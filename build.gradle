@@ -1,0 +1,23 @@
+def contractProjects = [project(':odd-platform-api-contract'), project(':odd-platform-ingestion-contract')]
+def javaProjects = contractProjects + project(':odd-platform-api')
+
+configure(javaProjects) {
+    apply plugin: 'java'
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+configure(contractProjects) {
+    dependencies {
+        compileOnly "org.springframework.boot:spring-boot-starter-webflux:$springWebfluxVersion"
+
+        compileOnly "javax.validation:validation-api:$validationApiVersion"
+        compileOnly "javax.annotation:javax.annotation-api:$annotationApiVersion"
+        compileOnly "io.swagger:swagger-annotations:$swaggerAnnotationsVersion"
+
+        compileOnly "io.springfox:springfox-boot-starter:$springfoxBootStarterVersion"
+        compileOnly "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
+    }
+}

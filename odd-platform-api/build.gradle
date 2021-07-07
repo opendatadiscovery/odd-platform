@@ -1,0 +1,89 @@
+plugins {
+    id 'org.springframework.boot' version '2.5.0'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'com.google.cloud.tools.jib' version '3.0.0'
+}
+
+group = 'com.provectus'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '13'
+
+apply from: 'jooq.generate.gradle'
+
+final boolean skipUIBundle = project.hasProperty("skipUIBundle") &&
+        Boolean.parseBoolean(project.property("skipUIBundle").toString())
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.session:spring-session-core'
+
+    implementation project(':odd-platform-api-contract')
+    implementation project(':odd-platform-ingestion-contract')
+
+    if (!skipUIBundle) {
+        implementation project(':odd-platform-ui')
+    }
+
+    implementation "org.flywaydb:flyway-core:$flywayVersion"
+    implementation "org.postgresql:postgresql:$postgresqlDriverVersion"
+
+    implementation "javax.validation:validation-api:$validationApiVersion"
+    implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonJsr310Version"
+
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    dbcontainer("org.testcontainers:postgresql:$testContainersVersion")
+}
+
+jooq {
+    basePackageName = "com.provectus.oddplatform.model"
+    includeMatches = ".*"
+    excludes = "FLYWAY_SCHEMA_HISTORY"
+    imageName = "postgres:13.2-alpine"
+    inputSchema = "public"
+    generate {
+        daos = false
+        pojos = true
+        fluentSetters = true
+        validationAnnotations = true
+        pojosEqualsAndHashCode = true
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+            srcDirs 'build/generated-jooq/src/main/java'
+        }
+    }
+}
+
+jib {
+    from {
+        image = 'adoptopenjdk/openjdk13:x86_64-alpine-jre-13.0.2_8'
+    }
+    to {
+        image = 'provectuslabs/odd-platform'
+        tags = ['latest', project.version]
+    }
+    container {
+        appRoot = '/app'
+        jvmFlags = ['-Xms1G', '-Xmx1G']
+        ports = ['8080']
+        workingDirectory = '/app'
+    }
+    allowInsecureRegistries = false
+}
+
+compileJava.dependsOn tasks.jooqDockerGenerate
+
+test {
+    useJUnitPlatform()
+}

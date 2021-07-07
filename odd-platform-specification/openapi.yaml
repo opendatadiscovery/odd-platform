@@ -1,0 +1,1162 @@
+openapi: 3.0.3
+info:
+  title: ProspectLog data catalog HTTP API contract
+  description: ProspectLog data catalog HTTP API contract
+  contact:
+    email: ndementev@provectus.com
+    url: https://provectus.com
+    name: Nikita Dementev
+  version: 0.0.1
+servers:
+  - url: 'http://localhost'
+    description: stub
+tags:
+  - name: identity
+  - name: owner
+  - name: namespace
+  - name: role
+  - name: tag
+  - name: label
+  - name: dataSource
+  - name: search
+  - name: dataSet
+  - name: dataEntity
+  - name: dataTransformer
+  - name: dataInput
+  - name: dataConsumer
+  - name: metadata
+  - name: datasetField
+paths:
+  /api/identity/whoami:
+    get:
+      summary: whoami
+      description: Get authed user identity
+      operationId: whoami
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AssociatedOwner'
+      tags:
+        - identity
+  /api/identity/owner:
+    put:
+      summary: Associate owner
+      description: Associates current authed user with owner
+      operationId: associateOwner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnerFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AssociatedOwner'
+      tags:
+        - identity
+    delete:
+      summary: Deassociate owner
+      description: Deassociates current authed user with owner
+      operationId: deassociateOwner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnerFormData'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - identity
+  /api/owners:
+    get:
+      summary: List of owners
+      description: Gets the list of existing owners
+      operationId: getOwnerList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/OwnerList'
+      tags:
+        - owner
+    post:
+      summary: Create owner
+      operationId: createOwner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnerFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Owner'
+      tags:
+        - owner
+  /api/owners/{owner_id}:
+    put:
+      summary: Update owner
+      description: Updates existing owner
+      operationId: updateOwner
+      parameters:
+        - name: owner_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnerFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Owner'
+      tags:
+        - owner
+    delete:
+      summary: Delete owner
+      description: Deletes existing owner
+      operationId: deleteOwner
+      parameters:
+        - name: owner_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - owner
+  /api/namespaces:
+    get:
+      summary: List of namespaces
+      description: Gets the list of existing namespaces
+      operationId: getNamespaceList
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/NamespaceList'
+      tags:
+        - namespace
+    post:
+      summary: Create a namespace
+      operationId: createNamespace
+      description: Creates a namespace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/NamespaceFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Namespace'
+      tags:
+        - namespace
+  /api/namespaces/{namespace_id}:
+    get:
+      summary: Get Namespace details
+      description: Get Namespace details
+      operationId: getNamespaceDetails
+      parameters:
+        - name: namespace_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Namespace'
+      tags:
+        - namespace
+    put:
+      summary: Update namespace
+      description: Updates namespace
+      operationId: updateNamespace
+      parameters:
+        - name: namespace_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/NamespaceUpdateFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Namespace'
+      tags:
+        - namespace
+  /api/roles:
+    get:
+      summary: List of roles
+      description: Gets the list of existing roles
+      operationId: getRoleList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/RoleList'
+      tags:
+        - role
+    post:
+      summary: Create a role
+      operationId: createRole
+      description: Creates a role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/RoleFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Role'
+      tags:
+        - role
+  /api/roles/{role_id}:
+    get:
+      summary: Get role details
+      description: Get role details
+      operationId: getRoleDetails
+      parameters:
+        - name: role_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Role'
+      tags:
+        - role
+    put:
+      summary: Update role
+      description: Updates role
+      operationId: updateRole
+      parameters:
+        - name: role_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/RoleUpdateFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Role'
+      tags:
+        - role
+  /api/tags:
+    get:
+      summary: List of popular tags
+      description: Gets the list of existing tags sorted by popularity
+      operationId: getPopularTagList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TagsResponse'
+      tags:
+        - tag
+    post:
+      summary: Create a tag
+      description: Creates a tag
+      operationId: createTag
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/BulkTagFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TagList'
+      tags:
+        - tag
+  /api/tags/{tag_id}:
+    put:
+      summary: Update tag
+      description: Updates existing tag
+      operationId: updateTag
+      parameters:
+        - name: tag_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TagFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Tag'
+      tags:
+        - tag
+    delete:
+      summary: Delete tag
+      description: Deletes existing tag
+      operationId: deleteTag
+      parameters:
+        - name: tag_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - tag
+  /api/labels:
+    get:
+      summary: List of structure field labels
+      description: Gets the list of existing labels
+      operationId: getLabelList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LabelsResponse'
+      tags:
+        - label
+    post:
+      summary: Create a label
+      description: Creates a label
+      operationId: createLabel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/BulkLabelFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LabelList'
+      tags:
+        - label
+  /api/labels/{label_id}:
+    put:
+      summary: Update label
+      description: Updates existing label
+      operationId: updateLabel
+      parameters:
+        - name: label_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/LabelFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Label'
+      tags:
+        - label
+    delete:
+      summary: Delete label
+      description: Deletes existing label
+      operationId: deleteLabel
+      parameters:
+        - name: label_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - label
+  /api/datasources:
+    get:
+      summary: List of data sources
+      description: Gets the list of available data sources
+      operationId: getDataSourceList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSourceList'
+      tags:
+        - dataSource
+    post:
+      summary: Register a data source
+      description: Registers a data source
+      operationId: registerDataSource
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataSourceFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSource'
+      tags:
+        - dataSource
+  /api/datasources/{data_source_id}:
+    put:
+      summary: Update data source
+      description: Updates data source
+      operationId: updateDataSource
+      parameters:
+        - name: data_source_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataSourceUpdateFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSource'
+      tags:
+        - dataSource
+    delete:
+      summary: Delete data source
+      description: Deletes data source
+      operationId: deleteDataSource
+      parameters:
+        - name: data_source_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataSource
+  /api/search:
+    post:
+      summary: Search by query
+      description: Creates a new search of all the matching dataEntities in active data sources to given query and calculates the aggregation data for correspondent data slice
+      operationId: search
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/SearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SearchFacetsData'
+      tags:
+        - search
+  /api/search/{search_id}:
+    get:
+      summary: Get search facets by search ID
+      description: Gets search facets by parameter which can be found in search endpoint response
+      operationId: getSearchFacetList
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SearchFacetsData'
+      tags:
+        - search
+    put:
+      summary: Update search facets by search ID
+      description: Updates search facets of a certain search ID by provided search parameters
+      operationId: updateSearchFacets
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/SearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/SearchFacetsData'
+      tags:
+        - search
+  /api/search/{search_id}/facet/{facet_type}:
+    get:
+      summary: Get countable filters for chosen facet type
+      description: Gets countable filters for chosen facet type
+      operationId: getFiltersForFacet
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: facet_type
+          in: path
+          required: true
+          schema:
+            $ref: './components.yaml/#/components/schemas/MultipleFacetType'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/CountableSearchFilter'
+      tags:
+        - search
+  /api/search/{search_id}/results:
+    get:
+      summary: Get search results by search ID
+      description: Returns paginated list of search results for a given search ID
+      operationId: getSearchResults
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityList'
+      tags:
+        - search
+  /api/dataentities:
+    get:
+      summary: Get dataEntities
+      description: Returns paginated list of dataEntities of a given type/subType sorted by priority
+      operationId: getDataEntityList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - name: type_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: subtype_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRefList'
+      tags:
+        - dataEntity
+  /api/dataentities/my:
+    get:
+      summary: Get my objects
+      description: Returns list of data entities owned by current user
+      operationId: getMyObjects
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRefList'
+      tags:
+        - dataEntity
+  /api/dataentities/my/upstream:
+    get:
+      summary: Get my objects with upstream dependencies
+      description: Returns list of data entities owned by current user with upstream dependencies
+      operationId: getMyObjectsWithUpstream
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRefList'
+      tags:
+        - dataEntity
+  /api/dataentities/my/downstream:
+    get:
+      summary: Get my objects with downstream dependencies
+      description: Returns list of data entities owned by current user with downstream dependencies
+      operationId: getMyObjectsWithDownstream
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRefList'
+      tags:
+        - dataEntity
+  /api/dataentities/popular:
+    get:
+      summary: Get popular entities
+      description: Returns list of the most popular data entities throughout the catalog
+      operationId: getPopular
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRefList'
+      tags:
+        - dataEntity
+  /api/dataentities/types:
+    get:
+      summary: Get Data Entity types
+      description: Get Data Entity types
+      operationId: getDataEntityTypes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityTypeDictionary'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}:
+    get:
+      summary: Get DataEntity details
+      description: "Gets DataEntity's detailed information such as metadata, description, etc"
+      operationId: getDataEntityDetails
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityDetails'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/description:
+    put:
+      summary: Upsert DataEntity's internal description
+      description: Upserts DataEntity's internal description in markdown format
+      operationId: upsertDataEntityInternalDescription
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/InternalDescriptionFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/InternalDescription'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/name:
+    put:
+      summary: Upsert DataEntity's internal name
+      description: Upserts DataEntity's internal name
+      operationId: upsertDataEntityInternalName
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/InternalNameFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/InternalName'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/ownership:
+    post:
+      summary: Create new ownership
+      description: Creates new ownership
+      operationId: createOwnership
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnershipFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Ownership'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/ownership/{ownership_id}:
+    put:
+      summary: Update existing ownership
+      description: Updates existing ownership
+      operationId: updateOwnership
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataEntityOwnershipIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnershipUpdateFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Ownership'
+      tags:
+        - dataEntity
+    delete:
+      summary: Delete ownership
+      description: Deletes the ownership
+      operationId: deleteOwnership
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataEntityOwnershipIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/tags:
+    put:
+      summary: Creates tags relations for DataEntity entity
+      description: Creates tags relations tags for DataEntity entity. Also creates corresponding tags in the system if they don't exist.
+      operationId: createDataEntityTagsRelations
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityTagsFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TagList'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/metadata:
+    post:
+      summary: Create DataEntity's metadata field value
+      description: Creates DataEntity's metadata field value
+      operationId: createDataEntityMetadataFieldValue
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/MetadataFieldValueFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MetadataFieldValueList'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/metadata/{metadata_field_id}:
+    put:
+      summary: Upsert DataEntity's metadata field value
+      description: Upserts DataEntity's metadata field value
+      operationId: upsertDataEntityMetadataFieldValue
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataEntityMetadataFieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/MetadataFieldValueUpdateFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MetadataFieldValue'
+      tags:
+        - dataEntity
+    delete:
+      summary: "Delete DataEntity's metadata field value"
+      description: "Delete DataEntity's metadata field value"
+      operationId: deleteDataEntityMetadataFieldValue
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataEntityMetadataFieldIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/lineage:
+    get:
+      summary: Get DataEntity's lineage graph
+      description: Gets DataEntity's lineage graph which size depends on lineage_depth parameter
+      operationId: getDataEntityLineage
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: lineage_depth
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityLineage'
+      tags:
+        - dataEntity
+  /api/datasets/{data_entity_id}/structure:
+    get:
+      summary: Get latest version's DataSet structure information
+      description: Gets DataSet's structure information of latest version such as column stats by DataSet's id
+      operationId: getDataSetStructureLatest
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSetStructure'
+      tags:
+        - dataSet
+  /api/datasets/{data_entity_id}/structure/{version_id}:
+    get:
+      summary: Get DataSet structure information
+      description: Gets DataSet's structure information such as column stats by DataSet's id and version
+      operationId: getDataSetStructureByVersionId
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: version_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSetStructure'
+      tags:
+        - dataSet
+  /api/metadata/fields:
+    get:
+      summary: Get custom metadata fields
+      description: Gets all available custom metadata fields
+      operationId: getMetadataFieldList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MetadataFieldList'
+
+      tags:
+        - metadata
+    post:
+      summary: Create new custom metadata field
+      description: Creates new custom metadata field
+      operationId: createCustomField
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/MetadataFieldFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MetadataField'
+      tags:
+        - metadata
+  /api/metadata/fields/{metadata_field_id}:
+    put:
+      summary: Update custom metadata field
+      description: Updates custom metadata field
+      operationId: updateCustomField
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityMetadataFieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/MetadataUpdateCustomFieldFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/MetadataField'
+      tags:
+        - metadata
+    delete:
+      summary: Delete custom metadata field
+      description: Deletes custom metadata field
+      operationId: deleteCustomField
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityMetadataFieldIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - metadata
+  /api/datasetfields/{dataset_field_id}/description:
+    put:
+      summary: Upsert DatasetField's internal description
+      description: Upserts DatasetField's internal description in string format
+      operationId: upsertDatasetFieldInternalDescription
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/InternalDescriptionFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/InternalDescription'
+      tags:
+        - datasetField
+  /api/datasetfields/{dataset_field_id}/labels:
+    put:
+      summary: Upsert DatasetField's labels
+      description: Upserts DatasetField's labels
+      operationId: upsertDatasetFieldLabels
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DatasetFieldLabelsFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/LabelList'
+      tags:
+        - datasetField

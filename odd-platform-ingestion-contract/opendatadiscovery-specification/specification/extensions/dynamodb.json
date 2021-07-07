@@ -1,0 +1,272 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "definitions": {
+        "DynamoDBDataSetExtension": {
+            "type": "object",
+            "properties": {
+                "table_id": {
+                    "type": "string"
+                },
+                "table_size_bytes": {
+                    "type": "number"
+                },
+                "table_status": {
+                    "type": "string",
+                    "enum": [
+                        "CREATING",
+                        "UPDATING",
+                        "DELETING",
+                        "ACTIVE",
+                        "INACCESSIBLE_ENCRYPTION_CREDENTIALS",
+                        "ARCHIVING",
+                        "ARCHIVED"
+                    ]
+                },
+                "table_arn": {
+                    "type": "string"
+                },
+                "provisioned_throughput": {
+                    "$ref": "#/definitions/DynamoDBProvisionedThroughput"
+                },
+                "key_schema": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DynamoDBKeySchema"
+                    }
+                },
+                "local_secondary_indexes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DynamoDBLocalSecondaryIndexInfo"
+                    }
+                },
+                "global_secondary_indexes": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DynamoDBGlobalSecondaryIndexInfo"
+                    }
+                },
+                "stream_specification": {
+                    "type": "object",
+                    "properties": {
+                        "stream_enabled": {
+                            "type": "boolean"
+                        },
+                        "stream_view_type": {
+                            "type": "string",
+                            "enum": [
+                                "NEW_IMAGE",
+                                "OLD_IMAGE",
+                                "NEW_AND_OLD_IMAGES",
+                                "KEYS_ONLY"
+                            ]
+                        }
+                    }
+                },
+                "latest_stream_label": {
+                    "type": "string"
+                },
+                "latest_stream_arn": {
+                    "type": "string"
+                },
+                "global_table_version": {
+                    "type": "string"
+                },
+                "replicas": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "region_name": {
+                                "type": "string"
+                            },
+                            "replica_status": {
+                                "type": "string",
+                                "enum": [
+                                    "CREATING",
+                                    "CREATION_FAILED",
+                                    "UPDATING",
+                                    "DELETING",
+                                    "ACTIVE",
+                                    "REGION_DISABLED",
+                                    "INACCESSIBLE_ENCRYPTION_CREDENTIALS"
+                                ]
+                            },
+                            "replica_status_description": {
+                                "type": "string"
+                            },
+                            "replica_status_percent_progress": {
+                                "type": "string"
+                            },
+                            "kms_master_key_id": {
+                                "type": "string"
+                            },
+                            "provisioned_throughput_override": {
+                                "$ref": "#/definitions/DynamoDBProvisionedThroughputOverride"
+                            },
+                            "global_secondary_indexes": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "properties": {
+                                        "index_name": {
+                                            "type": "string"
+                                        },
+                                        "provisioned_throughput_override": {
+                                            "$ref": "#/definitions/DynamoDBProvisionedThroughputOverride"
+                                        },
+                                    }
+                                }
+                            },
+                            "replica_inaccessible_date_time": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        }
+                    }
+                },
+                "restore_summary": {
+                    "source_backup_arn": {
+                        "type": "string"
+                    },
+                    "source_table_arn": {
+                        "type": "string"
+                    },
+                    "restore_date_time": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "restore_in_progress": {
+                        "type": "boolean"
+                    }
+                },
+                "sse_description": {
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "ENABLING",
+                            "ENABLED",
+                            "DISABLING",
+                            "DISABLED",
+                            "UPDATING"
+                        ]
+                    },
+                    "sse_type": {
+                        "type": "string",
+                        "enum": [
+                            "AES256",
+                            "KMS",
+                        ]
+                    },
+                    "kms_master_key_arn": {
+                        "type": "string"
+                    },
+                    "inaccessible_encryption_date_time": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "archival_summary": {
+                    "archival_date_time": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "archival_reason": {
+                        "type": "string"
+                    },
+                    "archival_backup_arn": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "DynamoDBProvisionedThroughput": {
+            "last_increase_date_time": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "last_decrease_date_time": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "number_of_decreases_today": {
+                "type": "number"
+            },
+            "read_capacity_units": {
+                "type": "number"
+            },
+            "write_capacity_units": {
+                "type": "number"
+            }
+        },
+        "DynamoDBKeySchema": {
+            "attribute_name": {
+                "type": "string"
+            },
+            "key_type": {
+                "type": "string",
+                "enum": [
+                    "HASH",
+                    "RANGE",
+                ]
+            }
+        },
+        "DynamoDBIndexInfo": {
+            "index_name": {
+                "type": "string"
+            },
+            "key_schema": {
+                "$ref": "#/definitions/DynamoDBKeySchema"
+            },
+            "projection": {
+                "projection_type": {
+                    "type": "string",
+                    "enum": ["ALL", "KEYS_ONLY", "INCLUDE"]
+                },
+                "non_key_attributes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "index_size_bytes": {
+                "type": "number"
+            },
+            "item_count": {
+                "type": "number"
+            },
+            "index_arn": {
+                "type": "string"
+            }
+        },
+        "DynamoDBLocalSecondaryIndexInfo": {
+            "allOf": [{ "$ref": "#/definitions/DynamoDBIndexInfo" }]
+        },
+        "DynamoDBGlobalSecondaryIndexInfo": {
+            "allOf": [
+                { "$ref": "#/definitions/DynamoDBIndexInfo" },
+                { "properties": {
+                    "index_status": {
+                        "type": "string",
+                        "enum": ["CREATING", "UPDATING", "DELETING", "ACTIVE"]
+                    },
+                    "backfilling": {
+                        "type": "boolean"
+                    },
+                    "provisioned_throughput": {
+                        "$ref": "#/definitions/DynamoDBProvisionedThroughput"
+                    }
+                }}
+            ]
+        },
+        "DynamoDBProvisionedThroughputOverride": {
+            "type": "object",
+            "properties": {
+                "read_capacity_units": {
+                    "type": "number"
+                }
+            }
+        },
+    }
+}

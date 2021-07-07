@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/odd
+    username: odd
+    password: odd_password
+  jooq:
+    sql-dialect: postgres
+  codec:
+    max-in-memory-size: 20MB
+
+management:
+  endpoints:
+    enabled: false
+    web:
+      base-path: /
+  info:
+    enabled: true
+  health:
+    enabled: true
+
+logging:
+  level:
+    org:
+      springframework:
+        transaction:
+          interceptor: trace
+      jooq:
+        tools:
+          LoggerListener: debug

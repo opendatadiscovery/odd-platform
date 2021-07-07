@@ -1,0 +1,3 @@
+rootProject.name = 'odd-platform'
+
+include 'odd-platform-api-contract', 'odd-platform-ingestion-contract', 'odd-platform-api', 'odd-platform-ui'

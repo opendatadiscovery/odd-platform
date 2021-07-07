@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "prospectlog.fullname" . }}
+  labels:
+    {{- include "prospectlog.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    {{- if .Values.ui.enabled }}
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: {{ .Values.service.apiPort }}
+      targetPort: api
+      protocol: TCP
+      name: api
+    {{- else }}
+    - port: {{ .Values.service.port }}
+      targetPort: api
+      protocol: TCP
+      name: http
+    {{- end }}
+  selector:
+    {{- include "prospectlog.selectorLabels" . | nindent 4 }}

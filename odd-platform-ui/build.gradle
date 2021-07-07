@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+    id "com.github.node-gradle.node" version "3.1.0"
+}
+
+node {
+    download = true
+    version = "14.17.1"
+}
+
+tasks.register("buildUI", NpmTask) {
+    inputs.files(fileTree("${project.projectDir}/node_modules"))
+    inputs.files(fileTree("${project.projectDir}/src"))
+    inputs.file("${project.projectDir}/package.json")
+
+    outputs.dir(project.buildDir)
+
+    dependsOn npmInstall
+    args = ['run', 'build']
+}
+
+jar {
+    dependsOn 'buildUI'
+    from project.buildDir into 'static'
+}

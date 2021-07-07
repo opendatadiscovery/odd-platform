@@ -1,0 +1,3 @@
+[submodule "odd-platform-ingestion-contract/opendatadiscovery-specification"]
+	path = odd-platform-ingestion-contract/opendatadiscovery-specification
+	url = https://github.com/opendatadiscovery/opendatadiscovery-specification.git

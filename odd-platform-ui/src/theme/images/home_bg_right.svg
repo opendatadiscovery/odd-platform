@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="492px" height="230px" viewBox="0 0 492 230" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>home bg_right</title>
+    <defs>
+        <path d="M0,0 L488,0 C490.209139,-4.05812251e-16 492,1.790861 492,4 L492,226 C492,228.209139 490.209139,230 488,230 L0,230 L0,230 L0,0 Z" id="path-1"></path>
+        <path d="M0,0 L488,0 C490.209139,-4.05812251e-16 492,1.790861 492,4 L492,226 C492,228.209139 490.209139,230 488,230 L0,230 L0,230 L0,0 Z" id="path-3"></path>
+    </defs>
+    <g id="Design" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="bg" transform="translate(-0.000000, 0.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <path stroke-opacity="0.2" stroke="#FFFFFF" d="M488,0.5 C488.966498,0.5 489.841498,0.891750844 490.474874,1.52512627 C491.108249,2.15850169 491.5,3.03350169 491.5,4 L491.5,4 L491.5,226 C491.5,226.966498 491.108249,227.841498 490.474874,228.474874 C489.841498,229.108249 488.966498,229.5 488,229.5 L488,229.5 L0.5,229.5 L0.5,0.5 Z"></path>
+            <mask id="mask-4" fill="white">
+                <use xlink:href="#path-3"></use>
+            </mask>
+            <use id="Mask" fill="#4B61B7" xlink:href="#path-3"></use>
+            <circle id="Oval" stroke-opacity="0.1" stroke="#FFFFFF" fill="#7188DE" mask="url(#mask-4)" cx="266" cy="203" r="265.5"></circle>
+            <circle id="Oval" stroke-opacity="0.1" stroke="#FFFFFF" fill="#A7B9FF" mask="url(#mask-4)" cx="472" cy="37" r="228.5"></circle>
+        </g>
+    </g>
+</svg>

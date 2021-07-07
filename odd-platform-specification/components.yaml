@@ -1,0 +1,1271 @@
+components:
+  schemas:
+    Identity:
+      type: object
+      properties:
+        username:
+          type: string
+      required:
+        - username
+
+    AssociatedOwner:
+      type: object
+      properties:
+        identity:
+          $ref: '#/components/schemas/Identity'
+        owner:
+          $ref: '#/components/schemas/Owner'
+      required:
+        - identity
+
+    Namespace:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    NamespaceList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Namespace'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+
+    NamespaceFormData:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    NamespaceUpdateFormData:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    Role:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    RoleList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+
+    RoleFormData:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    RoleUpdateFormData:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        important:
+          type: boolean
+      required:
+        - id
+        - name
+
+    TagList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Tag'
+
+    TagsResponse:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/TagList'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    TagFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        important:
+          type: boolean
+      required:
+        - name
+
+    BulkTagFormData:
+      type: array
+      items:
+        $ref: '#/components/schemas/TagFormData'
+
+    Owner:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    OwnerList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Owner'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    OwnerFormData:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    Ownership:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        owner:
+          $ref: '#/components/schemas/Owner'
+        role:
+          $ref: '#/components/schemas/Role'
+        data_entity_id:
+          type: integer
+          format: int64
+      required:
+        - id
+        - owner
+
+    OwnershipList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Ownership'
+
+    OwnershipFormData:
+      type: object
+      properties:
+        owner_name:
+          type: string
+        role_name:
+          type: string
+
+    OwnershipUpdateFormData:
+      type: object
+      properties:
+        role_name:
+          type: string
+
+    DataEntityTypeDictionary:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityType'
+        subtypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntitySubType'
+
+    DataEntityBaseObject:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        oddrn:
+          type: string
+        external_name:
+          type: string
+        internal_name:
+          type: string
+        ownership:
+          $ref: '#/components/schemas/OwnershipList'
+        data_source:
+          $ref: '#/components/schemas/DataSource'
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityType'
+        sub_type:
+          $ref: '#/components/schemas/DataEntitySubType'
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        tags:
+          $ref: '#/components/schemas/TagList'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - oddrn
+        - external_name
+        - data_source
+        - types
+        - namespace
+
+    DataEntityDetailsBaseObject:
+      type: object
+      properties:
+        metadata_field_values:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetadataFieldValue'
+        external_description:
+          type: string
+        internal_description:
+          type: string
+      required:
+        - metadata_field_values
+        - external_description
+        - internal_description
+
+    DataEntityDetails:
+      type: object
+      anyOf:
+        - $ref: '#/components/schemas/DataSetDetails'
+        - $ref: '#/components/schemas/DataTransformerDetails'
+        - $ref: '#/components/schemas/DataInputDetails'
+        - $ref: '#/components/schemas/DataConsumerDetails'
+        - $ref: '#/components/schemas/DataQualityTestDetails'
+
+    DataEntity:
+      type: object
+      anyOf:
+        - $ref: '#/components/schemas/DataSet'
+        - $ref: '#/components/schemas/DataTransformer'
+        - $ref: '#/components/schemas/DataConsumer'
+        - $ref: '#/components/schemas/DataInput'
+        - $ref: '#/components/schemas/DataQualityTest'
+
+    DataEntityType:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          enum:
+            - DATA_SET
+            - DATA_TRANSFORMER
+            - DATA_TRANSFORMER_RUN
+            - DATA_CONSUMER
+            - DATA_INPUT
+            - DATA_QUALITY_TEST
+            - DATA_QUALITY_TEST_RUN
+      required:
+        - id
+        - name
+
+    DataEntitySubType:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+          enum:
+            - TABLE
+            - FILE
+            - FEATURE_GROUP
+            - TOPIC
+            - JOB
+            - JOB_RUN
+            - EXPERIMENT
+            - ML_MODEL_TRAINING
+            - ML_MODEL_INSTANCE
+            - DASHBOARD
+            - ML_MODEL_ARTIFACT
+            - VIEW
+      required:
+        - id
+        - name
+
+    DataSetStats:
+      type: object
+      properties:
+        rows_count:
+          type: integer
+          format: int64
+        fields_count:
+          type: integer
+          format: int64
+        consumers_count:
+          type: integer
+          format: int64
+      required:
+        - rows_count
+        - fields_count
+        - consumers_count
+
+    DataSetVersion:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        version:
+          type: integer
+          format: int32
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - version
+        - created_at
+
+    DataSetVersionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/DataSetVersion'
+
+    DataSet:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            stats:
+              $ref: '#/components/schemas/DataSetStats'
+          required:
+            - stats
+
+    DataSetDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataSet'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+        - type: object
+          properties:
+            version_list:
+              $ref: '#/components/schemas/DataSetVersionList'
+
+    DataEntityRef:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityType'
+        internal_name:
+          type: string
+        external_name:
+          type: string
+        url:
+          type: string
+      required:
+        - id
+        - name
+
+    DataEntityRefList:
+      type: array
+      items:
+        $ref: '#/components/schemas/DataEntityRef'
+
+    DataTransformer:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            source_list:
+              $ref: '#/components/schemas/DataEntityRefList'
+            target_list:
+              $ref: '#/components/schemas/DataEntityRefList'
+
+    DataTransformerDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataTransformer'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+
+    DataInput:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+
+    DataInputDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataInput'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+
+    DataQualityTest:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            suite_url:
+              type: string
+            datasets_list:
+              $ref: '#/components/schemas/DataEntityRefList'
+
+    DataQualityTestDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataQualityTest'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+
+    DataConsumer:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            input_list:
+              $ref: '#/components/schemas/DataEntityRefList'
+
+    DataConsumerDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataConsumer'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+
+    DataEntityList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntity'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    DataSource:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        oddrn:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        connection_url:
+          type: string
+        active:
+          type: boolean
+        pulling_interval:
+          type: integer
+          format: int32
+          description: Pulling interval in seconds
+      required:
+        - id
+        - oddrn
+        - name
+        - active
+
+    DataSourceList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSource'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    DataSourceFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        oddrn:
+          type: string
+        description:
+          type: string
+        connection_url:
+          type: string
+        active:
+          type: boolean
+        pulling_interval:
+          type: integer
+          format: int32
+          description: Pulling interval in seconds
+      required:
+        - name
+        - oddrn
+        - connection_url
+
+    DataSourceUpdateFormData:
+      type: object
+      properties:
+        description:
+          type: string
+        active:
+          type: boolean
+        name:
+          type: string
+        connection_url:
+          type: string
+        pulling_interval:
+          type: integer
+          format: int32
+          description: Pulling interval in seconds
+
+    PageInfo:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int64
+        hasNext:
+          type: boolean
+      required:
+        - total
+        - hasNext
+
+    FilterType:
+      type: string
+      enum:
+        - DATASOURCE
+        - DATA_ENTITY_SUBTYPE
+        - NAMESPACE
+        - OWNER
+        - TAG
+
+    MultipleFacetType:
+      type: string
+      enum:
+        - owners
+        - tags
+        - subtypes
+
+    SearchFilter:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    CountableSearchFilter:
+      allOf:
+        - $ref: '#/components/schemas/SearchFilter'
+        - type: object
+          properties:
+            count:
+              type: integer
+              format: int64
+            selected:
+              type: boolean
+          required:
+            - stats
+
+    FacetState:
+      type: object
+      properties:
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/CountableSearchFilter'
+        subtypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        namespaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        datasources:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+      required:
+        - types
+
+    SearchFacetsData:
+      type: object
+      properties:
+        search_id:
+          type: string
+          format: uuid
+        query:
+          type: string
+        facet_state:
+          $ref: '#/components/schemas/FacetState'
+        total:
+          type: integer
+          format: int64
+        my_objects_total:
+          type: integer
+          format: int64
+        my_objects:
+          type: boolean
+      required:
+        - search_id
+        - query
+        - facet_state
+
+    SearchResponse:
+      type: object
+      properties:
+        results:
+          $ref: '#/components/schemas/DataEntityList'
+        facets_data:
+          $ref: '#/components/schemas/SearchFacetsData'
+      required:
+        - results
+        - facets_data
+
+    DataSetFieldStat:
+      type: object
+      properties:
+        name:
+          type: string
+        complex_stats:
+          $ref: '#/components/schemas/ComplexFieldStat'
+        boolean_stats:
+          $ref: '#/components/schemas/BooleanFieldStat'
+        number_stats:
+          $ref: '#/components/schemas/NumberFieldStat'
+        string_stats:
+          $ref: '#/components/schemas/StringFieldStat'
+        binary_stats:
+          $ref: '#/components/schemas/BinaryFieldStat'
+        date_time_stats:
+          $ref: '#/components/schemas/DateTimeFieldStat'
+      required:
+        - name
+
+    BooleanFieldStat:
+      type: object
+      properties:
+        true_count:
+          type: integer
+          format: int64
+        false_count:
+          type: integer
+          format: int64
+        nulls_count:
+          type: integer
+          format: int64
+      required:
+        - true_count
+        - false_count
+        - nulls_count
+
+    ComplexFieldStat:
+      type: object
+      properties:
+        nulls_count:
+          type: integer
+          format: int64
+        unique_count:
+          type: integer
+          format: int64
+      required:
+        - nulls_count
+        - unique_count
+
+    NumberFieldStat:
+      type: object
+      properties:
+        low_value:
+          type: number
+        high_value:
+          type: number
+        mean_value:
+          type: number
+        median_value:
+          type: number
+        nulls_count:
+          type: integer
+          format: int64
+        unique_count:
+          type: integer
+          format: int64
+      required:
+        - low_value
+        - high_value
+        - nulls_count
+        - unique_count
+
+    StringFieldStat:
+      type: object
+      properties:
+        max_length:
+          type: integer
+        avg_length:
+          type: number
+        nulls_count:
+          type: integer
+          format: int64
+        unique_count:
+          type: integer
+          format: int64
+      required:
+        - max_length
+        - avg_length
+        - nulls_count
+        - unique_count
+
+    BinaryFieldStat:
+      type: object
+      properties:
+        max_length:
+          type: integer
+        avg_length:
+          type: number
+        nulls_count:
+          type: integer
+          format: int64
+        unique_count:
+          type: integer
+          format: int64
+      required:
+        - max_length
+        - avg_length
+        - nulls_count
+        - unique_count
+
+    DateTimeFieldStat:
+      type: object
+      properties:
+        low_value:
+          type: string
+          format: date-time
+        high_value:
+          type: string
+          format: date-time
+        mean_value:
+          type: string
+          format: date-time
+        median_value:
+          type: string
+          format: date-time
+        nulls_count:
+          type: integer
+          format: int64
+        unique_count:
+          type: integer
+          format: int64
+      required:
+        - low_value
+        - high_value
+        - nulls_count
+        - unique_count
+
+    DataSetField:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        parent_field_id:
+          type: integer
+          format: int64
+        oddrn:
+          type: string
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataSetFieldType'
+        stats:
+          $ref: '#/components/schemas/DataSetFieldStat'
+        is_key:
+          type: boolean
+        is_value:
+          type: boolean
+        default_value:
+          type: string
+        external_description:
+          type: string
+        internal_description:
+          type: string
+        labels:
+          $ref: '#/components/schemas/LabelList'
+      required:
+        - id
+        - oddrn
+        - name
+        - type
+
+    DataSetFieldType:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - TYPE_STRING
+            - TYPE_CHAR
+            - TYPE_NUMBER
+            - TYPE_INTEGER
+            - TYPE_BOOLEAN
+            - TYPE_DATETIME
+            - TYPE_STRUCT
+            - TYPE_BINARY
+            - TYPE_LIST
+            - TYPE_MAP
+        logical_type:
+          type: string
+        is_nullable:
+          type: boolean
+      required:
+        - type
+        - is_nullable
+
+    DataSetStructure:
+      type: object
+      properties:
+        field_list:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataSetField'
+        data_set_version:
+          $ref: '#/components/schemas/DataSetVersion'
+      required:
+        - field_list
+        - data_set_version
+
+    Label:
+      description: DatasetField label
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      required:
+        - id
+        - name
+
+    LabelList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Label'
+
+    LabelsResponse:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/LabelList'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    LabelFormData:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    BulkLabelFormData:
+      type: array
+      items:
+        $ref: '#/components/schemas/LabelFormData'
+
+    DatasetFieldLabelsFormData:
+      type: object
+      properties:
+        label_name_list:
+          type: array
+          items:
+            type: string
+      required:
+        - label_name_list
+
+    DataEntityLineageNode:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        external_name:
+          type: string
+        internal_name:
+          type: string
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityType'
+        data_source:
+          $ref: '#/components/schemas/DataSource'
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+      required:
+        - id
+        - name
+        - type
+
+    DataEntityLineageEdge:
+      type: object
+      properties:
+        source_id:
+          type: integer
+          format: int64
+        target_id:
+          type: integer
+          format: int64
+      required:
+        - source_id
+        - target_id
+
+    DataEntityLineageStream:
+      type: object
+      properties:
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityLineageNode'
+        edges:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityLineageEdge'
+
+    DataEntityLineage:
+      type: object
+      properties:
+        upstream:
+          $ref: '#/components/schemas/DataEntityLineageStream'
+        downstream:
+          $ref: '#/components/schemas/DataEntityLineageStream'
+        root:
+          $ref: '#/components/schemas/DataEntityLineageNode'
+      required:
+        - root
+        - upstream
+        - downstream
+
+    MetadataFieldType:
+      type: string
+      enum:
+        - INTEGER
+        - STRING
+        - DATETIME
+        - FLOAT
+        - BOOLEAN
+        - ARRAY
+
+    MetadataFieldOrigin:
+      type: string
+      enum:
+        - EXTERNAL
+        - INTERNAL
+
+    MetadataField:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/MetadataFieldType'
+        origin:
+          $ref: '#/components/schemas/MetadataFieldOrigin'
+      required:
+        - id
+        - name
+        - type
+
+    MetadataFieldList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetadataField'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+
+    MetadataFieldValue:
+      type: object
+      properties:
+        field:
+          $ref: '#/components/schemas/MetadataField'
+        value:
+          type: string
+      required:
+        - field
+        - value
+
+    MetadataFieldValueList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/MetadataFieldValue'
+      required:
+        - items
+
+    MetadataFieldValueUpdateFormData:
+      type: object
+      properties:
+        value:
+          type: string
+        origin:
+          $ref: '#/components/schemas/MetadataFieldOrigin'
+      required:
+        - value
+
+    MetadataFieldFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+      required:
+        - name
+        - type
+
+    MetadataObject:
+      allOf:
+        - $ref: '#/components/schemas/MetadataFieldFormData'
+        - $ref: '#/components/schemas/MetadataFieldValueUpdateFormData'
+
+    MetadataFieldValueFormData:
+      type: array
+      items:
+        $ref: '#/components/schemas/MetadataObject'
+
+    InternalDescription:
+      type: object
+      properties:
+        internal_description:
+          type: string
+      required:
+        - internal_description
+
+    InternalDescriptionFormData:
+      type: object
+      properties:
+        internal_description:
+          type: string
+      required:
+        - internal_description
+
+    InternalName:
+      type: object
+      properties:
+        internal_name:
+          type: string
+      required:
+        - internal_name
+
+    InternalNameFormData:
+      type: object
+      properties:
+        internal_name:
+          type: string
+      required:
+        - internal_name
+
+    DataEntityTagsFormData:
+      type: object
+      properties:
+        tag_name_list:
+          type: array
+          items:
+            type: string
+      required:
+        - tag_name_list
+
+    MetadataUpdateCustomFieldFormData:
+      type: object
+      properties:
+        name:
+          type: string
+      required:
+        - name
+
+    SearchFilterState:
+      properties:
+        entity_id:
+          type: integer
+          format: int64
+        entity_name:
+          type: string
+        selected:
+          type: boolean
+      required:
+        - entity_id
+        - name
+        - selected
+
+    SearchFormData:
+      type: object
+      properties:
+        query:
+          type: string
+        my_objects:
+          type: boolean
+        filters:
+          type: object
+          properties:
+            types:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            subtypes:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            namespaces:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            owners:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            datasources:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+      required:
+        - filters
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page
+      required: true
+      schema:
+        type: integer
+        format: int32
+
+    SizeParam:
+      name: size
+      in: query
+      description: Size
+      required: true
+      schema:
+        type: integer
+        format: int32
+
+    SearchParam:
+      name: query
+      in: query
+      description: Search text
+      required: false
+      schema:
+        type: string
+
+    DataEntityIdParam:
+      name: data_entity_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    DatasetFieldIdParam:
+      name: dataset_field_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    DataEntityMetadataFieldIdParam:
+      name: metadata_field_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    DataEntityOwnershipIdParam:
+      name: ownership_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+  responses:
+    Deleted:
+      description: The resource has been successfully deleted

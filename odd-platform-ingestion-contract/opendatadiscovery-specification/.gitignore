@@ -1,0 +1,17 @@
+build/
+out/
+target/
+venv/
+.idea
+Thumbs.db
+.DS_Store
+.gradle
+*.iml
+*.ipr
+*.iws
+.project
+.settings
+.classpath
+__pycache__/
+*.py[cod]
+*$py.class

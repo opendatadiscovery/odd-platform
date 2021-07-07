@@ -1,0 +1,78 @@
+import React from 'react';
+import { Grid, Typography, Select, MenuItem } from '@material-ui/core';
+import { SearchFilter } from 'generated-sources';
+import {
+  FacetStateUpdate,
+  OptionalFacetNames,
+  SearchFilterStateSynced,
+} from 'redux/interfaces/search';
+import ChevronDownIcon from 'components/shared/Icons/ChevronDownIcon';
+import { StylesType } from './SingleFilterItemStyles';
+
+interface FilterItemProps extends StylesType {
+  name: string;
+  facetName: OptionalFacetNames;
+  facetOptions: SearchFilter[];
+  selectedOptions: SearchFilterStateSynced[] | undefined;
+  setFacets: (option: FacetStateUpdate) => void;
+}
+
+const SingleFilterItem: React.FC<FilterItemProps> = ({
+  classes,
+  name,
+  facetName,
+  facetOptions,
+  selectedOptions,
+  setFacets,
+}) => {
+  const handleFilterSelect = React.useCallback(
+    (e: React.ChangeEvent<{ value: unknown }>) => {
+      setFacets({
+        facetName,
+        facetOptionId:
+          e.target.value === 'All'
+            ? undefined
+            : (e.target.value as number),
+        facetOptionState: true,
+        facetSingle: true,
+      });
+    },
+    [setFacets, facetName]
+  );
+
+  return facetOptions.length ? (
+    <Grid container className={classes.container}>
+      <Grid item xs={12}>
+        <Typography
+          variant="h5"
+          id={`${facetName}-select-label`}
+          className={classes.caption}
+        >
+          {name}
+        </Typography>
+      </Grid>
+      <Grid item xs={12}>
+        <Select
+          className={classes.singleSelect}
+          IconComponent={ChevronDownIcon}
+          labelId={`${facetName}-select-label`}
+          id={`filter-${facetName}`}
+          variant="outlined"
+          value={
+            selectedOptions?.length ? selectedOptions[0].entityId : 'All'
+          }
+          onChange={handleFilterSelect}
+        >
+          <MenuItem value="All">All</MenuItem>
+          {facetOptions?.map(option => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </Grid>
+    </Grid>
+  ) : null;
+};
+
+export default SingleFilterItem;

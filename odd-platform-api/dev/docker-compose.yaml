@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:13.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    ports:
+      - 5432:5432
+    volumes:
+      - odc-dev
+    networks:
+      - odc-dev
+
+  data-catalog-ui:
+    build:
+      context: ../../.
+      dockerfile: ./odc-ui/Dockerfile
+      args:
+        - REACT_APP_API_URL=http://localhost:8080
+    restart: always
+    ports:
+      - 80:80
+
+volumes:
+  odc-dev:
+
+networks:
+  odc-dev:

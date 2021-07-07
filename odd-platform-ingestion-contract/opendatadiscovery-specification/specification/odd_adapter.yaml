@@ -1,0 +1,29 @@
+openapi: 3.0.3
+info:
+  title: OpenDataDiscovery Adapter Contract
+  version: 0.0.1
+  description: OpenDataDiscovery Adapter Contract
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+paths:
+  /entities:
+    get:
+      description: Provides list of available entities
+      operationId: getDataEntities
+      tags:
+        - OpenDataDiscoveryAdapter
+      parameters:
+        - in: query
+          name: changed_since
+          schema:
+            type: string
+            format: date-time
+          description: Get data enitites updated after changed_since date
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './entities.yaml/#/components/schemas/DataEntityList'
