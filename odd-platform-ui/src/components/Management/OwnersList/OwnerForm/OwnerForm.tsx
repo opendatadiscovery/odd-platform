@@ -48,10 +48,10 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
     isSuccessfulSubmit: boolean;
   }>(initialState);
 
-  const clearState = () => {
+  const clearState = React.useCallback(() => {
     setState(initialState);
-    reset();
-  };
+    reset({ name: owner?.name || '' });
+  }, [owner]);
 
   const handleSudmit = async (data: OwnerFormData) => {
     (owner
@@ -126,7 +126,12 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
     <DialogWrapper
       maxWidth="xs"
       renderOpenBtn={({ handleOpen }) =>
-        React.cloneElement(btnCreateEl, { onClick: handleOpen })
+        React.cloneElement(btnCreateEl, {
+          onClick: () => {
+            clearState();
+            handleOpen();
+          },
+        })
       }
       title={formTitle}
       renderContent={formContent}
