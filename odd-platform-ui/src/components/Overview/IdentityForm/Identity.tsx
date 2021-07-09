@@ -213,27 +213,53 @@ const Identity: React.FC<IdentityProps> = ({
                   blurOnSelect
                   freeSolo
                   renderInput={params => (
-                    <TextField
-                      {...params}
-                      name="name"
-                      label="Owner name"
-                      placeholder="Search name"
-                      variant="outlined"
-                      InputProps={{
-                        ...params.InputProps,
-                        endAdornment: (
-                          <>
-                            {optionsLoading ? (
-                              <CircularProgress
-                                color="inherit"
-                                size={20}
-                              />
-                            ) : null}
-                            {params.InputProps.endAdornment}
-                          </>
-                        ),
-                      }}
-                    />
+                    <>
+                      <TextField
+                        {...params}
+                        name="name"
+                        label="Owner name"
+                        placeholder="Search name"
+                        variant="outlined"
+                        InputProps={{
+                          ...params.InputProps,
+                          endAdornment: (
+                            <>
+                              {optionsLoading ? (
+                                <CircularProgress
+                                  color="inherit"
+                                  size={20}
+                                />
+                              ) : null}
+                              {params.InputProps.endAdornment}
+                            </>
+                          ),
+                        }}
+                      />
+                      {possibleOwners.length ? (
+                        <Grid
+                          item
+                          xs={12}
+                          container
+                          direction="column"
+                          alignItems="flex-start"
+                          className={classes.suggestedOwnersContainer}
+                        >
+                          <Typography variant="subtitle2">
+                            Maybe it&apos;s you
+                          </Typography>
+                          {possibleOwners.map(owner => (
+                            <Typography
+                              key={owner.id}
+                              variant="body1"
+                              className={classes.suggestedOwnerItem}
+                              onClick={() => field.onChange(owner.name)}
+                            >
+                              {owner.name}
+                            </Typography>
+                          ))}
+                        </Grid>
+                      ) : null}
+                    </>
                   )}
                   renderOption={option => (
                     <Typography variant="body2">
@@ -261,16 +287,6 @@ const Identity: React.FC<IdentityProps> = ({
             </AppButton>
           </form>
         </Grid>
-        {possibleOwners.length ? (
-          <Grid item xs={12} container>
-            <Typography variant="subtitle2">
-              Maybe it&apos;s you
-            </Typography>
-            {possibleOwners.map(owner => (
-              <Typography variant="body1">{owner.name}</Typography>
-            ))}
-          </Grid>
-        ) : null}
       </Grid>
     </div>
   );
