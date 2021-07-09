@@ -125,7 +125,6 @@ export const styles = (theme: Theme) =>
       '&.menu': {
         color: '#091E42',
         backgroundColor: '#EBECF0',
-        // '&.vertical': { marginBottom: theme.spacing(0.5) },
       },
     },
   });
