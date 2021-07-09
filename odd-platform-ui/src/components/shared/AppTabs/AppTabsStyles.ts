@@ -88,6 +88,7 @@ export const styles = (theme: Theme) =>
           color: '#7A869A',
           backgroundColor: '#F4F5F7',
         },
+        '&.vertical': { marginBottom: theme.spacing(0.5) },
       },
       '&.vertical .MuiTab-wrapper': {
         alignItems: 'flex-start',
@@ -124,7 +125,7 @@ export const styles = (theme: Theme) =>
       '&.menu': {
         color: '#091E42',
         backgroundColor: '#EBECF0',
-        '&.vertical': { marginBottom: theme.spacing(0.5) },
+        // '&.vertical': { marginBottom: theme.spacing(0.5) },
       },
     },
   });
