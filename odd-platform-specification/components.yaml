@@ -450,15 +450,31 @@ components:
         - $ref: '#/components/schemas/DataInput'
         - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
 
+    DataQualityTestExpectation:
+      type: object
+      properties:
+        type:
+          type: string
+      additionalProperties:
+        type: string
+
     DataQualityTest:
       allOf:
         - $ref: '#/components/schemas/DataEntityBaseObject'
         - type: object
           properties:
+            suite_name:
+              type: string
             suite_url:
               type: string
+            expectation:
+              $ref: '#/components/schemas/DataQualityTestExpectation'
             datasets_list:
               $ref: '#/components/schemas/DataEntityRefList'
+            linked_url_list:
+              type: array
+              items:
+                type: string
 
     DataQualityTestDetails:
       allOf:
