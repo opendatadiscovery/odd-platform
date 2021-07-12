@@ -32,8 +32,6 @@ import { StylesType } from './AppGraphStyles';
 export interface AppGraphProps extends StylesType {
   dataEntityId: number;
   data: DataEntityLineageById;
-  // defaultDepth: number;
-  // handleDepthChange: (e: React.ChangeEvent<{ value: unknown }>) => void;
   fetchDataEntityLineage: (
     params: DataEntityApiGetDataEntityLineageRequest
   ) => Promise<DataEntityLineage>;
@@ -43,13 +41,11 @@ const AppGraph: React.FC<AppGraphProps> = ({
   classes,
   dataEntityId,
   data,
-  // defaultDepth,
-  // handleDepthChange,
   fetchDataEntityLineage,
 }) => {
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
   const gInstanceRef = `rd3t-g-${uuidv4()}`;
-  const [compactView, setCompactView] = React.useState<boolean>(false);
+  const [compactView, setCompactView] = React.useState<boolean>(true);
   const d3Zoom = d3zoom<SVGSVGElement, unknown>();
   const transitionDuration = 800;
   const zoomable = true;
@@ -194,42 +190,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
     };
   };
 
-  React.useEffect(() => {
-    if (!data) return;
-    setParsedData({
-      root: assignInternalProps(data.root),
-      upstream: {
-        ...data.upstream,
-        nodesById: parseData(data.upstream.nodesById),
-      },
-      downstream: {
-        ...data.downstream,
-        nodesById: parseData(data.downstream.nodesById),
-      },
-    });
-  }, [data]);
-
-  React.useEffect(() => {
-    setTreeState(generateTree());
-  }, [parsedData]);
-
   const handleDepthChange = (e: React.ChangeEvent<{ value: unknown }>) => {
     fetchDataEntityLineage({
       dataEntityId,
       lineageDepth: e.target.value as number,
     });
   };
-
-  React.useEffect(
-    () =>
-      setNodeSize({
-        x: 200,
-        y: compactView ? 56 : 140,
-        mx: 24,
-        my: 24,
-      }),
-    [compactView]
-  );
 
   const transformation: { translate: Point; scale: number } = {
     translate: { x: 0, y: 0 },
@@ -307,10 +273,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
         const tspan = txt
           .select<SVGTSpanElement>('tspan.visible-text')
           .text(chars.join(''));
-
-        // Try the whole line
-        // While it's too long, and we have chars left, keep removing chars
-
         while (
           (tspan.node()?.getComputedTextLength() || 0) > width &&
           chars.length
@@ -326,9 +288,41 @@ const AppGraph: React.FC<AppGraphProps> = ({
   };
 
   React.useEffect(() => {
+    setNodeSize({
+      x: 200,
+      y: compactView ? 56 : 140,
+      mx: 24,
+      my: 24,
+    });
+  }, [compactView]);
+
+  React.useEffect(() => {
+    if (!data) return;
+    setParsedData({
+      root: assignInternalProps(data.root),
+      upstream: {
+        ...data.upstream,
+        nodesById: parseData(data.upstream.nodesById),
+      },
+      downstream: {
+        ...data.downstream,
+        nodesById: parseData(data.downstream.nodesById),
+      },
+    });
+  }, [data]);
+
+  React.useEffect(() => {
+    setTreeState(generateTree());
+    wrapLabels();
+  }, [parsedData, nodeSize]);
+
+  React.useEffect(() => {
+    wrapLabels();
+  }, [nodesUp]);
+
+  React.useEffect(() => {
     centerRoot();
     bindZoomListener();
-    wrapLabels();
   }, [ref.current]);
 
   return parsedData ? (
@@ -349,6 +343,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
           variant="secondarySmall"
           orientation="horizontal"
           items={[{ name: 'Full' }, { name: 'Compact' }]}
+          selectedTab={compactView ? 1 : 0}
           handleTabChange={(newViewIndex: number) =>
             setCompactView(newViewIndex > 0)
           }
