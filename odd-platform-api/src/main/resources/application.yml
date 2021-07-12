@@ -7,20 +7,20 @@ spring:
     sql-dialect: postgres
   codec:
     max-in-memory-size: 20MB
-  security:
-    oauth2:
-      client:
-        registration:
-          cognito:
-            client-id:
-            client-secret:
-            scope:
-            redirect-uri:
-            client-name:
-        provider:
-          cognito:
-            issuerUri:
-            user-name-attribute:
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          cognito:
+#            client-id:
+#            client-secret:
+#            scope:
+#            redirect-uri:
+#            client-name:
+#        provider:
+#          cognito:
+#            issuerUri:
+#            user-name-attribute:
 
 auth:
   enabled: false

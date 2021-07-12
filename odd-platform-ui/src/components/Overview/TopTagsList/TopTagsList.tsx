@@ -32,13 +32,13 @@ const TopTagsList: React.FC<TopTagsListProps> = ({
     fetchTagsList({ page: 1, size: 20 });
   }, []);
 
-  const handleTagClick = (id: number) => () => {
+  const handleTagClick = (id: number, name: string) => () => {
     if (searchLoading) return;
     setSearchLoading(true);
     const searchQuery: SearchFormData = {
       query: '',
       filters: {
-        tags: [{ entityId: id, selected: true }],
+        tags: [{ entityId: id, entityName: name, selected: true }],
       },
     };
     createDataEntitiesSearch({ searchFormData: searchQuery }).then(
@@ -47,6 +47,7 @@ const TopTagsList: React.FC<TopTagsListProps> = ({
         history.push(searchLink);
       }
     );
+    history.push(searchPath());
   };
 
   return (
@@ -55,7 +56,7 @@ const TopTagsList: React.FC<TopTagsListProps> = ({
         .sort(tag => (tag.important ? -1 : 1))
         .map(tag => (
           <TagItem
-            onClick={handleTagClick(tag.id)}
+            onClick={handleTagClick(tag.id, tag.name)}
             key={tag.id}
             label={tag.name}
             important={tag.important}

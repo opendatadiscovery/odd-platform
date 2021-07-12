@@ -111,11 +111,11 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
       <Toolbar disableGutters className={classes.container}>
         <Grid container className={classes.contentContainer}>
           <Grid item xs={3} className={classes.logoContainer}>
-            <a href="/" className={classes.title}>
+            <Link to="/" className={classes.title}>
               <Typography variant="h4" noWrap>
                 OpenDataCatalog
               </Typography>
-            </a>
+            </Link>
           </Grid>
           <Grid item xs={9} className={classes.actionsContainer}>
             <Grid item className={classes.tabsContainer}>
@@ -130,7 +130,9 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
             </Grid>
             <Grid item className={classes.sectionDesktop}>
               <AccountCircle className={classes.userAvatar} />
-              <p className={classes.userName}>{identity?.identity.username}</p>
+              <p className={classes.userName}>
+                {identity?.identity.username}
+              </p>
               <IconButton
                 edge="end"
                 aria-label="account of current user"

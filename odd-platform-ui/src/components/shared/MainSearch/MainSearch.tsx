@@ -44,6 +44,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
         history.push(searchLink);
       }
     );
+    history.push(searchPath());
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
