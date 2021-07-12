@@ -25,7 +25,6 @@ export const styles = (theme: Theme) =>
       margin: '0 auto',
     },
     infoBarContainer: {
-      display: 'none', // Remove when alerts implemented
       justifyContent: 'space-between',
       marginTop: theme.spacing(8),
       '& > *:last-child': {
