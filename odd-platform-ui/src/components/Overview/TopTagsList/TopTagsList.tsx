@@ -52,7 +52,12 @@ const TopTagsList: React.FC<TopTagsListProps> = ({
   return (
     <>
       {topTagsList
-        .sort(tag => (tag.important ? -1 : 1))
+        .sort((tag1, tag2) => {
+          if (tag1.important === tag2.important) {
+            return tag1.name.localeCompare(tag2.name);
+          }
+          return tag1.important ? -1 : 1;
+        })
         .map(tag => (
           <TagItem
             onClick={handleTagClick(tag.id)}
