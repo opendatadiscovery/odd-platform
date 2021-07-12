@@ -45,7 +45,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
 }) => {
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
   const gInstanceRef = `rd3t-g-${uuidv4()}`;
-  const [compactView, setCompactView] = React.useState<boolean>(true);
+  const [compactView, setCompactView] = React.useState<boolean>(false);
   const d3Zoom = d3zoom<SVGSVGElement, unknown>();
   const transitionDuration = 800;
   const zoomable = true;
@@ -173,11 +173,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
 
-    // const depth = {
-    //   upstream: maxBy(nUp, node => node.depth)?.depth || 0,
-    //   downstream: maxBy(nDown, node => node.depth)?.depth || 0,
-    // };
-
     return {
       nodesUp: nUp,
       linksUp: lUp,
@@ -207,10 +202,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
   const centerRoot = () => {
     const g = select(`.${gInstanceRef}`);
     if (ref?.current?.offsetWidth && ref?.current?.offsetHeight) {
-      transformation.scale =
+      transformation.scale = Math.min(
         ref?.current?.offsetWidth /
-        (depth.downstream + depth.upstream + 1) /
-        (nodeSize.x + nodeSize.mx);
+          (depth.downstream + depth.upstream + 1) /
+          (nodeSize.x + nodeSize.mx),
+        1
+      );
 
       const upstreamWidth = (nodeSize.x + nodeSize.mx) * depth.upstream;
       const downstreamWidth =
@@ -313,7 +310,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
 
   React.useEffect(() => {
     setTreeState(generateTree());
-    wrapLabels();
   }, [parsedData, nodeSize]);
 
   React.useEffect(() => {
