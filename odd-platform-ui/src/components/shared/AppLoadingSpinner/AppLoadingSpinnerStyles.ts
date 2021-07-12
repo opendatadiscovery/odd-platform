@@ -11,7 +11,7 @@ export const styles = (theme: Theme) =>
       zIndex: 9999,
     },
     colorPrimary: {
-      backgroundColor: fade(theme.palette.secondary.main, 0.9),
+      backgroundColor: fade('#0080FF', 0.9),
     },
     barColorPrimary: {
       backgroundColor: theme.palette.text.secondary,

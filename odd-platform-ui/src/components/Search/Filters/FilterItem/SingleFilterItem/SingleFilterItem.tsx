@@ -26,13 +26,11 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
   setFacets,
 }) => {
   const handleFilterSelect = React.useCallback(
-    (e: React.ChangeEvent<{ value: unknown }>) => {
+    (option: { id: number | string; name: string }) => {
       setFacets({
         facetName,
-        facetOptionId:
-          e.target.value === 'All'
-            ? undefined
-            : (e.target.value as number),
+        facetOptionId: option.id,
+        facetOptionName: option.name,
         facetOptionState: true,
         facetSingle: true,
       });
@@ -61,11 +59,19 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
           value={
             selectedOptions?.length ? selectedOptions[0].entityId : 'All'
           }
-          onChange={handleFilterSelect}
         >
-          <MenuItem value="All">All</MenuItem>
+          <MenuItem
+            value="All"
+            onClick={() => handleFilterSelect({ id: 'All', name: 'All' })}
+          >
+            All
+          </MenuItem>
           {facetOptions?.map(option => (
-            <MenuItem key={option.id} value={option.id}>
+            <MenuItem
+              key={option.id}
+              value={option.id}
+              onClick={() => handleFilterSelect(option)}
+            >
               {option.name}
             </MenuItem>
           ))}

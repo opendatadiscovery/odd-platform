@@ -58,6 +58,14 @@ const reducer = (state = initialState, action: Action): OwnersState => {
           }),
         },
       };
+    case getType(actions.updateOwnerAction.success):
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.payload.id]: action.payload,
+        },
+      };
     case getType(actions.createDataEntityOwnershipAction.success):
       return {
         ...state,

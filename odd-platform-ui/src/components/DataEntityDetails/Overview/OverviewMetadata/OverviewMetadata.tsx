@@ -35,7 +35,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           unmountOnExit
         >
           {predefOpen ? (
-            <Grid container spacing={1}>
+            <Grid container>
               {predefinedMetadata?.slice(visibleLimit).map(item => (
                 <MetadataItemContainer
                   dataEntityId={dataEntityId}
@@ -71,7 +71,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           unmountOnExit
         >
           {customOpen ? (
-            <Grid container spacing={1}>
+            <Grid container>
               {customMetadata?.slice(visibleLimit + 1).map(item => (
                 <MetadataItemContainer
                   dataEntityId={dataEntityId}
@@ -98,7 +98,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
   return (
     <>
       <Grid item container>
-        <Grid container spacing={1}>
+        <Grid container>
           <Grid item xs={12}>
             <div className={classes.subtitleContainer}>
               <Typography variant="h4" className={classes.subtitle}>
@@ -159,7 +159,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
         {collapsedCustom}
       </Grid>
       <Grid item container>
-        <Grid container spacing={1}>
+        <Grid container>
           <Grid item xs={12}>
             <div className={classes.subtitleContainer}>
               <Typography variant="h4" className={classes.subtitle}>
