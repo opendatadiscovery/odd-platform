@@ -19,9 +19,6 @@ export const styles = (theme: Theme) =>
       textDecoration: 'none',
       color: '#091E42',
       flexWrap: 'nowrap',
-      '& > span': {
-        marginLeft: theme.spacing(0.5),
-      },
       '&:hover': {
         backgroundColor: '#F4F5F7',
         borderRadius: '4px',
@@ -32,6 +29,9 @@ export const styles = (theme: Theme) =>
       '&:active': {
         backgroundColor: '#EBECF0',
       },
+    },
+    entityTypeItem: {
+      marginLeft: theme.spacing(0.5),
     },
     sectionCaption: {
       marginBottom: theme.spacing(2),
