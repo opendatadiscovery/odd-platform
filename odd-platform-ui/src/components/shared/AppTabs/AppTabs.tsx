@@ -44,6 +44,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
   const [currentTab, setCurrent] = React.useState<
     number | boolean | undefined
   >(selectedTab);
+
   const handleChange = (
     event: ChangeEvent<Record<string, never>>,
     newTab: number
@@ -51,6 +52,11 @@ const AppTabs: React.FC<AppTabsProps> = ({
     setCurrent(newTab);
     handleTabChange(newTab);
   };
+
+  React.useEffect(() => {
+    setCurrent(selectedTab);
+  }, [selectedTab]);
+
   return (
     <div className={cx(classes.container, className)}>
       <Tabs
