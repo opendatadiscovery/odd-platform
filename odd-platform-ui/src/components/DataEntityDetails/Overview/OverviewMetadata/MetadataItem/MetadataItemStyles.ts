@@ -45,6 +45,7 @@ export const styles = (theme: Theme) =>
     },
     formActionBtns: {
       display: 'flex',
+      alignItems: 'center',
       marginLeft: theme.spacing(1),
       '& > * + *': {
         marginLeft: theme.spacing(0.5),

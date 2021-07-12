@@ -24,7 +24,11 @@ const PopUpMenuByHover: React.FC<AppTabsProps> = ({
   const [renderPopUp, setRenderPopUp] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    if (containerRef.current && containerRef.current.firstElementChild) {
+    if (
+      containerRef.current &&
+      containerRef.current.firstElementChild &&
+      containerRef.current.parentElement
+    ) {
       const { scrollWidth } = containerRef.current.firstElementChild;
       const { clientWidth } = containerRef.current.firstElementChild;
       const { textOverflow } = getComputedStyle(
@@ -33,17 +37,23 @@ const PopUpMenuByHover: React.FC<AppTabsProps> = ({
       if (textOverflow !== 'ellipsis') setRenderPopUp(true);
       if (scrollWidth > clientWidth) setRenderPopUp(true);
     }
-  }, [containerRef]);
+  }, [containerRef, children]);
 
   const mouseHandler = (e: React.MouseEvent) => {
-    if (e.currentTarget.parentElement && paperRef.current) {
-      const currentTargetParentRect = e.currentTarget.getBoundingClientRect();
-      const offsetX = e.pageX - currentTargetParentRect.width;
-      const offsetY = e.pageY - currentTargetParentRect.top;
-      if (offsetX > 0 && e.currentTarget.clientWidth > 40) {
-        paperRef.current.style.left = `${offsetX + 15}px`;
-      } else {
-        paperRef.current.style.left = `${e.pageX}px`;
+    if (
+      e.currentTarget &&
+      paperRef.current &&
+      e.currentTarget.firstElementChild
+    ) {
+      const currentTargetRect = e.currentTarget.getBoundingClientRect();
+      const offsetX = e.clientX - currentTargetRect.left;
+      const offsetY = e.clientY - currentTargetRect.top;
+      if (e.currentTarget.firstElementChild.tagName !== 'svg') {
+        if (offsetX > 0) {
+          paperRef.current.style.left = `${offsetX + 15}px`;
+        } else {
+          paperRef.current.style.left = `${e.clientX}px`;
+        }
       }
 
       if (offsetY > 0) {

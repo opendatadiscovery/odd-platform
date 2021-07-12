@@ -32,7 +32,6 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
     handleSubmit,
     control,
     reset,
-    setValue,
     formState,
   } = useForm<OwnerFormData>({
     mode: 'onChange',
@@ -98,7 +97,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}
-                    onClick={() => setValue('name', '')}
+                    onClick={() => field.onChange('')}
                   />
                 </InputAdornment>
               ),
