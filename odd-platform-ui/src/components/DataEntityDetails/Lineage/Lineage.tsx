@@ -4,7 +4,6 @@ import {
   DataEntityApiGetDataEntityLineageRequest,
 } from 'generated-sources';
 import { DataEntityLineageById } from 'redux/interfaces/dataentityLineage';
-import AppGraph from 'components/shared/AppGraph/AppGraph';
 import { StylesType } from './LineageStyles';
 import AppGraphContainer from '../../shared/AppGraph/AppGraphContainer';
 

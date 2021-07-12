@@ -32,8 +32,6 @@ import { StylesType } from './AppGraphStyles';
 export interface AppGraphProps extends StylesType {
   dataEntityId: number;
   data: DataEntityLineageById;
-  // defaultDepth: number;
-  // handleDepthChange: (e: React.ChangeEvent<{ value: unknown }>) => void;
   fetchDataEntityLineage: (
     params: DataEntityApiGetDataEntityLineageRequest
   ) => Promise<DataEntityLineage>;
@@ -43,8 +41,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
   classes,
   dataEntityId,
   data,
-  // defaultDepth,
-  // handleDepthChange,
   fetchDataEntityLineage,
 }) => {
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
@@ -177,11 +173,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
 
-    // const depth = {
-    //   upstream: maxBy(nUp, node => node.depth)?.depth || 0,
-    //   downstream: maxBy(nDown, node => node.depth)?.depth || 0,
-    // };
-
     return {
       nodesUp: nUp,
       linksUp: lUp,
@@ -194,42 +185,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
     };
   };
 
-  React.useEffect(() => {
-    if (!data) return;
-    setParsedData({
-      root: assignInternalProps(data.root),
-      upstream: {
-        ...data.upstream,
-        nodesById: parseData(data.upstream.nodesById),
-      },
-      downstream: {
-        ...data.downstream,
-        nodesById: parseData(data.downstream.nodesById),
-      },
-    });
-  }, [data]);
-
-  React.useEffect(() => {
-    setTreeState(generateTree());
-  }, [parsedData]);
-
   const handleDepthChange = (e: React.ChangeEvent<{ value: unknown }>) => {
     fetchDataEntityLineage({
       dataEntityId,
       lineageDepth: e.target.value as number,
     });
   };
-
-  React.useEffect(
-    () =>
-      setNodeSize({
-        x: 200,
-        y: compactView ? 56 : 140,
-        mx: 24,
-        my: 24,
-      }),
-    [compactView]
-  );
 
   const transformation: { translate: Point; scale: number } = {
     translate: { x: 0, y: 0 },
@@ -241,10 +202,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
   const centerRoot = () => {
     const g = select(`.${gInstanceRef}`);
     if (ref?.current?.offsetWidth && ref?.current?.offsetHeight) {
-      transformation.scale =
+      transformation.scale = Math.min(
         ref?.current?.offsetWidth /
-        (depth.downstream + depth.upstream + 1) /
-        (nodeSize.x + nodeSize.mx);
+          (depth.downstream + depth.upstream + 1) /
+          (nodeSize.x + nodeSize.mx),
+        1
+      );
 
       const upstreamWidth = (nodeSize.x + nodeSize.mx) * depth.upstream;
       const downstreamWidth =
@@ -307,10 +270,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
         const tspan = txt
           .select<SVGTSpanElement>('tspan.visible-text')
           .text(chars.join(''));
-
-        // Try the whole line
-        // While it's too long, and we have chars left, keep removing chars
-
         while (
           (tspan.node()?.getComputedTextLength() || 0) > width &&
           chars.length
@@ -326,9 +285,40 @@ const AppGraph: React.FC<AppGraphProps> = ({
   };
 
   React.useEffect(() => {
+    setNodeSize({
+      x: 200,
+      y: compactView ? 56 : 140,
+      mx: 24,
+      my: 24,
+    });
+  }, [compactView]);
+
+  React.useEffect(() => {
+    if (!data) return;
+    setParsedData({
+      root: assignInternalProps(data.root),
+      upstream: {
+        ...data.upstream,
+        nodesById: parseData(data.upstream.nodesById),
+      },
+      downstream: {
+        ...data.downstream,
+        nodesById: parseData(data.downstream.nodesById),
+      },
+    });
+  }, [data]);
+
+  React.useEffect(() => {
+    setTreeState(generateTree());
+  }, [parsedData, nodeSize]);
+
+  React.useEffect(() => {
+    wrapLabels();
+  }, [nodesUp]);
+
+  React.useEffect(() => {
     centerRoot();
     bindZoomListener();
-    wrapLabels();
   }, [ref.current]);
 
   return parsedData ? (
@@ -349,6 +339,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
           variant="secondarySmall"
           orientation="horizontal"
           items={[{ name: 'Full' }, { name: 'Compact' }]}
+          selectedTab={compactView ? 1 : 0}
           handleTabChange={(newViewIndex: number) =>
             setCompactView(newViewIndex > 0)
           }
