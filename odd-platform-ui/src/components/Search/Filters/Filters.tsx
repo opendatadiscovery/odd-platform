@@ -7,13 +7,14 @@ import {
   DataSourceList,
   DataSourceApiGetDataSourceListRequest,
 } from 'generated-sources';
+import { SearchType } from 'redux/interfaces/search';
 import AppButton from 'components/shared/AppButton/AppButton';
 import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemContainer';
 import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
 import { StylesType } from './FiltersStyles';
 
 interface FiltersProps extends StylesType {
-  searchType?: number;
+  searchType?: SearchType;
   datasources: DataSource[];
   fetchDataSourcesList: (
     params: DataSourceApiGetDataSourceListRequest
@@ -50,7 +51,6 @@ const Filters: React.FC<FiltersProps> = ({
           facetName="datasources"
           name="Datasource"
           facetOptions={datasources}
-          // fetchOptions={fetchDataSourcesList}
         />
         {searchType && searchType > 0 ? (
           <MultipleFilterItemContainer

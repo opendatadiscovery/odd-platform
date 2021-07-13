@@ -8,14 +8,14 @@ import {
 } from '@material-ui/core';
 import TruncateMarkup from 'react-truncate-markup';
 import { formatDistanceToNowStrict, format } from 'date-fns';
-import { useHistory, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import {
   DataEntity,
   DataEntityTypeNameEnum,
   DataEntityRef,
 } from 'generated-sources';
-import { SearchTotalsByName } from 'redux/interfaces/search';
+import { SearchTotalsByName, SearchType } from 'redux/interfaces/search';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import MoreIcon from 'components/shared/Icons/MoreIcon';
@@ -23,7 +23,7 @@ import { dataEntityDetailsPath } from 'lib/paths';
 import { styles, StylesType } from './ResultItemStyles';
 
 interface ResultItemProps extends StylesType {
-  searchType?: number;
+  searchType?: SearchType;
   totals: SearchTotalsByName;
   searchResult: DataEntity;
 }
@@ -34,10 +34,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
   searchType,
   totals,
 }) => {
-  const history = useHistory();
   const detailsLink = dataEntityDetailsPath(searchResult.id);
 
-  // const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false);
 
   const dataRefListEllipsis = (
@@ -154,10 +152,11 @@ const ResultItem: React.FC<ResultItemProps> = ({
             {searchResult.externalName}
           </Typography>
           <div className={classes.typesList}>
-            {!searchType &&
-              searchResult.types?.map(type => (
-                <EntityTypeItem key={type.id} typeName={type.name} />
-              ))}
+            {!searchType ||
+              (typeof searchType === 'string' &&
+                searchResult.types?.map(type => (
+                  <EntityTypeItem key={type.id} typeName={type.name} />
+                )))}
           </div>
         </Grid>
         {searchType &&
