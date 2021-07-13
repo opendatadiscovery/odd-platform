@@ -103,15 +103,15 @@ public class SearchServiceImpl implements SearchService {
                                                  final Integer page,
                                                  final Integer size) {
         return fetchFacetState(searchId)
-            .map(pojo -> {
+            .flatMap(pojo -> {
                 final FacetStateDto state = facetStateMapper.pojoToState(pojo);
                 if (state.isMyObjects()) {
-                    authIdentityProvider.fetchAssociatedOwner()
+                    return authIdentityProvider.fetchAssociatedOwner()
                         .map(owner -> dataEntityRepository.findByState(state, page, size, owner))
                         .switchIfEmpty(Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size)));
                 }
 
-                return dataEntityRepository.findByState(state, page, size);
+                return Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size));
             })
             .map(dataEntityMapper::mapPojos);
     }
