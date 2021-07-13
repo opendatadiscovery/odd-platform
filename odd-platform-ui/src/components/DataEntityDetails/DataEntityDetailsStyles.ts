@@ -12,7 +12,7 @@ export const styles = (theme: Theme) =>
       width: `${maxContentWidthWithoutSidebar}px`,
       display: 'flex',
       flexDirection: 'column',
-      minHeight: `calc(100vh - ${toolbarHeight}px - 48px)`,
+      minHeight: `calc(100vh - ${toolbarHeight}px - 4px)`,
       [theme.breakpoints.up(maxContentWidthWithoutSidebar)]: {
         width: '100%',
         maxWidth: `${maxContentWidthWithoutSidebar}px`,
