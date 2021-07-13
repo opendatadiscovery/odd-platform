@@ -147,9 +147,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
           <Typography
             variant="body1"
             noWrap
-            title={searchResult.externalName}
+            title={searchResult.internalName || searchResult.externalName}
           >
-            {searchResult.externalName}
+            {searchResult.internalName || searchResult.externalName}
           </Typography>
           <div className={classes.typesList}>
             {!searchType ||
@@ -220,15 +220,19 @@ const ResultItem: React.FC<ResultItemProps> = ({
           </Typography>
         </Grid>
         <Grid item className={cx(classes.col, classes.colmd)}>
-          {searchResult.ownership?.map(ownership => (
-            <Typography
-              variant="body1"
-              title={ownership.owner.name}
-              noWrap
-            >
-              {ownership.owner.name}
-            </Typography>
-          ))}
+          <Grid container direction="column" alignItems="flex-start">
+            {searchResult.ownership?.map(ownership => (
+              <Grid item key={ownership.id}>
+                <Typography
+                  variant="body1"
+                  title={ownership.owner.name}
+                  noWrap
+                >
+                  {ownership.owner.name}
+                </Typography>
+              </Grid>
+            ))}
+          </Grid>
         </Grid>
         <Grid item className={cx(classes.col, classes.colsm)}>
           <Typography

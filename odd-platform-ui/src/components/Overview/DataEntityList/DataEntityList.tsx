@@ -33,8 +33,11 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
               to={dataEntityDetailsPath(item.id)}
               className={classes.listLink}
             >
-              <Typography noWrap title={item.externalName}>
-                {item.externalName}
+              <Typography
+                noWrap
+                title={item.internalName || item.externalName}
+              >
+                {item.internalName || item.externalName}
               </Typography>
             </Link>
             {item.types?.map(type => (
