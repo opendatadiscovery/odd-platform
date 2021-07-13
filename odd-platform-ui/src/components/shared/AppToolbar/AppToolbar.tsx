@@ -97,7 +97,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
       createDataEntitiesSearch({ searchFormData: searchQuery }).then(
         search => {
           const searchLink = searchPath(search.searchId);
-          history.push(searchLink);
+          history.replace(searchLink);
           setSearchLoading(false);
         }
       );

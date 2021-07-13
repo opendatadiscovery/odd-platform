@@ -89,6 +89,7 @@ export const styles = (theme: Theme) =>
           backgroundColor: '#F4F5F7',
         },
         '&.vertical': { marginBottom: theme.spacing(0.5) },
+        '&:not(.vertical)': { marginRight: theme.spacing(0.5) },
       },
       '&.vertical .MuiTab-wrapper': {
         alignItems: 'flex-start',
