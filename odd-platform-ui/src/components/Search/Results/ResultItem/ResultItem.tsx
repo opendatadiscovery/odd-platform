@@ -147,9 +147,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
           <Typography
             variant="body1"
             noWrap
-            title={searchResult.externalName}
+            title={searchResult.internalName || searchResult.externalName}
           >
-            {searchResult.externalName}
+            {searchResult.internalName || searchResult.externalName}
           </Typography>
           <div className={classes.typesList}>
             {!searchType ||

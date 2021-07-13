@@ -35,9 +35,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   enableLegacyTransitions,
 }) => {
   const detailsLink =
-    parent && (data.externalName || data.internalName)
-      ? dataEntityDetailsPath(data.id)
-      : '#';
+    parent && data.externalName ? dataEntityDetailsPath(data.id) : '#';
 
   let nodeRef: SVGGElement;
   const titleLayout = {
@@ -135,12 +133,12 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           onMouseOut={handleOnMouseOut}
         />
         <g transform={`translate(${titleLayout.x},${titleLayout.y})`}>
-          {data.externalName || data.internalName ? (
+          {data.externalName ? (
             <text
               className={cx(classes.title, 'wrap-text')}
               width={nodeSize.x - titleLayout.x * 2}
             >
-              <title>{data.externalName || data.internalName}</title>
+              <title>{data.internalName || data.externalName}</title>
               <tspan x={0} y={0} className="visible-text" />
               <tspan className="ellip">...</tspan>
             </text>
