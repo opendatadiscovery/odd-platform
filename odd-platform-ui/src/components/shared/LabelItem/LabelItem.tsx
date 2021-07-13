@@ -21,7 +21,7 @@ const LabelItem: React.FC<LabelItemProps> = ({
 }) => (
   <Typography
     noWrap
-    variant="body1"
+    variant="body2"
     title={labelName}
     className={cx(classes.container, { [classes.unfilled]: unfilled })}
   >

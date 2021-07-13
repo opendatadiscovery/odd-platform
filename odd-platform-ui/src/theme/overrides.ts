@@ -1,5 +1,5 @@
 import { Overrides } from '@material-ui/core/styles/overrides';
-import { breakpoints, pxToRem } from 'theme/typography';
+import { pxToRem, breakpointDownMdBody2 } from 'theme/typography';
 
 export const overrides: Overrides = {
   MuiInput: {
@@ -87,10 +87,7 @@ export const overrides: Overrides = {
           padding: '6px 14px 6px 8px',
           fontSize: pxToRem(14),
           lineHeight: pxToRem(20),
-          [breakpoints.down(1200)]: {
-            fontSize: pxToRem(12),
-            lineHeight: pxToRem(16),
-          },
+          ...breakpointDownMdBody2,
         },
       },
     },
@@ -126,10 +123,7 @@ export const overrides: Overrides = {
       fontWeight: 400,
       fontSize: pxToRem(14),
       lineHeight: pxToRem(20),
-      [breakpoints.down(1200)]: {
-        fontSize: pxToRem(12),
-        lineHeight: pxToRem(16),
-      },
+      ...breakpointDownMdBody2,
     },
     root: {
       '&.Mui-disabled': {
@@ -170,10 +164,7 @@ export const overrides: Overrides = {
       textTransform: 'none',
       fontSize: pxToRem(14),
       lineHeight: pxToRem(20),
-      [breakpoints.down(1200)]: {
-        fontSize: pxToRem(12),
-        lineHeight: pxToRem(16),
-      },
+      ...breakpointDownMdBody2,
     },
     text: { padding: '2px 8px' },
     startIcon: { marginRight: '4px' },
@@ -185,10 +176,7 @@ export const overrides: Overrides = {
       fontWeight: 500,
       fontSize: pxToRem(14),
       lineHeight: pxToRem(20),
-      [breakpoints.down(1200)]: {
-        fontSize: pxToRem(12),
-        lineHeight: pxToRem(16),
-      },
+      ...breakpointDownMdBody2,
     },
     sizeSmall: {
       minWidth: 'auto',
@@ -198,10 +186,7 @@ export const overrides: Overrides = {
       fontWeight: 400,
       fontSize: pxToRem(14),
       lineHeight: pxToRem(20),
-      [breakpoints.down(1200)]: {
-        fontSize: pxToRem(12),
-        lineHeight: pxToRem(16),
-      },
+      ...breakpointDownMdBody2,
     },
   },
   MuiSvgIcon: {
@@ -289,10 +274,7 @@ export const overrides: Overrides = {
     root: {
       fontSize: pxToRem(14),
       lineHeight: pxToRem(20),
-      [breakpoints.down(1200)]: {
-        fontSize: pxToRem(12),
-        lineHeight: pxToRem(16),
-      },
+      ...breakpointDownMdBody2,
       '&.MuiSelect-outlined.MuiSelect-outlined': {
         paddingRight: '39px',
       },
