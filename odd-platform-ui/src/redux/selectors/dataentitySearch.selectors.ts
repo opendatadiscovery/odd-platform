@@ -17,6 +17,7 @@ import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 import {
   SearchFilterStateSynced,
   SearchFacetStateById,
+  SearchType,
 } from '../interfaces/search';
 
 const searchState = ({ search }: RootState): SearchState => search;
@@ -78,16 +79,15 @@ export const getSearchFacetsByType = createSelector(
   (search, searchFacet) => values(search.facets[searchFacet]?.items) || []
 );
 
-export const getSearchEntityTypeId = createSelector(
-  searchState,
-  search => {
-    const selectedType = findKey(
-      omit(search.totals, ['all', 'myObjectsTotal']),
-      filterItem => filterItem?.selected
-    );
-    return search.totals[selectedType as DataEntityTypeNameEnum]?.id;
-  }
-);
+export const getSearchEntityType = createSelector(searchState, search => {
+  if (search.myObjects) return 'my' as SearchType;
+  const selectedType = findKey(
+    omit(search.totals, ['all', 'myObjectsTotal']),
+    filterItem => filterItem?.selected
+  );
+  return (search.totals[selectedType as DataEntityTypeNameEnum]?.id ||
+    'all') as SearchType;
+});
 
 export const getSelectedSearchFacetOptions = createSelector(
   searchState,

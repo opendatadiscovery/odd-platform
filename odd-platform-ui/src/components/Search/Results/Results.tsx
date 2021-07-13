@@ -10,9 +10,12 @@ import {
   SearchApiGetSearchResultsRequest,
   DataEntityType,
 } from 'generated-sources';
-import { SearchTotalsByName } from 'redux/interfaces';
+import {
+  CurrentPageInfo,
+  SearchTotalsByName,
+  SearchType,
+} from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { CurrentPageInfo } from 'redux/interfaces/common';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import ResultItem from './ResultItem/ResultItem';
 import { StylesType } from './ResultsStyles';
@@ -20,7 +23,7 @@ import { StylesType } from './ResultsStyles';
 interface ResultsProps extends StylesType {
   dataEntityTypesByName: Dictionary<DataEntityType>;
   searchId: string;
-  searchType?: number;
+  searchType?: SearchType;
   searchResults: DataEntity[];
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
@@ -45,7 +48,7 @@ const Results: React.FC<ResultsProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const tabs: AppTabItem[] = [
+  const tabs: AppTabItem<SearchType>[] = [
     {
       name: 'All',
       hint: totals.all,
@@ -56,20 +59,6 @@ const Results: React.FC<ResultsProps> = ({
       hint: totals.myObjectsTotal,
       value: 'my',
     },
-    // ...transform<Dictionary<DataEntityType>, AppTabItem[]>(
-    //   dataEntityTypesByName,
-    //   (memo, type) => {
-    //     if (DataEntityTypeLabelMap.get(type.name)) {
-    //       memo.push({
-    //         name: DataEntityTypeLabelMap.get(type.name)?.plural || capitalize(type.name),
-    //         hint: totals[type.name]?.count || 0,
-    //         value: type.id
-    //       });
-    //     }
-    //     return memo;
-    //   },
-    //   []
-    // ),
     {
       name: 'Datasets',
       hint: totals[DataEntityTypeNameEnum.SET]?.count || 0,

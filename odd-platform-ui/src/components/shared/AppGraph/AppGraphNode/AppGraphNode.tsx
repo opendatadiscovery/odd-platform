@@ -4,7 +4,7 @@ import { select } from 'd3-selection';
 import cx from 'classnames';
 import { withStyles } from '@material-ui/core';
 import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { TreeNodeDatum, Point } from 'redux/interfaces/graph';
 import { styles, StylesType } from './AppGraphNodeStyles';
@@ -34,8 +34,10 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   compactView,
   enableLegacyTransitions,
 }) => {
-  const history = useHistory();
-  const detailsLink = dataEntityDetailsPath(data.id);
+  const detailsLink =
+    parent && (data.externalName || data.internalName)
+      ? dataEntityDetailsPath(data.id)
+      : '#';
 
   let nodeRef: SVGGElement;
   const titleLayout = {
@@ -48,14 +50,14 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   const attributeLayout = {
     x: titleLayout.x,
     y: titleLayout.y + titleLayout.height + titleLayout.my,
-    labelWidth: 45,
+    labelWidth: 50,
     height: 20,
     my: 16,
   };
   const typeLayout = {
     width: 24,
-    height: 20,
-    my: compactView ? 12 : 16,
+    height: 16,
+    my: compactView ? 11 : 16,
     mx: 2,
   };
 
@@ -109,16 +111,12 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     commitTransform();
   }, []);
 
-  const handleOnClick = (evt: SyntheticEvent) => {
-    history.push(detailsLink);
-  };
-
   const handleOnMouseOver = (evt: SyntheticEvent) => {};
 
   const handleOnMouseOut = (evt: SyntheticEvent) => {};
 
   return (
-    <a href={detailsLink}>
+    <Link to={detailsLink}>
       <g
         id={data.d3attrs.id}
         ref={n => {
@@ -133,7 +131,6 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           width={nodeSize.x}
           height={nodeSize.y}
           className={!parent ? classes.rootNodeRect : ''}
-          onClick={handleOnClick}
           onMouseOver={handleOnMouseOver}
           onMouseOut={handleOnMouseOut}
         />
@@ -167,6 +164,27 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               />
             </>
           )}
+        </g>
+        <g
+          transform={`translate(${titleLayout.x},${
+            nodeSize.y - typeLayout.my
+          })`}
+        >
+          <text className={classes.attribute}>
+            <tspan
+              x={0}
+              y={0}
+              className={classes.placeholder}
+              style={{
+                display:
+                  compactView && !data.externalName && !data.internalName
+                    ? 'initial'
+                    : 'none',
+              }}
+            >
+              No Information
+            </tspan>
+          </text>
         </g>
         <g
           transform={`translate(${attributeLayout.x},${attributeLayout.y})`}
@@ -269,7 +287,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           </g>
         ))}
       </g>
-    </a>
+    </Link>
   );
 };
 

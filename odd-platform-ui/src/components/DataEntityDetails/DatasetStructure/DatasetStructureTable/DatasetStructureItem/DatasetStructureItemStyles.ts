@@ -54,6 +54,7 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'flex-start',
+      paddingRight: theme.spacing(9),
     },
     descriptionContainer: {
       paddingRight: theme.spacing(9),

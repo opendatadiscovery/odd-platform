@@ -45,3 +45,5 @@ export type FacetOptionsByName = {
     pageInfo: CurrentPageInfo;
   };
 };
+
+export type SearchType = number | 'all' | 'my';

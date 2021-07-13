@@ -73,19 +73,44 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
             }
           />
         </Grid>
-        <Grid item sm={6} container>
-          <LabeledInfoItem variant="body2" inline label="ODDRN" labelWidth={4}>
+        <Grid
+          item
+          sm={6}
+          container
+          className={classes.descriptionContainer}
+        >
+          <LabeledInfoItem
+            variant="body2"
+            inline
+            label="ODDRN"
+            labelWidth={4}
+          >
             {dataSource.oddrn}
           </LabeledInfoItem>
-          <LabeledInfoItem variant="body2" inline label="Description" labelWidth={4}>
+          <LabeledInfoItem
+            variant="body2"
+            inline
+            label="Description"
+            labelWidth={4}
+          >
             {dataSource.description}
           </LabeledInfoItem>
-          <LabeledInfoItem variant="body2" inline label="Namespace" labelWidth={4}>
+          <LabeledInfoItem
+            variant="body2"
+            inline
+            label="Namespace"
+            labelWidth={4}
+          >
             Namespace
           </LabeledInfoItem>
         </Grid>
 
-        <Grid item sm={6} container>
+        <Grid
+          item
+          sm={6}
+          container
+          className={classes.descriptionContainer}
+        >
           <LabeledInfoItem
             variant="body2"
             inline
@@ -97,14 +122,24 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
           >
             <BooleanFormatted value={dataSource.active} />
           </LabeledInfoItem>
-          <LabeledInfoItem variant="body2" inline label="Pulling Interval" labelWidth={4}>
+          <LabeledInfoItem
+            variant="body2"
+            inline
+            label="Pulling Interval"
+            labelWidth={4}
+          >
             {dataSource.active && dataSource.pullingInterval
               ? formatDistanceToNowStrict(
                   addSeconds(Date.now(), dataSource.pullingInterval)
                 )
               : null}
           </LabeledInfoItem>
-          <LabeledInfoItem variant="body2" inline label="Connection Url" labelWidth={4}>
+          <LabeledInfoItem
+            variant="body2"
+            inline
+            label="Connection Url"
+            labelWidth={4}
+          >
             {dataSource.connectionUrl}
           </LabeledInfoItem>
         </Grid>

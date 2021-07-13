@@ -5,20 +5,24 @@ import {
   TextField,
   Checkbox,
   FormControlLabel,
+  InputAdornment,
 } from '@material-ui/core';
 import { useFormContext, Controller } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
+import CancelIcon from 'components/shared/Icons/CancelIcon';
 import { styles, StylesType } from './TagCreateFormItemStyles';
 
 interface TagCreateFormItemProps extends StylesType {
   itemIndex: number;
   onItemRemove: () => void;
+  fieldsLength?: number;
 }
 
 const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
   classes,
   itemIndex,
   onItemRemove,
+  fieldsLength,
 }) => {
   const { control } = useFormContext();
 
@@ -28,6 +32,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
         name={`tags.${itemIndex}.name`}
         control={control}
         defaultValue=""
+        rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <TextField
             {...field}
@@ -35,6 +40,18 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
             placeholder="Tag Name"
             variant="outlined"
             name={`tags.${itemIndex}.name`}
+            InputProps={{
+              endAdornment: field.value && (
+                <InputAdornment position="start">
+                  <AppButton
+                    size="small"
+                    color="unfilled"
+                    icon={<CancelIcon />}
+                    onClick={() => field.onChange('')}
+                  />
+                </InputAdornment>
+              ),
+            }}
           />
         )}
       />
@@ -54,9 +71,11 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
             />
           )}
         />
-        <AppButton size="small" color="dropdown" onClick={onItemRemove}>
-          Delete
-        </AppButton>
+        {fieldsLength && fieldsLength > 1 && (
+          <AppButton size="small" color="dropdown" onClick={onItemRemove}>
+            Delete
+          </AppButton>
+        )}
       </Grid>
     </>
   );

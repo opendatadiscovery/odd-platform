@@ -3,6 +3,8 @@ import { createStyles, Theme, WithStyles } from '@material-ui/core';
 export const styles = (theme: Theme) =>
   createStyles({
     container: {
+      width: 'auto',
+      maxWidth: '100%',
       display: 'flex',
       alignItems: 'center',
       marginLeft: theme.spacing(1),
