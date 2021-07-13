@@ -41,7 +41,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
     createDataEntitiesSearch({ searchFormData: searchQuery }).then(
       search => {
         const searchLink = searchPath(search.searchId);
-        history.push(searchLink);
+        history.replace(searchLink);
       }
     );
     history.push(searchPath());
