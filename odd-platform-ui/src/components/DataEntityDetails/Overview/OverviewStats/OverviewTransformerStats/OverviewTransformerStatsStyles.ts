@@ -9,6 +9,7 @@ export const styles = (theme: Theme) =>
     statIcon: {
       fontSize: theme.typography.h5.fontSize,
       marginRight: theme.spacing(1),
+      color: '#0066CC',
     },
     statCount: {},
     statLabel: {

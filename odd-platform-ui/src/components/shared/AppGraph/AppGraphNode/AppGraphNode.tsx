@@ -4,7 +4,7 @@ import { select } from 'd3-selection';
 import cx from 'classnames';
 import { withStyles } from '@material-ui/core';
 import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
-import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { TreeNodeDatum, Point } from 'redux/interfaces/graph';
 import { styles, StylesType } from './AppGraphNodeStyles';
@@ -34,11 +34,10 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   compactView,
   enableLegacyTransitions,
 }) => {
-  const history = useHistory();
   const detailsLink =
-    data.externalName || data.internalName
+    parent && (data.externalName || data.internalName)
       ? dataEntityDetailsPath(data.id)
-      : undefined;
+      : '#';
 
   let nodeRef: SVGGElement;
   const titleLayout = {
@@ -112,14 +111,12 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     commitTransform();
   }, []);
 
-  const handleOnClick = (evt: SyntheticEvent) => {};
-
   const handleOnMouseOver = (evt: SyntheticEvent) => {};
 
   const handleOnMouseOut = (evt: SyntheticEvent) => {};
 
   return (
-    <a href={detailsLink}>
+    <Link to={detailsLink}>
       <g
         id={data.d3attrs.id}
         ref={n => {
@@ -290,7 +287,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           </g>
         ))}
       </g>
-    </a>
+    </Link>
   );
 };
 
