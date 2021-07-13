@@ -12,12 +12,12 @@ import java.util.stream.Stream;
 @Data
 @RequiredArgsConstructor
 public class DataEntityIngestionDtoSplit {
-    private final List<DataEntityIngestionDto> newEntities;
-    private final List<DataEntityIngestionDto> existingEntities;
+    private final List<EnrichedDataEntityIngestionDto> newEntities;
+    private final List<EnrichedDataEntityIngestionDto> existingEntities;
     private final List<LineagePojo> lineageRelations;
     private final Set<String> hollowOddrns;
 
-    public List<DataEntityIngestionDto> getAllEntities() {
+    public List<EnrichedDataEntityIngestionDto> getAllEntities() {
         return Stream.concat(newEntities.stream(), existingEntities.stream()).collect(Collectors.toList());
     }
 }

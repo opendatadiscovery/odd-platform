@@ -74,7 +74,7 @@ public class IngestionServiceImpl implements IngestionService {
             .map(DataSourcePojo::getId);
 
         final Mono<DataEntityIngestionDtoSplit> splitMono = dsIdMono
-            .map(dsId -> DataEntityIngestionDto.fromDataEntityList(dsId, dataEntityList.getItems()))
+            .map(dsId -> ingestionMapper.createIngestionDto(dataEntityList.getItems(), dsId))
             .map(dtos -> dtos.stream().collect(Collectors.toMap(DataEntityIngestionDto::getOddrn, item -> item)))
             .flatMap(dtos -> Flux.fromIterable(dataEntityRepository
                 .listAllByOddrns(dtos.keySet()))
@@ -93,8 +93,7 @@ public class IngestionServiceImpl implements IngestionService {
 
                 final Mono<DataEntityIngestionDtoSplit> es = Mono.just(split.getNewEntities())
                     .map(ingestionMapper::ingestDtoToDto)
-                    .map(dataEntityRepository::bulkCreate)
-                    .flatMapIterable(identity())
+                    .flatMapIterable(dataEntityRepository::bulkCreate)
                     .collectMap(dto -> dto.getDataEntity().getOddrn(), DataEntityDto::getDataEntity)
                     .map(rmap -> enrichWithIds(split, rmap))
                     .map(newEntities -> new DataEntityIngestionDtoSplit(newEntities, split.getExistingEntities(),
@@ -180,6 +179,12 @@ public class IngestionServiceImpl implements IngestionService {
         if (types.contains(DATA_CONSUMER)) {
             dto.getInputList().stream()
                 .map(input -> new LineagePojo().setParentOddrn(input.toLowerCase()).setChildOddrn(dtoOddrn))
+                .forEach(result::add);
+        }
+
+        if (types.contains(DATA_QUALITY_TEST)) {
+            dto.getDatasetList().stream()
+                .map(dataset -> new LineagePojo().setParentOddrn(dataset.toLowerCase()).setChildOddrn(dtoOddrn))
                 .forEach(result::add);
         }
 
