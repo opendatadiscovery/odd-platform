@@ -17,6 +17,7 @@ import {
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
+import SearchResultsSkeletonWrapper from 'components/Search/Results/SearchResultsSkeletonWrapper/SearchResultsSkeletonWrapper';
 import ResultItem from './ResultItem/ResultItem';
 import { StylesType } from './ResultsStyles';
 
@@ -121,6 +122,8 @@ const Results: React.FC<ResultsProps> = ({
     }
   }, [searchFiltersSynced, searchId]);
 
+  const searchResultsContainerRef = React.useRef<HTMLDivElement>(null);
+
   return (
     <div className={classes.container}>
       <AppTabs
@@ -179,35 +182,41 @@ const Results: React.FC<ResultsProps> = ({
           <Typography variant="caption">Last Update</Typography>
         </Grid>
       </Grid>
-      <div
-        id="results-list"
-        className={cx(classes.listContainer, classes.resultsTable)}
+      <SearchResultsSkeletonWrapper
+        searchResultsContainerRef={searchResultsContainerRef}
+        loading={isFetching}
       >
-        {searchResults?.length ? (
-          <InfiniteScroll
-            dataLength={searchResults.length}
-            next={fetchNextPage}
-            hasMore={!!pageInfo.hasNext}
-            loader={
-              <div className={classes.spinnerContainer}>
-                <CircularProgress color="primary" size={30} />
-              </div>
-            }
-            scrollThreshold="200px"
-            scrollableTarget="results-list"
-          >
-            {searchResults.map(searchResult => (
-              <ResultItem
-                key={searchResult.id}
-                searchType={searchType}
-                classes={{ container: classes.resultItem }}
-                searchResult={searchResult}
-                totals={totals}
-              />
-            ))}
-          </InfiniteScroll>
-        ) : null}
-      </div>
+        <div
+          id="results-list"
+          className={cx(classes.listContainer, classes.resultsTable)}
+          ref={searchResultsContainerRef}
+        >
+          {searchResults?.length ? (
+            <InfiniteScroll
+              dataLength={searchResults.length}
+              next={fetchNextPage}
+              hasMore={!!pageInfo.hasNext}
+              loader={
+                <div className={classes.spinnerContainer}>
+                  <CircularProgress color="primary" size={30} />
+                </div>
+              }
+              scrollThreshold="200px"
+              scrollableTarget="results-list"
+            >
+              {searchResults.map(searchResult => (
+                <ResultItem
+                  key={searchResult.id}
+                  searchType={searchType}
+                  classes={{ container: classes.resultItem }}
+                  searchResult={searchResult}
+                  totals={totals}
+                />
+              ))}
+            </InfiniteScroll>
+          ) : null}
+        </div>
+      </SearchResultsSkeletonWrapper>
       {!isFetching && !searchResults?.length ? (
         <Typography variant="subtitle1">No Matches Found</Typography>
       ) : null}

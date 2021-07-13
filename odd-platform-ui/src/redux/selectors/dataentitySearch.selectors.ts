@@ -11,14 +11,12 @@ import {
   RootState,
   OptionalFacetNames,
   SearchState,
-} from 'redux/interfaces';
-import { DataEntityTypeNameEnum } from 'generated-sources';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
-import {
   SearchFilterStateSynced,
   SearchFacetStateById,
   SearchType,
-} from '../interfaces/search';
+} from 'redux/interfaces';
+import { DataEntityTypeNameEnum } from 'generated-sources';
+import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 
 const searchState = ({ search }: RootState): SearchState => search;
 
@@ -49,7 +47,7 @@ export const getSearchIsFetching = createSelector(
   getSearchUpdateStatus,
   getSearchFiltersSynced,
   (statusCreate, statusFetch, statusUpdate, isSynced) =>
-    [statusCreate, statusFetch, statusUpdate].indexOf('fetching') >= 0 ||
+    [statusCreate, statusFetch, statusUpdate].includes('fetching') ||
     (!isSynced && statusUpdate !== 'errorFetching')
 );
 
