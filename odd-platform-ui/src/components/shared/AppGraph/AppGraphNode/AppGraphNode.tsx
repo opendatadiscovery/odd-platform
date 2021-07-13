@@ -36,7 +36,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
 }) => {
   const history = useHistory();
   const detailsLink =
-    data.externalName || data.internalName
+    parent && (data.externalName || data.internalName)
       ? dataEntityDetailsPath(data.id)
       : undefined;
 
@@ -112,14 +112,18 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     commitTransform();
   }, []);
 
-  const handleOnClick = (evt: SyntheticEvent) => {};
+  const handleOnClick = (evt: SyntheticEvent) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+    if (detailsLink) history.push(detailsLink);
+  };
 
   const handleOnMouseOver = (evt: SyntheticEvent) => {};
 
   const handleOnMouseOut = (evt: SyntheticEvent) => {};
 
   return (
-    <a href={detailsLink}>
+    <a href={detailsLink} onClick={handleOnClick}>
       <g
         id={data.d3attrs.id}
         ref={n => {
