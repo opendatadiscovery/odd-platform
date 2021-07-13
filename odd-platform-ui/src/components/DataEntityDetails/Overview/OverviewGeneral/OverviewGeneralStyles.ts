@@ -22,7 +22,6 @@ export const styles = (theme: Theme) =>
       borderColor: 'transparent',
       padding: '3px',
       marginTop: theme.spacing(0.25),
-      marginLeft: theme.spacing(7),
       '&:hover': {
         borderColor: '#CCE6FF',
         '& $ownerActionBtns': {

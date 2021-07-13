@@ -31,16 +31,12 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
   isLoading,
   updateTag,
 }) => {
-  const {
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-    formState,
-  } = useForm<TagFormData>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-  });
+  const { handleSubmit, control, reset, formState } = useForm<TagFormData>(
+    {
+      mode: 'onChange',
+      reValidateMode: 'onChange',
+    }
+  );
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
     error: string;
@@ -92,7 +88,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}
-                    onClick={() => setValue('name', '')}
+                    onClick={() => field.onChange('')}
                   />
                 </InputAdornment>
               ),

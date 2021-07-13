@@ -37,6 +37,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
         },
       ],
     },
+    mode: 'onChange',
   });
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
@@ -92,6 +93,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
               key={item.id}
               itemIndex={index}
               onItemRemove={handleRemove(index)}
+              fieldsLength={fields.length}
             />
           ))}
           <AppButton
@@ -115,6 +117,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
       form="tag-create-form"
       color="primary"
       fullWidth
+      disabled={!methods.formState.isValid}
       onClick={methods.handleSubmit(handleCreate)}
     >
       Create
