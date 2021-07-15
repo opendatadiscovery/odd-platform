@@ -630,6 +630,7 @@ public class DataEntityRepositoryImpl
 
         final List<DataEntityDimensionsDto> nodes = relations.stream()
             .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
+            .distinct()
             .map(dtoDict::get)
             .collect(Collectors.toList());
 
