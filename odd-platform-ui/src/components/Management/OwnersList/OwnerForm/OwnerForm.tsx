@@ -108,7 +108,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
     </form>
   );
 
-  const formActionButtons = (handleClose: () => void) => (
+  const formActionButtons = () => (
     <AppButton
       size="large"
       type="submit"
@@ -134,7 +134,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) => formActionButtons(handleClose)}
+      renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}

@@ -26,10 +26,7 @@ interface DialogWrapperProps
     handleClose: () => void;
     handleOpen: () => void;
   }) => JSX.Element;
-  renderActions(actionsProps: {
-    handleClose: () => void;
-    handleOpen: () => void;
-  }): JSX.Element;
+  renderActions(actionsProps: { handleOpen: () => void }): JSX.Element;
   handleCloseSubmittedForm?: boolean;
   isLoading?: boolean;
   errorText?: string;
@@ -108,7 +105,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
                 {errorText}
               </Typography>
             )}
-            {renderActions({ handleOpen, handleClose })}
+            {renderActions({ handleOpen })}
           </DialogActions>
         </Dialog>
       ) : null}

@@ -31,6 +31,7 @@ import {
   FilterOptionsState,
 } from '@material-ui/lab';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
+import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { StylesType } from './OwnershipFormStyles';
 
 interface OwnershipFormProps extends StylesType {
@@ -330,9 +331,14 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
               )}
               renderOption={option => (
                 <Typography variant="body2">
-                  {option.id
-                    ? option.name
-                    : `No result. Create new owner "${option.name}"`}
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="owner"
+                      optionName={option.name}
+                    />
+                  )}
                 </Typography>
               )}
             />
@@ -388,9 +394,14 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
             )}
             renderOption={option => (
               <Typography variant="body2">
-                {option.id
-                  ? option.name
-                  : `No result. Create new role "${option.name}"`}
+                {option.id ? (
+                  option.name
+                ) : (
+                  <AutocompleteSuggestion
+                    optionLabel="role"
+                    optionName={option.name}
+                  />
+                )}
               </Typography>
             )}
           />
@@ -399,7 +410,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
     </form>
   );
 
-  const ownerEditDialogActions = (handleClose: () => void) => (
+  const ownerEditDialogActions = () => (
     <AppButton
       size="large"
       color="primary"
@@ -421,9 +432,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) =>
-        ownerEditDialogActions(handleClose)
-      }
+      renderActions={ownerEditDialogActions}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isUpdating}
       errorText={error}

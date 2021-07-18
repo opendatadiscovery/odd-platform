@@ -21,6 +21,7 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import TagItem from 'components/shared/TagItem/TagItem';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { StylesType } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import cx from 'classnames';
 
@@ -232,9 +233,14 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
           >
             <div className={classes.optionItem}>
               <Typography variant="body1">
-                {option.id
-                  ? option.name
-                  : `No result. Create new tag "${option.name}"`}
+                {option.id ? (
+                  option.name
+                ) : (
+                  <AutocompleteSuggestion
+                    optionLabel="tag"
+                    optionName={option.name}
+                  />
+                )}
               </Typography>
             </div>
           </div>
@@ -262,7 +268,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
     </>
   );
 
-  const formActionButtons = (handleClose: () => void) => (
+  const formActionButtons = () => (
     <>
       <AppButton
         size="large"
@@ -284,7 +290,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) => formActionButtons(handleClose)}
+      renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}

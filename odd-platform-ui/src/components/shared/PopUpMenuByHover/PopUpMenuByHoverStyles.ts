@@ -8,6 +8,7 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       marginLeft: theme.spacing(1),
+      cursor: 'pointer',
       '&:hover $childrenContainer': {
         display: 'block',
       },

@@ -123,7 +123,7 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
     </form>
   );
 
-  const formActionButtons = (handleClose: () => void) => (
+  const formActionButtons = () => (
     <>
       <AppButton
         size="large"
@@ -145,7 +145,7 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) => formActionButtons(handleClose)}
+      renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
