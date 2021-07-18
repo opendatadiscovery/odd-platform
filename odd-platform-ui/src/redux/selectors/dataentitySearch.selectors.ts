@@ -38,7 +38,7 @@ export const getSearchResultsFetchStatus = createFetchingSelector(
 
 export const getSearchFiltersSynced = createSelector(
   searchState,
-  search => search.isFiltersStateSynced
+  search => search.isFacetsStateSynced
 );
 
 export const getSearchIsFetching = createSelector(
@@ -46,8 +46,17 @@ export const getSearchIsFetching = createSelector(
   getSearchFetchStatus,
   getSearchUpdateStatus,
   getSearchFiltersSynced,
-  (statusCreate, statusFetch, statusUpdate, isSynced) =>
-    [statusCreate, statusFetch, statusUpdate].includes('fetching') ||
+  getSearchResultsFetchStatus,
+  (
+    statusCreate,
+    statusFetch,
+    statusUpdate,
+    isSynced,
+    statusResultsFetch
+  ) =>
+    [statusCreate, statusFetch, statusUpdate, statusResultsFetch].includes(
+      'fetching'
+    ) ||
     (!isSynced && statusUpdate !== 'errorFetching')
 );
 

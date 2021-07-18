@@ -110,7 +110,7 @@ export interface SearchState {
   query: string;
   myObjects: boolean;
   facets: FacetOptionsByName;
-  isFiltersStateSynced: boolean;
+  isFacetsStateSynced: boolean;
   totals: SearchTotalsByName;
   results: {
     items: DataEntity[];
