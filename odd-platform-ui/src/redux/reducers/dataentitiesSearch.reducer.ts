@@ -133,7 +133,9 @@ const updateFilter = (
     ...state,
     isFiltersStateSynced: false,
     myObjects:
-      payload.facetName === 'types' && payload.facetOptionId === 'my',
+      payload.facetName === 'types'
+        ? payload.facetOptionId === 'my'
+        : state.myObjects,
     facetState: {
       ...state.facetState,
       [payload.facetName]: {

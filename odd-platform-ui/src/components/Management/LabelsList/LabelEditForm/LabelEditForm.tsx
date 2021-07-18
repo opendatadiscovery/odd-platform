@@ -29,7 +29,6 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
     control,
     handleSubmit,
     reset,
-    setValue,
     formState,
   } = useForm<LabelFormData>({
     mode: 'onChange',
@@ -87,7 +86,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}
-                    onClick={() => setValue('name', '')}
+                    onClick={() => field.onChange('')}
                   />
                 </InputAdornment>
               ),

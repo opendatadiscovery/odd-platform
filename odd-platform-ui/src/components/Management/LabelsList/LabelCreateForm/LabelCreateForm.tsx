@@ -36,6 +36,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
         },
       ],
     },
+    mode: 'onChange',
   });
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
@@ -89,6 +90,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
             <LabelCreateFormItem
               key={item.id}
               itemIndex={index}
+              fieldsLength={fields.length}
               onItemRemove={handleRemove(index)}
             />
           ))}
@@ -113,6 +115,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
       form="label-create-form"
       color="primary"
       fullWidth
+      disabled={!methods.formState.isValid}
       onClick={methods.handleSubmit(handleCreate)}
     >
       Create

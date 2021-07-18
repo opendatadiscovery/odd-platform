@@ -221,7 +221,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(DATA_ENTITY)
             .on(DATA_ENTITY.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
-            .join(TYPE_SUBTYPE_RELATION).on(TYPE_SUBTYPE_RELATION.TYPE_ID.eq(selectedType))
+            .join(TYPE_SUBTYPE_RELATION).on(TYPE_SUBTYPE_RELATION.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
             .leftJoin(SEARCH_ENTRYPOINT)
             .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
 
@@ -238,6 +238,7 @@ public class DataEntityRepositoryImpl
 
         return select
             .where(DATA_ENTITY_SUBTYPE.NAME.likeIgnoreCase("%" + (StringUtils.hasLength(facetQuery) ? facetQuery : "") + "%"))
+            .and(TYPE_SUBTYPE_RELATION.TYPE_ID.eq(selectedType))
             .groupBy(DATA_ENTITY_SUBTYPE.ID, DATA_ENTITY_SUBTYPE.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
             .limit(size)
@@ -629,6 +630,7 @@ public class DataEntityRepositoryImpl
 
         final List<DataEntityDimensionsDto> nodes = relations.stream()
             .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
+            .distinct()
             .map(dtoDict::get)
             .collect(Collectors.toList());
 

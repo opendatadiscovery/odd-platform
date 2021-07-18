@@ -10,8 +10,6 @@ export interface TreeNodeDatum extends DataEntityLineageNode {
   children?: TreeNodeDatum[];
   d3attrs: {
     id: string;
-    // depth: number;
-    // collapsed: boolean;
   };
 }
 

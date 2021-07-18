@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core';
 import {
   getSearchTotals,
   getSearchResults,
-  getSearchEntityTypeId,
+  getSearchEntityType,
   getSearchIsFetching,
   getSearchId,
   getSearchResultsPage,
@@ -17,7 +17,7 @@ import { styles } from './ResultsStyles';
 
 const mapStateToProps = (state: RootState) => ({
   searchId: getSearchId(state),
-  searchType: getSearchEntityTypeId(state),
+  searchType: getSearchEntityType(state),
   dataEntityTypesByName: getDataEntityTypesByName(state),
   totals: getSearchTotals(state),
   searchResults: getSearchResults(state),

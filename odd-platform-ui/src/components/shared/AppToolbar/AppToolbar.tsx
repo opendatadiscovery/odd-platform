@@ -14,7 +14,7 @@ import {
   SearchFacetsData,
   AssociatedOwner,
 } from 'generated-sources';
-import { useHistory, Link } from 'react-router-dom';
+import { useHistory, Link, useLocation } from 'react-router-dom';
 import { searchPath } from 'lib/paths';
 import { AccountCircle } from '@material-ui/icons';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -35,6 +35,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   createDataEntitiesSearch,
   fetchIdentity,
 }) => {
+  const location = useLocation();
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -62,21 +63,24 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   const [tabs, setTabs] = React.useState<AppTabItem[]>([
     { name: 'Catalog', link: '/search' },
-    // { name: 'Alerts', link: '', hidden: true },
+    { name: 'Management', link: '/management' },
+    // { name: 'Alerts', link: '/alerts', hidden: true },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number | boolean>(
-    -1
+    false
   );
 
   React.useEffect(() => {
-    const { pathname } = window.location;
-    if (!pathname.includes('/search')) {
-      setSelectedTab(false);
+    const newTabIndex = tabs.findIndex(
+      tab => tab.link && location.pathname.includes(tab.link)
+    );
+    if (newTabIndex >= 0) {
+      setSelectedTab(newTabIndex);
     } else {
-      setSelectedTab(0);
+      setSelectedTab(false);
     }
-  }, [setSelectedTab]);
+  }, [setSelectedTab, location.pathname]);
 
   const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
 
@@ -93,7 +97,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
       createDataEntitiesSearch({ searchFormData: searchQuery }).then(
         search => {
           const searchLink = searchPath(search.searchId);
-          history.push(searchLink);
+          history.replace(searchLink);
           setSearchLoading(false);
         }
       );
@@ -119,7 +123,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
           </Grid>
           <Grid item xs={9} className={classes.actionsContainer}>
             <Grid item className={classes.tabsContainer}>
-              {tabs.length && selectedTab >= 0 ? (
+              {tabs.length ? (
                 <AppTabs
                   variant="menu"
                   items={tabs}
@@ -157,9 +161,6 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         onClose={handleMenuClose}
       >
         {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-        <MenuItem onClick={handleMenuClose}>
-          <Link to="/management">Management</Link>
-        </MenuItem>
         <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
       </Menu>
     </AppBar>

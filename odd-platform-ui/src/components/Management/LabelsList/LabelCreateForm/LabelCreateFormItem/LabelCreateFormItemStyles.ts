@@ -2,9 +2,6 @@ import { Theme, createStyles, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
-    checkboxContainer: {
-      marginLeft: 0,
-    },
     labelItemButtons: {
       margin: theme.spacing(1, 0, 1.5, 0),
       display: 'flex',
