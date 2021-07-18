@@ -4,6 +4,7 @@ import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityIngestionDto;
 import com.provectus.oddplatform.dto.DataEntitySubtype;
 import com.provectus.oddplatform.dto.DataEntityType;
+import com.provectus.oddplatform.dto.EnrichedDataEntityIngestionDto;
 import com.provectus.oddplatform.ingestion.contract.model.DataConsumer;
 import com.provectus.oddplatform.ingestion.contract.model.DataEntity;
 import com.provectus.oddplatform.ingestion.contract.model.DataQualityTest;
@@ -95,7 +96,7 @@ public class IngestionMapperImpl implements IngestionMapper {
     }
 
     @Override
-    public List<DataEntityIngestionDto> createIngestionDto(final List<DataEntity> dataEntities,
+    public List<DataEntityIngestionDto> createIngestionDto(final Collection<DataEntity> dataEntities,
                                                            final long dataSourceId) {
         return dataEntities.stream()
             .map(e -> createIngestionDto(e, dataSourceId))
@@ -103,7 +104,7 @@ public class IngestionMapperImpl implements IngestionMapper {
     }
 
     @Override
-    public DataEntityPojo dtoToPojo(final DataEntityIngestionDto dto) {
+    public DataEntityPojo dtoToPojo(final EnrichedDataEntityIngestionDto dto) {
         final OffsetDateTime createdAt = dto.getCreatedAt();
         final OffsetDateTime updatedAt = dto.getUpdatedAt();
 
@@ -124,7 +125,27 @@ public class IngestionMapperImpl implements IngestionMapper {
     }
 
     @Override
-    public List<DataEntityPojo> dtoToPojo(final List<DataEntityIngestionDto> dtos) {
+    public DataEntityPojo dtoToPojo(final DataEntityIngestionDto dto) {
+        final OffsetDateTime createdAt = dto.getCreatedAt();
+        final OffsetDateTime updatedAt = dto.getUpdatedAt();
+
+        // TODO: can be stored in the DataEntityIngestionDto as well
+        final DataEntitySubtypePojo subtype = dataEntityTypeRepository.findSubtypeByName(dto.getSubType().toString());
+
+        return new DataEntityPojo()
+            .setExternalName(dto.getName())
+            .setExternalDescription(dto.getExternalDescription())
+            .setOddrn(dto.getOddrn().toLowerCase())
+            .setDataSourceId(dto.getDataSourceId())
+            .setCreatedAt(createdAt != null ? createdAt.toLocalDateTime() : null)
+            .setUpdatedAt(updatedAt != null ? updatedAt.toLocalDateTime() : null)
+            .setSubtypeId(subtype.getId())
+            .setHollow(false)
+            .setSpecificAttributes(JSONB.jsonb(dto.getSpecificAttributesJson()));
+    }
+
+    @Override
+    public List<DataEntityPojo> dtoToPojo(final List<EnrichedDataEntityIngestionDto> dtos) {
         return dtos.stream().map(this::dtoToPojo).collect(Collectors.toList());
     }
 
@@ -143,7 +164,7 @@ public class IngestionMapperImpl implements IngestionMapper {
     }
 
     @Override
-    public List<DataEntityDto> ingestDtoToDto(final List<DataEntityIngestionDto> ingestionDtos) {
+    public List<DataEntityDto> ingestDtoToDto(final Collection<DataEntityIngestionDto> ingestionDtos) {
         return ingestionDtos.stream().map(this::ingestDtoToDto).collect(Collectors.toList());
     }
 
@@ -216,27 +237,6 @@ public class IngestionMapperImpl implements IngestionMapper {
         } catch (final NoSuchAlgorithmException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    private Map<String, Object> flattenMetadata(final Map<String, Object> metadata) {
-        return flattenMetadata(metadata, null);
-    }
-
-    private Map<String, Object> flattenMetadata(final Map<String, Object> metadata, final String prefix) {
-        final HashMap<String, Object> result = new HashMap<>();
-
-        for (final var entry : metadata.entrySet()) {
-            final String k = entry.getKey();
-            final Object v = entry.getValue();
-            final String p = prefix != null ? String.format("%s.%s", prefix, k) : k;
-            if (v instanceof Map) {
-                result.putAll(flattenMetadata((Map<String, Object>) v, p));
-            } else {
-                result.put(p, v);
-            }
-        }
-
-        return result;
     }
 
     private String specificAttributesAsString(final Collection<DataEntityType> types,
