@@ -43,4 +43,4 @@ logging:
           interceptor: trace
       jooq:
         tools:
-          LoggerListener: info
+          LoggerListener: debug

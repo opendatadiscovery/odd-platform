@@ -2,20 +2,7 @@ package com.provectus.oddplatform.repository;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.provectus.oddplatform.dto.DataEntityDetailsDto;
-import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
-import com.provectus.oddplatform.dto.DataEntityDto;
-import com.provectus.oddplatform.dto.DataEntityLineageDto;
-import com.provectus.oddplatform.dto.DataEntityLineageStreamDto;
-import com.provectus.oddplatform.dto.DataEntityType;
-import com.provectus.oddplatform.dto.FacetStateDto;
-import com.provectus.oddplatform.dto.LineageDepth;
-import com.provectus.oddplatform.dto.MetadataDto;
-import com.provectus.oddplatform.dto.OwnershipDto;
-import com.provectus.oddplatform.dto.SearchFilterId;
-import com.provectus.oddplatform.dto.SearchFilterDto;
-import com.provectus.oddplatform.dto.FacetType;
-import com.provectus.oddplatform.dto.StreamKind;
+import com.provectus.oddplatform.dto.*;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
@@ -41,7 +28,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 import org.jooq.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,9 +104,12 @@ public class DataEntityRepositoryImpl
 
     @Override
     public Optional<DataEntityDimensionsDto> get(final long id) {
-        final DataEntitySelectConfig selectConfig = DataEntitySelectConfig.ofClause(DATA_ENTITY.ID.eq(id));
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
+            .build();
 
-        return dataEntitySelect(selectConfig).fetchOptional(this::mapDimensionRecord);
+
+        return dataEntitySelect(config).fetchOptional(this::mapDimensionRecord);
     }
 
     @Override
@@ -190,12 +182,10 @@ public class DataEntityRepositoryImpl
 
     @Override
     public Page<DataEntityDimensionsDto> list(final int page, final int size, final String query) {
-        final DataEntitySelectConfig selectConfig = DataEntitySelectConfig.defaultConfig();
-
         return Page.<DataEntityDimensionsDto>builder()
             .hasNext(false)
             .total(fetchCount(query))
-            .data(dataEntitySelect(selectConfig)
+            .data(dataEntitySelect(DataEntitySelectConfig.emptyConfig())
                 .fetchStream()
                 .map(this::mapDimensionRecord)
                 .collect(Collectors.toList()))
@@ -397,15 +387,7 @@ public class DataEntityRepositoryImpl
 
     @Override
     public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns) {
-        final DataEntitySelectConfig selectConfig = DataEntitySelectConfig.builder()
-            .whereClauses(singletonList(DATA_ENTITY.ODDRN.in(oddrns)))
-            .includeHollow(true)
-            .build();
-
-        return dataEntitySelect(selectConfig)
-            .fetchStream()
-            .map(this::mapDimensionRecord)
-            .collect(Collectors.toList());
+        return listAllByOddrns(oddrns, null, null);
     }
 
     @Override
@@ -413,14 +395,17 @@ public class DataEntityRepositoryImpl
                                                     final int size,
                                                     final long typeId,
                                                     final Long subTypeId) {
-        Condition whereClause = TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(typeId);
+        DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig
+            .builder()
+            .joinSelectConditions(singletonList(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(typeId)))
+            .dataEntityLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
+
         if (subTypeId != null) {
-            whereClause = whereClause.and(DATA_ENTITY.SUBTYPE_ID.eq(subTypeId));
+            configBuilder =
+                configBuilder.dataEntitySelectConditions(singletonList(DATA_ENTITY.SUBTYPE_ID.eq(subTypeId)));
         }
 
-        return dataEntitySelect(DataEntitySelectConfig.ofClause(whereClause))
-            .offset((page - 1) * size)
-            .limit(size)
+        return dataEntitySelect(configBuilder.build())
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toList());
@@ -428,9 +413,12 @@ public class DataEntityRepositoryImpl
 
     @Override
     public List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId) {
-        return dataEntitySelect(DataEntitySelectConfig.ofClause(OWNERSHIP.OWNER_ID.eq(ownerId)))
-            .offset((page - 1) * size)
-            .limit(size)
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .joinSelectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
+            .dataEntityLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
+            .build();
+
+        return dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toList());
@@ -441,26 +429,32 @@ public class DataEntityRepositoryImpl
                                                      final int size,
                                                      final long ownerId,
                                                      final StreamKind streamKind) {
-        final DataEntitySelectConfig selectConfig = DataEntitySelectConfig.ofClause(OWNERSHIP.OWNER_ID.eq(ownerId));
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .joinSelectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
+            .build();
 
-        final Set<String> associatedOddrns = dataEntitySelect(selectConfig)
+        final Set<String> associatedOddrns = dataEntitySelect(config)
             .fetchStream()
             .map(r -> r.get(DATA_ENTITY.ODDRN))
             .collect(Collectors.toSet());
 
-        return listAllByOddrns(collectLineage(lineageCte(associatedOddrns, LineageDepth.empty(), streamKind))
+        final List<String> oddrns = collectLineage(lineageCte(associatedOddrns, LineageDepth.empty(), streamKind))
             .stream()
             .flatMap(lp -> Stream.of(lp.getParentOddrn(), lp.getChildOddrn()))
             .distinct()
             .filter(Predicate.not(associatedOddrns::contains))
-            .collect(Collectors.toList()), page, size);
+            .collect(Collectors.toList());
+
+        return listAllByOddrns(oddrns, page, size);
     }
 
     @Override
     public List<? extends DataEntityDto> listPopular(final int page, final int size) {
-        return dataEntitySelect(DataEntitySelectConfig.defaultConfig())
-            .offset((page - 1) * size)
-            .limit(size)
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .dataEntityLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
+            .build();
+
+        return dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toList());
@@ -468,10 +462,14 @@ public class DataEntityRepositoryImpl
 
     @Override
     public Optional<DataEntityDetailsDto> getDetails(final long id) {
-        final DataEntitySelectConfig selectConfig = DataEntitySelectConfig
-            .ofClauses(singletonList(DATA_ENTITY.ID.eq(id)), true);
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
+            .includeDetails(true)
+            .build();
 
-        return dataEntitySelect(selectConfig).fetchOptional(this::mapDetailsRecord);
+        return dataEntitySelect(config)
+            .fetchOptional(this::mapDetailsRecord)
+            .map(this::enrichDataEntityDetailsDto);
     }
 
     @Override
@@ -498,16 +496,40 @@ public class DataEntityRepositoryImpl
             whereClauses.add(OWNER.ID.eq(owner.getId()));
         }
 
-        final DataEntitySelectConfig selectConfig = DataEntitySelectConfig.builder()
-            .whereClauses(whereClauses)
-            .searchEntrypointAsSource(true)
-            .build();
+        final List<Field<?>> selectFields = Stream
+            .of(
+                DATA_ENTITY.fields(),
+                NAMESPACE.fields(),
+                DATA_SOURCE.fields(),
+                DATA_ENTITY_SUBTYPE.fields()
+            )
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toList());
 
-        final SelectHavingStep<Record> baseQuery = dataEntitySelect(selectConfig);
+        final SelectLimitPercentAfterOffsetStep<Record> baseQuery = dslContext
+            .select(selectFields)
+            .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
+            .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
+            .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
+            .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
+            .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
+            .from(SEARCH_ENTRYPOINT).join(DATA_ENTITY).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .leftJoin(TYPE_ENTITY_RELATION).on(DATA_ENTITY.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_ID))
+            .leftJoin(DATA_ENTITY_TYPE).on(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(DATA_ENTITY_TYPE.ID))
+            .leftJoin(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
+            .leftJoin(TAG_TO_DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
+            .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
+            .leftJoin(DATA_SOURCE).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID))
+            .leftJoin(NAMESPACE).on(DATA_ENTITY.NAMESPACE_ID.eq(NAMESPACE.ID))
+            .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
+            .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
+            .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
+            .where(ListUtils.emptyIfNull(whereClauses))
+            .groupBy(selectFields)
+            .offset((page - 1) * size)
+            .limit(size);
 
         final Map<Long, DataEntityDimensionsDto> entitiesGrouped = baseQuery
-            .offset((page - 1) * size)
-            .limit(size)
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toMap(dto -> dto.getDataEntity().getId(), identity()));
@@ -536,18 +558,21 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public void calculateSearchEntrypoints(final List<Long> newDataEntitiesIds, final List<Long> updatedDataEntitiesIds) {
-        final List<Long> allEntitiesIds = Stream.concat(updatedDataEntitiesIds.stream(), newDataEntitiesIds.stream())
+    public void calculateSearchEntrypoints(final List<Long> newDataEntitiesIds,
+                                           final List<Long> updatedDataEntitiesIds) {
+        final List<Long> allEntitiesIds = Stream
+            .concat(updatedDataEntitiesIds.stream(), newDataEntitiesIds.stream())
             .collect(Collectors.toList());
 
-        final DataEntitySelectConfig selectConfig = DataEntitySelectConfig.builder()
-            .whereClauses(singletonList(DATA_ENTITY.ID.in(allEntitiesIds)))
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ID.in(allEntitiesIds)))
             .includeDetails(true)
             .build();
 
-        final Map<Long, DataEntityDetailsDto> dataMap = dataEntitySelect(selectConfig)
+        final Map<Long, DataEntityDetailsDto> dataMap = dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDetailsRecord)
+            // TODO: fix N + 1
             .map(this::enrichDataEntityDetailsDto)
             .collect(Collectors.toMap(dto -> dto.getDataEntity().getId(), identity()));
 
@@ -569,12 +594,12 @@ public class DataEntityRepositoryImpl
 
     @Override
     public void recalculateSearchEntrypoints(final long dataEntityId) {
-        final DataEntitySelectConfig selectConfig = DataEntitySelectConfig.builder()
-            .whereClauses(singletonList(DATA_ENTITY.ID.eq(dataEntityId)))
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ID.eq(dataEntityId)))
             .includeDetails(true)
             .build();
 
-        dataEntitySelect(selectConfig)
+        dataEntitySelect(config)
             .fetchOptional(this::mapDetailsRecord)
             .map(this::enrichDataEntityDetailsDto)
             .map(vectorizer::toTsVector)
@@ -684,25 +709,46 @@ public class DataEntityRepositoryImpl
     }
 
     private List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
-                                                          final int page,
-                                                          final int size) {
-        final DataEntitySelectConfig selectConfig = DataEntitySelectConfig.builder()
-            .whereClauses(singletonList(DATA_ENTITY.ODDRN.in(oddrns)))
-            .includeHollow(true)
-            .build();
+                                                          final Integer page,
+                                                          final Integer size) {
+        DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ODDRN.in(oddrns)))
+            .includeHollow(true);
 
-        return dataEntitySelect(selectConfig)
-            .limit(size)
-            .offset((page - 1) * size)
+        if (page != null && size != null) {
+            configBuilder = configBuilder.dataEntityLimitOffset(
+                new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
+        }
+
+        return dataEntitySelect(configBuilder.build())
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toList());
     }
 
     private SelectHavingStep<Record> dataEntitySelect(final DataEntitySelectConfig config) {
+        final Name deCteName = name("dataEntityCTE");
+
+        Select<Record> dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
+            .from(DATA_ENTITY)
+            .where(ListUtils.emptyIfNull(config.getDataEntitySelectConditions()));
+
+        if (!config.isIncludeHollow()) {
+            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
+                .and(DATA_ENTITY.HOLLOW.isFalse());
+        }
+
+        if (config.getDataEntityLimitOffset() != null) {
+            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
+                .limit(config.getDataEntityLimitOffset().getLimit())
+                .offset(config.getDataEntityLimitOffset().getOffset());
+        }
+
+        final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
+
         final List<Field<?>> selectFields = Stream
             .of(
-                DATA_ENTITY.fields(),
+                deCte.fields(),
                 NAMESPACE.fields(),
                 DATA_SOURCE.fields(),
                 DATA_ENTITY_SUBTYPE.fields()
@@ -710,7 +756,8 @@ public class DataEntityRepositoryImpl
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
-        SelectSelectStep<Record> sfq = dslContext
+        SelectSelectStep<Record> selectStep = dslContext.with(deCteName)
+            .asMaterialized(dataEntitySelect)
             .select(selectFields)
             .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
@@ -719,46 +766,38 @@ public class DataEntityRepositoryImpl
             .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD));
 
         if (config.isIncludeDetails()) {
-            sfq = sfq
+            selectStep = selectStep
                 .select(jsonArrayAgg(field(DATASET_VERSION.asterisk().toString())).as(AGG_DSV_FIELD))
                 .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(AGG_MF_FIELD))
                 .select(jsonArrayAgg(field(METADATA_FIELD_VALUE.asterisk().toString())).as(AGG_MFV_FIELD));
         }
 
-        SelectJoinStep<Record> query = config.isSearchEntrypointAsSource()
-            ? sfq.from(SEARCH_ENTRYPOINT).join(DATA_ENTITY).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            : sfq.from(DATA_ENTITY);
-
-        query = query
-            .leftJoin(TYPE_ENTITY_RELATION).on(DATA_ENTITY.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_ID))
+        SelectOnConditionStep<Record> joinStep = selectStep
+            .from(deCteName)
+            .leftJoin(TYPE_ENTITY_RELATION).on(deCte.field(DATA_ENTITY.ID).eq(TYPE_ENTITY_RELATION.DATA_ENTITY_ID))
             .leftJoin(DATA_ENTITY_TYPE).on(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(DATA_ENTITY_TYPE.ID))
-            .leftJoin(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
-            .leftJoin(TAG_TO_DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
+            .leftJoin(DATA_ENTITY_SUBTYPE).on(deCte.field(DATA_ENTITY.SUBTYPE_ID).eq(DATA_ENTITY_SUBTYPE.ID))
+            .leftJoin(TAG_TO_DATA_ENTITY).on(deCte.field(DATA_ENTITY.ID).eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
             .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
-            .leftJoin(DATA_SOURCE).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID))
-            .leftJoin(NAMESPACE).on(DATA_ENTITY.NAMESPACE_ID.eq(NAMESPACE.ID))
-            .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
+            .leftJoin(DATA_SOURCE).on(deCte.field(DATA_ENTITY.DATA_SOURCE_ID).eq(DATA_SOURCE.ID))
+            .leftJoin(NAMESPACE).on(deCte.field(DATA_ENTITY.NAMESPACE_ID).eq(NAMESPACE.ID))
+            .leftJoin(OWNERSHIP).on(deCte.field(DATA_ENTITY.ID).eq(OWNERSHIP.DATA_ENTITY_ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID));
 
         if (config.isIncludeDetails()) {
-            query = query
-                .leftJoin(DATASET_VERSION).on(DATA_ENTITY.ID.eq(DATASET_VERSION.DATASET_ID))
-                .leftJoin(METADATA_FIELD_VALUE).on(DATA_ENTITY.ID.eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
+            joinStep = joinStep
+                .leftJoin(DATASET_VERSION).on(deCte.field(DATA_ENTITY.ID).eq(DATASET_VERSION.DATASET_ID))
+                .leftJoin(METADATA_FIELD_VALUE).on(deCte.field(DATA_ENTITY.ID).eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
                 .leftJoin(METADATA_FIELD).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID));
         }
 
-        SelectConditionStep<Record> whereQuery = query.where(config.getWhereClauses() == null
-            ? emptyList()
-            : config.getWhereClauses());
-
-        if (!config.isIncludeHollow()) {
-            whereQuery = whereQuery.and(DATA_ENTITY.HOLLOW.isFalse());
-        }
-
-        return whereQuery.groupBy(selectFields);
+        return joinStep
+            .where(ListUtils.emptyIfNull(config.getJoinSelectConditions()))
+            .groupBy(selectFields);
     }
 
+    // TODO: refactor
     private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto d) {
         final String dataTransformerName = DataEntityType.DATA_TRANSFORMER.toString();
 
@@ -766,7 +805,7 @@ public class DataEntityRepositoryImpl
             .filter(p -> p.getName().equals(dataTransformerName))
             .findFirst();
 
-        // TODO: filth
+
         if (dataTransformerType.isPresent()) {
             final Map<String, ?> specificAttributes = JSONSerDeUtils.deserializeJson(
                 d.getDataEntity().getSpecificAttributes().data(),
@@ -947,23 +986,20 @@ public class DataEntityRepositoryImpl
     @Builder
     @Data
     private static class DataEntitySelectConfig {
-        private List<Condition> whereClauses;
+        private List<Condition> dataEntitySelectConditions;
+        private LimitOffset dataEntityLimitOffset;
+        private List<Condition> joinSelectConditions;
         private boolean includeDetails;
         private boolean includeHollow;
-        private boolean searchEntrypointAsSource;
 
-        public static DataEntitySelectConfig ofClauses(final List<Condition> conditions, final boolean includeDetails) {
-            return DataEntitySelectConfig.builder()
-                .whereClauses(conditions)
-                .includeDetails(includeDetails)
-                .build();
+        @RequiredArgsConstructor
+        @Data
+        private static class LimitOffset {
+            private final int limit;
+            private final int offset;
         }
 
-        public static DataEntitySelectConfig ofClause(final Condition condition) {
-            return ofClauses(List.of(condition), false);
-        }
-
-        public static DataEntitySelectConfig defaultConfig() {
+        public static DataEntitySelectConfig emptyConfig() {
             return new DataEntitySelectConfig();
         }
     }

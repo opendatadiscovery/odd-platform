@@ -6,8 +6,6 @@ import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
-import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
-import com.provectus.oddplatform.model.tables.pojos.OwnershipPojo;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import lombok.Builder;
 import lombok.Data;
