@@ -24,6 +24,7 @@ tags:
   - name: dataTransformer
   - name: dataInput
   - name: dataConsumer
+  - name: dataQuality
   - name: metadata
   - name: datasetField
 paths:
@@ -1047,6 +1048,55 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataSetStructure'
       tags:
         - dataSet
+  /api/datasets/{data_entity_id}/test_report:
+    get:
+      summary: Get Dataset's test report
+      description: Gets Dataset's test report
+      operationId: getDatasetTestReport
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSetTestReport'
+      tags:
+        - dataQuality
+
+  /api/datasets/{data_entity_id}/dataqatests:
+    get:
+      summary: Get DataEntity's related DataQualityTests
+      description: Gets DataEntity's related DataQualityTests
+      operationId: getDataEntityDataQATests
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityList'
+      tags:
+        - dataQuality
+  /api/dataqatests/{dataqatest_id}/runs:
+    get:
+      summary: Get DataQualityTest's runs
+      description: Gets DataQualityTest's runs
+      operationId: getRuns
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataQualityTestRunList'
+      tags:
+        - dataQuality
   /api/metadata/fields:
     get:
       summary: Get custom metadata fields
