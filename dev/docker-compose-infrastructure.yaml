@@ -11,22 +11,12 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - odc-dev
+      - oddp_dev
     networks:
-      - odc-dev
-
-  data-catalog-ui:
-    build:
-      context: ../../.
-      dockerfile: ./odc-ui/Dockerfile
-      args:
-        - REACT_APP_API_URL=http://localhost:8080
-    restart: always
-    ports:
-      - 80:80
+      - oddp_dev
 
 volumes:
-  odc-dev:
+  oddp_dev:
 
 networks:
-  odc-dev:
+  oddp_dev:

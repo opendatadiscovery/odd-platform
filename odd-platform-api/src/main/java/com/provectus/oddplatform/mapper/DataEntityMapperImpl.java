@@ -12,6 +12,7 @@ import com.provectus.oddplatform.api.contract.model.DataEntityRef;
 import com.provectus.oddplatform.api.contract.model.DataEntitySubType;
 import com.provectus.oddplatform.api.contract.model.DataEntityType;
 import com.provectus.oddplatform.api.contract.model.DataEntityTypeDictionary;
+import com.provectus.oddplatform.api.contract.model.DataQualityTestExpectation;
 import com.provectus.oddplatform.api.contract.model.DataSetStats;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
@@ -27,6 +28,7 @@ import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
 import com.provectus.oddplatform.utils.Pair;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.MapUtils;
 import org.jooq.JSONB;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +42,6 @@ import java.util.stream.Collectors;
 public class DataEntityMapperImpl implements DataEntityMapper {
     private final NamespaceMapper namespaceMapper;
     private final DataSourceMapper dataSourceMapper;
-    private final OwnerMapper ownerMapper;
     private final OwnershipMapper ownershipMapper;
     private final TagMapper tagMapper;
     private final MetadataFieldMapper metadataFieldMapper;
@@ -83,7 +84,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .map(this::mapType)
             .collect(Collectors.toList());
 
-        DataEntityDetails details = new DataEntityDetails()
+        final DataEntityDetails details = new DataEntityDetails()
             .id(pojo.getId())
             .externalName(pojo.getExternalName())
             .internalName(pojo.getInternalName())
@@ -98,7 +99,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapPojo(dto.getDataSource()))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
-            .versionList(datasetVersionMapper.mapPojo(dto.getDatasetVersions()))
+            .versionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().getDatasetVersions()))
             .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()));
 
         final List<DataEntityType.NameEnum> typeNames = types
@@ -107,12 +108,38 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .collect(Collectors.toList());
 
         if (typeNames.contains(DataEntityType.NameEnum.SET)) {
+            // TODO: move to the dto
             details.setStats(mapStats(pojo.getSpecificAttributes()));
         }
 
         if (typeNames.contains(DataEntityType.NameEnum.TRANSFORMER)) {
-            details.setSourceList(dto.getSourceList().stream().map(this::mapReference).collect(Collectors.toList()));
-            details.setTargetList(dto.getTargetList().stream().map(this::mapReference).collect(Collectors.toList()));
+            details
+                .sourceList(dto.getDataTransformerDetailsDto().getSourceList()
+                    .stream()
+                    .map(this::mapReference)
+                    .collect(Collectors.toList()))
+                .targetList(dto.getDataTransformerDetailsDto()
+                    .getTargetList()
+                    .stream()
+                    .map(this::mapReference)
+                    .collect(Collectors.toList()));
+        }
+
+        if (typeNames.contains(DataEntityType.NameEnum.QUALITY_TEST)) {
+            final DataQualityTestExpectation expectation = new DataQualityTestExpectation()
+                .type(dto.getDataQualityTestDetailsDto().getExpectationType());
+
+            expectation.putAll(MapUtils.emptyIfNull(dto.getDataQualityTestDetailsDto().getExpectationParameters()));
+
+            details.expectation(expectation)
+                .datasetsList(dto.getDataQualityTestDetailsDto()
+                    .getDatasetList()
+                    .stream()
+                    .map(this::mapReference)
+                    .collect(Collectors.toList()))
+                .linkedUrlList(dto.getDataQualityTestDetailsDto().getLinkedUrlList())
+                .suiteName(dto.getDataQualityTestDetailsDto().getSuiteName())
+                .suiteUrl(dto.getDataQualityTestDetailsDto().getSuiteUrl());
         }
 
         return details;

@@ -28,6 +28,8 @@ dependencies {
         implementation project(':odd-platform-ui')
     }
 
+    implementation "org.apache.commons:commons-collections4:$apacheCommonsCollectionsVersion"
+
     implementation "org.flywaydb:flyway-core:$flywayVersion"
     implementation "org.postgresql:postgresql:$postgresqlDriverVersion"
 
