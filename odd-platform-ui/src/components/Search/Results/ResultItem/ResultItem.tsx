@@ -72,7 +72,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
           onClose={() => setIsMenuOpen(false)}
         >
           {list?.map(item => (
-            <MenuItem>{item.internalName || item.externalName}</MenuItem>
+            <MenuItem key={item.id}>
+              {item.internalName || item.externalName}
+            </MenuItem>
           ))}
         </Menu>
       </>
@@ -225,6 +227,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
               variant="body1"
               title={ownership.owner.name}
               noWrap
+              key={ownership.id}
             >
               {ownership.owner.name}
             </Typography>

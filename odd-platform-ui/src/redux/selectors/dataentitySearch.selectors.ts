@@ -33,7 +33,7 @@ export const getSearchUpdateStatus = createFetchingSelector(
 );
 
 export const getSearchResultsFetchStatus = createFetchingSelector(
-  'GET_SEARCH_RESULTS'
+  'GET_DATA_ENTITIES_SEARCH_RESULTS'
 );
 
 export const getSearchFiltersSynced = createSelector(
@@ -42,22 +42,24 @@ export const getSearchFiltersSynced = createSelector(
 );
 
 export const getSearchIsFetching = createSelector(
-  getSearchCreationStatus,
   getSearchFetchStatus,
   getSearchUpdateStatus,
   getSearchFiltersSynced,
-  getSearchResultsFetchStatus,
-  (
-    statusCreate,
-    statusFetch,
-    statusUpdate,
-    isSynced,
-    statusResultsFetch
-  ) =>
-    [statusCreate, statusFetch, statusUpdate, statusResultsFetch].includes(
-      'fetching'
-    ) ||
+  searchState,
+  (statusFetch, statusUpdate, isSynced, search) =>
+    statusFetch === 'fetching' ||
+    (statusUpdate === 'fetched' && !!search.results.pageInfo.total) ||
     (!isSynced && statusUpdate !== 'errorFetching')
+);
+
+export const getSearchIsFetched = createSelector(
+  getSearchResultsFetchStatus,
+  getSearchUpdateStatus,
+  searchState,
+  (statusResults, statusUpdate, search) =>
+    statusResults === 'fetched' &&
+    statusUpdate === 'fetched' &&
+    !search.results.pageInfo.total
 );
 
 export const getSearchId = createSelector(
@@ -113,7 +115,7 @@ export const getSelectedSearchFacetOptions = createSelector(
 );
 
 export const getSearchFiltersData = createSelector(searchState, search =>
-  mapValues(search.facetState, (facetState, facetName) =>
+  mapValues(search.facetState, facetState =>
     pickBy(facetState, facetOption => !facetOption.syncedState)
   )
 );

@@ -28,11 +28,12 @@ interface ResultsProps extends StylesType {
   searchResults: DataEntity[];
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
-  isFetching: boolean;
+  isSearchFetched: boolean;
   totals: SearchTotalsByName;
   getDataEntitiesSearchResults: (
     params: SearchApiGetSearchResultsRequest
   ) => void;
+  isSearchFetching: boolean;
 }
 
 const Results: React.FC<ResultsProps> = ({
@@ -44,8 +45,9 @@ const Results: React.FC<ResultsProps> = ({
   pageInfo,
   totals,
   searchFiltersSynced,
-  isFetching,
+  isSearchFetched,
   getDataEntitiesSearchResults,
+  isSearchFetching,
 }) => {
   const dispatch = useDispatch();
 
@@ -131,8 +133,8 @@ const Results: React.FC<ResultsProps> = ({
         selectedTab={selectedTab}
         handleTabChange={onSearchTypeChange}
       />
-      {isFetching ? (
-        <SearchResultsSkeleton totals={totals} searchType={searchType} />
+      {isSearchFetching && !searchResults.length ? (
+        <SearchResultsSkeleton length={10} />
       ) : (
         <Grid
           container
@@ -193,35 +195,24 @@ const Results: React.FC<ResultsProps> = ({
             dataLength={searchResults.length}
             next={fetchNextPage}
             hasMore={!!pageInfo.hasNext}
-            loader={
-              <div className={classes.spinnerContainer}>
-                <CircularProgress color="primary" size={30} />
-              </div>
-            }
+            loader={<SearchResultsSkeleton length={5} />}
             scrollThreshold="200px"
             scrollableTarget="results-list"
           >
-            {searchResults.map(searchResult =>
-              isFetching ? (
-                <SearchResultsSkeleton
-                  totals={totals}
-                  searchType={searchType}
-                />
-              ) : (
-                <ResultItem
-                  key={searchResult.id}
-                  searchType={searchType}
-                  classes={{ container: classes.resultItem }}
-                  searchResult={searchResult}
-                  totals={totals}
-                />
-              )
-            )}
+            {searchResults.map(searchResult => (
+              <ResultItem
+                key={searchResult.id}
+                searchType={searchType}
+                classes={{ container: classes.resultItem }}
+                searchResult={searchResult}
+                totals={totals}
+              />
+            ))}
           </InfiniteScroll>
         </div>
       ) : null}
 
-      {!isFetching && !searchResults?.length ? (
+      {isSearchFetched && !searchResults?.length ? (
         <Typography variant="subtitle1">No Matches Found</Typography>
       ) : null}
     </div>

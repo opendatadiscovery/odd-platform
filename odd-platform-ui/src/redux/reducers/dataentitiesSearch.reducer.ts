@@ -91,7 +91,7 @@ const updateSearchState = (
           ),
     isFacetsStateSynced: true,
     results: {
-      items: state.results.items,
+      items: [],
       pageInfo: {
         page: 0,
         total: payload.total || 0,
@@ -150,6 +150,14 @@ const updateFacet = (
               syncedState: false,
             },
           }),
+      },
+    },
+    results: {
+      items: [],
+      pageInfo: {
+        page: 0,
+        total: 0,
+        hasNext: true,
       },
     },
   };

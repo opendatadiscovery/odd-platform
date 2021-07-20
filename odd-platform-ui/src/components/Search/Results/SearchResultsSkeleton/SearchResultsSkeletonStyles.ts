@@ -4,7 +4,6 @@ import { colWidthStyles } from 'components/Search/Results/ResultsStyles';
 export const styles = (theme: Theme) =>
   createStyles({
     container: {
-      borderBottom: '1px solid #EBECF0',
       padding: theme.spacing(1.25, 0),
       textDecoration: 'none',
       cursor: 'pointer',
