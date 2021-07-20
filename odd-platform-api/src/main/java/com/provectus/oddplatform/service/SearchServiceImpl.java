@@ -14,7 +14,6 @@ import com.provectus.oddplatform.exception.NotFoundException;
 import com.provectus.oddplatform.mapper.DataEntityMapper;
 import com.provectus.oddplatform.mapper.FacetStateMapper;
 import com.provectus.oddplatform.mapper.SearchMapper;
-import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import com.provectus.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import com.provectus.oddplatform.repository.DataEntityRepository;
 import com.provectus.oddplatform.repository.DataEntityTypeRepository;

@@ -291,6 +291,10 @@ public class IngestionServiceImpl implements IngestionService {
         final HashMap<MetadataFieldKey, Map<Long, Object>> allMetadata = new HashMap<>();
 
         for (final EnrichedDataEntityIngestionDto allEntity : split.getAllEntities()) {
+            if (allEntity.getMetadata() == null) {
+                continue;
+            }
+
             allEntity.getMetadata().forEach((mfName, mfValue) -> {
                 final MetadataFieldKey.MetadataTypeEnum fieldType = isDate(mfValue)
                     ? MetadataFieldKey.MetadataTypeEnum.DATETIME

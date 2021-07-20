@@ -1,8 +1,10 @@
 package com.provectus.oddplatform.repository;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.provectus.oddplatform.dto.*;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestAttributes;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataTransformerAttributes;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
@@ -30,6 +32,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.jooq.*;
 import org.springframework.stereotype.Repository;
@@ -51,7 +54,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.provectus.oddplatform.model.Tables.*;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static org.jooq.impl.DSL.*;
@@ -506,7 +508,7 @@ public class DataEntityRepositoryImpl
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
-        final SelectLimitPercentAfterOffsetStep<Record> baseQuery = dslContext
+        final SelectHavingStep<Record> baseQuery = dslContext
             .select(selectFields)
             .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
@@ -525,11 +527,13 @@ public class DataEntityRepositoryImpl
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
             .where(ListUtils.emptyIfNull(whereClauses))
-            .groupBy(selectFields)
-            .offset((page - 1) * size)
-            .limit(size);
+            .groupBy(selectFields);
+
+        final Long total = fetchCount(baseQuery);
 
         final Map<Long, DataEntityDimensionsDto> entitiesGrouped = baseQuery
+            .offset((page - 1) * size)
+            .limit(size)
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toMap(dto -> dto.getDataEntity().getId(), identity()));
@@ -537,7 +541,7 @@ public class DataEntityRepositoryImpl
         return Page.<DataEntityDimensionsDto>builder()
             .data(new ArrayList<>(entitiesGrouped.values()))
             .hasNext(true)
-            .total(fetchCount(baseQuery))
+            .total(total)
             .build();
     }
 
@@ -712,7 +716,7 @@ public class DataEntityRepositoryImpl
                                                           final Integer page,
                                                           final Integer size) {
         DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
-            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ODDRN.in(oddrns)))
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
             .includeHollow(true);
 
         if (page != null && size != null) {
@@ -726,6 +730,7 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toList());
     }
 
+    @SuppressWarnings("ConstantConditions")
     private SelectHavingStep<Record> dataEntitySelect(final DataEntitySelectConfig config) {
         final Name deCteName = name("dataEntityCTE");
 
@@ -797,31 +802,49 @@ public class DataEntityRepositoryImpl
             .groupBy(selectFields);
     }
 
-    // TODO: refactor
-    private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto d) {
-        final String dataTransformerName = DataEntityType.DATA_TRANSFORMER.toString();
+    private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto detailsDto) {
+        final Set<DataEntityType> dtoTypes = detailsDto.getTypes()
+            .stream()
+            .map(DataEntityTypePojo::getName)
+            .map(DataEntityType::valueOf)
+            .collect(Collectors.toSet());
 
-        final Optional<DataEntityTypePojo> dataTransformerType = d.getTypes().stream()
-            .filter(p -> p.getName().equals(dataTransformerName))
-            .findFirst();
+        final Map<String, ?> specificAttributes = JSONSerDeUtils.deserializeJson(
+            detailsDto.getDataEntity().getSpecificAttributes().data(),
+            new TypeReference<Map<String, ?>>() {
+            }
+        );
 
-
-        if (dataTransformerType.isPresent()) {
-            final Map<String, ?> specificAttributes = JSONSerDeUtils.deserializeJson(
-                d.getDataEntity().getSpecificAttributes().data(),
-                new TypeReference<Map<String, ?>>() {
-                }
+        if (dtoTypes.contains(DataEntityType.DATA_TRANSFORMER)) {
+            final DataTransformerAttributes attrs = JSONSerDeUtils.deserializeJson(
+                specificAttributes.get(DataEntityType.DATA_TRANSFORMER.toString()),
+                DataTransformerAttributes.class
             );
 
-            final DataTransformerAttributes attrs = JSONSerDeUtils
-                .deserializeJson(specificAttributes.get(dataTransformerName), DataTransformerAttributes.class);
-
-            d.setSourceCodeUrl(attrs.getSourceCodeUrl());
-            d.setSourceList(listAllByOddrns(attrs.getSourceList()));
-            d.setTargetList(listAllByOddrns(attrs.getTargetList()));
+            detailsDto.setDataTransformerDetailsDto(DataEntityDetailsDto.DataTransformerDetailsDto.builder()
+                .sourceList(listAllByOddrns(attrs.getSourceOddrnList()))
+                .targetList(listAllByOddrns(attrs.getTargetOddrnList()))
+                .sourceCodeUrl(attrs.getSourceCodeUrl())
+                .build());
         }
 
-        return d;
+        if (dtoTypes.contains(DataEntityType.DATA_QUALITY_TEST)) {
+            final DataQualityTestAttributes attrs = JSONSerDeUtils.deserializeJson(
+                specificAttributes.get(DataEntityType.DATA_QUALITY_TEST.toString()),
+                DataQualityTestAttributes.class
+            );
+
+            detailsDto.setDataQualityTestDetailsDto(DataQualityTestDetailsDto.builder()
+                .suiteName(attrs.getSuiteName())
+                .suiteUrl(attrs.getSuiteUrl())
+                .datasetList(listAllByOddrns(attrs.getDatasetOddrnList()))
+                .linkedUrlList(attrs.getLinkedUrlList())
+                .expectationType(attrs.getExpectation().getType())
+                .expectationParameters(attrs.getExpectation().getAdditionalProperties())
+                .build());
+        }
+
+        return detailsDto;
     }
 
     private DataEntityDimensionsDto mapDimensionRecord(final Record r) {
@@ -845,10 +868,10 @@ public class DataEntityRepositoryImpl
             .ownership(extractOwnershipRelation(r))
             .types(extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
             .tags(extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
-            .datasetVersions(extractAggRelation(r, AGG_DSV_FIELD, DatasetVersionPojo.class))
+            .dataSetDetailsDto(DataEntityDetailsDto.DataSetDetailsDto.builder()
+                .datasetVersions(extractAggRelation(r, AGG_DSV_FIELD, DatasetVersionPojo.class))
+                .build())
             .metadata(extractMetadataRelation(r))
-            .sourceList(emptyList())
-            .targetList(emptyList())
             .build();
     }
 
@@ -966,19 +989,6 @@ public class DataEntityRepositoryImpl
         }
 
         return function.apply(filters);
-    }
-
-    @Data
-    @NoArgsConstructor
-    private static class DataTransformerAttributes {
-        @JsonProperty("source_list")
-        private List<String> sourceList;
-
-        @JsonProperty("target_list")
-        private List<String> targetList;
-
-        @JsonProperty("source_code_url")
-        private String sourceCodeUrl;
     }
 
     @NoArgsConstructor

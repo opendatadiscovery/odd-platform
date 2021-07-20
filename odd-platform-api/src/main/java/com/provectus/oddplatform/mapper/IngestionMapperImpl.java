@@ -253,6 +253,7 @@ public class IngestionMapperImpl implements IngestionMapper {
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
+    // TODO: refactor using models and dtos
     private Pair<DataEntityType, Map<String, ?>> defineSpecificAttributes(
         final DataEntity dataEntity,
         final DataEntityType type
@@ -277,7 +278,11 @@ public class IngestionMapperImpl implements IngestionMapper {
                 ));
             case DATA_QUALITY_TEST:
                 return Pair.of(type, createMap(
-                    Pair.of("dataset_list", dataEntity.getDataQualityTest().getDatasetList())
+                    Pair.of("suite_name", dataEntity.getDataQualityTest().getSuiteName()),
+                    Pair.of("suite_url", dataEntity.getDataQualityTest().getSuiteUrl()),
+                    Pair.of("linked_url_list", dataEntity.getDataQualityTest().getLinkedUrlList()),
+                    Pair.of("dataset_list", dataEntity.getDataQualityTest().getDatasetList()),
+                    Pair.of("expectation", dataEntity.getDataQualityTest().getExpectation())
                 ));
 
             default:
