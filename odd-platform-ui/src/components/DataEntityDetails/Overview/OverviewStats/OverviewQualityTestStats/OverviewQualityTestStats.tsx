@@ -15,29 +15,30 @@ import { styles, StylesType } from './OverviewQualityTestStatsStyles';
 interface OverviewQualityTestStatsProps extends StylesType {
   suiteName: DataEntityDetails['suiteName'];
   suiteUrl: DataEntityDetails['suiteUrl'];
+  datasetsList: DataEntityDetails['datasetsList'];
 }
 
 const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   classes,
   suiteName,
   suiteUrl,
+  datasetsList,
 }) => (
   <Grid container>
     <Grid item xs={12}>
       <EntityTypeItem
-        typeName={DataEntityTypeNameEnum.TRANSFORMER}
+        typeName={DataEntityTypeNameEnum.QUALITY_TEST}
         fullName
         className={classes.typeLabel}
       />
     </Grid>
     <Grid item container xs={6} className={classes.statsItem}>
       <Grid item container xs={12} alignItems="baseline">
-        <UpstreamIcon className={classes.statIcon} />
         <Typography variant="h2" className={classes.statCount}>
-          {sources?.length || 0}
+          {datasetsList?.length || 0}
         </Typography>
         <Typography variant="body2" className={classes.statLabel}>
-          sources
+          datasets
         </Typography>
       </Grid>
       <Grid
@@ -47,15 +48,15 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
         direction="column"
         alignItems="flex-start"
       >
-        {sources?.map(source => (
+        {datasetsList?.map(dataset => (
           <AppButton
             className={classes.refItem}
             size="small"
             color="tertiary"
             onClick={() => {}}
           >
-            <Link to={dataEntityDetailsPath(source.id)}>
-              {source.internalName || source.externalName}
+            <Link to={dataEntityDetailsPath(dataset.id)}>
+              {dataset.internalName || dataset.externalName}
             </Link>
           </AppButton>
         ))}
@@ -63,12 +64,8 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
     </Grid>
     <Grid item container xs={6} className={classes.statsItem}>
       <Grid item container xs={12} alignItems="baseline">
-        <DownstreamIcon className={classes.statIcon} />
-        <Typography variant="h2" className={classes.statCount}>
-          {targets?.length || 0}
-        </Typography>
         <Typography variant="body1" className={classes.statLabel}>
-          targets
+          Suite
         </Typography>
       </Grid>
       <Grid
@@ -78,18 +75,18 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
         direction="column"
         alignItems="flex-start"
       >
-        {targets?.map(target => (
+        {suiteUrl ? (
           <AppButton
             className={classes.refItem}
             size="small"
             color="tertiary"
             onClick={() => {}}
           >
-            <Link to={dataEntityDetailsPath(target.id)}>
-              {target.internalName || target.externalName}
+            <Link to={{ pathname: suiteUrl }} target="_blank">
+              {suiteName || suiteUrl}
             </Link>
           </AppButton>
-        ))}
+        ) : null}
       </Grid>
     </Grid>
   </Grid>
