@@ -45,21 +45,17 @@ export const getSearchIsFetching = createSelector(
   getSearchFetchStatus,
   getSearchUpdateStatus,
   getSearchFiltersSynced,
+  getSearchResultsFetchStatus,
   searchState,
-  (statusFetch, statusUpdate, isSynced, search) =>
-    statusFetch === 'fetching' ||
-    (statusUpdate === 'fetched' && !!search.results.pageInfo.total) ||
-    (!isSynced && statusUpdate !== 'errorFetching')
+  (statusFetch, statusUpdate, isSynced, statusResults, search) =>
+    [statusFetch, statusUpdate, statusResults].includes('fetching') ||
+    !isSynced ||
+    (!!search.results.pageInfo.total && !search.results.items.length)
 );
 
-export const getSearchIsFetched = createSelector(
-  getSearchResultsFetchStatus,
-  getSearchUpdateStatus,
+export const getSearchResultPageInfoTotal = createSelector(
   searchState,
-  (statusResults, statusUpdate, search) =>
-    statusResults === 'fetched' &&
-    statusUpdate === 'fetched' &&
-    !search.results.pageInfo.total
+  search => search.results.pageInfo.total
 );
 
 export const getSearchId = createSelector(

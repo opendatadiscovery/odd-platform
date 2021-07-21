@@ -28,7 +28,7 @@ interface ResultsProps extends StylesType {
   searchResults: DataEntity[];
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
-  isSearchFetched: boolean;
+  pageInfoTotal: number;
   totals: SearchTotalsByName;
   getDataEntitiesSearchResults: (
     params: SearchApiGetSearchResultsRequest
@@ -45,7 +45,7 @@ const Results: React.FC<ResultsProps> = ({
   pageInfo,
   totals,
   searchFiltersSynced,
-  isSearchFetched,
+  pageInfoTotal,
   getDataEntitiesSearchResults,
   isSearchFetching,
 }) => {
@@ -212,7 +212,7 @@ const Results: React.FC<ResultsProps> = ({
         </div>
       ) : null}
 
-      {isSearchFetched && !searchResults?.length ? (
+      {!isSearchFetching && !pageInfoTotal ? (
         <Typography variant="subtitle1">No Matches Found</Typography>
       ) : null}
     </div>
