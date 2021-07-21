@@ -6,8 +6,6 @@ import {
   DataEntityDetails,
 } from 'generated-sources';
 import { dataEntityDetailsPath } from 'lib/paths';
-import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
-import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './OverviewQualityTestStatsStyles';
