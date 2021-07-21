@@ -39,7 +39,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     <Typography variant="subtitle1">{actionText}</Typography>
   );
 
-  const formActionButtons = (handleClose: () => void) => (
+  const formActionButtons = () => (
     <div className={classes.actions}>
       <AppButton size="large" color="primary" onClick={onClose(onConfirm)}>
         {actionName}
@@ -55,7 +55,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) => formActionButtons(handleClose)}
+      renderActions={formActionButtons}
       isLoading={isLoading}
     />
   );

@@ -289,7 +289,7 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
     </form>
   );
 
-  const formActionButtons = (handleClose: () => void) => (
+  const formActionButtons = () => (
     <AppButton
       size="large"
       type="submit"
@@ -310,7 +310,7 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) => formActionButtons(handleClose)}
+      renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}

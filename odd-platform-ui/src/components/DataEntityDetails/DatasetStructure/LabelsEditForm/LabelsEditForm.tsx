@@ -20,6 +20,7 @@ import {
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
+import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { StylesType } from './LabelsEditFormStyles';
 
 interface LabelsEditProps extends StylesType {
@@ -222,9 +223,14 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
           <div className={classes.optionsContainer}>
             <div className={classes.optionItem}>
               <Typography variant="body1">
-                {option.id
-                  ? option.name
-                  : `No result. Create new label "${option.name}"`}
+                {option.id ? (
+                  option.name
+                ) : (
+                  <AutocompleteSuggestion
+                    optionLabel="label"
+                    optionName={option.name}
+                  />
+                )}
               </Typography>
             </div>
           </div>
@@ -251,7 +257,7 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
     </>
   );
 
-  const formActionButtons = (handleClose: () => void) => (
+  const formActionButtons = () => (
     <>
       <AppButton
         size="large"
@@ -273,7 +279,7 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) => formActionButtons(handleClose)}
+      renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}

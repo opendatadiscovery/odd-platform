@@ -19,6 +19,7 @@ import {
 } from 'generated-sources';
 import MetadataValueEditField from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import cx from 'classnames';
+import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { StylesType } from './MetadataCreateFormItemStyles';
 
 interface MetadataCreateFormItemProps extends StylesType {
@@ -187,9 +188,14 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
             )}
             renderOption={option => (
               <Typography variant="body2">
-                {option.id
-                  ? option.name
-                  : `No result. Create new custom data "${option.name}"`}
+                {option.id ? (
+                  option.name
+                ) : (
+                  <AutocompleteSuggestion
+                    optionLabel="custom data"
+                    optionName={option.name}
+                  />
+                )}
               </Typography>
             )}
           />

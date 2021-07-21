@@ -106,7 +106,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
     </>
   );
 
-  const formActionButtons = (handleClose: () => void) => (
+  const formActionButtons = () => (
     <AppButton
       size="large"
       color="primary"
@@ -128,7 +128,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) => formActionButtons(handleClose)}
+      renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
