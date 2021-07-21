@@ -159,7 +159,11 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
         <div>
           <Typography variant="h4">Pre-defined</Typography>
           <Typography variant="subtitle1">
-            {dataEntityExternalDescription}
+            <ReactMarkdown
+              className={cx('markdown-body', classes.preview)}
+              plugins={[gfm]}
+              source={dataEntityExternalDescription}
+            />
           </Typography>
         </div>
       ) : null}
