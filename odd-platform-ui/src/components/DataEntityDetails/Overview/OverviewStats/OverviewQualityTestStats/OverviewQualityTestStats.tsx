@@ -37,7 +37,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
         <Typography variant="h2" className={classes.statCount}>
           {datasetsList?.length || 0}
         </Typography>
-        <Typography variant="body2" className={classes.statLabel}>
+        <Typography variant="body1" className={classes.statLabel}>
           datasets
         </Typography>
       </Grid>
@@ -50,6 +50,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
       >
         {datasetsList?.map(dataset => (
           <AppButton
+            key={dataset.id}
             className={classes.refItem}
             size="small"
             color="tertiary"

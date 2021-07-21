@@ -36,7 +36,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         <Typography variant="h2" className={classes.statCount}>
           {sources?.length || 0}
         </Typography>
-        <Typography variant="body2" className={classes.statLabel}>
+        <Typography variant="body1" className={classes.statLabel}>
           sources
         </Typography>
       </Grid>
@@ -49,6 +49,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
       >
         {sources?.map(source => (
           <AppButton
+            key={source.id}
             className={classes.refItem}
             size="small"
             color="tertiary"
@@ -80,6 +81,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
       >
         {targets?.map(target => (
           <AppButton
+            key={target.id}
             className={classes.refItem}
             size="small"
             color="tertiary"

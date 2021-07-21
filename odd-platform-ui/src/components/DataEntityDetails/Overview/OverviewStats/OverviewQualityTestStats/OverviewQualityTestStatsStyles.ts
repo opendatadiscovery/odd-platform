@@ -4,17 +4,13 @@ export const styles = (theme: Theme) =>
   createStyles({
     statsItem: {
       display: 'flex',
-      alignItems: 'center',
-    },
-    statIcon: {
-      fontSize: theme.typography.h5.fontSize,
-      marginRight: theme.spacing(1),
-      color: '#0066CC',
+      alignItems: 'flex-start',
     },
     statCount: {},
     statLabel: {
       color: '#B3BAC5',
       marginLeft: theme.spacing(0.5),
+      lineHeight: theme.typography.h2.lineHeight,
     },
     statValue: {
       fontWeight: theme.typography.fontWeightBold,
