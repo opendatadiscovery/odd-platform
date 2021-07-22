@@ -20,6 +20,15 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
 }) => {
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
+
+  const tagsCompare = (tag1: Tag, tag2: Tag) => {
+    // compare by importance and alphabet
+    if (tag1.important === tag2.important) {
+      return tag1.name.localeCompare(tag2.name);
+    }
+    return tag1.important ? -1 : 1;
+  };
+
   return (
     <div>
       <div className={classes.captionContainer}>
@@ -42,20 +51,24 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
       </div>
       {tags?.length ? (
         <div className={classes.tagsContainer}>
-          {tags.slice(0, visibleLimit).map(tag => (
-            <TagItem
-              key={tag.id}
-              label={tag.name}
-              important={tag.important}
-              classes={{ container: classes.tagItem }}
-            />
-          ))}
+          {tags
+            .slice(0, visibleLimit)
+            .sort(tagsCompare)
+            .map(tag => (
+              <TagItem
+                key={tag.id}
+                label={tag.name}
+                important={tag.important}
+                classes={{ container: classes.tagItem }}
+              />
+            ))}
           {tags?.length > visibleLimit ? (
             <>
               <Collapse in={viewAll} timeout="auto" unmountOnExit>
                 {viewAll
                   ? tags
                       ?.slice(visibleLimit)
+                      .sort(tagsCompare)
                       .map(tag => (
                         <TagItem
                           key={tag.id}

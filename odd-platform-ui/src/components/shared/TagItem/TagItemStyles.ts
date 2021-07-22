@@ -9,9 +9,18 @@ export const styles = (theme: Theme) =>
       borderRadius: '4px',
       padding: theme.spacing(0.25, 1),
       color: '#42526E',
+      '&:hover': {
+        borderColor: '#C1C7D0',
+      },
+      '&:active': {
+        borderColor: '#A8B0BD',
+      },
     },
     important: {
       borderColor: '#FFBB33',
+      '&:hover, &:active': {
+        borderColor: '#FFAA00',
+      },
     },
     containerRemovable: {
       paddingRight: theme.spacing(0.5),

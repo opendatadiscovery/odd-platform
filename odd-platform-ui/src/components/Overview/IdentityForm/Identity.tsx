@@ -27,6 +27,7 @@ import {
 } from 'generated-sources';
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { StylesType } from './IdentityStyles';
 
 interface IdentityProps extends StylesType {
@@ -263,9 +264,14 @@ const Identity: React.FC<IdentityProps> = ({
                   )}
                   renderOption={option => (
                     <Typography variant="body2">
-                      {option.id
-                        ? option.name
-                        : `No result. Create new owner "${option.name}"`}
+                      {option.id ? (
+                        option.name
+                      ) : (
+                        <AutocompleteSuggestion
+                          optionLabel="owner"
+                          optionName={option.name}
+                        />
+                      )}
                     </Typography>
                   )}
                 />

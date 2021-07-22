@@ -7,6 +7,7 @@ import {
 import { styles, StylesType } from './OverviewStatsStyles';
 import OverviewDatasetStats from './OverviewDatasetStats/OverviewDatasetStats';
 import OverviewTransformerStats from './OverviewTransformerStats/OverviewTransformerStats';
+import OverviewQualityTestStats from './OverviewQualityTestStats/OverviewQualityTestStats';
 
 interface OverviewStatsProps extends StylesType {
   dataEntityDetails: DataEntityDetails;
@@ -36,8 +37,15 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
           );
         // case DataEntityTypeNameEnum.CONSUMER:
         //   return (<OverviewDatasetStats key={type.id} stats={dataEntityDetails.stats}/>);
-        // case DataEntityTypeNameEnum.QUALITY_TEST:
-        //   return (<OverviewDatasetStats key={type.id} stats={dataEntityDetails.stats}/>);
+        case DataEntityTypeNameEnum.QUALITY_TEST:
+          return (
+            <OverviewQualityTestStats
+              key={type.id}
+              suiteName={dataEntityDetails.suiteName}
+              suiteUrl={dataEntityDetails.suiteUrl}
+              datasetsList={dataEntityDetails.datasetsList}
+            />
+          );
         default:
           return null;
       }

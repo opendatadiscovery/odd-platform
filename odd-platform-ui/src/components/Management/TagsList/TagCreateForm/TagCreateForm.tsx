@@ -110,7 +110,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
     </>
   );
 
-  const formActionButtons = (handleClose: () => void) => (
+  const formActionButtons = () => (
     <AppButton
       size="large"
       type="submit"
@@ -132,7 +132,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) => formActionButtons(handleClose)}
+      renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}

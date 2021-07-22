@@ -6,16 +6,11 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'flex-start',
     },
-    statIcon: {
-      fontSize: theme.typography.h5.fontSize,
-      marginRight: theme.spacing(1),
-      color: '#0066CC',
-      alignSelf: 'center',
-    },
     statCount: {},
     statLabel: {
       color: '#B3BAC5',
       marginLeft: theme.spacing(0.5),
+      lineHeight: theme.typography.h2.lineHeight,
     },
     statValue: {
       fontWeight: theme.typography.fontWeightBold,

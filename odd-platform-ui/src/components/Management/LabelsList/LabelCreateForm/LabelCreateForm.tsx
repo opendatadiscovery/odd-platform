@@ -108,7 +108,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
     </>
   );
 
-  const formActionButtons = (handleClose: () => void) => (
+  const formActionButtons = () => (
     <AppButton
       size="large"
       type="submit"
@@ -130,7 +130,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={({ handleClose }) => formActionButtons(handleClose)}
+      renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}

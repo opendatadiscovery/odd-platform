@@ -152,7 +152,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
       return (
         <Grid container justify="space-between">
           <span>{formattedOptionName}</span>
-          {/* <span className={classes.filterCount}>{option.count}</span> */}
+          <span className={classes.filterCount}>{option.count}</span>
         </Grid>
       );
     }
@@ -181,7 +181,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
           </span>
           {endString}
         </span>
-        {/* <span className={classes.filterCount}>{option.count}</span> */}
+        <span className={classes.filterCount}>{option.count}</span>
       </Grid>
     );
   };
