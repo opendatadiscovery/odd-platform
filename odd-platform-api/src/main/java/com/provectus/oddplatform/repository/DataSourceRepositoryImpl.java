@@ -16,7 +16,7 @@ public class DataSourceRepositoryImpl
 
     public DataSourceRepositoryImpl(final DSLContext dslContext) {
         super(dslContext, DATA_SOURCE, DATA_SOURCE.ID, DATA_SOURCE.IS_DELETED,
-            DATA_SOURCE.NAME, DATA_SOURCE.NAME, DataSourcePojo.class);
+            DATA_SOURCE.ODDRN, DATA_SOURCE.NAME, DataSourcePojo.class);
     }
 
     @Override
