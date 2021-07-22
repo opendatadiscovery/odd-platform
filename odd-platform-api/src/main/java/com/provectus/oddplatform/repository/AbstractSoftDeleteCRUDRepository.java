@@ -73,7 +73,7 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
 
             record.set(deletedField, false);
             record.set(idField, getResultRecord.get(idField));
-            return update(recordToPojo(getResultRecord));
+            return update(recordToPojo(record));
         }
 
         return super.create(pojo);
