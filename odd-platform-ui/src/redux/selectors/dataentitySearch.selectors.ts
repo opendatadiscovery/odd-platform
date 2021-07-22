@@ -53,11 +53,6 @@ export const getSearchIsFetching = createSelector(
     (!!search.results.pageInfo.total && !search.results.items.length)
 );
 
-export const getSearchResultPageInfoTotal = createSelector(
-  searchState,
-  search => search.results.pageInfo.total
-);
-
 export const getSearchId = createSelector(
   searchState,
   search => search.searchId

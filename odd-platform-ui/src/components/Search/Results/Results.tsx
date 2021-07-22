@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircularProgress, Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import cx from 'classnames';
@@ -28,7 +28,6 @@ interface ResultsProps extends StylesType {
   searchResults: DataEntity[];
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
-  pageInfoTotal: number;
   totals: SearchTotalsByName;
   getDataEntitiesSearchResults: (
     params: SearchApiGetSearchResultsRequest
@@ -45,7 +44,6 @@ const Results: React.FC<ResultsProps> = ({
   pageInfo,
   totals,
   searchFiltersSynced,
-  pageInfoTotal,
   getDataEntitiesSearchResults,
   isSearchFetching,
 }) => {
@@ -212,7 +210,7 @@ const Results: React.FC<ResultsProps> = ({
         </div>
       ) : null}
 
-      {!isSearchFetching && !pageInfoTotal ? (
+      {!isSearchFetching && !pageInfo.total ? (
         <Typography variant="subtitle1">No Matches Found</Typography>
       ) : null}
     </div>

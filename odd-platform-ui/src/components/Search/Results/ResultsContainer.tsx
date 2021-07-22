@@ -5,7 +5,6 @@ import {
   getSearchTotals,
   getSearchResults,
   getSearchEntityType,
-  getSearchResultPageInfoTotal,
   getSearchId,
   getSearchResultsPage,
   getSearchFiltersSynced,
@@ -24,7 +23,6 @@ const mapStateToProps = (state: RootState) => ({
   searchResults: getSearchResults(state),
   pageInfo: getSearchResultsPage(state),
   searchFiltersSynced: getSearchFiltersSynced(state),
-  pageInfoTotal: getSearchResultPageInfoTotal(state),
   isSearchFetching: getSearchIsFetching(state),
 });
 
