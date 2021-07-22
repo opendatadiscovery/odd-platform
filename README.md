@@ -1,7 +1,7 @@
 <img src="./images/open-data-discovery-platform-odd-logo.png" width="600px" alt="open-data-discovery-logo"/>&nbsp;
 
-[![Maintenance](https://img.shields.io/maintenance/yes/2021?style=for-the-badge)]()
 [![Apache2](https://img.shields.io/badge/license-Apache2-green.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
+[![Maintenance](https://img.shields.io/maintenance/yes/2021?style=for-the-badge)]()
 [![GitHub contributors](https://img.shields.io/github/contributors/opendatadiscovery/odd-platform?style=for-the-badge)](https://github.com/opendatadiscovery/odd-platform/graphs/contributors)
 
 <br>
