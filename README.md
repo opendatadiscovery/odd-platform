@@ -22,8 +22,9 @@
 
 ## Overview
 
-Open Data Discovery Platform (ODD Platform) is a reference implementation of [Open Data Discovery Spec](https://github.com/opendatadiscovery/opendatadiscovery-specification).
 We’re building a next-generation data discovery and observability tool for enterprises that helps to efficiently democratize data, powers collaboration of data science and data engineering teams, significantly reduces time to data discovery, cuts on data downtime and offers modern, easy-to-use environment with quick time-to-value. ODD makes all your data entities reliable, observable, and easily discoverable.  
+
+* :point_right: Open Data Discovery Platform (ODD Platform) is a reference implementation of [Open Data Discovery Spec](https://github.com/opendatadiscovery/opendatadiscovery-specification).
 
 
 <br>
