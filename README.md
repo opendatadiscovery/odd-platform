@@ -1,5 +1,5 @@
 
-<p align="center">
+<p>
 <img src="./images/open-data-discovery-platform-odd-logo.png" width="600px" alt="open-data-discovery-logo"/>&nbsp;
 </p>
 
