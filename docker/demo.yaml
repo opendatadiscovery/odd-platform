@@ -15,11 +15,9 @@ services:
     image: ghcr.io/opendatadiscovery/odd-platform:latest
     restart: always
     environment:
-      - POSTGRES_HOST=database
-      - POSTGRES_PORT=5432
-      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/${POSTGRES_DATABASE}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_DATABASE}
     depends_on:
       - database
     ports:
