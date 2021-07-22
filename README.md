@@ -6,7 +6,7 @@
 
 <br>
 
-# Open Data Platform: Next-Gen Data Discovery, Observability and Reliability 
+# Open Data Discovery Platform: Next-Gen Data Observability and Reliability 
 
 <br>
 
