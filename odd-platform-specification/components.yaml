@@ -491,7 +491,8 @@ components:
         - type: object
           properties:
             data_quality_test_id:
-              type: string
+              type: integer
+              format: int64
             start_time:
               type: string
               format: date-time
@@ -504,7 +505,7 @@ components:
               type: string
               enum:
                 - SUCCESS
-                - FAIL
+                - FAILED
                 - SKIPPED
                 - BROKEN
                 - ABORTED

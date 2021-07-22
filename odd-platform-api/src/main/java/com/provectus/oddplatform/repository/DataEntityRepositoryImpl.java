@@ -187,10 +187,7 @@ public class DataEntityRepositoryImpl
         return Page.<DataEntityDimensionsDto>builder()
             .hasNext(false)
             .total(fetchCount(query))
-            .data(dataEntitySelect(DataEntitySelectConfig.emptyConfig())
-                .fetchStream()
-                .map(this::mapDimensionRecord)
-                .collect(Collectors.toList()))
+            .data(listByConfig(DataEntitySelectConfig.emptyConfig()))
             .build();
     }
 
@@ -388,6 +385,26 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
+    public Collection<DataEntityDimensionsDto> listByOddrns(final Collection<String> oddrns) {
+        return listByConfig(DataEntitySelectConfig.builder()
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
+            .build());
+    }
+
+    @Override
+    public Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns) {
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
+            .build();
+
+        return dataEntitySelect(config)
+            .fetchStream()
+            .map(this::mapDetailsRecord)
+            .map(this::enrichDataEntityDetailsDto)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns) {
         return listAllByOddrns(oddrns, null, null);
     }
@@ -407,10 +424,7 @@ public class DataEntityRepositoryImpl
                 configBuilder.dataEntitySelectConditions(singletonList(DATA_ENTITY.SUBTYPE_ID.eq(subTypeId)));
         }
 
-        return dataEntitySelect(configBuilder.build())
-            .fetchStream()
-            .map(this::mapDimensionRecord)
-            .collect(Collectors.toList());
+        return listByConfig(configBuilder.build());
     }
 
     @Override
@@ -456,10 +470,7 @@ public class DataEntityRepositoryImpl
             .dataEntityLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
             .build();
 
-        return dataEntitySelect(config)
-            .fetchStream()
-            .map(this::mapDimensionRecord)
-            .collect(Collectors.toList());
+        return listByConfig(config);
     }
 
     @Override
@@ -724,7 +735,11 @@ public class DataEntityRepositoryImpl
                 new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
         }
 
-        return dataEntitySelect(configBuilder.build())
+        return listByConfig(configBuilder.build());
+    }
+
+    private List<DataEntityDimensionsDto> listByConfig(final DataEntitySelectConfig config) {
+        return dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toList());

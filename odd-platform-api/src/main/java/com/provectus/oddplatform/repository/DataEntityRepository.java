@@ -17,6 +17,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface DataEntityRepository extends CRUDRepository<DataEntityDimensionsDto> {
+    Collection<DataEntityDimensionsDto> listByOddrns(final Collection<String> oddrns);
+
+    Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns);
+
     List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns);
 
     List<DataEntityDimensionsDto> listByType(final int page,
