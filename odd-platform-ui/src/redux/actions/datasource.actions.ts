@@ -1,7 +1,7 @@
 import { createAsyncAction } from 'typesafe-actions';
 import { DataSource, DataSourceList } from 'generated-sources';
 import { DeleteDataSource } from 'redux/interfaces/datasources';
-import { PaginatedResponse } from '../interfaces/common';
+import { PaginatedResponse } from 'redux/interfaces';
 
 export const fetchDataSourcesAction = createAsyncAction(
   'GET_DATASOURCE_LIST__REQUEST',
