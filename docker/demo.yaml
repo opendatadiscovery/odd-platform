@@ -1,0 +1,109 @@
+version: "3.8"
+services:
+  # --- ODD Platform ---
+  database:
+    image: postgres:13.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    ports:
+      - 5432:5432
+
+  odd-platform:
+    image: ghcr.io/opendatadiscovery/odd-platform:latest
+    restart: always
+    environment:
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    depends_on:
+      - database
+    ports:
+      - 8080:8080
+
+  # --- ODD Platform Puller ---
+  redis:
+    image: redis:6.2.1-alpine
+    restart: always
+    command: [ "redis-server", "--bind", "redis", "--port", "6379" ]
+    ports:
+      - 6379:6379
+
+  celery-worker:
+    image: ghcr.io/opendatadiscovery/odd-platform-puller:latest
+    command: celery -A app worker -l debug
+    environment:
+      - CATALOG_HOST=http://odd-platform:8080
+    depends_on:
+      - redis
+      - odd-platform
+
+  celery-beat:
+    image: ghcr.io/opendatadiscovery/odd-platform-puller:latest
+    command: celery -A app beat -l debug
+    environment:
+      - CATALOG_HOST=http://odd-platform:8080
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+      - odd-platform
+
+  # --- ODD Adapters ---
+  mysql-adapter:
+    image: ghcr.io/opendatadiscovery/adapters/odd-mysql-adapter:latest
+    environment:
+      - MYSQLHOST=${MYSQLHOST}
+      - MYSQLPORT=${MYSQLPORT}
+      - MYSQLDATABASE=${MYSQLDATABASE}
+      - MYSQLUSER=${MYSQLUSER}
+      - MYSQLPASSWORD=${MYSQLPASSWORD}
+    ports:
+      - 8084:8080
+    depends_on:
+      - celery-worker
+      - celery-beat
+  
+  postgresql-adapter:
+    image: ghcr.io/opendatadiscovery/adapters/odd-postgresql-adapter:latest
+    environment:
+      - PGHOST=${PGHOST}
+      - PGPORT=${PGPORT}
+      - PGDATABASE=${PGDATABASE}
+      - PGUSER=${PGUSER}
+      - PGPASSWORD=${PGPASSWORD}
+    ports:
+      - 8085:8080
+    depends_on:
+      - celery-worker
+      - celery-beat
+
+  glue-adapter:
+    image: ghcr.io/opendatadiscovery/adapters/odd-glue-adapter:latest
+    environment:
+      - CATALOG_ID=${CATALOG_ID}
+      - AWS_REGION=${AWS_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - 8086:8080
+    depends_on:
+      - celery-worker
+      - celery-beat
+
+  redshift-adapter:
+    image: ghcr.io/opendatadiscovery/adapters/odd-redshift-adapter:latest
+    environment:
+      - PGHOST=${REDSHIFT_HOST}
+      - PGPORT=${REDSHIFT_PORT}
+      - PGDATABASE=${REDSHIFT_DATABASE}
+      - PGUSER=${REDSHIFT_USER}
+      - PGPASSWORD=${REDSHIFT_PASSWORD}
+    ports:
+      - 8087:8080
+    depends_on:
+      - celery-worker
+      - celery-beat
