@@ -15,7 +15,7 @@
 # Open Data Discovery Platform: Next-Gen Data Observability and Reliability 
 
 <p align="center">
-<img src="./images/odd-data-catalog-ui.jpgg" width="1000px" alt="odd-data-catalog-ui"/>&nbsp;
+<img src="./images/odd-data-catalog-ui.jpg" width="1000px" alt="odd-data-catalog-ui"/>&nbsp;
 </p>
 
 <br>
