@@ -68,7 +68,7 @@ Use a docker-compose file to launch ODD Platform on your local machine.
 
 TBD
 
-### Deppoying to Kubernetes with Helm Charts
+### Deploying to Kubernetes with Helm Charts
 
 <br>
 
