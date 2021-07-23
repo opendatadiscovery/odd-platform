@@ -18,6 +18,7 @@ import {
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import SearchResultsSkeleton from 'components/Search/Results/SearchResultsSkeleton/SearchResultsSkeleton';
+import SearchTabsSkeleton from 'components/Search/Results/SearchTabsSkeleton/SearchTabsSkeleton';
 import ResultItem from './ResultItem/ResultItem';
 import { StylesType } from './ResultsStyles';
 
@@ -124,13 +125,17 @@ const Results: React.FC<ResultsProps> = ({
 
   return (
     <div className={classes.container}>
-      <AppTabs
-        variant="primary"
-        classes={{ container: classes.tabsContainer }}
-        items={tabs}
-        selectedTab={selectedTab}
-        handleTabChange={onSearchTypeChange}
-      />
+      {isSearchFetching ? (
+        <SearchTabsSkeleton length={tabs.length} />
+      ) : (
+        <AppTabs
+          variant="primary"
+          classes={{ container: classes.tabsContainer }}
+          items={tabs}
+          selectedTab={selectedTab}
+          handleTabChange={onSearchTypeChange}
+        />
+      )}
       {isSearchFetching && !searchResults.length ? (
         <SearchResultsSkeleton length={10} />
       ) : (
