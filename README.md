@@ -75,9 +75,9 @@ We’re building a next-generation data discovery and observability tool for ent
 
 ### Running Locally with Docker Compose
 
-docker-compose -f docker/demo.yaml up -d
+```docker-compose -f docker/demo.yaml up -d```
 
-TBD
+* :point_right: [QUICKSTART](./docker/README.md)
 
 ### Deploying to Kubernetes with Helm Charts
 
