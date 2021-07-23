@@ -40,7 +40,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
 
   const dataRefListEllipsis = (
     menuName: string,
-    list?: DataEntityRef[]
+    list?: DataEntityRef[] | string[]
   ) => () => {
     let anchorEl;
     return (
@@ -71,11 +71,15 @@ const ResultItem: React.FC<ResultItemProps> = ({
           open={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
         >
-          {list?.map(item => (
-            <MenuItem key={item.id}>
-              {item.internalName || item.externalName}
-            </MenuItem>
-          ))}
+          {list?.map((item: DataEntityRef | string) =>
+            typeof item === 'string' ? (
+              <MenuItem key={item}>{item}</MenuItem>
+            ) : (
+              <MenuItem key={item.id}>
+                {item.internalName || item.externalName}
+              </MenuItem>
+            )
+          )}
         </Menu>
       </>
     );
@@ -134,6 +138,75 @@ const ResultItem: React.FC<ResultItemProps> = ({
                   to={dataEntityDetailsPath(target.id)}
                 >
                   {target.internalName || target.externalName}
+                </Link>
+              </AppButton>
+            </TruncateMarkup.Atom>
+          ))}
+        </div>
+      </TruncateMarkup>
+    );
+  }
+
+  let datasetsList;
+  if (
+    'datasetsList' in searchResult &&
+    searchResult.datasetsList?.length
+  ) {
+    datasetsList = (
+      <TruncateMarkup
+        lines={1}
+        lineHeight="16px"
+        ellipsis={dataRefListEllipsis(
+          'datasetsList',
+          searchResult.datasetsList
+        )}
+      >
+        <div className={classes.truncatedList}>
+          {searchResult.datasetsList?.map(dataset => (
+            <TruncateMarkup.Atom key={dataset.id}>
+              <AppButton
+                color="primaryLight"
+                size="small"
+                onClick={() => {}}
+              >
+                <Link
+                  target="__blank"
+                  to={dataEntityDetailsPath(dataset.id)}
+                >
+                  {dataset.internalName || dataset.externalName}
+                </Link>
+              </AppButton>
+            </TruncateMarkup.Atom>
+          ))}
+        </div>
+      </TruncateMarkup>
+    );
+  }
+
+  let linkedUrlList;
+  if (
+    'linkedUrlList' in searchResult &&
+    searchResult.linkedUrlList?.length
+  ) {
+    linkedUrlList = (
+      <TruncateMarkup
+        lines={1}
+        lineHeight="16px"
+        ellipsis={dataRefListEllipsis(
+          'linkedUrlList',
+          searchResult.linkedUrlList
+        )}
+      >
+        <div className={classes.truncatedList}>
+          {searchResult.linkedUrlList?.map(linkedUrl => (
+            <TruncateMarkup.Atom key={linkedUrl}>
+              <AppButton
+                color="primaryLight"
+                size="small"
+                onClick={() => {}}
+              >
+                <Link target="__blank" to={linkedUrl}>
+                  {linkedUrl}
                 </Link>
               </AppButton>
             </TruncateMarkup.Atom>
@@ -202,6 +275,22 @@ const ResultItem: React.FC<ResultItemProps> = ({
           <Grid item className={cx(classes.col, classes.collg)}>
             {sources}
           </Grid>
+        ) : null}
+        {searchType &&
+        searchType === totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id ? (
+          <>
+            <Grid
+              item
+              container
+              wrap="wrap"
+              className={cx(classes.col, classes.collg)}
+            >
+              {datasetsList}
+            </Grid>
+            <Grid item className={cx(classes.col, classes.collg)}>
+              {linkedUrlList}
+            </Grid>
+          </>
         ) : null}
         <Grid item className={cx(classes.col, classes.colmd)}>
           <Typography
