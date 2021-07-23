@@ -8,7 +8,6 @@ import {
   getMyDownstreamDataEntitiesFetching,
   getPopularDataEntitiesFetching,
 } from './dataentity.selectors';
-import { getSearchIsFetching } from './dataentitySearch.selectors';
 import { getIsDatasourcesListFetching } from './datasources.selectors';
 import { getIsTagsListFetching } from './tags.selectors';
 import { getDataSetStructureFetching } from './datasetStructure.selectors';
@@ -17,7 +16,6 @@ import { getIdentityFetching } from './profile.selectors';
 
 export const getMainContentLoading = createSelector(
   getDataEntitiesListFetching,
-  getSearchIsFetching,
   getDataEntityDetailsFetching,
   getDataSetStructureFetching,
   getDataEntityLineageFetching,

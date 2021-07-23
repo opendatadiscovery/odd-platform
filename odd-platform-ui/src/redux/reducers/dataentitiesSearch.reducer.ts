@@ -30,7 +30,7 @@ export const initialState: SearchState = {
   },
   facets: {},
   facetState: {},
-  isFiltersStateSynced: true,
+  isFacetsStateSynced: true,
 };
 
 const updateSearchState = (
@@ -89,9 +89,9 @@ const updateSearchState = (
               }
             )
           ),
-    isFiltersStateSynced: true,
+    isFacetsStateSynced: true,
     results: {
-      items: state.results.items,
+      items: [],
       pageInfo: {
         page: 0,
         total: payload.total || 0,
@@ -101,7 +101,7 @@ const updateSearchState = (
   };
 };
 
-const updateFilter = (
+const updateFacet = (
   state: SearchState,
   payload: FacetStateUpdate
 ): SearchState => {
@@ -131,7 +131,7 @@ const updateFilter = (
   }
   return {
     ...state,
-    isFiltersStateSynced: false,
+    isFacetsStateSynced: false,
     myObjects:
       payload.facetName === 'types'
         ? payload.facetOptionId === 'my'
@@ -154,12 +154,20 @@ const updateFilter = (
           }),
       },
     },
+    results: {
+      items: [],
+      pageInfo: {
+        page: 0,
+        total: 0,
+        hasNext: true,
+      },
+    },
   };
 };
 
 const clearFilters = (state: SearchState): SearchState => ({
   ...state,
-  isFiltersStateSynced: false,
+  isFacetsStateSynced: false,
   facetState: mapValues(state.facetState, (filter, facetName) => {
     if (facetName === 'types') return state.facetState.types; // Not clearing types filter
     return reduce<SearchFacetStateById, SearchFacetStateById>(
@@ -199,7 +207,7 @@ const reducer = (state = initialState, action: Action): SearchState => {
         },
       };
     case getType(actions.changeDataEntitySearchFilterAction):
-      return updateFilter(state, action.payload);
+      return updateFacet(state, action.payload);
     case getType(actions.clearDataEntitySearchFiltersAction):
       return clearFilters(state);
     case getType(actions.getSearchFacetOptionsAction.success):

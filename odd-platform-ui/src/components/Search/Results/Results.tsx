@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircularProgress, Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import cx from 'classnames';
@@ -17,6 +17,7 @@ import {
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
+import SearchResultsSkeleton from 'components/Search/Results/SearchResultsSkeleton/SearchResultsSkeleton';
 import ResultItem from './ResultItem/ResultItem';
 import { StylesType } from './ResultsStyles';
 
@@ -27,11 +28,11 @@ interface ResultsProps extends StylesType {
   searchResults: DataEntity[];
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
-  isFetching: boolean;
   totals: SearchTotalsByName;
   getDataEntitiesSearchResults: (
     params: SearchApiGetSearchResultsRequest
   ) => void;
+  isSearchFetching: boolean;
 }
 
 const Results: React.FC<ResultsProps> = ({
@@ -43,8 +44,8 @@ const Results: React.FC<ResultsProps> = ({
   pageInfo,
   totals,
   searchFiltersSynced,
-  isFetching,
   getDataEntitiesSearchResults,
+  isSearchFetching,
 }) => {
   const dispatch = useDispatch();
 
@@ -130,69 +131,69 @@ const Results: React.FC<ResultsProps> = ({
         selectedTab={selectedTab}
         handleTabChange={onSearchTypeChange}
       />
-      <Grid
-        container
-        className={cx(classes.resultsTable, classes.resultsTableHeader)}
-        wrap="nowrap"
-      >
-        <Grid item className={cx(classes.col, classes.collg)}>
-          <Typography variant="caption">Name</Typography>
+      {isSearchFetching && !searchResults.length ? (
+        <SearchResultsSkeleton length={10} />
+      ) : (
+        <Grid
+          container
+          className={cx(classes.resultsTable, classes.resultsTableHeader)}
+          wrap="nowrap"
+        >
+          <Grid item className={cx(classes.col, classes.collg)}>
+            <Typography variant="caption">Name</Typography>
+          </Grid>
+          {searchType &&
+          searchType === totals[DataEntityTypeNameEnum.SET]?.id ? (
+            <>
+              <Grid item className={cx(classes.col, classes.colxs)}>
+                <Typography variant="caption">Use</Typography>
+              </Grid>
+              <Grid item className={cx(classes.col, classes.colxs)}>
+                <Typography variant="caption">Rows</Typography>
+              </Grid>
+              <Grid item className={cx(classes.col, classes.colxs)}>
+                <Typography variant="caption">Columns</Typography>
+              </Grid>
+            </>
+          ) : null}
+          {searchType &&
+          searchType === totals[DataEntityTypeNameEnum.TRANSFORMER]?.id ? (
+            <>
+              <Grid item className={cx(classes.col, classes.collg)}>
+                <Typography variant="caption">Sources</Typography>
+              </Grid>
+              <Grid item className={cx(classes.col, classes.collg)}>
+                <Typography variant="caption">Targets</Typography>
+              </Grid>
+            </>
+          ) : null}
+          <Grid item className={cx(classes.col, classes.colmd)}>
+            <Typography variant="caption">Namespace</Typography>
+          </Grid>
+          <Grid item className={cx(classes.col, classes.colmd)}>
+            <Typography variant="caption">Datasource</Typography>
+          </Grid>
+          <Grid item className={cx(classes.col, classes.colmd)}>
+            <Typography variant="caption">Owners</Typography>
+          </Grid>
+          <Grid item className={cx(classes.col, classes.colsm)}>
+            <Typography variant="caption">Created</Typography>
+          </Grid>
+          <Grid item className={cx(classes.col, classes.colsm)}>
+            <Typography variant="caption">Last Update</Typography>
+          </Grid>
         </Grid>
-        {searchType &&
-        searchType === totals[DataEntityTypeNameEnum.SET]?.id ? (
-          <>
-            <Grid item className={cx(classes.col, classes.colxs)}>
-              <Typography variant="caption">Use</Typography>
-            </Grid>
-            <Grid item className={cx(classes.col, classes.colxs)}>
-              <Typography variant="caption">Rows</Typography>
-            </Grid>
-            <Grid item className={cx(classes.col, classes.colxs)}>
-              <Typography variant="caption">Columns</Typography>
-            </Grid>
-          </>
-        ) : null}
-        {searchType &&
-        searchType === totals[DataEntityTypeNameEnum.TRANSFORMER]?.id ? (
-          <>
-            <Grid item className={cx(classes.col, classes.collg)}>
-              <Typography variant="caption">Sources</Typography>
-            </Grid>
-            <Grid item className={cx(classes.col, classes.collg)}>
-              <Typography variant="caption">Targets</Typography>
-            </Grid>
-          </>
-        ) : null}
-        <Grid item className={cx(classes.col, classes.colmd)}>
-          <Typography variant="caption">Namespace</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colmd)}>
-          <Typography variant="caption">Datasource</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colmd)}>
-          <Typography variant="caption">Owners</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colsm)}>
-          <Typography variant="caption">Created</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colsm)}>
-          <Typography variant="caption">Last Update</Typography>
-        </Grid>
-      </Grid>
-      <div
-        id="results-list"
-        className={cx(classes.listContainer, classes.resultsTable)}
-      >
-        {searchResults?.length ? (
+      )}
+      {searchResults?.length ? (
+        <div
+          id="results-list"
+          className={cx(classes.listContainer, classes.resultsTable)}
+        >
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}
             hasMore={!!pageInfo.hasNext}
-            loader={
-              <div className={classes.spinnerContainer}>
-                <CircularProgress color="primary" size={30} />
-              </div>
-            }
+            loader={<SearchResultsSkeleton length={5} />}
             scrollThreshold="200px"
             scrollableTarget="results-list"
           >
@@ -206,9 +207,10 @@ const Results: React.FC<ResultsProps> = ({
               />
             ))}
           </InfiniteScroll>
-        ) : null}
-      </div>
-      {!isFetching && !searchResults?.length ? (
+        </div>
+      ) : null}
+
+      {!isSearchFetching && !pageInfo.total ? (
         <Typography variant="subtitle1">No Matches Found</Typography>
       ) : null}
     </div>

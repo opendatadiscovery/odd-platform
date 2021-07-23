@@ -310,6 +310,10 @@ public class IngestionServiceImpl implements IngestionService {
             }
 
             allEntity.getMetadata().forEach((mfName, mfValue) -> {
+                if (mfValue == null) {
+                    return;
+                }
+
                 final MetadataFieldKey.MetadataTypeEnum fieldType = isDate(mfValue)
                     ? MetadataFieldKey.MetadataTypeEnum.DATETIME
                     : MetadataFieldKey.MetadataTypeEnum.getMetadataType(mfValue.getClass());
@@ -445,7 +449,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private boolean isDate(final Object object) {
-        return object.getClass().equals(String.class) && isDate(object.toString());
+        return object != null && object.getClass().equals(String.class) && isDate(object.toString());
     }
 
     private boolean isDate(final String string) {

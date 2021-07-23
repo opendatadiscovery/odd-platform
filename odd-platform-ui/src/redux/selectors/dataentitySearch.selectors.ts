@@ -11,14 +11,12 @@ import {
   RootState,
   OptionalFacetNames,
   SearchState,
-} from 'redux/interfaces';
-import { DataEntityTypeNameEnum } from 'generated-sources';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
-import {
   SearchFilterStateSynced,
   SearchFacetStateById,
   SearchType,
-} from '../interfaces/search';
+} from 'redux/interfaces';
+import { DataEntityTypeNameEnum } from 'generated-sources';
+import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 
 const searchState = ({ search }: RootState): SearchState => search;
 
@@ -35,22 +33,24 @@ export const getSearchUpdateStatus = createFetchingSelector(
 );
 
 export const getSearchResultsFetchStatus = createFetchingSelector(
-  'GET_SEARCH_RESULTS'
+  'GET_DATA_ENTITIES_SEARCH_RESULTS'
 );
 
 export const getSearchFiltersSynced = createSelector(
   searchState,
-  search => search.isFiltersStateSynced
+  search => search.isFacetsStateSynced
 );
 
 export const getSearchIsFetching = createSelector(
-  getSearchCreationStatus,
   getSearchFetchStatus,
   getSearchUpdateStatus,
   getSearchFiltersSynced,
-  (statusCreate, statusFetch, statusUpdate, isSynced) =>
-    [statusCreate, statusFetch, statusUpdate].indexOf('fetching') >= 0 ||
-    (!isSynced && statusUpdate !== 'errorFetching')
+  getSearchResultsFetchStatus,
+  searchState,
+  (statusFetch, statusUpdate, isSynced, statusResults, search) =>
+    [statusFetch, statusUpdate, statusResults].includes('fetching') ||
+    !isSynced ||
+    (!!search.results.pageInfo.total && !search.results.items.length)
 );
 
 export const getSearchId = createSelector(
@@ -106,7 +106,7 @@ export const getSelectedSearchFacetOptions = createSelector(
 );
 
 export const getSearchFiltersData = createSelector(searchState, search =>
-  mapValues(search.facetState, (facetState, facetName) =>
+  mapValues(search.facetState, facetState =>
     pickBy(facetState, facetOption => !facetOption.syncedState)
   )
 );

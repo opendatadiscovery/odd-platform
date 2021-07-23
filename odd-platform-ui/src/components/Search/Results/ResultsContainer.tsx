@@ -5,10 +5,10 @@ import {
   getSearchTotals,
   getSearchResults,
   getSearchEntityType,
-  getSearchIsFetching,
   getSearchId,
   getSearchResultsPage,
   getSearchFiltersSynced,
+  getSearchIsFetching,
 } from 'redux/selectors/dataentitySearch.selectors';
 import { getDataEntityTypesByName } from 'redux/selectors/dataentity.selectors';
 import { getDataEntitiesSearchResults } from 'redux/thunks/dataentitiesSearch.thunks';
@@ -23,7 +23,7 @@ const mapStateToProps = (state: RootState) => ({
   searchResults: getSearchResults(state),
   pageInfo: getSearchResultsPage(state),
   searchFiltersSynced: getSearchFiltersSynced(state),
-  isFetching: getSearchIsFetching(state),
+  isSearchFetching: getSearchIsFetching(state),
 });
 
 const mapDispatchToProps = {

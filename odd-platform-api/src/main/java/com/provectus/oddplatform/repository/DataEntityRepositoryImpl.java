@@ -226,7 +226,7 @@ public class DataEntityRepositoryImpl
         }
 
         return select
-            .where(DATA_ENTITY_SUBTYPE.NAME.likeIgnoreCase("%" + (StringUtils.hasLength(facetQuery) ? facetQuery : "") + "%"))
+            .where(DATA_ENTITY_SUBTYPE.NAME.containsIgnoreCase(StringUtils.hasLength(facetQuery) ? facetQuery : ""))
             .and(TYPE_SUBTYPE_RELATION.TYPE_ID.eq(selectedType))
             .groupBy(DATA_ENTITY_SUBTYPE.ID, DATA_ENTITY_SUBTYPE.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
@@ -273,7 +273,8 @@ public class DataEntityRepositoryImpl
         }
 
         return select
-            .where(OWNER.NAME.likeIgnoreCase("%" + (StringUtils.hasLength(facetQuery) ? facetQuery : "") + "%"))
+            .where(OWNER.NAME.containsIgnoreCase((StringUtils.hasLength(facetQuery) ? facetQuery : "")))
+            .and(OWNER.IS_DELETED.isFalse())
             .groupBy(OWNER.ID, OWNER.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
             .limit(size)
@@ -319,7 +320,8 @@ public class DataEntityRepositoryImpl
         }
 
         return select
-            .where(TAG.NAME.likeIgnoreCase("%" + (StringUtils.hasLength(facetQuery) ? facetQuery : "") + "%"))
+            .where(TAG.NAME.containsIgnoreCase(StringUtils.hasLength(facetQuery) ? facetQuery : ""))
+            .and(TAG.IS_DELETED.isFalse())
             .groupBy(TAG.ID, TAG.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
             .limit(size)

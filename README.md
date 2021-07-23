@@ -1,5 +1,5 @@
 
-<p align="center">
+<p>
 <img src="./images/open-data-discovery-platform-odd-logo.png" width="600px" alt="open-data-discovery-logo"/>&nbsp;
 </p>
 
@@ -14,12 +14,17 @@
 
 # Open Data Discovery Platform: Next-Gen Data Observability and Reliability 
 
+<p align="center">
+<img src="./images/odd-data-catalog-ui.jpg" width="1000px" alt="odd-data-catalog-ui"/>&nbsp;
+</p>
+
 <br>
 
 ## Overview
 
-Open Data Platform (ODD Platform) is a reference implementation of [Open Data Spec](https://github.com/opendatadiscovery/opendatadiscovery-specification).
 We’re building a next-generation data discovery and observability tool for enterprises that helps to efficiently democratize data, powers collaboration of data science and data engineering teams, significantly reduces time to data discovery, cuts on data downtime and offers modern, easy-to-use environment with quick time-to-value. ODD makes all your data entities reliable, observable, and easily discoverable.  
+
+* :point_right: Open Data Discovery Platform (ODD Platform) is a reference implementation of [Open Data Discovery Spec](https://github.com/opendatadiscovery/opendatadiscovery-specification).
 
 
 <br>
@@ -68,13 +73,15 @@ We’re building a next-generation data discovery and observability tool for ent
 
 ## Getting Started 
 
-### Building Locally with Docker Compose
+### Running Locally with Docker Compose
 
-Use a docker-compose file to launch ODD Platform on your local machine.
+```docker-compose -f docker/demo.yaml up -d```
 
-TBD
+* :point_right: [QUICKSTART](./docker/README.md)
 
 ### Deploying to Kubernetes with Helm Charts
+
+TBA 
 
 <br>
 
