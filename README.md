@@ -73,9 +73,9 @@ We’re building a next-generation data discovery and observability tool for ent
 
 ## Getting Started 
 
-### Building Locally with Docker Compose
+### Running Locally with Docker Compose
 
-Use a docker-compose file to launch ODD Platform on your local machine.
+docker-compose -f docker/demo.yaml up -d
 
 TBD
 
