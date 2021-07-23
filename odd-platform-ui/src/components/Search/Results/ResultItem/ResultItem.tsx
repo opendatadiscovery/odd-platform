@@ -1,25 +1,13 @@
-import React, { MouseEvent } from 'react';
-import {
-  withStyles,
-  Typography,
-  Grid,
-  Menu,
-  MenuItem,
-} from '@material-ui/core';
-import TruncateMarkup from 'react-truncate-markup';
-import { formatDistanceToNowStrict, format } from 'date-fns';
+import React from 'react';
+import { Grid, Typography, withStyles } from '@material-ui/core';
+import { format, formatDistanceToNowStrict } from 'date-fns';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
-import {
-  DataEntity,
-  DataEntityTypeNameEnum,
-  DataEntityRef,
-} from 'generated-sources';
+import { DataEntity, DataEntityTypeNameEnum } from 'generated-sources';
 import { SearchTotalsByName, SearchType } from 'redux/interfaces/search';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import MoreIcon from 'components/shared/Icons/MoreIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
+import ResultItemTruncatedCell from 'components/Search/Results/ResultItem/ResultItemTruncatedCell/ResultItemTruncatedCell';
 import { styles, StylesType } from './ResultItemStyles';
 
 interface ResultItemProps extends StylesType {
@@ -36,185 +24,6 @@ const ResultItem: React.FC<ResultItemProps> = ({
 }) => {
   const detailsLink = dataEntityDetailsPath(searchResult.id);
 
-  const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false);
-
-  const dataRefListEllipsis = (
-    menuName: string,
-    list?: DataEntityRef[] | string[]
-  ) => () => {
-    let anchorEl;
-    return (
-      <>
-        <AppButton
-          ref={el => {
-            anchorEl = el;
-          }}
-          color="expand"
-          size="small"
-          icon={<MoreIcon />}
-          edge="end"
-          aria-label=""
-          aria-controls={`menu-${menuName}-${searchResult.id}`}
-          aria-haspopup="true"
-          onClick={(event: MouseEvent) => {
-            event.stopPropagation();
-            setIsMenuOpen(true);
-          }}
-        />
-        <Menu
-          anchorEl={anchorEl || null}
-          getContentAnchorEl={null}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          id={`menu-${menuName}-${searchResult.id}`}
-          keepMounted
-          open={isMenuOpen}
-          onClose={() => setIsMenuOpen(false)}
-        >
-          {list?.map((item: DataEntityRef | string) =>
-            typeof item === 'string' ? (
-              <MenuItem key={item}>{item}</MenuItem>
-            ) : (
-              <MenuItem key={item.id}>
-                {item.internalName || item.externalName}
-              </MenuItem>
-            )
-          )}
-        </Menu>
-      </>
-    );
-  };
-
-  let sources;
-  if ('sourceList' in searchResult && searchResult.sourceList?.length) {
-    sources = (
-      <TruncateMarkup
-        lines={1}
-        lineHeight="16px"
-        ellipsis={dataRefListEllipsis('sources', searchResult.sourceList)}
-      >
-        <div className={classes.truncatedList}>
-          {searchResult.sourceList?.map(source => (
-            <TruncateMarkup.Atom key={source.id}>
-              <AppButton
-                color="primaryLight"
-                size="small"
-                onClick={() => {}}
-              >
-                <Link
-                  // key={source.id}
-                  target="__blank"
-                  to={dataEntityDetailsPath(source.id)}
-                >
-                  {source.internalName || source.externalName}
-                </Link>
-              </AppButton>
-            </TruncateMarkup.Atom>
-          ))}
-        </div>
-      </TruncateMarkup>
-    );
-  }
-
-  let targets;
-  if ('targetList' in searchResult && searchResult.targetList?.length) {
-    targets = (
-      <TruncateMarkup
-        lines={1}
-        lineHeight="16px"
-        ellipsis={dataRefListEllipsis('targets', searchResult.targetList)}
-      >
-        <div className={classes.truncatedList}>
-          {searchResult.targetList?.map(target => (
-            <TruncateMarkup.Atom key={target.id}>
-              <AppButton
-                color="primaryLight"
-                size="small"
-                onClick={() => {}}
-              >
-                <Link
-                  // key={target.id}
-                  target="__blank"
-                  to={dataEntityDetailsPath(target.id)}
-                >
-                  {target.internalName || target.externalName}
-                </Link>
-              </AppButton>
-            </TruncateMarkup.Atom>
-          ))}
-        </div>
-      </TruncateMarkup>
-    );
-  }
-
-  let datasetsList;
-  if (
-    'datasetsList' in searchResult &&
-    searchResult.datasetsList?.length
-  ) {
-    datasetsList = (
-      <TruncateMarkup
-        lines={1}
-        lineHeight="16px"
-        ellipsis={dataRefListEllipsis(
-          'datasetsList',
-          searchResult.datasetsList
-        )}
-      >
-        <div className={classes.truncatedList}>
-          {searchResult.datasetsList?.map(dataset => (
-            <TruncateMarkup.Atom key={dataset.id}>
-              <AppButton
-                color="primaryLight"
-                size="small"
-                onClick={() => {}}
-              >
-                <Link
-                  target="__blank"
-                  to={dataEntityDetailsPath(dataset.id)}
-                >
-                  {dataset.internalName || dataset.externalName}
-                </Link>
-              </AppButton>
-            </TruncateMarkup.Atom>
-          ))}
-        </div>
-      </TruncateMarkup>
-    );
-  }
-
-  let linkedUrlList;
-  if (
-    'linkedUrlList' in searchResult &&
-    searchResult.linkedUrlList?.length
-  ) {
-    linkedUrlList = (
-      <TruncateMarkup
-        lines={1}
-        lineHeight="16px"
-        ellipsis={dataRefListEllipsis(
-          'linkedUrlList',
-          searchResult.linkedUrlList
-        )}
-      >
-        <div className={classes.truncatedList}>
-          {searchResult.linkedUrlList?.map(linkedUrl => (
-            <TruncateMarkup.Atom key={linkedUrl}>
-              <AppButton
-                color="primaryLight"
-                size="small"
-                onClick={() => {}}
-              >
-                <Link target="__blank" to={linkedUrl}>
-                  {linkedUrl}
-                </Link>
-              </AppButton>
-            </TruncateMarkup.Atom>
-          ))}
-        </div>
-      </TruncateMarkup>
-    );
-  }
   return (
     <Link to={detailsLink} className={classes.itemLink}>
       <Grid container className={classes.container} wrap="nowrap">
@@ -263,17 +72,26 @@ const ResultItem: React.FC<ResultItemProps> = ({
               wrap="wrap"
               className={cx(classes.col, classes.collg)}
             >
-              {sources}
+              <ResultItemTruncatedCell
+                searchResult={searchResult}
+                truncatedCellType="sourceList"
+              />
             </Grid>
             <Grid item className={cx(classes.col, classes.collg)}>
-              {targets}
+              <ResultItemTruncatedCell
+                searchResult={searchResult}
+                truncatedCellType="targetList"
+              />
             </Grid>
           </>
         ) : null}
         {searchType &&
         searchType === totals[DataEntityTypeNameEnum.CONSUMER]?.id ? (
           <Grid item className={cx(classes.col, classes.collg)}>
-            {sources}
+            <ResultItemTruncatedCell
+              searchResult={searchResult}
+              truncatedCellType="sourceList"
+            />
           </Grid>
         ) : null}
         {searchType &&
@@ -285,10 +103,16 @@ const ResultItem: React.FC<ResultItemProps> = ({
               wrap="wrap"
               className={cx(classes.col, classes.collg)}
             >
-              {datasetsList}
+              <ResultItemTruncatedCell
+                searchResult={searchResult}
+                truncatedCellType="datasetsList"
+              />
             </Grid>
             <Grid item className={cx(classes.col, classes.collg)}>
-              {linkedUrlList}
+              <ResultItemTruncatedCell
+                searchResult={searchResult}
+                truncatedCellType="linkedUrlList"
+              />
             </Grid>
           </>
         ) : null}
