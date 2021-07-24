@@ -96,6 +96,32 @@ To start contributing, use our [Contributing Guide](./CONTRIBUTING.md).
 
 <br>
 
+## Integrations
+-------------------------------------------------------------------------------
+
+ODD Platform works with many of the tools you're already using and is actively developing new integrations. 
+<table>
+	<thead>
+		<tr>
+			<th colspan="2">Integration</th>
+			<th>Notes</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/clickhouse-logo.jpg" />                                    </td><td style="width: 200px;">Clickhouse                  </td><td>Datasets, Transformers</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/microsoft-odbc-logo.jpg" />                             </td><td style="width: 200px;">Microsoft ODBC                    </td><td>Datasets, Transformers</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/mysql-logo.jpg" />          </td><td style="width: 200px;">MySQL                 </td><td>Datasets, Transformers</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dbt-logo.jpg" /></td><td style="width: 200px;">DBT</td><td>Datasets, Transformers, Transformer Runs</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dynamodb-logo.jpg" /></td><td style="width: 200px;">DynamoDB</td><td>Datasets</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/tableau-logo.jpg" />                       </td><td style="width: 200px;">Tableau                    </td><td>Datasets, Consumers</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-kafka-logo.jpg" />                 </td><td style="width: 200px;">Kafka            </td><td>Datasets</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://www.snowflake.com/wp-content/themes/snowflake/img/snowflake-logo-blue@2x.png" /> </td><td style="width: 200px;">Snowflake                </td><td>Datasets, Transformers</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/amazon-redshift-logo.jpg" /></td><td style="width: 200px;">Redshift          </td><td>Datasets, Transformers</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/postgresql-logo.jpg" />                                         </td><td style="width: 200px;">PostgreSQL </td><td>Datasets, Transformers</td></tr>
+</table>
+
+<br>
+
 ## License
 
 ODD Platform uses the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.txt).
