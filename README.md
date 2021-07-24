@@ -96,7 +96,7 @@ To start contributing, use our [Contributing Guide](./CONTRIBUTING.md).
 
 <br>
 
-##Integrations
+## Integrations
 
 
 ODD Platform works with many of the tools you're already using and is actively developing new integrations. 
