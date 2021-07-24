@@ -91,8 +91,10 @@ Contributing to ODD Platform is very welcome. For basic contributions, all you n
 * Work on new adapters 
 * Work on documentation
 
-To ensure equal and positive communication, we adhere to our [Code of Conduct](./CODE_OF_CONDUCT.md). Please read it and make sure to follow.
-To start contributing, use our [Contributing Guide](./CONTRIBUTING.md).
+To ensure equal and positive communication, we adhere to our [Code of Conduct](./CODE_OF_CONDUCT.md). Before starting any interactions with this repository, please read it and make sure to follow. 
+
+Please before contributing check out our [Contributing Guide](./CONTRIBUTING.md) and issues labeled "good first issue": 
+[![GitHub issues by-label](https://img.shields.io/github/issues/opendatadiscovery/odd-platform/good%20first%20issue?style=for-the-badge)](https://github.com/opendatadiscovery/odd-platform/contribute)
 
 <br>
 
