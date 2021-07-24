@@ -100,6 +100,8 @@ To start contributing, use our [Contributing Guide](./CONTRIBUTING.md).
 
 
 ODD Platform works with many of the tools you're already using and is actively developing new integrations. 
+
+Current integrations: 
 <table>
 	<thead>
 		<tr>
@@ -118,6 +120,28 @@ ODD Platform works with many of the tools you're already using and is actively d
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://www.snowflake.com/wp-content/themes/snowflake/img/snowflake-logo-blue@2x.png" /> </td><td style="width: 200px;">Snowflake                </td><td>Datasets, Transformers</td></tr>
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/amazon-redshift-logo.jpg" /></td><td style="width: 200px;">Redshift          </td><td>Datasets, Transformers</td></tr>
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/postgresql-logo.jpg" />                                         </td><td style="width: 200px;">PostgreSQL </td><td>Datasets, Transformers</td></tr>
+</table>
+
+<br>
+Coming soon: 
+
+<table>
+	<thead>
+		<tr>
+			<th colspan="2">Integration</th>
+			<th>Entities ODD Gathers Metadata From</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-hive-logo.jpg" />                                             </td><td style="width: 200px;">Apache Hive        </td><td>datasets</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/kubeflow-logo.jpg" />            </td><td style="width: 200px;">Kubeflow                   </td><td>transformers, transformer runs</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/mssql-server-logo.jpg" />            </td><td style="width: 200px;">MSSQL                   </td><td>datasets, transformers</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/amazon-sagemaker-logo.jpg" />            </td><td style="width: 200px;">SageMaker                   </td><td>datasets</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/oracle-logo.jpg" />            </td><td style="width: 200px;">Oracle                   </td><td>datasets, transformers</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dvc-logo.jpg" />            </td><td style="width: 200px;">DVC                </td><td>transformers, transformer runs</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-airflow-logo.jpg" />            </td><td style="width: 200px;">Airflow                </td><td>transformers, transformer runs</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-spark-logo.jpg" />            </td><td style="width: 200px;">Spark               </td><td>transformers, transformer runs</td></tr>
+	</tbody>
 </table>
 
 <br>
