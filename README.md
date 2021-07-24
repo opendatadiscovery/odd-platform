@@ -104,7 +104,7 @@ ODD Platform works with many of the tools you're already using and is actively d
 	<thead>
 		<tr>
 			<th colspan="2">Integration</th>
-			<th>Notes</th>
+			<th>Entities ODD Gathers Metadata From</th>
 		</tr>
 	</thead>
 	<tbody>
