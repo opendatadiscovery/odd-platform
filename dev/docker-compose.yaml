@@ -21,23 +21,30 @@ services:
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/${POSTGRES_DATABASE}
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
-      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_DATABASE}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - database
+    volumes:
+      - oddp_dev
+    networks:
+      - oddp_dev
     ports:
       - 8080:8080
 
   odd-platform-enricher:
     image: curlimages/curl:7.78.0
-    restart: always
     volumes:
       - ${PWD}/dev/requests:/requests
+      - oddp_dev
     environment:
       - CATALOG_HOSTNAME=odd-platform
+      - CONTEXT_PATH=/requests
     command:
       - /requests/ingest.sh
     entrypoint:
       - sh
+    networks:
+      - oddp_dev
 
 volumes:
   oddp_dev:
