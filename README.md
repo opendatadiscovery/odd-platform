@@ -114,7 +114,7 @@ Current integrations:
 		</tr>
 	</thead>
 	<tbody>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/clickhouse-logo.jpg" />                                    </td><td style="width: 200px;">Clickhouse                  </td><td>Datasets, Transformers</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/clickhouse-logo.jpg" />                                    </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-clickhouse-adapter">Clickhouse</a>                  </td><td>Datasets, Transformers</td></tr>
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/microsoft-odbc-logo.jpg" />                             </td><td style="width: 200px;">Microsoft ODBC                    </td><td>Datasets, Transformers</td></tr>
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/mysql-logo.jpg" />          </td><td style="width: 200px;">MySQL                 </td><td>Datasets, Transformers</td></tr>
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dbt-logo.jpg" /></td><td style="width: 200px;">DBT</td><td>Datasets, Transformers, Transformer Runs</td></tr>
