@@ -78,7 +78,7 @@ We’re building a next-generation data discovery and observability tool for ent
 
 ```docker-compose -f docker/demo.yaml up -d```
 
-* :point_right: [QUICKSTART](./docker/README.md)
+* :point_right: **[QUICKSTART](./docker/README.md)** 
 
 ### Deploying to Kubernetes with Helm Charts
 
