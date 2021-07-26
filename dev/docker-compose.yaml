@@ -1,0 +1,46 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:13.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    ports:
+      - 5432:5432
+    volumes:
+      - oddp_dev
+    networks:
+      - oddp_dev
+
+  odd-platform:
+    image: odd-platform:latest
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/${POSTGRES_DATABASE}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_DATABASE}
+    depends_on:
+      - database
+    ports:
+      - 8080:8080
+
+  odd-platform-enricher:
+    image: curlimages/curl:7.78.0
+    restart: always
+    volumes:
+      - ${PWD}/dev/requests:/requests
+    environment:
+      - CATALOG_HOSTNAME=odd-platform
+    command:
+      - /requests/ingest.sh
+    entrypoint:
+      - sh
+
+volumes:
+  oddp_dev:
+
+networks:
+  oddp_dev:
