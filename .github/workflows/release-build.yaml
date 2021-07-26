@@ -41,7 +41,7 @@ jobs:
             then
               VERSION="${{ github.event.release.tag_name }}"
             else
-              LATEST=`git describe --abbrev=0 --tags`
+              LATEST=`git tag -l --sort=creatordate | tail -1`
               VERSION=`echo ${LATEST} | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g'`-${{ github.sha }}
           fi
           echo ::set-output name=version::${VERSION}
