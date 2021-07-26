@@ -70,6 +70,7 @@ We’re building a next-generation data discovery and observability tool for ent
 * Doesn’t touch actual data for security reasons: operates metadata only  
 * Know what data is PII: label PII and other special data at the column level 
 
+[![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](https://forthebadge.com)
 <br>
 
 ## Getting Started 
