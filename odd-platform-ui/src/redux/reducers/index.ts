@@ -11,6 +11,7 @@ import owners from './owners.reducer';
 import datasetStructure from './datasetStructure.reducer';
 import dataEntityLineage from './dataentityLineage.reducer';
 import profile from './profile.reducer';
+import dataQualityTest from './dataQualityTest.reducer';
 
 export default combineReducers<RootState>({
   dataSources,
@@ -24,4 +25,5 @@ export default combineReducers<RootState>({
   labels,
   dataEntityLineage,
   profile,
+  dataQualityTest,
 });

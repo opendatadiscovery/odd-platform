@@ -102,7 +102,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
         @JsonProperty("suite_url")
         private String suiteUrl;
 
-        @JsonProperty("datasets_list")
+        @JsonProperty("dataset_list")
         private List<String> datasetOddrnList;
 
         @JsonProperty("linked_url_list")

@@ -17,6 +17,9 @@ import {
   DataEntitySubType,
   DataEntityRef,
   AssociatedOwner,
+  DataQualityTest,
+  DataQualityTestRun,
+  DataSetTestReport,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { LoaderState } from './loader';
@@ -71,6 +74,24 @@ export interface DatasetStructureState {
   };
   latestVersionByDataset: {
     [datasetId: string]: DataSetVersion['id'];
+  };
+}
+
+export interface DataQualityTestState {
+  qualityTestsById: {
+    [qualityTestId: string]: DataQualityTest;
+  };
+  allTestIdsByDatasetId: {
+    [datasetId: string]: DataQualityTest['id'][];
+  };
+  qualityTestRunsById: {
+    [qualityTestRunId: string]: DataQualityTest;
+  };
+  allTestRunIdsByTestId: {
+    [qualityTestId: string]: DataQualityTestRun['id'][];
+  };
+  datasetTestReportByEntityId: {
+    [dataEntityId: string]: DataSetTestReport;
   };
 }
 
@@ -135,6 +156,7 @@ export type RootState = {
   labels: LabelsState;
   dataEntityLineage: DataEntityLineageState;
   profile: ProfileState;
+  dataQualityTest: DataQualityTestState;
 };
 
 export type Action = ActionType<typeof actions>;
