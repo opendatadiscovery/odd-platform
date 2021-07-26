@@ -1,6 +1,7 @@
 export * from './datasources.thunks';
 export * from './dataentities.thunks';
 export * from './datasetStructure.thunks';
+export * from './dataQualityTest.thunks';
 export * from './dataentityLineage.thunks';
 export * from './dataentitiesSearch.thunks';
 export * from './owners.thunks';
