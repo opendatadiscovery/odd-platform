@@ -430,7 +430,7 @@ public class IngestionServiceImpl implements IngestionService {
 
         return types.contains(DATA_QUALITY_TEST) ? dto.getDatasetQualityTest().getDatasetList()
             .stream()
-            .map(dsOddrn -> new DataQualityTestRelationsPojo(dto.getOddrn(), dsOddrn))
+            .map(dsOddrn -> new DataQualityTestRelationsPojo(dsOddrn, dto.getOddrn()))
             .collect(Collectors.toList()) : emptyList();
     }
 

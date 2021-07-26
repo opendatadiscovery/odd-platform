@@ -54,7 +54,7 @@ public class DataQualityRepositoryImpl implements DataQualityRepository {
     public Optional<DatasetTestReportDto> getDatasetTestReport(final long datasetId) {
         final boolean datasetExists = dslContext.fetchExists(dslContext.selectFrom(DATA_ENTITY)
             .where(DATA_ENTITY.ID.eq(datasetId))
-            .and(DATA_ENTITY.HOLLOW));
+            .and(DATA_ENTITY.HOLLOW.isFalse()));
 
         if (!datasetExists) {
             return Optional.empty();
@@ -68,7 +68,7 @@ public class DataQualityRepositoryImpl implements DataQualityRepository {
             .on(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
             .where(DATA_ENTITY.ID.eq(datasetId))
             .groupBy(DATA_ENTITY_TASK_RUN.STATUS)
-            .fetchMap(Record2::component1, Long.class);
+            .fetchMap(Record2::component1, Record2::component2);
 
         // TODO: enum
         return Optional.of(DatasetTestReportDto.builder()
