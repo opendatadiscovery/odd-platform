@@ -86,7 +86,6 @@ public class IngestionServiceImpl implements IngestionService {
             .map(dsId -> ingestDataEntities(dataEntityList, dsId))
             .flatMap(split -> Mono
                 .zipDelayError(
-                    ingestTaskRuns(split),
                     ingestDatasetRevisions(split),
                     ingestDatasetStructure(split),
                     ingestMetadata(split)
@@ -182,12 +181,6 @@ public class IngestionServiceImpl implements IngestionService {
             .setStatus(testRun.getStatus().name())
             .setType(DATA_QUALITY_TEST_RUN.toString())
             .setDataEntityOddrn(testRun.getDataQualityTestOddrn());
-    }
-
-    private Mono<Void> ingestTaskRuns(final DataEntityIngestionDtoSplit split) {
-        // new entities --> simple insert
-        // old --> simple update?
-        return Mono.just(1).then();
     }
 
     private Mono<List<DatasetRevisionPojo>> ingestDatasetRevisions(final DataEntityIngestionDtoSplit entities) {
