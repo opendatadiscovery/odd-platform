@@ -194,3 +194,12 @@ export const getDataEntityInternalName = createSelector(
   (dataEntities, dataEntityId) =>
     dataEntities.byId[dataEntityId]?.internalName
 );
+
+export const getDataEntityIsDataset = createSelector(
+  dataEntitiesState,
+  getDataEntityId,
+  (dataEntities, dataEntityId) =>
+    !!dataEntities.byId[dataEntityId]?.types.find(
+      type => type.name === DataEntityTypeNameEnum.SET
+    )
+);

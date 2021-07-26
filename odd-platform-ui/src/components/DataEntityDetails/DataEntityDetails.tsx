@@ -29,6 +29,7 @@ interface DataEntityDetailsProps extends StylesType {
   viewType: string;
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
+  isDataset: boolean;
   fetchDataEntityDetails: (
     params: DataEntityApiGetDataEntityDetailsRequest
   ) => void;
@@ -39,6 +40,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   viewType,
   dataEntityId,
   dataEntityDetails,
+  isDataset,
   fetchDataEntityDetails,
 }) => {
   const [tabs, setTabs] = React.useState<AppTabItem[]>([
@@ -61,12 +63,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     setTabs(
       tabs.map(tab => ({
         ...tab,
-        hidden:
-          tab.name === 'Structure' &&
-          (!dataEntityDetails ||
-            !dataEntityDetails?.types.find(
-              type => type.name === DataEntityTypeNameEnum.SET
-            )),
+        hidden: tab.name === 'Structure' && !isDataset,
       }))
     );
   }, [dataEntityDetails]);
