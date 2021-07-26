@@ -7,6 +7,7 @@ import {
   dataEntityOverviewPath,
   datasetStructurePath,
   dataEntityLineagePath,
+  dataEntityTestReportPath,
 } from 'lib/paths';
 import {
   DataEntityDetails,
@@ -20,6 +21,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import TestReportContainer from 'components/DataEntityDetails/TestReport/TestReportContainer';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -49,6 +51,11 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       hidden: true,
     },
     { name: 'Lineage', link: dataEntityLineagePath(dataEntityId) },
+    {
+      name: 'Test reports',
+      link: dataEntityTestReportPath(dataEntityId),
+      hidden: true,
+    },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -62,14 +69,14 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       tabs.map(tab => ({
         ...tab,
         hidden:
-          tab.name === 'Structure' &&
+          (tab.name === 'Structure' || tab.name === 'Test reports') &&
           (!dataEntityDetails ||
             !dataEntityDetails?.types.find(
               type => type.name === DataEntityTypeNameEnum.SET
             )),
       }))
     );
-  }, [dataEntityDetails]);
+  }, [dataEntityDetails, tabs, setTabs]);
 
   React.useEffect(() => {
     setSelectedTab(
@@ -174,6 +181,11 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
               exact
               path="/dataentities/:dataEntityId/lineage"
               component={LineageContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/test_report"
+              component={TestReportContainer}
             />
             <Redirect
               from="/dataentities/:dataEntityId"
