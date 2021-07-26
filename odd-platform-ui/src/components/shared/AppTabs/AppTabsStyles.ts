@@ -96,7 +96,10 @@ export const styles = (theme: Theme) =>
       },
     },
     tabItemLabel: {
+      display: 'flex',
+      alignItems: 'center',
       '& span': {
+        alignSelf: 'center',
         marginLeft: '4px',
         verticalAlign: 'middle',
         backgroundColor: '#F4F5F7',
@@ -127,6 +130,11 @@ export const styles = (theme: Theme) =>
         color: '#091E42',
         backgroundColor: '#EBECF0',
       },
+    },
+    hintContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      height: '16px',
     },
   });
 

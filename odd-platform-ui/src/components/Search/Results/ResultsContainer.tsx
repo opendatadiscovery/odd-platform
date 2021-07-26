@@ -9,6 +9,8 @@ import {
   getSearchResultsPage,
   getSearchFiltersSynced,
   getSearchIsFetching,
+  getSearchIsCreated,
+  getSearchIsUpdated,
 } from 'redux/selectors/dataentitySearch.selectors';
 import { getDataEntityTypesByName } from 'redux/selectors/dataentity.selectors';
 import { getDataEntitiesSearchResults } from 'redux/thunks/dataentitiesSearch.thunks';
@@ -24,6 +26,8 @@ const mapStateToProps = (state: RootState) => ({
   pageInfo: getSearchResultsPage(state),
   searchFiltersSynced: getSearchFiltersSynced(state),
   isSearchFetching: getSearchIsFetching(state),
+  isSearchCreated: getSearchIsCreated(state),
+  isSearchUpdated: getSearchIsUpdated(state),
 });
 
 const mapDispatchToProps = {
