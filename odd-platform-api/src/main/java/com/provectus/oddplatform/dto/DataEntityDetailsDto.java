@@ -1,5 +1,7 @@
 package com.provectus.oddplatform.dto;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
@@ -16,6 +18,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -117,7 +120,17 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
             @JsonProperty("type")
             private String type;
 
-            private Map<String, String> additionalProperties;
+            private Map<String, String> additionalProperties = new HashMap<>();
+
+            @JsonAnyGetter
+            public Map<String, String> any() {
+                return this.additionalProperties;
+            }
+
+            @JsonAnySetter
+            public void set(final String name, final String value) {
+                this.additionalProperties.put(name, value);
+            }
         }
     }
 }
