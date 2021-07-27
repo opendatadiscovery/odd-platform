@@ -35,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.jooq.*;
-import org.jooq.exception.DataTypeException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -95,14 +94,17 @@ public class DataEntityRepositoryImpl
 
     private final FTSVectorizer vectorizer;
     private final TypeEntityRelationRepository typeEntityRelationRepository;
+    private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
 
     public DataEntityRepositoryImpl(final DSLContext dslContext,
                                     final FTSVectorizer vectorizer,
-                                    final TypeEntityRelationRepository typeEntityRelationRepository) {
+                                    final TypeEntityRelationRepository typeEntityRelationRepository,
+                                    final DataEntityTaskRunRepository dataEntityTaskRunRepository) {
         super(dslContext, DATA_ENTITY, DATA_ENTITY.ID, null, DataEntityDimensionsDto.class);
 
         this.vectorizer = vectorizer;
         this.typeEntityRelationRepository = typeEntityRelationRepository;
+        this.dataEntityTaskRunRepository = dataEntityTaskRunRepository;
     }
 
     @Override
@@ -404,6 +406,7 @@ public class DataEntityRepositoryImpl
         return dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDetailsRecord)
+            // TODO: Fix N + 1
             .map(this::enrichDataEntityDetailsDto)
             .collect(Collectors.toList());
     }
@@ -858,6 +861,9 @@ public class DataEntityRepositoryImpl
                 .suiteUrl(attrs.getSuiteUrl())
                 .datasetList(listAllByOddrns(attrs.getDatasetOddrnList()))
                 .linkedUrlList(attrs.getLinkedUrlList())
+                .latestTaskRun(dataEntityTaskRunRepository
+                    .getLatestRun(detailsDto.getDataEntity().getOddrn())
+                    .orElse(null))
                 .expectationType(attrs.getExpectation().getType())
                 .expectationParameters(attrs.getExpectation().getAdditionalProperties())
                 .build());
@@ -896,16 +902,11 @@ public class DataEntityRepositoryImpl
 
     @SuppressWarnings("unchecked")
     private <T> Set<T> extractAggRelation(final Record r, final String fieldName, final Class<T> fieldPojoClass) {
-        try {
-            return (Set<T>) r.get(fieldName, Set.class)
-                .stream()
-                .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        } catch (final IllegalArgumentException e) {
-            log.warn(e.toString());
-            return null;
-        }
+        return (Set<T>) r.get(fieldName, Set.class)
+            .stream()
+            .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 
     private <P> P extractRelation(final Record r, final Table<?> relationTable, final Class<P> pojoClass) {

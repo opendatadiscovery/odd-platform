@@ -55,6 +55,7 @@ public class DataQualityMapperImpl implements DataQualityMapper {
             .suiteName(dqDto.getSuiteName())
             .suiteUrl(dqDto.getSuiteUrl())
             .expectation(mapDataQualityTestExpectation(dqDto))
+            .latestRun(mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.getLatestTaskRun()))
             .linkedUrlList(dqDto.getLinkedUrlList())
             .datasetsList(dqDto
                 .getDatasetList()

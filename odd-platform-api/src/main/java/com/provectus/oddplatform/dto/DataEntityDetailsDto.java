@@ -3,8 +3,10 @@ package com.provectus.oddplatform.dto;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.provectus.oddplatform.ingestion.contract.model.DataTransformerRun;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
+import com.provectus.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -80,6 +82,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
         private Collection<? extends DataEntityDto> datasetList;
         private List<String> linkedUrlList;
         private String expectationType;
+        private DataEntityTaskRunPojo latestTaskRun;
         private Map<String, String> expectationParameters;
     }
 
