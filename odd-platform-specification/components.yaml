@@ -564,6 +564,9 @@ components:
         failed_total:
           type: integer
           format: int64
+        skipped_total:
+          type: integer
+          format: int64
         broken_total:
           type: integer
           format: int64

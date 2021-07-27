@@ -1,0 +1,93 @@
+name: Release Build
+on:
+  release:
+    types: [published]
+
+  workflow_dispatch:
+    inputs:
+      rebuild:
+        description: 'A tag name for building previously created release'
+        required: false
+        default: '0.0.0'
+
+jobs:
+  release:
+    runs-on: self-hosted
+    outputs:
+      version: ${{steps.get-version.outputs.version}}
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: true
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: Check version
+        id: get-version
+        run: |
+          if [[ "${{ github.event.action }}" == "published" ]]
+            then
+              VERSION="${{ github.event.release.tag_name }}"
+            else
+              LATEST=`git tag -l --sort=creatordate | tail -1`
+              VERSION=`echo ${LATEST} | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g'`-${{ github.sha }}
+          fi
+          echo ::set-output name=version::${VERSION}
+      - name: Cache local Gradle repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-Gradle-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-Gradle-
+      - name: Set up JDK 13
+        uses: actions/setup-java@v2
+        with:
+          java-version: '13'
+          distribution: 'adopt'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Build with Gradle
+        env:
+          CI: false
+        run: |
+          ./gradlew clean build --scan -P version=${{ steps.get-version.outputs.version }}
+  charts:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - uses: azure/setup-helm@v1
+      - name: update appVersion
+        run: |
+          export version=${{needs.release.outputs.version}}
+          sed -i "s/appVersion:.*/appVersion: ${version}/" charts/odd-platform/Chart.yaml
+      - name: add chart
+        if: ${{ github.event.action == 'published' }}
+        run: |
+          export VERSION=${{needs.release.outputs.version}}
+          MSG=$(helm package --app-version ${VERSION} charts/odd-platform)
+          git fetch origin
+          git stash
+          git checkout -b gh-pages origin/gh-pages
+          helm repo index .
+          git add -f ${MSG##*/} index.yaml
+          git commit -m "release ${VERSION}"
+          git push

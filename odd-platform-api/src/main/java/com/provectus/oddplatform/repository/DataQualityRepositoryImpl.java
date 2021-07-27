@@ -75,6 +75,7 @@ public class DataQualityRepositoryImpl implements DataQualityRepository {
             .successTotal(report.getOrDefault("SUCCESS", 0L))
             .failedTotal(report.getOrDefault("FAILED", 0L))
             .abortedTotal(report.getOrDefault("ABORTED", 0L))
+            .skippedTotal(report.getOrDefault("SKIPPED", 0L))
             .brokenTotal(report.getOrDefault("BROKEN", 0L))
             .unknownTotal(report.getOrDefault("UNKNOWN", 0L))
             .total(report.values().stream().mapToLong(a -> a).sum())

@@ -1,0 +1,81 @@
+{
+  "data_source_oddrn": "//ge/localhost",
+  "items": [
+    {
+      "oddrn": "//ge/localhost/titanic_pivot/table/expect_table_row_count_to_be_between/1620993781/run",
+      "name": "run",
+      "description": "#### Task Documentation\nYou can document your task using the attributes `doc_md` (markdown),\n`doc` (plain text), `doc_rst`, `doc_json`, `doc_yaml` which gets\nrendered in the UI's Task Instance Details page.\n![img](http: //montcs.bloomu.edu/~bobmon/Semesters/2012-01/491/import%20soul.png)\n",
+      "owner": "ge",
+      "type": "JOB_RUN",
+      "data_quality_test_run": {
+        "data_quality_test_oddrn": "//ge/localhost/titanic_pivot/table/expect_table_row_count_to_be_between/1620993781",
+        "start_time": "2021-02-23T12:07:49Z",
+        "end_time": "2021-02-23T12:07:49Z",
+        "status_reason": "",
+        "status": "SUCCESS"
+      },
+      "metadata": []
+    },
+    {
+      "oddrn": "//ge/localhost/titanic_pivot/table/expect_table_row_count_to_be_between/1620993781",
+      "name": "job",
+      "description": "#### Task Documentation\nYou can document your task using the attributes `doc_md` (markdown),\n`doc` (plain text), `doc_rst`, `doc_json`, `doc_yaml` which gets\nrendered in the UI's Task Instance Details page.\n![img](http: //montcs.bloomu.edu/~bobmon/Semesters/2012-01/491/import%20soul.png)\n",
+      "owner": "ge",
+      "type": "JOB",
+      "data_quality_test": {
+        "suite_name": "titanic_pivot",
+        "dataset_list": [
+          "//dbt/localhost/databases/analytics/schemas/dbt_claire/tables/mrr"
+        ],
+        "expectation": {
+          "type": "expect_table_row_count_to_be_between",
+          "max_value": 975,
+          "min_value": 798,
+          "additional_proprety": "yes",
+          "another_property_for_test": "yep"
+        },
+        "suite_url": "https://github.com/allure-framework/allure-docs/issues/21",
+        "linked_url_list": []
+      },
+      "metadata": []
+    },
+    {
+      "oddrn": "//ge/localhost/titanic_pivot/table/expect_table_row_count_to_be_between/1620993782/run",
+      "name": "run",
+      "description": "#### Task Documentation\nYou can document your task using the attributes `doc_md` (markdown),\n`doc` (plain text), `doc_rst`, `doc_json`, `doc_yaml` which gets\nrendered in the UI's Task Instance Details page.\n![img](http: //montcs.bloomu.edu/~bobmon/Semesters/2012-01/491/import%20soul.png)\n",
+      "owner": "ge",
+      "type": "JOB_RUN",
+      "data_quality_test_run": {
+        "data_quality_test_oddrn": "//ge/localhost/titanic_pivot/table/expect_table_row_count_to_be_between/1620993782",
+        "start_time": "2021-02-23T12:07:49Z",
+        "end_time": "2021-02-23T12:07:49Z",
+        "status_reason": "",
+        "status": "SUCCESS"
+      },
+      "metadata": []
+    },
+    {
+      "oddrn": "//ge/localhost/titanic_pivot/table/expect_table_row_count_to_be_between/1620993782",
+      "name": "job",
+      "description": "#### Task Documentation\nYou can document your task using the attributes `doc_md` (markdown),\n`doc` (plain text), `doc_rst`, `doc_json`, `doc_yaml` which gets\nrendered in the UI's Task Instance Details page.\n![img](http: //montcs.bloomu.edu/~bobmon/Semesters/2012-01/491/import%20soul.png)\n",
+      "owner": "ge",
+      "type": "JOB",
+      "data_quality_test": {
+        "suite_name": "titanic_pivot",
+        "dataset_list": [
+          "//dbt/localhost/databases/analytics/schemas/dbt_claire/tables/mrr"
+        ],
+        "expectation": {
+          "type": "expect_table_row_count_to_be_between",
+          "max_value": 975,
+          "min_value": 798,
+          "additional_proprety": "yes",
+          "another_property_for_test": "yep"
+        },
+        "suite_url": "https://github.com/allure-framework/allure-docs/issues/21",
+        "linked_url_list": []
+      },
+      "metadata": []
+    }
+  ]
+}

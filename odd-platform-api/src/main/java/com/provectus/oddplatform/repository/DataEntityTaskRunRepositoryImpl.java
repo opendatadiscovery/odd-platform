@@ -2,18 +2,16 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import com.provectus.oddplatform.model.tables.records.DataEntityTaskRunRecord;
-import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Table;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_TASK_RUN;
@@ -30,6 +28,14 @@ public class DataEntityTaskRunRepositoryImpl
     }
 
     @Override
+    public Optional<DataEntityTaskRunPojo> getLatestRun(final String dataEntityOddrn) {
+        return dslContext.selectFrom(DATA_ENTITY_TASK_RUN)
+            .where(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN.eq(dataEntityOddrn))
+            .orderBy(DATA_ENTITY_TASK_RUN.START_TIME.desc())
+            .fetchOptionalInto(DataEntityTaskRunPojo.class);
+    }
+
+    @Override
     @Transactional
     public void persist(final DataEntityTaskRunPojo pojo) {
         dslContext.selectFrom(DATA_ENTITY_TASK_RUN)
@@ -38,8 +44,7 @@ public class DataEntityTaskRunRepositoryImpl
             .map(r -> {
                 pojo.setId(r.getId());
                 return pojo;
-            })
-            .ifPresentOrElse(this::update, () -> create(pojo));
+            }).ifPresentOrElse(this::update, () -> create(pojo));
     }
 
     @Override

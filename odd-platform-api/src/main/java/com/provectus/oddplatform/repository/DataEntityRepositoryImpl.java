@@ -94,14 +94,17 @@ public class DataEntityRepositoryImpl
 
     private final FTSVectorizer vectorizer;
     private final TypeEntityRelationRepository typeEntityRelationRepository;
+    private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
 
     public DataEntityRepositoryImpl(final DSLContext dslContext,
                                     final FTSVectorizer vectorizer,
-                                    final TypeEntityRelationRepository typeEntityRelationRepository) {
+                                    final TypeEntityRelationRepository typeEntityRelationRepository,
+                                    final DataEntityTaskRunRepository dataEntityTaskRunRepository) {
         super(dslContext, DATA_ENTITY, DATA_ENTITY.ID, null, DataEntityDimensionsDto.class);
 
         this.vectorizer = vectorizer;
         this.typeEntityRelationRepository = typeEntityRelationRepository;
+        this.dataEntityTaskRunRepository = dataEntityTaskRunRepository;
     }
 
     @Override
@@ -397,11 +400,13 @@ public class DataEntityRepositoryImpl
     public Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .dataEntitySelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
+            .includeDetails(true)
             .build();
 
         return dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDetailsRecord)
+            // TODO: Fix N + 1
             .map(this::enrichDataEntityDetailsDto)
             .collect(Collectors.toList());
     }
@@ -856,6 +861,9 @@ public class DataEntityRepositoryImpl
                 .suiteUrl(attrs.getSuiteUrl())
                 .datasetList(listAllByOddrns(attrs.getDatasetOddrnList()))
                 .linkedUrlList(attrs.getLinkedUrlList())
+                .latestTaskRun(dataEntityTaskRunRepository
+                    .getLatestRun(detailsDto.getDataEntity().getOddrn())
+                    .orElse(null))
                 .expectationType(attrs.getExpectation().getType())
                 .expectationParameters(attrs.getExpectation().getAdditionalProperties())
                 .build());
@@ -894,7 +902,7 @@ public class DataEntityRepositoryImpl
 
     @SuppressWarnings("unchecked")
     private <T> Set<T> extractAggRelation(final Record r, final String fieldName, final Class<T> fieldPojoClass) {
-        return (Set<T>) r.getValue(fieldName, Set.class)
+        return (Set<T>) r.get(fieldName, Set.class)
             .stream()
             .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
             .filter(Objects::nonNull)

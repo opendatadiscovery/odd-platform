@@ -1,0 +1,7 @@
+{
+  "name": "DBT data source",
+  "oddrn": "//dbt/localhost",
+  "description": "DBT local environment data source",
+  "connection_url": "https://dbt-adapter:8080",
+  "active": false
+}
