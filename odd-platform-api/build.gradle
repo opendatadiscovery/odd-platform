@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'com.provectus'
-version = '0.0.1-SNAPSHOT'
+version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
+
 sourceCompatibility = '13'
 
 apply from: 'jooq.generate.gradle'

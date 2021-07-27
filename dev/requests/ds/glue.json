@@ -1,0 +1,8 @@
+{
+  "name": "Glue data source",
+  "oddrn": "//aws/glue/012345678910",
+  "description": "Glue local environment data source",
+  "connection_url": "https://glue-adapter:8080",
+  "active": true,
+  "pulling_interval": 1
+}

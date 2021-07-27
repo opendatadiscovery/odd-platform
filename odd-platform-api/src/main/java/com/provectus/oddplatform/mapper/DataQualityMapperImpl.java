@@ -55,6 +55,7 @@ public class DataQualityMapperImpl implements DataQualityMapper {
             .suiteName(dqDto.getSuiteName())
             .suiteUrl(dqDto.getSuiteUrl())
             .expectation(mapDataQualityTestExpectation(dqDto))
+            .latestRun(mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.getLatestTaskRun()))
             .linkedUrlList(dqDto.getLinkedUrlList())
             .datasetsList(dqDto
                 .getDatasetList()
@@ -78,6 +79,7 @@ public class DataQualityMapperImpl implements DataQualityMapper {
             .successTotal(report.getSuccessTotal())
             .failedTotal(report.getFailedTotal())
             .brokenTotal(report.getBrokenTotal())
+            .skippedTotal(report.getSkippedTotal())
             .abortedTotal(report.getAbortedTotal())
             .unknownTotal(report.getUnknownTotal());
     }
