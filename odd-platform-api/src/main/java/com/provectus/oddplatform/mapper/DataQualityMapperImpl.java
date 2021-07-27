@@ -78,6 +78,7 @@ public class DataQualityMapperImpl implements DataQualityMapper {
             .successTotal(report.getSuccessTotal())
             .failedTotal(report.getFailedTotal())
             .brokenTotal(report.getBrokenTotal())
+            .skippedTotal(report.getSkippedTotal())
             .abortedTotal(report.getAbortedTotal())
             .unknownTotal(report.getUnknownTotal());
     }

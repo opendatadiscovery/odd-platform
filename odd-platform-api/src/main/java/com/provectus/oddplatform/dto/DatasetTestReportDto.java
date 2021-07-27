@@ -13,6 +13,7 @@ public class DatasetTestReportDto {
     private long total;
     private long successTotal;
     private long failedTotal;
+    private long skippedTotal;
     private long brokenTotal;
     private long abortedTotal;
     private long unknownTotal;
