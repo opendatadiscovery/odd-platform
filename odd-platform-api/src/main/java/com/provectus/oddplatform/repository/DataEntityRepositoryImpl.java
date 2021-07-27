@@ -35,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.jooq.*;
+import org.jooq.exception.DataTypeException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -397,6 +398,7 @@ public class DataEntityRepositoryImpl
     public Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .dataEntitySelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
+            .includeDetails(true)
             .build();
 
         return dataEntitySelect(config)
@@ -894,11 +896,16 @@ public class DataEntityRepositoryImpl
 
     @SuppressWarnings("unchecked")
     private <T> Set<T> extractAggRelation(final Record r, final String fieldName, final Class<T> fieldPojoClass) {
-        return (Set<T>) r.getValue(fieldName, Set.class)
-            .stream()
-            .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+        try {
+            return (Set<T>) r.get(fieldName, Set.class)
+                .stream()
+                .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        } catch (final IllegalArgumentException e) {
+            log.warn(e.toString());
+            return null;
+        }
     }
 
     private <P> P extractRelation(final Record r, final Table<?> relationTable, final Class<P> pojoClass) {
