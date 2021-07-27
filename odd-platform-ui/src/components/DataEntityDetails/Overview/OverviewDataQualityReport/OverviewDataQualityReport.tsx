@@ -46,19 +46,19 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
           </Grid>
         </Grid>
         <Grid item container className={classes.totalScore}>
-          <Grid item container xs={6}>
+          <Grid item container xs={6} alignItems="baseline">
             <Typography variant="h4" className={classes.countValue}>
               {datasetQualityTestReport?.total}
             </Typography>
-            <Typography variant="body1" className={classes.countLabel}>
+            <Typography variant="subtitle2" className={classes.countLabel}>
               tests
             </Typography>
           </Grid>
-          <Grid item container xs={6}>
+          <Grid item container xs={6} alignItems="baseline">
             <Typography variant="h4" className={classes.countValue}>
               {datasetQualityTestReport?.score}%
             </Typography>
-            <Typography variant="body1" className={classes.countLabel}>
+            <Typography variant="subtitle2" className={classes.countLabel}>
               score
             </Typography>
           </Grid>
@@ -159,14 +159,20 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             aborted
           </Typography>
         </Grid>
-        {/* <Grid item container className={classes.countContainer}>
+        <Grid item container className={classes.countContainer}>
           <Typography variant="body1" className={classes.countValue}>
             {datasetQualityTestReport?.skippedTotal}
           </Typography>
-          <Typography variant="body1" className={cx(classes.countLabel, DataQualityTestRunStatusEnum.SKIPPED)}>
+          <Typography
+            variant="body1"
+            className={cx(
+              classes.countLabel,
+              DataQualityTestRunStatusEnum.SKIPPED
+            )}
+          >
             skipped
           </Typography>
-        </Grid> */}
+        </Grid>
         <Grid item container className={classes.countContainer}>
           <Typography variant="body1" className={classes.countValue}>
             {datasetQualityTestReport?.unknownTotal}

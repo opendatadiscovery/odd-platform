@@ -9,7 +9,7 @@ const statusColor = {
   FAILED: '#F2330D',
   BROKEN: '#FFAA00',
   SKIPPED: '#0080FF',
-  ABORTED: '#0080FF', // Temp
+  ABORTED: '#0066CC', // Temp
   OTHER: '#A8B0BD',
 };
 
@@ -27,7 +27,7 @@ export const styles = (theme: Theme) =>
       display: 'block',
     },
     totalScore: {
-      marginTop: theme.spacing(2),
+      marginTop: theme.spacing(2.75),
       marginBottom: theme.spacing(2),
     },
     countContainer: {
@@ -67,42 +67,59 @@ export const styles = (theme: Theme) =>
     }: {
       datasetQualityTestReport?: DataSetTestReport;
     }) => {
-      const totalPct = (datasetQualityTestReport?.total || 1) / 100;
+      // Stretching bars if total width less than 50%
+      const succRelation =
+        (datasetQualityTestReport?.successTotal || 0) /
+        (datasetQualityTestReport?.total || 1);
+      const otherStatusesAdjustment =
+        200 / (Math.round(1 - succRelation) + 1);
       return {
         height: '8px',
         width: '100%',
         [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
           backgroundColor: statusColor.SUCCESS,
           maxWidth: `${
-            (datasetQualityTestReport?.successTotal || 0) / totalPct
+            (succRelation * 200) / (Math.round(succRelation) + 1)
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
           backgroundColor: statusColor.FAILED,
           maxWidth: `${
-            (datasetQualityTestReport?.failedTotal || 0) / totalPct
+            ((datasetQualityTestReport?.failedTotal || 0) /
+              (datasetQualityTestReport?.total || 1)) *
+            otherStatusesAdjustment
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
           backgroundColor: statusColor.BROKEN,
           maxWidth: `${
-            (datasetQualityTestReport?.brokenTotal || 0) / totalPct
+            ((datasetQualityTestReport?.brokenTotal || 0) /
+              (datasetQualityTestReport?.total || 1)) *
+            otherStatusesAdjustment
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
           backgroundColor: statusColor.SKIPPED,
-          // maxWidth: `${(datasetQualityTestReport?.skippedTotal || 0) / totalPct}%`
+          maxWidth: `${
+            ((datasetQualityTestReport?.skippedTotal || 0) /
+              (datasetQualityTestReport?.total || 1)) *
+            otherStatusesAdjustment
+          }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
           backgroundColor: statusColor.ABORTED,
           maxWidth: `${
-            (datasetQualityTestReport?.abortedTotal || 0) / totalPct
+            ((datasetQualityTestReport?.abortedTotal || 0) /
+              (datasetQualityTestReport?.total || 1)) *
+            otherStatusesAdjustment
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.OTHER}`]: {
           backgroundColor: statusColor.OTHER,
           maxWidth: `${
-            (datasetQualityTestReport?.unknownTotal || 0) / totalPct
+            ((datasetQualityTestReport?.unknownTotal || 0) /
+              (datasetQualityTestReport?.total || 1)) *
+            otherStatusesAdjustment
           }%`,
         },
       };
