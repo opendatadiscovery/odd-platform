@@ -145,6 +145,7 @@ Coming soon:
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/oracle-logo.jpg" />            </td><td style="width: 200px;">Oracle                   </td><td>Datasets, Transformers</td></tr>
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dvc-logo.jpg" />            </td><td style="width: 200px;">DVC                </td><td>Transformers, Transformer Runs</td></tr>
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-spark-logo.jpg" />            </td><td style="width: 200px;">Spark               </td><td>Transformers, Transformer Runs</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/great-expectations-logo.jpg" />            </td><td style="width: 200px;">Great Expectations               </td><td>Transformers, Transformer Runs</td></tr>
 	</tbody>
 </table>
 
