@@ -3,6 +3,8 @@ import {
   DataQualityApiGetDatasetTestReportRequest,
   DataQualityApi,
   DataSetTestReport,
+  DataQualityApiGetDataEntityDataQATestsRequest,
+  DataEntityList,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import { PartialDataEntityUpdateParams } from 'redux/interfaces/dataentities';
@@ -23,6 +25,23 @@ export const fetchDataSetQualityTestReport = createThunk<
   (
     response: DataSetTestReport,
     request: DataQualityApiGetDatasetTestReportRequest
+  ) => ({
+    dataEntityId: request.dataEntityId,
+    value: response,
+  })
+);
+
+export const fetchDataSetQualityTestList = createThunk<
+  DataQualityApiGetDataEntityDataQATestsRequest,
+  DataEntityList,
+  PartialDataEntityUpdateParams<DataEntityList>
+>(
+  (params: DataQualityApiGetDataEntityDataQATestsRequest) =>
+    datasetQualityTestApiClient.getDataEntityDataQATests(params),
+  actions.fetchDataSetQualityTestListAction,
+  (
+    response: DataEntityList,
+    request: DataQualityApiGetDataEntityDataQATestsRequest
   ) => ({
     dataEntityId: request.dataEntityId,
     value: response,

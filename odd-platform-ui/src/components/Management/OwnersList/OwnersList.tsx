@@ -96,8 +96,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
       <div className={classes.caption}>
         <Typography variant="h1">Owners</Typography>
         <Typography variant="subtitle1" className={classes.totalCountText}>
-          {totalOwners ? <NumberFormatted value={totalOwners} /> : null}{' '}
-          owners overall
+          <NumberFormatted value={totalOwners} /> owners overall
         </Typography>
       </div>
       <div className={classes.caption}>

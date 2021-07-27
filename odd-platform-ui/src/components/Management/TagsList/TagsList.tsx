@@ -92,8 +92,7 @@ const TagsListView: React.FC<TagsListProps> = ({
       <div className={classes.caption}>
         <Typography variant="h1">Tags</Typography>
         <Typography variant="subtitle1" className={classes.totalCountText}>
-          {totalTags ? <NumberFormatted value={totalTags} /> : null} tags
-          overall
+          <NumberFormatted value={totalTags} /> tags overall
         </Typography>
       </div>
       <div className={classes.caption}>

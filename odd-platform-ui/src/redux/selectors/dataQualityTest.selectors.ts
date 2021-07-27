@@ -22,3 +22,10 @@ export const getDatasetTestReport = createSelector(
   (dataQualityTestState, dataEntityId) =>
     dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
 );
+
+export const getDatasetQualityTestList = createSelector(
+  getDataQualityTestState,
+  getDataEntityId,
+  (dataQualityTestState, dataEntityId) =>
+    dataQualityTestState.qualityTestsById[dataEntityId]
+);

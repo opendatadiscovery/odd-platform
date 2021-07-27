@@ -11,7 +11,6 @@ import {
 } from 'lib/paths';
 import {
   DataEntityDetails,
-  DataEntityTypeNameEnum,
   DataEntityApiGetDataEntityDetailsRequest,
 } from 'generated-sources';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -54,7 +53,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     },
     { name: 'Lineage', link: dataEntityLineagePath(dataEntityId) },
     {
-      name: 'Test reports',
+      name: 'test_report',
       link: dataEntityTestReportPath(dataEntityId),
       hidden: true,
     },
@@ -70,10 +69,12 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     setTabs(
       tabs.map(tab => ({
         ...tab,
-        hidden: tab.name === 'Structure' && !isDataset,
+        hidden:
+          (tab.name === 'Structure' || tab.name === 'Test reports') &&
+          !isDataset,
       }))
     );
-  }, [dataEntityDetails, tabs, setTabs]);
+  }, [dataEntityDetails]);
 
   React.useEffect(() => {
     setSelectedTab(
