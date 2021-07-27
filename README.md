@@ -151,6 +151,22 @@ Coming soon:
 
 <br>
 
+## ODD Data Model
+
+ODD operates the following high-level types of entities:
+
+<ol>
+<li><b>Datasets</b>(collections of data: tables, topics, files, feature groups)</li>
+<li><b>Transformers</b>(transformers of data: ETL or ML training jobs, experiments)</li> 
+<li><b>Data Consumers</b>(data consumers: ML models or BI dashboards)</li> 
+<li><b>Data Quality Tests</b>(data quality tests for datasets)</li> 
+<li><b>Data Inputs</b>(sources of data)</li>
+<li><b>Transformer Runs</b>(executions of ETL or ML training jobs)</li>
+<li><b>Quality Test Runs</b>executions of data quality tests</li> 
+</ol>
+
+For more information, please check **[specification.md](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md)**.
+
 ## License
 
 ODD Platform uses the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.txt).
