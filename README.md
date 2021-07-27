@@ -104,7 +104,7 @@ Please before contributing check out our [Contributing Guide](./CONTRIBUTING.md)
 
 ODD Platform works with many of the tools you're already using and is actively developing new integrations. 
 
-Current integrations: 
+Exisiting integrations: 
 <table>
 	<thead>
 		<tr>
