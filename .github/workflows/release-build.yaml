@@ -63,31 +63,4 @@ jobs:
         env:
           CI: false
         run: |
-          ./gradlew clean build --scan -P version=${{ steps.get-version.outputs.version }}
-  charts:
-    runs-on: ubuntu-latest
-    needs: release
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-      - uses: azure/setup-helm@v1
-      - name: update appVersion
-        run: |
-          export version=${{needs.release.outputs.version}}
-          sed -i "s/appVersion:.*/appVersion: ${version}/" charts/odd-platform/Chart.yaml
-      - name: add chart
-        if: ${{ github.event.action == 'published' }}
-        run: |
-          export VERSION=${{needs.release.outputs.version}}
-          MSG=$(helm package --app-version ${VERSION} charts/odd-platform)
-          git fetch origin
-          git stash
-          git checkout -b gh-pages origin/gh-pages
-          helm repo index .
-          git add -f ${MSG##*/} index.yaml
-          git commit -m "release ${VERSION}"
-          git push
+          ./gradlew clean jibDockerBuild --scan --full-stacktrace --debug --no-daemon --image odd-platform -P version=${{ steps.get-version.outputs.version }}
