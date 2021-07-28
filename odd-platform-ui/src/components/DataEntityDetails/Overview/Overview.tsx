@@ -7,10 +7,12 @@ import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
 import OverviewTags from './OverviewTags/OverviewTags';
 import { StylesType } from './OverviewStyles';
 import OverviewGeneralContainer from './OverviewGeneral/OverviewGeneralContainer';
+import OverviewDataQualityReportContainer from './OverviewDataQualityReport/OverviewDataQualityReportContainer';
 
 interface OverviewProps extends StylesType {
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
+  isDataset: boolean;
   isLoaded: boolean;
 }
 
@@ -18,6 +20,7 @@ const Overview: React.FC<OverviewProps> = ({
   classes,
   dataEntityId,
   dataEntityDetails,
+  isDataset,
 }) => (
   <div className={classes.container}>
     {dataEntityDetails ? (
@@ -45,6 +48,17 @@ const Overview: React.FC<OverviewProps> = ({
               dataEntityId={dataEntityDetails.id}
             />
           </Paper>
+          {isDataset ? (
+            <Paper
+              square
+              elevation={0}
+              className={classes.sectionContainer}
+            >
+              <OverviewDataQualityReportContainer
+                dataEntityId={dataEntityId}
+              />
+            </Paper>
+          ) : null}
           <Paper square elevation={0} className={classes.sectionContainer}>
             <OverviewTags
               tags={dataEntityDetails.tags}
