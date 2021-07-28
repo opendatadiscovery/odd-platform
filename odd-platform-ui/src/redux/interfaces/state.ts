@@ -81,8 +81,10 @@ export interface DataQualityTestState {
   qualityTestsById: {
     [qualityTestId: string]: DataQualityTest;
   };
-  allTestIdsByDatasetId: {
-    [datasetId: string]: DataQualityTest['id'][];
+  allSuiteNamesByDatasetId: {
+    [datasetId: string]: {
+      [suiteName: string]: DataQualityTest['id'][];
+    };
   };
   qualityTestRunsById: {
     [qualityTestRunId: string]: DataQualityTest;
@@ -92,6 +94,15 @@ export interface DataQualityTestState {
   };
   datasetTestReportByEntityId: {
     [dataEntityId: string]: DataSetTestReport;
+  };
+  testReportBySuiteName: {
+    [suiteName: string]: {
+      success: number;
+      failed: number;
+      skipped: number;
+      aborted: number;
+      unknown: number;
+    };
   };
 }
 

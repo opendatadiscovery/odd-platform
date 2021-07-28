@@ -1,15 +1,30 @@
 import { Action, DataQualityTestState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
-import { DataEntityList } from 'generated-sources';
+import {
+  DataEntity,
+  DataEntityList,
+  DataQualityTestRunStatusEnum,
+} from 'generated-sources';
 
 export const initialState: DataQualityTestState = {
   qualityTestsById: {},
-  allTestIdsByDatasetId: {},
+  allSuiteNamesByDatasetId: {},
   qualityTestRunsById: {},
   allTestRunIdsByTestId: {},
   datasetTestReportByEntityId: {},
+  testReportBySuiteName: {},
 };
+
+const latestRunStatusesCounter = (
+  arr: DataEntity[],
+  suiteName: string,
+  statusType: DataQualityTestRunStatusEnum
+): number =>
+  arr.filter(
+    item =>
+      item.suiteName === suiteName && item.latestRun?.status === statusType
+  ).length;
 
 const createDataSetQualityTestList = (
   state: DataQualityTestState,
@@ -26,18 +41,62 @@ const createDataSetQualityTestList = (
           ...dataSetQualityTest,
         },
       },
-      allTestIdsByDatasetId: {
-        ...memo.allTestIdsByDatasetId,
-        [datasetId]: [
-          ...memo.allTestIdsByDatasetId[datasetId],
-          dataSetQualityTest.id,
-        ],
+      allSuiteNamesByDatasetId: {
+        ...memo.allSuiteNamesByDatasetId,
+        [datasetId]: {
+          ...memo.allSuiteNamesByDatasetId[datasetId],
+          ...(dataSetQualityTest.suiteName
+            ? {
+                [dataSetQualityTest.suiteName]: [
+                  dataSetQualityTest.id,
+                  ...(memo.allSuiteNamesByDatasetId[datasetId]?.[
+                    dataSetQualityTest.suiteName
+                  ] || []),
+                ],
+              }
+            : null),
+        },
+      },
+      testReportBySuiteName: {
+        ...memo.testReportBySuiteName,
+        ...(dataSetQualityTest.suiteName
+          ? {
+              [dataSetQualityTest.suiteName]: {
+                ...memo.testReportBySuiteName[
+                  dataSetQualityTest.suiteName
+                ],
+                success: latestRunStatusesCounter(
+                  payload.items,
+                  dataSetQualityTest.suiteName,
+                  DataQualityTestRunStatusEnum.SUCCESS
+                ),
+                failed: latestRunStatusesCounter(
+                  payload.items,
+                  dataSetQualityTest.suiteName,
+                  DataQualityTestRunStatusEnum.FAILED
+                ),
+                skipped: latestRunStatusesCounter(
+                  payload.items,
+                  dataSetQualityTest.suiteName,
+                  DataQualityTestRunStatusEnum.SKIPPED
+                ),
+                aborted: latestRunStatusesCounter(
+                  payload.items,
+                  dataSetQualityTest.suiteName,
+                  DataQualityTestRunStatusEnum.ABORTED
+                ),
+                unknown: latestRunStatusesCounter(
+                  payload.items,
+                  dataSetQualityTest.suiteName,
+                  DataQualityTestRunStatusEnum.UNKNOWN
+                ),
+              },
+            }
+          : null),
       },
     }),
     {
       ...state,
-      qualityTestsById: {},
-      allTestIdsByDatasetId: {},
     }
   );
 

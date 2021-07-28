@@ -112,7 +112,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             <div
               className={cx(
                 classes.bar,
-                DataQualityTestRunStatusEnum.OTHER
+                DataQualityTestRunStatusEnum.UNKNOWN
               )}
             />
           </Grid>
@@ -181,7 +181,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             variant="body1"
             className={cx(
               classes.countLabel,
-              DataQualityTestRunStatusEnum.OTHER
+              DataQualityTestRunStatusEnum.UNKNOWN
             )}
           >
             unknown

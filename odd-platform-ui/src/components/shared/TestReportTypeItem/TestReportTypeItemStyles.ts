@@ -45,6 +45,7 @@ export const styles = (theme: Theme) =>
       backgroundColor: TestReportTypeColors.skipped.backgroundColor,
       borderColor: TestReportTypeColors.skipped.borderColor,
     },
+    aborted: {},
     unknown: {
       backgroundColor: TestReportTypeColors.unknown.backgroundColor,
       borderColor: TestReportTypeColors.unknown.borderColor,

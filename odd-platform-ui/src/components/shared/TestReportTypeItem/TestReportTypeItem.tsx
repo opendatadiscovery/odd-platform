@@ -11,6 +11,7 @@ export type DataSetTestReportTypeNames =
   | 'failed'
   | 'broken'
   | 'skipped'
+  | 'aborted'
   | 'unknown';
 
 interface TestReportTypeItemProps extends StylesType {

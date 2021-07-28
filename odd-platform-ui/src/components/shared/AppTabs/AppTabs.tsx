@@ -57,14 +57,6 @@ const AppTabs: React.FC<AppTabsProps> = ({
     setCurrent(selectedTab);
   }, [selectedTab]);
 
-  const formatName = (name: string) => {
-    const splitName = name.split('_');
-    const firstWord =
-      splitName[0].charAt(0).toUpperCase() + splitName[0].slice(1);
-    splitName[0] = firstWord;
-    return splitName.join(' ');
-  };
-
   return (
     <div className={cx(classes.container, className)}>
       <Tabs
@@ -82,13 +74,13 @@ const AppTabs: React.FC<AppTabsProps> = ({
           item.link ? (
             <LinkTab
               hidden={item.hidden}
-              key={formatName(item.name)}
+              key={item.name}
               label={
                 <Typography
                   variant="body1"
                   className={classes.tabItemLabel}
                 >
-                  {formatName(item.name)}
+                  {item.name}
                   {item.hint !== undefined && variant === 'primary' && (
                     <NumberFormatted value={item.hint} precision={0} />
                   )}
@@ -104,13 +96,13 @@ const AppTabs: React.FC<AppTabsProps> = ({
           ) : (
             <Tab
               hidden={item.hidden}
-              key={formatName(item.name)}
+              key={item.name}
               label={
                 <Typography
                   variant="body1"
                   className={classes.tabItemLabel}
                 >
-                  {formatName(item.name)}
+                  {item.name}
                   {item.hint !== undefined && variant === 'primary' && (
                     <NumberFormatted value={item.hint} precision={0} />
                   )}

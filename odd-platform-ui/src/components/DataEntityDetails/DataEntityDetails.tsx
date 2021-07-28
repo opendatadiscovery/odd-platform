@@ -45,17 +45,27 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   fetchDataEntityDetails,
 }) => {
   const [tabs, setTabs] = React.useState<AppTabItem[]>([
-    { name: 'Overview', link: dataEntityOverviewPath(dataEntityId) },
+    {
+      name: 'Overview',
+      link: dataEntityOverviewPath(dataEntityId),
+      value: 'overview',
+    },
     {
       name: 'Structure',
       link: datasetStructurePath(dataEntityId),
       hidden: true,
+      value: 'structure',
     },
-    { name: 'Lineage', link: dataEntityLineagePath(dataEntityId) },
     {
-      name: 'test_report',
+      name: 'Lineage',
+      link: dataEntityLineagePath(dataEntityId),
+      value: 'lineage',
+    },
+    {
+      name: 'Test reports',
       link: dataEntityTestReportPath(dataEntityId),
       hidden: true,
+      value: 'test-reports',
     },
   ]);
 
@@ -70,7 +80,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       tabs.map(tab => ({
         ...tab,
         hidden:
-          (tab.name === 'Structure' || tab.name === 'Test reports') &&
+          (tab.value === 'structure' || tab.value === 'test-reports') &&
           !isDataset,
       }))
     );
@@ -78,9 +88,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
 
   React.useEffect(() => {
     setSelectedTab(
-      viewType
-        ? tabs.findIndex(tab => tab.name.toLowerCase() === viewType)
-        : 0
+      viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
     );
   }, [tabs]);
 
@@ -182,7 +190,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test_report"
+              path="/dataentities/:dataEntityId/test-reports"
               component={TestReportContainer}
             />
             <Redirect
