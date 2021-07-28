@@ -7,7 +7,6 @@ import com.provectus.oddplatform.dto.DataEntityLineageDto;
 import com.provectus.oddplatform.dto.FacetStateDto;
 import com.provectus.oddplatform.dto.SearchFilterId;
 import com.provectus.oddplatform.dto.StreamKind;
-import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.utils.Page;
 
@@ -47,7 +46,7 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDto> bulkCreate(final List<DataEntityDto> dtos);
 
-    List<DataEntityPojo> bulkUpdate(final List<DataEntityPojo> dtos);
+    List<DataEntityDto> bulkUpdate(final List<DataEntityDto> dtos);
 
     void createHollow(final Collection<String> oddrns);
 
