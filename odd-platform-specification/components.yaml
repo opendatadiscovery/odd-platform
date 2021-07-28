@@ -1329,6 +1329,9 @@ components:
     Alert:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         data_entity:
           $ref: '#/components/schemas/DataEntityRef'
         description:
@@ -1345,6 +1348,12 @@ components:
         created_at:
           type: string
           format: date-time
+      required:
+        - id
+        - type
+        - description
+        - status
+        - created_at
 
     AlertType:
       type: string
