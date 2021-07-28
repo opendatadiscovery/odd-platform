@@ -23,7 +23,11 @@ spring:
 #            user-name-attribute:
 
 auth:
-  enabled: false
+  # DISABLED, LOGIN_FORM, OAUTH2
+  type: DISABLED
+
+  # username1:password1,username2:password2,etc
+  login-form-credentials: admin:admin,root:root
 
 management:
   endpoints:

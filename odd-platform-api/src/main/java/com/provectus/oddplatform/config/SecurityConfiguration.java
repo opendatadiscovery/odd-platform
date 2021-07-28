@@ -1,66 +1,95 @@
 package com.provectus.oddplatform.config;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.web.server.ServerWebExchange;
-import org.springframework.web.server.WebFilter;
-import org.springframework.web.server.WebFilterChain;
-import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @EnableWebFluxSecurity
 @Configuration
 public class SecurityConfiguration {
     @Bean
-    @ConditionalOnProperty(value = "auth.enabled", havingValue = "false")
-    public SecurityWebFilterChain securityWebFilterChainLocal(final ServerHttpSecurity http) {
+    @ConditionalOnProperty(value = "auth.type", havingValue = "DISABLED")
+    public SecurityWebFilterChain securityWebFilterChainDisabled(final ServerHttpSecurity http) {
         return http
             .csrf().disable()
             .authorizeExchange()
             .anyExchange().permitAll()
-            .and()
-            .build();
+            .and().build();
     }
 
     @Bean
-    @ConditionalOnProperty(value = "auth.enabled", havingValue = "true")
-    public SecurityWebFilterChain securityWebFilterChain(final ServerHttpSecurity http) {
-        return http
-            .csrf().disable()
-            .authorizeExchange()
-            .pathMatchers("/ingestion/entities").permitAll()
-            .pathMatchers("/health").permitAll()
-            .pathMatchers("/**").authenticated()
+    @ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
+    public SecurityWebFilterChain securityWebFilterChainOauth2(final ServerHttpSecurity http) {
+        return applyAuthPathMatchers(http)
             .and().oauth2Login()
             .and().build();
     }
 
     @Bean
-    public WebFilter corsFilter() {
-        return (final ServerWebExchange ctx, final WebFilterChain chain) -> {
-            final ServerHttpRequest request = ctx.getRequest();
+    @ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
+    public SecurityWebFilterChain securityWebFilterChainLoginForm(final ServerHttpSecurity http) {
+        return applyAuthPathMatchers(http)
+            .and().formLogin()
+            .and().build();
+    }
 
-            final ServerHttpResponse response = ctx.getResponse();
-            final HttpHeaders headers = response.getHeaders();
-            headers.add("Access-Control-Allow-Origin", "*");
-            headers.add("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
-            headers.add("Access-Control-Max-Age", "3600");
-            headers.add("Access-Control-Allow-Headers", "Content-Type");
+    @Bean
+    @ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
+    public MapReactiveUserDetailsService mapReactiveUserDetailsService(
+        @Value("${auth.login-form-credentials}") final String credentialString
+    ) {
+        final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-            if (request.getMethod() == HttpMethod.OPTIONS) {
-                response.setStatusCode(HttpStatus.OK);
-                return Mono.empty();
-            }
+        final List<UserDetails> users = Arrays
+            .stream(credentialString.split(","))
+            .map(LoginFormCredentials::parseCredentialString)
+            .map(c -> User
+                .withUsername(c.getUsername())
+                .passwordEncoder(pe::encode)
+                .password(c.getPassword())
+                .authorities("ROLE_USER")
+                .build())
+            .collect(Collectors.toList());
 
-            return chain.filter(ctx);
-        };
+        return new MapReactiveUserDetailsService(users);
+    }
+
+    private ServerHttpSecurity.AuthorizeExchangeSpec applyAuthPathMatchers(final ServerHttpSecurity http) {
+        return http
+            .csrf().disable()
+            .authorizeExchange()
+            .pathMatchers("/ingestion/entities").permitAll()
+            .pathMatchers("/health").permitAll()
+            .pathMatchers("/**").authenticated();
+    }
+
+    @Getter
+    @RequiredArgsConstructor
+    @Slf4j
+    private static class LoginFormCredentials {
+        private final String username;
+        private final String password;
+
+        private static LoginFormCredentials parseCredentialString(final String credentialString) {
+            final String[] credentials = credentialString.split(":");
+
+            return new LoginFormCredentials(credentials[0].trim(), credentials[1].trim());
+        }
     }
 }
