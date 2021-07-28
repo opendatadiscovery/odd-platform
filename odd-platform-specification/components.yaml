@@ -1440,6 +1440,14 @@ components:
         type: integer
         format: int64
 
+    AlertIdParam:
+      name: alert_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
   responses:
     Deleted:
       description: The resource has been successfully deleted
