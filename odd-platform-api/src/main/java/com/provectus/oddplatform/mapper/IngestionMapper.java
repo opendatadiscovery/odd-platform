@@ -22,5 +22,7 @@ public interface IngestionMapper {
 
     DataEntityDto ingestDtoToDto(final DataEntityIngestionDto ingestionDto);
 
+    DataEntityDto ingestDtoToDto(final EnrichedDataEntityIngestionDto ingestionDto);
+
     List<DataEntityDto> ingestDtoToDto(final Collection<DataEntityIngestionDto> ingestionDtos);
 }

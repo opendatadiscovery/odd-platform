@@ -56,6 +56,7 @@ import java.util.stream.Stream;
 import static com.provectus.oddplatform.model.Tables.*;
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
+import static java.util.function.Predicate.not;
 import static org.jooq.impl.DSL.*;
 
 @Repository
@@ -147,6 +148,7 @@ public class DataEntityRepositoryImpl
             .stream()
             .map(p -> {
                 final DataEntityDto dto = dtoDict.get(p.getOddrn());
+
                 return DataEntityDto.builder()
                     .dataEntity(dto.getDataEntity().setId(p.getId()))
                     .types(dto.getTypes())
@@ -156,8 +158,10 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public List<DataEntityPojo> bulkUpdate(final List<DataEntityPojo> pojos) {
-        final List<DataEntityRecord> records = pojos.stream()
+    @Transactional
+    public List<DataEntityDto> bulkUpdate(final List<DataEntityDto> dtos) {
+        final List<DataEntityRecord> records = dtos.stream()
+            .map(DataEntityDto::getDataEntity)
             .map(e -> dslContext.newRecord(recordTable, e))
             .peek(r -> {
                 r.changed(DATA_ENTITY.INTERNAL_DESCRIPTION, false);
@@ -166,11 +170,20 @@ public class DataEntityRepositoryImpl
             })
             .collect(Collectors.toList());
 
+        final List<TypeEntityRelationPojo> typeRelations = dtos
+            .stream()
+            .flatMap(d -> d.getTypes().stream().map(
+                t -> new TypeEntityRelationPojo()
+                    .setDataEntityId(d.getDataEntity().getId())
+                    .setDataEntityTypeId(t.getId())
+            ))
+            .collect(Collectors.toList());
+
+        typeEntityRelationRepository.bulkCreate(typeRelations);
+
         dslContext.batchUpdate(records).execute();
 
-        return records.stream()
-            .map(r -> r.into(DataEntityPojo.class))
-            .collect(Collectors.toList());
+        return dtos;
     }
 
     @Override
@@ -465,7 +478,7 @@ public class DataEntityRepositoryImpl
             .stream()
             .flatMap(lp -> Stream.of(lp.getParentOddrn(), lp.getChildOddrn()))
             .distinct()
-            .filter(Predicate.not(associatedOddrns::contains))
+            .filter(not(associatedOddrns::contains))
             .collect(Collectors.toList());
 
         return listAllByOddrns(oddrns, page, size);
@@ -598,19 +611,31 @@ public class DataEntityRepositoryImpl
             .map(this::enrichDataEntityDetailsDto)
             .collect(Collectors.toMap(dto -> dto.getDataEntity().getId(), identity()));
 
-        // TODO: rewrite on condition of presence of SearchEntrypoint instead of DataEntity
-        dslContext.batchInsert(newDataEntitiesIds.stream()
+        final Set<Long> seSet = dslContext.select(SEARCH_ENTRYPOINT.DATA_ENTITY_ID)
+            .from(SEARCH_ENTRYPOINT)
+            .where(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.in(allEntitiesIds))
+            .fetchStream()
+            .map(Record1::component1)
+            .collect(Collectors.toSet());
+
+        dslContext.batchUpdate(allEntitiesIds
+            .stream()
+            .filter(seSet::contains)
             .map(dataMap::get)
+            .filter(Objects::nonNull)
             .map(dto -> new SearchEntrypointRecord()
                 .setDataEntityId(dto.getDataEntity().getId())
                 .setDataEntityVector(vectorizer.toTsVector(dataMap.get(dto.getDataEntity().getId()))))
             .collect(Collectors.toList())).execute();
 
-        dslContext.batchUpdate(updatedDataEntitiesIds.stream()
+        dslContext.batchInsert(allEntitiesIds
+            .stream()
+            .filter(not(seSet::contains))
             .map(dataMap::get)
+            .filter(Objects::nonNull)
             .map(dto -> new SearchEntrypointRecord()
                 .setDataEntityId(dto.getDataEntity().getId())
-                .setDataEntityVector(vectorizer.toTsVector(dto)))
+                .setDataEntityVector(vectorizer.toTsVector(dataMap.get(dto.getDataEntity().getId()))))
             .collect(Collectors.toList())).execute();
     }
 

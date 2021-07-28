@@ -163,6 +163,20 @@ public class IngestionMapperImpl implements IngestionMapper {
     }
 
     @Override
+    public DataEntityDto ingestDtoToDto(final EnrichedDataEntityIngestionDto ingestionDto) {
+        final Set<DataEntityTypePojo> types = ingestionDto.getTypes().stream()
+            .map(DataEntityType::toString)
+            .map(dataEntityTypeRepository::findTypeByName)
+            .collect(Collectors.toSet());
+
+        return DataEntityDto.builder()
+            .dataEntity(dtoToPojo(ingestionDto))
+            .subtype(dataEntityTypeRepository.findSubtypeByName(ingestionDto.getSubType().toString()))
+            .types(types)
+            .build();
+    }
+
+    @Override
     public List<DataEntityDto> ingestDtoToDto(final Collection<DataEntityIngestionDto> ingestionDtos) {
         return ingestionDtos.stream().map(this::ingestDtoToDto).collect(Collectors.toList());
     }

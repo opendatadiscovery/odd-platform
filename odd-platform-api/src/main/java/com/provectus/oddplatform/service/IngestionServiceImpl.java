@@ -128,13 +128,12 @@ public class IngestionServiceImpl implements IngestionService {
                 return existingDto.getUpdatedAt() == null || isEntityUpdated(existingDto, existingPojo)
                     ? new EnrichedDataEntityIngestionDto(existingPojo.getId(), existingDto)
                     : null;
-
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
         dataEntityRepository.bulkUpdate(enrichedExistingDtos.stream()
-            .map(ingestionMapper::dtoToPojo)
+            .map(ingestionMapper::ingestDtoToDto)
             .collect(Collectors.toList()));
 
         final List<EnrichedDataEntityIngestionDto> enrichedNewDtos = dataEntityRepository
