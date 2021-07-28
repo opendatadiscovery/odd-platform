@@ -81,7 +81,7 @@ We’re building a next-generation data discovery and observability tool for ent
 
 ### Deploying to Kubernetes with Helm Charts
 
-TBA 
+* :point_right: **[QUICKSTART](./charts/QUICKSTART.md)**
 
 <br>
 
