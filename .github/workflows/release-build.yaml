@@ -63,4 +63,4 @@ jobs:
         env:
           CI: false
         run: |
-          ./gradlew clean jibDockerBuild --no-daemon --image odd-platform -P version=${{ steps.get-version.outputs.version }}
+          ./gradlew clean jibDockerBuild --scan --no-daemon --image odd-platform -P version=${{ steps.get-version.outputs.version }}
