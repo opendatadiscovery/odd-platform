@@ -452,9 +452,11 @@ components:
           type: string
         url:
           type: string
+        has_alerts:
+          type: boolean
       required:
         - id
-        - name
+        - external_name
 
     DataEntityRefList:
       type: array
@@ -1323,6 +1325,61 @@ components:
                 $ref: '#/components/schemas/SearchFilterState'
       required:
         - filters
+
+    Alert:
+      type: object
+      properties:
+        data_entity:
+          $ref: '#/components/schemas/DataEntityRef'
+        description:
+          type: string
+        type:
+          $ref: '#/components/schemas/AlertType'
+        status:
+          $ref: '#/components/schemas/AlertStatus'
+        status_updated_by:
+          $ref: '#/components/schemas/AssociatedOwner'
+        status_updated_at:
+          type: string
+          format: date-time
+        created_at:
+          type: string
+          format: date-time
+
+    AlertType:
+      type: string
+      enum:
+        - DISTRIBUTION_ANOMALY
+        - BACKWARDS_INCOMPATIBLE_SCHEMA
+
+    AlertStatus:
+      type: string
+      enum:
+        - OPEN
+        - RESOLVED
+
+    AlertList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alert'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+
+    AlertTotals:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int64
+        my_total:
+          type: integer
+          format: int64
+        dependent_total:
+          type: integer
+          format: int64
 
   parameters:
     PageParam:
