@@ -7,7 +7,8 @@ import {
 } from 'generated-sources';
 import { Grid, Paper, Typography } from '@material-ui/core';
 import TestReportTypeItem from 'components/shared/TestReportTypeItem/TestReportTypeItem';
-import TestReportItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItem';
+import TestReportItemContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemContainer';
+import TestRunDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportDetails/TestReportDetailsContainer';
 import { StylesType } from './TestReportStyles';
 
 interface DatasetQualityTestList {
@@ -26,6 +27,7 @@ interface TestReportBySuitName {
 
 interface TestReportProps extends StylesType {
   dataEntityId: number;
+  dataqatestId: number;
   datasetTestReport: DataSetTestReport;
   datasetQualityTestList: DatasetQualityTestList;
   fetchDataSetQualityTestList: (
@@ -35,12 +37,12 @@ interface TestReportProps extends StylesType {
     params: DataQualityApiGetDatasetTestReportRequest
   ) => void;
   testReportBySuitName: TestReportBySuitName;
-  testReportSuitNames: string[];
 }
 
 const TestReport: React.FC<TestReportProps> = ({
   classes,
   dataEntityId,
+  dataqatestId,
   datasetTestReport,
   datasetQualityTestList,
   fetchDataSetQualityTestList,
@@ -100,7 +102,9 @@ const TestReport: React.FC<TestReportProps> = ({
             <Grid container className={classes.testReportItemContainer}>
               {Object.entries(datasetQualityTestList).map(
                 ([suitName, dataQATestList]) => (
-                  <TestReportItem
+                  <TestReportItemContainer
+                    dataqatestId={dataqatestId}
+                    dataSetId={dataEntityId}
                     dataQATestReport={testReportBySuitName[suitName]}
                     key={suitName}
                     suitName={suitName}
@@ -112,7 +116,7 @@ const TestReport: React.FC<TestReportProps> = ({
           </Grid>
           <Grid item xs={4}>
             <Paper square elevation={0}>
-              TEST RUN DESCRIPTION
+              <TestRunDetailsContainer dataqatestId={dataqatestId} />
             </Paper>
           </Grid>
         </Grid>

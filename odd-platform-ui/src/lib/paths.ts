@@ -20,6 +20,9 @@ export const dataEntityLineagePath = (datasetId: number) =>
 export const dataEntityTestReportPath = (datasetId: number) =>
   `${dataEntityDetailsPath(datasetId)}/test-reports`;
 
+export const dataEntityTestPath = (datasetId: number, testId: number) =>
+  `${dataEntityTestReportPath(datasetId)}/${testId}`;
+
 // Entity type specific paths
 export const datasetStructurePath = (
   datasetId: number,

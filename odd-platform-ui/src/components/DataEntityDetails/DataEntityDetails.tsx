@@ -190,7 +190,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports"
+              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?"
               component={TestReportContainer}
             />
             <Redirect

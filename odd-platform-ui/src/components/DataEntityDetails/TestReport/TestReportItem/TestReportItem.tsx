@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataQualityTest } from 'generated-sources';
-import { Collapse, Grid, Typography, withStyles } from '@material-ui/core';
+import { Collapse, Grid, Typography } from '@material-ui/core';
 import TestReportTypeItem, {
   DataSetTestReportTypeNames,
 } from 'components/shared/TestReportTypeItem/TestReportTypeItem';
@@ -8,7 +8,9 @@ import cx from 'classnames';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import TestItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestItem/TestItem';
-import { styles, StylesType } from './TestReportItemStyles';
+import { dataEntityTestPath } from 'lib/paths';
+import { Link } from 'react-router-dom';
+import { StylesType } from './TestReportItemStyles';
 
 interface TestReport {
   success: number;
@@ -19,8 +21,9 @@ interface TestReport {
 }
 
 interface TestReportItemProps extends StylesType {
-  className?: string;
   suitName: string;
+  dataSetId: number;
+  dataqatestId: number;
   dataQATestList: DataQualityTest[];
   dataQATestReport: TestReport;
 }
@@ -28,6 +31,8 @@ interface TestReportItemProps extends StylesType {
 const TestReportItem: React.FC<TestReportItemProps> = ({
   classes,
   suitName,
+  dataSetId,
+  dataqatestId,
   dataQATestList,
   dataQATestReport,
 }) => {
@@ -89,15 +94,23 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
       <Collapse in={open} timeout="auto" unmountOnExit>
         {open && dataQATestList.length
           ? dataQATestList.map(dataQATest => (
-              <TestItem
-                key={dataQATest.id}
-                latestRun={dataQATest.latestRun?.status}
-                testName={
-                  dataQATest.internalName || dataQATest.externalName
-                }
-                testStartTime={dataQATest.latestRun?.startTime}
-                testEndTime={dataQATest.latestRun?.endTime}
-              />
+              <Link
+                // target="__self"
+                to={dataEntityTestPath(dataSetId, dataQATest.id)}
+              >
+                <TestItem
+                  className={cx({
+                    [classes.active]: dataqatestId === dataQATest.id,
+                  })}
+                  key={dataQATest.id}
+                  latestRun={dataQATest.latestRun?.status}
+                  testName={
+                    dataQATest.internalName || dataQATest.externalName
+                  }
+                  testStartTime={dataQATest.latestRun?.startTime}
+                  testEndTime={dataQATest.latestRun?.endTime}
+                />
+              </Link>
             ))
           : null}
       </Collapse>
@@ -105,4 +118,4 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   );
 };
 
-export default withStyles(styles)(TestReportItem);
+export default TestReportItem;

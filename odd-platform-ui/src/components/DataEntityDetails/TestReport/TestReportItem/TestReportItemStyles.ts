@@ -40,6 +40,9 @@ export const styles = (theme: Theme) =>
       flexWrap: 'nowrap',
       justifyContent: 'flex-end',
     },
+    active: {
+      backgroundColor: '#EBECF0',
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

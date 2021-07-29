@@ -72,3 +72,17 @@ export const getTestReportSuiteNames = createSelector(
     );
   }
 );
+
+export const getDataQATestId = (
+  _: RootState,
+  dataQATestId: number | string
+) => dataQATestId;
+
+export const getQualityTestRunsList = createSelector(
+  getDataQualityTestState,
+  getDataQATestId,
+  (dataQualityTestState, dataQATestId) =>
+    dataQualityTestState.allTestRunIdsByTestId[dataQATestId]?.map(
+      testRunId => dataQualityTestState.qualityTestRunsById[testRunId]
+    )
+);

@@ -9,7 +9,6 @@ export const styles = (theme: Theme) =>
       padding: theme.spacing(0.75, 1),
       alignItems: 'center',
       borderRadius: '4px',
-      cursor: 'pointer',
       '&:hover': {
         backgroundColor: '#EBECF0',
       },

@@ -4,6 +4,7 @@ import * as actions from 'redux/actions';
 import {
   DataEntity,
   DataEntityList,
+  DataQualityTestRunList,
   DataQualityTestRunStatusEnum,
 } from 'generated-sources';
 import { uniq } from 'lodash';
@@ -30,7 +31,7 @@ const latestRunStatusesCounter = (
 const createDataSetQualityTestList = (
   state: DataQualityTestState,
   payload: DataEntityList,
-  datasetId: number
+  datasetId: number | string
 ) =>
   payload.items.reduce(
     (memo: DataQualityTestState, dataSetQualityTest) => ({
@@ -99,6 +100,34 @@ const createDataSetQualityTestList = (
     }
   );
 
+const createDataSetQualityRunsList = (
+  state: DataQualityTestState,
+  payload: DataQualityTestRunList,
+  dataQATestId: number | string
+) =>
+  payload.items.reduce(
+    (memo: DataQualityTestState, dataQualityTestRun) => ({
+      ...memo,
+      qualityTestRunsById: {
+        ...memo.qualityTestRunsById,
+        [dataQualityTestRun.id]: {
+          ...memo.qualityTestRunsById[dataQualityTestRun.id],
+          ...dataQualityTestRun,
+        },
+      },
+      allTestRunIdsByTestId: {
+        ...memo.allTestRunIdsByTestId,
+        [dataQATestId]: uniq([
+          ...(memo.allTestRunIdsByTestId?.[dataQATestId] || []),
+          dataQualityTestRun.id,
+        ]),
+      },
+    }),
+    {
+      ...state,
+    }
+  );
+
 const reducer = (
   state = initialState,
   action: Action
@@ -116,6 +145,12 @@ const reducer = (
         state,
         action.payload.value,
         action.payload.dataEntityId
+      );
+    case getType(actions.fetchDataSetQualityTestRunsAction.success):
+      return createDataSetQualityRunsList(
+        state,
+        action.payload.value,
+        action.payload.dataqatestId
       );
     default:
       return state;

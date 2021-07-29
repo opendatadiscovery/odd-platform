@@ -1087,7 +1087,7 @@ paths:
       description: Gets DataQualityTest's runs
       operationId: getRuns
       parameters:
-        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataQATestIdParam'
       responses:
         '200':
           description: OK

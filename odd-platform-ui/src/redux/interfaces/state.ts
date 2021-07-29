@@ -87,7 +87,7 @@ export interface DataQualityTestState {
     };
   };
   qualityTestRunsById: {
-    [qualityTestRunId: string]: DataQualityTest;
+    [qualityTestRunId: string]: DataQualityTestRun;
   };
   allTestRunIdsByTestId: {
     [qualityTestId: string]: DataQualityTestRun['id'][];
