@@ -32,6 +32,7 @@ public class DataEntityTaskRunRepositoryImpl
         return dslContext.selectFrom(DATA_ENTITY_TASK_RUN)
             .where(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN.eq(dataEntityOddrn))
             .orderBy(DATA_ENTITY_TASK_RUN.START_TIME.desc())
+            .limit(1)
             .fetchOptionalInto(DataEntityTaskRunPojo.class);
     }
 
