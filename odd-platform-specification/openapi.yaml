@@ -1238,6 +1238,9 @@ paths:
       summary: Get all alerts
       description: Gets all alerts
       operationId: getAllAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
       responses:
         '200':
           description: OK
@@ -1253,6 +1256,9 @@ paths:
       summary: Get authenticated user's alerts
       description: Gets authenticated user's alerts
       operationId: getAssociatedUserAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
       responses:
         '200':
           description: OK
@@ -1268,6 +1274,9 @@ paths:
       summary: Get dependent entities' alerts
       description: Gets dependent entities' alerts
       operationId: getDependentEntitiesAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
       responses:
         '200':
           description: OK
