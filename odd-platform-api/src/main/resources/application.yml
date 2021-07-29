@@ -26,8 +26,11 @@ auth:
   # DISABLED, LOGIN_FORM, OAUTH2
   type: DISABLED
 
-  # username1:password1,username2:password2,etc
+  # For dev/demo purposes only -- username1:password1,username2:password2,etc
   login-form-credentials: admin:admin,root:root
+
+  # For dev purposes only -- successful auth redirect URI
+  login-form-redirect:
 
 management:
   endpoints:

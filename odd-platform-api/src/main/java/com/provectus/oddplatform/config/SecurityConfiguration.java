@@ -14,14 +14,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.server.DefaultServerRedirectStrategy;
 import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
+import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
+import org.springframework.util.StringUtils;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @EnableWebFluxSecurity
 @Configuration
+@Slf4j
 public class SecurityConfiguration {
     @Bean
     @ConditionalOnProperty(value = "auth.type", havingValue = "DISABLED")
@@ -43,9 +49,18 @@ public class SecurityConfiguration {
 
     @Bean
     @ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
-    public SecurityWebFilterChain securityWebFilterChainLoginForm(final ServerHttpSecurity http) {
+    public SecurityWebFilterChain securityWebFilterChainLoginForm(
+        final ServerHttpSecurity http,
+        @Value("${auth.login-form-redirect:}") final String redirectURIString
+    ) {
+        final URI redirectURI = parseURI(redirectURIString);
+
+        final ServerAuthenticationSuccessHandler authHandler = redirectURI != null
+            ? (wfe, auth) -> new DefaultServerRedirectStrategy().sendRedirect(wfe.getExchange(), redirectURI)
+            : new RedirectServerAuthenticationSuccessHandler("/");
+
         return applyAuthPathMatchers(http)
-            .and().formLogin()
+            .and().formLogin().authenticationSuccessHandler(authHandler)
             .and().build();
     }
 
@@ -77,6 +92,10 @@ public class SecurityConfiguration {
             .pathMatchers("/ingestion/entities").permitAll()
             .pathMatchers("/health").permitAll()
             .pathMatchers("/**").authenticated();
+    }
+
+    private URI parseURI(final String redirectUri) {
+        return StringUtils.hasLength(redirectUri) ? URI.create(redirectUri) : null;
     }
 
     @Getter
