@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { RootState, DataQualityTestState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { isEmpty, mapValues, transform } from 'lodash';
 import { getDataEntityId } from './dataentity.selectors';
 
 const getDataQualityTestState = ({
@@ -25,7 +26,49 @@ export const getDatasetTestReport = createSelector(
 
 export const getDatasetQualityTestList = createSelector(
   getDataQualityTestState,
+  dataQualityTestState => dataQualityTestState.qualityTestsById
+);
+
+export const getSuitNamesByDatasetId = createSelector(
+  getDataQualityTestState,
   getDataEntityId,
   (dataQualityTestState, dataEntityId) =>
-    dataQualityTestState.qualityTestsById[dataEntityId]
+    dataQualityTestState.allSuiteNamesByDatasetId[dataEntityId]
+);
+
+export const getDatasetQualityTestsBySuiteNames = createSelector(
+  getDataQualityTestState,
+  getDataEntityId,
+  (dataQualityTestState, dataEntityId) => {
+    if (isEmpty(dataQualityTestState.allSuiteNamesByDatasetId)) {
+      return {};
+    }
+    const suitNamesByDatasetId = Object.entries(
+      dataQualityTestState.allSuiteNamesByDatasetId[dataEntityId]
+    ).map(([key, values]) => {
+      const newValues = values.map(
+        id => dataQualityTestState.qualityTestsById[id]
+      );
+      return [key, newValues];
+    });
+    return Object.fromEntries(suitNamesByDatasetId);
+  }
+);
+
+export const getTestReportBySuiteName = createSelector(
+  getDataQualityTestState,
+  dataQualityTestState => dataQualityTestState.testReportBySuiteName
+);
+
+export const getTestReportSuiteNames = createSelector(
+  getDataQualityTestState,
+  getDataEntityId,
+  (dataQualityTestState, dataEntityId) => {
+    if (isEmpty(dataQualityTestState.allSuiteNamesByDatasetId)) {
+      return [];
+    }
+    return Object.keys(
+      dataQualityTestState.allSuiteNamesByDatasetId?.[dataEntityId]
+    );
+  }
 );

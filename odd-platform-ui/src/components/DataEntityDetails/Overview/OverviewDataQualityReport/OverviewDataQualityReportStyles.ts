@@ -1,17 +1,9 @@
 import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { statusColor } from 'theme/palette';
 import {
   DataQualityTestRunStatusEnum,
   DataSetTestReport,
 } from 'generated-sources';
-
-const statusColor = {
-  SUCCESS: '#1FAD1F',
-  FAILED: '#F2330D',
-  BROKEN: '#FFAA00',
-  SKIPPED: '#0080FF',
-  ABORTED: '#0066CC', // Temp
-  UNKNOWN: '#A8B0BD',
-};
 
 export const styles = (theme: Theme) =>
   createStyles({

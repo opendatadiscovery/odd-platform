@@ -1,10 +1,11 @@
 import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const TestReportTypeColors = {
-  passed: { backgroundColor: '#D1FADF', borderColor: '#A8F0A8' },
+  success: { backgroundColor: '#D1FADF', borderColor: '#A8F0A8' },
   failed: { backgroundColor: '#FFCCCC', borderColor: '#FF9999' },
   broken: { backgroundColor: '#FFEECC', borderColor: '#FFDD99' },
   skipped: { backgroundColor: '#CCE6FF', borderColor: '#99CCFF' },
+  aborted: { backgroundColor: '#baacf7', borderColor: '#8066FF' },
   unknown: { backgroundColor: '#EBECF0', borderColor: '#C1C7D0' },
 };
 
@@ -29,9 +30,9 @@ export const styles = (theme: Theme) =>
       padding: theme.spacing(0.25, 1),
       marginLeft: theme.spacing(0.5),
     },
-    passed: {
-      backgroundColor: TestReportTypeColors.passed.backgroundColor,
-      borderColor: TestReportTypeColors.passed.borderColor,
+    success: {
+      backgroundColor: TestReportTypeColors.success.backgroundColor,
+      borderColor: TestReportTypeColors.success.borderColor,
     },
     failed: {
       backgroundColor: TestReportTypeColors.failed.backgroundColor,
@@ -45,7 +46,10 @@ export const styles = (theme: Theme) =>
       backgroundColor: TestReportTypeColors.skipped.backgroundColor,
       borderColor: TestReportTypeColors.skipped.borderColor,
     },
-    aborted: {},
+    aborted: {
+      backgroundColor: TestReportTypeColors.aborted.backgroundColor,
+      borderColor: TestReportTypeColors.aborted.borderColor,
+    },
     unknown: {
       backgroundColor: TestReportTypeColors.unknown.backgroundColor,
       borderColor: TestReportTypeColors.unknown.borderColor,

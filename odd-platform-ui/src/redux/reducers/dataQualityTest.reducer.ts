@@ -6,6 +6,7 @@ import {
   DataEntityList,
   DataQualityTestRunStatusEnum,
 } from 'generated-sources';
+import { uniq } from 'lodash';
 
 export const initialState: DataQualityTestState = {
   qualityTestsById: {},
@@ -45,16 +46,14 @@ const createDataSetQualityTestList = (
         ...memo.allSuiteNamesByDatasetId,
         [datasetId]: {
           ...memo.allSuiteNamesByDatasetId[datasetId],
-          ...(dataSetQualityTest.suiteName
-            ? {
-                [dataSetQualityTest.suiteName]: [
-                  dataSetQualityTest.id,
-                  ...(memo.allSuiteNamesByDatasetId[datasetId]?.[
-                    dataSetQualityTest.suiteName
-                  ] || []),
-                ],
-              }
-            : null),
+          ...(dataSetQualityTest.suiteName && {
+            [dataSetQualityTest.suiteName]: uniq([
+              dataSetQualityTest.id,
+              ...(memo.allSuiteNamesByDatasetId[datasetId]?.[
+                dataSetQualityTest.suiteName
+              ] || []),
+            ]),
+          }),
         },
       },
       testReportBySuiteName: {

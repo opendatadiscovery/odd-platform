@@ -7,7 +7,7 @@ import {
 } from 'components/shared/TestReportTypeItem/TestReportTypeItemStyles';
 
 export type DataSetTestReportTypeNames =
-  | 'passed'
+  | 'success'
   | 'failed'
   | 'broken'
   | 'skipped'

@@ -7,8 +7,9 @@ import {
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import {
+  getDatasetQualityTestsBySuiteNames,
   getDatasetTestReport,
-  getDatasetQualityTestList,
+  getTestReportBySuiteName,
 } from 'redux/selectors/dataQualityTest.selectors';
 import TestReport from './TestReport';
 import { styles } from './TestReportStyles';
@@ -29,7 +30,11 @@ const mapStateToProps = (
 ) => ({
   dataEntityId: parseInt(dataEntityId, 10),
   datasetTestReport: getDatasetTestReport(state, dataEntityId),
-  datasetTestReportList: getDatasetQualityTestList(state, dataEntityId),
+  datasetQualityTestList: getDatasetQualityTestsBySuiteNames(
+    state,
+    dataEntityId
+  ),
+  testReportBySuitName: getTestReportBySuiteName(state),
 });
 
 const mapDispatchToProps = {
