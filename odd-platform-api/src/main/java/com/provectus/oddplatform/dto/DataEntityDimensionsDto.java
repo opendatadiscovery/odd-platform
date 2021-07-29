@@ -29,11 +29,12 @@ public class DataEntityDimensionsDto extends DataEntityDto {
     public DataEntityDimensionsDto(final DataEntityPojo dataEntity,
                                    final Collection<DataEntityTypePojo> types,
                                    final DataEntitySubtypePojo subtype,
+                                   final boolean hasAlerts,
                                    final NamespacePojo namespace,
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
                                    final Collection<TagPojo> tags) {
-        super(dataEntity, types, subtype);
+        super(dataEntity, types, subtype, hasAlerts);
         this.namespace = namespace;
         this.ownership = ownership;
         this.dataSource = dataSource;
