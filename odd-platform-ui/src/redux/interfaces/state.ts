@@ -22,6 +22,7 @@ import {
   DataSetTestReport,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
+import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
 import { LoaderState } from './loader';
 import { DataSetStructureTypesCount } from './datasetStructure';
 import {
@@ -96,13 +97,7 @@ export interface DataQualityTestState {
     [dataEntityId: string]: DataSetTestReport;
   };
   testReportBySuiteName: {
-    [suiteName: string]: {
-      success: number;
-      failed: number;
-      skipped: number;
-      aborted: number;
-      unknown: number;
-    };
+    [suiteName: string]: DataSetQualityTestsStatusCount;
   };
 }
 

@@ -10,7 +10,7 @@ import {
 import {
   getDatasetQualityTestsBySuiteNames,
   getDatasetTestReport,
-  getTestReportBySuiteName,
+  getTestReportListBySuiteName,
 } from 'redux/selectors/dataQualityTest.selectors';
 import TestReport from './TestReport';
 import { styles } from './TestReportStyles';
@@ -18,6 +18,7 @@ import { styles } from './TestReportStyles';
 interface RouteProps {
   dataEntityId: string;
   dataqatestId: string;
+  reportDetailsViewType: string;
 }
 
 type OwnProps = RouteComponentProps<RouteProps>;
@@ -26,10 +27,11 @@ const mapStateToProps = (
   state: RootState,
   {
     match: {
-      params: { dataEntityId, dataqatestId },
+      params: { dataEntityId, dataqatestId, reportDetailsViewType },
     },
   }: OwnProps
 ) => ({
+  reportDetailsViewType,
   dataEntityId: parseInt(dataEntityId, 10),
   dataqatestId: parseInt(dataqatestId, 10),
   datasetTestReport: getDatasetTestReport(state, dataEntityId),
@@ -37,7 +39,7 @@ const mapStateToProps = (
     state,
     dataEntityId
   ),
-  testReportBySuitName: getTestReportBySuiteName(state),
+  testReportBySuitName: getTestReportListBySuiteName(state),
 });
 
 const mapDispatchToProps = {

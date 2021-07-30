@@ -3,12 +3,13 @@ import {
   DataQualityApiGetDataEntityDataQATestsRequest,
   DataQualityApiGetDatasetTestReportRequest,
   DataQualityTest,
+  DataQualityTestRunStatusEnum,
   DataSetTestReport,
 } from 'generated-sources';
 import { Grid, Paper, Typography } from '@material-ui/core';
 import TestReportTypeItem from 'components/shared/TestReportTypeItem/TestReportTypeItem';
 import TestReportItemContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemContainer';
-import TestRunDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportDetails/TestReportDetailsContainer';
+import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
 import { StylesType } from './TestReportStyles';
 
 interface DatasetQualityTestList {
@@ -37,6 +38,7 @@ interface TestReportProps extends StylesType {
     params: DataQualityApiGetDatasetTestReportRequest
   ) => void;
   testReportBySuitName: TestReportBySuitName;
+  reportDetailsViewType: string;
 }
 
 const TestReport: React.FC<TestReportProps> = ({
@@ -48,6 +50,7 @@ const TestReport: React.FC<TestReportProps> = ({
   fetchDataSetQualityTestList,
   fetchDataSetQualityTestReport,
   testReportBySuitName,
+  reportDetailsViewType,
 }) => {
   React.useEffect(() => {
     fetchDataSetQualityTestReport({ dataEntityId });
@@ -60,32 +63,32 @@ const TestReport: React.FC<TestReportProps> = ({
         <Grid container item className={classes.testReport}>
           <TestReportTypeItem
             count={datasetTestReport?.successTotal}
-            typeName="success"
+            typeName={DataQualityTestRunStatusEnum.SUCCESS}
             size="large"
           />
           <TestReportTypeItem
             count={datasetTestReport?.failedTotal}
-            typeName="failed"
+            typeName={DataQualityTestRunStatusEnum.FAILED}
             size="large"
           />
           <TestReportTypeItem
             count={datasetTestReport?.brokenTotal}
-            typeName="broken"
+            typeName={DataQualityTestRunStatusEnum.BROKEN}
             size="large"
           />
           <TestReportTypeItem
             count={datasetTestReport?.abortedTotal}
-            typeName="skipped"
+            typeName={DataQualityTestRunStatusEnum.ABORTED}
             size="large"
           />
           <TestReportTypeItem
-            count={datasetTestReport?.successTotal}
-            typeName="aborted"
+            count={datasetTestReport?.skippedTotal}
+            typeName={DataQualityTestRunStatusEnum.SKIPPED}
             size="large"
           />
           <TestReportTypeItem
             count={datasetTestReport?.unknownTotal}
-            typeName="unknown"
+            typeName={DataQualityTestRunStatusEnum.UNKNOWN}
             size="large"
           />
         </Grid>
@@ -98,7 +101,7 @@ const TestReport: React.FC<TestReportProps> = ({
       </Grid>
       {datasetQualityTestList ? (
         <Grid container spacing={2}>
-          <Grid item xs={8}>
+          <Grid item xs={9}>
             <Grid container className={classes.testReportItemContainer}>
               {Object.entries(datasetQualityTestList).map(
                 ([suitName, dataQATestList]) => (
@@ -114,10 +117,16 @@ const TestReport: React.FC<TestReportProps> = ({
               )}
             </Grid>
           </Grid>
-          <Grid item xs={4}>
-            <Paper square elevation={0}>
-              <TestRunDetailsContainer dataqatestId={dataqatestId} />
-            </Paper>
+          <Grid item xs={3}>
+            {dataqatestId ? (
+              <Paper square elevation={0}>
+                <TestReportDetailsContainer
+                  dataEntityId={dataEntityId}
+                  dataqatestId={dataqatestId}
+                  reportDetailsViewType={reportDetailsViewType}
+                />
+              </Paper>
+            ) : null}
           </Grid>
         </Grid>
       ) : null}

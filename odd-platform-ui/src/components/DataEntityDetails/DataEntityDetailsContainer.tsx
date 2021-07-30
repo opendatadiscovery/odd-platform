@@ -13,6 +13,7 @@ import DataEntityDetailsView from './DataEntityDetails';
 interface RouteProps {
   dataEntityId: string;
   viewType: string;
+  reportDetailsViewType: string;
 }
 
 type OwnProps = RouteComponentProps<RouteProps>;

@@ -21,6 +21,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import TestReportContainer from 'components/DataEntityDetails/TestReport/TestReportContainer';
+import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -190,8 +191,13 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?"
+              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
               component={TestReportContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+              component={TestReportDetailsContainer}
             />
             <Redirect
               from="/dataentities/:dataEntityId"

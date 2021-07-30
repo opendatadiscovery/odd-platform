@@ -23,6 +23,21 @@ export const dataEntityTestReportPath = (datasetId: number) =>
 export const dataEntityTestPath = (datasetId: number, testId: number) =>
   `${dataEntityTestReportPath(datasetId)}/${testId}`;
 
+export const testReportDetailsOverviewPath = (
+  datasetId: number,
+  testId: number
+) => `${dataEntityTestPath(datasetId, testId)}/overview`;
+
+export const testReportDetailsHistoryPath = (
+  datasetId: number,
+  testId: number
+) => `${dataEntityTestPath(datasetId, testId)}/history`;
+
+export const testReportDetailsRetriesPath = (
+  datasetId: number,
+  testId: number
+) => `${dataEntityTestPath(datasetId, testId)}/retries`;
+
 // Entity type specific paths
 export const datasetStructurePath = (
   datasetId: number,

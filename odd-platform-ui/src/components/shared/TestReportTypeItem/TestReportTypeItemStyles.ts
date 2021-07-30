@@ -1,4 +1,5 @@
 import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { DataQualityTestRunStatusEnum } from 'generated-sources';
 
 export const TestReportTypeColors = {
   success: { backgroundColor: '#D1FADF', borderColor: '#A8F0A8' },
@@ -29,30 +30,30 @@ export const styles = (theme: Theme) =>
       borderStyle: 'solid',
       padding: theme.spacing(0.25, 1),
       marginLeft: theme.spacing(0.5),
-    },
-    success: {
-      backgroundColor: TestReportTypeColors.success.backgroundColor,
-      borderColor: TestReportTypeColors.success.borderColor,
-    },
-    failed: {
-      backgroundColor: TestReportTypeColors.failed.backgroundColor,
-      borderColor: TestReportTypeColors.failed.borderColor,
-    },
-    broken: {
-      backgroundColor: TestReportTypeColors.broken.backgroundColor,
-      borderColor: TestReportTypeColors.broken.borderColor,
-    },
-    skipped: {
-      backgroundColor: TestReportTypeColors.skipped.backgroundColor,
-      borderColor: TestReportTypeColors.skipped.borderColor,
-    },
-    aborted: {
-      backgroundColor: TestReportTypeColors.aborted.backgroundColor,
-      borderColor: TestReportTypeColors.aborted.borderColor,
-    },
-    unknown: {
-      backgroundColor: TestReportTypeColors.unknown.backgroundColor,
-      borderColor: TestReportTypeColors.unknown.borderColor,
+      [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
+        backgroundColor: TestReportTypeColors.success.backgroundColor,
+        borderColor: TestReportTypeColors.success.borderColor,
+      },
+      [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
+        backgroundColor: TestReportTypeColors.failed.backgroundColor,
+        borderColor: TestReportTypeColors.failed.borderColor,
+      },
+      [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
+        backgroundColor: TestReportTypeColors.broken.backgroundColor,
+        borderColor: TestReportTypeColors.broken.borderColor,
+      },
+      [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
+        backgroundColor: TestReportTypeColors.skipped.backgroundColor,
+        borderColor: TestReportTypeColors.skipped.borderColor,
+      },
+      [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
+        backgroundColor: TestReportTypeColors.aborted.backgroundColor,
+        borderColor: TestReportTypeColors.aborted.borderColor,
+      },
+      [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
+        backgroundColor: TestReportTypeColors.unknown.backgroundColor,
+        borderColor: TestReportTypeColors.unknown.borderColor,
+      },
     },
   });
 

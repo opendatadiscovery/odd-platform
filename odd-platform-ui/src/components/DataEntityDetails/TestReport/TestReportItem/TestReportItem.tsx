@@ -1,31 +1,25 @@
 import React from 'react';
-import { DataQualityTest } from 'generated-sources';
+import {
+  DataQualityTest,
+  DataQualityTestRunStatusEnum,
+} from 'generated-sources';
 import { Collapse, Grid, Typography } from '@material-ui/core';
-import TestReportTypeItem, {
-  DataSetTestReportTypeNames,
-} from 'components/shared/TestReportTypeItem/TestReportTypeItem';
+import TestReportTypeItem from 'components/shared/TestReportTypeItem/TestReportTypeItem';
 import cx from 'classnames';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import TestItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestItem/TestItem';
 import { dataEntityTestPath } from 'lib/paths';
 import { Link } from 'react-router-dom';
+import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
 import { StylesType } from './TestReportItemStyles';
-
-interface TestReport {
-  success: number;
-  failed: number;
-  skipped: number;
-  aborted: number;
-  unknown: number;
-}
 
 interface TestReportItemProps extends StylesType {
   suitName: string;
   dataSetId: number;
   dataqatestId: number;
   dataQATestList: DataQualityTest[];
-  dataQATestReport: TestReport;
+  dataQATestReport: DataSetQualityTestsStatusCount;
 }
 
 const TestReportItem: React.FC<TestReportItemProps> = ({
@@ -83,7 +77,9 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                   <TestReportTypeItem
                     key={testType}
                     count={count}
-                    typeName={testType as DataSetTestReportTypeNames}
+                    typeName={
+                      testType.toUpperCase() as DataQualityTestRunStatusEnum
+                    }
                     size="small"
                   />
                 )
@@ -97,13 +93,13 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
               <Link
                 // target="__self"
                 to={dataEntityTestPath(dataSetId, dataQATest.id)}
+                key={dataQATest.id}
               >
                 <TestItem
                   className={cx({
                     [classes.active]: dataqatestId === dataQATest.id,
                   })}
-                  key={dataQATest.id}
-                  latestRun={dataQATest.latestRun?.status}
+                  latestRunStatus={dataQATest.latestRun?.status}
                   testName={
                     dataQATest.internalName || dataQATest.externalName
                   }

@@ -5,19 +5,12 @@ import {
   styles,
   StylesType,
 } from 'components/shared/TestReportTypeItem/TestReportTypeItemStyles';
-
-export type DataSetTestReportTypeNames =
-  | 'success'
-  | 'failed'
-  | 'broken'
-  | 'skipped'
-  | 'aborted'
-  | 'unknown';
+import { DataQualityTestRunStatusEnum } from 'generated-sources';
 
 interface TestReportTypeItemProps extends StylesType {
   className?: string;
   count: number | undefined;
-  typeName: DataSetTestReportTypeNames;
+  typeName: DataQualityTestRunStatusEnum;
   size?: 'large' | 'small';
 }
 
@@ -30,13 +23,13 @@ const TestReportTypeItem: React.FC<TestReportTypeItemProps> = ({
 }) => (
   <div className={cx(classes.container, className)} title={typeName}>
     {size === 'small' ? (
-      <span className={cx(classes.filledContainer, classes[typeName])}>
+      <span className={cx(classes.filledContainer, typeName)}>
         {count}
       </span>
     ) : (
       <>
         <span className={classes.count}>{count}</span>
-        <span className={cx(classes.filledContainer, classes[typeName])}>
+        <span className={cx(classes.filledContainer, typeName)}>
           {typeName}
         </span>
       </>

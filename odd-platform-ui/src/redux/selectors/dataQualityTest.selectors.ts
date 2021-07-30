@@ -55,7 +55,7 @@ export const getDatasetQualityTestsBySuiteNames = createSelector(
   }
 );
 
-export const getTestReportBySuiteName = createSelector(
+export const getTestReportListBySuiteName = createSelector(
   getDataQualityTestState,
   dataQualityTestState => dataQualityTestState.testReportBySuiteName
 );
@@ -85,4 +85,11 @@ export const getQualityTestRunsList = createSelector(
     dataQualityTestState.allTestRunIdsByTestId[dataQATestId]?.map(
       testRunId => dataQualityTestState.qualityTestRunsById[testRunId]
     )
+);
+
+export const getQualityTestByTestId = createSelector(
+  getDataQualityTestState,
+  getDataQATestId,
+  (dataQualityTestState, dataQATestId) =>
+    dataQualityTestState.qualityTestsById[dataQATestId]
 );

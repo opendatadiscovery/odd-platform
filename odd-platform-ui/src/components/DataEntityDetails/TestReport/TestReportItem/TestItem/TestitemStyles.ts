@@ -1,6 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
-import { statusColor } from 'theme/palette';
-import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -11,31 +9,6 @@ export const styles = (theme: Theme) =>
       borderRadius: '4px',
       '&:hover': {
         backgroundColor: '#EBECF0',
-      },
-    },
-    latestRunIcon: {
-      padding: theme.spacing(0.5),
-      marginRight: theme.spacing(1),
-      width: '8px',
-      height: '8px',
-      borderRadius: '50%',
-      [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        backgroundColor: statusColor.SUCCESS,
-      },
-      [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        backgroundColor: statusColor.FAILED,
-      },
-      [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        backgroundColor: statusColor.BROKEN,
-      },
-      [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        backgroundColor: statusColor.SKIPPED,
-      },
-      [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        backgroundColor: statusColor.ABORTED,
-      },
-      [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        backgroundColor: statusColor.UNKNOWN,
       },
     },
   });
