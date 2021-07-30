@@ -8,6 +8,7 @@ import OverviewContainer from './Overview/OverviewContainer';
 import SearchContainer from './Search/SearchContainer';
 import AppLoadingSpinnerContainer from './shared/AppLoadingSpinner/AppLoadingSpinnerContainer';
 import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
+import AlertsContainer from './Alerts/AlertsContainer';
 
 interface AppProps {
   fetchDataEntitiesTypes: () => Promise<DataEntityTypeDictionary>;
@@ -26,6 +27,7 @@ const App: React.FC<AppProps> = ({ fetchDataEntitiesTypes }) => {
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <Switch>
           <Route exact path="/" component={OverviewContainer} />
+          <Route path="/alerts/:viewType?" component={AlertsContainer} />
           <Route
             path="/management/:viewType?"
             component={ManagementContainer}

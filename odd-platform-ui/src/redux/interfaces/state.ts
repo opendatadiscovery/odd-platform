@@ -20,6 +20,8 @@ import {
   DataQualityTest,
   DataQualityTestRun,
   DataSetTestReport,
+  AlertTotals,
+  Alert,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { LoaderState } from './loader';
@@ -140,6 +142,18 @@ export interface SearchState {
   facetState: SearcFacetsByName;
 }
 
+export interface AlertsState {
+  totals: AlertTotals;
+  pageInfo: CurrentPageInfo;
+  byId: {
+    [alertId: string]: Alert;
+  };
+  allIds: Alert['id'][];
+  alertIdsByDataEntityId: {
+    [dataEntityId: string]: Alert['id'][];
+  };
+}
+
 export interface ProfileState {
   owner?: AssociatedOwner;
 }
@@ -157,6 +171,7 @@ export type RootState = {
   dataEntityLineage: DataEntityLineageState;
   profile: ProfileState;
   dataQualityTest: DataQualityTestState;
+  alerts: AlertsState;
 };
 
 export type Action = ActionType<typeof actions>;

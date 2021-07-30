@@ -61,10 +61,10 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
     fetchIdentity();
   }, []);
 
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([
+  const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Catalog', link: '/search' },
     { name: 'Management', link: '/management' },
-    // { name: 'Alerts', link: '/alerts', hidden: true },
+    { name: 'Alerts', link: '/alerts' },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number | boolean>(
