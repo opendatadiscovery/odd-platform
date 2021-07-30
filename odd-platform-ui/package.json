@@ -9,7 +9,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "tsc": "tsc",
-    "generate": "rm -rf ./src/generated-sources && docker run -v `pwd`/..:/mnt -w /mnt --rm provectuslabs/openapi-generator-cli generate -c odd-platform-ui/openapi-config.yaml",
+    "generate": "rm -rf ./src/generated-sources && docker run -v `pwd`/..:/mnt -w /mnt --rm ghcr.io/opendatadiscovery/openapi-generator-cli:latest generate -c odd-platform-ui/openapi-config.yaml",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix"
   },

@@ -116,8 +116,9 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         <Grid container className={classes.contentContainer}>
           <Grid item xs={3} className={classes.logoContainer}>
             <Link to="/" className={classes.title}>
+              <div className={classes.logo} />
               <Typography variant="h4" noWrap>
-                OpenDataCatalog
+                Platform
               </Typography>
             </Link>
           </Grid>
