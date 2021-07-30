@@ -175,7 +175,7 @@ const Results: React.FC<ResultsProps> = ({
                 <Typography variant="caption">Entities</Typography>
               </Grid>
               <Grid item className={cx(classes.col, classes.collg)}>
-                <Typography variant="caption">Suit URL</Typography>
+                <Typography variant="caption">Suite URL</Typography>
               </Grid>
             </>
           ) : null}
