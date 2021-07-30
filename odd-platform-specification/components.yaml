@@ -509,7 +509,7 @@ components:
                 - SKIPPED
                 - BROKEN
                 - ABORTED
-                - OTHER
+                - UNKNOWN
 
     DataQualityTestExpectation:
       type: object
@@ -548,6 +548,8 @@ components:
             $ref: '#/components/schemas/DataQualityTestRun'
         page_info:
           $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
 
     DataSetTestReport:
       type: object
@@ -1377,6 +1379,14 @@ components:
 
     DataEntityOwnershipIdParam:
       name: ownership_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    DataQATestIdParam:
+      name: dataqatest_id
       in: path
       required: true
       schema:

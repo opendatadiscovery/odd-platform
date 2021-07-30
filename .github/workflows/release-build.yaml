@@ -9,6 +9,10 @@ on:
         description: 'A tag name for building previously created release'
         required: false
         default: '0.0.0'
+      buildOptions:
+        description: 'A additional oiptions for Gradle build command'
+        required: false
+        default: ''
 
 jobs:
   release:
@@ -44,6 +48,10 @@ jobs:
               LATEST=`git tag -l --sort=creatordate | tail -1`
               VERSION=`echo ${LATEST} | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g'`-${{ github.sha }}
           fi
+          if [[ -n "${{ github.event.inputs.buildOptions }}" ]]
+            then
+              VERSION="${{ github.event.inputs.buildOptions }}"
+          fi
           echo ::set-output name=version::${VERSION}
       - name: Cache local Gradle repository
         uses: actions/cache@v2
@@ -63,31 +71,14 @@ jobs:
         env:
           CI: false
         run: |
-          ./gradlew clean build --scan -P version=${{ steps.get-version.outputs.version }}
-  charts:
-    runs-on: ubuntu-latest
-    needs: release
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 1
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-      - uses: azure/setup-helm@v1
-      - name: update appVersion
-        run: |
-          export version=${{needs.release.outputs.version}}
-          sed -i "s/appVersion:.*/appVersion: ${version}/" charts/odd-platform/Chart.yaml
-      - name: add chart
+          ./gradlew clean jibDockerBuild ${{ github.event.inputs.buildOptions }} --no-daemon --image odd-platform -P version=${{ steps.get-version.outputs.version }}
+      - name: Retag image in GHCR
+        uses: kindaninja/retag-image-ghcr@0.1.0
         if: ${{ github.event.action == 'published' }}
-        run: |
-          export VERSION=${{needs.release.outputs.version}}
-          MSG=$(helm package --app-version ${VERSION} charts/odd-platform)
-          git fetch origin
-          git stash
-          git checkout -b gh-pages origin/gh-pages
-          helm repo index .
-          git add -f ${MSG##*/} index.yaml
-          git commit -m "release ${VERSION}"
-          git push
+        with:
+          registry: opendatadiscovery
+          image: odd-platform
+          current_tag: ${{ steps.get-version.outputs.version }}
+          new_tag: ${{ steps.get-version.outputs.version }}
+          username: github
+          password: ${{ secrets.GITHUB_TOKEN }}

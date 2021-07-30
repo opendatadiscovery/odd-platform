@@ -1,9 +1,8 @@
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
-import { Action } from 'redux/interfaces';
+import { Action, PaginatedResponse } from 'redux/interfaces';
 import { DataSourceList } from 'generated-sources';
 import { DataSourcesState } from 'redux/interfaces/state';
-import { PaginatedResponse } from '../interfaces/common';
 
 export const initialState: DataSourcesState = {
   byId: {},

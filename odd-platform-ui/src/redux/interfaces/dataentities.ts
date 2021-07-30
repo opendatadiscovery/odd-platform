@@ -1,4 +1,4 @@
-import { DataEntityRef, DataEntityTypeNameEnum } from 'generated-sources';
+import { DataEntityTypeNameEnum } from 'generated-sources';
 
 export interface UpdateDataEntityParams {
   dataEntityId: number;
@@ -6,6 +6,11 @@ export interface UpdateDataEntityParams {
 
 export interface PartialDataEntityUpdateParams<T> {
   dataEntityId: number;
+  value: T;
+}
+
+export interface PartialQATestParams<T> {
+  dataqatestId: number;
   value: T;
 }
 
