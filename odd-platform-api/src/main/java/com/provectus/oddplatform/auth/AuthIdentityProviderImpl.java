@@ -3,35 +3,26 @@ package com.provectus.oddplatform.auth;
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.repository.UserOwnerMappingRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.security.Principal;
+
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AuthIdentityProviderImpl implements AuthIdentityProvider {
     private final UserOwnerMappingRepository userOwnerMappingRepository;
 
     @Override
-    public Mono<OAuth2User> getIdentity() {
+    public Mono<String> getUsername() {
         return ReactiveSecurityContextHolder.getContext()
             .switchIfEmpty(Mono.empty())
             .map(SecurityContext::getAuthentication)
-            .cast(OAuth2AuthenticationToken.class)
-            .map(OAuth2AuthenticationToken::getPrincipal);
-    }
-
-    @Override
-    public Mono<String> getUsername() {
-        return getIdentity()
-            .flatMap(user -> {
-                final Object username = user.getAttribute("username");
-                return username == null ? Mono.empty() : Mono.just(username);
-            })
-            .cast(String.class);
+            .map(Principal::getName);
     }
 
     @Override
