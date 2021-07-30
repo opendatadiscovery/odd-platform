@@ -87,11 +87,13 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     );
   }, [dataEntityDetails]);
 
+  console.log(viewType);
+
   React.useEffect(() => {
     setSelectedTab(
       viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
     );
-  }, [tabs]);
+  }, [tabs, viewType]);
 
   return (
     <div className={classes.container}>
