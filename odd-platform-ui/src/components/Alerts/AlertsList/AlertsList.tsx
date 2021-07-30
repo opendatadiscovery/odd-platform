@@ -41,7 +41,7 @@ const AlertsList: React.FC<AlertsListProps> = ({
         dataLength={alerts?.length}
         next={fetchNextPage}
         hasMore={!!pageInfo?.hasNext}
-        loader={<span>loading</span>} // <SearchResultsSkeleton length={5} />}
+        loader={<span />} // Temp
         scrollThreshold="200px"
         // scrollableTarget="results-list"
       >

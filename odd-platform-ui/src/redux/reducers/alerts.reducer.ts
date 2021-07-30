@@ -35,6 +35,24 @@ const reducer = (state = initialState, action: Action): AlertsState => {
           ) || {},
         allIds: action.payload.items?.map(alert => alert.id) || [],
       };
+    case getType(actions.fetchDataEntityAlertsAction.success):
+      return {
+        ...state,
+        byId:
+          action.payload.value.items?.reduce(
+            (memo, alert) => ({
+              ...memo,
+              [alert.id]: alert,
+            }),
+            state.byId
+          ) || state.byId,
+        alertIdsByDataEntityId: {
+          ...state.alertIdsByDataEntityId,
+          [action.payload.dataEntityId]: action.payload.value.items?.map(
+            alert => alert.id
+          ),
+        },
+      };
     default:
       return state;
   }

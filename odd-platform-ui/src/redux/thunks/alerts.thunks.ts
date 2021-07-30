@@ -1,22 +1,25 @@
 import {
   Configuration,
   AlertApi,
+  DataEntityApi,
   AlertTotals,
   AlertList,
   AlertApiGetAllAlertsRequest,
   AlertApiGetAssociatedUserAlertsRequest,
   AlertApiGetDependentEntitiesAlertsRequest,
+  DataEntityApiGetDataEntityAlertsRequest,
+  AlertType,
   AlertStatus,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { PaginatedResponse } from 'redux/interfaces/common';
-import { DataEntityTypeNameEnum } from '../../generated-sources/models/DataEntityType';
-import { AlertType } from '../../generated-sources/models/AlertType';
+import { PartialDataEntityUpdateParams } from '../interfaces/dataentities';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new AlertApi(apiClientConf);
+const dataEntitApiClient = new DataEntityApi(apiClientConf);
 
 export const fetchAlertsTotals = createThunk<
   void,
@@ -93,5 +96,22 @@ export const fetchMyDependentsAlertList = createThunk<
         !!response.items?.length &&
         response.items?.length === request.size,
     },
+  })
+);
+
+export const fetchDataEntityAlerts = createThunk<
+  DataEntityApiGetDataEntityAlertsRequest,
+  AlertList,
+  PartialDataEntityUpdateParams<AlertList>
+>(
+  (params: DataEntityApiGetDataEntityAlertsRequest) =>
+    dataEntitApiClient.getDataEntityAlerts(params),
+  actions.fetchDataEntityAlertsAction,
+  (
+    response: AlertList,
+    request: DataEntityApiGetDataEntityAlertsRequest
+  ) => ({
+    dataEntityId: request.dataEntityId,
+    value: response,
   })
 );

@@ -34,3 +34,12 @@ export const getAlertListPageInfo = createSelector(
   getAlertsState,
   alertsState => alertsState.pageInfo
 );
+
+export const getDataEntityAlertList = createSelector(
+  getAlertsState,
+  getDataEntityId,
+  (alertsState, dataEntityId) =>
+    alertsState.alertIdsByDataEntityId[dataEntityId]?.map(
+      id => alertsState.byId[id]
+    )
+);
