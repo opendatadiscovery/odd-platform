@@ -2,12 +2,16 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.dto.DatasetFieldDto;
 import com.provectus.oddplatform.dto.DatasetStructureDto;
+import com.provectus.oddplatform.dto.HowToCallThat;
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetVersionRecord;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
+import com.provectus.oddplatform.utils.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -19,6 +23,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -126,6 +131,69 @@ public class DatasetVersionRepositoryImpl
             .fetchStreamInto(DATASET_VERSION)
             .map(this::recordToPojo)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Long, Pair<HowToCallThat, HowToCallThat>> howToCallThat(final Collection<Long> datasetIds) {
+        final List<DatasetVersionPojo> latestVersions = getLatestVersions(List.of(1L, 13L, 15L));
+
+        final List<DatasetVersionPojo> havePreMax = latestVersions
+            .stream()
+            .filter(p -> p.getVersion() > 1)
+            .collect(Collectors.toList());
+
+        if (havePreMax.isEmpty()) {
+            return Map.of();
+        }
+
+        final Condition condition = havePreMax.stream()
+            .map(v -> DATASET_VERSION.DATASET_ID.eq(v.getDatasetId()).and(DATASET_VERSION.VERSION.eq(v.getVersion() - 1)))
+            .reduce(Condition::or)
+            .get();
+
+        final List<DatasetVersionPojo> preMax = dslContext.selectFrom(DATASET_VERSION)
+            .where(condition)
+            .fetchStreamInto(DatasetVersionPojo.class)
+            .collect(Collectors.toList());
+
+        final List<DatasetVersionPojo> versions = ListUtils.union(havePreMax, preMax);
+
+        final Map<Long, List<DatasetFieldPojo>> vidToFields = dslContext.selectFrom(DATASET_FIELD)
+            .where(DATASET_FIELD.DATASET_VERSION_ID.in(versions.stream().map(DatasetVersionPojo::getId).collect(Collectors.toSet())))
+            .fetchStreamInto(DatasetFieldPojo.class)
+            .collect(Collectors.groupingBy(DatasetFieldPojo::getDatasetVersionId));
+
+        final Map<Long, List<DatasetVersionPojo>> dsIdToVersions = versions
+            .stream()
+            .collect(Collectors.groupingBy(DatasetVersionPojo::getDatasetId));
+
+        return dsIdToVersions.entrySet().stream()
+            .map(e -> {
+                final List<DatasetVersionPojo> v = e.getValue().stream()
+                    .sorted(Comparator.comparing(DatasetVersionPojo::getVersion))
+                    .collect(Collectors.toList());
+
+
+                return Pair.of(
+                    e.getKey(),
+                    Pair.of(
+                        HowToCallThat.builder()
+                            .datasetVersion(v.get(0))
+                            .datasetFields(vidToFields.get(v.get(0).getId()))
+                            .build(),
+                        HowToCallThat.builder()
+                            .datasetVersion(v.get(1))
+                            .datasetFields(vidToFields.get(v.get(1).getId()))
+                            .build()
+                    ));
+            })
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+
+//        final SelectHavingStep<Record2<Long, Long>> subquery = dslContext
+//            .select(DATASET_VERSION.DATASET_ID, max(DATASET_VERSION.VERSION))
+//            .from(DATASET_VERSION)
+//            .where(DATASET_VERSION.DATASET_ID.in(datasetIds))
+//            .groupBy(DATASET_VERSION.DATASET_ID);
     }
 
     private DatasetFieldDto extractDatasetFieldDto(final Record record) {

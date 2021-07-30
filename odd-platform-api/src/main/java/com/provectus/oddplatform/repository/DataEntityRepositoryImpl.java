@@ -828,7 +828,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(OWNERSHIP).on(deCte.field(DATA_ENTITY.ID).eq(OWNERSHIP.DATA_ENTITY_ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
-            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN));
+            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)));
 
         if (config.isIncludeDetails()) {
             joinStep = joinStep
@@ -893,7 +893,7 @@ public class DataEntityRepositoryImpl
     private DataEntityDimensionsDto mapDimensionRecord(final Record r) {
         return DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
-            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, AlertPojo.class).isEmpty())
+            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
@@ -906,7 +906,7 @@ public class DataEntityRepositoryImpl
     private DataEntityDetailsDto mapDetailsRecord(final Record r) {
         return DataEntityDetailsDto.detailsBuilder()
             .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
-            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, AlertPojo.class).isEmpty())
+            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))

@@ -1,10 +1,13 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.dto.DatasetStructureDto;
+import com.provectus.oddplatform.dto.HowToCallThat;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
+import com.provectus.oddplatform.utils.Pair;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public interface DatasetVersionRepository extends CRUDRepository<DatasetVersionPojo> {
@@ -15,4 +18,6 @@ public interface DatasetVersionRepository extends CRUDRepository<DatasetVersionP
     List<DatasetVersionPojo> getVersions(final long datasetId);
 
     List<DatasetVersionPojo> getLatestVersions(final Collection<Long> datasetIds);
+
+    Map<Long, Pair<HowToCallThat, HowToCallThat>> howToCallThat(final Collection<Long> datasetIds);
 }
