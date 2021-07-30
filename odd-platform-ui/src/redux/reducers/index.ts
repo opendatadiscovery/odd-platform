@@ -12,6 +12,7 @@ import datasetStructure from './datasetStructure.reducer';
 import dataEntityLineage from './dataentityLineage.reducer';
 import profile from './profile.reducer';
 import dataQualityTest from './dataQualityTest.reducer';
+import alerts from './alerts.reducer';
 
 export default combineReducers<RootState>({
   dataSources,
@@ -26,4 +27,5 @@ export default combineReducers<RootState>({
   dataEntityLineage,
   profile,
   dataQualityTest,
+  alerts,
 });

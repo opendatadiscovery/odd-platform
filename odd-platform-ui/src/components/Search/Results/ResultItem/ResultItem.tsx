@@ -145,7 +145,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
   return (
     <Link to={detailsLink} className={classes.itemLink}>
       <Grid container className={classes.container} wrap="nowrap">
-        <Grid item className={cx(classes.col, classes.collg)}>
+        <Grid
+          item
+          container
+          justify="space-between"
+          wrap="nowrap"
+          className={cx(classes.col, classes.collg)}
+        >
           <Typography
             variant="body1"
             noWrap

@@ -30,6 +30,9 @@ export const styles = (theme: Theme) =>
         backgroundColor: '#EBECF0',
       },
     },
+    alert: {
+      marginRight: theme.spacing(0.5),
+    },
     entityTypeItem: {
       marginLeft: theme.spacing(0.5),
     },

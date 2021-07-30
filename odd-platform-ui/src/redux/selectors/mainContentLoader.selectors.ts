@@ -13,6 +13,7 @@ import { getIsTagsListFetching } from './tags.selectors';
 import { getDataSetStructureFetching } from './datasetStructure.selectors';
 import { getDataEntityLineageFetching } from './dataentityLineage.selectors';
 import { getIdentityFetching } from './profile.selectors';
+import { getAlertListFetching } from './alert.selectors';
 
 export const getMainContentLoading = createSelector(
   getDataEntitiesListFetching,
@@ -26,5 +27,6 @@ export const getMainContentLoading = createSelector(
   getMyUpstreamDataEntitiesFetching,
   getMyDownstreamDataEntitiesFetching,
   getPopularDataEntitiesFetching,
+  getAlertListFetching,
   (...statuses: boolean[]) => compact(statuses).length > 0
 );
