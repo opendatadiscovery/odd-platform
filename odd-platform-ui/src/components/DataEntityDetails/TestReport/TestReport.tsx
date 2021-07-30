@@ -59,77 +59,88 @@ const TestReport: React.FC<TestReportProps> = ({
 
   return (
     <Grid container className={classes.container}>
-      <Grid container className={classes.testReportContainer}>
-        <Grid container item className={classes.testReport}>
-          <TestReportTypeItem
-            count={datasetTestReport?.successTotal}
-            typeName={DataQualityTestRunStatusEnum.SUCCESS}
-            size="large"
-          />
-          <TestReportTypeItem
-            count={datasetTestReport?.failedTotal}
-            typeName={DataQualityTestRunStatusEnum.FAILED}
-            size="large"
-          />
-          <TestReportTypeItem
-            count={datasetTestReport?.brokenTotal}
-            typeName={DataQualityTestRunStatusEnum.BROKEN}
-            size="large"
-          />
-          <TestReportTypeItem
-            count={datasetTestReport?.abortedTotal}
-            typeName={DataQualityTestRunStatusEnum.ABORTED}
-            size="large"
-          />
-          <TestReportTypeItem
-            count={datasetTestReport?.skippedTotal}
-            typeName={DataQualityTestRunStatusEnum.SKIPPED}
-            size="large"
-          />
-          <TestReportTypeItem
-            count={datasetTestReport?.unknownTotal}
-            typeName={DataQualityTestRunStatusEnum.UNKNOWN}
-            size="large"
-          />
-        </Grid>
-        <Grid container item className={classes.testCount}>
-          <Typography
-            variant="body2"
-            color="textSecondary"
-          >{` ${datasetTestReport?.total} tests`}</Typography>
-        </Grid>
-      </Grid>
       {datasetQualityTestList ? (
-        <Grid container spacing={2}>
-          <Grid item xs={9}>
-            <Grid container className={classes.testReportItemContainer}>
-              {Object.entries(datasetQualityTestList).map(
-                ([suitName, dataQATestList]) => (
-                  <TestReportItemContainer
-                    dataqatestId={dataqatestId}
-                    dataSetId={dataEntityId}
-                    dataQATestReport={testReportBySuitName[suitName]}
-                    key={suitName}
-                    suitName={suitName}
-                    dataQATestList={dataQATestList}
-                  />
-                )
-              )}
+        <>
+          <Grid container className={classes.testReportContainer}>
+            <Grid container item className={classes.testReport}>
+              <TestReportTypeItem
+                count={datasetTestReport?.successTotal}
+                typeName={DataQualityTestRunStatusEnum.SUCCESS}
+                size="large"
+              />
+              <TestReportTypeItem
+                count={datasetTestReport?.failedTotal}
+                typeName={DataQualityTestRunStatusEnum.FAILED}
+                size="large"
+              />
+              <TestReportTypeItem
+                count={datasetTestReport?.brokenTotal}
+                typeName={DataQualityTestRunStatusEnum.BROKEN}
+                size="large"
+              />
+              <TestReportTypeItem
+                count={datasetTestReport?.abortedTotal}
+                typeName={DataQualityTestRunStatusEnum.ABORTED}
+                size="large"
+              />
+              <TestReportTypeItem
+                count={datasetTestReport?.skippedTotal}
+                typeName={DataQualityTestRunStatusEnum.SKIPPED}
+                size="large"
+              />
+              <TestReportTypeItem
+                count={datasetTestReport?.unknownTotal}
+                typeName={DataQualityTestRunStatusEnum.UNKNOWN}
+                size="large"
+              />
+            </Grid>
+            <Grid container item className={classes.testCount}>
+              <Typography
+                variant="body2"
+                color="textSecondary"
+              >{` ${datasetTestReport?.total} tests`}</Typography>
             </Grid>
           </Grid>
-          <Grid item xs={3}>
-            {dataqatestId ? (
-              <Paper square elevation={0}>
-                <TestReportDetailsContainer
-                  dataEntityId={dataEntityId}
-                  dataqatestId={dataqatestId}
-                  reportDetailsViewType={reportDetailsViewType}
-                />
-              </Paper>
+          <>
+            {datasetQualityTestList ? (
+              <Grid container spacing={2}>
+                <Grid item xs={9}>
+                  <Grid
+                    container
+                    className={classes.testReportItemContainer}
+                  >
+                    {Object.entries(datasetQualityTestList).map(
+                      ([suitName, dataQATestList]) => (
+                        <TestReportItemContainer
+                          dataqatestId={dataqatestId}
+                          dataSetId={dataEntityId}
+                          dataQATestReport={testReportBySuitName[suitName]}
+                          key={suitName}
+                          suitName={suitName}
+                          dataQATestList={dataQATestList}
+                        />
+                      )
+                    )}
+                  </Grid>
+                </Grid>
+                <Grid item xs={3}>
+                  {dataqatestId ? (
+                    <Paper square elevation={0}>
+                      <TestReportDetailsContainer
+                        dataEntityId={dataEntityId}
+                        dataqatestId={dataqatestId}
+                        reportDetailsViewType={reportDetailsViewType}
+                      />
+                    </Paper>
+                  ) : null}
+                </Grid>
+              </Grid>
             ) : null}
-          </Grid>
-        </Grid>
-      ) : null}
+          </>
+        </>
+      ) : (
+        <Typography variant="body1">There are no test reports</Typography>
+      )}
     </Grid>
   );
 };
