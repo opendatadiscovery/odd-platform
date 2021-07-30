@@ -32,7 +32,7 @@ const AlertsList: React.FC<AlertsListProps> = ({
   const fetchNextPage = () => {};
 
   React.useEffect(() => {
-    fetchAlerts({ page: 1, size: 1 });
+    fetchAlerts({ page: 1, size: 30 });
   }, [fetchAlerts]);
 
   return (
