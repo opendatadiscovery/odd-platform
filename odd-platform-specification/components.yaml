@@ -224,6 +224,27 @@ components:
           items:
             $ref: '#/components/schemas/DataEntitySubType'
 
+    DataEntityRunBaseObject:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        oddrn:
+          type: string
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - oddrn
+        - name
+
     DataEntityBaseObject:
       type: object
       properties:
@@ -401,6 +422,20 @@ components:
             version_list:
               $ref: '#/components/schemas/DataSetVersionList'
 
+    DataSetTestReports:
+      type: object
+      properties:
+        runs:
+          type: object
+          properties:
+            items:
+              type: array
+              $ref: '#/components/schemas/DataQualityTestRun'
+            page_info:
+              $ref:
+        totals:
+          $ref: '#/components/schemas/DataSetTestReportsOverview'
+
     DataEntityRef:
       type: object
       properties:
@@ -450,6 +485,32 @@ components:
         - $ref: '#/components/schemas/DataInput'
         - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
 
+    DataQualityTestRun:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityRunBaseObject'
+        - type: object
+          properties:
+            data_quality_test_id:
+              type: integer
+              format: int64
+            start_time:
+              type: string
+              format: date-time
+            end_time:
+              type: string
+              format: date-time
+            status_reason:
+              type: string
+            status:
+              type: string
+              enum:
+                - SUCCESS
+                - FAILED
+                - SKIPPED
+                - BROKEN
+                - ABORTED
+                - UNKNOWN
+
     DataQualityTestExpectation:
       type: object
       properties:
@@ -475,6 +536,48 @@ components:
               type: array
               items:
                 type: string
+            latest_run:
+              $ref: '#/components/schemas/DataQualityTestRun'
+
+    DataQualityTestRunList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataQualityTestRun'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+
+    DataSetTestReport:
+      type: object
+      properties:
+        score:
+          type: integer
+          format: int32
+        total:
+          type: integer
+          format: int64
+        success_total:
+          type: integer
+          format: int64
+        failed_total:
+          type: integer
+          format: int64
+        skipped_total:
+          type: integer
+          format: int64
+        broken_total:
+          type: integer
+          format: int64
+        aborted_total:
+          type: integer
+          format: int64
+        unknown_total:
+          type: integer
+          format: int64
 
     DataQualityTestDetails:
       allOf:
@@ -1276,6 +1379,14 @@ components:
 
     DataEntityOwnershipIdParam:
       name: ownership_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    DataQATestIdParam:
+      name: dataqatest_id
       in: path
       required: true
       schema:

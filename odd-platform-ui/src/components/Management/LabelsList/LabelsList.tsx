@@ -92,8 +92,7 @@ const LabelsListView: React.FC<LabelsListProps> = ({
       <div className={classes.caption}>
         <Typography variant="h1">Labels</Typography>
         <Typography variant="subtitle1" className={classes.totalCountText}>
-          {totalLabels ? <NumberFormatted value={totalLabels} /> : null}{' '}
-          labels overall
+          <NumberFormatted value={totalLabels} /> labels overall
         </Typography>
       </div>
       <div className={classes.caption}>

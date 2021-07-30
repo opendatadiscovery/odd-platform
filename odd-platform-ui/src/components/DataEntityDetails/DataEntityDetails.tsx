@@ -7,10 +7,10 @@ import {
   dataEntityOverviewPath,
   datasetStructurePath,
   dataEntityLineagePath,
+  dataEntityTestReportPath,
 } from 'lib/paths';
 import {
   DataEntityDetails,
-  DataEntityTypeNameEnum,
   DataEntityApiGetDataEntityDetailsRequest,
 } from 'generated-sources';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -20,6 +20,8 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import TestReportContainer from 'components/DataEntityDetails/TestReport/TestReportContainer';
+import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -29,6 +31,7 @@ interface DataEntityDetailsProps extends StylesType {
   viewType: string;
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
+  isDataset: boolean;
   fetchDataEntityDetails: (
     params: DataEntityApiGetDataEntityDetailsRequest
   ) => void;
@@ -39,16 +42,32 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   viewType,
   dataEntityId,
   dataEntityDetails,
+  isDataset,
   fetchDataEntityDetails,
 }) => {
   const [tabs, setTabs] = React.useState<AppTabItem[]>([
-    { name: 'Overview', link: dataEntityOverviewPath(dataEntityId) },
+    {
+      name: 'Overview',
+      link: dataEntityOverviewPath(dataEntityId),
+      value: 'overview',
+    },
     {
       name: 'Structure',
       link: datasetStructurePath(dataEntityId),
       hidden: true,
+      value: 'structure',
     },
-    { name: 'Lineage', link: dataEntityLineagePath(dataEntityId) },
+    {
+      name: 'Lineage',
+      link: dataEntityLineagePath(dataEntityId),
+      value: 'lineage',
+    },
+    {
+      name: 'Test reports',
+      link: dataEntityTestReportPath(dataEntityId),
+      hidden: true,
+      value: 'test-reports',
+    },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -62,22 +81,19 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       tabs.map(tab => ({
         ...tab,
         hidden:
-          tab.name === 'Structure' &&
-          (!dataEntityDetails ||
-            !dataEntityDetails?.types.find(
-              type => type.name === DataEntityTypeNameEnum.SET
-            )),
+          (tab.value === 'structure' || tab.value === 'test-reports') &&
+          !isDataset,
       }))
     );
   }, [dataEntityDetails]);
 
+  console.log(viewType);
+
   React.useEffect(() => {
     setSelectedTab(
-      viewType
-        ? tabs.findIndex(tab => tab.name.toLowerCase() === viewType)
-        : 0
+      viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
     );
-  }, [tabs]);
+  }, [tabs, viewType]);
 
   return (
     <div className={classes.container}>
@@ -174,6 +190,16 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
               exact
               path="/dataentities/:dataEntityId/lineage"
               component={LineageContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+              component={TestReportContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+              component={TestReportDetailsContainer}
             />
             <Redirect
               from="/dataentities/:dataEntityId"
