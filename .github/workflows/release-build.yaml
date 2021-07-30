@@ -9,6 +9,10 @@ on:
         description: 'A tag name for building previously created release'
         required: false
         default: '0.0.0'
+      buildOptions:
+        description: 'A additional oiptions for Gradle build command'
+        required: false
+        default: ''
 
 jobs:
   release:
@@ -44,6 +48,10 @@ jobs:
               LATEST=`git tag -l --sort=creatordate | tail -1`
               VERSION=`echo ${LATEST} | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g'`-${{ github.sha }}
           fi
+          if [[ -n "${{ github.event.inputs.buildOptions }}" ]]
+            then
+              VERSION="${{ github.event.inputs.buildOptions }}"
+          fi
           echo ::set-output name=version::${VERSION}
       - name: Cache local Gradle repository
         uses: actions/cache@v2
@@ -63,4 +71,14 @@ jobs:
         env:
           CI: false
         run: |
-          ./gradlew clean jibDockerBuild --scan --full-stacktrace --debug --no-daemon --image odd-platform -P version=${{ steps.get-version.outputs.version }}
+          ./gradlew clean jibDockerBuild ${{ github.event.inputs.buildOptions }} --no-daemon --image odd-platform -P version=${{ steps.get-version.outputs.version }}
+      - name: Retag image in GHCR
+        uses: kindaninja/retag-image-ghcr@0.1.0
+        if: ${{ github.event.action == "published" }}
+        with:
+          registry: opendatadiscovery
+          image: odd-platform
+          current_tag: ${{ steps.get-version.outputs.version }}
+          new_tag: ${{ steps.get-version.outputs.version }}
+          username: github
+          password: ${{ secrets.GITHUB_TOKEN }}
