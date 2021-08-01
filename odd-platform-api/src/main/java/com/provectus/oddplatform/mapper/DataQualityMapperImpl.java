@@ -11,6 +11,7 @@ import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetails
 import com.provectus.oddplatform.dto.DatasetTestReportDto;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -85,7 +86,11 @@ public class DataQualityMapperImpl implements DataQualityMapper {
     }
 
     private DataQualityTestExpectation mapDataQualityTestExpectation(final DataQualityTestDetailsDto dto) {
-        return new DataQualityTestExpectation().type(dto.getExpectationType());
+        final DataQualityTestExpectation expectation = new DataQualityTestExpectation().type(dto.getExpectationType());
+
+        expectation.putAll(MapUtils.emptyIfNull(dto.getExpectationParameters()));
+
+        return expectation;
     }
 
     // TODO: duplicate with ReadOnlyCRUDMapper#addUTC
