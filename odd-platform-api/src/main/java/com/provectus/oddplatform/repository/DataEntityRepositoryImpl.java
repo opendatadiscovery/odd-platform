@@ -584,8 +584,8 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public void calculateSearchEntrypoints(final List<Long> newDataEntitiesIds,
-                                           final List<Long> updatedDataEntitiesIds) {
+    public void calculateSearchEntrypoints(final Collection<Long> newDataEntitiesIds,
+                                           final Collection<Long> updatedDataEntitiesIds) {
         final List<Long> allEntitiesIds = Stream
             .concat(updatedDataEntitiesIds.stream(), newDataEntitiesIds.stream())
             .collect(Collectors.toList());
@@ -828,7 +828,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(OWNERSHIP).on(deCte.field(DATA_ENTITY.ID).eq(OWNERSHIP.DATA_ENTITY_ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
-            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)));
+            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ID.eq(deCte.field(DATA_ENTITY.ID)));
 
         if (config.isIncludeDetails()) {
             joinStep = joinStep

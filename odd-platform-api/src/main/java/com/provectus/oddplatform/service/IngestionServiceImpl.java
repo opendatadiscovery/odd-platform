@@ -1,5 +1,8 @@
 package com.provectus.oddplatform.service;
 
+import com.provectus.oddplatform.api.contract.model.AlertStatus;
+import com.provectus.oddplatform.api.contract.model.AlertTotals;
+import com.provectus.oddplatform.api.contract.model.AlertType;
 import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityIngestionDto;
 import com.provectus.oddplatform.dto.DataEntityIngestionDtoSplit;
@@ -13,6 +16,7 @@ import com.provectus.oddplatform.ingestion.contract.model.DataEntityList;
 import com.provectus.oddplatform.ingestion.contract.model.DataQualityTestRun;
 import com.provectus.oddplatform.mapper.DatasetFieldMapper;
 import com.provectus.oddplatform.mapper.IngestionMapper;
+import com.provectus.oddplatform.model.tables.pojos.AlertPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
@@ -23,6 +27,7 @@ import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.LineagePojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
+import com.provectus.oddplatform.repository.AlertRepository;
 import com.provectus.oddplatform.repository.DataEntityRepository;
 import com.provectus.oddplatform.repository.DataEntityTaskRunRepository;
 import com.provectus.oddplatform.repository.DataQualityTestRelationRepository;
@@ -33,9 +38,12 @@ import com.provectus.oddplatform.repository.DatasetVersionRepository;
 import com.provectus.oddplatform.repository.LineageRepository;
 import com.provectus.oddplatform.repository.MetadataFieldRepository;
 import com.provectus.oddplatform.repository.MetadataFieldValueRepository;
+import com.provectus.oddplatform.utils.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -72,6 +80,7 @@ public class IngestionServiceImpl implements IngestionService {
     private final LineageRepository lineageRepository;
     private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
+    private final AlertRepository alertRepository;
 
     private final IngestionMapper ingestionMapper;
     private final DatasetFieldMapper datasetFieldMapper;
@@ -86,7 +95,7 @@ public class IngestionServiceImpl implements IngestionService {
             .map(dsId -> ingestDataEntities(dataEntityList, dsId))
             .flatMap(this::ingestCompanions)
             .flatMap(this::calculateSearchEntrypoints)
-            .map(this::audit)
+            .map(this::findAlerts)
             .map(__ -> 0);
     }
 
@@ -181,12 +190,8 @@ public class IngestionServiceImpl implements IngestionService {
                 .setUpdatedAt(e.getUpdatedAt() != null ? e.getUpdatedAt().toLocalDateTime() : now)
                 .setRowsCount(e.getDataSet().getRowsCount())));
 
-        final List<Long> existingEntitiesIds = entities.getExistingEntities().stream()
-            .map(EnrichedDataEntityIngestionDto::getId)
-            .collect(Collectors.toList());
-
         final Flux<DatasetRevisionPojo> existingDR = Flux
-            .fromIterable(datasetRevisionRepository.listLatestByDatasetIds(existingEntitiesIds))
+            .fromIterable(datasetRevisionRepository.listLatestByDatasetIds(entities.getExistingIds()))
             .collectMap(DatasetRevisionPojo::getDataEntityId, identity())
             .map(drRecords -> entities.getExistingEntities()
                 .stream()
@@ -290,10 +295,38 @@ public class IngestionServiceImpl implements IngestionService {
             .map(datasetFieldRepository::bulkCreate);
     }
 
-    private DataEntityIngestionDtoSplit audit(final DataEntityIngestionDtoSplit split) {
-        // interested only in existing
-        // fetch latest and penultimate structures
-        // audit for alerts
+    private DataEntityIngestionDtoSplit findAlerts(final DataEntityIngestionDtoSplit split) {
+        final List<AlertPojo> alerts = datasetVersionRepository.getLastStructureDelta(split.getExistingIds())
+            .entrySet()
+            .stream()
+            .flatMap(e -> {
+                final Map<Pair<String, String>, DatasetFieldPojo> lastDict = e.getValue().getRight()
+                    .stream()
+                    .collect(Collectors.toMap(
+                        df -> Pair.of(df.getOddrn(), df.getType().data()),
+                        identity()
+                    ));
+
+                return e.getValue().getLeft()
+                    .stream()
+                    .map(df -> {
+                        if (!lastDict.containsKey(Pair.of(df.getOddrn(), df.getType().data()))) {
+                            return new AlertPojo()
+                                .setDataEntityId(e.getKey())
+                                .setDescription(String.format(
+                                    "Backwards Incompatible schema: missing field: %s", df.getName()))
+                                .setType(AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA.getValue())
+                                .setStatus(AlertStatus.OPEN.getValue())
+                                .setStatusUpdatedAt(LocalDateTime.now());
+                        }
+
+                        return null;
+                    })
+                    .filter(Objects::nonNull);
+            })
+            .collect(Collectors.toList());
+
+        alertRepository.createAlerts(alerts);
 
         return split;
     }
@@ -440,10 +473,7 @@ public class IngestionServiceImpl implements IngestionService {
 
     private Mono<DataEntityIngestionDtoSplit> calculateSearchEntrypoints(final DataEntityIngestionDtoSplit split) {
         return Mono.fromCallable(() -> {
-            dataEntityRepository.calculateSearchEntrypoints(
-                split.getNewEntities().stream().map(EnrichedDataEntityIngestionDto::getId).collect(Collectors.toList()),
-                split.getExistingEntities().stream().map(EnrichedDataEntityIngestionDto::getId).collect(Collectors.toList())
-            );
+            dataEntityRepository.calculateSearchEntrypoints(split.getNewIds(), split.getExistingIds());
 
             return split;
         });

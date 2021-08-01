@@ -9,11 +9,19 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptySet;
+
 @Component
 public class JooqRecordHelper {
-    @SuppressWarnings("unchecked")
     public <T> Set<T> extractAggRelation(final Record r, final String fieldName, final Class<T> fieldPojoClass) {
-        return (Set<T>) r.get(fieldName, Set.class)
+        final Set<?> set;
+        try {
+            set = r.get(fieldName, Set.class);
+        } catch (final IllegalArgumentException e) {
+            return emptySet();
+        }
+
+        return set
             .stream()
             .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
             .filter(Objects::nonNull)
