@@ -18,4 +18,5 @@ public class DataEntityDto {
     protected DataEntityPojo dataEntity;
     protected Collection<DataEntityTypePojo> types;
     protected DataEntitySubtypePojo subtype;
+    protected boolean hasAlerts;
 }

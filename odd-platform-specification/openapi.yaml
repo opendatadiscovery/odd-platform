@@ -27,6 +27,7 @@ tags:
   - name: dataQuality
   - name: metadata
   - name: datasetField
+  - name: alert
 paths:
   /api/identity/whoami:
     get:
@@ -1010,6 +1011,24 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityLineage'
       tags:
         - dataEntity
+
+  /api/dataentities/{data_entity_id}/alerts:
+    get:
+      summary: Get DataEntity's alerts
+      description: Gets DataEntity's alerts
+      operationId: getDataEntityAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - dataEntity
+
   /api/datasets/{data_entity_id}/structure:
     get:
       summary: Get latest version's DataSet structure information
@@ -1026,6 +1045,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataSetStructure'
       tags:
         - dataSet
+
   /api/datasets/{data_entity_id}/structure/{version_id}:
     get:
       summary: Get DataSet structure information
@@ -1210,3 +1230,95 @@ paths:
                 $ref: './components.yaml/#/components/schemas/LabelList'
       tags:
         - datasetField
+
+  /api/alerts:
+    get:
+      summary: Get all alerts
+      description: Gets all alerts
+      operationId: getAllAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - alert
+
+  /api/alerts/my:
+    get:
+      summary: Get authenticated user's alerts
+      description: Gets authenticated user's alerts
+      operationId: getAssociatedUserAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - alert
+
+  /api/alerts/dependents:
+    get:
+      summary: Get dependent entities' alerts
+      description: Gets dependent entities' alerts
+      operationId: getDependentEntitiesAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - alert
+
+  /api/alerts/totals:
+    get:
+      summary: Get alerts' totals
+      description: Gets alerts' totals
+      operationId: getAlertTotals
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertTotals'
+      tags:
+        - alert
+
+  /api/alerts/{alert_id}/status:
+    put:
+      summary: Change alert status
+      description: Changes alert status
+      operationId: changeAlertStatus
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/AlertIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/AlertStatusFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertStatus'
+      tags:
+        - alert

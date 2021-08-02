@@ -19,8 +19,10 @@ import {
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PaginatedResponse } from 'redux/interfaces/common';
-import { PartialDataEntityUpdateParams } from 'redux/interfaces/dataentities';
+import {
+  PaginatedResponse,
+  PartialEntityUpdateParams,
+} from 'redux/interfaces/common';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new OwnerApi(apiClientConf);
@@ -79,13 +81,13 @@ export const deleteOwner = createThunk<
 export const createDataEntityOwnership = createThunk<
   DataEntityApiCreateOwnershipRequest,
   Ownership,
-  PartialDataEntityUpdateParams<Ownership>
+  PartialEntityUpdateParams<Ownership>
 >(
   (params: DataEntityApiCreateOwnershipRequest) =>
     dataEntityApiClient.createOwnership(params),
   actions.createDataEntityOwnershipAction,
   (response: Ownership, request: DataEntityApiCreateOwnershipRequest) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: response,
   })
 );
@@ -93,13 +95,13 @@ export const createDataEntityOwnership = createThunk<
 export const updateDataEntityOwnership = createThunk<
   DataEntityApiUpdateOwnershipRequest,
   Ownership,
-  PartialDataEntityUpdateParams<Ownership>
+  PartialEntityUpdateParams<Ownership>
 >(
   (params: DataEntityApiUpdateOwnershipRequest) =>
     dataEntityApiClient.updateOwnership(params),
   actions.updateDataEntityOwnershipAction,
   (response: Ownership, request: DataEntityApiUpdateOwnershipRequest) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: response,
   })
 );
@@ -107,13 +109,13 @@ export const updateDataEntityOwnership = createThunk<
 export const deleteDataEntityOwnership = createThunk<
   DataEntityApiDeleteOwnershipRequest,
   void,
-  PartialDataEntityUpdateParams<number>
+  PartialEntityUpdateParams<number>
 >(
   (params: DataEntityApiDeleteOwnershipRequest) =>
     dataEntityApiClient.deleteOwnership(params),
   actions.deleteDataEntityOwnershipAction,
   (_, request: DataEntityApiDeleteOwnershipRequest) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: request.ownershipId,
   })
 );

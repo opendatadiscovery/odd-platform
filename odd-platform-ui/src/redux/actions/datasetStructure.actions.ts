@@ -1,6 +1,6 @@
 import { createAsyncAction } from 'typesafe-actions';
 import { DataSetStructure } from 'generated-sources';
-import { PartialDataEntityUpdateParams } from 'redux/interfaces/dataentities';
+import { PartialEntityUpdateParams } from 'redux/interfaces';
 import {
   UpdateDataSetFieldInternalDescriptionParams,
   UpdateDataSetFieldLabelsParams,
@@ -12,7 +12,7 @@ export const fetchDataSetStructureAction = createAsyncAction(
   'GET_DATA_SET_STRUCTURE__FAILURE'
 )<
   undefined,
-  PartialDataEntityUpdateParams<{
+  PartialEntityUpdateParams<{
     datasetStructure: DataSetStructure;
     latest?: boolean;
   }>,

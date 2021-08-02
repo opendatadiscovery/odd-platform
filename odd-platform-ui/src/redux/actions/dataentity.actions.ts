@@ -7,7 +7,7 @@ import {
   DataEntityTypeDictionary,
   DataEntityRef,
 } from 'generated-sources';
-import { PartialDataEntityUpdateParams } from 'redux/interfaces/dataentities';
+import { PartialEntityUpdateParams } from 'redux/interfaces';
 
 export const fetchDataEntitiesTypesAction = createAsyncAction(
   'GET_DATA_ENTITIES_TYPES__REQUEST',
@@ -25,7 +25,7 @@ export const updateDataEntityTagsAction = createAsyncAction(
   'PUT_DATA_ENTITY_TAGS__REQUEST',
   'PUT_DATA_ENTITY_TAGS__SUCCESS',
   'PUT_DATA_ENTITY_TAGS__FAILURE'
-)<undefined, PartialDataEntityUpdateParams<Tag[]>, undefined>();
+)<undefined, PartialEntityUpdateParams<Tag[]>, undefined>();
 
 export const updateDataEntityDescriptionAction = createAsyncAction(
   'PUT_DATA_ENTITY_INTERNAL_DESCRIPTION__REQUEST',
@@ -33,7 +33,7 @@ export const updateDataEntityDescriptionAction = createAsyncAction(
   'PUT_DATA_ENTITY_INTERNAL_DESCRIPTION__FAILURE'
 )<
   undefined,
-  PartialDataEntityUpdateParams<
+  PartialEntityUpdateParams<
     DataEntityDetailsBaseObject['internalDescription']
   >,
   undefined
@@ -43,7 +43,7 @@ export const updateDataEntityInternalName = createAsyncAction(
   'PUT_DATA_ENTITY_INTERNAL_NAME__REQUEST',
   'PUT_DATA_ENTITY_INTERNAL_NAME__SUCCESS',
   'PUT_DATA_ENTITY_INTERNAL_NAME__FAILURE'
-)<undefined, PartialDataEntityUpdateParams<InternalName>, undefined>();
+)<undefined, PartialEntityUpdateParams<InternalName>, undefined>();
 
 export const fetchMyDataEntitiesAction = createAsyncAction(
   'GET_MY_DATA_ENTITIES__REQUEST',

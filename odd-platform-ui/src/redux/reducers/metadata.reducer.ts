@@ -34,18 +34,17 @@ const reducer = (state = initialState, action: Action): MetaDataState => {
         ...state,
         dataEntityMetadata: {
           ...state.dataEntityMetadata,
-          [action.payload.dataEntityId]: {
+          [action.payload.entityId]: {
             byId: action.payload.value.reduce(
               (memo, metadata) => ({
                 ...memo,
                 [metadata.field.id]: metadata,
               }),
-              state.dataEntityMetadata[action.payload.dataEntityId].byId
+              state.dataEntityMetadata[action.payload.entityId].byId
             ),
             allIds: uniq([
               ...action.payload.value.map(metadata => metadata.field.id),
-              ...state.dataEntityMetadata[action.payload.dataEntityId]
-                .allIds,
+              ...state.dataEntityMetadata[action.payload.entityId].allIds,
             ]),
           },
         },
@@ -55,11 +54,10 @@ const reducer = (state = initialState, action: Action): MetaDataState => {
         ...state,
         dataEntityMetadata: {
           ...state.dataEntityMetadata,
-          [action.payload.dataEntityId]: {
-            ...state.dataEntityMetadata[action.payload.dataEntityId],
+          [action.payload.entityId]: {
+            ...state.dataEntityMetadata[action.payload.entityId],
             byId: {
-              ...state.dataEntityMetadata[action.payload.dataEntityId]
-                .byId,
+              ...state.dataEntityMetadata[action.payload.entityId].byId,
               [action.payload.value.field.id]: action.payload.value,
             },
           },
@@ -75,10 +73,10 @@ const reducer = (state = initialState, action: Action): MetaDataState => {
         ...state,
         dataEntityMetadata: {
           ...state.dataEntityMetadata,
-          [action.payload.dataEntityId]: {
-            ...state.dataEntityMetadata[action.payload.dataEntityId],
+          [action.payload.entityId]: {
+            ...state.dataEntityMetadata[action.payload.entityId],
             allIds: filter(
-              state.dataEntityMetadata[action.payload.dataEntityId].allIds,
+              state.dataEntityMetadata[action.payload.entityId].allIds,
               item => item !== action.payload.value
             ),
           },

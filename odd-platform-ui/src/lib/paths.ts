@@ -1,3 +1,5 @@
+import { AlertViewType } from '../redux/interfaces/alert';
+
 export const searchPath = (searchId?: string) =>
   `/search${searchId ? `/${searchId}` : ''}`;
 
@@ -46,3 +48,7 @@ export const datasetStructurePath = (
   `${dataEntityDetailsPath(datasetId)}/structure${
     versionId ? `/${versionId}` : ''
   }`;
+
+// Alerts
+export const alertsPath = (viewType: AlertViewType) =>
+  `/alerts/${viewType}`;

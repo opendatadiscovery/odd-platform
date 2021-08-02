@@ -5,3 +5,8 @@ export interface CurrentPageInfo extends PageInfo {
 }
 
 export type PaginatedResponse<T> = T & { pageInfo: CurrentPageInfo };
+
+export interface PartialEntityUpdateParams<T> {
+  entityId: number;
+  value: T;
+}

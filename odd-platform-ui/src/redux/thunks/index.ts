@@ -8,3 +8,4 @@ export * from './owners.thunks';
 export * from './tags.thunks';
 export * from './labels.thunks';
 export * from './profile.thunks';
+export * from './alerts.thunks';

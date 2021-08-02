@@ -3,6 +3,7 @@ package com.provectus.oddplatform.controller;
 import com.provectus.oddplatform.api.contract.api.DataEntityApi;
 import com.provectus.oddplatform.api.contract.model.*;
 import com.provectus.oddplatform.dto.StreamKind;
+import com.provectus.oddplatform.service.AlertService;
 import com.provectus.oddplatform.service.DataEntityService;
 import com.provectus.oddplatform.service.OwnershipService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,14 @@ public class DataEntityController
     implements DataEntityApi {
 
     private final OwnershipService ownershipService;
+    private final AlertService alertService;
 
     public DataEntityController(final DataEntityService entityService,
-                                final OwnershipService ownershipService) {
+                                final OwnershipService ownershipService,
+                                final AlertService alertService) {
         super(entityService);
         this.ownershipService = ownershipService;
+        this.alertService = alertService;
     }
 
     @Override
@@ -200,6 +204,14 @@ public class DataEntityController
                                                                 final ServerWebExchange exchange) {
         return Mono.just(entityService.listPopular(page, size)
             .subscribeOn(Schedulers.boundedElastic()))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<AlertList>> getDataEntityAlerts(final Long dataEntityId,
+                                                               final ServerWebExchange exchange) {
+        return alertService.getDataEntityAlerts(dataEntityId)
+            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 }

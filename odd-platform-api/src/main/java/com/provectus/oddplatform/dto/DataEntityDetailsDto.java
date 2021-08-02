@@ -39,6 +39,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     public DataEntityDetailsDto(final DataEntityPojo dataEntity,
                                 final Set<DataEntityTypePojo> types,
                                 final DataEntitySubtypePojo subtype,
+                                final boolean hasAlerts,
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
                                 final DataSourcePojo dataSource,
@@ -47,7 +48,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final DataSetDetailsDto dataSetDetailsDto,
                                 final DataTransformerDetailsDto dataTransformerDetailsDto,
                                 final DataQualityTestDetailsDto dataQualityTestDetailsDto) {
-        super(dataEntity, types, subtype, namespace, ownership, dataSource, tags);
+        super(dataEntity, types, subtype, hasAlerts, namespace, ownership, dataSource, tags);
         this.metadata = metadata;
         this.dataSetDetailsDto = dataSetDetailsDto;
         this.dataTransformerDetailsDto = dataTransformerDetailsDto;

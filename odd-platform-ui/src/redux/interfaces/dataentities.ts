@@ -4,16 +4,6 @@ export interface UpdateDataEntityParams {
   dataEntityId: number;
 }
 
-export interface PartialDataEntityUpdateParams<T> {
-  dataEntityId: number;
-  value: T;
-}
-
-export interface PartialQATestParams<T> {
-  dataqatestId: number;
-  value: T;
-}
-
 export const DataEntityTypeLabelMap: Map<
   DataEntityTypeNameEnum,
   { short: string; normal: string; plural: string }

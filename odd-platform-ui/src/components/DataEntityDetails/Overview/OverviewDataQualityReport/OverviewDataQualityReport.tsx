@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid, LinearProgress } from '@material-ui/core';
+import { Typography, Grid } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import {

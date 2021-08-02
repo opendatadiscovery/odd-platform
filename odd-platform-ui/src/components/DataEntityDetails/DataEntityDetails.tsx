@@ -26,6 +26,7 @@ import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
 import { StylesType } from './DataEntityDetailsStyles';
+import AlertBannersContainer from './AlertBanners/AlertBannersContainer';
 
 interface DataEntityDetailsProps extends StylesType {
   viewType: string;
@@ -164,6 +165,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
               ) : null}
             </Grid>
           </Grid>
+          <AlertBannersContainer dataEntityId={dataEntityId} />
           {tabs.length && selectedTab >= 0 ? (
             <AppTabs
               className={classes.tabsContainer}

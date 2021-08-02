@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
 import { fetchDataEntityLineage } from 'redux/thunks/dataentityLineage.thunks';
-import { getDataEntityLineage } from 'redux/selectors/dataentityLineage.selectors';
 import LineageStructure from './Lineage';
 import { styles } from './LineageStyles';
 
