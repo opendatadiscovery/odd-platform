@@ -8,6 +8,7 @@ import {
   DataQualityTestRunStatusEnum,
 } from 'generated-sources';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { dataEntityTestReportPath } from 'lib/paths';
 import { StylesType } from './OverviewDataQualityReportStyles';
 
 interface OverviewDataQualityReportProps extends StylesType {
@@ -40,8 +41,9 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
           </Grid>
           <Grid item>
             <AppButton size="small" color="tertiary" onClick={() => {}}>
-              {/* Add path to test reports page */}
-              <Link to="/">See all</Link>
+              <Link to={dataEntityTestReportPath(dataEntityId)}>
+                See all
+              </Link>
             </AppButton>
           </Grid>
         </Grid>
@@ -112,7 +114,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             <div
               className={cx(
                 classes.bar,
-                DataQualityTestRunStatusEnum.OTHER
+                DataQualityTestRunStatusEnum.UNKNOWN
               )}
             />
           </Grid>
@@ -181,7 +183,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             variant="body1"
             className={cx(
               classes.countLabel,
-              DataQualityTestRunStatusEnum.OTHER
+              DataQualityTestRunStatusEnum.UNKNOWN
             )}
           >
             unknown

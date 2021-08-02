@@ -24,6 +24,7 @@ import {
   Alert,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
+import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
 import { LoaderState } from './loader';
 import { DataSetStructureTypesCount } from './datasetStructure';
 import {
@@ -83,17 +84,22 @@ export interface DataQualityTestState {
   qualityTestsById: {
     [qualityTestId: string]: DataQualityTest;
   };
-  allTestIdsByDatasetId: {
-    [datasetId: string]: DataQualityTest['id'][];
+  allSuiteNamesByDatasetId: {
+    [datasetId: string]: {
+      [suiteName: string]: DataQualityTest['id'][];
+    };
   };
   qualityTestRunsById: {
-    [qualityTestRunId: string]: DataQualityTest;
+    [qualityTestRunId: string]: DataQualityTestRun;
   };
   allTestRunIdsByTestId: {
     [qualityTestId: string]: DataQualityTestRun['id'][];
   };
   datasetTestReportByEntityId: {
     [dataEntityId: string]: DataSetTestReport;
+  };
+  testReportBySuiteName: {
+    [suiteName: string]: DataSetQualityTestsStatusCount;
   };
 }
 

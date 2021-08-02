@@ -1,17 +1,9 @@
 import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { statusColor } from 'theme/palette';
 import {
   DataQualityTestRunStatusEnum,
   DataSetTestReport,
 } from 'generated-sources';
-
-const statusColor = {
-  SUCCESS: '#1FAD1F',
-  FAILED: '#F2330D',
-  BROKEN: '#FFAA00',
-  SKIPPED: '#0080FF',
-  ABORTED: '#0066CC', // Temp
-  OTHER: '#A8B0BD',
-};
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -54,8 +46,8 @@ export const styles = (theme: Theme) =>
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
         color: statusColor.ABORTED,
       },
-      [`&.${DataQualityTestRunStatusEnum.OTHER}`]: {
-        color: statusColor.OTHER,
+      [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
+        color: statusColor.UNKNOWN,
       },
     },
     barsContainer: {
@@ -114,8 +106,8 @@ export const styles = (theme: Theme) =>
             otherStatusesAdjustment
           }%`,
         },
-        [`&.${DataQualityTestRunStatusEnum.OTHER}`]: {
-          backgroundColor: statusColor.OTHER,
+        [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
+          backgroundColor: statusColor.UNKNOWN,
           maxWidth: `${
             ((datasetQualityTestReport?.unknownTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *

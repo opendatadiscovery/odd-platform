@@ -3,9 +3,16 @@ import {
   DataQualityApiGetDatasetTestReportRequest,
   DataQualityApi,
   DataSetTestReport,
+  DataQualityApiGetDataEntityDataQATestsRequest,
+  DataEntityList,
+  DataQualityApiGetRunsRequest,
+  DataQualityTestRunList,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
-import { PartialDataEntityUpdateParams } from 'redux/interfaces/dataentities';
+import {
+  PartialDataEntityUpdateParams,
+  PartialQATestParams,
+} from 'redux/interfaces/dataentities';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 
@@ -25,6 +32,40 @@ export const fetchDataSetQualityTestReport = createThunk<
     request: DataQualityApiGetDatasetTestReportRequest
   ) => ({
     dataEntityId: request.dataEntityId,
+    value: response,
+  })
+);
+
+export const fetchDataSetQualityTestList = createThunk<
+  DataQualityApiGetDataEntityDataQATestsRequest,
+  DataEntityList,
+  PartialDataEntityUpdateParams<DataEntityList>
+>(
+  (params: DataQualityApiGetDataEntityDataQATestsRequest) =>
+    datasetQualityTestApiClient.getDataEntityDataQATests(params),
+  actions.fetchDataSetQualityTestListAction,
+  (
+    response: DataEntityList,
+    request: DataQualityApiGetDataEntityDataQATestsRequest
+  ) => ({
+    dataEntityId: request.dataEntityId,
+    value: response,
+  })
+);
+
+export const fetchDataSetQualityTestRuns = createThunk<
+  DataQualityApiGetRunsRequest,
+  DataQualityTestRunList,
+  PartialQATestParams<DataQualityTestRunList>
+>(
+  (params: DataQualityApiGetRunsRequest) =>
+    datasetQualityTestApiClient.getRuns(params),
+  actions.fetchDataSetQualityTestRunsAction,
+  (
+    response: DataQualityTestRunList,
+    request: DataQualityApiGetRunsRequest
+  ) => ({
+    dataqatestId: request.dataqatestId,
     value: response,
   })
 );

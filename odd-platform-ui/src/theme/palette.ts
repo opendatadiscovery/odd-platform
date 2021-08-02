@@ -1,5 +1,14 @@
 import createPalette from '@material-ui/core/styles/createPalette';
 
+export const statusColor = {
+  SUCCESS: '#1FAD1F',
+  FAILED: '#F2330D',
+  BROKEN: '#FFAA00',
+  SKIPPED: '#0080FF',
+  ABORTED: '#8066FF',
+  UNKNOWN: '#A8B0BD',
+};
+
 const colors = {
   primary: '#3a5ad1',
   primaryLight: '#758be1',

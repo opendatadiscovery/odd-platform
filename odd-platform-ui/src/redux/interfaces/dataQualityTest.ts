@@ -1,7 +1,7 @@
-export type DataSetQualityTestsStatusCount = {
-  all: number;
+export interface DataSetQualityTestsStatusCount {
   success: number;
-  fail: number;
+  failed: number;
   skipped: number;
+  aborted: number;
   unknown: number;
-};
+}

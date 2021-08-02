@@ -7,12 +7,13 @@ import {
   getDataEntityIsDataset,
 } from 'redux/selectors/dataentity.selectors';
 import { fetchDataEntityDetails } from 'redux/thunks/dataentities.thunks';
-import DataEntityDetails from './DataEntityDetails';
 import { styles } from './DataEntityDetailsStyles';
+import DataEntityDetailsView from './DataEntityDetails';
 
 interface RouteProps {
   dataEntityId: string;
   viewType: string;
+  reportDetailsViewType: string;
 }
 
 type OwnProps = RouteComponentProps<RouteProps>;
@@ -38,4 +39,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(DataEntityDetails));
+)(withStyles(styles)(DataEntityDetailsView));

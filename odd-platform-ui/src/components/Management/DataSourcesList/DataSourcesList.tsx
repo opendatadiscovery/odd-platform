@@ -87,10 +87,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
       <div className={classes.caption}>
         <Typography variant="h1">Datasources</Typography>
         <Typography variant="subtitle1" className={classes.totalCountText}>
-          {totalDataSources ? (
-            <NumberFormatted value={totalDataSources} />
-          ) : null}{' '}
-          datasources
+          <NumberFormatted value={totalDataSources} /> datasources
         </Typography>
       </div>
       <div className={classes.caption}>
