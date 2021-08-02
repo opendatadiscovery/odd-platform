@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography, withStyles } from '@material-ui/core';
 import cx from 'classnames';
-import { formatDistance, formatDistanceStrict } from 'date-fns';
+import { formatDistanceStrict } from 'date-fns';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
 import LatestRunIcon from 'components/shared/LatestTestRunIcon/LatestTestRunIcon';
 import { styles, StylesType } from './TestitemStyles';

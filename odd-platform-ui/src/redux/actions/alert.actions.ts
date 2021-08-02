@@ -1,8 +1,8 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { AlertList, AlertTotals } from 'generated-sources';
+import { AlertList, AlertTotals, AlertStatus } from 'generated-sources';
 import {
   PaginatedResponse,
-  PartialDataEntityUpdateParams,
+  PartialEntityUpdateParams,
 } from 'redux/interfaces';
 
 export const fetchAlertsTotalsAction = createAsyncAction(
@@ -17,8 +17,14 @@ export const fetchAlertListAction = createAsyncAction(
   'GET_ALERTS__FAILURE'
 )<undefined, PaginatedResponse<AlertList>, undefined>();
 
+export const updateAlertStatusAction = createAsyncAction(
+  'PUT_ALERT_STATUS__REQUEST',
+  'PUT_ALERT_STATUS__SUCCESS',
+  'PUT_ALERT_STATUS__FAILURE'
+)<undefined, PartialEntityUpdateParams<AlertStatus>, undefined>();
+
 export const fetchDataEntityAlertsAction = createAsyncAction(
   'GET_DATA_ENTITY_ALERTS__REQUEST',
   'GET_DATA_ENTITY_ALERTS__SUCCESS',
   'GET_DATA_ENTITY_ALERTS__FAILURE'
-)<undefined, PartialDataEntityUpdateParams<AlertList>, undefined>();
+)<undefined, PartialEntityUpdateParams<AlertList>, undefined>();

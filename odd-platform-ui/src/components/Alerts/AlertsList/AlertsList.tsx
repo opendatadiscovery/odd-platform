@@ -1,6 +1,4 @@
-import { Grid, Typography } from '@material-ui/core';
 import React from 'react';
-import cx from 'classnames';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   Alert,

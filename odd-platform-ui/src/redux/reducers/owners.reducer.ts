@@ -71,14 +71,14 @@ const reducer = (state = initialState, action: Action): OwnersState => {
         ...state,
         ownership: {
           ...state.ownership,
-          [action.payload.dataEntityId]: {
+          [action.payload.entityId]: {
             byId: {
-              ...state.ownership[action.payload.dataEntityId].byId,
+              ...state.ownership[action.payload.entityId].byId,
               [action.payload.value.id]: action.payload.value,
             },
             allIds: [
               action.payload.value.id,
-              ...state.ownership[action.payload.dataEntityId].allIds,
+              ...state.ownership[action.payload.entityId].allIds,
             ],
           },
         },
@@ -88,10 +88,10 @@ const reducer = (state = initialState, action: Action): OwnersState => {
         ...state,
         ownership: {
           ...state.ownership,
-          [action.payload.dataEntityId]: {
-            ...state.ownership[action.payload.dataEntityId],
+          [action.payload.entityId]: {
+            ...state.ownership[action.payload.entityId],
             byId: {
-              ...state.ownership[action.payload.dataEntityId].byId,
+              ...state.ownership[action.payload.entityId].byId,
               [action.payload.value.id]: action.payload.value,
             },
           },
@@ -102,10 +102,10 @@ const reducer = (state = initialState, action: Action): OwnersState => {
         ...state,
         ownership: {
           ...state.ownership,
-          [action.payload.dataEntityId]: {
-            ...state.ownership[action.payload.dataEntityId],
+          [action.payload.entityId]: {
+            ...state.ownership[action.payload.entityId],
             allIds: filter(
-              state.ownership[action.payload.dataEntityId].allIds,
+              state.ownership[action.payload.entityId].allIds,
               item => item !== action.payload.value
             ),
           },

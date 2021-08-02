@@ -48,9 +48,20 @@ const reducer = (state = initialState, action: Action): AlertsState => {
           ) || state.byId,
         alertIdsByDataEntityId: {
           ...state.alertIdsByDataEntityId,
-          [action.payload.dataEntityId]: action.payload.value.items?.map(
+          [action.payload.entityId]: action.payload.value.items?.map(
             alert => alert.id
           ),
+        },
+      };
+    case getType(actions.updateAlertStatusAction.success):
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.payload.entityId]: {
+            ...state.allIds,
+            status: action.payload.value,
+          },
         },
       };
     default:

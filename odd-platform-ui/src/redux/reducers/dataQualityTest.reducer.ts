@@ -137,20 +137,20 @@ const reducer = (
       return {
         ...state,
         datasetTestReportByEntityId: {
-          [action.payload.dataEntityId]: action.payload.value,
+          [action.payload.entityId]: action.payload.value,
         },
       };
     case getType(actions.fetchDataSetQualityTestListAction.success):
       return createDataSetQualityTestList(
         state,
         action.payload.value,
-        action.payload.dataEntityId
+        action.payload.entityId
       );
     case getType(actions.fetchDataSetQualityTestRunsAction.success):
       return createDataSetQualityRunsList(
         state,
         action.payload.value,
-        action.payload.dataqatestId
+        action.payload.entityId
       );
     default:
       return state;

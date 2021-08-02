@@ -1,9 +1,7 @@
-import { Grid, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import cx from 'classnames';
 import {
-  DataEntityRef,
   AlertTotals,
   AlertList,
   AlertApiGetAllAlertsRequest,

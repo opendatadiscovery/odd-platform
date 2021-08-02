@@ -2,6 +2,8 @@ import { createSelector } from 'reselect';
 import { RootState, AlertsState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 import { getDataEntityId } from './dataentity.selectors';
+import { Alert } from '../../generated-sources/models/Alert';
+import { AlertStatus } from '../../generated-sources';
 
 const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
 
@@ -35,11 +37,16 @@ export const getAlertListPageInfo = createSelector(
   alertsState => alertsState.pageInfo
 );
 
-export const getDataEntityAlertList = createSelector(
+export const getDataEntityOpenAlertList = createSelector(
   getAlertsState,
   getDataEntityId,
   (alertsState, dataEntityId) =>
-    alertsState.alertIdsByDataEntityId[dataEntityId]?.map(
-      id => alertsState.byId[id]
+    alertsState.alertIdsByDataEntityId[dataEntityId]?.reduce<Alert[]>(
+      (memo, id) => {
+        if (alertsState.byId[id].status === AlertStatus.OPEN)
+          memo.push(alertsState.byId[id]);
+        return memo;
+      },
+      []
     )
 );

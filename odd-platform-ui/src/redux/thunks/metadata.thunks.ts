@@ -14,7 +14,7 @@ import {
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PartialDataEntityUpdateParams } from '../interfaces/dataentities';
+import { PartialEntityUpdateParams } from 'redux/interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new DataEntityApi(apiClientConf);
@@ -23,7 +23,7 @@ const metadataClient = new MetadataApi(apiClientConf);
 export const createDataEntityCustomMetadata = createThunk<
   DataEntityApiCreateDataEntityMetadataFieldValueRequest,
   MetadataFieldValueList,
-  PartialDataEntityUpdateParams<MetadataFieldValue[]>
+  PartialEntityUpdateParams<MetadataFieldValue[]>
 >(
   (params: DataEntityApiCreateDataEntityMetadataFieldValueRequest) =>
     apiClient.createDataEntityMetadataFieldValue(params),
@@ -32,7 +32,7 @@ export const createDataEntityCustomMetadata = createThunk<
     result: MetadataFieldValueList,
     request: DataEntityApiCreateDataEntityMetadataFieldValueRequest
   ) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: result.items,
   })
 );
@@ -40,7 +40,7 @@ export const createDataEntityCustomMetadata = createThunk<
 export const updateDataEntityCustomMetadata = createThunk<
   DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
   MetadataFieldValue,
-  PartialDataEntityUpdateParams<MetadataFieldValue>
+  PartialEntityUpdateParams<MetadataFieldValue>
 >(
   (params: DataEntityApiUpsertDataEntityMetadataFieldValueRequest) =>
     apiClient.upsertDataEntityMetadataFieldValue(params),
@@ -49,7 +49,7 @@ export const updateDataEntityCustomMetadata = createThunk<
     result: MetadataFieldValue,
     request: DataEntityApiUpsertDataEntityMetadataFieldValueRequest
   ) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: result,
   })
 );
@@ -57,7 +57,7 @@ export const updateDataEntityCustomMetadata = createThunk<
 export const deleteDataEntityCustomMetadata = createThunk<
   DataEntityApiDeleteDataEntityMetadataFieldValueRequest,
   void,
-  PartialDataEntityUpdateParams<number>
+  PartialEntityUpdateParams<number>
 >(
   (params: DataEntityApiDeleteDataEntityMetadataFieldValueRequest) =>
     apiClient.deleteDataEntityMetadataFieldValue(params),
@@ -66,7 +66,7 @@ export const deleteDataEntityCustomMetadata = createThunk<
     _,
     request: DataEntityApiDeleteDataEntityMetadataFieldValueRequest
   ) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: request.metadataFieldId,
   })
 );

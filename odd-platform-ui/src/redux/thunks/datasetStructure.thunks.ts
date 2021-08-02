@@ -11,7 +11,7 @@ import {
   DatasetFieldApiUpsertDatasetFieldLabelsRequest,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
-import { PartialDataEntityUpdateParams } from 'redux/interfaces/dataentities';
+import { PartialEntityUpdateParams } from 'redux/interfaces';
 import {
   UpdateDataSetFieldInternalDescriptionParams,
   UpdateDataSetFieldLabelsParams,
@@ -26,7 +26,7 @@ const datasetFieldApiClient = new DatasetFieldApi(apiClientConf);
 export const fetchDataSetStructureLatest = createThunk<
   DataSetApiGetDataSetStructureLatestRequest,
   DataSetStructure,
-  PartialDataEntityUpdateParams<{
+  PartialEntityUpdateParams<{
     datasetStructure: DataSetStructure;
     latest?: boolean;
   }>
@@ -38,7 +38,7 @@ export const fetchDataSetStructureLatest = createThunk<
     response: DataSetStructure,
     request: DataSetApiGetDataSetStructureLatestRequest
   ) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: {
       datasetStructure: response,
       latest: true,
@@ -49,7 +49,7 @@ export const fetchDataSetStructureLatest = createThunk<
 export const fetchDataSetStructure = createThunk<
   DataSetApiGetDataSetStructureByVersionIdRequest,
   DataSetStructure,
-  PartialDataEntityUpdateParams<{
+  PartialEntityUpdateParams<{
     datasetStructure: DataSetStructure;
     latest?: boolean;
   }>
@@ -61,7 +61,7 @@ export const fetchDataSetStructure = createThunk<
     response: DataSetStructure,
     request: DataSetApiGetDataSetStructureByVersionIdRequest
   ) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: {
       datasetStructure: response,
     },

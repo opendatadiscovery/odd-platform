@@ -7,17 +7,22 @@ import { styles, StylesType } from './AlertBannerStyles';
 
 interface AlertBannerProps extends StylesType {
   alert: Alert;
+  resolveAlert: () => void;
 }
 
-const AlertBanner: React.FC<AlertBannerProps> = ({ classes, alert }) => (
+const AlertBanner: React.FC<AlertBannerProps> = ({
+  classes,
+  alert,
+  resolveAlert,
+}) => (
   <div className={classes.container}>
     <div className={classes.description}>
       <AlertIcon className={classes.icon} />
       <Typography variant="body1">{alert.description}</Typography>
     </div>
     <div className={classes.actions}>
-      <AppButton size="medium" color="secondary">
-        Close
+      <AppButton size="medium" color="secondary" onClick={resolveAlert}>
+        Resolve
       </AppButton>
     </div>
   </div>

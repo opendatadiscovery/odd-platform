@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { Typography, Grid } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import { StylesType } from './ManagementStyles';
 import DataSourcesListContainer from './DataSourcesList/DataSourcesListContainer';
@@ -13,7 +13,7 @@ interface ManagementProps extends StylesType {
 }
 
 const Management: React.FC<ManagementProps> = ({ classes, viewType }) => {
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([
+  const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Datasources', link: '/management/datasources' },
     { name: 'Owners', link: '/management/owners' },
     { name: 'Tags', link: '/management/tags' },
