@@ -19,7 +19,9 @@ public class ResourceProviderWebFilter implements WebFilter {
             return chain.filter(exchange);
         }
 
-        if (requestPath.startsWith("/static") || requestPath.equals("/manifest.json")) {
+        if (requestPath.startsWith("/static")
+            || requestPath.equals("/manifest.json")
+            || requestPath.startsWith("/favicon.ico")) {
             final ServerHttpRequest exchangeRequest = exchange.getRequest().mutate()
                 .header("Cache-Control", "No-Cache")
                 .build();

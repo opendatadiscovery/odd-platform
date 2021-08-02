@@ -91,6 +91,7 @@ public class SecurityConfiguration {
             .authorizeExchange()
             .pathMatchers("/ingestion/entities").permitAll()
             .pathMatchers("/health").permitAll()
+            .pathMatchers("/favicon.ico").permitAll()
             .pathMatchers("/**").authenticated();
     }
 
