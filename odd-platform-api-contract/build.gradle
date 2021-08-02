@@ -2,6 +2,17 @@ plugins {
     id 'org.openapi.generator' version '5.1.0'
 }
 
+dependencies {
+    compileOnly "org.springframework.boot:spring-boot-starter-webflux:$springWebfluxVersion"
+
+    compileOnly "javax.validation:validation-api:$validationApiVersion"
+    compileOnly "javax.annotation:javax.annotation-api:$annotationApiVersion"
+    compileOnly "io.swagger:swagger-annotations:$swaggerAnnotationsVersion"
+
+    compileOnly "io.springfox:springfox-boot-starter:$springfoxBootStarterVersion"
+    compileOnly "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
+}
+
 openApiGenerate {
     generatorName = "spring"
 
