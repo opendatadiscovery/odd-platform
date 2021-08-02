@@ -6,6 +6,7 @@ export const styles = (theme: Theme) =>
     statContainer: { margin: theme.spacing(2, 0) },
     statItem: { marginBottom: theme.spacing(1) },
     paramContainer: { marginBottom: theme.spacing(1) },
+    paramName: { paddingRight: theme.spacing(0.5) },
   });
 
 export type StylesType = WithStyles<typeof styles>;

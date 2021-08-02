@@ -40,7 +40,9 @@ export const getDatasetQualityTestsBySuiteNames = createSelector(
   getDataQualityTestState,
   getDataEntityId,
   (dataQualityTestState, dataEntityId) => {
-    if (isEmpty(dataQualityTestState.allSuiteNamesByDatasetId)) {
+    if (
+      isEmpty(dataQualityTestState.allSuiteNamesByDatasetId[dataEntityId])
+    ) {
       return {};
     }
     const suitNamesByDatasetId = Object.entries(

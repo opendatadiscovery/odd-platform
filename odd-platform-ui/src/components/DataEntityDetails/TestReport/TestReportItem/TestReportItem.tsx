@@ -105,6 +105,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                   }
                   testStartTime={dataQATest.latestRun?.startTime}
                   testEndTime={dataQATest.latestRun?.endTime}
+                  testExpectations={dataQATest?.expectation}
                 />
               </Link>
             ))
