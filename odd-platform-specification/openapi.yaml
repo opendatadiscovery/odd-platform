@@ -1312,7 +1312,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/AlertStatus'
+              $ref: './components.yaml/#/components/schemas/AlertStatusFormData'
       responses:
         '200':
           description: OK

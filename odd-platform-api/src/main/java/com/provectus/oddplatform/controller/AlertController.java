@@ -3,6 +3,7 @@ package com.provectus.oddplatform.controller;
 import com.provectus.oddplatform.api.contract.api.AlertApi;
 import com.provectus.oddplatform.api.contract.model.AlertList;
 import com.provectus.oddplatform.api.contract.model.AlertStatus;
+import com.provectus.oddplatform.api.contract.model.AlertStatusFormData;
 import com.provectus.oddplatform.api.contract.model.AlertTotals;
 import com.provectus.oddplatform.service.AlertService;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +20,11 @@ public class AlertController implements AlertApi {
 
     @Override
     public Mono<ResponseEntity<AlertStatus>> changeAlertStatus(final Long alertId,
-                                                               final Mono<String> body,
+                                                               final Mono<AlertStatusFormData> alertStatusFormData,
                                                                final ServerWebExchange exchange) {
-        return body
+        return alertStatusFormData
             .publishOn(Schedulers.boundedElastic())
-            .flatMap(s -> alertService.updateStatus(alertId, AlertStatus.fromValue(s)))
+            .flatMap(s -> alertService.updateStatus(alertId, s.getStatus()))
             .map(ResponseEntity::ok);
     }
 
