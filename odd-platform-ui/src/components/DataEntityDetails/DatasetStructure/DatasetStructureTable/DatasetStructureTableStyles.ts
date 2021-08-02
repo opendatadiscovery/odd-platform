@@ -17,6 +17,9 @@ export const columnBasicStyles = (theme: Theme) => ({
     display: 'flex',
     justifyContent: 'flex-end',
     paddingRight: theme.spacing(2),
+    '& > *': {
+      marginRight: theme.spacing(1),
+    },
   },
   uniqCol: {
     paddingLeft: 0,
@@ -24,7 +27,6 @@ export const columnBasicStyles = (theme: Theme) => ({
     width: '160px',
     display: 'flex',
     flexGrow: 1,
-    // justifyContent: 'flex-end',
   },
   missingCol: {
     paddingLeft: 0,

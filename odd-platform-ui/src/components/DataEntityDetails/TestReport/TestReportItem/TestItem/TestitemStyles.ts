@@ -11,6 +11,7 @@ export const styles = (theme: Theme) =>
         backgroundColor: '#EBECF0',
       },
     },
+    expectationItem: { marginRight: theme.spacing(0.5) },
   });
 
 export type StylesType = WithStyles<typeof styles>;

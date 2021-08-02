@@ -65,46 +65,29 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
       <Typography variant="h4" className={classes.statItem}>
         Parameters
       </Typography>
-      <Grid container>
-        <Grid item xs={4}>
-          <Typography variant="body1" color="textSecondary">
-            first:
-          </Typography>
-        </Grid>
-        <Grid item xs={8}>
-          <Typography variant="body1">null</Typography>
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={4}>
-          <Typography variant="body1" color="textSecondary">
-            second:
-          </Typography>
-        </Grid>
-        <Grid item xs={8}>
-          <Typography variant="body1">null</Typography>
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={4}>
-          <Typography variant="body1" color="textSecondary">
-            third:
-          </Typography>
-        </Grid>
-        <Grid item xs={8}>
-          <Typography variant="body1">null</Typography>
-        </Grid>
-      </Grid>
-      <Grid container>
-        <Grid item xs={4}>
-          <Typography variant="body1" color="textSecondary">
-            fourth:
-          </Typography>
-        </Grid>
-        <Grid item xs={8}>
-          <Typography variant="body1">null</Typography>
-        </Grid>
-      </Grid>
+      {qualityTest?.expectation &&
+        Object.entries(qualityTest.expectation).map(
+          ([key, value]) =>
+            value && (
+              <Grid key={key} container>
+                <Grid item xs={4} className={classes.paramName}>
+                  <Typography
+                    variant="body1"
+                    color="textSecondary"
+                    noWrap
+                    title={key}
+                  >
+                    {key}
+                  </Typography>
+                </Grid>
+                <Grid item xs={8}>
+                  <Typography variant="body1" noWrap title={value}>
+                    {value}
+                  </Typography>
+                </Grid>
+              </Grid>
+            )
+        )}
     </Grid>
     <Grid className={classes.paramContainer}>
       <Typography variant="h4" className={classes.statItem}>
