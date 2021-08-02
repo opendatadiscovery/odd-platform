@@ -15,7 +15,7 @@ interface TestItemProps extends StylesType {
   testName: string;
   testStartTime: Date | undefined;
   testEndTime: Date | undefined;
-  testExpectations: DataQualityTestExpectation | undefined;
+  testExpectations?: DataQualityTestExpectation;
 }
 
 const TestItem: React.FC<TestItemProps> = ({
