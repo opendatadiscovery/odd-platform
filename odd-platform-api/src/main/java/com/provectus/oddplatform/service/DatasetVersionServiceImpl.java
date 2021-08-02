@@ -16,7 +16,7 @@ public class DatasetVersionServiceImpl implements DatasetVersionService {
 
     @Override
     public Mono<DataSetStructure> getDatasetVersion(final long datasetId, final long datasetVersionId) {
-        return Mono.fromCallable(() -> datasetVersionRepository.getDatasetVersion(datasetId, datasetVersionId))
+        return Mono.fromCallable(() -> datasetVersionRepository.getDatasetVersion(datasetVersionId))
             .flatMap(optional -> optional.isEmpty()
                 ? Mono.error(new NotFoundException())
                 : Mono.just(optional.get()))
