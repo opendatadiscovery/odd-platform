@@ -442,10 +442,11 @@ public class DataEntityRepositoryImpl
     public List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .joinSelectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
-            .dataEntityLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
             .build();
 
         return dataEntitySelect(config)
+            .limit(size)
+            .offset((page - 1) * size)
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toList());
