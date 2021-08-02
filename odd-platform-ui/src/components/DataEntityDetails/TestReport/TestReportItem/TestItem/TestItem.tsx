@@ -2,7 +2,10 @@ import React from 'react';
 import { Grid, Typography, withStyles } from '@material-ui/core';
 import cx from 'classnames';
 import { formatDistanceStrict } from 'date-fns';
-import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import {
+  DataQualityTestExpectation,
+  DataQualityTestRunStatusEnum,
+} from 'generated-sources';
 import LatestRunIcon from 'components/shared/LatestTestRunIcon/LatestTestRunIcon';
 import { styles, StylesType } from './TestitemStyles';
 
@@ -12,7 +15,7 @@ interface TestItemProps extends StylesType {
   testName: string;
   testStartTime: Date | undefined;
   testEndTime: Date | undefined;
-  // expectationParams: any;
+  testExpectations?: DataQualityTestExpectation;
 }
 
 const TestItem: React.FC<TestItemProps> = ({
@@ -22,7 +25,7 @@ const TestItem: React.FC<TestItemProps> = ({
   testName,
   testStartTime,
   testEndTime,
-  // expectationParams
+  testExpectations,
 }) => (
   <Grid container className={cx(classes.container, className)}>
     <Grid item>
@@ -33,9 +36,20 @@ const TestItem: React.FC<TestItemProps> = ({
         <Typography variant="body1">{testName}</Typography>
       </Grid>
       <Grid container item xs={9} justify="center">
-        <Typography variant="body1">
-          null, null, some-value,null
-        </Typography>
+        {testExpectations &&
+          Object.entries(testExpectations).map(
+            ([key, value]) =>
+              value && (
+                <Typography
+                  key={key}
+                  variant="body1"
+                  className={classes.expectationItem}
+                >
+                  {value}
+                  {', '}
+                </Typography>
+              )
+          )}
       </Grid>
       <Grid item container xs={2} justify="flex-end">
         <Typography variant="body1">

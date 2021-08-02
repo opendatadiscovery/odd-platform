@@ -7,7 +7,6 @@ export const styles = (theme: Theme) =>
       maxWidth: '100%',
       display: 'flex',
       alignItems: 'center',
-      marginLeft: theme.spacing(1),
       cursor: 'pointer',
       '&:hover $childrenContainer': {
         display: 'block',
