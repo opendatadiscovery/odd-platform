@@ -43,23 +43,21 @@ public class DatasetVersionRepositoryImpl
     }
 
     @Override
-    // TODO: filth?
-    public Optional<DatasetStructureDto> getDatasetVersion(final long datasetId, final long datasetVersionId) {
+    public Optional<DatasetStructureDto> getDatasetVersion(final long datasetVersionId) {
         final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(), DATASET_FIELD.fields())
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
         final Map<DatasetVersionPojo, List<DatasetFieldDto>> result = dslContext
-            .select(DATASET_FIELD.fields())
             .select(selectFields)
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as("labels"))
             .from(DATASET_VERSION)
             .leftJoin(DATASET_FIELD).on(DATASET_FIELD.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
-            .where(DATASET_VERSION.DATASET_ID.eq(datasetId))
+            .where(DATASET_VERSION.ID.eq(datasetVersionId))
             .groupBy(selectFields)
-            .fetchGroups(DatasetVersionPojo.class, this::extractDatasetFieldDto);
+            .fetchGroups(r -> r.into(DATASET_VERSION).into(DatasetVersionPojo.class), this::extractDatasetFieldDto);
 
         return result.entrySet().stream()
             .findFirst()
@@ -93,8 +91,6 @@ public class DatasetVersionRepositoryImpl
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .groupBy(selectFields)
             .fetchGroups(r -> r.into(DATASET_VERSION).into(DatasetVersionPojo.class), this::extractDatasetFieldDto);
-
-        log.info("RESULT: {}", result);
 
         return result.entrySet().stream()
             .findFirst()

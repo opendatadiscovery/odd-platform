@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface DatasetVersionRepository extends CRUDRepository<DatasetVersionPojo> {
-    Optional<DatasetStructureDto> getDatasetVersion(final long datasetId, final long datasetVersionId);
+    Optional<DatasetStructureDto> getDatasetVersion(final long datasetVersionId);
 
     Optional<DatasetStructureDto> getLatestDatasetVersion(final long datasetId);
 
