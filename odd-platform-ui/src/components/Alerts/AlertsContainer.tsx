@@ -9,6 +9,7 @@ import {
   fetchMyDependentsAlertList,
 } from 'redux/thunks/alerts.thunks';
 import { getAlertTotals } from 'redux/selectors/alert.selectors';
+import * as actions from 'redux/actions';
 import Alerts from './Alerts';
 import { styles } from './AlertsStyles';
 
@@ -35,6 +36,7 @@ const mapDispatchToProps = {
   fetchAllAlertList,
   fetchMyAlertList,
   fetchMyDependentsAlertList,
+  alertsFilterUpdateAction: actions.changeAlertsFilterAction,
 };
 
 export default connect(

@@ -25,15 +25,21 @@ const reducer = (state = initialState, action: Action): AlertsState => {
     case getType(actions.fetchAlertListAction.success):
       return {
         ...state,
-        byId:
-          action.payload.items?.reduce(
+        byId: {
+          ...state.byId,
+          ...action.payload.items?.reduce(
             (memo, alert) => ({
               ...memo,
               [alert.id]: alert,
             }),
             {}
-          ) || {},
-        allIds: action.payload.items?.map(alert => alert.id) || [],
+          ),
+        },
+        allIds: [
+          ...(action.payload.pageInfo.page > 1 ? state.allIds : []),
+          ...(action.payload.items?.map(alert => alert.id) || []),
+        ],
+        pageInfo: action.payload.pageInfo,
       };
     case getType(actions.fetchDataEntityAlertsAction.success):
       return {
@@ -63,6 +69,12 @@ const reducer = (state = initialState, action: Action): AlertsState => {
             status: action.payload.value,
           },
         },
+      };
+    case getType(actions.changeAlertsFilterAction):
+      return {
+        ...state,
+        allIds: [],
+        pageInfo: initialState.pageInfo,
       };
     default:
       return state;

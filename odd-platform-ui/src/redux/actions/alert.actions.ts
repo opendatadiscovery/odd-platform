@@ -1,4 +1,4 @@
-import { createAsyncAction } from 'typesafe-actions';
+import { createAsyncAction, createAction } from 'typesafe-actions';
 import { AlertList, AlertTotals, AlertStatus } from 'generated-sources';
 import {
   PaginatedResponse,
@@ -28,3 +28,7 @@ export const fetchDataEntityAlertsAction = createAsyncAction(
   'GET_DATA_ENTITY_ALERTS__SUCCESS',
   'GET_DATA_ENTITY_ALERTS__FAILURE'
 )<undefined, PartialEntityUpdateParams<AlertList>, undefined>();
+
+export const changeAlertsFilterAction = createAction(
+  'CHANGE_ALERTS_FILTER'
+)<void>();
