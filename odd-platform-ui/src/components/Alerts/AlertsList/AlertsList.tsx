@@ -49,7 +49,7 @@ const AlertsList: React.FC<AlertsListProps> = ({
         hasMore={!!pageInfo?.hasNext}
         loader={
           alertListFetching ? <AlertListSkeleton length={5} /> : null
-        } // Temp
+        }
         scrollThreshold="200px"
       >
         {alerts?.map(alert => (
