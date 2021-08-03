@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@material-ui/core';
 import React from 'react';
-import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
+import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import {
   DataEntityRef,
@@ -9,7 +9,10 @@ import {
   DataEntityApiGetMyObjectsWithDownstreamRequest,
   DataEntityApiGetPopularRequest,
   AssociatedOwner,
+  AlertTotals,
 } from 'generated-sources';
+import { alertsPath } from 'lib/paths';
+import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
@@ -24,6 +27,7 @@ import IdentityContainer from './IdentityForm/IdentityContainer';
 interface OverviewProps extends StylesType {
   identity?: AssociatedOwner;
   identityFetched: boolean;
+  alertTotals: AlertTotals;
   myEntities: DataEntityRef[];
   myEntitiesDownstream: DataEntityRef[];
   myEntitiesUpstream: DataEntityRef[];
@@ -32,6 +36,7 @@ interface OverviewProps extends StylesType {
   myUpstreamDataEntitiesFetching: boolean;
   myDownstreamDataEntitiesFetching: boolean;
   popularDataEntitiesFetching: boolean;
+  fetchAlertsTotals: () => Promise<AlertTotals>;
   fetchMyDataEntitiesList: (
     params: DataEntityApiGetMyObjectsRequest
   ) => Promise<DataEntityRef[]>;
@@ -50,6 +55,7 @@ const Overview: React.FC<OverviewProps> = ({
   classes,
   identity,
   identityFetched,
+  alertTotals,
   myEntities,
   myEntitiesDownstream,
   myEntitiesUpstream,
@@ -58,6 +64,7 @@ const Overview: React.FC<OverviewProps> = ({
   myUpstreamDataEntitiesFetching,
   myDownstreamDataEntitiesFetching,
   popularDataEntitiesFetching,
+  fetchAlertsTotals,
   fetchMyDataEntitiesList,
   fetchMyUpstreamDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
@@ -74,6 +81,10 @@ const Overview: React.FC<OverviewProps> = ({
     fetchMyDownstreamDataEntitiesList(params);
     fetchPopularDataEntitiesList(params);
   }, [identity]);
+
+  React.useEffect(() => {
+    fetchAlertsTotals();
+  }, []);
 
   return (
     <div className={classes.container}>
@@ -95,26 +106,28 @@ const Overview: React.FC<OverviewProps> = ({
         >
           <Grid container justify="space-between">
             <Typography variant="subtitle1">Alerts</Typography>
-            <AppButton
-              size="small"
-              color="dropdown"
-              onClick={() => {}}
-              className={classes.showAllAlerts}
-            >
-              See All
-            </AppButton>
+            <Link to={alertsPath()}>
+              <AppButton
+                size="small"
+                color="dropdown"
+                onClick={() => {}}
+                className={classes.showAllAlerts}
+              >
+                See All
+              </AppButton>
+            </Link>
           </Grid>
           <Grid container className={classes.alerts}>
             <Grid container className={classes.myAlerts}>
               <AlertIcon className={classes.alertIcon} />
               <Typography variant="h2" className={classes.alertsCount}>
-                2
+                {alertTotals?.myTotal}
               </Typography>
               <span className={classes.infoBarStatsText}>my</span>
             </Grid>
             <Grid container className={classes.dependAlerts}>
               <Typography variant="h2" className={classes.alertsCount}>
-                2
+                {alertTotals?.dependentTotal}
               </Typography>
               <span className={classes.infoBarStatsText}>dependent</span>
             </Grid>

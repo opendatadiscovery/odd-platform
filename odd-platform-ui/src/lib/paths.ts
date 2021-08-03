@@ -50,5 +50,5 @@ export const datasetStructurePath = (
   }`;
 
 // Alerts
-export const alertsPath = (viewType: AlertViewType) =>
+export const alertsPath = (viewType: AlertViewType = 'all') =>
   `/alerts/${viewType}`;

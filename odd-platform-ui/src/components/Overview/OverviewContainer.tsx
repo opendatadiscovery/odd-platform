@@ -18,16 +18,19 @@ import {
   fetchPopularDataEntitiesList,
 } from 'redux/thunks/dataentities.thunks';
 import { fetchIdentity } from 'redux/thunks/profile.thunks';
+import { fetchAlertsTotals } from 'redux/thunks/alerts.thunks';
 import {
   getIdentity,
   getIdentityFetched,
 } from 'redux/selectors/profile.selectors';
+import { getAlertTotals } from 'redux/selectors/alert.selectors';
 import Overview from './Overview';
 import { styles } from './OverviewStyles';
 
 const mapStateToProps = (state: RootState) => ({
   identity: getIdentity(state),
   identityFetched: getIdentityFetched(state),
+  alertTotals: getAlertTotals(state),
   myEntities: getMyEntities(state),
   myEntitiesDownstream: getMyEntitiesDownstream(state),
   myEntitiesUpstream: getMyEntitiesUpstream(state),
@@ -42,6 +45,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   fetchIdentity,
+  fetchAlertsTotals,
   fetchMyDataEntitiesList,
   fetchMyUpstreamDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
