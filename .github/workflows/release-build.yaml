@@ -72,7 +72,7 @@ jobs:
           CI: false
         run: |
           # echo ./gradlew clean jibDockerBuild ${{ github.event.inputs.buildOptions }} --no-daemon --image odd-platform -P version=${{ steps.get-version.outputs.version }}
-          ./gradlew clean build --no-daemon -P version=${{ steps.get-version.outputs.version }}
+          ./gradlew clean odd-platform-ui:jar --no-daemon -P version=${{ steps.get-version.outputs.version }}
       - name: Retag image in GHCR
         uses: kindaninja/retag-image-ghcr@0.1.0
         if: ${{ github.event.action == 'published' }}
