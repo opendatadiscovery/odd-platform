@@ -8,15 +8,16 @@ import {
   AlertApiGetAssociatedUserAlertsRequest,
   AlertApiGetDependentEntitiesAlertsRequest,
 } from 'generated-sources';
+import { alertsPath } from 'lib/paths';
 import { AlertViewType } from 'redux/interfaces/alert';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import { StylesType } from './AlertsStyles';
 import AlertsListContainer from './AlertsList/AlertsListContainer';
-import { alertsPath } from '../../lib/paths';
 
 interface AlertsProps extends StylesType {
   totals: AlertTotals;
   viewType: string;
+  alertsFilterUpdateAction: () => void;
   fetchAlertsTotals: () => Promise<AlertTotals>;
   fetchAllAlertList: (
     params: AlertApiGetAllAlertsRequest
@@ -33,6 +34,7 @@ const Alerts: React.FC<AlertsProps> = ({
   classes,
   viewType,
   totals,
+  alertsFilterUpdateAction,
   fetchAlertsTotals,
   fetchAllAlertList,
   fetchMyAlertList,
@@ -77,33 +79,33 @@ const Alerts: React.FC<AlertsProps> = ({
         classes={{ container: classes.tabsContainer }}
         items={tabs}
         selectedTab={selectedTab}
-        handleTabChange={() => {}}
+        handleTabChange={alertsFilterUpdateAction}
       />
       <Switch>
         <Route
           exact
-          path="/alerts/all"
+          path={alertsPath('all')}
           render={() => (
             <AlertsListContainer fetchAlerts={fetchAllAlertList} />
           )}
         />
         <Route
           exact
-          path="/alerts/my"
+          path={alertsPath('my')}
           render={() => (
             <AlertsListContainer fetchAlerts={fetchMyAlertList} />
           )}
         />
         <Route
           exact
-          path="/alerts/dependents"
+          path={alertsPath('dependents')}
           render={() => (
             <AlertsListContainer
               fetchAlerts={fetchMyDependentsAlertList}
             />
           )}
         />
-        <Redirect from="/alerts" to="/alerts/all" />
+        <Redirect from="/alerts" to={alertsPath()} />
       </Switch>
     </div>
   );
