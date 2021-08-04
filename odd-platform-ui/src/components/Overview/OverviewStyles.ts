@@ -18,6 +18,7 @@ export const styles = (theme: Theme) =>
     searchContainer: {
       paddingTop: theme.spacing(8),
       paddingBottom: theme.spacing(9),
+      justifyContent: 'center',
     },
     tagsContainer: {
       maxWidth: `${maxTagsContainerWidth}px`,

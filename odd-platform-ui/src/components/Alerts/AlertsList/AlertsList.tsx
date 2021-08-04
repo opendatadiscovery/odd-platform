@@ -1,5 +1,4 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   Alert,

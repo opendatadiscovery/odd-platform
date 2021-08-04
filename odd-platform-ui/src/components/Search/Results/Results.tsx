@@ -18,6 +18,7 @@ import {
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import SearchResultsSkeleton from 'components/Search/Results/SearchResultsSkeleton/SearchResultsSkeleton';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import ResultItem from './ResultItem/ResultItem';
 import { StylesType } from './ResultsStyles';
 
@@ -211,7 +212,7 @@ const Results: React.FC<ResultsProps> = ({
       ) : null}
 
       {!isSearchFetching && !pageInfo.total ? (
-        <Typography variant="subtitle1">No Matches Found</Typography>
+        <EmptyContentPlaceholder text="No matches found" />
       ) : null}
     </div>
   );

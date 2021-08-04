@@ -1,19 +1,31 @@
 import React from 'react';
-import { TextField, InputAdornment, IconButton } from '@material-ui/core';
 import cx from 'classnames';
+import {
+  TextField,
+  InputAdornment,
+  IconButton,
+  Typography,
+  CircularProgress,
+} from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
+import { Autocomplete } from '@material-ui/lab';
+import { Link, useHistory } from 'react-router-dom';
 import {
   SearchApiSearchRequest,
   SearchFacetsData,
+  DataEntityRef,
 } from 'generated-sources';
-import { useHistory } from 'react-router-dom';
-import { searchPath } from 'lib/paths';
+import { searchPath, dataEntityDetailsPath } from 'lib/paths';
 import { StylesType } from 'components/shared/MainSearch/MainSearchStyles';
+import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import { useDebouncedCallback } from 'use-debounce/lib';
 
 interface AppSearchProps extends StylesType {
   className?: string;
   query?: string;
   placeholder?: string;
+  suggestions: DataEntityRef[];
+  fetchSearchSuggestions: () => Promise<DataEntityRef[]>;
   createDataEntitiesSearch: (
     params: SearchApiSearchRequest
   ) => Promise<SearchFacetsData>;
@@ -24,11 +36,21 @@ const MainSearch: React.FC<AppSearchProps> = ({
   className,
   placeholder,
   query,
+  suggestions,
+  fetchSearchSuggestions,
   createDataEntitiesSearch,
 }) => {
-  const [searchText, setSearchText] = React.useState<string | undefined>(
-    query
+  const [searchText, setSearchText] = React.useState<string>('');
+  const [options, setOptions] = React.useState<Partial<DataEntityRef>[]>(
+    []
   );
+  const [autocompleteOpen, setAutocompleteOpen] = React.useState<boolean>(
+    false
+  );
+  const [
+    loadingSuggestions,
+    setLoadingSuggestions,
+  ] = React.useState<boolean>(false);
 
   const history = useHistory();
 
@@ -47,8 +69,11 @@ const MainSearch: React.FC<AppSearchProps> = ({
     history.push(searchPath());
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+  const handleInputChange = (
+    _: React.ChangeEvent<unknown>,
+    inputVal: string
+  ) => {
+    setSearchText(inputVal);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -57,34 +82,103 @@ const MainSearch: React.FC<AppSearchProps> = ({
     }
   };
 
+  const getSuggestions = React.useCallback(
+    useDebouncedCallback(() => {
+      fetchSearchSuggestions().then(() => {
+        setLoadingSuggestions(false);
+      });
+    }, 500),
+    [searchText, setOptions, setLoadingSuggestions, fetchSearchSuggestions]
+  );
+
   React.useEffect(() => {
-    setSearchText(query);
+    setSearchText(query || '');
   }, [query]);
+
+  React.useEffect(() => {
+    setOptions(suggestions);
+  }, [suggestions]);
+
+  React.useEffect(() => {
+    if (!searchText) return;
+    setLoadingSuggestions(autocompleteOpen);
+    if (autocompleteOpen) {
+      getSuggestions();
+    }
+  }, [autocompleteOpen, searchText]);
 
   return (
     <div className={cx(classes.searchContainer, className)}>
       <div className={classes.search}>
-        <TextField
-          placeholder={
-            placeholder ||
-            'Search data tables, feature groups, jobs and ML models via keywords'
-          }
-          className={classes.root}
-          InputProps={{
-            'aria-label': 'search',
-            disableUnderline: true,
-            className: classes.inputInput,
-            startAdornment: (
-              <InputAdornment position="end">
-                <IconButton disableRipple onClick={createSearch}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
+        <Autocomplete
+          fullWidth
+          value={{ externalName: searchText }}
+          id="data-entity-search"
+          open={autocompleteOpen}
+          onOpen={() => {
+            if (searchText) setAutocompleteOpen(true);
           }}
-          value={searchText}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
+          onClose={() => {
+            setAutocompleteOpen(false);
+          }}
+          onInputChange={handleInputChange}
+          getOptionLabel={option =>
+            option.internalName || option.externalName || ''
+          }
+          options={options}
+          loading={loadingSuggestions}
+          className={classes.autocomplete}
+          classes={{
+            endAdornment: classes.clearIconContainer,
+          }}
+          freeSolo
+          renderInput={params => (
+            <TextField
+              {...params}
+              placeholder={
+                placeholder ||
+                'Search data tables, feature groups, jobs and ML models via keywords'
+              }
+              InputProps={{
+                ...params.InputProps,
+                disableUnderline: true,
+                classes: {
+                  root: classes.inputInput,
+                },
+                startAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton disableRipple onClick={createSearch}>
+                      <SearchIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <>
+                    {loadingSuggestions ? (
+                      <CircularProgress color="inherit" size={20} />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </>
+                ),
+              }}
+              onKeyDown={handleKeyDown}
+            />
+          )}
+          renderOption={option => (
+            <Link
+              to={option.id ? dataEntityDetailsPath(option.id) : '#'}
+              className={classes.suggestionItem}
+            >
+              <Typography variant="body2">
+                {option.internalName || option.externalName}
+              </Typography>
+              <div className={classes.suggestionItemTypes}>
+                {option.types?.map(type => (
+                  <EntityTypeItem key={type.id} typeName={type.name} />
+                ))}
+              </div>
+            </Link>
+          )}
         />
       </div>
     </div>
