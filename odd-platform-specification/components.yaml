@@ -1417,6 +1417,24 @@ components:
         type: integer
         format: int32
 
+    OptionalPageParam:
+      name: page
+      in: query
+      description: Page
+      required: false
+      schema:
+        type: integer
+        format: int32
+
+    OptionalSizeParam:
+      name: size
+      in: query
+      description: Size
+      required: false
+      schema:
+        type: integer
+        format: int32
+
     SearchParam:
       name: query
       in: query

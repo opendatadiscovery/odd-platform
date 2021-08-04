@@ -35,7 +35,9 @@ public class DataSourceController
         @Valid final String query,
         final ServerWebExchange exchange
     ) {
-        return list(page, size, query);
+        return (page == null || size == null)
+            ? entityService.listAll().map(ResponseEntity::ok)
+            : list(page, size, query);
     }
 
     @Override

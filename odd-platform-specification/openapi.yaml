@@ -487,8 +487,8 @@ paths:
       description: Gets the list of available data sources
       operationId: getDataSourceList
       parameters:
-        - $ref: './components.yaml/#/components/parameters/PageParam'
-        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/OptionalPageParam'
+        - $ref: './components.yaml/#/components/parameters/OptionalSizeParam'
         - $ref: './components.yaml/#/components/parameters/SearchParam'
       responses:
         '200':
