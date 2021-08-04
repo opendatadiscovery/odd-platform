@@ -4,7 +4,7 @@ import {
   DataQualityTestRunStatusEnum,
 } from 'generated-sources';
 import { Collapse, Grid, Typography } from '@material-ui/core';
-import TestReportTypeItem from 'components/shared/TestReportTypeItem/TestReportTypeItem';
+import TestReportTypeItem from 'components/shared/StatusTypeItem/StatusTypeItem';
 import cx from 'classnames';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';

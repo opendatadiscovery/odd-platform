@@ -1,4 +1,4 @@
-import { AlertViewType } from '../redux/interfaces/alert';
+import { AlertViewType } from 'redux/interfaces';
 
 export const searchPath = (searchId?: string) =>
   `/search${searchId ? `/${searchId}` : ''}`;
@@ -25,6 +25,10 @@ export const dataEntityTestReportPath = (datasetId: number) =>
 export const dataEntityTestPath = (datasetId: number, testId: number) =>
   `${dataEntityTestReportPath(datasetId)}/${testId}`;
 
+export const dataEntityAlertsPath = (datasetId: number) =>
+  `${dataEntityDetailsPath(datasetId)}/alerts`;
+
+// Test reports details
 export const testReportDetailsOverviewPath = (
   datasetId: number,
   testId: number
@@ -49,6 +53,6 @@ export const datasetStructurePath = (
     versionId ? `/${versionId}` : ''
   }`;
 
-// Alerts
+// DataEntityAlerts
 export const alertsPath = (viewType: AlertViewType = 'all') =>
   `/alerts/${viewType}`;

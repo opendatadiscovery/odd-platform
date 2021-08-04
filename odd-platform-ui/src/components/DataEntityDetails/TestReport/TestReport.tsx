@@ -7,7 +7,7 @@ import {
   DataSetTestReport,
 } from 'generated-sources';
 import { Grid, Paper, Typography } from '@material-ui/core';
-import TestReportTypeItem from 'components/shared/TestReportTypeItem/TestReportTypeItem';
+import TestReportTypeItem from 'components/shared/StatusTypeItem/StatusTypeItem';
 import TestReportItemContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemContainer';
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
 import { StylesType } from './TestReportStyles';

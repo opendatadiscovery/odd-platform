@@ -8,6 +8,7 @@ import {
   datasetStructurePath,
   dataEntityLineagePath,
   dataEntityTestReportPath,
+  dataEntityAlertsPath,
 } from 'lib/paths';
 import {
   DataEntityDetails,
@@ -22,6 +23,7 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import TestReportContainer from 'components/DataEntityDetails/TestReport/TestReportContainer';
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
+import DataEntityAlertsContainer from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsContainer';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -68,6 +70,11 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       link: dataEntityTestReportPath(dataEntityId),
       hidden: true,
       value: 'test-reports',
+    },
+    {
+      name: 'Alerts',
+      link: dataEntityAlertsPath(dataEntityId),
+      value: 'alerts',
     },
   ]);
 
@@ -200,6 +207,11 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
               exact
               path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
               component={TestReportDetailsContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/alerts"
+              component={DataEntityAlertsContainer}
             />
             <Redirect
               from="/dataentities/:dataEntityId"
