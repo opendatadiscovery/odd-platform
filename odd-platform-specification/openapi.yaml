@@ -487,8 +487,8 @@ paths:
       description: Gets the list of available data sources
       operationId: getDataSourceList
       parameters:
-        - $ref: './components.yaml/#/components/parameters/OptionalPageParam'
-        - $ref: './components.yaml/#/components/parameters/OptionalSizeParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/SearchParam'
       responses:
         '200':
@@ -516,6 +516,21 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/DataSource'
+      tags:
+        - dataSource
+  /api/datasources/active:
+    get:
+      summary: List of active data sources
+      description: Gets the list of active available data sources
+      operationId: getActiveDataSourceList
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: './components.yaml/#/components/schemas/DataSource'
       tags:
         - dataSource
   /api/datasources/{data_source_id}:

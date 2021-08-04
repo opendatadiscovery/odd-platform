@@ -8,7 +8,7 @@ import com.provectus.oddplatform.mapper.DataSourceMapper;
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.repository.DataSourceRepository;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 @Service
 public class DataSourceServiceImpl
@@ -21,8 +21,8 @@ public class DataSourceServiceImpl
     }
 
     @Override
-    public Mono<DataSourceList> listAll() {
-        return Mono.fromCallable(entityRepository::list)
-            .map(entityMapper::mapPojos);
+    public Flux<DataSource> listAll() {
+        return Flux.fromIterable(entityRepository.list())
+            .map(entityMapper::mapPojo);
     }
 }
