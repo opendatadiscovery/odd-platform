@@ -7,19 +7,19 @@ import {
 } from 'components/shared/TestReportTypeItem/TestReportTypeItemStyles';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
 
-interface TestReportTypeItemProps extends StylesType {
+interface TestRunTypeItemProps extends StylesType {
   className?: string;
-  count: number | undefined;
+  count?: number;
   typeName: DataQualityTestRunStatusEnum;
   size?: 'large' | 'small';
 }
 
-const TestReportTypeItem: React.FC<TestReportTypeItemProps> = ({
-  classes,
+const TestReportTypeItem: React.FC<TestRunTypeItemProps> = ({
   className,
-  count,
-  typeName,
   size = 'small',
+  typeName,
+  count,
+  classes,
 }) => (
   <div className={cx(classes.container, className)} title={typeName}>
     {size === 'small' ? (
@@ -30,7 +30,7 @@ const TestReportTypeItem: React.FC<TestReportTypeItemProps> = ({
       <>
         <span className={classes.count}>{count}</span>
         <span className={cx(classes.filledContainer, typeName)}>
-          {typeName}
+          {typeName.toLowerCase()}
         </span>
       </>
     )}

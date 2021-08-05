@@ -1,7 +1,6 @@
-import { Action } from 'redux/interfaces';
+import { Action, AlertsState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
-import { AlertsState } from '../interfaces/state';
 
 export const initialState: AlertsState = {
   byId: {},
@@ -65,7 +64,7 @@ const reducer = (state = initialState, action: Action): AlertsState => {
         byId: {
           ...state.byId,
           [action.payload.entityId]: {
-            ...state.allIds,
+            ...state.byId[action.payload.entityId],
             status: action.payload.value,
           },
         },

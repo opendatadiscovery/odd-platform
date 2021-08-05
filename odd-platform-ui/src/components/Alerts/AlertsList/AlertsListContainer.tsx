@@ -6,6 +6,7 @@ import {
   getAlertListPageInfo,
   getAlertListFetching,
 } from 'redux/selectors/alert.selectors';
+import { updateAlertStatus } from 'redux/thunks';
 import AlertsList from './AlertsList';
 import { styles } from './AlertsListStyles';
 
@@ -15,7 +16,7 @@ const mapStateToProps = (state: RootState) => ({
   alertListFetching: getAlertListFetching(state),
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = { updateAlertStatus };
 
 export default connect(
   mapStateToProps,

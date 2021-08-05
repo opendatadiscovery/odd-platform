@@ -8,6 +8,11 @@ const getDataQualityTestState = ({
   dataQualityTest,
 }: RootState): DataQualityTestState => dataQualityTest;
 
+export const getDataQATestId = (
+  _: RootState,
+  dataQATestId: number | string
+) => dataQATestId;
+
 const getDatasetTestReportFetchingStatus = createFetchingSelector(
   'GET_DATA_SET_QUALITY_TEST_REPORT'
 );
@@ -61,24 +66,6 @@ export const getTestReportListBySuiteName = createSelector(
   getDataQualityTestState,
   dataQualityTestState => dataQualityTestState.testReportBySuiteName
 );
-
-export const getTestReportSuiteNames = createSelector(
-  getDataQualityTestState,
-  getDataEntityId,
-  (dataQualityTestState, dataEntityId) => {
-    if (isEmpty(dataQualityTestState.allSuiteNamesByDatasetId)) {
-      return [];
-    }
-    return Object.keys(
-      dataQualityTestState.allSuiteNamesByDatasetId?.[dataEntityId]
-    );
-  }
-);
-
-export const getDataQATestId = (
-  _: RootState,
-  dataQATestId: number | string
-) => dataQATestId;
 
 export const getQualityTestRunsList = createSelector(
   getDataQualityTestState,

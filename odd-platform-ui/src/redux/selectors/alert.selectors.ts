@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
 import { RootState, AlertsState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { Alert, AlertStatus } from 'generated-sources';
+import { map } from 'lodash';
 import { getDataEntityId } from './dataentity.selectors';
-import { Alert } from '../../generated-sources/models/Alert';
-import { AlertStatus } from '../../generated-sources';
 
 const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
 
@@ -20,6 +20,15 @@ const getAlertListFetchingStatus = createFetchingSelector('GET_ALERTS');
 
 export const getAlertListFetching = createSelector(
   getAlertListFetchingStatus,
+  status => status === 'fetching'
+);
+
+const getDataEntityAlertListFetchingStatus = createFetchingSelector(
+  'GET_DATA_ENTITY_ALERTS'
+);
+
+export const getDataEntityAlertListFetching = createSelector(
+  getDataEntityAlertListFetchingStatus,
   status => status === 'fetching'
 );
 
@@ -48,5 +57,15 @@ export const getDataEntityOpenAlertList = createSelector(
         return memo;
       },
       []
+    )
+);
+
+export const getDataEntityAlertsList = createSelector(
+  getAlertsState,
+  getDataEntityId,
+  (alertsState, dataEntityId) =>
+    map(
+      alertsState.alertIdsByDataEntityId[dataEntityId],
+      (alertId: number) => alertsState.byId[alertId]
     )
 );
