@@ -4,16 +4,16 @@ import cx from 'classnames';
 import {
   styles,
   StylesType,
-} from 'components/shared/AlertTypeItem/AlertTypeItemStyles';
+} from 'components/shared/AlertStatusItem/AlertStatusItemStyles';
 import { AlertStatus } from 'generated-sources';
 import { toTitleCase } from 'lib/helpers';
 
-interface AlertTypeItemProps extends StylesType {
+interface AlertStatusItemProps extends StylesType {
   className?: string;
   typeName: AlertStatus;
 }
 
-const AlertTypeItem: React.FC<AlertTypeItemProps> = ({
+const AlertStatusItem: React.FC<AlertStatusItemProps> = ({
   className,
   typeName,
   classes,
@@ -25,4 +25,4 @@ const AlertTypeItem: React.FC<AlertTypeItemProps> = ({
   </div>
 );
 
-export default withStyles(styles)(AlertTypeItem);
+export default withStyles(styles)(AlertStatusItem);

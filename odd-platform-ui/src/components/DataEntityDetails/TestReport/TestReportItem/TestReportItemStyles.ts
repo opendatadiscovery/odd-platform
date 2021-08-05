@@ -40,6 +40,9 @@ export const styles = (theme: Theme) =>
       flexWrap: 'nowrap',
       justifyContent: 'flex-end',
     },
+    testStatusItem: {
+      marginLeft: theme.spacing(0.5),
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

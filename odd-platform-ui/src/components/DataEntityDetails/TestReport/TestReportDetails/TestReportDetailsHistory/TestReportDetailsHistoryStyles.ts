@@ -20,6 +20,10 @@ export const styles = (theme: Theme) =>
         marginTop: theme.spacing(1),
       },
     },
+    statusReason: {
+      color: '#A8B0BD',
+      marginLeft: theme.spacing(1),
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

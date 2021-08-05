@@ -5,7 +5,7 @@ import {
 } from 'generated-sources';
 import { Grid, Typography } from '@material-ui/core';
 import { formatDistanceStrict, format } from 'date-fns';
-import LatestRunIcon from 'components/shared/LatestTestRunIcon/LatestTestRunIcon';
+import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import { StylesType } from './TestReportDetailsHistoryStyles';
 import TestReportDetailsHistorySkeleton from './TestReportDetailsHistorySkeleton/TestReportDetailsHistorySkeleton';
 
@@ -56,10 +56,13 @@ const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
         </Grid>
         <Grid item xs={12} container className={classes.testRunInfoItem} alignItems="center" wrap="nowrap">
           {qualityTestRun.status && (
-            <LatestRunIcon typeName={qualityTestRun.status} />
+            <TestRunStatusItem
+              typeName={qualityTestRun.status}
+              size="large"
+            />
           )}
-          <Typography variant="subtitle1">
-            {qualityTestRun.statusReason}
+          <Typography variant="subtitle1" className={classes.statusReason}>
+            {qualityTestRun.statusReason || 'id is not equal 100'}
           </Typography>
         </Grid>
       </Grid>

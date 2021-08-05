@@ -29,9 +29,7 @@ const TestItem: React.FC<TestItemProps> = ({
   testStartTime,
   testEndTime,
   testExpectations,
-}) => {
-  console.log(testExpectations);
-  return(
+}) => (
   <Grid container className={cx(classes.container, className, { [classes.active]: active})}>
     <Grid item>
       {latestRunStatus && <LatestRunIcon typeName={latestRunStatus} />}
@@ -59,6 +57,5 @@ const TestItem: React.FC<TestItemProps> = ({
       </Grid>
     </Grid>
   </Grid>
-  );
-};
+);
 export default withStyles(styles)(TestItem);
