@@ -75,6 +75,7 @@ const AlertsList: React.FC<AlertsListProps> = ({
 
         <Grid
           item
+          container
           className={cx(classes.col, classes.colStatus)}
           justify="center"
         >

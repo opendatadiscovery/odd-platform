@@ -61,13 +61,11 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
             onClick={toggleOpen}
           />
         )}
-        renderChildren={({ handleClose }) =>
-          alert.status === 'OPEN' ? (
-            <MenuItem onClick={alertStatusHandler}>Resolve alert</MenuItem>
-          ) : (
-            <MenuItem onClick={alertStatusHandler}>Reopen alert</MenuItem>
-          )
-        }
+        renderChildren={({ handleClose }) => (
+          <MenuItem onClick={alertStatusHandler}>
+            {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
+          </MenuItem>
+        )}
       />
     </Grid>
   </Grid>

@@ -68,6 +68,7 @@ const DataEntityAlerts: React.FC<DataEntityAlertsProps> = ({
         <Grid container>
           {alertsList.map(alert => (
             <DataEntityAlertItem
+              key={alert.id}
               alertStatusHandler={alertStatusHandler(
                 alert.id,
                 alert.status

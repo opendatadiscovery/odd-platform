@@ -53,6 +53,6 @@ export const datasetStructurePath = (
     versionId ? `/${versionId}` : ''
   }`;
 
-// DataEntityAlerts
+// Alerts
 export const alertsPath = (viewType: AlertViewType = 'all') =>
   `/alerts/${viewType}`;

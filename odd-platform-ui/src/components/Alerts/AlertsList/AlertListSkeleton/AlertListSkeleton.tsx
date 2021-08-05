@@ -12,7 +12,7 @@ const AlertListSkeleton: React.FC<SkeletonProps> = ({
   length,
 }) => {
   const randomSkeletonWidth = () => {
-    const rand = 75 + Math.random() * (90 - 75);
+    const rand = 75 + Math.random() * 15;
     return Math.round(rand);
   };
 
