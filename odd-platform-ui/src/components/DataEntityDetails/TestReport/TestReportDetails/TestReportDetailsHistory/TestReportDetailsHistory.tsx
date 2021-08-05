@@ -41,7 +41,7 @@ const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
             {qualityTestRun?.startTime &&
               format(
                 qualityTestRun?.startTime,
-                'd MMM yyyy, HH:MM b'
+                'd MMM yyyy, HH:MM a'
               )}
           </Typography>
           <Typography variant="body1" align="right">
@@ -62,7 +62,7 @@ const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
             />
           )}
           <Typography variant="subtitle1" className={classes.statusReason}>
-            {qualityTestRun.statusReason || 'id is not equal 100'}
+            {qualityTestRun.statusReason}
           </Typography>
         </Grid>
       </Grid>

@@ -25,7 +25,7 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
             {qualityTest?.latestRun?.startTime &&
               format(
                 qualityTest?.latestRun?.startTime,
-                'd MMM yyyy, HH:MM b'
+                'd MMM yyyy, HH:MM a'
               )}
           </Typography>
         </Grid>
