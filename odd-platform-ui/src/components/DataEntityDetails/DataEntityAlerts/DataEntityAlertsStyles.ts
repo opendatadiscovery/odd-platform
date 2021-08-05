@@ -1,6 +1,6 @@
 import { Theme, createStyles, WithStyles } from '@material-ui/core';
 
-export const alertsMainColWidthStyles = {
+export const alertsColWidthStyles = {
   col: {
     display: 'flex',
     alignItems: 'center',
@@ -11,22 +11,22 @@ export const alertsMainColWidthStyles = {
       paddingRight: 0,
     },
   },
-  colName: {
+  colDate: {
+    flex: '0 0 12%',
+  },
+  colType: {
     flex: '0 0 12%',
   },
   colDescription: {
-    flex: '0 0 44%',
-  },
-  colUpdatedBy: {
-    flex: '0 0 9%',
+    flex: '0 0 43%',
   },
   colStatus: {
-    flex: '0 0 7%',
+    flex: '0 0 8%',
   },
-  colCreatedTime: {
-    flex: '0 0 12%',
+  colUpdatedBy: {
+    flex: '0 0 10%',
   },
-  colUpdatedAt: {
+  colUpdatedTime: {
     flex: '0 0 12%',
   },
   colActionBtn: {
@@ -42,7 +42,7 @@ export const styles = (theme: Theme) =>
       color: '#B3BAC5',
       borderBottom: '1px solid #EBECF0',
     },
-    ...alertsMainColWidthStyles,
+    ...alertsColWidthStyles,
   });
 
 export type StylesType = WithStyles<typeof styles>;

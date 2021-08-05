@@ -1,7 +1,8 @@
 import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid, withStyles } from '@material-ui/core';
-import { styles, StylesType } from './AlertListSkeletonStyles';
+import cx from 'classnames';
+import { styles, StylesType } from './DataEntityAlertsSkeletonStyles';
 
 interface SkeletonProps extends StylesType {
   length?: number;
@@ -18,18 +19,29 @@ const AlertListSkeleton: React.FC<SkeletonProps> = ({
 
   const skeleton = (key: number) => (
     <Grid key={key} container className={classes.container} wrap="nowrap">
-      <Grid item xs={3}>
+      <Grid item className={cx(classes.col, classes.colDate)}>
         <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
       </Grid>
-      <Grid item xs={7}>
+      <Grid item className={cx(classes.col, classes.colType)}>
         <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
       </Grid>
-      <Grid item xs={2}>
+      <Grid item className={cx(classes.col, classes.colDescription)}>
         <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
       </Grid>
+      <Grid item className={cx(classes.col, classes.colStatus)}>
+        <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+      </Grid>
+      <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
+        <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+      </Grid>
+      <Grid item className={cx(classes.col, classes.colUpdatedTime)}>
+        <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+      </Grid>
+      <Grid item className={cx(classes.col, classes.colActionBtn)} />
     </Grid>
   );
 
   return <>{[...Array(length)].map((_, id) => skeleton(id))}</>;
 };
+
 export default withStyles(styles)(AlertListSkeleton);

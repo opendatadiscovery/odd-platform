@@ -1,19 +1,34 @@
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, MenuItem, Typography, withStyles } from '@material-ui/core';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Alert } from 'generated-sources';
+import cx from 'classnames';
+import AlertTypeItem from 'components/shared/AlertTypeItem/AlertTypeItem';
+import PopUpMenuByClick from 'components/shared/PopUpMenuByClick/PopUpMenuByClick';
+import AppButton from 'components/shared/AppButton/AppButton';
+import KebabIcon from 'components/shared/Icons/KebabIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { styles, StylesType } from './AlertItemStyles';
 
 interface AlertItemProps extends StylesType {
   alert: Alert;
+  alertStatusHandler: () => void;
 }
 
-const AlertItem: React.FC<AlertItemProps> = ({ classes, alert }) => (
-  <Grid container className={classes.container} wrap="nowrap" spacing={2}>
-    <Grid item xs={3} container wrap="nowrap" justify="space-between">
+const AlertItem: React.FC<AlertItemProps> = ({
+  classes,
+  alert,
+  alertStatusHandler,
+}) => (
+  <Grid container className={classes.container}>
+    <Grid
+      item
+      container
+      className={cx(classes.col, classes.colName)}
+      justify="space-between"
+    >
       <Link
         to={
           alert?.dataEntity?.id
@@ -39,17 +54,53 @@ const AlertItem: React.FC<AlertItemProps> = ({ classes, alert }) => (
         ))}
       </div>
     </Grid>
-    <Grid item xs={7} container wrap="nowrap">
-      <Typography variant="body1" noWrap>
+    <Grid item className={cx(classes.col, classes.colDescription)}>
+      <Typography variant="body1" title={alert.type} noWrap>
         {alert.description}
       </Typography>
     </Grid>
-    <Grid item xs={2} container wrap="nowrap">
-      <Typography variant="body1" noWrap>
-        {alert.createdAt
-          ? format(alert.createdAt, 'd MMM yyyy, hh:mm a')
-          : null}
+    <Grid
+      item
+      container
+      className={cx(classes.col, classes.colStatus)}
+      justify="center"
+    >
+      <AlertTypeItem typeName={alert.status} />
+    </Grid>
+    <Grid item className={cx(classes.col, classes.colCreatedTime)}>
+      <Typography variant="body1">
+        {alert.createdAt && format(alert.createdAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
+    </Grid>
+    <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
+      <Typography variant="body1" noWrap>
+        {alert.statusUpdatedBy?.owner?.name ||
+          alert.statusUpdatedBy?.identity.username}
+      </Typography>
+    </Grid>
+    <Grid item className={cx(classes.col, classes.colUpdatedAt)}>
+      <Typography variant="body1">
+        {alert.statusUpdatedAt &&
+          format(alert.statusUpdatedAt, 'd MMM yyyy, HH:MM a')}
+      </Typography>
+    </Grid>
+    <Grid item className={cx(classes.col, classes.colActionBtn)}>
+      <PopUpMenuByClick
+        renderOpeningContent={({ toggleOpen }) => (
+          <AppButton
+            className={classes.optionsBtn}
+            size="medium"
+            color="primaryLight"
+            icon={<KebabIcon />}
+            onClick={toggleOpen}
+          />
+        )}
+        renderChildren={({ handleClose }) => (
+          <MenuItem onClick={alertStatusHandler}>
+            {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
+          </MenuItem>
+        )}
+      />
     </Grid>
   </Grid>
 );
