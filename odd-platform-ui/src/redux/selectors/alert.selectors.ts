@@ -23,6 +23,15 @@ export const getAlertListFetching = createSelector(
   status => status === 'fetching'
 );
 
+const getDataEntityAlertListFetchingStatus = createFetchingSelector(
+  'GET_DATA_ENTITY_ALERTS'
+);
+
+export const getDataEntityAlertListFetching = createSelector(
+  getDataEntityAlertListFetchingStatus,
+  status => status === 'fetching'
+);
+
 export const getAlertTotals = createSelector(
   getAlertsState,
   alertsState => alertsState.totals

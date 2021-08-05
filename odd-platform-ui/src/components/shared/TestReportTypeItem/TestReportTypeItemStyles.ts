@@ -1,8 +1,5 @@
 import { createStyles, Theme, WithStyles } from '@material-ui/core';
-import {
-  DataQualityTestRunStatusEnum,
-  AlertStatus,
-} from 'generated-sources';
+import { DataQualityTestRunStatusEnum } from 'generated-sources';
 
 export const TestReportTypeColors = {
   success: { backgroundColor: '#D1FADF', borderColor: '#A8F0A8' },
@@ -11,11 +8,6 @@ export const TestReportTypeColors = {
   skipped: { backgroundColor: '#CCE6FF', borderColor: '#99CCFF' },
   aborted: { backgroundColor: '#baacf7', borderColor: '#8066FF' },
   unknown: { backgroundColor: '#EBECF0', borderColor: '#C1C7D0' },
-};
-
-export const AlertTypeColors = {
-  open: { backgroundColor: '#FFCCCC', borderColor: '#FF9999' },
-  resolved: { backgroundColor: '#CCE6FF', borderColor: '#99CCFF' },
 };
 
 export const styles = (theme: Theme) =>
@@ -61,16 +53,6 @@ export const styles = (theme: Theme) =>
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
         backgroundColor: TestReportTypeColors.unknown.backgroundColor,
         borderColor: TestReportTypeColors.unknown.borderColor,
-      },
-      [`&.${AlertStatus.OPEN}`]: {
-        backgroundColor: AlertTypeColors.open.backgroundColor,
-        borderColor: AlertTypeColors.open.borderColor,
-        marginLeft: 0,
-      },
-      [`&.${AlertStatus.RESOLVED}`]: {
-        backgroundColor: AlertTypeColors.resolved.backgroundColor,
-        borderColor: AlertTypeColors.resolved.borderColor,
-        marginLeft: 0,
       },
     },
   });

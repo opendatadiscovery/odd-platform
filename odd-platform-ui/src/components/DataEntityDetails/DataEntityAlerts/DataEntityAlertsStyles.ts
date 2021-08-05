@@ -1,6 +1,16 @@
 import { Theme, createStyles, WithStyles } from '@material-ui/core';
 
 export const alertsColWidthStyles = {
+  col: {
+    display: 'flex',
+    alignItems: 'center',
+    overflow: 'hidden',
+    paddingRight: '8px',
+    paddingLeft: '8px',
+    '&:last-of-type': {
+      paddingRight: 0,
+    },
+  },
   colDate: {
     flex: '0 0 12%',
   },
@@ -13,21 +23,15 @@ export const alertsColWidthStyles = {
   colStatus: {
     flex: '0 0 8%',
   },
-  colResolvedBy: {
-    flex: '0 0 11%',
+  colUpdatedBy: {
+    flex: '0 0 10%',
   },
-  colResolvedTime: {
-    flex: '0 0 14%',
+  colUpdatedTime: {
+    flex: '0 0 12%',
   },
-  col: {
-    display: 'flex',
-    alignItems: 'center',
-    overflow: 'hidden',
-    paddingRight: '8px',
-    paddingLeft: '8px',
-    '&:last-of-type': {
-      paddingRight: 0,
-    },
+  colActionBtn: {
+    flex: '0 0 3%',
+    overflow: 'visible',
   },
 };
 

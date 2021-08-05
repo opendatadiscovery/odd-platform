@@ -1,24 +1,28 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, MenuItem, Typography, withStyles } from '@material-ui/core';
 import { Alert } from 'generated-sources';
 import cx from 'classnames';
 import { format } from 'date-fns';
-import StatusTypeItem from 'components/shared/StatusTypeItem/StatusTypeItem';
-import { StylesType, styles } from './DataEntityAlertItemStyles';
+import AlertTypeItem from 'components/shared/AlertTypeItem/AlertTypeItem';
+import PopUpMenuByClick from 'components/shared/PopUpMenuByClick/PopUpMenuByClick';
+import AppButton from 'components/shared/AppButton/AppButton';
+import KebabIcon from 'components/shared/Icons/KebabIcon';
+import { styles, StylesType } from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps extends StylesType {
   alert: Alert;
+  alertStatusHandler: () => void;
 }
 
 const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
   classes,
   alert,
+  alertStatusHandler,
 }) => (
   <Grid container className={classes.container}>
     <Grid item className={cx(classes.col, classes.colDate)}>
       <Typography variant="body1">
-        {alert.createdAt &&
-          format(alert.createdAt, 'dd MMM yyyy, HH:MM b')}
+        {alert.createdAt && format(alert.createdAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colType)}>
@@ -32,16 +36,39 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colStatus)}>
-      <StatusTypeItem typeName={alert.status} />
+      <AlertTypeItem typeName={alert.status} />
     </Grid>
-    <Grid item className={cx(classes.col, classes.colResolvedBy)}>
-      <Typography variant="body1">{alert.statusUpdatedBy}</Typography>
+    <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
+      <Typography variant="body1">
+        {alert.statusUpdatedBy?.owner?.name ||
+          alert.statusUpdatedBy?.identity.username}
+      </Typography>
     </Grid>
-    <Grid item className={cx(classes.col, classes.colResolvedTime)}>
+    <Grid item className={cx(classes.col, classes.colUpdatedTime)}>
       <Typography variant="body1">
         {alert.statusUpdatedAt &&
-          format(alert.statusUpdatedAt, 'dd MMM yyyy, HH:MM b')}
+          format(alert.statusUpdatedAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
+    </Grid>
+    <Grid item className={cx(classes.col, classes.colActionBtn)}>
+      <PopUpMenuByClick
+        renderOpeningContent={({ toggleOpen }) => (
+          <AppButton
+            className={classes.optionsBtn}
+            size="medium"
+            color="primaryLight"
+            icon={<KebabIcon />}
+            onClick={toggleOpen}
+          />
+        )}
+        renderChildren={({ handleClose }) =>
+          alert.status === 'OPEN' ? (
+            <MenuItem onClick={alertStatusHandler}>Resolve alert</MenuItem>
+          ) : (
+            <MenuItem onClick={alertStatusHandler}>Reopen alert</MenuItem>
+          )
+        }
+      />
     </Grid>
   </Grid>
 );

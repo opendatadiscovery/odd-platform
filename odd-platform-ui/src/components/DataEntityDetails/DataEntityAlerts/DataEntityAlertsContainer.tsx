@@ -2,7 +2,11 @@ import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
-import { getDataEntityAlertsList } from 'redux/selectors/alert.selectors';
+import {
+  getDataEntityAlertListFetching,
+  getDataEntityAlertsList,
+} from 'redux/selectors/alert.selectors';
+import { updateAlertStatus } from 'redux/thunks';
 import DataEntityAlerts from './DataEntityAlerts';
 import { styles } from './DataEntityAlertsStyles';
 
@@ -22,9 +26,10 @@ const mapStateToProps = (
 ) => ({
   dataEntityId: parseInt(dataEntityId, 10),
   alertsList: getDataEntityAlertsList(state, dataEntityId),
+  isAlertsFetching: getDataEntityAlertListFetching(state),
 });
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = { updateAlertStatus };
 
 export default connect(
   mapStateToProps,
