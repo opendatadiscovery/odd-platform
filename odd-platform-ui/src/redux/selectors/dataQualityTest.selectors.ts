@@ -22,6 +22,15 @@ export const getDatasetTestReportFetching = createSelector(
   status => status === 'fetching'
 );
 
+const getDatasetTestRunsFetchingStatus = createFetchingSelector(
+  'GET_DATA_SET_QUALITY_TEST_RUNS_REPORT'
+);
+
+export const getDatasetTestRunsFetching = createSelector(
+  getDatasetTestRunsFetchingStatus,
+  status => status === 'fetching'
+);
+
 export const getDatasetTestReport = createSelector(
   getDataQualityTestState,
   getDataEntityId,

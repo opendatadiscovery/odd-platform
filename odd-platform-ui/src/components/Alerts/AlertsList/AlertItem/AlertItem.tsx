@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Alert } from 'generated-sources';
 import cx from 'classnames';
-import AlertTypeItem from 'components/shared/AlertTypeItem/AlertTypeItem';
+import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import PopUpMenuByClick from 'components/shared/PopUpMenuByClick/PopUpMenuByClick';
 import AppButton from 'components/shared/AppButton/AppButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
@@ -65,7 +65,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
       className={cx(classes.col, classes.colStatus)}
       justify="center"
     >
-      <AlertTypeItem typeName={alert.status} />
+      <AlertStatusItem typeName={alert.status} />
     </Grid>
     <Grid item className={cx(classes.col, classes.colCreatedTime)}>
       <Typography variant="body1">

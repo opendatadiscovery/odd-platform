@@ -3,7 +3,8 @@ import { Grid, MenuItem, Typography, withStyles } from '@material-ui/core';
 import { Alert } from 'generated-sources';
 import cx from 'classnames';
 import { format } from 'date-fns';
-import AlertTypeItem from 'components/shared/AlertTypeItem/AlertTypeItem';
+import { lowerCase } from 'lodash';
+import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import PopUpMenuByClick from 'components/shared/PopUpMenuByClick/PopUpMenuByClick';
 import AppButton from 'components/shared/AppButton/AppButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
@@ -27,7 +28,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
     </Grid>
     <Grid item className={cx(classes.col, classes.colType)}>
       <Typography variant="body1" title={alert.type} noWrap>
-        {alert.type}
+        {lowerCase(alert.type)}
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colDescription)}>
@@ -36,7 +37,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colStatus)}>
-      <AlertTypeItem typeName={alert.status} />
+      <AlertStatusItem typeName={alert.status} />
     </Grid>
     <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
       <Typography variant="body1">

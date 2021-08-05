@@ -4,7 +4,7 @@ import {
   DataQualityTestRunStatusEnum,
 } from 'generated-sources';
 import { Collapse, Grid, Typography } from '@material-ui/core';
-import TestReportTypeItem from 'components/shared/TestReportTypeItem/TestReportTypeItem';
+import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import cx from 'classnames';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
@@ -74,8 +74,11 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
             {Object.entries(dataQATestReport).map(
               ([testType, count]) =>
                 count !== 0 && (
-                  <TestReportTypeItem
+                  <TestRunStatusItem
                     key={testType}
+                    classes={{
+                      filledContainer: classes.testStatusItem
+                    }}
                     count={count}
                     typeName={
                       testType.toUpperCase() as DataQualityTestRunStatusEnum
@@ -96,9 +99,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                 key={dataQATest.id}
               >
                 <TestItem
-                  className={cx({
-                    [classes.active]: dataqatestId === dataQATest.id,
-                  })}
+                  active={dataqatestId === dataQATest.id}
                   latestRunStatus={dataQATest.latestRun?.status}
                   testName={
                     dataQATest.internalName || dataQATest.externalName

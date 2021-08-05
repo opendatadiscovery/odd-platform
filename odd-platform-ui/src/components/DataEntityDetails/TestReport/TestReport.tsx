@@ -7,7 +7,7 @@ import {
   DataSetTestReport,
 } from 'generated-sources';
 import { Grid, Paper, Typography } from '@material-ui/core';
-import TestReportTypeItem from 'components/shared/TestReportTypeItem/TestReportTypeItem';
+import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import TestReportItemContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemContainer';
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
 import { StylesType } from './TestReportStyles';
@@ -63,32 +63,50 @@ const TestReport: React.FC<TestReportProps> = ({
         <>
           <Grid container className={classes.testReportContainer}>
             <Grid container item className={classes.testReport}>
-              <TestReportTypeItem
+              <TestRunStatusItem
+                classes={{
+                  filledContainer: classes.testStatusItem
+                }}
                 count={datasetTestReport?.successTotal}
                 typeName={DataQualityTestRunStatusEnum.SUCCESS}
                 size="large"
               />
-              <TestReportTypeItem
+              <TestRunStatusItem
+                classes={{
+                  filledContainer: classes.testStatusItem
+                }}
                 count={datasetTestReport?.failedTotal}
                 typeName={DataQualityTestRunStatusEnum.FAILED}
                 size="large"
               />
-              <TestReportTypeItem
+              <TestRunStatusItem
+                classes={{
+                  filledContainer: classes.testStatusItem
+                }}
                 count={datasetTestReport?.brokenTotal}
                 typeName={DataQualityTestRunStatusEnum.BROKEN}
                 size="large"
               />
-              <TestReportTypeItem
+              <TestRunStatusItem
+                classes={{
+                  filledContainer: classes.testStatusItem
+                }}
                 count={datasetTestReport?.abortedTotal}
                 typeName={DataQualityTestRunStatusEnum.ABORTED}
                 size="large"
               />
-              <TestReportTypeItem
+              <TestRunStatusItem
+                classes={{
+                  filledContainer: classes.testStatusItem
+                }}
                 count={datasetTestReport?.skippedTotal}
                 typeName={DataQualityTestRunStatusEnum.SKIPPED}
                 size="large"
               />
-              <TestReportTypeItem
+              <TestRunStatusItem
+                classes={{
+                  filledContainer: classes.testStatusItem
+                }}
                 count={datasetTestReport?.unknownTotal}
                 typeName={DataQualityTestRunStatusEnum.UNKNOWN}
                 size="large"

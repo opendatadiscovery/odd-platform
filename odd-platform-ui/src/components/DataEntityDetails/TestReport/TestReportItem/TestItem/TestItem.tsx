@@ -2,6 +2,7 @@ import React from 'react';
 import { Grid, Typography, withStyles } from '@material-ui/core';
 import cx from 'classnames';
 import { formatDistanceStrict } from 'date-fns';
+import { values } from 'lodash';
 import {
   DataQualityTestExpectation,
   DataQualityTestRunStatusEnum,
@@ -11,6 +12,7 @@ import { styles, StylesType } from './TestitemStyles';
 
 interface TestItemProps extends StylesType {
   className?: string;
+  active: boolean;
   latestRunStatus: DataQualityTestRunStatusEnum | undefined;
   testName: string;
   testStartTime: Date | undefined;
@@ -21,13 +23,14 @@ interface TestItemProps extends StylesType {
 const TestItem: React.FC<TestItemProps> = ({
   classes,
   className,
+  active,
   latestRunStatus,
   testName,
   testStartTime,
   testEndTime,
   testExpectations,
 }) => (
-  <Grid container className={cx(classes.container, className)}>
+  <Grid container className={cx(classes.container, className, { [classes.active]: active})}>
     <Grid item>
       {latestRunStatus && <LatestRunIcon typeName={latestRunStatus} />}
     </Grid>
@@ -36,27 +39,19 @@ const TestItem: React.FC<TestItemProps> = ({
         <Typography variant="body1">{testName}</Typography>
       </Grid>
       <Grid container item xs={9} justify="center">
-        {testExpectations &&
-          Object.entries(testExpectations).map(
-            ([key, value]) =>
-              value && (
-                <Typography
-                  key={key}
-                  variant="body1"
-                  className={classes.expectationItem}
-                >
-                  {value}
-                  {', '}
-                </Typography>
-              )
-          )}
+          <Typography
+            variant="body1"
+            className={classes.expectationItem}
+          >
+            {values(testExpectations).join(', ')}
+          </Typography>
       </Grid>
       <Grid item container xs={2} justify="flex-end">
         <Typography variant="body1">
           {testEndTime &&
             testStartTime &&
             formatDistanceStrict(testEndTime, testStartTime, {
-              addSuffix: true,
+              addSuffix: false,
             })}
         </Typography>
       </Grid>

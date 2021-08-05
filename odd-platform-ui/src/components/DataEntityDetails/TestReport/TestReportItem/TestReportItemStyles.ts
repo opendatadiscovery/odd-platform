@@ -40,8 +40,8 @@ export const styles = (theme: Theme) =>
       flexWrap: 'nowrap',
       justifyContent: 'flex-end',
     },
-    active: {
-      backgroundColor: '#EBECF0',
+    testStatusItem: {
+      marginLeft: theme.spacing(0.5),
     },
   });
 

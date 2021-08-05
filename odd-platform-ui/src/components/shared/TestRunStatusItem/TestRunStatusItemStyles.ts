@@ -29,7 +29,6 @@ export const styles = (theme: Theme) =>
       borderWidth: '1px',
       borderStyle: 'solid',
       padding: theme.spacing(0.25, 1),
-      marginLeft: theme.spacing(0.5),
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
         backgroundColor: TestReportTypeColors.success.backgroundColor,
         borderColor: TestReportTypeColors.success.borderColor,
