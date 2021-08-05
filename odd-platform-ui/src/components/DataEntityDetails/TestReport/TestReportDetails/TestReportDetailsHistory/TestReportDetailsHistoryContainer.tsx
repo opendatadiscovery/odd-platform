@@ -5,7 +5,7 @@ import TestReportDetailsHistory from 'components/DataEntityDetails/TestReport/Te
 import { styles } from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistoryStyles';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchDataSetQualityTestRuns } from 'redux/thunks';
-import { getQualityTestRunsList } from 'redux/selectors/dataQualityTest.selectors';
+import { getQualityTestRunsList, getDatasetTestRunsFetching } from 'redux/selectors/dataQualityTest.selectors';
 
 interface RouteProps {
   dataqatestId: string;
@@ -23,6 +23,7 @@ const mapStateToProps = (
 ) => ({
   dataqatestId: parseInt(dataqatestId, 10),
   testRunsList: getQualityTestRunsList(state, dataqatestId),
+  testRunsFetching: getDatasetTestRunsFetching(state),
 });
 
 const mapDispatchToProps = { fetchDataSetQualityTestRuns };

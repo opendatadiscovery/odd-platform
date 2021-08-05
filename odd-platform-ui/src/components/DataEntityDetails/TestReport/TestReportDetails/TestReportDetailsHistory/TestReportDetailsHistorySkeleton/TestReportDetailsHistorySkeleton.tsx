@@ -2,13 +2,13 @@ import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid, withStyles } from '@material-ui/core';
 import cx from 'classnames';
-import { styles, StylesType } from './AlertListSkeletonStyles';
+import { styles, StylesType } from './TestReportDetailsHistorySkeletonStyles';
 
 interface SkeletonProps extends StylesType {
   length?: number;
 }
 
-const AlertListSkeleton: React.FC<SkeletonProps> = ({
+const TestReportDetailsHistorySkeleton: React.FC<SkeletonProps> = ({
   classes,
   length,
 }) => {
@@ -19,18 +19,15 @@ const AlertListSkeleton: React.FC<SkeletonProps> = ({
 
   const skeleton = (key: number) => (
     <Grid key={key} container className={classes.container} wrap="nowrap">
-      <Grid item xs={3}>
+      <Grid item container xs={8}>
         <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
       </Grid>
-      <Grid item xs={7}>
-        <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-      </Grid>
-      <Grid item xs={2}>
-        <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+      <Grid item container xs={4} justify="flex-end">
+        <Skeleton width={`${randomSkeletonWidth()}%`} height="100%"/>
       </Grid>
     </Grid>
   );
 
   return <>{[...Array(length)].map((_, id) => skeleton(id))}</>;
 };
-export default withStyles(styles)(AlertListSkeleton);
+export default withStyles(styles)(TestReportDetailsHistorySkeleton);

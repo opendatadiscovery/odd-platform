@@ -96,9 +96,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                 key={dataQATest.id}
               >
                 <TestItem
-                  className={cx({
-                    [classes.active]: dataqatestId === dataQATest.id,
-                  })}
+                  active={dataqatestId === dataQATest.id}
                   latestRunStatus={dataQATest.latestRun?.status}
                   testName={
                     dataQATest.internalName || dataQATest.externalName

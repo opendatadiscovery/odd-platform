@@ -30,7 +30,7 @@ const TestReportTypeItem: React.FC<TestReportTypeItemProps> = ({
       <>
         <span className={classes.count}>{count}</span>
         <span className={cx(classes.filledContainer, typeName)}>
-          {typeName}
+          {typeName.toLocaleLowerCase()}
         </span>
       </>
     )}

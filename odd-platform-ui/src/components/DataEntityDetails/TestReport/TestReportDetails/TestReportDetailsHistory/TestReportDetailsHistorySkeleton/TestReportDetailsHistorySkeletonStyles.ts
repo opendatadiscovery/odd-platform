@@ -1,20 +1,18 @@
 import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { colWidthStyles } from 'components/Search/Results/ResultsStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
     container: {
-      flexWrap: 'nowrap',
-      padding: theme.spacing(0.75, 1),
+      padding: theme.spacing(1.25, 0),
+      textDecoration: 'none',
+      cursor: 'pointer',
       alignItems: 'center',
-      borderRadius: '4px',
-      '&:hover:not($active)': {
+      '&:hover': {
         backgroundColor: '#F4F5F7',
       },
     },
-    active: {
-      backgroundColor: '#EBECF0',
-    },
-    expectationItem: { marginRight: theme.spacing(0.5) },
+    ...colWidthStyles,
   });
 
 export type StylesType = WithStyles<typeof styles>;
