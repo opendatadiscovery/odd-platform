@@ -9,7 +9,9 @@ import {
 } from 'redux/thunks';
 import {
   getDatasetQualityTestsBySuiteNames,
+  getDatasetTestListFetching,
   getDatasetTestReport,
+  getDatasetTestReportFetching,
   getTestReportListBySuiteName,
 } from 'redux/selectors/dataQualityTest.selectors';
 import TestReport from './TestReport';
@@ -40,6 +42,8 @@ const mapStateToProps = (
     dataEntityId
   ),
   testReportBySuitName: getTestReportListBySuiteName(state),
+  isDatasetTestListFetching: getDatasetTestListFetching(state),
+  isDatasetTestReportFetching: getDatasetTestReportFetching(state),
 });
 
 const mapDispatchToProps = {

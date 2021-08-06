@@ -31,6 +31,15 @@ export const getDatasetTestRunsFetching = createSelector(
   status => status === 'fetching'
 );
 
+const getDatasetTestListFetchingStatus = createFetchingSelector(
+  'GET_DATA_SET_QUALITY_TEST_LIST_REPORT'
+);
+
+export const getDatasetTestListFetching = createSelector(
+  getDatasetTestListFetchingStatus,
+  status => status === 'fetching'
+);
+
 export const getDatasetTestReport = createSelector(
   getDataQualityTestState,
   getDataEntityId,
