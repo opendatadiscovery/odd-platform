@@ -21,6 +21,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import EditableTagItem from 'components/Management/TagsList/EditableTagItem/EditableTagItem';
+import TagItemSkeleton from 'components/Management/TagsList/TagItemSkeleton/TagItemSkeleton';
 import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
 import { StylesType } from './TagsListStyles';
 
@@ -148,33 +149,37 @@ const TagsListView: React.FC<TagsListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      {tagsList.length ? (
-        <div id="tags-list" className={classes.listContainer}>
-          {tagsList?.length ? (
-            <InfiniteScroll
-              next={fetchNextPage}
-              hasMore={!!pageInfo?.hasNext}
-              className={classes.tagsItem}
-              dataLength={tagsList.length}
-              scrollThreshold="200px"
-              scrollableTarget="tags-list"
-              loader={
-                <div className={classes.spinnerContainer}>
-                  <CircularProgress color="primary" size={30} />
-                </div>
-              }
-            >
-              {tagsList?.map(tag => (
-                <EditableTagItem
-                  key={tag.id}
-                  tag={tag}
-                  deleteTag={deleteTag}
-                />
-              ))}
-            </InfiniteScroll>
-          ) : null}
-        </div>
-      ) : null}
+      {isFetching ? (
+        <TagItemSkeleton length={10} />
+      ) : (
+        tagsList.length && (
+          <div id="tags-list" className={classes.listContainer}>
+            {tagsList?.length ? (
+              <InfiniteScroll
+                next={fetchNextPage}
+                hasMore={!!pageInfo?.hasNext}
+                className={classes.tagsItem}
+                dataLength={tagsList.length}
+                scrollThreshold="200px"
+                scrollableTarget="tags-list"
+                loader={
+                  <div className={classes.spinnerContainer}>
+                    <CircularProgress color="primary" size={30} />
+                  </div>
+                }
+              >
+                {tagsList?.map(tag => (
+                  <EditableTagItem
+                    key={tag.id}
+                    tag={tag}
+                    deleteTag={deleteTag}
+                  />
+                ))}
+              </InfiniteScroll>
+            ) : null}
+          </div>
+        )
+      )}
       {!isFetching && !tagsList.length ? (
         <Typography variant="subtitle1">
           {searchText ? 'No tags found' : 'No tags yet...'}
