@@ -162,6 +162,10 @@ paths:
       summary: List of namespaces
       description: Gets the list of existing namespaces
       operationId: getNamespaceList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
       responses:
         '200':
           description: OK

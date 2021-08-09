@@ -618,6 +618,8 @@ components:
         id:
           type: integer
           format: int64
+        namespace:
+          $ref: '#/components/schemas/Namespace'
         oddrn:
           type: string
         name:
@@ -655,6 +657,8 @@ components:
       type: object
       properties:
         name:
+          type: string
+        namespace_name:
           type: string
         oddrn:
           type: string
