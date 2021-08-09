@@ -23,6 +23,7 @@ import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/E
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceFormContainer from './NamespaceForm/NamespaceFormContainer';
+import NamespaceListSkeleton from './NamespaceListSkeleton/NamespaceListSkeleton';
 import { StylesType } from './NamespaceListStyles';
 
 interface NamespaceListProps extends StylesType {
@@ -144,33 +145,27 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      {namespacesList.length ? (
-        <div id="namespaces-list" className={classes.listContainer}>
-          {namespacesList?.length ? (
-            <InfiniteScroll
-              next={fetchNextPage}
-              hasMore={!!pageInfo?.hasNext}
-              className={classes.namespacesItem}
-              dataLength={namespacesList.length}
-              scrollThreshold="200px"
-              scrollableTarget="namespaces-list"
-              loader={
-                <div className={classes.spinnerContainer}>
-                  <CircularProgress color="primary" size={30} />
-                </div>
-              }
-            >
-              {namespacesList?.map(namespace => (
-                <EditableNamespaceItem
-                  key={namespace.id}
-                  namespace={namespace}
-                  deleteNamespace={deleteNamespace}
-                />
-              ))}
-            </InfiniteScroll>
-          ) : null}
+      <div id="namespaces-list" className={classes.listContainer}>
+        <InfiniteScroll
+          next={fetchNextPage}
+          hasMore={!!pageInfo?.hasNext}
+          className={classes.namespacesItem}
+          dataLength={namespacesList.length}
+          scrollThreshold="200px"
+          scrollableTarget="namespaces-list"
+          loader={
+            isFetching ? <NamespaceListSkeleton length={5} /> : null
+          }
+        >
+          {namespacesList?.map(namespace => (
+            <EditableNamespaceItem
+              key={namespace.id}
+              namespace={namespace}
+              deleteNamespace={deleteNamespace}
+            />
+          ))}
+        </InfiniteScroll>
         </div>
-      ) : null}
       {!isFetching && !namespacesList.length ? (
         <EmptyContentPlaceholder classes={{ container: classes.placeholder }}/>
       ) : null}
