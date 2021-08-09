@@ -63,7 +63,7 @@ export const getSearchIsFetching = createSelector(
     (!!search.results.pageInfo.total && !search.results.items.length)
 );
 
-export const getSearchIsCreated = createSelector(
+export const getSearchIsCreatingAndFetching = createSelector(
   getSearchCreationStatus,
   getSearchFetchStatus,
   (statusCreate, statusFetch) =>

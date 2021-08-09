@@ -34,7 +34,7 @@ interface ResultsProps extends StylesType {
     params: SearchApiGetSearchResultsRequest
   ) => void;
   isSearchFetching: boolean;
-  isSearchCreated: boolean;
+  isSearchCreatingAndFetching: boolean;
   isSearchUpdated: boolean;
 }
 
@@ -49,7 +49,7 @@ const Results: React.FC<ResultsProps> = ({
   searchFiltersSynced,
   getDataEntitiesSearchResults,
   isSearchFetching,
-  isSearchCreated,
+  isSearchCreatingAndFetching,
   isSearchUpdated,
 }) => {
   const dispatch = useDispatch();
@@ -129,7 +129,7 @@ const Results: React.FC<ResultsProps> = ({
 
   return (
     <div className={classes.container}>
-      {isSearchCreated ? (
+      {isSearchCreatingAndFetching ? (
         <SearchTabsSkeleton length={tabs.length} />
       ) : (
         <AppTabs
