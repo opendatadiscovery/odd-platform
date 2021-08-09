@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
 import {
   getDataEntityDetails,
+  getDataEntityDetailsFetching,
   getDataEntityIsDataset,
 } from 'redux/selectors/dataentity.selectors';
 import Overview from './Overview';
@@ -26,6 +27,7 @@ const mapStateToProps = (
   dataEntityDetails: getDataEntityDetails(state, dataEntityId),
   dataEntityId: parseInt(dataEntityId, 10),
   isDataset: getDataEntityIsDataset(state, dataEntityId),
+  isDataEntityDetailsFetching: getDataEntityDetailsFetching(state),
 });
 
 const mapDispatchToProps = {};
