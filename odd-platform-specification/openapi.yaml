@@ -241,6 +241,22 @@ paths:
                 $ref: './components.yaml/#/components/schemas/Namespace'
       tags:
         - namespace
+    delete:
+      summary: Delete namespace
+      description: Deletes existing namespace
+      operationId: deleteNamespace
+      parameters:
+        - name: namespace_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - namespace
   /api/roles:
     get:
       summary: List of roles
