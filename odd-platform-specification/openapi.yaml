@@ -697,6 +697,22 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - search
+  /api/search/suggestions:
+    get:
+      summary: Get search suggestions by query
+      description: Returns top five search suggestions for a given query
+      operationId: getSearchSuggestions
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRefList'
+      tags:
+        - search
   /api/dataentities:
     get:
       summary: Get dataEntities
