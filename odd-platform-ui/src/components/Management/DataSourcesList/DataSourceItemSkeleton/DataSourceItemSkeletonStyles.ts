@@ -5,7 +5,7 @@ export const styles = (theme: Theme) =>
     container: {
       width: 'calc(100% - 8px)',
       padding: theme.spacing(2, 2, 2, 2),
-      marginBottom: theme.spacing(1),
+      margin: theme.spacing(1, 0, 1, 0.5),
     },
     descriptionContainer: {
       '& > *': {

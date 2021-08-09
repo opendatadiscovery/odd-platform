@@ -134,32 +134,28 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
           }
         />
       </div>
-      {isDataSourcesListFetching ? (
-        <DataSourceItemSkeleton length={5} />
-      ) : (
-        <div className={classes.datasourcesListContainer}>
-          {dataSourcesList?.length ? (
-            <InfiniteScroll
-              next={fetchNextPage}
-              hasMore={!!pageInfo?.hasNext}
-              loader={
-                <div className={classes.spinnerContainer}>
-                  <CircularProgress color="primary" size={30} />
-                </div>
-              }
-              dataLength={dataSourcesList.length}
-            >
-              {dataSourcesList.map(dataSource => (
-                <DataSourceItemContainer
-                  classes={{ container: classes.datasourceItem }}
-                  key={dataSource.id}
-                  dataSource={dataSource}
-                />
-              ))}
-            </InfiniteScroll>
-          ) : null}
-        </div>
-      )}
+      <div className={classes.datasourcesListContainer}>
+        {dataSourcesList?.length ? (
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            loader={
+              isDataSourcesListFetching ? (
+                <DataSourceItemSkeleton length={5} />
+              ) : null
+            }
+            dataLength={dataSourcesList.length}
+          >
+            {dataSourcesList.map(dataSource => (
+              <DataSourceItemContainer
+                classes={{ container: classes.datasourceItem }}
+                key={dataSource.id}
+                dataSource={dataSource}
+              />
+            ))}
+          </InfiniteScroll>
+        ) : null}
+      </div>
     </div>
   );
 };
