@@ -22,6 +22,7 @@ import {
   DataSetTestReport,
   AlertTotals,
   Alert,
+  Namespace,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -52,6 +53,13 @@ export interface LabelsState {
   allIds: number[];
   pageInfo?: CurrentPageInfo;
 }
+
+export interface NamespacesState {
+  byId: { [namespaceId: string]: Namespace };
+  allIds: Namespace['id'][];
+  pageInfo?: CurrentPageInfo;
+}
+
 
 export interface MetaDataState {
   dataEntityMetadata: {
@@ -174,6 +182,7 @@ export type RootState = {
   owners: OwnersState;
   datasetStructure: DatasetStructureState;
   labels: LabelsState;
+  namespaces: NamespacesState;
   dataEntityLineage: DataEntityLineageState;
   profile: ProfileState;
   dataQualityTest: DataQualityTestState;
