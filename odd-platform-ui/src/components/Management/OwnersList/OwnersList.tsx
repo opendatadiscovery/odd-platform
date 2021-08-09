@@ -23,6 +23,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import OwnersListSkeleton from 'components/Management/OwnersList/OwnersListSkeleton/OwnersListSkeleton';
 import OwnerFormContainer from './OwnerForm/OwnerFormContainer';
 import { StylesType } from './OwnersListStyles';
 
@@ -159,9 +160,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
                 scrollThreshold="200px"
                 scrollableTarget="owners-list"
                 loader={
-                  <div className={classes.spinnerContainer}>
-                    <CircularProgress color="primary" size={30} />
-                  </div>
+                  isFetching ? <OwnersListSkeleton length={5} /> : null
                 }
               >
                 {ownersList?.map(owner => (
