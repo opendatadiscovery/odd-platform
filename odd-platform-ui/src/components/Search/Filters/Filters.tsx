@@ -6,6 +6,8 @@ import {
   DataSource,
   DataSourceList,
   DataSourceApiGetDataSourceListRequest,
+  NamespaceApiGetNamespaceListRequest,
+  Namespace,
 } from 'generated-sources';
 import { SearchType } from 'redux/interfaces/search';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -16,16 +18,20 @@ import { StylesType } from './FiltersStyles';
 interface FiltersProps extends StylesType {
   searchType?: SearchType;
   datasources: DataSource[];
+  namespaces: Namespace[];
   fetchDataSourcesList: (
     params: DataSourceApiGetDataSourceListRequest
   ) => Promise<DataSourceList>;
+  fetchNamespaceList: (params: NamespaceApiGetNamespaceListRequest) => void;
 }
 
 const Filters: React.FC<FiltersProps> = ({
   classes,
   searchType,
   datasources,
+  namespaces,
   fetchDataSourcesList,
+  fetchNamespaceList,
 }) => {
   const dispatch = useDispatch();
 
@@ -35,6 +41,7 @@ const Filters: React.FC<FiltersProps> = ({
 
   React.useEffect(() => {
     fetchDataSourcesList({ page: 1, size: 100 });
+    fetchNamespaceList({ page: 1, size: 100 });
   }, []);
 
   return (
@@ -63,7 +70,7 @@ const Filters: React.FC<FiltersProps> = ({
           key="ns"
           facetName="namespaces"
           name="Namespace"
-          facetOptions={[]}
+          facetOptions={namespaces}
         />
         <MultipleFilterItemContainer
           key="ow"
