@@ -9,5 +9,5 @@ import reactor.core.publisher.Flux;
 public interface DataSourceService
     extends CRUDService<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData> {
 
-    Flux<DataSource> listAll();
+    Flux<DataSource> listActive();
 }
