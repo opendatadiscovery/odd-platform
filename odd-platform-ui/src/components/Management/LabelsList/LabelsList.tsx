@@ -4,7 +4,6 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  CircularProgress,
   Grid,
 } from '@material-ui/core';
 import {
@@ -20,6 +19,7 @@ import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import LabelsListSkeleton from 'components/Management/LabelsList/LabelsListSkeleton/LabelsListSkeleton';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateFormContainer from './LabelCreateForm/LabelCreateFormContainer';
 import { StylesType } from './LabelsListStyles';
@@ -154,9 +154,7 @@ const LabelsListView: React.FC<LabelsListProps> = ({
               scrollThreshold="200px"
               scrollableTarget="labels-list"
               loader={
-                <div className={classes.spinnerContainer}>
-                  <CircularProgress color="primary" size={30} />
-                </div>
+                isFetching ? <LabelsListSkeleton length={5} /> : null
               }
             >
               {labelsList?.map(label => (
