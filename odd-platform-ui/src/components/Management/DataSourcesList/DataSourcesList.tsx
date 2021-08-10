@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  CircularProgress,
   IconButton,
   InputAdornment,
   TextField,
@@ -18,6 +17,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import DataSourcesListSkeleton from './DataSourcesListSkeleton/DataSourcesListSkeleton';
 import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
 import { StylesType } from './DataSourcesListStyles';
 import DataSourceFormDialogContainer from './DataSourceFormDialog/DataSourceFormDialogContainer';
@@ -30,6 +30,7 @@ interface DataSourcesListProps extends StylesType {
   isCreating: boolean;
   isDeleting: boolean;
   pageInfo?: CurrentPageInfo;
+  isDataSourcesListFetching: boolean;
 }
 
 const DataSourcesListView: React.FC<DataSourcesListProps> = ({
@@ -39,6 +40,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
   isCreating,
   isDeleting,
   pageInfo,
+  isDataSourcesListFetching,
 }) => {
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalDataSources, setTotalDataSources] = React.useState<
@@ -137,9 +139,9 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
             loader={
-              <div className={classes.spinnerContainer}>
-                <CircularProgress color="primary" size={30} />
-              </div>
+              isDataSourcesListFetching ? (
+                <DataSourcesListSkeleton length={5} />
+              ) : null
             }
             dataLength={dataSourcesList.length}
           >
