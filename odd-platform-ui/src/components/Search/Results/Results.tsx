@@ -18,6 +18,7 @@ import {
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import SearchResultsSkeleton from 'components/Search/Results/SearchResultsSkeleton/SearchResultsSkeleton';
+import SearchTabsSkeleton from 'components/Search/Results/SearchTabsSkeleton/SearchTabsSkeleton';
 import ResultItem from './ResultItem/ResultItem';
 import { StylesType } from './ResultsStyles';
 
@@ -33,6 +34,8 @@ interface ResultsProps extends StylesType {
     params: SearchApiGetSearchResultsRequest
   ) => void;
   isSearchFetching: boolean;
+  isSearchCreatingAndFetching: boolean;
+  isSearchUpdated: boolean;
 }
 
 const Results: React.FC<ResultsProps> = ({
@@ -46,6 +49,8 @@ const Results: React.FC<ResultsProps> = ({
   searchFiltersSynced,
   getDataEntitiesSearchResults,
   isSearchFetching,
+  isSearchCreatingAndFetching,
+  isSearchUpdated,
 }) => {
   const dispatch = useDispatch();
 
@@ -124,14 +129,19 @@ const Results: React.FC<ResultsProps> = ({
 
   return (
     <div className={classes.container}>
-      <AppTabs
-        variant="primary"
-        classes={{ container: classes.tabsContainer }}
-        items={tabs}
-        selectedTab={selectedTab}
-        handleTabChange={onSearchTypeChange}
-      />
-      {isSearchFetching && !searchResults.length ? (
+      {isSearchCreatingAndFetching ? (
+        <SearchTabsSkeleton length={tabs.length} />
+      ) : (
+        <AppTabs
+          variant="primary"
+          classes={{ container: classes.tabsContainer }}
+          items={tabs}
+          selectedTab={selectedTab}
+          handleTabChange={onSearchTypeChange}
+          isHintUpdated={isSearchUpdated}
+        />
+      )}
+      {isSearchFetching ? (
         <SearchResultsSkeleton length={10} />
       ) : (
         <Grid

@@ -42,15 +42,37 @@ export const getSearchFiltersSynced = createSelector(
 );
 
 export const getSearchIsFetching = createSelector(
+  getSearchCreationStatus,
   getSearchFetchStatus,
   getSearchUpdateStatus,
   getSearchFiltersSynced,
   getSearchResultsFetchStatus,
   searchState,
-  (statusFetch, statusUpdate, isSynced, statusResults, search) =>
-    [statusFetch, statusUpdate, statusResults].includes('fetching') ||
+  (
+    statusCreate,
+    statusFetch,
+    statusUpdate,
+    isSynced,
+    statusResults,
+    search
+  ) =>
+    [statusCreate, statusFetch, statusUpdate, statusResults].includes(
+      'fetching'
+    ) ||
     !isSynced ||
     (!!search.results.pageInfo.total && !search.results.items.length)
+);
+
+export const getSearchIsCreatingAndFetching = createSelector(
+  getSearchCreationStatus,
+  getSearchFetchStatus,
+  (statusCreate, statusFetch) =>
+    [statusCreate, statusFetch].includes('fetching')
+);
+
+export const getSearchIsUpdated = createSelector(
+  getSearchUpdateStatus,
+  statusUpdate => statusUpdate === 'fetching'
 );
 
 export const getSearchId = createSelector(
