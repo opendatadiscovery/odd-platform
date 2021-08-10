@@ -4,13 +4,13 @@ import { RootState } from 'redux/interfaces';
 import { createNamespace, updateNamespace } from 'redux/thunks/namespace.thunks';
 import {
   getIsNamespaceUpdating,
-  getIsNamespaceDeleting,
+  getIsNamespaceCreating,
 } from 'redux/selectors/namespace.selectors';
 import NamespaceForm from './NamespaceForm';
 import { styles } from './NamespaceFormStyles';
 
 const mapStateToProps = (state: RootState) => ({
-  isLoading: getIsNamespaceUpdating(state) || getIsNamespaceDeleting(state),
+  isLoading: getIsNamespaceUpdating(state) || getIsNamespaceCreating(state),
 });
 
 const mapDispatchToProps = {
