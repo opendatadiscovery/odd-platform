@@ -19,8 +19,9 @@ import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
-import TagListSkeleton from './TagListSkeleton/TagListSkeleton';
 import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
 import { StylesType } from './TagsListStyles';
 
@@ -156,7 +157,19 @@ const TagsListView: React.FC<TagsListProps> = ({
           dataLength={tagsList.length}
           scrollThreshold="200px"
           scrollableTarget="tags-list"
-          loader={isFetching && <TagListSkeleton length={10} />}
+          loader={
+            isFetching && (
+              <SkeletonWrapper
+                length={5}
+                renderContent={({ randomSkeletonPercentWidth, key }) => (
+                  <TagsSkeletonItem
+                    width={randomSkeletonPercentWidth()}
+                    key={key}
+                  />
+                )}
+              />
+            )
+          }
         >
           {tagsList?.map(tag => (
             <EditableTagItem

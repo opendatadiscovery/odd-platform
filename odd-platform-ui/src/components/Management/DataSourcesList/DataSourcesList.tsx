@@ -17,7 +17,8 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import DataSourcesListSkeleton from './DataSourcesListSkeleton/DataSourcesListSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
 import { StylesType } from './DataSourcesListStyles';
 import DataSourceFormDialogContainer from './DataSourceFormDialog/DataSourceFormDialogContainer';
@@ -134,26 +135,32 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
         />
       </div>
       <div className={classes.datasourcesListContainer}>
-        {dataSourcesList?.length ? (
-          <InfiniteScroll
-            next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
-            loader={
-              isDataSourcesListFetching ? (
-                <DataSourcesListSkeleton length={5} />
-              ) : null
-            }
-            dataLength={dataSourcesList.length}
-          >
-            {dataSourcesList.map(dataSource => (
-              <DataSourceItemContainer
-                classes={{ container: classes.datasourceItem }}
-                key={dataSource.id}
-                dataSource={dataSource}
+        <InfiniteScroll
+          next={fetchNextPage}
+          hasMore={!!pageInfo?.hasNext}
+          loader={
+            isDataSourcesListFetching ? (
+              <SkeletonWrapper
+                length={5}
+                renderContent={({ randomSkeletonPercentWidth, key }) => (
+                  <DataSourceSkeletonItem
+                    width={randomSkeletonPercentWidth()}
+                    key={key}
+                  />
+                )}
               />
-            ))}
-          </InfiniteScroll>
-        ) : null}
+            ) : null
+          }
+          dataLength={dataSourcesList.length}
+        >
+          {dataSourcesList.map(dataSource => (
+            <DataSourceItemContainer
+              classes={{ container: classes.datasourceItem }}
+              key={dataSource.id}
+              dataSource={dataSource}
+            />
+          ))}
+        </InfiniteScroll>
       </div>
     </div>
   );

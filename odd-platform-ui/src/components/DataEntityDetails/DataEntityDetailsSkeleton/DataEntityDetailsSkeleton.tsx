@@ -4,27 +4,28 @@ import { Grid, withStyles } from '@material-ui/core';
 import { styles, StylesType } from './DataEntityDetailsSkeletonStyles';
 
 interface SkeletonProps extends StylesType {
-  length?: number;
+  width: string;
 }
 
 const DataEntityDetailsSkeleton: React.FC<SkeletonProps> = ({
   classes,
-  length,
+  width,
 }) => {
-  const randomSkeletonWidth = () => {
-    const rand = 75 + Math.random() * 15;
-    return Math.round(rand);
-  };
+  const tabsSkeletonItem = (key: number) => (
+    <Grid key={key} item xs={2} className={classes.tabsSkeletonItem}>
+      <Skeleton width={width} height="100%" />
+    </Grid>
+  );
 
-  const skeleton = (key: number) => (
-    <Grid key={key} container className={classes.container}>
+  return (
+    <Grid container className={classes.container}>
       <Grid
         container
         justify="space-between"
         className={classes.dataentityName}
       >
         <Grid item xs={4}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+          <Skeleton width={width} height="100%" />
         </Grid>
       </Grid>
       <Grid
@@ -34,29 +35,10 @@ const DataEntityDetailsSkeleton: React.FC<SkeletonProps> = ({
         className={classes.tabsSkeletonContainer}
         wrap="nowrap"
       >
-        <Grid item xs={2} className={classes.tabsSkeletonItem}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
-        <Grid item xs={2}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
-        <Grid item xs={2}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
-        <Grid item xs={2}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
-        <Grid item xs={2}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
-        <Grid item xs={2}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
+        {[...Array(6)].map((_, id) => tabsSkeletonItem(id))}
       </Grid>
     </Grid>
   );
-
-  return <>{[...Array(length)].map((_, id) => skeleton(id))}</>;
 };
 
 export default withStyles(styles)(DataEntityDetailsSkeleton);

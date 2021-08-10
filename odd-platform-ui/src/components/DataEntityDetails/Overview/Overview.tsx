@@ -2,6 +2,7 @@ import { Grid, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import { DataEntityDetails } from 'generated-sources';
 import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import OverviewDescriptionContainer from './OverviewDescription/OverviewDescriptionContainer';
 import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
 import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
@@ -70,7 +71,11 @@ const Overview: React.FC<OverviewProps> = ({
         </Grid>
       </Grid>
     ) : (
-      <OverviewSkeleton />
+      <SkeletonWrapper
+        renderContent={({ randomSkeletonPercentWidth }) => (
+          <OverviewSkeleton width={randomSkeletonPercentWidth()} />
+        )}
+      />
     )}
   </>
 );

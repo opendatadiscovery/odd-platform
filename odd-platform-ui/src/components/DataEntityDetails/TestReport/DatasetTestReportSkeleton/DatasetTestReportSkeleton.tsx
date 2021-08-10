@@ -1,43 +1,35 @@
 import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid, withStyles } from '@material-ui/core';
-import {
-  styles,
-  StylesType,
-} from 'components/DataEntityDetails/TestReport/DatasetTestReportSkeleton/DatasetTestReportSkeletonStyles';
+import { styles, StylesType } from './DatasetTestReportSkeletonStyles';
 
 interface SkeletonProps extends StylesType {
-  length?: number;
+  width: string;
 }
 
 const DatasetTestReportSkeleton: React.FC<SkeletonProps> = ({
   classes,
-  length,
-}) => {
-  const randomSkeletonWidth = () => {
-    const rand = 75 + Math.random() * 15;
-    return Math.round(rand);
-  };
-
-  const skeleton = (key: number) => (
-    <Grid key={key} container className={classes.container}>
-      <Grid container className={classes.testReportSkeletonContainer}>
-        <Grid container item xs={6} className={classes.testSkeletons}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="30px" />
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="30px" />
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="30px" />
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="30px" />
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="30px" />
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="30px" />
-        </Grid>
-        <Grid container item xs={6} className={classes.testCountSkeleton}>
-          <Skeleton width="150px" height="100%" />
-        </Grid>
+  width,
+}) => (
+  <Grid container className={classes.container}>
+    <Grid
+      container
+      className={classes.testReportSkeletonContainer}
+      justify="space-between"
+    >
+      <Grid container item xs={6} className={classes.testSkeletons}>
+        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height="100%" />
+      </Grid>
+      <Grid container item xs={2} className={classes.testCountSkeleton}>
+        <Skeleton width={width} height="100%" />
       </Grid>
     </Grid>
-  );
-
-  return <>{[...Array(length)].map((_, id) => skeleton(id))}</>;
-};
+  </Grid>
+);
 
 export default withStyles(styles)(DatasetTestReportSkeleton);

@@ -25,6 +25,7 @@ import TestReportContainer from 'components/DataEntityDetails/TestReport/TestRep
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
 import DataEntityAlertsContainer from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsContainer';
 import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -187,7 +188,13 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
           ) : null}
         </>
       ) : (
-        <DataEntityDetailsSkeleton />
+        <SkeletonWrapper
+          renderContent={({ randomSkeletonPercentWidth }) => (
+            <DataEntityDetailsSkeleton
+              width={randomSkeletonPercentWidth()}
+            />
+          )}
+        />
       )}
       <Switch>
         <Route
