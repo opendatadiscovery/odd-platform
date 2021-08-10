@@ -19,7 +19,7 @@ import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import LabelsListSkeleton from 'components/Management/LabelsList/LabelsListSkeleton/LabelsListSkeleton';
+import LabelsListSkeleton from './LabelsListSkeleton/LabelsListSkeleton';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateFormContainer from './LabelCreateForm/LabelCreateFormContainer';
 import { StylesType } from './LabelsListStyles';
@@ -143,31 +143,25 @@ const LabelsListView: React.FC<LabelsListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      {labelsList.length ? (
-        <div id="labels-list" className={classes.listContainer}>
-          {labelsList?.length ? (
-            <InfiniteScroll
-              next={fetchNextPage}
-              hasMore={!!pageInfo?.hasNext}
-              className={classes.labelsItem}
-              dataLength={labelsList.length}
-              scrollThreshold="200px"
-              scrollableTarget="labels-list"
-              loader={
-                isFetching ? <LabelsListSkeleton length={5} /> : null
-              }
-            >
-              {labelsList?.map(label => (
-                <EditableLabelItem
-                  key={label.id}
-                  label={label}
-                  deleteLabel={deleteLabel}
-                />
-              ))}
-            </InfiniteScroll>
-          ) : null}
-        </div>
-      ) : null}
+      <div id="labels-list" className={classes.listContainer}>
+        <InfiniteScroll
+          next={fetchNextPage}
+          hasMore={!!pageInfo?.hasNext}
+          className={classes.labelsItem}
+          dataLength={labelsList.length}
+          scrollThreshold="200px"
+          scrollableTarget="labels-list"
+          loader={isFetching ? <LabelsListSkeleton length={5} /> : null}
+        >
+          {labelsList?.map(label => (
+            <EditableLabelItem
+              key={label.id}
+              label={label}
+              deleteLabel={deleteLabel}
+            />
+          ))}
+        </InfiniteScroll>
+      </div>
       {!isFetching && !labelsList.length ? (
         <Typography variant="subtitle1">
           {searchText ? 'No labels found' : 'No labels yet...'}
