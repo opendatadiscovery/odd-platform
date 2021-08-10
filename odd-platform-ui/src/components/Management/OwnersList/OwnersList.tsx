@@ -4,7 +4,6 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  CircularProgress,
   Grid,
 } from '@material-ui/core';
 import {
@@ -23,7 +22,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import OwnersListSkeleton from 'components/Management/OwnersList/OwnersListSkeleton/OwnersListSkeleton';
+import OwnersListSkeleton from './OwnersListSkeleton/OwnersListSkeleton';
 import OwnerFormContainer from './OwnerForm/OwnerFormContainer';
 import { StylesType } from './OwnersListStyles';
 
