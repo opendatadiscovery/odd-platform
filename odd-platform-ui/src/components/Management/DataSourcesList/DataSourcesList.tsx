@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  CircularProgress,
   IconButton,
   InputAdornment,
   TextField,
@@ -18,7 +17,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import DataSourceItemSkeleton from 'components/Management/DataSourcesList/DataSourceItemSkeleton/DataSourceItemSkeleton';
+import DataSourcesListSkeleton from './DataSourcesListSkeleton/DataSourcesListSkeleton';
 import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
 import { StylesType } from './DataSourcesListStyles';
 import DataSourceFormDialogContainer from './DataSourceFormDialog/DataSourceFormDialogContainer';
@@ -141,7 +140,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             hasMore={!!pageInfo?.hasNext}
             loader={
               isDataSourcesListFetching ? (
-                <DataSourceItemSkeleton length={5} />
+                <DataSourcesListSkeleton length={5} />
               ) : null
             }
             dataLength={dataSourcesList.length}

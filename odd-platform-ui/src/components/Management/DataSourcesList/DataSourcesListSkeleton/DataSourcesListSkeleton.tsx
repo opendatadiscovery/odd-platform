@@ -4,13 +4,16 @@ import { Grid, Paper, withStyles } from '@material-ui/core';
 import {
   styles,
   StylesType,
-} from 'components/Management/DataSourcesList/DataSourceItemSkeleton/DataSourceItemSkeletonStyles';
+} from 'components/Management/DataSourcesList/DataSourcesListSkeleton/DataSourcesListSkeletonStyles';
 
 interface SkeletonProps extends StylesType {
   length?: number;
 }
 
-const TagItemSkeleton: React.FC<SkeletonProps> = ({ classes, length }) => {
+const DataSourcesListSkeleton: React.FC<SkeletonProps> = ({
+  classes,
+  length,
+}) => {
   const randomSkeletonWidth = () => {
     const rand = 75 + Math.random() * 15;
     return Math.round(rand);
@@ -50,4 +53,4 @@ const TagItemSkeleton: React.FC<SkeletonProps> = ({ classes, length }) => {
 
   return <>{[...Array(length)].map((_, id) => skeleton(id))}</>;
 };
-export default withStyles(styles)(TagItemSkeleton);
+export default withStyles(styles)(DataSourcesListSkeleton);
