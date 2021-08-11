@@ -135,6 +135,7 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       height: '16px',
+      '& > span': { minWidth: '18px' },
     },
   });
 
