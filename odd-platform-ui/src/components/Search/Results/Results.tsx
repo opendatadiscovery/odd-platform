@@ -195,40 +195,52 @@ const Results: React.FC<ResultsProps> = ({
         id="results-list"
         className={cx(classes.listContainer, classes.resultsTable)}
       >
-        <InfiniteScroll
-          dataLength={searchResults.length}
-          next={fetchNextPage}
-          hasMore={!!pageInfo.hasNext}
-          loader={
-            isSearchFetching && (
-              <SkeletonWrapper
-                length={10}
-                renderContent={({ randomSkeletonPercentWidth, key }) => (
-                  <SearchResultsSkeletonItem
-                    width={randomSkeletonPercentWidth()}
-                    key={key}
-                  />
-                )}
+        {isSearchFetching ? (
+          <SkeletonWrapper
+            length={10}
+            renderContent={({ randomSkeletonPercentWidth, key }) => (
+              <SearchResultsSkeletonItem
+                width={randomSkeletonPercentWidth()}
+                key={key}
               />
-            )
-          }
-          scrollThreshold="200px"
-          scrollableTarget="results-list"
-        >
-          {searchResults.map(searchResult => (
-            <ResultItem
-              key={searchResult.id}
-              searchType={searchType}
-              classes={{ container: classes.resultItem }}
-              searchResult={searchResult}
-              totals={totals}
-            />
-          ))}
-        </InfiniteScroll>
+            )}
+          />
+        ) : (
+          <InfiniteScroll
+            dataLength={searchResults.length}
+            next={fetchNextPage}
+            hasMore={!!pageInfo.hasNext}
+            loader={
+              isSearchFetching && (
+                <SkeletonWrapper
+                  length={10}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <SearchResultsSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              )
+            }
+            scrollThreshold="200px"
+            scrollableTarget="results-list"
+          >
+            {searchResults.map(searchResult => (
+              <ResultItem
+                key={searchResult.id}
+                searchType={searchType}
+                classes={{ container: classes.resultItem }}
+                searchResult={searchResult}
+                totals={totals}
+              />
+            ))}
+          </InfiniteScroll>
+        )}
+        {!isSearchFetching && !pageInfo.total ? (
+          <Typography variant="subtitle1">No Matches Found</Typography>
+        ) : null}
       </div>
-      {!isSearchFetching && !pageInfo.total ? (
-        <Typography variant="subtitle1">No Matches Found</Typography>
-      ) : null}
     </div>
   );
 };

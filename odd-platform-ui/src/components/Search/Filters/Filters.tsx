@@ -20,6 +20,7 @@ interface FiltersProps extends StylesType {
   ) => Promise<DataSourceList>;
   clearDataEntitySearchFilters: () => void;
   isSearchFacetsUpdating: boolean;
+  isDatasourceListFetching: boolean;
 }
 
 const Filters: React.FC<FiltersProps> = ({
@@ -29,6 +30,7 @@ const Filters: React.FC<FiltersProps> = ({
   fetchDataSourcesList,
   clearDataEntitySearchFilters,
   isSearchFacetsUpdating,
+  isDatasourceListFetching,
 }) => {
   React.useEffect(() => {
     fetchDataSourcesList({ page: 1, size: 100 });
@@ -77,7 +79,7 @@ const Filters: React.FC<FiltersProps> = ({
           name="Tag"
         />
         <div className={classes.facetsLoaderContainer}>
-          {isSearchFacetsUpdating && (
+          {(isSearchFacetsUpdating || isDatasourceListFetching) && (
             <CircularProgressLoader text="Updating filters" />
           )}
         </div>
