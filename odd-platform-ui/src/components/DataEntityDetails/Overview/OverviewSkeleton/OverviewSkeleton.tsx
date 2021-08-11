@@ -1,28 +1,54 @@
 import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
-import { Grid, withStyles } from '@material-ui/core';
+import { Grid, GridSize, withStyles } from '@material-ui/core';
 import cx from 'classnames';
+import { mainSkeletonHeight } from 'lib/constants';
 import { styles, StylesType } from './OverviewSkeletonStyles';
 
 interface SkeletonProps extends StylesType {
-  length?: number;
+  width: string;
 }
 
-const OverviewSkeleton: React.FC<SkeletonProps> = ({
-  classes,
-  length,
-}) => {
-  const randomSkeletonWidth = () => {
-    const rand = 75 + Math.random() * 15;
-    return Math.round(rand);
-  };
+const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
+  const skeletonSmallItem = (xs: GridSize, key?: number) => (
+    <Grid key={key} item xs={xs}>
+      <Skeleton width={width} height={mainSkeletonHeight} />
+    </Grid>
+  );
 
-  const skeleton = (key: number) => (
-    <Grid key={key} container className={classes.container}>
+  const skeletonMediumItem = (key: number) => (
+    <Grid
+      key={key}
+      container
+      item
+      xs={12}
+      wrap="nowrap"
+      className={classes.smallItem}
+    >
+      {skeletonSmallItem(3)}
+      {skeletonSmallItem(4)}
+    </Grid>
+  );
+
+  const skeletonLargeItem = (key: number) => (
+    <Grid
+      key={key}
+      item
+      container
+      wrap="nowrap"
+      className={cx(classes.smallItem)}
+    >
+      {skeletonSmallItem(4)}
+      {skeletonSmallItem(4)}
+    </Grid>
+  );
+
+  return (
+    <Grid container className={classes.container}>
       <Grid container className={classes.overviewGeneralSkeletonContainer}>
         <Grid item xs={8} container className={classes.skeletonLeftSide}>
           <Grid item xs={2} className={classes.largeItem}>
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             item
@@ -31,24 +57,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="nowrap"
             className={classes.smallItem}
           >
-            <Grid item xs={2}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
+            {[...Array(3)].map((_, id) => skeletonSmallItem(2, id))}
           </Grid>
           <Grid
             item
@@ -57,87 +66,11 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="nowrap"
             className={classes.smallItem}
           >
-            <Grid item xs={2}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
+            {[...Array(3)].map((_, id) => skeletonSmallItem(2, id))}
           </Grid>
         </Grid>
         <Grid item xs={4} container>
-          <Grid
-            container
-            item
-            xs={12}
-            wrap="nowrap"
-            className={classes.smallItem}
-          >
-            <Grid item xs={3}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-          </Grid>
-          <Grid
-            container
-            item
-            xs={12}
-            wrap="nowrap"
-            className={classes.smallItem}
-          >
-            <Grid item xs={3}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-          </Grid>
-          <Grid
-            container
-            item
-            xs={12}
-            wrap="nowrap"
-            className={classes.smallItem}
-          >
-            <Grid item xs={3}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-          </Grid>
+          {[...Array(3)].map((_, id) => skeletonMediumItem(id))}
         </Grid>
       </Grid>
       <Grid
@@ -146,7 +79,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
       >
         <Grid item xs={8} container>
           <Grid item xs={2} className={classes.largeItem}>
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             item
@@ -155,12 +88,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="nowrap"
             className={classes.smallItem}
           >
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
+            {skeletonSmallItem(4)}
           </Grid>
           <Grid
             item
@@ -169,92 +97,9 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="nowrap"
             className={classes.smallItem}
           >
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
+            {skeletonSmallItem(4)}
           </Grid>
-          <Grid
-            item
-            container
-            wrap="nowrap"
-            className={cx(
-              classes.smallItem,
-              classes.overviewMetadataSkeletonContainer
-            )}
-          >
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-          </Grid>
-          <Grid
-            item
-            container
-            wrap="nowrap"
-            className={cx(classes.smallItem)}
-          >
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-          </Grid>
-          <Grid
-            item
-            container
-            wrap="nowrap"
-            className={cx(classes.smallItem)}
-          >
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-          </Grid>
-          <Grid
-            item
-            container
-            wrap="nowrap"
-            className={cx(classes.smallItem)}
-          >
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
-          </Grid>
+          {[...Array(4)].map((_, id) => skeletonLargeItem(id))}
         </Grid>
         <Grid item xs={4} container>
           <Grid
@@ -264,10 +109,10 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="wrap"
             className={classes.smallItem}
           >
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             container
@@ -276,18 +121,8 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             className={cx(classes.smallItem, classes.container)}
           >
             <Grid container justify="space-between" wrap="nowrap">
-              <Grid item xs={6} container>
-                <Skeleton
-                  width={`${randomSkeletonWidth()}%`}
-                  height="100%"
-                />
-              </Grid>
-              <Grid item xs={2} container>
-                <Skeleton
-                  width={`${randomSkeletonWidth()}%`}
-                  height="100%"
-                />
-              </Grid>
+              {skeletonSmallItem(6)}
+              {skeletonSmallItem(2)}
             </Grid>
           </Grid>
           <Grid
@@ -297,17 +132,17 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="wrap"
             className={classes.smallItem}
           >
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
         </Grid>
       </Grid>
       <Grid container className={classes.overviewAboutSkeletonContainer}>
         <Grid item xs={8} container>
           <Grid item xs={2} className={classes.largeItem}>
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             item
@@ -316,12 +151,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="nowrap"
             className={classes.smallItem}
           >
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
+            {skeletonSmallItem(4)}
           </Grid>
           <Grid
             item
@@ -330,12 +160,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="nowrap"
             className={classes.smallItem}
           >
-            <Grid item xs={4}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
-            </Grid>
+            {skeletonSmallItem(4)}
           </Grid>
           <Grid
             item
@@ -343,7 +168,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="nowrap"
             className={cx(classes.smallItem, classes.container)}
           >
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             item
@@ -351,7 +176,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             wrap="nowrap"
             className={cx(classes.smallItem)}
           >
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
         </Grid>
         <Grid item xs={4} container>
@@ -363,10 +188,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             className={cx(classes.smallItem, classes.container)}
           >
             <Grid item xs={8} container className={classes.largeItem}>
-              <Skeleton
-                width={`${randomSkeletonWidth()}%`}
-                height="100%"
-              />
+              <Skeleton width={width} height={mainSkeletonHeight} />
             </Grid>
           </Grid>
           <Grid
@@ -376,16 +198,14 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({
             className={cx(classes.largeItem, classes.tabItem)}
             wrap="nowrap"
           >
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-            <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
         </Grid>
       </Grid>
     </Grid>
   );
-
-  return <>{[...Array(length)].map((_, id) => skeleton(id))}</>;
 };
 
 export default withStyles(styles)(OverviewSkeleton);

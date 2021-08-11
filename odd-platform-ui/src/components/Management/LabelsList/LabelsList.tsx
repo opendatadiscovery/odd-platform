@@ -19,7 +19,8 @@ import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import LabelsListSkeleton from './LabelsListSkeleton/LabelsListSkeleton';
+import LabelsSkeletonItem from 'components/Management/LabelsList/LabelsSkeletonItem/LabelsSkeletonItem';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateFormContainer from './LabelCreateForm/LabelCreateFormContainer';
 import { StylesType } from './LabelsListStyles';
@@ -151,7 +152,19 @@ const LabelsListView: React.FC<LabelsListProps> = ({
           dataLength={labelsList.length}
           scrollThreshold="200px"
           scrollableTarget="labels-list"
-          loader={isFetching ? <LabelsListSkeleton length={5} /> : null}
+          loader={
+            isFetching ? (
+              <SkeletonWrapper
+                length={5}
+                renderContent={({ randomSkeletonPercentWidth, key }) => (
+                  <LabelsSkeletonItem
+                    key={key}
+                    width={randomSkeletonPercentWidth()}
+                  />
+                )}
+              />
+            ) : null
+          }
         >
           {labelsList?.map(label => (
             <EditableLabelItem

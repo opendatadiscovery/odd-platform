@@ -15,6 +15,7 @@ import { DataSetStructureTypesCount } from 'redux/interfaces/datasetStructure';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { StylesType } from './DatasetStructureStyles';
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
@@ -74,7 +75,13 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   return (
     <div className={classes.container}>
       {isDatasetStructureFetching ? (
-        <DatasetStructureSkeleton length={8} />
+        <SkeletonWrapper
+          renderContent={({ randomSkeletonPercentWidth }) => (
+            <DatasetStructureSkeleton
+              width={randomSkeletonPercentWidth()}
+            />
+          )}
+        />
       ) : (
         <Grid container>
           <Grid

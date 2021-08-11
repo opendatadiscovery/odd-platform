@@ -42,7 +42,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
   selectedTab,
   variant,
   orientation,
-  isHintUpdated = true,
+  isHintUpdated = false,
 }) => {
   const [currentTab, setCurrent] = React.useState<
     number | boolean | undefined

@@ -3,6 +3,7 @@ import { DataQualityTest } from 'generated-sources';
 import { format, formatDistanceStrict } from 'date-fns';
 import { Grid, Typography } from '@material-ui/core';
 import TestReportDetailsOverviewSkeleton from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { StylesType } from './TestReportDetailsOverviewStyles';
 
 interface TestReportDetailsOverviewProps extends StylesType {
@@ -17,7 +18,13 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
 }) => (
   <Grid className={classes.container}>
     {isDatasetTestListFetching ? (
-      <TestReportDetailsOverviewSkeleton />
+      <SkeletonWrapper
+        renderContent={({ randomSkeletonPercentWidth }) => (
+          <TestReportDetailsOverviewSkeleton
+            width={randomSkeletonPercentWidth()}
+          />
+        )}
+      />
     ) : (
       <>
         <Grid className={classes.statContainer}>

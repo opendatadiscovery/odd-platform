@@ -12,9 +12,10 @@ import { CurrentPageInfo } from 'redux/interfaces/common';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import { Grid, Typography } from '@material-ui/core';
 import cx from 'classnames';
+import AlertListSkeleton from 'components/Alerts/AlertsList/AlertSkeletonItem/AlertSkeletonItem';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { StylesType } from './AlertsListStyles';
 import AlertItem from './AlertItem/AlertItem';
-import AlertListSkeleton from './AlertListSkeleton/AlertListSkeleton';
 
 interface AlertsListProps extends StylesType {
   alerts: Alert[];
@@ -97,7 +98,16 @@ const AlertsList: React.FC<AlertsListProps> = ({
         next={fetchNextPage}
         hasMore={!!pageInfo?.hasNext}
         loader={
-          alertListFetching ? <AlertListSkeleton length={5} /> : null
+          alertListFetching && (
+            <SkeletonWrapper
+              renderContent={({ randomSkeletonPercentWidth, key }) => (
+                <AlertListSkeleton
+                  width={randomSkeletonPercentWidth()}
+                  key={key}
+                />
+              )}
+            />
+          )
         }
         scrollThreshold="200px"
       >
