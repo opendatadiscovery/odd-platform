@@ -9,6 +9,9 @@ spring:
     max-in-memory-size: 20MB
 #  security:
 #    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri:
 #      client:
 #        registration:
 #          cognito:

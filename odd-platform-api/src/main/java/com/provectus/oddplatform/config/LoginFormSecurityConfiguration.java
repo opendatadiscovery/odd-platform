@@ -2,12 +2,10 @@ package com.provectus.oddplatform.config;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
@@ -25,30 +23,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@EnableWebFluxSecurity
 @Configuration
-@Slf4j
-public class SecurityConfiguration {
+@ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
+public class LoginFormSecurityConfiguration {
     @Bean
-    @ConditionalOnProperty(value = "auth.type", havingValue = "DISABLED")
-    public SecurityWebFilterChain securityWebFilterChainDisabled(final ServerHttpSecurity http) {
-        return http
-            .csrf().disable()
-            .authorizeExchange()
-            .anyExchange().permitAll()
-            .and().build();
-    }
-
-    @Bean
-    @ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
-    public SecurityWebFilterChain securityWebFilterChainOauth2(final ServerHttpSecurity http) {
-        return applyAuthPathMatchers(http)
-            .and().oauth2Login()
-            .and().build();
-    }
-
-    @Bean
-    @ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
     public SecurityWebFilterChain securityWebFilterChainLoginForm(
         final ServerHttpSecurity http,
         @Value("${auth.login-form-redirect:}") final String redirectURIString
@@ -59,13 +37,16 @@ public class SecurityConfiguration {
             ? (wfe, auth) -> new DefaultServerRedirectStrategy().sendRedirect(wfe.getExchange(), redirectURI)
             : new RedirectServerAuthenticationSuccessHandler("/");
 
-        return applyAuthPathMatchers(http)
+        return http
+            .csrf().disable()
+            .authorizeExchange()
+            .pathMatchers("/health", "/favicon.ico").permitAll()
+            .pathMatchers("/**").authenticated()
             .and().formLogin().authenticationSuccessHandler(authHandler)
             .and().build();
     }
 
     @Bean
-    @ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
     public MapReactiveUserDetailsService mapReactiveUserDetailsService(
         @Value("${auth.login-form-credentials}") final String credentialString
     ) {
@@ -78,21 +59,11 @@ public class SecurityConfiguration {
                 .withUsername(c.getUsername())
                 .passwordEncoder(pe::encode)
                 .password(c.getPassword())
-                .authorities("ROLE_USER")
+                .authorities("ROLE_USER_STUB")
                 .build())
             .collect(Collectors.toList());
 
         return new MapReactiveUserDetailsService(users);
-    }
-
-    private ServerHttpSecurity.AuthorizeExchangeSpec applyAuthPathMatchers(final ServerHttpSecurity http) {
-        return http
-            .csrf().disable()
-            .authorizeExchange()
-            .pathMatchers("/ingestion/entities").permitAll()
-            .pathMatchers("/health").permitAll()
-            .pathMatchers("/favicon.ico").permitAll()
-            .pathMatchers("/**").authenticated();
     }
 
     private URI parseURI(final String redirectUri) {
@@ -101,7 +72,6 @@ public class SecurityConfiguration {
 
     @Getter
     @RequiredArgsConstructor
-    @Slf4j
     private static class LoginFormCredentials {
         private final String username;
         private final String password;

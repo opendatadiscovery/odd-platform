@@ -34,6 +34,7 @@ public class DataSourceRepositoryImpl
         return dslContext
             .selectFrom(recordTable)
             .where(DATA_SOURCE.ACTIVE.isTrue())
+            .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchStreamInto(DataSourcePojo.class)
             .collect(Collectors.toList());
     }
