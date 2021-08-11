@@ -12,6 +12,7 @@ import {
   getDatasetVersions,
 } from 'redux/selectors/dataentity.selectors';
 import {
+  getDataSetStructureFetching,
   getDatasetStructureTypeStats,
   getDatasetVersionId,
 } from 'redux/selectors/datasetStructure.selectors';
@@ -45,6 +46,7 @@ const mapStateToProps = (
     datasetId: dataEntityId,
     versionId,
   }),
+  isDatasetStructureFetching: getDataSetStructureFetching(state),
 });
 
 const mapDispatchToProps = {

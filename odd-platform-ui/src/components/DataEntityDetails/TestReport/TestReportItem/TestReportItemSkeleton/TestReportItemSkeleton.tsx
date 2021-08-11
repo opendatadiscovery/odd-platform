@@ -5,51 +5,39 @@ import {
   styles,
   StylesType,
 } from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemSkeleton/TestReportItemSkeletonStyles';
+import { mainSkeletonHeight } from 'lib/constants';
 
 interface SkeletonProps extends StylesType {
-  length?: number;
+  width: string;
 }
 
 const TestReportItemSkeleton: React.FC<SkeletonProps> = ({
   classes,
-  length,
+  width,
 }) => {
-  const randomSkeletonWidth = () => {
-    const rand = 75 + Math.random() * 15;
-    return Math.round(rand);
-  };
-
-  const skeleton = (key: number) => (
-    <Grid key={key} container className={classes.container}>
-      <Grid container item xs={4} className={classes.item}>
-        <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
+  const skeletonItem = () => (
+    <Grid container justify="space-between" className={classes.item}>
+      <Grid item xs={2}>
+        <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
-      <Grid container justify="space-between" className={classes.item}>
-        <Grid item xs={2}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
-        <Grid item xs={4}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
-        <Grid item xs={2}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
+      <Grid item xs={4}>
+        <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
-      <Grid container justify="space-between" className={classes.item}>
-        <Grid item xs={2}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
-        <Grid item xs={4}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
-        <Grid item xs={2}>
-          <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
-        </Grid>
+      <Grid item xs={2}>
+        <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
     </Grid>
   );
 
-  return <>{[...Array(length)].map((_, id) => skeleton(id))}</>;
+  return (
+    <Grid container className={classes.container}>
+      <Grid container item xs={4} className={classes.item}>
+        <Skeleton width={width} height={mainSkeletonHeight} />
+      </Grid>
+      {skeletonItem()}
+      {skeletonItem()}
+    </Grid>
+  );
 };
 
 export default withStyles(styles)(TestReportItemSkeleton);

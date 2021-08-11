@@ -5,12 +5,6 @@ export const styles = (theme: Theme) =>
   createStyles({
     container: {
       padding: theme.spacing(1.25, 0),
-      textDecoration: 'none',
-      cursor: 'pointer',
-      alignItems: 'center',
-      '&:hover': {
-        backgroundColor: '#F4F5F7',
-      },
     },
     ...colWidthStyles,
   });

@@ -9,6 +9,7 @@ import {
 import { Link, LinkProps } from 'react-router-dom';
 import cx from 'classnames';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import { Skeleton } from '@material-ui/lab';
 import { styles, StylesType } from './AppTabsStyles';
 
 const LinkTab: React.ComponentType<
@@ -30,6 +31,7 @@ interface AppTabsProps extends StylesType {
   selectedTab?: number | boolean;
   variant: 'primary' | 'secondary' | 'secondarySmall' | 'menu';
   orientation?: 'horizontal' | 'vertical';
+  isHintUpdated?: boolean;
 }
 
 const AppTabs: React.FC<AppTabsProps> = ({
@@ -40,6 +42,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
   selectedTab,
   variant,
   orientation,
+  isHintUpdated = false,
 }) => {
   const [currentTab, setCurrent] = React.useState<
     number | boolean | undefined
@@ -81,8 +84,17 @@ const AppTabs: React.FC<AppTabsProps> = ({
                   className={classes.tabItemLabel}
                 >
                   {item.name}
-                  {item.hint !== undefined && variant === 'primary' && (
-                    <NumberFormatted value={item.hint} precision={0} />
+                  {item.hint !== undefined &&
+                    variant === 'primary' &&
+                    !isHintUpdated && (
+                      <div className={classes.hintContainer}>
+                        <NumberFormatted value={item.hint} precision={0} />
+                      </div>
+                    )}
+                  {variant === 'primary' && isHintUpdated && (
+                    <div className={classes.hintContainer}>
+                      <Skeleton width="14px" height="27px" />
+                    </div>
                   )}
                 </Typography>
               }
@@ -103,8 +115,17 @@ const AppTabs: React.FC<AppTabsProps> = ({
                   className={classes.tabItemLabel}
                 >
                   {item.name}
-                  {item.hint !== undefined && variant === 'primary' && (
-                    <NumberFormatted value={item.hint} precision={0} />
+                  {item.hint !== undefined &&
+                    variant === 'primary' &&
+                    !isHintUpdated && (
+                      <div className={classes.hintContainer}>
+                        <NumberFormatted value={item.hint} precision={0} />
+                      </div>
+                    )}
+                  {variant === 'primary' && isHintUpdated && (
+                    <div className={classes.hintContainer}>
+                      <Skeleton width="14px" height="27px" />
+                    </div>
                   )}
                 </Typography>
               }

@@ -12,6 +12,7 @@ import TestReportItemContainer from 'components/DataEntityDetails/TestReport/Tes
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
 import TestReportItemSkeleton from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
 import DatasetTestReportSkeleton from 'components/DataEntityDetails/TestReport/DatasetTestReportSkeleton/DatasetTestReportSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { StylesType } from './TestReportStyles';
 
 interface DatasetQualityTestList {
@@ -68,7 +69,13 @@ const TestReport: React.FC<TestReportProps> = ({
       {datasetQualityTestList ? (
         <>
           {isDatasetTestReportFetching ? (
-            <DatasetTestReportSkeleton />
+            <SkeletonWrapper
+              renderContent={({ randomSkeletonPercentWidth }) => (
+                <DatasetTestReportSkeleton
+                  width={randomSkeletonPercentWidth()}
+                />
+              )}
+            />
           ) : (
             <Grid container className={classes.testReportContainer}>
               <Grid container item className={classes.testReport}>
@@ -134,7 +141,18 @@ const TestReport: React.FC<TestReportProps> = ({
               <Grid container spacing={2}>
                 <Grid item xs={9}>
                   {isDatasetTestListFetching ? (
-                    <TestReportItemSkeleton length={5} />
+                    <SkeletonWrapper
+                      length={5}
+                      renderContent={({
+                        randomSkeletonPercentWidth,
+                        key,
+                      }) => (
+                        <TestReportItemSkeleton
+                          width={randomSkeletonPercentWidth()}
+                          key={key}
+                        />
+                      )}
+                    />
                   ) : (
                     <Grid
                       container
