@@ -1,6 +1,7 @@
 import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid, withStyles } from '@material-ui/core';
+import { mainSkeletonHeight } from 'lib/constants';
 import { styles, StylesType } from './DataEntityDetailsSkeletonStyles';
 
 interface SkeletonProps extends StylesType {
@@ -13,7 +14,7 @@ const DataEntityDetailsSkeleton: React.FC<SkeletonProps> = ({
 }) => {
   const tabsSkeletonItem = (key: number) => (
     <Grid key={key} item xs={2} className={classes.tabsSkeletonItem}>
-      <Skeleton width={width} height="100%" />
+      <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
   );
 
@@ -25,7 +26,7 @@ const DataEntityDetailsSkeleton: React.FC<SkeletonProps> = ({
         className={classes.dataentityName}
       >
         <Grid item xs={4}>
-          <Skeleton width={width} height="100%" />
+          <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
       <Grid

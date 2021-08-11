@@ -5,6 +5,7 @@ import {
   styles,
   StylesType,
 } from 'components/Management/OwnersList/OwnersSkeletonItem/OwnersSkeletonItemStyles';
+import { mainSkeletonHeight } from 'lib/constants';
 
 interface SkeletonProps extends StylesType {
   width: string;
@@ -16,7 +17,7 @@ const OwnersSkeletonItem: React.FC<SkeletonProps> = ({
 }) => (
   <Grid container className={classes.container} wrap="nowrap">
     <Grid item xs={3}>
-      <Skeleton width={width} height="100%" />
+      <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
   </Grid>
 );

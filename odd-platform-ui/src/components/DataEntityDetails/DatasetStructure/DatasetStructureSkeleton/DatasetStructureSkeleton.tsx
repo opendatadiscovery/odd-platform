@@ -1,6 +1,7 @@
 import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid, withStyles } from '@material-ui/core';
+import { mainSkeletonHeight } from 'lib/constants';
 import { styles, StylesType } from './DatasetStructureSkeletonStyles';
 
 interface SkeletonProps extends StylesType {
@@ -23,10 +24,10 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
       wrap="wrap"
     >
       <Grid item xs={12}>
-        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
       <Grid item xs={12}>
-        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
     </Grid>
   );
@@ -40,21 +41,21 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
     >
       <Grid item xs={3} container wrap="wrap">
         <Grid item xs={10} className={classes.mediumItem}>
-          <Skeleton width={width} height="100%" />
+          <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
         <Grid item xs={10} className={classes.smallItem}>
-          <Skeleton width={width} height="100%" />
+          <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
       <Grid item xs={9} container justify="flex-end">
         <Grid item xs={2} className={classes.largeItem}>
-          <Skeleton width={width} height="100%" />
+          <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
         <Grid item xs={2} className={classes.largeItem}>
-          <Skeleton width={width} height="100%" />
+          <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
         <Grid item xs={2} className={classes.largeItem}>
-          <Skeleton width={width} height="100%" />
+          <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
         {[...Array(4)].map((_, id) => structureRowItem(id))}
       </Grid>
@@ -69,10 +70,10 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
         justify="space-between"
       >
         <Grid item xs={5}>
-          <Skeleton width={width} height="100%" />
+          <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
         <Grid item xs={2} container justify="flex-end">
-          <Skeleton width={width} height="100%" />
+          <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
       {[...Array(structureRowLength)].map((_, id) => structureRow(id))}

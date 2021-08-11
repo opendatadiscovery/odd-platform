@@ -5,6 +5,7 @@ import {
   styles,
   StylesType,
 } from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewStyles';
+import { mainSkeletonHeight } from 'lib/constants';
 
 interface SkeletonProps extends StylesType {
   width: string;
@@ -16,7 +17,7 @@ const TestReportDetailsOverviewSkeleton: React.FC<SkeletonProps> = ({
 }) => {
   const skeletonItem = (xs: GridSize) => (
     <Grid item xs={xs}>
-      <Skeleton width={width} height="100%" />
+      <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
   );
 
@@ -37,18 +38,18 @@ const TestReportDetailsOverviewSkeleton: React.FC<SkeletonProps> = ({
         </Grid>
       </Grid>
       <Grid className={classes.paramContainer}>
-        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height={mainSkeletonHeight} />
         <Grid container>
           {skeletonItem(4)}
           {skeletonItem(8)}
         </Grid>
       </Grid>
       <Grid className={classes.paramContainer}>
-        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height={mainSkeletonHeight} />
         <Grid container>{skeletonItem(4)}</Grid>
       </Grid>
       <Grid className={classes.paramContainer}>
-        <Skeleton width={width} height="100%" />
+        <Skeleton width={width} height={mainSkeletonHeight} />
         <Grid container>{skeletonItem(12)}</Grid>
       </Grid>
     </Grid>

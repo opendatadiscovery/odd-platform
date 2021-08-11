@@ -2,6 +2,7 @@ import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid, GridSize, withStyles } from '@material-ui/core';
 import cx from 'classnames';
+import { mainSkeletonHeight } from 'lib/constants';
 import { styles, StylesType } from './OverviewSkeletonStyles';
 
 interface SkeletonProps extends StylesType {
@@ -11,7 +12,7 @@ interface SkeletonProps extends StylesType {
 const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
   const skeletonSmallItem = (xs: GridSize, key?: number) => (
     <Grid key={key} item xs={xs}>
-      <Skeleton width={width} height="100%" />
+      <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
   );
 
@@ -47,7 +48,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
       <Grid container className={classes.overviewGeneralSkeletonContainer}>
         <Grid item xs={8} container className={classes.skeletonLeftSide}>
           <Grid item xs={2} className={classes.largeItem}>
-            <Skeleton width={width} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             item
@@ -78,7 +79,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
       >
         <Grid item xs={8} container>
           <Grid item xs={2} className={classes.largeItem}>
-            <Skeleton width={width} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             item
@@ -108,10 +109,10 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
             wrap="wrap"
             className={classes.smallItem}
           >
-            <Skeleton width={width} height="100%" />
-            <Skeleton width={width} height="100%" />
-            <Skeleton width={width} height="100%" />
-            <Skeleton width={width} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             container
@@ -131,17 +132,17 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
             wrap="wrap"
             className={classes.smallItem}
           >
-            <Skeleton width={width} height="100%" />
-            <Skeleton width={width} height="100%" />
-            <Skeleton width={width} height="100%" />
-            <Skeleton width={width} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
         </Grid>
       </Grid>
       <Grid container className={classes.overviewAboutSkeletonContainer}>
         <Grid item xs={8} container>
           <Grid item xs={2} className={classes.largeItem}>
-            <Skeleton width={width} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             item
@@ -167,7 +168,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
             wrap="nowrap"
             className={cx(classes.smallItem, classes.container)}
           >
-            <Skeleton width={width} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
           <Grid
             item
@@ -175,7 +176,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
             wrap="nowrap"
             className={cx(classes.smallItem)}
           >
-            <Skeleton width={width} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
         </Grid>
         <Grid item xs={4} container>
@@ -187,7 +188,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
             className={cx(classes.smallItem, classes.container)}
           >
             <Grid item xs={8} container className={classes.largeItem}>
-              <Skeleton width={width} height="100%" />
+              <Skeleton width={width} height={mainSkeletonHeight} />
             </Grid>
           </Grid>
           <Grid
@@ -197,9 +198,9 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
             className={cx(classes.largeItem, classes.tabItem)}
             wrap="nowrap"
           >
-            <Skeleton width={width} height="100%" />
-            <Skeleton width={width} height="100%" />
-            <Skeleton width={width} height="100%" />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
+            <Skeleton width={width} height={mainSkeletonHeight} />
           </Grid>
         </Grid>
       </Grid>
