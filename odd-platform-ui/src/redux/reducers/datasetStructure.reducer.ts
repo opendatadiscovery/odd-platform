@@ -55,7 +55,7 @@ const reducer = (
           ...state.latestVersionByDataset,
           ...(action.payload.value.latest
             ? {
-                [action.payload.dataEntityId]:
+                [action.payload.entityId]:
                   action.payload.value.datasetStructure.dataSetVersion.id,
               }
             : null),

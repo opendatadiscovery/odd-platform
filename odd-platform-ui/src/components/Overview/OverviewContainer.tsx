@@ -18,16 +18,22 @@ import {
   fetchPopularDataEntitiesList,
 } from 'redux/thunks/dataentities.thunks';
 import { fetchIdentity } from 'redux/thunks/profile.thunks';
+import { fetchAlertsTotals } from 'redux/thunks/alerts.thunks';
 import {
   getIdentity,
   getIdentityFetched,
 } from 'redux/selectors/profile.selectors';
+import { getAlertTotals } from 'redux/selectors/alert.selectors';
+import { getMainOverviewContentIsFetching } from 'redux/selectors/mainContentLoader.selectors';
+import { fetchTagsList } from 'redux/thunks';
+import { getTagsList } from 'redux/selectors/tags.selectors';
 import Overview from './Overview';
 import { styles } from './OverviewStyles';
 
 const mapStateToProps = (state: RootState) => ({
   identity: getIdentity(state),
   identityFetched: getIdentityFetched(state),
+  alertTotals: getAlertTotals(state),
   myEntities: getMyEntities(state),
   myEntitiesDownstream: getMyEntitiesDownstream(state),
   myEntitiesUpstream: getMyEntitiesUpstream(state),
@@ -38,14 +44,18 @@ const mapStateToProps = (state: RootState) => ({
     state
   ),
   popularDataEntitiesFetching: getPopularDataEntitiesFetching(state),
+  isMainOverviewContentFetching: getMainOverviewContentIsFetching(state),
+  topTagsList: getTagsList(state),
 });
 
 const mapDispatchToProps = {
   fetchIdentity,
+  fetchAlertsTotals,
   fetchMyDataEntitiesList,
   fetchMyUpstreamDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
   fetchPopularDataEntitiesList,
+  fetchTagsList,
 };
 
 export default connect(

@@ -7,7 +7,10 @@ import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetVersionRecord;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
+import com.provectus.oddplatform.utils.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,23 +43,21 @@ public class DatasetVersionRepositoryImpl
     }
 
     @Override
-    // TODO: filth?
-    public Optional<DatasetStructureDto> getDatasetVersion(final long datasetId, final long datasetVersionId) {
+    public Optional<DatasetStructureDto> getDatasetVersion(final long datasetVersionId) {
         final List<Field<?>> selectFields = Stream.of(DATASET_VERSION.fields(), DATASET_FIELD.fields())
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
         final Map<DatasetVersionPojo, List<DatasetFieldDto>> result = dslContext
-            .select(DATASET_FIELD.fields())
             .select(selectFields)
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as("labels"))
             .from(DATASET_VERSION)
             .leftJoin(DATASET_FIELD).on(DATASET_FIELD.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
-            .where(DATASET_VERSION.DATASET_ID.eq(datasetId))
+            .where(DATASET_VERSION.ID.eq(datasetVersionId))
             .groupBy(selectFields)
-            .fetchGroups(DatasetVersionPojo.class, this::extractDatasetFieldDto);
+            .fetchGroups(r -> r.into(DATASET_VERSION).into(DatasetVersionPojo.class), this::extractDatasetFieldDto);
 
         return result.entrySet().stream()
             .findFirst()
@@ -89,8 +91,6 @@ public class DatasetVersionRepositoryImpl
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .groupBy(selectFields)
             .fetchGroups(r -> r.into(DATASET_VERSION).into(DatasetVersionPojo.class), this::extractDatasetFieldDto);
-
-        log.info("RESULT: {}", result);
 
         return result.entrySet().stream()
             .findFirst()
@@ -126,6 +126,56 @@ public class DatasetVersionRepositoryImpl
             .fetchStreamInto(DATASET_VERSION)
             .map(this::recordToPojo)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Long, Pair<List<DatasetFieldPojo>, List<DatasetFieldPojo>>> getLastStructureDelta(
+        final Collection<Long> datasetIds
+    ) {
+        final List<DatasetVersionPojo> havePreMax = getLatestVersions(datasetIds)
+            .stream()
+            .filter(p -> p.getVersion() > 1)
+            .collect(Collectors.toList());
+
+        if (havePreMax.isEmpty()) {
+            return Map.of();
+        }
+
+        final Condition condition = havePreMax.stream()
+            .map(v -> DATASET_VERSION.DATASET_ID.eq(v.getDatasetId()).and(DATASET_VERSION.VERSION.eq(v.getVersion() - 1)))
+            .reduce(Condition::or)
+            .get();
+
+        final List<DatasetVersionPojo> preMax = dslContext.selectFrom(DATASET_VERSION)
+            .where(condition)
+            .fetchStreamInto(DatasetVersionPojo.class)
+            .collect(Collectors.toList());
+
+        final List<DatasetVersionPojo> versions = ListUtils.union(havePreMax, preMax);
+
+        final Map<Long, List<DatasetFieldPojo>> vidToFields = dslContext.selectFrom(DATASET_FIELD)
+            .where(DATASET_FIELD.DATASET_VERSION_ID.in(versions.stream()
+                .map(DatasetVersionPojo::getId)
+                .collect(Collectors.toSet())))
+            .fetchStreamInto(DatasetFieldPojo.class)
+            .collect(Collectors.groupingBy(DatasetFieldPojo::getDatasetVersionId));
+
+        final Map<Long, List<DatasetVersionPojo>> dsIdToVersions = versions
+            .stream()
+            .collect(Collectors.groupingBy(DatasetVersionPojo::getDatasetId));
+
+        return dsIdToVersions.entrySet().stream()
+            .map(e -> {
+                final List<DatasetVersionPojo> v = e.getValue().stream()
+                    .sorted(Comparator.comparing(DatasetVersionPojo::getVersion))
+                    .collect(Collectors.toList());
+
+                return Pair.of(e.getKey(), Pair.of(
+                    vidToFields.get(v.get(0).getId()),
+                    vidToFields.get(v.get(1).getId())
+                ));
+            })
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
     private DatasetFieldDto extractDatasetFieldDto(final Record record) {

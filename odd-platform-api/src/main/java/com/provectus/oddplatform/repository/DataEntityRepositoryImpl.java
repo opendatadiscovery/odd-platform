@@ -5,24 +5,12 @@ import com.provectus.oddplatform.dto.*;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestAttributes;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataTransformerAttributes;
-import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
-import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
-import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
-import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
-import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
-import com.provectus.oddplatform.model.tables.pojos.LineagePojo;
-import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
-import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
-import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
-import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
-import com.provectus.oddplatform.model.tables.pojos.OwnershipPojo;
-import com.provectus.oddplatform.model.tables.pojos.RolePojo;
-import com.provectus.oddplatform.model.tables.pojos.TagPojo;
-import com.provectus.oddplatform.model.tables.pojos.TypeEntityRelationPojo;
+import com.provectus.oddplatform.model.tables.pojos.*;
 import com.provectus.oddplatform.model.tables.records.DataEntityRecord;
 import com.provectus.oddplatform.model.tables.records.LineageRecord;
 import com.provectus.oddplatform.model.tables.records.SearchEntrypointRecord;
 import com.provectus.oddplatform.repository.util.FTSVectorizer;
+import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
 import com.provectus.oddplatform.utils.Pair;
@@ -48,7 +36,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,6 +43,7 @@ import java.util.stream.Stream;
 import static com.provectus.oddplatform.model.Tables.*;
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
+import static java.util.function.Predicate.not;
 import static org.jooq.impl.DSL.*;
 
 @Repository
@@ -72,6 +60,7 @@ public class DataEntityRepositoryImpl
     private static final String AGG_OWNERSHIP_FIELD = "ownership";
     private static final String AGG_OWNER_FIELD = "owner";
     private static final String AGG_ROLE_FIELD = "role";
+    private static final String AGG_ALERT_FIELD = "alert";
 
     private final Collector<Record3<Long, String, Integer>, ?, Map<SearchFilterId, Long>> FACET_COLLECTOR = Collectors
         .toMap(
@@ -93,15 +82,21 @@ public class DataEntityRepositoryImpl
     );
 
     private final FTSVectorizer vectorizer;
+    private final JooqRecordHelper jooqRecordHelper;
     private final TypeEntityRelationRepository typeEntityRelationRepository;
+    private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
 
     public DataEntityRepositoryImpl(final DSLContext dslContext,
                                     final FTSVectorizer vectorizer,
-                                    final TypeEntityRelationRepository typeEntityRelationRepository) {
+                                    final JooqRecordHelper jooqRecordHelper,
+                                    final TypeEntityRelationRepository typeEntityRelationRepository,
+                                    final DataEntityTaskRunRepository dataEntityTaskRunRepository) {
         super(dslContext, DATA_ENTITY, DATA_ENTITY.ID, null, DataEntityDimensionsDto.class);
 
         this.vectorizer = vectorizer;
+        this.jooqRecordHelper = jooqRecordHelper;
         this.typeEntityRelationRepository = typeEntityRelationRepository;
+        this.dataEntityTaskRunRepository = dataEntityTaskRunRepository;
     }
 
     @Override
@@ -144,6 +139,7 @@ public class DataEntityRepositoryImpl
             .stream()
             .map(p -> {
                 final DataEntityDto dto = dtoDict.get(p.getOddrn());
+
                 return DataEntityDto.builder()
                     .dataEntity(dto.getDataEntity().setId(p.getId()))
                     .types(dto.getTypes())
@@ -153,8 +149,10 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public List<DataEntityPojo> bulkUpdate(final List<DataEntityPojo> pojos) {
-        final List<DataEntityRecord> records = pojos.stream()
+    @Transactional
+    public List<DataEntityDto> bulkUpdate(final List<DataEntityDto> dtos) {
+        final List<DataEntityRecord> records = dtos.stream()
+            .map(DataEntityDto::getDataEntity)
             .map(e -> dslContext.newRecord(recordTable, e))
             .peek(r -> {
                 r.changed(DATA_ENTITY.INTERNAL_DESCRIPTION, false);
@@ -163,11 +161,20 @@ public class DataEntityRepositoryImpl
             })
             .collect(Collectors.toList());
 
+        final List<TypeEntityRelationPojo> typeRelations = dtos
+            .stream()
+            .flatMap(d -> d.getTypes().stream().map(
+                t -> new TypeEntityRelationPojo()
+                    .setDataEntityId(d.getDataEntity().getId())
+                    .setDataEntityTypeId(t.getId())
+            ))
+            .collect(Collectors.toList());
+
+        typeEntityRelationRepository.bulkCreate(typeRelations);
+
         dslContext.batchUpdate(records).execute();
 
-        return records.stream()
-            .map(r -> r.into(DataEntityPojo.class))
-            .collect(Collectors.toList());
+        return dtos;
     }
 
     @Override
@@ -187,10 +194,7 @@ public class DataEntityRepositoryImpl
         return Page.<DataEntityDimensionsDto>builder()
             .hasNext(false)
             .total(fetchCount(query))
-            .data(dataEntitySelect(DataEntitySelectConfig.emptyConfig())
-                .fetchStream()
-                .map(this::mapDimensionRecord)
-                .collect(Collectors.toList()))
+            .data(listByConfig(DataEntitySelectConfig.emptyConfig()))
             .build();
     }
 
@@ -390,6 +394,28 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
+    public Collection<DataEntityDimensionsDto> listByOddrns(final Collection<String> oddrns) {
+        return listByConfig(DataEntitySelectConfig.builder()
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
+            .build());
+    }
+
+    @Override
+    public Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns) {
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .dataEntitySelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
+            .includeDetails(true)
+            .build();
+
+        return dataEntitySelect(config)
+            .fetchStream()
+            .map(this::mapDetailsRecord)
+            // TODO: Fix N + 1
+            .map(this::enrichDataEntityDetailsDto)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns) {
         return listAllByOddrns(oddrns, null, null);
     }
@@ -409,20 +435,18 @@ public class DataEntityRepositoryImpl
                 configBuilder.dataEntitySelectConditions(singletonList(DATA_ENTITY.SUBTYPE_ID.eq(subTypeId)));
         }
 
-        return dataEntitySelect(configBuilder.build())
-            .fetchStream()
-            .map(this::mapDimensionRecord)
-            .collect(Collectors.toList());
+        return listByConfig(configBuilder.build());
     }
 
     @Override
     public List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .joinSelectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
-            .dataEntityLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
             .build();
 
         return dataEntitySelect(config)
+            .limit(size)
+            .offset((page - 1) * size)
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toList());
@@ -446,7 +470,7 @@ public class DataEntityRepositoryImpl
             .stream()
             .flatMap(lp -> Stream.of(lp.getParentOddrn(), lp.getChildOddrn()))
             .distinct()
-            .filter(Predicate.not(associatedOddrns::contains))
+            .filter(not(associatedOddrns::contains))
             .collect(Collectors.toList());
 
         return listAllByOddrns(oddrns, page, size);
@@ -458,10 +482,7 @@ public class DataEntityRepositoryImpl
             .dataEntityLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
             .build();
 
-        return dataEntitySelect(config)
-            .fetchStream()
-            .map(this::mapDimensionRecord)
-            .collect(Collectors.toList());
+        return listByConfig(config);
     }
 
     @Override
@@ -564,8 +585,8 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public void calculateSearchEntrypoints(final List<Long> newDataEntitiesIds,
-                                           final List<Long> updatedDataEntitiesIds) {
+    public void calculateSearchEntrypoints(final Collection<Long> newDataEntitiesIds,
+                                           final Collection<Long> updatedDataEntitiesIds) {
         final List<Long> allEntitiesIds = Stream
             .concat(updatedDataEntitiesIds.stream(), newDataEntitiesIds.stream())
             .collect(Collectors.toList());
@@ -582,19 +603,31 @@ public class DataEntityRepositoryImpl
             .map(this::enrichDataEntityDetailsDto)
             .collect(Collectors.toMap(dto -> dto.getDataEntity().getId(), identity()));
 
-        // TODO: rewrite on condition of presence of SearchEntrypoint instead of DataEntity
-        dslContext.batchInsert(newDataEntitiesIds.stream()
+        final Set<Long> seSet = dslContext.select(SEARCH_ENTRYPOINT.DATA_ENTITY_ID)
+            .from(SEARCH_ENTRYPOINT)
+            .where(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.in(allEntitiesIds))
+            .fetchStream()
+            .map(Record1::component1)
+            .collect(Collectors.toSet());
+
+        dslContext.batchUpdate(allEntitiesIds
+            .stream()
+            .filter(seSet::contains)
             .map(dataMap::get)
+            .filter(Objects::nonNull)
             .map(dto -> new SearchEntrypointRecord()
                 .setDataEntityId(dto.getDataEntity().getId())
                 .setDataEntityVector(vectorizer.toTsVector(dataMap.get(dto.getDataEntity().getId()))))
             .collect(Collectors.toList())).execute();
 
-        dslContext.batchUpdate(updatedDataEntitiesIds.stream()
+        dslContext.batchInsert(allEntitiesIds
+            .stream()
+            .filter(not(seSet::contains))
             .map(dataMap::get)
+            .filter(Objects::nonNull)
             .map(dto -> new SearchEntrypointRecord()
                 .setDataEntityId(dto.getDataEntity().getId())
-                .setDataEntityVector(vectorizer.toTsVector(dto)))
+                .setDataEntityVector(vectorizer.toTsVector(dataMap.get(dto.getDataEntity().getId()))))
             .collect(Collectors.toList())).execute();
     }
 
@@ -726,7 +759,11 @@ public class DataEntityRepositoryImpl
                 new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
         }
 
-        return dataEntitySelect(configBuilder.build())
+        return listByConfig(configBuilder.build());
+    }
+
+    private List<DataEntityDimensionsDto> listByConfig(final DataEntitySelectConfig config) {
+        return dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDimensionRecord)
             .collect(Collectors.toList());
@@ -770,7 +807,8 @@ public class DataEntityRepositoryImpl
             .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
             .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
             .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
-            .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD));
+            .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
+            .select(jsonArrayAgg(field(ALERT.asterisk().toString())).as(AGG_ALERT_FIELD));
 
         if (config.isIncludeDetails()) {
             selectStep = selectStep
@@ -790,7 +828,8 @@ public class DataEntityRepositoryImpl
             .leftJoin(NAMESPACE).on(deCte.field(DATA_ENTITY.NAMESPACE_ID).eq(NAMESPACE.ID))
             .leftJoin(OWNERSHIP).on(deCte.field(DATA_ENTITY.ID).eq(OWNERSHIP.DATA_ENTITY_ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
-            .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID));
+            .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
+            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ID.eq(deCte.field(DATA_ENTITY.ID)));
 
         if (config.isIncludeDetails()) {
             joinStep = joinStep
@@ -841,6 +880,9 @@ public class DataEntityRepositoryImpl
                 .suiteUrl(attrs.getSuiteUrl())
                 .datasetList(listAllByOddrns(attrs.getDatasetOddrnList()))
                 .linkedUrlList(attrs.getLinkedUrlList())
+                .latestTaskRun(dataEntityTaskRunRepository
+                    .getLatestRun(detailsDto.getDataEntity().getOddrn())
+                    .orElse(null))
                 .expectationType(attrs.getExpectation().getType())
                 .expectationParameters(attrs.getExpectation().getAdditionalProperties())
                 .build());
@@ -851,56 +893,41 @@ public class DataEntityRepositoryImpl
 
     private DataEntityDimensionsDto mapDimensionRecord(final Record r) {
         return DataEntityDimensionsDto.dimensionsBuilder()
-            .dataEntity(extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
-            .dataSource(extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
-            .subtype(extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
-            .namespace(extractRelation(r, NAMESPACE, NamespacePojo.class))
+            .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
+            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
+            .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
+            .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
+            .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
-            .types(extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
-            .tags(extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
+            .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
+            .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
             .build();
     }
 
     private DataEntityDetailsDto mapDetailsRecord(final Record r) {
         return DataEntityDetailsDto.detailsBuilder()
-            .dataEntity(extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
-            .dataSource(extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
-            .subtype(extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
-            .namespace(extractRelation(r, NAMESPACE, NamespacePojo.class))
+            .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
+            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
+            .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
+            .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
+            .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
-            .types(extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
-            .tags(extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
+            .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
+            .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
             .dataSetDetailsDto(DataEntityDetailsDto.DataSetDetailsDto.builder()
-                .datasetVersions(extractAggRelation(r, AGG_DSV_FIELD, DatasetVersionPojo.class))
+                .datasetVersions(jooqRecordHelper.extractAggRelation(r, AGG_DSV_FIELD, DatasetVersionPojo.class))
                 .build())
             .metadata(extractMetadataRelation(r))
             .build();
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> Set<T> extractAggRelation(final Record r, final String fieldName, final Class<T> fieldPojoClass) {
-        return (Set<T>) r.getValue(fieldName, Set.class)
-            .stream()
-            .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
-    }
-
-    private <P> P extractRelation(final Record r, final Table<?> relationTable, final Class<P> pojoClass) {
-        final Record relationRecord = r.into(relationTable);
-        if (null == relationRecord.get("id")) {
-            return null;
-        }
-
-        return relationRecord.into(pojoClass);
-    }
-
     private List<MetadataDto> extractMetadataRelation(final Record r) {
-        final Map<Long, MetadataFieldPojo> metadataFields = extractAggRelation(r, AGG_MF_FIELD, MetadataFieldPojo.class)
+        final Map<Long, MetadataFieldPojo> metadataFields = jooqRecordHelper
+            .extractAggRelation(r, AGG_MF_FIELD, MetadataFieldPojo.class)
             .stream()
             .collect(Collectors.toMap(MetadataFieldPojo::getId, identity()));
 
-        return extractAggRelation(r, AGG_MFV_FIELD, MetadataFieldValuePojo.class)
+        return jooqRecordHelper.extractAggRelation(r, AGG_MFV_FIELD, MetadataFieldValuePojo.class)
             .stream()
             .map(mfv -> {
                 final MetadataFieldPojo metadataField = metadataFields.get(mfv.getMetadataFieldId());
@@ -919,15 +946,15 @@ public class DataEntityRepositoryImpl
     }
 
     private List<OwnershipDto> extractOwnershipRelation(final Record r) {
-        final Map<Long, OwnerPojo> ownerDict = extractAggRelation(r, AGG_OWNER_FIELD, OwnerPojo.class)
+        final Map<Long, OwnerPojo> ownerDict = jooqRecordHelper.extractAggRelation(r, AGG_OWNER_FIELD, OwnerPojo.class)
             .stream()
             .collect(Collectors.toMap(OwnerPojo::getId, identity()));
 
-        final Map<Long, RolePojo> roleDict = extractAggRelation(r, AGG_ROLE_FIELD, RolePojo.class)
+        final Map<Long, RolePojo> roleDict = jooqRecordHelper.extractAggRelation(r, AGG_ROLE_FIELD, RolePojo.class)
             .stream()
             .collect(Collectors.toMap(RolePojo::getId, identity()));
 
-        return extractAggRelation(r, AGG_OWNERSHIP_FIELD, OwnershipPojo.class)
+        return jooqRecordHelper.extractAggRelation(r, AGG_OWNERSHIP_FIELD, OwnershipPojo.class)
             .stream()
             .map(os -> {
                 final OwnerPojo owner = ownerDict.get(os.getOwnerId());

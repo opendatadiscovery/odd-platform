@@ -7,7 +7,7 @@ import {
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PartialDataEntityUpdateParams } from '../interfaces/dataentities';
+import { PartialEntityUpdateParams } from 'redux/interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new DataEntityApi(apiClientConf);
@@ -15,7 +15,7 @@ const apiClient = new DataEntityApi(apiClientConf);
 export const fetchDataEntityLineage = createThunk<
   DataEntityApiGetDataEntityLineageRequest,
   DataEntityLineage,
-  PartialDataEntityUpdateParams<DataEntityLineage>
+  PartialEntityUpdateParams<DataEntityLineage>
 >(
   (params: DataEntityApiGetDataEntityLineageRequest) =>
     apiClient.getDataEntityLineage(params),
@@ -24,7 +24,7 @@ export const fetchDataEntityLineage = createThunk<
     response: DataEntityLineage,
     request: DataEntityApiGetDataEntityLineageRequest
   ) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: response,
   })
 );

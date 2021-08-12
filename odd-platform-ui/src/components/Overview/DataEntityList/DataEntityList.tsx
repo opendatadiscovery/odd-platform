@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import AlertIcon from 'components/shared/Icons/AlertIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { StylesType } from './DataEntityListStyles';
 
@@ -33,6 +34,9 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
               to={dataEntityDetailsPath(item.id)}
               className={classes.listLink}
             >
+              {item.hasAlerts ? (
+                <AlertIcon className={classes.alert} />
+              ) : null}
               <Typography
                 noWrap
                 title={item.internalName || item.externalName}

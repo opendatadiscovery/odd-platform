@@ -24,8 +24,10 @@ tags:
   - name: dataTransformer
   - name: dataInput
   - name: dataConsumer
+  - name: dataQuality
   - name: metadata
   - name: datasetField
+  - name: alert
 paths:
   /api/identity/whoami:
     get:
@@ -1009,6 +1011,24 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityLineage'
       tags:
         - dataEntity
+
+  /api/dataentities/{data_entity_id}/alerts:
+    get:
+      summary: Get DataEntity's alerts
+      description: Gets DataEntity's alerts
+      operationId: getDataEntityAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - dataEntity
+
   /api/datasets/{data_entity_id}/structure:
     get:
       summary: Get latest version's DataSet structure information
@@ -1025,6 +1045,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataSetStructure'
       tags:
         - dataSet
+
   /api/datasets/{data_entity_id}/structure/{version_id}:
     get:
       summary: Get DataSet structure information
@@ -1047,6 +1068,55 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataSetStructure'
       tags:
         - dataSet
+  /api/datasets/{data_entity_id}/test_report:
+    get:
+      summary: Get Dataset's test report
+      description: Gets Dataset's test report
+      operationId: getDatasetTestReport
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSetTestReport'
+      tags:
+        - dataQuality
+
+  /api/datasets/{data_entity_id}/dataqatests:
+    get:
+      summary: Get DataEntity's related DataQualityTests
+      description: Gets DataEntity's related DataQualityTests
+      operationId: getDataEntityDataQATests
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityList'
+      tags:
+        - dataQuality
+  /api/dataqatests/{dataqatest_id}/runs:
+    get:
+      summary: Get DataQualityTest's runs
+      description: Gets DataQualityTest's runs
+      operationId: getRuns
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataQATestIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataQualityTestRunList'
+      tags:
+        - dataQuality
   /api/metadata/fields:
     get:
       summary: Get custom metadata fields
@@ -1160,3 +1230,111 @@ paths:
                 $ref: './components.yaml/#/components/schemas/LabelList'
       tags:
         - datasetField
+
+  /api/alerts:
+    get:
+      summary: Get all alerts
+      description: Gets all alerts
+      operationId: getAllAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - alert
+
+  /api/alerts/my:
+    get:
+      summary: Get authenticated user's alerts
+      description: Gets authenticated user's alerts
+      operationId: getAssociatedUserAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - alert
+
+  /api/alerts/dependents:
+    get:
+      summary: Get dependent entities' alerts
+      description: Gets dependent entities' alerts
+      operationId: getDependentEntitiesAlerts
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertList'
+      tags:
+        - alert
+
+  /api/alerts/totals:
+    get:
+      summary: Get alerts' totals
+      description: Gets alerts' totals
+      operationId: getAlertTotals
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertTotals'
+      tags:
+        - alert
+
+  /api/alerts/{alert_id}/status:
+    put:
+      summary: Change alert status
+      description: Changes alert status
+      operationId: changeAlertStatus
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/AlertIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/AlertStatusFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AlertStatus'
+      tags:
+        - alert
+
+  /ingestion/datasources/active:
+    get:
+      summary: List of active data sources
+      description: Gets the list of active available data sources
+      operationId: getActiveDataSourceList
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: './components.yaml/#/components/schemas/DataSource'
+      tags:
+        - dataSource

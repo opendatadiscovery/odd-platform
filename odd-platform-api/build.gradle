@@ -5,7 +5,8 @@ plugins {
 }
 
 group = 'com.provectus'
-version = '0.0.1-SNAPSHOT'
+version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
+
 sourceCompatibility = '13'
 
 apply from: 'jooq.generate.gradle'
@@ -13,16 +14,26 @@ apply from: 'jooq.generate.gradle'
 final boolean skipUIBundle = project.hasProperty("skipUIBundle") &&
         Boolean.parseBoolean(project.property("skipUIBundle").toString())
 
+repositories {
+    maven {
+        name = "oddGHPRepository"
+        url = 'https://maven.pkg.github.com/opendatadiscovery/odd-platform-ingestion-contract'
+        credentials(PasswordCredentials)
+    }
+}
+
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-jooq'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.session:spring-session-core'
 
+    implementation "com.provectus.oddplatform:odd-platform-ingestion-contract:$odcIngestionApiVersion"
+
     implementation project(':odd-platform-api-contract')
-    implementation project(':odd-platform-ingestion-contract')
 
     if (!skipUIBundle) {
         implementation project(':odd-platform-ui')
@@ -72,7 +83,7 @@ jib {
         image = 'adoptopenjdk/openjdk13:x86_64-alpine-jre-13.0.2_8'
     }
     to {
-        image = 'provectuslabs/odd-platform'
+        image = 'opendatadiscovery/odd-platform'
         tags = ['latest', project.version]
     }
     container {

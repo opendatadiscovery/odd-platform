@@ -17,8 +17,14 @@ import {
   DataEntitySubType,
   DataEntityRef,
   AssociatedOwner,
+  DataQualityTest,
+  DataQualityTestRun,
+  DataSetTestReport,
+  AlertTotals,
+  Alert,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
+import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
 import { LoaderState } from './loader';
 import { DataSetStructureTypesCount } from './datasetStructure';
 import {
@@ -74,6 +80,29 @@ export interface DatasetStructureState {
   };
 }
 
+export interface DataQualityTestState {
+  qualityTestsById: {
+    [qualityTestId: string]: DataQualityTest;
+  };
+  allSuiteNamesByDatasetId: {
+    [datasetId: string]: {
+      [suiteName: string]: DataQualityTest['id'][];
+    };
+  };
+  qualityTestRunsById: {
+    [qualityTestRunId: string]: DataQualityTestRun;
+  };
+  allTestRunIdsByTestId: {
+    [qualityTestId: string]: DataQualityTestRun['id'][];
+  };
+  datasetTestReportByEntityId: {
+    [dataEntityId: string]: DataSetTestReport;
+  };
+  testReportBySuiteName: {
+    [suiteName: string]: DataSetQualityTestsStatusCount;
+  };
+}
+
 export interface DataEntityLineageState {
   [dataEntityId: string]: DataEntityLineageById;
 }
@@ -119,6 +148,18 @@ export interface SearchState {
   facetState: SearcFacetsByName;
 }
 
+export interface AlertsState {
+  totals: AlertTotals;
+  pageInfo: CurrentPageInfo;
+  byId: {
+    [alertId: string]: Alert;
+  };
+  allIds: Alert['id'][];
+  alertIdsByDataEntityId: {
+    [dataEntityId: string]: Alert['id'][];
+  };
+}
+
 export interface ProfileState {
   owner?: AssociatedOwner;
 }
@@ -135,6 +176,8 @@ export type RootState = {
   labels: LabelsState;
   dataEntityLineage: DataEntityLineageState;
   profile: ProfileState;
+  dataQualityTest: DataQualityTestState;
+  alerts: AlertsState;
 };
 
 export type Action = ActionType<typeof actions>;

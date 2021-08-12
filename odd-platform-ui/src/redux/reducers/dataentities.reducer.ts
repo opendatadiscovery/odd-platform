@@ -45,8 +45,8 @@ const reducer = (
         ...state,
         byId: {
           ...state.byId,
-          [action.payload.dataEntityId]: {
-            ...state.byId[action.payload.dataEntityId],
+          [action.payload.entityId]: {
+            ...state.byId[action.payload.entityId],
             tags: action.payload.value,
           },
         },
@@ -56,8 +56,8 @@ const reducer = (
         ...state,
         byId: {
           ...state.byId,
-          [action.payload.dataEntityId]: {
-            ...state.byId[action.payload.dataEntityId],
+          [action.payload.entityId]: {
+            ...state.byId[action.payload.entityId],
             internalDescription: action.payload.value,
           },
         },
@@ -67,8 +67,8 @@ const reducer = (
         ...state,
         byId: {
           ...state.byId,
-          [action.payload.dataEntityId]: {
-            ...state.byId[action.payload.dataEntityId],
+          [action.payload.entityId]: {
+            ...state.byId[action.payload.entityId],
             internalName: action.payload.value.internalName,
           },
         },

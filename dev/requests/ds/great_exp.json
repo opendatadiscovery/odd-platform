@@ -1,0 +1,7 @@
+{
+  "name": "GE data source",
+  "oddrn": "//ge/localhost",
+  "description": "GE local environment data source",
+  "connection_url": "https://ge-adapter:8080",
+  "active": false
+}

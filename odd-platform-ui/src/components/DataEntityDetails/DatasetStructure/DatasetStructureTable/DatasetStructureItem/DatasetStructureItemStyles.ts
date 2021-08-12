@@ -81,7 +81,6 @@ export const styles = (theme: Theme) =>
     },
     optionsBtn: {
       opacity: 0,
-      marginRight: theme.spacing(1),
     },
     colStatsPct: {
       color: '#A8B0BD',

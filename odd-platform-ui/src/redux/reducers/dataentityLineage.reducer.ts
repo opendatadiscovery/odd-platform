@@ -14,7 +14,7 @@ const reducer = (
     case getType(actions.fetchDataEntityLineageAction.success):
       return {
         ...state,
-        [action.payload.dataEntityId]: {
+        [action.payload.entityId]: {
           root: action.payload.value.root,
           upstream: {
             edgesById: action.payload.value.upstream.edges

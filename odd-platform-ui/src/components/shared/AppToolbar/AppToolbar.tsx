@@ -61,10 +61,10 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
     fetchIdentity();
   }, []);
 
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([
+  const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Catalog', link: '/search' },
     { name: 'Management', link: '/management' },
-    // { name: 'Alerts', link: '/alerts', hidden: true },
+    { name: 'Alerts', link: '/alerts' },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number | boolean>(
@@ -116,8 +116,9 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         <Grid container className={classes.contentContainer}>
           <Grid item xs={3} className={classes.logoContainer}>
             <Link to="/" className={classes.title}>
+              <div className={classes.logo} />
               <Typography variant="h4" noWrap>
-                OpenDataCatalog
+                Platform
               </Typography>
             </Link>
           </Grid>

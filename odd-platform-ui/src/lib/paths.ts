@@ -1,3 +1,5 @@
+import { AlertViewType } from 'redux/interfaces';
+
 export const searchPath = (searchId?: string) =>
   `/search${searchId ? `/${searchId}` : ''}`;
 
@@ -17,6 +19,31 @@ export const dataEntityOverviewPath = (datasetId: number) =>
 export const dataEntityLineagePath = (datasetId: number) =>
   `${dataEntityDetailsPath(datasetId)}/lineage`;
 
+export const dataEntityTestReportPath = (datasetId: number) =>
+  `${dataEntityDetailsPath(datasetId)}/test-reports`;
+
+export const dataEntityTestPath = (datasetId: number, testId: number) =>
+  `${dataEntityTestReportPath(datasetId)}/${testId}`;
+
+export const dataEntityAlertsPath = (datasetId: number) =>
+  `${dataEntityDetailsPath(datasetId)}/alerts`;
+
+// Test reports details
+export const testReportDetailsOverviewPath = (
+  datasetId: number,
+  testId: number
+) => `${dataEntityTestPath(datasetId, testId)}/overview`;
+
+export const testReportDetailsHistoryPath = (
+  datasetId: number,
+  testId: number
+) => `${dataEntityTestPath(datasetId, testId)}/history`;
+
+export const testReportDetailsRetriesPath = (
+  datasetId: number,
+  testId: number
+) => `${dataEntityTestPath(datasetId, testId)}/retries`;
+
 // Entity type specific paths
 export const datasetStructurePath = (
   datasetId: number,
@@ -25,3 +52,7 @@ export const datasetStructurePath = (
   `${dataEntityDetailsPath(datasetId)}/structure${
     versionId ? `/${versionId}` : ''
   }`;
+
+// Alerts
+export const alertsPath = (viewType: AlertViewType = 'all') =>
+  `/alerts/${viewType}`;

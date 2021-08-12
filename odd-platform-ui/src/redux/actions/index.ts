@@ -1,6 +1,7 @@
 export * from './datasource.actions';
 export * from './dataentity.actions';
 export * from './datasetStructure.actions';
+export * from './dataQualityTest.actions';
 export * from './dataentityLineage.actions';
 export * from './dataentitySearch.actions';
 export * from './tags.actions';
@@ -8,3 +9,4 @@ export * from './metadata.actions';
 export * from './owners.actions';
 export * from './labels.actions';
 export * from './profile.actions';
+export * from './alert.actions';

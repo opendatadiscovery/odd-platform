@@ -9,7 +9,9 @@ import com.provectus.oddplatform.service.DataSourceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -36,6 +38,14 @@ public class DataSourceController
         final ServerWebExchange exchange
     ) {
         return list(page, size, query);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<DataSource>>> getActiveDataSourceList(final ServerWebExchange exchange) {
+        final Flux<DataSource> response = entityService.listActive()
+            .subscribeOn(Schedulers.boundedElastic());
+
+        return Mono.just(ResponseEntity.ok(response));
     }
 
     @Override

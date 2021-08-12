@@ -1,12 +1,7 @@
-import { DataEntityRef, DataEntityTypeNameEnum } from 'generated-sources';
+import { DataEntityTypeNameEnum } from 'generated-sources';
 
 export interface UpdateDataEntityParams {
   dataEntityId: number;
-}
-
-export interface PartialDataEntityUpdateParams<T> {
-  dataEntityId: number;
-  value: T;
 }
 
 export const DataEntityTypeLabelMap: Map<

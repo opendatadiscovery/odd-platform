@@ -1,26 +1,32 @@
 import { Grid, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import { DataEntityDetails } from 'generated-sources';
+import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import OverviewDescriptionContainer from './OverviewDescription/OverviewDescriptionContainer';
 import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
 import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
 import OverviewTags from './OverviewTags/OverviewTags';
 import { StylesType } from './OverviewStyles';
 import OverviewGeneralContainer from './OverviewGeneral/OverviewGeneralContainer';
+import OverviewDataQualityReportContainer from './OverviewDataQualityReport/OverviewDataQualityReportContainer';
 
 interface OverviewProps extends StylesType {
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
-  isLoaded: boolean;
+  isDataset: boolean;
+  isDataEntityDetailsFetching: boolean;
 }
 
 const Overview: React.FC<OverviewProps> = ({
   classes,
   dataEntityId,
   dataEntityDetails,
+  isDataset,
+  isDataEntityDetailsFetching,
 }) => (
-  <div className={classes.container}>
-    {dataEntityDetails ? (
+  <>
+    {dataEntityDetails && !isDataEntityDetailsFetching ? (
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Paper elevation={9} className={classes.sectionContainer}>
@@ -45,6 +51,17 @@ const Overview: React.FC<OverviewProps> = ({
               dataEntityId={dataEntityDetails.id}
             />
           </Paper>
+          {isDataset ? (
+            <Paper
+              square
+              elevation={0}
+              className={classes.sectionContainer}
+            >
+              <OverviewDataQualityReportContainer
+                dataEntityId={dataEntityId}
+              />
+            </Paper>
+          ) : null}
           <Paper square elevation={0} className={classes.sectionContainer}>
             <OverviewTags
               tags={dataEntityDetails.tags}
@@ -53,8 +70,14 @@ const Overview: React.FC<OverviewProps> = ({
           </Paper>
         </Grid>
       </Grid>
-    ) : null}
-  </div>
+    ) : (
+      <SkeletonWrapper
+        renderContent={({ randomSkeletonPercentWidth }) => (
+          <OverviewSkeleton width={randomSkeletonPercentWidth()} />
+        )}
+      />
+    )}
+  </>
 );
 
 export default Overview;

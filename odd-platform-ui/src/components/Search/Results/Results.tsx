@@ -17,7 +17,9 @@ import {
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import SearchResultsSkeleton from 'components/Search/Results/SearchResultsSkeleton/SearchResultsSkeleton';
+import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
+import SearchTabsSkeleton from 'components/Search/Results/SearchTabsSkeleton/SearchTabsSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import ResultItem from './ResultItem/ResultItem';
 import { StylesType } from './ResultsStyles';
 
@@ -33,6 +35,8 @@ interface ResultsProps extends StylesType {
     params: SearchApiGetSearchResultsRequest
   ) => void;
   isSearchFetching: boolean;
+  isSearchCreatingAndFetching: boolean;
+  isSearchUpdated: boolean;
 }
 
 const Results: React.FC<ResultsProps> = ({
@@ -46,6 +50,8 @@ const Results: React.FC<ResultsProps> = ({
   searchFiltersSynced,
   getDataEntitiesSearchResults,
   isSearchFetching,
+  isSearchCreatingAndFetching,
+  isSearchUpdated,
 }) => {
   const dispatch = useDispatch();
 
@@ -124,88 +130,99 @@ const Results: React.FC<ResultsProps> = ({
 
   return (
     <div className={classes.container}>
-      <AppTabs
-        variant="primary"
-        classes={{ container: classes.tabsContainer }}
-        items={tabs}
-        selectedTab={selectedTab}
-        handleTabChange={onSearchTypeChange}
-      />
-      {isSearchFetching && !searchResults.length ? (
-        <SearchResultsSkeleton length={10} />
+      {isSearchCreatingAndFetching ? (
+        <SearchTabsSkeleton length={tabs.length} />
       ) : (
-        <Grid
-          container
-          className={cx(classes.resultsTable, classes.resultsTableHeader)}
-          wrap="nowrap"
-        >
-          <Grid item className={cx(classes.col, classes.collg)}>
-            <Typography variant="caption">Name</Typography>
-          </Grid>
-          {searchType &&
-          searchType === totals[DataEntityTypeNameEnum.SET]?.id ? (
-            <>
-              <Grid item className={cx(classes.col, classes.colxs)}>
-                <Typography variant="caption">Use</Typography>
-              </Grid>
-              <Grid item className={cx(classes.col, classes.colxs)}>
-                <Typography variant="caption">Rows</Typography>
-              </Grid>
-              <Grid item className={cx(classes.col, classes.colxs)}>
-                <Typography variant="caption">Columns</Typography>
-              </Grid>
-            </>
-          ) : null}
-          {searchType &&
-          searchType === totals[DataEntityTypeNameEnum.TRANSFORMER]?.id ? (
-            <>
-              <Grid item className={cx(classes.col, classes.collg)}>
-                <Typography variant="caption">Sources</Typography>
-              </Grid>
-              <Grid item className={cx(classes.col, classes.collg)}>
-                <Typography variant="caption">Targets</Typography>
-              </Grid>
-            </>
-          ) : null}
-          {searchType &&
-          searchType ===
-            totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id ? (
-            <>
-              <Grid item className={cx(classes.col, classes.collg)}>
-                <Typography variant="caption">Entities</Typography>
-              </Grid>
-              <Grid item className={cx(classes.col, classes.collg)}>
-                <Typography variant="caption">Suite URL</Typography>
-              </Grid>
-            </>
-          ) : null}
-          <Grid item className={cx(classes.col, classes.colmd)}>
-            <Typography variant="caption">Namespace</Typography>
-          </Grid>
-          <Grid item className={cx(classes.col, classes.colmd)}>
-            <Typography variant="caption">Datasource</Typography>
-          </Grid>
-          <Grid item className={cx(classes.col, classes.colmd)}>
-            <Typography variant="caption">Owners</Typography>
-          </Grid>
-          <Grid item className={cx(classes.col, classes.colsm)}>
-            <Typography variant="caption">Created</Typography>
-          </Grid>
-          <Grid item className={cx(classes.col, classes.colsm)}>
-            <Typography variant="caption">Last Update</Typography>
-          </Grid>
-        </Grid>
+        <AppTabs
+          variant="primary"
+          classes={{ container: classes.tabsContainer }}
+          items={tabs}
+          selectedTab={selectedTab}
+          handleTabChange={onSearchTypeChange}
+          isHintUpdated={isSearchUpdated}
+        />
       )}
-      {searchResults?.length ? (
-        <div
-          id="results-list"
-          className={cx(classes.listContainer, classes.resultsTable)}
-        >
+      <Grid
+        container
+        className={cx(classes.resultsTable, classes.resultsTableHeader)}
+        wrap="nowrap"
+      >
+        <Grid item className={cx(classes.col, classes.collg)}>
+          <Typography variant="caption">Name</Typography>
+        </Grid>
+        {searchType &&
+        searchType === totals[DataEntityTypeNameEnum.SET]?.id ? (
+          <>
+            <Grid item className={cx(classes.col, classes.colxs)}>
+              <Typography variant="caption">Use</Typography>
+            </Grid>
+            <Grid item className={cx(classes.col, classes.colxs)}>
+              <Typography variant="caption">Rows</Typography>
+            </Grid>
+            <Grid item className={cx(classes.col, classes.colxs)}>
+              <Typography variant="caption">Columns</Typography>
+            </Grid>
+          </>
+        ) : null}
+        {searchType &&
+        searchType === totals[DataEntityTypeNameEnum.TRANSFORMER]?.id ? (
+          <>
+            <Grid item className={cx(classes.col, classes.collg)}>
+              <Typography variant="caption">Sources</Typography>
+            </Grid>
+            <Grid item className={cx(classes.col, classes.collg)}>
+              <Typography variant="caption">Targets</Typography>
+            </Grid>
+          </>
+        ) : null}
+        <Grid item className={cx(classes.col, classes.colmd)}>
+          <Typography variant="caption">Namespace</Typography>
+        </Grid>
+        <Grid item className={cx(classes.col, classes.colmd)}>
+          <Typography variant="caption">Datasource</Typography>
+        </Grid>
+        <Grid item className={cx(classes.col, classes.colmd)}>
+          <Typography variant="caption">Owners</Typography>
+        </Grid>
+        <Grid item className={cx(classes.col, classes.colsm)}>
+          <Typography variant="caption">Created</Typography>
+        </Grid>
+        <Grid item className={cx(classes.col, classes.colsm)}>
+          <Typography variant="caption">Last Update</Typography>
+        </Grid>
+      </Grid>
+      <div
+        id="results-list"
+        className={cx(classes.listContainer, classes.resultsTable)}
+      >
+        {isSearchFetching ? (
+          <SkeletonWrapper
+            length={10}
+            renderContent={({ randomSkeletonPercentWidth, key }) => (
+              <SearchResultsSkeletonItem
+                width={randomSkeletonPercentWidth()}
+                key={key}
+              />
+            )}
+          />
+        ) : (
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}
             hasMore={!!pageInfo.hasNext}
-            loader={<SearchResultsSkeleton length={5} />}
+            loader={
+              isSearchFetching && (
+                <SkeletonWrapper
+                  length={10}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <SearchResultsSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              )
+            }
             scrollThreshold="200px"
             scrollableTarget="results-list"
           >
@@ -219,12 +236,11 @@ const Results: React.FC<ResultsProps> = ({
               />
             ))}
           </InfiniteScroll>
-        </div>
-      ) : null}
-
-      {!isSearchFetching && !pageInfo.total ? (
-        <Typography variant="subtitle1">No Matches Found</Typography>
-      ) : null}
+        )}
+        {!isSearchFetching && !pageInfo.total ? (
+          <Typography variant="subtitle1">No Matches Found</Typography>
+        ) : null}
+      </div>
     </div>
   );
 };

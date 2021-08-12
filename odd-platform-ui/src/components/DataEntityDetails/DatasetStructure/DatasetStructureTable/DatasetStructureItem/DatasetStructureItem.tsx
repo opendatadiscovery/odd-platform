@@ -135,7 +135,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   }
 
   return (
-    <Grid container direction="column" className={cx(classes.container)}>
+    <Grid container className={cx(classes.container)}>
       <Grid item container>
         <Grid item xs={12} container className={classes.rowInfo}>
           <Grid item xs={6} container>

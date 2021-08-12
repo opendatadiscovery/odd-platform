@@ -195,6 +195,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .internalName(dto.getDataEntity().getInternalName())
             .externalName(dto.getDataEntity().getExternalName())
             .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
+            .hasAlerts(dto.isHasAlerts())
             .url("");
     }
 

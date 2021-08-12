@@ -17,7 +17,7 @@ import {
   DataEntityApiGetMyObjectsWithDownstreamRequest,
   DataEntityApiGetPopularRequest,
 } from 'generated-sources';
-import { PartialDataEntityUpdateParams } from 'redux/interfaces/dataentities';
+import { PartialEntityUpdateParams } from 'redux/interfaces';
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
@@ -49,7 +49,7 @@ export const fetchDataEntityDetails = createThunk<
 export const updateDataEntityTags = createThunk<
   DataEntityApiCreateDataEntityTagsRelationsRequest,
   Tag[],
-  PartialDataEntityUpdateParams<Tag[]>
+  PartialEntityUpdateParams<Tag[]>
 >(
   (params: DataEntityApiCreateDataEntityTagsRelationsRequest) =>
     apiClient.createDataEntityTagsRelations(params),
@@ -58,7 +58,7 @@ export const updateDataEntityTags = createThunk<
     response: Tag[],
     request: DataEntityApiCreateDataEntityTagsRelationsRequest
   ) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: response,
   })
 );
@@ -66,7 +66,7 @@ export const updateDataEntityTags = createThunk<
 export const updateDataEntityInternalDescription = createThunk<
   DataEntityApiUpsertDataEntityInternalDescriptionRequest,
   InternalDescription,
-  PartialDataEntityUpdateParams<
+  PartialEntityUpdateParams<
     DataEntityDetailsBaseObject['internalDescription']
   >
 >(
@@ -77,7 +77,7 @@ export const updateDataEntityInternalDescription = createThunk<
     response: InternalDescription,
     request: DataEntityApiUpsertDataEntityInternalDescriptionRequest
   ) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: response.internalDescription,
   })
 );
@@ -85,7 +85,7 @@ export const updateDataEntityInternalDescription = createThunk<
 export const updateDataEntityInternalName = createThunk<
   DataEntityApiUpsertDataEntityInternalNameRequest,
   InternalName,
-  PartialDataEntityUpdateParams<InternalName>
+  PartialEntityUpdateParams<InternalName>
 >(
   (params: DataEntityApiUpsertDataEntityInternalNameRequest) =>
     apiClient.upsertDataEntityInternalName(params),
@@ -94,7 +94,7 @@ export const updateDataEntityInternalName = createThunk<
     response: InternalName,
     request: DataEntityApiUpsertDataEntityInternalNameRequest
   ) => ({
-    dataEntityId: request.dataEntityId,
+    entityId: request.dataEntityId,
     value: response,
   })
 );

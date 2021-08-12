@@ -12,12 +12,12 @@ import java.util.stream.Collectors;
 @Component
 public class DatasetFieldMapperImpl implements DatasetFieldMapper {
     @Override
-    public List<DatasetFieldPojo> toPojo(final List<DataSetField> fields, final long datasetVersionId) {
-        return fields.stream().map(f -> toPojo(f, datasetVersionId)).collect(Collectors.toList());
+    public List<DatasetFieldPojo> mapStructure(final List<DataSetField> fields, final long datasetVersionId) {
+        return fields.stream().map(f -> mapStructure(f, datasetVersionId)).collect(Collectors.toList());
     }
 
     @Override
-    public DatasetFieldPojo toPojo(final DataSetField field, final long datasetVersionId) {
+    public DatasetFieldPojo mapStructure(final DataSetField field, final long datasetVersionId) {
         return new DatasetFieldPojo()
             .setDatasetVersionId(datasetVersionId)
             .setName(field.getName())

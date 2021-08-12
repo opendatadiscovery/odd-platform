@@ -14,6 +14,8 @@ import { isComplexField } from 'lib/helpers';
 import { DataSetStructureTypesCount } from 'redux/interfaces/datasetStructure';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
+import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { StylesType } from './DatasetStructureStyles';
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
@@ -31,6 +33,7 @@ interface DatasetStructureTableProps extends StylesType {
   fetchDataSetStructure: (
     params: DataSetApiGetDataSetStructureByVersionIdRequest
   ) => void;
+  isDatasetStructureFetching: boolean;
 }
 
 const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
@@ -43,6 +46,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   datasetStructureVersion,
   fetchDataSetStructureLatest,
   fetchDataSetStructure,
+  isDatasetStructureFetching,
 }) => {
   const history = useHistory();
 
@@ -69,8 +73,16 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   };
 
   return (
-    <div>
-      <div className={classes.container}>
+    <div className={classes.container}>
+      {isDatasetStructureFetching ? (
+        <SkeletonWrapper
+          renderContent={({ randomSkeletonPercentWidth }) => (
+            <DatasetStructureSkeleton
+              width={randomSkeletonPercentWidth()}
+            />
+          )}
+        />
+      ) : (
         <Grid container>
           <Grid
             item
@@ -151,7 +163,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             />
           ) : null}
         </Grid>
-      </div>
+      )}
     </div>
   );
 };
