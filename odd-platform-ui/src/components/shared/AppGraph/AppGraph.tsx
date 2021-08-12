@@ -25,6 +25,7 @@ import {
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTabs from 'components/shared/AppTabs/AppTabs';
 import TargetIcon from 'components/shared/Icons/TargetIcon';
+import CircularProgressLoader from 'components/shared/CircularProgressLoader/CircularProgressLoader';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
 import { StylesType } from './AppGraphStyles';
@@ -35,6 +36,7 @@ export interface AppGraphProps extends StylesType {
   fetchDataEntityLineage: (
     params: DataEntityApiGetDataEntityLineageRequest
   ) => Promise<DataEntityLineage>;
+  isDataEntityLineageFetching: boolean;
 }
 
 const AppGraph: React.FC<AppGraphProps> = ({
@@ -42,6 +44,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
   dataEntityId,
   data,
   fetchDataEntityLineage,
+  isDataEntityLineageFetching,
 }) => {
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
   const gInstanceRef = `rd3t-g-${uuidv4()}`;
@@ -321,7 +324,11 @@ const AppGraph: React.FC<AppGraphProps> = ({
     bindZoomListener();
   }, [ref.current]);
 
-  return parsedData ? (
+  return isDataEntityLineageFetching ? (
+    <div className={classes.loaderContainer}>
+      <CircularProgressLoader text="Loading lineage" />
+    </div>
+  ) : (
     <div
       className={cx(classes.container, zoomable ? 'rd3t-grabbable' : '')}
       ref={ref}
@@ -403,7 +410,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
         </g>
       </svg>
     </div>
-  ) : null;
+  );
 };
 
 export default AppGraph;
