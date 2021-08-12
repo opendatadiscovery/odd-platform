@@ -77,7 +77,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                   <TestRunStatusItem
                     key={testType}
                     classes={{
-                      filledContainer: classes.testStatusItem
+                      filledContainer: classes.testStatusItem,
                     }}
                     count={count}
                     typeName={
