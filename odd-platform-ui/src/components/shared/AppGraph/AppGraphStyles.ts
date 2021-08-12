@@ -20,6 +20,14 @@ export const styles = (theme: Theme) =>
         marginLeft: theme.spacing(1),
       },
     },
+    loaderContainer: {
+      width: '100%',
+      height: 'inherit',
+      backgroundColor: '#F4F5F7',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

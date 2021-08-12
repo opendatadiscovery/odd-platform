@@ -93,7 +93,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
                     )}
                   {variant === 'primary' && isHintUpdated && (
                     <div className={classes.hintContainer}>
-                      <Skeleton width="14px" height="27px" />
+                      <Skeleton width="18px" height="27px" />
                     </div>
                   )}
                 </Typography>
@@ -124,7 +124,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
                     )}
                   {variant === 'primary' && isHintUpdated && (
                     <div className={classes.hintContainer}>
-                      <Skeleton width="14px" height="27px" />
+                      <Skeleton width="18px" height="27px" />
                     </div>
                   )}
                 </Typography>

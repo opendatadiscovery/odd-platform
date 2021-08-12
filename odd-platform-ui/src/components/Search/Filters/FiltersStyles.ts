@@ -16,6 +16,10 @@ export const styles = (theme: Theme) =>
       overflow: 'auto',
       paddingRight: theme.spacing(2),
     },
+    facetsLoaderContainer: {
+      padding: theme.spacing(0, 3),
+      marginTop: theme.spacing(2),
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;
