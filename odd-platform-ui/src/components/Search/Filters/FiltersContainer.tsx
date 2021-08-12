@@ -5,7 +5,10 @@ import {
   getSearchEntityType,
   getSearchIsUpdated,
 } from 'redux/selectors/dataentitySearch.selectors';
-import { getDataSourcesList } from 'redux/selectors/datasources.selectors';
+import {
+  getDataSourcesList,
+  getIsDataSourcesListFetching,
+} from 'redux/selectors/datasources.selectors';
 import { fetchDataSourcesList } from 'redux/thunks/datasources.thunks';
 import * as actions from 'redux/actions';
 import Filters from './Filters';
@@ -15,6 +18,7 @@ const mapStateToProps = (state: RootState) => ({
   searchType: getSearchEntityType(state),
   datasources: getDataSourcesList(state),
   isSearchFacetsUpdating: getSearchIsUpdated(state),
+  isDatasourceListFetching: getIsDataSourcesListFetching(state),
 });
 
 const mapDispatchToProps = {
