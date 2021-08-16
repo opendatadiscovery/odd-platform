@@ -34,6 +34,7 @@ import {
 } from './search';
 import { DataEntityLineageById } from './dataentityLineage';
 import { CurrentPageInfo } from './common';
+import { DataEntityDetailsState } from './dataentities';
 
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
@@ -121,7 +122,7 @@ export interface OwnersState {
 
 export interface DataEntitiesState {
   byId: {
-    [dataEntityId: string]: DataEntity & DataEntityDetails;
+    [dataEntityId: string]: DataEntity & DataEntityDetailsState;
   };
   allIds: number[];
   my: DataEntityRef[];
