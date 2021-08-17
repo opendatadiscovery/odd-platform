@@ -9,6 +9,8 @@ import {
   SearchApiUpdateSearchFacetsRequest,
   SearchApiGetSearchFacetListRequest,
   CountableSearchFilter,
+  DataEntityRef,
+  SearchApiGetSearchSuggestionsRequest,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
@@ -93,4 +95,15 @@ export const getFacetOptions = createThunk<
     facetOptions: response,
     page: request.page,
   })
+);
+
+export const fetchSearchSuggestions = createThunk<
+  SearchApiGetSearchSuggestionsRequest,
+  DataEntityRef[],
+  DataEntityRef[]
+>(
+  (params: SearchApiGetSearchSuggestionsRequest) =>
+    searchApiClient.getSearchSuggestions(params),
+  actions.getDataEntitySearchSuggestionsAction,
+  (response: DataEntityRef[]) => response
 );

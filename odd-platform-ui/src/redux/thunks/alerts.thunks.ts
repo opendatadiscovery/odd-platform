@@ -9,7 +9,6 @@ import {
   AlertApiGetDependentEntitiesAlertsRequest,
   AlertApiChangeAlertStatusRequest,
   DataEntityApiGetDataEntityAlertsRequest,
-  AlertType,
   AlertStatus,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';

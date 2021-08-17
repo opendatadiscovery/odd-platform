@@ -143,6 +143,11 @@ export const getSearchResults = createSelector(
   search => search.results.items
 );
 
+export const getSearchSuggestions = createSelector(
+  searchState,
+  search => search.suggestions || []
+);
+
 export const getSearchResultsPage = createSelector(
   searchState,
   search => search.results.pageInfo

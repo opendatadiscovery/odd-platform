@@ -5,6 +5,7 @@ export const styles = (theme: Theme) =>
     container: {
       display: 'flex',
       alignItems: 'center',
+      margin: theme.spacing(1, 0),
     },
     icon: {
       marginRight: theme.spacing(0.5),

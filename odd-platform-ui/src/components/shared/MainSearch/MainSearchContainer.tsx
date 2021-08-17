@@ -1,17 +1,25 @@
 import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { getSearchQuery } from 'redux/selectors/dataentitySearch.selectors';
-import { createDataEntitiesSearch } from 'redux/thunks';
+import {
+  getSearchQuery,
+  getSearchSuggestions,
+} from 'redux/selectors/dataentitySearch.selectors';
+import {
+  createDataEntitiesSearch,
+  fetchSearchSuggestions,
+} from 'redux/thunks';
 import MainSearch from 'components/shared/MainSearch/MainSearch';
 import { styles } from 'components/shared/MainSearch/MainSearchStyles';
 
 const mapStateToProps = (state: RootState) => ({
   query: getSearchQuery(state),
+  suggestions: getSearchSuggestions(state),
 });
 
 const mapDispatchToProps = {
   createDataEntitiesSearch,
+  fetchSearchSuggestions,
 };
 
 export default connect(

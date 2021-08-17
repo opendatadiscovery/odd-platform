@@ -145,6 +145,7 @@ export interface SearchState {
     items: DataEntity[];
     pageInfo: CurrentPageInfo;
   };
+  suggestions: DataEntityRef[];
   facetState: SearcFacetsByName;
 }
 
