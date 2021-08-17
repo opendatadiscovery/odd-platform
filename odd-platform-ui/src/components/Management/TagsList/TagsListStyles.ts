@@ -31,7 +31,6 @@ export const styles = (theme: Theme) =>
     rowName: { color: '#A8B0BD' },
     listContainer: {
       width: '100%',
-      minHeight: '300px',
     },
     tagsItem: {
       display: 'flex',

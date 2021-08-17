@@ -56,7 +56,6 @@ export const styles = (theme: Theme) =>
     },
     listContainer: {
       width: '100%',
-      minHeight: '300px',
     },
   });
 

@@ -20,6 +20,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
@@ -181,9 +182,7 @@ const TagsListView: React.FC<TagsListProps> = ({
         </InfiniteScroll>
       </div>
       {!isFetching && !tagsList.length ? (
-        <Typography variant="subtitle1">
-          {searchText ? 'No tags found' : 'No tags yet...'}
-        </Typography>
+        <EmptyContentPlaceholder />
       ) : null}
     </div>
   );
