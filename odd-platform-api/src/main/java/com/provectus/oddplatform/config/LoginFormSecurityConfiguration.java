@@ -40,7 +40,7 @@ public class LoginFormSecurityConfiguration {
         return http
             .csrf().disable()
             .authorizeExchange()
-            .pathMatchers("/health", "/favicon.ico").permitAll()
+            .pathMatchers("/health", "/favicon.ico", "/ingestion/entities").permitAll()
             .pathMatchers("/**").authenticated()
             .and().formLogin().authenticationSuccessHandler(authHandler)
             .and().build();

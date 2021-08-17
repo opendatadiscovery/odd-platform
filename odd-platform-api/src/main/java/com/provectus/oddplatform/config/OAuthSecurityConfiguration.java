@@ -18,8 +18,11 @@ public class OAuthSecurityConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityWebFilterChain securityWebFilterChainOauth2ResourceServer(final ServerHttpSecurity http) {
         return http
+            .csrf().disable()
             .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/ingestion/**"))
-            .authorizeExchange(e -> e.anyExchange().authenticated())
+            .authorizeExchange(e -> e
+                .pathMatchers("/ingestion/entities").permitAll()
+                .pathMatchers("/**").authenticated())
             .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
             .build();
     }
