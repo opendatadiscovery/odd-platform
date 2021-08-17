@@ -4,83 +4,98 @@ import {
   DataQualityTestRun,
 } from 'generated-sources';
 import { Grid, Typography } from '@material-ui/core';
-import { formatDistanceStrict } from 'date-fns';
-import LatestRunIcon from 'components/shared/LatestTestRunIcon/LatestTestRunIcon';
+import { formatDistanceStrict, format } from 'date-fns';
+import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import TestReportDetailsHistoryItemSkeleton from './TestReportDetailsHistoryItemSkeleton/TestReportDetailsHistoryItemSkeleton';
 import { StylesType } from './TestReportDetailsHistoryStyles';
 
 interface TestReportDetailsHistoryProps extends StylesType {
   testRunsList: DataQualityTestRun[];
+  dataqatestId: number;
+  testRunsFetching: boolean;
   fetchDataSetQualityTestRuns: (
     params: DataQualityApiGetRunsRequest
   ) => void;
-  dataqatestId: number;
 }
 
 const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
   classes,
   testRunsList,
-  fetchDataSetQualityTestRuns,
   dataqatestId,
+  testRunsFetching,
+  fetchDataSetQualityTestRuns,
 }) => {
   React.useEffect(() => {
     if (dataqatestId) fetchDataSetQualityTestRuns({ dataqatestId });
   }, [fetchDataSetQualityTestRuns, dataqatestId]);
 
-  const testRunItem = (qualityTestRun: DataQualityTestRun) => (
-    <Grid
-      key={qualityTestRun.id}
-      container
-      className={classes.testRunsContainer}
-    >
-      <Grid item xs={2} container className={classes.testRunInfoItem}>
-        {qualityTestRun.status && (
-          <LatestRunIcon typeName={qualityTestRun.status} />
-        )}
-      </Grid>
-      <Grid item xs={6} container className={classes.testRunInfoItem}>
-        <Typography variant="body1">
-          {qualityTestRun?.startTime &&
-            qualityTestRun?.endTime &&
-            formatDistanceStrict(
-              qualityTestRun?.endTime,
-              qualityTestRun?.startTime,
-              {
-                addSuffix: true,
-              }
-            )}
-        </Typography>
-      </Grid>
-      <Grid item xs={4} container className={classes.testRunInfoItem}>
-        <Typography variant="body1">
-          {qualityTestRun.statusReason}
-        </Typography>
-      </Grid>
-    </Grid>
-  );
-
   return (
-    <>
-      <Grid container className={classes.container}>
-        <Grid item xs={2} container className={classes.testRunInfoItem}>
-          <Typography variant="body1" color="textSecondary">
-            Status
-          </Typography>
+    <div className={classes.container}>
+      {testRunsList?.map(qualityTestRun => (
+        <Grid
+          key={qualityTestRun.id}
+          container
+          className={classes.testRunItemContainer}
+        >
+          <Grid
+            item
+            xs={12}
+            container
+            className={classes.testRunInfoItem}
+            alignItems="center"
+            wrap="nowrap"
+            justify="space-between"
+          >
+            <Typography variant="body1">
+              {qualityTestRun?.startTime &&
+                format(qualityTestRun?.startTime, 'd MMM yyyy, HH:MM a')}
+            </Typography>
+            <Typography variant="body1" align="right">
+              {qualityTestRun?.startTime &&
+                qualityTestRun?.endTime &&
+                formatDistanceStrict(
+                  qualityTestRun?.endTime,
+                  qualityTestRun?.startTime,
+                  { addSuffix: false }
+                )}
+            </Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            container
+            className={classes.testRunInfoItem}
+            alignItems="center"
+            wrap="nowrap"
+          >
+            {qualityTestRun.status && (
+              <TestRunStatusItem
+                typeName={qualityTestRun.status}
+                size="large"
+              />
+            )}
+            <Typography
+              variant="subtitle1"
+              className={classes.statusReason}
+            >
+              {qualityTestRun.statusReason}
+            </Typography>
+          </Grid>
         </Grid>
-        <Grid item xs={6} container className={classes.testRunInfoItem}>
-          <Typography variant="body1" color="textSecondary">
-            Duration
-          </Typography>
-        </Grid>
-        <Grid item xs={4} container className={classes.testRunInfoItem}>
-          <Typography variant="body1" color="textSecondary">
-            Status Reason
-          </Typography>
-        </Grid>
-      </Grid>
-      <>
-        {testRunsList?.map(qualityTestRun => testRunItem(qualityTestRun))}
-      </>
-    </>
+      ))}
+      {testRunsFetching && (
+        <SkeletonWrapper
+          length={5}
+          renderContent={({ randomSkeletonPercentWidth, key }) => (
+            <TestReportDetailsHistoryItemSkeleton
+              width={randomSkeletonPercentWidth()}
+              key={key}
+            />
+          )}
+        />
+      )}
+    </div>
   );
 };
 

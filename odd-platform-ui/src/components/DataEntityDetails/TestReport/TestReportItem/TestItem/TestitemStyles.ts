@@ -7,9 +7,12 @@ export const styles = (theme: Theme) =>
       padding: theme.spacing(0.75, 1),
       alignItems: 'center',
       borderRadius: '4px',
-      '&:hover': {
-        backgroundColor: '#EBECF0',
+      '&:hover:not($active)': {
+        backgroundColor: '#F4F5F7',
       },
+    },
+    active: {
+      backgroundColor: '#EBECF0',
     },
     expectationItem: { marginRight: theme.spacing(0.5) },
   });

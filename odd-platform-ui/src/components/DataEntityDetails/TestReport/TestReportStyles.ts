@@ -30,6 +30,9 @@ export const styles = (theme: Theme) =>
         borderTopColor: '#EBECF0',
       },
     },
+    testStatusItem: {
+      marginLeft: theme.spacing(0.5),
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

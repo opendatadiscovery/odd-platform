@@ -5,7 +5,9 @@ import com.provectus.oddplatform.model.tables.records.DataSourceRecord;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.provectus.oddplatform.model.Tables.DATA_SOURCE;
 
@@ -25,5 +27,15 @@ public class DataSourceRepositoryImpl
             .where(addSoftDeleteFilter(DATA_SOURCE.ODDRN.eq(oddrn)))
             .fetchOptional()
             .map(this::recordToPojo);
+    }
+
+    @Override
+    public Collection<DataSourcePojo> listActive() {
+        return dslContext
+            .selectFrom(recordTable)
+            .where(DATA_SOURCE.ACTIVE.isTrue())
+            .and(DATA_SOURCE.IS_DELETED.isFalse())
+            .fetchStreamInto(DataSourcePojo.class)
+            .collect(Collectors.toList());
     }
 }

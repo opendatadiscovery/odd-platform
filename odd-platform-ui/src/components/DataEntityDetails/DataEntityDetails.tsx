@@ -8,6 +8,7 @@ import {
   datasetStructurePath,
   dataEntityLineagePath,
   dataEntityTestReportPath,
+  dataEntityAlertsPath,
 } from 'lib/paths';
 import {
   DataEntityDetails,
@@ -22,6 +23,9 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import TestReportContainer from 'components/DataEntityDetails/TestReport/TestReportContainer';
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
+import DataEntityAlertsContainer from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsContainer';
+import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -36,6 +40,7 @@ interface DataEntityDetailsProps extends StylesType {
   fetchDataEntityDetails: (
     params: DataEntityApiGetDataEntityDetailsRequest
   ) => void;
+  isDataEntityDetailsFetching: boolean;
 }
 
 const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
@@ -45,6 +50,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityDetails,
   isDataset,
   fetchDataEntityDetails,
+  isDataEntityDetailsFetching,
 }) => {
   const [tabs, setTabs] = React.useState<AppTabItem[]>([
     {
@@ -68,6 +74,11 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       link: dataEntityTestReportPath(dataEntityId),
       hidden: true,
       value: 'test-reports',
+    },
+    {
+      name: 'Alerts',
+      link: dataEntityAlertsPath(dataEntityId),
+      value: 'alerts',
     },
   ]);
 
@@ -96,7 +107,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
 
   return (
     <div className={classes.container}>
-      {dataEntityDetails ? (
+      {dataEntityDetails && !isDataEntityDetailsFetching ? (
         <>
           <Grid container justify="space-between" alignItems="center">
             <Grid item className={classes.caption}>
@@ -175,39 +186,52 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
               handleTabChange={() => {}}
             />
           ) : null}
-          <Switch>
-            <Route
-              exact
-              path="/dataentities/:dataEntityId/overview"
-              component={OverviewContainer}
-            />
-            <Route
-              exact
-              path="/dataentities/:dataEntityId/structure/:versionId?"
-              component={DatasetStructureContainer}
-            />
-            <Route
-              exact
-              path="/dataentities/:dataEntityId/lineage"
-              component={LineageContainer}
-            />
-            <Route
-              exact
-              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
-              component={TestReportContainer}
-            />
-            <Route
-              exact
-              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
-              component={TestReportDetailsContainer}
-            />
-            <Redirect
-              from="/dataentities/:dataEntityId"
-              to="/dataentities/:dataEntityId/overview"
-            />
-          </Switch>
         </>
-      ) : null}
+      ) : (
+        <SkeletonWrapper
+          renderContent={({ randomSkeletonPercentWidth }) => (
+            <DataEntityDetailsSkeleton
+              width={randomSkeletonPercentWidth()}
+            />
+          )}
+        />
+      )}
+      <Switch>
+        <Route
+          exact
+          path="/dataentities/:dataEntityId/overview"
+          component={OverviewContainer}
+        />
+        <Route
+          exact
+          path="/dataentities/:dataEntityId/structure/:versionId?"
+          component={DatasetStructureContainer}
+        />
+        <Route
+          exact
+          path="/dataentities/:dataEntityId/lineage"
+          component={LineageContainer}
+        />
+        <Route
+          exact
+          path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+          component={TestReportContainer}
+        />
+        <Route
+          exact
+          path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+          component={TestReportDetailsContainer}
+        />
+        <Route
+          exact
+          path="/dataentities/:dataEntityId/alerts"
+          component={DataEntityAlertsContainer}
+        />
+        <Redirect
+          from="/dataentities/:dataEntityId"
+          to="/dataentities/:dataEntityId/overview"
+        />
+      </Switch>
     </div>
   );
 };

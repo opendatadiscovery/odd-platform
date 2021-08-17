@@ -1322,3 +1322,19 @@ paths:
                 $ref: './components.yaml/#/components/schemas/AlertStatus'
       tags:
         - alert
+
+  /ingestion/datasources/active:
+    get:
+      summary: List of active data sources
+      description: Gets the list of active available data sources
+      operationId: getActiveDataSourceList
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: './components.yaml/#/components/schemas/DataSource'
+      tags:
+        - dataSource

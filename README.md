@@ -180,7 +180,7 @@ If you have any questions or ideas, please don't hesitate to drop a line to any 
 |-----------------|-----------------------------------------------------------------------|-----------------------------------------------------|
 |German Osin      |  [LinkedIn](https://www.linkedin.com/in/german-osin-47a9339/)      	  | [germanosin](https://github.com/germanosin)         |
 |Elena Goydina    |  [LinkedIn](https://www.linkedin.com/in/goydina/)             	  | [Evanto](https://github.com/Evanto)                 |
-|Nikita Dementyev |  [LinkedIn](https://www.linkedin.com/in/nikita-dementev/)             | [DementevNikita](https://github.com/DementevNikita) |
+|Nikita Dementev  |  [LinkedIn](https://www.linkedin.com/in/nikita-dementev/)             | [DementevNikita](https://github.com/DementevNikita) |
 |Sofia Shnaidman  |  [LinkedIn](https://www.linkedin.com/in/sofia-shnaidman-293161a3/)    | [soffest](https://github.com/soffest)               |
 |Kirill Kuznetsov |  [LinkedIn](https://www.linkedin.com/in/kirill-kuznetsov-193069218/)  | [RBlack463](https://github.com/RBlack463)           |
 |Alexey Kozyurov  |  [LinkedIn](https://www.linkedin.com/in/alexey-kozyurov-1823b1219/)   | [Leshe4ka](https://github.com/Leshe4ka)             |

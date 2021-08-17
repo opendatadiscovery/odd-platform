@@ -4,7 +4,6 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  CircularProgress,
   Grid,
 } from '@material-ui/core';
 import {
@@ -23,6 +22,8 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerFormContainer from './OwnerForm/OwnerFormContainer';
 import { StylesType } from './OwnersListStyles';
 
@@ -141,84 +142,88 @@ const OwnersListView: React.FC<OwnersListProps> = ({
           }
         />
       </div>
-      {ownersList.length ? (
-        <>
-          <Grid container className={classes.tableHeader}>
-            <Grid item xs={12}>
-              <Typography variant="subtitle2" className={classes.rowName}>
-                Name
-              </Typography>
-            </Grid>
+      <>
+        <Grid container className={classes.tableHeader}>
+          <Grid item xs={12}>
+            <Typography variant="subtitle2" className={classes.rowName}>
+              Name
+            </Typography>
           </Grid>
-          <div id="owners-list" className={classes.listContainer}>
-            {ownersList?.length ? (
-              <InfiniteScroll
-                next={fetchNextPage}
-                hasMore={!!pageInfo?.hasNext}
-                dataLength={ownersList.length}
-                scrollThreshold="200px"
-                scrollableTarget="owners-list"
-                loader={
-                  <div className={classes.spinnerContainer}>
-                    <CircularProgress color="primary" size={30} />
-                  </div>
-                }
+        </Grid>
+        <div id="owners-list" className={classes.listContainer}>
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            dataLength={ownersList.length}
+            scrollThreshold="200px"
+            scrollableTarget="owners-list"
+            loader={
+              isFetching && (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <OwnersSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              )
+            }
+          >
+            {ownersList?.map(owner => (
+              <Grid
+                container
+                className={classes.tableRow}
+                key={owner.id}
+                wrap="nowrap"
+                alignItems="center"
+                justify="space-between"
               >
-                {ownersList?.map(owner => (
-                  <Grid
-                    container
-                    className={classes.tableRow}
-                    key={owner.id}
-                    wrap="nowrap"
-                    alignItems="center"
-                    justify="space-between"
-                  >
-                    <Grid item>
-                      <Typography variant="body1">{owner.name}</Typography>
-                    </Grid>
-                    <Grid item className={classes.rowActions}>
-                      <OwnerFormContainer
-                        owner={owner}
-                        btnCreateEl={
-                          <AppButton
-                            color="primaryLight"
-                            size="medium"
-                            onClick={() => {}}
-                            icon={<EditIcon />}
-                          >
-                            Edit
-                          </AppButton>
-                        }
-                      />
-                      <ConfirmationDialog
-                        actionTitle="Are you sure you want to delete this owner?"
-                        actionName="Delete Owner"
-                        actionText={
-                          <>
-                            &quot;{owner.name}&quot; will be deleted
-                            permanently.
-                          </>
-                        }
-                        onConfirm={() => handleOwnerDelete(owner.id)}
-                        actionBtn={
-                          <AppButton
-                            color="primaryLight"
-                            size="medium"
-                            onClick={() => {}}
-                            icon={<DeleteIcon />}
-                          >
-                            Delete
-                          </AppButton>
-                        }
-                      />
-                    </Grid>
-                  </Grid>
-                ))}
-              </InfiniteScroll>
-            ) : null}
-          </div>
-        </>
-      ) : null}
+                <Grid item>
+                  <Typography variant="body1">{owner.name}</Typography>
+                </Grid>
+                <Grid item className={classes.rowActions}>
+                  <OwnerFormContainer
+                    owner={owner}
+                    btnCreateEl={
+                      <AppButton
+                        color="primaryLight"
+                        size="medium"
+                        onClick={() => {}}
+                        icon={<EditIcon />}
+                      >
+                        Edit
+                      </AppButton>
+                    }
+                  />
+                  <ConfirmationDialog
+                    actionTitle="Are you sure you want to delete this owner?"
+                    actionName="Delete Owner"
+                    actionText={
+                      <>
+                        &quot;{owner.name}&quot; will be deleted
+                        permanently.
+                      </>
+                    }
+                    onConfirm={() => handleOwnerDelete(owner.id)}
+                    actionBtn={
+                      <AppButton
+                        color="primaryLight"
+                        size="medium"
+                        onClick={() => {}}
+                        icon={<DeleteIcon />}
+                      >
+                        Delete
+                      </AppButton>
+                    }
+                  />
+                </Grid>
+              </Grid>
+            ))}
+          </InfiniteScroll>
+        </div>
+      </>
       {!isFetching && !ownersList.length ? (
         <Typography variant="subtitle1">
           {searchText ? 'No owners found' : 'No owners yet...'}
