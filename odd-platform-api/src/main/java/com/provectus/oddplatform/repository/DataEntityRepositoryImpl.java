@@ -52,6 +52,8 @@ public class DataEntityRepositoryImpl
     extends AbstractCRUDRepository<DataEntityRecord, DataEntityDimensionsDto>
     implements DataEntityRepository {
 
+    private static final int SUGGESTION_LIMIT = 5;
+
     private static final String AGG_TYPES_FIELD = "type";
     private static final String AGG_TAGS_FIELD = "tag";
     private static final String AGG_DSV_FIELD = "dataset_version";
@@ -654,6 +656,42 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
+    public List<DataEntityDto> getQuerySuggestions(final String query) {
+        final Name deCteName = name("dataEntityCTE");
+
+        final Select<Record> dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
+            .from(SEARCH_ENTRYPOINT)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
+            .where(ftsCondition(query))
+            .limit(SUGGESTION_LIMIT);
+
+        final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
+
+        final List<Field<?>> selectFields = Stream
+            .of(
+                deCte.fields(),
+                DATA_ENTITY_SUBTYPE.fields()
+            )
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toList());
+
+        return dslContext.with(deCteName)
+            .asMaterialized(dataEntitySelect)
+            .select(selectFields)
+            .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
+            .select(jsonArrayAgg(field(ALERT.asterisk().toString())).as(AGG_ALERT_FIELD))
+            .from(deCteName)
+            .leftJoin(TYPE_ENTITY_RELATION).on(deCte.field(DATA_ENTITY.ID).eq(TYPE_ENTITY_RELATION.DATA_ENTITY_ID))
+            .leftJoin(DATA_ENTITY_TYPE).on(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(DATA_ENTITY_TYPE.ID))
+            .leftJoin(DATA_ENTITY_SUBTYPE).on(deCte.field(DATA_ENTITY.SUBTYPE_ID).eq(DATA_ENTITY_SUBTYPE.ID))
+            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ID.eq(deCte.field(DATA_ENTITY.ID)))
+            .groupBy(selectFields)
+            .fetchStream()
+            .map(this::mapDtoRecord)
+            .collect(Collectors.toList());
+    }
+
+    @Override
     public Optional<DataEntityLineageDto> getLineage(final long dataEntityId, final int lineageDepth) {
         return get(dataEntityId).map(dto -> getLineage(lineageDepth, dto));
     }
@@ -891,6 +929,15 @@ public class DataEntityRepositoryImpl
         return detailsDto;
     }
 
+    private DataEntityDto mapDtoRecord(final Record r) {
+        return DataEntityDto.builder()
+            .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
+            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
+            .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
+            .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
+            .build();
+    }
+
     private DataEntityDimensionsDto mapDimensionRecord(final Record r) {
         return DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
@@ -985,7 +1032,11 @@ public class DataEntityRepositoryImpl
     }
 
     private Condition ftsCondition(final FacetStateDto state) {
-        return condition(field("data_entity_vector @@ plainto_tsquery(?)", state.getQuery()).toString());
+        return ftsCondition(state.getQuery());
+    }
+
+    private Condition ftsCondition(final String query) {
+        return condition(field("data_entity_vector @@ plainto_tsquery(?)", query).toString());
     }
 
     private List<Condition> facetStateConditions(final FacetStateDto state,

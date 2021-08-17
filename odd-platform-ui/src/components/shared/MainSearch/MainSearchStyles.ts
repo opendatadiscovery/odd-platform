@@ -4,7 +4,7 @@ export const searchHeight = 40;
 export const styles = (theme: Theme) =>
   createStyles({
     inputInput: {
-      padding: theme.spacing(0.25, 0.25, 0.25, 0.25),
+      height: `${searchHeight}px`,
       transition: theme.transitions.create('width'),
       width: '100%',
       border: '1px solid #0080FF',
@@ -13,25 +13,37 @@ export const styles = (theme: Theme) =>
         border: '1px solid #0066CC',
       },
     },
-    root: {
+    clearIconContainer: {
+      right: '5px',
+      top: 'auto',
+    },
+    autocomplete: {
       color: theme.palette.common.black,
       width: '100%',
       boxSizing: 'border-box',
       '& .Mui-focused': {
-        padding: '1px',
         border: '2px solid #0080FF',
       },
     },
     searchContainer: {
       flexGrow: 1,
       display: 'flex',
-      justifyContent: 'center',
-    },
-    search: {
-      position: 'relative',
       width: '100%',
       maxWidth: '640px',
-      height: `${searchHeight}px`,
+    },
+    search: {
+      width: '100%',
+    },
+    suggestionItem: {
+      display: 'flex',
+      alignItems: 'center',
+      flexGrow: 1,
+    },
+    suggestionItemTypes: {
+      marginLeft: theme.spacing(0.5),
+      '& > * + *': {
+        marginLeft: theme.spacing(0.25),
+      },
     },
   });
 

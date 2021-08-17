@@ -2,6 +2,7 @@ package com.provectus.oddplatform.service;
 
 import com.provectus.oddplatform.api.contract.model.CountableSearchFilter;
 import com.provectus.oddplatform.api.contract.model.DataEntityList;
+import com.provectus.oddplatform.api.contract.model.DataEntityRef;
 import com.provectus.oddplatform.api.contract.model.MultipleFacetType;
 import com.provectus.oddplatform.api.contract.model.SearchFacetsData;
 import com.provectus.oddplatform.api.contract.model.SearchFormData;
@@ -113,6 +114,13 @@ public class SearchServiceImpl implements SearchService {
                 return Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size));
             })
             .map(dataEntityMapper::mapPojos);
+    }
+
+    @Override
+    public Flux<DataEntityRef> getQuerySuggestions(final String query) {
+        return Flux
+            .fromIterable(dataEntityRepository.getQuerySuggestions(query))
+            .map(dataEntityMapper::mapRef);
     }
 
     private Mono<SearchFacetsData> getFacetsData(final UUID searchId, final FacetStateDto state) {
