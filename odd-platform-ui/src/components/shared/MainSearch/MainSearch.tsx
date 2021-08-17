@@ -14,6 +14,7 @@ import {
   SearchApiSearchRequest,
   SearchFacetsData,
   DataEntityRef,
+  SearchApiGetSearchSuggestionsRequest,
 } from 'generated-sources';
 import { searchPath, dataEntityDetailsPath } from 'lib/paths';
 import { StylesType } from 'components/shared/MainSearch/MainSearchStyles';
@@ -25,7 +26,9 @@ interface AppSearchProps extends StylesType {
   query?: string;
   placeholder?: string;
   suggestions: DataEntityRef[];
-  fetchSearchSuggestions: () => Promise<DataEntityRef[]>;
+  fetchSearchSuggestions: (
+    params: SearchApiGetSearchSuggestionsRequest
+  ) => Promise<DataEntityRef[]>;
   createDataEntitiesSearch: (
     params: SearchApiSearchRequest
   ) => Promise<SearchFacetsData>;
@@ -84,7 +87,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
 
   const getSuggestions = React.useCallback(
     useDebouncedCallback(() => {
-      fetchSearchSuggestions().then(() => {
+      fetchSearchSuggestions({ query: searchText }).then(() => {
         setLoadingSuggestions(false);
       });
     }, 500),

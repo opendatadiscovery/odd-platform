@@ -10,7 +10,7 @@ import {
   SearchApiGetSearchFacetListRequest,
   CountableSearchFilter,
   DataEntityRef,
-  DataEntityTypeNameEnum,
+  SearchApiGetSearchSuggestionsRequest,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
@@ -98,13 +98,12 @@ export const getFacetOptions = createThunk<
 );
 
 export const fetchSearchSuggestions = createThunk<
-  void, // Temp
+  SearchApiGetSearchSuggestionsRequest,
   DataEntityRef[],
   DataEntityRef[]
 >(
-  () =>
-    // Replace with proper apiClient method when implemented
-    new Promise(resolve => resolve([])),
+  (params: SearchApiGetSearchSuggestionsRequest) =>
+    searchApiClient.getSearchSuggestions(params),
   actions.getDataEntitySearchSuggestionsAction,
   (response: DataEntityRef[]) => response
 );
