@@ -5,11 +5,11 @@ import { LabelsState } from 'redux/interfaces/state';
 
 const labelsState = ({ labels }: RootState): LabelsState => labels;
 
-const getLabelsListFetchingStatus = createFetchingSelector('GET_TAGS');
-export const getLabelsCreateStatus = createFetchingSelector('POST_TAGS');
-export const getLabelUpdateStatus = createFetchingSelector('PUT_TAG');
+const getLabelsListFetchingStatus = createFetchingSelector('GET_LABELS');
+export const getLabelsCreateStatus = createFetchingSelector('POST_LABELS');
+export const getLabelUpdateStatus = createFetchingSelector('PUT_LABEL');
 export const deleteLabelsUpdateStatus = createFetchingSelector(
-  'DELETE_TAG'
+  'DELETE_LABEL'
 );
 
 export const getIsLabelsListFetching = createSelector(

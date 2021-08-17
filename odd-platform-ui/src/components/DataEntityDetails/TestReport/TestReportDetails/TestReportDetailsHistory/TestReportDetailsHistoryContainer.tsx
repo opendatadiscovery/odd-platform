@@ -5,7 +5,10 @@ import TestReportDetailsHistory from 'components/DataEntityDetails/TestReport/Te
 import { styles } from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistoryStyles';
 import { RouteComponentProps } from 'react-router-dom';
 import { fetchDataSetQualityTestRuns } from 'redux/thunks';
-import { getQualityTestRunsList, getDatasetTestRunsFetching } from 'redux/selectors/dataQualityTest.selectors';
+import {
+  getQualityTestRunsList,
+  getDatasetTestRunsFetching,
+} from 'redux/selectors/dataQualityTest.selectors';
 
 interface RouteProps {
   dataqatestId: string;

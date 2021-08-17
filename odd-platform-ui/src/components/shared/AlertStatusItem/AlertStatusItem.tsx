@@ -1,12 +1,12 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
 import cx from 'classnames';
+import { capitalize } from 'lodash';
 import {
   styles,
   StylesType,
 } from 'components/shared/AlertStatusItem/AlertStatusItemStyles';
 import { AlertStatus } from 'generated-sources';
-import { toTitleCase } from 'lib/helpers';
 
 interface AlertStatusItemProps extends StylesType {
   className?: string;
@@ -20,7 +20,7 @@ const AlertStatusItem: React.FC<AlertStatusItemProps> = ({
 }) => (
   <div className={cx(classes.container, className)} title={typeName}>
     <span className={cx(classes.filledContainer, typeName)}>
-      {toTitleCase(typeName)}
+      {capitalize(typeName)}
     </span>
   </div>
 );

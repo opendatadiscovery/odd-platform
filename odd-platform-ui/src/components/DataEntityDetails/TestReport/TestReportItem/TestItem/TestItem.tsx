@@ -30,7 +30,12 @@ const TestItem: React.FC<TestItemProps> = ({
   testEndTime,
   testExpectations,
 }) => (
-  <Grid container className={cx(classes.container, className, { [classes.active]: active})}>
+  <Grid
+    container
+    className={cx(classes.container, className, {
+      [classes.active]: active,
+    })}
+  >
     <Grid item>
       {latestRunStatus && <LatestRunIcon typeName={latestRunStatus} />}
     </Grid>
@@ -39,12 +44,9 @@ const TestItem: React.FC<TestItemProps> = ({
         <Typography variant="body1">{testName}</Typography>
       </Grid>
       <Grid container item xs={9} justify="center">
-          <Typography
-            variant="body1"
-            className={classes.expectationItem}
-          >
-            {values(testExpectations).join(', ')}
-          </Typography>
+        <Typography variant="body1" className={classes.expectationItem}>
+          {values(testExpectations).join(', ')}
+        </Typography>
       </Grid>
       <Grid item container xs={2} justify="flex-end">
         <Typography variant="body1">

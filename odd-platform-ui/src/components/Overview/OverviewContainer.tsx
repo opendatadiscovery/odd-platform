@@ -24,6 +24,9 @@ import {
   getIdentityFetched,
 } from 'redux/selectors/profile.selectors';
 import { getAlertTotals } from 'redux/selectors/alert.selectors';
+import { getMainOverviewContentIsFetching } from 'redux/selectors/mainContentLoader.selectors';
+import { fetchTagsList } from 'redux/thunks';
+import { getTagsList } from 'redux/selectors/tags.selectors';
 import Overview from './Overview';
 import { styles } from './OverviewStyles';
 
@@ -41,6 +44,8 @@ const mapStateToProps = (state: RootState) => ({
     state
   ),
   popularDataEntitiesFetching: getPopularDataEntitiesFetching(state),
+  isMainOverviewContentFetching: getMainOverviewContentIsFetching(state),
+  topTagsList: getTagsList(state),
 });
 
 const mapDispatchToProps = {
@@ -50,6 +55,7 @@ const mapDispatchToProps = {
   fetchMyUpstreamDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
   fetchPopularDataEntitiesList,
+  fetchTagsList,
 };
 
 export default connect(

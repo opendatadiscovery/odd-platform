@@ -1,7 +1,10 @@
 import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { getDatasetTestReport } from 'redux/selectors/dataQualityTest.selectors';
+import {
+  getDatasetTestReport,
+  getDatasetTestReportFetching,
+} from 'redux/selectors/dataQualityTest.selectors';
 import { fetchDataSetQualityTestReport } from 'redux/thunks/dataQualityTest.thunks';
 import OverviewDataQualityReport from './OverviewDataQualityReport';
 import { styles } from './OverviewDataQualityReportStyles';
@@ -10,7 +13,7 @@ const mapStateToProps = (
   state: RootState,
   { dataEntityId }: { dataEntityId: number }
 ) => ({
-  isLoaded: true,
+  isDatasetTestReportFetching: getDatasetTestReportFetching(state),
   dataEntityId,
   datasetQualityTestReport: getDatasetTestReport(state, dataEntityId),
 });

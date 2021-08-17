@@ -2,7 +2,10 @@ import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import TestReportDetailsOverview from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverview';
-import { getQualityTestByTestId } from 'redux/selectors/dataQualityTest.selectors';
+import {
+  getDatasetTestListFetching,
+  getQualityTestByTestId,
+} from 'redux/selectors/dataQualityTest.selectors';
 import { styles } from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewStyles';
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -22,6 +25,7 @@ const mapStateToProps = (
 ) => ({
   dataqatestId: parseInt(dataqatestId, 10),
   qualityTest: getQualityTestByTestId(state, dataqatestId),
+  isDatasetTestListFetching: getDatasetTestListFetching(state),
 });
 
 const mapDispatchToProps = {};
