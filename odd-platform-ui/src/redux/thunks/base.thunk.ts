@@ -1,3 +1,4 @@
+import { ErrorState } from '../interfaces';
 import { PromiseThunkResult, Action } from '../interfaces/state';
 
 export const createThunk = <
@@ -9,7 +10,7 @@ export const createThunk = <
   action: {
     request: () => Action;
     success: (actionParams: SuccessActionParamsType) => Action;
-    failure: () => Action;
+    failure: (e: ErrorState) => Action;
   },
   getSuccessActionParams: (
     response: ResType,
@@ -24,8 +25,7 @@ export const createThunk = <
     const result: ResType = await reqPromise;
     dispatch(action.success(getSuccessActionParams(result, params)));
   } catch (e) {
-    console.log(e);
-    dispatch(action.failure());
+    dispatch(action.failure({statusCode: e?.status, statusText: e?.statusText}));
   }
   return reqPromise;
 };
