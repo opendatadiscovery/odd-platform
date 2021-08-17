@@ -17,6 +17,7 @@ import {
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
 import SearchTabsSkeleton from 'components/Search/Results/SearchTabsSkeleton/SearchTabsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
@@ -238,7 +239,7 @@ const Results: React.FC<ResultsProps> = ({
           </InfiniteScroll>
         )}
         {!isSearchFetching && !pageInfo.total ? (
-          <Typography variant="subtitle1">No Matches Found</Typography>
+          <EmptyContentPlaceholder text="No matches found" />
         ) : null}
       </div>
     </div>

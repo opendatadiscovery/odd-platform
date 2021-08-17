@@ -28,6 +28,7 @@ export const initialState: SearchState = {
       hasNext: true,
     },
   },
+  suggestions: [],
   facets: {},
   facetState: {},
   isFacetsStateSynced: true,
@@ -205,6 +206,11 @@ const reducer = (state = initialState, action: Action): SearchState => {
               : action.payload.items,
           pageInfo: action.payload.pageInfo,
         },
+      };
+    case getType(actions.getDataEntitySearchSuggestionsAction.success):
+      return {
+        ...state,
+        suggestions: action.payload,
       };
     case getType(actions.changeDataEntitySearchFilterAction):
       return updateFacet(state, action.payload);

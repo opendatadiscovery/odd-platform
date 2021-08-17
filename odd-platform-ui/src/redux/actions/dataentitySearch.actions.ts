@@ -4,7 +4,11 @@ import {
   PaginatedResponse,
   FacetOptions,
 } from 'redux/interfaces';
-import { DataEntityList, SearchFacetsData } from 'generated-sources';
+import {
+  DataEntityList,
+  SearchFacetsData,
+  DataEntityRef,
+} from 'generated-sources';
 
 export const getDataEntitySearchAction = createAsyncAction(
   'GET_DATA_ENTITIES_SEARCH__REQUEST',
@@ -35,6 +39,12 @@ export const getSearchFacetOptionsAction = createAsyncAction(
   'GET_SEARCH_FACET_OPTIONS__SUCCESS',
   'GET_SEARCH_FACET_OPTIONS__FAILURE'
 )<undefined, FacetOptions, undefined>();
+
+export const getDataEntitySearchSuggestionsAction = createAsyncAction(
+  'GET_DATA_ENTITIES_SEARCH_SUGGESTIONS__REQUEST',
+  'GET_DATA_ENTITIES_SEARCH_SUGGESTIONS__SUCCESS',
+  'GET_DATA_ENTITIES_SEARCH_SUGGESTIONS__FAILURE'
+)<undefined, DataEntityRef[], undefined>();
 
 export const changeDataEntitySearchFilterAction = createAction(
   'CHANGE_DATA_ENTITIES_SEARCH_FILTER'
