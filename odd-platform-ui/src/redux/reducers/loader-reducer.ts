@@ -12,7 +12,6 @@ const reducer = (state = initialState, action: Action): LoaderState => {
 
   // not a *__REQUEST / *__SUCCESS /  *__FAILURE actions, so we ignore them
   if (!matches) return state;
-  console.log(action);
   const [, requestName, requestState] = matches;
   switch (requestState) {
     case 'REQUEST':
