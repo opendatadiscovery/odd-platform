@@ -70,13 +70,14 @@ const Overview: React.FC<OverviewProps> = ({
           </Paper>
         </Grid>
       </Grid>
-    ) : (
+    ) : null}
+    {isDataEntityDetailsFetching ? (
       <SkeletonWrapper
         renderContent={({ randomSkeletonPercentWidth }) => (
           <OverviewSkeleton width={randomSkeletonPercentWidth()} />
         )}
       />
-    )}
+    ): null}
   </>
 );
 

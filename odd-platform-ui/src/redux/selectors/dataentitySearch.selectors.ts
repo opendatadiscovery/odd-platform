@@ -16,7 +16,7 @@ import {
   SearchType,
 } from 'redux/interfaces';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createFetchingSelector, createErrorSelector } from 'redux/selectors/loader-selectors';
 
 const searchState = ({ search }: RootState): SearchState => search;
 
@@ -25,6 +25,10 @@ export const getSearchCreationStatus = createFetchingSelector(
 );
 
 export const getSearchFetchStatus = createFetchingSelector(
+  'GET_DATA_ENTITIES_SEARCH'
+);
+
+export const getSearchFetchError = createErrorSelector(
   'GET_DATA_ENTITIES_SEARCH'
 );
 

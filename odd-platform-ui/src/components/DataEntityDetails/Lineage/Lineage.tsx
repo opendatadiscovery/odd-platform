@@ -3,9 +3,9 @@ import {
   DataEntityLineage,
   DataEntityApiGetDataEntityLineageRequest,
 } from 'generated-sources';
+import AppGraphContainer from 'components/shared/AppGraph/AppGraphContainer';
 import { DataEntityLineageById } from 'redux/interfaces/dataentityLineage';
 import { StylesType } from './LineageStyles';
-import AppGraphContainer from '../../shared/AppGraph/AppGraphContainer';
 
 interface LineageProps extends StylesType {
   isLoaded: boolean;

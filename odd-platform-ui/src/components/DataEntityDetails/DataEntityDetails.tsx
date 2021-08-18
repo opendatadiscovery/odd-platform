@@ -14,6 +14,7 @@ import {
   DataEntityDetails,
   DataEntityApiGetDataEntityDetailsRequest,
 } from 'generated-sources';
+import { FetchStatus, ErrorState } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
@@ -26,6 +27,7 @@ import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/
 import DataEntityAlertsContainer from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsContainer';
 import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -40,7 +42,8 @@ interface DataEntityDetailsProps extends StylesType {
   fetchDataEntityDetails: (
     params: DataEntityApiGetDataEntityDetailsRequest
   ) => void;
-  isDataEntityDetailsFetching: boolean;
+  dataEntityFetchingStatus: FetchStatus;
+  dataEntityFetchingError?: ErrorState;
 }
 
 const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
@@ -50,7 +53,8 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityDetails,
   isDataset,
   fetchDataEntityDetails,
-  isDataEntityDetailsFetching,
+  dataEntityFetchingStatus,
+  dataEntityFetchingError
 }) => {
   const [tabs, setTabs] = React.useState<AppTabItem[]>([
     {
@@ -107,7 +111,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
 
   return (
     <div className={classes.container}>
-      {dataEntityDetails && !isDataEntityDetailsFetching ? (
+      {dataEntityDetails && dataEntityFetchingStatus !== 'fetching' ? (
         <>
           <Grid container justify="space-between" alignItems="center">
             <Grid item className={classes.caption}>
@@ -187,51 +191,55 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             />
           ) : null}
         </>
-      ) : (
-        <SkeletonWrapper
+      ) : null}
+      {dataEntityFetchingStatus === 'fetching' ?
+        (<SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
             <DataEntityDetailsSkeleton
               width={randomSkeletonPercentWidth()}
             />
           )}
-        />
-      )}
-      <Switch>
-        <Route
-          exact
-          path="/dataentities/:dataEntityId/overview"
-          component={OverviewContainer}
-        />
-        <Route
-          exact
-          path="/dataentities/:dataEntityId/structure/:versionId?"
-          component={DatasetStructureContainer}
-        />
-        <Route
-          exact
-          path="/dataentities/:dataEntityId/lineage"
-          component={LineageContainer}
-        />
-        <Route
-          exact
-          path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
-          component={TestReportContainer}
-        />
-        <Route
-          exact
-          path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
-          component={TestReportDetailsContainer}
-        />
-        <Route
-          exact
-          path="/dataentities/:dataEntityId/alerts"
-          component={DataEntityAlertsContainer}
-        />
-        <Redirect
-          from="/dataentities/:dataEntityId"
-          to="/dataentities/:dataEntityId/overview"
-        />
-      </Switch>
+        />)
+      : null}
+      {dataEntityFetchingStatus !== 'errorFetching' ?
+        <Switch>
+          <Route
+            exact
+            path="/dataentities/:dataEntityId/overview"
+            component={OverviewContainer}
+          />
+          <Route
+            exact
+            path="/dataentities/:dataEntityId/structure/:versionId?"
+            component={DatasetStructureContainer}
+          />
+          <Route
+            exact
+            path="/dataentities/:dataEntityId/lineage"
+            component={LineageContainer}
+          />
+          <Route
+            exact
+            path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+            component={TestReportContainer}
+          />
+          <Route
+            exact
+            path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+            component={TestReportDetailsContainer}
+          />
+          <Route
+            exact
+            path="/dataentities/:dataEntityId/alerts"
+            component={DataEntityAlertsContainer}
+          />
+          <Redirect
+            from="/dataentities/:dataEntityId"
+            to="/dataentities/:dataEntityId/overview"
+          />
+        </Switch>
+      : null}
+      <AppErrorPage fetchStatus={dataEntityFetchingStatus} error={dataEntityFetchingError}/>
     </div>
   );
 };
