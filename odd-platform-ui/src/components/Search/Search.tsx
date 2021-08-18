@@ -7,7 +7,9 @@ import {
   SearchApiGetSearchFacetListRequest,
 } from 'generated-sources';
 import { SearcFacetsByName } from 'redux/interfaces/search';
+import { FetchStatus, ErrorState } from 'redux/interfaces/loader';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
+import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import FiltersContainer from './Filters/FiltersContainer';
 import ResultsContainer from './Results/ResultsContainer';
 import { StylesType } from './SearchStyles';
@@ -19,6 +21,8 @@ interface SearchProps extends StylesType {
   searchMyObjects: boolean;
   searchFilterParams: SearcFacetsByName;
   searchFiltersSynced: boolean;
+  searchFetchStatus: FetchStatus;
+  searchError?: ErrorState;
   getDataEntitiesSearchDetails: (
     params: SearchApiGetSearchFacetListRequest
   ) => void;
@@ -35,6 +39,8 @@ const Search: React.FC<SearchProps> = ({
   searchMyObjects,
   searchFilterParams,
   searchFiltersSynced,
+  searchFetchStatus,
+  searchError,
   getDataEntitiesSearchDetails,
   updateDataEntitiesSearch,
 }) => {
@@ -88,6 +94,7 @@ const Search: React.FC<SearchProps> = ({
           </Grid>
         </div>
       ) : null}
+      <AppErrorPage fetchStatus={searchFetchStatus} error={searchError}/>
     </>
   );
 };
