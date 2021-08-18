@@ -5,11 +5,11 @@ import { format } from 'date-fns';
 import { Alert } from 'generated-sources';
 import cx from 'classnames';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
-import PopUpMenuByClick from 'components/shared/PopUpMenuByClick/PopUpMenuByClick';
 import AppButton from 'components/shared/AppButton/AppButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import Tooltip from 'components/shared/Tooltip/Tooltip';
 import { styles, StylesType } from './AlertItemStyles';
 
 interface AlertItemProps extends StylesType {
@@ -85,22 +85,23 @@ const AlertItem: React.FC<AlertItemProps> = ({
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colActionBtn)}>
-      <PopUpMenuByClick
-        renderOpeningContent={({ toggleOpen }) => (
-          <AppButton
-            className={classes.optionsBtn}
-            size="medium"
-            color="primaryLight"
-            icon={<KebabIcon />}
-            onClick={toggleOpen}
-          />
-        )}
-        renderChildren={({ handleClose }) => (
+      <Tooltip
+        tooltipControl="byClick"
+        tooltipContent={
           <MenuItem onClick={alertStatusHandler}>
             {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
           </MenuItem>
-        )}
-      />
+        }
+        place="bottom"
+        type="light"
+      >
+        <AppButton
+          className={classes.optionsBtn}
+          size="medium"
+          color="primaryLight"
+          icon={<KebabIcon />}
+        />
+      </Tooltip>
     </Grid>
   </Grid>
 );
