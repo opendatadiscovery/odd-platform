@@ -78,23 +78,21 @@ const Search: React.FC<SearchProps> = ({
 
   return (
     <>
-      {searchId ? (
-        <div className={classes.container}>
-          <Grid container className={classes.contentContainer} spacing={2}>
-            <Grid item xs={3} className={classes.filtersContainer}>
-              <FiltersContainer />
-            </Grid>
-            <Grid item xs={9} className={classes.resultsContainer}>
-              <MainSearchContainer
-                className={classes.searchInput}
-                placeholder="Search"
-              />
-              <ResultsContainer />
-            </Grid>
+      <div className={classes.container}>
+        <Grid container className={classes.contentContainer} spacing={2}>
+          <Grid item xs={3} className={classes.filtersContainer}>
+            <FiltersContainer />
           </Grid>
-        </div>
-      ) : null}
-      <AppErrorPage fetchStatus={searchFetchStatus} error={searchError}/>
+          <Grid item xs={9} className={classes.resultsContainer}>
+            <MainSearchContainer
+              className={classes.searchInput}
+              placeholder="Search"
+            />
+            <ResultsContainer />
+          </Grid>
+        </Grid>
+      </div>
+      <AppErrorPage fetchStatus={searchFetchStatus} error={searchError} />
     </>
   );
 };
