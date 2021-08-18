@@ -18,6 +18,7 @@ import SearchIcon from 'components/shared/Icons/SearchIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
 import { StylesType } from './DataSourcesListStyles';
@@ -90,7 +91,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
       <div className={classes.caption}>
         <Typography variant="h1">Datasources</Typography>
         <Typography variant="subtitle1" className={classes.totalCountText}>
-          <NumberFormatted value={totalDataSources} /> datasources
+          <NumberFormatted value={totalDataSources} /> datasources overall
         </Typography>
       </div>
       <div className={classes.caption}>
@@ -162,6 +163,9 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
           ))}
         </InfiniteScroll>
       </div>
+      {!isDataSourcesListFetching && !dataSourcesList.length ? (
+        <EmptyContentPlaceholder />
+      ) : null}
     </div>
   );
 };

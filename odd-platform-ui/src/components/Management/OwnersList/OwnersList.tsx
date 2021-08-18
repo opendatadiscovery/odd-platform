@@ -23,6 +23,7 @@ import CancelIcon from 'components/shared/Icons/CancelIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerFormContainer from './OwnerForm/OwnerFormContainer';
 import { StylesType } from './OwnersListStyles';
@@ -225,9 +226,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
         </div>
       </>
       {!isFetching && !ownersList.length ? (
-        <Typography variant="subtitle1">
-          {searchText ? 'No owners found' : 'No owners yet...'}
-        </Typography>
+        <EmptyContentPlaceholder />
       ) : null}
     </div>
   );

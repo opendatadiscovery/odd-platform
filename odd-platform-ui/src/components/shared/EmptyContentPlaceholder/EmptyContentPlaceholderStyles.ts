@@ -4,8 +4,8 @@ export const styles = (theme: Theme) =>
   createStyles({
     container: {
       display: 'flex',
-      alignItems: 'center',
-      margin: theme.spacing(1, 0),
+      alignSelf: 'flex-start',
+      marginTop: theme.spacing(2),
     },
     icon: {
       marginRight: theme.spacing(0.5),
