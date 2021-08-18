@@ -8,6 +8,7 @@ import {
 import cx from 'classnames';
 import DataEntityAlertItem from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertItem/DataEntityAlertItem';
 import DataEntityAlertsSkeleton from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import { StylesType } from './DataEntityAlertsStyles';
 
 interface DataEntityAlertsProps extends StylesType {
@@ -78,6 +79,9 @@ const DataEntityAlerts: React.FC<DataEntityAlertsProps> = ({
           ))}
         </Grid>
       )}
+      {!isAlertsFetching && !alertsList.length ? (
+        <EmptyContentPlaceholder />
+      ) : null}
     </Grid>
   );
 };

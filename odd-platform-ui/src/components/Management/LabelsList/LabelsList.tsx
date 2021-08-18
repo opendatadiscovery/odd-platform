@@ -21,6 +21,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabelsSkeletonItem from 'components/Management/LabelsList/LabelsSkeletonItem/LabelsSkeletonItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateFormContainer from './LabelCreateForm/LabelCreateFormContainer';
 import { StylesType } from './LabelsListStyles';
@@ -176,9 +177,7 @@ const LabelsListView: React.FC<LabelsListProps> = ({
         </InfiniteScroll>
       </div>
       {!isFetching && !labelsList.length ? (
-        <Typography variant="subtitle1">
-          {searchText ? 'No labels found' : 'No labels yet...'}
-        </Typography>
+        <EmptyContentPlaceholder />
       ) : null}
     </div>
   );

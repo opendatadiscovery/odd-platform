@@ -27,8 +27,7 @@ import LabelsEditFormContainer from 'components/DataEntityDetails/DatasetStructu
 import InternalDescriptionFormDialogContainer from 'components/DataEntityDetails/DatasetStructure/InternalDescriptionFormDialog/InternalDescriptionFormDialogContainer';
 import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import PopUpMenuByClick from 'components/shared/PopUpMenuByClick/PopUpMenuByClick';
-import PopUpMenuByHover from 'components/shared/PopUpMenuByHover/PopUpMenuByHover';
+import Tooltip from 'components/shared/Tooltip/Tooltip';
 import { StylesType } from './DatasetStructureItemStyles';
 
 interface DatasetStructureItemProps extends StylesType {
@@ -151,17 +150,16 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
               <Grid item container>
                 <Grid item xs={12} className={classes.nameContainer}>
-                  <PopUpMenuByHover
-                    contentForHover={
-                      <Typography noWrap>
-                        {(datasetField.isKey && 'Key') ||
-                          (datasetField.isValue && 'Value') ||
-                          datasetField.name}
-                      </Typography>
-                    }
+                  <Tooltip
+                    tooltipContent={datasetField.name}
+                    place="bottom"
                   >
-                    {datasetField.name}
-                  </PopUpMenuByHover>
+                    <Typography noWrap>
+                      {(datasetField.isKey && 'Key') ||
+                        (datasetField.isValue && 'Value') ||
+                        datasetField.name}
+                    </Typography>
+                  </Tooltip>
                   <div
                     className={
                       datasetField.labels ? classes.labelsList : ''
@@ -177,24 +175,28 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   xs={12}
                   className={classes.descriptionContainer}
                 >
-                  <PopUpMenuByHover
-                    contentForHover={
-                      <Typography
-                        className={classes.internalDescription}
-                        noWrap
-                      >
-                        {datasetField.internalDescription}
-                      </Typography>
-                    }
+                  <Tooltip
+                    tooltipContent={datasetField.internalDescription}
+                    place="bottom"
                   >
-                    {datasetField.internalDescription}
-                  </PopUpMenuByHover>
-                  <Typography
-                    className={classes.externalDescription}
-                    title={datasetField.externalDescription || ''}
+                    <Typography
+                      className={classes.internalDescription}
+                      noWrap
+                    >
+                      {datasetField.internalDescription}
+                    </Typography>
+                  </Tooltip>
+                  <Tooltip
+                    tooltipContent={datasetField.externalDescription}
+                    place="bottom"
                   >
-                    {datasetField.externalDescription}
-                  </Typography>
+                    <Typography
+                      className={classes.externalDescription}
+                      noWrap
+                    >
+                      {datasetField.externalDescription}
+                    </Typography>
+                  </Tooltip>
                   {datasetField.type.type ===
                     DataSetFieldTypeTypeEnum.STRUCT &&
                   childFields.length ? (
@@ -210,46 +212,41 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
             </Grid>
             <Grid item className={classes.typeCol}>
-              <PopUpMenuByClick
-                renderOpeningContent={({ toggleOpen }) => (
-                  <AppButton
-                    className={classes.optionsBtn}
-                    size="medium"
-                    color="primaryLight"
-                    icon={<KebabIcon />}
-                    onClick={toggleOpen}
-                  />
-                )}
-                renderChildren={({ handleClose }) => (
+              <Tooltip
+                tooltipControl="byClick"
+                tooltipContent={
                   <>
                     <LabelsEditFormContainer
                       datasetFieldId={datasetField.id}
-                      btnCreateEl={
-                        <MenuItem onClick={handleClose}>
-                          Edit Labels
-                        </MenuItem>
-                      }
+                      btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
                     />
                     <InternalDescriptionFormDialogContainer
                       datasetFieldId={datasetField.id}
-                      btnCreateEl={
-                        <MenuItem onClick={handleClose}>
-                          Edit Description
-                        </MenuItem>
-                      }
+                      btnCreateEl={<MenuItem>Edit Description</MenuItem>}
                     />
                   </>
-                )}
-              />
+                }
+                place="bottom"
+                type="light"
+              >
+                <AppButton
+                  className={classes.optionsBtn}
+                  size="medium"
+                  color="primaryLight"
+                  icon={<KebabIcon />}
+                />
+              </Tooltip>
               <DatasetStructureFieldTypeLabel
                 type={datasetField.type.type}
               />
-              <PopUpMenuByHover
-                contentForHover={<InformationIcon />}
-                color="dark"
+              <Tooltip
+                tooltipContent={`Logical type: ${datasetField.type.logicalType}`}
+                place="bottom"
+                type="dark"
+                classes={{ childrenContainer: classes.logicalTypeIcon }}
               >
-                {`Logical type: ${datasetField.type.logicalType}`}
-              </PopUpMenuByHover>
+                <InformationIcon />
+              </Tooltip>
             </Grid>
           </Grid>
           <Grid item xs={2} container className={classes.columnDivided}>

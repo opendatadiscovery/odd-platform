@@ -15,12 +15,16 @@ import { styles, StylesType } from './OverviewTransformerStatsStyles';
 interface OverviewTransformerStatsProps extends StylesType {
   sources: DataEntityDetails['sourceList'];
   targets: DataEntityDetails['targetList'];
+  unknownSourcesCount: number;
+  unknownTargetsCount: number;
 }
 
 const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
   classes,
   sources,
   targets,
+  unknownSourcesCount,
+  unknownTargetsCount,
 }) => (
   <Grid container>
     <Grid item xs={12}>
@@ -34,7 +38,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
       <Grid item container xs={12} alignItems="baseline">
         <UpstreamIcon className={classes.statIcon} />
         <Typography variant="h2" className={classes.statCount}>
-          {sources?.length || 0}
+          {(sources?.length || 0) + (unknownSourcesCount || 0)}
         </Typography>
         <Typography variant="body1" className={classes.statLabel}>
           sources
@@ -60,13 +64,18 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             </Link>
           </AppButton>
         ))}
+        {unknownSourcesCount ? 
+          <Typography variant="subtitle1" className={classes.unknownCount}>
+            {unknownSourcesCount} more source{unknownSourcesCount === 1 ? '' : 's'} unknown
+          </Typography>
+        : null}
       </Grid>
     </Grid>
     <Grid item container xs={6} className={classes.statsItem}>
       <Grid item container xs={12} alignItems="baseline">
         <DownstreamIcon className={classes.statIcon} />
         <Typography variant="h2" className={classes.statCount}>
-          {targets?.length || 0}
+          {(targets?.length || 0) + (unknownTargetsCount || 0)}
         </Typography>
         <Typography variant="body1" className={classes.statLabel}>
           targets
@@ -92,6 +101,11 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             </Link>
           </AppButton>
         ))}
+        {unknownTargetsCount ?
+          <Typography variant="subtitle1" className={classes.unknownCount}>
+            {unknownTargetsCount} more target{unknownTargetsCount === 1 ? '' : 's'} unknown
+          </Typography>
+        : null}
       </Grid>
     </Grid>
   </Grid>
