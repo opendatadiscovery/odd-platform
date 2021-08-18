@@ -1,4 +1,4 @@
-import { DataEntityTypeNameEnum } from 'generated-sources';
+import { DataEntityTypeNameEnum, DataEntityDetails } from 'generated-sources';
 
 export interface UpdateDataEntityParams {
   dataEntityId: number;
@@ -29,3 +29,8 @@ export const DataEntityTypeLabelMap: Map<
     { short: 'QT', normal: 'Quality Test', plural: 'Quality Tests' },
   ],
 ]);
+
+export interface DataEntityDetailsState extends DataEntityDetails {
+  unknownSourcesCount: number;
+  unknownTargetsCount: number;
+}
