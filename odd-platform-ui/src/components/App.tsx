@@ -34,7 +34,7 @@ const App: React.FC<AppProps> = ({ fetchDataEntitiesTypes }) => {
           />
           <Route
             exact
-            path="/search/:searchId"
+            path="/search/:searchId?"
             component={SearchContainer}
           />
           <Route
