@@ -1035,8 +1035,9 @@ public class DataEntityRepositoryImpl
         return ftsCondition(state.getQuery());
     }
 
-    private Condition ftsCondition(final String query) {
-        return condition(field("data_entity_vector @@ plainto_tsquery(?)", query).toString());
+    private Condition ftsCondition(String query) {
+        final Field<Object> conditionField = field("data_entity_vector @@ to_tsquery(?)", String.format("%s:*", query));
+        return condition(conditionField.toString());
     }
 
     private List<Condition> facetStateConditions(final FacetStateDto state,
