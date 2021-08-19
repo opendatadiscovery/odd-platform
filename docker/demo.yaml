@@ -35,11 +35,11 @@ services:
   mysql-adapter:
     image: ghcr.io/opendatadiscovery/adapters/odd-mysql-adapter:latest
     environment:
-      - MYSQLHOST=${MYSQLHOST}
-      - MYSQLPORT=${MYSQLPORT}
-      - MYSQLDATABASE=${MYSQLDATABASE}
-      - MYSQLUSER=${MYSQLUSER}
-      - MYSQLPASSWORD=${MYSQLPASSWORD}
+      - MYSQL_HOST=${MYSQLHOST}
+      - MYSQL_PORT=${MYSQLPORT}
+      - MYSQL_DATABASE=${MYSQLDATABASE}
+      - MYSQL_USER=${MYSQLUSER}
+      - MYSQL_PASSWORD=${MYSQLPASSWORD}
       - FLASK_ENVIRONMENT=${FLASK_ENVIRONMENT}
       - FLASK_APP=${FLASK_APP}
     ports:
