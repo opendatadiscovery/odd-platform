@@ -150,14 +150,13 @@ const TagsListView: React.FC<TagsListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      <div id="tags-list" className={classes.listContainer}>
+      <Grid container className={classes.listContainer}>
         <InfiniteScroll
           next={fetchNextPage}
           hasMore={!!pageInfo?.hasNext}
           className={classes.tagsItem}
           dataLength={tagsList.length}
           scrollThreshold="200px"
-          scrollableTarget="tags-list"
           loader={
             isFetching && (
               <SkeletonWrapper
@@ -180,7 +179,7 @@ const TagsListView: React.FC<TagsListProps> = ({
             />
           ))}
         </InfiniteScroll>
-      </div>
+      </Grid>
       {!isFetching && !tagsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}

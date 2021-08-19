@@ -1,10 +1,10 @@
 import React from 'react';
 import {
-  Typography,
-  TextField,
-  InputAdornment,
-  IconButton,
   Grid,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
 } from '@material-ui/core';
 import {
   Owner,
@@ -15,15 +15,13 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import AppButton from 'components/shared/AppButton/AppButton';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import EditableOwnerItem from 'components/Management/OwnersList/EditableOwnerItem/EditableOwnerItem';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerFormContainer from './OwnerForm/OwnerFormContainer';
 import { StylesType } from './OwnersListStyles';
@@ -91,8 +89,6 @@ const OwnersListView: React.FC<OwnersListProps> = ({
     }
   };
 
-  const handleOwnerDelete = (ownerId: number) => deleteOwner({ ownerId });
-
   return (
     <div className={classes.container}>
       <div className={classes.caption}>
@@ -135,7 +131,6 @@ const OwnersListView: React.FC<OwnersListProps> = ({
             <AppButton
               color="primaryLight"
               size="medium"
-              onClick={() => {}}
               icon={<AddIcon />}
             >
               Create Owner
@@ -143,88 +138,43 @@ const OwnersListView: React.FC<OwnersListProps> = ({
           }
         />
       </div>
-      <>
-        <Grid container className={classes.tableHeader}>
-          <Grid item xs={12}>
-            <Typography variant="subtitle2" className={classes.rowName}>
-              Name
-            </Typography>
-          </Grid>
+      <Grid container className={classes.tableHeader}>
+        <Grid item xs={12}>
+          <Typography variant="subtitle2" className={classes.rowName}>
+            Name
+          </Typography>
         </Grid>
-        <div id="owners-list" className={classes.listContainer}>
-          <InfiniteScroll
-            next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
-            dataLength={ownersList.length}
-            scrollThreshold="200px"
-            scrollableTarget="owners-list"
-            loader={
-              isFetching && (
-                <SkeletonWrapper
-                  length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <OwnersSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
-                  )}
-                />
-              )
-            }
-          >
-            {ownersList?.map(owner => (
-              <Grid
-                container
-                className={classes.tableRow}
-                key={owner.id}
-                wrap="nowrap"
-                alignItems="center"
-                justify="space-between"
-              >
-                <Grid item>
-                  <Typography variant="body1">{owner.name}</Typography>
-                </Grid>
-                <Grid item className={classes.rowActions}>
-                  <OwnerFormContainer
-                    owner={owner}
-                    btnCreateEl={
-                      <AppButton
-                        color="primaryLight"
-                        size="medium"
-                        onClick={() => {}}
-                        icon={<EditIcon />}
-                      >
-                        Edit
-                      </AppButton>
-                    }
+      </Grid>
+      <Grid container className={classes.listContainer}>
+        <InfiniteScroll
+          next={fetchNextPage}
+          hasMore={!!pageInfo?.hasNext}
+          dataLength={ownersList.length}
+          className={classes.ownersItem}
+          scrollThreshold="200px"
+          loader={
+            isFetching && (
+              <SkeletonWrapper
+                length={5}
+                renderContent={({ randomSkeletonPercentWidth, key }) => (
+                  <OwnersSkeletonItem
+                    width={randomSkeletonPercentWidth()}
+                    key={key}
                   />
-                  <ConfirmationDialog
-                    actionTitle="Are you sure you want to delete this owner?"
-                    actionName="Delete Owner"
-                    actionText={
-                      <>
-                        &quot;{owner.name}&quot; will be deleted
-                        permanently.
-                      </>
-                    }
-                    onConfirm={() => handleOwnerDelete(owner.id)}
-                    actionBtn={
-                      <AppButton
-                        color="primaryLight"
-                        size="medium"
-                        onClick={() => {}}
-                        icon={<DeleteIcon />}
-                      >
-                        Delete
-                      </AppButton>
-                    }
-                  />
-                </Grid>
-              </Grid>
-            ))}
-          </InfiniteScroll>
-        </div>
-      </>
+                )}
+              />
+            )
+          }
+        >
+          {ownersList?.map(owner => (
+            <EditableOwnerItem
+              key={owner.id}
+              owner={owner}
+              deleteOwner={deleteOwner}
+            />
+          ))}
+        </InfiniteScroll>
+      </Grid>
       {!isFetching && !ownersList.length ? (
         <EmptyContentPlaceholder />
       ) : null}

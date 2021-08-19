@@ -10,6 +10,13 @@ export const styles = (theme: Theme) =>
         marginBottom: theme.spacing(1),
       },
     },
+    labelsTableHeader: {
+      borderBottom: '1px solid #EBECF0',
+      '& > *': {
+        padding: theme.spacing(0, 1),
+      },
+    },
+    rowName: { color: '#A8B0BD' },
     caption: {
       marginBottom: theme.spacing(2),
       display: 'flex',
@@ -17,27 +24,12 @@ export const styles = (theme: Theme) =>
       justifyContent: 'space-between',
       width: 'calc(100% - 8px)',
     },
-    labelsTableHeader: {
-      flexWrap: 'nowrap',
-      '& > *': {
-        borderBottom: '1px solid #EBECF0',
-        padding: theme.spacing(0, 1),
+    listContainer: {
+      '& > :first-child': {
+        width: '100%',
       },
     },
-    rowName: { color: '#A8B0BD' },
-    listContainer: {
-      width: '100%',
-    },
-    labelsItem: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    spinnerContainer: {
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      padding: theme.spacing(1),
-    },
+    labelsItem: { display: 'flex', flexWrap: 'wrap' },
     totalCountText: {
       color: '#42526E',
     },

@@ -4,6 +4,7 @@ import {
   InputAdornment,
   TextField,
   Typography,
+  Grid,
 } from '@material-ui/core';
 import {
   DataSource,
@@ -44,13 +45,14 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
   pageInfo,
   isDataSourcesListFetching,
 }) => {
+  const pageSize = 30;
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalDataSources, setTotalDataSources] = React.useState<
     number | undefined
   >(pageInfo?.total);
 
   React.useEffect(() => {
-    if (!searchText) fetchDataSourcesList({ page: 1, size: 30 });
+    if (!searchText) fetchDataSourcesList({ page: 1, size: pageSize });
   }, [fetchDataSourcesList, isCreating, isDeleting, searchText]);
 
   React.useEffect(() => {
@@ -59,7 +61,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      fetchDataSourcesList({ page: 1, size: 30, query: searchText });
+      fetchDataSourcesList({ page: 1, size: pageSize, query: searchText });
     }, 500),
     [searchText]
   );
@@ -81,7 +83,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
     if (!pageInfo?.hasNext) return;
     fetchDataSourcesList({
       page: pageInfo.page + 1,
-      size: 30,
+      size: pageSize,
       query: searchText,
     });
   };
@@ -135,7 +137,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
           }
         />
       </div>
-      <div className={classes.datasourcesListContainer}>
+      <Grid container className={classes.datasourcesListContainer}>
         <InfiniteScroll
           next={fetchNextPage}
           hasMore={!!pageInfo?.hasNext}
@@ -162,7 +164,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             />
           ))}
         </InfiniteScroll>
-      </div>
+      </Grid>
       {!isDataSourcesListFetching && !dataSourcesList.length ? (
         <EmptyContentPlaceholder />
       ) : null}

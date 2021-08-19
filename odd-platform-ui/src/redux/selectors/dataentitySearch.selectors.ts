@@ -16,7 +16,10 @@ import {
   SearchType,
 } from 'redux/interfaces';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { createFetchingSelector, createErrorSelector } from 'redux/selectors/loader-selectors';
+import {
+  createFetchingSelector,
+  createErrorSelector,
+} from 'redux/selectors/loader-selectors';
 
 const searchState = ({ search }: RootState): SearchState => search;
 
@@ -72,6 +75,11 @@ export const getSearchIsCreatingAndFetching = createSelector(
   getSearchFetchStatus,
   (statusCreate, statusFetch) =>
     [statusCreate, statusFetch].includes('fetching')
+);
+
+export const getSearchIsCreating = createSelector(
+  getSearchCreationStatus,
+  statusCreate => statusCreate === 'fetching'
 );
 
 export const getSearchIsUpdated = createSelector(

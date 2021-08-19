@@ -2,7 +2,10 @@ import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid, withStyles } from '@material-ui/core';
 import { mainSkeletonHeight } from 'lib/constants';
-import { styles, StylesType } from './LabelsSkeletonItemStyles';
+import {
+  styles,
+  StylesType,
+} from '../EditableLabelItem/EditableLabelItemStyles';
 
 interface SkeletonProps extends StylesType {
   width: string;

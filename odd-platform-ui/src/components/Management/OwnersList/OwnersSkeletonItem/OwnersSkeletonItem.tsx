@@ -1,11 +1,11 @@
 import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { Grid, withStyles } from '@material-ui/core';
+import { mainSkeletonHeight } from 'lib/constants';
 import {
   styles,
   StylesType,
-} from 'components/Management/OwnersList/OwnersSkeletonItem/OwnersSkeletonItemStyles';
-import { mainSkeletonHeight } from 'lib/constants';
+} from '../EditableOwnerItem/EditableOwnerItemStyles';
 
 interface SkeletonProps extends StylesType {
   width: string;

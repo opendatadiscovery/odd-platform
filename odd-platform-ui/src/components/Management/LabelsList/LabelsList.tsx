@@ -145,14 +145,13 @@ const LabelsListView: React.FC<LabelsListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      <div id="labels-list" className={classes.listContainer}>
+      <Grid container className={classes.listContainer}>
         <InfiniteScroll
           next={fetchNextPage}
           hasMore={!!pageInfo?.hasNext}
           className={classes.labelsItem}
           dataLength={labelsList.length}
           scrollThreshold="200px"
-          scrollableTarget="labels-list"
           loader={
             isFetching ? (
               <SkeletonWrapper
@@ -175,7 +174,7 @@ const LabelsListView: React.FC<LabelsListProps> = ({
             />
           ))}
         </InfiniteScroll>
-      </div>
+      </Grid>
       {!isFetching && !labelsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}

@@ -30,17 +30,13 @@ export const styles = (theme: Theme) =>
     },
     rowName: { color: '#A8B0BD' },
     listContainer: {
-      width: '100%',
+      '& > :first-child': {
+        width: '100%',
+      },
     },
     tagsItem: {
       display: 'flex',
       flexWrap: 'wrap',
-    },
-    spinnerContainer: {
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      padding: theme.spacing(1),
     },
     totalCountText: {
       color: '#42526E',

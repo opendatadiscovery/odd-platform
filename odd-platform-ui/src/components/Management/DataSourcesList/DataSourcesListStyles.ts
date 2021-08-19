@@ -18,8 +18,9 @@ export const styles = (theme: Theme) =>
       width: 'calc(100% - 8px)',
     },
     datasourcesListContainer: {
-      overflow: 'auto',
-      width: '100%',
+      '& > :first-child': {
+        width: '100%',
+      },
     },
     spinnerContainer: {
       display: 'flex',

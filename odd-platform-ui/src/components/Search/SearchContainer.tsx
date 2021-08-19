@@ -9,9 +9,11 @@ import {
   getSearchQuery,
   getSearchMyObjects,
   getSearchFetchError,
-  getSearchFetchStatus
+  getSearchFetchStatus,
+  getSearchIsCreating,
 } from 'redux/selectors/dataentitySearch.selectors';
 import {
+  createDataEntitiesSearch,
   getDataEntitiesSearchDetails,
   updateDataEntitiesSearch,
 } from 'redux/thunks';
@@ -39,12 +41,14 @@ const mapStateToProps = (
   searchFilterParams: getSearchFiltersData(state),
   searchFiltersSynced: getSearchFiltersSynced(state),
   searchFetchStatus: getSearchFetchStatus(state),
-  searchError: getSearchFetchError(state)
+  searchError: getSearchFetchError(state),
+  isSearchCreating: getSearchIsCreating(state),
 });
 
 const mapDispatchToProps = {
   getDataEntitiesSearchDetails,
   updateDataEntitiesSearch,
+  createDataEntitiesSearch,
 };
 
 export default connect(

@@ -13,7 +13,6 @@ export const styles = (theme: Theme) =>
     },
     listContainer: {
       height: `calc(100vh - 110px - ${toolbarHeight}px)`,
-      overflow: 'auto',
       paddingRight: theme.spacing(2),
     },
     facetsLoaderContainer: {

@@ -5,11 +5,15 @@ import { mapValues, values } from 'lodash';
 import {
   SearchApiUpdateSearchFacetsRequest,
   SearchApiGetSearchFacetListRequest,
+  SearchApiSearchRequest,
+  SearchFacetsData,
 } from 'generated-sources';
 import { SearcFacetsByName } from 'redux/interfaces/search';
 import { FetchStatus, ErrorState } from 'redux/interfaces/loader';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
+import { searchPath } from 'lib/paths';
+import { useHistory } from 'react-router-dom';
 import FiltersContainer from './Filters/FiltersContainer';
 import ResultsContainer from './Results/ResultsContainer';
 import { StylesType } from './SearchStyles';
@@ -29,6 +33,10 @@ interface SearchProps extends StylesType {
   updateDataEntitiesSearch: (
     params: SearchApiUpdateSearchFacetsRequest
   ) => void;
+  createDataEntitiesSearch: (
+    params: SearchApiSearchRequest
+  ) => Promise<SearchFacetsData>;
+  isSearchCreating: boolean;
 }
 
 const Search: React.FC<SearchProps> = ({
@@ -43,14 +51,33 @@ const Search: React.FC<SearchProps> = ({
   searchError,
   getDataEntitiesSearchDetails,
   updateDataEntitiesSearch,
+  createDataEntitiesSearch,
+  isSearchCreating,
 }) => {
+  const history = useHistory();
+  React.useEffect(() => {
+    if (!searchIdParam && !isSearchCreating) {
+      const emptySearchQuery = {
+        query: '',
+        pageSize: 30,
+        filters: {},
+      };
+      createDataEntitiesSearch({ searchFormData: emptySearchQuery }).then(
+        search => {
+          const searchLink = searchPath(search.searchId);
+          history.replace(searchLink);
+        }
+      );
+    }
+  }, [searchIdParam, createDataEntitiesSearch, isSearchCreating]);
+
   React.useEffect(() => {
     if (!searchId && searchIdParam) {
       getDataEntitiesSearchDetails({
         searchId: searchIdParam,
       });
     }
-  }, [searchId, searchIdParam]);
+  }, [searchId, searchIdParam, isSearchCreating]);
 
   const updateSearchFilters = React.useCallback(
     useDebouncedCallback(

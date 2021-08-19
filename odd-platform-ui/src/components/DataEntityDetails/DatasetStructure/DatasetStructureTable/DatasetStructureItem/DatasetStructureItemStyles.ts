@@ -64,9 +64,6 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       minHeight: '30px',
       alignItems: 'center',
-      '&:hover $editLabelsBtn': {
-        opacity: 1,
-      },
     },
     labelsList: {},
     externalDescription: {
