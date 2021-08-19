@@ -3,14 +3,15 @@ import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  getSearchId,
-  getSearchFiltersData,
-  getSearchFiltersSynced,
-  getSearchQuery,
-  getSearchMyObjects,
+  getSearchFacetOptions,
+  getSearchFacetsData,
   getSearchFetchError,
   getSearchFetchStatus,
+  getSearchFiltersSynced,
+  getSearchId,
   getSearchIsCreating,
+  getSearchMyObjects,
+  getSearchQuery,
 } from 'redux/selectors/dataentitySearch.selectors';
 import {
   createDataEntitiesSearch,
@@ -38,11 +39,12 @@ const mapStateToProps = (
   searchId: getSearchId(state),
   searchQuery: getSearchQuery(state),
   searchMyObjects: getSearchMyObjects(state),
-  searchFilterParams: getSearchFiltersData(state),
-  searchFiltersSynced: getSearchFiltersSynced(state),
+  searchFacetParams: getSearchFacetsData(state),
+  searchFacetsSynced: getSearchFiltersSynced(state),
   searchFetchStatus: getSearchFetchStatus(state),
   searchError: getSearchFetchError(state),
   isSearchCreating: getSearchIsCreating(state),
+  searchFacetsTags: getSearchFacetOptions(state, 'tags'),
 });
 
 const mapDispatchToProps = {
