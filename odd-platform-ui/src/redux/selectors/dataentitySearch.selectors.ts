@@ -139,12 +139,6 @@ export const getSelectedSearchFacetOptions = createSelector(
   }
 );
 
-export const getSearchFacetOptions = createSelector(
-  searchState,
-  getSearchFacetName,
-  (search, facetName) => search.facetState[facetName]
-);
-
 export const getSearchFacetsData = createSelector(searchState, search =>
   mapValues(search.facetState, facetState =>
     pickBy(facetState, facetOption => !facetOption.syncedState)

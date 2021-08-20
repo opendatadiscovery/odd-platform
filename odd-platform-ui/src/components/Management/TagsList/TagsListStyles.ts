@@ -29,11 +29,6 @@ export const styles = (theme: Theme) =>
       borderBottom: '1px solid #EBECF0',
     },
     rowName: { color: '#A8B0BD' },
-    listContainer: {
-      '& > :first-child': {
-        width: '100%',
-      },
-    },
     tagsItem: {
       display: 'flex',
       flexWrap: 'wrap',

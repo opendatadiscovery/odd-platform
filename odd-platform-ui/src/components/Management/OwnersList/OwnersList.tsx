@@ -145,35 +145,37 @@ const OwnersListView: React.FC<OwnersListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      <Grid container className={classes.listContainer}>
-        <InfiniteScroll
-          next={fetchNextPage}
-          hasMore={!!pageInfo?.hasNext}
-          dataLength={ownersList.length}
-          className={classes.ownersItem}
-          scrollThreshold="200px"
-          loader={
-            isFetching && (
-              <SkeletonWrapper
-                length={5}
-                renderContent={({ randomSkeletonPercentWidth, key }) => (
-                  <OwnersSkeletonItem
-                    width={randomSkeletonPercentWidth()}
-                    key={key}
-                  />
-                )}
+      <Grid container>
+        <Grid item xs={12}>
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            dataLength={ownersList.length}
+            className={classes.ownersItem}
+            scrollThreshold="200px"
+            loader={
+              isFetching && (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <OwnersSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              )
+            }
+          >
+            {ownersList?.map(owner => (
+              <EditableOwnerItem
+                key={owner.id}
+                owner={owner}
+                deleteOwner={deleteOwner}
               />
-            )
-          }
-        >
-          {ownersList?.map(owner => (
-            <EditableOwnerItem
-              key={owner.id}
-              owner={owner}
-              deleteOwner={deleteOwner}
-            />
-          ))}
-        </InfiniteScroll>
+            ))}
+          </InfiniteScroll>
+        </Grid>
       </Grid>
       {!isFetching && !ownersList.length ? (
         <EmptyContentPlaceholder />

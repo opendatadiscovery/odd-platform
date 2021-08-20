@@ -40,7 +40,6 @@ interface SearchProps extends StylesType {
     params: SearchApiSearchRequest
   ) => Promise<SearchFacetsData>;
   isSearchCreating: boolean;
-  searchFacetsTags?: SearchFacetStateById;
 }
 
 const Search: React.FC<SearchProps> = ({
@@ -57,11 +56,10 @@ const Search: React.FC<SearchProps> = ({
   updateDataEntitiesSearch,
   createDataEntitiesSearch,
   isSearchCreating,
-  searchFacetsTags,
 }) => {
   const history = useHistory();
   React.useEffect(() => {
-    if (!searchIdParam && !isSearchCreating && !searchFacetsTags) {
+    if (!searchIdParam && !isSearchCreating && !searchId) {
       const emptySearchQuery = {
         query: '',
         pageSize: 30,

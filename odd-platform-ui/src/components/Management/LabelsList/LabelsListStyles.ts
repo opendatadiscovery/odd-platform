@@ -24,11 +24,6 @@ export const styles = (theme: Theme) =>
       justifyContent: 'space-between',
       width: 'calc(100% - 8px)',
     },
-    listContainer: {
-      '& > :first-child': {
-        width: '100%',
-      },
-    },
     labelsItem: { display: 'flex', flexWrap: 'wrap' },
     totalCountText: {
       color: '#42526E',

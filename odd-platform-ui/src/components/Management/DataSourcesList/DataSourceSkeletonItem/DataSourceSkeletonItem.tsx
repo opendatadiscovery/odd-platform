@@ -1,6 +1,6 @@
 import React from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
-import { Grid, Paper, withStyles } from '@material-ui/core';
+import { Grid, withStyles } from '@material-ui/core';
 import { mainSkeletonHeight } from 'lib/constants';
 import { styles, StylesType } from './DataSourceSkeletonItemStyles';
 
@@ -12,7 +12,7 @@ const DataSourceSkeletonItem: React.FC<SkeletonProps> = ({
   classes,
   width,
 }) => (
-  <Paper elevation={0} className={classes.container}>
+  <Grid className={classes.container}>
     <Grid container alignItems="flex-start" spacing={2}>
       <Grid item container xs={12}>
         <Grid item xs={2}>
@@ -30,6 +30,6 @@ const DataSourceSkeletonItem: React.FC<SkeletonProps> = ({
         <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
     </Grid>
-  </Paper>
+  </Grid>
 );
 export default withStyles(styles)(DataSourceSkeletonItem);

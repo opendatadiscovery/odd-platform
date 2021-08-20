@@ -137,33 +137,35 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
           }
         />
       </div>
-      <Grid container className={classes.datasourcesListContainer}>
-        <InfiniteScroll
-          next={fetchNextPage}
-          hasMore={!!pageInfo?.hasNext}
-          loader={
-            isDataSourcesListFetching ? (
-              <SkeletonWrapper
-                length={5}
-                renderContent={({ randomSkeletonPercentWidth, key }) => (
-                  <DataSourceSkeletonItem
-                    width={randomSkeletonPercentWidth()}
-                    key={key}
-                  />
-                )}
+      <Grid container>
+        <Grid item xs={12}>
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            loader={
+              isDataSourcesListFetching ? (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <DataSourceSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              ) : null
+            }
+            dataLength={dataSourcesList.length}
+          >
+            {dataSourcesList.map(dataSource => (
+              <DataSourceItemContainer
+                classes={{ container: classes.datasourceItem }}
+                key={dataSource.id}
+                dataSource={dataSource}
               />
-            ) : null
-          }
-          dataLength={dataSourcesList.length}
-        >
-          {dataSourcesList.map(dataSource => (
-            <DataSourceItemContainer
-              classes={{ container: classes.datasourceItem }}
-              key={dataSource.id}
-              dataSource={dataSource}
-            />
-          ))}
-        </InfiniteScroll>
+            ))}
+          </InfiniteScroll>
+        </Grid>
       </Grid>
       {!isDataSourcesListFetching && !dataSourcesList.length ? (
         <EmptyContentPlaceholder />

@@ -3,7 +3,6 @@ import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  getSearchFacetOptions,
   getSearchFacetsData,
   getSearchFetchError,
   getSearchFetchStatus,
@@ -44,7 +43,6 @@ const mapStateToProps = (
   searchFetchStatus: getSearchFetchStatus(state),
   searchError: getSearchFetchError(state),
   isSearchCreating: getSearchIsCreating(state),
-  searchFacetsTags: getSearchFacetOptions(state, 'tags'),
 });
 
 const mapDispatchToProps = {
