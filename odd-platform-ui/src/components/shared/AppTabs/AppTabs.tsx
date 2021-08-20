@@ -82,6 +82,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
                 <Typography
                   variant="body1"
                   className={classes.tabItemLabel}
+                  component="span"
                 >
                   {item.name}
                   {item.hint !== undefined &&
@@ -113,6 +114,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
                 <Typography
                   variant="body1"
                   className={classes.tabItemLabel}
+                  component="span"
                 >
                   {item.name}
                   {item.hint !== undefined &&

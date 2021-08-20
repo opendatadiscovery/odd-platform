@@ -150,37 +150,38 @@ const TagsListView: React.FC<TagsListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      <div id="tags-list" className={classes.listContainer}>
-        <InfiniteScroll
-          next={fetchNextPage}
-          hasMore={!!pageInfo?.hasNext}
-          className={classes.tagsItem}
-          dataLength={tagsList.length}
-          scrollThreshold="200px"
-          scrollableTarget="tags-list"
-          loader={
-            isFetching && (
-              <SkeletonWrapper
-                length={5}
-                renderContent={({ randomSkeletonPercentWidth, key }) => (
-                  <TagsSkeletonItem
-                    width={randomSkeletonPercentWidth()}
-                    key={key}
-                  />
-                )}
+      <Grid container>
+        <Grid item xs={12}>
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            className={classes.tagsItem}
+            dataLength={tagsList.length}
+            scrollThreshold="200px"
+            loader={
+              isFetching && (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <TagsSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              )
+            }
+          >
+            {tagsList?.map(tag => (
+              <EditableTagItem
+                key={tag.id}
+                tag={tag}
+                deleteTag={deleteTag}
               />
-            )
-          }
-        >
-          {tagsList?.map(tag => (
-            <EditableTagItem
-              key={tag.id}
-              tag={tag}
-              deleteTag={deleteTag}
-            />
-          ))}
-        </InfiniteScroll>
-      </div>
+            ))}
+          </InfiniteScroll>
+        </Grid>
+      </Grid>
       {!isFetching && !tagsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}

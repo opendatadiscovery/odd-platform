@@ -3,13 +3,20 @@ import { Grid } from '@material-ui/core';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { mapValues, values } from 'lodash';
 import {
-  SearchApiUpdateSearchFacetsRequest,
   SearchApiGetSearchFacetListRequest,
+  SearchApiSearchRequest,
+  SearchApiUpdateSearchFacetsRequest,
+  SearchFacetsData,
 } from 'generated-sources';
-import { SearcFacetsByName } from 'redux/interfaces/search';
-import { FetchStatus, ErrorState } from 'redux/interfaces/loader';
+import {
+  SearchFacetsByName,
+  SearchFacetStateById,
+} from 'redux/interfaces/search';
+import { ErrorState, FetchStatus } from 'redux/interfaces/loader';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
+import { searchPath } from 'lib/paths';
+import { useHistory } from 'react-router-dom';
 import FiltersContainer from './Filters/FiltersContainer';
 import ResultsContainer from './Results/ResultsContainer';
 import { StylesType } from './SearchStyles';
@@ -19,8 +26,8 @@ interface SearchProps extends StylesType {
   searchId: string;
   searchQuery: string;
   searchMyObjects: boolean;
-  searchFilterParams: SearcFacetsByName;
-  searchFiltersSynced: boolean;
+  searchFacetParams: SearchFacetsByName;
+  searchFacetsSynced: boolean;
   searchFetchStatus: FetchStatus;
   searchError?: ErrorState;
   getDataEntitiesSearchDetails: (
@@ -29,6 +36,10 @@ interface SearchProps extends StylesType {
   updateDataEntitiesSearch: (
     params: SearchApiUpdateSearchFacetsRequest
   ) => void;
+  createDataEntitiesSearch: (
+    params: SearchApiSearchRequest
+  ) => Promise<SearchFacetsData>;
+  isSearchCreating: boolean;
 }
 
 const Search: React.FC<SearchProps> = ({
@@ -37,13 +48,32 @@ const Search: React.FC<SearchProps> = ({
   searchId,
   searchQuery,
   searchMyObjects,
-  searchFilterParams,
-  searchFiltersSynced,
+  searchFacetParams,
+  searchFacetsSynced,
   searchFetchStatus,
   searchError,
   getDataEntitiesSearchDetails,
   updateDataEntitiesSearch,
+  createDataEntitiesSearch,
+  isSearchCreating,
 }) => {
+  const history = useHistory();
+  React.useEffect(() => {
+    if (!searchIdParam && !isSearchCreating && !searchId) {
+      const emptySearchQuery = {
+        query: '',
+        pageSize: 30,
+        filters: {},
+      };
+      createDataEntitiesSearch({ searchFormData: emptySearchQuery }).then(
+        search => {
+          const searchLink = searchPath(search.searchId);
+          history.replace(searchLink);
+        }
+      );
+    }
+  }, [searchIdParam, createDataEntitiesSearch, isSearchCreating]);
+
   React.useEffect(() => {
     if (!searchId && searchIdParam) {
       getDataEntitiesSearchDetails({
@@ -52,7 +82,7 @@ const Search: React.FC<SearchProps> = ({
     }
   }, [searchId, searchIdParam]);
 
-  const updateSearchFilters = React.useCallback(
+  const updateSearchFacets = React.useCallback(
     useDebouncedCallback(
       () => {
         updateDataEntitiesSearch({
@@ -60,21 +90,21 @@ const Search: React.FC<SearchProps> = ({
           searchFormData: {
             query: searchQuery,
             myObjects: searchMyObjects,
-            filters: mapValues(searchFilterParams, values),
+            filters: mapValues(searchFacetParams, values),
           },
         });
       },
       1500,
       { leading: true }
     ),
-    [searchId, searchFilterParams]
+    [searchId, searchFacetParams]
   );
 
   React.useEffect(() => {
-    if (!searchFiltersSynced) {
-      updateSearchFilters();
+    if (!searchFacetsSynced) {
+      updateSearchFacets();
     }
-  }, [searchFilterParams]);
+  }, [searchFacetParams]);
 
   return (
     <>
