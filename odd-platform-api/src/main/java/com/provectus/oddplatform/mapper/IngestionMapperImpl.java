@@ -71,7 +71,7 @@ public class IngestionMapperImpl implements IngestionMapper {
             .subType(subType)
             .specificAttributesJson(specificAttributesAsString(types, dataEntity));
 
-        if (!dataEntity.getMetadata().isEmpty()) {
+        if (dataEntity.getMetadata() != null && !dataEntity.getMetadata().isEmpty()) {
             builder = builder.metadata(dataEntity.getMetadata().get(0).getMetadata());
         }
 

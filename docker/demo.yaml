@@ -79,11 +79,11 @@ services:
   redshift-adapter:
     image: ghcr.io/opendatadiscovery/adapters/odd-redshift-adapter:latest
     environment:
-      - PGHOST=${REDSHIFT_HOST}
-      - PGPORT=${REDSHIFT_PORT}
-      - PGDATABASE=${REDSHIFT_DATABASE}
-      - PGUSER=${REDSHIFT_USER}
-      - PGPASSWORD=${REDSHIFT_PASSWORD}
+      - REDSHIFT_HOST=${REDSHIFT_HOST}
+      - REDSHIFT_PORT=${REDSHIFT_PORT}
+      - REDSHIFT_DATABASE=${REDSHIFT_DATABASE}
+      - REDSHIFT_USER=${REDSHIFT_USER}
+      - REDSHIFT_PASSWORD=${REDSHIFT_PASSWORD}
       - FLASK_ENVIRONMENT=${FLASK_ENVIRONMENT}
       - FLASK_APP=${FLASK_APP}
     ports:
