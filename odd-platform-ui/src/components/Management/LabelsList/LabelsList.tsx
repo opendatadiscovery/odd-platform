@@ -145,37 +145,38 @@ const LabelsListView: React.FC<LabelsListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      <div id="labels-list" className={classes.listContainer}>
-        <InfiniteScroll
-          next={fetchNextPage}
-          hasMore={!!pageInfo?.hasNext}
-          className={classes.labelsItem}
-          dataLength={labelsList.length}
-          scrollThreshold="200px"
-          scrollableTarget="labels-list"
-          loader={
-            isFetching ? (
-              <SkeletonWrapper
-                length={5}
-                renderContent={({ randomSkeletonPercentWidth, key }) => (
-                  <LabelsSkeletonItem
-                    key={key}
-                    width={randomSkeletonPercentWidth()}
-                  />
-                )}
+      <Grid container>
+        <Grid item xs={12}>
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            className={classes.labelsItem}
+            dataLength={labelsList.length}
+            scrollThreshold="200px"
+            loader={
+              isFetching ? (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <LabelsSkeletonItem
+                      key={key}
+                      width={randomSkeletonPercentWidth()}
+                    />
+                  )}
+                />
+              ) : null
+            }
+          >
+            {labelsList?.map(label => (
+              <EditableLabelItem
+                key={label.id}
+                label={label}
+                deleteLabel={deleteLabel}
               />
-            ) : null
-          }
-        >
-          {labelsList?.map(label => (
-            <EditableLabelItem
-              key={label.id}
-              label={label}
-              deleteLabel={deleteLabel}
-            />
-          ))}
-        </InfiniteScroll>
-      </div>
+            ))}
+          </InfiniteScroll>
+        </Grid>
+      </Grid>
       {!isFetching && !labelsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}

@@ -29,7 +29,7 @@ import { LoaderState } from './loader';
 import { DataSetStructureTypesCount } from './datasetStructure';
 import {
   SearchTotalsByName,
-  SearcFacetsByName,
+  SearchFacetsByName,
   FacetOptionsByName,
 } from './search';
 import { DataEntityLineageById } from './dataentityLineage';
@@ -147,7 +147,7 @@ export interface SearchState {
     pageInfo: CurrentPageInfo;
   };
   suggestions: DataEntityRef[];
-  facetState: SearcFacetsByName;
+  facetState: SearchFacetsByName;
 }
 
 export interface AlertsState {

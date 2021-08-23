@@ -20,9 +20,12 @@ const SkeletonWrapper: React.FC<SkeletonProps> = ({
 
   return (
     <>
-      {[...Array(length)].map((_, key) =>
-        renderContent({ randomSkeletonPercentWidth, key })
-      )}
+      {[...Array(length)].map((_, key) => (
+        // eslint-disable-next-line react/no-array-index-key
+        <div key={key} className={classes.container}>
+          {renderContent({ randomSkeletonPercentWidth, key })}
+        </div>
+      ))}
     </>
   );
 };
