@@ -986,15 +986,19 @@ components:
           type: string
           enum:
             - TYPE_STRING
-            - TYPE_CHAR
             - TYPE_NUMBER
             - TYPE_INTEGER
             - TYPE_BOOLEAN
+            - TYPE_CHAR
             - TYPE_DATETIME
+            - TYPE_TIME
             - TYPE_STRUCT
             - TYPE_BINARY
             - TYPE_LIST
             - TYPE_MAP
+            - TYPE_UNION
+            - TYPE_DURATION
+            - TYPE_UNKNOWN
         logical_type:
           type: string
         is_nullable:
