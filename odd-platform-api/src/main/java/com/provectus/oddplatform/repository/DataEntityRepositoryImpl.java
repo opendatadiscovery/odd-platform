@@ -512,15 +512,19 @@ public class DataEntityRepositoryImpl
                                                      final int page,
                                                      final int size,
                                                      final OwnerPojo owner) {
-        final List<Condition> conditions = new ArrayList<>(facetStateConditions(state, true, state.isMyObjects()));
+        final Pair<List<Condition>, List<Condition>> conditionsPair = resultFacetStateConditions(
+            state, state.isMyObjects());
+
+        final List<Condition> joinConditions = new ArrayList<>(conditionsPair.getRight());
 
         if (owner != null) {
-            conditions.add(OWNER.ID.eq(owner.getId()));
+            joinConditions.add(OWNER.ID.eq(owner.getId()));
         }
 
         DataEntitySelectConfig.DataEntitySelectConfigBuilder builder = DataEntitySelectConfig
             .builder()
-            .joinSelectConditions(conditions);
+            .cteSelectConditions(conditionsPair.getLeft())
+            .joinSelectConditions(joinConditions);
 
         if (StringUtils.hasLength(state.getQuery())) {
             builder = builder.fts(
@@ -1063,6 +1067,31 @@ public class DataEntityRepositoryImpl
             .map(e -> compileFacetCondition(e.getKey(), e.getValue(), extended))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
+    }
+
+    // TODO: ad-hoc
+    private Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state,
+                                                                              final boolean skipTypeCondition) {
+        final List<Condition> joinConditions = state.getState().entrySet().stream()
+            .filter(e -> {
+                if (skipTypeCondition) {
+                    return !e.getKey().equals(FacetType.TYPES);
+                }
+
+                return true;
+            })
+            .filter(e -> !e.getKey().equals(FacetType.DATA_SOURCES))
+            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        final List<Condition> cteConditions = state.getState().entrySet().stream()
+            .filter(e -> e.getKey().equals(FacetType.DATA_SOURCES))
+            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        return Pair.of(cteConditions, joinConditions);
     }
 
     private Condition compileFacetCondition(final FacetType facetType,

@@ -48,6 +48,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -84,6 +85,11 @@ public class IngestionServiceImpl implements IngestionService {
 
     private final IngestionMapper ingestionMapper;
     private final DatasetFieldMapper datasetFieldMapper;
+
+    @PostConstruct
+    public void init() {
+        log.info("INGESTION SERVICE STARTED WORKING");
+    }
 
     public Mono<Integer> ingest(final DataEntityList dataEntityList) {
         return Mono.just(dataEntityList.getDataSourceOddrn())
