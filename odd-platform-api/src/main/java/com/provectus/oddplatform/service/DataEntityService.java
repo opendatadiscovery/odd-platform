@@ -1,7 +1,7 @@
 package com.provectus.oddplatform.service;
 
 import com.provectus.oddplatform.api.contract.model.*;
-import com.provectus.oddplatform.dto.StreamKind;
+import com.provectus.oddplatform.dto.LineageStreamKind;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -19,7 +19,7 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
 
     Flux<DataEntityRef> listAssociated(final int page, final int size);
 
-    Flux<DataEntityRef> listAssociated(final int page, final int size, final StreamKind streamKind);
+    Flux<DataEntityRef> listAssociated(final int page, final int size, final LineageStreamKind streamKind);
 
     Flux<DataEntityRef> listPopular(final int page, final int size);
 
@@ -37,5 +37,7 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
                                                       final long metadataFieldId,
                                                       final MetadataFieldValueUpdateFormData formData);
 
-    Mono<DataEntityLineage> getLineage(final long dataEntityId, final int lineageDepth);
+    Mono<DataEntityLineage> getLineage(final long dataEntityId,
+                                       final int lineageDepth,
+                                       final LineageStreamKind streamKind);
 }

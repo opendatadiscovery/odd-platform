@@ -3,8 +3,8 @@ package com.provectus.oddplatform.service;
 import com.provectus.oddplatform.api.contract.model.*;
 import com.provectus.oddplatform.auth.AuthIdentityProvider;
 import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
+import com.provectus.oddplatform.dto.LineageStreamKind;
 import com.provectus.oddplatform.dto.MetadataFieldKey;
-import com.provectus.oddplatform.dto.StreamKind;
 import com.provectus.oddplatform.exception.NotFoundException;
 import com.provectus.oddplatform.mapper.DataEntityMapper;
 import com.provectus.oddplatform.mapper.MetadataFieldMapper;
@@ -105,7 +105,7 @@ public class DataEntityServiceImpl
     @Override
     public Flux<DataEntityRef> listAssociated(final int page,
                                               final int size,
-                                              final StreamKind streamKind) {
+                                              final LineageStreamKind streamKind) {
         return authIdentityProvider.fetchAssociatedOwner()
             .flatMapIterable(o -> entityRepository.listByOwner(page, size, o.getId(), streamKind))
             .map(entityMapper::mapRef);
@@ -273,9 +273,11 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<DataEntityLineage> getLineage(final long dataEntityId, final int lineageDepth) {
+    public Mono<DataEntityLineage> getLineage(final long dataEntityId,
+                                              final int lineageDepth,
+                                              final LineageStreamKind lineageStreamKind) {
         return Mono
-            .fromCallable(() -> entityRepository.getLineage(dataEntityId, lineageDepth))
+            .fromCallable(() -> entityRepository.getLineage(dataEntityId, lineageDepth, lineageStreamKind))
             .flatMap(optional -> optional.isEmpty()
                 ? Mono.error(new NotFoundException())
                 : Mono.just(optional.get()))

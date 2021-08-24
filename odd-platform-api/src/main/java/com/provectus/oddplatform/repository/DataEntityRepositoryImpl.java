@@ -9,7 +9,6 @@ import com.provectus.oddplatform.model.tables.pojos.*;
 import com.provectus.oddplatform.model.tables.records.DataEntityRecord;
 import com.provectus.oddplatform.model.tables.records.LineageRecord;
 import com.provectus.oddplatform.model.tables.records.SearchEntrypointRecord;
-import com.provectus.oddplatform.repository.util.JooqFTSVectorizer;
 import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
@@ -40,7 +39,10 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.provectus.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
+import static com.provectus.oddplatform.dto.LineageStreamKind.UPSTREAM;
 import static com.provectus.oddplatform.model.Tables.*;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.*;
 import static java.util.function.Function.identity;
@@ -459,7 +461,7 @@ public class DataEntityRepositoryImpl
     public List<? extends DataEntityDto> listByOwner(final int page,
                                                      final int size,
                                                      final long ownerId,
-                                                     final StreamKind streamKind) {
+                                                     final LineageStreamKind streamKind) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .joinSelectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
             .build();
@@ -675,18 +677,25 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public Optional<DataEntityLineageDto> getLineage(final long dataEntityId, final int lineageDepth) {
-        return get(dataEntityId).map(dto -> getLineage(lineageDepth, dto));
+    public Optional<DataEntityLineageDto> getLineage(final long dataEntityId,
+                                                     final int lineageDepth,
+                                                     final LineageStreamKind streamKind) {
+        return get(dataEntityId).map(dto -> getLineage(lineageDepth, dto, streamKind));
     }
 
-    private DataEntityLineageDto getLineage(final int lineageDepth, final DataEntityDimensionsDto dto) {
-        final LineageDepth ld = LineageDepth.of(lineageDepth);
+    private DataEntityLineageDto getLineage(final int lineageDepth,
+                                            final DataEntityDimensionsDto dto,
+                                            final LineageStreamKind streamKind) {
 
         final List<LineagePojo> downstreamRelations =
-            collectLineage(lineageCte(dto.getDataEntity().getOddrn(), ld, StreamKind.DOWNSTREAM));
+            streamKind.equals(DOWNSTREAM) || streamKind.equals(LineageStreamKind.FULL_GRAPH)
+                ? collectLineage(lineageCte(dto.getDataEntity().getOddrn(), LineageDepth.of(lineageDepth), DOWNSTREAM))
+                : emptyList();
 
         final List<LineagePojo> upstreamRelations =
-            collectLineage(lineageCte(dto.getDataEntity().getOddrn(), ld, StreamKind.UPSTREAM));
+            streamKind.equals(UPSTREAM) || streamKind.equals(LineageStreamKind.FULL_GRAPH)
+                ? collectLineage(lineageCte(dto.getDataEntity().getOddrn(), LineageDepth.of(lineageDepth), UPSTREAM))
+                : emptyList();
 
         final Set<String> oddrnsToFetch = Stream.concat(
             downstreamRelations.stream().flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn())),
@@ -727,7 +736,7 @@ public class DataEntityRepositoryImpl
 
     private CommonTableExpression<Record> lineageCte(final Collection<String> oddrns,
                                                      final LineageDepth lineageDepth,
-                                                     final StreamKind streamKind) {
+                                                     final LineageStreamKind streamKind) {
         final Name cteName = name("t");
         final Field<Integer> startDepth = val(1).as(field("depth", Integer.class));
         final Field<Integer> tDepth = field("t.depth", Integer.class);
@@ -735,7 +744,7 @@ public class DataEntityRepositoryImpl
         final Field<String> tParentOddrn = field("t.parent_oddrn", String.class);
 
         final Pair<TableField<LineageRecord, String>, Field<String>> conditions =
-            streamKind.equals(StreamKind.DOWNSTREAM)
+            streamKind.equals(LineageStreamKind.DOWNSTREAM)
                 ? Pair.of(LINEAGE.PARENT_ODDRN, tChildOddrn)
                 : Pair.of(LINEAGE.CHILD_ODDRN, tParentOddrn);
 
@@ -756,7 +765,7 @@ public class DataEntityRepositoryImpl
 
     private CommonTableExpression<Record> lineageCte(final String oddrn,
                                                      final LineageDepth lineageDepth,
-                                                     final StreamKind streamKind) {
+                                                     final LineageStreamKind streamKind) {
         return lineageCte(List.of(oddrn), lineageDepth, streamKind);
     }
 
