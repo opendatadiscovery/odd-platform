@@ -18,7 +18,7 @@ import {
 import { TreeNodeDatum, Point } from 'redux/interfaces/graph';
 import {
   DataEntityLineageNode,
-  DataEntityApiGetDataEntityLineageRequest,
+  DataEntityApiGetDataEntityDownstreamLineageRequest,
   DataEntityLineage,
   DataEntityLineageEdge,
 } from 'generated-sources';
@@ -34,7 +34,7 @@ export interface AppGraphProps extends StylesType {
   dataEntityId: number;
   data: DataEntityLineageById;
   fetchDataEntityLineage: (
-    params: DataEntityApiGetDataEntityLineageRequest
+    params: DataEntityApiGetDataEntityDownstreamLineageRequest
   ) => Promise<DataEntityLineage>;
   isDataEntityLineageFetching: boolean;
 }

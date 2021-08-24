@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   DataEntityLineage,
-  DataEntityApiGetDataEntityLineageRequest,
+  DataEntityApiGetDataEntityDownstreamLineageRequest,
 } from 'generated-sources';
 import AppGraphContainer from 'components/shared/AppGraph/AppGraphContainer';
 import { DataEntityLineageById } from 'redux/interfaces/dataentityLineage';
@@ -12,7 +12,7 @@ interface LineageProps extends StylesType {
   dataEntityId: number;
   lineage: DataEntityLineageById;
   fetchDataEntityLineage: (
-    params: DataEntityApiGetDataEntityLineageRequest
+    params: DataEntityApiGetDataEntityDownstreamLineageRequest
   ) => Promise<DataEntityLineage>;
 }
 
