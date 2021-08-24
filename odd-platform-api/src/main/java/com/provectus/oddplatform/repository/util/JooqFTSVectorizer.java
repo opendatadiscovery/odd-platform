@@ -104,7 +104,7 @@ public class JooqFTSVectorizer {
 
     @Data
     @RequiredArgsConstructor
-    private static final class FTSConfig<P> {
+    private static class FTSConfig<P> {
         public final static FTSConfig<DataEntityPojo> DATA_ENTITY_CONFIG = FTSConfig.of(
             Pair.of(DataEntityPojo::getInternalName, 'A'),
             Pair.of(DataEntityPojo::getExternalName, 'A'),

@@ -9,6 +9,7 @@ import com.provectus.oddplatform.model.tables.pojos.*;
 import com.provectus.oddplatform.model.tables.records.DataEntityRecord;
 import com.provectus.oddplatform.model.tables.records.LineageRecord;
 import com.provectus.oddplatform.model.tables.records.SearchEntrypointRecord;
+import com.provectus.oddplatform.repository.util.JooqFTSVectorizer;
 import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
@@ -25,6 +26,7 @@ import org.jooq.*;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import com.provectus.oddplatform.repository.util.JooqFTSVectorizer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
