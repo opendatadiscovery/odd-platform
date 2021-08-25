@@ -55,6 +55,8 @@ public class DataEntityRepositoryImpl
 
     private static final int SUGGESTION_LIMIT = 5;
 
+    private static final String DATA_ENTITY_CTE_NAME = "dataEntityCTE";
+
     private static final String AGG_TYPES_FIELD = "type";
     private static final String AGG_TAGS_FIELD = "tag";
     private static final String AGG_DSV_FIELD = "dataset_version";
@@ -636,7 +638,7 @@ public class DataEntityRepositoryImpl
 
     @Override
     public List<DataEntityDto> getQuerySuggestions(final String query) {
-        final Name deCteName = name("dataEntityCTE");
+        final Name deCteName = name(DATA_ENTITY_CTE_NAME);
 
         final Select<Record> dataEntitySelect = dslContext
             .select(DATA_ENTITY.fields())
@@ -792,7 +794,7 @@ public class DataEntityRepositoryImpl
 
     @SuppressWarnings("ConstantConditions")
     private SelectLimitStep<Record> dataEntitySelect(final DataEntitySelectConfig config) {
-        final Name deCteName = name("dataEntityCTE");
+        final Name deCteName = name(DATA_ENTITY_CTE_NAME);
         final DataEntitySelectConfig.Fts ftsConfig = config.getFts();
 
         Select<Record> dataEntitySelect;
@@ -937,8 +939,10 @@ public class DataEntityRepositoryImpl
     }
 
     private DataEntityDimensionsDto mapDimensionRecord(final Record r) {
+        final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
+
         return DataEntityDimensionsDto.dimensionsBuilder()
-            .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
+            .dataEntity(jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class))
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))

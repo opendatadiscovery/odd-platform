@@ -86,11 +86,6 @@ public class IngestionServiceImpl implements IngestionService {
     private final IngestionMapper ingestionMapper;
     private final DatasetFieldMapper datasetFieldMapper;
 
-    @PostConstruct
-    public void init() {
-        log.info("INGESTION SERVICE STARTED WORKING");
-    }
-
     public Mono<Integer> ingest(final DataEntityList dataEntityList) {
         return Mono.just(dataEntityList.getDataSourceOddrn())
             .map(dataSourceRepository::getByOddrn)
