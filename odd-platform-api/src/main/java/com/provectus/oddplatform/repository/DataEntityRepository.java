@@ -79,4 +79,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
                                     final Collection<Long> updatedDataEntitiesIds);
 
     void recalculateSearchEntrypoints(final long dataEntityId);
+
+    List<DataEntityDto> getQuerySuggestions(final String query);
 }

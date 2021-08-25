@@ -29,19 +29,9 @@ export const styles = (theme: Theme) =>
       borderBottom: '1px solid #EBECF0',
     },
     rowName: { color: '#A8B0BD' },
-    listContainer: {
-      width: '100%',
-      minHeight: '300px',
-    },
     tagsItem: {
       display: 'flex',
       flexWrap: 'wrap',
-    },
-    spinnerContainer: {
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      padding: theme.spacing(1),
     },
     totalCountText: {
       color: '#42526E',

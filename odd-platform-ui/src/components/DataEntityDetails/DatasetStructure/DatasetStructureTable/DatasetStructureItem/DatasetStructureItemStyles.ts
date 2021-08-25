@@ -41,6 +41,7 @@ export const styles = (theme: Theme) =>
     },
     treeDividerContainer: {
       width: '14px',
+      minWidth: '14px',
       marginRight: '5px',
     },
     treeDivider: {
@@ -63,9 +64,6 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       minHeight: '30px',
       alignItems: 'center',
-      '&:hover $editLabelsBtn': {
-        opacity: 1,
-      },
     },
     labelsList: {},
     externalDescription: {
@@ -90,6 +88,7 @@ export const styles = (theme: Theme) =>
       marginLeft: theme.spacing(0.5),
     },
     customStatLabel: { fontSize: theme.typography.subtitle2.fontSize },
+    logicalTypeIcon: { display: 'flex', alignItems: 'center' },
     ...columnBasicStyles(theme),
   });
 

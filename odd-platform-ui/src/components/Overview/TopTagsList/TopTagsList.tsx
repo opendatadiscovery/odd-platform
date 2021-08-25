@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   SearchApiSearchRequest,
   SearchFacetsData,
   SearchFormData,
   Tag,
-  TagApiGetPopularTagListRequest,
 } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import { searchPath } from 'lib/paths';
@@ -13,7 +12,6 @@ import { StylesType } from './TopTagsListStyles';
 
 interface TopTagsListProps extends StylesType {
   topTagsList: Tag[];
-  fetchTagsList: (params: TagApiGetPopularTagListRequest) => void;
   createDataEntitiesSearch: (
     params: SearchApiSearchRequest
   ) => Promise<SearchFacetsData>;
@@ -22,15 +20,10 @@ interface TopTagsListProps extends StylesType {
 const TopTagsList: React.FC<TopTagsListProps> = ({
   classes,
   topTagsList,
-  fetchTagsList,
   createDataEntitiesSearch,
 }) => {
   const history = useHistory();
   const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
-
-  useEffect(() => {
-    fetchTagsList({ page: 1, size: 20 });
-  }, []);
 
   const handleTagClick = React.useCallback(
     (id: number, name: string) => () => {

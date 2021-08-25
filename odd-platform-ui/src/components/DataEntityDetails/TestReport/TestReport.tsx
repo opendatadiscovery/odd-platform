@@ -10,6 +10,9 @@ import { Grid, Paper, Typography } from '@material-ui/core';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import TestReportItemContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemContainer';
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
+import TestReportItemSkeleton from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
+import DatasetTestReportSkeleton from 'components/DataEntityDetails/TestReport/DatasetTestReportSkeleton/DatasetTestReportSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { StylesType } from './TestReportStyles';
 
 interface DatasetQualityTestList {
@@ -39,6 +42,8 @@ interface TestReportProps extends StylesType {
   ) => void;
   testReportBySuitName: TestReportBySuitName;
   reportDetailsViewType: string;
+  isDatasetTestListFetching: boolean;
+  isDatasetTestReportFetching: boolean;
 }
 
 const TestReport: React.FC<TestReportProps> = ({
@@ -51,6 +56,8 @@ const TestReport: React.FC<TestReportProps> = ({
   fetchDataSetQualityTestReport,
   testReportBySuitName,
   reportDetailsViewType,
+  isDatasetTestListFetching,
+  isDatasetTestReportFetching,
 }) => {
   React.useEffect(() => {
     fetchDataSetQualityTestReport({ dataEntityId });
@@ -61,85 +68,112 @@ const TestReport: React.FC<TestReportProps> = ({
     <Grid container className={classes.container}>
       {datasetQualityTestList ? (
         <>
-          <Grid container className={classes.testReportContainer}>
-            <Grid container item className={classes.testReport}>
-              <TestRunStatusItem
-                classes={{
-                  filledContainer: classes.testStatusItem
-                }}
-                count={datasetTestReport?.successTotal}
-                typeName={DataQualityTestRunStatusEnum.SUCCESS}
-                size="large"
-              />
-              <TestRunStatusItem
-                classes={{
-                  filledContainer: classes.testStatusItem
-                }}
-                count={datasetTestReport?.failedTotal}
-                typeName={DataQualityTestRunStatusEnum.FAILED}
-                size="large"
-              />
-              <TestRunStatusItem
-                classes={{
-                  filledContainer: classes.testStatusItem
-                }}
-                count={datasetTestReport?.brokenTotal}
-                typeName={DataQualityTestRunStatusEnum.BROKEN}
-                size="large"
-              />
-              <TestRunStatusItem
-                classes={{
-                  filledContainer: classes.testStatusItem
-                }}
-                count={datasetTestReport?.abortedTotal}
-                typeName={DataQualityTestRunStatusEnum.ABORTED}
-                size="large"
-              />
-              <TestRunStatusItem
-                classes={{
-                  filledContainer: classes.testStatusItem
-                }}
-                count={datasetTestReport?.skippedTotal}
-                typeName={DataQualityTestRunStatusEnum.SKIPPED}
-                size="large"
-              />
-              <TestRunStatusItem
-                classes={{
-                  filledContainer: classes.testStatusItem
-                }}
-                count={datasetTestReport?.unknownTotal}
-                typeName={DataQualityTestRunStatusEnum.UNKNOWN}
-                size="large"
-              />
+          {isDatasetTestReportFetching ? (
+            <SkeletonWrapper
+              renderContent={({ randomSkeletonPercentWidth }) => (
+                <DatasetTestReportSkeleton
+                  width={randomSkeletonPercentWidth()}
+                />
+              )}
+            />
+          ) : (
+            <Grid container className={classes.testReportContainer}>
+              <Grid container item className={classes.testReport}>
+                <TestRunStatusItem
+                  classes={{
+                    filledContainer: classes.testStatusItem,
+                  }}
+                  count={datasetTestReport?.successTotal}
+                  typeName={DataQualityTestRunStatusEnum.SUCCESS}
+                  size="large"
+                />
+                <TestRunStatusItem
+                  classes={{
+                    filledContainer: classes.testStatusItem,
+                  }}
+                  count={datasetTestReport?.failedTotal}
+                  typeName={DataQualityTestRunStatusEnum.FAILED}
+                  size="large"
+                />
+                <TestRunStatusItem
+                  classes={{
+                    filledContainer: classes.testStatusItem,
+                  }}
+                  count={datasetTestReport?.brokenTotal}
+                  typeName={DataQualityTestRunStatusEnum.BROKEN}
+                  size="large"
+                />
+                <TestRunStatusItem
+                  classes={{
+                    filledContainer: classes.testStatusItem,
+                  }}
+                  count={datasetTestReport?.abortedTotal}
+                  typeName={DataQualityTestRunStatusEnum.ABORTED}
+                  size="large"
+                />
+                <TestRunStatusItem
+                  classes={{
+                    filledContainer: classes.testStatusItem,
+                  }}
+                  count={datasetTestReport?.skippedTotal}
+                  typeName={DataQualityTestRunStatusEnum.SKIPPED}
+                  size="large"
+                />
+                <TestRunStatusItem
+                  classes={{
+                    filledContainer: classes.testStatusItem,
+                  }}
+                  count={datasetTestReport?.unknownTotal}
+                  typeName={DataQualityTestRunStatusEnum.UNKNOWN}
+                  size="large"
+                />
+              </Grid>
+              <Grid container item className={classes.testCount}>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                >{` ${datasetTestReport?.total} tests`}</Typography>
+              </Grid>
             </Grid>
-            <Grid container item className={classes.testCount}>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-              >{` ${datasetTestReport?.total} tests`}</Typography>
-            </Grid>
-          </Grid>
+          )}
           <>
             {datasetQualityTestList ? (
               <Grid container spacing={2}>
                 <Grid item xs={9}>
-                  <Grid
-                    container
-                    className={classes.testReportItemContainer}
-                  >
-                    {Object.entries(datasetQualityTestList).map(
-                      ([suitName, dataQATestList]) => (
-                        <TestReportItemContainer
-                          dataqatestId={dataqatestId}
-                          dataSetId={dataEntityId}
-                          dataQATestReport={testReportBySuitName[suitName]}
-                          key={suitName}
-                          suitName={suitName}
-                          dataQATestList={dataQATestList}
+                  {isDatasetTestListFetching ? (
+                    <SkeletonWrapper
+                      length={5}
+                      renderContent={({
+                        randomSkeletonPercentWidth,
+                        key,
+                      }) => (
+                        <TestReportItemSkeleton
+                          width={randomSkeletonPercentWidth()}
+                          key={key}
                         />
-                      )
-                    )}
-                  </Grid>
+                      )}
+                    />
+                  ) : (
+                    <Grid
+                      container
+                      className={classes.testReportItemContainer}
+                    >
+                      {Object.entries(datasetQualityTestList).map(
+                        ([suitName, dataQATestList]) => (
+                          <TestReportItemContainer
+                            dataqatestId={dataqatestId}
+                            dataSetId={dataEntityId}
+                            dataQATestReport={
+                              testReportBySuitName[suitName]
+                            }
+                            key={suitName}
+                            suitName={suitName}
+                            dataQATestList={dataQATestList}
+                          />
+                        )
+                      )}
+                    </Grid>
+                  )}
                 </Grid>
                 <Grid item xs={3}>
                   {dataqatestId ? (

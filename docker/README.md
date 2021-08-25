@@ -1,16 +1,15 @@
-
 # OpenDataDiscovery Platform local demo environment
 
 ## Overview
 
 This docker-compose contains:
 * ODD Platform
-* ODD Platform Puller and dependencies (Celery with Redis)
+* ODD Platform Puller
 * Several adapters:
-	* MySQL
-	* PostgreSQL
-	* Glue
-	* Redshift
+* MySQL
+* PostgreSQL
+* Glue
+* Redshift
 
 ## Configuration
 
@@ -18,11 +17,11 @@ All configuration variables are defined in `.env` file. Please adjust them to yo
 
 ## Execution
 
-To run the **whole** environment execute: 
+To run the **whole** environment execute:
 
-`docker-compose -f demo.yaml up -d`. 
+`docker-compose -f demo.yaml up -d`.
 
-If you'd like to run specific adapters, list them after the command using docker-compose services as identificators: 
+If you'd like to run specific adapters, list them after the command using docker-compose services as identificators:
 
 `docker-compose -f demo.yaml up -d mysql-adapter glue-adapter redshift-adapter`
 
@@ -39,45 +38,39 @@ All adapters expose 808x port:
 To start ingesting metadata from adapters to the platform:
 * Go to the `http://localhost:8080/management/datasources` and click on `Add datasource` button
 * Enter DataSource information:
-	* Name
-	* ODDRN: OpenDataDiscovery Resource Name. To identify DataSource's ODDRN make an HTTP GET request to the `http://localhost:{adapter_port}/entities` and find `data_source_oddrn` entry at the top-level JSON. If you have [JQ](https://stedolan.github.io/jq/) installed you may find the following command useful: `curl -s http://localhost:8080/entities | jq .data_source_oddrn`
-	* URL: Use `http://{adapter_service_name}:8080` as the URL e.g. `http://mysql-adapter:8080`
-	* Select `Receive data from current datasource` and choose an interval
-	* Description (optional)
+* Name
+* ODDRN: OpenDataDiscovery Resource Name. To identify DataSource's ODDRN make an HTTP GET request to the `http://localhost:{adapter_port}/entities` and find `data_source_oddrn` entry at the top-level JSON. If you have [JQ](https://stedolan.github.io/jq/) installed you may find the following command useful: `curl -s http://localhost:8080/entities | jq .data_source_oddrn`
+* URL: Use `http://{adapter_service_name}:8080` as the URL e.g. `http://mysql-adapter:8080`
+* Select `Receive data from current datasource` and choose an interval
+* Description (optional)
 * Hit `Save` and you're good to go! (Please note that it will take some time -- normally under a minute -- to ingest the metadata from your data source to the platform).
 
 ## Authentication
 
-ODD Platform uses OAuth2 + OIDC as the auth mechanism. This feature is **disabled** by default. To enable it you'd have to set up additional configurution for ODD Platform:
-* Set `AUTH_ENABLED=true` environment variable in ODD Platform docker-compose  service
-* Configure OAuth2 + OIDC using [this reference page](https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html/oauth2.html#oauth2) via environment variables in ODD Platform docker-compose service.
+Enabling authentication will bring additional functionality such as:
+1. `User mapping` (OAuth2 user -> ODD Platform Owner)
+2. `My Objects` in start and search pages
+3. `Upstream/Downstream dependencies` in start page
+4. ...
 
-Enabling authentication will also bring additional functionality in the ODD Platform such as:
-* `User mapping` (OAuth2 user -> ODD Platform Owner)
-* `My Objects` in start and search pages
-* `Upstream/Downstream dependencies` in start page
-* ...
+ODD Platform has several supported authentication mechanisms:
+* Form Login
+* OAuth2 + OIDC
 
-### Example: Cognito
+By default, the authentication is **disabled**
 
-`application.yaml` file entry:
+### Form Login
 
-    security:  
-      oauth2:  
-        client:  
-          registration:  
-            cognito:  
-              client-id: {cognito_app_client_id}
-              client-secret: {cognito_app_client_secret}
-              scope: openid
-              redirect-uri: http://localhost:8080/login/oauth2/code/cognito
-              client-name: auth-client
-          provider:  
-            cognito: 
-              issuerUri: https://cognito-idp.${cognito_region}.amazonaws.com/${user_pool_id}
-              user-name-attribute: username
+To enable Form Login auth mechanism:
 
-Could also be configured as environment variables e.g:
-* SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_ID=${cognito_app_client_id}
-* SECURITY_OAUTH2_CLIENT_REGISTRATION_COGNITO_CLIENT_SECRET=${cognito_app_client_secret}
-* ...
+1. Set  `AUTH_TYPE=LOGIN_FORM` environment variable in **ODD Platform** docker-compose service
+2. Configure Login Form auth section in ODD Platform Puller service using this [reference](https://github.com/opendatadiscovery/odd-platform-puller#readme)
+
+### OAuth2
+
+ODD Platform can be configured to be both OAuth2 client for API calls and OAuth2 Resource server for ingesting entities from adapters. To enable OAuth2 auth mechanism:
+
+1. Set  `AUTH_TYPE=OAUTH2` environment variable in **ODD Platform** docker-compose service
+3. Configure OAuth2 + OIDC using [this reference page](https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html/oauth2.html#oauth2) via environment variables in ODD Platform docker-compose service
+4. Configure OAuth2 Authorization Server's issuer URL by setting `SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URL` property via environment variables in ODD Platform docker-compose service
+5. Configure OAuth2 section in ODD Platform Puller service using this [reference](https://github.com/opendatadiscovery/odd-platform-puller#readme)

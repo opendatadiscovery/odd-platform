@@ -1,6 +1,8 @@
 import { Grid, Paper, Typography } from '@material-ui/core';
 import React from 'react';
 import { DataEntityDetails } from 'generated-sources';
+import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import OverviewDescriptionContainer from './OverviewDescription/OverviewDescriptionContainer';
 import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
 import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
@@ -13,7 +15,7 @@ interface OverviewProps extends StylesType {
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
-  isLoaded: boolean;
+  isDataEntityDetailsFetching: boolean;
 }
 
 const Overview: React.FC<OverviewProps> = ({
@@ -21,9 +23,10 @@ const Overview: React.FC<OverviewProps> = ({
   dataEntityId,
   dataEntityDetails,
   isDataset,
+  isDataEntityDetailsFetching,
 }) => (
-  <div className={classes.container}>
-    {dataEntityDetails ? (
+  <>
+    {dataEntityDetails && !isDataEntityDetailsFetching ? (
       <Grid container spacing={2}>
         <Grid item xs={8}>
           <Paper elevation={9} className={classes.sectionContainer}>
@@ -68,7 +71,14 @@ const Overview: React.FC<OverviewProps> = ({
         </Grid>
       </Grid>
     ) : null}
-  </div>
+    {isDataEntityDetailsFetching ? (
+      <SkeletonWrapper
+        renderContent={({ randomSkeletonPercentWidth }) => (
+          <OverviewSkeleton width={randomSkeletonPercentWidth()} />
+        )}
+      />
+    ): null}
+  </>
 );
 
 export default Overview;

@@ -42,7 +42,7 @@ public class DataSourceController
 
     @Override
     public Mono<ResponseEntity<Flux<DataSource>>> getActiveDataSourceList(final ServerWebExchange exchange) {
-        final Flux<DataSource> response = entityService.listAll()
+        final Flux<DataSource> response = entityService.listActive()
             .subscribeOn(Schedulers.boundedElastic());
 
         return Mono.just(ResponseEntity.ok(response));

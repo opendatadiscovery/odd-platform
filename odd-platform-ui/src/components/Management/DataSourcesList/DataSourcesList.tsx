@@ -1,10 +1,10 @@
 import React from 'react';
 import {
-  CircularProgress,
   IconButton,
   InputAdornment,
   TextField,
   Typography,
+  Grid,
 } from '@material-ui/core';
 import {
   DataSource,
@@ -18,6 +18,9 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
 import { StylesType } from './DataSourcesListStyles';
 import DataSourceFormDialogContainer from './DataSourceFormDialog/DataSourceFormDialogContainer';
@@ -30,6 +33,7 @@ interface DataSourcesListProps extends StylesType {
   isCreating: boolean;
   isDeleting: boolean;
   pageInfo?: CurrentPageInfo;
+  isDataSourcesListFetching: boolean;
 }
 
 const DataSourcesListView: React.FC<DataSourcesListProps> = ({
@@ -39,14 +43,16 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
   isCreating,
   isDeleting,
   pageInfo,
+  isDataSourcesListFetching,
 }) => {
+  const pageSize = 30;
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalDataSources, setTotalDataSources] = React.useState<
     number | undefined
   >(pageInfo?.total);
 
   React.useEffect(() => {
-    if (!searchText) fetchDataSourcesList({ page: 1, size: 30 });
+    if (!searchText) fetchDataSourcesList({ page: 1, size: pageSize });
   }, [fetchDataSourcesList, isCreating, isDeleting, searchText]);
 
   React.useEffect(() => {
@@ -55,7 +61,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      fetchDataSourcesList({ page: 1, size: 30, query: searchText });
+      fetchDataSourcesList({ page: 1, size: pageSize, query: searchText });
     }, 500),
     [searchText]
   );
@@ -77,7 +83,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
     if (!pageInfo?.hasNext) return;
     fetchDataSourcesList({
       page: pageInfo.page + 1,
-      size: 30,
+      size: pageSize,
       query: searchText,
     });
   };
@@ -87,7 +93,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
       <div className={classes.caption}>
         <Typography variant="h1">Datasources</Typography>
         <Typography variant="subtitle1" className={classes.totalCountText}>
-          <NumberFormatted value={totalDataSources} /> datasources
+          <NumberFormatted value={totalDataSources} /> datasources overall
         </Typography>
       </div>
       <div className={classes.caption}>
@@ -131,15 +137,23 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
           }
         />
       </div>
-      <div className={classes.datasourcesListContainer}>
-        {dataSourcesList?.length ? (
+      <Grid container>
+        <Grid item xs={12}>
           <InfiniteScroll
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
             loader={
-              <div className={classes.spinnerContainer}>
-                <CircularProgress color="primary" size={30} />
-              </div>
+              isDataSourcesListFetching ? (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <DataSourceSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              ) : null
             }
             dataLength={dataSourcesList.length}
           >
@@ -151,8 +165,11 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
               />
             ))}
           </InfiniteScroll>
-        ) : null}
-      </div>
+        </Grid>
+      </Grid>
+      {!isDataSourcesListFetching && !dataSourcesList.length ? (
+        <EmptyContentPlaceholder />
+      ) : null}
     </div>
   );
 };

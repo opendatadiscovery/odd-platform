@@ -1,6 +1,7 @@
 import { Action, DataEntitiesState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import { keyBy, omit } from 'lodash';
+import { DataEntityDetails } from 'generated-sources';
 import * as actions from 'redux/actions';
 
 export const initialState: DataEntitiesState = {
@@ -14,6 +15,39 @@ export const initialState: DataEntitiesState = {
   myUpstream: [],
   myDownstream: [],
   popular: [],
+};
+
+const updateDataEntity = (
+  state: DataEntitiesState,
+  payload: DataEntityDetails
+): DataEntitiesState => {
+  let unknownSourcesCount = 0;
+  let unknownTargetsCount = 0;
+  const sourceList = payload.sourceList?.filter((source) => {
+    if (source.externalName) return true;
+    unknownSourcesCount += 1;
+    return false;
+  });
+  const targetsCount = payload.targetList?.filter((target) => {
+    if (target.externalName) return true;
+    unknownTargetsCount += 1;
+    return false;
+  });
+
+  return {
+    ...state,
+    byId: {
+      ...state.byId,
+      [payload.id]: {
+        ...state.byId[payload.id],
+        ...omit(payload, ['metadata', 'ownership']), // Metadata and Ownership are being stored in MetadataState and OwnersState
+        sourceList,
+        unknownSourcesCount,
+        targetsCount,
+        unknownTargetsCount,
+      },
+    },
+  };
 };
 
 const reducer = (
@@ -30,16 +64,7 @@ const reducer = (
         },
       };
     case getType(actions.fetchDataEntityAction.success):
-      return {
-        ...state,
-        byId: {
-          ...state.byId,
-          [action.payload.id]: {
-            ...state.byId[action.payload.id],
-            ...omit(action.payload, ['metadata', 'ownership']), // Metadata and Ownership are being stored in MetadataState and OwnersState
-          },
-        },
-      };
+      return updateDataEntity(state, action.payload);
     case getType(actions.updateDataEntityTagsAction.success):
       return {
         ...state,

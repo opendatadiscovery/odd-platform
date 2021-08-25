@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { get } from 'lodash';
 import { RootState, DataEntitiesState } from 'redux/interfaces';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createFetchingSelector, createErrorSelector } from 'redux/selectors/loader-selectors';
 
 const dataEntitiesState = ({
   dataEntities,
@@ -106,7 +106,11 @@ export const getPopularEntities = createSelector(
   dataEntities => dataEntities.popular
 );
 // Details
-const getDataEntityDetailsFetchingStatus = createFetchingSelector(
+export const getDataEntityDetailsFetchingStatus = createFetchingSelector(
+  'GET_DATA_ENTITY'
+);
+
+export const getDataEntityDetailsFetchingError = createErrorSelector(
   'GET_DATA_ENTITY'
 );
 
@@ -118,6 +122,11 @@ export const getDataEntityDetailsFetching = createSelector(
 export const getDataEntityDetailsFetched = createSelector(
   getDataEntityDetailsFetchingStatus,
   status => status === 'fetched'
+);
+
+export const getDataEntityDetailsErrorFetching = createSelector(
+  getDataEntityDetailsFetchingStatus,
+  status => status === 'errorFetching'
 );
 
 const getDataEntityTagsUpdateStatus = createFetchingSelector(

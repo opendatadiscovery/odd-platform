@@ -16,7 +16,10 @@ import {
   SearchType,
 } from 'redux/interfaces';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import {
+  createFetchingSelector,
+  createErrorSelector,
+} from 'redux/selectors/loader-selectors';
 
 const searchState = ({ search }: RootState): SearchState => search;
 
@@ -25,6 +28,10 @@ export const getSearchCreationStatus = createFetchingSelector(
 );
 
 export const getSearchFetchStatus = createFetchingSelector(
+  'GET_DATA_ENTITIES_SEARCH'
+);
+
+export const getSearchFetchError = createErrorSelector(
   'GET_DATA_ENTITIES_SEARCH'
 );
 
@@ -42,15 +49,42 @@ export const getSearchFiltersSynced = createSelector(
 );
 
 export const getSearchIsFetching = createSelector(
+  getSearchCreationStatus,
   getSearchFetchStatus,
   getSearchUpdateStatus,
   getSearchFiltersSynced,
   getSearchResultsFetchStatus,
   searchState,
-  (statusFetch, statusUpdate, isSynced, statusResults, search) =>
-    [statusFetch, statusUpdate, statusResults].includes('fetching') ||
+  (
+    statusCreate,
+    statusFetch,
+    statusUpdate,
+    isSynced,
+    statusResults,
+    search
+  ) =>
+    [statusCreate, statusFetch, statusUpdate, statusResults].includes(
+      'fetching'
+    ) ||
     !isSynced ||
     (!!search.results.pageInfo.total && !search.results.items.length)
+);
+
+export const getSearchIsCreatingAndFetching = createSelector(
+  getSearchCreationStatus,
+  getSearchFetchStatus,
+  (statusCreate, statusFetch) =>
+    [statusCreate, statusFetch].includes('fetching')
+);
+
+export const getSearchIsCreating = createSelector(
+  getSearchCreationStatus,
+  statusCreate => statusCreate === 'fetching'
+);
+
+export const getSearchIsUpdated = createSelector(
+  getSearchUpdateStatus,
+  statusUpdate => statusUpdate === 'fetching'
 );
 
 export const getSearchId = createSelector(
@@ -105,7 +139,7 @@ export const getSelectedSearchFacetOptions = createSelector(
   }
 );
 
-export const getSearchFiltersData = createSelector(searchState, search =>
+export const getSearchFacetsData = createSelector(searchState, search =>
   mapValues(search.facetState, facetState =>
     pickBy(facetState, facetOption => !facetOption.syncedState)
   )
@@ -119,6 +153,11 @@ export const getSearchTotals = createSelector(
 export const getSearchResults = createSelector(
   searchState,
   search => search.results.items
+);
+
+export const getSearchSuggestions = createSelector(
+  searchState,
+  search => search.suggestions || []
 );
 
 export const getSearchResultsPage = createSelector(

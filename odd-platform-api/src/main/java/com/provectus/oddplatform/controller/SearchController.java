@@ -3,6 +3,7 @@ package com.provectus.oddplatform.controller;
 import com.provectus.oddplatform.api.contract.api.SearchApi;
 import com.provectus.oddplatform.api.contract.model.CountableSearchFilter;
 import com.provectus.oddplatform.api.contract.model.DataEntityList;
+import com.provectus.oddplatform.api.contract.model.DataEntityRef;
 import com.provectus.oddplatform.api.contract.model.MultipleFacetType;
 import com.provectus.oddplatform.api.contract.model.SearchFacetsData;
 import com.provectus.oddplatform.api.contract.model.SearchFormData;
@@ -74,6 +75,14 @@ public class SearchController implements SearchApi {
         return searchFormData
             .publishOn(Schedulers.boundedElastic())
             .flatMap(form -> searchService.updateFacets(searchId, form))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<DataEntityRef>>> getSearchSuggestions(final String query,
+                                                                          final ServerWebExchange exchange) {
+        return Mono.just(searchService.getQuerySuggestions(query)
+            .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 }

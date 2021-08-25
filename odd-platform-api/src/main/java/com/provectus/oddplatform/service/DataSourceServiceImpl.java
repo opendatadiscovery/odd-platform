@@ -21,8 +21,8 @@ public class DataSourceServiceImpl
     }
 
     @Override
-    public Flux<DataSource> listAll() {
-        return Flux.fromIterable(entityRepository.list())
+    public Flux<DataSource> listActive() {
+        return Flux.fromIterable(entityRepository.listActive())
             .map(entityMapper::mapPojo);
     }
 }

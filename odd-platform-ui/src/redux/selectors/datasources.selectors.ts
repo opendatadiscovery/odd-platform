@@ -7,10 +7,10 @@ const dataSourcesState = ({ dataSources }: RootState): DataSourcesState =>
   dataSources;
 
 const getDataSourcesListFetchingStatus = createFetchingSelector(
-  'GET_DATASOURCES'
+  'GET_DATASOURCE_LIST'
 );
 
-export const getIsDatasourcesListFetching = createSelector(
+export const getIsDataSourcesListFetching = createSelector(
   getDataSourcesListFetchingStatus,
   status => status === 'fetching'
 );

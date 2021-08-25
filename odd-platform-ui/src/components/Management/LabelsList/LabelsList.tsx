@@ -4,7 +4,6 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  CircularProgress,
   Grid,
 } from '@material-ui/core';
 import {
@@ -20,6 +19,9 @@ import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import LabelsSkeletonItem from 'components/Management/LabelsList/LabelsSkeletonItem/LabelsSkeletonItem';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateFormContainer from './LabelCreateForm/LabelCreateFormContainer';
 import { StylesType } from './LabelsListStyles';
@@ -143,37 +145,40 @@ const LabelsListView: React.FC<LabelsListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      {labelsList.length ? (
-        <div id="labels-list" className={classes.listContainer}>
-          {labelsList?.length ? (
-            <InfiniteScroll
-              next={fetchNextPage}
-              hasMore={!!pageInfo?.hasNext}
-              className={classes.labelsItem}
-              dataLength={labelsList.length}
-              scrollThreshold="200px"
-              scrollableTarget="labels-list"
-              loader={
-                <div className={classes.spinnerContainer}>
-                  <CircularProgress color="primary" size={30} />
-                </div>
-              }
-            >
-              {labelsList?.map(label => (
-                <EditableLabelItem
-                  key={label.id}
-                  label={label}
-                  deleteLabel={deleteLabel}
+      <Grid container>
+        <Grid item xs={12}>
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            className={classes.labelsItem}
+            dataLength={labelsList.length}
+            scrollThreshold="200px"
+            loader={
+              isFetching ? (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <LabelsSkeletonItem
+                      key={key}
+                      width={randomSkeletonPercentWidth()}
+                    />
+                  )}
                 />
-              ))}
-            </InfiniteScroll>
-          ) : null}
-        </div>
-      ) : null}
+              ) : null
+            }
+          >
+            {labelsList?.map(label => (
+              <EditableLabelItem
+                key={label.id}
+                label={label}
+                deleteLabel={deleteLabel}
+              />
+            ))}
+          </InfiniteScroll>
+        </Grid>
+      </Grid>
       {!isFetching && !labelsList.length ? (
-        <Typography variant="subtitle1">
-          {searchText ? 'No labels found' : 'No labels yet...'}
-        </Typography>
+        <EmptyContentPlaceholder />
       ) : null}
     </div>
   );

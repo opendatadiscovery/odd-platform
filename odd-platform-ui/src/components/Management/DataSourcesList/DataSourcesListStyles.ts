@@ -17,10 +17,6 @@ export const styles = (theme: Theme) =>
       justifyContent: 'space-between',
       width: 'calc(100% - 8px)',
     },
-    datasourcesListContainer: {
-      overflow: 'auto',
-      width: '100%',
-    },
     spinnerContainer: {
       display: 'flex',
       justifyContent: 'center',

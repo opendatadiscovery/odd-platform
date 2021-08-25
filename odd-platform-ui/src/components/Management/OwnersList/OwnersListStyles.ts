@@ -11,36 +11,12 @@ export const styles = (theme: Theme) =>
       },
     },
     tableHeader: {
-      borderBottom: '1px solid',
-      borderBottomColor: '#F4F5F7',
+      borderBottom: '1px solid #F4F5F7',
       '& > *': {
         padding: theme.spacing(0, 1),
       },
     },
-    tableRow: {
-      padding: theme.spacing(1.5, 1),
-      borderBottom: '1px solid',
-      borderBottomColor: '#F4F5F7',
-      '&:hover': {
-        backgroundColor: '#F4F5F7',
-        '& $rowActions': {
-          opacity: 1,
-        },
-      },
-    },
     rowName: { color: '#A8B0BD' },
-    rowActions: {
-      opacity: 0,
-      '& > * + *': {
-        marginLeft: theme.spacing(1),
-      },
-    },
-    spinnerContainer: {
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      padding: theme.spacing(1),
-    },
     caption: {
       marginBottom: theme.spacing(2),
       display: 'flex',
@@ -48,15 +24,12 @@ export const styles = (theme: Theme) =>
       justifyContent: 'space-between',
       width: 'calc(100% - 8px)',
     },
+    ownersItem: { display: 'flex', flexWrap: 'wrap' },
     totalCountText: {
       color: '#42526E',
     },
     searchInput: {
       minWidth: '340px',
-    },
-    listContainer: {
-      width: '100%',
-      minHeight: '300px',
     },
   });
 

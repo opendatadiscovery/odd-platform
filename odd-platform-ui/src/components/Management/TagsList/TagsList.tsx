@@ -4,7 +4,6 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-  CircularProgress,
   Grid,
 } from '@material-ui/core';
 import {
@@ -20,7 +19,10 @@ import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import EditableTagItem from 'components/Management/TagsList/EditableTagItem/EditableTagItem';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
+import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
 import { StylesType } from './TagsListStyles';
 
@@ -148,37 +150,40 @@ const TagsListView: React.FC<TagsListProps> = ({
           </Typography>
         </Grid>
       </Grid>
-      {tagsList.length ? (
-        <div id="tags-list" className={classes.listContainer}>
-          {tagsList?.length ? (
-            <InfiniteScroll
-              next={fetchNextPage}
-              hasMore={!!pageInfo?.hasNext}
-              className={classes.tagsItem}
-              dataLength={tagsList.length}
-              scrollThreshold="200px"
-              scrollableTarget="tags-list"
-              loader={
-                <div className={classes.spinnerContainer}>
-                  <CircularProgress color="primary" size={30} />
-                </div>
-              }
-            >
-              {tagsList?.map(tag => (
-                <EditableTagItem
-                  key={tag.id}
-                  tag={tag}
-                  deleteTag={deleteTag}
+      <Grid container>
+        <Grid item xs={12}>
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            className={classes.tagsItem}
+            dataLength={tagsList.length}
+            scrollThreshold="200px"
+            loader={
+              isFetching && (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <TagsSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
                 />
-              ))}
-            </InfiniteScroll>
-          ) : null}
-        </div>
-      ) : null}
+              )
+            }
+          >
+            {tagsList?.map(tag => (
+              <EditableTagItem
+                key={tag.id}
+                tag={tag}
+                deleteTag={deleteTag}
+              />
+            ))}
+          </InfiniteScroll>
+        </Grid>
+      </Grid>
       {!isFetching && !tagsList.length ? (
-        <Typography variant="subtitle1">
-          {searchText ? 'No tags found' : 'No tags yet...'}
-        </Typography>
+        <EmptyContentPlaceholder />
       ) : null}
     </div>
   );

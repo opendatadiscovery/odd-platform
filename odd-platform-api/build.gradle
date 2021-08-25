@@ -28,6 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.session:spring-session-core'
 
     implementation "com.provectus.oddplatform:odd-platform-ingestion-contract:$odcIngestionApiVersion"
@@ -82,7 +83,7 @@ jib {
         image = 'adoptopenjdk/openjdk13:x86_64-alpine-jre-13.0.2_8'
     }
     to {
-        image = 'provectuslabs/odd-platform'
+        image = 'opendatadiscovery/odd-platform'
         tags = ['latest', project.version]
     }
     container {

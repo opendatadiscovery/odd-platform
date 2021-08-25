@@ -5,6 +5,8 @@ import { RootState } from 'redux/interfaces';
 import {
   getDataEntityDetails,
   getDataEntityIsDataset,
+  getDataEntityDetailsFetchingStatus,
+  getDataEntityDetailsFetchingError,
 } from 'redux/selectors/dataentity.selectors';
 import { fetchDataEntityDetails } from 'redux/thunks/dataentities.thunks';
 import { styles } from './DataEntityDetailsStyles';
@@ -30,6 +32,8 @@ const mapStateToProps = (
   dataEntityId: parseInt(dataEntityId, 10),
   dataEntityDetails: getDataEntityDetails(state, dataEntityId),
   isDataset: getDataEntityIsDataset(state, dataEntityId),
+  dataEntityFetchingStatus: getDataEntityDetailsFetchingStatus(state),
+  dataEntityFetchingError: getDataEntityDetailsFetchingError(state)
 });
 
 const mapDispatchToProps = {

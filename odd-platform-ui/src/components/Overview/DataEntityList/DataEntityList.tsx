@@ -1,9 +1,10 @@
 import { Grid, Typography } from '@material-ui/core';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { StylesType } from './DataEntityListStyles';
 
@@ -55,7 +56,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
         </li>
       ))}
       {!isFetching && !dataEntitiesList.length ? (
-        <Typography variant="subtitle2">No objects yet</Typography>
+        <EmptyContentPlaceholder />
       ) : null}
     </ul>
   </Grid>
