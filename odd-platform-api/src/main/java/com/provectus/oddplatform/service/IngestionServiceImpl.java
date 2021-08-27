@@ -130,12 +130,9 @@ public class IngestionServiceImpl implements IngestionService {
             .map(existingDto -> {
                 final DataEntityPojo existingPojo = existingDtoDict.get(existingDto.getOddrn());
 
-                // TODO: revert
-                // TODO: add logging in case of returning null (structure wasn't updated)? to much logs?
-                return new EnrichedDataEntityIngestionDto(existingPojo.getId(), existingDto);
-//                return existingDto.getUpdatedAt() == null || isEntityUpdated(existingDto, existingPojo)
-//                    ? new EnrichedDataEntityIngestionDto(existingPojo.getId(), existingDto)
-//                    : null;
+                return existingDto.getUpdatedAt() == null || isEntityUpdated(existingDto, existingPojo)
+                    ? new EnrichedDataEntityIngestionDto(existingPojo.getId(), existingDto)
+                    : null;
             })
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -451,12 +448,6 @@ public class IngestionServiceImpl implements IngestionService {
         if (types.contains(DATA_CONSUMER)) {
             dto.getDataConsumer().getInputList().stream()
                 .map(input -> new LineagePojo().setParentOddrn(input.toLowerCase()).setChildOddrn(dtoOddrn))
-                .forEach(result::add);
-        }
-
-        if (types.contains(DATA_QUALITY_TEST)) {
-            dto.getDatasetQualityTest().getDatasetList().stream()
-                .map(dataset -> new LineagePojo().setParentOddrn(dataset.toLowerCase()).setChildOddrn(dtoOddrn))
                 .forEach(result::add);
         }
 
