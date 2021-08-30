@@ -34,6 +34,8 @@ jobs:
       - name: Build with Gradle
         env:
           CI: false
+          GRADLE_OPTS: "-Xms2048m -Xmx2048m"
+          JAVA_OPTS: "-Xms2048m -Xmx2048m"
         run: ./gradlew clean jibDockerBuild --no-daemon -PoddGHPRepositoryUsername=github-actions -PoddGHPRepositoryPassword=${{ secrets.GITHUB_TOKEN }} --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6}
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
