@@ -1,7 +1,10 @@
 import { withStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { fetchDataEntityLineage } from 'redux/thunks/dataentityLineage.thunks';
+import {
+  fetchDataEntityUpstreamLineage,
+  fetchDataEntityDownstreamLineage,
+} from 'redux/thunks/dataentityLineage.thunks';
 import {
   getDataEntityLineage,
   getDataEntityLineageFetching,
@@ -18,7 +21,8 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  fetchDataEntityLineage,
+  fetchDataEntityDownstreamLineage,
+  fetchDataEntityUpstreamLineage,
 };
 
 export default connect(

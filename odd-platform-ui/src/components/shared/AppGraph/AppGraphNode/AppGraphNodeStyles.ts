@@ -60,6 +60,12 @@ export const styles = (theme: Theme) =>
       fontWeight: theme.typography.body2.fontWeight,
       lineHeight: theme.typography.body2.lineHeight,
     },
+    button: {
+      cursor: 'pointer',
+      fill: '#E5F2FF',
+      '&:hover': { fill: '#CCE6FF' },
+      '&:active': { fill: '#99CCFF' },
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

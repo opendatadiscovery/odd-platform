@@ -24,3 +24,7 @@ export interface DataEntityLineageStreamById<
     [entityId: number]: EdgeT[];
   };
 }
+
+export interface DataEntityLineageRootNodeId {
+  [rootNodeId: string]: number;
+}
