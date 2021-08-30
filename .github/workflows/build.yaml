@@ -17,7 +17,7 @@ jobs:
       - uses: unfor19/install-aws-cli-action@v1
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1.3.3
-            - name: Cache local Gradle repository
+      - name: Cache local Gradle repository
         uses: actions/cache@v2
         with:
           path: ~/.m2/repository
