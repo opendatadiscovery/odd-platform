@@ -858,7 +858,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(TAG_TO_DATA_ENTITY).on(deCte.field(DATA_ENTITY.ID).eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
             .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .leftJoin(DATA_SOURCE).on(deCte.field(DATA_ENTITY.DATA_SOURCE_ID).eq(DATA_SOURCE.ID))
-//            .leftJoin(NAMESPACE).on(deCte.field(DATA_ENTITY.NAMESPACE_ID).eq(NAMESPACE.ID))
+            .leftJoin(NAMESPACE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
             .leftJoin(OWNERSHIP).on(deCte.field(DATA_ENTITY.ID).eq(OWNERSHIP.DATA_ENTITY_ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
