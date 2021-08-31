@@ -47,6 +47,9 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
     window.location.href = '/logout';
   };
 
@@ -164,7 +167,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         onClose={handleMenuClose}
       >
         {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-        <MenuItem className={classes.menuItem} onClick={handleMenuClose}>
+        <MenuItem className={classes.menuItem} onClick={handleLogout}>
           Logout
         </MenuItem>
       </Menu>
