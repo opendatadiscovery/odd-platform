@@ -5,7 +5,7 @@ public enum DataEntitySubtype {
     TABLE,
     FILE,
     FEATURE_GROUP,
-    TOPIC,
+    KAFKA_TOPIC,
 
     JOB,
     JOB_RUN,
