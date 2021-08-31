@@ -16,4 +16,13 @@ public class NamespaceRepositoryImpl
         super(dslContext, NAMESPACE, NAMESPACE.ID, NAMESPACE.IS_DELETED,
             NAMESPACE.NAME, NAMESPACE.NAME, NamespacePojo.class);
     }
+
+    @Override
+    public NamespacePojo createIfNotExists(final NamespacePojo namespacePojo) {
+        return dslContext
+            .selectFrom(NAMESPACE)
+            .where(NAMESPACE.NAME.eq(namespacePojo.getName()))
+            .fetchOptionalInto(NamespacePojo.class)
+            .orElse(super.create(namespacePojo));
+    }
 }
