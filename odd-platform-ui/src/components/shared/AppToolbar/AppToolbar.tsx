@@ -5,6 +5,7 @@ import {
   Toolbar,
   IconButton,
   Menu,
+  MenuItem,
   useScrollTrigger,
   Grid,
 } from '@material-ui/core';
@@ -35,6 +36,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   fetchIdentity,
 }) => {
   const location = useLocation();
+  const history = useHistory();
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -45,6 +47,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+    window.location.href = '/logout';
   };
 
   const [elevation, setElevation] = React.useState<number>(0);
@@ -83,7 +86,6 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
 
-  const history = useHistory();
   const handleTabClick = (idx: number) => {
     if (tabs[idx].name === 'Catalog') {
       if (searchLoading) return;
@@ -152,6 +154,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         </Grid>
       </Toolbar>
       <Menu
+        classes={{ paper: classes.menu }}
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
@@ -161,11 +164,9 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         onClose={handleMenuClose}
       >
         {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-        <Link to="/logout" className={classes.title}>
-          <Typography variant="h4" noWrap>
-            Logout
-          </Typography>
-        </Link>
+        <MenuItem className={classes.menuItem} onClick={handleMenuClose}>
+          Logout
+        </MenuItem>
       </Menu>
     </AppBar>
   );
