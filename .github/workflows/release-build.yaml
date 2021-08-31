@@ -10,7 +10,7 @@ on:
         required: false
         default: '0.0.0'
       buildOptions:
-        description: 'A additional oiptions for Gradle build command'
+        description: 'Additional options for Gradle build command'
         required: false
         default: ''
 

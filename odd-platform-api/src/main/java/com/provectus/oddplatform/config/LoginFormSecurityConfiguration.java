@@ -43,6 +43,7 @@ public class LoginFormSecurityConfiguration {
             .pathMatchers("/health", "/favicon.ico", "/ingestion/entities").permitAll()
             .pathMatchers("/**").authenticated()
             .and().formLogin().authenticationSuccessHandler(authHandler)
+            .and().logout()
             .and().build();
     }
 

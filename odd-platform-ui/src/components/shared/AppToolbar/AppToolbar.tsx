@@ -5,7 +5,6 @@ import {
   Toolbar,
   IconButton,
   Menu,
-  MenuItem,
   useScrollTrigger,
   Grid,
 } from '@material-ui/core';
@@ -162,7 +161,11 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         onClose={handleMenuClose}
       >
         {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-        <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+        <Link to="/logout" className={classes.title}>
+          <Typography variant="h4" noWrap>
+            Logout
+          </Typography>
+        </Link>
       </Menu>
     </AppBar>
   );
