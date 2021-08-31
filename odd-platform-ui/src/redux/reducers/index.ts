@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { RootState } from 'redux/interfaces';
 import loader from './loader-reducer';
+import namespaces from './namespace.reducer';
 import dataSources from './datasources.reducer';
 import dataEntities from './dataentities.reducer';
 import tags from './tags.reducer';
@@ -15,6 +16,7 @@ import dataQualityTest from './dataQualityTest.reducer';
 import alerts from './alerts.reducer';
 
 export default combineReducers<RootState>({
+  namespaces,
   dataSources,
   dataEntities,
   search,
