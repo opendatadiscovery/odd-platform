@@ -25,6 +25,9 @@ spring:
 #            issuerUri:
 #            user-name-attribute:
 
+cognito:
+  logoutUrl: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_SLj42PGZ4/logout
+
 auth:
   # DISABLED, LOGIN_FORM, OAUTH2
   type: DISABLED

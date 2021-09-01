@@ -30,6 +30,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     implementation 'org.springframework.session:spring-session-core'
+    implementation "javax.servlet:javax.servlet-api:$servletApiVersion"
 
     implementation "com.provectus.oddplatform:odd-platform-ingestion-contract:$odcIngestionApiVersion"
 
