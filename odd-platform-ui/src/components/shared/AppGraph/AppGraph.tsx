@@ -186,6 +186,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
       )
     );
 
+    // increases the horizontal distance between nodes
+    rootNodeUp.each(d => {
+      // eslint-disable-next-line no-param-reassign
+      d.y *= 1.5;
+    });
+
     const nUp = rootNodeUp.descendants();
     const lUp = rootNodeUp.links();
     const treeDown = d3tree<TreeNodeDatum>()
@@ -205,6 +211,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
           ) || []
       )
     );
+
+    // increases the horizontal distance between nodes
+    rootNodeDown.each(d => {
+      // eslint-disable-next-line no-param-reassign
+      d.y *= 1.5;
+    });
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
 
