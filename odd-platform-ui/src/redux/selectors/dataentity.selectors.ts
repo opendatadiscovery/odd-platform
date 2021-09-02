@@ -2,7 +2,10 @@ import { createSelector } from 'reselect';
 import { get } from 'lodash';
 import { RootState, DataEntitiesState } from 'redux/interfaces';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { createFetchingSelector, createErrorSelector } from 'redux/selectors/loader-selectors';
+import {
+  createFetchingSelector,
+  createErrorSelector,
+} from 'redux/selectors/loader-selectors';
 
 const dataEntitiesState = ({
   dataEntities,
@@ -210,5 +213,14 @@ export const getDataEntityIsDataset = createSelector(
   (dataEntities, dataEntityId) =>
     !!dataEntities.byId[dataEntityId]?.types.find(
       type => type.name === DataEntityTypeNameEnum.SET
+    )
+);
+
+export const getDataEntityIsQualityTest = createSelector(
+  dataEntitiesState,
+  getDataEntityId,
+  (dataEntities, dataEntityId) =>
+    !!dataEntities.byId[dataEntityId]?.types.find(
+      type => type.name === DataEntityTypeNameEnum.QUALITY_TEST
     )
 );
