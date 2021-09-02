@@ -168,6 +168,22 @@ const AppGraph: React.FC<AppGraphProps> = ({
 
   const generateTree = () => {
     if (!parsedData) return defaultTreeState;
+
+    enum NodeDirection {
+      HORIZONTAL = 'y',
+      VERTICAL = 'x',
+    }
+
+    // increases the horizontal or vertical distance between nodes
+    const increaseDistance = (
+      rootNode: HierarchyPointNode<TreeNodeDatum>,
+      direction: NodeDirection
+    ) =>
+      rootNode.each(d => {
+        const datum = d;
+        datum[direction] *= 2;
+      });
+
     const treeUp = d3tree<TreeNodeDatum>()
       .nodeSize([nodeSize.y + nodeSize.my, -(nodeSize.x + nodeSize.mx)])
       .separation((a, b) =>
@@ -186,11 +202,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
       )
     );
 
-    // increases the horizontal distance between nodes
-    rootNodeUp.each(d => {
-      // eslint-disable-next-line no-param-reassign
-      d.y *= 1.5;
-    });
+    increaseDistance(rootNodeUp, NodeDirection.HORIZONTAL);
 
     const nUp = rootNodeUp.descendants();
     const lUp = rootNodeUp.links();
@@ -212,11 +224,8 @@ const AppGraph: React.FC<AppGraphProps> = ({
       )
     );
 
-    // increases the horizontal distance between nodes
-    rootNodeDown.each(d => {
-      // eslint-disable-next-line no-param-reassign
-      d.y *= 1.5;
-    });
+    increaseDistance(rootNodeDown, NodeDirection.HORIZONTAL);
+
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
 

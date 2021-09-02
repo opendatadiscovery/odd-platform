@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityLineage } from 'generated-sources';
-import { arc } from 'd3-shape';
+import { useDebouncedCallback } from 'use-debounce/lib';
 import { styles, StylesType } from './AppGraphNodeStyles';
 
 interface AppGraphNodeProps extends StylesType {
@@ -70,11 +70,11 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
 
   const loadMoreLayout = {
     x: nodeSize.x,
-    y: nodeSize.y / 4,
+    y: nodeSize.y / 2,
     width: 91,
     height: 24,
     my: 4,
-    mx: 34,
+    mx: 16,
   };
 
   const setTransform = (
@@ -129,66 +129,37 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
 
   let loadMoreRef: SVGGElement;
 
+  const [showLoadMore, setShowLoadMore] = React.useState<boolean>(false);
+
+  const handleMouseEnter = () => setShowLoadMore(true);
+  const handleMouseLeave = useDebouncedCallback(
+    () => setShowLoadMore(false),
+    1500
+  );
+
   const buttonHandler = () => {
     if (parent?.children) {
       fetchMoreLineage(data.id, parent?.children[0].depth);
     }
+    setShowLoadMore(false);
   };
 
   const loadMoreVisibilityHandler = React.useMemo(
     () =>
+      showLoadMore &&
       parent &&
       parent.children
         ?.filter(node => !('children' in node))
         .map(node => node.data.id)
         .includes(data.id),
-    [parent, data]
+    [parent, data, showLoadMore]
   );
 
-  // old loadMore button
-
-  // <g
-  //   ref={n => {
-  //     if (n) loadMoreRef = n;
-  //   }}
-  //   transform={loadMoreTransformTranslate}
-  //   className={classes.button}
-  //   onClick={buttonHandler}
-  // >
-  //   <rect
-  //     width={loadMoreLayout.width}
-  //     height={loadMoreLayout.height}
-  //     rx={16}
-  //   />
-  //   <text
-  //     textAnchor="middle"
-  //     fontSize={12}
-  //     fill="#0066CC"
-  //     x={loadMoreLayout.width / 2}
-  //     y={loadMoreLayout.height / 2 + loadMoreLayout.my}
-  //   >
-  //     Load more
-  //   </text>
-  // </g>
-
-  // old loadMoreTransformTranslate
-  // const loadMoreTransformTranslate = `translate(${
-  //   reverse
-  //     ? -loadMoreLayout.mx - loadMoreLayout.width
-  //     : loadMoreLayout.x + loadMoreLayout.mx
-  // },${loadMoreLayout.y - loadMoreLayout.height / 2})`;
-
-  const loadMoreTransformTranslate = reverse
-    ? `translate(${loadMoreLayout.mx},${loadMoreLayout.y}) rotate(90)`
-    : `translate(${loadMoreLayout.x / 2},${loadMoreLayout.y}) rotate(0)`;
-
-  const arcGenerator = arc();
-  const loadMoreBtnData = arcGenerator({
-    innerRadius: 0,
-    outerRadius: loadMoreLayout.y,
-    startAngle: Math.PI,
-    endAngle: 0,
-  });
+  const loadMoreTransformTranslate = `translate(${
+    reverse
+      ? -loadMoreLayout.mx - loadMoreLayout.width
+      : loadMoreLayout.x + loadMoreLayout.mx
+  },${loadMoreLayout.y - loadMoreLayout.height / 2})`;
 
   return (
     <g
@@ -198,6 +169,9 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
       }}
       style={initialStyle}
       transform={transform}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      pointerEvents="bounding-box"
     >
       <Link to={detailsLink}>
         <g className={classes.container}>
@@ -370,12 +344,20 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           className={classes.button}
           onClick={buttonHandler}
         >
-          <path
-            d={loadMoreBtnData || undefined}
-            transform={loadMoreTransformTranslate}
-            fill="#ffffff"
-            stroke="black"
+          <rect
+            width={loadMoreLayout.width}
+            height={loadMoreLayout.height}
+            rx={16}
           />
+          <text
+            textAnchor="middle"
+            fontSize={12}
+            fill="#0066CC"
+            x={loadMoreLayout.width / 2}
+            y={loadMoreLayout.height / 2 + loadMoreLayout.my}
+          >
+            Load more
+          </text>
         </g>
       )}
     </g>
