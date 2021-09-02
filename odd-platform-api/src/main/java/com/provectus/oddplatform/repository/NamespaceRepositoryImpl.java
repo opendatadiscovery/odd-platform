@@ -21,8 +21,8 @@ public class NamespaceRepositoryImpl
     public NamespacePojo createIfNotExists(final NamespacePojo namespacePojo) {
         return dslContext
             .selectFrom(NAMESPACE)
-            .where(NAMESPACE.NAME.eq(namespacePojo.getName()))
+            .where(addSoftDeleteFilter(NAMESPACE.NAME.eq(namespacePojo.getName())))
             .fetchOptionalInto(NamespacePojo.class)
-            .orElse(super.create(namespacePojo));
+            .orElseGet(() -> super.create(namespacePojo));
     }
 }
