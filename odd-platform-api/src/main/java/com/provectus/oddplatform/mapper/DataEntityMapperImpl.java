@@ -100,7 +100,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .dataSource(dataSourceMapper.mapPojo(dto.getDataSource()))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
             .versionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().getDatasetVersions()))
-            .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()));
+            .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()))
+            .viewCount(pojo.getViewCount());
 
         final List<DataEntityType.NameEnum> typeNames = types
             .stream()
@@ -206,7 +207,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .externalName(pojo.getExternalName())
             .oddrn(pojo.getOddrn())
             .createdAt(addUTC(pojo.getCreatedAt()))
-            .updatedAt(addUTC(pojo.getUpdatedAt()));
+            .updatedAt(addUTC(pojo.getUpdatedAt()))
+            .viewCount(pojo.getViewCount());
     }
 
     private DataEntityLineageStream mapStream(final DataEntityLineageStreamDto upstream) {

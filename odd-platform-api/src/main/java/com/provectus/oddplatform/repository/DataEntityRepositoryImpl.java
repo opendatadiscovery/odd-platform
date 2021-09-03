@@ -1,11 +1,39 @@
 package com.provectus.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.provectus.oddplatform.dto.*;
+import com.provectus.oddplatform.api.contract.model.DataEntityDetails;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestAttributes;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataTransformerAttributes;
-import com.provectus.oddplatform.model.tables.pojos.*;
+import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
+import com.provectus.oddplatform.dto.DataEntityDto;
+import com.provectus.oddplatform.dto.DataEntityLineageDto;
+import com.provectus.oddplatform.dto.DataEntityLineageStreamDto;
+import com.provectus.oddplatform.dto.DataEntityType;
+import com.provectus.oddplatform.dto.FacetStateDto;
+import com.provectus.oddplatform.dto.FacetType;
+import com.provectus.oddplatform.dto.LineageDepth;
+import com.provectus.oddplatform.dto.MetadataDto;
+import com.provectus.oddplatform.dto.OwnershipDto;
+import com.provectus.oddplatform.dto.SearchFilterDto;
+import com.provectus.oddplatform.dto.SearchFilterId;
+import com.provectus.oddplatform.dto.StreamKind;
+import com.provectus.oddplatform.model.tables.pojos.AlertPojo;
+import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
+import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
+import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
+import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
+import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
+import com.provectus.oddplatform.model.tables.pojos.LineagePojo;
+import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
+import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
+import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
+import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
+import com.provectus.oddplatform.model.tables.pojos.OwnershipPojo;
+import com.provectus.oddplatform.model.tables.pojos.RolePojo;
+import com.provectus.oddplatform.model.tables.pojos.TagPojo;
+import com.provectus.oddplatform.model.tables.pojos.TypeEntityRelationPojo;
 import com.provectus.oddplatform.model.tables.records.DataEntityRecord;
 import com.provectus.oddplatform.model.tables.records.LineageRecord;
 import com.provectus.oddplatform.model.tables.records.SearchEntrypointRecord;
@@ -22,7 +50,26 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.jooq.*;
+import org.jooq.CommonTableExpression;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.InsertValuesStep2;
+import org.jooq.Name;
+import org.jooq.OrderField;
+import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Record3;
+import org.jooq.Select;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectHavingStep;
+import org.jooq.SelectLimitStep;
+import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectSelectStep;
+import org.jooq.SortField;
+import org.jooq.SortOrder;
+import org.jooq.Table;
+import org.jooq.TableField;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -42,7 +89,7 @@ import java.util.stream.Stream;
 
 import static com.provectus.oddplatform.model.Tables.*;
 import static java.util.Collections.singletonList;
-import static java.util.Objects.*;
+import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
 import static org.jooq.impl.DSL.*;
@@ -180,6 +227,15 @@ public class DataEntityRepositoryImpl
         dslContext.batchUpdate(records).execute();
 
         return dtos;
+    }
+
+    @Override
+    @Transactional
+    public void incrementViewCount(final DataEntityDetails dto) {
+        dslContext.update(DATA_ENTITY)
+                .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
+                .where(DATA_ENTITY.ID.eq(dto.getId()))
+                .execute();
     }
 
     @Override
@@ -485,6 +541,7 @@ public class DataEntityRepositoryImpl
     public List<? extends DataEntityDto> listPopular(final int page, final int size) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
+            .orderBy(DATA_ENTITY.VIEW_COUNT.sort(SortOrder.DESC))
             .build();
 
         return listByConfig(config);
@@ -811,6 +868,11 @@ public class DataEntityRepositoryImpl
                 .where(ListUtils.emptyIfNull(config.getCteSelectConditions()));
         }
 
+        if (config.getOrderBy() != null) {
+            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
+                    .orderBy(config.getOrderBy());
+        }
+
         if (!config.isIncludeHollow()) {
             dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
                 .and(DATA_ENTITY.HOLLOW.isFalse());
@@ -1128,6 +1190,7 @@ public class DataEntityRepositoryImpl
         private List<Condition> joinSelectConditions;
         private boolean includeDetails;
         private boolean includeHollow;
+        private SortField<?> orderBy;
         private Fts fts;
 
         @RequiredArgsConstructor

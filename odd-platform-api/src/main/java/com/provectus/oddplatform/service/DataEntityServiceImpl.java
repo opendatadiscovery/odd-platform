@@ -1,6 +1,24 @@
 package com.provectus.oddplatform.service;
 
-import com.provectus.oddplatform.api.contract.model.*;
+import com.provectus.oddplatform.api.contract.model.DataEntity;
+import com.provectus.oddplatform.api.contract.model.DataEntityDetails;
+import com.provectus.oddplatform.api.contract.model.DataEntityLineage;
+import com.provectus.oddplatform.api.contract.model.DataEntityList;
+import com.provectus.oddplatform.api.contract.model.DataEntityRef;
+import com.provectus.oddplatform.api.contract.model.DataEntityTagsFormData;
+import com.provectus.oddplatform.api.contract.model.DataEntityTypeDictionary;
+import com.provectus.oddplatform.api.contract.model.InternalDescription;
+import com.provectus.oddplatform.api.contract.model.InternalDescriptionFormData;
+import com.provectus.oddplatform.api.contract.model.InternalName;
+import com.provectus.oddplatform.api.contract.model.InternalNameFormData;
+import com.provectus.oddplatform.api.contract.model.MetadataField;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldOrigin;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldType;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldValue;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldValueList;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
+import com.provectus.oddplatform.api.contract.model.MetadataObject;
+import com.provectus.oddplatform.api.contract.model.Tag;
 import com.provectus.oddplatform.auth.AuthIdentityProvider;
 import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
 import com.provectus.oddplatform.dto.MetadataFieldKey;
@@ -79,10 +97,16 @@ public class DataEntityServiceImpl
     @Override
     public Mono<DataEntityDetails> getDetails(final long dataEntityId) {
         return Mono.fromCallable(() -> entityRepository.getDetails(dataEntityId))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException())
-                : Mono.just(optional.get()))
-            .map(entityMapper::mapDtoDetails);
+                .flatMap(optional -> optional.isEmpty()
+                        ? Mono.error(new NotFoundException())
+                        : Mono.just(optional.get()))
+                .map(entityMapper::mapDtoDetails)
+                .map(this::incrementViewCount);
+    }
+
+    public DataEntityDetails incrementViewCount(DataEntityDetails dto) {
+        entityRepository.incrementViewCount(dto);
+        return dto;
     }
 
     @Override
