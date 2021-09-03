@@ -21,6 +21,7 @@ jobs:
         with:
           node-version: '14'
           cache: npm
+          cache-dependency-path: odd-platform-ui/package-lock.json
       - name: Set up JDK 13
         uses: actions/setup-java@v2
         with:
