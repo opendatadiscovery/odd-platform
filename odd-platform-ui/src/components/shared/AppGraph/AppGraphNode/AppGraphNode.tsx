@@ -29,6 +29,7 @@ interface AppGraphNodeProps extends StylesType {
     lineageDepth: number
   ) => Promise<DataEntityLineage>;
   reverse?: boolean;
+  isStreamFetching: boolean;
 }
 
 const AppGraphNode: React.FC<AppGraphNodeProps> = ({
@@ -42,6 +43,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   enableLegacyTransitions,
   fetchMoreLineage,
   reverse,
+  isStreamFetching,
 }) => {
   const detailsLink =
     parent && data.externalName ? dataEntityDetailsPath(data.id) : '#';
@@ -66,15 +68,6 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     height: 16,
     my: compactView ? 11 : 16,
     mx: 2,
-  };
-
-  const loadMoreLayout = {
-    x: nodeSize.x,
-    y: nodeSize.y / 2,
-    width: 91,
-    height: 24,
-    my: 4,
-    mx: 16,
   };
 
   const setTransform = (
@@ -123,11 +116,16 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     applyTransform(newTransform, transitionDuration);
   };
 
-  React.useEffect(() => {
-    commitTransform();
-  }, []);
-
+  // load more btn
   let loadMoreRef: SVGGElement;
+  const loadMoreLayout = {
+    x: nodeSize.x,
+    y: nodeSize.y / 2,
+    width: 91,
+    height: 24,
+    my: 4,
+    mx: 16,
+  };
 
   const [showLoadMore, setShowLoadMore] = React.useState<boolean>(false);
 
@@ -139,9 +137,10 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
 
   const buttonHandler = () => {
     if (parent?.children) {
-      fetchMoreLineage(data.id, parent?.children[0].depth);
+      fetchMoreLineage(data.id, parent?.children[0].depth).then(() =>
+        setShowLoadMore(false)
+      );
     }
-    setShowLoadMore(false);
   };
 
   const loadMoreVisibilityHandler = React.useMemo(
@@ -160,6 +159,25 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
       ? -loadMoreLayout.mx - loadMoreLayout.width
       : loadMoreLayout.x + loadMoreLayout.mx
   },${loadMoreLayout.y - loadMoreLayout.height / 2})`;
+
+  let loadMoreSpinnerRef: SVGGElement;
+
+  const loadMoreSpinnerTransform = () => {
+    select(loadMoreSpinnerRef)
+      .transition()
+      .duration(200)
+      .attr('transform', 'rotate(0)')
+      .transition()
+      .attr('transform', 'rotate(540)')
+      .transition()
+      .attr('transform', 'rotate(1080)')
+      .on('end', loadMoreSpinnerTransform);
+  };
+
+  React.useEffect(() => {
+    commitTransform();
+    loadMoreSpinnerTransform();
+  }, []);
 
   return (
     <g
@@ -349,15 +367,35 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
             height={loadMoreLayout.height}
             rx={16}
           />
-          <text
-            textAnchor="middle"
-            fontSize={12}
-            fill="#0066CC"
-            x={loadMoreLayout.width / 2}
-            y={loadMoreLayout.height / 2 + loadMoreLayout.my}
-          >
-            Load more
-          </text>
+          {isStreamFetching ? (
+            <g>
+              <circle
+                className={classes.loadMoreSpinnerBack}
+                cx="46"
+                cy="12"
+                r="8"
+              />
+              <circle
+                className={classes.loadMoreSpinner}
+                ref={n => {
+                  if (n) loadMoreSpinnerRef = n;
+                }}
+                cx="46"
+                cy="12"
+                r="8"
+              />
+            </g>
+          ) : (
+            <text
+              textAnchor="middle"
+              fontSize={12}
+              fill="#0066CC"
+              x={loadMoreLayout.width / 2}
+              y={loadMoreLayout.height / 2 + loadMoreLayout.my}
+            >
+              Load more
+            </text>
+          )}
         </g>
       )}
     </g>

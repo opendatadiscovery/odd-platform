@@ -66,6 +66,19 @@ export const styles = (theme: Theme) =>
       '&:hover': { fill: '#CCE6FF' },
       '&:active': { fill: '#99CCFF' },
     },
+    loadMoreSpinnerBack: {
+      stroke: '#fff',
+      fill: 'transparent',
+      strokeWidth: 2,
+    },
+    loadMoreSpinner: {
+      fill: 'transparent',
+      stroke: '#0066CC',
+      strokeWidth: 2,
+      strokeLinecap: 'round',
+      strokeDasharray: '34',
+      transformOrigin: `46px 12px 0`,
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

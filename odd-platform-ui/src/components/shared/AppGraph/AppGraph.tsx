@@ -43,7 +43,8 @@ export interface AppGraphProps extends StylesType {
     params: DataEntityApiGetDataEntityUpstreamLineageRequest &
       DataEntityLineageRootNodeId
   ) => Promise<DataEntityLineage>;
-  isDataEntityLineageFetching: boolean;
+  isLineageFetching: boolean;
+  isStreamFetching: boolean;
 }
 
 const AppGraph: React.FC<AppGraphProps> = ({
@@ -52,7 +53,8 @@ const AppGraph: React.FC<AppGraphProps> = ({
   data,
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
-  isDataEntityLineageFetching,
+  isLineageFetching,
+  isStreamFetching,
 }) => {
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
   const gInstanceRef = `rd3t-g-${uuidv4()}`;
@@ -373,7 +375,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
     bindZoomListener();
   }, [ref.current]);
 
-  return isDataEntityLineageFetching ? (
+  return isLineageFetching ? (
     <div className={classes.loaderContainer}>
       <CircularProgressLoader text="Loading lineage" />
     </div>
@@ -434,6 +436,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
               fetchMoreLineage={fetchUpstreamLineage}
+              isStreamFetching={isStreamFetching}
             />
           ))}
           {nodesDown?.map(node => (
@@ -447,6 +450,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
               fetchMoreLineage={fetchDownstreamLineage}
+              isStreamFetching={isStreamFetching}
             />
           ))}
           {linksUp?.map(linkData => (

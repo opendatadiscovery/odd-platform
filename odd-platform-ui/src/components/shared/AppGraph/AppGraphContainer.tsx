@@ -8,6 +8,7 @@ import {
 import {
   getDataEntityLineage,
   getDataEntityLineageFetching,
+  getDataEntityLineageStreamFetching,
 } from 'redux/selectors/dataentityLineage.selectors';
 import AppGraph from './AppGraph';
 import { styles } from './AppGraphStyles';
@@ -16,8 +17,9 @@ const mapStateToProps = (
   state: RootState,
   { dataEntityId }: { dataEntityId: number }
 ) => ({
-  isDataEntityLineageFetching: getDataEntityLineageFetching(state),
+  isLineageFetching: getDataEntityLineageFetching(state),
   data: getDataEntityLineage(state, dataEntityId),
+  isStreamFetching: getDataEntityLineageStreamFetching(state),
 });
 
 const mapDispatchToProps = {
