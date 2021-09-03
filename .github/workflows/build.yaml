@@ -17,18 +17,16 @@ jobs:
       - uses: unfor19/install-aws-cli-action@v1
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1.3.3
-      - name: Cache local node_modules
-        uses: actions/cache@v2
+      - uses: actions/setup-node@v2
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-platform-${{ hashFiles('**/build.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-platform-
+          node-version: '14'
+          cache: npm
       - name: Set up JDK 13
         uses: actions/setup-java@v2
         with:
           java-version: '13'
           distribution: 'adopt'
+          cache: 'gradle'
       - name: Build with Gradle
         env:
           NODE_ENV: production
