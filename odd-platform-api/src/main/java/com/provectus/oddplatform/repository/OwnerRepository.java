@@ -1,7 +1,6 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
-
 import java.util.Optional;
 
 public interface OwnerRepository extends CRUDRepository<OwnerPojo> {

@@ -10,8 +10,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TagServiceImpl
-    extends AbstractCRUDService<Tag, TagsResponse, TagFormData, TagFormData, TagPojo, TagMapper, TagRepository>
-    implements TagService {
+        extends AbstractCRUDService<Tag, TagsResponse, TagFormData, TagFormData, TagPojo, TagMapper, TagRepository>
+        implements TagService {
 
     public TagServiceImpl(final TagMapper entityMapper, final TagRepository entityRepository) {
         super(entityMapper, entityRepository);

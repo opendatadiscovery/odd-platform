@@ -1,6 +1,12 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.utils.Page;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
@@ -14,15 +20,11 @@ import org.jooq.Table;
 import org.jooq.UpdatableRecord;
 import org.springframework.util.StringUtils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.*;
-import static org.jooq.impl.DSL.*;
+import static java.util.Collections.emptyList;
+import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.max;
+import static org.jooq.impl.DSL.rowNumber;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -40,30 +42,30 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     @Override
     public Optional<P> get(final long id) {
         return dslContext.selectFrom(recordTable)
-            .where(getCondition(id))
-            .fetchOptional()
-            .map(this::recordToPojo);
+                .where(getCondition(id))
+                .fetchOptional()
+                .map(this::recordToPojo);
     }
 
     public List<P> list() {
         return fetchList()
-            .stream()
-            .map(this::recordToPojo)
-            .collect(Collectors.toList());
+                .stream()
+                .map(this::recordToPojo)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<P> list(final String query) {
         return fetchList(query)
-            .stream()
-            .map(this::recordToPojo)
-            .collect(Collectors.toList());
+                .stream()
+                .map(this::recordToPojo)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Page<P> list(final int page, final int size, final String query) {
         final Map<Record, List<P>> result = paginate(baseSelectQuery(query), page - 1, size)
-            .fetchGroups(new String[]{PAGE_METADATA_TOTAL_FIELD, PAGE_METADATA_NEXT_FIELD}, pojoClass);
+                .fetchGroups(new String[] {PAGE_METADATA_TOTAL_FIELD, PAGE_METADATA_NEXT_FIELD}, pojoClass);
 
         return pageifyResult(result, page, () -> fetchCount(query));
     }
@@ -102,18 +104,30 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return bulkUpdate(pojos, pojoClass);
     }
 
+    protected <E> List<E> bulkUpdate(final Collection<E> entities, final Class<E> entityClass) {
+        final List<R> records = entities.stream()
+                .map(e -> dslContext.newRecord(recordTable, e))
+                .collect(Collectors.toList());
+
+        dslContext.batchUpdate(records).execute();
+
+        return records.stream()
+                .map(r -> r.into(entityClass))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public void delete(final long id) {
         dslContext.delete(recordTable)
-            .where(getCondition(id))
-            .execute();
+                .where(getCondition(id))
+                .execute();
     }
 
     @Override
     public void delete(final List<Long> ids) {
         dslContext.delete(recordTable)
-            .where(idField.in(ids))
-            .execute();
+                .where(idField.in(ids))
+                .execute();
     }
 
     protected List<Condition> getCondition(final long id) {
@@ -134,10 +148,10 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         switch (result.size()) {
             case 0:
                 return Page.<T>builder()
-                    .data(List.of())
-                    .total(emptyRecordTotalCounter.get())
-                    .hasNext(false)
-                    .build();
+                        .data(List.of())
+                        .total(emptyRecordTotalCounter.get())
+                        .hasNext(false)
+                        .build();
             case 1:
                 final Map.Entry<Record, List<T>> record = result.entrySet().stream().findFirst().get();
 
@@ -145,19 +159,20 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
                 final boolean hasNext = record.getKey().get(PAGE_METADATA_NEXT_FIELD, Boolean.class);
 
                 return Page.<T>builder()
-                    .data(record.getValue())
-                    .total(total)
-                    .hasNext(hasNext)
-                    .build();
+                        .data(record.getValue())
+                        .total(total)
+                        .hasNext(hasNext)
+                        .build();
             default:
-                throw new RuntimeException("Unexpected behaviour in pagination: total and is_next differ from record to record");
+                throw new RuntimeException(
+                        "Unexpected behaviour in pagination: total and is_next differ from record to record");
         }
     }
 
     protected <E> List<E> bulkInsert(final Collection<E> entities, final Class<E> entityClass) {
         final List<R> records = entities.stream()
-            .map(e -> dslContext.newRecord(recordTable, e))
-            .collect(Collectors.toList());
+                .map(e -> dslContext.newRecord(recordTable, e))
+                .collect(Collectors.toList());
 
         InsertSetStep<R> insertStep = dslContext.insertInto(recordTable);
         for (int i = 0; i < records.size() - 1; i++) {
@@ -165,37 +180,25 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         }
 
         return insertStep
-            .set(records.get(records.size() - 1))
-            .returning(recordTable.fields())
-            .fetch()
-            .stream()
-            .map(r -> r.into(entityClass))
-            .collect(Collectors.toList());
-    }
-
-    protected <E> List<E> bulkUpdate(final Collection<E> entities, final Class<E> entityClass) {
-        final List<R> records = entities.stream()
-            .map(e -> dslContext.newRecord(recordTable, e))
-            .collect(Collectors.toList());
-
-        dslContext.batchUpdate(records).execute();
-
-        return records.stream()
-            .map(r -> r.into(entityClass))
-            .collect(Collectors.toList());
+                .set(records.get(records.size() - 1))
+                .returning(recordTable.fields())
+                .fetch()
+                .stream()
+                .map(r -> r.into(entityClass))
+                .collect(Collectors.toList());
     }
 
     protected Long fetchCount(final String nameQuery) {
         return dslContext.selectCount()
-            .from(recordTable)
-            .where(listCondition(nameQuery))
-            .fetchOneInto(Long.class);
+                .from(recordTable)
+                .where(listCondition(nameQuery))
+                .fetchOneInto(Long.class);
     }
 
     protected Long fetchCount(final Select<?> query) {
         return dslContext.selectCount()
-            .from(query)
-            .fetchOneInto(Long.class);
+                .from(query)
+                .fetchOneInto(Long.class);
     }
 
     protected List<R> fetchList() {
@@ -204,14 +207,14 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
 
     protected List<R> fetchList(final String query) {
         return baseSelectQuery(query)
-            .fetchStream()
-            .collect(Collectors.toList());
+                .fetchStream()
+                .collect(Collectors.toList());
     }
 
     protected SelectConditionStep<R> baseSelectQuery(final String query) {
         return dslContext
-            .selectFrom(recordTable)
-            .where(listCondition(query));
+                .selectFrom(recordTable)
+                .where(listCondition(query));
     }
 
     protected R pojoToRecord(final P pojo) {
@@ -228,25 +231,25 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         final Table<?> u = original.asTable("u");
         final Field<Integer> totalRows = count().over().as(PAGE_METADATA_TOTAL_FIELD);
         final Field<Integer> row = rowNumber()
-            .over()
-            .orderBy(u.fields(idField));
+                .over()
+                .orderBy(u.fields(idField));
 
         final Table<?> t = dslContext
-            .select(u.asterisk())
-            .select(totalRows, row)
-            .from(u)
-            .orderBy(u.fields(idField))
-            .limit(limit)
-            .offset(offset)
-            .asTable("t");
+                .select(u.asterisk())
+                .select(totalRows, row)
+                .from(u)
+                .orderBy(u.fields(idField))
+                .limit(limit)
+                .offset(offset)
+                .asTable("t");
 
         return dslContext
-            .select(t.fields(original.getSelect().toArray(Field[]::new)))
-            .select(
-                field(max(t.field(row)).over().eq(t.field(totalRows))).as(PAGE_METADATA_NEXT_FIELD),
-                t.field(totalRows)
-            )
-            .from(t)
-            .orderBy(t.fields(idField));
+                .select(t.fields(original.getSelect().toArray(Field[]::new)))
+                .select(
+                        field(max(t.field(row)).over().eq(t.field(totalRows))).as(PAGE_METADATA_NEXT_FIELD),
+                        t.field(totalRows)
+                )
+                .from(t)
+                .orderBy(t.fields(idField));
     }
 }

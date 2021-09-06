@@ -1,12 +1,11 @@
 package com.provectus.oddplatform.dto;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor

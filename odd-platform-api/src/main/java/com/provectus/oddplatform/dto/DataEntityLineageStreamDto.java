@@ -1,13 +1,11 @@
 package com.provectus.oddplatform.dto;
 
-import com.provectus.oddplatform.model.tables.pojos.LineagePojo;
 import com.provectus.oddplatform.utils.Pair;
+import java.util.Collection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Collection;
 
 @NoArgsConstructor
 @AllArgsConstructor

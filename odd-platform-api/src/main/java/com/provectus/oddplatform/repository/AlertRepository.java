@@ -4,7 +4,6 @@ import com.provectus.oddplatform.dto.AlertDto;
 import com.provectus.oddplatform.dto.AlertStatusDto;
 import com.provectus.oddplatform.model.tables.pojos.AlertPojo;
 import com.provectus.oddplatform.utils.Page;
-
 import java.util.Collection;
 
 public interface AlertRepository {

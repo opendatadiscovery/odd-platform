@@ -12,8 +12,9 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class RoleServiceImpl
-    extends AbstractCRUDService<Role, RoleList, RoleFormData, RoleUpdateFormData, RolePojo, RoleMapper, RoleRepository>
-    implements RoleService {
+        extends
+        AbstractCRUDService<Role, RoleList, RoleFormData, RoleUpdateFormData, RolePojo, RoleMapper, RoleRepository>
+        implements RoleService {
 
     public RoleServiceImpl(final RoleMapper entityMapper,
                            final RoleRepository entityRepository) {
@@ -23,7 +24,7 @@ public class RoleServiceImpl
     @Override
     public Mono<Role> createOrGet(final RoleFormData formData) {
         return Mono
-            .fromCallable(() -> entityRepository.createOrGet(entityMapper.mapForm(formData)))
-            .map(entityMapper::mapPojo);
+                .fromCallable(() -> entityRepository.createOrGet(entityMapper.mapForm(formData)))
+                .map(entityMapper::mapPojo);
     }
 }

@@ -3,12 +3,10 @@ package com.provectus.oddplatform.mapper;
 import com.provectus.oddplatform.api.contract.model.Owner;
 import com.provectus.oddplatform.api.contract.model.OwnerFormData;
 import com.provectus.oddplatform.api.contract.model.OwnerList;
-import com.provectus.oddplatform.api.contract.model.PageInfo;
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.utils.Page;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class OwnerMapperImpl implements OwnerMapper {
@@ -30,21 +28,21 @@ public class OwnerMapperImpl implements OwnerMapper {
         }
 
         return new Owner()
-            .id(pojo.getId())
-            .name(pojo.getName());
+                .id(pojo.getId())
+                .name(pojo.getName());
     }
 
     @Override
     public OwnerList mapPojos(final List<OwnerPojo> pojos) {
         return new OwnerList()
-            .items(mapPojoList(pojos))
-            .pageInfo(pageInfo(pojos.size()));
+                .items(mapPojoList(pojos))
+                .pageInfo(pageInfo(pojos.size()));
     }
 
     @Override
     public OwnerList mapPojos(final Page<OwnerPojo> pojos) {
         return new OwnerList()
-            .items(mapPojoList(pojos.getData()))
-            .pageInfo(pageInfo(pojos));
+                .items(mapPojoList(pojos.getData()))
+                .pageInfo(pageInfo(pojos));
     }
 }

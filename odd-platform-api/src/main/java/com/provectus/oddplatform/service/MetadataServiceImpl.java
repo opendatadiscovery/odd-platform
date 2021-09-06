@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MetadataServiceImpl
-    extends AbstractCRUDService<MetadataField, MetadataFieldList, MetadataFieldFormData,
-    MetadataUpdateCustomFieldFormData, MetadataFieldPojo, MetadataFieldMapper, MetadataFieldRepository>
-    implements MetadataService {
+        extends AbstractCRUDService<MetadataField, MetadataFieldList, MetadataFieldFormData,
+        MetadataUpdateCustomFieldFormData, MetadataFieldPojo, MetadataFieldMapper, MetadataFieldRepository>
+        implements MetadataService {
 
     public MetadataServiceImpl(final MetadataFieldMapper entityMapper,
                                final MetadataFieldRepository entityRepository) {

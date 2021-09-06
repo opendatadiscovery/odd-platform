@@ -1,9 +1,8 @@
 package com.provectus.oddplatform.repository.specification;
 
-import org.jooq.UpdatableRecord;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jooq.UpdatableRecord;
 
 // TODO: abstraction lets user to understand what ids are in the system even if entities are deleted
 public interface Updatable<ID, R extends UpdatableRecord<R>, P> extends BaseTraitWithId<ID, R, P> {
@@ -17,13 +16,13 @@ public interface Updatable<ID, R extends UpdatableRecord<R>, P> extends BaseTrai
 
     default List<P> bulkUpdate(final List<P> entities) {
         final List<R> records = entities.stream()
-            .map(this::pojoToRecord)
-            .collect(Collectors.toList());
+                .map(this::pojoToRecord)
+                .collect(Collectors.toList());
 
         getDslContext().batchUpdate(records).execute();
 
         return records.stream()
-            .map(this::recordToPojo)
-            .collect(Collectors.toList());
+                .map(this::recordToPojo)
+                .collect(Collectors.toList());
     }
 }

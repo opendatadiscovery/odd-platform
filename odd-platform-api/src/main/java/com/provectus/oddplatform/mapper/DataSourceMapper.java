@@ -7,5 +7,5 @@ import com.provectus.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 
 public interface DataSourceMapper
-    extends CRUDMapper<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData, DataSourcePojo> {
+        extends CRUDMapper<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData, DataSourcePojo> {
 }

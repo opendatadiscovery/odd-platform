@@ -8,6 +8,9 @@ import com.provectus.oddplatform.api.contract.model.MultipleFacetType;
 import com.provectus.oddplatform.api.contract.model.SearchFacetsData;
 import com.provectus.oddplatform.api.contract.model.SearchFormData;
 import com.provectus.oddplatform.service.SearchService;
+import java.util.UUID;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,10 +19,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.UUID;
-
 @RestController
 @RequiredArgsConstructor
 public class SearchController implements SearchApi {
@@ -27,25 +26,25 @@ public class SearchController implements SearchApi {
 
     @Override
     public Mono<ResponseEntity<Flux<CountableSearchFilter>>> getFiltersForFacet(
-        final UUID searchId,
-        final MultipleFacetType facetType,
-        final Integer page,
-        final Integer size,
-        final String query,
-        final ServerWebExchange exchange
+            final UUID searchId,
+            final MultipleFacetType facetType,
+            final Integer page,
+            final Integer size,
+            final String query,
+            final ServerWebExchange exchange
     ) {
         return Mono.just(searchService
-            .getFilterOptions(searchId, facetType, page, size, query)
-            .subscribeOn(Schedulers.boundedElastic()))
-            .map(ResponseEntity::ok);
+                        .getFilterOptions(searchId, facetType, page, size, query)
+                        .subscribeOn(Schedulers.boundedElastic()))
+                .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<SearchFacetsData>> getSearchFacetList(final UUID searchId,
                                                                      final ServerWebExchange exchange) {
         return searchService.getFacets(searchId)
-            .subscribeOn(Schedulers.boundedElastic())
-            .map(ResponseEntity::ok);
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(ResponseEntity::ok);
     }
 
     @Override
@@ -54,18 +53,18 @@ public class SearchController implements SearchApi {
                                                                  @NotNull @Valid final Integer size,
                                                                  final ServerWebExchange exchange) {
         return searchService
-            .getSearchResults(searchId, page, size)
-            .subscribeOn(Schedulers.boundedElastic())
-            .map(ResponseEntity::ok);
+                .getSearchResults(searchId, page, size)
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<SearchFacetsData>> search(@Valid final Mono<SearchFormData> searchFormData,
                                                          final ServerWebExchange exchange) {
         return searchFormData
-            .publishOn(Schedulers.boundedElastic())
-            .flatMap(searchService::search)
-            .map(ResponseEntity::ok);
+                .publishOn(Schedulers.boundedElastic())
+                .flatMap(searchService::search)
+                .map(ResponseEntity::ok);
     }
 
     @Override
@@ -73,16 +72,16 @@ public class SearchController implements SearchApi {
                                                                      @Valid final Mono<SearchFormData> searchFormData,
                                                                      final ServerWebExchange exchange) {
         return searchFormData
-            .publishOn(Schedulers.boundedElastic())
-            .flatMap(form -> searchService.updateFacets(searchId, form))
-            .map(ResponseEntity::ok);
+                .publishOn(Schedulers.boundedElastic())
+                .flatMap(form -> searchService.updateFacets(searchId, form))
+                .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Flux<DataEntityRef>>> getSearchSuggestions(final String query,
                                                                           final ServerWebExchange exchange) {
         return Mono.just(searchService.getQuerySuggestions(query)
-            .subscribeOn(Schedulers.boundedElastic()))
-            .map(ResponseEntity::ok);
+                        .subscribeOn(Schedulers.boundedElastic()))
+                .map(ResponseEntity::ok);
     }
 }

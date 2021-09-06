@@ -19,21 +19,21 @@ public class DataQualityServiceImpl implements DataQualityService {
     @Override
     public Mono<DataEntityList> getDataEntityDataQATests(final long dataEntityId) {
         return Mono.fromCallable(() -> dataQualityRepository.getDataQualityTests(dataEntityId))
-            .map(dataQualityMapper::mapDataQualityTests);
+                .map(dataQualityMapper::mapDataQualityTests);
     }
 
     @Override
     public Mono<DataSetTestReport> getDatasetTestReport(final long datasetId) {
         return Mono.fromCallable(() -> dataQualityRepository.getDatasetTestReport(datasetId))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException("No dataset with ID %s was found", datasetId))
-                : Mono.just(optional.get()))
-            .map(dataQualityMapper::mapDatasetTestReport);
+                .flatMap(optional -> optional.isEmpty()
+                        ? Mono.error(new NotFoundException("No dataset with ID %s was found", datasetId))
+                        : Mono.just(optional.get()))
+                .map(dataQualityMapper::mapDatasetTestReport);
     }
 
     @Override
     public Mono<DataQualityTestRunList> getDataQualityTestRuns(final long dataQualityTestId) {
         return Mono.fromCallable(() -> dataQualityRepository.getDataQualityTestRuns(dataQualityTestId))
-            .map(runs -> dataQualityMapper.mapDataQualityTestRuns(dataQualityTestId, runs));
+                .map(runs -> dataQualityMapper.mapDataQualityTestRuns(dataQualityTestId, runs));
     }
 }

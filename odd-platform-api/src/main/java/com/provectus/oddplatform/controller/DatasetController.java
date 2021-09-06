@@ -17,24 +17,24 @@ public class DatasetController implements DataSetApi {
 
     @Override
     public Mono<ResponseEntity<DataSetStructure>> getDataSetStructureByVersionId(
-        final Long dataEntityId,
-        final Long versionId,
-        final ServerWebExchange exchange
+            final Long dataEntityId,
+            final Long versionId,
+            final ServerWebExchange exchange
     ) {
         return datasetVersionService
-            .getDatasetVersion(dataEntityId, versionId)
-            .subscribeOn(Schedulers.boundedElastic())
-            .map(ResponseEntity::ok);
+                .getDatasetVersion(dataEntityId, versionId)
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<DataSetStructure>> getDataSetStructureLatest(
-        final Long dataEntityId,
-        final ServerWebExchange exchange
+            final Long dataEntityId,
+            final ServerWebExchange exchange
     ) {
         return datasetVersionService
-            .getLatestDatasetVersion(dataEntityId)
-            .subscribeOn(Schedulers.boundedElastic())
-            .map(ResponseEntity::ok);
+                .getLatestDatasetVersion(dataEntityId)
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(ResponseEntity::ok);
     }
 }

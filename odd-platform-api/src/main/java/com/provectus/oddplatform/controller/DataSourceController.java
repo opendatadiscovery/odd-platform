@@ -6,6 +6,8 @@ import com.provectus.oddplatform.api.contract.model.DataSourceFormData;
 import com.provectus.oddplatform.api.contract.model.DataSourceList;
 import com.provectus.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import com.provectus.oddplatform.service.DataSourceService;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -13,13 +15,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 @RestController
 public class DataSourceController
-    extends AbstractCRUDController<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData, DataSourceService>
-    implements DataSourceApi {
+        extends
+        AbstractCRUDController<DataSource, DataSourceList, DataSourceFormData,
+                DataSourceUpdateFormData, DataSourceService>
+        implements DataSourceApi {
 
     public DataSourceController(final DataSourceService entityService) {
         super(entityService);
@@ -32,10 +33,10 @@ public class DataSourceController
 
     @Override
     public Mono<ResponseEntity<DataSourceList>> getDataSourceList(
-        @NotNull @Valid final Integer page,
-        @NotNull @Valid final Integer size,
-        @Valid final String query,
-        final ServerWebExchange exchange
+            @NotNull @Valid final Integer page,
+            @NotNull @Valid final Integer size,
+            @Valid final String query,
+            final ServerWebExchange exchange
     ) {
         return list(page, size, query);
     }
@@ -43,24 +44,24 @@ public class DataSourceController
     @Override
     public Mono<ResponseEntity<Flux<DataSource>>> getActiveDataSourceList(final ServerWebExchange exchange) {
         final Flux<DataSource> response = entityService.listActive()
-            .subscribeOn(Schedulers.boundedElastic());
+                .subscribeOn(Schedulers.boundedElastic());
 
         return Mono.just(ResponseEntity.ok(response));
     }
 
     @Override
     public Mono<ResponseEntity<DataSource>> registerDataSource(
-        @Valid final Mono<DataSourceFormData> dataSourceFormData,
-        final ServerWebExchange exchange
+            @Valid final Mono<DataSourceFormData> dataSourceFormData,
+            final ServerWebExchange exchange
     ) {
         return create(dataSourceFormData);
     }
 
     @Override
     public Mono<ResponseEntity<DataSource>> updateDataSource(
-        final Long dataSourceId,
-        @Valid final Mono<DataSourceUpdateFormData> dataSourceUpdateFormData,
-        final ServerWebExchange exchange
+            final Long dataSourceId,
+            @Valid final Mono<DataSourceUpdateFormData> dataSourceUpdateFormData,
+            final ServerWebExchange exchange
     ) {
         return update(dataSourceId, dataSourceUpdateFormData);
     }

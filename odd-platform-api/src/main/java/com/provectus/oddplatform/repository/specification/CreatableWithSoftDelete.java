@@ -1,34 +1,33 @@
 package com.provectus.oddplatform.repository.specification;
 
 import com.provectus.oddplatform.exception.EntityAlreadyExists;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jooq.InsertSetStep;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DSL;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static java.util.Collections.emptyList;
 
 public interface CreatableWithSoftDelete<ID, R extends UpdatableRecord<R>, P>
-    extends Creatable<ID, R, P>, Updatable<ID, R, P>, BaseTraitWithSoftDelete<ID, R, P> {
+        extends Creatable<ID, R, P>, Updatable<ID, R, P>, BaseTraitWithSoftDelete<ID, R, P> {
 
     default P create(final P entity) {
         return getDslContext().transactionResult(config -> DSL.using(config)
-            .selectFrom(getRecordTable())
-            .where(conditionToFindConflict(entity))
-            .fetchOptional()
-            .map(r -> {
-                if (isRecordDeleted(r)) {
-                    final R recordToUpdate = pojoToRecord(entity);
-                    recordToUpdate.set(getDeletedField(), false);
-                    recordToUpdate.set(getIdField(), r.get(getIdField()));
-                    return update(recordToPojo(recordToUpdate));
-                } else {
-                    throw new EntityAlreadyExists();
-                }
-            })
-            .orElseGet(() -> Creatable.super.create(entity)));
+                .selectFrom(getRecordTable())
+                .where(conditionToFindConflict(entity))
+                .fetchOptional()
+                .map(r -> {
+                    if (isRecordDeleted(r)) {
+                        final R recordToUpdate = pojoToRecord(entity);
+                        recordToUpdate.set(getDeletedField(), false);
+                        recordToUpdate.set(getIdField(), r.get(getIdField()));
+                        return update(recordToPojo(recordToUpdate));
+                    } else {
+                        throw new EntityAlreadyExists();
+                    }
+                })
+                .orElseGet(() -> Creatable.super.create(entity)));
     }
 
     default List<P> bulkCreate(final List<P> entities) {
@@ -37,8 +36,8 @@ public interface CreatableWithSoftDelete<ID, R extends UpdatableRecord<R>, P>
         }
 
         final List<R> records = entities.stream()
-            .map(this::pojoToRecord)
-            .collect(Collectors.toList());
+                .map(this::pojoToRecord)
+                .collect(Collectors.toList());
 
         InsertSetStep<R> insertStep = getDslContext().insertInto(getRecordTable());
         for (int i = 0; i < records.size() - 1; i++) {
@@ -47,12 +46,12 @@ public interface CreatableWithSoftDelete<ID, R extends UpdatableRecord<R>, P>
 
         // TODO: remove dirty hack
         return insertStep
-            .set(records.get(records.size() - 1))
-            .onDuplicateKeyIgnore()
-            .returning(getRecordTable().fields())
-            .fetch()
-            .stream()
-            .map(this::recordToPojo)
-            .collect(Collectors.toList());
+                .set(records.get(records.size() - 1))
+                .onDuplicateKeyIgnore()
+                .returning(getRecordTable().fields())
+                .fetch()
+                .stream()
+                .map(this::recordToPojo)
+                .collect(Collectors.toList());
     }
 }

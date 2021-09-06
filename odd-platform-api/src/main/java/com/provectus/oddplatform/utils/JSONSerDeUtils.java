@@ -8,26 +8,27 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class JSONSerDeUtils {
-    private static final ObjectMapper objectMapper = new ObjectMapper()
-        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .registerModule(new JavaTimeModule())
-        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .registerModule(new JavaTimeModule())
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
     public static <T> T deserializeJson(final String data, final Class<T> clazz) {
         try {
-            return objectMapper.readValue(data, clazz);
+            return OBJECT_MAPPER.readValue(data, clazz);
         } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static <T> T deserializeJson(final Object data, final Class<T> clazz) {
-        return objectMapper.convertValue(data, clazz);
+        return OBJECT_MAPPER.convertValue(data, clazz);
     }
 
     public static <T> T deserializeJson(final String data, final TypeReference<T> tr) {
         try {
-            return objectMapper.readValue(data, tr);
+            return OBJECT_MAPPER.readValue(data, tr);
         } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
@@ -35,7 +36,7 @@ public class JSONSerDeUtils {
 
     public static <T> String serializeJson(final T object) {
         try {
-            return objectMapper.writeValueAsString(object);
+            return OBJECT_MAPPER.writeValueAsString(object);
         } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }

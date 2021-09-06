@@ -9,11 +9,11 @@ import static com.provectus.oddplatform.model.Tables.NAMESPACE;
 
 @Repository
 public class NamespaceRepositoryImpl
-    extends AbstractSoftDeleteCRUDRepository<NamespaceRecord, NamespacePojo>
-    implements NamespaceRepository {
+        extends AbstractSoftDeleteCRUDRepository<NamespaceRecord, NamespacePojo>
+        implements NamespaceRepository {
 
     public NamespaceRepositoryImpl(final DSLContext dslContext) {
         super(dslContext, NAMESPACE, NAMESPACE.ID, NAMESPACE.IS_DELETED,
-            NAMESPACE.NAME, NAMESPACE.NAME, NamespacePojo.class);
+                NAMESPACE.NAME, NAMESPACE.NAME, NamespacePojo.class);
     }
 }

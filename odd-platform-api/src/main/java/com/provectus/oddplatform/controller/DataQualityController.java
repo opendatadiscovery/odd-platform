@@ -21,26 +21,26 @@ public class DataQualityController implements DataQualityApi {
     public Mono<ResponseEntity<DataEntityList>> getDataEntityDataQATests(final Long dataEntityId,
                                                                          final ServerWebExchange exchange) {
         return dataQualityService
-            .getDataEntityDataQATests(dataEntityId)
-            .subscribeOn(Schedulers.boundedElastic())
-            .map(ResponseEntity::ok);
+                .getDataEntityDataQATests(dataEntityId)
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<DataSetTestReport>> getDatasetTestReport(final Long dataEntityId,
                                                                         final ServerWebExchange exchange) {
         return dataQualityService
-            .getDatasetTestReport(dataEntityId)
-            .subscribeOn(Schedulers.boundedElastic())
-            .map(ResponseEntity::ok);
+                .getDatasetTestReport(dataEntityId)
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<DataQualityTestRunList>> getRuns(final Long dataEntityId,
                                                                 final ServerWebExchange exchange) {
         return dataQualityService
-            .getDataQualityTestRuns(dataEntityId)
-            .subscribeOn(Schedulers.boundedElastic())
-            .map(ResponseEntity::ok);
+                .getDataQualityTestRuns(dataEntityId)
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(ResponseEntity::ok);
     }
 }

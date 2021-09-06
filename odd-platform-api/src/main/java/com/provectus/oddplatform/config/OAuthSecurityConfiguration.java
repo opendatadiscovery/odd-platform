@@ -1,6 +1,5 @@
 package com.provectus.oddplatform.config;
 
-
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,24 +17,24 @@ public class OAuthSecurityConfiguration {
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityWebFilterChain securityWebFilterChainOauth2ResourceServer(final ServerHttpSecurity http) {
         return http
-            .csrf().disable()
-            .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/ingestion/**"))
-            .authorizeExchange(e -> e
-                .pathMatchers("/ingestion/entities").permitAll()
-                .pathMatchers("/**").authenticated())
-            .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
-            .build();
+                .csrf().disable()
+                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/ingestion/**"))
+                .authorizeExchange(e -> e
+                        .pathMatchers("/ingestion/entities").permitAll()
+                        .pathMatchers("/**").authenticated())
+                .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
+                .build();
     }
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChainOauth2Client(final ServerHttpSecurity http) {
         return http
-            .csrf().disable()
-            .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
-            .authorizeExchange(e -> e
-                .pathMatchers("/health", "/favicon.ico").permitAll()
-                .pathMatchers("/**").authenticated())
-            .oauth2Login(Customizer.withDefaults())
-            .build();
+                .csrf().disable()
+                .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
+                .authorizeExchange(e -> e
+                        .pathMatchers("/health", "/favicon.ico").permitAll()
+                        .pathMatchers("/**").authenticated())
+                .oauth2Login(Customizer.withDefaults())
+                .build();
     }
 }

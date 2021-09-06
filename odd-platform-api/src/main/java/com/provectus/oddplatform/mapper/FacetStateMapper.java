@@ -5,7 +5,6 @@ import com.provectus.oddplatform.api.contract.model.FacetState;
 import com.provectus.oddplatform.api.contract.model.SearchFormData;
 import com.provectus.oddplatform.dto.FacetStateDto;
 import com.provectus.oddplatform.model.tables.pojos.SearchFacetsPojo;
-
 import java.util.List;
 import java.util.UUID;
 

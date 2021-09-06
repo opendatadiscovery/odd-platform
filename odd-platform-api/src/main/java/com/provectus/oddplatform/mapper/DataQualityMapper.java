@@ -8,7 +8,6 @@ import com.provectus.oddplatform.api.contract.model.DataSetTestReport;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DatasetTestReportDto;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
-
 import java.util.Collection;
 
 public interface DataQualityMapper {

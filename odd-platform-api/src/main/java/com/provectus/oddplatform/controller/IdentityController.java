@@ -21,16 +21,16 @@ public class IdentityController implements IdentityApi {
     @Override
     public Mono<ResponseEntity<AssociatedOwner>> whoami(final ServerWebExchange exchange) {
         return identityService.whoami()
-            .map(ResponseEntity::ok)
-            .switchIfEmpty(Mono.just(ResponseEntity.noContent().build()));
+                .map(ResponseEntity::ok)
+                .switchIfEmpty(Mono.just(ResponseEntity.noContent().build()));
     }
 
     @Override
     public Mono<ResponseEntity<AssociatedOwner>> associateOwner(final Mono<OwnerFormData> ownerFormData,
                                                                 final ServerWebExchange exchange) {
         return ownerFormData
-            .publishOn(Schedulers.boundedElastic())
-            .flatMap(identityService::associateOwner)
-            .map(ResponseEntity::ok);
+                .publishOn(Schedulers.boundedElastic())
+                .flatMap(identityService::associateOwner)
+                .map(ResponseEntity::ok);
     }
 }

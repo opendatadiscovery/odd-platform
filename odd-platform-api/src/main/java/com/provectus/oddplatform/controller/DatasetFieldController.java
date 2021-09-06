@@ -6,6 +6,7 @@ import com.provectus.oddplatform.api.contract.model.InternalDescription;
 import com.provectus.oddplatform.api.contract.model.InternalDescriptionFormData;
 import com.provectus.oddplatform.api.contract.model.Label;
 import com.provectus.oddplatform.service.DatasetFieldService;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,8 +15,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-
 @RestController
 @RequiredArgsConstructor
 public class DatasetFieldController implements DatasetFieldApi {
@@ -23,25 +22,25 @@ public class DatasetFieldController implements DatasetFieldApi {
 
     @Override
     public Mono<ResponseEntity<InternalDescription>> upsertDatasetFieldInternalDescription(
-        final Long datasetFieldId,
-        @Valid final Mono<InternalDescriptionFormData> internalDescriptionFormData,
-        final ServerWebExchange exchange
+            final Long datasetFieldId,
+            @Valid final Mono<InternalDescriptionFormData> internalDescriptionFormData,
+            final ServerWebExchange exchange
     ) {
         return internalDescriptionFormData
-            .publishOn(Schedulers.boundedElastic())
-            .flatMap(form -> datasetFieldService.upsertDescription(datasetFieldId, form))
-            .map(ResponseEntity::ok);
+                .publishOn(Schedulers.boundedElastic())
+                .flatMap(form -> datasetFieldService.upsertDescription(datasetFieldId, form))
+                .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Flux<Label>>> upsertDatasetFieldLabels(
-        final Long datasetFieldId,
-        final Mono<DatasetFieldLabelsFormData> datasetFieldLabelsFormData,
-        final ServerWebExchange exchange
+            final Long datasetFieldId,
+            final Mono<DatasetFieldLabelsFormData> datasetFieldLabelsFormData,
+            final ServerWebExchange exchange
     ) {
         final Flux<Label> labels = datasetFieldLabelsFormData
-            .publishOn(Schedulers.boundedElastic())
-            .flatMapMany(form -> datasetFieldService.upsertLabels(datasetFieldId, form));
+                .publishOn(Schedulers.boundedElastic())
+                .flatMapMany(form -> datasetFieldService.upsertLabels(datasetFieldId, form));
 
         return Mono.just(ResponseEntity.ok(labels));
     }

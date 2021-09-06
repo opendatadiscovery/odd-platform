@@ -27,15 +27,14 @@ import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
 import com.provectus.oddplatform.utils.Pair;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.MapUtils;
-import org.jooq.JSONB;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.MapUtils;
+import org.jooq.JSONB;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -50,29 +49,39 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     @Override
     public DataEntity mapPojo(final DataEntityDimensionsDto dataEntityDto) {
         return mapPojo(dataEntityDto.getDataEntity())
-            .types(dataEntityDto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
-            .subType(mapSubType(dataEntityDto.getSubtype()))
-            .namespace(namespaceMapper.mapPojo(dataEntityDto.getNamespace()))
-            .ownership(ownershipMapper.mapDtos(dataEntityDto.getOwnership()))
-            .dataSource(dataSourceMapper.mapPojo(dataEntityDto.getDataSource()))
-            .tags(dataEntityDto.getTags() != null ?
-                dataEntityDto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList())
-                : null
-            );
+                .types(dataEntityDto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
+                .subType(mapSubType(dataEntityDto.getSubtype()))
+                .namespace(namespaceMapper.mapPojo(dataEntityDto.getNamespace()))
+                .ownership(ownershipMapper.mapDtos(dataEntityDto.getOwnership()))
+                .dataSource(dataSourceMapper.mapPojo(dataEntityDto.getDataSource()))
+                .tags(dataEntityDto.getTags() != null
+                        ? dataEntityDto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList())
+                        : null
+                );
+    }
+
+    private DataEntity mapPojo(final DataEntityPojo pojo) {
+        return new DataEntity()
+                .id(pojo.getId())
+                .internalName(pojo.getInternalName())
+                .externalName(pojo.getExternalName())
+                .oddrn(pojo.getOddrn())
+                .createdAt(addUTC(pojo.getCreatedAt()))
+                .updatedAt(addUTC(pojo.getUpdatedAt()));
     }
 
     @Override
     public DataEntityList mapPojos(final List<DataEntityDimensionsDto> dataEntityDto) {
         return new DataEntityList()
-            .items(dataEntityDto.stream().map(this::mapPojo).collect(Collectors.toList()))
-            .pageInfo(pageInfo(dataEntityDto.size()));
+                .items(dataEntityDto.stream().map(this::mapPojo).collect(Collectors.toList()))
+                .pageInfo(pageInfo(dataEntityDto.size()));
     }
 
     @Override
     public DataEntityList mapPojos(final Page<DataEntityDimensionsDto> dataEntityDto) {
         return new DataEntityList()
-            .items(dataEntityDto.getData().stream().map(this::mapPojo).collect(Collectors.toList()))
-            .pageInfo(pageInfo(dataEntityDto));
+                .items(dataEntityDto.getData().stream().map(this::mapPojo).collect(Collectors.toList()))
+                .pageInfo(pageInfo(dataEntityDto));
     }
 
     @Override
@@ -80,32 +89,32 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         final DataEntityPojo pojo = dto.getDataEntity();
 
         final List<DataEntityType> types = dto.getTypes()
-            .stream()
-            .map(this::mapType)
-            .collect(Collectors.toList());
+                .stream()
+                .map(this::mapType)
+                .collect(Collectors.toList());
 
         final DataEntityDetails details = new DataEntityDetails()
-            .id(pojo.getId())
-            .externalName(pojo.getExternalName())
-            .internalName(pojo.getInternalName())
-            .oddrn(pojo.getOddrn())
-            .internalDescription(pojo.getInternalDescription())
-            .externalDescription(pojo.getExternalDescription())
-            .createdAt(addUTC(pojo.getCreatedAt()))
-            .updatedAt(addUTC(pojo.getUpdatedAt()))
-            .types(types)
-            .subType(mapSubType(dto.getSubtype()))
-            .namespace(namespaceMapper.mapPojo(dto.getNamespace()))
-            .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
-            .dataSource(dataSourceMapper.mapPojo(dto.getDataSource()))
-            .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
-            .versionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().getDatasetVersions()))
-            .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()));
+                .id(pojo.getId())
+                .externalName(pojo.getExternalName())
+                .internalName(pojo.getInternalName())
+                .oddrn(pojo.getOddrn())
+                .internalDescription(pojo.getInternalDescription())
+                .externalDescription(pojo.getExternalDescription())
+                .createdAt(addUTC(pojo.getCreatedAt()))
+                .updatedAt(addUTC(pojo.getUpdatedAt()))
+                .types(types)
+                .subType(mapSubType(dto.getSubtype()))
+                .namespace(namespaceMapper.mapPojo(dto.getNamespace()))
+                .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
+                .dataSource(dataSourceMapper.mapPojo(dto.getDataSource()))
+                .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
+                .versionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().getDatasetVersions()))
+                .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()));
 
         final List<DataEntityType.NameEnum> typeNames = types
-            .stream()
-            .map(DataEntityType::getName)
-            .collect(Collectors.toList());
+                .stream()
+                .map(DataEntityType::getName)
+                .collect(Collectors.toList());
 
         if (typeNames.contains(DataEntityType.NameEnum.SET)) {
             // TODO: move to the dto
@@ -114,32 +123,32 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
         if (typeNames.contains(DataEntityType.NameEnum.TRANSFORMER)) {
             details
-                .sourceList(dto.getDataTransformerDetailsDto().getSourceList()
-                    .stream()
-                    .map(this::mapReference)
-                    .collect(Collectors.toList()))
-                .targetList(dto.getDataTransformerDetailsDto()
-                    .getTargetList()
-                    .stream()
-                    .map(this::mapReference)
-                    .collect(Collectors.toList()));
+                    .sourceList(dto.getDataTransformerDetailsDto().getSourceList()
+                            .stream()
+                            .map(this::mapReference)
+                            .collect(Collectors.toList()))
+                    .targetList(dto.getDataTransformerDetailsDto()
+                            .getTargetList()
+                            .stream()
+                            .map(this::mapReference)
+                            .collect(Collectors.toList()));
         }
 
         if (typeNames.contains(DataEntityType.NameEnum.QUALITY_TEST)) {
             final DataQualityTestExpectation expectation = new DataQualityTestExpectation()
-                .type(dto.getDataQualityTestDetailsDto().getExpectationType());
+                    .type(dto.getDataQualityTestDetailsDto().getExpectationType());
 
             expectation.putAll(MapUtils.emptyIfNull(dto.getDataQualityTestDetailsDto().getExpectationParameters()));
 
             details.expectation(expectation)
-                .datasetsList(dto.getDataQualityTestDetailsDto()
-                    .getDatasetList()
-                    .stream()
-                    .map(this::mapReference)
-                    .collect(Collectors.toList()))
-                .linkedUrlList(dto.getDataQualityTestDetailsDto().getLinkedUrlList())
-                .suiteName(dto.getDataQualityTestDetailsDto().getSuiteName())
-                .suiteUrl(dto.getDataQualityTestDetailsDto().getSuiteUrl());
+                    .datasetsList(dto.getDataQualityTestDetailsDto()
+                            .getDatasetList()
+                            .stream()
+                            .map(this::mapReference)
+                            .collect(Collectors.toList()))
+                    .linkedUrlList(dto.getDataQualityTestDetailsDto().getLinkedUrlList())
+                    .suiteName(dto.getDataQualityTestDetailsDto().getSuiteName())
+                    .suiteUrl(dto.getDataQualityTestDetailsDto().getSuiteUrl());
         }
 
         return details;
@@ -161,64 +170,54 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         }
 
         return new DataEntitySubType()
-            .id(sub.getId())
-            .name(DataEntitySubType.NameEnum.fromValue(sub.getName()));
+                .id(sub.getId())
+                .name(DataEntitySubType.NameEnum.fromValue(sub.getName()));
     }
 
     @Override
     public DataEntityTypeDictionary mapTypeDict(final Map<DataEntityTypePojo, List<DataEntitySubtypePojo>> typeDict) {
         return new DataEntityTypeDictionary()
-            .subtypes(typeDict.values()
-                .stream()
-                .flatMap(List::stream)
-                .map(this::mapSubType)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()))
-            .types(typeDict.keySet()
-                .stream()
-                .map(this::mapType)
-                .collect(Collectors.toList()));
+                .subtypes(typeDict.values()
+                        .stream()
+                        .flatMap(List::stream)
+                        .map(this::mapSubType)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList()))
+                .types(typeDict.keySet()
+                        .stream()
+                        .map(this::mapType)
+                        .collect(Collectors.toList()));
     }
 
     @Override
     public DataEntityLineage mapLineageDto(final DataEntityLineageDto dto) {
         return new DataEntityLineage()
-            .root(mapNode(dto.getDataEntityDto()))
-            .upstream(mapStream(dto.getUpstream()))
-            .downstream(mapStream(dto.getDownstream()));
+                .root(mapNode(dto.getDataEntityDto()))
+                .upstream(mapStream(dto.getUpstream()))
+                .downstream(mapStream(dto.getDownstream()));
     }
 
     @Override
     public DataEntityRef mapRef(final DataEntityDto dto) {
         return new DataEntityRef()
-            .id(dto.getDataEntity().getId())
-            .internalName(dto.getDataEntity().getInternalName())
-            .externalName(dto.getDataEntity().getExternalName())
-            .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
-            .hasAlerts(dto.isHasAlerts())
-            .url("");
-    }
-
-    private DataEntity mapPojo(final DataEntityPojo pojo) {
-        return new DataEntity()
-            .id(pojo.getId())
-            .internalName(pojo.getInternalName())
-            .externalName(pojo.getExternalName())
-            .oddrn(pojo.getOddrn())
-            .createdAt(addUTC(pojo.getCreatedAt()))
-            .updatedAt(addUTC(pojo.getUpdatedAt()));
+                .id(dto.getDataEntity().getId())
+                .internalName(dto.getDataEntity().getInternalName())
+                .externalName(dto.getDataEntity().getExternalName())
+                .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
+                .hasAlerts(dto.isHasAlerts())
+                .url("");
     }
 
     private DataEntityLineageStream mapStream(final DataEntityLineageStreamDto upstream) {
         return new DataEntityLineageStream()
-            .nodes(upstream.getNodes().stream().map(this::mapNode).collect(Collectors.toList()))
-            .edges(upstream.getEdges().stream().map(this::mapEdge).collect(Collectors.toList()));
+                .nodes(upstream.getNodes().stream().map(this::mapNode).collect(Collectors.toList()))
+                .edges(upstream.getEdges().stream().map(this::mapEdge).collect(Collectors.toList()));
     }
 
     private DataEntityLineageEdge mapEdge(final Pair<Long, Long> edge) {
         return new DataEntityLineageEdge()
-            .sourceId(edge.getLeft())
-            .targetId(edge.getRight());
+                .sourceId(edge.getLeft())
+                .targetId(edge.getRight());
     }
 
     private DataEntityLineageNode mapNode(final DataEntityDimensionsDto dto) {
@@ -227,30 +226,31 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         final DataSourcePojo dataSource = dto.getDataSource();
 
         return new DataEntityLineageNode()
-            .id(dataEntity.getId())
-            .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
-            .externalName(dataEntity.getExternalName())
-            .internalName(dataEntity.getInternalName())
-            .namespace(namespace != null ? namespaceMapper.mapPojo(namespace) : null)
-            .dataSource(dataSource != null ? dataSourceMapper.mapPojo(dataSource) : null);
+                .id(dataEntity.getId())
+                .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
+                .externalName(dataEntity.getExternalName())
+                .internalName(dataEntity.getInternalName())
+                .namespace(namespace != null ? namespaceMapper.mapPojo(namespace) : null)
+                .dataSource(dataSource != null ? dataSourceMapper.mapPojo(dataSource) : null);
     }
 
     private DataEntityRef mapReference(final DataEntityDto dto) {
         final DataEntityPojo pojo = dto.getDataEntity();
 
         return new DataEntityRef()
-            .id(pojo.getId())
-            .externalName(pojo.getExternalName())
-            .internalName(pojo.getInternalName())
-            .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
-            .url("");
+                .id(pojo.getId())
+                .externalName(pojo.getExternalName())
+                .internalName(pojo.getInternalName())
+                .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
+                .url("");
     }
 
     private DataSetStats mapStats(final JSONB specificAttributes) {
-        final Map<String, ?> sa = JSONSerDeUtils.deserializeJson(specificAttributes.data(), new TypeReference<Map<String, ?>>() {
-        });
+        final Map<String, ?> sa =
+                JSONSerDeUtils.deserializeJson(specificAttributes.data(), new TypeReference<Map<String, ?>>() {
+                });
 
         return JSONSerDeUtils
-            .deserializeJson(sa.get(DataEntityType.NameEnum.SET.getValue()), DataSetStats.class);
+                .deserializeJson(sa.get(DataEntityType.NameEnum.SET.getValue()), DataSetStats.class);
     }
 }
