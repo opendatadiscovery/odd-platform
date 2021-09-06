@@ -1,6 +1,5 @@
 package com.provectus.oddplatform.repository;
 
-import com.provectus.oddplatform.api.contract.model.DataEntityDetails;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
 import com.provectus.oddplatform.dto.DataEntityDto;
@@ -50,7 +49,7 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDto> bulkUpdate(final List<DataEntityDto> dtos);
 
-    void incrementViewCount(DataEntityDetails dto);
+    void incrementViewCount(final long id);
 
     void createHollow(final Collection<String> oddrns);
 

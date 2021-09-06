@@ -20,6 +20,7 @@ import com.provectus.oddplatform.api.contract.model.MetadataFieldValueUpdateForm
 import com.provectus.oddplatform.api.contract.model.MetadataObject;
 import com.provectus.oddplatform.api.contract.model.Tag;
 import com.provectus.oddplatform.auth.AuthIdentityProvider;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
 import com.provectus.oddplatform.dto.MetadataFieldKey;
 import com.provectus.oddplatform.dto.StreamKind;
@@ -100,12 +101,14 @@ public class DataEntityServiceImpl
                 .flatMap(optional -> optional.isEmpty()
                         ? Mono.error(new NotFoundException())
                         : Mono.just(optional.get()))
-                .map(entityMapper::mapDtoDetails)
-                .map(this::incrementViewCount);
+                .map(this::incrementViewCount)
+                .map(entityMapper::mapDtoDetails);
     }
 
-    public DataEntityDetails incrementViewCount(DataEntityDetails dto) {
-        entityRepository.incrementViewCount(dto);
+    private DataEntityDetailsDto incrementViewCount(DataEntityDetailsDto dto) {
+        final var dataEntity = dto.getDataEntity();
+        entityRepository.incrementViewCount(dataEntity.getId());
+        dataEntity.setViewCount(dataEntity.getViewCount() + 1);
         return dto;
     }
 

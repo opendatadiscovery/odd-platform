@@ -1,7 +1,6 @@
 package com.provectus.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.provectus.oddplatform.api.contract.model.DataEntityDetails;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestAttributes;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
@@ -210,6 +209,7 @@ public class DataEntityRepositoryImpl
                 r.changed(DATA_ENTITY.INTERNAL_DESCRIPTION, false);
                 r.changed(DATA_ENTITY.INTERNAL_NAME, false);
                 r.changed(DATA_ENTITY.NAMESPACE_ID, false);
+                r.changed(DATA_ENTITY.VIEW_COUNT, false);
             })
             .collect(Collectors.toList());
 
@@ -231,10 +231,10 @@ public class DataEntityRepositoryImpl
 
     @Override
     @Transactional
-    public void incrementViewCount(final DataEntityDetails dto) {
+    public void incrementViewCount(final long id) {
         dslContext.update(DATA_ENTITY)
                 .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
-                .where(DATA_ENTITY.ID.eq(dto.getId()))
+                .where(DATA_ENTITY.ID.eq(id))
                 .execute();
     }
 
