@@ -42,7 +42,7 @@
 
   <module name="LineLength">
     <property name="fileExtensions" value="java"/>
-    <property name="max" value="100"/>
+    <property name="max" value="120"/> <!-- MODIFIED -->
     <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
   </module>
 
@@ -140,6 +140,8 @@
                     STATIC_INIT, INSTANCE_INIT, METHOD_DEF, CTOR_DEF, VARIABLE_DEF, RECORD_DEF,
                     COMPACT_CTOR_DEF"/>
       <property name="allowNoEmptyLineBetweenFields" value="true"/>
+      <property name="allowMultipleEmptyLines" value="false"/> <!-- MODIFIED -->
+      <property name="allowMultipleEmptyLinesInsideClassMembers" value="false"/> <!-- MODIFIED -->
     </module>
     <module name="SeparatorWrap">
       <property name="id" value="SeparatorWrapDot"/>
@@ -246,12 +248,12 @@
              value="GenericWhitespace ''{0}'' is not preceded with whitespace."/>
     </module>
     <module name="Indentation">
-      <property name="basicOffset" value="2"/>
-      <property name="braceAdjustment" value="2"/>
-      <property name="caseIndent" value="2"/>
-      <property name="throwsIndent" value="4"/>
-      <property name="lineWrappingIndentation" value="4"/>
-      <property name="arrayInitIndent" value="2"/>
+      <property name="basicOffset" value="4"/> <!-- MODIFIED -->
+      <property name="braceAdjustment" value="0"/>
+      <property name="caseIndent" value="4"/> <!-- MODIFIED -->
+      <property name="throwsIndent" value="8"/> <!-- MODIFIED -->
+      <property name="lineWrappingIndentation" value="8"/> <!-- MODIFIED -->
+      <property name="arrayInitIndent" value="4"/> <!-- MODIFIED -->
     </module>
     <module name="AbbreviationAsWordInName">
       <property name="ignoreFinal" value="false"/>
@@ -266,8 +268,8 @@
     <module name="VariableDeclarationUsageDistance"/>
     <module name="CustomImportOrder">
       <property name="sortImportsInGroupAlphabetically" value="true"/>
-      <property name="separateLineBetweenGroups" value="true"/>
-      <property name="customImportOrderRules" value="STATIC###THIRD_PARTY_PACKAGE"/>
+      <property name="separateLineBetweenGroups" value="false"/> <!-- MODIFIED -->
+      <property name="customImportOrderRules" value="STATIC###STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE"/> <!-- MODIFIED -->
       <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF"/>
     </module>
     <module name="MethodParamPad">
@@ -360,5 +362,20 @@
              default="checkstyle-xpath-suppressions.xml" />
       <property name="optional" value="true"/>
     </module>
+
+    <module name="ConstantName"> <!-- CUSTOM -->
+      <property name="format" value="^(?!LOG(GER)?)(log(ger)?$|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*)$"/>
+    </module>
   </module>
+
+  <module name="RegexpMultiline"> <!-- CUSTOM -->
+    <property name="message" value="Blank line at start of block is not allowed"/>
+    <property name="format" value="\)\s+(throws .*\s+)*\{\s*\n\s*\n"/>
+  </module>
+
+  <module name="RegexpMultiline"> <!-- CUSTOM -->
+    <property name="message" value="Blank line at end of block is not allowed"/>
+    <property name="format" value="^\s*\n\s*\}"/>
+  </module>
+
 </module>
