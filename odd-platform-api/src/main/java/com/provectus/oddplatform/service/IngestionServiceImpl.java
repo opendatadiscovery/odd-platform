@@ -492,10 +492,10 @@ public class IngestionServiceImpl implements IngestionService {
         return !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
     }
 
-                    private <K, V1, V2, V> Map<K, V> intersection(final Map<K, V1> left,
+    private <K, V1, V2, V> Map<K, V> intersection(final Map<K, V1> left,
                                                   final Map<K, V2> right,
                                                   final BiFunction<V1, V2, V> mapper) {
-                                final Map<K, V> intersection = new HashMap<>();
+        final Map<K, V> intersection = new HashMap<>();
         for (final Map.Entry<K, V1> entry : left.entrySet()) {
             final K key = entry.getKey();
             if (right.containsKey(key)) {
@@ -504,10 +504,6 @@ public class IngestionServiceImpl implements IngestionService {
         }
         return intersection;
     }
-
-
-
-
 
     // TODO: all below to mapper
     private DataEntityTaskRunPojo mapDataQualityTaskRun(final DataEntity item) {
