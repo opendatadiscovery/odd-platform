@@ -42,7 +42,7 @@
 
   <module name="LineLength">
     <property name="fileExtensions" value="java"/>
-    <property name="max" value="120"/> <!-- MODIFIED -->
+    <property name="max" value="120"/> 
     <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
   </module>
 
@@ -140,8 +140,8 @@
                     STATIC_INIT, INSTANCE_INIT, METHOD_DEF, CTOR_DEF, VARIABLE_DEF, RECORD_DEF,
                     COMPACT_CTOR_DEF"/>
       <property name="allowNoEmptyLineBetweenFields" value="true"/>
-      <property name="allowMultipleEmptyLines" value="false"/> <!-- MODIFIED -->
-      <property name="allowMultipleEmptyLinesInsideClassMembers" value="false"/> <!-- MODIFIED -->
+      <property name="allowMultipleEmptyLines" value="false"/> 
+      <property name="allowMultipleEmptyLinesInsideClassMembers" value="false"/> 
     </module>
     <module name="SeparatorWrap">
       <property name="id" value="SeparatorWrapDot"/>
@@ -212,27 +212,27 @@
              value="Pattern variable name ''{0}'' must match pattern ''{1}''."/>
     </module>
     <module name="ClassTypeParameterName">
-      <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
+      <property name="format" value="^[A-Z]{1,}$"/> 
       <message key="name.invalidPattern"
              value="Class type name ''{0}'' must match pattern ''{1}''."/>
     </module>
-    <module name="RecordComponentName">
+    <!--<module name="RecordComponentName">
       <property name="format" value="^[a-z]([a-z0-9][a-zA-Z0-9]*)?$"/>
       <message key="name.invalidPattern"
                value="Record component name ''{0}'' must match pattern ''{1}''."/>
-    </module>
+    </module>--> <!-- TODO java14 -->
     <module name="RecordTypeParameterName">
-      <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
+      <property name="format" value="^[A-Z]{1,}$"/> 
       <message key="name.invalidPattern"
                value="Record type name ''{0}'' must match pattern ''{1}''."/>
     </module>
     <module name="MethodTypeParameterName">
-      <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
+      <property name="format" value="^[A-Z0-9]{1,}$"/>
       <message key="name.invalidPattern"
              value="Method type name ''{0}'' must match pattern ''{1}''."/>
     </module>
     <module name="InterfaceTypeParameterName">
-      <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
+      <property name="format" value="^[A-Z]{1,}$"/> 
       <message key="name.invalidPattern"
              value="Interface type name ''{0}'' must match pattern ''{1}''."/>
     </module>
@@ -248,28 +248,31 @@
              value="GenericWhitespace ''{0}'' is not preceded with whitespace."/>
     </module>
     <module name="Indentation">
-      <property name="basicOffset" value="4"/> <!-- MODIFIED -->
+      <property name="basicOffset" value="4"/> 
       <property name="braceAdjustment" value="0"/>
-      <property name="caseIndent" value="4"/> <!-- MODIFIED -->
-      <property name="throwsIndent" value="8"/> <!-- MODIFIED -->
-      <property name="lineWrappingIndentation" value="8"/> <!-- MODIFIED -->
-      <property name="arrayInitIndent" value="4"/> <!-- MODIFIED -->
+      <property name="caseIndent" value="4"/> 
+      <property name="throwsIndent" value="8"/> 
+      <property name="lineWrappingIndentation" value="8"/> 
+      <property name="arrayInitIndent" value="4"/> 
     </module>
     <module name="AbbreviationAsWordInName">
       <property name="ignoreFinal" value="false"/>
-      <property name="allowedAbbreviationLength" value="0"/>
+      <property name="allowedAbbreviationLength" value="5"/> 
       <property name="tokens"
                value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, ANNOTATION_DEF, ANNOTATION_FIELD_DEF,
                     PARAMETER_DEF, VARIABLE_DEF, METHOD_DEF, PATTERN_VARIABLE_DEF, RECORD_DEF,
                     RECORD_COMPONENT_DEF"/>
     </module>
-    <module name="NoWhitespaceBeforeCaseDefaultColon"/>
+<!--    <module name="NoWhitespaceBeforeCaseDefaultColon"/>--> <!-- java-->
     <module name="OverloadMethodsDeclarationOrder"/>
     <module name="VariableDeclarationUsageDistance"/>
     <module name="CustomImportOrder">
       <property name="sortImportsInGroupAlphabetically" value="true"/>
-      <property name="separateLineBetweenGroups" value="false"/> <!-- MODIFIED -->
-      <property name="customImportOrderRules" value="STATIC###STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE"/> <!-- MODIFIED -->
+<!--      <property name="separateLineBetweenGroups" value="false"/> &lt;!&ndash; MODIFIED &ndash;&gt;-->
+<!--      <property name="customImportOrderRules" value="STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STATIC"/> &lt;!&ndash; MODIFIED &ndash;&gt;-->
+<!--      <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF"/>-->
+      <property name="separateLineBetweenGroups" value="true"/>
+      <property name="customImportOrderRules" value="THIRD_PARTY_PACKAGE###STATIC"/>
       <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF"/>
     </module>
     <module name="MethodParamPad">
@@ -324,26 +327,26 @@
                value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF"/>
     </module>
     <module name="JavadocMethod">
-      <property name="accessModifiers" value="public"/>
+<!--      <property name="accessModifiers" value="public"/>-->
       <property name="allowMissingParamTags" value="true"/>
       <property name="allowMissingReturnTag" value="true"/>
       <property name="allowedAnnotations" value="Override, Test"/>
       <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF, COMPACT_CTOR_DEF"/>
     </module>
-    <module name="MissingJavadocMethod">
+    <!--<module name="MissingJavadocMethod">
       <property name="scope" value="public"/>
       <property name="minLineCount" value="2"/>
       <property name="allowedAnnotations" value="Override, Test"/>
       <property name="tokens" value="METHOD_DEF, CTOR_DEF, ANNOTATION_FIELD_DEF,
                                    COMPACT_CTOR_DEF"/>
-    </module>
-    <module name="MissingJavadocType">
+    </module>-->  <!-- TODO -->
+   <!-- <module name="MissingJavadocType">
       <property name="scope" value="protected"/>
       <property name="tokens"
                 value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF,
                       RECORD_DEF, ANNOTATION_DEF"/>
       <property name="excludeScope" value="nothing"/>
-    </module>
+    </module>-->
     <module name="MethodName">
       <property name="format" value="^[a-z][a-z0-9][a-zA-Z0-9_]*$"/>
       <message key="name.invalidPattern"
@@ -376,6 +379,10 @@
   <module name="RegexpMultiline"> <!-- CUSTOM -->
     <property name="message" value="Blank line at end of block is not allowed"/>
     <property name="format" value="^\s*\n\s*\}"/>
+  </module>
+
+  <module name="SuppressionFilter">
+    <property name="file" value="${suppressionFile}" default="suppressions.xml"/>
   </module>
 
 </module>
