@@ -18,6 +18,10 @@ public class DataEntityIngestionDtoSplit {
         return Stream.concat(newEntities.stream(), existingEntities.stream()).collect(Collectors.toList());
     }
 
+    public List<Long> getIds() {
+        return this.getAllEntities().stream().map(EnrichedDataEntityIngestionDto::getId).collect(Collectors.toList());
+    }
+
     public List<Long> getExistingIds() {
         return this.existingEntities.stream().map(EnrichedDataEntityIngestionDto::getId).collect(Collectors.toList());
     }

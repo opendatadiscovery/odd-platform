@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://127.0.0.1:5432/odd
-    username: odd
-    password: odd_password
+    url: jdbc:postgresql://127.0.0.1:5432/odd-platform
+    username: odd-platform
+    password: odd-platform-password
   jooq:
     sql-dialect: postgres
   codec:
@@ -53,4 +53,4 @@ logging:
           interceptor: trace
       jooq:
         tools:
-          LoggerListener: debug
+          LoggerListener: info

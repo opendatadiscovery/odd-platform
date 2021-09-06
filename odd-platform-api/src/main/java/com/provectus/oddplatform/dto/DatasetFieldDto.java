@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -15,5 +15,5 @@ import java.util.List;
 @Builder
 public class DatasetFieldDto {
     private DatasetFieldPojo datasetFieldPojo;
-    private List<LabelPojo> labelPojos;
+    private Set<LabelPojo> labelPojos;
 }

@@ -70,7 +70,7 @@ public class DatasetVersionMapperImpl implements DatasetVersionMapper {
             .labels(mapLabels(dto.getLabelPojos()));
     }
 
-    private List<Label> mapLabels(final List<LabelPojo> pojos) {
+    private List<Label> mapLabels(final Collection<LabelPojo> pojos) {
         final List<Label> labels = pojos.stream().map(this::mapLabel).filter(Objects::nonNull).collect(Collectors.toList());
         return labels.isEmpty() ? null : labels;
     }
