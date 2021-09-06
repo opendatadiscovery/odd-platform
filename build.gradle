@@ -11,6 +11,8 @@ configure([project(':odd-platform-api-contract'), project(':odd-platform-api')])
         // use one common config file for all subprojects
         configFile = project(':').file('config/checkstyle/checkstyle.xml')
         configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/suppressions.xml')]
+        ignoreFailures = false
+        maxWarnings = 0
     }
 
 }
