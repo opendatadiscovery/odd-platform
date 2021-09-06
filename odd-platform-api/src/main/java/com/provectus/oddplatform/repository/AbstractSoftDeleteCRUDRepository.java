@@ -102,12 +102,12 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                 .orElseThrow();
 
         final Set<R> update = dslContext.selectFrom(recordTable)
-            .where(whereClause)
-            .fetchStream()
-            .map(r -> {
-                if (!r.get(deletedField)) {
-                    throw new EntityAlreadyExistsException();
-                }
+                .where(whereClause)
+                .fetchStream()
+                .map(r -> {
+                    if (!r.get(deletedField)) {
+                        throw new EntityAlreadyExistsException();
+                    }
 
                     final R recordToUpdate = records.get(extractRecordCollisionValues(r));
                     recordToUpdate.set(deletedField, false);
