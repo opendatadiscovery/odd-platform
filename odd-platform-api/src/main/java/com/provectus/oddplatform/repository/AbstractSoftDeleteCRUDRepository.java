@@ -1,6 +1,6 @@
 package com.provectus.oddplatform.repository;
 
-import com.provectus.oddplatform.exception.EntityAlreadyExists;
+import com.provectus.oddplatform.exception.EntityAlreadyExistsException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -67,7 +67,7 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
             final R getResultRecord = getResultRecordOpt.get();
 
             if (!getResultRecord.get(deletedField)) {
-                throw new EntityAlreadyExists();
+                throw new EntityAlreadyExistsException();
             }
 
             record.set(deletedField, false);
@@ -102,12 +102,12 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                 .orElseThrow();
 
         final Set<R> update = dslContext.selectFrom(recordTable)
-                .where(whereClause)
-                .fetchStream()
-                .map(r -> {
-                    if (!r.get(deletedField)) {
-                        throw new EntityAlreadyExists();
-                    }
+            .where(whereClause)
+            .fetchStream()
+            .map(r -> {
+                if (!r.get(deletedField)) {
+                    throw new EntityAlreadyExistsException();
+                }
 
                     final R recordToUpdate = records.get(extractRecordCollisionValues(r));
                     recordToUpdate.set(deletedField, false);

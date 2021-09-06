@@ -1,6 +1,6 @@
 package com.provectus.oddplatform.repository.specification;
 
-import com.provectus.oddplatform.exception.EntityAlreadyExists;
+import com.provectus.oddplatform.exception.EntityAlreadyExistsException;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jooq.InsertSetStep;
@@ -24,7 +24,7 @@ public interface CreatableWithSoftDelete<ID, R extends UpdatableRecord<R>, P>
                         recordToUpdate.set(getIdField(), r.get(getIdField()));
                         return update(recordToPojo(recordToUpdate));
                     } else {
-                        throw new EntityAlreadyExists();
+                        throw new EntityAlreadyExistsException();
                     }
                 })
                 .orElseGet(() -> Creatable.super.create(entity)));
