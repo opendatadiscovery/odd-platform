@@ -846,7 +846,11 @@ public class DataEntityRepositoryImpl
 
         if (config.isIncludeDetails()) {
             selectStep = selectStep
-                .select(jsonArrayAgg(field(DATASET_VERSION.asterisk().toString())).as(AGG_DSV_FIELD))
+                .select(
+                    jsonArrayAgg(field(DATASET_VERSION.asterisk().toString()))
+                        .orderBy(DATASET_VERSION.VERSION.desc())
+                        .as(AGG_DSV_FIELD)
+                )
                 .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(AGG_MF_FIELD))
                 .select(jsonArrayAgg(field(METADATA_FIELD_VALUE.asterisk().toString())).as(AGG_MFV_FIELD));
         }
