@@ -26,7 +26,8 @@ spring:
 #            user-name-attribute:
 
 cognito:
-  logoutUrl: https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_SLj42PGZ4/logout
+  enabled: true
+  logoutUrl: https://odc-auth.auth.eu-central-1.amazoncognito.com/logout
 
 auth:
   # DISABLED, LOGIN_FORM, OAUTH2
