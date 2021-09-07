@@ -15,43 +15,27 @@ CREATE TABLE IF NOT EXISTS dataset_structure
             REFERENCES dataset_field (id)
 );
 
-WITH duplicate_fields AS (
-    SELECT max(id)                       AS latest_field,
-           array_agg(dataset_version_id) AS dsv_ids
+CREATE TEMP TABLE duplicate_fields AS
+WITH cte AS (
+    SELECT array_agg(id order by id desc) AS field_ids,
+           array_agg(dataset_version_id)  AS dsv_ids
     FROM dataset_field
     GROUP BY oddrn, type
     ORDER BY oddrn
 )
-INSERT INTO dataset_structure (dataset_version_id, dataset_field_id)
-    SELECT unnest(dsv_ids), latest_field FROM duplicate_fields;
+SELECT * from cte;
 
-WITH duplicate_fields AS (
-    SELECT array_agg(id order by id desc) AS field_ids
-    FROM dataset_field
-    GROUP BY oddrn, type
-    ORDER BY oddrn
-)
+INSERT INTO dataset_structure (dataset_version_id, dataset_field_id)
+SELECT unnest(dsv_ids), field_ids[1] FROM duplicate_fields;
+
 INSERT INTO label_to_dataset_field (label_id, dataset_field_id)
     SELECT label_id, duplicate_fields.field_ids[1]
     FROM duplicate_fields
     JOIN label_to_dataset_field ON label_to_dataset_field.dataset_field_id = ANY(duplicate_fields.field_ids[2:])
 ON CONFLICT DO NOTHING;
 
-WITH duplicate_fields AS (
-    SELECT max(id) AS latest_field
-    FROM dataset_field
-    GROUP BY oddrn, type
-    ORDER BY oddrn
-)
-DELETE FROM label_to_dataset_field WHERE dataset_field_id NOT IN (SELECT latest_field FROM duplicate_fields);
-
-WITH duplicate_fields AS (
-    SELECT max(id) AS latest_field
-    FROM dataset_field
-    GROUP BY oddrn, type
-    ORDER BY oddrn
-)
-DELETE FROM dataset_field WHERE id NOT IN (SELECT latest_field FROM duplicate_fields);
+DELETE FROM label_to_dataset_field WHERE dataset_field_id NOT IN (SELECT field_ids[1] FROM duplicate_fields);
+DELETE FROM dataset_field WHERE id NOT IN (SELECT field_ids[1] FROM duplicate_fields);
 
 ALTER TABLE dataset_field
     DROP CONSTRAINT dataset_field_dataset_version_id_fkey,
