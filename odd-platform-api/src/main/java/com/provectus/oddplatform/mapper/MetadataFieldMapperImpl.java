@@ -20,31 +20,31 @@ public class MetadataFieldMapperImpl implements MetadataFieldMapper {
     @Override
     public MetadataField mapPojo(final MetadataFieldPojo pojo) {
         return new MetadataField()
-                .id(pojo.getId())
-                .name(pojo.getName())
-                .type(MetadataFieldType.valueOf(pojo.getType()))
-                .origin(MetadataFieldOrigin.valueOf(pojo.getOrigin()));
+            .id(pojo.getId())
+            .name(pojo.getName())
+            .type(MetadataFieldType.valueOf(pojo.getType()))
+            .origin(MetadataFieldOrigin.valueOf(pojo.getOrigin()));
     }
 
     @Override
     public MetadataFieldList mapPojos(final List<MetadataFieldPojo> pojos) {
         return new MetadataFieldList()
-                .items(mapPojoList(pojos))
-                .pageInfo(pageInfo(pojos.size()));
+            .items(mapPojoList(pojos))
+            .pageInfo(pageInfo(pojos.size()));
     }
 
     @Override
     public MetadataFieldList mapPojos(final Page<MetadataFieldPojo> pojos) {
         return new MetadataFieldList()
-                .items(mapPojoList(pojos.getData()))
-                .pageInfo(pageInfo(pojos));
+            .items(mapPojoList(pojos.getData()))
+            .pageInfo(pageInfo(pojos));
     }
 
     @Override
     public MetadataFieldPojo mapForm(final MetadataFieldFormData form) {
         return new MetadataFieldPojo()
-                .setName(form.getName())
-                .setType(form.getType());
+            .setName(form.getName())
+            .setType(form.getType());
     }
 
     @Override
@@ -56,8 +56,8 @@ public class MetadataFieldMapperImpl implements MetadataFieldMapper {
     @Override
     public MetadataFieldValue mapDto(final MetadataDto dto) {
         return new MetadataFieldValue()
-                .field(mapField(dto.getMetadataField()))
-                .value(dto.getMetadataFieldValue().getValue());
+            .field(mapField(dto.getMetadataField()))
+            .value(dto.getMetadataFieldValue().getValue());
     }
 
     @Override
@@ -67,9 +67,9 @@ public class MetadataFieldMapperImpl implements MetadataFieldMapper {
 
     private MetadataField mapField(final MetadataFieldPojo pojo) {
         return new MetadataField()
-                .id(pojo.getId())
-                .name(pojo.getName())
-                .origin(MetadataFieldOrigin.valueOf(pojo.getOrigin()))
-                .type(MetadataFieldType.fromValue(pojo.getType()));
+            .id(pojo.getId())
+            .name(pojo.getName())
+            .origin(MetadataFieldOrigin.valueOf(pojo.getOrigin()))
+            .type(MetadataFieldType.fromValue(pojo.getType()));
     }
 }

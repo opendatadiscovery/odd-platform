@@ -13,8 +13,8 @@ public class TagMapperImpl implements TagMapper {
     @Override
     public TagPojo mapForm(final TagFormData form) {
         return new TagPojo()
-                .setName(form.getName())
-                .setImportant(form.getImportant());
+            .setName(form.getName())
+            .setImportant(form.getImportant());
     }
 
     @Override
@@ -27,29 +27,29 @@ public class TagMapperImpl implements TagMapper {
     @Override
     public Tag mapPojo(final TagPojo pojo) {
         return new Tag()
-                .id(pojo.getId())
-                .name(pojo.getName())
-                .important(pojo.getImportant());
+            .id(pojo.getId())
+            .name(pojo.getName())
+            .important(pojo.getImportant());
     }
 
     @Override
     public TagsResponse mapPojos(final List<TagPojo> pojos) {
         return new TagsResponse()
-                .items(mapPojoList(pojos))
-                .pageInfo(pageInfo(pojos.size()));
+            .items(mapPojoList(pojos))
+            .pageInfo(pageInfo(pojos.size()));
     }
 
     @Override
     public TagsResponse mapPojos(final Page<TagPojo> pojos) {
         return new TagsResponse()
-                .items(mapPojoList(pojos.getData()))
-                .pageInfo(pageInfo(pojos));
+            .items(mapPojoList(pojos.getData()))
+            .pageInfo(pageInfo(pojos));
     }
 
     @Override
     public TagsResponse mapTags(final List<Tag> tags) {
         return new TagsResponse()
-                .items(tags)
-                .pageInfo(pageInfo(tags.size()));
+            .items(tags)
+            .pageInfo(pageInfo(tags.size()));
     }
 }

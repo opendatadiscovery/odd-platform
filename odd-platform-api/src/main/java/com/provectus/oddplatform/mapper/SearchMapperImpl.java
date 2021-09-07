@@ -14,23 +14,23 @@ public class SearchMapperImpl implements SearchMapper {
     @Override
     public SearchFacetsData mapDto(final UUID searchId, final String query, final FacetState facetState) {
         return new SearchFacetsData()
-                .query(query)
-                .facetState(facetState)
-                .searchId(searchId);
+            .query(query)
+            .facetState(facetState)
+            .searchId(searchId);
     }
 
     @Override
     public SearchFilter mapDto(final SearchFilterDto dto) {
         return new SearchFilter()
-                .id(dto.getEntityId())
-                .name(dto.getEntityName());
+            .id(dto.getEntityId())
+            .name(dto.getEntityName());
     }
 
     @Override
     public CountableSearchFilter mapCountableSearchFilter(final SearchFilterId filterId, final long count) {
         return new CountableSearchFilter()
-                .id(filterId.getEntityId())
-                .name(filterId.getName())
-                .count(count);
+            .id(filterId.getEntityId())
+            .name(filterId.getName())
+            .count(count);
     }
 }

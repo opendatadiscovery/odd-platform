@@ -19,9 +19,9 @@ public class OwnershipMapperImpl implements OwnershipMapper {
     @Override
     public Ownership mapDto(final OwnershipDto ownership) {
         return mapModel(
-                ownership.getOwnership(),
-                ownerMapper.mapPojo(ownership.getOwner()),
-                roleMapper.mapPojo(ownership.getRole())
+            ownership.getOwnership(),
+            ownerMapper.mapPojo(ownership.getOwner()),
+            roleMapper.mapPojo(ownership.getRole())
         );
     }
 
@@ -33,9 +33,9 @@ public class OwnershipMapperImpl implements OwnershipMapper {
     @Override
     public Ownership mapModel(final OwnershipPojo ownership, final Owner owner, final Role role) {
         return new Ownership()
-                .id(ownership.getId())
-                .dataEntityId(ownership.getDataEntityId())
-                .owner(owner)
-                .role(role);
+            .id(ownership.getId())
+            .dataEntityId(ownership.getDataEntityId())
+            .owner(owner)
+            .role(role);
     }
 }

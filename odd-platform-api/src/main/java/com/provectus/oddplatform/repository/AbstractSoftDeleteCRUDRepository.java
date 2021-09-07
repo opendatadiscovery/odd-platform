@@ -20,7 +20,7 @@ import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 
 public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord<R>, P>
-        extends AbstractCRUDRepository<R, P> {
+    extends AbstractCRUDRepository<R, P> {
 
     private final Field<Boolean> deletedField;
     private final List<Field<String>> collisionIdentifiers;
@@ -55,13 +55,13 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
         final R record = pojoToRecord(pojo);
 
         final List<Condition> whereClause = collisionIdentifiers.stream()
-                .map(ci -> ci.eq(record.get(ci)))
-                .collect(Collectors.toList());
+            .map(ci -> ci.eq(record.get(ci)))
+            .collect(Collectors.toList());
 
         final Optional<R> getResultRecordOpt = dslContext
-                .selectFrom(recordTable)
-                .where(whereClause)
-                .fetchOptional();
+            .selectFrom(recordTable)
+            .where(whereClause)
+            .fetchOptional();
 
         if (getResultRecordOpt.isPresent()) {
             final R getResultRecord = getResultRecordOpt.get();
@@ -89,70 +89,70 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
         // not a great idea overall
         // at very least preserve order and DO NOT let to use mutable collections
         final Map<List<String>, R> records = pojos.stream()
-                .map(this::pojoToRecord)
-                .collect(Collectors.toMap(this::extractRecordCollisionValues, identity()));
+            .map(this::pojoToRecord)
+            .collect(Collectors.toMap(this::extractRecordCollisionValues, identity()));
 
         final Condition whereClause = records.keySet()
-                .stream()
-                .map(this::matchConditionsWithValues)
-                .map(conditions -> conditions.stream().reduce(Condition::and))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .reduce(Condition::or)
-                .orElseThrow();
+            .stream()
+            .map(this::matchConditionsWithValues)
+            .map(conditions -> conditions.stream().reduce(Condition::and))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .reduce(Condition::or)
+            .orElseThrow();
 
         final Set<R> update = dslContext.selectFrom(recordTable)
-                .where(whereClause)
-                .fetchStream()
-                .map(r -> {
-                    if (!r.get(deletedField)) {
-                        throw new EntityAlreadyExistsException();
-                    }
+            .where(whereClause)
+            .fetchStream()
+            .map(r -> {
+                if (!r.get(deletedField)) {
+                    throw new EntityAlreadyExistsException();
+                }
 
-                    final R recordToUpdate = records.get(extractRecordCollisionValues(r));
-                    recordToUpdate.set(deletedField, false);
-                    recordToUpdate.set(idField, r.get(idField));
-                    return recordToUpdate;
-                })
-                .collect(Collectors.toSet());
+                final R recordToUpdate = records.get(extractRecordCollisionValues(r));
+                recordToUpdate.set(deletedField, false);
+                recordToUpdate.set(idField, r.get(idField));
+                return recordToUpdate;
+            })
+            .collect(Collectors.toSet());
 
         final List<P> updateResult = super.bulkUpdate(update.stream()
-                .map(this::recordToPojo)
-                .collect(Collectors.toList()));
+            .map(this::recordToPojo)
+            .collect(Collectors.toList()));
 
         final Set<List<String>> updateColIds = update.stream()
-                .map(this::extractRecordCollisionValues)
-                .collect(Collectors.toSet());
+            .map(this::extractRecordCollisionValues)
+            .collect(Collectors.toSet());
 
         final List<P> create = records.values()
-                .stream()
-                .filter(r -> !updateColIds.contains(extractRecordCollisionValues(r)))
-                .map(this::recordToPojo)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(r -> !updateColIds.contains(extractRecordCollisionValues(r)))
+            .map(this::recordToPojo)
+            .collect(Collectors.toList());
 
         final List<P> createResult = super.bulkCreate(create);
 
         return Stream
-                .concat(createResult.stream(), updateResult.stream())
-                .collect(Collectors.toList());
+            .concat(createResult.stream(), updateResult.stream())
+            .collect(Collectors.toList());
     }
 
     @Override
     public void delete(final long id) {
         dslContext
-                .update(recordTable)
-                .set(deletedField, true)
-                .where(getCondition(id))
-                .execute();
+            .update(recordTable)
+            .set(deletedField, true)
+            .where(getCondition(id))
+            .execute();
     }
 
     @Override
     public void delete(final List<Long> ids) {
         dslContext
-                .update(recordTable)
-                .set(deletedField, true)
-                .where(getCondition(ids))
-                .execute();
+            .update(recordTable)
+            .set(deletedField, true)
+            .where(getCondition(ids))
+            .execute();
     }
 
     @Override

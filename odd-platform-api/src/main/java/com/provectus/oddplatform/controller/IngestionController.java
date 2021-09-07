@@ -21,15 +21,15 @@ public class IngestionController implements IngestionApi {
 
     @Override
     public Mono<ResponseEntity<Void>> postDataEntityList(
-            @Valid final Mono<DataEntityList> dataEntityList,
-            final ServerWebExchange exchange
+        @Valid final Mono<DataEntityList> dataEntityList,
+        final ServerWebExchange exchange
     ) {
         return dataEntityList
-                .publishOn(Schedulers.boundedElastic())
-                .doOnError(t -> log.error(t.getMessage()))
-                .map(list -> {
-                    ingestionService.ingest(list);
-                    return ResponseEntity.ok().build();
-                });
+            .publishOn(Schedulers.boundedElastic())
+            .doOnError(t -> log.error(t.getMessage()))
+            .map(list -> {
+                ingestionService.ingest(list);
+                return ResponseEntity.ok().build();
+            });
     }
 }

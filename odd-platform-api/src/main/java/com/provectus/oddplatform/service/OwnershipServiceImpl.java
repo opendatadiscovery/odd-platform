@@ -31,9 +31,9 @@ public class OwnershipServiceImpl implements OwnershipService {
 
         return Mono.zip(owner, role).map(t -> {
             final OwnershipPojo pojo = ownershipRepository.create(new OwnershipPojo()
-                    .setDataEntityId(dataEntityId)
-                    .setOwnerId(t.getT1().getId())
-                    .setRoleId(t.getT2().getId()));
+                .setDataEntityId(dataEntityId)
+                .setOwnerId(t.getT1().getId())
+                .setRoleId(t.getT2().getId()));
 
             return ownershipMapper.mapModel(pojo, t.getT1(), t.getT2());
         });
@@ -42,15 +42,15 @@ public class OwnershipServiceImpl implements OwnershipService {
     @Override
     public Mono<Void> delete(final long ownershipId) {
         return Mono
-                .fromRunnable(() -> ownershipRepository.delete(ownershipId))
-                .then();
+            .fromRunnable(() -> ownershipRepository.delete(ownershipId))
+            .then();
     }
 
     @Override
     public Mono<Ownership> update(final long ownershipId,
                                   final OwnershipUpdateFormData formData) {
         return Mono
-                .fromCallable(() -> ownershipRepository.updateRole(ownershipId, formData.getRoleName()))
-                .map(ownershipMapper::mapDto);
+            .fromCallable(() -> ownershipRepository.updateRole(ownershipId, formData.getRoleName()))
+            .map(ownershipMapper::mapDto);
     }
 }

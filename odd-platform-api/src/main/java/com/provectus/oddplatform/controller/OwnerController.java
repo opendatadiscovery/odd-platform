@@ -14,8 +14,8 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class OwnerController
-        extends AbstractCRUDController<Owner, OwnerList, OwnerFormData, OwnerFormData, OwnerService>
-        implements OwnerApi {
+    extends AbstractCRUDController<Owner, OwnerList, OwnerFormData, OwnerFormData, OwnerService>
+    implements OwnerApi {
 
     public OwnerController(final OwnerService entityService) {
         super(entityService);
@@ -23,18 +23,18 @@ public class OwnerController
 
     @Override
     public Mono<ResponseEntity<Owner>> createOwner(
-            @Valid final Mono<OwnerFormData> ownerFormData,
-            final ServerWebExchange exchange
+        @Valid final Mono<OwnerFormData> ownerFormData,
+        final ServerWebExchange exchange
     ) {
         return create(ownerFormData);
     }
 
     @Override
     public Mono<ResponseEntity<OwnerList>> getOwnerList(
-            @NotNull @Valid final Integer page,
-            @NotNull @Valid final Integer size,
-            @Valid final String query,
-            final ServerWebExchange exchange
+        @NotNull @Valid final Integer page,
+        @NotNull @Valid final Integer size,
+        @Valid final String query,
+        final ServerWebExchange exchange
     ) {
         return list(page, size, query);
     }

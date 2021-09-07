@@ -19,7 +19,7 @@ import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.rowNumber;
 
 public interface Pageable<ID, R extends UpdatableRecord<R>, P>
-        extends Enumerable<R, P>, BaseTraitWithSoftDelete<ID, R, P> {
+    extends Enumerable<R, P>, BaseTraitWithSoftDelete<ID, R, P> {
     String PAGE_METADATA_TOTAL_FIELD = "total";
     String PAGE_METADATA_NEXT_FIELD = "next";
 
@@ -27,16 +27,16 @@ public interface Pageable<ID, R extends UpdatableRecord<R>, P>
         final List<Condition> conditions = filterDeletedCondition();
 
         final SelectConditionStep<R> baseQuery = getDslContext()
-                .selectFrom(getRecordTable())
-                .where(conditions);
+            .selectFrom(getRecordTable())
+            .where(conditions);
 
         final Map<Record, List<P>> result = paginate(baseQuery, page - 1, size)
-                .fetchGroups(new String[] {PAGE_METADATA_TOTAL_FIELD, PAGE_METADATA_NEXT_FIELD}, getPojoClass());
+            .fetchGroups(new String[] {PAGE_METADATA_TOTAL_FIELD, PAGE_METADATA_NEXT_FIELD}, getPojoClass());
 
         return pageifyResult(result, () -> getDslContext().selectCount()
-                .from(getRecordTable())
-                .where(conditions)
-                .fetchOneInto(Long.class));
+            .from(getRecordTable())
+            .where(conditions)
+            .fetchOneInto(Long.class));
     }
 
     default Select<?> paginate(final Select<?> original,
@@ -45,26 +45,26 @@ public interface Pageable<ID, R extends UpdatableRecord<R>, P>
         final Table<?> u = original.asTable("u");
         final Field<Integer> totalRows = count().over().as(PAGE_METADATA_TOTAL_FIELD);
         final Field<Integer> row = rowNumber()
-                .over()
-                .orderBy(u.fields(getIdField()));
+            .over()
+            .orderBy(u.fields(getIdField()));
 
         final Table<?> t = getDslContext()
-                .select(u.asterisk())
-                .select(totalRows, row)
-                .from(u)
-                .orderBy(u.fields(getIdField()))
-                .limit(limit)
-                .offset(offset)
-                .asTable("t");
+            .select(u.asterisk())
+            .select(totalRows, row)
+            .from(u)
+            .orderBy(u.fields(getIdField()))
+            .limit(limit)
+            .offset(offset)
+            .asTable("t");
 
         return getDslContext()
-                .select(t.fields(original.getSelect().toArray(Field[]::new)))
-                .select(
-                        field(max(t.field(row)).over().eq(t.field(totalRows))).as(PAGE_METADATA_NEXT_FIELD),
-                        t.field(totalRows)
-                )
-                .from(t)
-                .orderBy(t.fields(getIdField()));
+            .select(t.fields(original.getSelect().toArray(Field[]::new)))
+            .select(
+                field(max(t.field(row)).over().eq(t.field(totalRows))).as(PAGE_METADATA_NEXT_FIELD),
+                t.field(totalRows)
+            )
+            .from(t)
+            .orderBy(t.fields(getIdField()));
     }
 
     default Page<P> pageifyResult(final Map<Record, List<P>> result,
@@ -72,10 +72,10 @@ public interface Pageable<ID, R extends UpdatableRecord<R>, P>
         switch (result.size()) {
             case 0:
                 return Page.<P>builder()
-                        .data(List.of())
-                        .total(emptyRecordTotalCounter.get())
-                        .hasNext(false)
-                        .build();
+                    .data(List.of())
+                    .total(emptyRecordTotalCounter.get())
+                    .hasNext(false)
+                    .build();
             case 1:
                 final Map.Entry<Record, List<P>> record = result.entrySet().stream().findFirst().get();
 
@@ -83,13 +83,13 @@ public interface Pageable<ID, R extends UpdatableRecord<R>, P>
                 final boolean hasNext = record.getKey().get(PAGE_METADATA_NEXT_FIELD, Boolean.class);
 
                 return Page.<P>builder()
-                        .data(record.getValue())
-                        .total(total)
-                        .hasNext(hasNext)
-                        .build();
+                    .data(record.getValue())
+                    .total(total)
+                    .hasNext(hasNext)
+                    .build();
             default:
                 throw new RuntimeException(
-                        "Unexpected behaviour in pagination: total and is_next differ from record to record");
+                    "Unexpected behaviour in pagination: total and is_next differ from record to record");
         }
     }
 

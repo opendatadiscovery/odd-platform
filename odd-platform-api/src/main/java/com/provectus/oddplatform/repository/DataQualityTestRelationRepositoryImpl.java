@@ -18,9 +18,9 @@ public class DataQualityTestRelationRepositoryImpl implements DataQualityTestRel
     @Override
     public void createRelations(final Collection<DataQualityTestRelationsPojo> pojos) {
         InsertValuesStep2<DataQualityTestRelationsRecord, String, String> step = dslContext.insertInto(
-                DATA_QUALITY_TEST_RELATIONS,
-                DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN,
-                DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN
+            DATA_QUALITY_TEST_RELATIONS,
+            DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN,
+            DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN
         );
 
         for (final DataQualityTestRelationsPojo p : pojos) {

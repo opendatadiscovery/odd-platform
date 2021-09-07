@@ -12,10 +12,10 @@ import reactor.core.publisher.Flux;
 
 @Service
 public class DataSourceServiceImpl
-        extends
-        AbstractCRUDService<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData,
-                DataSourcePojo, DataSourceMapper, DataSourceRepository>
-        implements DataSourceService {
+    extends
+    AbstractCRUDService<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData,
+        DataSourcePojo, DataSourceMapper, DataSourceRepository>
+    implements DataSourceService {
 
     public DataSourceServiceImpl(final DataSourceMapper entityMapper,
                                  final DataSourceRepository entityRepository) {
@@ -25,6 +25,6 @@ public class DataSourceServiceImpl
     @Override
     public Flux<DataSource> listActive() {
         return Flux.fromIterable(entityRepository.listActive())
-                .map(entityMapper::mapPojo);
+            .map(entityMapper::mapPojo);
     }
 }

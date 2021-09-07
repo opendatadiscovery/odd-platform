@@ -11,9 +11,9 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class OwnerServiceImpl
-        extends
-        AbstractCRUDService<Owner, OwnerList, OwnerFormData, OwnerFormData, OwnerPojo, OwnerMapper, OwnerRepository>
-        implements OwnerService {
+    extends
+    AbstractCRUDService<Owner, OwnerList, OwnerFormData, OwnerFormData, OwnerPojo, OwnerMapper, OwnerRepository>
+    implements OwnerService {
 
     public OwnerServiceImpl(final OwnerMapper entityMapper, final OwnerRepository entityRepository) {
         super(entityMapper, entityRepository);
@@ -22,7 +22,7 @@ public class OwnerServiceImpl
     @Override
     public Mono<Owner> createOrGet(final OwnerFormData formData) {
         return Mono
-                .fromCallable(() -> entityRepository.createOrGet(entityMapper.mapForm(formData)))
-                .map(entityMapper::mapPojo);
+            .fromCallable(() -> entityRepository.createOrGet(entityMapper.mapForm(formData)))
+            .map(entityMapper::mapPojo);
     }
 }

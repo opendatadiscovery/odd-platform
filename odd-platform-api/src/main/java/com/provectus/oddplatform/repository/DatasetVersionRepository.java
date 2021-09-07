@@ -19,5 +19,5 @@ public interface DatasetVersionRepository extends CRUDRepository<DatasetVersionP
     List<DatasetVersionPojo> getLatestVersions(final Collection<Long> datasetIds);
 
     Map<Long, Pair<List<DatasetFieldPojo>, List<DatasetFieldPojo>>> getLastStructureDelta(
-            final Collection<Long> datasetIds);
+        final Collection<Long> datasetIds);
 }

@@ -18,7 +18,7 @@ public class LineageRepositoryImpl implements LineageRepository {
     @Override
     public void createLineagePaths(final List<LineagePojo> pojos) {
         InsertValuesStep2<LineageRecord, String, String> step
-                = dslContext.insertInto(LINEAGE, LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN);
+            = dslContext.insertInto(LINEAGE, LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN);
 
         for (final LineagePojo p : pojos) {
             step = step.values(p.getParentOddrn(), p.getChildOddrn());

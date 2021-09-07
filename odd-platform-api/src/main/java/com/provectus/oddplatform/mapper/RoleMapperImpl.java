@@ -24,21 +24,21 @@ public class RoleMapperImpl implements RoleMapper {
     @Override
     public Role mapPojo(final RolePojo pojo) {
         return new Role()
-                .id(pojo.getId())
-                .name(pojo.getName());
+            .id(pojo.getId())
+            .name(pojo.getName());
     }
 
     @Override
     public RoleList mapPojos(final List<RolePojo> pojos) {
         return new RoleList()
-                .items(mapPojoList(pojos))
-                .pageInfo(pageInfo(pojos.size()));
+            .items(mapPojoList(pojos))
+            .pageInfo(pageInfo(pojos.size()));
     }
 
     @Override
     public RoleList mapPojos(final Page<RolePojo> pojos) {
         return new RoleList()
-                .items(mapPojoList(pojos.getData()))
-                .pageInfo(pageInfo(pojos));
+            .items(mapPojoList(pojos.getData()))
+            .pageInfo(pageInfo(pojos));
     }
 }

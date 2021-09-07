@@ -9,8 +9,8 @@ import static com.provectus.oddplatform.model.Tables.DATASET_FIELD;
 
 @Repository
 public class DatasetFieldRepositoryImpl
-        extends AbstractCRUDRepository<DatasetFieldRecord, DatasetFieldPojo>
-        implements DatasetFieldRepository {
+    extends AbstractCRUDRepository<DatasetFieldRecord, DatasetFieldPojo>
+    implements DatasetFieldRepository {
 
     public DatasetFieldRepositoryImpl(final DSLContext dslContext) {
         super(dslContext, DATASET_FIELD, DATASET_FIELD.ID, DATASET_FIELD.NAME, DatasetFieldPojo.class);
@@ -19,8 +19,8 @@ public class DatasetFieldRepositoryImpl
     @Override
     public void setDescription(final long datasetFieldId, final String description) {
         dslContext.update(DATASET_FIELD)
-                .set(DATASET_FIELD.INTERNAL_DESCRIPTION, description)
-                .where(DATASET_FIELD.ID.eq(datasetFieldId))
-                .execute();
+            .set(DATASET_FIELD.INTERNAL_DESCRIPTION, description)
+            .where(DATASET_FIELD.ID.eq(datasetFieldId))
+            .execute();
     }
 }

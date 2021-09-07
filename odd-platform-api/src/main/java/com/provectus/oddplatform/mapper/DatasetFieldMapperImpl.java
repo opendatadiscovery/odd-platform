@@ -18,15 +18,15 @@ public class DatasetFieldMapperImpl implements DatasetFieldMapper {
     @Override
     public DatasetFieldPojo mapStructure(final DataSetField field, final long datasetVersionId) {
         return new DatasetFieldPojo()
-                .setDatasetVersionId(datasetVersionId)
-                .setName(field.getName())
-                .setOddrn(field.getOddrn())
-                .setParentFieldOddrn(field.getParentFieldOddrn())
-                .setFieldOrder(0)
-                .setStats(JSONB.jsonb(JSONSerDeUtils.serializeJson(field.getStats())))
-                .setType(JSONB.jsonb(JSONSerDeUtils.serializeJson(field.getType())))
-                .setIsKey(field.getIsKey())
-                .setIsValue(field.getIsValue())
-                .setExternalDescription(field.getDescription());
+            .setDatasetVersionId(datasetVersionId)
+            .setName(field.getName())
+            .setOddrn(field.getOddrn())
+            .setParentFieldOddrn(field.getParentFieldOddrn())
+            .setFieldOrder(0)
+            .setStats(JSONB.jsonb(JSONSerDeUtils.serializeJson(field.getStats())))
+            .setType(JSONB.jsonb(JSONSerDeUtils.serializeJson(field.getType())))
+            .setIsKey(field.getIsKey())
+            .setIsValue(field.getIsValue())
+            .setExternalDescription(field.getDescription());
     }
 }

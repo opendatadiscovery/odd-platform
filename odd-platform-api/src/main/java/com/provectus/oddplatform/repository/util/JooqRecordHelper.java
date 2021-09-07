@@ -31,10 +31,10 @@ public class JooqRecordHelper {
         }
 
         return set
-                .stream()
-                .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+            .stream()
+            .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 
     public <P> P extractRelation(final Record r, final Table<?> relationTable, final Class<P> pojoClass) {

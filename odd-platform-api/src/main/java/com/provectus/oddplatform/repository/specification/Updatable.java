@@ -16,13 +16,13 @@ public interface Updatable<ID, R extends UpdatableRecord<R>, P> extends BaseTrai
 
     default List<P> bulkUpdate(final List<P> entities) {
         final List<R> records = entities.stream()
-                .map(this::pojoToRecord)
-                .collect(Collectors.toList());
+            .map(this::pojoToRecord)
+            .collect(Collectors.toList());
 
         getDslContext().batchUpdate(records).execute();
 
         return records.stream()
-                .map(this::recordToPojo)
-                .collect(Collectors.toList());
+            .map(this::recordToPojo)
+            .collect(Collectors.toList());
     }
 }

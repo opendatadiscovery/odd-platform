@@ -10,9 +10,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 public class JSONSerDeUtils {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-            .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-            .registerModule(new JavaTimeModule())
-            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+        .registerModule(new JavaTimeModule())
+        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
     public static <T> T deserializeJson(final String data, final Class<T> clazz) {
         try {

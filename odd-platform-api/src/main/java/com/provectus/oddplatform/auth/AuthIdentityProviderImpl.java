@@ -19,15 +19,15 @@ public class AuthIdentityProviderImpl implements AuthIdentityProvider {
     @Override
     public Mono<String> getUsername() {
         return ReactiveSecurityContextHolder.getContext()
-                .switchIfEmpty(Mono.empty())
-                .map(SecurityContext::getAuthentication)
-                .map(Principal::getName);
+            .switchIfEmpty(Mono.empty())
+            .map(SecurityContext::getAuthentication)
+            .map(Principal::getName);
     }
 
     @Override
     public Mono<OwnerPojo> fetchAssociatedOwner() {
         return getUsername()
-                .map(userOwnerMappingRepository::getAssociatedOwner)
-                .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty));
+            .map(userOwnerMappingRepository::getAssociatedOwner)
+            .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty));
     }
 }

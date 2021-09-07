@@ -39,7 +39,7 @@ public class MetadataFieldKey {
         }
 
         private static final Map<Class<?>, MetadataTypeEnum> MAP = Arrays.stream(MetadataTypeEnum.values())
-                .collect(Collectors.toMap(MetadataTypeEnum::getClazz, Function.identity()));
+            .collect(Collectors.toMap(MetadataTypeEnum::getClazz, Function.identity()));
 
         public static MetadataTypeEnum getMetadataType(final Class<?> clazz) {
             return MAP.getOrDefault(clazz, UNKNOWN);

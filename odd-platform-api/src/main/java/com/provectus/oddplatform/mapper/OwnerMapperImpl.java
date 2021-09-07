@@ -28,21 +28,21 @@ public class OwnerMapperImpl implements OwnerMapper {
         }
 
         return new Owner()
-                .id(pojo.getId())
-                .name(pojo.getName());
+            .id(pojo.getId())
+            .name(pojo.getName());
     }
 
     @Override
     public OwnerList mapPojos(final List<OwnerPojo> pojos) {
         return new OwnerList()
-                .items(mapPojoList(pojos))
-                .pageInfo(pageInfo(pojos.size()));
+            .items(mapPojoList(pojos))
+            .pageInfo(pageInfo(pojos.size()));
     }
 
     @Override
     public OwnerList mapPojos(final Page<OwnerPojo> pojos) {
         return new OwnerList()
-                .items(mapPojoList(pojos.getData()))
-                .pageInfo(pageInfo(pojos));
+            .items(mapPojoList(pojos.getData()))
+            .pageInfo(pageInfo(pojos));
     }
 }

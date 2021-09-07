@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface DataEntityMapper
-        extends ReadOnlyCRUDMapperWithList<DataEntity, DataEntityList, DataEntityDimensionsDto> {
+    extends ReadOnlyCRUDMapperWithList<DataEntity, DataEntityList, DataEntityDimensionsDto> {
     DataEntityDetails mapDtoDetails(final DataEntityDetailsDto dataEntityDetailsDto);
 
     DataEntityType mapType(final DataEntityTypePojo type);

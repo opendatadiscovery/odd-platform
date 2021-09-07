@@ -11,9 +11,9 @@ import java.util.Collection;
 import java.util.List;
 
 public interface MetadataFieldMapper
-        extends
-        CRUDMapper<MetadataField, MetadataFieldList, MetadataFieldFormData,
-                MetadataUpdateCustomFieldFormData, MetadataFieldPojo> {
+    extends
+    CRUDMapper<MetadataField, MetadataFieldList, MetadataFieldFormData,
+        MetadataUpdateCustomFieldFormData, MetadataFieldPojo> {
     MetadataFieldValue mapDto(final MetadataDto dto);
 
     List<MetadataFieldValue> mapDtos(final Collection<MetadataDto> dto);

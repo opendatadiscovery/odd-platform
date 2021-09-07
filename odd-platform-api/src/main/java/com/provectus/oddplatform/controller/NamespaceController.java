@@ -14,9 +14,9 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class NamespaceController
-        extends
-        AbstractCRUDController<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData, NamespaceService>
-        implements NamespaceApi {
+    extends
+    AbstractCRUDController<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData, NamespaceService>
+    implements NamespaceApi {
 
     public NamespaceController(final NamespaceService entityService) {
         super(entityService);
@@ -24,16 +24,16 @@ public class NamespaceController
 
     @Override
     public Mono<ResponseEntity<Namespace>> createNamespace(
-            @Valid final Mono<NamespaceFormData> namespaceFormData,
-            final ServerWebExchange exchange
+        @Valid final Mono<NamespaceFormData> namespaceFormData,
+        final ServerWebExchange exchange
     ) {
         return create(namespaceFormData);
     }
 
     @Override
     public Mono<ResponseEntity<Namespace>> getNamespaceDetails(
-            final Long namespaceId,
-            final ServerWebExchange exchange
+        final Long namespaceId,
+        final ServerWebExchange exchange
     ) {
         return get(namespaceId);
     }
@@ -45,9 +45,9 @@ public class NamespaceController
 
     @Override
     public Mono<ResponseEntity<Namespace>> updateNamespace(
-            final Long namespaceId,
-            @Valid final Mono<NamespaceUpdateFormData> namespaceUpdateFormData,
-            final ServerWebExchange exchange
+        final Long namespaceId,
+        @Valid final Mono<NamespaceUpdateFormData> namespaceUpdateFormData,
+        final ServerWebExchange exchange
     ) {
         return update(namespaceId, namespaceUpdateFormData);
     }

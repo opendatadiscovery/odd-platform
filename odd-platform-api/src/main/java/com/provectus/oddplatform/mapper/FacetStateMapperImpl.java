@@ -30,13 +30,13 @@ public class FacetStateMapperImpl implements FacetStateMapper {
     private final SearchMapper searchMapper;
 
     private static final Map<Function<SearchFormDataFilters, List<SearchFilterState>>, FacetType> FORM_MAPPINGS =
-            Map.of(
-                    SearchFormDataFilters::getTypes, FacetType.TYPES,
-                    SearchFormDataFilters::getSubtypes, FacetType.SUBTYPES,
-                    SearchFormDataFilters::getDatasources, FacetType.DATA_SOURCES,
-                    SearchFormDataFilters::getOwners, FacetType.OWNERS,
-                    SearchFormDataFilters::getTags, FacetType.TAGS
-            );
+        Map.of(
+            SearchFormDataFilters::getTypes, FacetType.TYPES,
+            SearchFormDataFilters::getSubtypes, FacetType.SUBTYPES,
+            SearchFormDataFilters::getDatasources, FacetType.DATA_SOURCES,
+            SearchFormDataFilters::getOwners, FacetType.OWNERS,
+            SearchFormDataFilters::getTags, FacetType.TAGS
+        );
 
     @Override
     public SearchFacetsPojo mapStateToPojo(final FacetStateDto state) {
@@ -46,9 +46,9 @@ public class FacetStateMapperImpl implements FacetStateMapper {
     @Override
     public SearchFacetsPojo mapStateToPojo(final UUID searchId, final FacetStateDto state) {
         return new SearchFacetsPojo()
-                .setId(searchId)
-                .setQueryString(state.getQuery())
-                .setFilters(JSONB.jsonb(JSONSerDeUtils.serializeJson(state)));
+            .setId(searchId)
+            .setQueryString(state.getQuery())
+            .setFilters(JSONB.jsonb(JSONSerDeUtils.serializeJson(state)));
     }
 
     @Override
@@ -59,25 +59,25 @@ public class FacetStateMapperImpl implements FacetStateMapper {
         }
 
         final Map<FacetType, List<SearchFilterDto>> state = FORM_MAPPINGS.entrySet().stream()
-                .map(e -> {
-                    final List<SearchFilterState> filterList = e.getKey().apply(filters);
-                    if (filterList == null) {
-                        return null;
-                    }
+            .map(e -> {
+                final List<SearchFilterState> filterList = e.getKey().apply(filters);
+                if (filterList == null) {
+                    return null;
+                }
 
-                    return filterList
-                            .stream()
-                            .map(f -> mapFilter(f, e.getValue()))
-                            .collect(Collectors.toList());
-                })
-                .filter(Objects::nonNull)
-                .flatMap(List::stream)
-                .collect(groupingBy(SearchFilterDto::getType));
+                return filterList
+                    .stream()
+                    .map(f -> mapFilter(f, e.getValue()))
+                    .collect(Collectors.toList());
+            })
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .collect(groupingBy(SearchFilterDto::getType));
 
         return new FacetStateDto(
-                state,
-                formData.getQuery(),
-                formData.getMyObjects() != null ? formData.getMyObjects() : false
+            state,
+            formData.getQuery(),
+            formData.getMyObjects() != null ? formData.getMyObjects() : false
         );
     }
 
@@ -90,25 +90,25 @@ public class FacetStateMapperImpl implements FacetStateMapper {
     @Override
     public FacetState mapDto(final List<CountableSearchFilter> types, final FacetStateDto state) {
         return new FacetState()
-                .types(types)
-                .datasources(getSearchFiltersForFacetType(state, FacetType.DATA_SOURCES))
-                .subtypes(getSearchFiltersForFacetType(state, FacetType.SUBTYPES))
-                .owners(getSearchFiltersForFacetType(state, FacetType.OWNERS))
-                .tags(getSearchFiltersForFacetType(state, FacetType.TAGS));
+            .types(types)
+            .datasources(getSearchFiltersForFacetType(state, FacetType.DATA_SOURCES))
+            .subtypes(getSearchFiltersForFacetType(state, FacetType.SUBTYPES))
+            .owners(getSearchFiltersForFacetType(state, FacetType.OWNERS))
+            .tags(getSearchFiltersForFacetType(state, FacetType.TAGS));
     }
 
     private SearchFilterDto mapFilter(final SearchFilterState f, final FacetType type) {
         return SearchFilterDto.builder()
-                .entityId(f.getEntityId())
-                .entityName(f.getEntityName())
-                .selected(f.getSelected())
-                .type(type)
-                .build();
+            .entityId(f.getEntityId())
+            .entityName(f.getEntityName())
+            .selected(f.getSelected())
+            .type(type)
+            .build();
     }
 
     private List<SearchFilter> getSearchFiltersForFacetType(final FacetStateDto state, final FacetType facetType) {
         return state.getFacetEntities(facetType).stream()
-                .map(searchMapper::mapDto)
-                .collect(Collectors.toList());
+            .map(searchMapper::mapDto)
+            .collect(Collectors.toList());
     }
 }

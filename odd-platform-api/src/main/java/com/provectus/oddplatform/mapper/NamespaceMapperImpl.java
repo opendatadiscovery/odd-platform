@@ -34,21 +34,21 @@ public class NamespaceMapperImpl implements NamespaceMapper {
         }
 
         return new Namespace()
-                .id(pojo.getId())
-                .name(pojo.getName());
+            .id(pojo.getId())
+            .name(pojo.getName());
     }
 
     @Override
     public NamespaceList mapPojos(final List<NamespacePojo> pojos) {
         return new NamespaceList()
-                .items(mapPojoList(pojos))
-                .pageInfo(pageInfo(pojos.size()));
+            .items(mapPojoList(pojos))
+            .pageInfo(pageInfo(pojos.size()));
     }
 
     @Override
     public NamespaceList mapPojos(final Page<NamespacePojo> pojos) {
         return new NamespaceList()
-                .items(mapPojoList(pojos.getData()))
-                .pageInfo(pageInfo(pojos));
+            .items(mapPojoList(pojos.getData()))
+            .pageInfo(pageInfo(pojos));
     }
 }

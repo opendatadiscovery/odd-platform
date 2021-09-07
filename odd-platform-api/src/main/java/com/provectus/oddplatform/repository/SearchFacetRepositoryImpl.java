@@ -33,7 +33,7 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
     @Override
     public Optional<SearchFacetsPojo> getFacetState(final UUID id) {
         return dslContext.selectFrom(SEARCH_FACETS)
-                .where(SEARCH_FACETS.ID.eq(id))
-                .fetchOptionalInto(SearchFacetsPojo.class);
+            .where(SEARCH_FACETS.ID.eq(id))
+            .fetchOptionalInto(SearchFacetsPojo.class);
     }
 }

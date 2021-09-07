@@ -27,23 +27,23 @@ public class DataQualityMapperImpl implements DataQualityMapper {
     @Override
     public DataQualityTestRun mapDataQualityTestRun(final long dataQualityTestId, final DataEntityTaskRunPojo run) {
         return new DataQualityTestRun()
-                .id(run.getId())
-                .dataQualityTestId(dataQualityTestId)
-                .name(run.getName())
-                .oddrn(run.getOddrn())
-                .startTime(addUTC(run.getStartTime()))
-                .endTime(addUTC(run.getEndTime()))
-                .status(DataQualityTestRun.StatusEnum.fromValue(run.getStatus()))
-                .statusReason(run.getStatusReason());
+            .id(run.getId())
+            .dataQualityTestId(dataQualityTestId)
+            .name(run.getName())
+            .oddrn(run.getOddrn())
+            .startTime(addUTC(run.getStartTime()))
+            .endTime(addUTC(run.getEndTime()))
+            .status(DataQualityTestRun.StatusEnum.fromValue(run.getStatus()))
+            .statusReason(run.getStatusReason());
     }
 
     @Override
     public DataQualityTestRunList mapDataQualityTestRuns(final long dataQualityTestId,
                                                          final Collection<DataEntityTaskRunPojo> runs) {
         return new DataQualityTestRunList().items(
-                runs.stream()
-                        .map(r -> mapDataQualityTestRun(dataQualityTestId, r))
-                        .collect(Collectors.toList())
+            runs.stream()
+                .map(r -> mapDataQualityTestRun(dataQualityTestId, r))
+                .collect(Collectors.toList())
         );
     }
 
@@ -52,36 +52,36 @@ public class DataQualityMapperImpl implements DataQualityMapper {
         final DataQualityTestDetailsDto dqDto = dto.getDataQualityTestDetailsDto();
 
         return dataEntityMapper.mapPojo(dto)
-                .suiteName(dqDto.getSuiteName())
-                .suiteUrl(dqDto.getSuiteUrl())
-                .expectation(mapDataQualityTestExpectation(dqDto))
-                .latestRun(mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.getLatestTaskRun()))
-                .linkedUrlList(dqDto.getLinkedUrlList())
-                .datasetsList(dqDto
-                        .getDatasetList()
-                        .stream()
-                        .map(dataEntityMapper::mapRef)
-                        .collect(Collectors.toList()));
+            .suiteName(dqDto.getSuiteName())
+            .suiteUrl(dqDto.getSuiteUrl())
+            .expectation(mapDataQualityTestExpectation(dqDto))
+            .latestRun(mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.getLatestTaskRun()))
+            .linkedUrlList(dqDto.getLinkedUrlList())
+            .datasetsList(dqDto
+                .getDatasetList()
+                .stream()
+                .map(dataEntityMapper::mapRef)
+                .collect(Collectors.toList()));
     }
 
     @Override
     public DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos) {
         return new DataEntityList()
-                .items(dtos.stream().map(this::mapDataQualityTest).collect(Collectors.toList()));
+            .items(dtos.stream().map(this::mapDataQualityTest).collect(Collectors.toList()));
     }
 
     @Override
     public DataSetTestReport mapDatasetTestReport(final DatasetTestReportDto report) {
         return new DataSetTestReport()
-                .total(report.getTotal())
-                // stub
-                .score(100)
-                .successTotal(report.getSuccessTotal())
-                .failedTotal(report.getFailedTotal())
-                .brokenTotal(report.getBrokenTotal())
-                .skippedTotal(report.getSkippedTotal())
-                .abortedTotal(report.getAbortedTotal())
-                .unknownTotal(report.getUnknownTotal());
+            .total(report.getTotal())
+            // stub
+            .score(100)
+            .successTotal(report.getSuccessTotal())
+            .failedTotal(report.getFailedTotal())
+            .brokenTotal(report.getBrokenTotal())
+            .skippedTotal(report.getSkippedTotal())
+            .abortedTotal(report.getAbortedTotal())
+            .unknownTotal(report.getUnknownTotal());
     }
 
     private DataQualityTestExpectation mapDataQualityTestExpectation(final DataQualityTestDetailsDto dto) {

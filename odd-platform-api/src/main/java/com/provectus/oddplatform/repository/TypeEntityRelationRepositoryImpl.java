@@ -13,8 +13,8 @@ import static com.provectus.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
 
 @Repository
 public class TypeEntityRelationRepositoryImpl
-        extends AbstractCRUDRepository<TypeEntityRelationRecord, TypeEntityRelationPojo>
-        implements TypeEntityRelationRepository {
+    extends AbstractCRUDRepository<TypeEntityRelationRecord, TypeEntityRelationPojo>
+    implements TypeEntityRelationRepository {
 
     public TypeEntityRelationRepositoryImpl(final DSLContext dslContext) {
         super(dslContext, TYPE_ENTITY_RELATION, null, null, TypeEntityRelationPojo.class);
@@ -23,9 +23,9 @@ public class TypeEntityRelationRepositoryImpl
     @Override
     public List<TypeEntityRelationPojo> bulkCreate(final Collection<TypeEntityRelationPojo> pojos) {
         InsertValuesStep2<TypeEntityRelationRecord, Long, Long> step = dslContext.insertInto(
-                TYPE_ENTITY_RELATION,
-                TYPE_ENTITY_RELATION.DATA_ENTITY_ID,
-                TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID
+            TYPE_ENTITY_RELATION,
+            TYPE_ENTITY_RELATION.DATA_ENTITY_ID,
+            TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID
         );
 
         for (final TypeEntityRelationPojo p : pojos) {

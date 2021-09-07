@@ -21,8 +21,8 @@ public interface Creatable<ID, R extends UpdatableRecord<R>, P> extends BaseTrai
         }
 
         final List<R> records = entities.stream()
-                .map(this::pojoToRecord)
-                .collect(Collectors.toList());
+            .map(this::pojoToRecord)
+            .collect(Collectors.toList());
 
         InsertSetStep<R> insertStep = getDslContext().insertInto(getRecordTable());
         for (int i = 0; i < records.size() - 1; i++) {
@@ -30,12 +30,12 @@ public interface Creatable<ID, R extends UpdatableRecord<R>, P> extends BaseTrai
         }
 
         return insertStep
-                .set(records.get(records.size() - 1))
-                .returning(getRecordTable().fields())
-                .fetch()
-                .stream()
-                .map(this::recordToPojo)
-                .collect(Collectors.toList());
+            .set(records.get(records.size() - 1))
+            .returning(getRecordTable().fields())
+            .fetch()
+            .stream()
+            .map(this::recordToPojo)
+            .collect(Collectors.toList());
     }
 
     // TODO: apply here as well

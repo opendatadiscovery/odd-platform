@@ -30,17 +30,17 @@ public class FacetStateDto {
 
     public Set<Long> getFacetEntitiesIds(final FacetType facetType) {
         return getFacetEntities(facetType)
-                .stream()
-                .map(SearchFilterDto::getEntityId)
-                .collect(Collectors.toSet());
+            .stream()
+            .map(SearchFilterDto::getEntityId)
+            .collect(Collectors.toSet());
     }
 
     public Optional<Long> selectedDataEntityType() {
         return getFacetEntities(FacetType.TYPES)
-                .stream()
-                .filter(SearchFilterDto::isSelected)
-                .map(SearchFilterDto::getEntityId)
-                .findFirst();
+            .stream()
+            .filter(SearchFilterDto::isSelected)
+            .map(SearchFilterDto::getEntityId)
+            .findFirst();
     }
 
     public static FacetStateDto empty() {
@@ -49,11 +49,11 @@ public class FacetStateDto {
 
     public static FacetStateDto removeUnselected(final FacetStateDto facetState) {
         final Map<FacetType, List<SearchFilterDto>> state = facetState.getState().entrySet()
-                .stream()
-                .map(e -> Pair.of(e.getKey(), e.getValue().stream()
-                        .filter(SearchFilterDto::isSelected)
-                        .collect(Collectors.toList())))
-                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            .stream()
+            .map(e -> Pair.of(e.getKey(), e.getValue().stream()
+                .filter(SearchFilterDto::isSelected)
+                .collect(Collectors.toList())))
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
         return new FacetStateDto(state, facetState.getQuery(), facetState.isMyObjects());
     }
@@ -79,10 +79,10 @@ public class FacetStateDto {
         }
 
         return result.values()
-                .stream()
-                .filter(Objects::nonNull)
-                .filter(SearchFilterDto::isSelected)
-                .collect(Collectors.toList());
+            .stream()
+            .filter(Objects::nonNull)
+            .filter(SearchFilterDto::isSelected)
+            .collect(Collectors.toList());
     }
 
     private static Map<Long, SearchFilterDto> filtersMap(final List<SearchFilterDto> filters) {

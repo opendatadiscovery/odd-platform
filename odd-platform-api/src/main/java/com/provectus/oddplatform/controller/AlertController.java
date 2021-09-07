@@ -23,16 +23,16 @@ public class AlertController implements AlertApi {
                                                                final Mono<AlertStatusFormData> alertStatusFormData,
                                                                final ServerWebExchange exchange) {
         return alertStatusFormData
-                .publishOn(Schedulers.boundedElastic())
-                .flatMap(s -> alertService.updateStatus(alertId, s.getStatus()))
-                .map(ResponseEntity::ok);
+            .publishOn(Schedulers.boundedElastic())
+            .flatMap(s -> alertService.updateStatus(alertId, s.getStatus()))
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<AlertTotals>> getAlertTotals(final ServerWebExchange exchange) {
         return alertService.getTotals()
-                .subscribeOn(Schedulers.boundedElastic())
-                .map(ResponseEntity::ok);
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class AlertController implements AlertApi {
                                                         final Integer size,
                                                         final ServerWebExchange exchange) {
         return alertService.listAll(page, size)
-                .subscribeOn(Schedulers.boundedElastic())
-                .map(ResponseEntity::ok);
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
     }
 
     @Override
@@ -49,8 +49,8 @@ public class AlertController implements AlertApi {
                                                                    final Integer size,
                                                                    final ServerWebExchange exchange) {
         return alertService.listByOwner(page, size)
-                .subscribeOn(Schedulers.boundedElastic())
-                .map(ResponseEntity::ok);
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class AlertController implements AlertApi {
                                                                       final Integer size,
                                                                       final ServerWebExchange exchange) {
         return alertService.listByOwner(page, size)
-                .subscribeOn(Schedulers.boundedElastic())
-                .map(ResponseEntity::ok);
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
     }
 }

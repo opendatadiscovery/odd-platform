@@ -17,8 +17,8 @@ import static org.jooq.impl.DSL.max;
 
 @Repository
 public class DatasetRevisionRepositoryImpl
-        extends AbstractCRUDRepository<DatasetRevisionRecord, DatasetRevisionPojo>
-        implements DatasetRevisionRepository {
+    extends AbstractCRUDRepository<DatasetRevisionRecord, DatasetRevisionPojo>
+    implements DatasetRevisionRepository {
 
     public DatasetRevisionRepositoryImpl(final DSLContext dslContext) {
         // TODO: DATASET_REVISION.DATA_ENTITY_ID is not primary key field. Field -> Primary Key
@@ -30,18 +30,18 @@ public class DatasetRevisionRepositoryImpl
         final TableField<DatasetRevisionRecord, Long> dataEntityId = DATASET_REVISION.DATA_ENTITY_ID;
 
         final SelectHavingStep<Record2<Long, LocalDateTime>> subquery = dslContext.select(dataEntityId, maxUpdatedAt)
-                .from(DATASET_REVISION)
-                .where(DATASET_REVISION.DATA_ENTITY_ID.in(datasetIds))
-                .groupBy(DATASET_REVISION.DATA_ENTITY_ID);
+            .from(DATASET_REVISION)
+            .where(DATASET_REVISION.DATA_ENTITY_ID.in(datasetIds))
+            .groupBy(DATASET_REVISION.DATA_ENTITY_ID);
 
         return dslContext.select(DATASET_REVISION.DATA_ENTITY_ID, DATASET_REVISION.ROWS_COUNT,
-                        DATASET_REVISION.UPDATED_AT)
-                .from(subquery)
-                .join(DATASET_REVISION)
-                .on(DATASET_REVISION.DATA_ENTITY_ID.eq(dataEntityId))
-                .and(DATASET_REVISION.UPDATED_AT.eq(maxUpdatedAt))
-                .fetchStreamInto(DATASET_REVISION)
-                .map(this::recordToPojo)
-                .collect(Collectors.toList());
+                DATASET_REVISION.UPDATED_AT)
+            .from(subquery)
+            .join(DATASET_REVISION)
+            .on(DATASET_REVISION.DATA_ENTITY_ID.eq(dataEntityId))
+            .and(DATASET_REVISION.UPDATED_AT.eq(maxUpdatedAt))
+            .fetchStreamInto(DATASET_REVISION)
+            .map(this::recordToPojo)
+            .collect(Collectors.toList());
     }
 }

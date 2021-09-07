@@ -27,40 +27,40 @@ import org.springframework.util.StringUtils;
 public class LoginFormSecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChainLoginForm(
-            final ServerHttpSecurity http,
-            @Value("${auth.login-form-redirect:}") final String redirectURIString
+        final ServerHttpSecurity http,
+        @Value("${auth.login-form-redirect:}") final String redirectURIString
     ) {
         final URI redirectURI = parseURI(redirectURIString);
 
         final ServerAuthenticationSuccessHandler authHandler = redirectURI != null
-                ? (wfe, auth) -> new DefaultServerRedirectStrategy().sendRedirect(wfe.getExchange(), redirectURI)
-                : new RedirectServerAuthenticationSuccessHandler("/");
+            ? (wfe, auth) -> new DefaultServerRedirectStrategy().sendRedirect(wfe.getExchange(), redirectURI)
+            : new RedirectServerAuthenticationSuccessHandler("/");
 
         return http
-                .csrf().disable()
-                .authorizeExchange()
-                .pathMatchers("/health", "/favicon.ico", "/ingestion/entities").permitAll()
-                .pathMatchers("/**").authenticated()
-                .and().formLogin().authenticationSuccessHandler(authHandler)
-                .and().build();
+            .csrf().disable()
+            .authorizeExchange()
+            .pathMatchers("/health", "/favicon.ico", "/ingestion/entities").permitAll()
+            .pathMatchers("/**").authenticated()
+            .and().formLogin().authenticationSuccessHandler(authHandler)
+            .and().build();
     }
 
     @Bean
     public MapReactiveUserDetailsService mapReactiveUserDetailsService(
-            @Value("${auth.login-form-credentials}") final String credentialString
+        @Value("${auth.login-form-credentials}") final String credentialString
     ) {
         final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
         final List<UserDetails> users = Arrays
-                .stream(credentialString.split(","))
-                .map(LoginFormCredentials::parseCredentialString)
-                .map(c -> User
-                        .withUsername(c.getUsername())
-                        .passwordEncoder(pe::encode)
-                        .password(c.getPassword())
-                        .authorities("ROLE_USER_STUB")
-                        .build())
-                .collect(Collectors.toList());
+            .stream(credentialString.split(","))
+            .map(LoginFormCredentials::parseCredentialString)
+            .map(c -> User
+                .withUsername(c.getUsername())
+                .passwordEncoder(pe::encode)
+                .password(c.getPassword())
+                .authorities("ROLE_USER_STUB")
+                .build())
+            .collect(Collectors.toList());
 
         return new MapReactiveUserDetailsService(users);
     }

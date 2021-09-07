@@ -5,7 +5,7 @@ import org.jooq.Condition;
 import org.jooq.UpdatableRecord;
 
 public interface DeterminableWithSoftDelete<ID, R extends UpdatableRecord<R>, P>
-        extends Determinable<ID, R, P>, BaseTraitWithSoftDelete<ID, R, P> {
+    extends Determinable<ID, R, P>, BaseTraitWithSoftDelete<ID, R, P> {
 
     @Override
     default List<Condition> conditions(final ID id) {

@@ -24,21 +24,21 @@ public class LabelMapperImpl implements LabelMapper {
     @Override
     public Label mapPojo(final LabelPojo pojo) {
         return new Label()
-                .id(pojo.getId())
-                .name(pojo.getName());
+            .id(pojo.getId())
+            .name(pojo.getName());
     }
 
     @Override
     public LabelsResponse mapPojos(final List<LabelPojo> pojos) {
         return new LabelsResponse()
-                .items(pojos.stream().map(this::mapPojo).collect(Collectors.toList()))
-                .pageInfo(pageInfo(pojos.size()));
+            .items(pojos.stream().map(this::mapPojo).collect(Collectors.toList()))
+            .pageInfo(pageInfo(pojos.size()));
     }
 
     @Override
     public LabelsResponse mapPojos(final Page<LabelPojo> pojos) {
         return new LabelsResponse()
-                .items(mapPojoList(pojos.getData()))
-                .pageInfo(pageInfo(pojos));
+            .items(mapPojoList(pojos.getData()))
+            .pageInfo(pageInfo(pojos));
     }
 }

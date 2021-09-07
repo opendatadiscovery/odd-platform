@@ -18,8 +18,8 @@ import static java.util.Collections.emptyList;
 
 @Repository
 public class MetadataFieldValueRepositoryImpl
-        extends AbstractCRUDRepository<MetadataFieldValueRecord, MetadataFieldValuePojo>
-        implements MetadataFieldValueRepository {
+    extends AbstractCRUDRepository<MetadataFieldValueRecord, MetadataFieldValuePojo>
+    implements MetadataFieldValueRepository {
 
     public MetadataFieldValueRepositoryImpl(final DSLContext dslContext) {
         super(dslContext, METADATA_FIELD_VALUE, null, null, MetadataFieldValuePojo.class);
@@ -32,8 +32,8 @@ public class MetadataFieldValueRepositoryImpl
         }
 
         final List<MetadataFieldValueRecord> records = pojos.stream()
-                .map(this::pojoToRecord)
-                .collect(Collectors.toList());
+            .map(this::pojoToRecord)
+            .collect(Collectors.toList());
 
         InsertSetStep<MetadataFieldValueRecord> insertStep = dslContext.insertInto(recordTable);
 
@@ -42,9 +42,9 @@ public class MetadataFieldValueRepositoryImpl
         }
 
         insertStep
-                .set(records.get(records.size() - 1))
-                .onConflictDoNothing()
-                .execute();
+            .set(records.get(records.size() - 1))
+            .onConflictDoNothing()
+            .execute();
 
         return new ArrayList<>(pojos);
     }
@@ -62,37 +62,37 @@ public class MetadataFieldValueRepositoryImpl
     @Override
     public List<MetadataDto> getDtosByDataEntityId(final long dataEntityId) {
         return dslContext
-                .select(METADATA_FIELD.fields())
-                .select(METADATA_FIELD_VALUE.fields())
-                .from(METADATA_FIELD_VALUE)
-                .join(METADATA_FIELD).on(METADATA_FIELD.ID.eq(METADATA_FIELD_VALUE.METADATA_FIELD_ID))
-                .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(dataEntityId))
-                .fetchStream()
-                .map(this::metadataDto)
-                .collect(Collectors.toList());
+            .select(METADATA_FIELD.fields())
+            .select(METADATA_FIELD_VALUE.fields())
+            .from(METADATA_FIELD_VALUE)
+            .join(METADATA_FIELD).on(METADATA_FIELD.ID.eq(METADATA_FIELD_VALUE.METADATA_FIELD_ID))
+            .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(dataEntityId))
+            .fetchStream()
+            .map(this::metadataDto)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<MetadataFieldValuePojo> listByDataEntityIds(final List<Long> dataEntityIds) {
         return dslContext.selectFrom(METADATA_FIELD_VALUE)
-                .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.in(dataEntityIds))
-                .fetchStream()
-                .map(this::recordToPojo)
-                .collect(Collectors.toList());
+            .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.in(dataEntityIds))
+            .fetchStream()
+            .map(this::recordToPojo)
+            .collect(Collectors.toList());
     }
 
     @Override
     public void delete(final long dataEntityId, final long metadataFieldId) {
         dslContext.deleteFrom(METADATA_FIELD_VALUE)
-                .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(dataEntityId))
-                .and(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(metadataFieldId))
-                .execute();
+            .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(dataEntityId))
+            .and(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(metadataFieldId))
+            .execute();
     }
 
     private MetadataDto metadataDto(final org.jooq.Record r) {
         return MetadataDto.builder()
-                .metadataField(r.into(METADATA_FIELD).into(MetadataFieldPojo.class))
-                .metadataFieldValue(r.into(METADATA_FIELD_VALUE).into(MetadataFieldValuePojo.class))
-                .build();
+            .metadataField(r.into(METADATA_FIELD).into(MetadataFieldPojo.class))
+            .metadataFieldValue(r.into(METADATA_FIELD_VALUE).into(MetadataFieldValuePojo.class))
+            .build();
     }
 }

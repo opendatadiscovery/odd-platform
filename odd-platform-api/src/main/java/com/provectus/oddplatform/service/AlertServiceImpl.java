@@ -21,21 +21,21 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Mono<AlertList> listAll(final int page, final int size) {
         return Mono.fromCallable(() -> alertRepository.listAll(page, size))
-                .map(alertMapper::mapAlerts);
+            .map(alertMapper::mapAlerts);
     }
 
     @Override
     public Mono<AlertList> listByOwner(final int page, final int size) {
         return authIdentityProvider.fetchAssociatedOwner()
-                .map(o -> alertRepository.listByOwner(page, size, o.getId()))
-                .map(alertMapper::mapAlerts);
+            .map(o -> alertRepository.listByOwner(page, size, o.getId()))
+            .map(alertMapper::mapAlerts);
     }
 
     @Override
     public Mono<AlertList> listDependent(final int page, final int size) {
         return authIdentityProvider.fetchAssociatedOwner()
-                .map(o -> alertRepository.listByOwner(page, size, o.getId()))
-                .map(alertMapper::mapAlerts);
+            .map(o -> alertRepository.listByOwner(page, size, o.getId()))
+            .map(alertMapper::mapAlerts);
     }
 
     @Override
@@ -43,14 +43,14 @@ public class AlertServiceImpl implements AlertService {
         final Mono<Long> allCount = Mono.fromCallable(alertRepository::count);
 
         final Mono<Long> countByOwner = authIdentityProvider.fetchAssociatedOwner()
-                .map(o -> alertRepository.countByOwner(o.getId()))
-                .switchIfEmpty(Mono.just(0L));
+            .map(o -> alertRepository.countByOwner(o.getId()))
+            .switchIfEmpty(Mono.just(0L));
 
         return Mono.zipDelayError(allCount, countByOwner)
-                .map(t -> new AlertTotals()
-                        .total(t.getT1())
-                        .myTotal(t.getT2())
-                        .dependentTotal(t.getT2()));
+            .map(t -> new AlertTotals()
+                .total(t.getT1())
+                .myTotal(t.getT2())
+                .dependentTotal(t.getT2()));
     }
 
     @Override
@@ -64,6 +64,6 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Mono<AlertList> getDataEntityAlerts(final long dataEntityId) {
         return Mono.fromCallable(() -> alertRepository.getDataEntityAlerts(dataEntityId))
-                .map(alertMapper::mapAlerts);
+            .map(alertMapper::mapAlerts);
     }
 }

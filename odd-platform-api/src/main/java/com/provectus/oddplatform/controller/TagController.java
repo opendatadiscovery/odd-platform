@@ -16,8 +16,8 @@ import reactor.core.scheduler.Schedulers;
 
 @RestController
 public class TagController
-        extends AbstractCRUDController<Tag, TagsResponse, TagFormData, TagFormData, TagService>
-        implements TagApi {
+    extends AbstractCRUDController<Tag, TagsResponse, TagFormData, TagFormData, TagService>
+    implements TagApi {
 
     public TagController(final TagService entityService) {
         super(entityService);
@@ -25,13 +25,13 @@ public class TagController
 
     @Override
     public Mono<ResponseEntity<Flux<Tag>>> createTag(
-            @Valid final Flux<TagFormData> tagFormData,
-            final ServerWebExchange exchange
+        @Valid final Flux<TagFormData> tagFormData,
+        final ServerWebExchange exchange
     ) {
         return tagFormData.collectList()
-                .publishOn(Schedulers.boundedElastic())
-                .map(entityService::bulkCreate)
-                .map(ResponseEntity::ok);
+            .publishOn(Schedulers.boundedElastic())
+            .map(entityService::bulkCreate)
+            .map(ResponseEntity::ok);
     }
 
     @Override
@@ -41,19 +41,19 @@ public class TagController
 
     @Override
     public Mono<ResponseEntity<TagsResponse>> getPopularTagList(
-            @NotNull @Valid final Integer page,
-            @NotNull @Valid final Integer size,
-            @Valid final String query,
-            final ServerWebExchange exchange
+        @NotNull @Valid final Integer page,
+        @NotNull @Valid final Integer size,
+        @Valid final String query,
+        final ServerWebExchange exchange
     ) {
         return list(page, size, query);
     }
 
     @Override
     public Mono<ResponseEntity<Tag>> updateTag(
-            final Long tagId,
-            @Valid final Mono<TagFormData> tagFormData,
-            final ServerWebExchange exchange
+        final Long tagId,
+        @Valid final Mono<TagFormData> tagFormData,
+        final ServerWebExchange exchange
     ) {
         return update(tagId, tagFormData);
     }

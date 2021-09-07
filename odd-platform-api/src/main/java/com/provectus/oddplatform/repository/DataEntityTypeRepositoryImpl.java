@@ -31,36 +31,36 @@ public class DataEntityTypeRepositoryImpl implements DataEntityTypeRepository {
     @Override
     public DataEntityTypePojo findTypeByName(final String name) {
         return getTypes().keySet().stream()
-                .filter(t -> t.getName().equals(name))
-                .findFirst()
-                .orElseThrow(
-                        () -> new IllegalStateException(String.format("No supported type with name %s found", name)));
+            .filter(t -> t.getName().equals(name))
+            .findFirst()
+            .orElseThrow(
+                () -> new IllegalStateException(String.format("No supported type with name %s found", name)));
     }
 
     @Override
     public DataEntitySubtypePojo findSubtypeByName(final String name) {
         return getTypes().values().stream()
-                .flatMap(List::stream)
-                .filter(t -> t.getName().equals(name))
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException(
-                        String.format("No supported subtype with name %s found", name)));
+            .flatMap(List::stream)
+            .filter(t -> t.getName().equals(name))
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException(
+                String.format("No supported subtype with name %s found", name)));
     }
 
     private Map<DataEntityTypePojo, List<DataEntitySubtypePojo>> fetch() {
         return dslContext
-                .select(DATA_ENTITY_TYPE.ID, DATA_ENTITY_TYPE.NAME)
-                .select(DATA_ENTITY_SUBTYPE.ID, DATA_ENTITY_SUBTYPE.NAME)
-                .from(DATA_ENTITY_TYPE)
-                .leftJoin(TYPE_SUBTYPE_RELATION).on(TYPE_SUBTYPE_RELATION.TYPE_ID.eq(DATA_ENTITY_TYPE.ID))
-                .leftJoin(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(TYPE_SUBTYPE_RELATION.SUBTYPE_ID))
-                .fetchGroups(
-                        r -> new DataEntityTypePojo()
-                                .setId(r.get(0, Long.class))
-                                .setName(r.get(1, String.class)),
-                        r -> new DataEntitySubtypePojo()
-                                .setId(r.get(2, Long.class))
-                                .setName(r.get(3, String.class))
-                );
+            .select(DATA_ENTITY_TYPE.ID, DATA_ENTITY_TYPE.NAME)
+            .select(DATA_ENTITY_SUBTYPE.ID, DATA_ENTITY_SUBTYPE.NAME)
+            .from(DATA_ENTITY_TYPE)
+            .leftJoin(TYPE_SUBTYPE_RELATION).on(TYPE_SUBTYPE_RELATION.TYPE_ID.eq(DATA_ENTITY_TYPE.ID))
+            .leftJoin(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(TYPE_SUBTYPE_RELATION.SUBTYPE_ID))
+            .fetchGroups(
+                r -> new DataEntityTypePojo()
+                    .setId(r.get(0, Long.class))
+                    .setName(r.get(1, String.class)),
+                r -> new DataEntitySubtypePojo()
+                    .setId(r.get(2, Long.class))
+                    .setName(r.get(3, String.class))
+            );
     }
 }

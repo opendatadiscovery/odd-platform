@@ -13,8 +13,8 @@ import reactor.core.publisher.Mono;
 
 @RestController
 public class RoleController
-        extends AbstractCRUDController<Role, RoleList, RoleFormData, RoleUpdateFormData, RoleService>
-        implements RoleApi {
+    extends AbstractCRUDController<Role, RoleList, RoleFormData, RoleUpdateFormData, RoleService>
+    implements RoleApi {
 
     public RoleController(final RoleService entityService) {
         super(entityService);

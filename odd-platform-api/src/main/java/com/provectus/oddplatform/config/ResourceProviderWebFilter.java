@@ -15,28 +15,28 @@ public class ResourceProviderWebFilter implements WebFilter {
         final String requestPath = exchange.getRequest().getURI().getPath();
 
         if (requestPath.startsWith("/api")
-                || requestPath.startsWith("/ingestion")
-                || requestPath.startsWith("/health")) {
+            || requestPath.startsWith("/ingestion")
+            || requestPath.startsWith("/health")) {
             return chain.filter(exchange);
         }
 
         if (requestPath.startsWith("/static")
-                || requestPath.equals("/manifest.json")
-                || requestPath.startsWith("/favicon.ico")) {
+            || requestPath.equals("/manifest.json")
+            || requestPath.startsWith("/favicon.ico")) {
             final ServerHttpRequest exchangeRequest = exchange.getRequest().mutate()
-                    .header("Cache-Control", "No-Cache")
-                    .build();
+                .header("Cache-Control", "No-Cache")
+                .build();
 
             return chain.filter(exchange.mutate().request(exchangeRequest).build());
         }
 
         final ServerHttpRequest exchangeRequest = exchange.getRequest().mutate()
-                .path("/index.html")
-                .header("Cache-Control", "No-Cache")
-                .build();
+            .path("/index.html")
+            .header("Cache-Control", "No-Cache")
+            .build();
 
         return chain.filter(exchange.mutate()
-                .request(exchangeRequest)
-                .build());
+            .request(exchangeRequest)
+            .build());
     }
 }

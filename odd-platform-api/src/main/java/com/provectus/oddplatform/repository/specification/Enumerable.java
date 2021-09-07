@@ -14,10 +14,10 @@ public interface Enumerable<R extends UpdatableRecord<R>, P> extends BaseTrait<R
 
     default List<P> fetchList(final List<Condition> conditions) {
         return getDslContext()
-                .selectFrom(getRecordTable())
-                .where(conditions)
-                .fetchStreamInto(getPojoClass())
-                .collect(Collectors.toList());
+            .selectFrom(getRecordTable())
+            .where(conditions)
+            .fetchStreamInto(getPojoClass())
+            .collect(Collectors.toList());
     }
 
     default List<Condition> conditions() {

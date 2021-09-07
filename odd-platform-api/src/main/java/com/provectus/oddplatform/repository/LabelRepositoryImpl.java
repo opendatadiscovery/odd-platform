@@ -17,8 +17,8 @@ import static com.provectus.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 
 @Repository
 public class LabelRepositoryImpl
-        extends AbstractSoftDeleteCRUDRepository<LabelRecord, LabelPojo>
-        implements LabelRepository {
+    extends AbstractSoftDeleteCRUDRepository<LabelRecord, LabelPojo>
+    implements LabelRepository {
     public LabelRepositoryImpl(final DSLContext dslContext) {
         super(dslContext, LABEL, LABEL.ID, LABEL.IS_DELETED, LABEL.NAME, LABEL.NAME, LabelPojo.class);
     }
@@ -26,23 +26,23 @@ public class LabelRepositoryImpl
     @Override
     public List<LabelPojo> listByDatasetFieldId(final long datasetFieldId) {
         final List<Condition> whereClause =
-                addSoftDeleteFilter(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId));
+            addSoftDeleteFilter(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId));
 
         return dslContext.select(LABEL.asterisk())
-                .from(LABEL)
-                .join(LABEL_TO_DATASET_FIELD).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
-                .where(whereClause)
-                .fetchStreamInto(LabelPojo.class)
-                .collect(Collectors.toList());
+            .from(LABEL)
+            .join(LABEL_TO_DATASET_FIELD).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
+            .where(whereClause)
+            .fetchStreamInto(LabelPojo.class)
+            .collect(Collectors.toList());
     }
 
     @Override
     public List<LabelPojo> listByNames(final Collection<String> names) {
         return dslContext.select(LABEL.asterisk())
-                .from(LABEL)
-                .where(addSoftDeleteFilter(LABEL.NAME.in(names)))
-                .fetchStreamInto(LabelPojo.class)
-                .collect(Collectors.toList());
+            .from(LABEL)
+            .where(addSoftDeleteFilter(LABEL.NAME.in(names)))
+            .fetchStreamInto(LabelPojo.class)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -52,9 +52,9 @@ public class LabelRepositoryImpl
         }
 
         dslContext.delete(LABEL_TO_DATASET_FIELD)
-                .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)
-                        .and(LABEL_TO_DATASET_FIELD.LABEL_ID.in(labels)))
-                .execute();
+            .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)
+                .and(LABEL_TO_DATASET_FIELD.LABEL_ID.in(labels)))
+            .execute();
     }
 
     @Override
@@ -64,17 +64,17 @@ public class LabelRepositoryImpl
         }
 
         final List<LabelToDatasetFieldRecord> records = labels.stream()
-                .map(t -> new LabelToDatasetFieldPojo().setDatasetFieldId(datasetFieldId).setLabelId(t))
-                .map(p -> dslContext.newRecord(LABEL_TO_DATASET_FIELD, p))
-                .collect(Collectors.toList());
+            .map(t -> new LabelToDatasetFieldPojo().setDatasetFieldId(datasetFieldId).setLabelId(t))
+            .map(p -> dslContext.newRecord(LABEL_TO_DATASET_FIELD, p))
+            .collect(Collectors.toList());
 
         try {
             // TODO: bad idea, will not throw error
             dslContext.loadInto(LABEL_TO_DATASET_FIELD)
-                    .onDuplicateKeyIgnore()
-                    .loadRecords(records)
-                    .fields(LABEL_TO_DATASET_FIELD.fields())
-                    .execute();
+                .onDuplicateKeyIgnore()
+                .loadRecords(records)
+                .fields(LABEL_TO_DATASET_FIELD.fields())
+                .execute();
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }

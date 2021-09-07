@@ -7,5 +7,5 @@ import com.provectus.oddplatform.api.contract.model.NamespaceUpdateFormData;
 import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 
 public interface NamespaceMapper
-        extends CRUDMapper<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData, NamespacePojo> {
+    extends CRUDMapper<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData, NamespacePojo> {
 }

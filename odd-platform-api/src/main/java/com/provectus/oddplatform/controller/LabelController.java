@@ -14,8 +14,8 @@ import reactor.core.scheduler.Schedulers;
 
 @RestController
 public class LabelController
-        extends AbstractCRUDController<Label, LabelsResponse, LabelFormData, LabelFormData, LabelService>
-        implements LabelApi {
+    extends AbstractCRUDController<Label, LabelsResponse, LabelFormData, LabelFormData, LabelService>
+    implements LabelApi {
 
     public LabelController(final LabelService entityService) {
         super(entityService);
@@ -25,9 +25,9 @@ public class LabelController
     public Mono<ResponseEntity<Flux<Label>>> createLabel(final Flux<LabelFormData> labelFormData,
                                                          final ServerWebExchange exchange) {
         return labelFormData.collectList()
-                .publishOn(Schedulers.boundedElastic())
-                .map(entityService::bulkCreate)
-                .map(ResponseEntity::ok);
+            .publishOn(Schedulers.boundedElastic())
+            .map(entityService::bulkCreate)
+            .map(ResponseEntity::ok);
     }
 
     @Override
