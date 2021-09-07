@@ -10,13 +10,13 @@ import { DataQualityTestRunStatusEnum } from 'generated-sources';
 interface TestRunStatusItemProps extends StylesType {
   className?: string;
   count?: number;
-  typeName: DataQualityTestRunStatusEnum;
+  typeName: DataQualityTestRunStatusEnum | undefined;
   size?: 'large' | 'small';
 }
 
 const TestRunStatusItem: React.FC<TestRunStatusItemProps> = ({
   className,
-  size = 'small',
+  size = 'large',
   typeName,
   count,
   classes,
@@ -30,7 +30,7 @@ const TestRunStatusItem: React.FC<TestRunStatusItemProps> = ({
       <>
         <span className={classes.count}>{count}</span>
         <span className={cx(classes.filledContainer, typeName)}>
-          {typeName.toLowerCase()}
+          {typeName && typeName.toLowerCase()}
         </span>
       </>
     )}
