@@ -2,7 +2,9 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetFieldRecord;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.SelectWhereStep;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.provectus.oddplatform.model.Tables.DATASET_FIELD;
+import static java.util.Collections.emptyList;
 
 @Repository
 public class DatasetFieldRepositoryImpl
@@ -33,12 +36,18 @@ public class DatasetFieldRepositoryImpl
 
     @Override
     public List<DatasetFieldPojo> bulkCreateIfNotExist(final List<DatasetFieldPojo> fields) {
-        final Set<String> oddrns = fields.stream()
-            .map(DatasetFieldPojo::getOddrn)
-            .collect(Collectors.toSet());
+        if (fields.isEmpty()) {
+            return emptyList();
+        }
 
-        final Map<String, DatasetFieldPojo> existingFieldsDict = dslContext.selectFrom(DATASET_FIELD)
-            .where(DATASET_FIELD.ODDRN.in(oddrns))
+        final Condition condition = fields.stream()
+            .map(f -> DATASET_FIELD.ODDRN.eq(f.getOddrn()).and(DATASET_FIELD.TYPE.eq(f.getType())))
+            .reduce(Condition::or)
+            .orElseThrow(RuntimeException::new);
+
+        final Map<String, DatasetFieldPojo> existingFieldsDict = dslContext
+            .selectFrom(DATASET_FIELD)
+            .where(condition)
             .fetchStreamInto(DatasetFieldPojo.class)
             .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, Function.identity()));
 
