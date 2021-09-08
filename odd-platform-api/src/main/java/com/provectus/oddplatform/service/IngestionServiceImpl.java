@@ -312,7 +312,7 @@ public class IngestionServiceImpl implements IngestionService {
             });
         }
 
-        final Mono<Map<MetadataBinding, MetadataFieldValuePojo>> mfvAll = Mono.just(split.getIds())
+        final Mono<Map<MetadataBinding, MetadataFieldValuePojo>> mfvAll = Mono.just(split.getAllIds())
             .map(metadataFieldValueRepository::listByDataEntityIds)
             .map(mfList -> mfList.stream().collect(Collectors.toMap(
                 mf -> new MetadataBinding(mf.getDataEntityId(), mf.getMetadataFieldId()),
