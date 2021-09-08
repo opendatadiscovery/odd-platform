@@ -49,7 +49,7 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDto> bulkUpdate(final List<DataEntityDto> dtos);
 
-    void incrementViewCount(final long id);
+    Optional<Long> incrementViewCount(final long id);
 
     void createHollow(final Collection<String> oddrns);
 

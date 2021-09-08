@@ -108,8 +108,8 @@ public class DataEntityServiceImpl
 
     private DataEntityDetailsDto incrementViewCount(DataEntityDetailsDto dto) {
         final DataEntityPojo dataEntity = dto.getDataEntity();
-        entityRepository.incrementViewCount(dataEntity.getId());
-        dataEntity.setViewCount(dataEntity.getViewCount() + 1);
+        final Optional<Long> viewCount = entityRepository.incrementViewCount(dataEntity.getId());
+        viewCount.ifPresent(dataEntity::setViewCount);
         return dto;
     }
 

@@ -41,6 +41,18 @@ import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
 import com.provectus.oddplatform.utils.Pair;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -73,25 +85,34 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.provectus.oddplatform.model.Tables.*;
+import static com.provectus.oddplatform.model.Tables.ALERT;
+import static com.provectus.oddplatform.model.Tables.DATASET_VERSION;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_TYPE;
+import static com.provectus.oddplatform.model.Tables.DATA_SOURCE;
+import static com.provectus.oddplatform.model.Tables.LINEAGE;
+import static com.provectus.oddplatform.model.Tables.METADATA_FIELD;
+import static com.provectus.oddplatform.model.Tables.METADATA_FIELD_VALUE;
+import static com.provectus.oddplatform.model.Tables.NAMESPACE;
+import static com.provectus.oddplatform.model.Tables.OWNER;
+import static com.provectus.oddplatform.model.Tables.OWNERSHIP;
+import static com.provectus.oddplatform.model.Tables.ROLE;
+import static com.provectus.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
+import static com.provectus.oddplatform.model.Tables.TAG;
+import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
+import static com.provectus.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
+import static com.provectus.oddplatform.model.Tables.TYPE_SUBTYPE_RELATION;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
-import static org.jooq.impl.DSL.*;
+import static org.jooq.impl.DSL.condition;
+import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.jsonArrayAgg;
+import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.val;
 
 @Repository
 @Slf4j
@@ -230,11 +251,13 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public void incrementViewCount(final long id) {
-        dslContext.update(DATA_ENTITY)
-                .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
-                .where(DATA_ENTITY.ID.eq(id))
-                .execute();
+    public Optional<Long> incrementViewCount(final long id) {
+        return dslContext.update(DATA_ENTITY)
+            .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
+            .where(DATA_ENTITY.ID.eq(id))
+            .returningResult(DATA_ENTITY.VIEW_COUNT)
+            .fetchOptional()
+            .map(Record1::value1);
     }
 
     @Override
