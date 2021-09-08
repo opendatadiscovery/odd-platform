@@ -193,9 +193,6 @@ const Results: React.FC<ResultsProps> = ({
         <Grid item className={cx(classes.col, classes.colsm)}>
           <Typography variant="caption">Last Update</Typography>
         </Grid>
-        <Grid item className={cx(classes.col, classes.colsm)}>
-          <Typography variant="caption">View Count</Typography>
-        </Grid>
       </Grid>
       <div
         id="results-list"

@@ -189,15 +189,6 @@ const ResultItem: React.FC<ResultItemProps> = ({
               : null}
           </Typography>
         </Grid>
-        <Grid item className={cx(classes.col, classes.colsm)}>
-          <Typography
-            variant="body1"
-            title={searchResult.viewCount.toString()}
-            noWrap
-          >
-            {searchResult.viewCount}
-          </Typography>
-        </Grid>
       </Grid>
     </Link>
   );

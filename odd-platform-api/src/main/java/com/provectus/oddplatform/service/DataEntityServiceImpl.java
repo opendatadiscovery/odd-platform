@@ -28,6 +28,7 @@ import com.provectus.oddplatform.exception.NotFoundException;
 import com.provectus.oddplatform.mapper.DataEntityMapper;
 import com.provectus.oddplatform.mapper.MetadataFieldMapper;
 import com.provectus.oddplatform.mapper.TagMapper;
+import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
@@ -106,7 +107,7 @@ public class DataEntityServiceImpl
     }
 
     private DataEntityDetailsDto incrementViewCount(DataEntityDetailsDto dto) {
-        final var dataEntity = dto.getDataEntity();
+        final DataEntityPojo dataEntity = dto.getDataEntity();
         entityRepository.incrementViewCount(dataEntity.getId());
         dataEntity.setViewCount(dataEntity.getViewCount() + 1);
         return dto;

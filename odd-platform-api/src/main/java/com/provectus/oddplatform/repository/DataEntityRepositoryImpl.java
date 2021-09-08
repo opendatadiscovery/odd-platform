@@ -230,7 +230,6 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @Transactional
     public void incrementViewCount(final long id) {
         dslContext.update(DATA_ENTITY)
                 .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
