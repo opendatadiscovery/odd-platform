@@ -11,8 +11,8 @@ import QualityTestRunItem from 'components/DataEntityDetails/QualityTestRunsHist
 
 interface QualityTestHistoryProps extends StylesType {
   dataqatestId: number;
-  testRuns: DataQualityTestRun[];
-  isTestRunsFetching: boolean;
+  testRunsList: DataQualityTestRun[];
+  isTestRunsListFetching: boolean;
   fetchDataSetQualityTestRuns: (
     params: DataQualityApiGetRunsRequest
   ) => void;
@@ -21,8 +21,8 @@ interface QualityTestHistoryProps extends StylesType {
 const QualityTestRunsHistory: React.FC<QualityTestHistoryProps> = ({
   classes,
   dataqatestId,
-  testRuns,
-  isTestRunsFetching,
+  testRunsList,
+  isTestRunsListFetching,
   fetchDataSetQualityTestRuns,
 }) => {
   React.useEffect(() => {
@@ -46,12 +46,11 @@ const QualityTestRunsHistory: React.FC<QualityTestHistoryProps> = ({
         </Grid>
       </Grid>
       <Grid container>
-        {testRuns &&
-          testRuns.map(testRun => (
-            <QualityTestRunItem key={testRun.id} testRun={testRun} />
-          ))}
+        {testRunsList?.map(testRun => (
+          <QualityTestRunItem key={testRun.id} testRun={testRun} />
+        ))}
       </Grid>
-      {!isTestRunsFetching && !testRuns?.length ? (
+      {!isTestRunsListFetching && !testRunsList?.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Grid>

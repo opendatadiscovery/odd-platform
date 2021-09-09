@@ -99,24 +99,22 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           classes={{
             value: cx(
               classes.latestRunStatus,
-              qualityTest && qualityTest.latestRun?.status
+              qualityTest?.latestRun?.status
             ),
           }}
         >
-          {qualityTest && qualityTest.latestRun?.status}
+          {qualityTest?.latestRun?.status}
         </LabeledInfoItem>
         <LabeledInfoItem inline label="Date" labelWidth={4}>
-          {qualityTest &&
-            qualityTest.latestRun?.startTime &&
+          {qualityTest?.latestRun?.startTime &&
             format(
-              qualityTest.latestRun?.startTime,
+              qualityTest?.latestRun?.startTime,
               'd MMM yyyy, HH:MM a'
             )}
         </LabeledInfoItem>
         <LabeledInfoItem inline label="Duration" labelWidth={4}>
-          {qualityTest &&
-            qualityTest.latestRun?.startTime &&
-            qualityTest.latestRun.endTime &&
+          {qualityTest?.latestRun?.startTime &&
+            qualityTest?.latestRun?.endTime &&
             formatDistanceStrict(
               qualityTest.latestRun.endTime,
               qualityTest.latestRun.startTime,
@@ -129,7 +127,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           null
         </LabeledInfoItem>
         <Grid container>
-          <Link to={dataEntityHistoryPath(qualityTest.id)}>
+          <Link to={dataEntityHistoryPath(qualityTest?.id)}>
             <AppButton size="small" color="tertiary">
               History
             </AppButton>
@@ -144,17 +142,11 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             </Typography>
           </Grid>
           <Grid container className={classes.parameters}>
-            {qualityTest &&
-              entries(qualityTest.expectation).map(([key, value]) => (
-                <LabeledInfoItem
-                  inline
-                  key={key}
-                  label={key}
-                  labelWidth={8}
-                >
-                  {value}
-                </LabeledInfoItem>
-              ))}
+            {entries(qualityTest?.expectation).map(([key, value]) => (
+              <LabeledInfoItem inline key={key} label={key} labelWidth={8}>
+                {value}
+              </LabeledInfoItem>
+            ))}
           </Grid>
         </Grid>
         <Grid item className={classes.dataQALinks}>
@@ -164,13 +156,11 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             </Typography>
             <Grid container className={classes.dataQALinksList}>
               <Grid item container xs={12} wrap="nowrap">
-                {qualityTest &&
-                  qualityTest.linkedUrlList &&
-                  qualityTest?.linkedUrlList.map(link => (
-                    <Typography variant="body1">
-                      {`${link}, `}&nbsp;
-                    </Typography>
-                  ))}
+                {qualityTest?.linkedUrlList?.map(link => (
+                  <Typography variant="body1">
+                    {`${link}, `}&nbsp;
+                  </Typography>
+                ))}
               </Grid>
             </Grid>
           </Grid>

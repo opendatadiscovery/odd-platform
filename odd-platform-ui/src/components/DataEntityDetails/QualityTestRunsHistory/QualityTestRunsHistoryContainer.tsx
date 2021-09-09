@@ -25,8 +25,8 @@ const mapStateToProps = (
   }: OwnProps
 ) => ({
   dataqatestId: parseInt(dataEntityId, 10),
-  testRuns: getQualityTestRunsList(state, dataEntityId),
-  isTestRunsFetching: getDatasetTestRunsFetching(state),
+  testRunsList: getQualityTestRunsList(state, dataEntityId),
+  isTestRunsListFetching: getDatasetTestRunsFetching(state),
 });
 
 const mapDispatchToProps = {
