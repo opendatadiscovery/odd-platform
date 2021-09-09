@@ -12,13 +12,12 @@ import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
-import org.springframework.stereotype.Component;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 @Component
 public class DatasetVersionMapperImpl implements DatasetVersionMapper {
@@ -71,7 +70,8 @@ public class DatasetVersionMapperImpl implements DatasetVersionMapper {
     }
 
     private List<Label> mapLabels(final Collection<LabelPojo> pojos) {
-        final List<Label> labels = pojos.stream().map(this::mapLabel).filter(Objects::nonNull).collect(Collectors.toList());
+        final List<Label> labels =
+            pojos.stream().map(this::mapLabel).filter(Objects::nonNull).collect(Collectors.toList());
         return labels.isEmpty() ? null : labels;
     }
 

@@ -6,23 +6,24 @@ import com.provectus.oddplatform.api.contract.model.LabelsResponse;
 import com.provectus.oddplatform.mapper.LabelMapper;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.repository.LabelRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @Slf4j
 public class LabelServiceImpl
-    extends AbstractCRUDService<Label, LabelsResponse, LabelFormData, LabelFormData, LabelPojo, LabelMapper, LabelRepository>
+    extends
+    AbstractCRUDService<Label, LabelsResponse, LabelFormData,
+        LabelFormData, LabelPojo, LabelMapper, LabelRepository>
     implements LabelService {
 
     public LabelServiceImpl(final LabelMapper entityMapper, final LabelRepository entityRepository) {
@@ -57,8 +58,9 @@ public class LabelServiceImpl
                     .map(entityMapper::mapForm)
                     .collect(Collectors.toList());
 
-                final Stream<Label> result = Stream.concat(entityRepository.bulkCreate(labelsToCreate).stream(), labelsToUpdate.stream())
-                    .map(entityMapper::mapPojo);
+                final Stream<Label> result =
+                    Stream.concat(entityRepository.bulkCreate(labelsToCreate).stream(), labelsToUpdate.stream())
+                        .map(entityMapper::mapPojo);
 
                 return Flux.fromStream(result);
             });

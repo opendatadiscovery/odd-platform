@@ -6,16 +6,16 @@ import com.provectus.oddplatform.api.contract.model.NamespaceFormData;
 import com.provectus.oddplatform.api.contract.model.NamespaceList;
 import com.provectus.oddplatform.api.contract.model.NamespaceUpdateFormData;
 import com.provectus.oddplatform.service.NamespaceService;
+import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
-
 @RestController
 public class NamespaceController
-    extends AbstractCRUDController<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData, NamespaceService>
+    extends
+    AbstractCRUDController<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData, NamespaceService>
     implements NamespaceApi {
 
     public NamespaceController(final NamespaceService entityService) {

@@ -1,12 +1,11 @@
 package com.provectus.oddplatform.repository.specification;
 
 import com.provectus.oddplatform.exception.EntityAlreadyExistsException;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jooq.InsertSetStep;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DSL;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 

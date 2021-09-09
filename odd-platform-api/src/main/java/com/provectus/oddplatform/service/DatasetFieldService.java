@@ -7,7 +7,6 @@ import com.provectus.oddplatform.api.contract.model.Label;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-
 public interface DatasetFieldService {
     Mono<InternalDescription> upsertDescription(final long datasetFieldId, final InternalDescriptionFormData form);
 

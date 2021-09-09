@@ -2,12 +2,11 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.model.tables.records.DataSourceRecord;
-import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 
 import static com.provectus.oddplatform.model.Tables.DATA_SOURCE;
 

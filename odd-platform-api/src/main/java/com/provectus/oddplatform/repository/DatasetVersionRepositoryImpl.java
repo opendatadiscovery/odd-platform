@@ -7,8 +7,15 @@ import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetVersionRecord;
 import com.provectus.oddplatform.repository.util.JooqRecordHelper;
-import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Pair;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.jooq.Condition;
@@ -21,19 +28,15 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.provectus.oddplatform.model.Tables.*;
-import static java.util.function.Function.identity;
+import static com.provectus.oddplatform.model.Tables.DATASET_FIELD;
+import static com.provectus.oddplatform.model.Tables.DATASET_STRUCTURE;
+import static com.provectus.oddplatform.model.Tables.DATASET_VERSION;
+import static com.provectus.oddplatform.model.Tables.LABEL;
+import static com.provectus.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static java.util.stream.Collectors.mapping;
-import static org.jooq.impl.DSL.*;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.jsonArrayAgg;
+import static org.jooq.impl.DSL.max;
 
 @Repository
 @Slf4j
@@ -129,7 +132,10 @@ public class DatasetVersionRepositoryImpl
 
         return dslContext.select(DATASET_VERSION.fields())
             .from(subquery)
-            .join(DATASET_VERSION).on(DATASET_VERSION.DATASET_ID.eq(subquery.field("dsv_dataset_id").cast(Long.class)))
+            .join(DATASET_VERSION).on(DATASET_VERSION.DATASET_ID
+                .eq(subquery
+                    .field("dsv_dataset_id")
+                    .cast(Long.class)))
             .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
             .fetchStreamInto(DATASET_VERSION)
             .map(this::recordToPojo)
@@ -150,7 +156,8 @@ public class DatasetVersionRepositoryImpl
         }
 
         final Condition condition = havePreMax.stream()
-            .map(v -> DATASET_VERSION.DATASET_ID.eq(v.getDatasetId()).and(DATASET_VERSION.VERSION.eq(v.getVersion() - 1)))
+            .map(v -> DATASET_VERSION.DATASET_ID.eq(v.getDatasetId())
+                .and(DATASET_VERSION.VERSION.eq(v.getVersion() - 1)))
             .reduce(Condition::or)
             .get();
 

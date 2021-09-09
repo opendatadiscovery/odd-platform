@@ -2,17 +2,14 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetFieldRecord;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.SelectWhereStep;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 
 import static com.provectus.oddplatform.model.Tables.DATASET_FIELD;
 import static java.util.Collections.emptyList;

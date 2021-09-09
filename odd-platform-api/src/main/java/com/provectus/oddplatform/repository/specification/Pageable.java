@@ -1,6 +1,9 @@
 package com.provectus.oddplatform.repository.specification;
 
 import com.provectus.oddplatform.utils.Page;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -9,15 +12,14 @@ import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.UpdatableRecord;
 
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import static java.util.Collections.singletonList;
-import static org.jooq.impl.DSL.*;
+import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.max;
+import static org.jooq.impl.DSL.rowNumber;
 
-public interface Pageable<ID, R extends UpdatableRecord<R>, P> extends Enumerable<R, P>, BaseTraitWithSoftDelete<ID, R, P> {
+public interface Pageable<ID, R extends UpdatableRecord<R>, P>
+    extends Enumerable<R, P>, BaseTraitWithSoftDelete<ID, R, P> {
     String PAGE_METADATA_TOTAL_FIELD = "total";
     String PAGE_METADATA_NEXT_FIELD = "next";
 
@@ -29,7 +31,7 @@ public interface Pageable<ID, R extends UpdatableRecord<R>, P> extends Enumerabl
             .where(conditions);
 
         final Map<Record, List<P>> result = paginate(baseQuery, page - 1, size)
-            .fetchGroups(new String[]{PAGE_METADATA_TOTAL_FIELD, PAGE_METADATA_NEXT_FIELD}, getPojoClass());
+            .fetchGroups(new String[] {PAGE_METADATA_TOTAL_FIELD, PAGE_METADATA_NEXT_FIELD}, getPojoClass());
 
         return pageifyResult(result, () -> getDslContext().selectCount()
             .from(getRecordTable())
@@ -86,7 +88,8 @@ public interface Pageable<ID, R extends UpdatableRecord<R>, P> extends Enumerabl
                     .hasNext(hasNext)
                     .build();
             default:
-                throw new RuntimeException("Unexpected behaviour in pagination: total and is_next differ from record to record");
+                throw new RuntimeException(
+                    "Unexpected behaviour in pagination: total and is_next differ from record to record");
         }
     }
 

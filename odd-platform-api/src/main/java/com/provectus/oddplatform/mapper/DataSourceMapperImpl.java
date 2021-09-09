@@ -6,9 +6,8 @@ import com.provectus.oddplatform.api.contract.model.DataSourceList;
 import com.provectus.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.utils.Page;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class DataSourceMapperImpl implements DataSourceMapper {

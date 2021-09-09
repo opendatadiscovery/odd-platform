@@ -9,7 +9,6 @@ import com.provectus.oddplatform.dto.SearchFilterId;
 import com.provectus.oddplatform.dto.StreamKind;
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.utils.Page;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,8 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId);
 
-    List<? extends DataEntityDto> listByOwner(final int page, final int size, final long ownerId, final StreamKind streamKind);
+    List<? extends DataEntityDto> listByOwner(final int page, final int size, final long ownerId,
+                                              final StreamKind streamKind);
 
     List<? extends DataEntityDto> listPopular(final int page, final int size);
 

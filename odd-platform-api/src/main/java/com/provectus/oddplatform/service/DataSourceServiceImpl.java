@@ -12,7 +12,9 @@ import reactor.core.publisher.Flux;
 
 @Service
 public class DataSourceServiceImpl
-    extends AbstractCRUDService<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData, DataSourcePojo, DataSourceMapper, DataSourceRepository>
+    extends
+    AbstractCRUDService<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData,
+        DataSourcePojo, DataSourceMapper, DataSourceRepository>
     implements DataSourceService {
 
     public DataSourceServiceImpl(final DataSourceMapper entityMapper,

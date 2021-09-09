@@ -4,7 +4,6 @@ import com.provectus.oddplatform.api.contract.model.Alert;
 import com.provectus.oddplatform.api.contract.model.AlertList;
 import com.provectus.oddplatform.dto.AlertDto;
 import com.provectus.oddplatform.utils.Page;
-
 import java.util.Collection;
 
 public interface AlertMapper {

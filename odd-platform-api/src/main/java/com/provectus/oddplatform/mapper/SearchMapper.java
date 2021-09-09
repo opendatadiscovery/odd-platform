@@ -6,7 +6,6 @@ import com.provectus.oddplatform.api.contract.model.SearchFacetsData;
 import com.provectus.oddplatform.api.contract.model.SearchFilter;
 import com.provectus.oddplatform.dto.SearchFilterDto;
 import com.provectus.oddplatform.dto.SearchFilterId;
-
 import java.util.UUID;
 
 public interface SearchMapper {

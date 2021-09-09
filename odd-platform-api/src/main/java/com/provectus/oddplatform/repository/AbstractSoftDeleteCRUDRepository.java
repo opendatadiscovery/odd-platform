@@ -1,13 +1,6 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.exception.EntityAlreadyExistsException;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Table;
-import org.jooq.UpdatableRecord;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,6 +9,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Table;
+import org.jooq.UpdatableRecord;
+import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;

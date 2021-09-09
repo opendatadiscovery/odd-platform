@@ -1,11 +1,38 @@
 package com.provectus.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.provectus.oddplatform.dto.*;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestAttributes;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataTransformerAttributes;
-import com.provectus.oddplatform.model.tables.pojos.*;
+import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
+import com.provectus.oddplatform.dto.DataEntityDto;
+import com.provectus.oddplatform.dto.DataEntityLineageDto;
+import com.provectus.oddplatform.dto.DataEntityLineageStreamDto;
+import com.provectus.oddplatform.dto.DataEntityType;
+import com.provectus.oddplatform.dto.FacetStateDto;
+import com.provectus.oddplatform.dto.FacetType;
+import com.provectus.oddplatform.dto.LineageDepth;
+import com.provectus.oddplatform.dto.MetadataDto;
+import com.provectus.oddplatform.dto.OwnershipDto;
+import com.provectus.oddplatform.dto.SearchFilterDto;
+import com.provectus.oddplatform.dto.SearchFilterId;
+import com.provectus.oddplatform.dto.StreamKind;
+import com.provectus.oddplatform.model.tables.pojos.AlertPojo;
+import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
+import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
+import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
+import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
+import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
+import com.provectus.oddplatform.model.tables.pojos.LineagePojo;
+import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
+import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
+import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
+import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
+import com.provectus.oddplatform.model.tables.pojos.OwnershipPojo;
+import com.provectus.oddplatform.model.tables.pojos.RolePojo;
+import com.provectus.oddplatform.model.tables.pojos.TagPojo;
+import com.provectus.oddplatform.model.tables.pojos.TypeEntityRelationPojo;
 import com.provectus.oddplatform.model.tables.records.DataEntityRecord;
 import com.provectus.oddplatform.model.tables.records.LineageRecord;
 import com.provectus.oddplatform.model.tables.records.SearchEntrypointRecord;
@@ -14,19 +41,6 @@ import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
 import com.provectus.oddplatform.utils.Pair;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
-import org.jooq.*;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,13 +54,64 @@ import java.util.function.Function;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
+import org.jooq.CommonTableExpression;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.InsertValuesStep2;
+import org.jooq.Name;
+import org.jooq.OrderField;
+import org.jooq.Record;
+import org.jooq.Record1;
+import org.jooq.Record3;
+import org.jooq.Select;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectHavingStep;
+import org.jooq.SelectLimitStep;
+import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectSelectStep;
+import org.jooq.Table;
+import org.jooq.TableField;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
-import static com.provectus.oddplatform.model.Tables.*;
+import static com.provectus.oddplatform.model.Tables.ALERT;
+import static com.provectus.oddplatform.model.Tables.DATASET_VERSION;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_TYPE;
+import static com.provectus.oddplatform.model.Tables.DATA_SOURCE;
+import static com.provectus.oddplatform.model.Tables.LINEAGE;
+import static com.provectus.oddplatform.model.Tables.METADATA_FIELD;
+import static com.provectus.oddplatform.model.Tables.METADATA_FIELD_VALUE;
+import static com.provectus.oddplatform.model.Tables.NAMESPACE;
+import static com.provectus.oddplatform.model.Tables.OWNER;
+import static com.provectus.oddplatform.model.Tables.OWNERSHIP;
+import static com.provectus.oddplatform.model.Tables.ROLE;
+import static com.provectus.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
+import static com.provectus.oddplatform.model.Tables.TAG;
+import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
+import static com.provectus.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
+import static com.provectus.oddplatform.model.Tables.TYPE_SUBTYPE_RELATION;
 import static java.util.Collections.singletonList;
-import static java.util.Objects.*;
+import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
-import static org.jooq.impl.DSL.*;
+import static org.jooq.impl.DSL.condition;
+import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.jsonArrayAgg;
+import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.val;
 
 @Repository
 @Slf4j
@@ -68,18 +133,18 @@ public class DataEntityRepositoryImpl
     private static final String AGG_ROLE_FIELD = "role";
     private static final String AGG_ALERT_FIELD = "alert";
 
-    private final Collector<Record3<Long, String, Integer>, ?, Map<SearchFilterId, Long>> FACET_COLLECTOR = Collectors
-        .toMap(
-            r -> SearchFilterId.builder().entityId(r.component1()).name(r.component2()).build(),
-            r -> r.component3().longValue()
-        );
+    private static final Collector<Record3<Long, String, Integer>, ?, Map<SearchFilterId, Long>> FACET_COLLECTOR
+        = Collectors.toMap(
+        r -> SearchFilterId.builder().entityId(r.component1()).name(r.component2()).build(),
+        r -> r.component3().longValue()
+    );
 
-    private final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
+    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
         FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters))
     );
 
-    private final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
+    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
         FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
         FacetType.SUBTYPES, filters -> DATA_ENTITY_SUBTYPE.ID.in(extractFilterId(filters)),
@@ -110,7 +175,6 @@ public class DataEntityRepositoryImpl
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
             .build();
-
 
         return dataEntitySelect(config).fetchOptional(this::mapDimensionRecord);
     }
@@ -216,9 +280,9 @@ public class DataEntityRepositoryImpl
         }
 
         var select = dslContext.select(
-            DATA_ENTITY_SUBTYPE.ID,
-            DATA_ENTITY_SUBTYPE.NAME,
-            countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
+                DATA_ENTITY_SUBTYPE.ID,
+                DATA_ENTITY_SUBTYPE.NAME,
+                countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
             .from(DATA_ENTITY_SUBTYPE)
             .leftJoin(DATA_ENTITY)
             .on(DATA_ENTITY.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
@@ -424,6 +488,21 @@ public class DataEntityRepositoryImpl
     @Override
     public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns) {
         return listAllByOddrns(oddrns, null, null);
+    }
+
+    private List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
+                                                          final Integer page,
+                                                          final Integer size) {
+        DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
+            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
+            .includeHollow(true);
+
+        if (page != null && size != null) {
+            configBuilder = configBuilder.cteLimitOffset(
+                new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
+        }
+
+        return listByConfig(configBuilder.build());
     }
 
     @Override
@@ -771,21 +850,6 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toList());
     }
 
-    private List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
-                                                          final Integer page,
-                                                          final Integer size) {
-        DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
-            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
-            .includeHollow(true);
-
-        if (page != null && size != null) {
-            configBuilder = configBuilder.cteLimitOffset(
-                new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
-        }
-
-        return listByConfig(configBuilder.build());
-    }
-
     private List<DataEntityDimensionsDto> listByConfig(final DataEntitySelectConfig config) {
         return dataEntitySelect(config)
             .fetchStream()
@@ -869,7 +933,8 @@ public class DataEntityRepositoryImpl
         if (config.isIncludeDetails()) {
             joinStep = joinStep
                 .leftJoin(DATASET_VERSION).on(deCte.field(DATA_ENTITY.ID).eq(DATASET_VERSION.DATASET_ID))
-                .leftJoin(METADATA_FIELD_VALUE).on(deCte.field(DATA_ENTITY.ID).eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
+                .leftJoin(METADATA_FIELD_VALUE)
+                .on(deCte.field(DATA_ENTITY.ID).eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
                 .leftJoin(METADATA_FIELD).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID));
         }
 
@@ -994,7 +1059,8 @@ public class DataEntityRepositoryImpl
                 final MetadataFieldPojo metadataField = metadataFields.get(mfv.getMetadataFieldId());
                 if (null == metadataField) {
                     throw new IllegalStateException(String.format(
-                        "Corrupted metadata field value object -- no corresponding metadata field. MFV: %s", mfv));
+                        "Corrupted metadata field value object -- no corresponding metadata field. MFV: %s",
+                        mfv));
                 }
 
                 return MetadataDto.builder()
@@ -1039,7 +1105,7 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toList());
     }
 
-    private List<Long> extractFilterId(final List<SearchFilterDto> filters) {
+    private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
         return filters.stream()
             .map(SearchFilterDto::getEntityId)
             .collect(Collectors.toList());

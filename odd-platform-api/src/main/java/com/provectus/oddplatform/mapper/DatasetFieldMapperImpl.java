@@ -3,11 +3,10 @@ package com.provectus.oddplatform.mapper;
 import com.provectus.oddplatform.ingestion.contract.model.DataSetField;
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
-import org.jooq.JSONB;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jooq.JSONB;
+import org.springframework.stereotype.Component;
 
 @Component
 public class DatasetFieldMapperImpl implements DatasetFieldMapper {

@@ -3,12 +3,10 @@ package com.provectus.oddplatform.mapper;
 import com.provectus.oddplatform.api.contract.model.Owner;
 import com.provectus.oddplatform.api.contract.model.OwnerFormData;
 import com.provectus.oddplatform.api.contract.model.OwnerList;
-import com.provectus.oddplatform.api.contract.model.PageInfo;
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.utils.Page;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class OwnerMapperImpl implements OwnerMapper {

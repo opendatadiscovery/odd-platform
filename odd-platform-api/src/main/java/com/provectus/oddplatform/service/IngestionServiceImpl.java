@@ -39,13 +39,6 @@ import com.provectus.oddplatform.repository.LineageRepository;
 import com.provectus.oddplatform.repository.MetadataFieldRepository;
 import com.provectus.oddplatform.repository.MetadataFieldValueRepository;
 import com.provectus.oddplatform.utils.Pair;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.ListUtils;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -59,9 +52,19 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import static com.provectus.oddplatform.dto.DataEntityType.*;
-import static com.provectus.oddplatform.ingestion.contract.model.DataEntityType.*;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_CONSUMER;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST_RUN;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_SET;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_TRANSFORMER;
+import static com.provectus.oddplatform.ingestion.contract.model.DataEntityType.JOB_RUN;
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 
@@ -84,18 +87,19 @@ public class IngestionServiceImpl implements IngestionService {
     private final IngestionMapper ingestionMapper;
     private final DatasetFieldMapper datasetFieldMapper;
 
-    public Mono<Integer> ingest(final DataEntityList dataEntityList) {
-        return Mono.just(dataEntityList.getDataSourceOddrn())
+    public void ingest(final DataEntityList dataEntityList) {
+        Mono.just(dataEntityList.getDataSourceOddrn())
             .map(dataSourceRepository::getByOddrn)
             .flatMap(o -> o.isEmpty()
-                ? Mono.error(new NotFoundException("Data source with oddrn %s hasn't been found", dataEntityList.getDataSourceOddrn()))
+                ? Mono.error(new NotFoundException("Data source with oddrn %s hasn't been found",
+                dataEntityList.getDataSourceOddrn()))
                 : Mono.just(o.get()))
             .map(DataSourcePojo::getId)
             .map(dsId -> ingestDataEntities(dataEntityList, dsId))
             .flatMap(this::ingestCompanions)
             .flatMap(this::calculateSearchEntrypoints)
             .map(this::findAlerts)
-            .map(__ -> 0);
+            .subscribe();
     }
 
     private DataEntityIngestionDtoSplit ingestDataEntities(final DataEntityList dataEntityList,
@@ -173,7 +177,7 @@ public class IngestionServiceImpl implements IngestionService {
     private Mono<DataEntityIngestionDtoSplit> ingestCompanions(final DataEntityIngestionDtoSplit split) {
         return Mono
             .zipDelayError(ingestDatasetRevisions(split), ingestDatasetStructure(split), ingestMetadata(split))
-            .map(__ -> split);
+            .map(m -> split);
     }
 
     private Mono<List<DatasetRevisionPojo>> ingestDatasetRevisions(final DataEntityIngestionDtoSplit entities) {
@@ -199,9 +203,10 @@ public class IngestionServiceImpl implements IngestionService {
                         return null;
                     }
 
-                    if (Objects.equals(existingRevision.getRowsCount(), e.getDataSet().getRowsCount()) &&
-                        e.getUpdatedAt() != null &&
-                        Objects.equals(existingRevision.getUpdatedAt(), e.getUpdatedAt().toLocalDateTime())) {
+                    if (Objects.equals(existingRevision.getRowsCount(), e.getDataSet().getRowsCount())
+                        && e.getUpdatedAt() != null
+                        && Objects.equals(existingRevision.getUpdatedAt(),
+                        e.getUpdatedAt().toLocalDateTime())) {
                         return null;
                     }
 
@@ -314,10 +319,11 @@ public class IngestionServiceImpl implements IngestionService {
 
         final Mono<Map<MetadataBinding, MetadataFieldValuePojo>> mfvAll = Mono.just(split.getAllIds())
             .map(metadataFieldValueRepository::listByDataEntityIds)
-            .map(mfList -> mfList.stream().collect(Collectors.toMap(
-                mf -> new MetadataBinding(mf.getDataEntityId(), mf.getMetadataFieldId()),
-                identity()
-            )));
+            .map(mfList -> mfList
+                .stream()
+                .collect(Collectors.toMap(
+                    mf -> new MetadataBinding(mf.getDataEntityId(), mf.getMetadataFieldId()), identity()
+                )));
 
         final Mono<Map<MetadataFieldKey, MetadataFieldPojo>> metadataFields = Mono
             .fromCallable(() -> metadataFieldRepository.listByKey(allMetadata.keySet()))
@@ -327,7 +333,7 @@ public class IngestionServiceImpl implements IngestionService {
             )))
             .map(existingMfs -> {
                 final HashMap<MetadataFieldKey, MetadataFieldPojo> newMfs = new HashMap<>();
-                allMetadata.forEach((id, __) -> {
+                allMetadata.forEach((id, none) -> {
                     if (!existingMfs.containsKey(id)) {
                         newMfs.put(id, new MetadataFieldPojo()
                             .setType(id.getFieldType().toString())
@@ -453,12 +459,14 @@ public class IngestionServiceImpl implements IngestionService {
     private Mono<DataEntityIngestionDtoSplit> calculateSearchEntrypoints(final DataEntityIngestionDtoSplit split) {
         final AtomicReference<Long> longAtomicReference = new AtomicReference<>();
 
-        return Mono.fromCallable(() -> {
-            dataEntityRepository.calculateSearchEntrypoints(split.getNewIds(), split.getExistingIds());
+        return Mono.fromCallable(
+                () -> {
+                    dataEntityRepository.calculateSearchEntrypoints(split.getNewIds(), split.getExistingIds());
 
-            return split;
-        }).doOnSubscribe(__ -> longAtomicReference.set(System.currentTimeMillis()))
-            .doFinally(__ -> log.info("TSV: {} ms", System.currentTimeMillis() - longAtomicReference.get()));
+                    return split;
+                }
+            ).doOnSubscribe(m -> longAtomicReference.set(System.currentTimeMillis()))
+            .doFinally(m -> log.info("TSV: {} ms", System.currentTimeMillis() - longAtomicReference.get()));
     }
 
     private boolean isDate(final Object object) {
@@ -484,8 +492,9 @@ public class IngestionServiceImpl implements IngestionService {
         final Map<K, V> intersection = new HashMap<>();
         for (final Map.Entry<K, V1> entry : left.entrySet()) {
             final K key = entry.getKey();
-            if (right.containsKey(key))
+            if (right.containsKey(key)) {
                 intersection.put(key, mapper.apply(entry.getValue(), right.get(key)));
+            }
         }
         return intersection;
     }

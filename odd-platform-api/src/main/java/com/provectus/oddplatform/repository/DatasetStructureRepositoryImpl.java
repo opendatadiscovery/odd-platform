@@ -4,18 +4,16 @@ import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetStructureRecord;
-import lombok.RequiredArgsConstructor;
-import org.jooq.DSLContext;
-import org.jooq.InsertSetStep;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
+import org.jooq.InsertSetStep;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.provectus.oddplatform.model.Tables.DATASET_STRUCTURE;
 

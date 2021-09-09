@@ -9,22 +9,25 @@ import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.Page;
-import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Record;
-import org.jooq.SelectOnConditionStep;
-import org.springframework.stereotype.Repository;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.SelectOnConditionStep;
+import org.springframework.stereotype.Repository;
 
-import static com.provectus.oddplatform.model.Tables.*;
+import static com.provectus.oddplatform.model.Tables.ALERT;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_TYPE;
+import static com.provectus.oddplatform.model.Tables.OWNERSHIP;
+import static com.provectus.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 

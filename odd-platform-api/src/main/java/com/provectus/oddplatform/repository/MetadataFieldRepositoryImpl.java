@@ -1,15 +1,9 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.api.contract.model.MetadataFieldOrigin;
-import com.provectus.oddplatform.api.contract.model.MetadataFieldType;
 import com.provectus.oddplatform.dto.MetadataFieldKey;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import com.provectus.oddplatform.model.tables.records.MetadataFieldRecord;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,6 +12,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import static com.provectus.oddplatform.model.Tables.METADATA_FIELD;
 import static java.util.function.Predicate.not;
@@ -58,7 +56,8 @@ public class MetadataFieldRepositoryImpl
         }
 
         final Condition condition = keys.stream()
-            .map(t -> METADATA_FIELD.NAME.eq(t.getFieldName()).and(METADATA_FIELD.TYPE.eq(t.getFieldType().toString())))
+            .map(t -> METADATA_FIELD.NAME.eq(t.getFieldName())
+                .and(METADATA_FIELD.TYPE.eq(t.getFieldType().toString())))
             .reduce(Condition::or)
             .orElseThrow();
 

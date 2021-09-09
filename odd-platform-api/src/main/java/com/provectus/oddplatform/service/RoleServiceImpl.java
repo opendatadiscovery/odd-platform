@@ -12,7 +12,8 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class RoleServiceImpl
-    extends AbstractCRUDService<Role, RoleList, RoleFormData, RoleUpdateFormData, RolePojo, RoleMapper, RoleRepository>
+    extends
+    AbstractCRUDService<Role, RoleList, RoleFormData, RoleUpdateFormData, RolePojo, RoleMapper, RoleRepository>
     implements RoleService {
 
     public RoleServiceImpl(final RoleMapper entityMapper,

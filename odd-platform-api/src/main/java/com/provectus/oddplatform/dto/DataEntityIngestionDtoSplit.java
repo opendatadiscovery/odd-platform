@@ -1,10 +1,9 @@
 package com.provectus.oddplatform.dto;
 
-import lombok.Getter;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
 
 @Getter
 public class DataEntityIngestionDtoSplit {
