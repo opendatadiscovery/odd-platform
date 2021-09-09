@@ -18,6 +18,8 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.SelectOnConditionStep;
 import org.springframework.stereotype.Repository;
 
 import static com.provectus.oddplatform.model.Tables.ALERT;
@@ -42,33 +44,19 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<Field<?>> selectFields = Stream
             .of(
                 ALERT.fields(),
-                DATA_ENTITY.fields()
+                DATA_ENTITY.fields(),
+                DATA_ENTITY_SUBTYPE.fields()
             )
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
-        final List<AlertDto> data = dslContext
-            .select(selectFields)
-            .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
-            .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT.DATA_ENTITY_ID))
-            .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
+        final List<AlertDto> data = baseAlertSelect(selectFields)
             .groupBy(selectFields)
             .orderBy(ALERT.CREATED_AT.desc())
             .offset((page - 1) * size)
             .limit(size)
             .fetchStream()
-            .map(r -> new AlertDto(
-                jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class),
-                DataEntityDto.builder()
-                    .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
-                    .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD,
-                        DataEntityTypePojo.class))
-                    .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE,
-                        DataEntitySubtypePojo.class))
-                    .build()
-            ))
+            .map(this::mapRecord)
             .collect(Collectors.toList());
 
         return Page.<AlertDto>builder()
@@ -83,18 +71,13 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<Field<?>> selectFields = Stream
             .of(
                 ALERT.fields(),
-                DATA_ENTITY.fields()
+                DATA_ENTITY.fields(),
+                DATA_ENTITY_SUBTYPE.fields()
             )
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
-        final List<AlertDto> data = dslContext
-            .select(selectFields)
-            .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
-            .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT.DATA_ENTITY_ID))
-            .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
+        final List<AlertDto> data = baseAlertSelect(selectFields)
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .where(OWNERSHIP.OWNER_ID.eq(ownerId))
             .groupBy(selectFields)
@@ -102,16 +85,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .offset((page - 1) * size)
             .limit(size)
             .fetchStream()
-            .map(r -> new AlertDto(
-                jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class),
-                DataEntityDto.builder()
-                    .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
-                    .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD,
-                        DataEntityTypePojo.class))
-                    .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE,
-                        DataEntitySubtypePojo.class))
-                    .build()
-            ))
+            .map(this::mapRecord)
             .collect(Collectors.toList());
 
         return Page.<AlertDto>builder()
@@ -122,40 +96,21 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
-    public Page<AlertDto> listDependent(final int page, final int size, final long ownerId) {
-        return listByOwner(page, size, ownerId);
-    }
-
-    @Override
     public Collection<AlertDto> getDataEntityAlerts(final long dataEntityId) {
         final List<Field<?>> selectFields = Stream
             .of(
                 ALERT.fields(),
-                DATA_ENTITY.fields()
+                DATA_ENTITY.fields(),
+                DATA_ENTITY_SUBTYPE.fields()
             )
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
-        return dslContext
-            .select(selectFields)
-            .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
-            .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT.DATA_ENTITY_ID))
-            .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
+        return baseAlertSelect(selectFields)
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .groupBy(selectFields)
             .fetchStream()
-            .map(r -> new AlertDto(
-                jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class),
-                DataEntityDto.builder()
-                    .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
-                    .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD,
-                        DataEntityTypePojo.class))
-                    .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE,
-                        DataEntitySubtypePojo.class))
-                    .build()
-            ))
+            .map(this::mapRecord)
             .collect(Collectors.toList());
     }
 
@@ -179,7 +134,6 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
-    // TODO: 404 if there's no alert with such ID here and everywhere where can be applied
     public void updateAlertStatus(final long alertId, final AlertStatusDto status) {
         dslContext.update(ALERT)
             .set(ALERT.STATUS, status.toString())
@@ -193,5 +147,27 @@ public class AlertRepositoryImpl implements AlertRepository {
         dslContext
             .batchInsert(alerts.stream().map(a -> dslContext.newRecord(ALERT, a)).collect(Collectors.toList()))
             .execute();
+    }
+
+    private SelectOnConditionStep<Record> baseAlertSelect(final List<Field<?>> selectFields) {
+        return dslContext
+            .select(selectFields)
+            .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
+            .from(ALERT)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT.DATA_ENTITY_ID))
+            .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
+            .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID));
+    }
+
+    private AlertDto mapRecord(final Record r) {
+        return new AlertDto(
+            jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class),
+            DataEntityDto.builder()
+                .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
+                .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
+                .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
+                .build()
+        );
     }
 }
