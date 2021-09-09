@@ -60,58 +60,52 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityFetchingStatus,
   dataEntityFetchingError,
 }) => {
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([
-    {
-      name: 'Overview',
-      link: dataEntityOverviewPath(dataEntityId),
-      value: 'overview',
-    },
-    {
-      name: 'Structure',
-      link: datasetStructurePath(dataEntityId),
-      hidden: true,
-      value: 'structure',
-    },
-    {
-      name: 'Lineage',
-      link: dataEntityLineagePath(dataEntityId),
-      value: 'lineage',
-    },
-    {
-      name: 'Test reports',
-      link: dataEntityTestReportPath(dataEntityId),
-      hidden: true,
-      value: 'test-reports',
-    },
-    {
-      name: 'History',
-      link: dataEntityHistoryPath(dataEntityId),
-      value: 'history',
-    },
-    {
-      name: 'Alerts',
-      link: dataEntityAlertsPath(dataEntityId),
-      value: 'alerts',
-    },
-  ]);
+  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
+
+  React.useEffect(() => {
+    setTabs([
+      {
+        name: 'Overview',
+        link: dataEntityOverviewPath(dataEntityId),
+        value: 'overview',
+      },
+      {
+        name: 'Structure',
+        link: datasetStructurePath(dataEntityId),
+        hidden: !isDataset,
+        value: 'structure',
+      },
+      {
+        name: 'Lineage',
+        link: dataEntityLineagePath(dataEntityId),
+        hidden: isQualityTest,
+        value: 'lineage',
+      },
+      {
+        name: 'Test reports',
+        link: dataEntityTestReportPath(dataEntityId),
+        hidden: !isDataset,
+        value: 'test-reports',
+      },
+      {
+        name: 'History',
+        link: dataEntityHistoryPath(dataEntityId),
+        hidden: !isQualityTest,
+        value: 'history',
+      },
+      {
+        name: 'Alerts',
+        link: dataEntityAlertsPath(dataEntityId),
+        value: 'alerts',
+      },
+    ]);
+  }, [dataEntityId, isQualityTest, isDataset]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
   React.useEffect(() => {
     fetchDataEntityDetails({ dataEntityId });
   }, [fetchDataEntityDetails, dataEntityId]);
-
-  React.useEffect(() => {
-    setTabs(
-      tabs.map(tab => ({
-        ...tab,
-        hidden:
-          ((tab.value === 'structure' || tab.value === 'test-reports') &&
-            !isDataset) ||
-          (tab.value === 'history' && !isQualityTest),
-      }))
-    );
-  }, [dataEntityDetails]);
 
   React.useEffect(() => {
     setSelectedTab(
