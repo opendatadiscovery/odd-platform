@@ -4,13 +4,12 @@ import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import com.provectus.oddplatform.model.tables.records.TagRecord;
 import com.provectus.oddplatform.model.tables.records.TagToDataEntityRecord;
-import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 
 import static com.provectus.oddplatform.model.Tables.TAG;
 import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;

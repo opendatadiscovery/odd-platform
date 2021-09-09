@@ -8,9 +8,9 @@ import com.provectus.oddplatform.api.contract.model.SearchFacetsData;
 import com.provectus.oddplatform.api.contract.model.SearchFormData;
 import com.provectus.oddplatform.auth.AuthIdentityProvider;
 import com.provectus.oddplatform.dto.FacetStateDto;
-import com.provectus.oddplatform.dto.SearchFilterId;
-import com.provectus.oddplatform.dto.SearchFilterDto;
 import com.provectus.oddplatform.dto.FacetType;
+import com.provectus.oddplatform.dto.SearchFilterDto;
+import com.provectus.oddplatform.dto.SearchFilterId;
 import com.provectus.oddplatform.exception.NotFoundException;
 import com.provectus.oddplatform.mapper.DataEntityMapper;
 import com.provectus.oddplatform.mapper.FacetStateMapper;
@@ -19,12 +19,6 @@ import com.provectus.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import com.provectus.oddplatform.repository.DataEntityRepository;
 import com.provectus.oddplatform.repository.DataEntityTypeRepository;
 import com.provectus.oddplatform.repository.SearchFacetRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +26,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -108,7 +107,8 @@ public class SearchServiceImpl implements SearchService {
                 if (state.isMyObjects()) {
                     return authIdentityProvider.fetchAssociatedOwner()
                         .map(owner -> dataEntityRepository.findByState(state, page, size, owner))
-                        .switchIfEmpty(Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size)));
+                        .switchIfEmpty(
+                            Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size)));
                 }
 
                 return Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size));

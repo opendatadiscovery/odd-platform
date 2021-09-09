@@ -2,14 +2,15 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Map;
-
-import static com.provectus.oddplatform.model.Tables.*;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_TYPE;
+import static com.provectus.oddplatform.model.Tables.TYPE_SUBTYPE_RELATION;
 
 @Repository
 @RequiredArgsConstructor
@@ -32,7 +33,8 @@ public class DataEntityTypeRepositoryImpl implements DataEntityTypeRepository {
         return getTypes().keySet().stream()
             .filter(t -> t.getName().equals(name))
             .findFirst()
-            .orElseThrow(() -> new IllegalStateException(String.format("No supported type with name %s found", name)));
+            .orElseThrow(
+                () -> new IllegalStateException(String.format("No supported type with name %s found", name)));
     }
 
     @Override
@@ -41,7 +43,8 @@ public class DataEntityTypeRepositoryImpl implements DataEntityTypeRepository {
             .flatMap(List::stream)
             .filter(t -> t.getName().equals(name))
             .findFirst()
-            .orElseThrow(() -> new IllegalStateException(String.format("No supported subtype with name %s found", name)));
+            .orElseThrow(() -> new IllegalStateException(
+                String.format("No supported subtype with name %s found", name)));
     }
 
     private Map<DataEntityTypePojo, List<DataEntitySubtypePojo>> fetch() {

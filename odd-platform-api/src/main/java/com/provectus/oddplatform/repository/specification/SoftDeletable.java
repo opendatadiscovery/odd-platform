@@ -1,8 +1,7 @@
 package com.provectus.oddplatform.repository.specification;
 
-import org.jooq.UpdatableRecord;
-
 import java.util.List;
+import org.jooq.UpdatableRecord;
 
 public interface SoftDeletable<ID, R extends UpdatableRecord<R>, P>
     extends Deletable<ID, R, P>, BaseTraitWithSoftDelete<ID, R, P> {

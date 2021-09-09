@@ -5,15 +5,14 @@ import com.provectus.oddplatform.api.contract.model.Tag;
 import com.provectus.oddplatform.api.contract.model.TagFormData;
 import com.provectus.oddplatform.api.contract.model.TagsResponse;
 import com.provectus.oddplatform.service.TagService;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 @RestController
 public class TagController

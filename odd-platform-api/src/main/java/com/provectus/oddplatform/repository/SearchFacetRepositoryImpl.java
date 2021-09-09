@@ -2,12 +2,11 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import com.provectus.oddplatform.model.tables.records.SearchFacetsRecord;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static com.provectus.oddplatform.model.Tables.SEARCH_FACETS;
 

@@ -44,6 +44,7 @@ import com.provectus.oddplatform.utils.Pair;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -134,18 +135,18 @@ public class DataEntityRepositoryImpl
     private static final String AGG_ROLE_FIELD = "role";
     private static final String AGG_ALERT_FIELD = "alert";
 
-    private final Collector<Record3<Long, String, Integer>, ?, Map<SearchFilterId, Long>> FACET_COLLECTOR = Collectors
-        .toMap(
-            r -> SearchFilterId.builder().entityId(r.component1()).name(r.component2()).build(),
-            r -> r.component3().longValue()
-        );
+    private static final Collector<Record3<Long, String, Integer>, ?, Map<SearchFilterId, Long>> FACET_COLLECTOR
+        = Collectors.toMap(
+        r -> SearchFilterId.builder().entityId(r.component1()).name(r.component2()).build(),
+        r -> r.component3().longValue()
+    );
 
-    private final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
+    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
         FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters))
     );
 
-    private final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
+    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
         FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
         FacetType.SUBTYPES, filters -> DATA_ENTITY_SUBTYPE.ID.in(extractFilterId(filters)),
@@ -176,7 +177,6 @@ public class DataEntityRepositoryImpl
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
             .build();
-
 
         return dataEntitySelect(config).fetchOptional(this::mapDimensionRecord);
     }
@@ -293,9 +293,9 @@ public class DataEntityRepositoryImpl
         }
 
         var select = dslContext.select(
-            DATA_ENTITY_SUBTYPE.ID,
-            DATA_ENTITY_SUBTYPE.NAME,
-            countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
+                DATA_ENTITY_SUBTYPE.ID,
+                DATA_ENTITY_SUBTYPE.NAME,
+                countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
             .from(DATA_ENTITY_SUBTYPE)
             .leftJoin(DATA_ENTITY)
             .on(DATA_ENTITY.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
@@ -501,6 +501,21 @@ public class DataEntityRepositoryImpl
     @Override
     public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns) {
         return listAllByOddrns(oddrns, null, null);
+    }
+
+    private List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
+                                                          final Integer page,
+                                                          final Integer size) {
+        DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
+            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
+            .includeHollow(true);
+
+        if (page != null && size != null) {
+            configBuilder = configBuilder.cteLimitOffset(
+                new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
+        }
+
+        return listByConfig(configBuilder.build());
     }
 
     @Override
@@ -849,21 +864,6 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toList());
     }
 
-    private List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
-                                                          final Integer page,
-                                                          final Integer size) {
-        DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
-            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
-            .includeHollow(true);
-
-        if (page != null && size != null) {
-            configBuilder = configBuilder.cteLimitOffset(
-                new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
-        }
-
-        return listByConfig(configBuilder.build());
-    }
-
     private List<DataEntityDimensionsDto> listByConfig(final DataEntitySelectConfig config) {
         return dataEntitySelect(config)
             .fetchStream()
@@ -892,7 +892,7 @@ public class DataEntityRepositoryImpl
 
         if (config.getOrderBy() != null) {
             dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
-                    .orderBy(config.getOrderBy());
+                .orderBy(config.getOrderBy());
         }
 
         if (!config.isIncludeHollow()) {
@@ -952,7 +952,8 @@ public class DataEntityRepositoryImpl
         if (config.isIncludeDetails()) {
             joinStep = joinStep
                 .leftJoin(DATASET_VERSION).on(deCte.field(DATA_ENTITY.ID).eq(DATASET_VERSION.DATASET_ID))
-                .leftJoin(METADATA_FIELD_VALUE).on(deCte.field(DATA_ENTITY.ID).eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
+                .leftJoin(METADATA_FIELD_VALUE)
+                .on(deCte.field(DATA_ENTITY.ID).eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
                 .leftJoin(METADATA_FIELD).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID));
         }
 
@@ -1042,6 +1043,13 @@ public class DataEntityRepositoryImpl
     private DataEntityDetailsDto mapDetailsRecord(final Record r) {
         final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
 
+        // ad-hoc solution until https://github.com/opendatadiscovery/odd-platform/issues/123 is fixed
+        final Set<DatasetVersionPojo> datasetVersions = jooqRecordHelper
+            .extractAggRelation(r, AGG_DSV_FIELD, DatasetVersionPojo.class)
+            .stream()
+            .sorted((d1, d2) -> d2.getVersion().compareTo(d1.getVersion()))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+
         return DataEntityDetailsDto.detailsBuilder()
             .dataEntity(jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class))
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
@@ -1052,7 +1060,7 @@ public class DataEntityRepositoryImpl
             .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
             .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
             .dataSetDetailsDto(DataEntityDetailsDto.DataSetDetailsDto.builder()
-                .datasetVersions(jooqRecordHelper.extractAggRelation(r, AGG_DSV_FIELD, DatasetVersionPojo.class))
+                .datasetVersions(datasetVersions)
                 .build())
             .metadata(extractMetadataRelation(r))
             .build();
@@ -1070,7 +1078,8 @@ public class DataEntityRepositoryImpl
                 final MetadataFieldPojo metadataField = metadataFields.get(mfv.getMetadataFieldId());
                 if (null == metadataField) {
                     throw new IllegalStateException(String.format(
-                        "Corrupted metadata field value object -- no corresponding metadata field. MFV: %s", mfv));
+                        "Corrupted metadata field value object -- no corresponding metadata field. MFV: %s",
+                        mfv));
                 }
 
                 return MetadataDto.builder()
@@ -1115,7 +1124,7 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toList());
     }
 
-    private List<Long> extractFilterId(final List<SearchFilterDto> filters) {
+    private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
         return filters.stream()
             .map(SearchFilterDto::getEntityId)
             .collect(Collectors.toList());

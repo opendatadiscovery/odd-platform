@@ -2,7 +2,6 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
-
 import java.util.List;
 import java.util.Map;
 

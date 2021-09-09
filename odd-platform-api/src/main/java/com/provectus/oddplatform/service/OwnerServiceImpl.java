@@ -11,7 +11,8 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class OwnerServiceImpl
-    extends AbstractCRUDService<Owner, OwnerList, OwnerFormData, OwnerFormData, OwnerPojo, OwnerMapper, OwnerRepository>
+    extends
+    AbstractCRUDService<Owner, OwnerList, OwnerFormData, OwnerFormData, OwnerPojo, OwnerMapper, OwnerRepository>
     implements OwnerService {
 
     public OwnerServiceImpl(final OwnerMapper entityMapper, final OwnerRepository entityRepository) {

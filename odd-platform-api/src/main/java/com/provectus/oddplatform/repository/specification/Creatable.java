@@ -1,11 +1,10 @@
 package com.provectus.oddplatform.repository.specification;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.InsertSetStep;
 import org.jooq.UpdatableRecord;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.emptyList;
 

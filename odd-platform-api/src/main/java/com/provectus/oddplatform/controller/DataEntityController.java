@@ -1,20 +1,38 @@
 package com.provectus.oddplatform.controller;
 
 import com.provectus.oddplatform.api.contract.api.DataEntityApi;
-import com.provectus.oddplatform.api.contract.model.*;
+import com.provectus.oddplatform.api.contract.model.AlertList;
+import com.provectus.oddplatform.api.contract.model.DataEntity;
+import com.provectus.oddplatform.api.contract.model.DataEntityDetails;
+import com.provectus.oddplatform.api.contract.model.DataEntityLineage;
+import com.provectus.oddplatform.api.contract.model.DataEntityList;
+import com.provectus.oddplatform.api.contract.model.DataEntityRef;
+import com.provectus.oddplatform.api.contract.model.DataEntityTagsFormData;
+import com.provectus.oddplatform.api.contract.model.DataEntityTypeDictionary;
+import com.provectus.oddplatform.api.contract.model.InternalDescription;
+import com.provectus.oddplatform.api.contract.model.InternalDescriptionFormData;
+import com.provectus.oddplatform.api.contract.model.InternalName;
+import com.provectus.oddplatform.api.contract.model.InternalNameFormData;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldValue;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldValueList;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
+import com.provectus.oddplatform.api.contract.model.MetadataObject;
+import com.provectus.oddplatform.api.contract.model.Ownership;
+import com.provectus.oddplatform.api.contract.model.OwnershipFormData;
+import com.provectus.oddplatform.api.contract.model.OwnershipUpdateFormData;
+import com.provectus.oddplatform.api.contract.model.Tag;
 import com.provectus.oddplatform.dto.StreamKind;
 import com.provectus.oddplatform.service.AlertService;
 import com.provectus.oddplatform.service.DataEntityService;
 import com.provectus.oddplatform.service.OwnershipService;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import javax.validation.Valid;
 
 @RestController
 @Slf4j
@@ -54,7 +72,7 @@ public class DataEntityController
         return entityService
             .deleteMetadata(dataEntityId, metadataFieldId)
             .subscribeOn(Schedulers.boundedElastic())
-            .map(__ -> ResponseEntity.noContent().build());
+            .map(m -> ResponseEntity.noContent().build());
     }
 
     @Override
@@ -84,7 +102,7 @@ public class DataEntityController
                                                       final ServerWebExchange exchange) {
         return ownershipService.delete(ownershipId)
             .subscribeOn(Schedulers.boundedElastic())
-            .map(__ -> ResponseEntity.noContent().build());
+            .map(m -> ResponseEntity.noContent().build());
     }
 
     @Override
@@ -173,8 +191,8 @@ public class DataEntityController
                                                                   final Integer size,
                                                                   final ServerWebExchange exchange) {
         return Mono.just(entityService
-            .listAssociated(page, size)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .listAssociated(page, size)
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 
@@ -183,8 +201,8 @@ public class DataEntityController
                                                                                 final Integer size,
                                                                                 final ServerWebExchange exchange) {
         return Mono.just(entityService
-            .listAssociated(page, size, StreamKind.DOWNSTREAM)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .listAssociated(page, size, StreamKind.DOWNSTREAM)
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 
@@ -193,8 +211,8 @@ public class DataEntityController
                                                                               final Integer size,
                                                                               final ServerWebExchange exchange) {
         return Mono.just(entityService
-            .listAssociated(page, size, StreamKind.UPSTREAM)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .listAssociated(page, size, StreamKind.UPSTREAM)
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 
@@ -203,7 +221,7 @@ public class DataEntityController
                                                                 final Integer size,
                                                                 final ServerWebExchange exchange) {
         return Mono.just(entityService.listPopular(page, size)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 
