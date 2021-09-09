@@ -1,15 +1,8 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
 import { DataEntityTypeNameEnum } from 'generated-sources';
+import { ODDTheme } from 'theme/interfaces';
 
-export const entityTypeColors = {
-  [DataEntityTypeNameEnum.SET]: '#FFE5E6',
-  [DataEntityTypeNameEnum.TRANSFORMER]: '#EAE5FF',
-  [DataEntityTypeNameEnum.CONSUMER]: '#E5F2FF',
-  [DataEntityTypeNameEnum.INPUT]: '#E8FCEF',
-  [DataEntityTypeNameEnum.QUALITY_TEST]: '#FFF6E5',
-};
-
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       display: 'inline-flex',
@@ -20,21 +13,19 @@ export const styles = (theme: Theme) =>
       lineHeight: theme.typography.body2.lineHeight,
       color: '#091E42',
       [`&.${DataEntityTypeNameEnum.SET}`]: {
-        backgroundColor: entityTypeColors[DataEntityTypeNameEnum.SET],
+        backgroundColor: theme.palette.entityType?.SET,
       },
       [`&.${DataEntityTypeNameEnum.TRANSFORMER}`]: {
-        backgroundColor:
-          entityTypeColors[DataEntityTypeNameEnum.TRANSFORMER],
+        backgroundColor: theme.palette.entityType?.TRANSFORMER,
       },
       [`&.${DataEntityTypeNameEnum.CONSUMER}`]: {
-        backgroundColor: entityTypeColors[DataEntityTypeNameEnum.CONSUMER],
+        backgroundColor: theme.palette.entityType?.CONSUMER,
       },
       [`&.${DataEntityTypeNameEnum.INPUT}`]: {
-        backgroundColor: entityTypeColors[DataEntityTypeNameEnum.INPUT],
+        backgroundColor: theme.palette.entityType?.INPUT,
       },
       [`&.${DataEntityTypeNameEnum.QUALITY_TEST}`]: {
-        backgroundColor:
-          entityTypeColors[DataEntityTypeNameEnum.QUALITY_TEST],
+        backgroundColor: theme.palette.entityType?.QUALITY_TEST,
       },
     },
     containerSmall: {

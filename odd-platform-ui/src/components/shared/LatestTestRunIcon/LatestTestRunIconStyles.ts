@@ -1,8 +1,8 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
-import { statusColor } from 'theme/palette';
+import { createStyles, WithStyles } from '@material-ui/core';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     latestRunIcon: {
       padding: theme.spacing(0.5),
@@ -11,22 +11,22 @@ export const styles = (theme: Theme) =>
       height: '8px',
       borderRadius: '50%',
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        backgroundColor: statusColor.SUCCESS,
+        backgroundColor: theme.palette.runStatus?.SUCCESS,
       },
       [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        backgroundColor: statusColor.FAILED,
+        backgroundColor: theme.palette.runStatus?.FAILED,
       },
       [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        backgroundColor: statusColor.BROKEN,
+        backgroundColor: theme.palette.runStatus?.BROKEN,
       },
       [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        backgroundColor: statusColor.SKIPPED,
+        backgroundColor: theme.palette.runStatus?.SKIPPED,
       },
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        backgroundColor: statusColor.ABORTED,
+        backgroundColor: theme.palette.runStatus?.ABORTED,
       },
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        backgroundColor: statusColor.UNKNOWN,
+        backgroundColor: theme.palette.runStatus?.UNKNOWN,
       },
     },
   });

@@ -1,8 +1,8 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { entityTypeColors } from 'components/shared/EntityTypeItem/EntityTypeItemStyles';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       cursor: 'pointer',
@@ -40,19 +40,19 @@ export const styles = (theme: Theme) =>
     },
     type: {
       [`&.${DataEntityTypeNameEnum.SET}`]: {
-        fill: entityTypeColors[DataEntityTypeNameEnum.SET],
+        fill: theme.palette.entityType?.SET,
       },
       [`&.${DataEntityTypeNameEnum.TRANSFORMER}`]: {
-        fill: entityTypeColors[DataEntityTypeNameEnum.TRANSFORMER],
+        fill: theme.palette.entityType?.TRANSFORMER,
       },
       [`&.${DataEntityTypeNameEnum.CONSUMER}`]: {
-        fill: entityTypeColors[DataEntityTypeNameEnum.CONSUMER],
+        fill: theme.palette.entityType?.CONSUMER,
       },
       [`&.${DataEntityTypeNameEnum.INPUT}`]: {
-        fill: entityTypeColors[DataEntityTypeNameEnum.INPUT],
+        fill: theme.palette.entityType?.INPUT,
       },
       [`&.${DataEntityTypeNameEnum.QUALITY_TEST}`]: {
-        fill: entityTypeColors[DataEntityTypeNameEnum.QUALITY_TEST],
+        fill: theme.palette.entityType?.QUALITY_TEST,
       },
     },
     typeLabel: {
