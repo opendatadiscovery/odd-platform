@@ -7,5 +7,4 @@ import com.provectus.oddplatform.api.contract.model.RoleUpdateFormData;
 import com.provectus.oddplatform.model.tables.pojos.RolePojo;
 
 public interface RoleMapper extends CRUDMapper<Role, RoleList, RoleFormData, RoleUpdateFormData, RolePojo> {
-    
 }

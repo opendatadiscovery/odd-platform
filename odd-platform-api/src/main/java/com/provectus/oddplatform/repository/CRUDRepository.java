@@ -1,7 +1,6 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.utils.Page;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;

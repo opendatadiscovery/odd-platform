@@ -10,7 +10,9 @@ import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.provectus.oddplatform.model.Tables.*;
+import static com.provectus.oddplatform.model.Tables.OWNER;
+import static com.provectus.oddplatform.model.Tables.OWNERSHIP;
+import static com.provectus.oddplatform.model.Tables.ROLE;
 
 @Repository
 @RequiredArgsConstructor

@@ -7,7 +7,8 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
-public abstract class AbstractReadOnlyCRUDService<E, EL, P, M extends ReadOnlyCRUDMapperWithList<E, EL, P>, R extends CRUDRepository<P>>
+public abstract class AbstractReadOnlyCRUDService<E, EL, P, M
+    extends ReadOnlyCRUDMapperWithList<E, EL, P>, R extends CRUDRepository<P>>
     implements ReadOnlyCRUDService<E, EL> {
     protected final M entityMapper;
     protected final R entityRepository;

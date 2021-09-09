@@ -4,18 +4,19 @@ import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DatasetTestReportDto;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
-import lombok.RequiredArgsConstructor;
-import org.jooq.DSLContext;
-import org.jooq.Record2;
-import org.springframework.stereotype.Repository;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
+import org.jooq.Record2;
+import org.springframework.stereotype.Repository;
 
-import static com.provectus.oddplatform.model.Tables.*;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY;
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_TASK_RUN;
+import static com.provectus.oddplatform.model.Tables.DATA_QUALITY_TEST_RELATIONS;
 import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.count;
 

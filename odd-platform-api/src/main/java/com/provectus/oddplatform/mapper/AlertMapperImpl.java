@@ -6,12 +6,11 @@ import com.provectus.oddplatform.api.contract.model.AlertStatus;
 import com.provectus.oddplatform.api.contract.model.AlertType;
 import com.provectus.oddplatform.dto.AlertDto;
 import com.provectus.oddplatform.utils.Page;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor

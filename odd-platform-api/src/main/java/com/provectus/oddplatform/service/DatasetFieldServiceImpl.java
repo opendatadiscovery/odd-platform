@@ -6,19 +6,17 @@ import com.provectus.oddplatform.api.contract.model.InternalDescriptionFormData;
 import com.provectus.oddplatform.api.contract.model.Label;
 import com.provectus.oddplatform.mapper.LabelMapper;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
-import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.repository.DatasetFieldRepository;
 import com.provectus.oddplatform.repository.LabelRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static java.util.function.Predicate.not;
 

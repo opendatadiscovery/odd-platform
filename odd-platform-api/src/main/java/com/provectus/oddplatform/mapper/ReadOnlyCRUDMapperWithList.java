@@ -2,7 +2,6 @@ package com.provectus.oddplatform.mapper;
 
 import com.provectus.oddplatform.api.contract.model.PageInfo;
 import com.provectus.oddplatform.utils.Page;
-
 import java.util.List;
 import java.util.stream.Collectors;
 

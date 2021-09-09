@@ -10,15 +10,14 @@ import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
 import com.provectus.oddplatform.dto.DatasetTestReportDto;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.MapUtils;
-import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.MapUtils;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor

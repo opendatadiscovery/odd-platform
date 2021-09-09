@@ -30,6 +30,6 @@ public abstract class AbstractCRUDController<E, EL, CEF, UEF, S extends CRUDServ
     protected Mono<ResponseEntity<Void>> delete(final long id) {
         return entityService.delete(id)
             .subscribeOn(Schedulers.boundedElastic())
-            .map(__ -> ResponseEntity.noContent().build());
+            .map(m -> ResponseEntity.noContent().build());
     }
 }

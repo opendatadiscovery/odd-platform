@@ -6,8 +6,16 @@ import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetVersionRecord;
-import com.provectus.oddplatform.utils.JSONSerDeUtils;
+import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.Pair;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.jooq.Condition;
@@ -20,17 +28,15 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.provectus.oddplatform.model.Tables.*;
-import static org.jooq.impl.DSL.*;
+import static com.provectus.oddplatform.model.Tables.DATASET_FIELD;
+import static com.provectus.oddplatform.model.Tables.DATASET_STRUCTURE;
+import static com.provectus.oddplatform.model.Tables.DATASET_VERSION;
+import static com.provectus.oddplatform.model.Tables.LABEL;
+import static com.provectus.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
+import static java.util.stream.Collectors.mapping;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.jsonArrayAgg;
+import static org.jooq.impl.DSL.max;
 
 @Repository
 @Slf4j
@@ -38,8 +44,11 @@ public class DatasetVersionRepositoryImpl
     extends AbstractCRUDRepository<DatasetVersionRecord, DatasetVersionPojo>
     implements DatasetVersionRepository {
 
-    public DatasetVersionRepositoryImpl(final DSLContext dslContext) {
+    private final JooqRecordHelper jooqRecordHelper;
+
+    public DatasetVersionRepositoryImpl(final DSLContext dslContext, final JooqRecordHelper jooqRecordHelper) {
         super(dslContext, DATASET_VERSION, DATASET_VERSION.ID, null, DatasetVersionPojo.class);
+        this.jooqRecordHelper = jooqRecordHelper;
     }
 
     @Override
@@ -52,12 +61,13 @@ public class DatasetVersionRepositoryImpl
             .select(selectFields)
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as("labels"))
             .from(DATASET_VERSION)
-            .leftJoin(DATASET_FIELD).on(DATASET_FIELD.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .where(DATASET_VERSION.ID.eq(datasetVersionId))
             .groupBy(selectFields)
-            .fetchGroups(r -> r.into(DATASET_VERSION).into(DatasetVersionPojo.class), this::extractDatasetFieldDto);
+            .fetchGroups(this::extractDatasetVersion, this::extractDatasetFieldDto);
 
         return result.entrySet().stream()
             .findFirst()
@@ -86,11 +96,12 @@ public class DatasetVersionRepositoryImpl
             .from(subquery)
             .join(DATASET_VERSION).on(DATASET_VERSION.DATASET_ID.eq(datasetId))
             .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
-            .leftJoin(DATASET_FIELD).on(DATASET_FIELD.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .groupBy(selectFields)
-            .fetchGroups(r -> r.into(DATASET_VERSION).into(DatasetVersionPojo.class), this::extractDatasetFieldDto);
+            .fetchGroups(this::extractDatasetVersion, this::extractDatasetFieldDto);
 
         return result.entrySet().stream()
             .findFirst()
@@ -121,7 +132,10 @@ public class DatasetVersionRepositoryImpl
 
         return dslContext.select(DATASET_VERSION.fields())
             .from(subquery)
-            .join(DATASET_VERSION).on(DATASET_VERSION.DATASET_ID.eq(subquery.field("dsv_dataset_id").cast(Long.class)))
+            .join(DATASET_VERSION).on(DATASET_VERSION.DATASET_ID
+                .eq(subquery
+                    .field("dsv_dataset_id")
+                    .cast(Long.class)))
             .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
             .fetchStreamInto(DATASET_VERSION)
             .map(this::recordToPojo)
@@ -142,7 +156,8 @@ public class DatasetVersionRepositoryImpl
         }
 
         final Condition condition = havePreMax.stream()
-            .map(v -> DATASET_VERSION.DATASET_ID.eq(v.getDatasetId()).and(DATASET_VERSION.VERSION.eq(v.getVersion() - 1)))
+            .map(v -> DATASET_VERSION.DATASET_ID.eq(v.getDatasetId())
+                .and(DATASET_VERSION.VERSION.eq(v.getVersion() - 1)))
             .reduce(Condition::or)
             .get();
 
@@ -153,12 +168,19 @@ public class DatasetVersionRepositoryImpl
 
         final List<DatasetVersionPojo> versions = ListUtils.union(havePreMax, preMax);
 
-        final Map<Long, List<DatasetFieldPojo>> vidToFields = dslContext.selectFrom(DATASET_FIELD)
-            .where(DATASET_FIELD.DATASET_VERSION_ID.in(versions.stream()
-                .map(DatasetVersionPojo::getId)
-                .collect(Collectors.toSet())))
-            .fetchStreamInto(DatasetFieldPojo.class)
-            .collect(Collectors.groupingBy(DatasetFieldPojo::getDatasetVersionId));
+        final Map<Long, List<DatasetFieldPojo>> vidToFields =
+            dslContext.select(DATASET_STRUCTURE.DATASET_VERSION_ID)
+                .select(DATASET_FIELD.asterisk())
+                .from(DATASET_FIELD)
+                .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+                .where(DATASET_STRUCTURE.DATASET_VERSION_ID.in(versions.stream()
+                    .map(DatasetVersionPojo::getId)
+                    .collect(Collectors.toSet())))
+                .fetchStream()
+                .collect(Collectors.groupingBy(
+                    r -> r.get(DATASET_STRUCTURE.DATASET_VERSION_ID),
+                    mapping(this::extractDatasetField, Collectors.toList())
+                ));
 
         final Map<Long, List<DatasetVersionPojo>> dsIdToVersions = versions
             .stream()
@@ -178,16 +200,18 @@ public class DatasetVersionRepositoryImpl
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
-    private DatasetFieldDto extractDatasetFieldDto(final Record record) {
-        //noinspection unchecked
-        final List<LabelPojo> labels = (List<LabelPojo>) record.getValue("labels", List.class)
-            .stream()
-            .map(t -> JSONSerDeUtils.deserializeJson(t, LabelPojo.class))
-            .collect(Collectors.toList());
+    private DatasetVersionPojo extractDatasetVersion(final Record record) {
+        return jooqRecordHelper.extractRelation(record, DATASET_VERSION, DatasetVersionPojo.class);
+    }
 
+    private DatasetFieldPojo extractDatasetField(final Record record) {
+        return jooqRecordHelper.extractRelation(record, DATASET_FIELD, DatasetFieldPojo.class);
+    }
+
+    private DatasetFieldDto extractDatasetFieldDto(final Record record) {
         return DatasetFieldDto.builder()
-            .datasetFieldPojo(record.into(DATASET_FIELD).into(DatasetFieldPojo.class))
-            .labelPojos(labels)
+            .datasetFieldPojo(extractDatasetField(record))
+            .labelPojos(jooqRecordHelper.extractAggRelation(record, "labels", LabelPojo.class))
             .build();
     }
 }

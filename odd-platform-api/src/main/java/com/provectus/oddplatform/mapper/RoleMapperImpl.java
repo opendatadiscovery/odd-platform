@@ -1,15 +1,13 @@
 package com.provectus.oddplatform.mapper;
 
-import com.provectus.oddplatform.api.contract.model.NamespaceList;
 import com.provectus.oddplatform.api.contract.model.Role;
 import com.provectus.oddplatform.api.contract.model.RoleFormData;
 import com.provectus.oddplatform.api.contract.model.RoleList;
 import com.provectus.oddplatform.api.contract.model.RoleUpdateFormData;
 import com.provectus.oddplatform.model.tables.pojos.RolePojo;
 import com.provectus.oddplatform.utils.Page;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class RoleMapperImpl implements RoleMapper {

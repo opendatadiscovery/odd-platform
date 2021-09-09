@@ -1,7 +1,6 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
-
 import java.util.Collection;
 import java.util.List;
 
