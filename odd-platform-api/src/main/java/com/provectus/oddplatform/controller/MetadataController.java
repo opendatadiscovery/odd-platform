@@ -6,16 +6,17 @@ import com.provectus.oddplatform.api.contract.model.MetadataFieldFormData;
 import com.provectus.oddplatform.api.contract.model.MetadataFieldList;
 import com.provectus.oddplatform.api.contract.model.MetadataUpdateCustomFieldFormData;
 import com.provectus.oddplatform.service.MetadataService;
+import javax.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
-
 @RestController
 public class MetadataController
-    extends AbstractCRUDController<MetadataField, MetadataFieldList, MetadataFieldFormData, MetadataUpdateCustomFieldFormData, MetadataService>
+    extends
+    AbstractCRUDController<MetadataField, MetadataFieldList, MetadataFieldFormData,
+        MetadataUpdateCustomFieldFormData, MetadataService>
     implements MetadataApi {
 
     public MetadataController(final MetadataService entityService) {

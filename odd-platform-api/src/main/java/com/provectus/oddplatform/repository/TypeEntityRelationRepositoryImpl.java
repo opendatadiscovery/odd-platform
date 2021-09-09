@@ -2,13 +2,12 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.TypeEntityRelationPojo;
 import com.provectus.oddplatform.model.tables.records.TypeEntityRelationRecord;
-import org.jooq.DSLContext;
-import org.jooq.InsertValuesStep2;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.jooq.DSLContext;
+import org.jooq.InsertValuesStep2;
+import org.springframework.stereotype.Repository;
 
 import static com.provectus.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
 

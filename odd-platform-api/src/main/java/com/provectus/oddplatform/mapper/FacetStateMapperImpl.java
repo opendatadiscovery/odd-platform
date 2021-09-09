@@ -12,16 +12,15 @@ import com.provectus.oddplatform.dto.FacetType;
 import com.provectus.oddplatform.dto.SearchFilterDto;
 import com.provectus.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
-import lombok.RequiredArgsConstructor;
-import org.jooq.JSONB;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.jooq.JSONB;
+import org.springframework.stereotype.Component;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -30,7 +29,7 @@ import static java.util.stream.Collectors.groupingBy;
 public class FacetStateMapperImpl implements FacetStateMapper {
     private final SearchMapper searchMapper;
 
-    private final static Map<Function<SearchFormDataFilters, List<SearchFilterState>>, FacetType> FORM_MAPPINGS =
+    private static final Map<Function<SearchFormDataFilters, List<SearchFilterState>>, FacetType> FORM_MAPPINGS =
         Map.of(
             SearchFormDataFilters::getTypes, FacetType.TYPES,
             SearchFormDataFilters::getSubtypes, FacetType.SUBTYPES,

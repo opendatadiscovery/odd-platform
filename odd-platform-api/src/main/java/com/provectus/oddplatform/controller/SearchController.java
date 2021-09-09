@@ -8,6 +8,9 @@ import com.provectus.oddplatform.api.contract.model.MultipleFacetType;
 import com.provectus.oddplatform.api.contract.model.SearchFacetsData;
 import com.provectus.oddplatform.api.contract.model.SearchFormData;
 import com.provectus.oddplatform.service.SearchService;
+import java.util.UUID;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,10 +18,6 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,8 +34,8 @@ public class SearchController implements SearchApi {
         final ServerWebExchange exchange
     ) {
         return Mono.just(searchService
-            .getFilterOptions(searchId, facetType, page, size, query)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .getFilterOptions(searchId, facetType, page, size, query)
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 
@@ -82,7 +81,7 @@ public class SearchController implements SearchApi {
     public Mono<ResponseEntity<Flux<DataEntityRef>>> getSearchSuggestions(final String query,
                                                                           final ServerWebExchange exchange) {
         return Mono.just(searchService.getQuerySuggestions(query)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 }

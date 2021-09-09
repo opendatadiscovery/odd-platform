@@ -3,23 +3,17 @@ package com.provectus.oddplatform.mapper;
 import com.provectus.oddplatform.ingestion.contract.model.DataSetField;
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.jooq.JSONB;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Component
 public class DatasetFieldMapperImpl implements DatasetFieldMapper {
-    @Override
-    public List<DatasetFieldPojo> mapStructure(final List<DataSetField> fields, final long datasetVersionId) {
-        return fields.stream().map(f -> mapStructure(f, datasetVersionId)).collect(Collectors.toList());
-    }
 
     @Override
-    public DatasetFieldPojo mapStructure(final DataSetField field, final long datasetVersionId) {
+    public DatasetFieldPojo mapField(final DataSetField field) {
         return new DatasetFieldPojo()
-            .setDatasetVersionId(datasetVersionId)
             .setName(field.getName())
             .setOddrn(field.getOddrn())
             .setParentFieldOddrn(field.getParentFieldOddrn())
@@ -29,5 +23,10 @@ public class DatasetFieldMapperImpl implements DatasetFieldMapper {
             .setIsKey(field.getIsKey())
             .setIsValue(field.getIsValue())
             .setExternalDescription(field.getDescription());
+    }
+
+    @Override
+    public List<DatasetFieldPojo> mapFields(final List<DataSetField> fields) {
+        return fields.stream().map(this::mapField).collect(Collectors.toList());
     }
 }

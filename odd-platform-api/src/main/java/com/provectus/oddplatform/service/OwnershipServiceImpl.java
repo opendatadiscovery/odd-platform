@@ -34,7 +34,7 @@ public class OwnershipServiceImpl implements OwnershipService {
                 .setDataEntityId(dataEntityId)
                 .setOwnerId(t.getT1().getId())
                 .setRoleId(t.getT2().getId()));
-            
+
             return ownershipMapper.mapModel(pojo, t.getT1(), t.getT2());
         });
     }

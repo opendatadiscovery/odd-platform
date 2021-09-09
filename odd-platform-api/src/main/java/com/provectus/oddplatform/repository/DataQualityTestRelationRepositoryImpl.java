@@ -2,12 +2,11 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import com.provectus.oddplatform.model.tables.records.DataQualityTestRelationsRecord;
+import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStep2;
 import org.springframework.stereotype.Repository;
-
-import java.util.Collection;
 
 import static com.provectus.oddplatform.model.Tables.DATA_QUALITY_TEST_RELATIONS;
 

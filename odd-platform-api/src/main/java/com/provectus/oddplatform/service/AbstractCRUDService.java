@@ -3,13 +3,13 @@ package com.provectus.oddplatform.service;
 import com.provectus.oddplatform.exception.NotFoundException;
 import com.provectus.oddplatform.mapper.CRUDMapper;
 import com.provectus.oddplatform.repository.CRUDRepository;
+import java.util.List;
+import java.util.stream.Collectors;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-public abstract class AbstractCRUDService<E, EL, CEF, UEF, P, M extends CRUDMapper<E, EL, CEF, UEF, P>, CR extends CRUDRepository<P>>
+public abstract class AbstractCRUDService<E, EL, CEF, UEF, P, M
+    extends CRUDMapper<E, EL, CEF, UEF, P>, CR extends CRUDRepository<P>>
     extends AbstractReadOnlyCRUDService<E, EL, P, M, CR>
     implements CRUDService<E, EL, CEF, UEF> {
 

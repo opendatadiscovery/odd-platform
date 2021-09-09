@@ -5,9 +5,9 @@ import { RootState } from 'redux/interfaces';
 import {
   getDataEntityDetails,
   getDataEntityIsDataset,
-  getDataEntityIsQualityTest,
   getDataEntityDetailsFetchingStatus,
   getDataEntityDetailsFetchingError,
+  getDataEntityIsQualityTest,
 } from 'redux/selectors/dataentity.selectors';
 import { fetchDataEntityDetails } from 'redux/thunks/dataentities.thunks';
 import { styles } from './DataEntityDetailsStyles';
