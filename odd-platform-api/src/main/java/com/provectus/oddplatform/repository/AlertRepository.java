@@ -12,8 +12,6 @@ public interface AlertRepository {
 
     Page<AlertDto> listByOwner(final int page, final int size, final long ownerId);
 
-    Page<AlertDto> listDependent(final int page, final int size, final long ownerId);
-
     Collection<AlertDto> getDataEntityAlerts(long dataEntityId);
 
     long count();

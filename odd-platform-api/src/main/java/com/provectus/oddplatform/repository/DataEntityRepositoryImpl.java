@@ -30,6 +30,7 @@ import org.springframework.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -958,6 +959,13 @@ public class DataEntityRepositoryImpl
     private DataEntityDetailsDto mapDetailsRecord(final Record r) {
         final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
 
+        // ad-hoc solution until https://github.com/opendatadiscovery/odd-platform/issues/123 is fixed
+        final Set<DatasetVersionPojo> datasetVersions = jooqRecordHelper
+            .extractAggRelation(r, AGG_DSV_FIELD, DatasetVersionPojo.class)
+            .stream()
+            .sorted((d1, d2) -> d2.getVersion().compareTo(d1.getVersion()))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
+
         return DataEntityDetailsDto.detailsBuilder()
             .dataEntity(jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class))
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
@@ -968,7 +976,7 @@ public class DataEntityRepositoryImpl
             .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
             .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
             .dataSetDetailsDto(DataEntityDetailsDto.DataSetDetailsDto.builder()
-                .datasetVersions(jooqRecordHelper.extractAggRelation(r, AGG_DSV_FIELD, DatasetVersionPojo.class))
+                .datasetVersions(datasetVersions)
                 .build())
             .metadata(extractMetadataRelation(r))
             .build();

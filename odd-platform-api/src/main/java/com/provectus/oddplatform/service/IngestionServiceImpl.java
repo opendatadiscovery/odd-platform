@@ -1,7 +1,6 @@
 package com.provectus.oddplatform.service;
 
 import com.provectus.oddplatform.api.contract.model.AlertStatus;
-import com.provectus.oddplatform.api.contract.model.AlertTotals;
 import com.provectus.oddplatform.api.contract.model.AlertType;
 import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityIngestionDto;
@@ -23,6 +22,7 @@ import com.provectus.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetRevisionPojo;
+import com.provectus.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.LineagePojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
@@ -32,8 +32,8 @@ import com.provectus.oddplatform.repository.DataEntityRepository;
 import com.provectus.oddplatform.repository.DataEntityTaskRunRepository;
 import com.provectus.oddplatform.repository.DataQualityTestRelationRepository;
 import com.provectus.oddplatform.repository.DataSourceRepository;
-import com.provectus.oddplatform.repository.DatasetFieldRepository;
 import com.provectus.oddplatform.repository.DatasetRevisionRepository;
+import com.provectus.oddplatform.repository.DatasetStructureRepository;
 import com.provectus.oddplatform.repository.DatasetVersionRepository;
 import com.provectus.oddplatform.repository.LineageRepository;
 import com.provectus.oddplatform.repository.MetadataFieldRepository;
@@ -41,14 +41,11 @@ import com.provectus.oddplatform.repository.MetadataFieldValueRepository;
 import com.provectus.oddplatform.utils.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -58,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -75,7 +73,7 @@ public class IngestionServiceImpl implements IngestionService {
     private final DataEntityRepository dataEntityRepository;
     private final DatasetRevisionRepository datasetRevisionRepository;
     private final DatasetVersionRepository datasetVersionRepository;
-    private final DatasetFieldRepository datasetFieldRepository;
+    private final DatasetStructureRepository datasetStructureRepository;
     private final MetadataFieldRepository metadataFieldRepository;
     private final MetadataFieldValueRepository metadataFieldValueRepository;
     private final LineageRepository lineageRepository;
@@ -222,106 +220,57 @@ public class IngestionServiceImpl implements IngestionService {
             .map(datasetRevisionRepository::bulkCreate);
     }
 
-    private Mono<List<DatasetFieldPojo>> ingestDatasetStructure(
-        final DataEntityIngestionDtoSplit split
-    ) {
-        return Mono.zipDelayError(
-            ingestNewDatasetStructure(split),
-            ingestExistingDatasetStructure(split)
-        ).map(t -> ListUtils.union(t.getT1(), t.getT2()));
+    private Mono<List<DatasetStructurePojo>> ingestDatasetStructure(final DataEntityIngestionDtoSplit split) {
+        return Mono
+            .zipDelayError(ingestNewDatasetStructure(split), ingestExistingDatasetStructure(split))
+            .map(t -> ListUtils.union(t.getT1(), t.getT2()));
     }
 
-    private Mono<List<DatasetFieldPojo>> ingestNewDatasetStructure(final DataEntityIngestionDtoSplit split) {
-        final Map<Long, DataEntityIngestionDto> datasetDict = split.getNewEntities()
-            .stream()
+    private Mono<List<DatasetStructurePojo>> ingestNewDatasetStructure(final DataEntityIngestionDtoSplit split) {
+        final Map<Long, EnrichedDataEntityIngestionDto> datasetDict = split.getNewEntities().stream()
             .filter(e -> e.getTypes().contains(DATA_SET))
             .collect(Collectors.toMap(EnrichedDataEntityIngestionDto::getId, identity()));
 
-        final List<DatasetVersionPojo> versions = split.getNewEntities().stream()
-            .filter(entity -> entity.getTypes().contains(DATA_SET))
+        final List<DatasetVersionPojo> versions = datasetDict.values().stream()
             .map(this::mapNewDatasetVersion)
             .collect(Collectors.toList());
 
-        return Mono.just(versions)
-            .map(datasetVersionRepository::bulkCreate)
-            .map(vl -> vl.stream()
-                .map(v -> datasetFieldMapper.mapStructure(
-                    datasetDict.get(v.getDatasetId()).getDataSet().getFieldList(),
-                    v.getId()
-                ))
-                .flatMap(List::stream)
-                .collect(Collectors.toList())
-            )
-            .map(datasetFieldRepository::bulkCreate);
+        final Map<Long, List<DatasetFieldPojo>> datasetFields = datasetDict.values().stream()
+            .collect(Collectors.toMap(
+                EnrichedDataEntityIngestionDto::getId,
+                dto -> datasetFieldMapper.mapFields(dto.getDataSet().getFieldList())
+            ));
+
+        return Mono.fromCallable(() -> datasetStructureRepository.bulkCreate(versions, datasetFields));
     }
 
-    private Mono<List<DatasetFieldPojo>> ingestExistingDatasetStructure(final DataEntityIngestionDtoSplit split) {
+    private Mono<List<DatasetStructurePojo>> ingestExistingDatasetStructure(final DataEntityIngestionDtoSplit split) {
         final Map<Long, EnrichedDataEntityIngestionDto> datasetDict = split.getExistingEntities().stream()
             .filter(e -> e.getTypes().contains(DATA_SET))
             .collect(Collectors.toMap(EnrichedDataEntityIngestionDto::getId, identity()));
 
-        final Mono<List<DatasetVersionPojo>> createdVersions = Mono.just(datasetDict.keySet())
+        final Mono<List<DatasetVersionPojo>> versions = Mono.just(datasetDict.keySet())
             .map(datasetVersionRepository::getLatestVersions)
             .map(fetchedVersions -> fetchedVersions.stream()
-                .map(fetchedVersion -> {
-                    final EnrichedDataEntityIngestionDto dto = datasetDict.get(fetchedVersion.getDatasetId());
-
-                    // TODO: move to the select: IN -> (AND + OR)
-                    if (fetchedVersion.getVersionHash().equals(dto.getDataSet().getStructureHash())) {
-                        log.info("no change in structure with ID: {} found", fetchedVersion.getId());
-                        return null;
-                    }
-
-                    // TODO: possible concurrent issues
-                    return mapNewDatasetVersion(dto, fetchedVersion.getVersion() + 1);
-                })
+                .map(fetchedVersion -> incrementVersion(datasetDict, fetchedVersion))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toList()))
-            .map(datasetVersionRepository::bulkCreate);
+                .collect(Collectors.toList()));
 
-        return createdVersions
-            .map(vl -> vl.stream().collect(Collectors.toMap(
-                DatasetVersionPojo::getDatasetId,
-                DatasetVersionPojo::getId
-            )))
-            .map(dsv -> intersection(
-                dsv,
-                datasetDict,
-                (dsvId, deDto) -> datasetFieldMapper.mapStructure(deDto.getDataSet().getFieldList(), dsvId)
-            ))
-            .map(dsv -> dsv.values().stream().flatMap(List::stream).collect(Collectors.toList()))
-            .map(datasetFieldRepository::bulkCreate);
+        final Map<Long, List<DatasetFieldPojo>> datasetFields = datasetDict.values().stream()
+            .collect(Collectors.toMap(
+                EnrichedDataEntityIngestionDto::getId,
+                dto -> datasetFieldMapper.mapFields(dto.getDataSet().getFieldList())
+            ));
+
+        return Mono.zipDelayError(versions, Mono.just(datasetFields))
+            .map(t -> datasetStructureRepository.bulkCreate(t.getT1(), t.getT2()));
     }
 
     private DataEntityIngestionDtoSplit findAlerts(final DataEntityIngestionDtoSplit split) {
         final List<AlertPojo> alerts = datasetVersionRepository.getLastStructureDelta(split.getExistingIds())
             .entrySet()
             .stream()
-            .flatMap(e -> {
-                final Map<Pair<String, String>, DatasetFieldPojo> lastDict = e.getValue().getRight()
-                    .stream()
-                    .collect(Collectors.toMap(
-                        df -> Pair.of(df.getOddrn(), df.getType().data()),
-                        identity()
-                    ));
-
-                return e.getValue().getLeft()
-                    .stream()
-                    .map(df -> {
-                        if (!lastDict.containsKey(Pair.of(df.getOddrn(), df.getType().data()))) {
-                            return new AlertPojo()
-                                .setDataEntityId(e.getKey())
-                                .setDescription(String.format(
-                                    "Backwards Incompatible schema: missing field: %s", df.getName()))
-                                .setType(AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA.getValue())
-                                .setStatus(AlertStatus.OPEN.getValue())
-                                .setStatusUpdatedAt(LocalDateTime.now());
-                        }
-
-                        return null;
-                    })
-                    .filter(Objects::nonNull);
-            })
+            .flatMap(this::mapAlerts)
             .collect(Collectors.toList());
 
         alertRepository.createAlerts(alerts);
@@ -332,12 +281,12 @@ public class IngestionServiceImpl implements IngestionService {
     private Mono<Integer> ingestMetadata(final DataEntityIngestionDtoSplit split) {
         final HashMap<MetadataFieldKey, Map<Long, Object>> allMetadata = new HashMap<>();
 
-        for (final EnrichedDataEntityIngestionDto allEntity : split.getAllEntities()) {
-            if (allEntity.getMetadata() == null) {
+        for (final EnrichedDataEntityIngestionDto entity : split.getAllEntities()) {
+            if (entity.getMetadata() == null) {
                 continue;
             }
 
-            allEntity.getMetadata().forEach((mfName, mfValue) -> {
+            entity.getMetadata().forEach((mfName, mfValue) -> {
                 if (mfValue == null) {
                     return;
                 }
@@ -347,7 +296,7 @@ public class IngestionServiceImpl implements IngestionService {
                     : MetadataFieldKey.MetadataTypeEnum.getMetadataType(mfValue.getClass());
 
                 if (fieldType.equals(MetadataFieldKey.MetadataTypeEnum.UNKNOWN)) {
-                    log.error("Unknown metadata field: {} -- {}", mfName, mfValue);
+                    log.error("Unknown metadata field: {}, {}, {}", mfName, mfValue, fieldType);
                     return;
                 }
 
@@ -356,20 +305,19 @@ public class IngestionServiceImpl implements IngestionService {
                         map = new HashMap<>();
                     }
 
-                    map.put(allEntity.getId(), mfValue);
+                    map.put(entity.getId(), mfValue);
 
                     return map;
                 });
             });
         }
 
-        final Mono<Map<MetadataBinding, MetadataFieldValuePojo>> mfvAll =
-            Mono.just(split.getAllEntities().stream().map(EnrichedDataEntityIngestionDto::getId).collect(Collectors.toList()))
-                .map(metadataFieldValueRepository::listByDataEntityIds)
-                .map(mfList -> mfList.stream().collect(Collectors.toMap(
-                    mf -> new MetadataBinding(mf.getDataEntityId(), mf.getMetadataFieldId()),
-                    identity()
-                )));
+        final Mono<Map<MetadataBinding, MetadataFieldValuePojo>> mfvAll = Mono.just(split.getAllIds())
+            .map(metadataFieldValueRepository::listByDataEntityIds)
+            .map(mfList -> mfList.stream().collect(Collectors.toMap(
+                mf -> new MetadataBinding(mf.getDataEntityId(), mf.getMetadataFieldId()),
+                identity()
+            )));
 
         final Mono<Map<MetadataFieldKey, MetadataFieldPojo>> metadataFields = Mono
             .fromCallable(() -> metadataFieldRepository.listByKey(allMetadata.keySet()))
@@ -381,8 +329,10 @@ public class IngestionServiceImpl implements IngestionService {
                 final HashMap<MetadataFieldKey, MetadataFieldPojo> newMfs = new HashMap<>();
                 allMetadata.forEach((id, __) -> {
                     if (!existingMfs.containsKey(id)) {
-                        newMfs.put(id, new MetadataFieldPojo(null, id.getFieldType().toString(),
-                            id.getFieldName(), "EXTERNAL", null));
+                        newMfs.put(id, new MetadataFieldPojo()
+                            .setType(id.getFieldType().toString())
+                            .setName(id.getFieldName())
+                            .setOrigin("EXTERNAL"));
                     }
                 });
 
@@ -412,12 +362,49 @@ public class IngestionServiceImpl implements IngestionService {
                     }
                 }));
 
-                // TODO: parallel
                 metadataFieldValueRepository.bulkCreate(create);
                 metadataFieldValueRepository.bulkUpdate(update);
 
                 return 0;
             });
+    }
+
+    private Stream<AlertPojo> mapAlerts(final Map.Entry<Long, Pair<List<DatasetFieldPojo>, List<DatasetFieldPojo>>> e) {
+        final Map<Pair<String, String>, DatasetFieldPojo> lastDict = e.getValue().getRight()
+            .stream()
+            .collect(Collectors.toMap(
+                df -> Pair.of(df.getOddrn(), df.getType().data()),
+                identity()
+            ));
+
+        return e.getValue().getLeft()
+            .stream()
+            .map(df -> {
+                if (!lastDict.containsKey(Pair.of(df.getOddrn(), df.getType().data()))) {
+                    return new AlertPojo()
+                        .setDataEntityId(e.getKey())
+                        .setDescription(String.format(
+                            "Backwards Incompatible schema: missing field: %s", df.getName()))
+                        .setType(AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA.getValue())
+                        .setStatus(AlertStatus.OPEN.getValue())
+                        .setStatusUpdatedAt(LocalDateTime.now());
+                }
+
+                return null;
+            })
+            .filter(Objects::nonNull);
+    }
+
+    private DatasetVersionPojo incrementVersion(final Map<Long, EnrichedDataEntityIngestionDto> datasetDict,
+                                                final DatasetVersionPojo fetchedVersion) {
+        final EnrichedDataEntityIngestionDto dto = datasetDict.get(fetchedVersion.getDatasetId());
+
+        if (fetchedVersion.getVersionHash().equals(dto.getDataSet().getStructureHash())) {
+            log.debug("No change in dataset structure with ID: {} found", fetchedVersion.getId());
+            return null;
+        }
+
+        return mapNewDatasetVersion(dto, fetchedVersion.getVersion() + 1);
     }
 
     private List<LineagePojo> extractLineageRelations(final DataEntityIngestionDto dto) {
@@ -464,11 +451,14 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<DataEntityIngestionDtoSplit> calculateSearchEntrypoints(final DataEntityIngestionDtoSplit split) {
+        final AtomicReference<Long> longAtomicReference = new AtomicReference<>();
+
         return Mono.fromCallable(() -> {
             dataEntityRepository.calculateSearchEntrypoints(split.getNewIds(), split.getExistingIds());
 
             return split;
-        });
+        }).doOnSubscribe(__ -> longAtomicReference.set(System.currentTimeMillis()))
+            .doFinally(__ -> log.info("TSV: {} ms", System.currentTimeMillis() - longAtomicReference.get()));
     }
 
     private boolean isDate(final Object object) {
