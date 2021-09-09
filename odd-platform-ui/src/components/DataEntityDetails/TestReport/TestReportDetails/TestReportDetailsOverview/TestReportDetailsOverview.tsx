@@ -58,7 +58,7 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                     qualityTest?.latestRun.endTime,
                     qualityTest?.latestRun.startTime,
                     {
-                      addSuffix: true,
+                      addSuffix: false,
                     }
                   )}
               </Typography>
