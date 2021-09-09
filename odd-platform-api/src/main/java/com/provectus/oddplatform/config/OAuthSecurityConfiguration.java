@@ -1,6 +1,5 @@
 package com.provectus.oddplatform.config;
 
-
 import com.provectus.oddplatform.auth.CognitoOidcLogoutSuccessHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -33,8 +32,8 @@ public class OAuthSecurityConfiguration {
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public SecurityWebFilterChain securityWebFilterChainOauth2ResourceServer(final ServerHttpSecurity http,
-                                                                             ReactiveClientRegistrationRepository repo) {
-
+                                                                             final ReactiveClientRegistrationRepository
+                                                                                 repo) {
         ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
             ? new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId)
             : new OidcClientInitiatedServerLogoutSuccessHandler(repo);
@@ -56,7 +55,6 @@ public class OAuthSecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChainOauth2Client(final ServerHttpSecurity http,
                                                                      final ReactiveClientRegistrationRepository repo) {
-
         ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
             ? new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId)
             : new OidcClientInitiatedServerLogoutSuccessHandler(repo);
