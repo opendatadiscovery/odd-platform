@@ -459,12 +459,14 @@ public class IngestionServiceImpl implements IngestionService {
     private Mono<DataEntityIngestionDtoSplit> calculateSearchEntrypoints(final DataEntityIngestionDtoSplit split) {
         final AtomicReference<Long> longAtomicReference = new AtomicReference<>();
 
-        return Mono.fromCallable(() -> {
-                dataEntityRepository.calculateSearchEntrypoints(split.getNewIds(), split.getExistingIds());
+        return Mono.fromCallable(
+                () -> {
+                    dataEntityRepository.calculateSearchEntrypoints(split.getNewIds(), split.getExistingIds());
 
-                return split;
-            }).doOnSubscribe(__ -> longAtomicReference.set(System.currentTimeMillis()))
-            .doFinally(__ -> log.info("TSV: {} ms", System.currentTimeMillis() - longAtomicReference.get()));
+                    return split;
+                }
+            ).doOnSubscribe(m -> longAtomicReference.set(System.currentTimeMillis()))
+            .doFinally(m -> log.info("TSV: {} ms", System.currentTimeMillis() - longAtomicReference.get()));
     }
 
     private boolean isDate(final Object object) {

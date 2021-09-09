@@ -29,6 +29,7 @@ import org.jooq.SelectHavingStep;
 import org.springframework.stereotype.Repository;
 
 import static com.provectus.oddplatform.model.Tables.DATASET_FIELD;
+import static com.provectus.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static com.provectus.oddplatform.model.Tables.DATASET_VERSION;
 import static com.provectus.oddplatform.model.Tables.LABEL;
 import static com.provectus.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
@@ -131,8 +132,10 @@ public class DatasetVersionRepositoryImpl
 
         return dslContext.select(DATASET_VERSION.fields())
             .from(subquery)
-            .join(DATASET_VERSION)
-            .on(DATASET_VERSION.DATASET_ID.eq(subquery.field("dsv_dataset_id").cast(Long.class)))
+            .join(DATASET_VERSION).on(DATASET_VERSION.DATASET_ID
+                .eq(subquery
+                    .field("dsv_dataset_id")
+                    .cast(Long.class)))
             .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
             .fetchStreamInto(DATASET_VERSION)
             .map(this::recordToPojo)
