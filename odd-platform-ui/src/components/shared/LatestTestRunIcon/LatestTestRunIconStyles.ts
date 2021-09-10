@@ -11,22 +11,22 @@ export const styles = (theme: ODDTheme) =>
       height: '8px',
       borderRadius: '50%',
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        backgroundColor: theme.palette.runStatus?.SUCCESS,
+        backgroundColor: theme.palette.runStatus?.success,
       },
       [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        backgroundColor: theme.palette.runStatus?.FAILED,
+        backgroundColor: theme.palette.runStatus?.failed,
       },
       [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        backgroundColor: theme.palette.runStatus?.BROKEN,
+        backgroundColor: theme.palette.runStatus?.broken,
       },
       [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        backgroundColor: theme.palette.runStatus?.SKIPPED,
+        backgroundColor: theme.palette.runStatus?.skipped,
       },
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        backgroundColor: theme.palette.runStatus?.ABORTED,
+        backgroundColor: theme.palette.runStatus?.aborted,
       },
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        backgroundColor: theme.palette.runStatus?.UNKNOWN,
+        backgroundColor: theme.palette.runStatus?.unknown,
       },
     },
   });

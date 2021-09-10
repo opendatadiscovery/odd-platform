@@ -6,61 +6,67 @@ import { Theme } from '@material-ui/core';
 import { ThemeOptions } from '@material-ui/core/styles';
 
 // palette interfaces
-interface ReportStatusStyles {
-  background: string;
-  border: string;
+interface ItemColors {
+  background?: string;
+  border?: string;
+  color?: string;
+}
+
+interface ButtonTypeCondition {
+  normal: ItemColors;
+  hover: ItemColors;
+  active: ItemColors;
+  disabled: ItemColors;
+}
+
+interface ReportStatus {
+  success: ItemColors;
+  failed: ItemColors;
+  broken: ItemColors;
+  skipped: ItemColors;
+  aborted: ItemColors;
+  unknown: ItemColors;
+}
+
+interface RunStatus {
+  success: string;
+  failed: string;
+  broken: string;
+  skipped: string;
+  aborted: string;
+  unknown: string;
+}
+
+interface EntityType {
+  SET: string;
+  TRANSFORMER: string;
+  CONSUMER: string;
+  INPUT: string;
+  QUALITY_TEST: string;
+}
+
+interface ButtonType {
+  primary: ButtonTypeCondition;
+  primaryLight: ButtonTypeCondition;
+  secondary: ButtonTypeCondition;
+  tertiary: ButtonTypeCondition;
+  dropdown: ButtonTypeCondition;
+  expand: ButtonTypeCondition;
+  unfilled: ButtonTypeCondition;
 }
 
 export interface ODDPalette extends Palette {
-  entityType?: {
-    SET: string;
-    TRANSFORMER: string;
-    CONSUMER: string;
-    INPUT: string;
-    QUALITY_TEST: string;
-  };
-  runStatus?: {
-    SUCCESS: string;
-    FAILED: string;
-    BROKEN: string;
-    SKIPPED: string;
-    ABORTED: string;
-    UNKNOWN: string;
-  };
-  reportStatus?: {
-    success: ReportStatusStyles;
-    failed: ReportStatusStyles;
-    broken: ReportStatusStyles;
-    skipped: ReportStatusStyles;
-    aborted: ReportStatusStyles;
-    unknown: ReportStatusStyles;
-  };
+  entityType?: EntityType;
+  reportStatus?: ReportStatus;
+  runStatus?: RunStatus;
+  button?: ButtonType;
 }
 
 export interface ODDPaletteOptions extends PaletteOptions {
-  entityType?: {
-    SET: string;
-    TRANSFORMER: string;
-    CONSUMER: string;
-    INPUT: string;
-    QUALITY_TEST: string;
-  };
-  runStatus?: {
-    SUCCESS: string;
-    FAILED: string;
-    BROKEN: string;
-    SKIPPED: string;
-    ABORTED: string;
-    UNKNOWN: string;
-  };
-  reportStatus?: {
-    success: ReportStatusStyles;
-    failed: ReportStatusStyles;
-    broken: ReportStatusStyles;
-    skipped: ReportStatusStyles;
-    aborted: ReportStatusStyles;
-    unknown: ReportStatusStyles;
-  };
+  entityType?: EntityType;
+  reportStatus?: ReportStatus;
+  runStatus?: RunStatus;
+  button?: ButtonType;
 }
 
 // theme interfaces

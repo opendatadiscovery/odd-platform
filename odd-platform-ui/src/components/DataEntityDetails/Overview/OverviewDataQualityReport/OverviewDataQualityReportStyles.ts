@@ -32,22 +32,22 @@ export const styles = (theme: ODDTheme) =>
     },
     countLabel: {
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        color: theme.palette.runStatus?.SUCCESS,
+        color: theme.palette.runStatus?.success,
       },
       [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        color: theme.palette.runStatus?.FAILED,
+        color: theme.palette.runStatus?.failed,
       },
       [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        color: theme.palette.runStatus?.BROKEN,
+        color: theme.palette.runStatus?.broken,
       },
       [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        color: theme.palette.runStatus?.SKIPPED,
+        color: theme.palette.runStatus?.skipped,
       },
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        color: theme.palette.runStatus?.ABORTED,
+        color: theme.palette.runStatus?.aborted,
       },
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        color: theme.palette.runStatus?.UNKNOWN,
+        color: theme.palette.runStatus?.unknown,
       },
     },
     barsContainer: {
@@ -69,13 +69,13 @@ export const styles = (theme: ODDTheme) =>
         height: '8px',
         width: '100%',
         [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-          backgroundColor: theme.palette.runStatus?.SUCCESS,
+          backgroundColor: theme.palette.runStatus?.success,
           maxWidth: `${
             (succRelation * 200) / (Math.round(succRelation) + 1)
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-          backgroundColor: theme.palette.runStatus?.FAILED,
+          backgroundColor: theme.palette.runStatus?.failed,
           maxWidth: `${
             ((datasetQualityTestReport?.failedTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *
@@ -83,7 +83,7 @@ export const styles = (theme: ODDTheme) =>
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-          backgroundColor: theme.palette.runStatus?.BROKEN,
+          backgroundColor: theme.palette.runStatus?.broken,
           maxWidth: `${
             ((datasetQualityTestReport?.brokenTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *
@@ -91,7 +91,7 @@ export const styles = (theme: ODDTheme) =>
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-          backgroundColor: theme.palette.runStatus?.SKIPPED,
+          backgroundColor: theme.palette.runStatus?.skipped,
           maxWidth: `${
             ((datasetQualityTestReport?.skippedTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *
@@ -99,7 +99,7 @@ export const styles = (theme: ODDTheme) =>
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-          backgroundColor: theme.palette.runStatus?.ABORTED,
+          backgroundColor: theme.palette.runStatus?.aborted,
           maxWidth: `${
             ((datasetQualityTestReport?.abortedTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *
@@ -107,7 +107,7 @@ export const styles = (theme: ODDTheme) =>
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-          backgroundColor: theme.palette.runStatus?.UNKNOWN,
+          backgroundColor: theme.palette.runStatus?.unknown,
           maxWidth: `${
             ((datasetQualityTestReport?.unknownTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *

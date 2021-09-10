@@ -10,12 +10,12 @@ const entityTypeColors = {
 };
 
 const runStatusColors = {
-  SUCCESS: '#1FAD1F',
-  FAILED: '#F2330D',
-  BROKEN: '#FFAA00',
-  SKIPPED: '#0080FF',
-  ABORTED: '#8066FF',
-  UNKNOWN: '#A8B0BD',
+  success: '#1FAD1F',
+  failed: '#F2330D',
+  broken: '#FFAA00',
+  skipped: '#0080FF',
+  aborted: '#8066FF',
+  unknown: '#A8B0BD',
 };
 
 const reportStatusColors = {
@@ -45,10 +45,16 @@ const colors = {
   background: '#F4F5F7', // done
   success: '#4baa73',
   successLight: '#27AE60',
-  button: '#0080FF', // done
   black: '#000000', // done
   white: '#FFFFFF', // done
-  red: '#FFFFFF', // done
+  blue65: '#0059B2', // done
+  blue60: '#0066CC', // done
+  blue50: '#0080FF', // done
+  blue40: '#3399FF', // done
+  blue30: '#66B3FF', // done
+  blue20: '#99CCFF', // done
+  blue10: '#CCE6FF', // done
+  blue5: '#E5F2FF', // done
   // 1: '#091E42', // 22
   2: '#253858', // 2
   // 3: '#42526E', // 20
@@ -62,7 +68,7 @@ const colors = {
   // 11: '#F4F5F7', // 26
   // 12: '#FFFFFF', // 14
 
-  13: '#0059B2', // 4
+  // 13: '#0059B2', // 4
   // 14: '#0066CC', // 24
   // 15: '#0080FF', // 19
   16: '#99CCFF', // 9
@@ -117,12 +123,12 @@ export const palette = createPalette({
     QUALITY_TEST: entityTypeColors.QUALITY_TEST,
   },
   runStatus: {
-    SUCCESS: runStatusColors.SUCCESS,
-    FAILED: runStatusColors.FAILED,
-    BROKEN: runStatusColors.BROKEN,
-    SKIPPED: runStatusColors.SKIPPED,
-    ABORTED: runStatusColors.ABORTED,
-    UNKNOWN: runStatusColors.UNKNOWN,
+    success: runStatusColors.success,
+    failed: runStatusColors.failed,
+    broken: runStatusColors.broken,
+    skipped: runStatusColors.skipped,
+    aborted: runStatusColors.aborted,
+    unknown: runStatusColors.unknown,
   },
   reportStatus: {
     success: {
@@ -148,6 +154,14 @@ export const palette = createPalette({
     unknown: {
       background: reportStatusColors.unknown.background,
       border: reportStatusColors.unknown.border,
+    },
+  },
+  button: {
+    primary: {
+      normal: { background: colors.blue50, color: colors.white },
+      hover: { background: colors.blue60, color: colors.white },
+      active: { background: colors.blue65, color: colors.white },
+      disabled: { background: colors.blue20, color: colors.white },
     },
   },
 } as ODDPaletteOptions);

@@ -1,6 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       padding: '2px',
@@ -12,11 +13,18 @@ export const styles = (theme: Theme) =>
       color: theme.palette.text.hint,
     },
     primary: {
-      backgroundColor: '#0080FF',
-      color: '#FFFFFF',
-      '&:hover': { backgroundColor: '#0066CC' },
-      '&:active': { backgroundColor: '#0059B2' },
-      '&:disabled': { backgroundColor: '#99CCFF', color: '#FFFFFF' },
+      backgroundColor: theme.palette.button?.primary.normal.background,
+      color: theme.palette.button?.primary.normal.color,
+      '&:hover': {
+        backgroundColor: theme.palette.button?.primary.hover.background,
+      },
+      '&:active': {
+        backgroundColor: theme.palette.button?.primary.active.background,
+      },
+      '&:disabled': {
+        backgroundColor: theme.palette.button?.primary.disabled.background,
+        color: theme.palette.button?.primary.disabled.color,
+      },
     },
     primaryLight: {
       color: '#0066CC',
