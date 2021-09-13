@@ -78,6 +78,8 @@ import org.jooq.SelectHavingStep;
 import org.jooq.SelectLimitStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectSelectStep;
+import org.jooq.SortField;
+import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.springframework.stereotype.Repository;
@@ -228,6 +230,7 @@ public class DataEntityRepositoryImpl
                 r.changed(DATA_ENTITY.INTERNAL_DESCRIPTION, false);
                 r.changed(DATA_ENTITY.INTERNAL_NAME, false);
                 r.changed(DATA_ENTITY.NAMESPACE_ID, false);
+                r.changed(DATA_ENTITY.VIEW_COUNT, false);
             })
             .collect(Collectors.toList());
 
@@ -245,6 +248,16 @@ public class DataEntityRepositoryImpl
         dslContext.batchUpdate(records).execute();
 
         return dtos;
+    }
+
+    @Override
+    public Optional<Long> incrementViewCount(final long id) {
+        return dslContext.update(DATA_ENTITY)
+            .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
+            .where(DATA_ENTITY.ID.eq(id))
+            .returningResult(DATA_ENTITY.VIEW_COUNT)
+            .fetchOptional()
+            .map(Record1::value1);
     }
 
     @Override
@@ -565,6 +578,7 @@ public class DataEntityRepositoryImpl
     public List<? extends DataEntityDto> listPopular(final int page, final int size) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
+            .orderBy(DATA_ENTITY.VIEW_COUNT.sort(SortOrder.DESC))
             .build();
 
         return listByConfig(config);
@@ -874,6 +888,11 @@ public class DataEntityRepositoryImpl
             dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
                 .from(DATA_ENTITY)
                 .where(ListUtils.emptyIfNull(config.getCteSelectConditions()));
+        }
+
+        if (config.getOrderBy() != null) {
+            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
+                .orderBy(config.getOrderBy());
         }
 
         if (!config.isIncludeHollow()) {
@@ -1202,6 +1221,7 @@ public class DataEntityRepositoryImpl
         private List<Condition> joinSelectConditions;
         private boolean includeDetails;
         private boolean includeHollow;
+        private SortField<?> orderBy;
         private Fts fts;
 
         @RequiredArgsConstructor

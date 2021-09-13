@@ -48,6 +48,8 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDto> bulkUpdate(final List<DataEntityDto> dtos);
 
+    Optional<Long> incrementViewCount(final long id);
+
     void createHollow(final Collection<String> oddrns);
 
     Map<SearchFilterId, Long> getSubtypeFacet(final String facetQuery,
