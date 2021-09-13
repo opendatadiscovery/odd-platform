@@ -1,6 +1,7 @@
 import {
   DataEntityLineageNode,
   DataEntityLineageEdge,
+  DataEntityLineage,
 } from 'generated-sources';
 
 export interface DataEntityLineageById<
@@ -26,5 +27,10 @@ export interface DataEntityLineageStreamById<
 }
 
 export interface DataEntityLineageRootNodeId {
-  [rootNodeId: string]: number;
+  rootNodeId?: number;
+}
+
+export interface LineageStreamParams {
+  dataEntityLineage: DataEntityLineage;
+  rootNodeId?: number;
 }

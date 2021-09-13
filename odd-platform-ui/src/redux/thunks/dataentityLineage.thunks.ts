@@ -9,7 +9,10 @@ import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { PartialEntityUpdateParams } from 'redux/interfaces';
-import { DataEntityLineageRootNodeId } from 'redux/interfaces/dataentityLineage';
+import {
+  DataEntityLineageRootNodeId,
+  LineageStreamParams,
+} from 'redux/interfaces/dataentityLineage';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new DataEntityApi(apiClientConf);
@@ -18,10 +21,7 @@ export const fetchDataEntityDownstreamLineage = createThunk<
   DataEntityApiGetDataEntityDownstreamLineageRequest &
     DataEntityLineageRootNodeId,
   DataEntityLineage,
-  PartialEntityUpdateParams<{
-    dataEntityLineage: DataEntityLineage;
-    rootNodeId: number;
-  }>
+  PartialEntityUpdateParams<LineageStreamParams>
 >(
   (
     params: DataEntityApiGetDataEntityDownstreamLineageRequest &
@@ -42,10 +42,7 @@ export const fetchDataEntityUpstreamLineage = createThunk<
   DataEntityApiGetDataEntityDownstreamLineageRequest &
     DataEntityLineageRootNodeId,
   DataEntityLineage,
-  PartialEntityUpdateParams<{
-    dataEntityLineage: DataEntityLineage;
-    rootNodeId: number;
-  }>
+  PartialEntityUpdateParams<LineageStreamParams>
 >(
   (
     params: DataEntityApiGetDataEntityUpstreamLineageRequest &
