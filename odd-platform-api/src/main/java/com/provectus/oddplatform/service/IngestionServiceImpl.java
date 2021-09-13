@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -457,16 +456,10 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<DataEntityIngestionDtoSplit> calculateSearchEntrypoints(final DataEntityIngestionDtoSplit split) {
-        final AtomicReference<Long> longAtomicReference = new AtomicReference<>();
-
-        return Mono.fromCallable(
-                () -> {
-                    dataEntityRepository.calculateSearchEntrypoints(split.getNewIds(), split.getExistingIds());
-
-                    return split;
-                }
-            ).doOnSubscribe(m -> longAtomicReference.set(System.currentTimeMillis()))
-            .doFinally(m -> log.info("TSV: {} ms", System.currentTimeMillis() - longAtomicReference.get()));
+        return Mono.fromCallable(() -> {
+            dataEntityRepository.calculateSearchEntrypoints(split.getNewIds(), split.getExistingIds());
+            return split;
+        });
     }
 
     private boolean isDate(final Object object) {

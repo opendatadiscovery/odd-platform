@@ -4,9 +4,12 @@ import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetFieldRecord;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.Nullable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -32,7 +35,7 @@ public class DatasetFieldRepositoryImpl
     }
 
     @Override
-    public List<DatasetFieldPojo> bulkCreateIfNotExist(final List<DatasetFieldPojo> fields) {
+    public List<DatasetFieldPojo> persist(final List<DatasetFieldPojo> fields) {
         if (fields.isEmpty()) {
             return emptyList();
         }
@@ -54,8 +57,27 @@ public class DatasetFieldRepositoryImpl
 
         final List<DatasetFieldPojo> createdFields = super.bulkCreate(fieldsToCreate);
 
-        return Stream
-            .concat(existingFieldsDict.values().stream(), createdFields.stream())
+        final List<DatasetFieldRecord> updatedFieldRecords = fields.stream()
+            .map(f -> createRecord(f, existingFieldsDict.get(f.getOddrn())))
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
+
+        dslContext.batchUpdate(updatedFieldRecords).execute();
+
+        return Stream
+            .concat(updatedFieldRecords.stream().map(r -> r.into(DatasetFieldPojo.class)), createdFields.stream())
+            .collect(Collectors.toList());
+    }
+
+    private DatasetFieldRecord createRecord(final DatasetFieldPojo f, final DatasetFieldPojo existingField) {
+        if (null == existingField) {
+            return null;
+        }
+
+        final DatasetFieldRecord fieldRecord =
+            dslContext.newRecord(recordTable, f.setId(existingField.getId()));
+
+        fieldRecord.changed(DATASET_FIELD.INTERNAL_DESCRIPTION, false);
+        return fieldRecord;
     }
 }
