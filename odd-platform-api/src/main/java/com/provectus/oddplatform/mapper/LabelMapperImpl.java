@@ -5,10 +5,9 @@ import com.provectus.oddplatform.api.contract.model.LabelFormData;
 import com.provectus.oddplatform.api.contract.model.LabelsResponse;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.utils.Page;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 @Component
 public class LabelMapperImpl implements LabelMapper {

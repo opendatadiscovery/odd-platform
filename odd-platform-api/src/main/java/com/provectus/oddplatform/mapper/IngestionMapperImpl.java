@@ -17,12 +17,6 @@ import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import com.provectus.oddplatform.repository.DataEntityTypeRepository;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Pair;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.ListUtils;
-import org.jooq.JSONB;
-import org.springframework.stereotype.Component;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
@@ -34,15 +28,24 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
+import org.jooq.JSONB;
+import org.springframework.stereotype.Component;
 
-import static com.provectus.oddplatform.dto.DataEntityType.*;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_CONSUMER;
 import static com.provectus.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST_RUN;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_SET;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_TRANSFORMER;
+import static com.provectus.oddplatform.dto.DataEntityType.DATA_TRANSFORMER_RUN;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class IngestionMapperImpl implements IngestionMapper {
-    private final static List<Pair<Predicate<DataEntity>, DataEntityType>> TYPE_DICT_DISCRIMINATOR = List.of(
+    private static final List<Pair<Predicate<DataEntity>, DataEntityType>> TYPE_DICT_DISCRIMINATOR = List.of(
         Pair.of(de -> de.getDataset() != null, DATA_SET),
         Pair.of(de -> de.getDataTransformer() != null, DATA_TRANSFORMER),
         Pair.of(de -> de.getDataTransformerRun() != null, DATA_TRANSFORMER_RUN),

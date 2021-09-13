@@ -4,16 +4,16 @@ import com.provectus.oddplatform.dto.MetadataDto;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import com.provectus.oddplatform.model.tables.records.MetadataFieldValueRecord;
-import org.jooq.DSLContext;
-import org.jooq.InsertSetStep;
-import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jooq.DSLContext;
+import org.jooq.InsertSetStep;
+import org.springframework.stereotype.Repository;
 
-import static com.provectus.oddplatform.model.Tables.*;
+import static com.provectus.oddplatform.model.Tables.METADATA_FIELD;
+import static com.provectus.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static java.util.Collections.emptyList;
 
 @Repository

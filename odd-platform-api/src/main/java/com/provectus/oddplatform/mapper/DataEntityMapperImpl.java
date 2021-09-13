@@ -28,15 +28,14 @@ import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
 import com.provectus.oddplatform.utils.Pair;
-import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.MapUtils;
-import org.jooq.JSONB;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.MapUtils;
+import org.jooq.JSONB;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -57,10 +56,21 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .ownership(ownershipMapper.mapDtos(dataEntityDto.getOwnership()))
             .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dataEntityDto.getDataSource(),
                 dataEntityDto.getNamespace())))
-            .tags(dataEntityDto.getTags() != null ?
-                dataEntityDto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList())
+            .tags(dataEntityDto.getTags() != null
+                ? dataEntityDto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList())
                 : null
             );
+    }
+
+    private DataEntity mapPojo(final DataEntityPojo pojo) {
+        return new DataEntity()
+            .id(pojo.getId())
+            .internalName(pojo.getInternalName())
+            .externalName(pojo.getExternalName())
+            .oddrn(pojo.getOddrn())
+            .createdAt(addUTC(pojo.getCreatedAt()))
+            .updatedAt(addUTC(pojo.getUpdatedAt()))
+            .viewCount(pojo.getViewCount());
     }
 
     @Override
@@ -102,7 +112,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace())))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
             .versionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().getDatasetVersions()))
-            .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()));
+            .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()))
+            .viewCount(pojo.getViewCount());
 
         final List<DataEntityType.NameEnum> typeNames = types
             .stream()
@@ -201,16 +212,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .url("");
     }
 
-    private DataEntity mapPojo(final DataEntityPojo pojo) {
-        return new DataEntity()
-            .id(pojo.getId())
-            .internalName(pojo.getInternalName())
-            .externalName(pojo.getExternalName())
-            .oddrn(pojo.getOddrn())
-            .createdAt(addUTC(pojo.getCreatedAt()))
-            .updatedAt(addUTC(pojo.getUpdatedAt()));
-    }
-
     private DataEntityLineageStream mapStream(final DataEntityLineageStreamDto upstream) {
         return new DataEntityLineageStream()
             .nodes(upstream.getNodes().stream().map(this::mapNode).collect(Collectors.toList()))
@@ -251,8 +252,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private DataSetStats mapStats(final JSONB specificAttributes) {
-        final Map<String, ?> sa = JSONSerDeUtils.deserializeJson(specificAttributes.data(), new TypeReference<Map<String, ?>>() {
-        });
+        final Map<String, ?> sa =
+            JSONSerDeUtils.deserializeJson(specificAttributes.data(), new TypeReference<Map<String, ?>>() {
+            });
 
         return JSONSerDeUtils
             .deserializeJson(sa.get(DataEntityType.NameEnum.SET.getValue()), DataSetStats.class);

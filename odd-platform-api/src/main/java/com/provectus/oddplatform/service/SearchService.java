@@ -6,10 +6,9 @@ import com.provectus.oddplatform.api.contract.model.DataEntityRef;
 import com.provectus.oddplatform.api.contract.model.MultipleFacetType;
 import com.provectus.oddplatform.api.contract.model.SearchFacetsData;
 import com.provectus.oddplatform.api.contract.model.SearchFormData;
+import java.util.UUID;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.UUID;
 
 public interface SearchService {
     Flux<CountableSearchFilter> getFilterOptions(final UUID searchId,

@@ -2,10 +2,9 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.RolePojo;
 import com.provectus.oddplatform.model.tables.records.RoleRecord;
+import java.util.Optional;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 import static com.provectus.oddplatform.model.Tables.ROLE;
 

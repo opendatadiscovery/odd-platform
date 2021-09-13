@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 
 import static com.provectus.oddplatform.model.Tables.DATA_SOURCE;
 import static com.provectus.oddplatform.model.Tables.NAMESPACE;

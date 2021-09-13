@@ -1,7 +1,6 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.SearchFacetsPojo;
-
 import java.util.Optional;
 import java.util.UUID;
 

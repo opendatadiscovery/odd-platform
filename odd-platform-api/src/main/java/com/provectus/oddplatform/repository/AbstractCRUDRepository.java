@@ -1,6 +1,12 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.utils.Page;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
@@ -14,15 +20,11 @@ import org.jooq.Table;
 import org.jooq.UpdatableRecord;
 import org.springframework.util.StringUtils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import static java.util.Collections.*;
-import static org.jooq.impl.DSL.*;
+import static java.util.Collections.emptyList;
+import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.max;
+import static org.jooq.impl.DSL.rowNumber;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -63,7 +65,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     @Override
     public Page<P> list(final int page, final int size, final String query) {
         final Map<Record, List<P>> result = paginate(baseSelectQuery(query), page - 1, size)
-            .fetchGroups(new String[]{PAGE_METADATA_TOTAL_FIELD, PAGE_METADATA_NEXT_FIELD}, pojoClass);
+            .fetchGroups(new String[] {PAGE_METADATA_TOTAL_FIELD, PAGE_METADATA_NEXT_FIELD}, pojoClass);
 
         return pageifyResult(result, page, () -> fetchCount(query));
     }
@@ -100,6 +102,18 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         }
 
         return bulkUpdate(pojos, pojoClass);
+    }
+
+    protected <E> List<E> bulkUpdate(final Collection<E> entities, final Class<E> entityClass) {
+        final List<R> records = entities.stream()
+            .map(e -> dslContext.newRecord(recordTable, e))
+            .collect(Collectors.toList());
+
+        dslContext.batchUpdate(records).execute();
+
+        return records.stream()
+            .map(r -> r.into(entityClass))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -150,7 +164,8 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
                     .hasNext(hasNext)
                     .build();
             default:
-                throw new RuntimeException("Unexpected behaviour in pagination: total and is_next differ from record to record");
+                throw new RuntimeException(
+                    "Unexpected behaviour in pagination: total and is_next differ from record to record");
         }
     }
 
@@ -169,18 +184,6 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
             .returning(recordTable.fields())
             .fetch()
             .stream()
-            .map(r -> r.into(entityClass))
-            .collect(Collectors.toList());
-    }
-
-    protected <E> List<E> bulkUpdate(final Collection<E> entities, final Class<E> entityClass) {
-        final List<R> records = entities.stream()
-            .map(e -> dslContext.newRecord(recordTable, e))
-            .collect(Collectors.toList());
-
-        dslContext.batchUpdate(records).execute();
-
-        return records.stream()
             .map(r -> r.into(entityClass))
             .collect(Collectors.toList());
     }
