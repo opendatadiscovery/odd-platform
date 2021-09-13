@@ -34,7 +34,7 @@ public class DatasetStructureRepositoryImpl implements DatasetStructureRepositor
 
         final List<DatasetVersionPojo> createdVersions = datasetVersionRepository.bulkCreate(versions);
 
-        final Map<String, DatasetFieldPojo> createdDFMap = datasetFieldRepository.bulkCreateIfNotExist(fields)
+        final Map<String, DatasetFieldPojo> createdDFMap = datasetFieldRepository.persist(fields)
             .stream()
             .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, Function.identity()));
 
