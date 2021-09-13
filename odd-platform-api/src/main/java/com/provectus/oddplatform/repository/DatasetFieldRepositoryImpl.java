@@ -5,7 +5,6 @@ import com.provectus.oddplatform.model.tables.records.DatasetFieldRecord;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -69,6 +68,7 @@ public class DatasetFieldRepositoryImpl
             .collect(Collectors.toList());
     }
 
+    @Nullable
     private DatasetFieldRecord createRecord(final DatasetFieldPojo f, final DatasetFieldPojo existingField) {
         if (null == existingField) {
             return null;
