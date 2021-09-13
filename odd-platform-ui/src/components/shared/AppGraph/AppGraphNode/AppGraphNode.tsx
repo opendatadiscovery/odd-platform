@@ -1,6 +1,7 @@
 import React from 'react';
 import { HierarchyPointNode } from 'd3-hierarchy';
 import { select } from 'd3-selection';
+import { interpolateString } from 'd3-interpolate';
 import cx from 'classnames';
 import { withStyles } from '@material-ui/core';
 import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
@@ -8,7 +9,6 @@ import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityLineage } from 'generated-sources';
-import { useDebouncedCallback } from 'use-debounce/lib';
 import { styles, StylesType } from './AppGraphNodeStyles';
 
 interface AppGraphNodeProps extends StylesType {
@@ -30,6 +30,7 @@ interface AppGraphNodeProps extends StylesType {
   ) => Promise<DataEntityLineage>;
   reverse?: boolean;
   isStreamFetching: boolean;
+  hasChildren: boolean;
 }
 
 const AppGraphNode: React.FC<AppGraphNodeProps> = ({
@@ -44,6 +45,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   fetchMoreLineage,
   reverse,
   isStreamFetching,
+  hasChildren,
 }) => {
   const detailsLink =
     parent && data.externalName ? dataEntityDetailsPath(data.id) : '#';
@@ -124,16 +126,13 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     width: 91,
     height: 24,
     my: 4,
-    mx: 16,
+    mx: 8,
   };
 
   const [showLoadMore, setShowLoadMore] = React.useState<boolean>(false);
 
   const handleMouseEnter = () => setShowLoadMore(true);
-  const handleMouseLeave = useDebouncedCallback(
-    () => setShowLoadMore(false),
-    1500
-  );
+  const handleMouseLeave = () => setShowLoadMore(false);
 
   const buttonHandler = () => {
     if (parent?.children) {
@@ -143,17 +142,6 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     }
   };
 
-  const loadMoreVisibilityHandler = React.useMemo(
-    () =>
-      showLoadMore &&
-      parent &&
-      parent.children
-        ?.filter(node => !('children' in node))
-        .map(node => node.data.id)
-        .includes(data.id),
-    [parent, data, showLoadMore]
-  );
-
   const loadMoreTransformTranslate = `translate(${
     reverse
       ? -loadMoreLayout.mx - loadMoreLayout.width
@@ -162,22 +150,37 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
 
   let loadMoreSpinnerRef: SVGGElement;
 
+  // spinner parameters
+  const centerX = 46;
+  const centerY = 12;
+  const radius = 8;
+  const strokeWidth = 2;
+
   const loadMoreSpinnerTransform = () => {
     select(loadMoreSpinnerRef)
+      .attr('cx', centerX)
+      .attr('cy', centerY)
+      .attr('r', radius)
+      .attr('stroke-width', strokeWidth)
+      .attr('stroke-linecap', 'round')
+      .attr('stroke-dasharray', 2 * Math.PI * radius)
+      .attr('stroke-dashoffset', 50)
       .transition()
-      .duration(200)
-      .attr('transform', 'rotate(0)')
-      .transition()
-      .attr('transform', 'rotate(540)')
-      .transition()
-      .attr('transform', 'rotate(1080)')
+      .duration(2000)
+      .attrTween('transform', () =>
+        interpolateString(
+          `translate(0, 0) rotate(0, ${centerX}, ${centerY})`,
+          `translate(0, 0) rotate(360, ${centerX}, ${centerY})`
+        )
+      )
+      .attr('stroke-dashoffset', 0)
       .on('end', loadMoreSpinnerTransform);
   };
 
   React.useEffect(() => {
     commitTransform();
     loadMoreSpinnerTransform();
-  }, []);
+  }, [commitTransform, loadMoreSpinnerTransform]);
 
   return (
     <g
@@ -353,7 +356,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           ))}
         </g>
       </Link>
-      {loadMoreVisibilityHandler && (
+      {!hasChildren && showLoadMore && (
         <g
           ref={n => {
             if (n) loadMoreRef = n;
@@ -371,18 +374,16 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
             <g>
               <circle
                 className={classes.loadMoreSpinnerBack}
-                cx="46"
-                cy="12"
-                r="8"
+                cx={centerX}
+                cy={centerY}
+                r={radius}
+                strokeWidth={strokeWidth}
               />
               <circle
                 className={classes.loadMoreSpinner}
                 ref={n => {
                   if (n) loadMoreSpinnerRef = n;
                 }}
-                cx="46"
-                cy="12"
-                r="8"
               />
             </g>
           ) : (

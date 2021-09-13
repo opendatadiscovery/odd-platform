@@ -111,12 +111,18 @@ const AppGraph: React.FC<AppGraphProps> = ({
     };
   }>(defaultTreeState);
 
-  const [nodeSize, setNodeSize] = React.useState({
+  const nodeSizeInitial = {
     x: 200,
     y: 140,
-    mx: 24,
+    mx: 300,
     my: 24,
-  });
+  };
+
+  const [nodeSize, setNodeSize] = React.useState(nodeSizeInitial);
+
+  React.useEffect(() => {
+    setNodeSize({ ...nodeSizeInitial, y: compactView ? 56 : 140 });
+  }, [compactView]);
 
   React.useEffect(() => {
     fetchDataEntityDownstreamLineage({
@@ -171,21 +177,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
   const generateTree = () => {
     if (!parsedData) return defaultTreeState;
 
-    enum NodeDirection {
-      HORIZONTAL = 'y',
-      VERTICAL = 'x',
-    }
-
-    // increases the horizontal or vertical distance between nodes
-    const increaseDistance = (
-      rootNode: HierarchyPointNode<TreeNodeDatum>,
-      direction: NodeDirection
-    ) =>
-      rootNode.each(d => {
-        const datum = d;
-        datum[direction] *= 2;
-      });
-
     const treeUp = d3tree<TreeNodeDatum>()
       .nodeSize([nodeSize.y + nodeSize.my, -(nodeSize.x + nodeSize.mx)])
       .separation((a, b) =>
@@ -203,8 +194,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
           ) || []
       )
     );
-
-    increaseDistance(rootNodeUp, NodeDirection.HORIZONTAL);
 
     const nUp = rootNodeUp.descendants();
     const lUp = rootNodeUp.links();
@@ -225,8 +214,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
           ) || []
       )
     );
-
-    increaseDistance(rootNodeDown, NodeDirection.HORIZONTAL);
 
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
@@ -339,15 +326,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
   };
 
   React.useEffect(() => {
-    setNodeSize({
-      x: 200,
-      y: compactView ? 56 : 140,
-      mx: 24,
-      my: 24,
-    });
-  }, [compactView]);
-
-  React.useEffect(() => {
     if (!data) return;
     setParsedData({
       root: assignInternalProps(data.root),
@@ -437,6 +415,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
               transitionDuration={transitionDuration}
               fetchMoreLineage={fetchUpstreamLineage}
               isStreamFetching={isStreamFetching}
+              hasChildren={!!node.children?.length}
             />
           ))}
           {nodesDown?.map(node => (
@@ -451,6 +430,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
               transitionDuration={transitionDuration}
               fetchMoreLineage={fetchDownstreamLineage}
               isStreamFetching={isStreamFetching}
+              hasChildren={!!node.children?.length}
             />
           ))}
           {linksUp?.map(linkData => (

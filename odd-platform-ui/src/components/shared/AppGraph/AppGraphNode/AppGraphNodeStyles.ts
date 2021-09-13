@@ -69,15 +69,10 @@ export const styles = (theme: Theme) =>
     loadMoreSpinnerBack: {
       stroke: '#fff',
       fill: 'transparent',
-      strokeWidth: 2,
     },
     loadMoreSpinner: {
       fill: 'transparent',
       stroke: '#0066CC',
-      strokeWidth: 2,
-      strokeLinecap: 'round',
-      strokeDasharray: '34',
-      transformOrigin: `46px 12px 0`,
     },
   });
 
