@@ -1,12 +1,12 @@
 package com.provectus.oddplatform.config;
 
 import com.provectus.oddplatform.auth.CognitoOidcLogoutSuccessHandler;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
@@ -19,14 +19,17 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
 @ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
 public class OAuthSecurityConfiguration {
 
+    private final Boolean cognitoEnabled;
     private final String clientId;
     private final String logoutUrl;
-    private final Boolean cognitoEnabled;
 
-    public OAuthSecurityConfiguration(Environment env) {
-        this.cognitoEnabled = env.getProperty("cognito.enabled", Boolean.class);
-        this.clientId = env.getProperty("spring.security.oauth2.client.registration.cognito.client-id");
-        this.logoutUrl = env.getProperty("cognito.logoutUrl");
+    public OAuthSecurityConfiguration(
+        @Value("${cognito.enabled}") final Boolean cognitoEnabled,
+        @Value("${spring.security.oauth2.client.registration.cognito.client-id}") final String clientId,
+        @Value("${cognito.logoutUrl}") final String logoutUrl) {
+        this.cognitoEnabled = cognitoEnabled;
+        this.clientId = clientId;
+        this.logoutUrl = logoutUrl;
     }
 
     @Bean

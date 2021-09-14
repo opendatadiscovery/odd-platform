@@ -21,8 +21,8 @@ public class CognitoOidcLogoutSuccessHandler implements ServerLogoutSuccessHandl
     private final String clientId;
 
     @Override
-    public Mono<Void> onLogoutSuccess(WebFilterExchange exchange, Authentication authentication) {
-        ServerHttpResponse response = exchange.getExchange().getResponse();
+    public Mono<Void> onLogoutSuccess(final WebFilterExchange exchange, final Authentication authentication) {
+        final ServerHttpResponse response = exchange.getExchange().getResponse();
         response.setStatusCode(HttpStatus.FOUND);
 
         final var requestUri = exchange.getExchange().getRequest().getURI();
@@ -31,14 +31,14 @@ public class CognitoOidcLogoutSuccessHandler implements ServerLogoutSuccessHandl
             requestUri.getHost(), requestUri.getPort(),
             requestUri.getPath(), requestUri.getQuery());
 
-        UriComponents baseUrl = UriComponentsBuilder
+        final UriComponents baseUrl = UriComponentsBuilder
             .fromHttpUrl(fullUrl)
             .replacePath("/")
             .replaceQuery(null)
             .fragment(null)
             .build();
 
-        var uri = UriComponentsBuilder
+        final var uri = UriComponentsBuilder
             .fromUri(URI.create(logoutUrl))
             .queryParam("client_id", clientId)
             .queryParam("logout_uri", baseUrl)
