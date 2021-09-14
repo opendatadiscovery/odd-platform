@@ -103,7 +103,7 @@ checkstyle {
     maxWarnings = 0
 }
 
-task buildlessCodestyleCheck(type: Checkstyle) {
+task buildlessCheckstyleMain(type: Checkstyle) {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')
     source 'src/main/java'
     classpath = files()
@@ -111,6 +111,16 @@ task buildlessCodestyleCheck(type: Checkstyle) {
     ignoreFailures = false
     maxWarnings = 0
 }
+
+task buildlessCheckstyleTest(type: Checkstyle) {
+    configFile = project(':').file('config/checkstyle/checkstyle.xml')
+    source 'src/test/java'
+    classpath = files()
+    configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/suppressions.xml')]
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
 
 tasks.withType(Checkstyle) {
     reports {
