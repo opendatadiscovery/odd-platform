@@ -28,6 +28,9 @@ export const dataEntityTestPath = (datasetId: number, testId: number) =>
 export const dataEntityAlertsPath = (datasetId: number) =>
   `${dataEntityDetailsPath(datasetId)}/alerts`;
 
+export const dataEntityHistoryPath = (datasetId: number) =>
+  `${dataEntityDetailsPath(datasetId)}/history`;
+
 // Test reports details
 export const testReportDetailsOverviewPath = (
   datasetId: number,

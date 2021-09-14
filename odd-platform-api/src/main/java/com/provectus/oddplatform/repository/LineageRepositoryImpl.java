@@ -2,12 +2,11 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.LineagePojo;
 import com.provectus.oddplatform.model.tables.records.LineageRecord;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStep2;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 import static com.provectus.oddplatform.model.Tables.LINEAGE;
 

@@ -60,6 +60,11 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
               : null}
           </LabeledInfoItem>
         </Grid>
+        <Grid item sm={12} className={classes.generalItem}>
+          <LabeledInfoItem inline label="View count" labelWidth={4}>
+            {dataEntityDetails.viewCount}
+          </LabeledInfoItem>
+        </Grid>
         <Grid item sm={12}>
           <LabeledInfoItem
             label="Owners"

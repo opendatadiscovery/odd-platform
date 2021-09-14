@@ -9,13 +9,14 @@ import reactor.core.publisher.Mono;
 
 @Component
 public class ResourceProviderWebFilter implements WebFilter {
+
     @Override
     public Mono<Void> filter(final ServerWebExchange exchange, final WebFilterChain chain) {
         final String requestPath = exchange.getRequest().getURI().getPath();
 
-        if (requestPath.startsWith("/api") ||
-            requestPath.startsWith("/ingestion") ||
-            requestPath.startsWith("/health")) {
+        if (requestPath.startsWith("/api")
+            || requestPath.startsWith("/ingestion")
+            || requestPath.startsWith("/health")) {
             return chain.filter(exchange);
         }
 

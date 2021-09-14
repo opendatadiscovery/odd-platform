@@ -1,23 +1,19 @@
 package com.provectus.oddplatform.repository;
 
-import com.provectus.oddplatform.model.tables.LabelToDatasetField;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
-import com.provectus.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import com.provectus.oddplatform.model.tables.records.LabelRecord;
 import com.provectus.oddplatform.model.tables.records.LabelToDatasetFieldRecord;
-import com.provectus.oddplatform.model.tables.records.TagToDataEntityRecord;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.springframework.stereotype.Repository;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.springframework.stereotype.Repository;
 
-import static com.provectus.oddplatform.model.Tables.*;
-import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
+import static com.provectus.oddplatform.model.Tables.LABEL;
+import static com.provectus.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 
 @Repository
 public class LabelRepositoryImpl
@@ -56,7 +52,8 @@ public class LabelRepositoryImpl
         }
 
         dslContext.delete(LABEL_TO_DATASET_FIELD)
-            .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId).and(LABEL_TO_DATASET_FIELD.LABEL_ID.in(labels)))
+            .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)
+                .and(LABEL_TO_DATASET_FIELD.LABEL_ID.in(labels)))
             .execute();
     }
 

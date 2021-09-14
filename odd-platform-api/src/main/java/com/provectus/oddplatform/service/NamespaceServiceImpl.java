@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NamespaceServiceImpl
-    extends AbstractCRUDService<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData, NamespacePojo, NamespaceMapper, NamespaceRepository>
+    extends
+    AbstractCRUDService<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData,
+        NamespacePojo, NamespaceMapper, NamespaceRepository>
     implements NamespaceService {
 
     public NamespaceServiceImpl(final NamespaceMapper entityMapper,

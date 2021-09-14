@@ -6,9 +6,8 @@ import com.provectus.oddplatform.api.contract.model.SearchFacetsData;
 import com.provectus.oddplatform.api.contract.model.SearchFilter;
 import com.provectus.oddplatform.dto.SearchFilterDto;
 import com.provectus.oddplatform.dto.SearchFilterId;
-import org.springframework.stereotype.Component;
-
 import java.util.UUID;
+import org.springframework.stereotype.Component;
 
 @Component
 public class SearchMapperImpl implements SearchMapper {

@@ -1,10 +1,9 @@
 package com.provectus.oddplatform.utils;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
 
 @Data
 @RequiredArgsConstructor

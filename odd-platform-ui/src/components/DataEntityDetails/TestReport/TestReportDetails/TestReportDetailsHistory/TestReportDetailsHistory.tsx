@@ -70,10 +70,7 @@ const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
             wrap="nowrap"
           >
             {qualityTestRun.status && (
-              <TestRunStatusItem
-                typeName={qualityTestRun.status}
-                size="large"
-              />
+              <TestRunStatusItem typeName={qualityTestRun.status} />
             )}
             <Typography
               variant="subtitle1"

@@ -6,9 +6,8 @@ import com.provectus.oddplatform.api.contract.model.NamespaceList;
 import com.provectus.oddplatform.api.contract.model.NamespaceUpdateFormData;
 import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.utils.Page;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class NamespaceMapperImpl implements NamespaceMapper {

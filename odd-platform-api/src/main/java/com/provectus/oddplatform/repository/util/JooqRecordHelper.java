@@ -1,18 +1,27 @@
 package com.provectus.oddplatform.repository.util;
 
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static java.util.Collections.emptySet;
 
 @Component
+@RequiredArgsConstructor
 public class JooqRecordHelper {
+    private final DSLContext dslContext;
+
     public <T> Set<T> extractAggRelation(final Record r, final String fieldName, final Class<T> fieldPojoClass) {
         final Set<?> set;
         try {
@@ -35,5 +44,26 @@ public class JooqRecordHelper {
         }
 
         return relationRecord.into(pojoClass);
+    }
+
+    // returns truncated record with fields that are prefixed with cteName
+    public Record remapCte(final Record r, final String cteName, final Table<?> targetTable) {
+        final List<Field<?>> remappedFields = new ArrayList<>();
+        final Map<String, Object> remappedValues = new HashMap<>();
+
+        for (final Field<?> cteField : r.fields()) {
+            final String segm = cteField.getQualifiedName().first();
+            if (segm != null && segm.equals(cteName)) {
+                final Field<?> targetField = targetTable.field(cteField.getName());
+
+                final Field<?> f = targetField != null ? targetField : cteField;
+                remappedFields.add(f);
+                remappedValues.put(f.getName(), r.get(cteField.getQualifiedName()));
+            }
+        }
+
+        final Record record = dslContext.newRecord(remappedFields);
+        record.fromMap(remappedValues);
+        return record;
     }
 }

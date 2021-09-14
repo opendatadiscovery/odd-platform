@@ -1,9 +1,8 @@
 package com.provectus.oddplatform.repository.specification;
 
+import java.util.List;
 import org.jooq.Condition;
 import org.jooq.UpdatableRecord;
-
-import java.util.List;
 
 public interface EnumerableWithSoftDelete<ID, R extends UpdatableRecord<R>, P>
     extends Enumerable<R, P>, BaseTraitWithSoftDelete<ID, R, P> {

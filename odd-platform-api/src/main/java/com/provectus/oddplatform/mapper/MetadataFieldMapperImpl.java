@@ -10,11 +10,10 @@ import com.provectus.oddplatform.api.contract.model.MetadataUpdateCustomFieldFor
 import com.provectus.oddplatform.dto.MetadataDto;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import com.provectus.oddplatform.utils.Page;
-import org.springframework.stereotype.Component;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MetadataFieldMapperImpl implements MetadataFieldMapper {

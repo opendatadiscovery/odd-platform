@@ -277,6 +277,9 @@ components:
         updated_at:
           type: string
           format: date-time
+        view_count:
+          type: integer
+          format: int64
       required:
         - id
         - oddrn
@@ -284,6 +287,7 @@ components:
         - data_source
         - types
         - namespace
+        - view_count
 
     DataEntityDetailsBaseObject:
       type: object
@@ -296,10 +300,14 @@ components:
           type: string
         internal_description:
           type: string
+        view_count:
+          type: integer
+          format: int64
       required:
         - metadata_field_values
         - external_description
         - internal_description
+        - view_count
 
     DataEntityDetails:
       type: object
@@ -351,7 +359,7 @@ components:
             - TABLE
             - FILE
             - FEATURE_GROUP
-            - TOPIC
+            - KAFKA_TOPIC
             - JOB
             - JOB_RUN
             - EXPERIMENT

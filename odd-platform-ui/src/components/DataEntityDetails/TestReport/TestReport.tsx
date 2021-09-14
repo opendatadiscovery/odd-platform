@@ -85,7 +85,6 @@ const TestReport: React.FC<TestReportProps> = ({
                   }}
                   count={datasetTestReport?.successTotal}
                   typeName={DataQualityTestRunStatusEnum.SUCCESS}
-                  size="large"
                 />
                 <TestRunStatusItem
                   classes={{
@@ -93,7 +92,6 @@ const TestReport: React.FC<TestReportProps> = ({
                   }}
                   count={datasetTestReport?.failedTotal}
                   typeName={DataQualityTestRunStatusEnum.FAILED}
-                  size="large"
                 />
                 <TestRunStatusItem
                   classes={{
@@ -101,7 +99,6 @@ const TestReport: React.FC<TestReportProps> = ({
                   }}
                   count={datasetTestReport?.brokenTotal}
                   typeName={DataQualityTestRunStatusEnum.BROKEN}
-                  size="large"
                 />
                 <TestRunStatusItem
                   classes={{
@@ -109,7 +106,6 @@ const TestReport: React.FC<TestReportProps> = ({
                   }}
                   count={datasetTestReport?.abortedTotal}
                   typeName={DataQualityTestRunStatusEnum.ABORTED}
-                  size="large"
                 />
                 <TestRunStatusItem
                   classes={{
@@ -117,7 +113,6 @@ const TestReport: React.FC<TestReportProps> = ({
                   }}
                   count={datasetTestReport?.skippedTotal}
                   typeName={DataQualityTestRunStatusEnum.SKIPPED}
-                  size="large"
                 />
                 <TestRunStatusItem
                   classes={{
@@ -125,7 +120,6 @@ const TestReport: React.FC<TestReportProps> = ({
                   }}
                   count={datasetTestReport?.unknownTotal}
                   typeName={DataQualityTestRunStatusEnum.UNKNOWN}
-                  size="large"
                 />
               </Grid>
               <Grid container item className={classes.testCount}>

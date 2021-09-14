@@ -1,7 +1,18 @@
 configure([project(':odd-platform-api-contract'), project(':odd-platform-api')]) {
     apply plugin: 'java'
 
+    apply plugin: 'checkstyle'
+
     repositories {
         mavenCentral()
     }
+
+    checkstyle {
+        // use one common config file for all subprojects
+        configFile = project(':').file('config/checkstyle/checkstyle.xml')
+        configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/suppressions.xml')]
+        ignoreFailures = false
+        maxWarnings = 0
+    }
+
 }

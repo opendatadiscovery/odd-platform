@@ -2,12 +2,11 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.model.tables.pojos.UserOwnerMappingPojo;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static com.provectus.oddplatform.model.Tables.OWNER;
 import static com.provectus.oddplatform.model.Tables.USER_OWNER_MAPPING;
