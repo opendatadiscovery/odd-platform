@@ -65,7 +65,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
   const separation = { siblings: 1, nonSiblings: 1 };
   const enableLegacyTransitions = false;
   const scaleExtent = { min: 0.1, max: 3 };
-  const defaultDepth = 1;
+  const defaultDepth = 2;
   const [selectedDepth, setSelectedDepth] = React.useState<number>(
     defaultDepth
   );
@@ -388,7 +388,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
             labelId="depth-select-label"
             id="depth-select"
             variant="outlined"
-            defaultValue={defaultDepth}
+            defaultValue={selectedDepth}
             onChange={handleDepthChange}
           >
             {new Array(20).fill(0).map((_, i) => (
