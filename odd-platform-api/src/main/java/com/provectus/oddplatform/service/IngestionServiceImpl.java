@@ -180,7 +180,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<List<DatasetRevisionPojo>> ingestDatasetRevisions(final DataEntityIngestionDtoSplit entities) {
-        var now = LocalDateTime.now();
+        final var now = LocalDateTime.now();
 
         final Flux<DatasetRevisionPojo> newDatasetRevisions = Flux.fromStream(entities.getNewEntities().stream()
             .filter(e -> e.getTypes().contains(DATA_SET))
