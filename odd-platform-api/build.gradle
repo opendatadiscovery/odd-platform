@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.5.0'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.google.cloud.tools.jib' version '3.0.0'
+    id 'checkstyle'
 }
 
 group = 'com.provectus'
@@ -93,6 +94,29 @@ jib {
         workingDirectory = '/app'
     }
     allowInsecureRegistries = false
+}
+
+checkstyle {
+    configFile = project(':').file('config/checkstyle/checkstyle.xml')
+    configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/suppressions.xml')]
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
+task buildlessCodestyleCheck(type: Checkstyle) {
+    configFile = project(':').file('config/checkstyle/checkstyle.xml')
+    source 'src/main/java'
+    classpath = files()
+    configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/suppressions.xml')]
+    ignoreFailures = false
+    maxWarnings = 0
+}
+
+tasks.withType(Checkstyle) {
+    reports {
+        xml.enabled false
+        html.enabled false
+    }
 }
 
 compileJava.dependsOn tasks.jooqDockerGenerate
