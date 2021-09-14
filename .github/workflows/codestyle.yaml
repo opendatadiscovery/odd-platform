@@ -27,10 +27,10 @@ jobs:
         with:
           java-version: '13'
           distribution: 'adopt'
-      - name: Build with Gradle
+      - name: Run codestyle check
         env:
           NODE_ENV: production
           GENERATE_SOURCEMAP: false
           CI: false
-          JAVA_OPTS: "-Xms2048m -Xmx2048m"
+          JAVA_OPTS: "-Xms512m -Xmx512m"
         run: ./gradlew buildlessCodestyleCheck
