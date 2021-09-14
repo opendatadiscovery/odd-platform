@@ -37,7 +37,7 @@ public class OAuthSecurityConfiguration {
     public SecurityWebFilterChain securityWebFilterChainOauth2ResourceServer(final ServerHttpSecurity http,
                                                                              final ReactiveClientRegistrationRepository
                                                                                  repo) {
-        ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
+        final ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
             ? new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId)
             : new OidcClientInitiatedServerLogoutSuccessHandler(repo);
 
@@ -58,7 +58,7 @@ public class OAuthSecurityConfiguration {
     @Bean
     public SecurityWebFilterChain securityWebFilterChainOauth2Client(final ServerHttpSecurity http,
                                                                      final ReactiveClientRegistrationRepository repo) {
-        ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
+        final ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
             ? new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId)
             : new OidcClientInitiatedServerLogoutSuccessHandler(repo);
 
