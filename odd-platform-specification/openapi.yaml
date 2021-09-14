@@ -1024,11 +1024,34 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - dataEntity
-  /api/dataentities/{data_entity_id}/lineage:
+  /api/dataentities/{data_entity_id}/lineage/upstream:
     get:
-      summary: Get DataEntity's lineage graph
-      description: Gets DataEntity's lineage graph which size depends on lineage_depth parameter
-      operationId: getDataEntityLineage
+      summary: Get DataEntity's upstream lineage graph
+      description: Gets DataEntity's upstream lineage graph which size depends on lineage_depth parameter
+      operationId: getDataEntityUpstreamLineage
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: lineage_depth
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityLineage'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/lineage/downstream:
+    get:
+      summary: Get DataEntity's downstream lineage graph
+      description: Gets DataEntity's downstream lineage graph which size depends on lineage_depth parameter
+      operationId: getDataEntityDownstreamLineage
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - name: lineage_depth
