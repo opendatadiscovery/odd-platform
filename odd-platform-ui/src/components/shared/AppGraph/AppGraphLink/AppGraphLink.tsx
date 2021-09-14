@@ -56,24 +56,7 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
   }, []);
 
   const drawPath = () =>
-    // if (reverse)
-    //   return linkHorizontal()({
-    //     source: [source.y, source.x + nodeSize.y / 2],
-    //     target: [target.y + nodeSize.x, target.x + nodeSize.y / 2],
-    //   });
-
-    // return linkHorizontal()({
-    //   source: [source.y + nodeSize.x, source.x + nodeSize.y / 2],
-    //   target: [target.y, target.x + nodeSize.y / 2],
-    // });
     linkHorizontal()(coords as DefaultLinkObject) || undefined;
-  // };
-
-  const handleOnClick = (evt: SyntheticEvent) => {};
-
-  const handleOnMouseOver = (evt: SyntheticEvent) => {};
-
-  const handleOnMouseOut = (evt: SyntheticEvent) => {};
 
   return (
     <>
@@ -84,9 +67,6 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
         style={{ opacity: 0 }}
         className={classes.path}
         d={drawPath()}
-        onClick={handleOnClick}
-        onMouseOver={handleOnMouseOver}
-        onMouseOut={handleOnMouseOut}
         data-source-id={source.id}
         data-target-id={target.id}
       />

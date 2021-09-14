@@ -1,5 +1,9 @@
 import { createSelector } from 'reselect';
-import { RootState, DataEntityLineageState } from 'redux/interfaces';
+import {
+  RootState,
+  DataEntityLineageState,
+  FetchStatus,
+} from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 import { getDataEntityId } from './dataentity.selectors';
 
@@ -7,13 +11,26 @@ const dataEntitiesState = ({
   dataEntityLineage,
 }: RootState): DataEntityLineageState => dataEntityLineage;
 
-const getDataEntityLineageFetchingStatus = createFetchingSelector(
-  'GET_DATA_ENTITY_LINEAGE'
+const getDataEntityUpstreamLineageFetchingStatus = createFetchingSelector(
+  'GET_DATA_ENTITY_UPSTREAM_LINEAGE'
+);
+
+const getDataEntityDownstreamLineageFetchingStatus = createFetchingSelector(
+  'GET_DATA_ENTITY_DOWNSTREAM_LINEAGE'
 );
 
 export const getDataEntityLineageFetching = createSelector(
-  getDataEntityLineageFetchingStatus,
-  status => status === 'fetching'
+  getDataEntityUpstreamLineageFetchingStatus,
+  getDataEntityDownstreamLineageFetchingStatus,
+  (statusUpstreamFetch, statusDownstreamFetch) =>
+    statusUpstreamFetch === 'fetching' &&
+    statusDownstreamFetch === 'fetching'
+);
+
+export const getDataEntityLineageStreamFetching = createSelector(
+  getDataEntityUpstreamLineageFetchingStatus,
+  getDataEntityDownstreamLineageFetchingStatus,
+  (...statuses: FetchStatus[]) => statuses.includes('fetching')
 );
 
 export const getDataEntityLineage = createSelector(

@@ -1,26 +1,28 @@
 import React from 'react';
 import {
-  tree as d3tree,
   hierarchy,
-  HierarchyPointNode,
   HierarchyPointLink,
+  HierarchyPointNode,
+  tree as d3tree,
 } from 'd3-hierarchy';
 import { select, selectAll } from 'd3-selection';
 import { zoom as d3zoom, zoomIdentity } from 'd3-zoom';
 import { entries, maxBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { Typography, Select, FormControl } from '@material-ui/core';
+import { FormControl, Select, Typography } from '@material-ui/core';
 import cx from 'classnames';
 import {
   DataEntityLineageById,
+  DataEntityLineageRootNodeId,
   DataEntityLineageStreamById,
 } from 'redux/interfaces/dataentityLineage';
-import { TreeNodeDatum, Point } from 'redux/interfaces/graph';
+import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import {
-  DataEntityLineageNode,
   DataEntityApiGetDataEntityDownstreamLineageRequest,
+  DataEntityApiGetDataEntityUpstreamLineageRequest,
   DataEntityLineage,
   DataEntityLineageEdge,
+  DataEntityLineageNode,
 } from 'generated-sources';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTabs from 'components/shared/AppTabs/AppTabs';
@@ -33,18 +35,26 @@ import { StylesType } from './AppGraphStyles';
 export interface AppGraphProps extends StylesType {
   dataEntityId: number;
   data: DataEntityLineageById;
-  fetchDataEntityLineage: (
-    params: DataEntityApiGetDataEntityDownstreamLineageRequest
+  fetchDataEntityDownstreamLineage: (
+    params: DataEntityApiGetDataEntityDownstreamLineageRequest &
+      DataEntityLineageRootNodeId
   ) => Promise<DataEntityLineage>;
-  isDataEntityLineageFetching: boolean;
+  fetchDataEntityUpstreamLineage: (
+    params: DataEntityApiGetDataEntityUpstreamLineageRequest &
+      DataEntityLineageRootNodeId
+  ) => Promise<DataEntityLineage>;
+  isLineageFetching: boolean;
+  isStreamFetching: boolean;
 }
 
 const AppGraph: React.FC<AppGraphProps> = ({
   classes,
   dataEntityId,
   data,
-  fetchDataEntityLineage,
-  isDataEntityLineageFetching,
+  fetchDataEntityDownstreamLineage,
+  fetchDataEntityUpstreamLineage,
+  isLineageFetching,
+  isStreamFetching,
 }) => {
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
   const gInstanceRef = `rd3t-g-${uuidv4()}`;
@@ -55,7 +65,10 @@ const AppGraph: React.FC<AppGraphProps> = ({
   const separation = { siblings: 1, nonSiblings: 1 };
   const enableLegacyTransitions = false;
   const scaleExtent = { min: 0.1, max: 3 };
-  const defaultDepth = 5;
+  const defaultDepth = 1;
+  const [selectedDepth, setSelectedDepth] = React.useState<number>(
+    defaultDepth
+  );
 
   const [parsedData, setParsedData] = React.useState<{
     root: TreeNodeDatum;
@@ -98,19 +111,46 @@ const AppGraph: React.FC<AppGraphProps> = ({
     };
   }>(defaultTreeState);
 
-  const [nodeSize, setNodeSize] = React.useState({
+  const nodeSizeInitial = {
     x: 200,
     y: 140,
-    mx: 24,
+    mx: 300,
     my: 24,
-  });
+  };
+
+  const [nodeSize, setNodeSize] = React.useState(nodeSizeInitial);
 
   React.useEffect(() => {
-    fetchDataEntityLineage({
+    setNodeSize({ ...nodeSizeInitial, y: compactView ? 56 : 140 });
+  }, [compactView]);
+
+  React.useEffect(() => {
+    fetchDataEntityDownstreamLineage({
       dataEntityId,
-      lineageDepth: defaultDepth,
+      lineageDepth: selectedDepth,
     });
-  }, []);
+    fetchDataEntityUpstreamLineage({
+      dataEntityId,
+      lineageDepth: selectedDepth,
+    });
+  }, [selectedDepth, dataEntityId]);
+
+  const fetchUpstreamLineage = (entityId: number, lineageDepth: number) =>
+    fetchDataEntityUpstreamLineage({
+      dataEntityId: entityId,
+      lineageDepth,
+      rootNodeId: dataEntityId,
+    });
+
+  const fetchDownstreamLineage = (
+    entityId: number,
+    lineageDepth: number
+  ) =>
+    fetchDataEntityDownstreamLineage({
+      dataEntityId: entityId,
+      lineageDepth,
+      rootNodeId: dataEntityId,
+    });
 
   const assignInternalProps = (
     nodeData: DataEntityLineageNode
@@ -136,6 +176,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
 
   const generateTree = () => {
     if (!parsedData) return defaultTreeState;
+
     const treeUp = d3tree<TreeNodeDatum>()
       .nodeSize([nodeSize.y + nodeSize.my, -(nodeSize.x + nodeSize.mx)])
       .separation((a, b) =>
@@ -173,6 +214,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
           ) || []
       )
     );
+
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
 
@@ -188,12 +230,8 @@ const AppGraph: React.FC<AppGraphProps> = ({
     };
   };
 
-  const handleDepthChange = (e: React.ChangeEvent<{ value: unknown }>) => {
-    fetchDataEntityLineage({
-      dataEntityId,
-      lineageDepth: e.target.value as number,
-    });
-  };
+  const handleDepthChange = (e: React.ChangeEvent<{ value: unknown }>) =>
+    setSelectedDepth(e.target.value as number);
 
   const transformation: { translate: Point; scale: number } = {
     translate: { x: 0, y: 0 },
@@ -288,25 +326,16 @@ const AppGraph: React.FC<AppGraphProps> = ({
   };
 
   React.useEffect(() => {
-    setNodeSize({
-      x: 200,
-      y: compactView ? 56 : 140,
-      mx: 24,
-      my: 24,
-    });
-  }, [compactView]);
-
-  React.useEffect(() => {
     if (!data) return;
     setParsedData({
       root: assignInternalProps(data.root),
       upstream: {
         ...data.upstream,
-        nodesById: parseData(data.upstream.nodesById),
+        nodesById: parseData(data.upstream?.nodesById),
       },
       downstream: {
         ...data.downstream,
-        nodesById: parseData(data.downstream.nodesById),
+        nodesById: parseData(data.downstream?.nodesById),
       },
     });
   }, [data]);
@@ -324,7 +353,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
     bindZoomListener();
   }, [ref.current]);
 
-  return isDataEntityLineageFetching ? (
+  return isLineageFetching ? (
     <div className={classes.loaderContainer}>
       <CircularProgressLoader text="Loading lineage" />
     </div>
@@ -373,21 +402,37 @@ const AppGraph: React.FC<AppGraphProps> = ({
       </div>
       <svg className={svgInstanceRef} width="100%" height="100%">
         <g className={gInstanceRef}>
-          {nodesDown
-            ?.slice(1)
-            .concat(nodesUp)
-            .map(node => (
-              <AppGraphNode
-                key={`node-${node.x}${node.y}`}
-                data={node.data}
-                position={{ x: node.x, y: node.y }}
-                parent={node.parent}
-                nodeSize={nodeSize}
-                compactView={compactView}
-                enableLegacyTransitions={enableLegacyTransitions}
-                transitionDuration={transitionDuration}
-              />
-            ))}
+          {nodesUp?.map(node => (
+            <AppGraphNode
+              key={`node-${node.x}${node.y}`}
+              reverse
+              data={node.data}
+              position={{ x: node.x, y: node.y }}
+              parent={node.parent}
+              nodeSize={nodeSize}
+              compactView={compactView}
+              enableLegacyTransitions={enableLegacyTransitions}
+              transitionDuration={transitionDuration}
+              fetchMoreLineage={fetchUpstreamLineage}
+              isStreamFetching={isStreamFetching}
+              hasChildren={!!node.children?.length}
+            />
+          ))}
+          {nodesDown?.map(node => (
+            <AppGraphNode
+              key={`node-${node.x}${node.y}`}
+              data={node.data}
+              position={{ x: node.x, y: node.y }}
+              parent={node.parent}
+              nodeSize={nodeSize}
+              compactView={compactView}
+              enableLegacyTransitions={enableLegacyTransitions}
+              transitionDuration={transitionDuration}
+              fetchMoreLineage={fetchDownstreamLineage}
+              isStreamFetching={isStreamFetching}
+              hasChildren={!!node.children?.length}
+            />
+          ))}
           {linksUp?.map(linkData => (
             <AppGraphLink
               key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
