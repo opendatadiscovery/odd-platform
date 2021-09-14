@@ -20,13 +20,15 @@ import com.provectus.oddplatform.api.contract.model.MetadataFieldValueUpdateForm
 import com.provectus.oddplatform.api.contract.model.MetadataObject;
 import com.provectus.oddplatform.api.contract.model.Tag;
 import com.provectus.oddplatform.auth.AuthIdentityProvider;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
+import com.provectus.oddplatform.dto.LineageStreamKind;
 import com.provectus.oddplatform.dto.MetadataFieldKey;
-import com.provectus.oddplatform.dto.StreamKind;
 import com.provectus.oddplatform.exception.NotFoundException;
 import com.provectus.oddplatform.mapper.DataEntityMapper;
 import com.provectus.oddplatform.mapper.MetadataFieldMapper;
 import com.provectus.oddplatform.mapper.TagMapper;
+import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
@@ -97,10 +99,18 @@ public class DataEntityServiceImpl
     @Override
     public Mono<DataEntityDetails> getDetails(final long dataEntityId) {
         return Mono.fromCallable(() -> entityRepository.getDetails(dataEntityId))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException())
-                : Mono.just(optional.get()))
-            .map(entityMapper::mapDtoDetails);
+                .flatMap(optional -> optional.isEmpty()
+                        ? Mono.error(new NotFoundException())
+                        : Mono.just(optional.get()))
+                .map(this::incrementViewCount)
+                .map(entityMapper::mapDtoDetails);
+    }
+
+    private DataEntityDetailsDto incrementViewCount(DataEntityDetailsDto dto) {
+        final DataEntityPojo dataEntity = dto.getDataEntity();
+        final Optional<Long> viewCount = entityRepository.incrementViewCount(dataEntity.getId());
+        viewCount.ifPresent(dataEntity::setViewCount);
+        return dto;
     }
 
     @Override
@@ -123,7 +133,7 @@ public class DataEntityServiceImpl
     @Override
     public Flux<DataEntityRef> listAssociated(final int page,
                                               final int size,
-                                              final StreamKind streamKind) {
+                                              final LineageStreamKind streamKind) {
         return authIdentityProvider.fetchAssociatedOwner()
             .flatMapIterable(o -> entityRepository.listByOwner(page, size, o.getId(), streamKind))
             .map(entityMapper::mapRef);
@@ -292,9 +302,11 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<DataEntityLineage> getLineage(final long dataEntityId, final int lineageDepth) {
+    public Mono<DataEntityLineage> getLineage(final long dataEntityId,
+                                              final int lineageDepth,
+                                              final LineageStreamKind lineageStreamKind) {
         return Mono
-            .fromCallable(() -> entityRepository.getLineage(dataEntityId, lineageDepth))
+            .fromCallable(() -> entityRepository.getLineage(dataEntityId, lineageDepth, lineageStreamKind))
             .flatMap(optional -> optional.isEmpty()
                 ? Mono.error(new NotFoundException())
                 : Mono.just(optional.get()))

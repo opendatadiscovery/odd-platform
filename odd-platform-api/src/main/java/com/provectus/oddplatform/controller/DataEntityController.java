@@ -21,7 +21,7 @@ import com.provectus.oddplatform.api.contract.model.Ownership;
 import com.provectus.oddplatform.api.contract.model.OwnershipFormData;
 import com.provectus.oddplatform.api.contract.model.OwnershipUpdateFormData;
 import com.provectus.oddplatform.api.contract.model.Tag;
-import com.provectus.oddplatform.dto.StreamKind;
+import com.provectus.oddplatform.dto.LineageStreamKind;
 import com.provectus.oddplatform.service.AlertService;
 import com.provectus.oddplatform.service.DataEntityService;
 import com.provectus.oddplatform.service.OwnershipService;
@@ -175,13 +175,21 @@ public class DataEntityController
     }
 
     @Override
-    public Mono<ResponseEntity<DataEntityLineage>> getDataEntityLineage(
-        final Long dataEntityId,
-        final Integer lineageDepth,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<DataEntityLineage>> getDataEntityDownstreamLineage(final Long dataEntityId,
+                                                                                  final Integer lineageDepth,
+                                                                                  final ServerWebExchange exchange) {
         return entityService
-            .getLineage(dataEntityId, lineageDepth)
+            .getLineage(dataEntityId, lineageDepth, LineageStreamKind.DOWNSTREAM)
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityLineage>> getDataEntityUpstreamLineage(final Long dataEntityId,
+                                                                                final Integer lineageDepth,
+                                                                                final ServerWebExchange exchange) {
+        return entityService
+            .getLineage(dataEntityId, lineageDepth, LineageStreamKind.UPSTREAM)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
@@ -201,7 +209,7 @@ public class DataEntityController
                                                                                 final Integer size,
                                                                                 final ServerWebExchange exchange) {
         return Mono.just(entityService
-                .listAssociated(page, size, StreamKind.DOWNSTREAM)
+                .listAssociated(page, size, LineageStreamKind.DOWNSTREAM)
                 .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
@@ -211,7 +219,7 @@ public class DataEntityController
                                                                               final Integer size,
                                                                               final ServerWebExchange exchange) {
         return Mono.just(entityService
-                .listAssociated(page, size, StreamKind.UPSTREAM)
+                .listAssociated(page, size, LineageStreamKind.UPSTREAM)
                 .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
