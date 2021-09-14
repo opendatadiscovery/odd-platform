@@ -25,8 +25,8 @@ public class OAuthSecurityConfiguration {
 
     public OAuthSecurityConfiguration(
         @Value("${cognito.enabled}") final Boolean cognitoEnabled,
-        @Value("${spring.security.oauth2.client.registration.cognito.client-id}") final String clientId,
-        @Value("${cognito.logoutUrl}") final String logoutUrl) {
+        @Value("${spring.security.oauth2.client.registration.cognito.client-id:}") final String clientId,
+        @Value("${cognito.logoutUrl:}") final String logoutUrl) {
         this.cognitoEnabled = cognitoEnabled;
         this.clientId = clientId;
         this.logoutUrl = logoutUrl;
