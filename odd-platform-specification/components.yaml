@@ -267,8 +267,6 @@ components:
             $ref: '#/components/schemas/DataEntityType'
         sub_type:
           $ref: '#/components/schemas/DataEntitySubType'
-        namespace:
-          $ref: '#/components/schemas/Namespace'
         tags:
           $ref: '#/components/schemas/TagList'
         created_at:
@@ -1102,8 +1100,6 @@ components:
             $ref: '#/components/schemas/DataEntityType'
         data_source:
           $ref: '#/components/schemas/DataSource'
-        namespace:
-          $ref: '#/components/schemas/Namespace'
       required:
         - id
         - name

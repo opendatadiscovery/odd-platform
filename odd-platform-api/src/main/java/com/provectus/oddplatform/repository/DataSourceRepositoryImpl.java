@@ -1,26 +1,26 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.dto.DataSourceDto;
-import com.provectus.oddplatform.exception.EntityAlreadyExists;
+import com.provectus.oddplatform.exception.EntityAlreadyExistsException;
 import com.provectus.oddplatform.exception.NotFoundException;
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.model.tables.records.DataSourceRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryUtils;
 import com.provectus.oddplatform.utils.Page;
-import lombok.RequiredArgsConstructor;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Record;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import static com.provectus.oddplatform.model.Tables.DATA_SOURCE;
 import static com.provectus.oddplatform.model.Tables.NAMESPACE;
@@ -99,7 +99,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             .fetchOptionalInto(DataSourcePojo.class)
             .map(ds -> {
                 if (!ds.getIsDeleted()) {
-                    throw new EntityAlreadyExists();
+                    throw new EntityAlreadyExistsException();
                 }
 
                 final DataSourceRecord record = pojoToRecord(dto.getDataSource());

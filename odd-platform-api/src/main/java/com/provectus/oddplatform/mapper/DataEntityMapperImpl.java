@@ -40,7 +40,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DataEntityMapperImpl implements DataEntityMapper {
-    private final NamespaceMapper namespaceMapper;
     private final DataSourceMapper dataSourceMapper;
     private final OwnershipMapper ownershipMapper;
     private final TagMapper tagMapper;
@@ -52,7 +51,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         return mapPojo(dataEntityDto.getDataEntity())
             .types(dataEntityDto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
             .subType(mapSubType(dataEntityDto.getSubtype()))
-            .namespace(namespaceMapper.mapPojo(dataEntityDto.getNamespace()))
             .ownership(ownershipMapper.mapDtos(dataEntityDto.getOwnership()))
             .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dataEntityDto.getDataSource(),
                 dataEntityDto.getNamespace())))
@@ -107,7 +105,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .updatedAt(addUTC(pojo.getUpdatedAt()))
             .types(types)
             .subType(mapSubType(dto.getSubtype()))
-            .namespace(namespaceMapper.mapPojo(dto.getNamespace()))
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace())))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
@@ -234,7 +231,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
             .externalName(dataEntity.getExternalName())
             .internalName(dataEntity.getInternalName())
-            .namespace(namespace != null ? namespaceMapper.mapPojo(namespace) : null)
             .dataSource(dataSource != null
                 ? dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace()))
                 : null);
