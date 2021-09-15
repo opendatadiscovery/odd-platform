@@ -1,14 +1,15 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
 const maxContentWidth = '320px';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       marginTop: theme.spacing(4),
       padding: theme.spacing(4.5, 3, 4, 3),
       border: '1px solid',
-      borderColor: '#EBECF0',
+      borderColor: theme.palette.divider,
       borderRadius: '8px',
     },
     captionIcon: {
@@ -36,14 +37,14 @@ export const styles = (theme: Theme) =>
       padding: theme.spacing(0.25),
       marginTop: theme.spacing(0.75),
       '&:hover': {
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.background.primary,
         borderRadius: '4px',
         '& > *': {
-          color: '#091E42',
+          color: theme.palette.text.primary,
         },
       },
       '&:active': {
-        backgroundColor: '#EBECF0',
+        backgroundColor: theme.palette.background.secondary,
       },
     },
   });

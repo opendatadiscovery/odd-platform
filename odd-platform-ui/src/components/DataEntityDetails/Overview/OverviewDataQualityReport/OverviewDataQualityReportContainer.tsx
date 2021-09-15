@@ -6,8 +6,6 @@ import {
   getDatasetTestReportFetching,
 } from 'redux/selectors/dataQualityTest.selectors';
 import { fetchDataSetQualityTestReport } from 'redux/thunks/dataQualityTest.thunks';
-// import { Styles } from '@material-ui/styles';
-import { ODDTheme } from 'theme/interfaces';
 import OverviewDataQualityReport from './OverviewDataQualityReport';
 import { styles } from './OverviewDataQualityReportStyles';
 

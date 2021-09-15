@@ -1,7 +1,8 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
 export const primaryTabsHeight = 32;
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       '&.primary': { marginBottom: theme.spacing(3) },
@@ -17,19 +18,20 @@ export const styles = (theme: Theme) =>
           bottom: '0px',
           width: '100%',
           zIndex: '-1',
-          borderBottom: '1px solid #C1C7D0',
+          borderBottom: '1px solid',
+          borderBottomColor: theme.palette.info.light,
         },
       },
       '&.secondary': {
         minHeight: '24px',
-        backgroundColor: '#EBECF0',
+        backgroundColor: theme.palette.background.secondary,
         padding: theme.spacing(0.5),
         borderRadius: theme.spacing(1),
       },
       '&.secondarySmall': {
         minHeight: '24px',
         height: '24px',
-        backgroundColor: '#EBECF0',
+        backgroundColor: theme.palette.background.secondary,
         borderRadius: theme.spacing(2),
       },
       '&.menu': {
@@ -46,11 +48,11 @@ export const styles = (theme: Theme) =>
         display: 'block',
         height: '1px',
         borderRadius: '1px',
-        backgroundColor: '#0066CC',
+        backgroundColor: theme.palette.button?.secondary.hover.background,
       },
     },
     tabItem: {
-      color: '#7A869A',
+      color: theme.palette.text.secondary,
       fontSize: theme.typography.body1.fontSize,
       textTransform: 'none',
       '&.primary': {
@@ -64,20 +66,20 @@ export const styles = (theme: Theme) =>
           display: 'none',
         },
         '&:hover': {
-          color: '#42526E',
-          borderColor: '#0066CC',
+          color: theme.palette.text.info,
+          borderColor: theme.palette.button?.secondary.hover.background,
         },
       },
       '&.secondary': {
         minHeight: '24px',
         minWidth: '91px',
         padding: theme.spacing(0.25),
-        '&:hover': { color: '#091E42' },
+        '&:hover': { color: theme.palette.text.primary },
       },
       '&.secondarySmall': {
         minHeight: '24px',
         minWidth: '44px',
-        '&:hover': { color: '#42526E' },
+        '&:hover': { color: theme.palette.text.info },
       },
       '&.menu': {
         minWidth: '65px',
@@ -85,8 +87,8 @@ export const styles = (theme: Theme) =>
         borderRadius: '4px',
         minHeight: '32px',
         '&:hover': {
-          color: '#7A869A',
-          backgroundColor: '#F4F5F7',
+          color: theme.palette.text.secondary,
+          backgroundColor: theme.palette.background.primary,
         },
         '&.vertical': { marginBottom: theme.spacing(0.5) },
         '&:not(.vertical)': { marginRight: theme.spacing(0.5) },
@@ -102,33 +104,34 @@ export const styles = (theme: Theme) =>
         alignSelf: 'center',
         marginLeft: '4px',
         verticalAlign: 'middle',
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.background.primary,
         padding: '0 4px',
         borderRadius: '4px',
         fontSize: '11px',
         fontWeight: '500',
         lineHeight: '16px',
-        color: '#7A869A',
+        color: theme.palette.text.secondary,
       },
     },
     tabItemSelected: {
-      color: '#091E42',
+      color: theme.palette.text.primary,
       '&.primary': {},
       '&.secondary': {
         height: '24px',
-        backgroundColor: '#ffffff',
+        backgroundColor: theme.palette.background.default,
         borderRadius: theme.spacing(0.5),
       },
       '&.secondarySmall': {
-        color: '#42526E',
+        color: theme.palette.text.info,
         height: '24px',
-        backgroundColor: '#ffffff',
-        border: '1px solid #C1C7D0',
+        backgroundColor: theme.palette.background.default,
+        border: '1px solid',
+        borderColor: theme.palette.info.light,
         borderRadius: theme.spacing(2),
       },
       '&.menu': {
-        color: '#091E42',
-        backgroundColor: '#EBECF0',
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.background.secondary,
       },
     },
     hintContainer: {

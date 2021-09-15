@@ -1,6 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {},
     addOwnerBtn: {
@@ -23,15 +24,15 @@ export const styles = (theme: Theme) =>
       padding: '3px',
       marginTop: theme.spacing(0.25),
       '&:hover': {
-        borderColor: '#CCE6FF',
+        borderColor: theme.palette.button?.primaryLight.hover.border,
         '& $ownerActionBtns': {
           opacity: 1,
         },
       },
     },
     ownerRole: {
-      color: '#7A869A',
-      backgroundColor: '#EBECF0',
+      color: theme.palette.text.secondary,
+      backgroundColor: theme.palette.background.secondary,
       padding: theme.spacing(0, 0.25),
       marginLeft: theme.spacing(0.5),
       marginRight: theme.spacing(0.25),

@@ -1,6 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       display: 'flex',
@@ -11,12 +12,13 @@ export const styles = (theme: Theme) =>
       },
     },
     tableHeader: {
-      borderBottom: '1px solid #F4F5F7',
+      borderBottom: '1px solid',
+      borderBottomColor: theme.palette.background.primary,
       '& > *': {
         padding: theme.spacing(0, 1),
       },
     },
-    rowName: { color: '#A8B0BD' },
+    rowName: { color: theme.palette.text.hint },
     caption: {
       marginBottom: theme.spacing(2),
       display: 'flex',
@@ -26,7 +28,7 @@ export const styles = (theme: Theme) =>
     },
     ownersItem: { display: 'flex', flexWrap: 'wrap' },
     totalCountText: {
-      color: '#42526E',
+      color: theme.palette.text.info,
     },
     searchInput: {
       minWidth: '340px',

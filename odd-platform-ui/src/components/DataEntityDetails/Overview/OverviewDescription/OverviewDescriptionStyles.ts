@@ -1,6 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {},
     captionContainer: {
@@ -15,7 +16,7 @@ export const styles = (theme: Theme) =>
       fontFamily: 'inherit',
       fontWeight: theme.typography.body1.fontWeight,
       lineHeight: theme.typography.body1.lineHeight,
-      color: '#7A869A',
+      color: theme.palette.text.secondary,
     },
     formActions: {
       marginTop: theme.spacing(2),

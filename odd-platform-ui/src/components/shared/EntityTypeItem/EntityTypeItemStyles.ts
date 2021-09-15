@@ -11,7 +11,7 @@ export const styles = (theme: ODDTheme) =>
       fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.body2.fontWeight,
       lineHeight: theme.typography.body2.lineHeight,
-      color: '#091E42',
+      color: theme.palette.text.primary,
       [`&.${DataEntityTypeNameEnum.SET}`]: {
         backgroundColor: theme.palette.entityType?.SET,
       },

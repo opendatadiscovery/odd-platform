@@ -1,9 +1,10 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
 import { maxContentWidthWithoutSidebar } from 'lib/constants';
+import { ODDTheme } from 'theme/interfaces';
 
 const maxTagsContainerWidth = 920;
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       margin: '0 auto',
@@ -36,7 +37,7 @@ export const styles = (theme: Theme) =>
       height: '56px',
       marginRight: theme.spacing(3),
       padding: theme.spacing(1, 2),
-      backgroundColor: '#F4F5F7',
+      backgroundColor: theme.palette.background.primary,
       borderRadius: '4px',
     },
     dataContainer: {
@@ -71,7 +72,7 @@ export const styles = (theme: Theme) =>
       marginBottom: '-2px',
     },
     infoBarStatsText: {
-      color: '#B3BAC5',
+      color: theme.palette.text.hint,
       lineHeight: theme.typography.h2.lineHeight,
       marginBottom: '-4px',
     },

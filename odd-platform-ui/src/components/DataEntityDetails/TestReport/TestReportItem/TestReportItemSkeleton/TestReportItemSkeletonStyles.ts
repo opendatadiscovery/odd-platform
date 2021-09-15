@@ -1,6 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       padding: theme.spacing(1.25, 1),
@@ -8,7 +9,7 @@ export const styles = (theme: Theme) =>
       cursor: 'pointer',
       alignItems: 'center',
       '&:hover': {
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.background.primary,
       },
     },
     item: { marginBottom: theme.spacing(2) },

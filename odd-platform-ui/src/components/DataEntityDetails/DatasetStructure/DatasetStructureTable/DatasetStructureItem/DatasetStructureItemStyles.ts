@@ -1,7 +1,8 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 import { columnBasicStyles } from '../DatasetStructureTableStyles';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       position: 'relative',
@@ -9,13 +10,13 @@ export const styles = (theme: Theme) =>
     rowInfo: {
       minHeight: '41px',
       borderBottom: '1px solid',
-      borderBottomColor: '#F4F5F7',
+      borderBottomColor: theme.palette.background.primary,
       '& > *': {
         padding: theme.spacing(0.5, 0),
         alignItems: 'center',
       },
       '&:hover': {
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.background.primary,
         '& $optionsBtn': {
           opacity: 1,
         },
@@ -26,8 +27,8 @@ export const styles = (theme: Theme) =>
       height: '14px',
       width: '14px',
       borderRadius: '2px',
-      backgroundColor: '#C4C4C4',
-      color: 'white',
+      backgroundColor: theme.palette.text.secondary,
+      color: theme.palette.common.white,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -37,7 +38,7 @@ export const styles = (theme: Theme) =>
       },
     },
     collapseBtnOpen: {
-      backgroundColor: '#091E42',
+      backgroundColor: theme.palette.background.darken,
     },
     treeDividerContainer: {
       width: '14px',
@@ -67,13 +68,13 @@ export const styles = (theme: Theme) =>
     },
     labelsList: {},
     externalDescription: {
-      color: '#7A869A',
+      color: theme.palette.text.secondary,
     },
     internalDescription: {
-      color: '#42526E',
+      color: theme.palette.text.info,
     },
     childKeys: {
-      color: '#42526E',
+      color: theme.palette.text.info,
       display: 'flex',
       alignItems: 'center',
     },
@@ -81,7 +82,7 @@ export const styles = (theme: Theme) =>
       opacity: 0,
     },
     colStatsPct: {
-      color: '#A8B0BD',
+      color: theme.palette.text.hint,
       fontSize: theme.typography.body1.fontSize,
       fontWeight: theme.typography.body1.fontWeight,
       lineHeight: theme.typography.body1.lineHeight,

@@ -1,6 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       alignItems: 'center',
@@ -24,7 +25,7 @@ export const styles = (theme: Theme) =>
       borderColor: 'transparent',
       borderRadius: '4px',
       '&:hover': {
-        borderColor: '#EBECF0',
+        borderColor: theme.palette.divider,
       },
     },
     value: {

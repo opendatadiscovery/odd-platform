@@ -6,7 +6,7 @@ export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       cursor: 'pointer',
-      fill: '#ffffff',
+      fill: theme.palette.background.default,
       rx: 2,
       '&:hover': {
         '-webkit-filter': `drop-shadow(${theme.shadows[9]})`,
@@ -14,17 +14,17 @@ export const styles = (theme: ODDTheme) =>
       },
     },
     rootNodeRect: {
-      stroke: '#0080FF',
+      stroke: theme.palette.button?.primary.normal.border,
       strokeWidth: 1,
     },
     title: {
-      fill: '#000000',
+      fill: theme.palette.common.black,
       fontSize: theme.typography.h4.fontSize,
       fontWeight: theme.typography.h4.fontWeight,
       lineHeight: theme.typography.h4.lineHeight,
     },
     attribute: {
-      fill: '#000',
+      fill: theme.palette.common.black,
       fontSize: theme.typography.body1.fontSize,
       fontWeight: theme.typography.body1.fontWeight,
       lineHeight: theme.typography.body1.lineHeight,
@@ -33,10 +33,10 @@ export const styles = (theme: ODDTheme) =>
       marginLeft: theme.spacing(0.5),
     },
     placeholder: {
-      fill: '#A8B0BD',
+      fill: theme.palette.text.hint,
     },
     attributeLabel: {
-      fill: '#7A869A',
+      fill: theme.palette.text.secondary,
     },
     type: {
       [`&.${DataEntityTypeNameEnum.SET}`]: {
@@ -56,7 +56,7 @@ export const styles = (theme: ODDTheme) =>
       },
     },
     typeLabel: {
-      fill: '#000',
+      fill: theme.palette.common.black,
       fontWeight: theme.typography.body2.fontWeight,
       lineHeight: theme.typography.body2.lineHeight,
     },

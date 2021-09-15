@@ -1,6 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       margin: 'auto 0',
@@ -18,19 +19,20 @@ export const styles = (theme: Theme) =>
         lineHeight: theme.typography.body2.lineHeight,
       },
       '& .__react_component_tooltip.type-light': {
-        color: '#42526E',
+        color: theme.palette.text.info,
         maxWidth: '320px',
         borderRadius: '4px',
         padding: theme.spacing(1),
-        border: '1px solid #EBECF0',
-        backgroundColor: '#FFFFFF',
+        border: '1px solid',
+        borderColor: theme.palette.divider,
+        backgroundColor: theme.palette.background.default,
       },
       '& .__react_component_tooltip.type-dark': {
-        color: '#EBECF0',
+        color: theme.palette.divider,
         maxWidth: '320px',
         borderRadius: '4px',
         padding: theme.spacing(0.25, 0.5),
-        backgroundColor: '#253858',
+        backgroundColor: theme.palette.info.dark,
       },
     },
     childrenContainer: {},

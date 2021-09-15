@@ -1,6 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {},
     formElement: {},
@@ -9,7 +10,7 @@ export const styles = (theme: Theme) =>
       marginTop: theme.spacing(1.5),
     },
     asterisk: {
-      color: '#F2330D',
+      color: theme.palette.warning.main,
     },
     checkboxContainer: {
       margin: theme.spacing(1.5, 0, 0, 0),

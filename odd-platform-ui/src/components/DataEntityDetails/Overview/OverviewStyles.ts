@@ -1,6 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {},
     caption: { marginBottom: theme.spacing(3) },
@@ -12,7 +13,7 @@ export const styles = (theme: Theme) =>
       },
       '& > * + *': {
         borderTop: '1px solid',
-        borderTopColor: '#EBECF0',
+        borderTopColor: theme.palette.divider,
       },
     },
     sectionCaption: {

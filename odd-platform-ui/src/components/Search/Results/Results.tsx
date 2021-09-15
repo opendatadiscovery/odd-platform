@@ -145,11 +145,7 @@ const Results: React.FC<ResultsProps> = ({
           isHintUpdated={isSearchUpdated}
         />
       )}
-      <Grid
-        container
-        className={cx(classes.resultsTable, classes.resultsTableHeader)}
-        wrap="nowrap"
-      >
+      <Grid container className={classes.resultsTableHeader} wrap="nowrap">
         <Grid item className={cx(classes.col, classes.collg)}>
           <Typography variant="caption">Name</Typography>
         </Grid>
@@ -194,10 +190,7 @@ const Results: React.FC<ResultsProps> = ({
           <Typography variant="caption">Last Update</Typography>
         </Grid>
       </Grid>
-      <div
-        id="results-list"
-        className={cx(classes.listContainer, classes.resultsTable)}
-      >
+      <div id="results-list" className={classes.listContainer}>
         <InfiniteScroll
           dataLength={searchResults.length}
           next={fetchNextPage}

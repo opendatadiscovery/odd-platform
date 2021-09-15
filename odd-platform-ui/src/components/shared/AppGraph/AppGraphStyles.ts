@@ -1,11 +1,12 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       width: '100%',
       height: 'inherit',
-      backgroundColor: '#F4F5F7',
+      backgroundColor: theme.palette.background.primary,
       fontSize: '0.6rem',
       position: 'relative',
     },
@@ -23,7 +24,7 @@ export const styles = (theme: Theme) =>
     loaderContainer: {
       width: '100%',
       height: 'inherit',
-      backgroundColor: '#F4F5F7',
+      backgroundColor: theme.palette.background.primary,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',

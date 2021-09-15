@@ -1,6 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       display: 'flex',
@@ -31,7 +32,7 @@ export const styles = (theme: Theme) =>
       },
     },
     totalCountText: {
-      color: '#42526E',
+      color: theme.palette.text.info,
     },
   });
 

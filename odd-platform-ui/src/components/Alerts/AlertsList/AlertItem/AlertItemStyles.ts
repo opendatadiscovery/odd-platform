@@ -1,13 +1,15 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
 import { alertsMainColWidthStyles } from 'components/Alerts/AlertsList/AlertsListStyles';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       padding: theme.spacing(1.25, 0),
-      borderBottom: '1px solid #EBECF0',
+      borderBottom: '1px solid',
+      borderBottomColor: theme.palette.divider,
       '&:hover': {
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.background.primary,
         '& $optionsBtn': {
           opacity: 1,
         },

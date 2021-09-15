@@ -1,6 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     labelItemButtons: {
       margin: theme.spacing(1, 0, 1.5, 0),
@@ -8,7 +9,8 @@ export const styles = (theme: Theme) =>
       justifyContent: 'flex-end',
       alignItems: 'center',
       paddingBottom: theme.spacing(1.5),
-      borderBottom: '1px solid #F4F5F7',
+      borderBottom: '1px solid',
+      borderBottomColor: theme.palette.background.primary,
     },
   });
 

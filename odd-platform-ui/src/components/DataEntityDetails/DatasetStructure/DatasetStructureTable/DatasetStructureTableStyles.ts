@@ -1,6 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const columnBasicStyles = (theme: Theme) => ({
+export const columnBasicStyles = (theme: ODDTheme) => ({
   collapseCol: {
     width: '20px',
     display: 'flex',
@@ -41,22 +42,22 @@ export const columnBasicStyles = (theme: Theme) => ({
   },
   columnDivided: {
     borderRight: '1px solid',
-    borderRightColor: '#F4F5F7',
+    borderRightColor: theme.palette.background.primary,
     paddingRight: '15px',
   },
 });
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       position: 'relative',
       marginTop: theme.spacing(2.5),
     },
     tableHeader: {
-      color: '#A8B0BD',
+      color: theme.palette.text.hint,
       '& > *': {
         borderBottom: '1px solid',
-        borderBottomColor: '#F4F5F7',
+        borderBottomColor: theme.palette.background.primary,
       },
       '& > $columnDivided': {
         borderRightColor: 'transparent',

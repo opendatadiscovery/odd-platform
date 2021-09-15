@@ -33,7 +33,7 @@ const mapStateToProps = (
   dataEntityDetails: getDataEntityDetails(state, dataEntityId),
   isDataset: getDataEntityIsDataset(state, dataEntityId),
   dataEntityFetchingStatus: getDataEntityDetailsFetchingStatus(state),
-  dataEntityFetchingError: getDataEntityDetailsFetchingError(state)
+  dataEntityFetchingError: getDataEntityDetailsFetchingError(state),
 });
 
 const mapDispatchToProps = {

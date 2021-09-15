@@ -1,11 +1,12 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
 import {
   maxContentWidth,
   maxSidebarWidth,
   toolbarHeight,
 } from 'lib/constants';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       minHeight: `${toolbarHeight}px`,
@@ -13,7 +14,8 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      borderBottom: '1px solid #EBECF0',
+      borderBottom: '1px solid',
+      borderBottomColor: theme.palette.divider,
     },
     contentContainer: {
       position: 'relative',
@@ -47,17 +49,17 @@ export const styles = (theme: Theme) =>
     },
     title: {
       display: 'flex',
-      color: '#000000',
+      color: theme.palette.common.black,
       textDecoration: 'none',
       [theme.breakpoints.up('sm')]: {
         alignItems: 'center',
       },
     },
     lightBg: {
-      backgroundColor: '#ffffff',
+      backgroundColor: theme.palette.common.white,
     },
     darkBg: {
-      backgroundColor: theme.palette.background.default,
+      backgroundColor: theme.palette.background.darken,
     },
     sectionDesktop: {
       justifyContent: 'flex-end',

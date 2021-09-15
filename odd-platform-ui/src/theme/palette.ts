@@ -1,167 +1,194 @@
 import createPalette from '@material-ui/core/styles/createPalette';
 import { ODDPaletteOptions } from 'theme/interfaces';
 
-const entityTypeColors = {
-  SET: '#FFE5E6',
-  TRANSFORMER: '#EAE5FF',
-  CONSUMER: '#E5F2FF',
-  INPUT: '#E8FCEF',
-  QUALITY_TEST: '#FFF6E5',
-};
-
-const runStatusColors = {
-  success: '#1FAD1F',
-  failed: '#F2330D',
-  broken: '#FFAA00',
-  skipped: '#0080FF',
-  aborted: '#8066FF',
-  unknown: '#A8B0BD',
-};
-
-const reportStatusColors = {
-  success: { background: '#D1FADF', border: '#A8F0A8' },
-  failed: { background: '#FFCCCC', border: '#FF9999' },
-  broken: { background: '#FFEECC', border: '#FFDD99' },
-  skipped: { background: '#CCE6FF', border: '#99CCFF' },
-  aborted: { background: '#baacf7', border: '#8066FF' },
-  unknown: { background: '#EBECF0', border: '#C1C7D0' },
-};
-
 const colors = {
-  primary: '#3a5ad1',
-  primaryLight: '#758be1',
-  secondary: '#dd357e',
-  warning: '#f38435',
-  warningLight: '#FF0000',
-  secondaryLight: '#f9f9fa',
-  textInfo: '#d8d8df',
-  textPrimary: '#091E42', // done
-  textHint: '#A8B0BD',
-  textSecondary: '#7A869A', // done
-  textTertiary: '#42526E', // done
-  textFourth: '#A8B0BD', // done
-  textAction: '#0066CC', // done
-  divider: '#EBECF0', // done
-  background: '#F4F5F7', // done
-  success: '#4baa73',
-  successLight: '#27AE60',
-  black: '#000000', // done
-  white: '#FFFFFF', // done
-  blue65: '#0059B2', // done
-  blue60: '#0066CC', // done
-  blue50: '#0080FF', // done
-  blue40: '#3399FF', // done
-  blue30: '#66B3FF', // done
-  blue20: '#99CCFF', // done
-  blue10: '#CCE6FF', // done
-  blue5: '#E5F2FF', // done
-  // 1: '#091E42', // 22
-  2: '#253858', // 2
-  // 3: '#42526E', // 20
-  4: '#5E6C84', // 0
-  // 5: '#7A869A', // 25
-  6: '#97A0AF', // 0
-  // 7: '#A8B0BD', // 17
-  8: '#C1C7D0', // 8
-  9: '#DFE1E6', // 0
-  // 10: '#EBECF0', // 38
-  // 11: '#F4F5F7', // 26
-  // 12: '#FFFFFF', // 14
+  black: '#000000',
+  white: '#FFFFFF',
+  transparent: 'transparent',
 
-  // 13: '#0059B2', // 4
-  // 14: '#0066CC', // 24
-  // 15: '#0080FF', // 19
-  16: '#99CCFF', // 9
-  17: '#CCE6FF', // 6
-  18: '#E5F2FF', // 6
-  19: '#FFAA00', // 3
-  20: '#FFBB33', // 2
-  21: '#FFDD99', // 2
-  22: '#FFEECC', // 2
-  24: '#1FAD1F', // 1
-  25: '#A8F0A8', // 2
-  26: '#D1FADF', // 1
-  28: '#A7FF33', // 1
-  29: '#33FF99', // 1
-  30: '#F2330D', // 5
-  31: '#FF9999', // 3
-  32: '#FFCCCC', // 2
-  33: '#FFE5E6', // 2
-  34: '#EE99FF', // 1
-  35: '#8066FF', // 2
-  36: '#AA99FF', // 1
+  black90: '#091E42',
+  black80: '#253858',
+  black70: '#42526E',
+  black60: '#5E6C84',
+  black50: '#7A869A',
+  black40: '#97A0AF',
+  black30: '#A8B0BD',
+  black20: '#C1C7D0',
+  black15: '#DFE1E6',
+  black10: '#EBECF0',
+  black5: '#F4F5F7',
+
+  blue65: '#0059B2',
+  blue60: '#0066CC',
+  blue50: '#0080FF',
+  blue40: '#3399FF',
+  blue30: '#66B3FF',
+  blue20: '#99CCFF',
+  blue10: '#CCE6FF',
+  blue5: '#E5F2FF',
+
+  orange50: '#FFAA00',
+  orange40: '#FFBB33',
+  orange20: '#FFDD99',
+  orange10: '#FFEECC',
+  orange5: '#FFF6E5',
+
+  green60: '#1FAD1F',
+  green40: '#14B84B',
+  green20: '#A8F0A8',
+  green10: '#D1FADF',
+  green5: '#E8FCEF',
+
+  lightGreen60: '#A7FF33',
+  lightGreen40: '#D3FF99',
+
+  turquoise40: '#33FF99',
+  turquoise20: '#99FFCC',
+
+  red60: '#C2290A',
+  red50: '#F2330D',
+  red40: '#F55C3D',
+  red20: '#FF9999',
+  red10: '#FFCCCC',
+  red5: '#FFE5E6',
+
+  pink60: '#EE99FF',
+
+  purple40: '#5533FF',
+  purple30: '#8066FF',
+  purple20: '#AA99FF',
+  purple10: '#D4CCFF',
+  purple5: '#EAE5FF',
 };
 
 export const palette = createPalette({
   common: { black: colors.black, white: colors.white },
-  primary: {
-    main: colors.primary,
-    light: colors.primaryLight,
-  },
-  secondary: {
-    main: colors.secondary,
-    light: colors.secondaryLight,
-  },
   warning: {
-    main: colors.warning,
-    light: colors.warningLight,
+    main: colors.red50,
+    light: colors.orange10,
   },
   text: {
-    primary: colors.textPrimary,
-    secondary: colors.textSecondary,
-    hint: colors.textHint,
-    disabled: colors.textHint,
+    primary: colors.black90,
+    secondary: colors.black50,
+    hint: colors.black30,
+    info: colors.black70,
   },
-  background: { default: '#ffffff' },
-  divider: colors.divider,
-  success: { main: colors.success },
+  background: {
+    primary: colors.black5,
+    secondary: colors.black10,
+    darken: colors.black90,
+    default: colors.white,
+  },
+  info: {
+    main: colors.black90,
+    light: colors.black20,
+    dark: colors.black80,
+  },
+  divider: colors.black10,
   entityType: {
-    SET: entityTypeColors.SET,
-    TRANSFORMER: entityTypeColors.TRANSFORMER,
-    CONSUMER: entityTypeColors.CONSUMER,
-    INPUT: entityTypeColors.INPUT,
-    QUALITY_TEST: entityTypeColors.QUALITY_TEST,
+    SET: colors.red5,
+    TRANSFORMER: colors.purple5,
+    CONSUMER: colors.blue5,
+    INPUT: colors.green5,
+    QUALITY_TEST: colors.orange5,
   },
   runStatus: {
-    success: runStatusColors.success,
-    failed: runStatusColors.failed,
-    broken: runStatusColors.broken,
-    skipped: runStatusColors.skipped,
-    aborted: runStatusColors.aborted,
-    unknown: runStatusColors.unknown,
+    success: colors.green60,
+    failed: colors.red50,
+    broken: colors.orange50,
+    skipped: colors.blue50,
+    aborted: colors.purple30,
+    unknown: colors.black30,
   },
   reportStatus: {
-    success: {
-      background: reportStatusColors.success.background,
-      border: reportStatusColors.success.border,
-    },
-    failed: {
-      background: reportStatusColors.failed.background,
-      border: reportStatusColors.failed.border,
-    },
-    broken: {
-      background: reportStatusColors.broken.background,
-      border: reportStatusColors.broken.border,
-    },
-    skipped: {
-      background: reportStatusColors.skipped.background,
-      border: reportStatusColors.skipped.border,
-    },
-    aborted: {
-      background: reportStatusColors.aborted.background,
-      border: reportStatusColors.aborted.border,
-    },
-    unknown: {
-      background: reportStatusColors.unknown.background,
-      border: reportStatusColors.unknown.border,
-    },
+    success: { background: colors.green10, border: colors.green20 },
+    failed: { background: colors.red10, border: colors.red20 },
+    broken: { background: colors.orange10, border: colors.orange20 },
+    skipped: { background: colors.blue10, border: colors.blue20 },
+    aborted: { background: colors.purple10, border: colors.purple30 },
+    unknown: { background: colors.black10, border: colors.black20 },
   },
   button: {
     primary: {
-      normal: { background: colors.blue50, color: colors.white },
+      normal: {
+        background: colors.blue50,
+        color: colors.white,
+        border: colors.blue50,
+      },
       hover: { background: colors.blue60, color: colors.white },
       active: { background: colors.blue65, color: colors.white },
       disabled: { background: colors.blue20, color: colors.white },
     },
+    primaryLight: {
+      normal: { background: colors.blue5, color: colors.blue60 },
+      hover: {
+        background: colors.blue10,
+        color: colors.blue60,
+        border: colors.blue10,
+      },
+      active: { background: colors.blue20, color: colors.blue60 },
+      disabled: { background: colors.blue5, color: colors.blue20 },
+    },
+    secondary: {
+      normal: { background: colors.white, color: colors.blue60 },
+      hover: { background: colors.blue50, color: colors.white },
+      active: { background: colors.blue60, color: colors.white },
+      disabled: { background: colors.white, color: colors.blue20 },
+    },
+    tertiary: {
+      normal: { background: colors.white, color: colors.blue60 },
+      hover: { background: colors.blue5, color: colors.blue60 },
+      active: { background: colors.blue10, color: colors.blue65 },
+    },
+    dropdown: {
+      normal: { background: colors.transparent, color: colors.blue50 },
+      hover: { background: colors.transparent, color: colors.blue60 },
+      active: { background: colors.transparent, color: colors.blue65 },
+    },
+    expand: {
+      normal: { background: colors.blue5, color: colors.blue60 },
+      hover: { background: colors.blue10, color: colors.blue60 },
+      active: { background: colors.blue50, color: colors.white },
+    },
+    unfilled: {
+      normal: { background: colors.transparent, color: colors.black30 },
+      hover: { background: colors.transparent, color: colors.black70 },
+      active: { background: colors.transparent, color: colors.black90 },
+    },
+  },
+  tag: {
+    main: {
+      normal: { border: colors.black10, color: colors.black70 },
+      hover: { border: colors.black20, color: colors.black70 },
+      active: { border: colors.black30, color: colors.black70 },
+    },
+    important: {
+      normal: {
+        border: colors.orange40,
+        color: colors.black70,
+        background: colors.orange40,
+      },
+      hover: {
+        border: colors.orange50,
+        color: colors.black70,
+        background: colors.orange50,
+      },
+      active: { border: colors.orange50, color: colors.black70 },
+    },
+  },
+  structureLabel: {
+    STRING: { border: colors.orange20 },
+    BOOLEAN: { border: colors.purple20 },
+    INTEGER: { border: colors.green20 },
+    NUMBER: { border: colors.pink60 },
+    BINARY: { border: colors.red20 },
+    DATETIME: { border: colors.blue20 },
+    STRUCT: { border: colors.black20 },
+    LIST: { border: colors.lightGreen60 },
+    MAP: { border: colors.turquoise40 },
+  },
+  alert: {
+    open: { background: colors.red10, border: colors.red20 },
+    resolved: { background: colors.blue10, border: colors.blue20 },
   },
 } as ODDPaletteOptions);

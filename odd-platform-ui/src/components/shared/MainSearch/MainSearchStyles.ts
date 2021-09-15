@@ -1,16 +1,19 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
 export const searchHeight = 40;
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     inputInput: {
       height: `${searchHeight}px`,
       transition: theme.transitions.create('width'),
       width: '100%',
-      border: '1px solid #0080FF',
+      border: '1px solid',
+      borderColor: theme.palette.button?.primary.normal.border,
       marginLeft: '4px',
       '&:hover': {
-        border: '1px solid #0066CC',
+        border: '1px solid',
+        borderColor: theme.palette.button?.primaryLight.normal.color,
       },
     },
     clearIconContainer: {
@@ -22,7 +25,8 @@ export const styles = (theme: Theme) =>
       width: '100%',
       boxSizing: 'border-box',
       '& .Mui-focused': {
-        border: '2px solid #0080FF',
+        border: '2px solid',
+        borderColor: theme.palette.button?.primary.normal.border,
       },
     },
     searchContainer: {

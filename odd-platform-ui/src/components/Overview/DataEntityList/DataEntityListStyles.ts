@@ -1,6 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {},
     listLinks: {
@@ -17,17 +18,17 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       textDecoration: 'none',
-      color: '#091E42',
+      color: theme.palette.text?.primary,
       flexWrap: 'nowrap',
       '&:hover': {
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.background.primary,
         borderRadius: '4px',
         '& > *': {
-          color: '#091E42',
+          color: theme.palette.text?.primary,
         },
       },
       '&:active': {
-        backgroundColor: '#EBECF0',
+        backgroundColor: theme.palette.background.secondary,
       },
     },
     alert: {
@@ -39,7 +40,7 @@ export const styles = (theme: Theme) =>
     sectionCaption: {
       marginBottom: theme.spacing(2),
       paddingTop: theme.spacing(0.75),
-      color: '#000000',
+      color: theme.palette.common.white,
       display: 'flex',
       alignItems: 'center',
       '& > svg ': {

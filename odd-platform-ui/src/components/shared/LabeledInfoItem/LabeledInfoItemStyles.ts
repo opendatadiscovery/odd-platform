@@ -1,6 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       alignItems: 'flex-start',
@@ -16,7 +17,7 @@ export const styles = (theme: Theme) =>
       },
     },
     label: {
-      color: '#7A869A',
+      color: theme.palette.text.secondary,
     },
     value: {
       wordBreak: 'break-all',

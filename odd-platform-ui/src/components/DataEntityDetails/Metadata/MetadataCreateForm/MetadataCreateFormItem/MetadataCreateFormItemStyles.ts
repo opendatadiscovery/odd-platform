@@ -1,6 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       marginBottom: theme.spacing(2),
@@ -18,8 +19,8 @@ export const styles = (theme: Theme) =>
     typeTitle: {
       marginRight: theme.spacing(0.5),
       fontSize: '12px',
-      color: '#7A869A',
-      fontWeight: 400,
+      color: theme.palette.text.secondary,
+      fontWeight: theme.typography.subtitle2.fontWeight,
     },
     hidden: {
       display: 'none',

@@ -1,6 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     container: {
       width: '100%',
@@ -12,7 +13,7 @@ export const styles = (theme: Theme) =>
       '& + $testRunItemContainer': {
         paddingTop: theme.spacing(1),
         borderTop: '1px solid',
-        borderTopColor: '#EBECF0',
+        borderTopColor: theme.palette.divider,
       },
     },
     testRunInfoItem: {
@@ -21,7 +22,7 @@ export const styles = (theme: Theme) =>
       },
     },
     statusReason: {
-      color: '#A8B0BD',
+      color: theme.palette.text.secondary,
       marginLeft: theme.spacing(1),
     },
   });

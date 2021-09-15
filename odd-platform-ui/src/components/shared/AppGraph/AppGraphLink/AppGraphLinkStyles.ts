@@ -1,14 +1,15 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@material-ui/core';
+import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
+export const styles = (theme: ODDTheme) =>
   createStyles({
     path: {
       fill: 'none',
-      stroke: '#7A869A',
+      stroke: theme.palette.text.secondary,
       strokeWidth: 1,
     },
     circle: {
-      fill: '#7A869A',
+      fill: theme.palette.text.secondary,
     },
   });
 
