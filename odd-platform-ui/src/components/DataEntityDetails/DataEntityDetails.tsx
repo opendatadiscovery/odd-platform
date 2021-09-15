@@ -9,6 +9,7 @@ import {
   dataEntityLineagePath,
   dataEntityTestReportPath,
   dataEntityAlertsPath,
+  dataEntityHistoryPath,
 } from 'lib/paths';
 import {
   DataEntityDetails,
@@ -28,6 +29,7 @@ import DataEntityAlertsContainer from 'components/DataEntityDetails/DataEntityAl
 import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
+import QualityTestHistoryContainer from 'components/DataEntityDetails/QualityTestRunsHistory/QualityTestRunsHistoryContainer';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -39,6 +41,7 @@ interface DataEntityDetailsProps extends StylesType {
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
+  isQualityTest: boolean;
   fetchDataEntityDetails: (
     params: DataEntityApiGetDataEntityDetailsRequest
   ) => void;
@@ -52,56 +55,57 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityId,
   dataEntityDetails,
   isDataset,
+  isQualityTest,
   fetchDataEntityDetails,
   dataEntityFetchingStatus,
-  dataEntityFetchingError
+  dataEntityFetchingError,
 }) => {
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([
-    {
-      name: 'Overview',
-      link: dataEntityOverviewPath(dataEntityId),
-      value: 'overview',
-    },
-    {
-      name: 'Structure',
-      link: datasetStructurePath(dataEntityId),
-      hidden: true,
-      value: 'structure',
-    },
-    {
-      name: 'Lineage',
-      link: dataEntityLineagePath(dataEntityId),
-      value: 'lineage',
-    },
-    {
-      name: 'Test reports',
-      link: dataEntityTestReportPath(dataEntityId),
-      hidden: true,
-      value: 'test-reports',
-    },
-    {
-      name: 'Alerts',
-      link: dataEntityAlertsPath(dataEntityId),
-      value: 'alerts',
-    },
-  ]);
+  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
+
+  React.useEffect(() => {
+    setTabs([
+      {
+        name: 'Overview',
+        link: dataEntityOverviewPath(dataEntityId),
+        value: 'overview',
+      },
+      {
+        name: 'Structure',
+        link: datasetStructurePath(dataEntityId),
+        hidden: !isDataset,
+        value: 'structure',
+      },
+      {
+        name: 'Lineage',
+        link: dataEntityLineagePath(dataEntityId),
+        hidden: isQualityTest,
+        value: 'lineage',
+      },
+      {
+        name: 'Test reports',
+        link: dataEntityTestReportPath(dataEntityId),
+        hidden: !isDataset,
+        value: 'test-reports',
+      },
+      {
+        name: 'History',
+        link: dataEntityHistoryPath(dataEntityId),
+        hidden: !isQualityTest,
+        value: 'history',
+      },
+      {
+        name: 'Alerts',
+        link: dataEntityAlertsPath(dataEntityId),
+        value: 'alerts',
+      },
+    ]);
+  }, [dataEntityId, isQualityTest, isDataset]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
   React.useEffect(() => {
     fetchDataEntityDetails({ dataEntityId });
   }, [fetchDataEntityDetails, dataEntityId]);
-
-  React.useEffect(() => {
-    setTabs(
-      tabs.map(tab => ({
-        ...tab,
-        hidden:
-          (tab.value === 'structure' || tab.value === 'test-reports') &&
-          !isDataset,
-      }))
-    );
-  }, [dataEntityDetails]);
 
   React.useEffect(() => {
     setSelectedTab(
@@ -192,16 +196,16 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
           ) : null}
         </>
       ) : null}
-      {dataEntityFetchingStatus === 'fetching' ?
-        (<SkeletonWrapper
+      {dataEntityFetchingStatus === 'fetching' ? (
+        <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
             <DataEntityDetailsSkeleton
               width={randomSkeletonPercentWidth()}
             />
           )}
-        />)
-      : null}
-      {dataEntityFetchingStatus !== 'errorFetching' ?
+        />
+      ) : null}
+      {dataEntityFetchingStatus !== 'errorFetching' ? (
         <Switch>
           <Route
             exact
@@ -233,13 +237,21 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             path="/dataentities/:dataEntityId/alerts"
             component={DataEntityAlertsContainer}
           />
+          <Route
+            exact
+            path="/dataentities/:dataEntityId/history"
+            component={QualityTestHistoryContainer}
+          />
           <Redirect
             from="/dataentities/:dataEntityId"
             to="/dataentities/:dataEntityId/overview"
           />
         </Switch>
-      : null}
-      <AppErrorPage fetchStatus={dataEntityFetchingStatus} error={dataEntityFetchingError}/>
+      ) : null}
+      <AppErrorPage
+        fetchStatus={dataEntityFetchingStatus}
+        error={dataEntityFetchingError}
+      />
     </div>
   );
 };

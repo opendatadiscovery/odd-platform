@@ -9,7 +9,7 @@ export const styles = (theme: ODDTheme) =>
       padding: 0,
       '& + $sectionContainer': { marginTop: theme.spacing(2) },
       '& > *': {
-        padding: theme.spacing(2.5, 2),
+        padding: theme.spacing(2, 2),
       },
       '& > * + *': {
         borderTop: '1px solid',

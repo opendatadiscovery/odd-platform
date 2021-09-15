@@ -14,6 +14,11 @@ import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.model.tables.pojos.RolePojo;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.utils.Pair;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Stream;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,15 +28,10 @@ import org.jooq.impl.DSL;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Stream;
-
 @Component
 @Slf4j
 public class JooqFTSVectorizer {
+
     public Field<Object> toTsVector(final DataEntityDimensionsDto dto) {
         return reduceVectorStream(dataEntityDimensionFTSConfigStream(dto));
     }
@@ -104,8 +104,8 @@ public class JooqFTSVectorizer {
 
     @Data
     @RequiredArgsConstructor
-    private static final class FTSConfig<P> {
-        public final static FTSConfig<DataEntityPojo> DATA_ENTITY_CONFIG = FTSConfig.of(
+    private static class FTSConfig<P> {
+        public static final FTSConfig<DataEntityPojo> DATA_ENTITY_CONFIG = FTSConfig.of(
             Pair.of(DataEntityPojo::getInternalName, 'A'),
             Pair.of(DataEntityPojo::getExternalName, 'A'),
             Pair.of(DataEntityPojo::getExternalDescription, 'B'),
@@ -113,36 +113,36 @@ public class JooqFTSVectorizer {
             Pair.of(DataEntityPojo::getOddrn, 'D')
         );
 
-        public final static FTSConfig<DataSourcePojo> DATA_SOURCE_CONFIG = FTSConfig.of(
+        public static final FTSConfig<DataSourcePojo> DATA_SOURCE_CONFIG = FTSConfig.of(
             Pair.of(DataSourcePojo::getName, 'B'),
             Pair.of(DataSourcePojo::getOddrn, 'D')
         );
 
-        public final static FTSConfig<OwnerPojo> OWNER_CONFIG = FTSConfig.of(
+        public static final FTSConfig<OwnerPojo> OWNER_CONFIG = FTSConfig.of(
             Pair.of(OwnerPojo::getName, 'B')
         );
 
-        public final static FTSConfig<NamespacePojo> NAMESPACE_CONFIG = FTSConfig.of(
+        public static final FTSConfig<NamespacePojo> NAMESPACE_CONFIG = FTSConfig.of(
             Pair.of(NamespacePojo::getName, 'B')
         );
 
-        public final static FTSConfig<TagPojo> TAG_CONFIG = FTSConfig.of(
+        public static final FTSConfig<TagPojo> TAG_CONFIG = FTSConfig.of(
             Pair.of(TagPojo::getName, 'B')
         );
 
-        public final static FTSConfig<MetadataFieldPojo> MF_CONFIG = FTSConfig.of(
+        public static final FTSConfig<MetadataFieldPojo> MF_CONFIG = FTSConfig.of(
             Pair.of(MetadataFieldPojo::getName, 'C')
         );
 
-        public final static FTSConfig<MetadataFieldValuePojo> MFV_CONFIG = FTSConfig.of(
+        public static final FTSConfig<MetadataFieldValuePojo> MFV_CONFIG = FTSConfig.of(
             Pair.of(MetadataFieldValuePojo::getValue, 'D')
         );
 
-        public final static FTSConfig<RolePojo> ROLE_CONFIG = FTSConfig.of(
+        public static final FTSConfig<RolePojo> ROLE_CONFIG = FTSConfig.of(
             Pair.of(RolePojo::getName, 'D')
         );
 
-        public final static FTSConfig<DatasetFieldPojo> FIELD_CONFIG = FTSConfig.of(
+        public static final FTSConfig<DatasetFieldPojo> FIELD_CONFIG = FTSConfig.of(
             Pair.of(DatasetFieldPojo::getName, 'C'),
             Pair.of(DatasetFieldPojo::getOddrn, 'D')
         );

@@ -5,13 +5,12 @@ import com.provectus.oddplatform.api.contract.model.Owner;
 import com.provectus.oddplatform.api.contract.model.OwnerFormData;
 import com.provectus.oddplatform.api.contract.model.OwnerList;
 import com.provectus.oddplatform.service.OwnerService;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 @RestController
 public class OwnerController

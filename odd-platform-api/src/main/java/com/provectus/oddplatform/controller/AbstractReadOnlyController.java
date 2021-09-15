@@ -9,7 +9,7 @@ import reactor.core.scheduler.Schedulers;
 
 @RequiredArgsConstructor
 public class AbstractReadOnlyController<E, EL, S extends ReadOnlyCRUDService<E, EL>> {
-    final protected S entityService;
+    protected final S entityService;
 
     protected Mono<ResponseEntity<E>> get(final long id) {
         return entityService.get(id)

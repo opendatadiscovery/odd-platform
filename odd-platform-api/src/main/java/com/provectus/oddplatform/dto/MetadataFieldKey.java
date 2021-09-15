@@ -1,19 +1,19 @@
 package com.provectus.oddplatform.dto;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Data
 public class MetadataFieldKey {
+
     private final String fieldName;
     private final MetadataTypeEnum fieldType;
 
@@ -38,11 +38,11 @@ public class MetadataFieldKey {
             this.clazz = clazz;
         }
 
-        private final static Map<Class<?>, MetadataTypeEnum> map = Arrays.stream(MetadataTypeEnum.values())
+        private static final Map<Class<?>, MetadataTypeEnum> MAP = Arrays.stream(MetadataTypeEnum.values())
             .collect(Collectors.toMap(MetadataTypeEnum::getClazz, Function.identity()));
 
         public static MetadataTypeEnum getMetadataType(final Class<?> clazz) {
-            return map.getOrDefault(clazz, UNKNOWN);
+            return MAP.getOrDefault(clazz, UNKNOWN);
         }
     }
 }

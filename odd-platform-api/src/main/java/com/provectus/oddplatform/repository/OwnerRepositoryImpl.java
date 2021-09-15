@@ -2,11 +2,10 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.model.tables.records.OwnerRecord;
+import java.util.Optional;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static com.provectus.oddplatform.model.Tables.OWNER;
 

@@ -5,9 +5,8 @@ import com.provectus.oddplatform.api.contract.model.TagFormData;
 import com.provectus.oddplatform.api.contract.model.TagsResponse;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.utils.Page;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
+import org.springframework.stereotype.Component;
 
 @Component
 public class TagMapperImpl implements TagMapper {

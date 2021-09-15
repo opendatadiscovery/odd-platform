@@ -60,6 +60,20 @@ export const styles = (theme: ODDTheme) =>
       fontWeight: theme.typography.body2.fontWeight,
       lineHeight: theme.typography.body2.lineHeight,
     },
+    button: {
+      cursor: 'pointer',
+      fill: '#E5F2FF',
+      '&:hover': { fill: '#CCE6FF' },
+      '&:active': { fill: '#99CCFF' },
+    },
+    loadMoreSpinnerBack: {
+      stroke: '#fff',
+      fill: 'transparent',
+    },
+    loadMoreSpinner: {
+      fill: 'transparent',
+      stroke: '#0066CC',
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

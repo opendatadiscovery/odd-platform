@@ -1,14 +1,34 @@
 package com.provectus.oddplatform.service;
 
-import com.provectus.oddplatform.api.contract.model.*;
+import com.provectus.oddplatform.api.contract.model.DataEntity;
+import com.provectus.oddplatform.api.contract.model.DataEntityDetails;
+import com.provectus.oddplatform.api.contract.model.DataEntityLineage;
+import com.provectus.oddplatform.api.contract.model.DataEntityList;
+import com.provectus.oddplatform.api.contract.model.DataEntityRef;
+import com.provectus.oddplatform.api.contract.model.DataEntityTagsFormData;
+import com.provectus.oddplatform.api.contract.model.DataEntityTypeDictionary;
+import com.provectus.oddplatform.api.contract.model.InternalDescription;
+import com.provectus.oddplatform.api.contract.model.InternalDescriptionFormData;
+import com.provectus.oddplatform.api.contract.model.InternalName;
+import com.provectus.oddplatform.api.contract.model.InternalNameFormData;
+import com.provectus.oddplatform.api.contract.model.MetadataField;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldOrigin;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldType;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldValue;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldValueList;
+import com.provectus.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
+import com.provectus.oddplatform.api.contract.model.MetadataObject;
+import com.provectus.oddplatform.api.contract.model.Tag;
 import com.provectus.oddplatform.auth.AuthIdentityProvider;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
+import com.provectus.oddplatform.dto.LineageStreamKind;
 import com.provectus.oddplatform.dto.MetadataFieldKey;
-import com.provectus.oddplatform.dto.StreamKind;
 import com.provectus.oddplatform.exception.NotFoundException;
 import com.provectus.oddplatform.mapper.DataEntityMapper;
 import com.provectus.oddplatform.mapper.MetadataFieldMapper;
 import com.provectus.oddplatform.mapper.TagMapper;
+import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
@@ -17,11 +37,6 @@ import com.provectus.oddplatform.repository.DataEntityTypeRepository;
 import com.provectus.oddplatform.repository.MetadataFieldRepository;
 import com.provectus.oddplatform.repository.MetadataFieldValueRepository;
 import com.provectus.oddplatform.repository.TagRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,13 +45,18 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import static java.util.function.Predicate.not;
 
 @Service
 @Slf4j
 public class DataEntityServiceImpl
-    extends AbstractReadOnlyCRUDService<DataEntity, DataEntityList, DataEntityDimensionsDto, DataEntityMapper, DataEntityRepository>
+    extends AbstractReadOnlyCRUDService<DataEntity, DataEntityList,
+    DataEntityDimensionsDto, DataEntityMapper, DataEntityRepository>
     implements DataEntityService {
 
     private final AuthIdentityProvider authIdentityProvider;
@@ -79,10 +99,18 @@ public class DataEntityServiceImpl
     @Override
     public Mono<DataEntityDetails> getDetails(final long dataEntityId) {
         return Mono.fromCallable(() -> entityRepository.getDetails(dataEntityId))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException())
-                : Mono.just(optional.get()))
-            .map(entityMapper::mapDtoDetails);
+                .flatMap(optional -> optional.isEmpty()
+                        ? Mono.error(new NotFoundException())
+                        : Mono.just(optional.get()))
+                .map(this::incrementViewCount)
+                .map(entityMapper::mapDtoDetails);
+    }
+
+    private DataEntityDetailsDto incrementViewCount(DataEntityDetailsDto dto) {
+        final DataEntityPojo dataEntity = dto.getDataEntity();
+        final Optional<Long> viewCount = entityRepository.incrementViewCount(dataEntity.getId());
+        viewCount.ifPresent(dataEntity::setViewCount);
+        return dto;
     }
 
     @Override
@@ -105,7 +133,7 @@ public class DataEntityServiceImpl
     @Override
     public Flux<DataEntityRef> listAssociated(final int page,
                                               final int size,
-                                              final StreamKind streamKind) {
+                                              final LineageStreamKind streamKind) {
         return authIdentityProvider.fetchAssociatedOwner()
             .flatMapIterable(o -> entityRepository.listByOwner(page, size, o.getId(), streamKind))
             .map(entityMapper::mapRef);
@@ -151,17 +179,18 @@ public class DataEntityServiceImpl
                     .bulkCreate(mfvPojos)
                     .stream()
                     .map(mfv -> {
-                            final MetadataFieldPojo metadataFieldPojo = metadataFields.get(mfv.getMetadataFieldId());
-                            return new MetadataFieldValue()
-                                .field(new MetadataField()
-                                    .id(metadataFieldPojo.getId())
-                                    .name(metadataFieldPojo.getName())
-                                    .origin(MetadataFieldOrigin.fromValue(metadataFieldPojo.getOrigin()))
-                                    .type(MetadataFieldType.valueOf(metadataFieldPojo.getType()))
-                                )
-                                .value(mfv.getValue());
-                        }
-                    )
+                        final MetadataFieldPojo metadataFieldPojo =
+                            metadataFields.get(mfv.getMetadataFieldId());
+                        return new MetadataFieldValue()
+                            .field(new MetadataField()
+                                .id(metadataFieldPojo.getId())
+                                .name(metadataFieldPojo.getName())
+                                .origin(MetadataFieldOrigin
+                                    .fromValue(metadataFieldPojo.getOrigin()))
+                                .type(MetadataFieldType.valueOf(metadataFieldPojo.getType()))
+                            )
+                            .value(mfv.getValue());
+                    })
                     .collect(Collectors.toList());
 
                 entityRepository.recalculateSearchEntrypoints(dataEntityId);
@@ -252,10 +281,10 @@ public class DataEntityServiceImpl
                                                              final long metadataFieldId,
                                                              final MetadataFieldValueUpdateFormData formData) {
         return Mono.just(new MetadataFieldValuePojo()
-            .setDataEntityId(dataEntityId)
-            .setMetadataFieldId(metadataFieldId)
-            .setActive(true)
-            .setValue(formData.getValue()))
+                .setDataEntityId(dataEntityId)
+                .setMetadataFieldId(metadataFieldId)
+                .setActive(true)
+                .setValue(formData.getValue()))
             .flatMap(pojo -> {
                 final Optional<MetadataFieldPojo> metadataFieldPojo = metadataFieldRepository.get(metadataFieldId);
                 if (metadataFieldPojo.isEmpty()) {
@@ -273,9 +302,11 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<DataEntityLineage> getLineage(final long dataEntityId, final int lineageDepth) {
+    public Mono<DataEntityLineage> getLineage(final long dataEntityId,
+                                              final int lineageDepth,
+                                              final LineageStreamKind lineageStreamKind) {
         return Mono
-            .fromCallable(() -> entityRepository.getLineage(dataEntityId, lineageDepth))
+            .fromCallable(() -> entityRepository.getLineage(dataEntityId, lineageDepth, lineageStreamKind))
             .flatMap(optional -> optional.isEmpty()
                 ? Mono.error(new NotFoundException())
                 : Mono.just(optional.get()))

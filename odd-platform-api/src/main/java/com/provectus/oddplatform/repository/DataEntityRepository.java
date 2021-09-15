@@ -5,11 +5,10 @@ import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
 import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityLineageDto;
 import com.provectus.oddplatform.dto.FacetStateDto;
+import com.provectus.oddplatform.dto.LineageStreamKind;
 import com.provectus.oddplatform.dto.SearchFilterId;
-import com.provectus.oddplatform.dto.StreamKind;
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.utils.Page;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -29,13 +28,18 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId);
 
-    List<? extends DataEntityDto> listByOwner(final int page, final int size, final long ownerId, final StreamKind streamKind);
+    List<? extends DataEntityDto> listByOwner(final int page,
+                                              final int size,
+                                              final long ownerId,
+                                              final LineageStreamKind streamKind);
 
     List<? extends DataEntityDto> listPopular(final int page, final int size);
 
     Optional<DataEntityDetailsDto> getDetails(final long id);
 
-    Optional<DataEntityLineageDto> getLineage(final long dataEntityId, final int lineageDepth);
+    Optional<DataEntityLineageDto> getLineage(final long dataEntityId,
+                                              final int lineageDepth,
+                                              final LineageStreamKind streamKind);
 
     Page<DataEntityDimensionsDto> findByState(final FacetStateDto state, final int page, final int size);
 
@@ -47,6 +51,8 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     List<DataEntityDto> bulkCreate(final List<DataEntityDto> dtos);
 
     List<DataEntityDto> bulkUpdate(final List<DataEntityDto> dtos);
+
+    Optional<Long> incrementViewCount(final long id);
 
     void createHollow(final Collection<String> oddrns);
 

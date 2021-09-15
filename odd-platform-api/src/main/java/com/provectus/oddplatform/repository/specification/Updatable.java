@@ -1,9 +1,8 @@
 package com.provectus.oddplatform.repository.specification;
 
-import org.jooq.UpdatableRecord;
-
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jooq.UpdatableRecord;
 
 // TODO: abstraction lets user to understand what ids are in the system even if entities are deleted
 public interface Updatable<ID, R extends UpdatableRecord<R>, P> extends BaseTraitWithId<ID, R, P> {

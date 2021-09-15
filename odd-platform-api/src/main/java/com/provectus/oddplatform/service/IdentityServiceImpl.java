@@ -7,11 +7,10 @@ import com.provectus.oddplatform.auth.AuthIdentityProvider;
 import com.provectus.oddplatform.mapper.OwnerMapper;
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.repository.UserOwnerMappingRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

@@ -5,7 +5,6 @@ import com.provectus.oddplatform.dto.DataEntityIngestionDto;
 import com.provectus.oddplatform.dto.EnrichedDataEntityIngestionDto;
 import com.provectus.oddplatform.ingestion.contract.model.DataEntity;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
-
 import java.util.Collection;
 import java.util.List;
 
