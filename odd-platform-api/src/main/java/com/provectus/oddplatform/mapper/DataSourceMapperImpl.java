@@ -11,6 +11,7 @@ import com.provectus.oddplatform.utils.Page;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
@@ -27,7 +28,11 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setConnectionUrl(form.getConnectionUrl())
             .setPullingInterval(form.getPullingInterval());
 
-        return new DataSourceDto(dataSourcePojo, new NamespacePojo().setName(form.getNamespaceName()));
+        final NamespacePojo namespace = StringUtils.hasLength(form.getNamespaceName())
+            ? new NamespacePojo().setName(form.getNamespaceName())
+            : null;
+
+        return new DataSourceDto(dataSourcePojo, namespace);
     }
 
     @Override

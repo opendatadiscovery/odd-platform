@@ -1,6 +1,7 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.exception.EntityAlreadyExistsException;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,25 +27,26 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
     private final List<Field<String>> collisionIdentifiers;
 
     public AbstractSoftDeleteCRUDRepository(final DSLContext dslContext,
+                                            final JooqQueryHelper jooqQueryHelper,
                                             final Table<R> recordTable,
                                             final Field<Long> idField,
                                             final Field<Boolean> deletedField,
                                             final Field<String> collisionIdentifier,
                                             final Field<String> nameField,
                                             final Class<P> pojoClass) {
-        super(dslContext, recordTable, idField, nameField, pojoClass);
-        this.deletedField = deletedField;
-        this.collisionIdentifiers = List.of(collisionIdentifier);
+        this(dslContext, jooqQueryHelper, recordTable, idField, deletedField, List.of(collisionIdentifier), nameField,
+            pojoClass);
     }
 
     public AbstractSoftDeleteCRUDRepository(final DSLContext dslContext,
+                                            final JooqQueryHelper jooqQueryHelper,
                                             final Table<R> recordTable,
                                             final Field<Long> idField,
                                             final Field<Boolean> deletedField,
                                             final List<Field<String>> collisionIdentifiers,
                                             final Field<String> nameField,
                                             final Class<P> pojoClass) {
-        super(dslContext, recordTable, idField, nameField, pojoClass);
+        super(dslContext, jooqQueryHelper, recordTable, idField, nameField, pojoClass);
         this.deletedField = deletedField;
         this.collisionIdentifiers = List.copyOf(collisionIdentifiers);
     }

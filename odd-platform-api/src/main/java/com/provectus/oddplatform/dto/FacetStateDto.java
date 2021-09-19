@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 @AllArgsConstructor
 @NoArgsConstructor
 @Slf4j
-// TODO: bad for testing
 public class FacetStateDto {
     private Map<FacetType, List<SearchFilterDto>> state;
     private String query;

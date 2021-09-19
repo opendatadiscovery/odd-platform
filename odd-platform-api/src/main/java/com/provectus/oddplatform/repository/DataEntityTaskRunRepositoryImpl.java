@@ -2,6 +2,7 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import com.provectus.oddplatform.model.tables.records.DataEntityTaskRunRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,8 +21,8 @@ public class DataEntityTaskRunRepositoryImpl
     extends AbstractCRUDRepository<DataEntityTaskRunRecord, DataEntityTaskRunPojo>
     implements DataEntityTaskRunRepository {
 
-    public DataEntityTaskRunRepositoryImpl(final DSLContext dslContext) {
-        super(dslContext, DATA_ENTITY_TASK_RUN, DATA_ENTITY_TASK_RUN.ID,
+    public DataEntityTaskRunRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
+        super(dslContext, jooqQueryHelper, DATA_ENTITY_TASK_RUN, DATA_ENTITY_TASK_RUN.ID,
             DATA_ENTITY_TASK_RUN.NAME, DataEntityTaskRunPojo.class);
     }
 

@@ -6,18 +6,19 @@ import com.provectus.oddplatform.exception.NotFoundException;
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.model.tables.records.DataSourceRecord;
-import com.provectus.oddplatform.repository.util.JooqQueryUtils;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import com.provectus.oddplatform.utils.Page;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Select;
-import org.jooq.SelectConditionStep;
+import org.jooq.Table;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -28,9 +29,11 @@ import static java.util.Collections.emptyList;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class DataSourceRepositoryImpl implements DataSourceRepository {
     private final DSLContext dslContext;
     private final NamespaceRepository namespaceRepository;
+    private final JooqQueryHelper jooqQueryHelper;
 
     @Override
     public Optional<DataSourceDto> get(final long id) {
@@ -70,29 +73,33 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
 
     @Override
     public Page<DataSourceDto> list(final int page, final int size, final String query) {
-        final List<DataSourceDto> data = dslContext.select(DATA_SOURCE.asterisk())
-            .select(NAMESPACE.asterisk())
-            .from(DATA_SOURCE)
-            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+        final Select<DataSourceRecord> homogeneousQuery = dslContext
+            .selectFrom(DATA_SOURCE)
             .where(queryCondition(query))
-            .and(DATA_SOURCE.IS_DELETED.isFalse())
-            .offset((page - 1) * size)
-            .limit(size)
+            .and(DATA_SOURCE.IS_DELETED.isFalse());
+
+        final Select<? extends Record> dataSourceSelect =
+            jooqQueryHelper.paginate(homogeneousQuery, (page - 1) * size, size);
+
+        final Table<? extends Record> dataSourceCTE = dataSourceSelect.asTable("data_source_cte");
+
+        final List<Record> dataSourceRecords = dslContext.with(dataSourceCTE.getName())
+            .as(dataSourceSelect)
+            .select(dataSourceCTE.fields())
+            .from(dataSourceCTE.getName())
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(dataSourceCTE.field(DATA_SOURCE.NAMESPACE_ID)))
             .fetchStream()
-            .map(this::mapRecord)
             .collect(Collectors.toList());
 
-        return Page.<DataSourceDto>builder()
-            .data(data)
-            .total(0L)
-            .hasNext(false)
-            .build();
+        return jooqQueryHelper.pageifyResult(dataSourceRecords, this::mapRecord, () -> fetchCount(query));
     }
 
     @Override
     @Transactional
     public DataSourceDto create(final DataSourceDto dto) {
-        final NamespacePojo namespace = namespaceRepository.createIfNotExists(dto.getNamespace());
+        final NamespacePojo namespace = null != dto.getNamespace()
+            ? namespaceRepository.createIfNotExists(dto.getNamespace())
+            : null;
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(DATA_SOURCE.ODDRN.eq(dto.getDataSource().getOddrn()))
@@ -102,38 +109,22 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
                     throw new EntityAlreadyExistsException();
                 }
 
-                final DataSourceRecord record = pojoToRecord(dto.getDataSource());
-                record.set(DATA_SOURCE.IS_DELETED, false);
-                record.set(DATA_SOURCE.ID, ds.getId());
-                record.set(DATA_SOURCE.NAMESPACE_ID, namespace.getId());
-                record.store();
-
-                return new DataSourceDto(recordToPojo(record), namespace);
+                return store(ds.getId(), dto.getDataSource(), namespace);
             })
-            .orElseGet(() -> {
-                final DataSourceRecord record = pojoToRecord(dto.getDataSource());
-                record.set(DATA_SOURCE.NAMESPACE_ID, namespace.getId());
-                record.store();
-                return new DataSourceDto(recordToPojo(record), namespace);
-            });
+            .orElseGet(() -> store(dto.getDataSource(), namespace));
     }
 
     @Override
     public DataSourceDto update(final DataSourceDto dto) {
-        final NamespacePojo namespace = namespaceRepository.createIfNotExists(dto.getNamespace());
+        final NamespacePojo namespace = null != dto.getNamespace()
+            ? namespaceRepository.createIfNotExists(dto.getNamespace())
+            : null;
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(DATA_SOURCE.ID.eq(dto.getDataSource().getId()))
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchOptionalInto(DataSourcePojo.class)
-            .map(ds -> {
-                final DataSourceRecord record = pojoToRecord(dto.getDataSource());
-                record.set(DATA_SOURCE.ID, ds.getId());
-                record.set(DATA_SOURCE.NAMESPACE_ID, namespace.getId());
-                record.store();
-
-                return new DataSourceDto(recordToPojo(record), namespace);
-            })
+            .map(ds -> store(ds.getId(), dto.getDataSource(), namespace))
             .orElseThrow(() -> {
                 throw new NotFoundException();
             });
@@ -201,6 +192,35 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
                 .where(DATA_SOURCE.NAMESPACE_ID.eq(namespaceId))
                 .and(DATA_SOURCE.IS_DELETED.isFalse())
         );
+    }
+
+    private DataSourceDto store(final DataSourcePojo dataSource, final NamespacePojo namespace) {
+        return store(null, dataSource, namespace);
+    }
+
+    private DataSourceDto store(final Long dsId, final DataSourcePojo dataSource, final NamespacePojo namespace) {
+        final DataSourceRecord record = pojoToRecord(dataSource);
+
+        record.set(DATA_SOURCE.IS_DELETED, false);
+
+        if (null != dsId) {
+            record.set(DATA_SOURCE.ID, dsId);
+        }
+
+        if (null != namespace) {
+            record.set(DATA_SOURCE.NAMESPACE_ID, namespace.getId());
+        }
+
+        record.store();
+
+        return new DataSourceDto(recordToPojo(record), namespace);
+    }
+
+    private Long fetchCount(final String query) {
+        return dslContext.selectCount()
+            .from(DATA_SOURCE)
+            .where(queryCondition(query))
+            .fetchOneInto(Long.class);
     }
 
     private List<Condition> queryCondition(final String query) {
