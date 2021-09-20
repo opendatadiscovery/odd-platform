@@ -8,7 +8,7 @@
 [![Apache2](https://img.shields.io/badge/license-Apache2-green.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
 [![Maintenance](https://img.shields.io/maintenance/yes/2021?style=for-the-badge)]()
 [![GitHub contributors](https://img.shields.io/github/contributors/opendatadiscovery/odd-platform?style=for-the-badge)](https://github.com/opendatadiscovery/odd-platform/graphs/contributors)
-[![Slack](https://img.shields.io/badge/chat-on_slack-purple.svg?style=for-the-badge&logo=slack)](https://join.slack.com/t/opendatadiscovery/shared_invite/zt-tgdhil90-1kcAuGBo9psX3CJbSsUJ4g)
+[![Slack](https://img.shields.io/badge/chat-on_slack-purple.svg?style=for-the-badge&logo=slack)](https://join.slack.com/t/opendatadiscovery/shared_invite/zt-vzcxeu3p-01Iyevf63btjv8nUiwYwRw)
 [![GitHub issues by-label](https://img.shields.io/github/issues/opendatadiscovery/odd-platform/good%20first%20issue?style=for-the-badge)](https://github.com/opendatadiscovery/odd-platform/contribute)
 
 <br>
