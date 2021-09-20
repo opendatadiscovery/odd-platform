@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import static com.provectus.oddplatform.model.Tables.TAG;
 import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
+import static org.jooq.impl.DSL.count;
 
 @Repository
 public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecord, TagPojo> implements TagRepository {
@@ -36,6 +37,20 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .from(TAG_TO_DATA_ENTITY)
             .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
             .where(addSoftDeleteFilter(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId)))
+            .fetchStreamInto(pojoClass)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TagPojo> listMostPopular(String query, final int page, final int size) {
+        return dslContext
+            .select(TAG.ID, count(TAG.ID).cast(Long.class))
+            .from(TAG_TO_DATA_ENTITY)
+            .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .where(TAG.NAME.like(query))
+            .groupBy(TAG.ID)
+            .offset((page - 1) * size)
+            .limit(size)
             .fetchStreamInto(pojoClass)
             .collect(Collectors.toList());
     }

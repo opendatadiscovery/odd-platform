@@ -4,9 +4,10 @@ import com.provectus.oddplatform.api.contract.api.TagApi;
 import com.provectus.oddplatform.api.contract.model.Tag;
 import com.provectus.oddplatform.api.contract.model.TagFormData;
 import com.provectus.oddplatform.api.contract.model.TagsResponse;
+import com.provectus.oddplatform.mapper.TagMapper;
 import com.provectus.oddplatform.service.TagService;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -19,8 +20,13 @@ public class TagController
     extends AbstractCRUDController<Tag, TagsResponse, TagFormData, TagFormData, TagService>
     implements TagApi {
 
-    public TagController(final TagService entityService) {
-        super(entityService);
+    private final TagService tagService;
+    private final TagMapper tagMapper;
+
+    public TagController(final TagService tagService, final TagMapper tagMapper) {
+        super(tagService);
+        this.tagService = tagService;
+        this.tagMapper = tagMapper;
     }
 
     @Override
@@ -46,7 +52,10 @@ public class TagController
         @Valid final String query,
         final ServerWebExchange exchange
     ) {
-        return list(page, size, query);
+        return tagService.listMostPopular(query, page, size)
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
+
     }
 
     @Override
