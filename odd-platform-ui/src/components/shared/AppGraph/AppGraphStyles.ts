@@ -9,6 +9,10 @@ export const styles = (theme: Theme) =>
       fontSize: '0.6rem',
       position: 'relative',
     },
+    layer: {
+      width: '100%',
+      height: '100vh',
+    },
     actionsContainer: {
       position: 'absolute',
       top: 0,
