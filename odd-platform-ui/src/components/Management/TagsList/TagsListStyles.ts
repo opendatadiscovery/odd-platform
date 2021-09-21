@@ -1,7 +1,6 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       display: 'flex',
@@ -36,7 +35,7 @@ export const styles = (theme: ODDTheme) =>
       flexWrap: 'wrap',
     },
     totalCountText: {
-      color: theme.palette.text.info,
+      color: theme.palette.texts.info,
     },
     searchInput: {
       minWidth: '340px',

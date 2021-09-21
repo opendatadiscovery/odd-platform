@@ -1,8 +1,7 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const primaryTabsHeight = 32;
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       '&.primary': { marginBottom: theme.spacing(3) },
@@ -24,14 +23,14 @@ export const styles = (theme: ODDTheme) =>
       },
       '&.secondary': {
         minHeight: '24px',
-        backgroundColor: theme.palette.background.secondary,
+        backgroundColor: theme.palette.backgrounds.secondary,
         padding: theme.spacing(0.5),
         borderRadius: theme.spacing(1),
       },
       '&.secondarySmall': {
         minHeight: '24px',
         height: '24px',
-        backgroundColor: theme.palette.background.secondary,
+        backgroundColor: theme.palette.backgrounds.secondary,
         borderRadius: theme.spacing(2),
       },
       '&.menu': {
@@ -48,11 +47,11 @@ export const styles = (theme: ODDTheme) =>
         display: 'block',
         height: '1px',
         borderRadius: '1px',
-        backgroundColor: theme.palette.button?.secondary.hover.background,
+        backgroundColor: theme.palette.button.secondary.hover.background,
       },
     },
     tabItem: {
-      color: theme.palette.text.secondary,
+      color: theme.palette.texts.secondary,
       fontSize: theme.typography.body1.fontSize,
       textTransform: 'none',
       '&.primary': {
@@ -66,7 +65,7 @@ export const styles = (theme: ODDTheme) =>
           display: 'none',
         },
         '&:hover': {
-          color: theme.palette.text.info,
+          color: theme.palette.texts.info,
           borderColor: theme.palette.button?.secondary.hover.background,
         },
       },
@@ -74,12 +73,12 @@ export const styles = (theme: ODDTheme) =>
         minHeight: '24px',
         minWidth: '91px',
         padding: theme.spacing(0.25),
-        '&:hover': { color: theme.palette.text.primary },
+        '&:hover': { color: theme.palette.texts.primary },
       },
       '&.secondarySmall': {
         minHeight: '24px',
         minWidth: '44px',
-        '&:hover': { color: theme.palette.text.info },
+        '&:hover': { color: theme.palette.texts.primary },
       },
       '&.menu': {
         minWidth: '65px',
@@ -87,8 +86,8 @@ export const styles = (theme: ODDTheme) =>
         borderRadius: '4px',
         minHeight: '32px',
         '&:hover': {
-          color: theme.palette.text.secondary,
-          backgroundColor: theme.palette.background.primary,
+          color: theme.palette.texts.secondary,
+          backgroundColor: theme.palette.backgrounds.primary,
         },
         '&.vertical': { marginBottom: theme.spacing(0.5) },
         '&:not(.vertical)': { marginRight: theme.spacing(0.5) },
@@ -104,17 +103,17 @@ export const styles = (theme: ODDTheme) =>
         alignSelf: 'center',
         marginLeft: '4px',
         verticalAlign: 'middle',
-        backgroundColor: theme.palette.background.primary,
+        backgroundColor: theme.palette.backgrounds.primary,
         padding: '0 4px',
         borderRadius: '4px',
         fontSize: '11px',
         fontWeight: '500',
         lineHeight: '16px',
-        color: theme.palette.text.secondary,
+        color: theme.palette.texts.secondary,
       },
     },
     tabItemSelected: {
-      color: theme.palette.text.primary,
+      color: theme.palette.texts.primary,
       '&.primary': {},
       '&.secondary': {
         height: '24px',
@@ -122,7 +121,7 @@ export const styles = (theme: ODDTheme) =>
         borderRadius: theme.spacing(0.5),
       },
       '&.secondarySmall': {
-        color: theme.palette.text.info,
+        color: theme.palette.texts.info,
         height: '24px',
         backgroundColor: theme.palette.background.default,
         border: '1px solid',
@@ -130,8 +129,8 @@ export const styles = (theme: ODDTheme) =>
         borderRadius: theme.spacing(2),
       },
       '&.menu': {
-        color: theme.palette.text.primary,
-        backgroundColor: theme.palette.background.secondary,
+        color: theme.palette.texts.primary,
+        backgroundColor: theme.palette.backgrounds.secondary,
       },
     },
     hintContainer: {

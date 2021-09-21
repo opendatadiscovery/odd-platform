@@ -1,8 +1,7 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { columnBasicStyles } from '../DatasetStructureTableStyles';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       position: 'relative',
@@ -10,13 +9,13 @@ export const styles = (theme: ODDTheme) =>
     rowInfo: {
       minHeight: '41px',
       borderBottom: '1px solid',
-      borderBottomColor: theme.palette.background.primary,
+      borderBottomColor: theme.palette.backgrounds.primary,
       '& > *': {
         padding: theme.spacing(0.5, 0),
         alignItems: 'center',
       },
       '&:hover': {
-        backgroundColor: theme.palette.background.primary,
+        backgroundColor: theme.palette.backgrounds.primary,
         '& $optionsBtn': {
           opacity: 1,
         },
@@ -38,7 +37,7 @@ export const styles = (theme: ODDTheme) =>
       },
     },
     collapseBtnOpen: {
-      backgroundColor: theme.palette.background.darken,
+      backgroundColor: theme.palette.backgrounds.darken,
     },
     treeDividerContainer: {
       width: '14px',
@@ -71,10 +70,10 @@ export const styles = (theme: ODDTheme) =>
       color: theme.palette.text.secondary,
     },
     internalDescription: {
-      color: theme.palette.text.info,
+      color: theme.palette.texts.info,
     },
     childKeys: {
-      color: theme.palette.text.info,
+      color: theme.palette.texts.info,
       display: 'flex',
       alignItems: 'center',
     },

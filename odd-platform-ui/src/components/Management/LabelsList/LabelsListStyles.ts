@@ -1,7 +1,6 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       display: 'flex',
@@ -18,7 +17,7 @@ export const styles = (theme: ODDTheme) =>
         padding: theme.spacing(0, 1),
       },
     },
-    rowName: { color: theme.palette.text.hint },
+    rowName: { color: theme.palette.texts.hint },
     caption: {
       marginBottom: theme.spacing(2),
       display: 'flex',
@@ -28,7 +27,7 @@ export const styles = (theme: ODDTheme) =>
     },
     labelsItem: { display: 'flex', flexWrap: 'wrap' },
     totalCountText: {
-      color: theme.palette.text.info,
+      color: theme.palette.texts.info,
     },
     searchInput: {
       minWidth: '340px',

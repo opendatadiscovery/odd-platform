@@ -1,7 +1,6 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {},
     caption: {
@@ -22,7 +21,7 @@ export const styles = (theme: ODDTheme) =>
       backgroundColor: theme.palette.warning.light,
       borderRadius: '2px',
     },
-    filterCount: { color: theme.palette.text.hint },
+    filterCount: { color: theme.palette.texts.hint },
     autoComplete: {
       width: '192px',
     },

@@ -1,7 +1,6 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {},
     addOwnerBtn: {
@@ -32,7 +31,7 @@ export const styles = (theme: ODDTheme) =>
     },
     ownerRole: {
       color: theme.palette.text.secondary,
-      backgroundColor: theme.palette.background.secondary,
+      backgroundColor: theme.palette.backgrounds.secondary,
       padding: theme.spacing(0, 0.25),
       marginLeft: theme.spacing(0.5),
       marginRight: theme.spacing(0.25),

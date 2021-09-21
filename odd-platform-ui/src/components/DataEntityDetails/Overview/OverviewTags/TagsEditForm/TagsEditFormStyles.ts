@@ -1,7 +1,6 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {},
     annotation: {
@@ -13,7 +12,7 @@ export const styles = (theme: ODDTheme) =>
     },
     tagItem: { margin: theme.spacing(0.5, 0.5, 0.5, 0) },
     tagItemImportant: {
-      backgroundColor: theme.palette.tag?.important.normal.background,
+      backgroundColor: theme.palette.tag.important.normal.background,
     },
     tagInput: {},
     optionsContainer: {
@@ -29,7 +28,7 @@ export const styles = (theme: ODDTheme) =>
         width: '4px',
         height: '4px',
         borderRadius: '50%',
-        backgroundColor: theme.palette.tag?.important.hover.background,
+        backgroundColor: theme.palette.tag.important.hover.background,
       },
     },
   });

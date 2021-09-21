@@ -1,7 +1,6 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       flexWrap: 'nowrap',
@@ -9,7 +8,7 @@ export const styles = (theme: ODDTheme) =>
       borderBottom: '1px solid',
       borderBottomColor: theme.palette.divider,
       '&:hover': {
-        backgroundColor: theme.palette.background.primary,
+        backgroundColor: theme.palette.backgrounds.primary,
       },
       '&:hover $actionsContainer': {
         visibility: 'visible',

@@ -1,8 +1,7 @@
-import { createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       display: 'inline-flex',
@@ -13,19 +12,19 @@ export const styles = (theme: ODDTheme) =>
       lineHeight: theme.typography.body2.lineHeight,
       color: theme.palette.text.primary,
       [`&.${DataEntityTypeNameEnum.SET}`]: {
-        backgroundColor: theme.palette.entityType?.SET,
+        backgroundColor: theme.palette.entityType.SET,
       },
       [`&.${DataEntityTypeNameEnum.TRANSFORMER}`]: {
-        backgroundColor: theme.palette.entityType?.TRANSFORMER,
+        backgroundColor: theme.palette.entityType.TRANSFORMER,
       },
       [`&.${DataEntityTypeNameEnum.CONSUMER}`]: {
-        backgroundColor: theme.palette.entityType?.CONSUMER,
+        backgroundColor: theme.palette.entityType.CONSUMER,
       },
       [`&.${DataEntityTypeNameEnum.INPUT}`]: {
-        backgroundColor: theme.palette.entityType?.INPUT,
+        backgroundColor: theme.palette.entityType.INPUT,
       },
       [`&.${DataEntityTypeNameEnum.QUALITY_TEST}`]: {
-        backgroundColor: theme.palette.entityType?.QUALITY_TEST,
+        backgroundColor: theme.palette.entityType.QUALITY_TEST,
       },
     },
     containerSmall: {

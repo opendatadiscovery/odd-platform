@@ -1,8 +1,7 @@
-import { createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { primaryTabsHeight } from 'components/shared/AppTabs/AppTabsStyles';
 import { searchHeight } from 'components/shared/MainSearch/MainSearchStyles';
 import { toolbarHeight } from 'lib/constants';
-import { ODDTheme } from 'theme/interfaces';
 
 const tabsContainerMargin = 16;
 export const colWidthStyles = {
@@ -29,7 +28,7 @@ export const colWidthStyles = {
     },
   },
 };
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       marginTop: theme.spacing(2),

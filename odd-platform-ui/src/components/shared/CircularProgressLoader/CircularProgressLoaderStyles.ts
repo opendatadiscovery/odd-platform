@@ -1,11 +1,10 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       padding: theme.spacing(0.75, 1),
-      backgroundColor: theme.palette.entityType?.CONSUMER,
+      backgroundColor: theme.palette.entityType.CONSUMER,
       borderRadius: theme.spacing(2),
       justifyContent: 'space-between',
       flexWrap: 'nowrap',
@@ -22,7 +21,7 @@ export const styles = (theme: ODDTheme) =>
       whiteSpace: 'nowrap',
     },
     circularProgress: {
-      color: theme.palette.button?.primaryLight.normal.color,
+      color: theme.palette.button.primaryLight.normal.color,
     },
   });
 

@@ -1,27 +1,26 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       display: 'inline-flex',
       alignItems: 'center',
       border: '1px solid',
-      borderColor: theme.palette.tag?.main.normal.border,
+      borderColor: theme.palette.tag.main.normal.border,
       borderRadius: '4px',
       padding: theme.spacing(0.25, 1),
-      color: theme.palette.tag?.main.normal.color,
+      color: theme.palette.tag.main.normal.color,
       '&:hover': {
-        borderColor: theme.palette.tag?.main.hover.border,
+        borderColor: theme.palette.tag.main.hover.border,
       },
       '&:active': {
-        borderColor: theme.palette.tag?.main.active.border,
+        borderColor: theme.palette.tag.main.active.border,
       },
     },
     important: {
-      borderColor: theme.palette.tag?.important.normal.border,
+      borderColor: theme.palette.tag.important.normal.border,
       '&:hover, &:active': {
-        borderColor: theme.palette.tag?.important.hover.border,
+        borderColor: theme.palette.tag.important.hover.border,
       },
     },
     containerRemovable: {

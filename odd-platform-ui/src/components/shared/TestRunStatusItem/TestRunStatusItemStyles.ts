@@ -1,8 +1,7 @@
-import { createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
-import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       display: 'inline-flex',
@@ -22,28 +21,28 @@ export const styles = (theme: ODDTheme) =>
       borderStyle: 'solid',
       padding: theme.spacing(0.25, 1),
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        backgroundColor: theme.palette.reportStatus?.success.background,
-        borderColor: theme.palette.reportStatus?.success.border,
+        backgroundColor: theme.palette.reportStatus.success.background,
+        borderColor: theme.palette.reportStatus.success.border,
       },
       [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        backgroundColor: theme.palette.reportStatus?.failed.background,
-        borderColor: theme.palette.reportStatus?.failed.border,
+        backgroundColor: theme.palette.reportStatus.failed.background,
+        borderColor: theme.palette.reportStatus.failed.border,
       },
       [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        backgroundColor: theme.palette.reportStatus?.broken.background,
-        borderColor: theme.palette.reportStatus?.broken.border,
+        backgroundColor: theme.palette.reportStatus.broken.background,
+        borderColor: theme.palette.reportStatus.broken.border,
       },
       [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        backgroundColor: theme.palette.reportStatus?.skipped.background,
-        borderColor: theme.palette.reportStatus?.skipped.border,
+        backgroundColor: theme.palette.reportStatus.skipped.background,
+        borderColor: theme.palette.reportStatus.skipped.border,
       },
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        backgroundColor: theme.palette.reportStatus?.aborted.background,
-        borderColor: theme.palette.reportStatus?.aborted.border,
+        backgroundColor: theme.palette.reportStatus.aborted.background,
+        borderColor: theme.palette.reportStatus.aborted.border,
       },
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        backgroundColor: theme.palette.reportStatus?.unknown.background,
-        borderColor: theme.palette.reportStatus?.unknown.border,
+        backgroundColor: theme.palette.reportStatus.unknown.background,
+        borderColor: theme.palette.reportStatus.unknown.border,
       },
     },
   });

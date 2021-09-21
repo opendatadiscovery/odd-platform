@@ -1,8 +1,7 @@
-import { createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { colWidthStyles } from 'components/Search/Results/ResultsStyles';
-import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       borderBottom: '1px solid',
@@ -12,7 +11,7 @@ export const styles = (theme: ODDTheme) =>
       cursor: 'pointer',
       alignItems: 'center',
       '&:hover': {
-        backgroundColor: theme.palette.background.primary,
+        backgroundColor: theme.palette.backgrounds.primary,
       },
     },
     itemLink: {

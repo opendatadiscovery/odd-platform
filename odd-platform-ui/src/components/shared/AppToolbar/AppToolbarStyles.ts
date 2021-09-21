@@ -1,12 +1,11 @@
-import { createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import {
   maxContentWidth,
   maxSidebarWidth,
   toolbarHeight,
 } from 'lib/constants';
-import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       minHeight: `${toolbarHeight}px`,
@@ -59,7 +58,7 @@ export const styles = (theme: ODDTheme) =>
       backgroundColor: theme.palette.common.white,
     },
     darkBg: {
-      backgroundColor: theme.palette.background.darken,
+      backgroundColor: theme.palette.backgrounds.darken,
     },
     sectionDesktop: {
       justifyContent: 'flex-end',
@@ -96,7 +95,7 @@ export const styles = (theme: ODDTheme) =>
     },
     menuItem: {
       padding: theme.spacing(0.75, 1),
-      '&:hover': { backgroundColor: '#F4F5F7' },
+      '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
     },
   });
 

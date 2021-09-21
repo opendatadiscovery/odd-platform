@@ -1,10 +1,4 @@
-import {
-  Palette,
-  PaletteOptions,
-  TypeBackground,
-} from '@material-ui/core/styles/createPalette';
-import { Theme } from '@material-ui/core';
-import { ThemeOptions } from '@material-ui/core/styles';
+import { TypeBackground } from '@material-ui/core/styles/createPalette';
 
 // palette interfaces
 interface ItemColors {
@@ -91,35 +85,27 @@ interface AlertType {
   resolved: ItemColors;
 }
 
-export interface ODDPalette extends Omit<Palette, 'text' | 'background'> {
-  entityType?: EntityType;
-  reportStatus?: ReportStatus;
-  runStatus?: RunStatus;
-  button?: ButtonType;
-  tag?: TagType;
-  structureLabel?: StructureLabelType;
-  alert?: AlertType;
-  text: Partial<TextType>;
-  background: Partial<BackgroundType>;
-}
-
-export interface ODDPaletteOptions
-  extends Omit<PaletteOptions, 'divider'> {
-  entityType: EntityType;
-  reportStatus: ReportStatus;
-  runStatus: RunStatus;
-  button: ButtonType;
-  tag: TagType;
-  structureLabel: StructureLabelType;
-  alert: AlertType;
-  text: TextType;
-  background: Partial<BackgroundType>;
-}
-
-// theme interfaces
-export interface ODDTheme extends Omit<Theme, 'palette'> {
-  palette: ODDPalette;
-}
-export interface ODDThemeOptions extends Omit<ThemeOptions, 'palette'> {
-  palette: ODDPaletteOptions;
+declare module '@material-ui/core/styles/createPalette' {
+  interface Palette {
+    entityType: EntityType;
+    reportStatus: ReportStatus;
+    runStatus: RunStatus;
+    button: ButtonType;
+    tag: TagType;
+    structureLabel: StructureLabelType;
+    alert: AlertType;
+    backgrounds: Partial<BackgroundType>;
+    texts: TextType;
+  }
+  interface PaletteOptions {
+    entityType?: EntityType;
+    reportStatus?: ReportStatus;
+    runStatus?: RunStatus;
+    button?: ButtonType;
+    tag?: TagType;
+    structureLabel?: StructureLabelType;
+    alert?: AlertType;
+    backgrounds?: Partial<BackgroundType>;
+    texts?: TextType;
+  }
 }

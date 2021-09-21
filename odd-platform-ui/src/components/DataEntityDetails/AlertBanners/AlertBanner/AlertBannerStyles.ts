@@ -1,14 +1,13 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, WithStyles, Theme } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
       flexWrap: 'nowrap',
-      backgroundColor: theme.palette.runStatus?.failed,
+      backgroundColor: theme.palette.runStatus.failed,
       borderRadius: '2px',
       padding: theme.spacing(0.5, 1),
       boxShadow: theme.shadows[1],

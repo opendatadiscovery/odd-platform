@@ -1,7 +1,6 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {},
     content: {
@@ -9,8 +8,8 @@ export const styles = (theme: ODDTheme) =>
       cursor: 'pointer',
       fontSize: theme.typography.body1.fontSize,
       maxWidth: '100%',
-      color: theme.palette.text.info,
-      backgroundColor: theme.palette.background.primary,
+      color: theme.palette.texts.info,
+      backgroundColor: theme.palette.backgrounds.primary,
       borderRadius: '2px',
       padding: theme.spacing(0, 0.75, 0, 0.5),
       alignItems: 'center',

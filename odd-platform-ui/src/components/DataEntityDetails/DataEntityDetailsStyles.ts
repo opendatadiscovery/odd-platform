@@ -1,11 +1,10 @@
-import { createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import {
   maxContentWidthWithoutSidebar,
   toolbarHeight,
 } from 'lib/constants';
-import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       margin: '0 auto',
@@ -45,9 +44,9 @@ export const styles = (theme: ODDTheme) =>
     originalLabel: {
       marginRight: '4px',
       padding: '0 2px',
-      backgroundColor: theme.palette.background.secondary,
+      backgroundColor: theme.palette.backgrounds.secondary,
       borderRadius: '2px',
-      color: theme.palette.text.info,
+      color: theme.palette.texts.info,
     },
     tabsContainer: {
       marginBottom: theme.spacing(2),

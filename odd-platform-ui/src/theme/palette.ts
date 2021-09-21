@@ -1,5 +1,4 @@
 import createPalette from '@material-ui/core/styles/createPalette';
-import { ODDPaletteOptions } from 'theme/interfaces';
 
 const colors = {
   black: '#000000',
@@ -63,17 +62,17 @@ const colors = {
 
 export const palette = createPalette({
   common: { black: colors.black, white: colors.white },
-  warning: {
-    main: colors.red50,
-    light: colors.orange10,
-  },
-  text: {
+  texts: {
     primary: colors.black90,
     secondary: colors.black50,
     hint: colors.black30,
     info: colors.black70,
   },
-  background: {
+  warning: {
+    main: colors.red50,
+    light: colors.orange10,
+  },
+  backgrounds: {
     primary: colors.black5,
     secondary: colors.black10,
     darken: colors.black90,
@@ -191,4 +190,5 @@ export const palette = createPalette({
     open: { background: colors.red10, border: colors.red20 },
     resolved: { background: colors.blue10, border: colors.blue20 },
   },
-} as ODDPaletteOptions);
+  background: { default: colors.white },
+});

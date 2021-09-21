@@ -1,7 +1,6 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       justifyContent: 'space-between',
@@ -9,9 +8,9 @@ export const styles = (theme: ODDTheme) =>
       alignItems: 'center',
       padding: theme.spacing(1.5, 1, 1.5, 1),
       borderBottom: '1px solid',
-      borderBottomColor: theme.palette.background.secondary,
+      borderBottomColor: theme.palette.backgrounds.secondary,
       '&:hover': {
-        backgroundColor: theme.palette.background.primary,
+        backgroundColor: theme.palette.backgrounds.primary,
       },
       '&:hover $actionsContainer': {
         visibility: 'visible',

@@ -1,9 +1,8 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 const maxContentWidth = '320px';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       marginTop: theme.spacing(4),
@@ -37,14 +36,14 @@ export const styles = (theme: ODDTheme) =>
       padding: theme.spacing(0.25),
       marginTop: theme.spacing(0.75),
       '&:hover': {
-        backgroundColor: theme.palette.background.primary,
+        backgroundColor: theme.palette.backgrounds.primary,
         borderRadius: '4px',
         '& > *': {
           color: theme.palette.text.primary,
         },
       },
       '&:active': {
-        backgroundColor: theme.palette.background.secondary,
+        backgroundColor: theme.palette.backgrounds.secondary,
       },
     },
   });

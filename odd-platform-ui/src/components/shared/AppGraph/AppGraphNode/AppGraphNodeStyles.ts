@@ -1,8 +1,7 @@
-import { createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { ODDTheme } from 'theme/interfaces';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       cursor: 'pointer',
@@ -14,7 +13,7 @@ export const styles = (theme: ODDTheme) =>
       },
     },
     rootNodeRect: {
-      stroke: theme.palette.button?.primary.normal.border,
+      stroke: theme.palette.button.primary.normal.border,
       strokeWidth: 1,
     },
     title: {
@@ -40,19 +39,19 @@ export const styles = (theme: ODDTheme) =>
     },
     type: {
       [`&.${DataEntityTypeNameEnum.SET}`]: {
-        fill: theme.palette.entityType?.SET,
+        fill: theme.palette.entityType.SET,
       },
       [`&.${DataEntityTypeNameEnum.TRANSFORMER}`]: {
-        fill: theme.palette.entityType?.TRANSFORMER,
+        fill: theme.palette.entityType.TRANSFORMER,
       },
       [`&.${DataEntityTypeNameEnum.CONSUMER}`]: {
-        fill: theme.palette.entityType?.CONSUMER,
+        fill: theme.palette.entityType.CONSUMER,
       },
       [`&.${DataEntityTypeNameEnum.INPUT}`]: {
-        fill: theme.palette.entityType?.INPUT,
+        fill: theme.palette.entityType.INPUT,
       },
       [`&.${DataEntityTypeNameEnum.QUALITY_TEST}`]: {
-        fill: theme.palette.entityType?.QUALITY_TEST,
+        fill: theme.palette.entityType.QUALITY_TEST,
       },
     },
     typeLabel: {
@@ -62,17 +61,21 @@ export const styles = (theme: ODDTheme) =>
     },
     button: {
       cursor: 'pointer',
-      fill: '#E5F2FF',
-      '&:hover': { fill: '#CCE6FF' },
-      '&:active': { fill: '#99CCFF' },
+      fill: theme.palette.button.primaryLight.normal.background,
+      '&:hover': {
+        fill: theme.palette.button.primaryLight.hover.background,
+      },
+      '&:active': {
+        fill: theme.palette.button.primaryLight.active.background,
+      },
     },
     loadMoreSpinnerBack: {
-      stroke: '#fff',
+      stroke: theme.palette.common.white,
       fill: 'transparent',
     },
     loadMoreSpinner: {
       fill: 'transparent',
-      stroke: '#0066CC',
+      stroke: theme.palette.button.primaryLight.normal.color,
     },
   });
 

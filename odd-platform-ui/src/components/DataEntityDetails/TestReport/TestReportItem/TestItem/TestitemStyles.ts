@@ -1,7 +1,6 @@
-import { createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       flexWrap: 'nowrap',
@@ -9,11 +8,11 @@ export const styles = (theme: ODDTheme) =>
       alignItems: 'center',
       borderRadius: '4px',
       '&:hover:not($active)': {
-        backgroundColor: theme.palette.background.primary,
+        backgroundColor: theme.palette.backgrounds.primary,
       },
     },
     active: {
-      backgroundColor: theme.palette.background.secondary,
+      backgroundColor: theme.palette.backgrounds.secondary,
     },
     expectationItem: { marginRight: theme.spacing(0.5) },
   });

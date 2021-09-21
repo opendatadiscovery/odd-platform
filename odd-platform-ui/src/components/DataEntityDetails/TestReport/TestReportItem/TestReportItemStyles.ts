@@ -1,7 +1,6 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
-import { ODDTheme } from 'theme/interfaces';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
-export const styles = (theme: ODDTheme) =>
+export const styles = (theme: Theme) =>
   createStyles({
     container: {
       justifyContent: 'space-between',
@@ -35,7 +34,7 @@ export const styles = (theme: ODDTheme) =>
       },
     },
     collapseBtnOpen: {
-      backgroundColor: theme.palette.background.darken,
+      backgroundColor: theme.palette.backgrounds.darken,
     },
     testReportBySuitNameContainer: {
       flexWrap: 'nowrap',
