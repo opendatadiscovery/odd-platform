@@ -27,9 +27,7 @@ public class IngestionController implements IngestionApi {
         return dataEntityList
             .publishOn(Schedulers.boundedElastic())
             .doOnError(t -> log.error(t.getMessage()))
-            .map(list -> {
-                ingestionService.ingest(list);
-                return ResponseEntity.ok().build();
-            });
+            .flatMap(ingestionService::ingest)
+            .map(voidMono -> ResponseEntity.ok().build());
     }
 }

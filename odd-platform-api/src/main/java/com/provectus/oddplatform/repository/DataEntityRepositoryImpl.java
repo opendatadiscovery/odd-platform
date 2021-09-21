@@ -665,14 +665,9 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public void calculateSearchEntrypoints(final Collection<Long> newDataEntitiesIds,
-                                           final Collection<Long> updatedDataEntitiesIds) {
-        final List<Long> allEntitiesIds = Stream
-            .concat(updatedDataEntitiesIds.stream(), newDataEntitiesIds.stream())
-            .collect(Collectors.toList());
-
+    public void calculateSearchEntrypoints(final Collection<Long> dataEntityIds) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
-            .cteSelectConditions(singletonList(DATA_ENTITY.ID.in(allEntitiesIds)))
+            .cteSelectConditions(singletonList(DATA_ENTITY.ID.in(dataEntityIds)))
             .includeDetails(true)
             .build();
 
@@ -685,12 +680,12 @@ public class DataEntityRepositoryImpl
 
         final Set<Long> seSet = dslContext.select(SEARCH_ENTRYPOINT.DATA_ENTITY_ID)
             .from(SEARCH_ENTRYPOINT)
-            .where(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.in(allEntitiesIds))
+            .where(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.in(dataEntityIds))
             .fetchStream()
             .map(Record1::component1)
             .collect(Collectors.toSet());
 
-        dslContext.batchUpdate(allEntitiesIds
+        dslContext.batchUpdate(dataEntityIds
             .stream()
             .filter(seSet::contains)
             .map(dataMap::get)
@@ -700,7 +695,7 @@ public class DataEntityRepositoryImpl
                 .setDataEntityVector(vectorizer.toTsVector(dataMap.get(dto.getDataEntity().getId()))))
             .collect(Collectors.toList())).execute();
 
-        dslContext.batchInsert(allEntitiesIds
+        dslContext.batchInsert(dataEntityIds
             .stream()
             .filter(not(seSet::contains))
             .map(dataMap::get)
@@ -765,7 +760,7 @@ public class DataEntityRepositoryImpl
             .join(TYPE_ENTITY_RELATION).on(deCte.field(DATA_ENTITY.ID).eq(TYPE_ENTITY_RELATION.DATA_ENTITY_ID))
             .join(DATA_ENTITY_TYPE).on(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(DATA_ENTITY_TYPE.ID))
             .join(DATA_ENTITY_SUBTYPE).on(deCte.field(DATA_ENTITY.SUBTYPE_ID).eq(DATA_ENTITY_SUBTYPE.ID))
-            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ID.eq(deCte.field(DATA_ENTITY.ID)))
+            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .groupBy(selectFields)
             .orderBy(ftsRanking(deCte.field(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR), query))
             .fetchStream()
@@ -958,11 +953,11 @@ public class DataEntityRepositoryImpl
             .leftJoin(OWNERSHIP).on(deCte.field(DATA_ENTITY.ID).eq(OWNERSHIP.DATA_ENTITY_ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
-            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ID.eq(deCte.field(DATA_ENTITY.ID)));
+            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)));
 
         if (config.isIncludeDetails()) {
             joinStep = joinStep
-                .leftJoin(DATASET_VERSION).on(deCte.field(DATA_ENTITY.ID).eq(DATASET_VERSION.DATASET_ID))
+                .leftJoin(DATASET_VERSION).on(deCte.field(DATA_ENTITY.ODDRN).eq(DATASET_VERSION.DATASET_ODDRN))
                 .leftJoin(METADATA_FIELD_VALUE)
                 .on(deCte.field(DATA_ENTITY.ID).eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
                 .leftJoin(METADATA_FIELD).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID));
@@ -1088,7 +1083,7 @@ public class DataEntityRepositoryImpl
             .map(mfv -> {
                 final MetadataFieldPojo metadataField = metadataFields.get(mfv.getMetadataFieldId());
                 if (null == metadataField) {
-                    throw new IllegalStateException(String.format(
+                    throw new IllegalArgumentException(String.format(
                         "Corrupted metadata field value object -- no corresponding metadata field. MFV: %s",
                         mfv));
                 }
@@ -1116,13 +1111,13 @@ public class DataEntityRepositoryImpl
             .map(os -> {
                 final OwnerPojo owner = ownerDict.get(os.getOwnerId());
                 if (owner == null) {
-                    throw new IllegalStateException(
+                    throw new IllegalArgumentException(
                         String.format("There's no owner with id %s found in ownerDict", os.getOwnerId()));
                 }
 
                 final RolePojo role = roleDict.get(os.getRoleId());
                 if (role == null) {
-                    throw new IllegalStateException(
+                    throw new IllegalArgumentException(
                         String.format("There's no role with id %s found in roleDict", os.getRoleId()));
                 }
 

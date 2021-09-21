@@ -81,8 +81,7 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     void setInternalName(final long dataEntityId, final String businessName);
 
-    void calculateSearchEntrypoints(final Collection<Long> newDataEntitiesIds,
-                                    final Collection<Long> updatedDataEntitiesIds);
+    void calculateSearchEntrypoints(final Collection<Long> dataEntityIds);
 
     void recalculateSearchEntrypoints(final long dataEntityId);
 

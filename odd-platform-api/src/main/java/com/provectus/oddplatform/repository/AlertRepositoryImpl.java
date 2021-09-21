@@ -126,7 +126,7 @@ public class AlertRepositoryImpl implements AlertRepository {
     public long countByOwner(final long ownerId) {
         return dslContext.selectCount()
             .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT.DATA_ENTITY_ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .where(OWNERSHIP.OWNER_ID.eq(ownerId))
             .fetchOptionalInto(Long.class)
@@ -154,7 +154,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .select(selectFields)
             .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
             .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT.DATA_ENTITY_ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
             .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID));

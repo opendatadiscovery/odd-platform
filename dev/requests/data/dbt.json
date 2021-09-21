@@ -194,26 +194,8 @@
         "parent_oddrn": "//dbt/localhost/databases/ANALYTICS/schemas/DBT_CLAIRE",
         "field_list": [
           {
-            "oddrn": "//dbt/localhost/databases/ANALYTICS/schemas/DBT_CLAIRE/tables/MRR/columns/ID",
-            "name": "ID",
-            "owner": "TRANSFORMER",
-            "metadata": [
-              {
-                "schema_url": "https://raw.githubusercontent.com/opendatadiscovery/opendatadiscovery-specification/main/specification/extensions/dbt.json#/definitions/DbtDataSetFieldExtension",
-                "metadata": {
-                  "index": 1
-                }
-              }
-            ],
-            "type": {
-              "type": "TYPE_STRING",
-              "logical_type": "TEXT",
-              "is_nullable": true
-            }
-          },
-          {
-            "oddrn": "//dbt/localhost/databases/ANALYTICS/schemas/DBT_CLAIRE/tables/MRR/columns/DATE_MONTH",
-            "name": "DATE_MONTH",
+            "oddrn": "//dbt/localhost/databases/ANALYTICS/schemas/DBT_CLAIRE/tables/MRR/columns/asd",
+            "name": "asd",
             "owner": "TRANSFORMER",
             "metadata": [
               {

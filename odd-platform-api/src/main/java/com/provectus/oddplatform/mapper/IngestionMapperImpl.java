@@ -8,9 +8,11 @@ import com.provectus.oddplatform.dto.EnrichedDataEntityIngestionDto;
 import com.provectus.oddplatform.ingestion.contract.model.DataConsumer;
 import com.provectus.oddplatform.ingestion.contract.model.DataEntity;
 import com.provectus.oddplatform.ingestion.contract.model.DataQualityTest;
+import com.provectus.oddplatform.ingestion.contract.model.DataQualityTestRun;
 import com.provectus.oddplatform.ingestion.contract.model.DataSet;
 import com.provectus.oddplatform.ingestion.contract.model.DataSetField;
 import com.provectus.oddplatform.ingestion.contract.model.DataTransformer;
+import com.provectus.oddplatform.ingestion.contract.model.DataTransformerRun;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
@@ -59,7 +61,6 @@ public class IngestionMapperImpl implements IngestionMapper {
 
     @Override
     public DataEntityIngestionDto createIngestionDto(final DataEntity dataEntity, final long dataSourceId) {
-        // TODO: validate subtype
         final Set<DataEntityType> types = defineTypes(dataEntity);
         final DataEntitySubtype subType = DataEntitySubtype.valueOf(dataEntity.getType().toString());
 
@@ -131,7 +132,7 @@ public class IngestionMapperImpl implements IngestionMapper {
         final OffsetDateTime createdAt = dto.getCreatedAt();
         final OffsetDateTime updatedAt = dto.getUpdatedAt();
 
-        // TODO: can be stored in the DataEntityIngestionDto as well
+        // TODO: move pojo to the dto
         final DataEntitySubtypePojo subtype = dataEntityTypeRepository.findSubtypeByName(dto.getSubType().toString());
 
         return new DataEntityPojo()

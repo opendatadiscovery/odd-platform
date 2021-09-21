@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetStep;
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,7 @@ import static com.provectus.oddplatform.model.Tables.DATASET_STRUCTURE;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class DatasetStructureRepositoryImpl implements DatasetStructureRepository {
     private final DSLContext dslContext;
     private final DatasetFieldRepository datasetFieldRepository;
@@ -27,7 +29,7 @@ public class DatasetStructureRepositoryImpl implements DatasetStructureRepositor
     @Override
     @Transactional
     public List<DatasetStructurePojo> bulkCreate(final List<DatasetVersionPojo> versions,
-                                                 final Map<Long, List<DatasetFieldPojo>> datasetFields) {
+                                                 final Map<String, List<DatasetFieldPojo>> datasetFields) {
         final List<DatasetFieldPojo> fields = datasetFields.values().stream()
             .flatMap(List::stream)
             .collect(Collectors.toList());
@@ -39,7 +41,7 @@ public class DatasetStructureRepositoryImpl implements DatasetStructureRepositor
             .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, Function.identity()));
 
         final List<DatasetStructurePojo> structure = createdVersions.stream()
-            .flatMap(v -> datasetFields.get(v.getDatasetId()).stream()
+            .flatMap(v -> datasetFields.get(v.getDatasetOddrn()).stream()
                 .map(f -> createdDFMap.get(f.getOddrn()))
                 .map(DatasetFieldPojo::getId)
                 .map(dfId -> new DatasetStructurePojo().setDatasetFieldId(dfId).setDatasetVersionId(v.getId())))
