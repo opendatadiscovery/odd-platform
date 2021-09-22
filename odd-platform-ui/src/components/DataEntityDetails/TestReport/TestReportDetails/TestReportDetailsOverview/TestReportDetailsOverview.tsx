@@ -1,9 +1,10 @@
 import React from 'react';
-import { DataQualityTest } from 'generated-sources';
-import { format, formatDistanceStrict } from 'date-fns';
 import { Grid, Typography } from '@material-ui/core';
 import TestReportDetailsOverviewSkeleton from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import Tooltip from 'components/shared/Tooltip/Tooltip';
+import { format, formatDistanceStrict } from 'date-fns';
+import { DataQualityTest } from 'generated-sources';
 import { StylesType } from './TestReportDetailsOverviewStyles';
 
 interface TestReportDetailsOverviewProps extends StylesType {
@@ -85,19 +86,22 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                 value && (
                   <Grid key={key} container>
                     <Grid item xs={4} className={classes.paramName}>
-                      <Typography
-                        variant="body1"
-                        color="textSecondary"
-                        noWrap
-                        title={key}
-                      >
-                        {key}
-                      </Typography>
+                      <Tooltip tooltipContent={key} place="bottom">
+                        <Typography
+                          variant="body1"
+                          color="textSecondary"
+                          noWrap
+                        >
+                          {key}
+                        </Typography>
+                      </Tooltip>
                     </Grid>
                     <Grid item xs={8}>
-                      <Typography variant="body1" noWrap title={value}>
-                        {value}
-                      </Typography>
+                      <Tooltip tooltipContent={value} place="bottom">
+                        <Typography variant="body1" noWrap>
+                          {value}
+                        </Typography>
+                      </Tooltip>
                     </Grid>
                   </Grid>
                 )

@@ -178,6 +178,23 @@ const Results: React.FC<ResultsProps> = ({
             </Grid>
           </>
         ) : null}
+        {searchType &&
+        searchType === totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id ? (
+          <>
+            <Grid item className={cx(classes.col, classes.collg)}>
+              <Typography variant="caption">Entities</Typography>
+            </Grid>
+            <Grid item className={cx(classes.col, classes.collg)}>
+              <Typography variant="caption">Suite URL</Typography>
+            </Grid>
+          </>
+        ) : null}
+        {searchType &&
+        searchType === totals[DataEntityTypeNameEnum.CONSUMER]?.id ? (
+          <Grid item className={cx(classes.col, classes.collg)}>
+            <Typography variant="caption">Source</Typography>
+          </Grid>
+        ) : null}
         <Grid item className={cx(classes.col, classes.colmd)}>
           <Typography variant="caption">Namespace</Typography>
         </Grid>
