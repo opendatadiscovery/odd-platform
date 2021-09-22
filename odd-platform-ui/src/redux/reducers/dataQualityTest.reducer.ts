@@ -75,15 +75,20 @@ const createDataSetQualityTestList = (
                   dataSetQualityTest.suiteName,
                   DataQualityTestRunStatusEnum.FAILED
                 ),
-                skipped: latestRunStatusesCounter(
+                broken: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.SKIPPED
+                  DataQualityTestRunStatusEnum.BROKEN
                 ),
                 aborted: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
                   DataQualityTestRunStatusEnum.ABORTED
+                ),
+                skipped: latestRunStatusesCounter(
+                  payload.items,
+                  dataSetQualityTest.suiteName,
+                  DataQualityTestRunStatusEnum.SKIPPED
                 ),
                 unknown: latestRunStatusesCounter(
                   payload.items,
