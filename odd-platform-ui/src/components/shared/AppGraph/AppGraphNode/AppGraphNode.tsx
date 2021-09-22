@@ -192,8 +192,17 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
       transform={transform}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      pointerEvents="bounding-box"
     >
+      <rect
+        width={nodeSize.x + loadMoreLayout.width + loadMoreLayout.mx}
+        transform={
+          reverse
+            ? `translate(${-loadMoreLayout.width - loadMoreLayout.mx})`
+            : ''
+        }
+        height={nodeSize.y}
+        fill="transparent"
+      />
       <Link to={detailsLink}>
         <g className={classes.container}>
           <rect

@@ -13,6 +13,7 @@ import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/
 import TestReportItemSkeleton from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
 import DatasetTestReportSkeleton from 'components/DataEntityDetails/TestReport/DatasetTestReportSkeleton/DatasetTestReportSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
 import { StylesType } from './TestReportStyles';
 
 interface DatasetQualityTestList {
@@ -20,13 +21,7 @@ interface DatasetQualityTestList {
 }
 
 interface TestReportBySuitName {
-  [suiteName: string]: {
-    success: number;
-    failed: number;
-    skipped: number;
-    aborted: number;
-    unknown: number;
-  };
+  [suiteName: string]: DataSetQualityTestsStatusCount;
 }
 
 interface TestReportProps extends StylesType {

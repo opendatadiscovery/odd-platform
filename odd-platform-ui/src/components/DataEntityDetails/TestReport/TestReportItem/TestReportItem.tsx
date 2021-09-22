@@ -94,7 +94,6 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
         {open && dataQATestList.length
           ? dataQATestList.map(dataQATest => (
               <Link
-                // target="__self"
                 to={dataEntityTestPath(dataSetId, dataQATest.id)}
                 key={dataQATest.id}
               >
