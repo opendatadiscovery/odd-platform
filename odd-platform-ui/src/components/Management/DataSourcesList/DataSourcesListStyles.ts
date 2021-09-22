@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -31,7 +31,7 @@ export const styles = (theme: Theme) =>
       },
     },
     totalCountText: {
-      color: '#42526E',
+      color: theme.palette.texts.info,
     },
   });
 

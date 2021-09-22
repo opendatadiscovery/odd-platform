@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles, Theme } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -7,7 +7,7 @@ export const styles = (theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       flexWrap: 'nowrap',
-      backgroundColor: '#FFE5E6',
+      backgroundColor: theme.palette.runStatus.failed,
       borderRadius: '2px',
       padding: theme.spacing(0.5, 1),
       boxShadow: theme.shadows[1],

@@ -15,7 +15,7 @@ export const styles = (theme: Theme) =>
       fontFamily: 'inherit',
       fontWeight: theme.typography.body1.fontWeight,
       lineHeight: theme.typography.body1.lineHeight,
-      color: '#7A869A',
+      color: theme.palette.text.secondary,
     },
     formActions: {
       marginTop: theme.spacing(2),

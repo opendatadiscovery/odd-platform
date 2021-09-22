@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -18,8 +18,8 @@ export const styles = (theme: Theme) =>
     typeTitle: {
       marginRight: theme.spacing(0.5),
       fontSize: '12px',
-      color: '#7A869A',
-      fontWeight: 400,
+      color: theme.palette.text.secondary,
+      fontWeight: theme.typography.subtitle2.fontWeight,
     },
     hidden: {
       display: 'none',

@@ -6,7 +6,7 @@ export const styles = (theme: Theme) =>
     caption: {
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(0.5),
-      color: '#7A869A',
+      color: theme.palette.text.secondary,
     },
     selectedOptionsContainer: {
       display: 'inline-flex',
@@ -17,8 +17,11 @@ export const styles = (theme: Theme) =>
       margin: '2px',
       marginTop: theme.spacing(0.5),
     },
-    highlightedOption: { backgroundColor: '#FFEECC', borderRadius: '2px' },
-    filterCount: { color: '#A8B0BD' },
+    highlightedOption: {
+      backgroundColor: theme.palette.warning.light,
+      borderRadius: '2px',
+    },
+    filterCount: { color: theme.palette.texts.hint },
     autoComplete: {
       width: '192px',
     },

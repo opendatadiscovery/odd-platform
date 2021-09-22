@@ -6,8 +6,10 @@ export const styles = (theme: Theme) =>
       fontSize: theme.typography.body2.fontSize,
       lineHeight: theme.typography.body2.lineHeight,
     },
-    noResultText: { color: '#7A869A' },
-    createNewOptionText: { color: '#0080FF' },
+    noResultText: { color: theme.palette.texts.secondary },
+    createNewOptionText: {
+      color: theme.palette.button.dropdown.normal.color,
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

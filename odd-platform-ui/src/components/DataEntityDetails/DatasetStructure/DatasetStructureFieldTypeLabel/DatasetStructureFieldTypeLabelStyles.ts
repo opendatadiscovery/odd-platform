@@ -12,31 +12,31 @@ export const styles = (theme: Theme) =>
       borderRadius: theme.typography.body2.fontSize,
       alignSelf: 'center',
       [`&.${DataSetFieldTypeTypeEnum.STRING}`]: {
-        borderColor: '#FFDD99',
+        borderColor: theme.palette.structureLabel.STRING.border,
       },
       [`&.${DataSetFieldTypeTypeEnum.BOOLEAN}`]: {
-        borderColor: '#AA99FF',
+        borderColor: theme.palette.structureLabel.BOOLEAN.border,
       },
       [`&.${DataSetFieldTypeTypeEnum.INTEGER}`]: {
-        borderColor: '#A8F0A8',
+        borderColor: theme.palette.structureLabel.INTEGER.border,
       },
       [`&.${DataSetFieldTypeTypeEnum.NUMBER}`]: {
-        borderColor: '#EE99FF',
+        borderColor: theme.palette.structureLabel.NUMBER.border,
       },
       [`&.${DataSetFieldTypeTypeEnum.BINARY}`]: {
-        borderColor: '#FF9999',
+        borderColor: theme.palette.structureLabel.BINARY.border,
       },
       [`&.${DataSetFieldTypeTypeEnum.DATETIME}`]: {
-        borderColor: '#99CCFF',
+        borderColor: theme.palette.structureLabel.DATETIME.border,
       },
       [`&.${DataSetFieldTypeTypeEnum.STRUCT}`]: {
-        borderColor: '#C1C7D0',
+        borderColor: theme.palette.structureLabel.STRUCT.border,
       },
       [`&.${DataSetFieldTypeTypeEnum.LIST}`]: {
-        borderColor: '#A7FF33',
+        borderColor: theme.palette.structureLabel.LIST.border,
       },
       [`&.${DataSetFieldTypeTypeEnum.MAP}`]: {
-        borderColor: '#33FF99',
+        borderColor: theme.palette.structureLabel.MAP.border,
       },
     },
   });

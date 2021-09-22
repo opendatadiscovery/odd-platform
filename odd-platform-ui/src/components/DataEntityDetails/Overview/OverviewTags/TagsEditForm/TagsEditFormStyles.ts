@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -11,7 +11,9 @@ export const styles = (theme: Theme) =>
       marginTop: theme.spacing(1),
     },
     tagItem: { margin: theme.spacing(0.5, 0.5, 0.5, 0) },
-    tagItemImportant: { backgroundColor: '#FFBB33' },
+    tagItemImportant: {
+      backgroundColor: theme.palette.tag.important.normal.background,
+    },
     tagInput: {},
     optionsContainer: {
       position: 'relative',
@@ -21,12 +23,12 @@ export const styles = (theme: Theme) =>
       '&:after': {
         position: 'absolute',
         content: '""',
-        top: '7px',
+        top: '9px',
         right: '-8px',
         width: '4px',
         height: '4px',
         borderRadius: '50%',
-        backgroundColor: '#FFAA00',
+        backgroundColor: theme.palette.tag.important.hover.background,
       },
     },
   });

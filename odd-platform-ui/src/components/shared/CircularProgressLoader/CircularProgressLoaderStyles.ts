@@ -4,7 +4,7 @@ export const styles = (theme: Theme) =>
   createStyles({
     container: {
       padding: theme.spacing(0.75, 1),
-      backgroundColor: '#E5F2FF',
+      backgroundColor: theme.palette.entityType.CONSUMER,
       borderRadius: theme.spacing(2),
       justifyContent: 'space-between',
       flexWrap: 'nowrap',
@@ -20,7 +20,9 @@ export const styles = (theme: Theme) =>
       marginLeft: theme.spacing(1.25),
       whiteSpace: 'nowrap',
     },
-    circularProgress: { color: '#0066CC' },
+    circularProgress: {
+      color: theme.palette.button.primaryLight.normal.color,
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

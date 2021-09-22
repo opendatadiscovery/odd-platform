@@ -13,7 +13,8 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      borderBottom: '1px solid #EBECF0',
+      borderBottom: '1px solid',
+      borderBottomColor: theme.palette.divider,
     },
     contentContainer: {
       position: 'relative',
@@ -47,17 +48,17 @@ export const styles = (theme: Theme) =>
     },
     title: {
       display: 'flex',
-      color: '#000000',
+      color: theme.palette.common.black,
       textDecoration: 'none',
       [theme.breakpoints.up('sm')]: {
         alignItems: 'center',
       },
     },
     lightBg: {
-      backgroundColor: '#ffffff',
+      backgroundColor: theme.palette.common.white,
     },
     darkBg: {
-      backgroundColor: theme.palette.background.default,
+      backgroundColor: theme.palette.backgrounds.darken,
     },
     sectionDesktop: {
       justifyContent: 'flex-end',
@@ -94,7 +95,7 @@ export const styles = (theme: Theme) =>
     },
     menuItem: {
       padding: theme.spacing(0.75, 1),
-      '&:hover': { backgroundColor: '#F4F5F7' },
+      '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
     },
   });
 

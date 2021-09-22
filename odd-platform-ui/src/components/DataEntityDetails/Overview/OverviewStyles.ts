@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -12,7 +12,7 @@ export const styles = (theme: Theme) =>
       },
       '& > * + *': {
         borderTop: '1px solid',
-        borderTopColor: '#EBECF0',
+        borderTopColor: theme.palette.divider,
       },
     },
     sectionCaption: {
