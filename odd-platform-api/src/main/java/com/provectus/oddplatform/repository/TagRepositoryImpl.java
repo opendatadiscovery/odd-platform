@@ -1,5 +1,6 @@
 package com.provectus.oddplatform.repository;
 
+import com.provectus.oddplatform.dto.TagDto;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import com.provectus.oddplatform.model.tables.records.TagRecord;
@@ -8,12 +9,15 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 import static com.provectus.oddplatform.model.Tables.TAG;
 import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
-import static org.jooq.impl.DSL.count;
+import static java.util.Collections.emptyList;
 
 @Repository
 public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecord, TagPojo> implements TagRepository {
@@ -42,16 +46,18 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
     }
 
     @Override
-    public List<TagPojo> listMostPopular(String query, final int page, final int size) {
+    public List<TagDto> listMostPopular(final String query, final int page, final int size) {
         return dslContext
-            .select(TAG.ID, count(TAG.ID).cast(Long.class))
-            .from(TAG_TO_DATA_ENTITY)
-            .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
-            .where(TAG.NAME.like(query))
-            .groupBy(TAG.ID)
+            .select(TAG.asterisk())
+            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID))
+            .from(TAG)
+            .join(TAG_TO_DATA_ENTITY).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .where(queryCondition(query))
+            .groupBy(TAG.ID, TAG.NAME, TAG.IMPORTANT, TAG_TO_DATA_ENTITY.TAG_ID)
+            .orderBy(TAG_TO_DATA_ENTITY.TAG_ID.desc())
             .offset((page - 1) * size)
             .limit(size)
-            .fetchStreamInto(pojoClass)
+            .fetchStreamInto(TagDto.class)
             .collect(Collectors.toList());
     }
 
@@ -87,5 +93,11 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private List<Condition> queryCondition(final String query) {
+        return StringUtils.hasLength(query)
+            ? List.of(TAG.NAME.startsWithIgnoreCase(query))
+            : emptyList();
     }
 }

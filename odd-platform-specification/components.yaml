@@ -108,6 +108,9 @@ components:
           type: string
         important:
           type: boolean
+        usedCount:
+          type: integer
+          format: int64
       required:
         - id
         - name

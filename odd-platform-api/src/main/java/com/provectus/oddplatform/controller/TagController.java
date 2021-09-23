@@ -55,7 +55,6 @@ public class TagController
         return tagService.listMostPopular(query, page, size)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
-
     }
 
     @Override
