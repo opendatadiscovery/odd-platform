@@ -97,7 +97,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     @Override
     @Transactional
     public DataSourceDto create(final DataSourceDto dto) {
-        final NamespacePojo namespace = null != dto.getNamespace()
+        final NamespacePojo namespace = dto.getNamespace() != null
             ? namespaceRepository.createIfNotExists(dto.getNamespace())
             : null;
 
@@ -116,7 +116,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
 
     @Override
     public DataSourceDto update(final DataSourceDto dto) {
-        final NamespacePojo namespace = null != dto.getNamespace()
+        final NamespacePojo namespace = dto.getNamespace() != null
             ? namespaceRepository.createIfNotExists(dto.getNamespace())
             : null;
 
@@ -203,11 +203,11 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
 
         record.set(DATA_SOURCE.IS_DELETED, false);
 
-        if (null != dsId) {
+        if (dsId != null) {
             record.set(DATA_SOURCE.ID, dsId);
         }
 
-        if (null != namespace) {
+        if (namespace != null) {
             record.set(DATA_SOURCE.NAMESPACE_ID, namespace.getId());
         }
 

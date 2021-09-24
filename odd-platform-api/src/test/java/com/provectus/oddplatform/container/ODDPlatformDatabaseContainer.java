@@ -11,7 +11,7 @@ public class ODDPlatformDatabaseContainer extends PostgreSQLContainer<ODDPlatfor
     }
 
     public static ODDPlatformDatabaseContainer getInstance() {
-        if (null == container) {
+        if (container == null) {
             container = new ODDPlatformDatabaseContainer();
         }
         return container;
