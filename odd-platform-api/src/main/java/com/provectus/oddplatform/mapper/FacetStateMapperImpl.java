@@ -34,6 +34,7 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             SearchFormDataFilters::getTypes, FacetType.TYPES,
             SearchFormDataFilters::getSubtypes, FacetType.SUBTYPES,
             SearchFormDataFilters::getDatasources, FacetType.DATA_SOURCES,
+            SearchFormDataFilters::getNamespaces, FacetType.NAMESPACES,
             SearchFormDataFilters::getOwners, FacetType.OWNERS,
             SearchFormDataFilters::getTags, FacetType.TAGS
         );
@@ -94,6 +95,7 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             .datasources(getSearchFiltersForFacetType(state, FacetType.DATA_SOURCES))
             .subtypes(getSearchFiltersForFacetType(state, FacetType.SUBTYPES))
             .owners(getSearchFiltersForFacetType(state, FacetType.OWNERS))
+            .namespaces(getSearchFiltersForFacetType(state, FacetType.NAMESPACES))
             .tags(getSearchFiltersForFacetType(state, FacetType.TAGS));
     }
 

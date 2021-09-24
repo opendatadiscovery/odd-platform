@@ -6,6 +6,7 @@ import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityIngestionDto;
 import com.provectus.oddplatform.dto.DataEntityIngestionDtoSplit;
 import com.provectus.oddplatform.dto.DataEntityType;
+import com.provectus.oddplatform.dto.DataSourceDto;
 import com.provectus.oddplatform.dto.EnrichedDataEntityIngestionDto;
 import com.provectus.oddplatform.dto.MetadataBinding;
 import com.provectus.oddplatform.dto.MetadataFieldKey;
@@ -93,6 +94,7 @@ public class IngestionServiceImpl implements IngestionService {
                 ? Mono.error(new NotFoundException("Data source with oddrn %s hasn't been found",
                 dataEntityList.getDataSourceOddrn()))
                 : Mono.just(o.get()))
+            .map(DataSourceDto::getDataSource)
             .map(DataSourcePojo::getId)
             .map(dsId -> ingestDataEntities(dataEntityList, dsId))
             .flatMap(this::ingestCompanions)

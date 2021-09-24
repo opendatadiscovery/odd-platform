@@ -4,6 +4,7 @@ import com.provectus.oddplatform.dto.MetadataDto;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import com.provectus.oddplatform.model.tables.records.MetadataFieldValueRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -21,8 +22,8 @@ public class MetadataFieldValueRepositoryImpl
     extends AbstractCRUDRepository<MetadataFieldValueRecord, MetadataFieldValuePojo>
     implements MetadataFieldValueRepository {
 
-    public MetadataFieldValueRepositoryImpl(final DSLContext dslContext) {
-        super(dslContext, METADATA_FIELD_VALUE, null, null, MetadataFieldValuePojo.class);
+    public MetadataFieldValueRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
+        super(dslContext, jooqQueryHelper, METADATA_FIELD_VALUE, null, null, MetadataFieldValuePojo.class);
     }
 
     @Override

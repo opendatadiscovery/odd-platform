@@ -4,6 +4,7 @@ import com.provectus.oddplatform.api.contract.model.MetadataFieldOrigin;
 import com.provectus.oddplatform.dto.MetadataFieldKey;
 import com.provectus.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import com.provectus.oddplatform.model.tables.records.MetadataFieldRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -25,8 +26,8 @@ public class MetadataFieldRepositoryImpl
     extends AbstractSoftDeleteCRUDRepository<MetadataFieldRecord, MetadataFieldPojo>
     implements MetadataFieldRepository {
 
-    public MetadataFieldRepositoryImpl(final DSLContext dslContext) {
-        super(dslContext, METADATA_FIELD, METADATA_FIELD.ID, METADATA_FIELD.IS_DELETED,
+    public MetadataFieldRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
+        super(dslContext, jooqQueryHelper, METADATA_FIELD, METADATA_FIELD.ID, METADATA_FIELD.IS_DELETED,
             List.of(METADATA_FIELD.NAME, METADATA_FIELD.TYPE),
             METADATA_FIELD.NAME, MetadataFieldPojo.class);
     }

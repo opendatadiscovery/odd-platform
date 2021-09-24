@@ -39,8 +39,16 @@ public class NamespaceController
     }
 
     @Override
-    public Mono<ResponseEntity<NamespaceList>> getNamespaceList(final ServerWebExchange exchange) {
-        return list();
+    public Mono<ResponseEntity<Void>> deleteNamespace(final Long namespaceId, final ServerWebExchange exchange) {
+        return delete(namespaceId);
+    }
+
+    @Override
+    public Mono<ResponseEntity<NamespaceList>> getNamespaceList(final Integer page,
+                                                                final Integer size,
+                                                                final String query,
+                                                                final ServerWebExchange exchange) {
+        return list(page, size, query);
     }
 
     @Override
