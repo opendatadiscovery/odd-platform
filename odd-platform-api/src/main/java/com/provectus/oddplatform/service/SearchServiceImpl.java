@@ -107,8 +107,7 @@ public class SearchServiceImpl implements SearchService {
                 if (state.isMyObjects()) {
                     return authIdentityProvider.fetchAssociatedOwner()
                         .map(owner -> dataEntityRepository.findByState(state, page, size, owner))
-                        .switchIfEmpty(
-                            Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size)));
+                        .switchIfEmpty(Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size)));
                 }
 
                 return Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size));

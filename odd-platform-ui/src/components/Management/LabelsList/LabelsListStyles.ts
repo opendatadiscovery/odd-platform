@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -11,12 +11,13 @@ export const styles = (theme: Theme) =>
       },
     },
     labelsTableHeader: {
-      borderBottom: '1px solid #EBECF0',
+      borderBottom: '1px solid',
+      borderBottomColor: theme.palette.divider,
       '& > *': {
         padding: theme.spacing(0, 1),
       },
     },
-    rowName: { color: '#A8B0BD' },
+    rowName: { color: theme.palette.texts.hint },
     caption: {
       marginBottom: theme.spacing(2),
       display: 'flex',
@@ -26,7 +27,7 @@ export const styles = (theme: Theme) =>
     },
     labelsItem: { display: 'flex', flexWrap: 'wrap' },
     totalCountText: {
-      color: '#42526E',
+      color: theme.palette.texts.info,
     },
     searchInput: {
       minWidth: '340px',

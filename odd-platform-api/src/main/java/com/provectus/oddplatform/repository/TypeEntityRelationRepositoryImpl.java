@@ -2,6 +2,7 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.TypeEntityRelationPojo;
 import com.provectus.oddplatform.model.tables.records.TypeEntityRelationRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,8 +17,8 @@ public class TypeEntityRelationRepositoryImpl
     extends AbstractCRUDRepository<TypeEntityRelationRecord, TypeEntityRelationPojo>
     implements TypeEntityRelationRepository {
 
-    public TypeEntityRelationRepositoryImpl(final DSLContext dslContext) {
-        super(dslContext, TYPE_ENTITY_RELATION, null, null, TypeEntityRelationPojo.class);
+    public TypeEntityRelationRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
+        super(dslContext, jooqQueryHelper, TYPE_ENTITY_RELATION, null, null, TypeEntityRelationPojo.class);
     }
 
     @Override

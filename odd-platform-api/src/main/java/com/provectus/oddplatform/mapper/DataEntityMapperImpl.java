@@ -19,6 +19,7 @@ import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
 import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityLineageDto;
 import com.provectus.oddplatform.dto.DataEntityLineageStreamDto;
+import com.provectus.oddplatform.dto.DataSourceDto;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
@@ -39,7 +40,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class DataEntityMapperImpl implements DataEntityMapper {
-    private final NamespaceMapper namespaceMapper;
     private final DataSourceMapper dataSourceMapper;
     private final OwnershipMapper ownershipMapper;
     private final TagMapper tagMapper;
@@ -51,9 +51,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         return mapPojo(dataEntityDto.getDataEntity())
             .types(dataEntityDto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
             .subType(mapSubType(dataEntityDto.getSubtype()))
-            .namespace(namespaceMapper.mapPojo(dataEntityDto.getNamespace()))
             .ownership(ownershipMapper.mapDtos(dataEntityDto.getOwnership()))
-            .dataSource(dataSourceMapper.mapPojo(dataEntityDto.getDataSource()))
+            .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dataEntityDto.getDataSource(),
+                dataEntityDto.getNamespace())))
             .tags(dataEntityDto.getTags() != null
                 ? dataEntityDto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList())
                 : null
@@ -105,9 +105,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .updatedAt(addUTC(pojo.getUpdatedAt()))
             .types(types)
             .subType(mapSubType(dto.getSubtype()))
-            .namespace(namespaceMapper.mapPojo(dto.getNamespace()))
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
-            .dataSource(dataSourceMapper.mapPojo(dto.getDataSource()))
+            .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace())))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
             .versionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().getDatasetVersions()))
             .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()))
@@ -232,8 +231,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
             .externalName(dataEntity.getExternalName())
             .internalName(dataEntity.getInternalName())
-            .namespace(namespace != null ? namespaceMapper.mapPojo(namespace) : null)
-            .dataSource(dataSource != null ? dataSourceMapper.mapPojo(dataSource) : null);
+            .dataSource(dataSource != null
+                ? dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace()))
+                : null);
     }
 
     private DataEntityRef mapReference(final DataEntityDto dto) {

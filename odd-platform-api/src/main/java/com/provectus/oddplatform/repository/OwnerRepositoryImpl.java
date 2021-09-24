@@ -2,6 +2,7 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.OwnerPojo;
 import com.provectus.oddplatform.model.tables.records.OwnerRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.util.Optional;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -14,8 +15,8 @@ public class OwnerRepositoryImpl
     extends AbstractSoftDeleteCRUDRepository<OwnerRecord, OwnerPojo>
     implements OwnerRepository {
 
-    public OwnerRepositoryImpl(final DSLContext dslContext) {
-        super(dslContext, OWNER, OWNER.ID, OWNER.IS_DELETED, OWNER.NAME, OWNER.NAME, OwnerPojo.class);
+    public OwnerRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
+        super(dslContext, jooqQueryHelper, OWNER, OWNER.ID, OWNER.IS_DELETED, OWNER.NAME, OWNER.NAME, OwnerPojo.class);
     }
 
     @Override

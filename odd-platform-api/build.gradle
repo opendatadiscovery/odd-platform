@@ -24,16 +24,15 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    implementation 'org.springframework.boot:spring-boot-starter-jooq'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    implementation 'org.springframework.session:spring-session-core'
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+    implementation "org.springframework.boot:spring-boot-starter-jooq"
+    implementation "org.springframework.boot:spring-boot-starter-actuator"
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
+    implementation "org.springframework.session:spring-session-core"
 
-    implementation "com.provectus.oddplatform:odd-platform-ingestion-contract:$odcIngestionApiVersion"
-
+    implementation "com.provectus.oddplatform:odd-platform-ingestion-contract:$oddIngestionApiVersion"
     implementation project(':odd-platform-api-contract')
 
     if (!skipUIBundle) {
@@ -52,7 +51,24 @@ dependencies {
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
-    dbcontainer("org.testcontainers:postgresql:$testContainersVersion")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude group: 'junit', module: 'junit'
+    }
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion"
+    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+
+    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
+    testImplementation "org.testcontainers:postgresql:$testContainersVersion"
+
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    jooqGenerationContainer("org.testcontainers:postgresql:$testContainersVersion")
 }
 
 jooq {
@@ -98,7 +114,7 @@ jib {
 
 checkstyle {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')
-    configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/suppressions.xml')]
+    configProperties = ["suppressionFile": project(':').file('config/checkstyle/suppressions.xml')]
     ignoreFailures = false
     maxWarnings = 0
 }
@@ -107,7 +123,7 @@ task buildlessCheckstyleMain(type: Checkstyle) {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')
     source 'src/main/java'
     classpath = files()
-    configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/suppressions.xml')]
+    configProperties = ["suppressionFile": project(':').file('config/checkstyle/suppressions.xml')]
     ignoreFailures = false
     maxWarnings = 0
 }
@@ -116,7 +132,7 @@ task buildlessCheckstyleTest(type: Checkstyle) {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')
     source 'src/test/java'
     classpath = files()
-    configProperties = [ "suppressionFile" : project(':').file('config/checkstyle/suppressions.xml')]
+    configProperties = ["suppressionFile": project(':').file('config/checkstyle/suppressions.xml')]
     ignoreFailures = false
     maxWarnings = 0
 }
@@ -133,4 +149,5 @@ compileJava.dependsOn tasks.jooqDockerGenerate
 
 test {
     useJUnitPlatform()
+    testLogging.showStandardStreams = true
 }

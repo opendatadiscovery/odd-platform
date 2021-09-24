@@ -16,7 +16,7 @@ export const styles = (theme: Theme) =>
       },
     },
     label: {
-      color: '#7A869A',
+      color: theme.palette.texts.secondary,
     },
     value: {
       wordBreak: 'break-all',

@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -7,9 +7,10 @@ export const styles = (theme: Theme) =>
       flexWrap: 'nowrap',
       alignItems: 'center',
       padding: theme.spacing(1.5, 1, 1.5, 1),
-      borderBottom: '1px solid #EBECF0',
+      borderBottom: '1px solid',
+      borderBottomColor: theme.palette.backgrounds.secondary,
       '&:hover': {
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.backgrounds.primary,
       },
       '&:hover $actionsContainer': {
         visibility: 'visible',

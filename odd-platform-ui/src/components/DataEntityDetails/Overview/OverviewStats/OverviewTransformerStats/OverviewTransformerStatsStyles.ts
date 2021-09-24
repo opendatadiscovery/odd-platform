@@ -9,12 +9,12 @@ export const styles = (theme: Theme) =>
     statIcon: {
       fontSize: theme.typography.h5.fontSize,
       marginRight: theme.spacing(1),
-      color: '#0066CC',
+      color: theme.palette.button?.primaryLight.normal.color,
       alignSelf: 'center',
     },
     statCount: {},
     statLabel: {
-      color: '#B3BAC5',
+      color: theme.palette.text.hint,
       marginLeft: theme.spacing(0.5),
     },
     statValue: {
@@ -31,8 +31,8 @@ export const styles = (theme: Theme) =>
       },
     },
     unknownCount: {
-      marginLeft: theme.spacing(0.5)
-    }
+      marginLeft: theme.spacing(0.5),
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

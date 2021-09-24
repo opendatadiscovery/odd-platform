@@ -4,6 +4,7 @@ import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.records.LabelRecord;
 import com.provectus.oddplatform.model.tables.records.LabelToDatasetFieldRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -19,8 +20,9 @@ import static com.provectus.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 public class LabelRepositoryImpl
     extends AbstractSoftDeleteCRUDRepository<LabelRecord, LabelPojo>
     implements LabelRepository {
-    public LabelRepositoryImpl(final DSLContext dslContext) {
-        super(dslContext, LABEL, LABEL.ID, LABEL.IS_DELETED, LABEL.NAME, LABEL.NAME, LabelPojo.class);
+
+    public LabelRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
+        super(dslContext, jooqQueryHelper, LABEL, LABEL.ID, LABEL.IS_DELETED, LABEL.NAME, LABEL.NAME, LabelPojo.class);
     }
 
     @Override

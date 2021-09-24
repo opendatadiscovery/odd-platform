@@ -1,11 +1,6 @@
 import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { AlertStatus } from 'generated-sources';
 
-export const AlertTypeColors = {
-  open: { backgroundColor: '#FFCCCC', borderColor: '#FF9999' },
-  resolved: { backgroundColor: '#CCE6FF', borderColor: '#99CCFF' },
-};
-
 export const styles = (theme: Theme) =>
   createStyles({
     container: {
@@ -21,13 +16,13 @@ export const styles = (theme: Theme) =>
       padding: theme.spacing(0.25, 1),
       marginLeft: theme.spacing(0.5),
       [`&.${AlertStatus.OPEN}`]: {
-        backgroundColor: AlertTypeColors.open.backgroundColor,
-        borderColor: AlertTypeColors.open.borderColor,
+        backgroundColor: theme.palette.alert.open.background,
+        borderColor: theme.palette.alert.open.border,
         marginLeft: 0,
       },
       [`&.${AlertStatus.RESOLVED}`]: {
-        backgroundColor: AlertTypeColors.resolved.backgroundColor,
-        borderColor: AlertTypeColors.resolved.borderColor,
+        backgroundColor: theme.palette.alert.resolved.background,
+        borderColor: theme.palette.alert.resolved.border,
         marginLeft: 0,
       },
     },

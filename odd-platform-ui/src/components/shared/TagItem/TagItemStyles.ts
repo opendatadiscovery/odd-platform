@@ -5,21 +5,22 @@ export const styles = (theme: Theme) =>
     container: {
       display: 'inline-flex',
       alignItems: 'center',
-      border: '1px solid #EBECF0',
+      border: '1px solid',
+      borderColor: theme.palette.tag.main.normal.border,
       borderRadius: '4px',
       padding: theme.spacing(0.25, 1),
-      color: '#42526E',
+      color: theme.palette.tag.main.normal.color,
       '&:hover': {
-        borderColor: '#C1C7D0',
+        borderColor: theme.palette.tag.main.hover.border,
       },
       '&:active': {
-        borderColor: '#A8B0BD',
+        borderColor: theme.palette.tag.main.active.border,
       },
     },
     important: {
-      borderColor: '#FFBB33',
+      borderColor: theme.palette.tag.important.normal.border,
       '&:hover, &:active': {
-        borderColor: '#FFAA00',
+        borderColor: theme.palette.tag.important.hover.border,
       },
     },
     containerRemovable: {

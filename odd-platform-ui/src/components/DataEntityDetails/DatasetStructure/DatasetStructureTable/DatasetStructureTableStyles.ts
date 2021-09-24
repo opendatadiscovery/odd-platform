@@ -41,7 +41,7 @@ export const columnBasicStyles = (theme: Theme) => ({
   },
   columnDivided: {
     borderRight: '1px solid',
-    borderRightColor: '#F4F5F7',
+    borderRightColor: theme.palette.backgrounds.primary,
     paddingRight: '15px',
   },
 });
@@ -53,10 +53,10 @@ export const styles = (theme: Theme) =>
       marginTop: theme.spacing(2.5),
     },
     tableHeader: {
-      color: '#A8B0BD',
+      color: theme.palette.text.hint,
       '& > *': {
         borderBottom: '1px solid',
-        borderBottomColor: '#F4F5F7',
+        borderBottomColor: theme.palette.backgrounds.primary,
       },
       '& > $columnDivided': {
         borderRightColor: 'transparent',

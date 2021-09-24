@@ -2,6 +2,7 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetFieldRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -21,8 +22,8 @@ public class DatasetFieldRepositoryImpl
     extends AbstractCRUDRepository<DatasetFieldRecord, DatasetFieldPojo>
     implements DatasetFieldRepository {
 
-    public DatasetFieldRepositoryImpl(final DSLContext dslContext) {
-        super(dslContext, DATASET_FIELD, DATASET_FIELD.ID, DATASET_FIELD.NAME, DatasetFieldPojo.class);
+    public DatasetFieldRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
+        super(dslContext, jooqQueryHelper, DATASET_FIELD, DATASET_FIELD.ID, DATASET_FIELD.NAME, DatasetFieldPojo.class);
     }
 
     @Override

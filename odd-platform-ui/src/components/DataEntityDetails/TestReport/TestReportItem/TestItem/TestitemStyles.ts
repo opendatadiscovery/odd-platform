@@ -8,11 +8,11 @@ export const styles = (theme: Theme) =>
       alignItems: 'center',
       borderRadius: '4px',
       '&:hover:not($active)': {
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.backgrounds.primary,
       },
     },
     active: {
-      backgroundColor: '#EBECF0',
+      backgroundColor: theme.palette.backgrounds.secondary,
     },
     expectationItem: { marginRight: theme.spacing(0.5) },
   });

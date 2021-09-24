@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -9,7 +9,7 @@ export const styles = (theme: Theme) =>
       marginTop: theme.spacing(1.5),
     },
     asterisk: {
-      color: '#F2330D',
+      color: theme.palette.warning.main,
     },
     checkboxContainer: {
       margin: theme.spacing(1.5, 0, 0, 0),

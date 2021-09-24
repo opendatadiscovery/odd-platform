@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -17,17 +17,17 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       textDecoration: 'none',
-      color: '#091E42',
+      color: theme.palette.text?.primary,
       flexWrap: 'nowrap',
       '&:hover': {
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.backgrounds.primary,
         borderRadius: '4px',
         '& > *': {
-          color: '#091E42',
+          color: theme.palette.text?.primary,
         },
       },
       '&:active': {
-        backgroundColor: '#EBECF0',
+        backgroundColor: theme.palette.backgrounds.secondary,
       },
     },
     alert: {
@@ -39,7 +39,7 @@ export const styles = (theme: Theme) =>
     sectionCaption: {
       marginBottom: theme.spacing(2),
       paddingTop: theme.spacing(0.75),
-      color: '#000000',
+      color: theme.palette.common.white,
       display: 'flex',
       alignItems: 'center',
       '& > svg ': {

@@ -3,6 +3,7 @@ package com.provectus.oddplatform.service;
 import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityIngestionDto;
 import com.provectus.oddplatform.dto.DataEntityType;
+import com.provectus.oddplatform.dto.DataSourceDto;
 import com.provectus.oddplatform.dto.DatasetStructureDelta;
 import com.provectus.oddplatform.dto.EnrichedDataEntityIngestionDto;
 import com.provectus.oddplatform.dto.IngestionDataStructure;
@@ -115,6 +116,7 @@ public class IngestionServiceImpl implements IngestionService {
             .flatMap(o -> o.isEmpty()
                 ? Mono.error(new NotFoundException("Data source with oddrn %s hasn't been found", dataSourceOddrn))
                 : Mono.just(o.get()))
+            .map(DataSourceDto::getDataSource)
             .map(DataSourcePojo::getId);
     }
 

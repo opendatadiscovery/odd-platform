@@ -192,8 +192,17 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
       transform={transform}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      pointerEvents="bounding-box"
     >
+      <rect
+        width={nodeSize.x + loadMoreLayout.width + loadMoreLayout.mx}
+        transform={
+          reverse
+            ? `translate(${-loadMoreLayout.width - loadMoreLayout.mx})`
+            : ''
+        }
+        height={nodeSize.y}
+        fill="transparent"
+      />
       <Link to={detailsLink}>
         <g className={classes.container}>
           <rect
@@ -274,14 +283,14 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
                 nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
               }
             >
-              <title>{data.namespace?.name}</title>
+              <title>{data.dataSource?.namespace?.name}</title>
               <tspan
                 x={attributeLayout.labelWidth}
                 y={0}
                 className="visible-text"
               />
               <tspan className="ellip">...</tspan>
-              {!data.namespace && (
+              {!data.dataSource?.namespace && (
                 <tspan
                   x={attributeLayout.labelWidth}
                   y={0}

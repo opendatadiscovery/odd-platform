@@ -4,11 +4,11 @@ export const styles = (theme: Theme) =>
   createStyles({
     path: {
       fill: 'none',
-      stroke: '#7A869A',
+      stroke: theme.palette.texts.hint,
       strokeWidth: 1,
     },
     circle: {
-      fill: '#7A869A',
+      fill: theme.palette.texts.hint,
     },
   });
 

@@ -9,7 +9,7 @@ export const styles = (theme: Theme) =>
       cursor: 'pointer',
       alignItems: 'center',
       '&:hover': {
-        backgroundColor: '#F4F5F7',
+        backgroundColor: theme.palette.backgrounds.primary,
       },
     },
     ...alertsColWidthStyles,

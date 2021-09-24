@@ -1,6 +1,5 @@
 import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
-import { statusColor } from 'theme/palette';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -19,7 +18,7 @@ export const styles = (theme: Theme) =>
     links: {},
     linkCount: { marginRight: theme.spacing(0.5) },
     statLabel: {
-      color: '#7A869A',
+      color: theme.palette.text.secondary,
       lineHeight: theme.typography.h2.lineHeight,
     },
     link: {
@@ -38,22 +37,22 @@ export const styles = (theme: Theme) =>
     },
     latestRunStatus: {
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        color: statusColor.SUCCESS,
+        color: theme.palette.runStatus.success,
       },
       [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        color: statusColor.FAILED,
+        color: theme.palette.runStatus.failed,
       },
       [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        color: statusColor.BROKEN,
+        color: theme.palette.runStatus.broken,
       },
       [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        color: statusColor.SKIPPED,
+        color: theme.palette.runStatus.skipped,
       },
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        color: statusColor.ABORTED,
+        color: theme.palette.runStatus.aborted,
       },
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        color: statusColor.UNKNOWN,
+        color: theme.palette.runStatus.unknown,
       },
     },
     parameters: {
