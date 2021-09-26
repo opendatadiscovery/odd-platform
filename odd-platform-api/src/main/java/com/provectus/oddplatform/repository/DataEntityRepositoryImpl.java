@@ -1,15 +1,19 @@
 package com.provectus.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.provectus.oddplatform.dto.DataConsumerAttributes;
+import com.provectus.oddplatform.dto.DataEntityAttributes;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto;
-import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestAttributes;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataConsumerDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
-import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataTransformerAttributes;
 import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
 import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityLineageDto;
 import com.provectus.oddplatform.dto.DataEntityLineageStreamDto;
 import com.provectus.oddplatform.dto.DataEntityType;
+import com.provectus.oddplatform.dto.DataQualityTestAttributes;
+import com.provectus.oddplatform.dto.DataSetAttributes;
+import com.provectus.oddplatform.dto.DataTransformerAttributes;
 import com.provectus.oddplatform.dto.FacetStateDto;
 import com.provectus.oddplatform.dto.FacetType;
 import com.provectus.oddplatform.dto.LineageDepth;
@@ -108,6 +112,7 @@ import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static com.provectus.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
 import static com.provectus.oddplatform.model.Tables.TYPE_SUBTYPE_RELATION;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
@@ -158,6 +163,9 @@ public class DataEntityRepositoryImpl
         FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
         FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
     );
+
+    public static final TypeReference<Map<String, ?>> SPECIFIC_ATTRIBUTES_TYPE_REFERENCE = new TypeReference<>() {
+    };
 
     private final JooqFTSVectorizer vectorizer;
     private final JooqRecordHelper jooqRecordHelper;
@@ -495,12 +503,10 @@ public class DataEntityRepositoryImpl
             .includeDetails(true)
             .build();
 
-        return dataEntitySelect(config)
+        return enrichDataEntityDetailsDto(dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDetailsRecord)
-            // TODO: Fix N + 1
-            .map(this::enrichDataEntityDetailsDto)
-            .collect(Collectors.toList());
+            .collect(Collectors.toList()));
     }
 
     @Override
@@ -673,11 +679,13 @@ public class DataEntityRepositoryImpl
             .includeDetails(true)
             .build();
 
-        final Map<Long, DataEntityDetailsDto> dataMap = dataEntitySelect(config)
+        final List<DataEntityDetailsDto> dtos = dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDetailsRecord)
-            // TODO: fix N + 1
-            .map(this::enrichDataEntityDetailsDto)
+            .collect(Collectors.toList());
+
+        final Map<Long, DataEntityDetailsDto> dataMap = enrichDataEntityDetailsDto(dtos)
+            .stream()
             .collect(Collectors.toMap(dto -> dto.getDataEntity().getId(), identity()));
 
         final Set<Long> seSet = dslContext.select(SEARCH_ENTRYPOINT.DATA_ENTITY_ID)
@@ -975,81 +983,138 @@ public class DataEntityRepositoryImpl
     }
 
     private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto detailsDto) {
-        final Set<DataEntityType> dtoTypes = detailsDto.getTypes()
-            .stream()
-            .map(DataEntityTypePojo::getName)
-            .map(DataEntityType::valueOf)
+        final Set<String> deps = detailsDto.getSpecificAttributes().values().stream()
+            .map(DataEntityAttributes::getDependentOddrns)
+            .flatMap(Set::stream)
             .collect(Collectors.toSet());
 
-        final Map<String, ?> specificAttributes = JSONSerDeUtils.deserializeJson(
-            detailsDto.getDataEntity().getSpecificAttributes().data(),
-            new TypeReference<Map<String, ?>>() {
-            }
-        );
+        final Map<String, DataEntityDimensionsDto> depsRepository = listAllByOddrns(deps)
+            .stream()
+            .collect(Collectors.toMap(dto -> dto.getDataEntity().getOddrn(), identity()));
 
-        if (dtoTypes.contains(DataEntityType.DATA_TRANSFORMER)) {
-            final DataTransformerAttributes attrs = JSONSerDeUtils.deserializeJson(
-                specificAttributes.get(DataEntityType.DATA_TRANSFORMER.toString()),
-                DataTransformerAttributes.class
-            );
-
-            detailsDto.setDataTransformerDetailsDto(DataEntityDetailsDto.DataTransformerDetailsDto.builder()
-                .sourceList(listAllByOddrns(attrs.getSourceOddrnList()))
-                .targetList(listAllByOddrns(attrs.getTargetOddrnList()))
-                .sourceCodeUrl(attrs.getSourceCodeUrl())
-                .build());
-        }
-
-        if (dtoTypes.contains(DataEntityType.DATA_QUALITY_TEST)) {
-            final DataQualityTestAttributes attrs = JSONSerDeUtils.deserializeJson(
-                specificAttributes.get(DataEntityType.DATA_QUALITY_TEST.toString()),
-                DataQualityTestAttributes.class
-            );
-
-            detailsDto.setDataQualityTestDetailsDto(DataQualityTestDetailsDto.builder()
-                .suiteName(attrs.getSuiteName())
-                .suiteUrl(attrs.getSuiteUrl())
-                .datasetList(listAllByOddrns(attrs.getDatasetOddrnList()))
-                .linkedUrlList(attrs.getLinkedUrlList())
-                .latestTaskRun(dataEntityTaskRunRepository
-                    .getLatestRun(detailsDto.getDataEntity().getOddrn())
-                    .orElse(null))
-                .expectationType(attrs.getExpectation().getType())
-                .expectationParameters(attrs.getExpectation().getAdditionalProperties())
-                .build());
-        }
+        enrichDataEntityDetailsDto(detailsDto, depsRepository);
 
         return detailsDto;
     }
 
+    private List<DataEntityDetailsDto> enrichDataEntityDetailsDto(final List<DataEntityDetailsDto> detailsDtos) {
+        final Set<String> deps = detailsDtos.stream().map(DataEntityDto::getSpecificAttributes)
+            .map(Map::values)
+            .flatMap(Collection::stream)
+            .map(DataEntityAttributes::getDependentOddrns)
+            .flatMap(Set::stream)
+            .collect(Collectors.toSet());
+
+        final Map<String, DataEntityDimensionsDto> depsRepository = listAllByOddrns(deps)
+            .stream()
+            .collect(Collectors.toMap(dto -> dto.getDataEntity().getOddrn(), identity()));
+
+        for (final DataEntityDetailsDto detailsDto : detailsDtos) {
+            enrichDataEntityDetailsDto(detailsDto, depsRepository);
+        }
+
+        return detailsDtos;
+    }
+
+    private void enrichDataEntityDetailsDto(final DataEntityDetailsDto dto,
+                                            final Map<String, DataEntityDimensionsDto> depsRepository) {
+        final Function<Collection<String>, Collection<? extends DataEntityDto>> fetcher =
+            oddrns -> oddrns.stream().map(depsRepository::get).filter(Objects::nonNull).collect(Collectors.toList());
+
+        dto.getSpecificAttributes().forEach((t, attrs) -> {
+            switch (t) {
+                case DATA_SET:
+                    final DataSetAttributes dsa = (DataSetAttributes) attrs;
+
+                    final DataEntityDetailsDto.DataSetDetailsDto dataSetDetailsDto = dto.getDataSetDetailsDto() != null
+                        ? dto.getDataSetDetailsDto()
+                        : new DataEntityDetailsDto.DataSetDetailsDto();
+
+                    dataSetDetailsDto.setRowsCount(dsa.getRowsCount());
+                    dataSetDetailsDto.setFieldsCount(dsa.getFieldsCount());
+                    dataSetDetailsDto.setConsumersCount(dsa.getConsumersCount());
+
+                    dto.setDataSetDetailsDto(dataSetDetailsDto);
+
+                    break;
+                case DATA_TRANSFORMER:
+                    final DataTransformerAttributes dta = (DataTransformerAttributes) attrs;
+
+                    dto.setDataTransformerDetailsDto(DataEntityDetailsDto.DataTransformerDetailsDto.builder()
+                        .sourceList(fetcher.apply(dta.getSourceOddrnList()))
+                        .targetList(fetcher.apply(dta.getTargetOddrnList()))
+                        .sourceCodeUrl(dta.getSourceCodeUrl())
+                        .build());
+
+                    break;
+                case DATA_QUALITY_TEST:
+                    final DataQualityTestAttributes dqta = (DataQualityTestAttributes) attrs;
+
+                    dto.setDataQualityTestDetailsDto(DataQualityTestDetailsDto.builder()
+                        .suiteName(dqta.getSuiteName())
+                        .suiteUrl(dqta.getSuiteUrl())
+                        .datasetList(fetcher.apply(dqta.getDatasetOddrnList()))
+                        .linkedUrlList(dqta.getLinkedUrlList())
+                        .latestTaskRun(dataEntityTaskRunRepository
+                            .getLatestRun(dto.getDataEntity().getOddrn())
+                            .orElse(null))
+                        .expectationType(dqta.getExpectation().getType())
+                        .expectationParameters(dqta.getExpectation().getAdditionalProperties())
+                        .build());
+                    break;
+                case DATA_CONSUMER:
+                    final DataConsumerAttributes dca = (DataConsumerAttributes) attrs;
+
+                    dto.setDataConsumerDetailsDto(DataConsumerDetailsDto.builder()
+                        .inputList(fetcher.apply(dca.getInputListOddrn()))
+                        .build());
+                    break;
+            }
+        });
+    }
+
     private DataEntityDto mapDtoRecord(final Record r) {
         final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
+        final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
+
+        final Set<DataEntityTypePojo> types =
+            jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class);
 
         return DataEntityDto.builder()
-            .dataEntity(jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class))
+            .dataEntity(dataEntity)
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
             .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
-            .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
+            .specificAttributes(extractSpecificAttributes(dataEntity, types))
+            .types(types)
             .build();
     }
 
     private DataEntityDimensionsDto mapDimensionRecord(final Record r) {
         final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
+        final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
+
+        final Set<DataEntityTypePojo> types =
+            jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class);
 
         return DataEntityDimensionsDto.dimensionsBuilder()
-            .dataEntity(jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class))
+            .dataEntity(dataEntity)
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
+            .specificAttributes(extractSpecificAttributes(dataEntity, types))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
-            .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
+            .types(types)
             .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
             .build();
     }
 
     private DataEntityDetailsDto mapDetailsRecord(final Record r) {
         final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
+        final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
+
+        final Set<DataEntityTypePojo> types =
+            jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class);
 
         // ad-hoc solution until https://github.com/opendatadiscovery/odd-platform/issues/123 is fixed
         final Set<DatasetVersionPojo> datasetVersions = jooqRecordHelper
@@ -1059,13 +1124,14 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
         return DataEntityDetailsDto.detailsBuilder()
-            .dataEntity(jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class))
+            .dataEntity(dataEntity)
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
+            .specificAttributes(extractSpecificAttributes(dataEntity, types))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
-            .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
+            .types(types)
             .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
             .dataSetDetailsDto(DataEntityDetailsDto.DataSetDetailsDto.builder()
                 .datasetVersions(datasetVersions)
@@ -1130,6 +1196,30 @@ public class DataEntityRepositoryImpl
                     .build();
             })
             .collect(Collectors.toList());
+    }
+
+    private Map<DataEntityType, DataEntityAttributes> extractSpecificAttributes(
+        final DataEntityPojo dataEntity,
+        final Collection<DataEntityTypePojo> types) {
+        if (dataEntity.getHollow()) {
+            return emptyMap();
+        }
+
+        final Map<String, ?> specificAttributes = JSONSerDeUtils.deserializeJson(
+            dataEntity.getSpecificAttributes().data(),
+            SPECIFIC_ATTRIBUTES_TYPE_REFERENCE
+        );
+
+        return types
+            .stream()
+            .map(DataEntityTypePojo::getName)
+            .map(DataEntityType::valueOf)
+            .map(t -> Pair.of(t, JSONSerDeUtils.deserializeJson(
+                specificAttributes.get(t.toString()),
+                DataEntityAttributes.TYPE_TO_ATTR_CLASS.get(t)
+            )))
+            .filter(p -> p.getRight() != null)
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
     private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
