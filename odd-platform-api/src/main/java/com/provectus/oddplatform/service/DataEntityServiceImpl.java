@@ -34,6 +34,7 @@ import com.provectus.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.repository.DataEntityRepository;
 import com.provectus.oddplatform.repository.DataEntityTypeRepository;
+import com.provectus.oddplatform.repository.LineageRepository;
 import com.provectus.oddplatform.repository.MetadataFieldRepository;
 import com.provectus.oddplatform.repository.MetadataFieldValueRepository;
 import com.provectus.oddplatform.repository.TagRepository;
@@ -65,6 +66,7 @@ public class DataEntityServiceImpl
     private final MetadataFieldRepository metadataFieldRepository;
     private final DataEntityTypeRepository dataEntityTypeRepository;
     private final TagRepository tagRepository;
+    private final LineageRepository lineageRepository;
 
     private final MetadataFieldMapper metadataFieldMapper;
     private final TagMapper tagMapper;
@@ -76,6 +78,7 @@ public class DataEntityServiceImpl
                                  final MetadataFieldRepository metadataFieldRepository,
                                  final DataEntityTypeRepository dataEntityTypeRepository,
                                  final TagRepository tagRepository,
+                                 final LineageRepository lineageRepository,
                                  final MetadataFieldMapper metadataFieldMapper,
                                  final TagMapper tagMapper) {
         super(entityMapper, entityRepository);
@@ -85,6 +88,7 @@ public class DataEntityServiceImpl
         this.metadataFieldRepository = metadataFieldRepository;
         this.dataEntityTypeRepository = dataEntityTypeRepository;
         this.tagRepository = tagRepository;
+        this.lineageRepository = lineageRepository;
         this.metadataFieldMapper = metadataFieldMapper;
         this.tagMapper = tagMapper;
     }
@@ -98,12 +102,23 @@ public class DataEntityServiceImpl
 
     @Override
     public Mono<DataEntityDetails> getDetails(final long dataEntityId) {
-        return Mono.fromCallable(() -> entityRepository.getDetails(dataEntityId))
-                .flatMap(optional -> optional.isEmpty()
-                        ? Mono.error(new NotFoundException())
-                        : Mono.just(optional.get()))
-                .map(this::incrementViewCount)
-                .map(entityMapper::mapDtoDetails);
+        final Mono<DataEntityDetailsDto> dto = Mono
+            .fromCallable(() -> entityRepository.getDetails(dataEntityId))
+            .flatMap(optional -> optional.isEmpty()
+                ? Mono.error(new NotFoundException())
+                : Mono.just(optional.get()))
+            .map(this::incrementViewCount);
+
+        final Mono<Long> targetCount = Mono
+            .fromCallable(() -> lineageRepository.getTargetsCount(dataEntityId))
+            .map(opt -> opt.orElse(0L));
+
+        return Mono.zip(dto, targetCount)
+            .map(tuple -> {
+                tuple.getT1().getDataSetDetailsDto().setConsumersCount(tuple.getT2());
+                return tuple.getT1();
+            })
+            .map(entityMapper::mapDtoDetails);
     }
 
     private DataEntityDetailsDto incrementViewCount(DataEntityDetailsDto dto) {
@@ -281,10 +296,10 @@ public class DataEntityServiceImpl
                                                              final long metadataFieldId,
                                                              final MetadataFieldValueUpdateFormData formData) {
         return Mono.just(new MetadataFieldValuePojo()
-                .setDataEntityId(dataEntityId)
-                .setMetadataFieldId(metadataFieldId)
-                .setActive(true)
-                .setValue(formData.getValue()))
+            .setDataEntityId(dataEntityId)
+            .setMetadataFieldId(metadataFieldId)
+            .setActive(true)
+            .setValue(formData.getValue()))
             .flatMap(pojo -> {
                 final Optional<MetadataFieldPojo> metadataFieldPojo = metadataFieldRepository.get(metadataFieldId);
                 if (metadataFieldPojo.isEmpty()) {
