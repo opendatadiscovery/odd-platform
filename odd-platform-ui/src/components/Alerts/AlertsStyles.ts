@@ -1,4 +1,6 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { maxContentWidthWithoutSidebar } from 'lib/constants';
 
 export const styles = (theme: Theme) =>

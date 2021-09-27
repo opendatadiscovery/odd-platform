@@ -1,4 +1,4 @@
-import { Typography, TextField, InputAdornment } from '@material-ui/core';
+import { Typography, TextField, InputAdornment } from '@mui/material';
 import React from 'react';
 import {
   InternalDescriptionFormData,

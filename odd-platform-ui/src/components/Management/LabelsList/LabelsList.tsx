@@ -5,7 +5,7 @@ import {
   InputAdornment,
   IconButton,
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   Label,
   LabelApiDeleteLabelRequest,
@@ -107,7 +107,11 @@ const LabelsListView: React.FC<LabelsListProps> = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="end">
-                <IconButton disableRipple onClick={handleSearch}>
+                <IconButton
+                  disableRipple
+                  onClick={handleSearch}
+                  size="large"
+                >
                   <SearchIcon />
                 </IconButton>
               </InputAdornment>

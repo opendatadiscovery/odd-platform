@@ -1,4 +1,4 @@
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid } from '@mui/material';
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -117,7 +117,11 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     <div className={classes.container}>
       {dataEntityDetails && dataEntityFetchingStatus !== 'fetching' ? (
         <>
-          <Grid container justify="space-between" alignItems="center">
+          <Grid
+            container
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Grid item className={classes.caption}>
               <Grid container item alignItems="center">
                 <Typography variant="h1" noWrap>

@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { primaryTabsHeight } from 'components/shared/AppTabs/AppTabsStyles';
 import { searchHeight } from 'components/shared/MainSearch/MainSearchStyles';
 import { toolbarHeight } from 'lib/constants';

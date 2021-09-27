@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import { DataSetField } from 'generated-sources';
 import { StylesType } from './DatasetStructureTableStyles';
 import DatasetStructureItemContainer from './DatasetStructureItem/DatasetStructureItemContainer';

@@ -1,4 +1,5 @@
-import { Grid, MenuItem, Typography, withStyles } from '@material-ui/core';
+import { Grid, MenuItem, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -27,7 +28,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
       item
       container
       className={cx(classes.col, classes.colName)}
-      justify="space-between"
+      justifyContent="space-between"
     >
       <Link
         to={
@@ -63,7 +64,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
       item
       container
       className={cx(classes.col, classes.colStatus)}
-      justify="center"
+      justifyContent="center"
     >
       <AlertStatusItem typeName={alert.status} />
     </Grid>

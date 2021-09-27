@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton, withStyles, Typography } from '@material-ui/core';
+import { IconButton, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import cx from 'classnames';
 import { SearchFilter, SearchFilterState } from 'generated-sources';
 import * as actions from 'redux/actions';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
 import { OptionalFacetNames } from 'redux/interfaces/search';
 import { styles, StylesType } from './SelectedFilterOptionStyles';
@@ -41,7 +42,11 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({
         <Typography noWrap title={filterName}>
           <TextFormatted value={filterName} />
         </Typography>
-        <IconButton className={classes.removeBtn} onClick={onRemoveClick}>
+        <IconButton
+          className={classes.removeBtn}
+          onClick={onRemoveClick}
+          size="large"
+        >
           <CloseIcon fontSize="inherit" />
         </IconButton>
       </div>

@@ -5,7 +5,7 @@ import {
   FormControlLabel,
   Checkbox,
   InputAdornment,
-} from '@material-ui/core';
+} from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Tag,

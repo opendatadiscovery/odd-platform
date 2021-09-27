@@ -8,7 +8,7 @@ import {
   MenuItem,
   useScrollTrigger,
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   SearchApiSearchRequest,
   SearchFacetsData,
@@ -16,9 +16,9 @@ import {
 } from 'generated-sources';
 import { useHistory, Link, useLocation } from 'react-router-dom';
 import { searchPath } from 'lib/paths';
-import { AccountCircle } from '@material-ui/icons';
+import { AccountCircle } from '@mui/icons-material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { StylesType } from './AppToolbarStyles';
 
 interface AppToolbarProps extends StylesType {
@@ -149,6 +149,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
                 aria-haspopup="true"
                 onClick={handleProfileMenuOpen}
                 color="inherit"
+                size="large"
               >
                 <ArrowDropDownIcon />
               </IconButton>

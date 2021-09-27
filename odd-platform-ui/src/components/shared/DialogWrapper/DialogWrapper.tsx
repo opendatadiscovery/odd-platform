@@ -7,9 +7,9 @@ import {
   DialogProps,
   DialogTitle,
   LinearProgress,
-  withStyles,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import AppButton from 'components/shared/AppButton/AppButton';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import { styles, StylesType } from './DialogWrapperStyles';
@@ -77,7 +77,6 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           <DialogTitle
             className={classes.title}
             id="max-width-dialog-title"
-            disableTypography
           >
             {title}
             <AppButton

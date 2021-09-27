@@ -1,22 +1,24 @@
-import React from 'react';
-import {
-  Grid,
-  Typography,
-  TextField,
-  CircularProgress,
-} from '@material-ui/core';
+import React, { HTMLAttributes } from 'react';
 import {
   Autocomplete,
-  AutocompleteInputChangeReason,
   AutocompleteRenderOptionState,
+  CircularProgress,
+  Grid,
+  TextField,
+  Typography,
+} from '@mui/material';
+
+import {
+  AutocompleteInputChangeReason,
   createFilterOptions,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
+
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  SearchFilter,
-  SearchApiGetFiltersForFacetRequest,
   CountableSearchFilter,
   MultipleFacetType,
+  SearchApiGetFiltersForFacetRequest,
+  SearchFilter,
 } from 'generated-sources';
 import {
   FacetStateUpdate,
@@ -141,6 +143,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
   };
 
   const fillOptionMatches = (
+    props: HTMLAttributes<HTMLLIElement>,
     option: FilterOption,
     state: AutocompleteRenderOptionState
   ) => {
@@ -150,10 +153,12 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
         : option.name;
     if (!state.inputValue) {
       return (
-        <Grid container justify="space-between">
-          <span>{formattedOptionName}</span>
-          <span className={classes.filterCount}>{option.count}</span>
-        </Grid>
+        <li {...props}>
+          <Grid container justifyContent="space-between">
+            <span>{formattedOptionName}</span>
+            <span className={classes.filterCount}>{option.count}</span>
+          </Grid>
+        </li>
       );
     }
 
@@ -173,7 +178,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
     );
 
     return (
-      <Grid container justify="space-between">
+      <Grid container justifyContent="space-between">
         <span>
           {string}
           <span className={classes.highlightedOption}>

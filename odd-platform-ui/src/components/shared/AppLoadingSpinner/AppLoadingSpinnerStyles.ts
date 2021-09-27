@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles, fade } from '@material-ui/core';
+import { Theme, alpha } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -11,7 +14,7 @@ export const styles = (theme: Theme) =>
       zIndex: 9999,
     },
     colorPrimary: {
-      backgroundColor: fade('#0080FF', 0.9),
+      backgroundColor: alpha('#0080FF', 0.9),
     },
     barColorPrimary: {
       backgroundColor: theme.palette.text.secondary,

@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -11,9 +14,7 @@ export const styles = (theme: Theme) =>
       flexDirection: 'column',
       alignItems: 'flex-start',
     },
-    generalItem: {
-      padding: '1px 8px !important',
-    },
+    ownersContainer: { marginTop: theme.spacing(2) },
     ownerItem: {
       display: 'flex',
       alignItems: 'center',

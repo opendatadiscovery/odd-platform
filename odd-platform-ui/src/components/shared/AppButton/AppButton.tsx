@@ -1,11 +1,11 @@
 import React from 'react';
 import {
-  withStyles,
   IconButton,
   IconButtonProps,
   Button,
   ButtonProps,
-} from '@material-ui/core';
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import cx from 'classnames';
 import {
   styles,

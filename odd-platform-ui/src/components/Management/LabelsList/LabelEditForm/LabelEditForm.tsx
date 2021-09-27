@@ -1,5 +1,5 @@
 import React from 'react';
-import { InputAdornment, TextField, Typography } from '@material-ui/core';
+import { InputAdornment, TextField, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Label,

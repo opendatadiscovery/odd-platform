@@ -1,5 +1,6 @@
 import React from 'react';
-import { withStyles, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import EmptyIcon from 'components/shared/Icons/EmptyIcon';
 import {
   styles,

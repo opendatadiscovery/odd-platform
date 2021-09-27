@@ -1,6 +1,6 @@
 import React from 'react';
 import { DataQualityTest } from 'generated-sources';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import {
   testReportDetailsHistoryPath,
@@ -63,7 +63,7 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
       <Typography variant="h2">
         {qualityTest?.internalName || qualityTest?.externalName}
       </Typography>
-      <Grid container wrap="wrap" justify="center">
+      <Grid container wrap="wrap" justifyContent="center">
         {tabs.length && selectedTab >= 0 ? (
           <AppTabs
             className={classes.tabsContainer}

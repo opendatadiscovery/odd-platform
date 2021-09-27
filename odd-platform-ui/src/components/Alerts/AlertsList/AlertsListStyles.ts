@@ -1,4 +1,7 @@
-import { createStyles, WithStyles, Theme } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const alertsMainColWidthStyles = {
   col: {
@@ -39,7 +42,7 @@ export const styles = (theme: Theme) =>
   createStyles({
     container: {},
     alertsTableHeader: {
-      color: theme.palette.text.hint,
+      color: theme.palette.texts.hint,
       borderBottom: '1px solid',
       borderBottomColor: theme.palette.divider,
     },

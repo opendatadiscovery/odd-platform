@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid, Collapse } from '@material-ui/core';
+import { Typography, Grid, Collapse } from '@mui/material';
 import { MetadataFieldValue } from 'generated-sources';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -137,7 +137,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
               xs={12}
               container
               alignItems="center"
-              justify="flex-start"
+              justifyContent="flex-start"
               wrap="nowrap"
             >
               <Typography variant="subtitle2">Not created.</Typography>

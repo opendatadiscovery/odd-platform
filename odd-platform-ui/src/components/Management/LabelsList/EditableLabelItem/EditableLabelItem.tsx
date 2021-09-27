@@ -1,5 +1,6 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { Label, LabelApiDeleteLabelRequest } from 'generated-sources';
 import AppButton from 'components/shared/AppButton/AppButton';
 import EditIcon from 'components/shared/Icons/EditIcon';

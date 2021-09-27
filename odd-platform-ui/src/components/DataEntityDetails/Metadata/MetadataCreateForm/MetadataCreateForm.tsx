@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
   MetadataObject,
@@ -93,6 +93,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
         <form
           id="metadata-create-form"
           onSubmit={methods.handleSubmit(createMetadata)}
+          className={classes.container}
         >
           {fields.map((item, index) => (
             <MetadataCreateFormItemContainer

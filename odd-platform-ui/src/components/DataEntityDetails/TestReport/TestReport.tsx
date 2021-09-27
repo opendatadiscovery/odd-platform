@@ -6,7 +6,7 @@ import {
   DataQualityTestRunStatusEnum,
   DataSetTestReport,
 } from 'generated-sources';
-import { Grid, Paper, Typography } from '@material-ui/core';
+import { Grid, Paper, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import TestReportItemContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemContainer';
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';

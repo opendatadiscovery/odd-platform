@@ -9,7 +9,12 @@ import { select, selectAll } from 'd3-selection';
 import { zoom as d3zoom, zoomIdentity } from 'd3-zoom';
 import { entries, maxBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { FormControl, Select, Typography } from '@material-ui/core';
+import {
+  FormControl,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from '@mui/material';
 import cx from 'classnames';
 import {
   DataEntityLineageById,
@@ -225,7 +230,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
     };
   };
 
-  const handleDepthChange = (e: React.ChangeEvent<{ value: unknown }>) =>
+  const handleDepthChange = (e: SelectChangeEvent<number>) =>
     setSelectedDepth(e.target.value as number);
 
   const transformation: { translate: Point; scale: number } = {

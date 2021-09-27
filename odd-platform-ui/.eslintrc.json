@@ -42,7 +42,8 @@
         "RadioGroup",
         "SvgIcon",
         "OutlinedTextField",
-        "FormProvider"
+        "FormProvider",
+        "li"
       ]
     }]
   },

@@ -1,6 +1,6 @@
-import { TypeBackground } from '@material-ui/core/styles/createPalette';
-
 // palette interfaces
+import { TypeBackground } from '@mui/material/styles/createPalette';
+
 interface ItemColors {
   background?: string;
   border?: string;
@@ -85,7 +85,7 @@ interface AlertType {
   resolved: ItemColors;
 }
 
-declare module '@material-ui/core/styles/createPalette' {
+declare module '@mui/material/styles' {
   interface Palette {
     entityType: EntityType;
     reportStatus: ReportStatus;

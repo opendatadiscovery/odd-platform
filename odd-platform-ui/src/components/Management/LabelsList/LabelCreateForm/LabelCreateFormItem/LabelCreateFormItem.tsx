@@ -1,5 +1,6 @@
 import React from 'react';
-import { withStyles, TextField, InputAdornment } from '@material-ui/core';
+import { TextField, InputAdornment } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import CancelIcon from 'components/shared/Icons/CancelIcon';

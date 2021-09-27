@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collapse, Typography, Grid, MenuItem } from '@material-ui/core';
+import { Collapse, Typography, Grid, MenuItem } from '@mui/material';
 import cx from 'classnames';
 import { round } from 'lodash';
 import {

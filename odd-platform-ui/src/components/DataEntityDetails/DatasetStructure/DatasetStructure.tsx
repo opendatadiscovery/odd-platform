@@ -1,4 +1,9 @@
-import { Grid, Typography, Select } from '@material-ui/core';
+import {
+  Grid,
+  Typography,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { toPairs, round } from 'lodash';
@@ -61,9 +66,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     }
   }, [fetchDataSetStructureLatest, dataEntityId]);
 
-  const handleRevisionChange = (
-    e: React.ChangeEvent<{ value: unknown }>
-  ) => {
+  const handleRevisionChange = (e: SelectChangeEvent<number>) => {
     const newVersionId = e.target.value as number;
     fetchDataSetStructure({
       dataEntityId,
@@ -87,7 +90,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
           <Grid
             item
             xs={12}
-            justify="space-between"
+            justifyContent="space-between"
             alignItems="center"
             container
           >

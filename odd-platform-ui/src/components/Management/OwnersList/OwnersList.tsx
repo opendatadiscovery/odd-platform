@@ -5,7 +5,7 @@ import {
   InputAdornment,
   TextField,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   Owner,
   OwnerApiDeleteOwnerRequest,
@@ -107,7 +107,11 @@ const OwnersListView: React.FC<OwnersListProps> = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="end">
-                <IconButton disableRipple onClick={handleSearch}>
+                <IconButton
+                  disableRipple
+                  onClick={handleSearch}
+                  size="large"
+                >
                   <SearchIcon />
                 </IconButton>
               </InputAdornment>

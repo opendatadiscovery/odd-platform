@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import { DataEntityDetailsState } from 'redux/interfaces/dataentities';
 import { styles, StylesType } from './OverviewStatsStyles';

@@ -1,19 +1,19 @@
 import React from 'react';
 import {
-  Typography,
-  TextField,
-  CircularProgress,
-} from '@material-ui/core';
-import {
   Autocomplete,
+  CircularProgress,
+  TextField,
+  Typography,
+} from '@mui/material';
+import {
   AutocompleteInputChangeReason,
   createFilterOptions,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
-  Label,
   DatasetFieldApiUpsertDatasetFieldLabelsRequest,
+  Label,
   LabelApiGetLabelListRequest,
   LabelsResponse,
 } from 'generated-sources';
@@ -219,22 +219,40 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
             }}
           />
         )}
-        renderOption={option => (
-          <div className={classes.optionsContainer}>
-            <div className={classes.optionItem}>
-              <Typography variant="body1">
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="label"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
+        renderOption={(props, option) => (
+          <li {...props}>
+            <div className={classes.optionsContainer}>
+              <div className={classes.optionItem}>
+                <Typography variant="body1">
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="label"
+                      optionName={option.name}
+                    />
+                  )}
+                </Typography>
+              </div>
             </div>
-          </div>
+          </li>
         )}
+        // renderOption={option => (
+        //   <div className={classes.optionsContainer}>
+        //     <div className={classes.optionItem}>
+        //       <Typography variant="body1">
+        //         {option.id ? (
+        //           option.name
+        //         ) : (
+        //           <AutocompleteSuggestion
+        //             optionLabel="label"
+        //             optionName={option.name}
+        //           />
+        //         )}
+        //       </Typography>
+        //     </div>
+        //   </div>
+        // )}
       />
       <FormProvider {...methods}>
         <form

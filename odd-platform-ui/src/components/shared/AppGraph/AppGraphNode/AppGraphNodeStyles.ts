@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 
 export const styles = (theme: Theme) =>
@@ -32,7 +34,7 @@ export const styles = (theme: Theme) =>
       marginLeft: theme.spacing(0.5),
     },
     placeholder: {
-      fill: theme.palette.text.hint,
+      fill: theme.palette.texts.hint,
     },
     attributeLabel: {
       fill: theme.palette.text.secondary,

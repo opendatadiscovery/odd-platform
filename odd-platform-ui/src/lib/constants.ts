@@ -8,7 +8,7 @@ export const BASE_PARAMS: ConfigurationParameters = {
 
 // content width constants
 export const toolbarHeight = 49;
-export const maxSidebarWidth = 224;
+export const maxSidebarWidth = 240;
 export const maxContentWidth = 1216;
 export const maxContentWidthWithoutSidebar = 1440;
 

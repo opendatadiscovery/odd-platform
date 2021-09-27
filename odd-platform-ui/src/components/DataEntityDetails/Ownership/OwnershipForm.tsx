@@ -1,20 +1,21 @@
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import {
-  Typography,
-  TextField,
+  Autocomplete,
   CircularProgress,
-} from '@material-ui/core';
+  TextField,
+  Typography,
+} from '@mui/material';
 import {
-  useForm,
   Controller,
   ControllerRenderProps,
+  useForm,
 } from 'react-hook-form';
 import {
-  Owner,
-  OwnerApiGetOwnerListRequest,
   DataEntityApiCreateOwnershipRequest,
   DataEntityApiUpdateOwnershipRequest,
+  Owner,
+  OwnerApiGetOwnerListRequest,
   OwnerList,
   Ownership,
   OwnershipFormData,
@@ -25,11 +26,10 @@ import {
 import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
-  Autocomplete,
   AutocompleteInputChangeReason,
   createFilterOptions,
   FilterOptionsState,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { StylesType } from './OwnershipFormStyles';
@@ -302,7 +302,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
               options={ownerOptions}
               filterOptions={getOwnerFilterOptions}
               loading={ownersLoading}
-              getOptionSelected={(option, value) =>
+              isOptionEqualToValue={(option, value) =>
                 option.name === value.name
               }
               handleHomeEndKeys
@@ -329,17 +329,19 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
                   }}
                 />
               )}
-              renderOption={option => (
-                <Typography variant="body2">
-                  {option.id ? (
-                    option.name
-                  ) : (
-                    <AutocompleteSuggestion
-                      optionLabel="owner"
-                      optionName={option.name}
-                    />
-                  )}
-                </Typography>
+              renderOption={(props, option) => (
+                <li {...props}>
+                  <Typography variant="body2">
+                    {option.id ? (
+                      option.name
+                    ) : (
+                      <AutocompleteSuggestion
+                        optionLabel="owner"
+                        optionName={option.name}
+                      />
+                    )}
+                  </Typography>
+                </li>
               )}
             />
           )}
@@ -365,7 +367,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
             options={rolesOptions}
             filterOptions={getRoleFilterOptions}
             loading={rolesLoading}
-            getOptionSelected={(option, value) =>
+            isOptionEqualToValue={(option, value) =>
               option.name === value.name
             }
             handleHomeEndKeys
@@ -392,17 +394,19 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
                 }}
               />
             )}
-            renderOption={option => (
-              <Typography variant="body2">
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="role"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
+            renderOption={(props, option) => (
+              <li {...props}>
+                <Typography variant="body2">
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="role"
+                      optionName={option.name}
+                    />
+                  )}
+                </Typography>
+              </li>
             )}
           />
         )}

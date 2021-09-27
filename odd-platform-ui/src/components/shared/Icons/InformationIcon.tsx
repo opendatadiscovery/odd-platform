@@ -1,6 +1,6 @@
 import React from 'react';
-import SvgIcon, { SvgIconProps } from '@material-ui/core/SvgIcon';
-import { makeStyles } from '@material-ui/core';
+import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles({
   informationIconContainer: {

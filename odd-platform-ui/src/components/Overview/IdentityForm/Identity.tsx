@@ -1,10 +1,11 @@
 import React from 'react';
 import {
-  Grid,
-  Typography,
-  TextField,
+  Autocomplete,
   CircularProgress,
-} from '@material-ui/core';
+  Grid,
+  TextField,
+  Typography,
+} from '@mui/material';
 import {
   Controller,
   ControllerRenderProps,
@@ -12,18 +13,17 @@ import {
 } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  Autocomplete,
   AutocompleteInputChangeReason,
   createFilterOptions,
   FilterOptionsState,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
 import {
   AssociatedOwner,
+  IdentityApiAssociateOwnerRequest,
   Owner,
-  OwnerList,
   OwnerApiGetOwnerListRequest,
   OwnerFormData,
-  IdentityApiAssociateOwnerRequest,
+  OwnerList,
 } from 'generated-sources';
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -153,7 +153,7 @@ const Identity: React.FC<IdentityProps> = ({
   return (
     <div className={classes.container}>
       <Grid container>
-        <Grid item xs={12} container justify="center">
+        <Grid item xs={12} container justifyContent="center">
           <UserSyncIcon classes={{ root: classes.captionIcon }} />
         </Grid>
         <Grid
@@ -206,7 +206,7 @@ const Identity: React.FC<IdentityProps> = ({
                   options={options}
                   filterOptions={getFilterOptions}
                   loading={optionsLoading}
-                  getOptionSelected={(option, value) =>
+                  isOptionEqualToValue={(option, value) =>
                     option.name === value.name
                   }
                   handleHomeEndKeys
@@ -262,17 +262,19 @@ const Identity: React.FC<IdentityProps> = ({
                       ) : null}
                     </>
                   )}
-                  renderOption={option => (
-                    <Typography variant="body2">
-                      {option.id ? (
-                        option.name
-                      ) : (
-                        <AutocompleteSuggestion
-                          optionLabel="owner"
-                          optionName={option.name}
-                        />
-                      )}
-                    </Typography>
+                  renderOption={(props, option) => (
+                    <li {...props}>
+                      <Typography variant="body2">
+                        {option.id ? (
+                          option.name
+                        ) : (
+                          <AutocompleteSuggestion
+                            optionLabel="owner"
+                            optionName={option.name}
+                          />
+                        )}
+                      </Typography>
+                    </li>
                   )}
                 />
               )}

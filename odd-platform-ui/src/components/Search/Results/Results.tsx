@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import cx from 'classnames';
@@ -218,10 +218,7 @@ const Results: React.FC<ResultsProps> = ({
           )}
         />
       ) : (
-        <div
-          id="results-list"
-          className={classes.listContainer}
-        >
+        <div id="results-list" className={classes.listContainer}>
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}

@@ -1,4 +1,4 @@
-import createPalette from '@material-ui/core/styles/createPalette';
+import createPalette from '@mui/material/styles/createPalette';
 
 const colors = {
   black: '#000000',

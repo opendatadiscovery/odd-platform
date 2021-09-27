@@ -3,7 +3,7 @@ import {
   DataQualityTest,
   DataQualityTestRunStatusEnum,
 } from 'generated-sources';
-import { Collapse, Grid, Typography } from '@material-ui/core';
+import { Collapse, Grid, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import cx from 'classnames';
 import MinusIcon from 'components/shared/Icons/MinusIcon';

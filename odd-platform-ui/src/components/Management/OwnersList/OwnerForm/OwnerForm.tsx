@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, TextField, InputAdornment } from '@material-ui/core';
+import { Typography, TextField, InputAdornment } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import {
   OwnerFormData,
@@ -78,7 +78,11 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
   );
 
   const formContent = () => (
-    <form id="owner-create-form" onSubmit={handleSubmit(handleSudmit)}>
+    <form
+      id="owner-create-form"
+      onSubmit={handleSubmit(handleSudmit)}
+      className={classes.container}
+    >
       <Controller
         name="name"
         control={control}

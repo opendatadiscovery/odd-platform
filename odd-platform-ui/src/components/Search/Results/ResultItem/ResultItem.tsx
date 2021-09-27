@@ -1,5 +1,6 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
@@ -30,7 +31,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
         <Grid
           item
           container
-          justify="space-between"
+          justifyContent="space-between"
           wrap="nowrap"
           className={cx(classes.col, classes.collg)}
         >

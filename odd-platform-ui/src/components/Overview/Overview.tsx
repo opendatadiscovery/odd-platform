@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
@@ -124,7 +124,7 @@ const Overview: React.FC<OverviewProps> = ({
               xs={3}
               className={cx(classes.infoBarItem, classes.alertsContainer)}
             >
-              <Grid container justify="space-between">
+              <Grid container justifyContent="space-between">
                 <Typography variant="subtitle1">Alerts</Typography>
                 <Link to={alertsPath()}>
                   <AppButton

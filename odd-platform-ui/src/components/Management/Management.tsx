@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import { StylesType } from './ManagementStyles';
 import DataSourcesListContainer from './DataSourcesList/DataSourcesListContainer';

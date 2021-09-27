@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const searchHeight = 40;
 export const styles = (theme: Theme) =>

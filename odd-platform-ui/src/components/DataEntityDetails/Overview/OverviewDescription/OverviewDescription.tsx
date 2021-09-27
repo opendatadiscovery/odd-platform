@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import gfm from 'remark-gfm';
 import cx from 'classnames';
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid } from '@mui/material';
 import {
   InternalDescription,
   DataEntityDetailsBaseObject,
@@ -139,7 +139,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
                 xs={12}
                 container
                 alignItems="center"
-                justify="flex-start"
+                justifyContent="flex-start"
                 wrap="nowrap"
               >
                 <Typography variant="subtitle2">Not created.</Typography>

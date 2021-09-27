@@ -1,5 +1,6 @@
 import React from 'react';
-import { withStyles, Typography, Grid, Collapse } from '@material-ui/core';
+import { Typography, Grid, Collapse } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { Tag } from 'generated-sources';
 import TagItem from 'components/shared/TagItem/TagItem';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -96,7 +97,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
           xs={12}
           container
           alignItems="center"
-          justify="flex-start"
+          justifyContent="flex-start"
           wrap="nowrap"
         >
           <Typography variant="subtitle2">Not created.</Typography>

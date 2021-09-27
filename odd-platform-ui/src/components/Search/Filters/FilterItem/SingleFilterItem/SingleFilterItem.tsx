@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography, Select, MenuItem } from '@material-ui/core';
+import { Grid, Typography, Select, MenuItem } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
 import {
   FacetStateUpdate,

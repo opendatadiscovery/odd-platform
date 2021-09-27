@@ -1,6 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import { DatasetTypeLabelMap } from 'redux/interfaces/datasetStructure';
 import {

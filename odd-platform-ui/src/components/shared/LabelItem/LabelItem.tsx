@@ -1,5 +1,6 @@
 import React from 'react';
-import { Typography, withStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import cx from 'classnames';

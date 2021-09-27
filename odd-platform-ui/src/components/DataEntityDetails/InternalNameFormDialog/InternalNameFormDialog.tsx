@@ -1,4 +1,4 @@
-import { Typography, TextField, InputAdornment } from '@material-ui/core';
+import { Typography, TextField, InputAdornment } from '@mui/material';
 import React from 'react';
 import {
   InternalNameFormData,
@@ -9,6 +9,7 @@ import { Controller, useForm } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
+import OutlinedTextField from 'components/shared/OutlinedTextField/OutlinedTextField';
 import { StylesType } from './InternalNameFormDialogStyles';
 
 interface InternalNameFormDialogProps extends StylesType {
@@ -92,7 +93,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
         name="internalName"
         defaultValue={dataEntityInternalName || ''}
         render={({ field }) => (
-          <TextField
+          <OutlinedTextField
             {...field}
             fullWidth
             type="text"

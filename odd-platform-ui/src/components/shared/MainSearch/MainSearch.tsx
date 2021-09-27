@@ -1,22 +1,22 @@
 import React from 'react';
 import cx from 'classnames';
 import {
-  TextField,
-  InputAdornment,
-  IconButton,
-  Typography,
+  Autocomplete,
   CircularProgress,
-} from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import { Autocomplete } from '@material-ui/lab';
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { Link, useHistory } from 'react-router-dom';
 import {
-  SearchApiSearchRequest,
-  SearchFacetsData,
   DataEntityRef,
   SearchApiGetSearchSuggestionsRequest,
+  SearchApiSearchRequest,
+  SearchFacetsData,
 } from 'generated-sources';
-import { searchPath, dataEntityDetailsPath } from 'lib/paths';
+import { dataEntityDetailsPath, searchPath } from 'lib/paths';
 import { StylesType } from 'components/shared/MainSearch/MainSearchStyles';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { useDebouncedCallback } from 'use-debounce/lib';
@@ -150,7 +150,11 @@ const MainSearch: React.FC<AppSearchProps> = ({
                 },
                 startAdornment: (
                   <InputAdornment position="end">
-                    <IconButton disableRipple onClick={createSearch}>
+                    <IconButton
+                      disableRipple
+                      onClick={createSearch}
+                      size="large"
+                    >
                       <SearchIcon />
                     </IconButton>
                   </InputAdornment>
@@ -167,21 +171,38 @@ const MainSearch: React.FC<AppSearchProps> = ({
               onKeyDown={handleKeyDown}
             />
           )}
-          renderOption={option => (
-            <Link
-              to={option.id ? dataEntityDetailsPath(option.id) : '#'}
-              className={classes.suggestionItem}
-            >
-              <Typography variant="body2">
-                {option.internalName || option.externalName}
-              </Typography>
-              <div className={classes.suggestionItemTypes}>
-                {option.types?.map(type => (
-                  <EntityTypeItem key={type.id} typeName={type.name} />
-                ))}
-              </div>
-            </Link>
+          renderOption={(props, option) => (
+            <li {...props}>
+              <Link
+                to={option.id ? dataEntityDetailsPath(option.id) : '#'}
+                className={classes.suggestionItem}
+              >
+                <Typography variant="body2">
+                  {option.internalName || option.externalName}
+                </Typography>
+                <div className={classes.suggestionItemTypes}>
+                  {option.types?.map(type => (
+                    <EntityTypeItem key={type.id} typeName={type.name} />
+                  ))}
+                </div>
+              </Link>
+            </li>
           )}
+          // renderOption={option => (
+          //   <Link
+          //     to={option.id ? dataEntityDetailsPath(option.id) : '#'}
+          //     className={classes.suggestionItem}
+          //   >
+          //     <Typography variant="body2">
+          //       {option.internalName || option.externalName}
+          //     </Typography>
+          //     <div className={classes.suggestionItemTypes}>
+          //       {option.types?.map(type => (
+          //         <EntityTypeItem key={type.id} typeName={type.name} />
+          //       ))}
+          //     </div>
+          //   </Link>
+          // )}
         />
       </div>
     </div>

@@ -1,6 +1,7 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import { TextFieldProps, withStyles } from '@material-ui/core';
+import TextField from '@mui/material/TextField';
+import { TextFieldProps } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { styles, StylesType } from './OutlinedTextFieldStyles';
 
 interface OutlinedTextFieldProps

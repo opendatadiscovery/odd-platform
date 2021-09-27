@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import {
   getSearchTotals,
   getSearchResults,

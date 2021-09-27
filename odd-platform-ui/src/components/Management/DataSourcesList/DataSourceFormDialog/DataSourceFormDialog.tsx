@@ -8,7 +8,7 @@ import {
   TextField,
   Checkbox,
   InputLabel,
-} from '@material-ui/core';
+} from '@mui/material';
 import { capitalize, reduce } from 'lodash';
 import {
   add,
@@ -282,7 +282,7 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
             placeholder="Datasource description"
             multiline
             rows={4}
-            rowsMax={4}
+            maxRows={4}
           />
         )}
       />

@@ -1,6 +1,7 @@
 import React from 'react';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Grid, withStyles } from '@material-ui/core';
+import Skeleton from '@mui/material/Skeleton';
+import { Grid } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { mainSkeletonHeight } from 'lib/constants';
 import { styles, StylesType } from './DatasetTestReportSkeletonStyles';
 
@@ -16,7 +17,7 @@ const DatasetTestReportSkeleton: React.FC<SkeletonProps> = ({
     <Grid
       container
       className={classes.testReportSkeletonContainer}
-      justify="space-between"
+      justifyContent="space-between"
     >
       <Grid container item xs={6} className={classes.testSkeletons}>
         <Skeleton width={width} height={mainSkeletonHeight} />

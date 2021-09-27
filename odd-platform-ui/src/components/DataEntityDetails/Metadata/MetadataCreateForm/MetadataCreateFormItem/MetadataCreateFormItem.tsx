@@ -1,14 +1,15 @@
 import React from 'react';
 import {
+  Autocomplete,
   CircularProgress,
   InputLabel,
   MenuItem,
   Select,
   TextField,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import { capitalize, values } from 'lodash';
-import { Autocomplete, createFilterOptions } from '@material-ui/lab';
+import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { Controller, useFormContext } from 'react-hook-form';
 import {
@@ -186,17 +187,19 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
                 }}
               />
             )}
-            renderOption={option => (
-              <Typography variant="body2">
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="custom data"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
+            renderOption={(props, option) => (
+              <li {...props}>
+                <Typography variant="body2">
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="custom data"
+                      optionName={option.name}
+                    />
+                  )}
+                </Typography>
+              </li>
             )}
           />
         )}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import ReactTooltip, { TooltipProps } from 'react-tooltip';
 import cx from 'classnames';
 import { v4 as uuidv4 } from 'uuid';

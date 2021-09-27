@@ -1,26 +1,28 @@
-import createTypography, {
-  TypographyOptions,
-} from '@material-ui/core/styles/createTypography';
 import { palette } from 'theme/palette';
 import { breakpoints } from 'theme/breakpoints';
+import createTypography, {
+  TypographyOptions,
+} from '@mui/material/styles/createTypography';
+import { Palette } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 
-export const { pxToRem } = createTypography(palette, {});
+export const { pxToRem } = createTypography(palette as Palette, {});
 
-export const breakpointDownMdBody1: TypographyOptions = {
-  [breakpoints.down('md')]: {
+export const breakpointDownLgBody1: TypographyOptions = {
+  [createTheme({ breakpoints }).breakpoints.down('lg')]: {
     fontSize: pxToRem(14),
     lineHeight: pxToRem(20),
   },
 };
 
-export const breakpointDownMdBody2: TypographyOptions = {
-  [breakpoints.down('md')]: {
+export const breakpointDownLgBody2: TypographyOptions = {
+  [createTheme({ breakpoints }).breakpoints.down('lg')]: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),
   },
 };
 
-export const typography = createTypography(palette, {
+export const typography = createTypography(palette as Palette, {
   h1: {
     fontSize: pxToRem(20),
     lineHeight: pxToRem(32),
@@ -35,13 +37,13 @@ export const typography = createTypography(palette, {
     fontSize: pxToRem(16),
     lineHeight: pxToRem(24),
     fontWeight: 500,
-    ...breakpointDownMdBody1,
+    ...breakpointDownLgBody1,
   },
   h4: {
     fontSize: pxToRem(14),
     lineHeight: pxToRem(20),
     fontWeight: 500,
-    ...breakpointDownMdBody2,
+    ...breakpointDownLgBody2,
   },
   h5: {
     fontSize: pxToRem(12),
@@ -56,9 +58,9 @@ export const typography = createTypography(palette, {
   subtitle1: {
     fontSize: pxToRem(14),
     lineHeight: pxToRem(20),
-    color: palette.text.secondary,
+    color: palette.text?.secondary,
     fontWeight: 400,
-    ...breakpointDownMdBody2,
+    ...breakpointDownLgBody2,
   },
   subtitle2: {
     fontSize: pxToRem(12),
@@ -71,19 +73,19 @@ export const typography = createTypography(palette, {
     lineHeight: pxToRem(20),
     fontWeight: 400,
     color: palette.text.primary,
-    ...breakpointDownMdBody2,
+    ...breakpointDownLgBody2,
   },
   body2: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),
     fontWeight: 400,
     color: palette.text.primary,
-    ...breakpointDownMdBody2,
+    ...breakpointDownLgBody2,
   },
   caption: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),
     fontWeight: 400,
-    color: palette.text.hint,
+    color: palette.texts.hint,
   },
 });

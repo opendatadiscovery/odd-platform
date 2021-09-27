@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import {
@@ -40,7 +40,12 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
         <OverviewDataQualityReportSkeleton />
       ) : (
         <Grid container direction="column">
-          <Grid item container wrap="nowrap" justify="space-between">
+          <Grid
+            item
+            container
+            wrap="nowrap"
+            justifyContent="space-between"
+          >
             <Grid item>
               <Typography variant="h4">Test report</Typography>
             </Grid>

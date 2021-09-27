@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import {
   TagFormData,
@@ -87,7 +87,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
   const formContent = () => (
     <>
       <FormProvider {...methods}>
-        <form id="tag-create-form">
+        <form id="tag-create-form" className={classes.container}>
           {fields.map((item, index) => (
             <TagCreateFormItem
               key={item.id}

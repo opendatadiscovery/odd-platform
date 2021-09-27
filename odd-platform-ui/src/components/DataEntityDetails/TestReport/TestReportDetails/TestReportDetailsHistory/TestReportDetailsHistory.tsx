@@ -3,7 +3,7 @@ import {
   DataQualityApiGetRunsRequest,
   DataQualityTestRun,
 } from 'generated-sources';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import { formatDistanceStrict, format } from 'date-fns';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
@@ -45,7 +45,7 @@ const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
             className={classes.testRunInfoItem}
             alignItems="center"
             wrap="nowrap"
-            justify="space-between"
+            justifyContent="space-between"
           >
             <Typography variant="body1">
               {qualityTestRun?.startTime &&

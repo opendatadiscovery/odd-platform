@@ -5,14 +5,15 @@ import {
   RadioGroup,
   Radio,
   FormControlLabel,
-  withStyles,
   TextFieldProps,
-} from '@material-ui/core';
-import { KeyboardDatePicker } from '@material-ui/pickers';
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
+// import { KeyboardDatePicker } from '@material-ui/pickers';
+import DatePicker from '@mui/lab/DatePicker';
 import { Controller, useFormContext } from 'react-hook-form';
 import { format } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+// import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { styles, StylesType } from './MetadataValueEditorStyles';
 
 interface MetadataValueEditFieldProps extends StylesType {
@@ -38,7 +39,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
       ? format(new Date(metadataValue), 'dd/MM/yyyy')
       : ''
   );
-  const setDate = (date: MaterialUiPickersDate) => {
+  const setDate = (date: any) => {
     if (date && date.toDateString() !== 'Invalid Date') {
       setValue(fieldName, format(date, "yyyy-MM-dd'T'HH:mm:ss"), {
         shouldValidate: true,
@@ -66,31 +67,22 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
         rules={{ required: 'Invalid date' }}
         render={({ field: { ref }, fieldState }) => (
           <>
-            <KeyboardDatePicker
+            <DatePicker
               className={classes.pickerErrorMessage}
               label={labeled ? defaultText : ''}
-              disableToolbar
-              variant="inline"
-              inputVariant="outlined"
-              format="dd/MM/yyyy"
-              placeholder="DD/MM/YYYY"
-              fullWidth
-              id="date-picker-inline"
-              autoOk
-              size={size}
-              inputProps={{ ref }}
-              inputValue={selectedDate}
+              ref={ref}
+              inputFormat="dd/MM/yyyy"
+              InputAdornmentProps={{ className: classes.pickerAdornment }}
+              renderInput={params => (
+                <TextField {...params} className={classes.pickerInput} />
+              )}
               value={selectedDate || null}
               onAccept={date => {
-                if (date) setSelectedDate(format(date, 'dd/MM/yyyy'));
                 setDate(date);
               }}
               onChange={date => {
                 setSelectedDate('');
                 setDate(date);
-              }}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
               }}
             />
             <div className={classes.formErrorContainer}>

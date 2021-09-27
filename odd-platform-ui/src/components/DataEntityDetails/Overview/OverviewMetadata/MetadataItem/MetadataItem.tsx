@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Typography, Grid } from '@mui/material';
 import { format } from 'date-fns';
 import { FormProvider, useForm } from 'react-hook-form';
 import {

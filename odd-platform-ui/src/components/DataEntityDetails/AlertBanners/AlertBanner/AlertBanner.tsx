@@ -1,4 +1,5 @@
-import { Typography, withStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import React from 'react';
 import { Alert } from 'generated-sources';
 import AlertIcon from 'components/shared/Icons/AlertIcon';

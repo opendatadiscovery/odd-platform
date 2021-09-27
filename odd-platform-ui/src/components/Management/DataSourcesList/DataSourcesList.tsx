@@ -5,7 +5,7 @@ import {
   TextField,
   Typography,
   Grid,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
   DataSource,
   DataSourceApiGetDataSourceListRequest,
@@ -106,7 +106,11 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="end">
-                <IconButton disableRipple onClick={handleSearch}>
+                <IconButton
+                  disableRipple
+                  onClick={handleSearch}
+                  size="large"
+                >
                   <SearchIcon />
                 </IconButton>
               </InputAdornment>

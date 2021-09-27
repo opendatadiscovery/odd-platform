@@ -1,5 +1,6 @@
 import React, { MouseEvent } from 'react';
-import { Menu, MenuItem, withStyles } from '@material-ui/core';
+import { Menu, MenuItem } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import TruncateMarkup from 'react-truncate-markup';
 import { Link } from 'react-router-dom';
 import { DataEntity, DataEntityRef } from 'generated-sources';
@@ -52,7 +53,7 @@ const ResultItemTruncatedCell: React.FC<ResultItemProps> = ({
         />
         <Menu
           anchorEl={anchorEl || null}
-          getContentAnchorEl={null}
+          // getContentAnchorEl={null}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           id={`menu-${menuName}-${searchResult.id}`}

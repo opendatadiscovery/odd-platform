@@ -1,5 +1,6 @@
 import React from 'react';
-import { withStyles, Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';

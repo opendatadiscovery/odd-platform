@@ -1,12 +1,12 @@
 import React from 'react';
 import {
-  withStyles,
   Grid,
   TextField,
   Checkbox,
   FormControlLabel,
   InputAdornment,
-} from '@material-ui/core';
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import CancelIcon from 'components/shared/Icons/CancelIcon';

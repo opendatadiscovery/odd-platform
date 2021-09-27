@@ -1,5 +1,5 @@
 import React from 'react';
-import { LinearProgress, Fade } from '@material-ui/core';
+import { LinearProgress, Fade } from '@mui/material';
 import { StylesType } from './AppLoadingSpinnerStyles';
 
 interface AppLoadingSpinnerProps extends StylesType {

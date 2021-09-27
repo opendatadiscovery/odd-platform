@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import {
   maxContentWidth,
   maxSidebarWidth,
@@ -34,6 +36,7 @@ export const styles = (theme: Theme) =>
       position: 'fixed',
       top: 0,
       left: 0,
+      color: theme.palette.common.black,
     },
     actionsContainer: {
       display: 'flex',
@@ -63,7 +66,7 @@ export const styles = (theme: Theme) =>
     sectionDesktop: {
       justifyContent: 'flex-end',
       alignItems: 'center',
-      color: theme.palette.text.hint,
+      color: theme.palette.texts.hint,
       [theme.breakpoints.up('md')]: { display: 'flex' },
     },
     userAvatar: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import {
   DataEntityDetails,
@@ -40,32 +40,32 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
         item
         container
         sm={12}
-        spacing={2}
+        // spacing={2}
         className={classes.container}
       >
-        <Grid item sm={12} className={classes.generalItem}>
+        <Grid item sm={12}>
           <LabeledInfoItem inline label="Namespace" labelWidth={4}>
             {dataEntityDetails.namespace?.name}
           </LabeledInfoItem>
         </Grid>
-        <Grid item sm={12} className={classes.generalItem}>
+        <Grid item sm={12}>
           <LabeledInfoItem inline label="Datasource" labelWidth={4}>
             {dataEntityDetails.dataSource?.name}
           </LabeledInfoItem>
         </Grid>
-        <Grid item sm={12} className={classes.generalItem}>
+        <Grid item sm={12}>
           <LabeledInfoItem inline label="Created" labelWidth={4}>
             {dataEntityDetails.createdAt
               ? format(dataEntityDetails.createdAt, 'd MMM yyyy')
               : null}
           </LabeledInfoItem>
         </Grid>
-        <Grid item sm={12} className={classes.generalItem}>
+        <Grid item sm={12}>
           <LabeledInfoItem inline label="View count" labelWidth={4}>
             {dataEntityDetails.viewCount}
           </LabeledInfoItem>
         </Grid>
-        <Grid item sm={12}>
+        <Grid item sm={12} className={classes.ownersContainer}>
           <LabeledInfoItem
             label="Owners"
             classes={{

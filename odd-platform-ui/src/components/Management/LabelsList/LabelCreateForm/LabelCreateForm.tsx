@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
 import {
   LabelFormData,
@@ -85,7 +85,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
   const formContent = () => (
     <>
       <FormProvider {...methods}>
-        <form id="label-create-form">
+        <form id="label-create-form" className={classes.container}>
           {fields.map((item, index) => (
             <LabelCreateFormItem
               key={item.id}

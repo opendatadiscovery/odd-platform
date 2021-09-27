@@ -1,6 +1,7 @@
 import React from 'react';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Grid, withStyles } from '@material-ui/core';
+import Skeleton from '@mui/material/Skeleton';
+import { Grid } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import {
   styles,
   StylesType,
@@ -19,7 +20,7 @@ const TestReportDetailsHistoryItemSkeleton: React.FC<SkeletonProps> = ({
     <Grid item container xs={8}>
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
-    <Grid item container xs={4} justify="flex-end">
+    <Grid item container xs={4} justifyContent="flex-end">
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
   </Grid>

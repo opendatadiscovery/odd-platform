@@ -1,5 +1,6 @@
 import React from 'react';
-import { Grid, MenuItem, Typography, withStyles } from '@material-ui/core';
+import { Grid, MenuItem, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { Alert } from 'generated-sources';
 import cx from 'classnames';
 import { format } from 'date-fns';

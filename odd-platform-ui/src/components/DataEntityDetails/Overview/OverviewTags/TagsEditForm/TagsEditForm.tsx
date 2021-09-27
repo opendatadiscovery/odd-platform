@@ -1,20 +1,20 @@
 import React from 'react';
 import {
+  Autocomplete,
   CircularProgress,
   TextField,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
 import {
-  Tag,
   DataEntityApiCreateDataEntityTagsRelationsRequest,
+  Tag,
   TagApiGetPopularTagListRequest,
   TagsResponse,
 } from 'generated-sources';
 import {
-  Autocomplete,
   AutocompleteInputChangeReason,
   createFilterOptions,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { compact } from 'lodash';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
@@ -225,25 +225,27 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
             }}
           />
         )}
-        renderOption={option => (
-          <div
-            className={cx(classes.optionsContainer, {
-              [classes.importantOptionContainer]: option.important,
-            })}
-          >
-            <div className={classes.optionItem}>
-              <Typography variant="body1">
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="tag"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
+        renderOption={(props, option) => (
+          <li {...props}>
+            <div
+              className={cx(classes.optionsContainer, {
+                [classes.importantOptionContainer]: option.important,
+              })}
+            >
+              <div className={classes.optionItem}>
+                <Typography variant="body1">
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="tag"
+                      optionName={option.name}
+                    />
+                  )}
+                </Typography>
+              </div>
             </div>
-          </div>
+          </li>
         )}
       />
       <FormProvider {...methods}>

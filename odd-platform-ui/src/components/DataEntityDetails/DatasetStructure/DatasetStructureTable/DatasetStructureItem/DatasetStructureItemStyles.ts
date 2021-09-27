@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { columnBasicStyles } from '../DatasetStructureTableStyles';
 
 export const styles = (theme: Theme) =>
@@ -81,7 +83,7 @@ export const styles = (theme: Theme) =>
       opacity: 0,
     },
     colStatsPct: {
-      color: theme.palette.text.hint,
+      color: theme.palette.texts.hint,
       fontSize: theme.typography.body1.fontSize,
       fontWeight: theme.typography.body1.fontWeight,
       lineHeight: theme.typography.body1.lineHeight,

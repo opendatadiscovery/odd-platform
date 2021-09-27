@@ -1,4 +1,6 @@
-import { createStyles, WithStyles, Theme } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { alertsMainColWidthStyles } from 'components/Alerts/AlertsList/AlertsListStyles';
 
 export const styles = (theme: Theme) =>
