@@ -2,6 +2,7 @@ package com.provectus.oddplatform.service;
 
 import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityIngestionDto;
+import com.provectus.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import com.provectus.oddplatform.dto.DataEntityType;
 import com.provectus.oddplatform.dto.DataSourceDto;
 import com.provectus.oddplatform.dto.DatasetStructureDelta;
@@ -101,7 +102,8 @@ public class IngestionServiceImpl implements IngestionService {
 
                 final List<AlertPojo> alerts = Stream.of(
                     alertLocator.locateDatasetBIS(delta),
-                    alertLocator.locateDQF(dataStructure.getTaskRuns())
+                    alertLocator.locateDQF(dataStructure.getTaskRuns()),
+                    dataStructure.getEarlyAlerts()
                 ).flatMap(List::stream).collect(Collectors.toList());
 
                 alertRepository.createAlerts(alerts);
@@ -122,11 +124,6 @@ public class IngestionServiceImpl implements IngestionService {
 
     private IngestionDataStructure buildStructure(final DataEntityList dataEntityList,
                                                   final Long dataSourceId) {
-        final List<IngestionTaskRun> taskRuns = dataEntityList.getItems().stream()
-            .filter(d -> d.getType().equals(JOB_RUN))
-            .map(this::mapTaskRun)
-            .collect(Collectors.toList());
-
         final Map<String, DataEntityIngestionDto> dtoDict = dataEntityList.getItems().stream()
             .filter(d -> !d.getType().equals(JOB_RUN))
             .map(de -> ingestionMapper.createIngestionDto(de, dataSourceId))
@@ -164,6 +161,11 @@ public class IngestionServiceImpl implements IngestionService {
                 d.getDataEntity().getId(), dtoDict.get(d.getDataEntity().getOddrn())))
             .collect(Collectors.toList());
 
+        final List<IngestionTaskRun> taskRuns = dataEntityList.getItems().stream()
+            .filter(d -> d.getType().equals(JOB_RUN))
+            .map(this::mapTaskRun)
+            .collect(Collectors.toList());
+
         final List<LineagePojo> lineageRelations = Stream
             .concat(enrichedNewDtos.stream(), enrichedExistingDtos.stream())
             .map(this::extractLineageRelations)
@@ -176,12 +178,24 @@ public class IngestionServiceImpl implements IngestionService {
             .flatMap(List::stream)
             .collect(Collectors.toList());
 
+        final List<DataEntitySpecificAttributesDelta> dataTransformerAttrsDelta = dtoDict.entrySet()
+            .stream()
+            .filter(e -> existingDtoDict.containsKey(e.getKey()))
+            .map(e -> new DataEntitySpecificAttributesDelta(
+                e.getKey(),
+                e.getValue().getTypes(),
+                existingDtoDict.get(e.getKey()).getSpecificAttributes().data(),
+                e.getValue().getSpecificAttributesJson()
+            ))
+            .collect(Collectors.toList());
+
         return IngestionDataStructure.builder()
             .newEntities(enrichedNewDtos)
             .existingEntities(enrichedExistingDtos)
             .taskRuns(taskRuns)
             .lineageRelations(lineageRelations)
             .dataQARelations(dataQATestRelations)
+            .earlyAlerts(alertLocator.locateEarlyBIS(dataTransformerAttrsDelta))
             .build();
     }
 
