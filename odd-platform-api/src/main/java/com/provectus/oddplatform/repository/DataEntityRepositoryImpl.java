@@ -118,7 +118,6 @@ import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
 import static org.jooq.impl.DSL.condition;
-import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.name;
@@ -1068,6 +1067,8 @@ public class DataEntityRepositoryImpl
                     dto.setDataConsumerDetailsDto(DataConsumerDetailsDto.builder()
                         .inputList(fetcher.apply(dca.getInputListOddrn()))
                         .build());
+                    break;
+                default:
                     break;
             }
         });

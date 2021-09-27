@@ -24,15 +24,14 @@ import static java.util.function.Function.identity;
 public class AlertLocatorImpl implements AlertLocator {
     private static final Set<IngestionTaskRun.IngestionTaskRunStatus> TASK_RUN_BAD_STATUSES = Set.of(
         IngestionTaskRun.IngestionTaskRunStatus.BROKEN,
-        IngestionTaskRun.IngestionTaskRunStatus.FAILED,
-        IngestionTaskRun.IngestionTaskRunStatus.UNKNOWN
+        IngestionTaskRun.IngestionTaskRunStatus.FAILED
     );
 
     @Override
     public List<AlertPojo> locateDatasetBIS(final Map<String, DatasetStructureDelta> structureDeltas) {
         return structureDeltas.entrySet()
             .stream()
-            .flatMap(this::mapAlerts)
+            .flatMap(this::locateAlertsInDelta)
             .collect(Collectors.toList());
     }
 
@@ -41,17 +40,16 @@ public class AlertLocatorImpl implements AlertLocator {
         return taskRuns.stream()
             .filter(tr -> tr.getType().equals(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN))
             .filter(tr -> TASK_RUN_BAD_STATUSES.contains(tr.getStatus()))
-            .map(tr -> new AlertPojo()
-                .setDataEntityOddrn(tr.getDataEntityOddrn())
-                .setDescription(
-                    String.format("Failed DQ test: test %s failed with status %s", tr.getName(), tr.getStatus()))
-                .setType(AlertType.FAILED_DQ_TEST.getValue())
-                .setStatus(AlertStatus.OPEN.getValue())
-                .setStatusUpdatedAt(LocalDateTime.now()))
+            .map(tr -> buildAlert(
+                tr.getDataEntityOddrn(),
+                AlertType.FAILED_DQ_TEST,
+                tr.getOddrn(),
+                String.format("Failed DQ test: test %s failed with status %s", tr.getTaskName(), tr.getStatus())
+            ))
             .collect(Collectors.toList());
     }
 
-    private Stream<AlertPojo> mapAlerts(final Map.Entry<String, DatasetStructureDelta> e) {
+    private Stream<AlertPojo> locateAlertsInDelta(final Map.Entry<String, DatasetStructureDelta> e) {
         final Map<DatasetFieldKey, DatasetFieldPojo> latestVersionFields = e.getValue().getLatest()
             .stream()
             .collect(Collectors.toMap(f -> new DatasetFieldKey(f.getOddrn(), f.getType().data()), identity()));
@@ -59,13 +57,31 @@ public class AlertLocatorImpl implements AlertLocator {
         return e.getValue().getPenultimate()
             .stream()
             .filter(f -> !latestVersionFields.containsKey(new DatasetFieldKey(f.getOddrn(), f.getType().data())))
-            .map(df -> new AlertPojo()
-                .setDataEntityOddrn(e.getKey())
-                .setDescription(String.format("Backwards Incompatible schema: missing field: %s", df.getName()))
-                .setType(AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA.getValue())
-                .setStatus(AlertStatus.OPEN.getValue())
-                .setStatusUpdatedAt(LocalDateTime.now()))
+            .map(df -> buildAlert(
+                e.getKey(),
+                AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA,
+                String.format("Backwards Incompatible schema: missing field: %s", df.getName()))
+            )
             .filter(Objects::nonNull);
+    }
+
+    private AlertPojo buildAlert(final String dataEntityOddrn,
+                                 final AlertType alertType,
+                                 final String description) {
+        return buildAlert(dataEntityOddrn, alertType, null, description);
+    }
+
+    private AlertPojo buildAlert(final String dataEntityOddrn,
+                                 final AlertType alertType,
+                                 final String messengerOddrn,
+                                 final String description) {
+        return new AlertPojo()
+            .setDataEntityOddrn(dataEntityOddrn)
+            .setDescription(description)
+            .setMessengerEntityOddrn(messengerOddrn)
+            .setType(alertType.getValue())
+            .setStatus(AlertStatus.OPEN.getValue())
+            .setStatusUpdatedAt(LocalDateTime.now());
     }
 
     @Data

@@ -467,7 +467,7 @@ public class IngestionServiceImpl implements IngestionService {
                                         final String name,
                                         final String oddrn) {
         return IngestionTaskRun.builder()
-            .name(name)
+            .taskName(name)
             .oddrn(oddrn)
             .dataEntityOddrn(transformerRun.getTransformerOddrn())
             .startTime(transformerRun.getStartTime())
@@ -482,7 +482,7 @@ public class IngestionServiceImpl implements IngestionService {
                                         final String name,
                                         final String oddrn) {
         return IngestionTaskRun.builder()
-            .name(name)
+            .taskName(name)
             .oddrn(oddrn)
             .dataEntityOddrn(dataQualityTestRun.getDataQualityTestOddrn())
             .startTime(dataQualityTestRun.getStartTime())

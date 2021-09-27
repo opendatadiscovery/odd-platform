@@ -15,7 +15,7 @@ public class DataEntityTaskRunMapperImpl implements DataEntityTaskRunMapper {
         final OffsetDateTime endTime = taskRun.getEndTime();
 
         return new DataEntityTaskRunPojo()
-            .setName(taskRun.getName())
+            .setName(taskRun.getTaskName())
             .setOddrn(taskRun.getOddrn())
             .setDataEntityOddrn(taskRun.getDataEntityOddrn())
             .setType(taskRun.getType().name())

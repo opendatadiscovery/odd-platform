@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.provectus.oddplatform.model.Tables.ALERT;
 import static com.provectus.oddplatform.model.Tables.DATA_ENTITY;
@@ -143,9 +146,26 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
+    @Transactional
     public void createAlerts(final Collection<AlertPojo> alerts) {
+        final Set<String> messengerOddrns = alerts.stream()
+            .map(AlertPojo::getMessengerEntityOddrn)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        final Set<String> existingMessengers = dslContext.select(ALERT.MESSENGER_ENTITY_ODDRN)
+            .from(ALERT)
+            .where(ALERT.MESSENGER_ENTITY_ODDRN.in(messengerOddrns))
+            .fetchStreamInto(String.class)
+            .collect(Collectors.toSet());
+
+        final List<AlertPojo> filteredAlerts = alerts.stream()
+            .filter(a -> a.getMessengerEntityOddrn() == null ||
+                !existingMessengers.contains(a.getMessengerEntityOddrn()))
+            .collect(Collectors.toList());
+
         dslContext
-            .batchInsert(alerts.stream().map(a -> dslContext.newRecord(ALERT, a)).collect(Collectors.toList()))
+            .batchInsert(filteredAlerts.stream().map(a -> dslContext.newRecord(ALERT, a)).collect(Collectors.toList()))
             .execute();
     }
 
