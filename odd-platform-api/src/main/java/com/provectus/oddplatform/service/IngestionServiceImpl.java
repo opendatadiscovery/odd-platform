@@ -97,11 +97,11 @@ public class IngestionServiceImpl implements IngestionService {
             .flatMap(this::ingestCompanions)
             .flatMap(this::calculateSearchEntrypoints)
             .map(dataStructure -> {
-                final Map<String, DatasetStructureDelta> delta =
+                final Map<String, DatasetStructureDelta> datasetStructureDelta =
                     datasetVersionRepository.getLastStructureDelta(dataStructure.getExistingIds());
 
                 final List<AlertPojo> alerts = Stream.of(
-                    alertLocator.locateDatasetBIS(delta),
+                    alertLocator.locateDatasetBIS(datasetStructureDelta),
                     alertLocator.locateDQF(dataStructure.getTaskRuns()),
                     dataStructure.getEarlyAlerts()
                 ).flatMap(List::stream).collect(Collectors.toList());
