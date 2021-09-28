@@ -283,14 +283,14 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
                 nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
               }
             >
-              <title>{data.namespace?.name}</title>
+              <title>{data.dataSource?.namespace?.name}</title>
               <tspan
                 x={attributeLayout.labelWidth}
                 y={0}
                 className="visible-text"
               />
               <tspan className="ellip">...</tspan>
-              {!data.namespace && (
+              {!data.dataSource?.namespace && (
                 <tspan
                   x={attributeLayout.labelWidth}
                   y={0}

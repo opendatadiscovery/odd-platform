@@ -45,7 +45,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
       >
         <Grid item sm={12}>
           <LabeledInfoItem inline label="Namespace" labelWidth={4}>
-            {dataEntityDetails.namespace?.name}
+            {dataEntityDetails.dataSource.namespace?.name}
           </LabeledInfoItem>
         </Grid>
         <Grid item sm={12}>

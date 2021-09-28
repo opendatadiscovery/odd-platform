@@ -6,6 +6,7 @@ import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.LabelPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetVersionRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.Pair;
 import java.util.Arrays;
@@ -46,8 +47,10 @@ public class DatasetVersionRepositoryImpl
 
     private final JooqRecordHelper jooqRecordHelper;
 
-    public DatasetVersionRepositoryImpl(final DSLContext dslContext, final JooqRecordHelper jooqRecordHelper) {
-        super(dslContext, DATASET_VERSION, DATASET_VERSION.ID, null, DatasetVersionPojo.class);
+    public DatasetVersionRepositoryImpl(final DSLContext dslContext,
+                                        final JooqRecordHelper jooqRecordHelper,
+                                        final JooqQueryHelper jooqQueryHelper) {
+        super(dslContext, jooqQueryHelper, DATASET_VERSION, DATASET_VERSION.ID, null, DatasetVersionPojo.class);
         this.jooqRecordHelper = jooqRecordHelper;
     }
 

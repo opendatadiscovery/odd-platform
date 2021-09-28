@@ -126,10 +126,10 @@ const ResultItem: React.FC<ResultItemProps> = ({
         <Grid item className={cx(classes.col, classes.colmd)}>
           <Typography
             variant="body1"
-            title={searchResult.namespace?.name}
+            title={searchResult.dataSource.namespace?.name}
             noWrap
           >
-            {searchResult.namespace?.name}
+            {searchResult.dataSource.namespace?.name}
           </Typography>
         </Grid>
         <Grid item className={cx(classes.col, classes.colmd)}>

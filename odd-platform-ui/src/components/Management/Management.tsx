@@ -7,6 +7,7 @@ import DataSourcesListContainer from './DataSourcesList/DataSourcesListContainer
 import TagsListContainer from './TagsList/TagsListContainer';
 import LabelsListContainer from './LabelsList/LabelsListContainer';
 import OwnersListContainer from './OwnersList/OwnersListContainer';
+import NamespaceListContainer from './NamespaceList/NamespaceListContainer';
 
 interface ManagementProps extends StylesType {
   viewType: string;
@@ -14,6 +15,7 @@ interface ManagementProps extends StylesType {
 
 const Management: React.FC<ManagementProps> = ({ classes, viewType }) => {
   const [tabs] = React.useState<AppTabItem[]>([
+    { name: 'Namespaces', link: '/management/namespaces' },
     { name: 'Datasources', link: '/management/datasources' },
     { name: 'Owners', link: '/management/owners' },
     { name: 'Tags', link: '/management/tags' },
@@ -52,6 +54,11 @@ const Management: React.FC<ManagementProps> = ({ classes, viewType }) => {
           <Switch>
             <Route
               exact
+              path="/management/namespaces"
+              component={NamespaceListContainer}
+            />
+            <Route
+              exact
               path="/management/datasources"
               component={DataSourcesListContainer}
             />
@@ -73,7 +80,7 @@ const Management: React.FC<ManagementProps> = ({ classes, viewType }) => {
             <Redirect
               exact
               from="/management"
-              to="/management/datasources"
+              to="/management/namespaces"
             />
           </Switch>
         </Grid>

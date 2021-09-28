@@ -102,7 +102,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
             label="Namespace"
             labelWidth={4}
           >
-            Namespace
+            {dataSource.namespace?.name}
           </LabeledInfoItem>
         </Grid>
 

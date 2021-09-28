@@ -1,14 +1,4 @@
 import React from 'react';
-import {
-  FormControlLabel,
-  Typography,
-  Grid,
-  Select,
-  MenuItem,
-  TextField,
-  Checkbox,
-  InputLabel,
-} from '@mui/material';
 import { capitalize, reduce } from 'lodash';
 import {
   add,
@@ -22,22 +12,43 @@ import {
   DataSource,
   DataSourceApiRegisterDataSourceRequest,
   DataSourceApiUpdateDataSourceRequest,
+  Namespace,
+  NamespaceApiGetNamespaceListRequest,
+  NamespaceList,
 } from 'generated-sources';
 import OutlinedTextField from 'components/shared/OutlinedTextField/OutlinedTextField';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
+import {
+  Autocomplete,
+  Checkbox,
+  CircularProgress,
+  createFilterOptions,
+  FormControlLabel,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { useDebouncedCallback } from 'use-debounce/lib';
 import { StylesType } from './DataSourceFormDialogStyles';
 
 interface DataSourceFormDialogProps extends StylesType {
   btnCreateEl: JSX.Element;
   isLoading: boolean;
+  dataSource?: DataSource;
   registerDataSource: (
     params: DataSourceApiRegisterDataSourceRequest
   ) => Promise<DataSource>;
   updateDataSource: (
     params: DataSourceApiUpdateDataSourceRequest
   ) => Promise<DataSource>;
-  dataSource?: DataSource;
+  searchNamespace: (
+    params: NamespaceApiGetNamespaceListRequest
+  ) => Promise<NamespaceList>;
 }
 
 type DataSourceFormDataValues = Omit<
@@ -54,11 +65,13 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
   isLoading,
   registerDataSource,
   updateDataSource,
+  searchNamespace,
 }) => {
   const getDefaultValues = React.useCallback(
     (): DataSourceFormDataValues => ({
       name: '',
       oddrn: '',
+      namespaceName: '',
       connectionUrl: '',
       description: '',
       ...dataSource,
@@ -140,6 +153,101 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
       }
     );
   };
+
+  // Namespace autocomplete
+  type FilterOption = Omit<Namespace, 'id' | 'namespace'> &
+    Partial<Namespace>;
+
+  type FilterChangeOption = FilterOption | string | { inputValue: string };
+  const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
+  const [options, setOptions] = React.useState<FilterOption[]>([]);
+  const filter = createFilterOptions<FilterOption>();
+  const [searchText, setSearchText] = React.useState<string>('');
+  const [loading, setLoading] = React.useState<boolean>(false);
+
+  const handleNamespaceSearch = React.useCallback(
+    useDebouncedCallback(() => {
+      setLoading(true);
+      searchNamespace({ query: searchText, page: 1, size: 30 }).then(
+        response => {
+          setOptions(response.items);
+          setLoading(false);
+        }
+      );
+    }, 500),
+    [setLoading, searchNamespace, setOptions, searchText]
+  );
+
+  React.useEffect(() => {
+    setLoading(autocompleteOpen);
+    if (autocompleteOpen) {
+      handleNamespaceSearch();
+    }
+  }, [autocompleteOpen, searchText]);
+
+  const handleInputChange = (
+    _: React.ChangeEvent<unknown>,
+    query: string
+  ) => {
+    setSearchText(query);
+  };
+
+  const handleOptionChange = React.useCallback(
+    (onChange: (val?: string) => void) => (
+      _: React.ChangeEvent<unknown>,
+      newValue: FilterChangeOption | null
+    ) => {
+      let newField;
+      if (newValue && typeof newValue === 'object') {
+        if ('name' in newValue) {
+          newField = newValue;
+        }
+      }
+
+      // Create value from keyboard
+      if (typeof newValue === 'string') {
+        newField = {
+          name: newValue,
+        };
+      }
+      onChange(newField?.name);
+    },
+    []
+  );
+
+  const getFilterOptions = React.useCallback(
+    (filterOptions, params) => {
+      const filtered = filter(options, params);
+      // Suggest the creation of a new value
+      if (
+        params.inputValue !== '' &&
+        !loading &&
+        !options.some(option => option.name === params.inputValue)
+      ) {
+        return [
+          ...options,
+          {
+            name: params.inputValue,
+          },
+        ];
+      }
+
+      return filtered;
+    },
+    [loading]
+  );
+
+  const getOptionLabel = React.useCallback((option: FilterOption) => {
+    // Value selected with enter, right from the input
+    if (typeof option === 'string') {
+      return option;
+    }
+    // Regular option
+    if ('name' in option && option.name) {
+      return option.name;
+    }
+    return '';
+  }, []);
 
   const formTitle = (
     <Typography variant="h4">
@@ -273,10 +381,74 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
         </Grid>
       ) : null}
       <Controller
+        name="namespaceName"
+        defaultValue={dataSource?.namespace?.name || ''}
+        control={control}
+        render={({ field }) => (
+          <Autocomplete
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...field}
+            fullWidth
+            id="namespace-name-search"
+            open={autocompleteOpen}
+            onOpen={() => {
+              setAutocompleteOpen(true);
+            }}
+            onClose={() => {
+              setAutocompleteOpen(false);
+            }}
+            onChange={handleOptionChange(field.onChange)}
+            onInputChange={handleInputChange}
+            getOptionLabel={getOptionLabel}
+            options={options}
+            filterOptions={getFilterOptions}
+            loading={loading}
+            freeSolo
+            handleHomeEndKeys
+            selectOnFocus
+            renderInput={params => (
+              <OutlinedTextField
+                {...params}
+                placeholder="Namespace"
+                label="Namespace"
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {loading ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
+            )}
+            renderOption={(props, option) => (
+              <Typography
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...props}
+                variant="body2"
+              >
+                {option.id ? (
+                  option.name
+                ) : (
+                  <AutocompleteSuggestion
+                    optionLabel="custom data"
+                    optionName={option.name}
+                  />
+                )}
+              </Typography>
+            )}
+          />
+        )}
+      />
+      <Controller
         name="description"
         control={control}
         render={({ field }) => (
           <OutlinedTextField
+            // eslint-disable-next-line react/jsx-props-no-spreading
             {...field}
             label="Description"
             placeholder="Datasource description"
