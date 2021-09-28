@@ -24,12 +24,12 @@ interface ReportStatus {
 }
 
 interface RunStatus {
-  success: string;
-  failed: string;
-  broken: string;
-  skipped: string;
-  aborted: string;
-  unknown: string;
+  SUCCESS: string;
+  FAILED: string;
+  BROKEN: string;
+  SKIPPED: string;
+  ABORTED: string;
+  UNKNOWN: string;
 }
 
 interface EntityType {

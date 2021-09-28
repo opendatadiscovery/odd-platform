@@ -8,7 +8,7 @@ import {
   DataQualityTestExpectation,
   DataQualityTestRunStatusEnum,
 } from 'generated-sources';
-import LatestRunIcon from 'components/shared/LatestTestRunIcon/LatestTestRunIcon';
+import TestRunStatusIcon from 'components/shared/TestRunStatusIcon/TestRunStatusIcon';
 import { styles, StylesType } from './TestitemStyles';
 
 interface TestItemProps extends StylesType {
@@ -38,7 +38,7 @@ const TestItem: React.FC<TestItemProps> = ({
     })}
   >
     <Grid item>
-      {latestRunStatus && <LatestRunIcon typeName={latestRunStatus} />}
+      {latestRunStatus && <TestRunStatusIcon typeName={latestRunStatus} />}
     </Grid>
     <Grid container item wrap="nowrap">
       <Grid item xs={2}>

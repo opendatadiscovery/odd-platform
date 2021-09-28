@@ -39,22 +39,22 @@ export const styles = (theme: Theme) =>
     },
     latestRunStatus: {
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        color: theme.palette.runStatus.success,
+        color: theme.palette.runStatus.SUCCESS,
       },
       [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        color: theme.palette.runStatus.failed,
+        color: theme.palette.runStatus.FAILED,
       },
       [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        color: theme.palette.runStatus.broken,
+        color: theme.palette.runStatus.BROKEN,
       },
       [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        color: theme.palette.runStatus.skipped,
+        color: theme.palette.runStatus.SKIPPED,
       },
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        color: theme.palette.runStatus.aborted,
+        color: theme.palette.runStatus.ABORTED,
       },
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        color: theme.palette.runStatus.unknown,
+        color: theme.palette.runStatus.UNKNOWN,
       },
     },
     parameters: {

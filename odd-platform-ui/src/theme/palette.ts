@@ -92,12 +92,12 @@ export const palette = createPalette({
     QUALITY_TEST: colors.orange5,
   },
   runStatus: {
-    success: colors.green60,
-    failed: colors.red50,
-    broken: colors.orange50,
-    skipped: colors.blue50,
-    aborted: colors.purple30,
-    unknown: colors.black30,
+    SUCCESS: colors.green60,
+    FAILED: colors.red50,
+    BROKEN: colors.orange50,
+    SKIPPED: colors.blue50,
+    ABORTED: colors.purple30,
+    UNKNOWN: colors.black30,
   },
   reportStatus: {
     success: { background: colors.green10, border: colors.green20 },
