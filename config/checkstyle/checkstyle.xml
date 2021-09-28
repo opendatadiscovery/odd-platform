@@ -369,6 +369,9 @@
     <module name="ConstantName"> <!-- CUSTOM -->
       <property name="format" value="^(?!LOG(GER)?)(log(ger)?$|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*)$"/>
     </module>
+
+    <module name="FinalParameters"/>
+
   </module>
 
   <module name="RegexpMultiline"> <!-- CUSTOM -->

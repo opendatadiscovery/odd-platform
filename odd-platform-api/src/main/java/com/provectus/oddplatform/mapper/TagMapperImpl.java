@@ -3,6 +3,7 @@ package com.provectus.oddplatform.mapper;
 import com.provectus.oddplatform.api.contract.model.Tag;
 import com.provectus.oddplatform.api.contract.model.TagFormData;
 import com.provectus.oddplatform.api.contract.model.TagsResponse;
+import com.provectus.oddplatform.dto.TagDto;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.utils.Page;
 import java.util.List;
@@ -51,5 +52,14 @@ public class TagMapperImpl implements TagMapper {
         return new TagsResponse()
             .items(tags)
             .pageInfo(pageInfo(tags.size()));
+    }
+
+    public Tag mapTag(final TagDto dto) {
+        final Tag tag = new Tag();
+        tag.setId(dto.getId());
+        tag.setName(dto.getName());
+        tag.setImportant(dto.getImportant());
+        tag.setUsedCount(dto.getUsedCount());
+        return tag;
     }
 }

@@ -10,7 +10,7 @@ public interface TagRepository extends CRUDRepository<TagPojo> {
 
     List<TagPojo> listByDataEntityId(final long dataEntityId);
 
-    List<TagDto> listMostPopular(String query, final int page, final int size);
+    List<TagDto> listMostPopular(final String query, final int page, final int size);
 
     void deleteRelations(final long dataEntityId, final Collection<Long> tags);
 
