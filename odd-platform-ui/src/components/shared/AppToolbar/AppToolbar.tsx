@@ -36,6 +36,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   fetchIdentity,
 }) => {
   const location = useLocation();
+  const history = useHistory();
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -46,6 +47,10 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    window.location.href = '/logout';
   };
 
   const [elevation, setElevation] = React.useState<number>(0);
@@ -84,7 +89,6 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
 
-  const history = useHistory();
   const handleTabClick = (idx: number) => {
     if (tabs[idx].name === 'Catalog') {
       if (searchLoading) return;
@@ -153,6 +157,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         </Grid>
       </Toolbar>
       <Menu
+        classes={{ paper: classes.menu }}
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
@@ -162,7 +167,9 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         onClose={handleMenuClose}
       >
         {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-        <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+        <MenuItem className={classes.menuItem} onClick={handleLogout}>
+          Logout
+        </MenuItem>
       </Menu>
     </AppBar>
   );

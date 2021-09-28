@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { maxContentWidthWithoutSidebar } from 'lib/constants';
 
 const maxTagsContainerWidth = 920;
@@ -36,7 +36,7 @@ export const styles = (theme: Theme) =>
       height: '56px',
       marginRight: theme.spacing(3),
       padding: theme.spacing(1, 2),
-      backgroundColor: '#F4F5F7',
+      backgroundColor: theme.palette.backgrounds.primary,
       borderRadius: '4px',
     },
     dataContainer: {
@@ -71,7 +71,7 @@ export const styles = (theme: Theme) =>
       marginBottom: '-2px',
     },
     infoBarStatsText: {
-      color: '#B3BAC5',
+      color: theme.palette.text.hint,
       lineHeight: theme.typography.h2.lineHeight,
       marginBottom: '-4px',
     },

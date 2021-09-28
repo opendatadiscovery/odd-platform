@@ -5,6 +5,7 @@ import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import com.provectus.oddplatform.model.tables.records.TagRecord;
 import com.provectus.oddplatform.model.tables.records.TagToDataEntityRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
@@ -18,8 +19,9 @@ import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 
 @Repository
 public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecord, TagPojo> implements TagRepository {
-    public TagRepositoryImpl(final DSLContext dslContext) {
-        super(dslContext, TAG, TAG.ID, TAG.IS_DELETED, TAG.NAME, TAG.NAME, TagPojo.class);
+
+    public TagRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
+        super(dslContext, jooqQueryHelper, TAG, TAG.ID, TAG.IS_DELETED, TAG.NAME, TAG.NAME, TagPojo.class);
     }
 
     @Override

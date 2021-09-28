@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -12,7 +12,7 @@ export const styles = (theme: Theme) =>
       '& + $testRunItemContainer': {
         paddingTop: theme.spacing(1),
         borderTop: '1px solid',
-        borderTopColor: '#EBECF0',
+        borderTopColor: theme.palette.divider,
       },
     },
     testRunInfoItem: {
@@ -21,7 +21,7 @@ export const styles = (theme: Theme) =>
       },
     },
     statusReason: {
-      color: '#A8B0BD',
+      color: theme.palette.text.secondary,
       marginLeft: theme.spacing(1),
     },
   });

@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import {
   maxContentWidthWithoutSidebar,
   toolbarHeight,
@@ -44,9 +44,9 @@ export const styles = (theme: Theme) =>
     originalLabel: {
       marginRight: '4px',
       padding: '0 2px',
-      backgroundColor: '#EBECF0',
+      backgroundColor: theme.palette.backgrounds.secondary,
       borderRadius: '2px',
-      color: '#42526E',
+      color: theme.palette.texts.info,
     },
     tabsContainer: {
       marginBottom: theme.spacing(2),

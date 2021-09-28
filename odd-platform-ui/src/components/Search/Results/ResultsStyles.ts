@@ -1,7 +1,7 @@
 import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { primaryTabsHeight } from 'components/shared/AppTabs/AppTabsStyles';
 import { searchHeight } from 'components/shared/MainSearch/MainSearchStyles';
-import { maxContentWidth, toolbarHeight } from 'lib/constants';
+import { toolbarHeight } from 'lib/constants';
 
 const tabsContainerMargin = 16;
 export const colWidthStyles = {
@@ -36,12 +36,10 @@ export const styles = (theme: Theme) =>
     tabsContainer: {
       marginBottom: `${tabsContainerMargin}px`,
     },
-    resultsTable: {},
     resultsTableHeader: {
-      color: '#B3BAC5',
       '& > *': {
         borderBottom: '1px solid',
-        borderBottomColor: '#EBECF0',
+        borderBottomColor: theme.palette.divider,
       },
     },
     listContainer: {
@@ -53,14 +51,8 @@ export const styles = (theme: Theme) =>
     resultItem: {
       '&:not(:last-of-type)': {
         borderBottom: '1px solid',
-        borderBottomColor: '#EBECF0',
+        borderBottomColor: theme.palette.divider,
       },
-    },
-    spinnerContainer: {
-      maxWidth: `${maxContentWidth}px`,
-      display: 'flex',
-      justifyContent: 'center',
-      padding: theme.spacing(1),
     },
     ...colWidthStyles,
   });

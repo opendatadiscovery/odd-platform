@@ -8,5 +8,6 @@ export * from './tags.actions';
 export * from './metadata.actions';
 export * from './owners.actions';
 export * from './labels.actions';
+export * from './namespace.actions';
 export * from './profile.actions';
 export * from './alert.actions';

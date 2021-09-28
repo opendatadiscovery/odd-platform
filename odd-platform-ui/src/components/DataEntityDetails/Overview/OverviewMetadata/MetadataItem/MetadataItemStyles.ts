@@ -24,7 +24,7 @@ export const styles = (theme: Theme) =>
       borderColor: 'transparent',
       borderRadius: '4px',
       '&:hover': {
-        borderColor: '#EBECF0',
+        borderColor: theme.palette.divider,
       },
     },
     value: {

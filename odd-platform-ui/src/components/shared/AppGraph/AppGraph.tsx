@@ -125,14 +125,9 @@ const AppGraph: React.FC<AppGraphProps> = ({
   }, [compactView]);
 
   React.useEffect(() => {
-    fetchDataEntityDownstreamLineage({
-      dataEntityId,
-      lineageDepth: selectedDepth,
-    });
-    fetchDataEntityUpstreamLineage({
-      dataEntityId,
-      lineageDepth: selectedDepth,
-    });
+    const params = { dataEntityId, lineageDepth: selectedDepth };
+    fetchDataEntityDownstreamLineage(params);
+    fetchDataEntityUpstreamLineage(params);
   }, [selectedDepth, dataEntityId]);
 
   const fetchUpstreamLineage = (entityId: number, lineageDepth: number) =>
@@ -400,7 +395,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
           </Select>
         </FormControl>
       </div>
-      <svg className={svgInstanceRef} width="100%" height="100%">
+      <svg className={cx(classes.layer, svgInstanceRef)}>
         <g className={gInstanceRef}>
           {nodesUp?.map(node => (
             <AppGraphNode

@@ -1,5 +1,6 @@
 package com.provectus.oddplatform.repository;
 
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import com.provectus.oddplatform.utils.Page;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +34,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     protected static final String PAGE_METADATA_NEXT_FIELD = "next";
 
     protected final DSLContext dslContext;
+    protected final JooqQueryHelper jooqQueryHelper;
 
     protected final Table<R> recordTable;
     protected final Field<Long> idField;
@@ -64,10 +66,12 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
 
     @Override
     public Page<P> list(final int page, final int size, final String query) {
-        final Map<Record, List<P>> result = paginate(baseSelectQuery(query), page - 1, size)
-            .fetchGroups(new String[] {PAGE_METADATA_TOTAL_FIELD, PAGE_METADATA_NEXT_FIELD}, pojoClass);
+        final List<? extends Record> records = jooqQueryHelper
+            .paginate(baseSelectQuery(query), idField, page - 1, size)
+            .fetchStream()
+            .collect(Collectors.toList());
 
-        return pageifyResult(result, page, () -> fetchCount(query));
+        return jooqQueryHelper.pageifyResult(records, r -> r.into(pojoClass), () -> fetchCount(query));
     }
 
     @Override

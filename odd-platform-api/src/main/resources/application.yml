@@ -25,6 +25,10 @@ spring:
 #            issuerUri:
 #            user-name-attribute:
 
+cognito:
+  enabled: false
+  logoutUrl:
+
 auth:
   # DISABLED, LOGIN_FORM, OAUTH2
   type: DISABLED

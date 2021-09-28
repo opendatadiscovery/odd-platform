@@ -1,4 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -26,15 +26,16 @@ export const styles = (theme: Theme) =>
     tagsTableHeader: {
       flexWrap: 'nowrap',
       paddingLeft: theme.spacing(1),
-      borderBottom: '1px solid #EBECF0',
+      borderBottom: '1px solid',
+      borderBottomColor: theme.palette.divider,
     },
-    rowName: { color: '#A8B0BD' },
+    rowName: { color: theme.palette.text.hint },
     tagsItem: {
       display: 'flex',
       flexWrap: 'wrap',
     },
     totalCountText: {
-      color: '#42526E',
+      color: theme.palette.texts.info,
     },
     searchInput: {
       minWidth: '340px',

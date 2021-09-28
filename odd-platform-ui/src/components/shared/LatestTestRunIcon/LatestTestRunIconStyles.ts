@@ -1,5 +1,4 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
-import { statusColor } from 'theme/palette';
+import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
 
 export const styles = (theme: Theme) =>
@@ -11,22 +10,22 @@ export const styles = (theme: Theme) =>
       height: '8px',
       borderRadius: '50%',
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        backgroundColor: statusColor.SUCCESS,
+        backgroundColor: theme.palette.runStatus.success,
       },
       [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        backgroundColor: statusColor.FAILED,
+        backgroundColor: theme.palette.runStatus.failed,
       },
       [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        backgroundColor: statusColor.BROKEN,
+        backgroundColor: theme.palette.runStatus.broken,
       },
       [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        backgroundColor: statusColor.SKIPPED,
+        backgroundColor: theme.palette.runStatus.skipped,
       },
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        backgroundColor: statusColor.ABORTED,
+        backgroundColor: theme.palette.runStatus.aborted,
       },
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        backgroundColor: statusColor.UNKNOWN,
+        backgroundColor: theme.palette.runStatus.unknown,
       },
     },
   });

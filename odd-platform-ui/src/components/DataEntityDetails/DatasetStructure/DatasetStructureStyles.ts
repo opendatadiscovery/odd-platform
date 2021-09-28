@@ -6,7 +6,6 @@ export const styles = (theme: Theme) =>
     dataCount: {
       display: 'flex',
       marginRight: theme.spacing(3),
-      fontWeight: theme.typography.fontWeightBold,
       '& + $dataCount': { marginLeft: theme.spacing(1) },
       '& span': {
         margin: theme.spacing(0, 0.5),
@@ -41,13 +40,13 @@ export const styles = (theme: Theme) =>
       '& + $typesCountItem': { marginLeft: theme.spacing(5) },
     },
     typesCountItemPct: {
-      color: '#A8B0BD',
+      color: theme.palette.text.hint,
       fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.body2.fontWeight,
       lineHeight: theme.typography.body2.lineHeight,
     },
     statIcon: {},
-    columnsName: { color: '#A8B0BD' },
+    columnsName: { color: theme.palette.text.hint },
   });
 
 export type StylesType = WithStyles<typeof styles>;
