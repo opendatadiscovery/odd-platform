@@ -27,7 +27,13 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
         fullName
       />
     </Grid>
-    <Grid item container xs={6} className={classes.statsItem}>
+    <Grid
+      item
+      container
+      xs={6}
+      alignItems="flex-start"
+      alignContent="flex-start"
+    >
       <Grid item container xs={12} alignItems="baseline">
         <Typography variant="h2" className={classes.statCount}>
           {(inputs?.length || 0) + (unknownInputsCount || 0)}

@@ -2,11 +2,6 @@ import { createStyles, Theme, WithStyles } from '@material-ui/core';
 
 export const styles = (theme: Theme) =>
   createStyles({
-    statsItem: {
-      display: 'flex',
-      alignItems: 'flex-start',
-      alignContent: 'flex-start',
-    },
     statIcon: {
       fontSize: theme.typography.h5.fontSize,
       marginRight: theme.spacing(1),
