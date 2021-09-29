@@ -2,6 +2,7 @@ package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.model.tables.pojos.DatasetRevisionPojo;
 import com.provectus.oddplatform.model.tables.records.DatasetRevisionRecord;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,9 +21,10 @@ public class DatasetRevisionRepositoryImpl
     extends AbstractCRUDRepository<DatasetRevisionRecord, DatasetRevisionPojo>
     implements DatasetRevisionRepository {
 
-    public DatasetRevisionRepositoryImpl(final DSLContext dslContext) {
+    public DatasetRevisionRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
         // TODO: DATASET_REVISION.DATA_ENTITY_ID is not primary key field. Field -> Primary Key
-        super(dslContext, DATASET_REVISION, DATASET_REVISION.DATA_ENTITY_ID, null, DatasetRevisionPojo.class);
+        super(dslContext, jooqQueryHelper, DATASET_REVISION, DATASET_REVISION.DATA_ENTITY_ID, null,
+            DatasetRevisionPojo.class);
     }
 
     public List<DatasetRevisionPojo> listLatestByDatasetIds(final List<Long> datasetIds) {
@@ -35,7 +37,7 @@ public class DatasetRevisionRepositoryImpl
             .groupBy(DATASET_REVISION.DATA_ENTITY_ID);
 
         return dslContext.select(DATASET_REVISION.DATA_ENTITY_ID, DATASET_REVISION.ROWS_COUNT,
-                DATASET_REVISION.UPDATED_AT)
+            DATASET_REVISION.UPDATED_AT)
             .from(subquery)
             .join(DATASET_REVISION)
             .on(DATASET_REVISION.DATA_ENTITY_ID.eq(dataEntityId))

@@ -32,7 +32,7 @@ import org.jooq.codegen.JavaGenerator
 import org.jooq.codegen.DefaultGeneratorStrategy
 import java.util.stream.Collectors
 
-project.configurations.create("dbcontainer")
+project.configurations.create("jooqGenerationContainer")
 project.extensions.create("jooq", DockerGeneratorExtension.class)
 project.jooq.extensions.create("generate", Generate.class)
 
@@ -153,7 +153,7 @@ class DockerGeneratorTask extends DefaultTask {
     }
 
     private URL[] resolveJdbcArtifacts() {
-        return project.configurations.getByName("dbcontainer")
+        return project.configurations.getByName("jooqGenerationContainer")
                 .resolvedConfiguration
                 .resolvedArtifacts
                 .stream()

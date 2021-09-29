@@ -267,8 +267,6 @@ components:
             $ref: '#/components/schemas/DataEntityType'
         sub_type:
           $ref: '#/components/schemas/DataEntitySubType'
-        namespace:
-          $ref: '#/components/schemas/Namespace'
         tags:
           $ref: '#/components/schemas/TagList'
         created_at:
@@ -626,6 +624,8 @@ components:
         id:
           type: integer
           format: int64
+        namespace:
+          $ref: '#/components/schemas/Namespace'
         oddrn:
           type: string
         name:
@@ -664,6 +664,8 @@ components:
       properties:
         name:
           type: string
+        namespace_name:
+          type: string
         oddrn:
           type: string
         description:
@@ -689,6 +691,8 @@ components:
         active:
           type: boolean
         name:
+          type: string
+        namespace_name:
           type: string
         connection_url:
           type: string
@@ -1096,8 +1100,6 @@ components:
             $ref: '#/components/schemas/DataEntityType'
         data_source:
           $ref: '#/components/schemas/DataSource'
-        namespace:
-          $ref: '#/components/schemas/Namespace'
       required:
         - id
         - name

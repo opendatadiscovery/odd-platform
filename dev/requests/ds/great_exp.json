@@ -3,5 +3,6 @@
   "oddrn": "//ge/localhost",
   "description": "GE local environment data source",
   "connection_url": "https://ge-adapter:8080",
+  "namespace_name": "Testing",
   "active": false
 }

@@ -4,8 +4,8 @@ import com.provectus.oddplatform.api.contract.model.DataSource;
 import com.provectus.oddplatform.api.contract.model.DataSourceFormData;
 import com.provectus.oddplatform.api.contract.model.DataSourceList;
 import com.provectus.oddplatform.api.contract.model.DataSourceUpdateFormData;
+import com.provectus.oddplatform.dto.DataSourceDto;
 import com.provectus.oddplatform.mapper.DataSourceMapper;
-import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.repository.DataSourceRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -14,7 +14,7 @@ import reactor.core.publisher.Flux;
 public class DataSourceServiceImpl
     extends
     AbstractCRUDService<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData,
-        DataSourcePojo, DataSourceMapper, DataSourceRepository>
+        DataSourceDto, DataSourceMapper, DataSourceRepository>
     implements DataSourceService {
 
     public DataSourceServiceImpl(final DataSourceMapper entityMapper,
@@ -24,7 +24,6 @@ public class DataSourceServiceImpl
 
     @Override
     public Flux<DataSource> listActive() {
-        return Flux.fromIterable(entityRepository.listActive())
-            .map(entityMapper::mapPojo);
+        return Flux.fromIterable(entityRepository.listActive()).map(entityMapper::mapPojo);
     }
 }

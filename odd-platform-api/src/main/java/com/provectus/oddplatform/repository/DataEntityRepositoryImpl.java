@@ -37,6 +37,7 @@ import com.provectus.oddplatform.model.tables.records.DataEntityRecord;
 import com.provectus.oddplatform.model.tables.records.LineageRecord;
 import com.provectus.oddplatform.model.tables.records.SearchEntrypointRecord;
 import com.provectus.oddplatform.repository.util.JooqFTSVectorizer;
+import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
@@ -152,6 +153,7 @@ public class DataEntityRepositoryImpl
     private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
         FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
+        FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
         FacetType.SUBTYPES, filters -> DATA_ENTITY_SUBTYPE.ID.in(extractFilterId(filters)),
         FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
         FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
@@ -163,11 +165,12 @@ public class DataEntityRepositoryImpl
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
 
     public DataEntityRepositoryImpl(final DSLContext dslContext,
+                                    final JooqQueryHelper jooqQueryHelper,
                                     final JooqFTSVectorizer vectorizer,
                                     final JooqRecordHelper jooqRecordHelper,
                                     final TypeEntityRelationRepository typeEntityRelationRepository,
                                     final DataEntityTaskRunRepository dataEntityTaskRunRepository) {
-        super(dslContext, DATA_ENTITY, DATA_ENTITY.ID, null, DataEntityDimensionsDto.class);
+        super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null, DataEntityDimensionsDto.class);
 
         this.vectorizer = vectorizer;
         this.jooqRecordHelper = jooqRecordHelper;
@@ -232,7 +235,6 @@ public class DataEntityRepositoryImpl
             .peek(r -> {
                 r.changed(DATA_ENTITY.INTERNAL_DESCRIPTION, false);
                 r.changed(DATA_ENTITY.INTERNAL_NAME, false);
-                r.changed(DATA_ENTITY.NAMESPACE_ID, false);
                 r.changed(DATA_ENTITY.VIEW_COUNT, false);
             })
             .collect(Collectors.toList());
@@ -956,7 +958,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(TAG_TO_DATA_ENTITY).on(deCte.field(DATA_ENTITY.ID).eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
             .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .leftJoin(DATA_SOURCE).on(deCte.field(DATA_ENTITY.DATA_SOURCE_ID).eq(DATA_SOURCE.ID))
-            .leftJoin(NAMESPACE).on(deCte.field(DATA_ENTITY.NAMESPACE_ID).eq(NAMESPACE.ID))
+            .leftJoin(NAMESPACE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
             .leftJoin(OWNERSHIP).on(deCte.field(DATA_ENTITY.ID).eq(OWNERSHIP.DATA_ENTITY_ID))
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
