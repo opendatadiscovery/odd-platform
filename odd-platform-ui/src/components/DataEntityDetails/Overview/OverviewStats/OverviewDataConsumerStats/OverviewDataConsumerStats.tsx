@@ -12,11 +12,13 @@ import { styles, StylesType } from './OverviewDataConsumerStatsStyles';
 
 interface OverviewDataConsumerStatsProps extends StylesType {
   inputs: DataEntityDetails['inputList'];
+  unknownInputsCount: number;
 }
 
 const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
   classes,
   inputs,
+  unknownInputsCount,
 }) => (
   <Grid container>
     <Grid item xs={12} className={classes.typeLabel}>
@@ -28,7 +30,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
     <Grid item container xs={6} className={classes.statsItem}>
       <Grid item container xs={12} alignItems="baseline">
         <Typography variant="h2" className={classes.statCount}>
-          {inputs?.length || 0}
+          {(inputs?.length || 0) + (unknownInputsCount || 0)}
         </Typography>
         <Typography variant="body1" className={classes.statLabel}>
           inputs
@@ -54,6 +56,12 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
             </Link>
           </AppButton>
         ))}
+        {unknownInputsCount ? (
+          <Typography variant="subtitle1" className={classes.unknownCount}>
+            {unknownInputsCount} more source
+            {unknownInputsCount === 1 ? '' : 's'} unknown
+          </Typography>
+        ) : null}
       </Grid>
     </Grid>
   </Grid>

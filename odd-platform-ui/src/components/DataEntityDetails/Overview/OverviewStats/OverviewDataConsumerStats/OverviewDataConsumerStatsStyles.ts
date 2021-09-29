@@ -27,6 +27,9 @@ export const styles = (theme: Theme) =>
         marginTop: theme.spacing(1),
       },
     },
+    unknownCount: {
+      marginLeft: theme.spacing(0.5),
+    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

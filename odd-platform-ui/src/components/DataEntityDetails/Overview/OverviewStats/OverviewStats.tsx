@@ -41,6 +41,7 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
             <OverviewDataConsumerStats
               key={type.id}
               inputs={dataEntityDetails.inputList}
+              unknownInputsCount={dataEntityDetails.unknownInputsCount}
             />
           );
         case DataEntityTypeNameEnum.QUALITY_TEST:
