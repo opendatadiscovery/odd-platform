@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface TagMapper extends CRUDMapper<Tag, TagsResponse, TagFormData, TagFormData, TagPojo> {
     TagsResponse mapTags(final List<Tag> tags);
+
     Tag mapTag(final TagDto dto);
 }
