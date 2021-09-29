@@ -5,6 +5,7 @@ export const styles = (theme: Theme) =>
     statsItem: {
       display: 'flex',
       alignItems: 'flex-start',
+      alignContent: 'flex-start',
     },
     statIcon: {
       fontSize: theme.typography.h5.fontSize,

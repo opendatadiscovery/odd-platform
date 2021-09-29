@@ -24,17 +24,17 @@ const updateDataEntity = (
   let unknownSourcesCount = 0;
   let unknownTargetsCount = 0;
   let unknownInputsCount = 0;
-  const sourcesCount = payload.sourceList?.filter(source => {
+  const sourceList = payload.sourceList?.filter(source => {
     if (source.externalName) return true;
     unknownSourcesCount += 1;
     return false;
   });
-  const targetsCount = payload.targetList?.filter(target => {
+  const targetList = payload.targetList?.filter(target => {
     if (target.externalName) return true;
     unknownTargetsCount += 1;
     return false;
   });
-  const inputsCount = payload.inputList?.filter(input => {
+  const inputList = payload.inputList?.filter(input => {
     if (input.externalName) return true;
     unknownInputsCount += 1;
     return false;
@@ -47,11 +47,11 @@ const updateDataEntity = (
       [payload.id]: {
         ...state.byId[payload.id],
         ...omit(payload, ['metadata', 'ownership']), // Metadata and Ownership are being stored in MetadataState and OwnersState
-        sourcesCount,
+        sourceList,
         unknownSourcesCount,
-        targetsCount,
+        targetList,
         unknownTargetsCount,
-        inputsCount,
+        inputList,
         unknownInputsCount,
       },
     },
