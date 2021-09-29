@@ -19,11 +19,8 @@ export const styles = (theme: Theme) =>
     typesList: {
       display: 'flex',
       flexWrap: 'nowrap',
-      marginLeft: theme.spacing(1.25),
-      '& > * + *': {
-        marginLeft: theme.spacing(0.5),
-      },
     },
+    dataEntityLink: { overflow: 'hidden' },
     optionsBtn: {
       opacity: 0,
     },

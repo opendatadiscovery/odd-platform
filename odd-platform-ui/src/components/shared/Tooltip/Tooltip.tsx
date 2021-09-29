@@ -13,6 +13,7 @@ interface CustomTooltipProps
   type?: 'light' | 'dark';
   tooltipControl?: 'byClick' | 'byHover';
   overflowCheck?: boolean;
+  place?: TooltipProps['place'];
 }
 
 const Tooltip: React.FC<CustomTooltipProps> = ({
@@ -23,6 +24,7 @@ const Tooltip: React.FC<CustomTooltipProps> = ({
   type = 'light',
   tooltipControl = 'byHover',
   overflowCheck = true,
+  place = 'bottom',
   ...props
 }) => {
   const tagList = ['svg'];
@@ -60,6 +62,7 @@ const Tooltip: React.FC<CustomTooltipProps> = ({
           type={type}
           clickable={controlChecker}
           globalEventOff="click"
+          place={place}
         >
           {tooltipContent}
         </ReactTooltip>

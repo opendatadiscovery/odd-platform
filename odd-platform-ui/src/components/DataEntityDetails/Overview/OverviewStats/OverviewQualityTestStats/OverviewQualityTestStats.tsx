@@ -31,11 +31,10 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   qualityTest,
 }) => (
   <Grid container>
-    <Grid item>
+    <Grid item className={classes.typeLabel}>
       <EntityTypeItem
         typeName={DataEntityTypeNameEnum.QUALITY_TEST}
         fullName
-        className={classes.typeLabel}
       />
     </Grid>
     <Grid container className={classes.statsContainer}>

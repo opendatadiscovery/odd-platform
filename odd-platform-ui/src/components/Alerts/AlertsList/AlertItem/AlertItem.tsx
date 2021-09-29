@@ -9,8 +9,8 @@ import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import Tooltip from 'components/shared/Tooltip/Tooltip';
+import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { styles, StylesType } from './AlertItemStyles';
 
 interface AlertItemProps extends StylesType {
@@ -29,25 +29,27 @@ const AlertItem: React.FC<AlertItemProps> = ({
       container
       className={cx(classes.col, classes.colName)}
       justifyContent="space-between"
+      wrap="nowrap"
     >
       <Link
+        className={classes.dataEntityLink}
         to={
           alert?.dataEntity?.id
             ? dataEntityDetailsPath(alert.dataEntity.id)
             : '#'
         }
       >
-        <Typography
-          variant="body1"
-          noWrap
-          title={
+        <Tooltip
+          tooltipContent={
             alert.dataEntity?.internalName ||
             alert.dataEntity?.externalName
           }
         >
-          {alert.dataEntity?.internalName ||
-            alert.dataEntity?.externalName}
-        </Typography>
+          <Typography variant="body1" noWrap>
+            {alert.dataEntity?.internalName ||
+              alert.dataEntity?.externalName}
+          </Typography>
+        </Tooltip>
       </Link>
       <div className={classes.typesList}>
         {alert.dataEntity?.types?.map(type => (
@@ -93,7 +95,6 @@ const AlertItem: React.FC<AlertItemProps> = ({
             {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
           </MenuItem>
         }
-        place="bottom"
         type="light"
       >
         <AppButton

@@ -15,10 +15,10 @@ export const alertsMainColWidthStyles = {
     },
   },
   colName: {
-    flex: '0 0 12%',
+    flex: '0 0 14%',
   },
   colDescription: {
-    flex: '0 0 44%',
+    flex: '0 0 43%',
   },
   colUpdatedBy: {
     flex: '0 0 9%',

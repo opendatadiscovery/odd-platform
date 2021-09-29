@@ -41,19 +41,19 @@ export const styles = (theme: Theme) =>
     },
     type: {
       [`&.${DataEntityTypeNameEnum.SET}`]: {
-        fill: theme.palette.entityType.SET,
+        fill: theme.palette.entityType.DATA_SET,
       },
       [`&.${DataEntityTypeNameEnum.TRANSFORMER}`]: {
-        fill: theme.palette.entityType.TRANSFORMER,
+        fill: theme.palette.entityType.DATA_TRANSFORMER,
       },
       [`&.${DataEntityTypeNameEnum.CONSUMER}`]: {
-        fill: theme.palette.entityType.CONSUMER,
+        fill: theme.palette.entityType.DATA_CONSUMER,
       },
       [`&.${DataEntityTypeNameEnum.INPUT}`]: {
-        fill: theme.palette.entityType.INPUT,
+        fill: theme.palette.entityType.DATA_INPUT,
       },
       [`&.${DataEntityTypeNameEnum.QUALITY_TEST}`]: {
-        fill: theme.palette.entityType.QUALITY_TEST,
+        fill: theme.palette.entityType.DATA_QUALITY_TEST,
       },
     },
     typeLabel: {

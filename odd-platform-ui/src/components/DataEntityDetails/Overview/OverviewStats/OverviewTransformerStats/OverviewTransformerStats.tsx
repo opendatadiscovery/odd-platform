@@ -28,11 +28,10 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
   unknownTargetsCount,
 }) => (
   <Grid container>
-    <Grid item xs={12}>
+    <Grid item xs={12} className={classes.typeLabel}>
       <EntityTypeItem
         typeName={DataEntityTypeNameEnum.TRANSFORMER}
         fullName
-        className={classes.typeLabel}
       />
     </Grid>
     <Grid item container xs={6} className={classes.statsItem}>

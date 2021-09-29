@@ -42,7 +42,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
           >
             {searchResult.internalName || searchResult.externalName}
           </Typography>
-          <div className={classes.typesList}>
+          <div>
             {!searchType ||
               (typeof searchType === 'string' &&
                 searchResult.types?.map(type => (

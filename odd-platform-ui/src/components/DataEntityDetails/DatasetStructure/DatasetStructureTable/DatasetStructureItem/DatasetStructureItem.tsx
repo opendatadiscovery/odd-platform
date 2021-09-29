@@ -150,10 +150,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
               <Grid item container>
                 <Grid item xs={12} className={classes.nameContainer}>
-                  <Tooltip
-                    tooltipContent={datasetField.name}
-                    place="bottom"
-                  >
+                  <Tooltip tooltipContent={datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
                         (datasetField.isValue && 'Value') ||
@@ -177,7 +174,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 >
                   <Tooltip
                     tooltipContent={datasetField.internalDescription}
-                    place="bottom"
                   >
                     <Typography
                       className={classes.internalDescription}
@@ -188,7 +184,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   </Tooltip>
                   <Tooltip
                     tooltipContent={datasetField.externalDescription}
-                    place="bottom"
                   >
                     <Typography
                       className={classes.externalDescription}
@@ -226,7 +221,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     />
                   </>
                 }
-                place="bottom"
                 type="light"
               >
                 <AppButton
@@ -241,7 +235,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               />
               <Tooltip
                 tooltipContent={`Logical type: ${datasetField.type.logicalType}`}
-                place="bottom"
                 type="dark"
                 classes={{ childrenContainer: classes.logicalTypeIcon }}
               >

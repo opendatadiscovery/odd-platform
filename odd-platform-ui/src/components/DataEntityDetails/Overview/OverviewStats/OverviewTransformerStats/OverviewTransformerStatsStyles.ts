@@ -24,7 +24,6 @@ export const styles = (theme: Theme) =>
       fontWeight: theme.typography.fontWeightBold,
     },
     typeLabel: {
-      marginLeft: 0,
       marginBottom: theme.spacing(1.25),
     },
     refItem: {

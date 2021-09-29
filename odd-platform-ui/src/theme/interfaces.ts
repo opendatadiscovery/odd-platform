@@ -33,11 +33,13 @@ interface RunStatus {
 }
 
 interface EntityType {
-  SET: string;
-  TRANSFORMER: string;
-  CONSUMER: string;
-  INPUT: string;
-  QUALITY_TEST: string;
+  DATA_SET: string;
+  DATA_TRANSFORMER: string;
+  DATA_TRANSFORMER_RUN?: string;
+  DATA_CONSUMER: string;
+  DATA_INPUT: string;
+  DATA_QUALITY_TEST: string;
+  DATA_QUALITY_TEST_RUN?: string;
 }
 
 interface StructureLabelType {

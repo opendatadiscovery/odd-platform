@@ -36,9 +36,6 @@ export const styles = (theme: Theme) =>
     alert: {
       marginRight: theme.spacing(0.5),
     },
-    entityTypeItem: {
-      marginLeft: theme.spacing(0.5),
-    },
     sectionCaption: {
       marginBottom: theme.spacing(2),
       paddingTop: theme.spacing(0.75),

@@ -124,17 +124,17 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
           >
             <Grid item className={classes.caption}>
               <Grid container item alignItems="center">
-                <Typography variant="h1" noWrap>
+                <Typography
+                  variant="h1"
+                  noWrap
+                  className={classes.entityTypeLabel}
+                >
                   {dataEntityDetails.internalName
                     ? dataEntityDetails.internalName
                     : dataEntityDetails.externalName}
                 </Typography>
                 {dataEntityDetails.types.map(type => (
-                  <EntityTypeItem
-                    key={type.id}
-                    typeName={type.name}
-                    className={classes.entityTypeLabel}
-                  />
+                  <EntityTypeItem key={type.id} typeName={type.name} />
                 ))}
                 <div className={cx(classes.internalNameEditBtnContainer)}>
                   <InternalNameFormDialogContainer

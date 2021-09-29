@@ -7,7 +7,7 @@ export const styles = (theme: Theme) =>
   createStyles({
     container: {
       padding: theme.spacing(0.75, 1),
-      backgroundColor: theme.palette.entityType.CONSUMER,
+      backgroundColor: theme.palette.entityType.DATA_CONSUMER,
       borderRadius: theme.spacing(2),
       justifyContent: 'space-between',
       flexWrap: 'nowrap',

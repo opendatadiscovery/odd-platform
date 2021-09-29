@@ -177,32 +177,15 @@ const MainSearch: React.FC<AppSearchProps> = ({
                 to={option.id ? dataEntityDetailsPath(option.id) : '#'}
                 className={classes.suggestionItem}
               >
-                <Typography variant="body2">
+                <Typography variant="body1" className={classes.name}>
                   {option.internalName || option.externalName}
                 </Typography>
-                <div className={classes.suggestionItemTypes}>
-                  {option.types?.map(type => (
-                    <EntityTypeItem key={type.id} typeName={type.name} />
-                  ))}
-                </div>
+                {option.types?.map(type => (
+                  <EntityTypeItem key={type.id} typeName={type.name} />
+                ))}
               </Link>
             </li>
           )}
-          // renderOption={option => (
-          //   <Link
-          //     to={option.id ? dataEntityDetailsPath(option.id) : '#'}
-          //     className={classes.suggestionItem}
-          //   >
-          //     <Typography variant="body2">
-          //       {option.internalName || option.externalName}
-          //     </Typography>
-          //     <div className={classes.suggestionItemTypes}>
-          //       {option.types?.map(type => (
-          //         <EntityTypeItem key={type.id} typeName={type.name} />
-          //       ))}
-          //     </div>
-          //   </Link>
-          // )}
         />
       </div>
     </div>

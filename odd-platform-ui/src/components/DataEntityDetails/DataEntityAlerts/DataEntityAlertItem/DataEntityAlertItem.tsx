@@ -60,7 +60,6 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
             {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
           </MenuItem>
         }
-        place="bottom"
         type="light"
       >
         <AppButton

@@ -277,6 +277,7 @@ export const components: Components = {
   },
   MuiTabs: {
     styleOverrides: {
+      flexContainer: { alignItems: 'center' },
       scrollButtons: {
         width: '20px',
         '&.Mui-disabled': {

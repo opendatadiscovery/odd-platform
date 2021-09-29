@@ -22,13 +22,6 @@ export const styles = (theme: Theme) =>
       flexGrow: 1,
       overflow: 'hidden',
     },
-    typesList: {
-      display: 'flex',
-      flexWrap: 'nowrap',
-      '& > *': {
-        marginLeft: theme.spacing(1),
-      },
-    },
     ...colWidthStyles,
   });
 

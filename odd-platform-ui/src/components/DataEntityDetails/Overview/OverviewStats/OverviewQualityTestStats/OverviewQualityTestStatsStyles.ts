@@ -14,7 +14,6 @@ export const styles = (theme: Theme) =>
       },
     },
     typeLabel: {
-      marginLeft: 0,
       marginBottom: theme.spacing(1.25),
     },
     links: {},

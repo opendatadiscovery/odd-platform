@@ -1,30 +1,27 @@
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
-import cx from 'classnames';
-import { DataEntityType } from 'generated-sources';
+import { DataEntityTypeNameEnum } from 'generated-sources';
 import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
-import { styles, StylesType } from './EntityTypeItemStyles';
+import * as S from './EntityTypeItemStyles';
 
-interface EntityTypeItemProps extends StylesType {
-  className?: string;
-  typeName: DataEntityType['name'];
+interface EntityTypeItemProps {
+  typeName: DataEntityTypeNameEnum;
   fullName?: boolean;
+  ml?: number;
 }
 
 const EntityTypeItem: React.FC<EntityTypeItemProps> = ({
-  classes,
-  className,
   typeName,
   fullName,
+  ml,
 }) => (
-  <span
-    className={cx(classes.container, className, typeName, {
-      [classes.containerSmall]: fullName,
-    })}
+  <S.Content
+    typeName={typeName}
+    fullName={fullName}
+    ml={ml}
     title={DataEntityTypeLabelMap.get(typeName)?.normal}
   >
     {DataEntityTypeLabelMap.get(typeName)?.[fullName ? 'normal' : 'short']}
-  </span>
+  </S.Content>
 );
 
-export default withStyles(styles)(EntityTypeItem);
+export default EntityTypeItem;

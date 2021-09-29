@@ -35,7 +35,7 @@ export const styles = (theme: Theme) =>
     },
     updatedAtIcon: { fontSize: theme.typography.h1.fontSize },
     entityTypeLabel: {
-      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
     },
     internalNameEditBtnContainer: {
       display: 'none',
