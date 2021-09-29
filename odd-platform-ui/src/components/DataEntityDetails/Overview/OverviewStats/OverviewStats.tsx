@@ -2,6 +2,7 @@ import React from 'react';
 import { withStyles } from '@material-ui/core';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import { DataEntityDetailsState } from 'redux/interfaces/dataentities';
+import OverviewDataConsumerStats from 'components/DataEntityDetails/Overview/OverviewStats/OverviewDataConsumerStats/OverviewDataConsumerStats';
 import { styles, StylesType } from './OverviewStatsStyles';
 import OverviewDatasetStats from './OverviewDatasetStats/OverviewDatasetStats';
 import OverviewTransformerStats from './OverviewTransformerStats/OverviewTransformerStats';
@@ -35,8 +36,13 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
               unknownTargetsCount={dataEntityDetails.unknownTargetsCount}
             />
           );
-        // case DataEntityTypeNameEnum.CONSUMER:
-        //   return (<OverviewDatasetStats key={type.id} stats={dataEntityDetails.stats}/>);
+        case DataEntityTypeNameEnum.CONSUMER:
+          return (
+            <OverviewDataConsumerStats
+              key={type.id}
+              inputs={dataEntityDetails.inputList}
+            />
+          );
         case DataEntityTypeNameEnum.QUALITY_TEST:
           return (
             <OverviewQualityTestStats
