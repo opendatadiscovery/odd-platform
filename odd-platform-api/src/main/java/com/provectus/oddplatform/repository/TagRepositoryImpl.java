@@ -50,7 +50,7 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .select(TAG.asterisk())
             .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID))
             .from(TAG)
-            .join(TAG_TO_DATA_ENTITY).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
             .where(listCondition(query))
             .groupBy(TAG.ID, TAG.NAME, TAG.IMPORTANT, TAG_TO_DATA_ENTITY.TAG_ID)
             .orderBy(TAG_TO_DATA_ENTITY.TAG_ID.desc())
