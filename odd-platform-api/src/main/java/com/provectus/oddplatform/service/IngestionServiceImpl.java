@@ -101,8 +101,8 @@ public class IngestionServiceImpl implements IngestionService {
                     datasetVersionRepository.getLastStructureDelta(dataStructure.getExistingIds());
 
                 final List<AlertPojo> alerts = Stream.of(
-                    alertLocator.locateDatasetBIS(datasetStructureDelta),
-                    alertLocator.locateDQF(dataStructure.getTaskRuns()),
+                    alertLocator.locateDatasetBackIncSchema(datasetStructureDelta),
+                    alertLocator.locateDataQualityTestRunFailed(dataStructure.getTaskRuns()),
                     dataStructure.getEarlyAlerts()
                 ).flatMap(List::stream).collect(Collectors.toList());
 
@@ -195,7 +195,7 @@ public class IngestionServiceImpl implements IngestionService {
             .taskRuns(taskRuns)
             .lineageRelations(lineageRelations)
             .dataQARelations(dataQATestRelations)
-            .earlyAlerts(alertLocator.locateEarlyBIS(dataTransformerAttrsDelta))
+            .earlyAlerts(alertLocator.locateEarlyBackIncSchema(dataTransformerAttrsDelta))
             .build();
     }
 

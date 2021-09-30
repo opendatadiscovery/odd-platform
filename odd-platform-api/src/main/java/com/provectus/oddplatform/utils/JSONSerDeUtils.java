@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.jetbrains.annotations.Nullable;
 
 public class JSONSerDeUtils {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
@@ -21,6 +22,7 @@ public class JSONSerDeUtils {
         }
     }
 
+    @Nullable
     public static <T> T deserializeJson(final Object data, final Class<T> clazz) {
         if (data == null || clazz == null) {
             return null;

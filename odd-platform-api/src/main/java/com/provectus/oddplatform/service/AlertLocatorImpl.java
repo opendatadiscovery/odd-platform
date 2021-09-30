@@ -35,7 +35,7 @@ public class AlertLocatorImpl implements AlertLocator {
     );
 
     @Override
-    public List<AlertPojo> locateDatasetBIS(final Map<String, DatasetStructureDelta> structureDeltas) {
+    public List<AlertPojo> locateDatasetBackIncSchema(final Map<String, DatasetStructureDelta> structureDeltas) {
         return structureDeltas.entrySet()
             .stream()
             .flatMap(this::locateAlertsInDSDelta)
@@ -43,7 +43,7 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     @Override
-    public List<AlertPojo> locateDQF(final List<IngestionTaskRun> taskRuns) {
+    public List<AlertPojo> locateDataQualityTestRunFailed(final List<IngestionTaskRun> taskRuns) {
         return taskRuns.stream()
             .filter(tr -> tr.getType().equals(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN))
             .filter(tr -> TASK_RUN_BAD_STATUSES.contains(tr.getStatus()))
@@ -57,7 +57,7 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     @Override
-    public List<AlertPojo> locateEarlyBIS(final List<DataEntitySpecificAttributesDelta> deltas) {
+    public List<AlertPojo> locateEarlyBackIncSchema(final List<DataEntitySpecificAttributesDelta> deltas) {
         final Stream<AlertPojo> transformerAlerts = deltas.stream()
             .filter(d -> d.getDataEntityTypes().contains(DataEntityType.DATA_TRANSFORMER))
             .flatMap(this::locateAlertsInDTDelta);

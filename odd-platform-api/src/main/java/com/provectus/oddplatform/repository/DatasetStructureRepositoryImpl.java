@@ -20,7 +20,6 @@ import static com.provectus.oddplatform.model.Tables.DATASET_STRUCTURE;
 
 @Repository
 @RequiredArgsConstructor
-@Slf4j
 public class DatasetStructureRepositoryImpl implements DatasetStructureRepository {
     private final DSLContext dslContext;
     private final DatasetFieldRepository datasetFieldRepository;

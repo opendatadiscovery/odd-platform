@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 public interface AlertLocator {
-    List<AlertPojo> locateDatasetBIS(final Map<String, DatasetStructureDelta> structureDeltas);
+    List<AlertPojo> locateDatasetBackIncSchema(final Map<String, DatasetStructureDelta> structureDeltas);
 
-    List<AlertPojo> locateDQF(final List<IngestionTaskRun> taskRuns);
+    List<AlertPojo> locateDataQualityTestRunFailed(final List<IngestionTaskRun> taskRuns);
 
-    List<AlertPojo> locateEarlyBIS(final List<DataEntitySpecificAttributesDelta> deltas);
+    List<AlertPojo> locateEarlyBackIncSchema(final List<DataEntitySpecificAttributesDelta> deltas);
 }
