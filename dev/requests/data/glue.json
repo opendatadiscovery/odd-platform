@@ -124,12 +124,40 @@
           }
         }
       ],
-      "updated_at": "2021-04-21T11:25:07+00:00",
+      "updated_at": "2021-04-12T11:25:07+00:00",
       "created_at": "2021-03-17T20:14:37+00:00",
       "type": "TABLE",
       "dataset": {
         "rows_number": 0,
         "field_list": [
+          {
+            "oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/very_complex_field/subcolumns/employer",
+            "name": "employer",
+            "metadata": [],
+            "parent_field_oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/very_complex_field",
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "string",
+              "is_nullable": true
+            },
+            "is_key": false,
+            "is_value": false,
+            "stats": {}
+          },
+          {
+            "oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/very_complex_field/subcolumns/id",
+            "name": "id",
+            "metadata": [],
+            "parent_field_oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/very_complex_field",
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "bigint",
+              "is_nullable": true
+            },
+            "is_key": false,
+            "is_value": false,
+            "stats": {}
+          },
           {
             "oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/very_complex_field/subcolumns/address",
             "name": "address",
@@ -166,6 +194,20 @@
             "type": {
               "type": "TYPE_INTEGER",
               "logical_type": "int",
+              "is_nullable": true
+            },
+            "is_key": false,
+            "is_value": false,
+            "stats": {}
+          },
+          {
+            "oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/incredibly_complex_field/subcolumns/street_address/subcolumns/street_name",
+            "name": "street_name",
+            "metadata": [],
+            "parent_field_oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/incredibly_complex_field/subcolumns/street_address",
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "string",
               "is_nullable": true
             },
             "is_key": false,
@@ -278,6 +320,34 @@
             "stats": {}
           },
           {
+            "oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/field_with_map_and_list/values/list/subcolumns/struct/subcolumns/name",
+            "name": "name",
+            "metadata": [],
+            "parent_field_oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/field_with_map_and_list/values/list/subcolumns/struct",
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "string",
+              "is_nullable": true
+            },
+            "is_key": false,
+            "is_value": false,
+            "stats": {}
+          },
+          {
+            "oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/field_with_map_and_list/values/list/subcolumns/struct",
+            "name": "struct",
+            "metadata": [],
+            "parent_field_oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/field_with_map_and_list/values/list",
+            "type": {
+              "type": "TYPE_STRUCT",
+              "logical_type": "struct",
+              "is_nullable": true
+            },
+            "is_key": false,
+            "is_value": false,
+            "stats": {}
+          },
+          {
             "oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/field_with_map_and_list/values/list",
             "name": "list",
             "metadata": [],
@@ -343,21 +413,6 @@
         "inputs": [],
         "outputs": []
       }
-    },
-    {
-      "oddrn":"//aws/glue//jobs/mos_espa_job/run",
-      "name":"run",
-      "type":"JOB_RUN",
-      "data_transformer_run":{
-        "transformer_oddrn":"//aws/glue//jobs/mos_espa_job",
-        "start_time":"2013-08-19T10:21:16+00:00",
-        "end_time":"2021-02-23T12:07:49+00:00",
-        "status_reason":"",
-        "status":"SUCCESS"
-      },
-      "metadata":[
-
-      ]
     }
   ]
 }
