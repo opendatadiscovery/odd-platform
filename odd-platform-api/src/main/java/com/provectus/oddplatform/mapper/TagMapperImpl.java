@@ -55,11 +55,10 @@ public class TagMapperImpl implements TagMapper {
     }
 
     public Tag mapTag(final TagDto dto) {
-        final Tag tag = new Tag();
-        tag.setId(dto.getTagPojo().getId());
-        tag.setName(dto.getTagPojo().getName());
-        tag.setImportant(dto.getTagPojo().getImportant());
-        tag.setUsedCount(dto.getUsedCount());
-        return tag;
+        return new Tag()
+            .id(dto.getTagPojo().getId())
+            .name(dto.getTagPojo().getName())
+            .important(dto.getTagPojo().getImportant())
+            .usedCount(dto.getUsedCount());
     }
 }
