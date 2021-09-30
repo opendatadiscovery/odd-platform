@@ -13,9 +13,6 @@ export const styles = (theme: Theme) =>
       color: theme.palette.text.hint,
       marginLeft: theme.spacing(0.5),
     },
-    statValue: {
-      fontWeight: theme.typography.fontWeightBold,
-    },
     typeLabel: {
       marginLeft: 0,
       marginBottom: theme.spacing(1.25),

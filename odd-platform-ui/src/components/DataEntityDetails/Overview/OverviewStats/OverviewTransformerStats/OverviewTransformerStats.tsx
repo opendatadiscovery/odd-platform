@@ -34,7 +34,13 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         className={classes.typeLabel}
       />
     </Grid>
-    <Grid item container xs={6} className={classes.statsItem}>
+    <Grid
+      item
+      container
+      xs={6}
+      alignItems="flex-start"
+      alignContent="flex-start"
+    >
       <Grid item container xs={12} alignItems="baseline">
         <UpstreamIcon className={classes.statIcon} />
         <Typography variant="h2" className={classes.statCount}>
@@ -64,14 +70,21 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             </Link>
           </AppButton>
         ))}
-        {unknownSourcesCount ? 
+        {unknownSourcesCount ? (
           <Typography variant="subtitle1" className={classes.unknownCount}>
-            {unknownSourcesCount} more source{unknownSourcesCount === 1 ? '' : 's'} unknown
+            {unknownSourcesCount} more source
+            {unknownSourcesCount === 1 ? '' : 's'} unknown
           </Typography>
-        : null}
+        ) : null}
       </Grid>
     </Grid>
-    <Grid item container xs={6} className={classes.statsItem}>
+    <Grid
+      item
+      container
+      xs={6}
+      alignItems="flex-start"
+      alignContent="flex-start"
+    >
       <Grid item container xs={12} alignItems="baseline">
         <DownstreamIcon className={classes.statIcon} />
         <Typography variant="h2" className={classes.statCount}>
@@ -101,11 +114,12 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             </Link>
           </AppButton>
         ))}
-        {unknownTargetsCount ?
+        {unknownTargetsCount ? (
           <Typography variant="subtitle1" className={classes.unknownCount}>
-            {unknownTargetsCount} more target{unknownTargetsCount === 1 ? '' : 's'} unknown
+            {unknownTargetsCount} more target
+            {unknownTargetsCount === 1 ? '' : 's'} unknown
           </Typography>
-        : null}
+        ) : null}
       </Grid>
     </Grid>
   </Grid>

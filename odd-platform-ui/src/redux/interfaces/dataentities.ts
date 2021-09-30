@@ -1,4 +1,7 @@
-import { DataEntityTypeNameEnum, DataEntityDetails } from 'generated-sources';
+import {
+  DataEntityTypeNameEnum,
+  DataEntityDetails,
+} from 'generated-sources';
 
 export interface UpdateDataEntityParams {
   dataEntityId: number;
@@ -33,4 +36,5 @@ export const DataEntityTypeLabelMap: Map<
 export interface DataEntityDetailsState extends DataEntityDetails {
   unknownSourcesCount: number;
   unknownTargetsCount: number;
+  unknownInputsCount: number;
 }
