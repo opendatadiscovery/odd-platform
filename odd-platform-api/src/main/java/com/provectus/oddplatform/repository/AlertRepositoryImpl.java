@@ -160,8 +160,8 @@ public class AlertRepositoryImpl implements AlertRepository {
             .collect(Collectors.toSet());
 
         final List<AlertPojo> filteredAlerts = alerts.stream()
-            .filter(a -> a.getMessengerEntityOddrn() == null ||
-                !existingMessengers.contains(a.getMessengerEntityOddrn()))
+            .filter(
+                a -> a.getMessengerEntityOddrn() == null || !existingMessengers.contains(a.getMessengerEntityOddrn()))
             .collect(Collectors.toList());
 
         dslContext

@@ -125,11 +125,9 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     private DataTransformerAttributes extractDTAttributes(final String json) {
-        // TODO: if Map<DataEntityType, ?> works apply in DERI
         final Map<DataEntityType, ?> specificAttributes =
             JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityType, ?>>() {
             });
-
 
         return JSONSerDeUtils.deserializeJson(
             specificAttributes.get(DataEntityType.DATA_TRANSFORMER),
@@ -138,11 +136,9 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     private DataConsumerAttributes extractDCAttributes(final String json) {
-        // TODO: if Map<DataEntityType, ?> works apply in DERI
         final Map<DataEntityType, ?> specificAttributes =
             JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityType, ?>>() {
             });
-
 
         return JSONSerDeUtils.deserializeJson(
             specificAttributes.get(DataEntityType.DATA_CONSUMER),
