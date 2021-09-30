@@ -6,11 +6,15 @@ import com.provectus.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import com.provectus.oddplatform.model.tables.records.TagRecord;
 import com.provectus.oddplatform.model.tables.records.TagToDataEntityRecord;
 import com.provectus.oddplatform.repository.util.JooqQueryHelper;
+import com.provectus.oddplatform.utils.Page;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Select;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +23,8 @@ import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 
 @Repository
 public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecord, TagPojo> implements TagRepository {
+
+    private static final String COUNT_FIELD = "count";
 
     public TagRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
         super(dslContext, jooqQueryHelper, TAG, TAG.ID, TAG.IS_DELETED, TAG.NAME, TAG.NAME, TagPojo.class);
@@ -45,19 +51,29 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
     }
 
     @Override
-    public List<TagDto> listMostPopular(final String query, final int page, final int size) {
-        return dslContext
-            .select(TAG.asterisk())
-            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID))
-            .from(TAG)
-            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
-            .where(listCondition(query))
-            .groupBy(TAG.ID, TAG.NAME, TAG.IMPORTANT, TAG_TO_DATA_ENTITY.TAG_ID)
-            .orderBy(TAG_TO_DATA_ENTITY.TAG_ID.desc())
-            .offset((page - 1) * size)
-            .limit(size)
-            .fetchStreamInto(TagDto.class)
+    public Page<TagDto> listMostPopular(final String query, final int page, final int size) {
+        final Select<TagRecord> homogeneousQuery = dslContext
+            .selectFrom(TAG)
+            .where(listCondition(query));
+
+        final Select<? extends Record> select =
+            jooqQueryHelper.paginate(homogeneousQuery, (page - 1) * size, size);
+
+        final Table<? extends Record> tagCte = select.asTable("tag_cte");
+
+        final List<Record> records = dslContext
+            .with(tagCte.getName())
+            .as(select)
+            .select(tagCte.fields())
+            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
+            .from(tagCte.getName())
+            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(tagCte.field(TAG.ID)))
+            .groupBy(tagCte.fields())
+            .orderBy(DSL.field(COUNT_FIELD).desc())
+            .fetchStream()
             .collect(Collectors.toList());
+
+        return jooqQueryHelper.pageifyResult(records, this::mapTag, () -> fetchCount(query));
     }
 
     @Override
@@ -92,5 +108,12 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private TagDto mapTag(final Record record) {
+        return new TagDto(
+            record.into(TagPojo.class),
+            record.get(COUNT_FIELD, Long.class)
+        );
     }
 }
