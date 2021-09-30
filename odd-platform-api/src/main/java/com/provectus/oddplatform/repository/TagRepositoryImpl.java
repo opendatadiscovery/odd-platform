@@ -1,5 +1,6 @@
 package com.provectus.oddplatform.repository;
 
+import com.provectus.oddplatform.dto.TagDto;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import com.provectus.oddplatform.model.tables.records.TagRecord;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
+import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
 
 import static com.provectus.oddplatform.model.Tables.TAG;
@@ -39,6 +41,22 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
             .where(addSoftDeleteFilter(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId)))
             .fetchStreamInto(pojoClass)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<TagDto> listMostPopular(final String query, final int page, final int size) {
+        return dslContext
+            .select(TAG.asterisk())
+            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID))
+            .from(TAG)
+            .join(TAG_TO_DATA_ENTITY).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .where(listCondition(query))
+            .groupBy(TAG.ID, TAG.NAME, TAG.IMPORTANT, TAG_TO_DATA_ENTITY.TAG_ID)
+            .orderBy(TAG_TO_DATA_ENTITY.TAG_ID.desc())
+            .offset((page - 1) * size)
+            .limit(size)
+            .fetchStreamInto(TagDto.class)
             .collect(Collectors.toList());
     }
 

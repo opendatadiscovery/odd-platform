@@ -106,7 +106,7 @@ public class DataEntityServiceImpl
                 .map(entityMapper::mapDtoDetails);
     }
 
-    private DataEntityDetailsDto incrementViewCount(DataEntityDetailsDto dto) {
+    private DataEntityDetailsDto incrementViewCount(final DataEntityDetailsDto dto) {
         final DataEntityPojo dataEntity = dto.getDataEntity();
         final Optional<Long> viewCount = entityRepository.incrementViewCount(dataEntity.getId());
         viewCount.ifPresent(dataEntity::setViewCount);

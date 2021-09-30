@@ -218,10 +218,7 @@ const Results: React.FC<ResultsProps> = ({
           )}
         />
       ) : (
-        <div
-          id="results-list"
-          className={classes.listContainer}
-        >
+        <div id="results-list" className={classes.listContainer}>
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}
