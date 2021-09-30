@@ -8,5 +8,5 @@ import java.util.Map;
 
 public interface DatasetStructureRepository {
     List<DatasetStructurePojo> bulkCreate(final List<DatasetVersionPojo> versions,
-                                          final Map<Long, List<DatasetFieldPojo>> datasetFields);
+                                          final Map<String, List<DatasetFieldPojo>> datasetFields);
 }

@@ -8,6 +8,7 @@ import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,11 +30,12 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final Collection<DataEntityTypePojo> types,
                                    final DataEntitySubtypePojo subtype,
                                    final boolean hasAlerts,
+                                   final Map<DataEntityType, DataEntityAttributes> specificAttributes,
                                    final NamespacePojo namespace,
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
                                    final Collection<TagPojo> tags) {
-        super(dataEntity, types, subtype, hasAlerts);
+        super(dataEntity, types, subtype, hasAlerts, specificAttributes);
         this.namespace = namespace;
         this.ownership = ownership;
         this.dataSource = dataSource;

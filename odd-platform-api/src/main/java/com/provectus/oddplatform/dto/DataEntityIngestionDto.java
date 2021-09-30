@@ -37,7 +37,6 @@ public class DataEntityIngestionDto {
     @NoArgsConstructor
     public static class DataSetIngestionDto {
         private String parentDatasetOddrn;
-        // TODO: dto for fields?
         private List<DataSetField> fieldList;
         private String structureHash;
         private Long rowsCount;

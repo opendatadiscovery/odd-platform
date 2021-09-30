@@ -1379,6 +1379,7 @@ components:
       enum:
         - DISTRIBUTION_ANOMALY
         - BACKWARDS_INCOMPATIBLE_SCHEMA
+        - FAILED_DQ_TEST
 
     AlertStatus:
       type: string
