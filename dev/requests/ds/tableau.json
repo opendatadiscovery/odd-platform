@@ -1,0 +1,8 @@
+{
+  "name": "Tableau data source",
+  "oddrn": "//tableau/demo",
+  "description": "Tableau local environment data source",
+  "connection_url": "https://tableau-adapter:8080",
+  "namespace_name": "Analytics",
+  "active": false
+}
