@@ -148,6 +148,13 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .suiteUrl(dto.getDataQualityTestDetailsDto().getSuiteUrl());
         }
 
+        if (typeNames.contains(DataEntityType.NameEnum.CONSUMER)) {
+            details.setInputList(dto.getDataConsumerDetailsDto()
+                .getInputList()
+                .stream()
+                .map(this::mapReference).collect(Collectors.toList()));
+        }
+
         return details;
     }
 

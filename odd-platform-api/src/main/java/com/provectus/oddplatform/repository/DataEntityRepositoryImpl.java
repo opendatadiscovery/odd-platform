@@ -517,8 +517,13 @@ public class DataEntityRepositoryImpl
     private List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
                                                           final Integer page,
                                                           final Integer size) {
+        final Set<String> conditionValues = CollectionUtils.emptyIfNull(oddrns)
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toSet());
+
         DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
-            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
+            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(conditionValues)))
             .includeHollow(true);
 
         if (page != null && size != null) {
@@ -1018,8 +1023,11 @@ public class DataEntityRepositoryImpl
 
     private void enrichDataEntityDetailsDto(final DataEntityDetailsDto dto,
                                             final Map<String, DataEntityDimensionsDto> depsRepository) {
-        final Function<Collection<String>, Collection<? extends DataEntityDto>> fetcher =
-            oddrns -> oddrns.stream().map(depsRepository::get).filter(Objects::nonNull).collect(Collectors.toList());
+        final Function<Collection<String>, Collection<? extends DataEntityDto>> fetcher = oddrns -> oddrns.stream()
+            .map(String::toLowerCase)
+            .map(depsRepository::get)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
 
         dto.getSpecificAttributes().forEach((t, attrs) -> {
             switch (t) {
