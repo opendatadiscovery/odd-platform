@@ -27,7 +27,7 @@ import {
 } from 'redux/interfaces/search';
 import { StylesType } from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemStyles';
 import SelectedFilterOption from 'components/Search/Filters/FilterItem/SelectedFilterOption/SelectedFilterOption';
-import ChevronDownIcon from 'components/shared/Icons/ChevronDownIcon';
+import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 
 interface FilterItemProps extends StylesType {
   searchId: string;
@@ -202,7 +202,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
         <Autocomplete
           className={classes.autoComplete}
           fullWidth
-          popupIcon={<ChevronDownIcon />}
+          popupIcon={<DropdownIcon />}
           id={`filter-${facetName}`}
           open={autocompleteOpen}
           onOpen={() => setAutocompleteOpen(true)}

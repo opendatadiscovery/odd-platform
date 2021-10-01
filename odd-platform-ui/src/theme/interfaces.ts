@@ -1,6 +1,6 @@
-// palette interfaces
 import { TypeBackground } from '@mui/material/styles/createPalette';
 
+// palette interfaces
 interface ItemColors {
   background?: string;
   border?: string;
@@ -68,6 +68,7 @@ interface ButtonType {
   tertiary: ButtonTypeCondition;
   dropdown: ButtonTypeCondition;
   expand: ButtonTypeCondition;
+  expandText: ButtonTypeCondition;
   unfilled: ButtonTypeCondition;
 }
 

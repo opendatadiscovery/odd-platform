@@ -1,25 +1,23 @@
 import React from 'react';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 
-const KebabIcon: React.FC<SvgIconProps> = props => (
-  <SvgIcon
-    viewBox="0 0 16 16"
-    {...props}
-    style={{ transform: 'rotate(90deg)' }}
-  >
-    <path
-      d="M9.5 12.5C9.5 13.3285 8.82843 14 8 14C7.17157 14 6.5 13.3285 6.5 12.5C6.5 11.6716 7.17157 11 8 11C8.82843 11 9.5 11.6716 9.5 12.5Z"
-      fill="#0066CC"
-    />
-    <path
-      d="M9.5 8.00002C9.5 8.82845 8.82843 9.50002 8 9.50002C7.17157 9.50002 6.5 8.82845 6.5 8.00002C6.5 7.1716 7.17157 6.50002 8 6.50002C8.82843 6.50002 9.5 7.1716 9.5 8.00002Z"
-      fill="#0066CC"
-    />
-    <path
-      d="M9.5 3.5C9.5 4.32843 8.82843 5 8 5C7.17157 5 6.5 4.32843 6.5 3.5C6.5 2.67157 7.17157 2 8 2C8.82843 2 9.5 2.67157 9.5 3.5Z"
-      fill="#0066CC"
-    />
+const MoreIcon: React.FC<SvgIconProps> = props => (
+  <SvgIcon viewBox="0 0 13 4" {...props}>
+    <svg
+      width="13"
+      height="4"
+      viewBox="0 0 13 4"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M3 2C3 2.82843 2.32843 3.5 1.5 3.5C0.671573 3.5 0 2.82843 0 2C0 1.17157 0.671573 0.5 1.5 0.5C2.32843 0.5 3 1.17157 3 2ZM8 2C8 2.82843 7.32843 3.5 6.5 3.5C5.67157 3.5 5 2.82843 5 2C5 1.17157 5.67157 0.5 6.5 0.5C7.32843 0.5 8 1.17157 8 2ZM11.5 3.5C12.3284 3.5 13 2.82843 13 2C13 1.17157 12.3284 0.5 11.5 0.5C10.6716 0.5 10 1.17157 10 2C10 2.82843 10.6716 3.5 11.5 3.5Z"
+        fill="currentColor"
+      />
+    </svg>
   </SvgIcon>
 );
 
-export default KebabIcon;
+export default MoreIcon;

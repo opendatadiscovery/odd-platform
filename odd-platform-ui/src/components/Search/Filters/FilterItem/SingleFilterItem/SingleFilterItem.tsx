@@ -6,7 +6,7 @@ import {
   OptionalFacetNames,
   SearchFilterStateSynced,
 } from 'redux/interfaces/search';
-import ChevronDownIcon from 'components/shared/Icons/ChevronDownIcon';
+import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import { StylesType } from './SingleFilterItemStyles';
 
 interface FilterItemProps extends StylesType {
@@ -52,7 +52,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
       <Grid item xs={12}>
         <Select
           className={classes.singleSelect}
-          IconComponent={ChevronDownIcon}
+          IconComponent={DropdownIcon}
           labelId={`${facetName}-select-label`}
           id={`filter-${facetName}`}
           variant="outlined"

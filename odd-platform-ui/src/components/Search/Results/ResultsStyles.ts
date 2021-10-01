@@ -47,7 +47,7 @@ export const styles = (theme: Theme) =>
     listContainer: {
       height: `calc(100vh - ${toolbarHeight}px - ${searchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
         8
-      )}px)`,
+      )})`,
       overflow: 'auto',
     },
     resultItem: {

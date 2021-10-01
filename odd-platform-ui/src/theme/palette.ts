@@ -149,6 +149,11 @@ export const palette = createPalette({
       hover: { background: colors.blue10, color: colors.blue60 },
       active: { background: colors.blue50, color: colors.white },
     },
+    expandText: {
+      normal: { background: colors.blue5, color: colors.blue60 },
+      hover: { background: colors.blue10, color: colors.blue60 },
+      active: { background: colors.blue20, color: colors.blue60 },
+    },
     unfilled: {
       normal: { background: colors.transparent, color: colors.black30 },
       hover: { background: colors.transparent, color: colors.black70 },

@@ -1,7 +1,7 @@
 import React from 'react';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
 
-const ChevronDownIcon: React.FC<SvgIconProps> = props => (
+const DropdownIcon: React.FC<SvgIconProps> = props => (
   <SvgIcon viewBox="0 0 16 16" {...props}>
     <svg
       width="16"
@@ -15,4 +15,4 @@ const ChevronDownIcon: React.FC<SvgIconProps> = props => (
   </SvgIcon>
 );
 
-export default ChevronDownIcon;
+export default DropdownIcon;

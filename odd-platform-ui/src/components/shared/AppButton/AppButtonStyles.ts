@@ -5,15 +5,6 @@ import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
-    container: {
-      padding: '2px',
-      marginLeft: '4px',
-    },
-    icon: {
-      width: '16px',
-      height: '16px',
-      color: theme.palette.texts.hint,
-    },
     primary: {
       backgroundColor: theme.palette.button.primary.normal.background,
       color: theme.palette.button.primary.normal.color,
