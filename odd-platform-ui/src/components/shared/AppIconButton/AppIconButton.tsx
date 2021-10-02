@@ -7,14 +7,15 @@ interface AppIconButtonProps
   disabled?: boolean;
   size?: 'medium' | 'small';
   color: IconButtonColors;
+  icon: React.ReactNode;
 }
 
 const AppIconButton: React.FC<AppIconButtonProps> = ({
   onClick,
-  children,
   disabled,
   size = 'small',
   color,
+  icon,
 }) => (
   <StyledIconButton
     $color={color}
@@ -23,7 +24,7 @@ const AppIconButton: React.FC<AppIconButtonProps> = ({
     disabled={disabled}
     size={size}
   >
-    {children}
+    {icon}
   </StyledIconButton>
 );
 

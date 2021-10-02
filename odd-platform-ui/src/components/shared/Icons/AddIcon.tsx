@@ -1,8 +1,9 @@
 import React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import { SvgIconProps } from '@mui/material/SvgIcon';
+import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 
-const AddIcon: React.FC<SvgIconProps> = props => (
-  <SvgIcon viewBox="0 0 16 16" {...props}>
+const AddIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
+  <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props}>
     <svg
       width="16"
       height="16"
@@ -17,7 +18,7 @@ const AddIcon: React.FC<SvgIconProps> = props => (
         fill="currentColor"
       />
     </svg>
-  </SvgIcon>
+  </AppSvgIcon>
 );
 
 export default AddIcon;

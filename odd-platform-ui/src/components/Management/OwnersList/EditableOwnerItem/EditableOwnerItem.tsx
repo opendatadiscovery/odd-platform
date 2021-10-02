@@ -4,9 +4,9 @@ import withStyles from '@mui/styles/withStyles';
 import { Owner, OwnerApiDeleteOwnerRequest } from 'generated-sources';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import OwnerFormContainer from 'components/Management/OwnersList/OwnerForm/OwnerFormContainer';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 import { styles, StylesType } from './EditableOwnerItemStyles';
 
 interface EditableOwnerItemProps extends StylesType {
@@ -35,13 +35,13 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
         <OwnerFormContainer
           owner={owner}
           btnCreateEl={
-            <AppButton
+            <AppButton2
               color="primaryLight"
               size="medium"
-              icon={<EditIcon />}
+              startIcon={<EditIcon />}
             >
               Edit
-            </AppButton>
+            </AppButton2>
           }
         />
         <ConfirmationDialog
@@ -52,13 +52,14 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
           }
           onConfirm={handleDelete}
           actionBtn={
-            <AppButton
+            <AppButton2
               size="medium"
               color="primaryLight"
-              icon={<DeleteIcon />}
+              startIcon={<DeleteIcon />}
+              sx={{ ml: 1 }}
             >
               Delete
-            </AppButton>
+            </AppButton2>
           }
         />
       </Grid>

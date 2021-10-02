@@ -2,8 +2,9 @@ import React from 'react';
 import { TextField, InputAdornment } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
-import AppButton from 'components/shared/AppButton/AppButton';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './LabelCreateFormItemStyles';
 
 interface LabelCreateFormItemProps extends StylesType {
@@ -37,7 +38,7 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
             InputProps={{
               endAdornment: field.value && (
                 <InputAdornment position="start">
-                  <AppButton
+                  <AppIconButton
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}
@@ -51,9 +52,9 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
       />
       <div className={classes.labelItemButtons}>
         {fieldsLength && fieldsLength > 1 && (
-          <AppButton size="small" color="dropdown" onClick={onItemRemove}>
+          <AppButton2 size="small" color="dropdown" onClick={onItemRemove}>
             Delete
-          </AppButton>
+          </AppButton2>
         )}
       </div>
     </>

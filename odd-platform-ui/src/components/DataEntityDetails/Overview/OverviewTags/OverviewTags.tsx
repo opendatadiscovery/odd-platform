@@ -1,12 +1,12 @@
 import React from 'react';
-import { Typography, Grid, Collapse } from '@mui/material';
+import { Collapse, Grid, Typography } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { Tag } from 'generated-sources';
 import TagItem from 'components/shared/TagItem/TagItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import TagsEditContainer from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormContainer';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 import { styles, StylesType } from './OverviewTagsStyles';
 
 interface OverviewTagsProps extends StylesType {
@@ -39,14 +39,14 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
         <TagsEditContainer
           dataEntityId={dataEntityId}
           btnEditEl={
-            <AppButton
+            <AppButton2
               size="medium"
               color="primaryLight"
               onClick={() => {}}
-              icon={tags?.length ? <EditIcon /> : <AddIcon />}
+              startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
             >
               {tags?.length ? 'Edit' : 'Add'} tags
-            </AppButton>
+            </AppButton2>
           }
         />
       </div>
@@ -80,14 +80,14 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
                       ))
                   : null}
               </Collapse>
-              <AppButton
+              <AppButton2
                 size="small"
                 color="tertiary"
-                className={classes.viewAllBtn}
+                sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
               >
                 {viewAll ? 'Hide' : `View All (${tags?.length})`}
-              </AppButton>
+              </AppButton2>
             </>
           ) : null}
         </div>
@@ -104,9 +104,9 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
           <TagsEditContainer
             dataEntityId={dataEntityId}
             btnEditEl={
-              <AppButton size="small" color="tertiary" onClick={() => {}}>
+              <AppButton2 size="small" color="tertiary" onClick={() => {}}>
                 Add tags
-              </AppButton>
+              </AppButton2>
             }
           />
         </Grid>

@@ -21,9 +21,6 @@ export const styles = (theme: Theme) =>
     },
     actionsContainer: {
       visibility: 'hidden',
-      '& > :first-child': {
-        marginRight: theme.spacing(1),
-      },
     },
   });
 

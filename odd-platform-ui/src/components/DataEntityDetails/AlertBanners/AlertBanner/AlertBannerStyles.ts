@@ -19,9 +19,6 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
     },
-    icon: {
-      marginRight: theme.spacing(1),
-    },
     actions: {},
   });
 

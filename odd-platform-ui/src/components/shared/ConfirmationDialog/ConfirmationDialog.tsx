@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 import { styles, StylesType } from './ConfirmationDialogStyles';
 
 interface ConfirmationDialogProps extends StylesType {
@@ -42,9 +42,13 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
   const formActionButtons = () => (
     <div className={classes.actions}>
-      <AppButton size="large" color="primary" onClick={onClose(onConfirm)}>
+      <AppButton2
+        size="large"
+        color="primary"
+        onClick={onClose(onConfirm)}
+      >
         {actionName}
-      </AppButton>
+      </AppButton2>
     </div>
   );
 

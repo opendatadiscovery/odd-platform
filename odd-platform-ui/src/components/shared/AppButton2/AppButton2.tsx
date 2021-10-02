@@ -1,8 +1,8 @@
 import React from 'react';
-import { ButtonProps, IconButtonProps } from '@mui/material';
+import { ButtonProps } from '@mui/material';
 import {
-  StyledAppButton,
   ButtonColors,
+  StyledAppButton,
 } from 'components/shared/AppButton2/AppButtonStyles2';
 
 interface AppButtonProps extends Omit<ButtonProps, 'color'> {
@@ -21,9 +21,11 @@ const AppButton2: React.FC<AppButtonProps> = ({
   disabled,
   size,
   color,
+  sx,
 }) => (
   <StyledAppButton
     $color={color}
+    sx={sx}
     onClick={onClick}
     disabled={disabled}
     size={size}
