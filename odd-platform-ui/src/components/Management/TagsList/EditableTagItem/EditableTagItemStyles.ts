@@ -21,9 +21,6 @@ export const styles = (theme: Theme) =>
       flexGrow: 1,
       visibility: 'hidden',
       justifyContent: 'flex-end',
-      '& > :first-child': {
-        marginRight: theme.spacing(1),
-      },
     },
     col: {
       minWidth: '285px',

@@ -32,7 +32,7 @@ export const styles = (theme: Theme) =>
     overview: {
       '& > *': {
         marginBottom: theme.spacing(1),
-        marginLeft: theme.spacing(0.5),
+        marginLeft: theme.spacing(0.25),
         '&:last-child': { marginLeft: 0 },
       },
     },

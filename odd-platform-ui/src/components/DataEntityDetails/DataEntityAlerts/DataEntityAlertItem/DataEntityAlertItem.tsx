@@ -6,9 +6,9 @@ import cx from 'classnames';
 import { format } from 'date-fns';
 import { lowerCase } from 'lodash';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import Tooltip from 'components/shared/Tooltip/Tooltip';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps extends StylesType {
@@ -52,7 +52,10 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
           format(alert.statusUpdatedAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
     </Grid>
-    <Grid item className={cx(classes.col, classes.colActionBtn)}>
+    <Grid
+      item
+      className={cx(classes.col, classes.colActionBtn, classes.optionsBtn)}
+    >
       <Tooltip
         tooltipControl="byClick"
         tooltipContent={
@@ -62,8 +65,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
         }
         type="light"
       >
-        <AppButton
-          className={classes.optionsBtn}
+        <AppIconButton
           size="medium"
           color="primaryLight"
           icon={<KebabIcon />}

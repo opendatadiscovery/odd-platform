@@ -24,34 +24,8 @@ export const styles = (theme: Theme) =>
       },
     },
     rowChildren: {},
-    collapseBtn: {
-      height: '14px',
-      width: '14px',
-      borderRadius: '2px',
-      backgroundColor: theme.palette.text.secondary,
-      color: theme.palette.common.white,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      '& > *': {
-        width: '6px',
-        height: '6px',
-      },
-    },
-    collapseBtnOpen: {
-      backgroundColor: theme.palette.backgrounds.darken,
-    },
     treeDividerContainer: {
-      width: '14px',
-      minWidth: '14px',
       marginRight: '5px',
-    },
-    treeDivider: {
-      cursor: 'pointer',
-      padding: theme.spacing(0.25, 0, 0, 0),
-      backgroundColor: 'transparent',
-      border: 'none',
-      outline: 'none',
     },
     nameContainer: {
       display: 'flex',

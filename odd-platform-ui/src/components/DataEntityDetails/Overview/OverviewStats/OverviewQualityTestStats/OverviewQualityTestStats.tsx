@@ -10,10 +10,10 @@ import {
 import { entries } from 'lodash';
 import { dataEntityDetailsPath, dataEntityHistoryPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import cx from 'classnames';
 import { format, formatDistanceStrict } from 'date-fns';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 import { styles, StylesType } from './OverviewQualityTestStatsStyles';
 
 interface OverviewQualityTestStatsProps extends StylesType {
@@ -40,7 +40,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
     <Grid container className={classes.statsContainer}>
       <Grid item className={classes.links}>
         <Grid item container>
-          <Grid item container alignItems="baseline">
+          <Grid item container alignItems="baseline" sx={{ mb: 1 }}>
             <Typography variant="h2" className={classes.linkCount}>
               {datasetsList?.length || 0}
             </Typography>
@@ -50,17 +50,16 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
           <Grid item>
             {datasetsList?.map(dataset => (
-              <AppButton
+              <AppButton2
                 key={dataset.id}
-                className={classes.link}
-                size="small"
+                sx={{ mt: 0.25, mb: 0.25 }}
+                size="medium"
                 color="tertiary"
-                onClick={() => {}}
               >
                 <Link to={dataEntityDetailsPath(dataset.id)}>
                   {dataset.internalName || dataset.externalName}
                 </Link>
-              </AppButton>
+              </AppButton2>
             ))}
           </Grid>
         </Grid>
@@ -72,16 +71,15 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
           <Grid item>
             {suiteUrl ? (
-              <AppButton
-                className={classes.link}
-                size="small"
+              <AppButton2
+                sx={{ mt: 0.25, mb: 0.25 }}
+                size="medium"
                 color="tertiary"
-                onClick={() => {}}
               >
                 <Link to={{ pathname: suiteUrl }} target="_blank">
                   {suiteName || suiteUrl}
                 </Link>
-              </AppButton>
+              </AppButton2>
             ) : null}
           </Grid>
         </Grid>
@@ -128,9 +126,9 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
         </LabeledInfoItem>
         <Grid container>
           <Link to={dataEntityHistoryPath(qualityTest?.id)}>
-            <AppButton size="small" color="tertiary">
+            <AppButton2 size="small" color="tertiary">
               History
-            </AppButton>
+            </AppButton2>
           </Link>
         </Grid>
       </Grid>

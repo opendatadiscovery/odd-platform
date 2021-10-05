@@ -23,11 +23,7 @@ const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({
 }) => (
   <Grid container>
     <Grid item xs={12} className={classes.typeLabel}>
-      <EntityTypeItem
-        typeName={DataEntityTypeNameEnum.SET}
-        fullName
-        ml={0}
-      />
+      <EntityTypeItem typeName={DataEntityTypeNameEnum.SET} fullName />
     </Grid>
     <Grid item container xs={4} className={classes.statsItem}>
       <Grid item xs={12}>

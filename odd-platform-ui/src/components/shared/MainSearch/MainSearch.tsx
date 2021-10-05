@@ -181,7 +181,11 @@ const MainSearch: React.FC<AppSearchProps> = ({
                   {option.internalName || option.externalName}
                 </Typography>
                 {option.types?.map(type => (
-                  <EntityTypeItem key={type.id} typeName={type.name} />
+                  <EntityTypeItem
+                    sx={{ mr: 0.5 }}
+                    key={type.id}
+                    typeName={type.name}
+                  />
                 ))}
               </Link>
             </li>

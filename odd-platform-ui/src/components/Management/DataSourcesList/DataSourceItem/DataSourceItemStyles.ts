@@ -14,17 +14,14 @@ export const styles = (theme: Theme) =>
         boxShadow: theme.shadows[8],
       },
       '&:hover $actionsContainer': {
-        paddingBottom: '0 !important',
+        visibility: 'visible',
         display: 'flex',
         justifyContent: 'flex-end',
-        '& > * + *': {
-          marginLeft: theme.spacing(1),
-        },
       },
     },
     nameContainer: { minHeight: '40px' },
     actionsContainer: {
-      display: 'none',
+      visibility: 'hidden',
     },
     pullingValue: { color: 'green' },
     descriptionContainer: {

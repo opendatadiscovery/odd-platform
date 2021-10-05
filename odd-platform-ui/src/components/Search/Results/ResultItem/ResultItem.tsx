@@ -46,7 +46,11 @@ const ResultItem: React.FC<ResultItemProps> = ({
             {!searchType ||
               (typeof searchType === 'string' &&
                 searchResult.types?.map(type => (
-                  <EntityTypeItem key={type.id} typeName={type.name} />
+                  <EntityTypeItem
+                    sx={{ ml: 0.5 }}
+                    key={type.id}
+                    typeName={type.name}
+                  />
                 )))}
           </div>
         </Grid>

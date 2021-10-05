@@ -1,10 +1,9 @@
 import React from 'react';
 import {
-  Typography,
-  TextField,
-  InputAdornment,
-  IconButton,
   Grid,
+  InputAdornment,
+  TextField,
+  Typography,
 } from '@mui/material';
 import {
   Tag,
@@ -17,10 +16,11 @@ import { CurrentPageInfo } from 'redux/interfaces/common';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
@@ -107,19 +107,16 @@ const TagsListView: React.FC<TagsListProps> = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="end">
-                <IconButton
-                  disableRipple
+                <AppIconButton
+                  color="unfilled"
+                  icon={<SearchIcon />}
                   onClick={handleSearch}
-                  size="large"
-                >
-                  <SearchIcon />
-                </IconButton>
+                />
               </InputAdornment>
             ),
             endAdornment: searchText && (
               <InputAdornment position="start">
-                <AppButton
-                  size="small"
+                <AppIconButton
                   color="unfilled"
                   icon={<CancelIcon />}
                   onClick={() => setSearchText('')}
@@ -132,13 +129,13 @@ const TagsListView: React.FC<TagsListProps> = ({
         />
         <TagCreateFormContainer
           btnCreateEl={
-            <AppButton
+            <AppButton2
               size="medium"
               color="primaryLight"
-              icon={<AddIcon />}
+              startIcon={<AddIcon />}
             >
               Create tag
-            </AppButton>
+            </AppButton2>
           }
         />
       </div>

@@ -31,17 +31,13 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'flex-end',
-      '& p': { marginLeft: theme.spacing(0.5) },
+      '& p': { marginLeft: theme.spacing(1) },
     },
-    updatedAtIcon: { fontSize: theme.typography.h1.fontSize },
     entityTypeLabel: {
       marginRight: theme.spacing(1),
     },
     internalNameEditBtnContainer: {
       display: 'none',
-    },
-    internalNameEditBtn: {
-      marginLeft: '8px',
     },
     originalLabel: {
       marginRight: '4px',

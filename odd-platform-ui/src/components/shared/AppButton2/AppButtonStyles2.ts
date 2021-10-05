@@ -16,13 +16,16 @@ interface AppButtonStyleProps {
   $color: ButtonColors;
 }
 
+const isTertiary = (color: string) => color === 'tertiary';
+
 export const StyledAppButton = styled(
   Button,
   shouldForwardProp(['$color'])
 )<AppButtonStyleProps>(({ theme, $color }) => ({
   // overrides of MUI Button styles
   [`&.${buttonClasses.root}`]: {
-    borderRadius: '16px',
+    minWidth: 0,
+    borderRadius: isTertiary($color) ? '4px' : '16px',
     letterSpacing: '0em',
     textAlign: 'center',
     textTransform: 'none',
@@ -31,7 +34,11 @@ export const StyledAppButton = styled(
     lineHeight: theme.typography.body1.lineHeight,
     ...breakpointDownLgBody2,
   },
-  [`&.${buttonClasses.text}`]: { padding: theme.spacing(0.5, 1.5) },
+  [`&.${buttonClasses.text}`]: {
+    padding: isTertiary($color)
+      ? theme.spacing(0, 0.25)
+      : theme.spacing(0.5, 1.5),
+  },
   [`& .${buttonClasses.startIcon}`]: {
     marginRight: theme.spacing(0.5),
   },
@@ -59,12 +66,12 @@ export const StyledAppButton = styled(
   color: theme.palette.button[$color].normal.color,
   backgroundColor: theme.palette.button[$color].normal.background,
   '&:hover': {
-    color: theme.palette.button[$color].hover.color,
-    backgroundColor: theme.palette.button[$color].hover.background,
+    color: theme.palette.button[$color].hover?.color,
+    backgroundColor: theme.palette.button[$color].hover?.background,
   },
   '&:active': {
-    color: theme.palette.button[$color].active.color,
-    backgroundColor: theme.palette.button[$color].active.background,
+    color: theme.palette.button[$color].active?.color,
+    backgroundColor: theme.palette.button[$color].active?.background,
   },
   '&:disabled': {
     color: theme.palette.button[$color].disabled?.color,

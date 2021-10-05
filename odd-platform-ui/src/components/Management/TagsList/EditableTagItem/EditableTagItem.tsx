@@ -4,7 +4,6 @@ import withStyles from '@mui/styles/withStyles';
 import { Tag, TagApiDeleteTagRequest } from 'generated-sources';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import {
   styles,
@@ -12,6 +11,7 @@ import {
 } from 'components/Management/TagsList/EditableTagItem/EditableTagItemStyles';
 import cx from 'classnames';
 import TagEditFormContainer from 'components/Management/TagsList/TagEditForm/TagEditFormContainer';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 
 interface EditableTagItemProps extends StylesType {
   tag: Tag;
@@ -44,14 +44,14 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
         <TagEditFormContainer
           tag={tag}
           editBtn={
-            <AppButton
+            <AppButton2
               size="medium"
               color="primaryLight"
-              icon={<EditIcon />}
-              onClick={() => {}}
+              startIcon={<EditIcon />}
+              sx={{ mr: 1 }}
             >
               Edit
-            </AppButton>
+            </AppButton2>
           }
         />
         <ConfirmationDialog
@@ -62,14 +62,13 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
           }
           onConfirm={handleDelete}
           actionBtn={
-            <AppButton
+            <AppButton2
               size="medium"
               color="primaryLight"
-              icon={<DeleteIcon />}
-              onClick={() => {}}
+              startIcon={<DeleteIcon />}
             >
               Delete
-            </AppButton>
+            </AppButton2>
           }
         />
       </Grid>

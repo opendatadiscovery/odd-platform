@@ -6,11 +6,11 @@ import { format } from 'date-fns';
 import { Alert } from 'generated-sources';
 import cx from 'classnames';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
 import Tooltip from 'components/shared/Tooltip/Tooltip';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './AlertItemStyles';
 
 interface AlertItemProps extends StylesType {
@@ -87,7 +87,10 @@ const AlertItem: React.FC<AlertItemProps> = ({
           format(alert.statusUpdatedAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
     </Grid>
-    <Grid item className={cx(classes.col, classes.colActionBtn)}>
+    <Grid
+      item
+      className={cx(classes.col, classes.colActionBtn, classes.optionsBtn)}
+    >
       <Tooltip
         tooltipControl="byClick"
         tooltipContent={
@@ -97,8 +100,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
         }
         type="light"
       >
-        <AppButton
-          className={classes.optionsBtn}
+        <AppIconButton
           size="medium"
           color="primaryLight"
           icon={<KebabIcon />}

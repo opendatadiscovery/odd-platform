@@ -1,8 +1,9 @@
 import React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import { SvgIconProps } from '@mui/material/SvgIcon';
+import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 
-const SearchIcon: React.FC<SvgIconProps> = props => (
-  <SvgIcon viewBox="0 0 16 16" {...props}>
+const SearchIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
+  <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props}>
     <svg
       width="16"
       height="16"
@@ -19,7 +20,7 @@ const SearchIcon: React.FC<SvgIconProps> = props => (
         strokeLinejoin="round"
       />
     </svg>
-  </SvgIcon>
+  </AppSvgIcon>
 );
 
 export default SearchIcon;

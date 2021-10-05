@@ -8,6 +8,7 @@ interface AppIconButtonProps
   size?: 'medium' | 'small';
   color: IconButtonColors;
   icon: React.ReactNode;
+  open?: boolean;
 }
 
 const AppIconButton: React.FC<AppIconButtonProps> = ({
@@ -16,9 +17,13 @@ const AppIconButton: React.FC<AppIconButtonProps> = ({
   size = 'small',
   color,
   icon,
+  open,
+  sx,
 }) => (
   <StyledIconButton
     $color={color}
+    $open={open}
+    sx={sx}
     onClick={onClick}
     disableRipple
     disabled={disabled}

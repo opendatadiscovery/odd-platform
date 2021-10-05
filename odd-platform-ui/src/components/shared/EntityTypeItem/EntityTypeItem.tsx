@@ -1,23 +1,24 @@
 import React from 'react';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
+import { BoxProps } from '@mui/material';
 import * as S from './EntityTypeItemStyles';
 
-interface EntityTypeItemProps {
+interface EntityTypeItemProps extends Pick<BoxProps, 'sx'> {
   typeName: DataEntityTypeNameEnum;
   fullName?: boolean;
-  ml?: number;
 }
 
 const EntityTypeItem: React.FC<EntityTypeItemProps> = ({
   typeName,
   fullName,
-  ml,
+  sx,
 }) => (
   <S.Content
     typeName={typeName}
     fullName={fullName}
-    ml={ml}
+    sx={sx}
+    component="span"
     title={DataEntityTypeLabelMap.get(typeName)?.normal}
   >
     {DataEntityTypeLabelMap.get(typeName)?.[fullName ? 'normal' : 'short']}

@@ -1,25 +1,24 @@
-import { Typography, Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import cx from 'classnames';
 import {
-  dataEntityOverviewPath,
-  datasetStructurePath,
-  dataEntityLineagePath,
-  dataEntityTestReportPath,
   dataEntityAlertsPath,
   dataEntityHistoryPath,
+  dataEntityLineagePath,
+  dataEntityOverviewPath,
+  dataEntityTestReportPath,
+  datasetStructurePath,
 } from 'lib/paths';
 import {
-  DataEntityDetails,
   DataEntityApiGetDataEntityDetailsRequest,
+  DataEntityDetails,
 } from 'generated-sources';
-import { FetchStatus, ErrorState } from 'redux/interfaces';
+import { ErrorState, FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
@@ -30,6 +29,7 @@ import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDe
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import QualityTestHistoryContainer from 'components/DataEntityDetails/QualityTestRunsHistory/QualityTestRunsHistoryContainer';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -134,18 +134,21 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                     : dataEntityDetails.externalName}
                 </Typography>
                 {dataEntityDetails.types.map(type => (
-                  <EntityTypeItem key={type.id} typeName={type.name} />
+                  <EntityTypeItem
+                    sx={{ ml: 0.5 }}
+                    key={type.id}
+                    typeName={type.name}
+                  />
                 ))}
                 <div className={cx(classes.internalNameEditBtnContainer)}>
                   <InternalNameFormDialogContainer
                     dataEntityId={dataEntityId}
                     btnCreateEl={
-                      <AppButton
-                        className={classes.internalNameEditBtn}
-                        onClick={() => {}}
-                        size="medium"
+                      <AppButton2
+                        size="small"
                         color="tertiary"
-                        icon={
+                        sx={{ ml: 1 }}
+                        startIcon={
                           dataEntityDetails.internalName ? (
                             <EditIcon />
                           ) : (
@@ -158,7 +161,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                             ? 'Edit'
                             : 'Add custom'
                         } name`}
-                      </AppButton>
+                      </AppButton2>
                     }
                   />
                 </div>
@@ -175,7 +178,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             <Grid item className={classes.updatedAt}>
               {dataEntityDetails.updatedAt ? (
                 <>
-                  <TimeGapIcon classes={{ root: classes.updatedAtIcon }} />
+                  <TimeGapIcon />
                   <Typography variant="body1">
                     {formatDistanceToNowStrict(
                       dataEntityDetails.updatedAt,

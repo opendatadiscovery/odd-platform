@@ -1,4 +1,8 @@
 import { TypeBackground } from '@mui/material/styles/createPalette';
+import {
+  DataEntityTypeNameEnum,
+  DataSetFieldTypeTypeEnum,
+} from 'generated-sources';
 
 // palette interfaces
 interface ItemColors {
@@ -32,27 +36,9 @@ interface RunStatus {
   UNKNOWN: string;
 }
 
-interface EntityType {
-  DATA_SET: string;
-  DATA_TRANSFORMER: string;
-  DATA_TRANSFORMER_RUN?: string;
-  DATA_CONSUMER: string;
-  DATA_INPUT: string;
-  DATA_QUALITY_TEST: string;
-  DATA_QUALITY_TEST_RUN?: string;
-}
+type EntityType = Record<DataEntityTypeNameEnum, string>;
 
-interface StructureLabelType {
-  STRING: ItemColors;
-  BOOLEAN: ItemColors;
-  INTEGER: ItemColors;
-  NUMBER: ItemColors;
-  BINARY: ItemColors;
-  DATETIME: ItemColors;
-  STRUCT: ItemColors;
-  LIST: ItemColors;
-  MAP: ItemColors;
-}
+type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 
 interface TextType {
   primary: string;
@@ -70,6 +56,7 @@ interface ButtonType {
   expand: ButtonTypeCondition;
   expandText: ButtonTypeCondition;
   unfilled: ButtonTypeCondition;
+  collapse: ButtonTypeCondition;
 }
 
 interface BackgroundType extends TypeBackground {

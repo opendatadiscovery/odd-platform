@@ -1,24 +1,23 @@
 import React from 'react';
-import { Collapse, Typography, Grid, MenuItem } from '@mui/material';
+import { Collapse, Grid, MenuItem, Typography } from '@mui/material';
 import cx from 'classnames';
 import { round } from 'lodash';
 import {
   DataSetField,
+  DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
   DataSetFieldTypeTypeEnum,
   DataSetStats,
   InternalDescription,
-  DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
 } from 'generated-sources';
 import {
   DataSetFormattedStats,
-  DatasetStatsLabelMap,
   DataSetFormattedStatsKeys,
+  DatasetStatsLabelMap,
 } from 'redux/interfaces/datasetStructure';
 import { format } from 'date-fns';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
@@ -28,6 +27,7 @@ import InternalDescriptionFormDialogContainer from 'components/DataEntityDetails
 import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
 import Tooltip from 'components/shared/Tooltip/Tooltip';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { StylesType } from './DatasetStructureItemStyles';
 
 interface DatasetStructureItemProps extends StylesType {
@@ -116,20 +116,19 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   let collapseBlock;
   if (childFields?.length) {
     collapseBlock = (
-      <button
-        className={classes.treeDivider}
-        type="button"
+      <AppIconButton
+        color="collapse"
+        open={open}
+        icon={
+          open ? (
+            <MinusIcon width={6} height={6} />
+          ) : (
+            <PlusIcon width={6} height={6} />
+          )
+        }
         aria-label="expand row"
         onClick={() => setOpen(!open)}
-      >
-        <div
-          className={cx(classes.collapseBtn, {
-            [classes.collapseBtnOpen]: open,
-          })}
-        >
-          {open ? <MinusIcon /> : <PlusIcon />}
-        </div>
-      </button>
+      />
     );
   }
 
@@ -199,7 +198,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                       variant="subtitle2"
                       className={classes.childKeys}
                     >
-                      <LineBreakIcon />
+                      <LineBreakIcon sx={{ mr: 0.5 }} />
                       {childFields?.map(field => field.name).join(', ')}
                     </Typography>
                   ) : null}
@@ -223,15 +222,16 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 }
                 type="light"
               >
-                <AppButton
-                  className={classes.optionsBtn}
-                  size="medium"
-                  color="primaryLight"
-                  icon={<KebabIcon />}
-                />
+                <div className={classes.optionsBtn}>
+                  <AppIconButton
+                    size="medium"
+                    color="primaryLight"
+                    icon={<KebabIcon />}
+                  />
+                </div>
               </Tooltip>
               <DatasetStructureFieldTypeLabel
-                type={datasetField.type.type}
+                typeName={datasetField.type.type}
               />
               <Tooltip
                 tooltipContent={`Logical type: ${datasetField.type.logicalType}`}

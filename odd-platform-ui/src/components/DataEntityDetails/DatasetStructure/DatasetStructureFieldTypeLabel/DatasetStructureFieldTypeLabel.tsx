@@ -1,24 +1,21 @@
 import React from 'react';
-import cx from 'classnames';
-import withStyles from '@mui/styles/withStyles';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import { DatasetTypeLabelMap } from 'redux/interfaces/datasetStructure';
-import {
-  StylesType,
-  styles,
-} from './DatasetStructureFieldTypeLabelStyles';
+import { BoxProps } from '@mui/material';
+import * as S from './DatasetStructureFieldTypeLabelStyles';
 
-interface DatasetStructureFieldTypeLabelProps extends StylesType {
-  type: DataSetFieldTypeTypeEnum;
+interface DatasetStructureFieldTypeLabelProps
+  extends Pick<BoxProps, 'sx'> {
+  typeName: DataSetFieldTypeTypeEnum;
 }
 
 const DatasetStructureFieldTypeLabel: React.FC<DatasetStructureFieldTypeLabelProps> = ({
-  classes,
-  type,
+  typeName,
+  sx,
 }) => (
-  <span className={cx(classes.container, type)}>
-    {DatasetTypeLabelMap.get(type)?.short}
-  </span>
+  <S.Content component="span" sx={sx} typeName={typeName}>
+    {DatasetTypeLabelMap.get(typeName)?.short}
+  </S.Content>
 );
 
-export default withStyles(styles)(DatasetStructureFieldTypeLabel);
+export default DatasetStructureFieldTypeLabel;

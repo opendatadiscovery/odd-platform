@@ -1,11 +1,11 @@
 import { styled } from '@mui/material/styles';
 import { DataEntityTypeNameEnum } from 'generated-sources';
+import { Box } from '@mui/material';
 
-export const Content = styled('span')<{
+export const Content = styled(Box)<{
   typeName: DataEntityTypeNameEnum;
   fullName?: boolean;
-  ml?: number;
-}>(({ theme, typeName, fullName, ml }) => ({
+}>(({ theme, typeName, fullName }) => ({
   display: 'inline-flex',
   padding: theme.spacing(0.25, fullName ? 0.5 : 0.56),
   borderRadius: '4px',
@@ -14,6 +14,4 @@ export const Content = styled('span')<{
   lineHeight: theme.typography.body2.lineHeight,
   color: theme.palette.text.primary,
   backgroundColor: theme.palette.entityType[typeName],
-  marginLeft: theme.spacing(ml !== undefined ? ml : 0.5),
-  '&:first-of-type': { marginLeft: 0 },
 }));

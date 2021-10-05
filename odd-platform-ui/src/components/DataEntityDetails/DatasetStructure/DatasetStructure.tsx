@@ -114,7 +114,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                   >
                     {count}
                     <DatasetStructureFieldTypeLabel
-                      type={type as DataSetFieldTypeTypeEnum}
+                      typeName={type as DataSetFieldTypeTypeEnum}
                     />
                     <span className={classes.typesCountItemPct}>
                       {count

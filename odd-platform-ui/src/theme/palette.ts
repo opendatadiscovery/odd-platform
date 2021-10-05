@@ -90,6 +90,9 @@ export const palette = createPalette({
     DATA_CONSUMER: colors.blue5,
     DATA_INPUT: colors.green5,
     DATA_QUALITY_TEST: colors.orange5,
+    // colors will be updated by design
+    DATA_TRANSFORMER_RUN: colors.transparent,
+    DATA_QUALITY_TEST_RUN: colors.transparent,
   },
   runStatus: {
     SUCCESS: colors.green60,
@@ -159,6 +162,23 @@ export const palette = createPalette({
       hover: { background: colors.transparent, color: colors.black70 },
       active: { background: colors.transparent, color: colors.black90 },
     },
+    collapse: {
+      normal: {
+        background: colors.black90,
+        color: colors.white,
+        border: colors.black20,
+      },
+      hover: {
+        background: colors.black90,
+        color: colors.white,
+        border: colors.black20,
+      },
+      active: {
+        background: colors.black90,
+        color: colors.white,
+        border: colors.black20,
+      },
+    },
   },
   tag: {
     main: {
@@ -181,15 +201,21 @@ export const palette = createPalette({
     },
   },
   structureLabel: {
-    STRING: { border: colors.orange20 },
-    BOOLEAN: { border: colors.purple20 },
-    INTEGER: { border: colors.green20 },
-    NUMBER: { border: colors.pink60 },
-    BINARY: { border: colors.red20 },
-    DATETIME: { border: colors.blue20 },
-    STRUCT: { border: colors.black20 },
-    LIST: { border: colors.lightGreen60 },
-    MAP: { border: colors.turquoise40 },
+    TYPE_STRING: { border: colors.orange20 },
+    TYPE_BOOLEAN: { border: colors.purple20 },
+    TYPE_INTEGER: { border: colors.green20 },
+    TYPE_NUMBER: { border: colors.pink60 },
+    TYPE_BINARY: { border: colors.red20 },
+    TYPE_DATETIME: { border: colors.blue20 },
+    TYPE_STRUCT: { border: colors.black20 },
+    TYPE_LIST: { border: colors.lightGreen60 },
+    TYPE_MAP: { border: colors.turquoise40 },
+    // colors will be updated by design
+    TYPE_CHAR: { border: colors.transparent },
+    TYPE_TIME: { border: colors.transparent },
+    TYPE_UNION: { border: colors.transparent },
+    TYPE_DURATION: { border: colors.transparent },
+    TYPE_UNKNOWN: { border: colors.transparent },
   },
   alert: {
     open: { background: colors.red10, border: colors.red20 },
