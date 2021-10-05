@@ -48,6 +48,15 @@ dependencies {
     implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonJsr310Version"
 
+    implementation(platform("io.opentelemetry:opentelemetry-bom:$opentelemetryVersion"))
+    implementation(platform("io.opentelemetry:opentelemetry-bom-alpha:1.6.0-alpha"))
+
+    implementation("io.opentelemetry:opentelemetry-api")
+    implementation("io.opentelemetry:opentelemetry-api-metrics")
+    implementation("io.opentelemetry:opentelemetry-sdk-metrics")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp-metrics")
+    implementation group: 'io.grpc', name: 'grpc-netty-shaded', version: '1.41.0'
+
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 

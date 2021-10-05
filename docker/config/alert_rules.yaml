@@ -1,0 +1,5 @@
+groups:
+  - name: test.alert
+    rules:
+      - alert: TestAlert
+        expr: max_length > 0

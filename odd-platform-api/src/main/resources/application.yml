@@ -39,6 +39,11 @@ auth:
   # For dev purposes only -- successful auth redirect URI
   login-form-redirect:
 
+metrics:
+  export:
+    enabled: true
+    otlp-endpoint: http://localhost:4317
+
 management:
   endpoints:
     enabled: false

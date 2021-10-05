@@ -10,8 +10,6 @@ services:
       - POSTGRES_DATABASE=${POSTGRES_DATABASE}
     ports:
       - 5432:5432
-    volumes:
-      - oddp_dev
     networks:
       - oddp_dev
 
@@ -24,8 +22,6 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - database
-    volumes:
-      - oddp_dev
     networks:
       - oddp_dev
     ports:
@@ -35,7 +31,6 @@ services:
     image: curlimages/curl:7.78.0
     volumes:
       - ${PWD}/dev/requests:/requests
-      - oddp_dev
     environment:
       - CATALOG_HOSTNAME=odd-platform
       - CONTEXT_PATH=/requests
@@ -45,9 +40,6 @@ services:
       - sh
     networks:
       - oddp_dev
-
-volumes:
-  oddp_dev:
 
 networks:
   oddp_dev:
