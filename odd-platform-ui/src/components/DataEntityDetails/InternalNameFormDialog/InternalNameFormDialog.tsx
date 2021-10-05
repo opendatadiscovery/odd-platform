@@ -1,15 +1,16 @@
-import { Typography, TextField, InputAdornment } from '@mui/material';
+import { InputAdornment, Typography } from '@mui/material';
 import React from 'react';
 import {
-  InternalNameFormData,
   DataEntityApiUpsertDataEntityInternalNameRequest,
   InternalName,
+  InternalNameFormData,
 } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import OutlinedTextField from 'components/shared/OutlinedTextField/OutlinedTextField';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 import { StylesType } from './InternalNameFormDialogStyles';
 
 interface InternalNameFormDialogProps extends StylesType {
@@ -104,7 +105,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
             InputProps={{
               endAdornment: field.value && (
                 <InputAdornment position="start">
-                  <AppButton
+                  <AppIconButton
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}
@@ -121,16 +122,15 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
 
   const formActionButtons = () => (
     <>
-      <AppButton
+      <AppButton2
         size="large"
         type="submit"
         form="dataentity-internal-name"
         color="primary"
         fullWidth
-        onClick={() => {}}
       >
         Save
-      </AppButton>
+      </AppButton2>
     </>
   );
 

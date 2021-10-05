@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Autocomplete,
   CircularProgress,
+  InputAdornment,
   TextField,
   Typography,
 } from '@mui/material';
@@ -18,9 +19,11 @@ import {
   LabelsResponse,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import CancelIcon from 'components/shared/Icons/CancelIcon';
 import { StylesType } from './LabelsEditFormStyles';
 
 interface LabelsEditProps extends StylesType {
@@ -213,7 +216,16 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
                   {loading ? (
                     <CircularProgress color="inherit" size={20} />
                   ) : null}
-                  {params.InputProps.endAdornment}
+                  <InputAdornment position="end">
+                    <AppIconButton
+                      size="small"
+                      color="unfilled"
+                      icon={<CancelIcon />}
+                      onClick={() =>
+                        methods.setValue('labelNameList', [{ name: '' }])
+                      }
+                    />
+                  </InputAdornment>
                 </>
               ),
             }}
@@ -237,22 +249,6 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
             </div>
           </li>
         )}
-        // renderOption={option => (
-        //   <div className={classes.optionsContainer}>
-        //     <div className={classes.optionItem}>
-        //       <Typography variant="body1">
-        //         {option.id ? (
-        //           option.name
-        //         ) : (
-        //           <AutocompleteSuggestion
-        //             optionLabel="label"
-        //             optionName={option.name}
-        //           />
-        //         )}
-        //       </Typography>
-        //     </div>
-        //   </div>
-        // )}
       />
       <FormProvider {...methods}>
         <form
@@ -277,16 +273,15 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
 
   const formActionButtons = () => (
     <>
-      <AppButton
+      <AppButton2
         size="large"
         type="submit"
         form="label-create-form"
         color="primary"
         fullWidth
-        onClick={() => {}}
       >
         Save
-      </AppButton>
+      </AppButton2>
     </>
   );
 

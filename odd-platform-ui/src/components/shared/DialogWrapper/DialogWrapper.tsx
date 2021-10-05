@@ -10,8 +10,8 @@ import {
   Typography,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import AppButton from 'components/shared/AppButton/AppButton';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './DialogWrapperStyles';
 
 interface DialogWrapperProps
@@ -79,7 +79,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
             id="max-width-dialog-title"
           >
             {title}
-            <AppButton
+            <AppIconButton
               size="small"
               color="unfilled"
               icon={<CancelIcon />}

@@ -88,6 +88,7 @@ export const components: Components = {
           paddingTop: 0,
           paddingBottom: 0,
           paddingLeft: 0,
+          paddingRight: 8,
           '& .MuiAutocomplete-endAdornment': {
             top: 'calc(50% - 12px)',
           },

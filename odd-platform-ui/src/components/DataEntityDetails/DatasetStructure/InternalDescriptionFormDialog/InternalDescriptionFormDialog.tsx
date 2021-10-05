@@ -1,14 +1,15 @@
-import { Typography, TextField, InputAdornment } from '@mui/material';
+import { InputAdornment, TextField, Typography } from '@mui/material';
 import React from 'react';
 import {
-  InternalDescriptionFormData,
   DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
   InternalDescription,
+  InternalDescriptionFormData,
 } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 import { StylesType } from './InternalDescriptionFormDialogStyles';
 
 interface InternalDescriptionFormDialogProps extends StylesType {
@@ -108,7 +109,7 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
             InputProps={{
               endAdornment: field.value && (
                 <InputAdornment position="start">
-                  <AppButton
+                  <AppIconButton
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}
@@ -125,16 +126,15 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
 
   const formActionButtons = () => (
     <>
-      <AppButton
+      <AppButton2
         size="large"
         type="submit"
         form="datasetfield-internal-description"
         color="primary"
         fullWidth
-        onClick={() => {}}
       >
         Save
-      </AppButton>
+      </AppButton2>
     </>
   );
 

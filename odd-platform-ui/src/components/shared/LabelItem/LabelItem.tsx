@@ -2,8 +2,8 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import cx from 'classnames';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './LabelItemStyles';
 
 interface LabelItemProps extends StylesType {
@@ -22,14 +22,14 @@ const LabelItem: React.FC<LabelItemProps> = ({
 }) => (
   <Typography
     noWrap
-    variant="body2"
+    variant="body1"
     title={labelName}
     className={cx(classes.container, { [classes.unfilled]: unfilled })}
   >
     {labelName}
     {removable && (
-      <AppButton
-        className={classes.removeBtn}
+      <AppIconButton
+        sx={{ ml: 0.25 }}
         size="small"
         color="unfilled"
         icon={<CancelIcon />}

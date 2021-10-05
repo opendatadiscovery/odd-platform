@@ -25,9 +25,6 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      '& > * + *': {
-        marginLeft: theme.spacing(0.5),
-      },
     },
   });
 

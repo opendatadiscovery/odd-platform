@@ -2,15 +2,15 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
-  MetadataObject,
+  DataEntityApiCreateDataEntityMetadataFieldValueRequest,
+  MetadataApiGetMetadataFieldListRequest,
   MetadataField,
   MetadataFieldList,
-  DataEntityApiCreateDataEntityMetadataFieldValueRequest,
   MetadataFieldValueList,
-  MetadataApiGetMetadataFieldListRequest,
+  MetadataObject,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 import MetadataCreateFormItemContainer from './MetadataCreateFormItem/MetadataCreateFormItemContainer';
 import { StylesType } from './MetadataCreateFormStyles';
 
@@ -108,17 +108,16 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <AppButton
+    <AppButton2
+      type="submit"
       size="large"
       color="primary"
       form="metadata-create-form"
-      type="submit"
       fullWidth
       disabled={!methods.formState.isValid}
-      onClick={() => {}}
     >
       Add
-    </AppButton>
+    </AppButton2>
   );
 
   return (

@@ -29,9 +29,6 @@ export const styles = (theme: Theme) =>
     containerRemovable: {
       paddingRight: theme.spacing(0.5),
     },
-    removeBtn: {
-      marginLeft: theme.spacing(0.25),
-    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

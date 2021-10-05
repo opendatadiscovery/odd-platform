@@ -37,7 +37,7 @@ export const StyledAppButton = styled(
   [`&.${buttonClasses.text}`]: {
     padding: isTertiary($color)
       ? theme.spacing(0, 0.25)
-      : theme.spacing(0.5, 1.5),
+      : theme.spacing(0.25, 1.5),
   },
   [`& .${buttonClasses.startIcon}`]: {
     marginRight: theme.spacing(0.5),

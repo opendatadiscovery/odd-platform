@@ -26,9 +26,6 @@ export const styles = (theme: Theme) =>
       padding: theme.spacing(0.25, 0.5, 0.25, 1),
       color: theme.palette.texts.info,
     },
-    removeBtn: {
-      marginLeft: theme.spacing(0.25),
-    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

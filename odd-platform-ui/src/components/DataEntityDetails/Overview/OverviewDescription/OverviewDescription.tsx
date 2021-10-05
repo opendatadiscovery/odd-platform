@@ -3,17 +3,17 @@ import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import gfm from 'remark-gfm';
 import cx from 'classnames';
-import { Typography, Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import {
-  InternalDescription,
-  DataEntityDetailsBaseObject,
   DataEntityApiUpsertDataEntityInternalDescriptionRequest,
+  DataEntityDetailsBaseObject,
+  InternalDescription,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
+import AppButton2 from 'components/shared/AppButton2/AppButton2';
 import { StylesType } from './OverviewDescriptionStyles';
 
 interface OverviewDescriptionProps extends StylesType {
@@ -82,16 +82,16 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
             Custom
           </Typography>
           {editMode ? null : (
-            <AppButton
+            <AppButton2
               onClick={onEditClick}
               size="medium"
               color="primaryLight"
-              icon={
+              startIcon={
                 dataEntityInternalDescription ? <EditIcon /> : <AddIcon />
               }
             >
               {dataEntityInternalDescription ? 'Edit' : 'Add'} description
-            </AppButton>
+            </AppButton2>
           )}
         </div>
         {editMode ? (
@@ -110,20 +110,21 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               }}
             />
             <div className={classes.formActions}>
-              <AppButton
+              <AppButton2
                 onClick={handleDescriptionUpdate}
                 size="medium"
                 color="primaryLight"
+                sx={{ mr: 0.5 }}
               >
                 Save
-              </AppButton>
-              <AppButton
+              </AppButton2>
+              <AppButton2
                 onClick={() => setEditMode(false)}
                 size="medium"
                 color="tertiary"
               >
                 Cancel
-              </AppButton>
+              </AppButton2>
               <Typography variant="subtitle2" color="error">
                 {error}
               </Typography>
@@ -143,13 +144,13 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
                 wrap="nowrap"
               >
                 <Typography variant="subtitle2">Not created.</Typography>
-                <AppButton
+                <AppButton2
                   onClick={onEditClick}
                   size="small"
                   color="tertiary"
                 >
                   Add Description
-                </AppButton>
+                </AppButton2>
               </Grid>
             )}
           </div>
