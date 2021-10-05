@@ -1,8 +1,5 @@
 package com.provectus.oddplatform.dto;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
@@ -12,7 +9,6 @@ import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,6 +27,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
 
     private DataSetDetailsDto dataSetDetailsDto;
     private DataTransformerDetailsDto dataTransformerDetailsDto;
+    private DataConsumerDetailsDto dataConsumerDetailsDto;
     private DataQualityTestDetailsDto dataQualityTestDetailsDto;
 
     @Builder(builderMethodName = "detailsBuilder")
@@ -38,6 +35,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final Set<DataEntityTypePojo> types,
                                 final DataEntitySubtypePojo subtype,
                                 final boolean hasAlerts,
+                                final Map<DataEntityType, DataEntityAttributes> specificAttributes,
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
                                 final DataSourcePojo dataSource,
@@ -45,11 +43,13 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final Collection<MetadataDto> metadata,
                                 final DataSetDetailsDto dataSetDetailsDto,
                                 final DataTransformerDetailsDto dataTransformerDetailsDto,
+                                final DataConsumerDetailsDto dataConsumerDetailsDto,
                                 final DataQualityTestDetailsDto dataQualityTestDetailsDto) {
-        super(dataEntity, types, subtype, hasAlerts, namespace, ownership, dataSource, tags);
+        super(dataEntity, types, subtype, hasAlerts, specificAttributes, namespace, ownership, dataSource, tags);
         this.metadata = metadata;
         this.dataSetDetailsDto = dataSetDetailsDto;
         this.dataTransformerDetailsDto = dataTransformerDetailsDto;
+        this.dataConsumerDetailsDto = dataConsumerDetailsDto;
         this.dataQualityTestDetailsDto = dataQualityTestDetailsDto;
     }
 
@@ -58,6 +58,9 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class DataSetDetailsDto {
+        private Long rowsCount;
+        private Long fieldsCount;
+        private Long consumersCount;
         private Collection<DatasetVersionPojo> datasetVersions;
     }
 
@@ -86,53 +89,10 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     }
 
     @Data
+    @Builder
     @NoArgsConstructor
-    public static class DataTransformerAttributes {
-        @JsonProperty("source_list")
-        private List<String> sourceOddrnList;
-
-        @JsonProperty("target_list")
-        private List<String> targetOddrnList;
-
-        @JsonProperty("source_code_url")
-        private String sourceCodeUrl;
-    }
-
-    @Data
-    @NoArgsConstructor
-    public static class DataQualityTestAttributes {
-        @JsonProperty("suite_name")
-        private String suiteName;
-
-        @JsonProperty("suite_url")
-        private String suiteUrl;
-
-        @JsonProperty("dataset_list")
-        private List<String> datasetOddrnList;
-
-        @JsonProperty("linked_url_list")
-        private List<String> linkedUrlList;
-
-        @JsonProperty("expectation")
-        private DataQualityTestExpectationAttributes expectation;
-
-        @Data
-        @NoArgsConstructor
-        public static class DataQualityTestExpectationAttributes {
-            @JsonProperty("type")
-            private String type;
-
-            private Map<String, String> additionalProperties = new HashMap<>();
-
-            @JsonAnyGetter
-            public Map<String, String> any() {
-                return this.additionalProperties;
-            }
-
-            @JsonAnySetter
-            public void set(final String name, final String value) {
-                this.additionalProperties.put(name, value);
-            }
-        }
+    @AllArgsConstructor
+    public static class DataConsumerDetailsDto {
+        private Collection<? extends DataEntityDto> inputList;
     }
 }

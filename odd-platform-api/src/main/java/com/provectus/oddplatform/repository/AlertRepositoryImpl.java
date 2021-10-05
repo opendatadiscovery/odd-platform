@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectOnConditionStep;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import static com.provectus.oddplatform.model.Tables.ALERT;
 import static com.provectus.oddplatform.model.Tables.DATA_ENTITY;
@@ -126,7 +129,7 @@ public class AlertRepositoryImpl implements AlertRepository {
     public long countByOwner(final long ownerId) {
         return dslContext.selectCount()
             .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT.DATA_ENTITY_ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .where(OWNERSHIP.OWNER_ID.eq(ownerId))
             .fetchOptionalInto(Long.class)
@@ -143,9 +146,26 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
+    @Transactional
     public void createAlerts(final Collection<AlertPojo> alerts) {
+        final Set<String> messengerOddrns = alerts.stream()
+            .map(AlertPojo::getMessengerEntityOddrn)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
+
+        final Set<String> existingMessengers = dslContext.select(ALERT.MESSENGER_ENTITY_ODDRN)
+            .from(ALERT)
+            .where(ALERT.MESSENGER_ENTITY_ODDRN.in(messengerOddrns))
+            .fetchStreamInto(String.class)
+            .collect(Collectors.toSet());
+
+        final List<AlertPojo> filteredAlerts = alerts.stream()
+            .filter(
+                a -> a.getMessengerEntityOddrn() == null || !existingMessengers.contains(a.getMessengerEntityOddrn()))
+            .collect(Collectors.toList());
+
         dslContext
-            .batchInsert(alerts.stream().map(a -> dslContext.newRecord(ALERT, a)).collect(Collectors.toList()))
+            .batchInsert(filteredAlerts.stream().map(a -> dslContext.newRecord(ALERT, a)).collect(Collectors.toList()))
             .execute();
     }
 
@@ -154,7 +174,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .select(selectFields)
             .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
             .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ALERT.DATA_ENTITY_ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
             .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID));

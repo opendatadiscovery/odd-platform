@@ -1,6 +1,5 @@
 package com.provectus.oddplatform.mapper;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.provectus.oddplatform.api.contract.model.DataEntity;
 import com.provectus.oddplatform.api.contract.model.DataEntityDetails;
 import com.provectus.oddplatform.api.contract.model.DataEntityLineage;
@@ -25,7 +24,6 @@ import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
-import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import com.provectus.oddplatform.utils.Page;
 import com.provectus.oddplatform.utils.Pair;
 import java.util.List;
@@ -34,7 +32,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
-import org.jooq.JSONB;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -108,7 +105,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace())))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
-            .versionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().getDatasetVersions()))
             .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()))
             .viewCount(pojo.getViewCount());
 
@@ -118,21 +114,21 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .collect(Collectors.toList());
 
         if (typeNames.contains(DataEntityType.NameEnum.SET)) {
-            // TODO: move to the dto
-            details.setStats(mapStats(pojo.getSpecificAttributes()));
+            details.setVersionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().getDatasetVersions()));
+            details.setStats(mapStats(dto.getDataSetDetailsDto()));
         }
 
         if (typeNames.contains(DataEntityType.NameEnum.TRANSFORMER)) {
-            details
-                .sourceList(dto.getDataTransformerDetailsDto().getSourceList()
-                    .stream()
-                    .map(this::mapReference)
-                    .collect(Collectors.toList()))
-                .targetList(dto.getDataTransformerDetailsDto()
-                    .getTargetList()
-                    .stream()
-                    .map(this::mapReference)
-                    .collect(Collectors.toList()));
+            details.setSourceList(dto.getDataTransformerDetailsDto().getSourceList()
+                .stream()
+                .map(this::mapReference)
+                .collect(Collectors.toList()));
+
+            details.setTargetList(dto.getDataTransformerDetailsDto()
+                .getTargetList()
+                .stream()
+                .map(this::mapReference)
+                .collect(Collectors.toList()));
         }
 
         if (typeNames.contains(DataEntityType.NameEnum.QUALITY_TEST)) {
@@ -150,6 +146,13 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .linkedUrlList(dto.getDataQualityTestDetailsDto().getLinkedUrlList())
                 .suiteName(dto.getDataQualityTestDetailsDto().getSuiteName())
                 .suiteUrl(dto.getDataQualityTestDetailsDto().getSuiteUrl());
+        }
+
+        if (typeNames.contains(DataEntityType.NameEnum.CONSUMER)) {
+            details.setInputList(dto.getDataConsumerDetailsDto()
+                .getInputList()
+                .stream()
+                .map(this::mapReference).collect(Collectors.toList()));
         }
 
         return details;
@@ -247,12 +250,10 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .url("");
     }
 
-    private DataSetStats mapStats(final JSONB specificAttributes) {
-        final Map<String, ?> sa =
-            JSONSerDeUtils.deserializeJson(specificAttributes.data(), new TypeReference<Map<String, ?>>() {
-            });
-
-        return JSONSerDeUtils
-            .deserializeJson(sa.get(DataEntityType.NameEnum.SET.getValue()), DataSetStats.class);
+    private DataSetStats mapStats(final DataEntityDetailsDto.DataSetDetailsDto dataSetDetailsDto) {
+        return new DataSetStats()
+            .consumersCount(dataSetDetailsDto.getConsumersCount())
+            .fieldsCount(dataSetDetailsDto.getFieldsCount())
+            .rowsCount(dataSetDetailsDto.getRowsCount());
     }
 }
