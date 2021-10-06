@@ -113,6 +113,7 @@ jib {
         tags = ['latest', project.version]
     }
     container {
+        creationTime = 'USE_CURRENT_TIMESTAMP'
         appRoot = '/app'
         jvmFlags = ['-Xms1G', '-Xmx1G']
         ports = ['8080']

@@ -14,6 +14,7 @@ import com.provectus.oddplatform.api.contract.model.DataEntityTypeDictionary;
 import com.provectus.oddplatform.api.contract.model.DataQualityTestExpectation;
 import com.provectus.oddplatform.api.contract.model.DataSetStats;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto;
+import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDimensionsDto;
 import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityLineageDto;
@@ -26,6 +27,7 @@ import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.utils.Page;
 import com.provectus.oddplatform.utils.Pair;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,6 +44,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private final TagMapper tagMapper;
     private final MetadataFieldMapper metadataFieldMapper;
     private final DatasetVersionMapper datasetVersionMapper;
+    private final DataQualityMapper dataQualityMapper;
 
     @Override
     public DataEntity mapPojo(final DataEntityDimensionsDto dataEntityDto) {
@@ -144,6 +147,10 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                     .map(this::mapReference)
                     .collect(Collectors.toList()))
                 .linkedUrlList(dto.getDataQualityTestDetailsDto().getLinkedUrlList())
+                .latestRun(dataQualityMapper.mapDataQualityTestRun(
+                    dto.getDataEntity().getId(),
+                    dto.getDataQualityTestDetailsDto().getLatestTaskRun())
+                )
                 .suiteName(dto.getDataQualityTestDetailsDto().getSuiteName())
                 .suiteUrl(dto.getDataQualityTestDetailsDto().getSuiteUrl());
         }
@@ -156,6 +163,29 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         }
 
         return details;
+    }
+
+    @Override
+    public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto) {
+        final DataQualityTestDetailsDto dqDto = dto.getDataQualityTestDetailsDto();
+
+        return mapPojo(dto)
+            .suiteName(dqDto.getSuiteName())
+            .suiteUrl(dqDto.getSuiteUrl())
+            .expectation(mapDataQualityTestExpectation(dqDto))
+            .latestRun(dataQualityMapper.mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.getLatestTaskRun()))
+            .linkedUrlList(dqDto.getLinkedUrlList())
+            .datasetsList(dqDto
+                .getDatasetList()
+                .stream()
+                .map(this::mapRef)
+                .collect(Collectors.toList()));
+    }
+
+    @Override
+    public DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos) {
+        return new DataEntityList()
+            .items(dtos.stream().map(this::mapDataQualityTest).collect(Collectors.toList()));
     }
 
     @Override
@@ -255,5 +285,13 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .consumersCount(dataSetDetailsDto.getConsumersCount())
             .fieldsCount(dataSetDetailsDto.getFieldsCount())
             .rowsCount(dataSetDetailsDto.getRowsCount());
+    }
+
+    private DataQualityTestExpectation mapDataQualityTestExpectation(final DataQualityTestDetailsDto dto) {
+        final DataQualityTestExpectation expectation = new DataQualityTestExpectation().type(dto.getExpectationType());
+
+        expectation.putAll(MapUtils.emptyIfNull(dto.getExpectationParameters()));
+
+        return expectation;
     }
 }
