@@ -779,7 +779,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .groupBy(selectFields)
             .orderBy(ftsRanking(deCte.field(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR), query),
-                DATA_ENTITY.INTERNAL_NAME, DATA_ENTITY.EXTERNAL_NAME)
+                deCte.field(DATA_ENTITY.INTERNAL_NAME), deCte.field(DATA_ENTITY.EXTERNAL_NAME))
             .fetchStream()
             .map(this::mapDtoRecord)
             .collect(Collectors.toList());
