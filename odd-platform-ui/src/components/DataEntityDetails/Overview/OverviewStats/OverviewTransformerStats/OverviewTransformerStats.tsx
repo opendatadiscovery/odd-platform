@@ -34,7 +34,13 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         fullName
       />
     </Grid>
-    <Grid item container xs={6} className={classes.statsItem}>
+    <Grid
+      item
+      container
+      xs={6}
+      alignItems="flex-start"
+      alignContent="flex-start"
+    >
       <Grid item container xs={12} alignItems="baseline">
         <UpstreamIcon className={classes.statIcon} />
         <Typography variant="h2" className={classes.statCount}>
@@ -76,7 +82,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
       item
       container
       xs={6}
-      className={classes.statsItem}
+      alignItems="flex-start"
       alignContent="flex-start"
     >
       <Grid item container xs={12} alignItems="baseline">

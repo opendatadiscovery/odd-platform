@@ -101,7 +101,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
           <Grid item className={cx(classes.col, classes.collg)}>
             <ResultItemTruncatedCell
               searchResult={searchResult}
-              truncatedCellType="sourceList"
+              truncatedCellType="inputList"
             />
           </Grid>
         ) : null}

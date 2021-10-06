@@ -1,7 +1,5 @@
-import { Theme } from '@mui/material';
-
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+import { createStyles, WithStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -16,17 +14,18 @@ export const styles = (theme: Theme) =>
       color: theme.palette.texts.hint,
       marginLeft: theme.spacing(0.5),
     },
-    statValue: {
-      fontWeight: theme.typography.fontWeightBold,
-    },
     typeLabel: {
+      marginLeft: 0,
       marginBottom: theme.spacing(1.25),
     },
-    refs: {
-      marginTop: theme.spacing(1),
+    refItem: {
+      margin: theme.spacing(0.25, 0),
+      '&:first-of-type': {
+        marginTop: theme.spacing(1),
+      },
     },
     unknownCount: {
-      marginLeft: theme.spacing(0.25),
+      marginLeft: theme.spacing(0.5),
     },
   });
 

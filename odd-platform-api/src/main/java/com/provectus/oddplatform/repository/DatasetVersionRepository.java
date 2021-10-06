@@ -1,9 +1,8 @@
 package com.provectus.oddplatform.repository;
 
+import com.provectus.oddplatform.dto.DatasetStructureDelta;
 import com.provectus.oddplatform.dto.DatasetStructureDto;
-import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
-import com.provectus.oddplatform.utils.Pair;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +17,5 @@ public interface DatasetVersionRepository extends CRUDRepository<DatasetVersionP
 
     List<DatasetVersionPojo> getLatestVersions(final Collection<Long> datasetIds);
 
-    Map<Long, Pair<List<DatasetFieldPojo>, List<DatasetFieldPojo>>> getLastStructureDelta(
-        final Collection<Long> datasetIds);
+    Map<String, DatasetStructureDelta> getLastStructureDelta(final Collection<Long> datasetIds);
 }
