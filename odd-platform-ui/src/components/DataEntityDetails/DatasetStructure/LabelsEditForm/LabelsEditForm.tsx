@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Autocomplete,
   CircularProgress,
-  InputAdornment,
   TextField,
   Typography,
 } from '@mui/material';
@@ -21,9 +20,7 @@ import {
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './LabelsEditFormStyles';
 
 interface LabelsEditProps extends StylesType {
@@ -216,16 +213,7 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
                   {loading ? (
                     <CircularProgress color="inherit" size={20} />
                   ) : null}
-                  <InputAdornment position="end">
-                    <AppIconButton
-                      size="small"
-                      color="unfilled"
-                      icon={<CancelIcon />}
-                      onClick={() =>
-                        methods.setValue('labelNameList', [{ name: '' }])
-                      }
-                    />
-                  </InputAdornment>
+                  {params.InputProps.endAdornment}
                 </>
               ),
             }}
@@ -273,7 +261,7 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
 
   const formActionButtons = () => (
     <>
-      <AppButton2
+      <AppButton
         size="large"
         type="submit"
         form="label-create-form"
@@ -281,7 +269,7 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
         fullWidth
       >
         Save
-      </AppButton2>
+      </AppButton>
     </>
   );
 

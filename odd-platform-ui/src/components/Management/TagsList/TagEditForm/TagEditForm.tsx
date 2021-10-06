@@ -13,8 +13,9 @@ import {
   TagApiUpdateTagRequest,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { StylesType } from './TagEditFormStyles';
 
 interface TagEditFormProps extends StylesType {
@@ -84,7 +85,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
             InputProps={{
               endAdornment: field.value && (
                 <InputAdornment position="start">
-                  <AppButton
+                  <AppIconButton
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}
@@ -123,7 +124,6 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
       form="tag-edit-form"
       color="primary"
       fullWidth
-      onClick={() => {}}
       disabled={!formState.isValid}
     >
       Save

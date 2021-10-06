@@ -3,24 +3,24 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import {
-  DataEntityRef,
-  DataEntityApiGetMyObjectsRequest,
-  DataEntityApiGetMyObjectsWithUpstreamRequest,
-  DataEntityApiGetMyObjectsWithDownstreamRequest,
-  DataEntityApiGetPopularRequest,
-  AssociatedOwner,
   AlertTotals,
+  AssociatedOwner,
+  DataEntityApiGetMyObjectsRequest,
+  DataEntityApiGetMyObjectsWithDownstreamRequest,
+  DataEntityApiGetMyObjectsWithUpstreamRequest,
+  DataEntityApiGetPopularRequest,
+  DataEntityRef,
   TagApiGetPopularTagListRequest,
 } from 'generated-sources';
 import { alertsPath } from 'lib/paths';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
 import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import StarIcon from 'components/shared/Icons/StarIcon';
 import CatalogIcon from 'components/shared/Icons/CatalogIcon';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import AppButton from 'components/shared/AppButton/AppButton';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import { StylesType } from './OverviewStyles';
 import OverviewDataEntityContainer from './DataEntityList/DataEntityListContainer';
@@ -130,7 +130,6 @@ const Overview: React.FC<OverviewProps> = ({
                   <AppButton
                     size="small"
                     color="dropdown"
-                    onClick={() => {}}
                     className={classes.showAllAlerts}
                   >
                     See All

@@ -10,7 +10,7 @@ import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './TagCreateFormItemStyles';
 
 interface TagCreateFormItemProps extends StylesType {
@@ -73,9 +73,9 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
           )}
         />
         {fieldsLength && fieldsLength > 1 && (
-          <AppButton2 size="small" color="dropdown" onClick={onItemRemove}>
+          <AppButton size="small" color="dropdown" onClick={onItemRemove}>
             Delete
-          </AppButton2>
+          </AppButton>
         )}
       </Grid>
     </>

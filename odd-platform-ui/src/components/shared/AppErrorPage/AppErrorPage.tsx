@@ -3,7 +3,7 @@ import withStyles from '@mui/styles/withStyles';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorState, FetchStatus } from 'redux/interfaces/loader';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType, styles } from './AppErrorPageStyles';
 
 interface AppErrorPageProps extends StylesType {
@@ -30,9 +30,9 @@ const AppErrorPage: React.FC<AppErrorPageProps> = ({
           </Typography>
           <Grid container alignItems="center">
             <Typography variant="body1">Return to the</Typography>
-            <AppButton2 size="small" color="tertiary">
+            <AppButton size="small" color="tertiary">
               <Link to="/">Home Page</Link>
-            </AppButton2>
+            </AppButton>
           </Grid>
         </Grid>
       </Grid>

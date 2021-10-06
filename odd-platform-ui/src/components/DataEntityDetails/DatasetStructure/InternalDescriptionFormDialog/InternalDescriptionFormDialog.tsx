@@ -9,7 +9,7 @@ import { Controller, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './InternalDescriptionFormDialogStyles';
 
 interface InternalDescriptionFormDialogProps extends StylesType {
@@ -126,7 +126,7 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
 
   const formActionButtons = () => (
     <>
-      <AppButton2
+      <AppButton
         size="large"
         type="submit"
         form="datasetfield-internal-description"
@@ -134,7 +134,7 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
         fullWidth
       >
         Save
-      </AppButton2>
+      </AppButton>
     </>
   );
 

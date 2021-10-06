@@ -5,13 +5,13 @@ import {
 } from 'generated-sources';
 import { Collapse, Grid, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
-import cx from 'classnames';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import TestItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestItem/TestItem';
 import { dataEntityTestPath } from 'lib/paths';
 import { Link } from 'react-router-dom';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { StylesType } from './TestReportItemStyles';
 
 interface TestReportItemProps extends StylesType {
@@ -37,20 +37,20 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   }, [dataQATestList]);
 
   const collapseBtn = (
-    <button
-      className={classes.divider}
-      type="button"
+    <AppIconButton
+      sx={{ mr: 1 }}
+      color="collapse"
+      open={open}
+      icon={
+        open ? (
+          <MinusIcon width={6} height={6} />
+        ) : (
+          <PlusIcon width={6} height={6} />
+        )
+      }
       aria-label="expand row"
-      onClick={() => setOpen(prevState => !prevState)}
-    >
-      <div
-        className={cx(classes.collapseBtn, {
-          [classes.collapseBtnOpen]: open,
-        })}
-      >
-        {open ? <MinusIcon /> : <PlusIcon />}
-      </div>
-    </button>
+      onClick={() => setOpen(!open)}
+    />
   );
 
   return (

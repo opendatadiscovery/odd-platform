@@ -9,7 +9,7 @@ import {
 } from 'generated-sources';
 import { dataEntityTestReportPath } from 'lib/paths';
 import OverviewDataQualityReportSkeleton from 'components/DataEntityDetails/Overview/OverviewDataQualityReport/OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './OverviewDataQualityReportStyles';
 
 interface OverviewDataQualityReportProps extends StylesType {
@@ -50,11 +50,11 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
               <Typography variant="h4">Test report</Typography>
             </Grid>
             <Grid item>
-              <AppButton2 size="small" color="tertiary">
+              <AppButton size="small" color="tertiary">
                 <Link to={dataEntityTestReportPath(dataEntityId)}>
                   See all
                 </Link>
-              </AppButton2>
+              </AppButton>
             </Grid>
           </Grid>
           <Grid item container className={classes.totalScore}>

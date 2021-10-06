@@ -29,7 +29,7 @@ import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDe
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import QualityTestHistoryContainer from 'components/DataEntityDetails/QualityTestRunsHistory/QualityTestRunsHistoryContainer';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -144,7 +144,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                   <InternalNameFormDialogContainer
                     dataEntityId={dataEntityId}
                     btnCreateEl={
-                      <AppButton2
+                      <AppButton
                         size="small"
                         color="tertiary"
                         sx={{ ml: 1 }}
@@ -161,7 +161,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                             ? 'Edit'
                             : 'Add custom'
                         } name`}
-                      </AppButton2>
+                      </AppButton>
                     }
                   />
                 </div>

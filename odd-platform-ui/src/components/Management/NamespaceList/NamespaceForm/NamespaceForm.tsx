@@ -6,10 +6,11 @@ import {
   NamespaceApiUpdateNamespaceRequest,
   NamespaceApiCreateNamespaceRequest,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import { InputAdornment, TextField, Typography } from '@mui/material';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './NamespaceFormStyles';
 
 interface NamespaceFormProps extends StylesType {
@@ -98,7 +99,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
             InputProps={{
               endAdornment: field.value && (
                 <InputAdornment position="start">
-                  <AppButton
+                  <AppIconButton
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}
@@ -120,7 +121,6 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
       form="namespace-edit-form"
       color="primary"
       fullWidth
-      onClick={() => {}}
       disabled={!formState.isValid}
     >
       Save

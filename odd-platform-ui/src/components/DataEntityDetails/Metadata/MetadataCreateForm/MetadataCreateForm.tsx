@@ -10,7 +10,7 @@ import {
   MetadataObject,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import MetadataCreateFormItemContainer from './MetadataCreateFormItem/MetadataCreateFormItemContainer';
 import { StylesType } from './MetadataCreateFormStyles';
 
@@ -108,7 +108,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <AppButton2
+    <AppButton
       type="submit"
       size="large"
       color="primary"
@@ -117,7 +117,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
       disabled={!methods.formState.isValid}
     >
       Add
-    </AppButton2>
+    </AppButton>
   );
 
   return (

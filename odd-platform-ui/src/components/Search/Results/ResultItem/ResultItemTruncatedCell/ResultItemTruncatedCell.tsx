@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { DataEntity, DataEntityRef } from 'generated-sources';
 import MoreIcon from 'components/shared/Icons/MoreIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './ResultItemTruncatedCellStyles';
 
@@ -85,11 +85,11 @@ const ResultItemTruncatedCell: React.FC<ResultItemProps> = ({
         : item.internalName || item.externalName;
     return (
       <TruncateMarkup.Atom key={key}>
-        <AppButton2 color="primaryLight" size="small">
+        <AppButton color="primaryLight" size="small">
           <Link target="__blank" to={linkTo}>
             {linkContent}
           </Link>
-        </AppButton2>
+        </AppButton>
       </TruncateMarkup.Atom>
     );
   };

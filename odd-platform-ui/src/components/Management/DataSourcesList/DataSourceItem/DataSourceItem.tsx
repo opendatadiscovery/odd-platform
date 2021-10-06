@@ -13,7 +13,7 @@ import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatte
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceFormDialog/DataSourceFormDialogContainer';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './DataSourceItemStyles';
 
 interface DataSourceItemProps extends StylesType {
@@ -45,14 +45,14 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
           <DataSourceFormDialogContainer
             dataSource={dataSource}
             btnCreateEl={
-              <AppButton2
+              <AppButton
                 size="medium"
                 color="primaryLight"
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
               >
                 Edit
-              </AppButton2>
+              </AppButton>
             }
           />
           <ConfirmationDialog
@@ -65,13 +65,13 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
             }
             onConfirm={onDelete}
             actionBtn={
-              <AppButton2
+              <AppButton
                 size="medium"
                 color="primaryLight"
                 startIcon={<DeleteIcon />}
               >
                 Delete
-              </AppButton2>
+              </AppButton>
             }
           />
         </Grid>

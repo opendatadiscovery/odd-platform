@@ -7,9 +7,10 @@ import {
   OwnerApiCreateOwnerRequest,
   OwnerApiUpdateOwnerRequest,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './OwnerFormStyles';
 
 interface OwnerFormProps extends StylesType {
@@ -97,7 +98,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
             InputProps={{
               endAdornment: field.value && (
                 <InputAdornment position="start">
-                  <AppButton
+                  <AppIconButton
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}

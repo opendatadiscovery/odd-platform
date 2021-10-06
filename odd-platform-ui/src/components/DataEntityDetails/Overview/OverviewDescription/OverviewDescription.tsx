@@ -13,7 +13,7 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './OverviewDescriptionStyles';
 
 interface OverviewDescriptionProps extends StylesType {
@@ -82,7 +82,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
             Custom
           </Typography>
           {editMode ? null : (
-            <AppButton2
+            <AppButton
               onClick={onEditClick}
               size="medium"
               color="primaryLight"
@@ -91,7 +91,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               }
             >
               {dataEntityInternalDescription ? 'Edit' : 'Add'} description
-            </AppButton2>
+            </AppButton>
           )}
         </div>
         {editMode ? (
@@ -110,21 +110,21 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               }}
             />
             <div className={classes.formActions}>
-              <AppButton2
+              <AppButton
                 onClick={handleDescriptionUpdate}
                 size="medium"
                 color="primaryLight"
                 sx={{ mr: 0.5 }}
               >
                 Save
-              </AppButton2>
-              <AppButton2
+              </AppButton>
+              <AppButton
                 onClick={() => setEditMode(false)}
                 size="medium"
                 color="tertiary"
               >
                 Cancel
-              </AppButton2>
+              </AppButton>
               <Typography variant="subtitle2" color="error">
                 {error}
               </Typography>
@@ -144,13 +144,13 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
                 wrap="nowrap"
               >
                 <Typography variant="subtitle2">Not created.</Typography>
-                <AppButton2
+                <AppButton
                   onClick={onEditClick}
                   size="small"
                   color="tertiary"
                 >
                   Add Description
-                </AppButton2>
+                </AppButton>
               </Grid>
             )}
           </div>

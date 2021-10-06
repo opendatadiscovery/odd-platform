@@ -20,10 +20,10 @@ import { compact } from 'lodash';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import TagItem from 'components/shared/TagItem/TagItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { StylesType } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import cx from 'classnames';
+import AppButton from 'components/shared/AppButton/AppButton';
 
 interface TagsEditProps extends StylesType {
   dataEntityId: number;
@@ -278,7 +278,6 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
         form="tags-create-form"
         color="primary"
         fullWidth
-        onClick={() => {}}
       >
         Save
       </AppButton>

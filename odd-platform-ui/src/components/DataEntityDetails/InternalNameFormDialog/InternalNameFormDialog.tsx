@@ -10,7 +10,7 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import OutlinedTextField from 'components/shared/OutlinedTextField/OutlinedTextField';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './InternalNameFormDialogStyles';
 
 interface InternalNameFormDialogProps extends StylesType {
@@ -122,7 +122,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
 
   const formActionButtons = () => (
     <>
-      <AppButton2
+      <AppButton
         size="large"
         type="submit"
         form="dataentity-internal-name"
@@ -130,7 +130,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
         fullWidth
       >
         Save
-      </AppButton2>
+      </AppButton>
     </>
   );
 

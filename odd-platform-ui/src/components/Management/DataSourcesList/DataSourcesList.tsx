@@ -1,10 +1,9 @@
 import React from 'react';
 import {
-  IconButton,
+  Grid,
   InputAdornment,
   TextField,
   Typography,
-  Grid,
 } from '@mui/material';
 import {
   DataSource,
@@ -13,13 +12,14 @@ import {
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppButton from 'components/shared/AppButton/AppButton';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
 import { StylesType } from './DataSourcesListStyles';
@@ -106,18 +106,17 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="end">
-                <IconButton
-                  disableRipple
+                <AppIconButton
+                  size="small"
+                  color="unfilled"
+                  icon={<SearchIcon />}
                   onClick={handleSearch}
-                  size="large"
-                >
-                  <SearchIcon />
-                </IconButton>
+                />
               </InputAdornment>
             ),
             endAdornment: searchText && (
               <InputAdornment position="start">
-                <AppButton
+                <AppIconButton
                   size="small"
                   color="unfilled"
                   icon={<CancelIcon />}
@@ -134,7 +133,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<AddIcon />}
+              startIcon={<AddIcon />}
             >
               Add datasource
             </AppButton>

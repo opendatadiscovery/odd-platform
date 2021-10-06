@@ -1,8 +1,9 @@
 import React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import { SvgIconProps } from '@mui/material/SvgIcon';
+import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 
-const TargetIcon: React.FC<SvgIconProps> = props => (
-  <SvgIcon viewBox="0 0 16 16" {...props}>
+const TargetIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
+  <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -10,7 +11,7 @@ const TargetIcon: React.FC<SvgIconProps> = props => (
       fill="#0066CC"
     />
     <circle cx="8" cy="8" r="1" fill="#0066CC" />
-  </SvgIcon>
+  </AppSvgIcon>
 );
 
 export default TargetIcon;

@@ -3,7 +3,7 @@ import withStyles from '@mui/styles/withStyles';
 import React from 'react';
 import { Alert } from 'generated-sources';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './AlertBannerStyles';
 
 interface AlertBannerProps extends StylesType {
@@ -22,9 +22,9 @@ const AlertBanner: React.FC<AlertBannerProps> = ({
       <Typography variant="body1">{alert.description}</Typography>
     </div>
     <div className={classes.actions}>
-      <AppButton2 size="medium" color="secondary" onClick={resolveAlert}>
+      <AppButton size="medium" color="secondary" onClick={resolveAlert}>
         Resolve
-      </AppButton2>
+      </AppButton>
     </div>
   </div>
 );

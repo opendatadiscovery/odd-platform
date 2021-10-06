@@ -18,7 +18,6 @@ import {
 } from 'generated-sources';
 import OutlinedTextField from 'components/shared/OutlinedTextField/OutlinedTextField';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import {
   Autocomplete,
@@ -34,6 +33,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce/lib';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './DataSourceFormDialogStyles';
 
 interface DataSourceFormDialogProps extends StylesType {
@@ -469,7 +469,6 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
       color="primary"
       fullWidth
       disabled={!isValid}
-      onClick={() => {}}
     >
       Save
     </AppButton>

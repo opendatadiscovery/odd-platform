@@ -6,7 +6,7 @@ import TagItem from 'components/shared/TagItem/TagItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import TagsEditContainer from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormContainer';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './OverviewTagsStyles';
 
 interface OverviewTagsProps extends StylesType {
@@ -39,14 +39,14 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
         <TagsEditContainer
           dataEntityId={dataEntityId}
           btnEditEl={
-            <AppButton2
+            <AppButton
               size="medium"
               color="primaryLight"
               onClick={() => {}}
               startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
             >
               {tags?.length ? 'Edit' : 'Add'} tags
-            </AppButton2>
+            </AppButton>
           }
         />
       </div>
@@ -80,14 +80,14 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
                       ))
                   : null}
               </Collapse>
-              <AppButton2
+              <AppButton
                 size="small"
                 color="tertiary"
                 sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
               >
                 {viewAll ? 'Hide' : `View All (${tags?.length})`}
-              </AppButton2>
+              </AppButton>
             </>
           ) : null}
         </div>
@@ -104,9 +104,9 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
           <TagsEditContainer
             dataEntityId={dataEntityId}
             btnEditEl={
-              <AppButton2 size="small" color="tertiary" onClick={() => {}}>
+              <AppButton size="small" color="tertiary" onClick={() => {}}>
                 Add tags
-              </AppButton2>
+              </AppButton>
             }
           />
         </Grid>

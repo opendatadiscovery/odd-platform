@@ -6,9 +6,6 @@ import createStyles from '@mui/styles/createStyles';
 export const styles = (theme: Theme) =>
   createStyles({
     container: {},
-    addOwnerBtn: {
-      marginTop: theme.spacing(0.25),
-    },
     ownershipList: {
       display: 'flex',
       flexDirection: 'column',
@@ -40,7 +37,6 @@ export const styles = (theme: Theme) =>
     },
     ownerActionBtns: {
       opacity: 0,
-      marginLeft: theme.spacing(1.25),
     },
   });
 

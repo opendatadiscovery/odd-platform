@@ -2,10 +2,10 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { Label, LabelApiDeleteLabelRequest } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
+import AppButton from 'components/shared/AppButton/AppButton';
 import LabelEditFormContainer from '../LabelEditForm/LabelEditFormContainer';
 import { styles, StylesType } from './EditableLabelItemStyles';
 
@@ -38,8 +38,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<EditIcon />}
-              onClick={() => {}}
+              startIcon={<EditIcon />}
             >
               Edit
             </AppButton>
@@ -56,8 +55,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<DeleteIcon />}
-              onClick={() => {}}
+              startIcon={<DeleteIcon />}
             >
               Delete
             </AppButton>

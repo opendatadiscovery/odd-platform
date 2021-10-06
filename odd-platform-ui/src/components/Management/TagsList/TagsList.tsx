@@ -19,7 +19,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
@@ -129,13 +129,13 @@ const TagsListView: React.FC<TagsListProps> = ({
         />
         <TagCreateFormContainer
           btnCreateEl={
-            <AppButton2
+            <AppButton
               size="medium"
               color="primaryLight"
               startIcon={<AddIcon />}
             >
               Create tag
-            </AppButton2>
+            </AppButton>
           }
         />
       </div>

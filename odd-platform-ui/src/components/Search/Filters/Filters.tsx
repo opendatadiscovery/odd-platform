@@ -4,14 +4,14 @@ import {
   DataSource,
   DataSourceApiGetDataSourceListRequest,
   DataSourceList,
-  NamespaceApiGetNamespaceListRequest,
   Namespace,
+  NamespaceApiGetNamespaceListRequest,
 } from 'generated-sources';
 import { SearchType } from 'redux/interfaces/search';
-import AppButton from 'components/shared/AppButton/AppButton';
 import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemContainer';
 import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
 import CircularProgressLoader from 'components/shared/CircularProgressLoader/CircularProgressLoader';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './FiltersStyles';
 
 interface FiltersProps extends StylesType {

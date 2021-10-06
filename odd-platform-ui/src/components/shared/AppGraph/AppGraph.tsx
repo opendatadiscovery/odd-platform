@@ -29,10 +29,10 @@ import {
   DataEntityLineageEdge,
   DataEntityLineageNode,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AppTabs from 'components/shared/AppTabs/AppTabs';
 import TargetIcon from 'components/shared/Icons/TargetIcon';
 import CircularProgressLoader from 'components/shared/CircularProgressLoader/CircularProgressLoader';
+import AppButton from 'components/shared/AppButton/AppButton';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
 import { StylesType } from './AppGraphStyles';
@@ -366,7 +366,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
         <AppButton
           color="primaryLight"
           size="medium"
-          icon={<TargetIcon />}
+          startIcon={<TargetIcon />}
           onClick={centerRoot}
         >
           Main

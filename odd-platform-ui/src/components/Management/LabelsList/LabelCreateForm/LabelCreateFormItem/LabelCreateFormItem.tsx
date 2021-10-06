@@ -3,7 +3,7 @@ import { TextField, InputAdornment } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './LabelCreateFormItemStyles';
 
@@ -52,9 +52,9 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
       />
       <div className={classes.labelItemButtons}>
         {fieldsLength && fieldsLength > 1 && (
-          <AppButton2 size="small" color="dropdown" onClick={onItemRemove}>
+          <AppButton size="small" color="dropdown" onClick={onItemRemove}>
             Delete
-          </AppButton2>
+          </AppButton>
         )}
       </div>
     </>

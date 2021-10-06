@@ -3,8 +3,8 @@ import { Grid, Typography } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { Link } from 'react-router-dom';
 import {
-  DataEntityTypeNameEnum,
   DataEntityDetails,
+  DataEntityTypeNameEnum,
 } from 'generated-sources';
 import { dataEntityDetailsPath } from 'lib/paths';
 import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
@@ -50,14 +50,14 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         xs={12}
         direction="column"
         alignItems="flex-start"
+        className={classes.refs}
       >
         {sources?.map(source => (
           <AppButton
             key={source.id}
-            className={classes.refItem}
             size="small"
             color="tertiary"
-            onClick={() => {}}
+            sx={{ my: 0.25 }}
           >
             <Link to={dataEntityDetailsPath(source.id)}>
               {source.internalName || source.externalName}
@@ -72,7 +72,13 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         ) : null}
       </Grid>
     </Grid>
-    <Grid item container xs={6} className={classes.statsItem}>
+    <Grid
+      item
+      container
+      xs={6}
+      className={classes.statsItem}
+      alignContent="flex-start"
+    >
       <Grid item container xs={12} alignItems="baseline">
         <DownstreamIcon className={classes.statIcon} />
         <Typography variant="h2" className={classes.statCount}>
@@ -88,15 +94,10 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         xs={12}
         direction="column"
         alignItems="flex-start"
+        className={classes.refs}
       >
         {targets?.map(target => (
-          <AppButton
-            key={target.id}
-            className={classes.refItem}
-            size="small"
-            color="tertiary"
-            onClick={() => {}}
-          >
+          <AppButton key={target.id} size="small" color="tertiary">
             <Link to={dataEntityDetailsPath(target.id)}>
               {target.internalName || target.externalName}
             </Link>

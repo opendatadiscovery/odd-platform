@@ -11,7 +11,7 @@ import {
 } from 'components/Management/TagsList/EditableTagItem/EditableTagItemStyles';
 import cx from 'classnames';
 import TagEditFormContainer from 'components/Management/TagsList/TagEditForm/TagEditFormContainer';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 
 interface EditableTagItemProps extends StylesType {
   tag: Tag;
@@ -44,14 +44,14 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
         <TagEditFormContainer
           tag={tag}
           editBtn={
-            <AppButton2
+            <AppButton
               size="medium"
               color="primaryLight"
               startIcon={<EditIcon />}
               sx={{ mr: 1 }}
             >
               Edit
-            </AppButton2>
+            </AppButton>
           }
         />
         <ConfirmationDialog
@@ -62,13 +62,13 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
           }
           onConfirm={handleDelete}
           actionBtn={
-            <AppButton2
+            <AppButton
               size="medium"
               color="primaryLight"
               startIcon={<DeleteIcon />}
             >
               Delete
-            </AppButton2>
+            </AppButton>
           }
         />
       </Grid>

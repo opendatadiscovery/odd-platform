@@ -164,19 +164,19 @@ export const palette = createPalette({
     },
     collapse: {
       normal: {
-        background: colors.black90,
+        background: colors.black20,
         color: colors.white,
-        border: colors.black20,
+        border: colors.black90,
       },
       hover: {
-        background: colors.black90,
+        background: colors.black20,
         color: colors.white,
-        border: colors.black20,
+        border: colors.black90,
       },
       active: {
-        background: colors.black90,
+        background: colors.black20,
         color: colors.white,
-        border: colors.black20,
+        border: colors.black90,
       },
     },
   },

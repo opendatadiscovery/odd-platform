@@ -9,17 +9,17 @@ import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import {
   Grid,
-  IconButton,
   InputAdornment,
   TextField,
   Typography,
 } from '@mui/material';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppButton from 'components/shared/AppButton/AppButton';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceFormContainer from './NamespaceForm/NamespaceFormContainer';
 import NamespaceListSkeleton from './NamespaceListSkeleton/NamespaceListSkeleton';
@@ -110,14 +110,17 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="end">
-                <IconButton disableRipple onClick={handleSearch}>
-                  <SearchIcon />
-                </IconButton>
+                <AppIconButton
+                  size="small"
+                  color="unfilled"
+                  icon={<SearchIcon />}
+                  onClick={handleSearch}
+                />
               </InputAdornment>
             ),
             endAdornment: searchText && (
               <InputAdornment position="start">
-                <AppButton
+                <AppIconButton
                   size="small"
                   color="unfilled"
                   icon={<CancelIcon />}
@@ -134,7 +137,7 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<AddIcon />}
+              startIcon={<AddIcon />}
             >
               Create namespace
             </AppButton>

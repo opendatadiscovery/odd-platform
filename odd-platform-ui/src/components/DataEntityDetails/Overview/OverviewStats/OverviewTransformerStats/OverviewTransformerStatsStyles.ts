@@ -26,14 +26,11 @@ export const styles = (theme: Theme) =>
     typeLabel: {
       marginBottom: theme.spacing(1.25),
     },
-    refItem: {
-      margin: theme.spacing(0.25, 0),
-      '&:first-of-type': {
-        marginTop: theme.spacing(1),
-      },
+    refs: {
+      marginTop: theme.spacing(1),
     },
     unknownCount: {
-      marginLeft: theme.spacing(0.5),
+      marginLeft: theme.spacing(0.25),
     },
   });
 

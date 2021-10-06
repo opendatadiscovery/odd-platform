@@ -6,7 +6,7 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import OwnerFormContainer from 'components/Management/OwnersList/OwnerForm/OwnerFormContainer';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './EditableOwnerItemStyles';
 
 interface EditableOwnerItemProps extends StylesType {
@@ -35,13 +35,13 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
         <OwnerFormContainer
           owner={owner}
           btnCreateEl={
-            <AppButton2
+            <AppButton
               color="primaryLight"
               size="medium"
               startIcon={<EditIcon />}
             >
               Edit
-            </AppButton2>
+            </AppButton>
           }
         />
         <ConfirmationDialog
@@ -52,14 +52,14 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
           }
           onConfirm={handleDelete}
           actionBtn={
-            <AppButton2
+            <AppButton
               size="medium"
               color="primaryLight"
               startIcon={<DeleteIcon />}
               sx={{ ml: 1 }}
             >
               Delete
-            </AppButton2>
+            </AppButton>
           }
         />
       </Grid>

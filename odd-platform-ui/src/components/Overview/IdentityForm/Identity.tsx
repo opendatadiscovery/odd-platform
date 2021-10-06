@@ -26,8 +26,8 @@ import {
   OwnerList,
 } from 'generated-sources';
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './IdentityStyles';
 
 interface IdentityProps extends StylesType {
@@ -285,7 +285,6 @@ const Identity: React.FC<IdentityProps> = ({
               color="primary"
               type="submit"
               form="owner-connect-form"
-              onClick={() => {}}
               fullWidth
               disabled={
                 !methods.formState.isValid || !methods.formState.isDirty

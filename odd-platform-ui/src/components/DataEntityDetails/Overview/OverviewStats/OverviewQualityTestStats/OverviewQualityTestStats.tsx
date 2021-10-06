@@ -13,7 +13,7 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import cx from 'classnames';
 import { format, formatDistanceStrict } from 'date-fns';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import AppButton2 from 'components/shared/AppButton2/AppButton2';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './OverviewQualityTestStatsStyles';
 
 interface OverviewQualityTestStatsProps extends StylesType {
@@ -50,7 +50,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
           <Grid item>
             {datasetsList?.map(dataset => (
-              <AppButton2
+              <AppButton
                 key={dataset.id}
                 sx={{ mt: 0.25, mb: 0.25 }}
                 size="medium"
@@ -59,7 +59,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
                 <Link to={dataEntityDetailsPath(dataset.id)}>
                   {dataset.internalName || dataset.externalName}
                 </Link>
-              </AppButton2>
+              </AppButton>
             ))}
           </Grid>
         </Grid>
@@ -71,7 +71,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
           <Grid item>
             {suiteUrl ? (
-              <AppButton2
+              <AppButton
                 sx={{ mt: 0.25, mb: 0.25 }}
                 size="medium"
                 color="tertiary"
@@ -79,7 +79,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
                 <Link to={{ pathname: suiteUrl }} target="_blank">
                   {suiteName || suiteUrl}
                 </Link>
-              </AppButton2>
+              </AppButton>
             ) : null}
           </Grid>
         </Grid>
@@ -126,9 +126,9 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
         </LabeledInfoItem>
         <Grid container>
           <Link to={dataEntityHistoryPath(qualityTest?.id)}>
-            <AppButton2 size="small" color="tertiary">
+            <AppButton size="small" color="tertiary">
               History
-            </AppButton2>
+            </AppButton>
           </Link>
         </Grid>
       </Grid>

@@ -23,7 +23,6 @@ import {
   RoleApiGetRoleListRequest,
   RoleList,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
   AutocompleteInputChangeReason,
@@ -32,6 +31,7 @@ import {
 } from '@mui/material/useAutocomplete';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './OwnershipFormStyles';
 
 interface OwnershipFormProps extends StylesType {
@@ -420,7 +420,6 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       color="primary"
       type="submit"
       form="owner-add-form"
-      onClick={() => {}}
       fullWidth
       disabled={!methods.formState.isValid || !methods.formState.isDirty}
     >

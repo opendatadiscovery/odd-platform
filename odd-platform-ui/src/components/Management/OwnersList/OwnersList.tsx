@@ -14,7 +14,6 @@ import {
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
-import AppButton from 'components/shared/AppButton/AppButton';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
@@ -22,6 +21,8 @@ import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import EditableOwnerItem from 'components/Management/OwnersList/EditableOwnerItem/EditableOwnerItem';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppButton from 'components/shared/AppButton/AppButton';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerFormContainer from './OwnerForm/OwnerFormContainer';
 import { StylesType } from './OwnersListStyles';
@@ -107,18 +108,17 @@ const OwnersListView: React.FC<OwnersListProps> = ({
             disableUnderline: true,
             startAdornment: (
               <InputAdornment position="end">
-                <IconButton
-                  disableRipple
+                <AppIconButton
+                  size="small"
+                  color="unfilled"
+                  icon={<SearchIcon />}
                   onClick={handleSearch}
-                  size="large"
-                >
-                  <SearchIcon />
-                </IconButton>
+                />
               </InputAdornment>
             ),
             endAdornment: searchText && (
               <InputAdornment position="start">
-                <AppButton
+                <AppIconButton
                   size="small"
                   color="unfilled"
                   icon={<CancelIcon />}
@@ -135,7 +135,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
             <AppButton
               color="primaryLight"
               size="medium"
-              icon={<AddIcon />}
+              startIcon={<AddIcon />}
             >
               Create Owner
             </AppButton>

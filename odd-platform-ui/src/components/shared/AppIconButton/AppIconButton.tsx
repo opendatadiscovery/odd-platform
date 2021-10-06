@@ -4,7 +4,6 @@ import { IconButtonColors, StyledIconButton } from './AppIconButtonStyles';
 
 interface AppIconButtonProps
   extends Omit<IconButtonProps, 'color' | 'size'> {
-  disabled?: boolean;
   size?: 'medium' | 'small';
   color: IconButtonColors;
   icon: React.ReactNode;
@@ -12,21 +11,18 @@ interface AppIconButtonProps
 }
 
 const AppIconButton: React.FC<AppIconButtonProps> = ({
-  onClick,
-  disabled,
   size = 'small',
   color,
   icon,
   open,
-  sx,
+  ...props
 }) => (
   <StyledIconButton
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    {...props}
     $color={color}
     $open={open}
-    sx={sx}
-    onClick={onClick}
     disableRipple
-    disabled={disabled}
     size={size}
   >
     {icon}

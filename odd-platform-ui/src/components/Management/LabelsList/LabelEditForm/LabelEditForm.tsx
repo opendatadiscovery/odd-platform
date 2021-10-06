@@ -6,9 +6,10 @@ import {
   LabelFormData,
   LabelApiUpdateLabelRequest,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { StylesType } from './LabelEditFormStyles';
 
 interface LabelEditFormProps extends StylesType {
@@ -82,7 +83,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
             InputProps={{
               endAdornment: field.value && (
                 <InputAdornment position="start">
-                  <AppButton
+                  <AppIconButton
                     size="small"
                     color="unfilled"
                     icon={<CancelIcon />}
@@ -104,7 +105,6 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
       form="label-edit-form"
       color="primary"
       fullWidth
-      onClick={() => {}}
       disabled={!formState.isValid}
     >
       Save
