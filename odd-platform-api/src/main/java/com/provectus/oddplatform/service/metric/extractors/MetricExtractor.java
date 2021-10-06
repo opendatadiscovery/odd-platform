@@ -1,16 +1,54 @@
 package com.provectus.oddplatform.service.metric.extractors;
 
-import com.provectus.oddplatform.dto.DataEntityIngestionDto;
-import com.provectus.oddplatform.dto.IngestionTaskRun;
+import com.provectus.oddplatform.dto.IngestionDataStructure;
+import com.provectus.oddplatform.service.metric.dto.MetricDataTriplet;
+import com.provectus.oddplatform.utils.Pair;
+import io.opentelemetry.sdk.common.InstrumentationLibraryInfo;
+import io.opentelemetry.sdk.metrics.data.DoubleGaugeData;
+import io.opentelemetry.sdk.metrics.data.DoublePointData;
+import io.opentelemetry.sdk.metrics.data.LongGaugeData;
+import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
+import io.opentelemetry.sdk.metrics.data.PointData;
+import io.opentelemetry.sdk.resources.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-// TODO: rework into chain
 public interface MetricExtractor {
-    Stream<MetricData> extractDatasetMetrics(final List<? extends DataEntityIngestionDto> entities);
+    Stream<MetricData> extract(final IngestionDataStructure dataStructure);
 
-    Stream<MetricData> extractTaskRunMetrics(final List<IngestionTaskRun> taskRuns);
+    default Stream<MetricData> gaugeStream(final Stream<Pair<MetricDataTriplet, ? extends PointData>> metricStream) {
+        return metricStream
+            .filter(p -> p.getRight() != null)
+            // TODO: get rid of intermediate collector
+            .collect(Collectors.groupingBy(Pair::getLeft))
+            .entrySet()
+            .stream()
+            .map(e -> Pair.of(e.getKey(), e.getValue().stream().map(Pair::getRight).collect(Collectors.toList())))
+            .map(p -> gauge(p.getLeft(), p.getRight()));
+    }
 
-    Stream<MetricData> extractDatasetFieldMetrics(final List<? extends DataEntityIngestionDto> entities);
+    @SuppressWarnings("unchecked")
+    default MetricData gauge(final MetricDataTriplet metricDataTriplet, final List<? extends PointData> points) {
+        if (metricDataTriplet.equals(MetricDataTriplet.DF_AVG_LENGTH)) {
+            return MetricData.createDoubleGauge(
+                Resource.getDefault(),
+                InstrumentationLibraryInfo.empty(),
+                metricDataTriplet.getName(),
+                metricDataTriplet.getDescription(),
+                metricDataTriplet.getUnit(),
+                DoubleGaugeData.create((List<DoublePointData>) points)
+            );
+        }
+
+        return MetricData.createLongGauge(
+            Resource.getDefault(),
+            InstrumentationLibraryInfo.empty(),
+            metricDataTriplet.getName(),
+            metricDataTriplet.getDescription(),
+            metricDataTriplet.getUnit(),
+            LongGaugeData.create((List<LongPointData>) points)
+        );
+    }
 }

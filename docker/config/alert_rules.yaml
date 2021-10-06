@@ -2,4 +2,4 @@ groups:
   - name: test.alert
     rules:
       - alert: TestAlert
-        expr: max_length > 0
+        expr: oddplatform_dataset_field_max_length > 0

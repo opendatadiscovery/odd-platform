@@ -6,7 +6,6 @@ import com.provectus.oddplatform.utils.Pair;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import java.time.OffsetDateTime;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;

@@ -537,11 +537,12 @@ public class IngestionServiceImpl implements IngestionService {
         return !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
     }
 
-    private boolean equalRevisions(final EnrichedDataEntityIngestionDto e, final DatasetRevisionPojo existingRevision) {
+    private boolean equalRevisions(final EnrichedDataEntityIngestionDto dto,
+                                   final DatasetRevisionPojo existingRevision) {
         return existingRevision != null
-            && Objects.equals(existingRevision.getRowsCount(), e.getDataSet().getRowsCount())
-            && e.getUpdatedAt() != null
-            && Objects.equals(existingRevision.getUpdatedAt(), e.getUpdatedAt().toLocalDateTime());
+            && Objects.equals(existingRevision.getRowsCount(), dto.getDataSet().getRowsCount())
+            && dto.getUpdatedAt() != null
+            && Objects.equals(existingRevision.getUpdatedAt(), dto.getUpdatedAt().toLocalDateTime());
     }
 
     private DatasetVersionPojo mapNewDatasetVersion(final EnrichedDataEntityIngestionDto entity) {
