@@ -3,10 +3,12 @@ package com.provectus.oddplatform.dto;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.Value;
 
 @Value
 @RequiredArgsConstructor
+@Setter
 public class TagDto {
     TagPojo tagPojo;
     Long usedCount;

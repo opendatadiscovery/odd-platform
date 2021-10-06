@@ -40,6 +40,7 @@ dependencies {
     }
 
     implementation "org.apache.commons:commons-collections4:$apacheCommonsCollectionsVersion"
+    implementation "org.apache.commons:commons-lang3:$apacheCommonsLangVersion"
 
     implementation "org.flywaydb:flyway-core:$flywayVersion"
     implementation "org.postgresql:postgresql:$postgresqlDriverVersion"

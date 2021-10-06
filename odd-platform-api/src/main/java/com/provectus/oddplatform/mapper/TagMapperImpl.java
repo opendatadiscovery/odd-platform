@@ -7,6 +7,7 @@ import com.provectus.oddplatform.dto.TagDto;
 import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.utils.Page;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -52,6 +53,15 @@ public class TagMapperImpl implements TagMapper {
         return new TagsResponse()
             .items(tags)
             .pageInfo(pageInfo(tags.size()));
+    }
+
+    public TagsResponse mapTagDtos(final Page<TagDto> tags) {
+        final List<Tag> items = tags.getData().stream()
+            .map(this::mapTag)
+            .collect(Collectors.toList());
+        return new TagsResponse()
+            .items(items)
+            .pageInfo(this.pageInfo(tags));
     }
 
     public Tag mapTag(final TagDto dto) {
