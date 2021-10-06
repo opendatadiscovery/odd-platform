@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class AlertServiceImpl implements AlertService {
-    private final static DateTimeFormatter ALERT_MANAGER_TIME_FORMATTER =
+    private static final DateTimeFormatter ALERT_MANAGER_TIME_FORMATTER =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final AlertRepository alertRepository;

@@ -21,7 +21,6 @@ public interface MetricExtractor {
     default Stream<MetricData> gaugeStream(final Stream<Pair<MetricDataTriplet, ? extends PointData>> metricStream) {
         return metricStream
             .filter(p -> p.getRight() != null)
-            // TODO: get rid of intermediate collector
             .collect(Collectors.groupingBy(Pair::getLeft))
             .entrySet()
             .stream()
