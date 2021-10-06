@@ -74,6 +74,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
+    // TODO: handle other alert types
     public Mono<Void> handleExternalAlerts(final List<ExternalAlert> externalAlerts) {
         final List<AlertPojo> alerts = externalAlerts.stream().map(a -> {
             final String alertTime =
@@ -85,7 +86,6 @@ public class AlertServiceImpl implements AlertService {
                 .build()
                 .toString();
 
-            // TODO: handle other alert types
             final LocalDateTime now = LocalDateTime.now();
 
             return new AlertPojo()

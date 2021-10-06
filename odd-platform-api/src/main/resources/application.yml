@@ -41,7 +41,7 @@ auth:
 
 metrics:
   export:
-    enabled: true
+    enabled: false
     otlp-endpoint: http://localhost:4317
 
 management:

@@ -10,4 +10,4 @@ route:
 receivers:
   - name: webhook
     webhook_configs:
-      - url: 'http://host.docker.internal:8080/ingestion/alert/alertmanager'
+      - url: 'http://odd-platform:8080/ingestion/alert/alertmanager'
