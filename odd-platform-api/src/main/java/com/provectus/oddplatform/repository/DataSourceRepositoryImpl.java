@@ -8,6 +8,7 @@ import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.model.tables.records.DataSourceRecord;
 import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import com.provectus.oddplatform.utils.Page;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,6 @@ import org.springframework.util.StringUtils;
 
 import static com.provectus.oddplatform.model.Tables.DATA_SOURCE;
 import static com.provectus.oddplatform.model.Tables.NAMESPACE;
-import static java.util.Collections.emptyList;
 
 @Repository
 @RequiredArgsConstructor
@@ -65,7 +65,6 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             .from(DATA_SOURCE)
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
             .where(queryCondition(query))
-            .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchStream()
             .map(this::mapRecord)
             .collect(Collectors.toList());
@@ -75,8 +74,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     public Page<DataSourceDto> list(final int page, final int size, final String query) {
         final Select<DataSourceRecord> homogeneousQuery = dslContext
             .selectFrom(DATA_SOURCE)
-            .where(queryCondition(query))
-            .and(DATA_SOURCE.IS_DELETED.isFalse());
+            .where(queryCondition(query));
 
         final Select<? extends Record> dataSourceSelect =
             jooqQueryHelper.paginate(homogeneousQuery, (page - 1) * size, size);
@@ -224,9 +222,13 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     }
 
     private List<Condition> queryCondition(final String query) {
-        return StringUtils.hasLength(query)
-            ? List.of(DATA_SOURCE.NAME.startsWithIgnoreCase(query))
-            : emptyList();
+        final var conditionsList = new ArrayList<Condition>();
+
+        conditionsList.add(DATA_SOURCE.IS_DELETED.isFalse());
+        if (StringUtils.hasLength(query)) {
+            conditionsList.add(DATA_SOURCE.NAME.startsWithIgnoreCase(query));
+        }
+        return conditionsList;
     }
 
     private DataSourceDto mapRecord(final Record record) {

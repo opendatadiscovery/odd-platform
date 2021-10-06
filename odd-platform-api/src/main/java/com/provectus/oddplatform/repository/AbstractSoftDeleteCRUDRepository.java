@@ -173,9 +173,9 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
     }
 
     protected List<Condition> addSoftDeleteFilter(final List<Condition> conditions) {
-        final ArrayList<Condition> c = new ArrayList<>(conditions);
-        c.add(deletedField.isFalse());
-        return c;
+        final ArrayList<Condition> conditionsList = new ArrayList<>(conditions);
+        conditionsList.add(deletedField.isFalse());
+        return conditionsList;
     }
 
     protected List<Condition> addSoftDeleteFilter(final Condition condition) {
