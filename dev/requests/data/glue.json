@@ -41,7 +41,7 @@
       "created_at": "2021-03-17T16:59:30+00:00",
       "type": "TABLE",
       "dataset": {
-        "rows_number": 0,
+        "rows_number": 10,
         "field_list": [
           {
             "oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_eisley/columns/name",
@@ -124,11 +124,11 @@
           }
         }
       ],
-      "updated_at": "2021-04-12T11:25:07+00:00",
+      "updated_at": null,
       "created_at": "2021-03-17T20:14:37+00:00",
       "type": "TABLE",
       "dataset": {
-        "rows_number": 0,
+        "rows_number": 20,
         "field_list": [
           {
             "oddrn": "//aws/glue/012345678910/databases/tatooine/tables/mos_espa/columns/very_complex_field/subcolumns/employer",
@@ -298,9 +298,9 @@
             "is_value": false,
             "stats": {
               "string_stats": {
-                "max_length": 228,
+                "max_length": 100,
                 "avg_length": 666,
-                "nulls_count": 228,
+                "nulls_count": 100,
                 "unique_count": 111
               }
             }

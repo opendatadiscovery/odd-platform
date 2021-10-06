@@ -31,7 +31,7 @@ services:
     depends_on:
       - odd-platform
 
-#   --- ODD Adapters ---
+  # --- ODD Adapters ---
   mysql-adapter:
     image: ghcr.io/opendatadiscovery/adapters/odd-mysql-adapter:latest
     environment:
@@ -90,3 +90,34 @@ services:
       - 8087:8080
     depends_on:
       - odd-platform-puller
+
+  # --- OpenTelemetry collector and Prometheus backend ---
+  otel-collector:
+    image: otel/opentelemetry-collector
+    command: [ "--config=/etc/otel/otelcol-config.yaml" ]
+    volumes:
+      - ${PWD}/docker/config/otel_collector.yaml:/etc/otel/otelcol-config.yaml
+    environment:
+      - PRW_ENDPOINT=http://prometheus:9090/api/v1/write
+    ports:
+      - 4317:4317
+      - 55679:55679
+
+  prometheus:
+    image: prom/prometheus:v2.30.1
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yaml"
+      - "--enable-feature=remote-write-receiver"
+    volumes:
+      - ${PWD}/docker/config/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ${PWD}/docker/config/alert_rules.yaml:/etc/prometheus/alert_rules.yaml
+    ports:
+      - 9090:9090
+
+  alertmanager:
+    image: prom/alertmanager:v0.23.0
+    command: [ "--config.file=/etc/alertmanager/alertmanager.yaml" ]
+    volumes:
+      - ${PWD}/docker/config/alertmanager.yaml:/etc/alertmanager/alertmanager.yaml
+    ports:
+      - 9093:9093

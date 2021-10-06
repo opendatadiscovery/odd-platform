@@ -7,13 +7,20 @@ import lombok.EqualsAndHashCode;
 @Data
 public class EnrichedDataEntityIngestionDto extends DataEntityIngestionDto {
     private long id;
+    private boolean updated;
 
     public EnrichedDataEntityIngestionDto(final long id, final DataEntityIngestionDto ingestionDto) {
+        this(id, ingestionDto, true);
+    }
+
+    public EnrichedDataEntityIngestionDto(final long id, final DataEntityIngestionDto ingestionDto,
+                                          final boolean updated) {
         super(ingestionDto.name, ingestionDto.oddrn, ingestionDto.dataSourceId, ingestionDto.externalDescription,
             ingestionDto.createdAt, ingestionDto.updatedAt, ingestionDto.types, ingestionDto.subType,
             ingestionDto.metadata, ingestionDto.specificAttributesJson, ingestionDto.dataSet,
             ingestionDto.dataTransformer, ingestionDto.dataConsumer, ingestionDto.datasetQualityTest);
 
         this.id = id;
+        this.updated = updated;
     }
 }
