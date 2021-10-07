@@ -4,6 +4,7 @@ import com.provectus.oddplatform.api.contract.model.DataEntityList;
 import com.provectus.oddplatform.api.contract.model.DataQualityTestRunList;
 import com.provectus.oddplatform.api.contract.model.DataSetTestReport;
 import com.provectus.oddplatform.exception.NotFoundException;
+import com.provectus.oddplatform.mapper.DataEntityMapper;
 import com.provectus.oddplatform.mapper.DataQualityMapper;
 import com.provectus.oddplatform.repository.DataQualityRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +16,12 @@ import reactor.core.publisher.Mono;
 public class DataQualityServiceImpl implements DataQualityService {
     private final DataQualityRepository dataQualityRepository;
     private final DataQualityMapper dataQualityMapper;
+    private final DataEntityMapper dataEntityMapper;
 
     @Override
     public Mono<DataEntityList> getDataEntityDataQATests(final long dataEntityId) {
         return Mono.fromCallable(() -> dataQualityRepository.getDataQualityTests(dataEntityId))
-            .map(dataQualityMapper::mapDataQualityTests);
+            .map(dataEntityMapper::mapDataQualityTests);
     }
 
     @Override

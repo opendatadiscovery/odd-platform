@@ -14,12 +14,17 @@ import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.dto.DataEntityLineageDto;
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public interface DataEntityMapper
     extends ReadOnlyCRUDMapperWithList<DataEntity, DataEntityList, DataEntityDimensionsDto> {
     DataEntityDetails mapDtoDetails(final DataEntityDetailsDto dataEntityDetailsDto);
+
+    DataEntity mapDataQualityTest(final DataEntityDetailsDto dto);
+
+    DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos);
 
     DataEntityType mapType(final DataEntityTypePojo type);
 
