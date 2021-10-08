@@ -40,8 +40,8 @@ public class DatasetRevisionRepositoryImpl
             DATASET_REVISION.UPDATED_AT)
             .from(subquery)
             .join(DATASET_REVISION)
-            .on(DATASET_REVISION.DATA_ENTITY_ID.eq(dataEntityId))
-            .and(DATASET_REVISION.UPDATED_AT.eq(maxUpdatedAt))
+            .on(DATASET_REVISION.DATA_ENTITY_ID.eq(subquery.field(DATASET_REVISION.DATA_ENTITY_ID)))
+            .and(DATASET_REVISION.UPDATED_AT.eq(subquery.field(maxUpdatedAt)))
             .fetchStreamInto(DATASET_REVISION)
             .map(this::recordToPojo)
             .collect(Collectors.toList());
