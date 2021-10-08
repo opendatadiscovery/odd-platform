@@ -173,6 +173,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         }
     }
 
+    // TODO: remove empty record from the end of the query
     protected <E> List<E> bulkInsert(final Collection<E> entities, final Class<E> entityClass) {
         final List<R> records = entities.stream()
             .map(e -> dslContext.newRecord(recordTable, e))
