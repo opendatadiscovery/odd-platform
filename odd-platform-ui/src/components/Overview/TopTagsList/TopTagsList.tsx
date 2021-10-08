@@ -46,24 +46,22 @@ const TopTagsList: React.FC<TopTagsListProps> = ({
     [searchLoading, setSearchLoading, createDataEntitiesSearch, history]
   );
 
+  // sorting by importance and usedCount
+  const sortedTags = topTagsList
+    .filter(tag => tag.important)
+    .concat(topTagsList.filter(tag => !tag.important));
+
   return (
     <>
-      {topTagsList
-        .sort((tag1, tag2) => {
-          if (tag1.important === tag2.important) {
-            return tag1.name.localeCompare(tag2.name);
-          }
-          return tag1.important ? -1 : 1;
-        })
-        .map(tag => (
-          <TagItem
-            onClick={handleTagClick(tag.id, tag.name)}
-            key={tag.id}
-            label={tag.name}
-            important={tag.important}
-            classes={{ container: classes.tagItem }}
-          />
-        ))}
+      {sortedTags.map(tag => (
+        <TagItem
+          onClick={handleTagClick(tag.id, tag.name)}
+          key={tag.id}
+          label={tag.name}
+          important={tag.important}
+          classes={{ container: classes.tagItem }}
+        />
+      ))}
     </>
   );
 };

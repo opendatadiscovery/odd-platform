@@ -671,8 +671,9 @@ public class DataEntityRepositoryImpl
 
     @Override
     public void setInternalName(final long dataEntityId, final String businessName) {
+        final String newBusinessName = businessName != null && businessName.isEmpty() ? null : businessName;
         dslContext.update(DATA_ENTITY)
-            .set(DATA_ENTITY.INTERNAL_NAME, businessName)
+            .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .execute();
     }
@@ -777,7 +778,8 @@ public class DataEntityRepositoryImpl
             .join(DATA_ENTITY_SUBTYPE).on(deCte.field(DATA_ENTITY.SUBTYPE_ID).eq(DATA_ENTITY_SUBTYPE.ID))
             .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .groupBy(selectFields)
-            .orderBy(ftsRanking(deCte.field(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR), query))
+            .orderBy(ftsRanking(deCte.field(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR), query),
+                deCte.field(DATA_ENTITY.INTERNAL_NAME), deCte.field(DATA_ENTITY.EXTERNAL_NAME))
             .fetchStream()
             .map(this::mapDtoRecord)
             .collect(Collectors.toList());

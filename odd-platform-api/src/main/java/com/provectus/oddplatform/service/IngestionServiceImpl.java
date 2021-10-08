@@ -41,6 +41,7 @@ import com.provectus.oddplatform.repository.DatasetVersionRepository;
 import com.provectus.oddplatform.repository.LineageRepository;
 import com.provectus.oddplatform.repository.MetadataFieldRepository;
 import com.provectus.oddplatform.repository.MetadataFieldValueRepository;
+import com.provectus.oddplatform.service.metric.MetricService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -89,6 +90,8 @@ public class IngestionServiceImpl implements IngestionService {
     private final DatasetFieldMapper datasetFieldMapper;
     private final DataEntityTaskRunMapper dataEntityTaskRunMapper;
 
+    private final MetricService metricService;
+
     @Override
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
         return fetchDataSourceId(dataEntityList.getDataSourceOddrn())
@@ -109,6 +112,7 @@ public class IngestionServiceImpl implements IngestionService {
                 alertRepository.createAlerts(alerts);
                 return dataStructure;
             })
+            .flatMap(metricService::exportMetrics)
             .then();
     }
 
@@ -143,14 +147,16 @@ public class IngestionServiceImpl implements IngestionService {
             .map(existingDto -> {
                 final DataEntityPojo existingPojo = existingDtoDict.get(existingDto.getOddrn());
 
-                return existingDto.getUpdatedAt() == null || isEntityUpdated(existingDto, existingPojo)
-                    ? new EnrichedDataEntityIngestionDto(existingPojo.getId(), existingDto)
-                    : null;
+                return new EnrichedDataEntityIngestionDto(
+                    existingPojo.getId(),
+                    existingDto,
+                    existingDto.getUpdatedAt() == null || isEntityUpdated(existingDto, existingPojo)
+                );
             })
-            .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
         dataEntityRepository.bulkUpdate(enrichedExistingDtos.stream()
+            .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .map(ingestionMapper::ingestDtoToDto)
             .collect(Collectors.toList()));
 
@@ -158,7 +164,9 @@ public class IngestionServiceImpl implements IngestionService {
             .bulkCreate(ingestionMapper.ingestDtoToDto(dtoPartitions.get(false)))
             .stream()
             .map(d -> new EnrichedDataEntityIngestionDto(
-                d.getDataEntity().getId(), dtoDict.get(d.getDataEntity().getOddrn())))
+                d.getDataEntity().getId(),
+                dtoDict.get(d.getDataEntity().getOddrn()))
+            )
             .collect(Collectors.toList());
 
         final List<IngestionTaskRun> taskRuns = dataEntityList.getItems().stream()
@@ -245,13 +253,9 @@ public class IngestionServiceImpl implements IngestionService {
                     final DatasetRevisionPojo existingRevision = drRecords.get(e.getId());
                     if (existingRevision == null) {
                         log.error("There's no DatasetRevision for existing {}", e.getOddrn());
-                        return null;
                     }
 
-                    if (Objects.equals(existingRevision.getRowsCount(), e.getDataSet().getRowsCount())
-                        && e.getUpdatedAt() != null
-                        && Objects.equals(existingRevision.getUpdatedAt(),
-                        e.getUpdatedAt().toLocalDateTime())) {
+                    if (equalRevisions(e, existingRevision)) {
                         return null;
                     }
 
@@ -297,11 +301,13 @@ public class IngestionServiceImpl implements IngestionService {
     private Mono<List<DatasetStructurePojo>> ingestExistingDatasetStructure(final IngestionDataStructure split) {
         final Map<String, EnrichedDataEntityIngestionDto> datasetDict = split.getExistingEntities().stream()
             .filter(e -> e.getTypes().contains(DATA_SET))
+            .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .collect(Collectors.toMap(EnrichedDataEntityIngestionDto::getOddrn, identity()));
 
         final Set<Long> datasetIds = split.getExistingEntities()
             .stream()
             .filter(e -> e.getTypes().contains(DATA_SET))
+            .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .map(EnrichedDataEntityIngestionDto::getId)
             .collect(Collectors.toSet());
 
@@ -322,10 +328,10 @@ public class IngestionServiceImpl implements IngestionService {
             .map(t -> datasetStructureRepository.bulkCreate(t.getT1(), t.getT2()));
     }
 
-    private Mono<Integer> ingestMetadata(final IngestionDataStructure split) {
+    private Mono<Integer> ingestMetadata(final IngestionDataStructure dataStructure) {
         final HashMap<MetadataFieldKey, Map<Long, Object>> allMetadata = new HashMap<>();
 
-        for (final EnrichedDataEntityIngestionDto entity : split.getAllEntities()) {
+        for (final EnrichedDataEntityIngestionDto entity : dataStructure.getAllEntities()) {
             if (entity.getMetadata() == null) {
                 continue;
             }
@@ -340,7 +346,7 @@ public class IngestionServiceImpl implements IngestionService {
                     : MetadataFieldKey.MetadataTypeEnum.getMetadataType(mfValue.getClass());
 
                 if (fieldType.equals(MetadataFieldKey.MetadataTypeEnum.UNKNOWN)) {
-                    log.error("Unknown metadata field: {}, {}, {}", mfName, mfValue, fieldType);
+                    log.warn("Unknown metadata field: {}, {}, {}", mfName, mfValue, fieldType);
                     return;
                 }
 
@@ -356,7 +362,7 @@ public class IngestionServiceImpl implements IngestionService {
             });
         }
 
-        final Mono<Map<MetadataBinding, MetadataFieldValuePojo>> mfvAll = Mono.just(split.getAllIds())
+        final Mono<Map<MetadataBinding, MetadataFieldValuePojo>> mfvAll = Mono.just(dataStructure.getAllIds())
             .map(metadataFieldValueRepository::listByDataEntityIds)
             .map(mfList -> mfList
                 .stream()
@@ -529,6 +535,14 @@ public class IngestionServiceImpl implements IngestionService {
 
     private boolean isEntityUpdated(final DataEntityIngestionDto dto, final DataEntityPojo dePojo) {
         return !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
+    }
+
+    private boolean equalRevisions(final EnrichedDataEntityIngestionDto dto,
+                                   final DatasetRevisionPojo existingRevision) {
+        return existingRevision != null
+            && Objects.equals(existingRevision.getRowsCount(), dto.getDataSet().getRowsCount())
+            && dto.getUpdatedAt() != null
+            && Objects.equals(existingRevision.getUpdatedAt(), dto.getUpdatedAt().toLocalDateTime());
     }
 
     private DatasetVersionPojo mapNewDatasetVersion(final EnrichedDataEntityIngestionDto entity) {
