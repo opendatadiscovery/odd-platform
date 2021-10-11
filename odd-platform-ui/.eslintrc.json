@@ -44,7 +44,8 @@
         "OutlinedTextField",
         "FormProvider",
         "li",
-        "AppSvgIcon"
+        "AppSvgIcon",
+        "AppTextField"
       ]
     }]
   },

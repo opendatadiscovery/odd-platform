@@ -3,7 +3,10 @@ import { IconButtonProps } from '@mui/material';
 import { IconButtonColors, StyledIconButton } from './AppIconButtonStyles';
 
 interface AppIconButtonProps
-  extends Omit<IconButtonProps, 'color' | 'size'> {
+  extends Pick<
+    IconButtonProps,
+    'onClick' | 'sx' | 'ref' | 'edge' | 'disabled'
+  > {
   size?: 'medium' | 'small';
   color: IconButtonColors;
   icon: React.ReactNode;
@@ -15,15 +18,18 @@ const AppIconButton: React.FC<AppIconButtonProps> = ({
   color,
   icon,
   open,
-  ...props
+  onClick,
+  sx,
+  disabled,
 }) => (
   <StyledIconButton
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
     $color={color}
     $open={open}
     disableRipple
     size={size}
+    onClick={onClick}
+    sx={sx}
+    disabled={disabled}
   >
     {icon}
   </StyledIconButton>

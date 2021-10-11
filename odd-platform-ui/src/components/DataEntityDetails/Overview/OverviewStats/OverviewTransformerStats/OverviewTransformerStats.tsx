@@ -61,7 +61,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         {sources?.map(source => (
           <AppButton
             key={source.id}
-            size="small"
+            size="medium"
             color="tertiary"
             sx={{ my: 0.25 }}
           >
@@ -103,7 +103,12 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         className={classes.refs}
       >
         {targets?.map(target => (
-          <AppButton key={target.id} size="small" color="tertiary">
+          <AppButton
+            key={target.id}
+            sx={{ my: 0.25 }}
+            size="medium"
+            color="tertiary"
+          >
             <Link to={dataEntityDetailsPath(target.id)}>
               {target.internalName || target.externalName}
             </Link>

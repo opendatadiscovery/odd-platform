@@ -52,7 +52,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             {datasetsList?.map(dataset => (
               <AppButton
                 key={dataset.id}
-                sx={{ mt: 0.25, mb: 0.25 }}
+                sx={{ my: 0.25 }}
                 size="medium"
                 color="tertiary"
               >
@@ -71,11 +71,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
           <Grid item>
             {suiteUrl ? (
-              <AppButton
-                sx={{ mt: 0.25, mb: 0.25 }}
-                size="medium"
-                color="tertiary"
-              >
+              <AppButton sx={{ my: 0.25 }} size="medium" color="tertiary">
                 <Link to={{ pathname: suiteUrl }} target="_blank">
                   {suiteName || suiteUrl}
                 </Link>

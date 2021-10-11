@@ -127,13 +127,11 @@ const Overview: React.FC<OverviewProps> = ({
               <Grid container justifyContent="space-between">
                 <Typography variant="subtitle1">Alerts</Typography>
                 <Link to={alertsPath()}>
-                  <AppButton
-                    size="small"
-                    color="dropdown"
-                    className={classes.showAllAlerts}
-                  >
-                    See All
-                  </AppButton>
+                  <div className={classes.showAllAlerts}>
+                    <AppButton size="small" color="dropdown">
+                      See All
+                    </AppButton>
+                  </div>
                 </Link>
               </Grid>
               <Grid container className={classes.alerts}>

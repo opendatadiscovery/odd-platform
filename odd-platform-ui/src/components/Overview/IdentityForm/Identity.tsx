@@ -280,7 +280,7 @@ const Identity: React.FC<IdentityProps> = ({
               )}
             />
             <AppButton
-              className={classes.submitBtn}
+              sx={{ mt: 2 }}
               size="large"
               color="primary"
               type="submit"

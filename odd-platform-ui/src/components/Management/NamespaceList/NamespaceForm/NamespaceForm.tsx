@@ -7,10 +7,9 @@ import {
   NamespaceApiCreateNamespaceRequest,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
-import { InputAdornment, TextField, Typography } from '@mui/material';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { StylesType } from './NamespaceFormStyles';
 
 interface NamespaceFormProps extends StylesType {
@@ -91,23 +90,13 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
         defaultValue={namespace?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
             fullWidth
+            size="medium"
             placeholder="Namespace Name"
-            variant="outlined"
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppIconButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => field.onChange('')}
-                  />
-                </InputAdornment>
-              ),
-            }}
+            defaultEndAdornmentCondition={!!field.value}
+            defaultEndAdornmentOnClick={() => field.onChange('')}
           />
         )}
       />

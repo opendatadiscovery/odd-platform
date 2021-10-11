@@ -53,7 +53,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
         {inputs?.map(input => (
           <AppButton
             key={input.id}
-            className={classes.refItem}
+            sx={{ my: 0.25 }}
             size="small"
             color="tertiary"
             onClick={() => {}}

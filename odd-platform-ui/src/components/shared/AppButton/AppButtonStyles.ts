@@ -1,6 +1,5 @@
 import { styled } from '@mui/material/styles';
-import { buttonClasses } from '@mui/material';
-import Button from '@mui/material/Button';
+import { buttonClasses, Button } from '@mui/material';
 import { breakpointDownLgBody2 } from 'theme/typography';
 import { shouldForwardProp } from 'lib/helpers';
 

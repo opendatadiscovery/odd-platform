@@ -5,19 +5,47 @@ import {
   StyledAppButton,
 } from 'components/shared/AppButton/AppButtonStyles';
 
-interface AppButtonProps extends Omit<ButtonProps, 'color'> {
+interface AppButtonProps
+  extends Pick<
+    ButtonProps,
+    | 'size'
+    | 'onClick'
+    | 'sx'
+    | 'startIcon'
+    | 'endIcon'
+    | 'fullWidth'
+    | 'disabled'
+    | 'type'
+    | 'form'
+  > {
   color: ButtonColors;
 }
 
 const AppButton: React.FC<AppButtonProps> = ({
   children,
   color,
-  ...props
+  size,
+  onClick,
+  sx,
+  startIcon,
+  endIcon,
+  fullWidth,
+  disabled,
+  type,
+  form,
 }) => (
   <StyledAppButton
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    {...props}
     $color={color}
+    disableRipple
+    size={size}
+    onClick={onClick}
+    sx={sx}
+    startIcon={startIcon}
+    endIcon={endIcon}
+    fullWidth={fullWidth}
+    disabled={disabled}
+    type={type}
+    form={form}
   >
     {children}
   </StyledAppButton>

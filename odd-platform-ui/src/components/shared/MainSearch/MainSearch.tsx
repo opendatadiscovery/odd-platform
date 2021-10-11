@@ -1,14 +1,6 @@
 import React from 'react';
 import cx from 'classnames';
-import {
-  Autocomplete,
-  CircularProgress,
-  IconButton,
-  InputAdornment,
-  TextField,
-  Typography,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { Autocomplete, Typography } from '@mui/material';
 import { Link, useHistory } from 'react-router-dom';
 import {
   DataEntityRef,
@@ -20,6 +12,7 @@ import { dataEntityDetailsPath, searchPath } from 'lib/paths';
 import { StylesType } from 'components/shared/MainSearch/MainSearchStyles';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { useDebouncedCallback } from 'use-debounce/lib';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 
 interface AppSearchProps extends StylesType {
   className?: string;
@@ -136,38 +129,20 @@ const MainSearch: React.FC<AppSearchProps> = ({
           }}
           freeSolo
           renderInput={params => (
-            <TextField
+            <AppTextField
               {...params}
+              ref={params.InputProps.ref}
+              fullWidth
+              size="large"
               placeholder={
                 placeholder ||
                 'Search data tables, feature groups, jobs and ML models via keywords'
               }
-              InputProps={{
-                ...params.InputProps,
-                disableUnderline: true,
-                classes: {
-                  root: classes.inputInput,
-                },
-                startAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      disableRipple
-                      onClick={createSearch}
-                      size="large"
-                    >
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <>
-                    {loadingSuggestions ? (
-                      <CircularProgress color="inherit" size={20} />
-                    ) : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                ),
-              }}
+              defaultStartAdornmentCondition
+              defaultStartAdornmentOnClick={createSearch}
+              defaultEndAdornmentCondition={!!searchText}
+              defaultEndAdornmentOnClick={() => setSearchText('')}
+              loaderCondition={loadingSuggestions}
               onKeyDown={handleKeyDown}
             />
           )}

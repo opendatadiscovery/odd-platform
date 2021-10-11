@@ -221,5 +221,12 @@ export const palette = createPalette({
     open: { background: colors.red10, border: colors.red20 },
     resolved: { background: colors.blue10, border: colors.blue20 },
   },
+  textField: {
+    normal: { border: colors.black20, background: colors.white },
+    hover: { border: colors.black50, color: colors.blue60 },
+    active: { border: colors.blue50 },
+    error: { border: colors.red50 },
+    disabled: { border: colors.black10 },
+  },
   background: { default: colors.white },
 });

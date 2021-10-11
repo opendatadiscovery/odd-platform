@@ -11,10 +11,11 @@ interface ItemColors {
   color?: string;
 }
 
-interface ButtonTypeCondition {
+interface ItemCondition {
   normal: ItemColors;
   hover: ItemColors;
   active: ItemColors;
+  error?: ItemColors;
   disabled?: ItemColors;
 }
 
@@ -48,15 +49,15 @@ interface TextType {
 }
 
 interface ButtonType {
-  primary: ButtonTypeCondition;
-  primaryLight: ButtonTypeCondition;
-  secondary: ButtonTypeCondition;
-  tertiary: ButtonTypeCondition;
-  dropdown: ButtonTypeCondition;
-  expand: ButtonTypeCondition;
-  expandText: ButtonTypeCondition;
-  unfilled: ButtonTypeCondition;
-  collapse: ButtonTypeCondition;
+  primary: ItemCondition;
+  primaryLight: ItemCondition;
+  secondary: ItemCondition;
+  tertiary: ItemCondition;
+  dropdown: ItemCondition;
+  expand: ItemCondition;
+  expandText: ItemCondition;
+  unfilled: ItemCondition;
+  collapse: ItemCondition;
 }
 
 interface BackgroundType extends TypeBackground {
@@ -66,8 +67,8 @@ interface BackgroundType extends TypeBackground {
 }
 
 interface TagType {
-  main: ButtonTypeCondition;
-  important: ButtonTypeCondition;
+  main: ItemCondition;
+  important: ItemCondition;
 }
 
 interface AlertType {
@@ -86,6 +87,7 @@ declare module '@mui/material/styles' {
     alert: AlertType;
     backgrounds: Partial<BackgroundType>;
     texts: TextType;
+    textField: ItemCondition;
   }
   interface PaletteOptions {
     entityType?: EntityType;
@@ -97,5 +99,6 @@ declare module '@mui/material/styles' {
     alert?: AlertType;
     backgrounds?: Partial<BackgroundType>;
     texts?: TextType;
+    textField?: ItemCondition;
   }
 }
