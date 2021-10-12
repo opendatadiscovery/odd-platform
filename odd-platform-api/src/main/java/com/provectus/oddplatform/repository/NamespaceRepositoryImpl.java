@@ -71,7 +71,8 @@ public class NamespaceRepositoryImpl
             .from(NAMESPACE)
             .join(DATA_SOURCE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
             .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
-            .where(NAMESPACE.ID.eq(namespaceId));
+            .where(NAMESPACE.ID.eq(namespaceId))
+            .and(NAMESPACE.IS_DELETED.isFalse());
 
         jooqFTSHelper.buildSearchEntrypointUpsert(
             vectorSelect,

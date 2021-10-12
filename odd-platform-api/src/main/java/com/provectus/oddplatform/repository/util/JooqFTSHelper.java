@@ -146,7 +146,7 @@ public class JooqFTSHelper {
             final String remappedFieldWeight = WEIGHTS.get(remappedField);
 
             if (remappedFieldWeight == null) {
-                log.warn("Couldn't find weight for the remapped field {} nor the original {}",
+                log.warn("Couldn't find weight neither for the remapped field {} nor the original {}",
                     remappedField, field);
                 return null;
             }

@@ -156,7 +156,7 @@ public class LabelRepositoryImpl
             labelName
         );
 
-        final SelectOnConditionStep<Record> vectorSelect = dslContext
+        final SelectConditionStep<Record> vectorSelect = dslContext
             .select(vectorFields)
             .select(deId)
             .from(subquery)
@@ -166,7 +166,8 @@ public class LabelRepositoryImpl
             .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID));
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
+            .where(LABEL.IS_DELETED.isFalse());
 
         jooqFTSHelper.buildSearchEntrypointUpsert(
             vectorSelect,

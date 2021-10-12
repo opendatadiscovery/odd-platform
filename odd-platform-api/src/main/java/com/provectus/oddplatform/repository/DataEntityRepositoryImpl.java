@@ -737,7 +737,8 @@ public class DataEntityRepositoryImpl
             .join(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
-            .where(DATA_ENTITY.ID.in(dataEntityIds));
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(TAG.IS_DELETED.isFalse());
 
         jooqFTSHelper
             .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.TAG_VECTOR, true)
@@ -756,7 +757,8 @@ public class DataEntityRepositoryImpl
             .from(NAMESPACE)
             .join(DATA_SOURCE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
             .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
-            .where(DATA_ENTITY.ID.in(dataEntityIds));
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(NAMESPACE.IS_DELETED.isFalse());
 
         jooqFTSHelper
             .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.NAMESPACE_VECTOR)
@@ -774,7 +776,8 @@ public class DataEntityRepositoryImpl
             .select(vectorFields)
             .from(DATA_SOURCE)
             .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
-            .where(DATA_ENTITY.ID.in(dataEntityIds));
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(DATA_SOURCE.IS_DELETED.isFalse());
 
         jooqFTSHelper
             .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.DATA_SOURCE_VECTOR)
@@ -797,7 +800,8 @@ public class DataEntityRepositoryImpl
             .join(METADATA_FIELD_VALUE).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
-            .where(DATA_ENTITY.ID.in(dataEntityIds));
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(METADATA_FIELD.IS_DELETED.isFalse());
 
         jooqFTSHelper
             .buildSearchEntrypointUpsert(select, deId, fields, SEARCH_ENTRYPOINT.METADATA_VECTOR, true)
@@ -914,7 +918,7 @@ public class DataEntityRepositoryImpl
             labelName
         );
 
-        final SelectOnConditionStep<Record> vectorSelect = dslContext
+        final SelectConditionStep<Record> vectorSelect = dslContext
             .select(vectorFields)
             .select(deId)
             .from(subquery)
@@ -924,7 +928,8 @@ public class DataEntityRepositoryImpl
             .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID));
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
+            .where(LABEL.IS_DELETED.isFalse());
 
         jooqFTSHelper.buildSearchEntrypointUpsert(
             vectorSelect,
