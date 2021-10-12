@@ -44,7 +44,11 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setPullingInterval(form.getPullingInterval())
             .setActive(form.getActive());
 
-        return new DataSourceDto(dataSourcePojo, pojo.getNamespace());
+        final NamespacePojo namespace = StringUtils.hasLength(form.getNamespaceName())
+            ? new NamespacePojo().setName(form.getNamespaceName())
+            : null;
+
+        return new DataSourceDto(dataSourcePojo, namespace);
     }
 
     @Override

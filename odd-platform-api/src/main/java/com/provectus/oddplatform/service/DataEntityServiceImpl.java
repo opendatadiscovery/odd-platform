@@ -163,6 +163,7 @@ public class DataEntityServiceImpl
 
     @Override
     // TODO: refactor
+    // TODO: fix non-transactional update of search entrypoint
     public Mono<MetadataFieldValueList> createMetadata(final long dataEntityId,
                                                        final List<MetadataObject> metadataList) {
         return Mono.just(metadataList)
@@ -208,7 +209,7 @@ public class DataEntityServiceImpl
                     })
                     .collect(Collectors.toList());
 
-                entityRepository.recalculateSearchEntrypoints(dataEntityId);
+                entityRepository.calculateMetadataVectors(List.of(dataEntityId));
                 return new MetadataFieldValueList().items(fields);
             });
     }
@@ -225,7 +226,6 @@ public class DataEntityServiceImpl
                                                        final InternalDescriptionFormData formData) {
         return Mono.just(formData.getInternalDescription()).map(d -> {
             entityRepository.setDescription(dataEntityId, d);
-            entityRepository.recalculateSearchEntrypoints(dataEntityId);
             return new InternalDescription().internalDescription(d);
         });
     }
@@ -236,12 +236,13 @@ public class DataEntityServiceImpl
         return Mono.just(formData.getInternalName())
             .map(name -> {
                 entityRepository.setInternalName(dataEntityId, name);
-                entityRepository.recalculateSearchEntrypoints(dataEntityId);
                 return new InternalName().internalName(name);
             });
     }
 
     @Override
+    // TODO: refactor
+    // TODO: fix non-transactional update of search entrypoint and Tag CRUD
     public Flux<Tag> upsertTags(final long dataEntityId, final DataEntityTagsFormData formData) {
         final Set<String> names = new HashSet<>(formData.getTagNameList());
 
@@ -281,7 +282,7 @@ public class DataEntityServiceImpl
 
                 tagRepository.createRelations(dataEntityId, toRelate);
 
-                entityRepository.recalculateSearchEntrypoints(dataEntityId);
+                entityRepository.calculateTagVectors(List.of(dataEntityId));
 
                 return Stream
                     .concat(tagToCreate.stream(), existingTags.stream())
@@ -292,6 +293,7 @@ public class DataEntityServiceImpl
 
     @Override
     // TODO: refactor
+    // TODO: fix non-transactional update of search entrypoint
     public Mono<MetadataFieldValue> upsertMetadataFieldValue(final long dataEntityId,
                                                              final long metadataFieldId,
                                                              final MetadataFieldValueUpdateFormData formData) {
@@ -308,7 +310,7 @@ public class DataEntityServiceImpl
 
                 final MetadataFieldValuePojo enrichedPojo = metadataFieldValueRepository.update(pojo);
 
-                entityRepository.recalculateSearchEntrypoints(dataEntityId);
+                entityRepository.calculateMetadataVectors(List.of(dataEntityId));
 
                 return Mono.just(new MetadataFieldValue()
                     .field(metadataFieldMapper.mapPojo(metadataFieldPojo.get()))

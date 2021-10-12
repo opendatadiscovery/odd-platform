@@ -83,7 +83,15 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     void calculateSearchEntrypoints(final Collection<Long> dataEntityIds);
 
-    void recalculateSearchEntrypoints(final long dataEntityId);
+    void calculateDataEntityVectors(final Collection<Long> ids);
+
+    void calculateTagVectors(final Collection<Long> ids);
+
+    void calculateNamespaceVectors(final Collection<Long> ids);
+
+    void calculateDataSourceVectors(final Collection<Long> ids);
+
+    void calculateMetadataVectors(final Collection<Long> ids);
 
     List<DataEntityDto> getQuerySuggestions(final String query);
 }

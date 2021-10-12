@@ -7,10 +7,12 @@ import com.provectus.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import com.provectus.oddplatform.dto.DataSourceDto;
 import com.provectus.oddplatform.mapper.DataSourceMapper;
 import com.provectus.oddplatform.repository.DataSourceRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 @Service
+@Slf4j
 public class DataSourceServiceImpl
     extends
     AbstractCRUDService<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData,

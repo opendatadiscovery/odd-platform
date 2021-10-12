@@ -31,6 +31,7 @@ public class LabelServiceImpl
     }
 
     @Override
+    // TODO: fix non-transactional Label CRUD
     public Flux<Label> bulkCreate(final List<LabelFormData> forms) {
         final List<String> names = forms.stream().map(LabelFormData::getName).collect(Collectors.toList());
 
