@@ -66,6 +66,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.CommonTableExpression;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -88,7 +89,6 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import static com.provectus.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
 import static com.provectus.oddplatform.dto.LineageStreamKind.UPSTREAM;
@@ -321,7 +321,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(SEARCH_ENTRYPOINT)
             .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
 
-        if (StringUtils.hasLength(state.getQuery())) {
+        if (StringUtils.isEmpty(state.getQuery())) {
             select = select.and(ftsCondition(state.getQuery()));
         }
 
@@ -333,7 +333,7 @@ public class DataEntityRepositoryImpl
         }
 
         return select
-            .where(DATA_ENTITY_SUBTYPE.NAME.containsIgnoreCase(StringUtils.hasLength(facetQuery) ? facetQuery : ""))
+            .where(DATA_ENTITY_SUBTYPE.NAME.containsIgnoreCase(StringUtils.isEmpty(facetQuery) ? facetQuery : ""))
             .and(TYPE_SUBTYPE_RELATION.TYPE_ID.eq(selectedType))
             .groupBy(DATA_ENTITY_SUBTYPE.ID, DATA_ENTITY_SUBTYPE.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
@@ -353,7 +353,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(OWNERSHIP).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(OWNERSHIP.DATA_ENTITY_ID));
 
-        if (StringUtils.hasLength(state.getQuery())) {
+        if (StringUtils.isEmpty(state.getQuery())) {
             select = select.and(ftsCondition(state.getQuery()));
         }
 
@@ -380,7 +380,7 @@ public class DataEntityRepositoryImpl
         }
 
         return select
-            .where(OWNER.NAME.containsIgnoreCase((StringUtils.hasLength(facetQuery) ? facetQuery : "")))
+            .where(OWNER.NAME.containsIgnoreCase((StringUtils.isEmpty(facetQuery) ? facetQuery : "")))
             .and(OWNER.IS_DELETED.isFalse())
             .groupBy(OWNER.ID, OWNER.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
@@ -400,7 +400,7 @@ public class DataEntityRepositoryImpl
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID));
 
-        if (StringUtils.hasLength(state.getQuery())) {
+        if (StringUtils.isEmpty(state.getQuery())) {
             select = select.and(ftsCondition(state.getQuery()));
         }
 
@@ -427,7 +427,7 @@ public class DataEntityRepositoryImpl
         }
 
         return select
-            .where(TAG.NAME.containsIgnoreCase(StringUtils.hasLength(facetQuery) ? facetQuery : ""))
+            .where(TAG.NAME.containsIgnoreCase(StringUtils.isEmpty(facetQuery) ? facetQuery : ""))
             .and(TAG.IS_DELETED.isFalse())
             .groupBy(TAG.ID, TAG.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
@@ -453,7 +453,7 @@ public class DataEntityRepositoryImpl
             .where(facetStateConditions(state, true, true))
             .and(DATA_ENTITY.HOLLOW.isFalse());
 
-        if (StringUtils.hasLength(state.getQuery())) {
+        if (StringUtils.isEmpty(state.getQuery())) {
             select = select.and(ftsCondition(state.getQuery()));
         }
 
@@ -482,7 +482,7 @@ public class DataEntityRepositoryImpl
             .where(facetStateConditions(state, true, true))
             .and(DATA_ENTITY.HOLLOW.isFalse());
 
-        if (StringUtils.hasLength(state.getQuery())) {
+        if (StringUtils.isEmpty(state.getQuery())) {
             query = query.and(ftsCondition(state.getQuery()));
         }
 
@@ -646,7 +646,7 @@ public class DataEntityRepositoryImpl
             .cteSelectConditions(conditionsPair.getLeft())
             .joinSelectConditions(joinConditions);
 
-        if (StringUtils.hasLength(state.getQuery())) {
+        if (StringUtils.isEmpty(state.getQuery())) {
             builder = builder.fts(
                 new DataEntitySelectConfig.Fts(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR, state.getQuery()));
         }
@@ -806,6 +806,10 @@ public class DataEntityRepositoryImpl
 
     @Override
     public List<DataEntityDto> getQuerySuggestions(final String query) {
+        if (StringUtils.isEmpty(query)) {
+            return emptyList();
+        }
+
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
 
         final Field<?> searchVectorAlias = field("sv_alias", Object.class);
