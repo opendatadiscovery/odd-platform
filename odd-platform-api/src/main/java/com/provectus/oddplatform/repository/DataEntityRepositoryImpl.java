@@ -39,8 +39,7 @@ import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.model.tables.pojos.TypeEntityRelationPojo;
 import com.provectus.oddplatform.model.tables.records.DataEntityRecord;
 import com.provectus.oddplatform.model.tables.records.LineageRecord;
-import com.provectus.oddplatform.model.tables.records.SearchEntrypointRecord;
-import com.provectus.oddplatform.repository.util.JooqFTSVectorizer;
+import com.provectus.oddplatform.repository.util.JooqFTSHelper;
 import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import com.provectus.oddplatform.repository.util.JooqRecordHelper;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
@@ -67,6 +66,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.CommonTableExpression;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -89,16 +89,19 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import static com.provectus.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
 import static com.provectus.oddplatform.dto.LineageStreamKind.UPSTREAM;
 import static com.provectus.oddplatform.model.Tables.ALERT;
+import static com.provectus.oddplatform.model.Tables.DATASET_FIELD;
+import static com.provectus.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static com.provectus.oddplatform.model.Tables.DATASET_VERSION;
 import static com.provectus.oddplatform.model.Tables.DATA_ENTITY;
 import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
 import static com.provectus.oddplatform.model.Tables.DATA_ENTITY_TYPE;
 import static com.provectus.oddplatform.model.Tables.DATA_SOURCE;
+import static com.provectus.oddplatform.model.Tables.LABEL;
+import static com.provectus.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static com.provectus.oddplatform.model.Tables.LINEAGE;
 import static com.provectus.oddplatform.model.Tables.METADATA_FIELD;
 import static com.provectus.oddplatform.model.Tables.METADATA_FIELD_VALUE;
@@ -121,6 +124,7 @@ import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
+import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.val;
 
@@ -167,20 +171,20 @@ public class DataEntityRepositoryImpl
     public static final TypeReference<Map<String, ?>> SPECIFIC_ATTRIBUTES_TYPE_REFERENCE = new TypeReference<>() {
     };
 
-    private final JooqFTSVectorizer vectorizer;
+    private final JooqFTSHelper jooqFTSHelper;
     private final JooqRecordHelper jooqRecordHelper;
     private final TypeEntityRelationRepository typeEntityRelationRepository;
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
 
     public DataEntityRepositoryImpl(final DSLContext dslContext,
                                     final JooqQueryHelper jooqQueryHelper,
-                                    final JooqFTSVectorizer vectorizer,
+                                    final JooqFTSHelper jooqFTSHelper,
                                     final JooqRecordHelper jooqRecordHelper,
                                     final TypeEntityRelationRepository typeEntityRelationRepository,
                                     final DataEntityTaskRunRepository dataEntityTaskRunRepository) {
         super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null, DataEntityDimensionsDto.class);
 
-        this.vectorizer = vectorizer;
+        this.jooqFTSHelper = jooqFTSHelper;
         this.jooqRecordHelper = jooqRecordHelper;
         this.typeEntityRelationRepository = typeEntityRelationRepository;
         this.dataEntityTaskRunRepository = dataEntityTaskRunRepository;
@@ -317,8 +321,8 @@ public class DataEntityRepositoryImpl
             .leftJoin(SEARCH_ENTRYPOINT)
             .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
 
-        if (StringUtils.hasLength(state.getQuery())) {
-            select = select.and(ftsCondition(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR, state));
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            select = select.and(ftsCondition(state.getQuery()));
         }
 
         final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
@@ -329,7 +333,7 @@ public class DataEntityRepositoryImpl
         }
 
         return select
-            .where(DATA_ENTITY_SUBTYPE.NAME.containsIgnoreCase(StringUtils.hasLength(facetQuery) ? facetQuery : ""))
+            .where(DATA_ENTITY_SUBTYPE.NAME.containsIgnoreCase(StringUtils.isNotEmpty(facetQuery) ? facetQuery : ""))
             .and(TYPE_SUBTYPE_RELATION.TYPE_ID.eq(selectedType))
             .groupBy(DATA_ENTITY_SUBTYPE.ID, DATA_ENTITY_SUBTYPE.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
@@ -349,8 +353,8 @@ public class DataEntityRepositoryImpl
             .leftJoin(OWNERSHIP).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(OWNERSHIP.DATA_ENTITY_ID));
 
-        if (StringUtils.hasLength(state.getQuery())) {
-            select = select.and(ftsCondition(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR, state));
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            select = select.and(ftsCondition(state.getQuery()));
         }
 
         select = select
@@ -376,7 +380,7 @@ public class DataEntityRepositoryImpl
         }
 
         return select
-            .where(OWNER.NAME.containsIgnoreCase((StringUtils.hasLength(facetQuery) ? facetQuery : "")))
+            .where(OWNER.NAME.containsIgnoreCase((StringUtils.isNotEmpty(facetQuery) ? facetQuery : "")))
             .and(OWNER.IS_DELETED.isFalse())
             .groupBy(OWNER.ID, OWNER.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
@@ -396,8 +400,8 @@ public class DataEntityRepositoryImpl
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID));
 
-        if (StringUtils.hasLength(state.getQuery())) {
-            select = select.and(ftsCondition(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR, state));
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            select = select.and(ftsCondition(state.getQuery()));
         }
 
         select = select
@@ -423,7 +427,7 @@ public class DataEntityRepositoryImpl
         }
 
         return select
-            .where(TAG.NAME.containsIgnoreCase(StringUtils.hasLength(facetQuery) ? facetQuery : ""))
+            .where(TAG.NAME.containsIgnoreCase(StringUtils.isNotEmpty(facetQuery) ? facetQuery : ""))
             .and(TAG.IS_DELETED.isFalse())
             .groupBy(TAG.ID, TAG.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
@@ -449,8 +453,8 @@ public class DataEntityRepositoryImpl
             .where(facetStateConditions(state, true, true))
             .and(DATA_ENTITY.HOLLOW.isFalse());
 
-        if (StringUtils.hasLength(state.getQuery())) {
-            select = select.and(ftsCondition(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR, state));
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            select = select.and(ftsCondition(state.getQuery()));
         }
 
         return select
@@ -478,8 +482,8 @@ public class DataEntityRepositoryImpl
             .where(facetStateConditions(state, true, true))
             .and(DATA_ENTITY.HOLLOW.isFalse());
 
-        if (StringUtils.hasLength(state.getQuery())) {
-            query = query.and(ftsCondition(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR, state));
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            query = query.and(ftsCondition(state.getQuery()));
         }
 
         if (owner != null) {
@@ -521,6 +525,10 @@ public class DataEntityRepositoryImpl
             .stream()
             .map(String::toLowerCase)
             .collect(Collectors.toSet());
+
+        if (conditionValues.isEmpty()) {
+            return emptyList();
+        }
 
         DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(conditionValues)))
@@ -624,8 +632,8 @@ public class DataEntityRepositoryImpl
                                                      final int page,
                                                      final int size,
                                                      final OwnerPojo owner) {
-        final Pair<List<Condition>, List<Condition>> conditionsPair = resultFacetStateConditions(
-            state, state.isMyObjects());
+        final Pair<List<Condition>, List<Condition>> conditionsPair =
+            resultFacetStateConditions(state, state.isMyObjects());
 
         final List<Condition> joinConditions = new ArrayList<>(conditionsPair.getRight());
 
@@ -638,7 +646,7 @@ public class DataEntityRepositoryImpl
             .cteSelectConditions(conditionsPair.getLeft())
             .joinSelectConditions(joinConditions);
 
-        if (StringUtils.hasLength(state.getQuery())) {
+        if (StringUtils.isNotEmpty(state.getQuery())) {
             builder = builder.fts(
                 new DataEntitySelectConfig.Fts(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR, state.getQuery()));
         }
@@ -662,98 +670,160 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
+    @Transactional
     public void setDescription(final long dataEntityId, final String description) {
         dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_DESCRIPTION, description)
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .execute();
+
+        calculateDataEntityVectors(List.of(dataEntityId));
     }
 
     @Override
+    @Transactional
     public void setInternalName(final long dataEntityId, final String businessName) {
         final String newBusinessName = businessName != null && businessName.isEmpty() ? null : businessName;
         dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .execute();
+
+        calculateDataEntityVectors(List.of(dataEntityId));
     }
 
     @Override
+    @Transactional
     public void calculateSearchEntrypoints(final Collection<Long> dataEntityIds) {
-        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
-            .cteSelectConditions(singletonList(DATA_ENTITY.ID.in(dataEntityIds)))
-            .includeDetails(true)
-            .build();
-
-        final List<DataEntityDetailsDto> dtos = dataEntitySelect(config)
-            .fetchStream()
-            .map(this::mapDetailsRecord)
-            .collect(Collectors.toList());
-
-        final Map<Long, DataEntityDetailsDto> dataMap = enrichDataEntityDetailsDto(dtos)
-            .stream()
-            .collect(Collectors.toMap(dto -> dto.getDataEntity().getId(), identity()));
-
-        final Set<Long> seSet = dslContext.select(SEARCH_ENTRYPOINT.DATA_ENTITY_ID)
-            .from(SEARCH_ENTRYPOINT)
-            .where(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.in(dataEntityIds))
-            .fetchStream()
-            .map(Record1::component1)
-            .collect(Collectors.toSet());
-
-        dslContext.batchUpdate(dataEntityIds
-            .stream()
-            .filter(seSet::contains)
-            .map(dataMap::get)
-            .filter(Objects::nonNull)
-            .map(dto -> new SearchEntrypointRecord()
-                .setDataEntityId(dto.getDataEntity().getId())
-                .setDataEntityVector(vectorizer.toTsVector(dataMap.get(dto.getDataEntity().getId()))))
-            .collect(Collectors.toList())).execute();
-
-        dslContext.batchInsert(dataEntityIds
-            .stream()
-            .filter(not(seSet::contains))
-            .map(dataMap::get)
-            .filter(Objects::nonNull)
-            .map(dto -> new SearchEntrypointRecord()
-                .setDataEntityId(dto.getDataEntity().getId())
-                .setDataEntityVector(vectorizer.toTsVector(dataMap.get(dto.getDataEntity().getId()))))
-            .collect(Collectors.toList())).execute();
+        calculateDataEntityVectors(dataEntityIds);
+        calculateDataSourceVectors(dataEntityIds);
+        calculateNamespaceVectors(dataEntityIds);
+        calculateMetadataVectors(dataEntityIds);
+        calculateStructureVectors(dataEntityIds);
     }
 
     @Override
-    public void recalculateSearchEntrypoints(final long dataEntityId) {
-        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
-            .cteSelectConditions(singletonList(DATA_ENTITY.ID.eq(dataEntityId)))
-            .includeDetails(true)
-            .build();
+    public void calculateDataEntityVectors(final Collection<Long> dataEntityIds) {
+        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
 
-        dataEntitySelect(config)
-            .fetchOptional(this::mapDetailsRecord)
-            .map(this::enrichDataEntityDetailsDto)
-            .map(vectorizer::toTsVector)
-            .ifPresent(tsvector -> dslContext.selectFrom(SEARCH_ENTRYPOINT)
-                .where(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(dataEntityId))
-                .fetchOptional()
-                .map(r -> r.setDataEntityVector(tsvector))
-                .map(dslContext::executeUpdate)
-                .orElseGet(() -> {
-                    log.info("There's no search entrypoint for {} data entity", dataEntityId);
-                    return 0;
-                }));
+        final List<Field<?>> vectorFields = List.of(
+            DATA_ENTITY.EXTERNAL_NAME,
+            DATA_ENTITY.INTERNAL_NAME,
+            DATA_ENTITY.EXTERNAL_DESCRIPTION,
+            DATA_ENTITY.INTERNAL_DESCRIPTION
+        );
+
+        final SelectConditionStep<Record> vectorSelect = dslContext
+            .select(vectorFields)
+            .select(DATA_ENTITY.ID.as(dataEntityId))
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(DATA_ENTITY.HOLLOW.isFalse());
+
+        jooqFTSHelper
+            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR)
+            .execute();
+    }
+
+    @Override
+    public void calculateTagVectors(final Collection<Long> dataEntityIds) {
+        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(TAG.NAME);
+
+        final SelectConditionStep<Record> vectorSelect = dslContext.select(vectorFields)
+            .select(DATA_ENTITY.ID.as(dataEntityId))
+            .from(TAG)
+            .join(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(TAG.IS_DELETED.isFalse());
+
+        jooqFTSHelper
+            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.TAG_VECTOR, true)
+            .execute();
+    }
+
+    @Override
+    public void calculateNamespaceVectors(final Collection<Long> dataEntityIds) {
+        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(NAMESPACE.NAME);
+
+        final SelectConditionStep<Record> vectorSelect = dslContext
+            .select(DATA_ENTITY.ID.as(dataEntityId))
+            .select(vectorFields)
+            .from(NAMESPACE)
+            .join(DATA_SOURCE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(NAMESPACE.IS_DELETED.isFalse());
+
+        jooqFTSHelper
+            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.NAMESPACE_VECTOR)
+            .execute();
+    }
+
+    @Override
+    public void calculateDataSourceVectors(final Collection<Long> dataEntityIds) {
+        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(DATA_SOURCE.NAME, DATA_SOURCE.CONNECTION_URL, DATA_SOURCE.ODDRN);
+
+        final SelectConditionStep<Record> vectorSelect = dslContext
+            .select(DATA_ENTITY.ID.as(dataEntityId))
+            .select(vectorFields)
+            .from(DATA_SOURCE)
+            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(DATA_SOURCE.IS_DELETED.isFalse());
+
+        jooqFTSHelper
+            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.DATA_SOURCE_VECTOR)
+            .execute();
+    }
+
+    @Override
+    public void calculateMetadataVectors(final Collection<Long> dataEntityIds) {
+        final Field<Long> deId = field("data_entity_id", Long.class);
+
+        final List<Field<?>> fields = List.of(
+            METADATA_FIELD.NAME,
+            METADATA_FIELD_VALUE.VALUE
+        );
+
+        final SelectConditionStep<Record> select = dslContext
+            .select(DATA_ENTITY.ID.as(deId))
+            .select(fields)
+            .from(METADATA_FIELD)
+            .join(METADATA_FIELD_VALUE).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .and(METADATA_FIELD.IS_DELETED.isFalse());
+
+        jooqFTSHelper
+            .buildSearchEntrypointUpsert(select, deId, fields, SEARCH_ENTRYPOINT.METADATA_VECTOR, true)
+            .execute();
     }
 
     @Override
     public List<DataEntityDto> getQuerySuggestions(final String query) {
+        if (StringUtils.isEmpty(query)) {
+            return emptyList();
+        }
+
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
+
+        final Field<?> searchVectorAlias = field("sv_alias", Object.class);
 
         final Select<Record> dataEntitySelect = dslContext
             .select(DATA_ENTITY.fields())
-            .select(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR)
+            .select(SEARCH_ENTRYPOINT.SEARCH_VECTOR.as(searchVectorAlias))
             .from(SEARCH_ENTRYPOINT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-            .where(ftsCondition(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR, query))
+            .where(ftsCondition(query))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .limit(SUGGESTION_LIMIT);
 
@@ -778,8 +848,11 @@ public class DataEntityRepositoryImpl
             .join(DATA_ENTITY_SUBTYPE).on(deCte.field(DATA_ENTITY.SUBTYPE_ID).eq(DATA_ENTITY_SUBTYPE.ID))
             .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .groupBy(selectFields)
-            .orderBy(ftsRanking(deCte.field(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR), query),
-                deCte.field(DATA_ENTITY.INTERNAL_NAME), deCte.field(DATA_ENTITY.EXTERNAL_NAME))
+            .orderBy(
+                ftsRanking(searchVectorAlias, query),
+                deCte.field(DATA_ENTITY.INTERNAL_NAME),
+                deCte.field(DATA_ENTITY.EXTERNAL_NAME)
+            )
             .fetchStream()
             .map(this::mapDtoRecord)
             .collect(Collectors.toList());
@@ -819,6 +892,53 @@ public class DataEntityRepositoryImpl
             .upstream(getLineageStream(dtoDict, upstreamRelations))
             .downstream(getLineageStream(dtoDict, downstreamRelations))
             .build();
+    }
+
+    private void calculateStructureVectors(final Collection<Long> dataEntityIds) {
+        final String dsOddrnAlias = "dsv_dataset_oddrn";
+
+        final Field<String> datasetOddrnField = DATASET_VERSION.DATASET_ODDRN.as(dsOddrnAlias);
+        final Field<Long> dsvMaxField = max(DATASET_VERSION.VERSION).as("dsv_max");
+
+        final SelectHavingStep<Record3<Long, String, Long>> subquery = dslContext
+            .select(DATA_ENTITY.ID, datasetOddrnField, dsvMaxField)
+            .from(DATASET_VERSION)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
+            .where(DATA_ENTITY.ID.in(dataEntityIds))
+            .groupBy(DATA_ENTITY.ID, DATASET_VERSION.DATASET_ODDRN);
+
+        final Field<Long> deId = subquery.field(DATA_ENTITY.ID);
+
+        final Field<String> labelName = LABEL.NAME.as("label_name");
+
+        final List<Field<?>> vectorFields = List.of(
+            DATASET_FIELD.NAME,
+            DATASET_FIELD.INTERNAL_DESCRIPTION,
+            DATASET_FIELD.EXTERNAL_DESCRIPTION,
+            labelName
+        );
+
+        final SelectConditionStep<Record> vectorSelect = dslContext
+            .select(vectorFields)
+            .select(deId)
+            .from(subquery)
+            .join(DATASET_VERSION)
+            .on(DATASET_VERSION.DATASET_ODDRN.eq(subquery.field(dsOddrnAlias, String.class)))
+            .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
+            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+            .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
+            .where(LABEL.IS_DELETED.isFalse());
+
+        jooqFTSHelper.buildSearchEntrypointUpsert(
+            vectorSelect,
+            deId,
+            vectorFields,
+            SEARCH_ENTRYPOINT.STRUCTURE_VECTOR,
+            true,
+            Map.of(labelName, LABEL.NAME)
+        ).execute();
     }
 
     private DataEntityLineageStreamDto getLineageStream(final Map<String, DataEntityDimensionsDto> dtoDict,
@@ -897,16 +1017,17 @@ public class DataEntityRepositoryImpl
     @SuppressWarnings("ConstantConditions")
     private SelectLimitStep<Record> dataEntitySelect(final DataEntitySelectConfig config) {
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
+        final Field<?> searchVectorAlias = field("sv_alias");
         final DataEntitySelectConfig.Fts ftsConfig = config.getFts();
 
         Select<Record> dataEntitySelect;
 
         if (ftsConfig != null) {
             dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
-                .select(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR)
+                .select(SEARCH_ENTRYPOINT.SEARCH_VECTOR.as(searchVectorAlias))
                 .from(SEARCH_ENTRYPOINT)
                 .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-                .where(ftsCondition(ftsConfig.getVectorField(), ftsConfig.getQuery()));
+                .where(ftsCondition(ftsConfig.getQuery()));
         } else {
             dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
                 .from(DATA_ENTITY)
@@ -985,7 +1106,7 @@ public class DataEntityRepositoryImpl
             .groupBy(selectFields);
 
         return ftsConfig != null
-            ? groupByStep.orderBy(ftsRanking(deCte.field(ftsConfig.getVectorField()), ftsConfig.getQuery()))
+            ? groupByStep.orderBy(ftsRanking(searchVectorAlias, ftsConfig.getQuery()))
             : groupByStep;
     }
 
@@ -1240,14 +1361,10 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toList());
     }
 
-    private Condition ftsCondition(final Field<?> vectorField, final FacetStateDto state) {
-        return ftsCondition(vectorField, state.getQuery());
-    }
-
-    private Condition ftsCondition(final Field<?> vectorField, final String query) {
+    private Condition ftsCondition(final String query) {
         final Field<Object> conditionField = field(
             "? @@ to_tsquery(?)",
-            vectorField.getQualifiedName(),
+            SEARCH_ENTRYPOINT.SEARCH_VECTOR,
             String.format("%s:*", query)
         );
 
@@ -1259,7 +1376,7 @@ public class DataEntityRepositoryImpl
 
         return field(
             "ts_rank_cd(?, to_tsquery(?))",
-            vectorField.getQualifiedName(),
+            vectorField,
             String.format("%s:*", query)
         ).desc();
     }
