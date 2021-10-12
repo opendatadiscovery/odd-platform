@@ -1363,7 +1363,7 @@ public class DataEntityRepositoryImpl
 
     private Condition ftsCondition(final String query) {
         final Field<Object> conditionField = field(
-            "? @@ to_tsquery(?)",
+            "? @@ plainto_tsquery(?)",
             SEARCH_ENTRYPOINT.SEARCH_VECTOR,
             String.format("%s:*", query)
         );
@@ -1375,7 +1375,7 @@ public class DataEntityRepositoryImpl
         requireNonNull(vectorField);
 
         return field(
-            "ts_rank_cd(?, to_tsquery(?))",
+            "ts_rank_cd(?, plainto_tsquery(?))",
             vectorField,
             String.format("%s:*", query)
         ).desc();
