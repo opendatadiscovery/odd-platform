@@ -9,11 +9,14 @@ public class EnrichedDataEntityIngestionDto extends DataEntityIngestionDto {
     private long id;
     private boolean updated;
 
+    private Boolean datasetSchemaChanged;
+
     public EnrichedDataEntityIngestionDto(final long id, final DataEntityIngestionDto ingestionDto) {
         this(id, ingestionDto, true);
     }
 
-    public EnrichedDataEntityIngestionDto(final long id, final DataEntityIngestionDto ingestionDto,
+    public EnrichedDataEntityIngestionDto(final long id,
+                                          final DataEntityIngestionDto ingestionDto,
                                           final boolean updated) {
         super(ingestionDto.name, ingestionDto.oddrn, ingestionDto.dataSourceId, ingestionDto.externalDescription,
             ingestionDto.createdAt, ingestionDto.updatedAt, ingestionDto.types, ingestionDto.subType,

@@ -54,6 +54,7 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -96,8 +97,14 @@ public class IngestionServiceImpl implements IngestionService {
             .flatMap(this::ingestCompanions)
             .flatMap(this::calculateSearchEntrypoints)
             .map(dataStructure -> {
+                final List<Long> changedSchemaIds = dataStructure.getExistingEntities()
+                    .stream()
+                    .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
+                    .map(EnrichedDataEntityIngestionDto::getId)
+                    .collect(Collectors.toList());
+
                 final Map<String, DatasetStructureDelta> datasetStructureDelta =
-                    datasetVersionRepository.getLastStructureDelta(dataStructure.getExistingIds());
+                    datasetVersionRepository.getLastStructureDelta(changedSchemaIds);
 
                 final List<AlertPojo> alerts = Stream.of(
                     alertLocator.locateDatasetBackIncSchema(datasetStructureDelta),
@@ -383,6 +390,8 @@ public class IngestionServiceImpl implements IngestionService {
             return null;
         }
 
+        dto.setDatasetSchemaChanged(true);
+
         return mapNewDatasetVersion(dto, fetchedVersion.getVersion() + 1);
     }
 
@@ -467,10 +476,10 @@ public class IngestionServiceImpl implements IngestionService {
             .build();
     }
 
-    private Mono<IngestionDataStructure> calculateSearchEntrypoints(final IngestionDataStructure split) {
+    private Mono<IngestionDataStructure> calculateSearchEntrypoints(final IngestionDataStructure dataStructure) {
         return Mono.fromCallable(() -> {
-            dataEntityRepository.calculateSearchEntrypoints(split.getAllIds());
-            return split;
+            dataEntityRepository.calculateSearchEntrypoints(dataStructure.getAllIds());
+            return dataStructure;
         });
     }
 
