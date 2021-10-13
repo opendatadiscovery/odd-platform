@@ -65,7 +65,7 @@ jobs:
         uses: kindaninja/retag-image-ghcr@0.1.0
         if: ${{ github.event.action == 'published' }}
         with:
-          registry: opendatadiscovery
+          registry: opendatadiscovery/odd-platform
           image: odd-platform
           current_tag: ${{ steps.get-version.outputs.version }}
           new_tag: ${{ steps.get-version.outputs.version }}
