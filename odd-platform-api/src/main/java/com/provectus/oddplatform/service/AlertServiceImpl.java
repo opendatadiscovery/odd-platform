@@ -60,8 +60,8 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public Mono<com.provectus.oddplatform.api.contract.model.AlertStatus> updateStatus(final long alertId,
-                                                                                       final AlertStatus alertStatus) {
+    public Mono<AlertStatus> updateStatus(final long alertId,
+                                          final AlertStatus alertStatus) {
         return Mono.fromCallable(() -> {
             alertRepository.updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()));
             return alertStatus;
