@@ -76,10 +76,10 @@ const AlertItem: React.FC<AlertItemProps> = ({
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
-      <Typography variant="body1" noWrap>
-        {alert.statusUpdatedBy?.owner?.name ||
-          alert.statusUpdatedBy?.identity.username}
-      </Typography>
+      {/* <Typography variant="body1" noWrap> */}
+      {/*  {alert.statusUpdatedBy?.owner?.name || */}
+      {/*    alert.statusUpdatedBy?.identity.username} */}
+      {/* </Typography> */}
     </Grid>
     <Grid item className={cx(classes.col, classes.colUpdatedAt)}>
       <Typography variant="body1">
