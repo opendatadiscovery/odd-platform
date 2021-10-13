@@ -1,7 +1,7 @@
 package com.provectus.oddplatform.repository;
 
 import com.provectus.oddplatform.dto.AlertDto;
-import com.provectus.oddplatform.dto.AlertStatus;
+import com.provectus.oddplatform.dto.AlertStatusEnum;
 import com.provectus.oddplatform.dto.DataEntityDto;
 import com.provectus.oddplatform.model.tables.pojos.AlertPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -54,7 +54,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .collect(Collectors.toList());
 
         final List<AlertDto> data = baseAlertSelect(selectFields)
-            .where(ALERT.STATUS.eq(AlertStatus.OPEN.toString()))
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
             .orderBy(ALERT.CREATED_AT.desc())
             .offset((page - 1) * size)
@@ -84,7 +84,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<AlertDto> data = baseAlertSelect(selectFields)
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .where(OWNERSHIP.OWNER_ID.eq(ownerId))
-            .and(ALERT.STATUS.eq(AlertStatus.OPEN.toString()))
+            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
             .orderBy(ALERT.CREATED_AT.desc())
             .offset((page - 1) * size)
@@ -139,7 +139,7 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
-    public void updateAlertStatus(final long alertId, final AlertStatus status) {
+    public void updateAlertStatus(final long alertId, final AlertStatusEnum status) {
         dslContext.update(ALERT)
             .set(ALERT.STATUS, status.toString())
             .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
