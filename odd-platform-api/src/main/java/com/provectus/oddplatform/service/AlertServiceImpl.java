@@ -1,11 +1,10 @@
 package com.provectus.oddplatform.service;
 
 import com.provectus.oddplatform.api.contract.model.AlertList;
-import com.provectus.oddplatform.api.contract.model.AlertStatus;
 import com.provectus.oddplatform.api.contract.model.AlertTotals;
 import com.provectus.oddplatform.api.contract.model.AlertType;
 import com.provectus.oddplatform.auth.AuthIdentityProvider;
-import com.provectus.oddplatform.dto.AlertStatusDto;
+import com.provectus.oddplatform.dto.AlertStatus;
 import com.provectus.oddplatform.dto.ExternalAlert;
 import com.provectus.oddplatform.mapper.AlertMapper;
 import com.provectus.oddplatform.model.tables.pojos.AlertPojo;
@@ -60,9 +59,9 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public Mono<AlertStatus> updateStatus(final long alertId, final AlertStatus alertStatus) {
+    public Mono<com.provectus.oddplatform.api.contract.model.AlertStatus> updateStatus(final long alertId, final com.provectus.oddplatform.api.contract.model.AlertStatus alertStatus) {
         return Mono.fromCallable(() -> {
-            alertRepository.updateAlertStatus(alertId, AlertStatusDto.valueOf(alertStatus.name()));
+            alertRepository.updateAlertStatus(alertId, AlertStatus.valueOf(alertStatus.name()));
             return alertStatus;
         });
     }
@@ -94,7 +93,7 @@ public class AlertServiceImpl implements AlertService {
                 .setType(AlertType.DISTRIBUTION_ANOMALY.getValue())
                 .setDataEntityOddrn(a.getLabels().get("entity_oddrn"))
                 .setDescription(String.format("Distribution Anomaly. URL: %s", queryUrl))
-                .setStatus(AlertStatus.OPEN.getValue());
+                .setStatus(com.provectus.oddplatform.api.contract.model.AlertStatus.OPEN.getValue());
         }).collect(Collectors.toList());
 
         return Mono.fromRunnable(() -> alertRepository.createAlerts(alerts)).then();

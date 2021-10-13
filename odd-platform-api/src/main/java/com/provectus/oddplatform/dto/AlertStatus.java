@@ -1,5 +1,5 @@
 package com.provectus.oddplatform.dto;
 
-public enum AlertStatusDto {
+public enum AlertStatus {
     OPEN, RESOLVED
 }
