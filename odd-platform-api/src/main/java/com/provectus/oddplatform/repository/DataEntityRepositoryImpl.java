@@ -515,12 +515,13 @@ public class DataEntityRepositoryImpl
 
     @Override
     public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns) {
-        return listAllByOddrns(oddrns, null, null);
+        return listAllByOddrns(oddrns, null, null, false);
     }
 
     private List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
                                                           final Integer page,
-                                                          final Integer size) {
+                                                          final Integer size,
+                                                          final boolean skipHollow) {
         final Set<String> conditionValues = CollectionUtils.emptyIfNull(oddrns)
             .stream()
             .map(String::toLowerCase)
@@ -532,7 +533,7 @@ public class DataEntityRepositoryImpl
 
         DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(conditionValues)))
-            .includeHollow(true);
+            .includeHollow(!skipHollow);
 
         if (page != null && size != null) {
             configBuilder = configBuilder.cteLimitOffset(
@@ -595,7 +596,7 @@ public class DataEntityRepositoryImpl
             .filter(not(associatedOddrns::contains))
             .collect(Collectors.toList());
 
-        return listAllByOddrns(oddrns, page, size);
+        return listAllByOddrns(oddrns, page, size, true);
     }
 
     @Override
