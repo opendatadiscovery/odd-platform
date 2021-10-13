@@ -5,7 +5,7 @@ import com.provectus.oddplatform.api.contract.model.AlertStatus;
 import com.provectus.oddplatform.api.contract.model.AlertTotals;
 import com.provectus.oddplatform.api.contract.model.AlertType;
 import com.provectus.oddplatform.auth.AuthIdentityProvider;
-import com.provectus.oddplatform.dto.AlertStatusDto;
+import com.provectus.oddplatform.dto.AlertStatusEnum;
 import com.provectus.oddplatform.dto.ExternalAlert;
 import com.provectus.oddplatform.mapper.AlertMapper;
 import com.provectus.oddplatform.model.tables.pojos.AlertPojo;
@@ -60,9 +60,10 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public Mono<AlertStatus> updateStatus(final long alertId, final AlertStatus alertStatus) {
+    public Mono<AlertStatus> updateStatus(final long alertId,
+                                          final AlertStatus alertStatus) {
         return Mono.fromCallable(() -> {
-            alertRepository.updateAlertStatus(alertId, AlertStatusDto.valueOf(alertStatus.name()));
+            alertRepository.updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()));
             return alertStatus;
         });
     }
