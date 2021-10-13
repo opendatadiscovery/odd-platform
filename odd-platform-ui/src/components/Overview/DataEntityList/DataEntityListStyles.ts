@@ -4,6 +4,8 @@ export const styles = (theme: Theme) =>
   createStyles({
     container: {},
     listLinks: {
+      display: 'flex',
+      flexDirection: 'column',
       padding: 0,
       listStyle: 'none',
       '& li': {

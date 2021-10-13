@@ -187,7 +187,11 @@ export const palette = createPalette({
     MAP: { border: colors.turquoise40 },
   },
   alert: {
-    open: { background: colors.red10, border: colors.red20 },
+    open: {
+      background: colors.red10,
+      border: colors.red20,
+      color: colors.red5,
+    },
     resolved: { background: colors.blue10, border: colors.blue20 },
   },
   background: { default: colors.white },

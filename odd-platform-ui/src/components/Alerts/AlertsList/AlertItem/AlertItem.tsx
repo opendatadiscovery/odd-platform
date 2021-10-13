@@ -28,26 +28,29 @@ const AlertItem: React.FC<AlertItemProps> = ({
       container
       className={cx(classes.col, classes.colName)}
       justify="space-between"
+      wrap="nowrap"
     >
-      <Link
-        to={
-          alert?.dataEntity?.id
-            ? dataEntityDetailsPath(alert.dataEntity.id)
-            : '#'
-        }
-      >
-        <Typography
-          variant="body1"
-          noWrap
-          title={
-            alert.dataEntity?.internalName ||
-            alert.dataEntity?.externalName
+      <div className={classes.alertName}>
+        <Link
+          to={
+            alert?.dataEntity?.id
+              ? dataEntityDetailsPath(alert.dataEntity.id)
+              : '#'
           }
         >
-          {alert.dataEntity?.internalName ||
-            alert.dataEntity?.externalName}
-        </Typography>
-      </Link>
+          <Typography
+            variant="body1"
+            noWrap
+            title={
+              alert.dataEntity?.internalName ||
+              alert.dataEntity?.externalName
+            }
+          >
+            {alert.dataEntity?.internalName ||
+              alert.dataEntity?.externalName}
+          </Typography>
+        </Link>
+      </div>
       <div className={classes.typesList}>
         {alert.dataEntity?.types?.map(type => (
           <EntityTypeItem key={type.id} typeName={type.name} />
@@ -73,10 +76,10 @@ const AlertItem: React.FC<AlertItemProps> = ({
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
-      <Typography variant="body1" noWrap>
-        {alert.statusUpdatedBy?.owner?.name ||
-          alert.statusUpdatedBy?.identity.username}
-      </Typography>
+      {/* <Typography variant="body1" noWrap> */}
+      {/*  {alert.statusUpdatedBy?.owner?.name || */}
+      {/*    alert.statusUpdatedBy?.identity.username} */}
+      {/* </Typography> */}
     </Grid>
     <Grid item className={cx(classes.col, classes.colUpdatedAt)}>
       <Typography variant="body1">
