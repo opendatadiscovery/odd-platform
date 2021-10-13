@@ -8,11 +8,10 @@ import com.provectus.oddplatform.dto.EnrichedDataEntityIngestionDto;
 import com.provectus.oddplatform.ingestion.contract.model.DataConsumer;
 import com.provectus.oddplatform.ingestion.contract.model.DataEntity;
 import com.provectus.oddplatform.ingestion.contract.model.DataQualityTest;
-import com.provectus.oddplatform.ingestion.contract.model.DataQualityTestRun;
 import com.provectus.oddplatform.ingestion.contract.model.DataSet;
 import com.provectus.oddplatform.ingestion.contract.model.DataSetField;
+import com.provectus.oddplatform.ingestion.contract.model.DataSetFieldType;
 import com.provectus.oddplatform.ingestion.contract.model.DataTransformer;
-import com.provectus.oddplatform.ingestion.contract.model.DataTransformerRun;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import com.provectus.oddplatform.model.tables.pojos.DataEntityTypePojo;
@@ -24,15 +23,20 @@ import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.jooq.JSONB;
 import org.springframework.stereotype.Component;
 
@@ -239,9 +243,21 @@ public class IngestionMapperImpl implements IngestionMapper {
 
         final MessageDigest md = createSHA256MessageDigest();
 
+        final List<HashableDatasetField> sortedFields = fields.stream()
+            .map(f -> HashableDatasetField.builder()
+                .name(f.getName())
+                .oddrn(f.getOddrn())
+                .parentFieldOddrn(f.getParentFieldOddrn())
+                .type(f.getType())
+                .isKey(BooleanUtils.toBoolean(f.getIsKey()))
+                .isValue(BooleanUtils.toBoolean(f.getIsValue()))
+                .build())
+            .sorted(Comparator.comparing(HashableDatasetField::getOddrn))
+            .collect(Collectors.toList());
+
         final StringBuilder sb = new StringBuilder();
 
-        for (final byte b : md.digest(JSONSerDeUtils.serializeJson(fields).getBytes())) {
+        for (final byte b : md.digest(JSONSerDeUtils.serializeJson(sortedFields).getBytes())) {
             sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
         }
 
@@ -313,5 +329,17 @@ public class IngestionMapperImpl implements IngestionMapper {
         return Arrays.stream(pairs)
             .filter(p -> p.getRight() != null && p.getLeft() != null)
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    static class HashableDatasetField {
+        private String oddrn;
+        private String name;
+        private String parentFieldOddrn;
+        private DataSetFieldType type;
+        private boolean isKey;
+        private boolean isValue;
     }
 }
