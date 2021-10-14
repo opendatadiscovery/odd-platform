@@ -179,9 +179,10 @@ If you have any questions or ideas, please don't hesitate to drop a line to any 
 | Team Member     | LinkedIn                                      	                  | GitHub                                              |
 |-----------------|-----------------------------------------------------------------------|-----------------------------------------------------|
 |German Osin      |  [LinkedIn](https://www.linkedin.com/in/german-osin-47a9339/)      	  | [germanosin](https://github.com/germanosin)         |
-|Elena Goydina    |  [LinkedIn](https://www.linkedin.com/in/goydina/)             	  | [Evanto](https://github.com/Evanto)                 |
+|Elena Goydina    |  [LinkedIn](https://www.linkedin.com/in/goydina/)             	      | [Evanto](https://github.com/Evanto)                 |
 |Nikita Dementev  |  [LinkedIn](https://www.linkedin.com/in/nikita-dementev/)             | [DementevNikita](https://github.com/DementevNikita) |
 |Sofia Shnaidman  |  [LinkedIn](https://www.linkedin.com/in/sofia-shnaidman-293161a3/)    | [soffest](https://github.com/soffest)               |
+|Roman Zabaluev   |  [LinkedIn](https://www.linkedin.com/in/haarolean/)                   | [Haarolean](https://github.com/haarolean)           |
 |Alexey Kozyurov  |  [LinkedIn](https://www.linkedin.com/in/alexey-kozyurov-1823b1219/)   | [Leshe4ka](https://github.com/Leshe4ka)             |
 
 
