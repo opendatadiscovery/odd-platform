@@ -24,7 +24,6 @@ import com.provectus.oddplatform.model.tables.pojos.DataEntityPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import com.provectus.oddplatform.model.tables.pojos.DataSourcePojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
-import com.provectus.oddplatform.model.tables.pojos.DatasetRevisionPojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import com.provectus.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import com.provectus.oddplatform.model.tables.pojos.LineagePojo;
@@ -35,7 +34,6 @@ import com.provectus.oddplatform.repository.DataEntityRepository;
 import com.provectus.oddplatform.repository.DataEntityTaskRunRepository;
 import com.provectus.oddplatform.repository.DataQualityTestRelationRepository;
 import com.provectus.oddplatform.repository.DataSourceRepository;
-import com.provectus.oddplatform.repository.DatasetRevisionRepository;
 import com.provectus.oddplatform.repository.DatasetStructureRepository;
 import com.provectus.oddplatform.repository.DatasetVersionRepository;
 import com.provectus.oddplatform.repository.LineageRepository;
@@ -56,8 +54,8 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static com.provectus.oddplatform.dto.DataEntityType.DATA_CONSUMER;
@@ -76,7 +74,6 @@ public class IngestionServiceImpl implements IngestionService {
 
     private final DataSourceRepository dataSourceRepository;
     private final DataEntityRepository dataEntityRepository;
-    private final DatasetRevisionRepository datasetRevisionRepository;
     private final DatasetVersionRepository datasetVersionRepository;
     private final DatasetStructureRepository datasetStructureRepository;
     private final MetadataFieldRepository metadataFieldRepository;
@@ -100,8 +97,14 @@ public class IngestionServiceImpl implements IngestionService {
             .flatMap(this::ingestCompanions)
             .flatMap(this::calculateSearchEntrypoints)
             .map(dataStructure -> {
+                final List<Long> changedSchemaIds = dataStructure.getExistingEntities()
+                    .stream()
+                    .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
+                    .map(EnrichedDataEntityIngestionDto::getId)
+                    .collect(Collectors.toList());
+
                 final Map<String, DatasetStructureDelta> datasetStructureDelta =
-                    datasetVersionRepository.getLastStructureDelta(dataStructure.getExistingIds());
+                    datasetVersionRepository.getLastStructureDelta(changedSchemaIds);
 
                 final List<AlertPojo> alerts = Stream.of(
                     alertLocator.locateDatasetBackIncSchema(datasetStructureDelta),
@@ -226,52 +229,10 @@ public class IngestionServiceImpl implements IngestionService {
     private Mono<IngestionDataStructure> ingestCompanions(final IngestionDataStructure dataStructure) {
         return Mono
             .zipDelayError(
-                ingestDatasetRevisions(dataStructure),
                 ingestDatasetStructure(dataStructure),
                 ingestMetadata(dataStructure)
             )
             .map(m -> dataStructure);
-    }
-
-    private Mono<List<DatasetRevisionPojo>> ingestDatasetRevisions(final IngestionDataStructure entities) {
-        final LocalDateTime now = LocalDateTime.now();
-
-        final Flux<DatasetRevisionPojo> newDatasetRevisions = Flux.fromStream(entities.getNewEntities().stream()
-            .filter(e -> e.getTypes().contains(DATA_SET))
-            .map(e -> new DatasetRevisionPojo()
-                .setDataEntityId(e.getId())
-                .setUpdatedAt(e.getUpdatedAt() != null ? e.getUpdatedAt().toLocalDateTime() : now)
-                .setRowsCount(e.getDataSet().getRowsCount())));
-
-        final Flux<DatasetRevisionPojo> existingDR = Flux
-            .fromIterable(datasetRevisionRepository.listLatestByDatasetIds(entities.getExistingIds()))
-            .collectMap(DatasetRevisionPojo::getDataEntityId, identity())
-            .map(drRecords -> entities.getExistingEntities()
-                .stream()
-                .filter(e -> e.getTypes().contains(DATA_SET))
-                .map(e -> {
-                    final DatasetRevisionPojo existingRevision = drRecords.get(e.getId());
-                    if (existingRevision == null) {
-                        log.error("There's no DatasetRevision for existing {}", e.getOddrn());
-                    }
-
-                    if (equalRevisions(e, existingRevision)) {
-                        return null;
-                    }
-
-                    return new DatasetRevisionPojo(
-                        e.getId(),
-                        e.getUpdatedAt() != null ? e.getUpdatedAt().toLocalDateTime() : now,
-                        e.getDataSet().getRowsCount()
-                    );
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()))
-            .flatMapIterable(identity());
-
-        return Flux.merge(newDatasetRevisions, existingDR)
-            .collectList()
-            .map(datasetRevisionRepository::bulkCreate);
     }
 
     private Mono<List<DatasetStructurePojo>> ingestDatasetStructure(final IngestionDataStructure split) {
@@ -429,6 +390,8 @@ public class IngestionServiceImpl implements IngestionService {
             return null;
         }
 
+        dto.setDatasetSchemaChanged(true);
+
         return mapNewDatasetVersion(dto, fetchedVersion.getVersion() + 1);
     }
 
@@ -513,10 +476,10 @@ public class IngestionServiceImpl implements IngestionService {
             .build();
     }
 
-    private Mono<IngestionDataStructure> calculateSearchEntrypoints(final IngestionDataStructure split) {
+    private Mono<IngestionDataStructure> calculateSearchEntrypoints(final IngestionDataStructure dataStructure) {
         return Mono.fromCallable(() -> {
-            dataEntityRepository.calculateSearchEntrypoints(split.getAllIds());
-            return split;
+            dataEntityRepository.calculateSearchEntrypoints(dataStructure.getAllIds());
+            return dataStructure;
         });
     }
 
@@ -535,14 +498,6 @@ public class IngestionServiceImpl implements IngestionService {
 
     private boolean isEntityUpdated(final DataEntityIngestionDto dto, final DataEntityPojo dePojo) {
         return !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
-    }
-
-    private boolean equalRevisions(final EnrichedDataEntityIngestionDto dto,
-                                   final DatasetRevisionPojo existingRevision) {
-        return existingRevision != null
-            && Objects.equals(existingRevision.getRowsCount(), dto.getDataSet().getRowsCount())
-            && dto.getUpdatedAt() != null
-            && Objects.equals(existingRevision.getUpdatedAt(), dto.getUpdatedAt().toLocalDateTime());
     }
 
     private DatasetVersionPojo mapNewDatasetVersion(final EnrichedDataEntityIngestionDto entity) {

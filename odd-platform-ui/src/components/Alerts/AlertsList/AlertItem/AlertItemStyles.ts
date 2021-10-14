@@ -24,6 +24,7 @@ export const styles = (theme: Theme) =>
     optionsBtn: {
       opacity: 0,
     },
+    alertName: { maxWidth: '118px' },
     ...alertsMainColWidthStyles,
   });
 

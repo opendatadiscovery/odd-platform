@@ -5,6 +5,7 @@ import com.provectus.oddplatform.model.tables.pojos.TagPojo;
 import com.provectus.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import com.provectus.oddplatform.model.tables.records.TagRecord;
 import com.provectus.oddplatform.model.tables.records.TagToDataEntityRecord;
+import com.provectus.oddplatform.repository.util.JooqFTSHelper;
 import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import com.provectus.oddplatform.utils.Page;
 import java.io.IOException;
@@ -12,22 +13,33 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Select;
+import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import static com.provectus.oddplatform.model.Tables.DATA_ENTITY;
+import static com.provectus.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static com.provectus.oddplatform.model.Tables.TAG;
 import static com.provectus.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
+import static org.jooq.impl.DSL.field;
 
 @Repository
 public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecord, TagPojo> implements TagRepository {
-
     private static final String COUNT_FIELD = "count";
 
-    public TagRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
+    private final JooqFTSHelper jooqFTSHelper;
+
+    public TagRepositoryImpl(final DSLContext dslContext,
+                             final JooqQueryHelper jooqQueryHelper,
+                             final JooqFTSHelper jooqFTSHelper) {
         super(dslContext, jooqQueryHelper, TAG, TAG.ID, TAG.IS_DELETED, TAG.NAME, TAG.NAME, TagPojo.class);
+
+        this.jooqFTSHelper = jooqFTSHelper;
     }
 
     @Override
@@ -108,6 +120,30 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    @Transactional
+    public TagPojo update(final TagPojo pojo) {
+        final TagPojo updatedPojo = super.update(pojo);
+
+        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(TAG.NAME);
+
+        final SelectConditionStep<Record> vectorSelect = dslContext.select(vectorFields)
+            .select(DATA_ENTITY.ID.as(dataEntityId))
+            .from(TAG)
+            .join(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(TAG.ID.eq(updatedPojo.getId()));
+
+        jooqFTSHelper
+            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.TAG_VECTOR, true)
+            .execute();
+
+        return updatedPojo;
     }
 
     private TagDto mapTag(final Record record) {

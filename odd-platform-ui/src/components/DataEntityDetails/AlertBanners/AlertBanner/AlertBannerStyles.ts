@@ -10,7 +10,7 @@ export const styles = (theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       flexWrap: 'nowrap',
-      backgroundColor: theme.palette.runStatus.FAILED,
+      backgroundColor: theme.palette.alert.open.color,
       borderRadius: '2px',
       padding: theme.spacing(0.5, 1),
       boxShadow: theme.shadows[1],
@@ -18,6 +18,9 @@ export const styles = (theme: Theme) =>
     description: {
       display: 'flex',
       alignItems: 'center',
+    },
+    icon: {
+      marginRight: theme.spacing(1),
     },
     actions: {},
   });

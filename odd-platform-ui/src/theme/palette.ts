@@ -218,7 +218,11 @@ export const palette = createPalette({
     TYPE_UNKNOWN: { border: colors.transparent },
   },
   alert: {
-    open: { background: colors.red10, border: colors.red20 },
+    open: {
+      background: colors.red10,
+      border: colors.red20,
+      color: colors.red5,
+    },
     resolved: { background: colors.blue10, border: colors.blue20 },
   },
   textField: {

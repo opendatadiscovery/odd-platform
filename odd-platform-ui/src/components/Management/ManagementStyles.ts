@@ -20,7 +20,6 @@ export const styles = (theme: Theme) =>
       [theme.breakpoints.up(maxContentWidth + maxSidebarWidth)]: {
         paddingLeft: `${maxSidebarWidth}px`,
         paddingRight: 0,
-        justifyContent: 'center',
       },
     },
     sidebarContainer: {

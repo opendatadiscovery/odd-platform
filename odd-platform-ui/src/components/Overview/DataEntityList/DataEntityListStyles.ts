@@ -7,6 +7,8 @@ export const styles = (theme: Theme) =>
   createStyles({
     container: {},
     listLinks: {
+      display: 'flex',
+      flexDirection: 'column',
       padding: 0,
       listStyle: 'none',
       '& li': {
@@ -20,13 +22,13 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       textDecoration: 'none',
-      color: theme.palette.text?.primary,
+      color: theme.palette.texts?.primary,
       flexWrap: 'nowrap',
       '&:hover': {
         backgroundColor: theme.palette.backgrounds.primary,
         borderRadius: '4px',
         '& > *': {
-          color: theme.palette.text?.primary,
+          color: theme.palette.texts?.primary,
         },
       },
       '&:active': {
@@ -39,7 +41,7 @@ export const styles = (theme: Theme) =>
     sectionCaption: {
       marginBottom: theme.spacing(2),
       paddingTop: theme.spacing(0.75),
-      color: theme.palette.common.white,
+      color: theme.palette.texts?.primary,
       display: 'flex',
       alignItems: 'center',
       '& > svg ': {

@@ -10,8 +10,8 @@ import com.provectus.oddplatform.model.tables.pojos.NamespacePojo;
 import com.provectus.oddplatform.utils.Page;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setConnectionUrl(form.getConnectionUrl())
             .setPullingInterval(form.getPullingInterval());
 
-        final NamespacePojo namespace = StringUtils.hasLength(form.getNamespaceName())
+        final NamespacePojo namespace = StringUtils.isNotEmpty(form.getNamespaceName())
             ? new NamespacePojo().setName(form.getNamespaceName())
             : null;
 
@@ -44,7 +44,11 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setPullingInterval(form.getPullingInterval())
             .setActive(form.getActive());
 
-        return new DataSourceDto(dataSourcePojo, pojo.getNamespace());
+        final NamespacePojo namespace = StringUtils.isNotEmpty(form.getNamespaceName())
+            ? new NamespacePojo().setName(form.getNamespaceName())
+            : null;
+
+        return new DataSourceDto(dataSourcePojo, namespace);
     }
 
     @Override

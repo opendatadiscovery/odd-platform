@@ -86,7 +86,7 @@ const AlertsList: React.FC<AlertsListProps> = ({
           <Typography variant="caption">Created at</Typography>
         </Grid>
         <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
-          <Typography variant="caption">Status updated by</Typography>
+          {/* <Typography variant="caption">Status updated by</Typography> */}
         </Grid>
         <Grid item className={cx(classes.col, classes.colUpdatedAt)}>
           <Typography variant="caption">Status updated at</Typography>
