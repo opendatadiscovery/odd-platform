@@ -16,24 +16,23 @@ import {
   NamespaceApiGetNamespaceListRequest,
   NamespaceList,
 } from 'generated-sources';
-import OutlinedTextField from 'components/shared/OutlinedTextField/OutlinedTextField';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import {
   Autocomplete,
   Checkbox,
-  CircularProgress,
   createFilterOptions,
   FormControlLabel,
   Grid,
   InputLabel,
   MenuItem,
   Select,
-  TextField,
   Typography,
 } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import CancelIcon from 'components/shared/Icons/CancelIcon';
 import { StylesType } from './DataSourceFormDialogStyles';
 
 interface DataSourceFormDialogProps extends StylesType {
@@ -96,9 +95,10 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
     handleSubmit,
     control,
     reset,
+    setValue,
     formState: { isValid },
   } = useForm<DataSourceFormDataValues>({
-    mode: 'onChange',
+    mode: 'all',
     reValidateMode: 'onChange',
     defaultValues: getDefaultValues(),
   });
@@ -274,11 +274,17 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <OutlinedTextField
+          <AppTextField
             {...field}
+            sx={{ mt: 1.5 }}
             label="Name"
             placeholder="e.g. Data Tower"
             required
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => field.onChange(''),
+            }}
           />
         )}
       />
@@ -290,12 +296,18 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <OutlinedTextField
+          <AppTextField
             {...field}
+            sx={{ mt: 1.25 }}
             label="ODDRN"
             placeholder="e.g. //kafka/"
             required
             disabled={!!dataSource}
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => field.onChange(''),
+            }}
           />
         )}
       />
@@ -307,11 +319,17 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <OutlinedTextField
+          <AppTextField
             {...field}
+            sx={{ mt: 1.25 }}
             label="URL"
             placeholder="e.g. https://github.com/link/example"
             required
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => field.onChange(''),
+            }}
           />
         )}
       />
@@ -362,18 +380,12 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
               name="pullingInterval.value"
               control={control}
               render={({ field }) => (
-                <TextField
+                <AppTextField
                   {...field}
-                  type="number"
-                  variant="outlined"
                   label="Value"
                   placeholder="e.g. 1"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    min: 1,
-                  }}
+                  type="number"
+                  inputProps={{ min: 1 }}
                 />
               )}
             />
@@ -381,9 +393,9 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
         </Grid>
       ) : null}
       <Controller
+        control={control}
         name="namespaceName"
         defaultValue={dataSource?.namespace?.name || ''}
-        control={control}
         render={({ field }) => (
           <Autocomplete
             // eslint-disable-next-line react/jsx-props-no-spreading
@@ -406,21 +418,17 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
             freeSolo
             handleHomeEndKeys
             selectOnFocus
+            clearIcon={<CancelIcon />}
             renderInput={params => (
-              <OutlinedTextField
+              <AppTextField
                 {...params}
+                sx={{ mt: 1.25 }}
+                ref={params.InputProps.ref}
                 placeholder="Namespace"
                 label="Namespace"
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <>
-                      {loading ? (
-                        <CircularProgress color="inherit" size={20} />
-                      ) : null}
-                      {params.InputProps.endAdornment}
-                    </>
-                  ),
+                customEndAdornment={{
+                  variant: 'loader',
+                  isShow: loading,
                 }}
               />
             )}
@@ -447,14 +455,18 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
         name="description"
         control={control}
         render={({ field }) => (
-          <OutlinedTextField
-            // eslint-disable-next-line react/jsx-props-no-spreading
+          <AppTextField
             {...field}
+            sx={{ mt: 1.25 }}
             label="Description"
             placeholder="Datasource description"
             multiline
-            rows={4}
             maxRows={4}
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => setValue('description', ''),
+            }}
           />
         )}
       />

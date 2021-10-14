@@ -13,6 +13,7 @@ import { StylesType } from 'components/shared/MainSearch/MainSearchStyles';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import CancelIcon from 'components/shared/Icons/CancelIcon';
 
 interface AppSearchProps extends StylesType {
   className?: string;
@@ -128,22 +129,27 @@ const MainSearch: React.FC<AppSearchProps> = ({
             endAdornment: classes.clearIconContainer,
           }}
           freeSolo
+          filterOptions={option => option}
+          clearIcon={<CancelIcon />}
           renderInput={params => (
             <AppTextField
               {...params}
               ref={params.InputProps.ref}
-              fullWidth
               size="large"
               placeholder={
                 placeholder ||
                 'Search data tables, feature groups, jobs and ML models via keywords'
               }
-              defaultStartAdornmentCondition
-              defaultStartAdornmentOnClick={createSearch}
-              defaultEndAdornmentCondition={!!searchText}
-              defaultEndAdornmentOnClick={() => setSearchText('')}
-              loaderCondition={loadingSuggestions}
               onKeyDown={handleKeyDown}
+              customStartAdornment={{
+                variant: 'search',
+                isShow: true,
+                onCLick: createSearch,
+              }}
+              customEndAdornment={{
+                variant: 'loader',
+                isShow: loadingSuggestions,
+              }}
             />
           )}
           renderOption={(props, option) => (

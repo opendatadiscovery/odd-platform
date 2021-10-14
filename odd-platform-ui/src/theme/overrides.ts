@@ -60,10 +60,26 @@ export const components: Components = {
   //     },
   //   },
   // },
+  MuiButtonBase: {
+    defaultProps: {
+      disableTouchRipple: true,
+    },
+  },
   MuiFormLabel: {
     styleOverrides: {
       asterisk: {
         color: '#F2330D',
+      },
+    },
+  },
+  MuiAutocomplete: {
+    styleOverrides: {
+      endAdornment: { top: 'calc(50% - 12px)' },
+      clearIndicator: {
+        '&:hover': {
+          backgroundColor: 'transparent',
+          color: '#42526E',
+        },
       },
     },
   },

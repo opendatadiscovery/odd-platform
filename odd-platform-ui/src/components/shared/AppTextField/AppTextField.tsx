@@ -1,5 +1,10 @@
 import React from 'react';
-import { CircularProgress, Grid, TextFieldProps } from '@mui/material';
+import {
+  CircularProgress,
+  Grid,
+  TextFieldProps,
+  Theme,
+} from '@mui/material';
 import {
   StyledAppTextField,
   TextFieldSizes,
@@ -7,6 +12,15 @@ import {
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import CancelIcon from 'components/shared/Icons/CancelIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
+import { SxProps } from '@mui/system';
+
+type AdornmentVariant = 'loader' | 'clear' | 'search';
+interface AdornmentProps {
+  variant: AdornmentVariant;
+  isShow: boolean;
+  onCLick?: () => void;
+  sx?: SxProps<Theme>;
+}
 
 interface AppTextFieldProps
   extends Pick<
@@ -15,7 +29,6 @@ interface AppTextFieldProps
     | 'onChange'
     | 'onKeyDown'
     | 'sx'
-    | 'fullWidth'
     | 'placeholder'
     | 'InputProps'
     | 'value'
@@ -26,13 +39,15 @@ interface AppTextFieldProps
     | 'defaultValue'
     | 'ref'
     | 'inputProps'
+    | 'required'
+    | 'type'
+    | 'maxRows'
+    | 'multiline'
   > {
   size?: TextFieldSizes;
-  defaultStartAdornmentCondition?: boolean;
-  defaultStartAdornmentOnClick?: () => void;
-  defaultEndAdornmentCondition?: boolean;
-  defaultEndAdornmentOnClick?: () => void;
-  loaderCondition?: boolean;
+
+  customStartAdornment?: AdornmentProps;
+  customEndAdornment?: AdornmentProps;
 }
 
 const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
@@ -41,7 +56,6 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
       size = 'medium',
       onClick,
       sx,
-      fullWidth,
       placeholder,
       InputProps,
       value,
@@ -49,58 +63,81 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
       disabled,
       error,
       helperText,
-      defaultStartAdornmentCondition = false,
-      defaultStartAdornmentOnClick,
-      defaultEndAdornmentCondition = false,
-      defaultEndAdornmentOnClick,
       label,
       defaultValue,
       onKeyDown,
       inputProps,
-      loaderCondition,
+      required,
+      type,
+      customStartAdornment,
+      customEndAdornment,
+      maxRows,
+      multiline,
     },
     ref
   ) => {
-    const defaultStartAdornment = (
-      <AppIconButton
-        sx={{ ml: 1 }}
-        size="small"
-        color="unfilled"
-        icon={<SearchIcon />}
-        disabled={disabled}
-        onClick={defaultStartAdornmentOnClick}
-      />
-    );
-    const defaultEndAdornment = (
-      <Grid
-        container
-        justifyContent="space-between"
-        width="auto"
-        alignItems="center"
-        wrap="nowrap"
-      >
-        {loaderCondition && <CircularProgress color="inherit" size={20} />}
-        <AppIconButton
-          sx={{ mx: 1 }}
-          size="small"
-          color="unfilled"
-          icon={<CancelIcon />}
-          disabled={disabled}
-          onClick={defaultEndAdornmentOnClick}
-        />
-      </Grid>
-    );
+    const adornment = (
+      variant?: AdornmentVariant,
+      isShow?: boolean,
+      onCLick?: () => void,
+      position?: SxProps<Theme>
+    ) => {
+      switch (variant) {
+        case 'clear':
+          return (
+            isShow && (
+              <AppIconButton
+                sx={position || { mx: 1 }}
+                size="small"
+                color="unfilled"
+                icon={<CancelIcon />}
+                disabled={disabled}
+                onClick={onCLick}
+              />
+            )
+          );
+        case 'search':
+          return (
+            isShow && (
+              <AppIconButton
+                sx={position || { mx: 1 }}
+                size="small"
+                color="unfilled"
+                icon={<SearchIcon />}
+                disabled={disabled}
+                onClick={onCLick}
+              />
+            )
+          );
+        case 'loader':
+          return (
+            isShow && (
+              <Grid
+                container
+                alignItems="center"
+                justifyContent="flex-end"
+                sx={position || { mr: 5 }}
+              >
+                <CircularProgress color="inherit" size={20} />
+              </Grid>
+            )
+          );
+        default:
+          return null;
+      }
+    };
 
     return (
       <StyledAppTextField
         variant="outlined"
+        fullWidth
+        InputLabelProps={{ shrink: true }}
         $size={size}
-        onClick={onClick}
         sx={sx}
-        fullWidth={fullWidth}
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        onClick={onClick}
         disabled={disabled}
         error={error}
         helperText={helperText}
@@ -109,17 +146,34 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
         onKeyDown={onKeyDown}
         ref={ref}
         inputProps={inputProps}
+        required={required}
+        type={type}
+        maxRows={maxRows}
+        multiline={multiline}
         // eslint-disable-next-line react/jsx-no-duplicate-props
-        InputProps={
-          defaultStartAdornmentCondition || defaultEndAdornmentCondition
-            ? {
-                startAdornment:
-                  defaultStartAdornmentCondition && defaultStartAdornment,
-                endAdornment:
-                  defaultEndAdornmentCondition && defaultEndAdornment,
-              }
-            : InputProps
-        }
+        InputProps={{
+          startAdornment: (
+            <>
+              {adornment(
+                customStartAdornment?.variant,
+                customStartAdornment?.isShow,
+                customStartAdornment?.onCLick,
+                customStartAdornment?.sx
+              )}
+            </>
+          ),
+          endAdornment: (
+            <>
+              {adornment(
+                customEndAdornment?.variant,
+                customEndAdornment?.isShow,
+                customEndAdornment?.onCLick,
+                customEndAdornment?.sx
+              )}
+              {InputProps?.endAdornment}
+            </>
+          ),
+        }}
       />
     );
   }

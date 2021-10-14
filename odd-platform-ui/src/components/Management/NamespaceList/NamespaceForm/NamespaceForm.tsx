@@ -92,11 +92,12 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
         render={({ field }) => (
           <AppTextField
             {...field}
-            fullWidth
-            size="medium"
             placeholder="Namespace Name"
-            defaultEndAdornmentCondition={!!field.value}
-            defaultEndAdornmentOnClick={() => field.onChange('')}
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => field.onChange(''),
+            }}
           />
         )}
       />

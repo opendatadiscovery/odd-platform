@@ -1,4 +1,4 @@
-import { InputAdornment, TextField, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import React from 'react';
 import {
   DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
@@ -7,9 +7,8 @@ import {
 } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { StylesType } from './InternalDescriptionFormDialogStyles';
 
 interface InternalDescriptionFormDialogProps extends StylesType {
@@ -98,25 +97,15 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
         name="internalDescription"
         defaultValue={datasetFieldIdInternalDescription || ''}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
-            type="text"
-            variant="outlined"
             label="Description"
             placeholder="Enter description"
             onKeyDown={handleKeyDown}
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppIconButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => setValue('internalDescription', '')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => setValue('internalDescription', ''),
             }}
           />
         )}
