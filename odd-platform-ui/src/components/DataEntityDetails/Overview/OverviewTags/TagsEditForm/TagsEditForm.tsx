@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Autocomplete,
-  CircularProgress,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Autocomplete, Typography } from '@mui/material';
 import {
   DataEntityApiCreateDataEntityTagsRelationsRequest,
   Tag,
@@ -24,6 +19,8 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import { StylesType } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import cx from 'classnames';
 import AppButton from 'components/shared/AppButton/AppButton';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 
 interface TagsEditProps extends StylesType {
   dataEntityId: number;
@@ -205,23 +202,15 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
         blurOnSelect
         freeSolo
         value={{ name: searchText }}
+        clearIcon={<ClearIcon />}
         renderInput={params => (
-          <TextField
+          <AppTextField
             {...params}
-            className={classes.tagInput}
+            ref={params.InputProps.ref}
             placeholder="Enter tag name…"
-            variant="outlined"
-            fullWidth
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
-                  {params.InputProps.endAdornment}
-                </>
-              ),
+            customEndAdornment={{
+              variant: 'loader',
+              isShow: loading,
             }}
           />
         )}

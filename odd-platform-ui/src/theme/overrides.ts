@@ -81,6 +81,12 @@ export const components: Components = {
           color: '#42526E',
         },
       },
+      popupIndicator: {
+        '&:hover': {
+          backgroundColor: 'transparent',
+          color: '#42526E',
+        },
+      },
     },
   },
   // MuiOutlinedInput: {

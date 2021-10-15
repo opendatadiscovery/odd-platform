@@ -10,7 +10,7 @@ import {
   TextFieldSizes,
 } from 'components/shared/AppTextField/AppTextFieldStyles';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import { SxProps } from '@mui/system';
 
@@ -43,6 +43,8 @@ interface AppTextFieldProps
     | 'type'
     | 'maxRows'
     | 'multiline'
+    | 'name'
+    | 'fullWidth'
   > {
   size?: TextFieldSizes;
 
@@ -73,6 +75,8 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
       customEndAdornment,
       maxRows,
       multiline,
+      name,
+      fullWidth = true,
     },
     ref
   ) => {
@@ -90,7 +94,7 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
                 sx={position || { mx: 1 }}
                 size="small"
                 color="unfilled"
-                icon={<CancelIcon />}
+                icon={<ClearIcon />}
                 disabled={disabled}
                 onClick={onCLick}
               />
@@ -116,6 +120,7 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
                 container
                 alignItems="center"
                 justifyContent="flex-end"
+                width="max-content"
                 sx={position || { mr: 5 }}
               >
                 <CircularProgress color="inherit" size={20} />
@@ -130,7 +135,7 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
     return (
       <StyledAppTextField
         variant="outlined"
-        fullWidth
+        fullWidth={fullWidth}
         InputLabelProps={{ shrink: true }}
         $size={size}
         sx={sx}
@@ -150,8 +155,10 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
         type={type}
         maxRows={maxRows}
         multiline={multiline}
+        name={name}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
+          ...InputProps,
           startAdornment: (
             <>
               {adornment(

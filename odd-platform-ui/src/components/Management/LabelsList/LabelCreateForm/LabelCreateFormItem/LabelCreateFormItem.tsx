@@ -1,10 +1,8 @@
 import React from 'react';
-import { TextField, InputAdornment } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { styles, StylesType } from './LabelCreateFormItemStyles';
 
 interface LabelCreateFormItemProps extends StylesType {
@@ -29,23 +27,14 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
         defaultValue=""
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
             placeholder="Label Name"
-            variant="outlined"
             name={`labels.${itemIndex}.name`}
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppIconButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => field.onChange('')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => field.onChange(''),
             }}
           />
         )}

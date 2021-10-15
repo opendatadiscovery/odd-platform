@@ -1,5 +1,5 @@
 import React from 'react';
-import { InputAdornment, TextField, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Label,
@@ -7,9 +7,8 @@ import {
   LabelApiUpdateLabelRequest,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { StylesType } from './LabelEditFormStyles';
 
 interface LabelEditFormProps extends StylesType {
@@ -75,22 +74,13 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
         defaultValue={label.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
             placeholder="Label Name"
-            variant="outlined"
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppIconButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => field.onChange('')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => field.onChange(''),
             }}
           />
         )}

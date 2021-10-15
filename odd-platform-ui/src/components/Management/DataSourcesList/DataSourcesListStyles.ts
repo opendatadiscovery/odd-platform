@@ -25,9 +25,6 @@ export const styles = (theme: Theme) =>
       justifyContent: 'center',
       padding: theme.spacing(1),
     },
-    searchInput: {
-      minWidth: '340px',
-    },
     datasourceItem: {
       '& + $datasourceItem': {
         marginTop: theme.spacing(1),

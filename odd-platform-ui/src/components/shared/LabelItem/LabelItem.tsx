@@ -1,7 +1,7 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import cx from 'classnames';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './LabelItemStyles';
@@ -32,7 +32,7 @@ const LabelItem: React.FC<LabelItemProps> = ({
         sx={{ ml: 0.25 }}
         size="small"
         color="unfilled"
-        icon={<CancelIcon />}
+        icon={<ClearIcon />}
         onClick={onRemoveClick}
       />
     )}

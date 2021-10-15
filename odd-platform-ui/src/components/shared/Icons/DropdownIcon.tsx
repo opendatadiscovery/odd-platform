@@ -1,8 +1,9 @@
 import React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import { SvgIconProps } from '@mui/material/SvgIcon';
+import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 
-const DropdownIcon: React.FC<SvgIconProps> = props => (
-  <SvgIcon viewBox="0 0 16 16" {...props}>
+const DropdownIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
+  <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props}>
     <svg
       width="16"
       height="16"
@@ -12,7 +13,7 @@ const DropdownIcon: React.FC<SvgIconProps> = props => (
     >
       <path d="M4 6L8 10L12 6" stroke="currentColor" />
     </svg>
-  </SvgIcon>
+  </AppSvgIcon>
 );
 
 export default DropdownIcon;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, TextField, InputAdornment } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import {
   OwnerFormData,
@@ -8,9 +8,8 @@ import {
   OwnerApiUpdateOwnerRequest,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { StylesType } from './OwnerFormStyles';
 
 interface OwnerFormProps extends StylesType {
@@ -90,22 +89,13 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
         defaultValue={owner?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
             placeholder="Owner Name"
-            variant="outlined"
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppIconButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => field.onChange('')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => field.onChange(''),
             }}
           />
         )}

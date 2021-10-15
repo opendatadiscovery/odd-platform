@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './DialogWrapperStyles';
 
@@ -82,7 +82,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
             <AppIconButton
               size="small"
               color="unfilled"
-              icon={<CancelIcon />}
+              icon={<ClearIcon />}
               onClick={() => {
                 if (clearState) {
                   clearState();

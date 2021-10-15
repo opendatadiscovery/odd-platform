@@ -5,7 +5,7 @@ import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
-    container: { marginTop: theme.spacing(1.5) },
+    container: {},
   });
 
 export type StylesType = WithStyles<typeof styles>;

@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Autocomplete,
-  CircularProgress,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Autocomplete, Typography } from '@mui/material';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -21,6 +16,8 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './LabelsEditFormStyles';
 
 interface LabelsEditProps extends StylesType {
@@ -199,23 +196,15 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
         blurOnSelect
         freeSolo
         value={{ name: searchText }}
+        clearIcon={<ClearIcon />}
         renderInput={params => (
-          <TextField
+          <AppTextField
             {...params}
-            className={classes.labelInput}
+            ref={params.InputProps.ref}
             placeholder="Enter label name…"
-            variant="outlined"
-            fullWidth
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
-                  {params.InputProps.endAdornment}
-                </>
-              ),
+            customEndAdornment={{
+              variant: 'loader',
+              isShow: loading,
             }}
           />
         )}

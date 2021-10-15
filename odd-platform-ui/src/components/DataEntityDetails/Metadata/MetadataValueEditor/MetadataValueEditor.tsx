@@ -8,12 +8,10 @@ import {
   TextFieldProps,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-// import { KeyboardDatePicker } from '@material-ui/pickers';
 import DatePicker from '@mui/lab/DatePicker';
 import { Controller, useFormContext } from 'react-hook-form';
 import { format } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';
-// import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 import { styles, StylesType } from './MetadataValueEditorStyles';
 
 interface MetadataValueEditFieldProps extends StylesType {

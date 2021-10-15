@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  TextField,
-  Typography,
-  FormControlLabel,
-  Checkbox,
-  InputAdornment,
-} from '@mui/material';
+import { Typography, FormControlLabel, Checkbox } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Tag,
@@ -13,9 +7,8 @@ import {
   TagApiUpdateTagRequest,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { StylesType } from './TagEditFormStyles';
 
 interface TagEditFormProps extends StylesType {
@@ -77,22 +70,13 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
         defaultValue={tag.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
             placeholder="Tag Name"
-            variant="outlined"
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppIconButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => field.onChange('')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => field.onChange(''),
             }}
           />
         )}

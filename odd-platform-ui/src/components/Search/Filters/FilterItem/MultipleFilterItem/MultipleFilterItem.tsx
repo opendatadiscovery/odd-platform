@@ -2,10 +2,7 @@ import React, { HTMLAttributes } from 'react';
 import {
   Autocomplete,
   AutocompleteRenderOptionState,
-  CircularProgress,
   Grid,
-  TextField,
-  Typography,
 } from '@mui/material';
 
 import {
@@ -28,6 +25,8 @@ import {
 import { StylesType } from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemStyles';
 import SelectedFilterOption from 'components/Search/Filters/FilterItem/SelectedFilterOption/SelectedFilterOption';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 
 interface FilterItemProps extends StylesType {
   searchId: string;
@@ -178,31 +177,27 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
     );
 
     return (
-      <Grid container justifyContent="space-between">
-        <span>
-          {string}
-          <span className={classes.highlightedOption}>
-            {highlightedText}
+      <li {...props}>
+        <Grid container justifyContent="space-between">
+          <span>
+            {string}
+            <span className={classes.highlightedOption}>
+              {highlightedText}
+            </span>
+            {endString}
           </span>
-          {endString}
-        </span>
-        <span className={classes.filterCount}>{option.count}</span>
-      </Grid>
+          <span className={classes.filterCount}>{option.count}</span>
+        </Grid>
+      </li>
     );
   };
 
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12}>
-        <Typography variant="h5" className={classes.caption}>
-          {name}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
         <Autocomplete
           className={classes.autoComplete}
           fullWidth
-          popupIcon={<DropdownIcon />}
           id={`filter-${facetName}`}
           open={autocompleteOpen}
           onOpen={() => setAutocompleteOpen(true)}
@@ -218,22 +213,18 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
           value={{ name: searchText }}
           noOptionsText={facetOptionsLoading ? '' : 'No options'}
           renderOption={fillOptionMatches}
+          popupIcon={<DropdownIcon />}
+          clearIcon={<ClearIcon />}
           renderInput={params => (
-            <TextField
+            <AppTextField
               {...params}
+              sx={{ mt: 2 }}
               placeholder="Search by name"
-              variant="outlined"
-              fullWidth
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <>
-                    {autocompleteOpen && facetOptionsLoading ? (
-                      <CircularProgress color="inherit" size={20} />
-                    ) : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                ),
+              label={name}
+              ref={params.InputProps.ref}
+              customEndAdornment={{
+                variant: 'loader',
+                isShow: autocompleteOpen && facetOptionsLoading,
               }}
             />
           )}

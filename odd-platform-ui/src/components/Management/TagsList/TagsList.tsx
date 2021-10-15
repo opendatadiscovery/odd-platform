@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Grid,
-  InputAdornment,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import {
   Tag,
   TagApiDeleteTagRequest,
@@ -13,14 +8,12 @@ import {
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
@@ -98,32 +91,22 @@ const TagsListView: React.FC<TagsListProps> = ({
         </Typography>
       </div>
       <div className={classes.caption}>
-        <TextField
+        <AppTextField
           placeholder="Search tag..."
-          classes={{ root: classes.searchInput }}
           value={searchText}
-          InputProps={{
-            'aria-label': 'search',
-            disableUnderline: true,
-            startAdornment: (
-              <InputAdornment position="end">
-                <AppIconButton
-                  color="unfilled"
-                  icon={<SearchIcon />}
-                  onClick={handleSearch}
-                />
-              </InputAdornment>
-            ),
-            endAdornment: searchText && (
-              <InputAdornment position="start">
-                <AppIconButton
-                  color="unfilled"
-                  icon={<CancelIcon />}
-                  onClick={() => setSearchText('')}
-                />
-              </InputAdornment>
-            ),
+          sx={{ minWidth: '340px' }}
+          fullWidth={false}
+          customStartAdornment={{
+            variant: 'search',
+            isShow: true,
+            onCLick: handleSearch,
           }}
+          customEndAdornment={{
+            variant: 'clear',
+            isShow: !!searchText,
+            onCLick: () => setSearchText(''),
+          }}
+          InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />

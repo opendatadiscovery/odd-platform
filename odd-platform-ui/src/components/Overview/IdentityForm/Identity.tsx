@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Autocomplete,
-  CircularProgress,
-  Grid,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Autocomplete, Grid, Typography } from '@mui/material';
 import {
   Controller,
   ControllerRenderProps,
@@ -28,6 +22,8 @@ import {
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './IdentityStyles';
 
 interface IdentityProps extends StylesType {
@@ -213,27 +209,18 @@ const Identity: React.FC<IdentityProps> = ({
                   selectOnFocus
                   blurOnSelect
                   freeSolo
+                  clearIcon={<ClearIcon />}
                   renderInput={params => (
                     <>
-                      <TextField
+                      <AppTextField
                         {...params}
+                        ref={params.InputProps.ref}
                         name="name"
                         label="Owner name"
                         placeholder="Search name"
-                        variant="outlined"
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment: (
-                            <>
-                              {optionsLoading ? (
-                                <CircularProgress
-                                  color="inherit"
-                                  size={20}
-                                />
-                              ) : null}
-                              {params.InputProps.endAdornment}
-                            </>
-                          ),
+                        customEndAdornment={{
+                          variant: 'loader',
+                          isShow: optionsLoading,
                         }}
                       />
                       {possibleOwners.length ? (

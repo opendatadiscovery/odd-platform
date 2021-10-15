@@ -13,7 +13,7 @@ import { StylesType } from 'components/shared/MainSearch/MainSearchStyles';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 
 interface AppSearchProps extends StylesType {
   className?: string;
@@ -130,7 +130,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
           }}
           freeSolo
           filterOptions={option => option}
-          clearIcon={<CancelIcon />}
+          clearIcon={<ClearIcon />}
           renderInput={params => (
             <AppTextField
               {...params}

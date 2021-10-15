@@ -13,7 +13,7 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'nowrap',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       '& $label': {
         marginRight: theme.spacing(2),
       },

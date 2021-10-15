@@ -1,4 +1,4 @@
-import { InputAdornment, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import React from 'react';
 import {
   DataEntityApiUpsertDataEntityInternalNameRequest,
@@ -7,10 +7,8 @@ import {
 } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
-import OutlinedTextField from 'components/shared/OutlinedTextField/OutlinedTextField';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { StylesType } from './InternalNameFormDialogStyles';
 
 interface InternalNameFormDialogProps extends StylesType {
@@ -31,12 +29,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   dataEntityInternalName,
   updateDataEntityInternalName,
 }) => {
-  const {
-    handleSubmit,
-    control,
-    reset,
-    setValue,
-  } = useForm<InternalNameFormData>({
+  const { handleSubmit, control, reset } = useForm<InternalNameFormData>({
     mode: 'all',
     reValidateMode: 'onChange',
   });
@@ -94,25 +87,15 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
         name="internalName"
         defaultValue={dataEntityInternalName || ''}
         render={({ field }) => (
-          <OutlinedTextField
+          <AppTextField
             {...field}
-            fullWidth
-            type="text"
-            variant="outlined"
-            label="Name"
+            label="Business name"
             placeholder="Enter business name"
             onKeyDown={handleKeyDown}
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppIconButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => setValue('internalName', '')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              isShow: !!field.value,
+              onCLick: () => field.onChange(''),
             }}
           />
         )}
@@ -145,6 +128,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
+      clearState={clearState}
     />
   );
 };

@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Grid,
-  InputAdornment,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import {
   DataSource,
   DataSourceApiGetDataSourceListRequest,
@@ -13,13 +8,11 @@ import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
 import { StylesType } from './DataSourcesListStyles';
@@ -97,34 +90,22 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
         </Typography>
       </div>
       <div className={classes.caption}>
-        <TextField
+        <AppTextField
           placeholder="Search datasource..."
-          classes={{ root: classes.searchInput }}
+          sx={{ minWidth: '340px' }}
+          fullWidth={false}
           value={searchText}
-          InputProps={{
-            'aria-label': 'search',
-            disableUnderline: true,
-            startAdornment: (
-              <InputAdornment position="end">
-                <AppIconButton
-                  size="small"
-                  color="unfilled"
-                  icon={<SearchIcon />}
-                  onClick={handleSearch}
-                />
-              </InputAdornment>
-            ),
-            endAdornment: searchText && (
-              <InputAdornment position="start">
-                <AppIconButton
-                  size="small"
-                  color="unfilled"
-                  icon={<CancelIcon />}
-                  onClick={() => setSearchText('')}
-                />
-              </InputAdornment>
-            ),
+          customStartAdornment={{
+            variant: 'search',
+            isShow: true,
+            onCLick: handleSearch,
           }}
+          customEndAdornment={{
+            variant: 'clear',
+            isShow: !!searchText,
+            onCLick: () => setSearchText(''),
+          }}
+          InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />

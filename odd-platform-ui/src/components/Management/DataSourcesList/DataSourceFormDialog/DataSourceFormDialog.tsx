@@ -32,7 +32,7 @@ import {
 import { useDebouncedCallback } from 'use-debounce/lib';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './DataSourceFormDialogStyles';
 
 interface DataSourceFormDialogProps extends StylesType {
@@ -418,7 +418,7 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
             freeSolo
             handleHomeEndKeys
             selectOnFocus
-            clearIcon={<CancelIcon />}
+            clearIcon={<ClearIcon />}
             renderInput={params => (
               <AppTextField
                 {...params}
@@ -433,20 +433,18 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
               />
             )}
             renderOption={(props, option) => (
-              <Typography
-                // eslint-disable-next-line react/jsx-props-no-spreading
-                {...props}
-                variant="body2"
-              >
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="custom data"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
+              <li {...props}>
+                <Typography variant="body2">
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="custom namespace"
+                      optionName={option.name}
+                    />
+                  )}
+                </Typography>
+              </li>
             )}
           />
         )}
