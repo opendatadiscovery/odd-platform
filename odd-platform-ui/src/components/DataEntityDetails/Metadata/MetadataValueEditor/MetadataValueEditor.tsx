@@ -1,17 +1,21 @@
 import React from 'react';
 import {
-  TextField,
-  Grid,
-  RadioGroup,
-  Radio,
   FormControlLabel,
+  Grid,
+  Radio,
+  RadioGroup,
   TextFieldProps,
 } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
-import DatePicker from '@mui/lab/DatePicker';
 import { Controller, useFormContext } from 'react-hook-form';
-import { format } from 'date-fns';
+import { format, isAfter, isBefore, isValid } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';
+import AppDatePicker, {
+  maxDate,
+  metadataDatePickerInputFormat,
+  minDate,
+} from 'components/shared/AppDatePicker/AppDatePicker';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { styles, StylesType } from './MetadataValueEditorStyles';
 
 interface MetadataValueEditFieldProps extends StylesType {
@@ -30,26 +34,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   labeled,
   size,
 }) => {
-  const { control, setValue } = useFormContext();
-
-  const [selectedDate, setSelectedDate] = React.useState<string>(
-    metadataType === MetadataFieldType.DATETIME && metadataValue
-      ? format(new Date(metadataValue), 'dd/MM/yyyy')
-      : ''
-  );
-  const setDate = (date: any) => {
-    if (date && date.toDateString() !== 'Invalid Date') {
-      setValue(fieldName, format(date, "yyyy-MM-dd'T'HH:mm:ss"), {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-    } else {
-      setValue(fieldName, null, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-    }
-  };
+  const { control } = useFormContext();
 
   const defaultText =
     metadataType === MetadataFieldType.ARRAY ? 'item1,item2,...' : 'Value';
@@ -60,36 +45,36 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
         control={control}
         name={fieldName}
         defaultValue={
-          metadataValue && format(new Date(metadataValue), 'dd/MM/yyyy')
+          metadataValue &&
+          format(new Date(metadataValue), metadataDatePickerInputFormat)
         }
-        rules={{ required: 'Invalid date' }}
-        render={({ field: { ref }, fieldState }) => (
+        rules={{
+          validate: {
+            isValid: d => isValid(d) || 'Date is invalid',
+            greaterThan: v =>
+              isAfter(new Date(v), minDate) ||
+              `Date should be greater than ${minDate.toDateString()}`,
+            lessThan: v =>
+              isBefore(new Date(v), maxDate) ||
+              `Date should be less than ${maxDate.toDateString()}`,
+          },
+        }}
+        render={({ field, fieldState }) => (
           <>
-            <DatePicker
-              className={classes.pickerErrorMessage}
+            <AppDatePicker
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...field}
               label={labeled ? defaultText : ''}
-              ref={ref}
-              inputFormat="dd/MM/yyyy"
-              InputAdornmentProps={{ className: classes.pickerAdornment }}
-              renderInput={params => (
-                <TextField {...params} className={classes.pickerInput} />
-              )}
-              value={selectedDate || null}
-              onAccept={date => {
-                setDate(date);
-              }}
-              onChange={date => {
-                setSelectedDate('');
-                setDate(date);
-              }}
+              disableMaskedInput
+              defaultDate={
+                metadataType === MetadataFieldType.DATETIME &&
+                metadataValue
+                  ? metadataValue
+                  : ''
+              }
+              showInputError={!!fieldState.error?.message}
+              inputHelperText={fieldState.error?.message}
             />
-            <div className={classes.formErrorContainer}>
-              {fieldState.error?.message && (
-                <p className={classes.formErrorMessage}>
-                  {fieldState.error?.message}
-                </p>
-              )}
-            </div>
           </>
         )}
       />
@@ -137,13 +122,13 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
       defaultValue={metadataValue || ''}
       rules={{ required: true }}
       render={({ field }) => (
-        <TextField
+        <AppTextField
           {...field}
           size={size}
           fullWidth
           label={labeled ? 'Value' : null}
           placeholder={labeled ? '' : defaultText}
-          variant="outlined"
+          // variant="outlined"
           inputProps={{
             type:
               metadataType &&

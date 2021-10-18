@@ -14,9 +14,9 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
-import MetadataValueEditField from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import { StylesType } from './MetadataItemStyles';
 
 interface MetadataItemProps extends StylesType {
@@ -97,7 +97,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
               className={classes.editForm}
               onSubmit={methods.handleSubmit(handleUpdate)}
             >
-              <MetadataValueEditField
+              <MetadataValueEditor
                 fieldName="value"
                 metadataType={metadataItem.field.type}
                 metadataValue={metadataItem.value}

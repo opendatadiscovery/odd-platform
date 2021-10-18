@@ -96,7 +96,7 @@ export const palette = createPalette({
   },
   runStatus: {
     SUCCESS: colors.green60,
-    FAILED: colors.red5,
+    FAILED: colors.red50,
     BROKEN: colors.orange50,
     SKIPPED: colors.blue50,
     ABORTED: colors.purple30,

@@ -1,6 +1,8 @@
 import { styled } from '@mui/material/styles';
 import {
+  buttonBaseClasses,
   formHelperTextClasses,
+  inputAdornmentClasses,
   inputBaseClasses,
   inputLabelClasses,
   outlinedInputClasses,
@@ -25,7 +27,7 @@ const inputYPaddingsBySize = (size: TextFieldSizes) => {
 
 export const StyledAppTextField = styled(
   TextField,
-  shouldForwardProp(['$size'])
+  shouldForwardProp(['$size', '$isLabeled'])
 )<AppTextFieldStyleProps>(({ theme, $size }) => ({
   [`&.${textFieldClasses.root}`]: {
     [`& .${outlinedInputClasses.notchedOutline}`]: {
@@ -81,6 +83,18 @@ export const StyledAppTextField = styled(
       transform: 'none',
       border: 'none',
       outline: 'none !important',
+    },
+  },
+  // overriding DatePicker endAdornment button
+  [`& .${outlinedInputClasses.root}`]: {
+    [`& .${inputAdornmentClasses.root}`]: {
+      [`& .${buttonBaseClasses.root}`]: {
+        marginRight: 0,
+        '&:hover': {
+          backgroundColor: 'unset',
+          color: theme.palette.button.unfilled.hover.color,
+        },
+      },
     },
   },
 }));
