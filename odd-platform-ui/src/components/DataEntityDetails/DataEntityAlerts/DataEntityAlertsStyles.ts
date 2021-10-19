@@ -24,6 +24,7 @@ export const alertsColWidthStyles = {
     flex: '0 0 43%',
   },
   colStatus: {
+    justifyContent: 'center',
     flex: '0 0 8%',
   },
   colUpdatedBy: {

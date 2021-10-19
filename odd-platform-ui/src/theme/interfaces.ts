@@ -1,5 +1,6 @@
 import { TypeBackground } from '@mui/material/styles/createPalette';
 import {
+  AlertStatus,
   DataEntityTypeNameEnum,
   DataSetFieldTypeTypeEnum,
 } from 'generated-sources';
@@ -71,10 +72,7 @@ interface TagType {
   important: ItemCondition;
 }
 
-interface AlertType {
-  open: ItemColors;
-  resolved: ItemColors;
-}
+type AlertType = Record<AlertStatus, ItemColors>;
 
 declare module '@mui/material/styles' {
   interface Palette {

@@ -10,7 +10,7 @@ export const styles = (theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       flexWrap: 'nowrap',
-      backgroundColor: theme.palette.alert.open.color,
+      backgroundColor: theme.palette.alert.OPEN.color,
       borderRadius: '2px',
       padding: theme.spacing(0.5, 1),
       boxShadow: theme.shadows[1],
