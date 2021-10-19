@@ -7,8 +7,8 @@ import { format } from 'date-fns';
 import { lowerCase } from 'lodash';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
-import Tooltip from 'components/shared/Tooltip/Tooltip';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { styles, StylesType } from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps extends StylesType {
@@ -28,9 +28,11 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colType)}>
-      <Typography variant="body1" title={alert.type} noWrap>
-        {lowerCase(alert.type)}
-      </Typography>
+      <AppTooltip title={lowerCase(alert.type)} offset={{ right: 80 }}>
+        <Typography variant="body1" title={alert.type} noWrap>
+          {lowerCase(alert.type)}
+        </Typography>
+      </AppTooltip>
     </Grid>
     <Grid item className={cx(classes.col, classes.colDescription)}>
       <Typography variant="body1" title={alert.description} noWrap>
@@ -56,21 +58,20 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       item
       className={cx(classes.col, classes.colActionBtn, classes.optionsBtn)}
     >
-      <Tooltip
-        tooltipControl="byClick"
-        tooltipContent={
+      <AppTooltip
+        control="byClick"
+        title={
           <MenuItem onClick={alertStatusHandler}>
             {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
           </MenuItem>
         }
-        type="light"
       >
         <AppIconButton
           size="medium"
           color="primaryLight"
           icon={<KebabIcon />}
         />
-      </Tooltip>
+      </AppTooltip>
     </Grid>
   </Grid>
 );

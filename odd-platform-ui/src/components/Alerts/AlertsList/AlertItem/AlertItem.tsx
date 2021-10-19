@@ -8,9 +8,9 @@ import cx from 'classnames';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
-import Tooltip from 'components/shared/Tooltip/Tooltip';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { styles, StylesType } from './AlertItemStyles';
 
 interface AlertItemProps extends StylesType {
@@ -39,17 +39,18 @@ const AlertItem: React.FC<AlertItemProps> = ({
               : '#'
           }
         >
-          <Typography
-            variant="body1"
-            noWrap
+          <AppTooltip
             title={
               alert.dataEntity?.internalName ||
               alert.dataEntity?.externalName
             }
+            offset={{ right: 80 }}
           >
-            {alert.dataEntity?.internalName ||
-              alert.dataEntity?.externalName}
-          </Typography>
+            <Typography variant="body1" noWrap>
+              {alert.dataEntity?.internalName ||
+                alert.dataEntity?.externalName}
+            </Typography>
+          </AppTooltip>
         </Link>
       </div>
       <div className={classes.typesList}>
@@ -92,21 +93,20 @@ const AlertItem: React.FC<AlertItemProps> = ({
       item
       className={cx(classes.col, classes.colActionBtn, classes.optionsBtn)}
     >
-      <Tooltip
-        tooltipControl="byClick"
-        tooltipContent={
+      <AppTooltip
+        control="byClick"
+        title={
           <MenuItem onClick={alertStatusHandler}>
             {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
           </MenuItem>
         }
-        type="light"
       >
         <AppIconButton
           size="medium"
           color="primaryLight"
           icon={<KebabIcon />}
         />
-      </Tooltip>
+      </AppTooltip>
     </Grid>
   </Grid>
 );

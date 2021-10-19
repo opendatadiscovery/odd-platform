@@ -1,31 +1,30 @@
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
 import ReactTooltip, { TooltipProps } from 'react-tooltip';
-import cx from 'classnames';
 import { v4 as uuidv4 } from 'uuid';
-import { styles, StylesType } from './TooltipStyles';
+import { SxProps } from '@mui/system';
+import { Theme } from '@mui/material';
+import * as S from './AppTooltipStyles';
 
-interface CustomTooltipProps
-  extends StylesType,
-    Omit<TooltipProps, 'type'> {
-  className?: string;
-  tooltipContent: string | JSX.Element | undefined;
+interface AppTooltipProps extends Pick<TooltipProps, 'place' | 'offset'> {
+  title: string | JSX.Element | undefined;
   type?: 'light' | 'dark';
-  tooltipControl?: 'byClick' | 'byHover';
+  control?: 'byClick' | 'byHover';
   overflowCheck?: boolean;
   place?: TooltipProps['place'];
+  maxWidth?: number;
+  sx?: SxProps<Theme>;
 }
 
-const Tooltip: React.FC<CustomTooltipProps> = ({
-  classes,
-  className,
-  tooltipContent,
+const AppTooltip: React.FC<AppTooltipProps> = ({
+  title,
   children,
   type = 'light',
-  tooltipControl = 'byHover',
+  control = 'byHover',
   overflowCheck = true,
   place = 'bottom',
-  ...props
+  offset,
+  maxWidth,
+  sx,
 }) => {
   const tagList = ['svg'];
 
@@ -49,37 +48,41 @@ const Tooltip: React.FC<CustomTooltipProps> = ({
   }, [childrenRef, hasOverflow, children, overflowCheck]);
 
   const controlChecker = React.useMemo<boolean>(
-    () => tooltipControl === 'byClick',
-    [tooltipControl]
+    () => control === 'byClick',
+    [control]
   );
 
   return (
-    <div className={classes.container}>
+    <S.Container $maxWidth={maxWidth} sx={sx}>
       {hasOverflow || controlChecker || !overflowCheck ? (
         <ReactTooltip
-          {...props} // eslint-disable-line react/jsx-props-no-spreading
           id={id}
           type={type}
           clickable={controlChecker}
           globalEventOff="click"
           place={place}
+          eventOff="mouseleave"
+          offset={
+            offset ||
+            (control === 'byClick'
+              ? { right: 60, top: 25 }
+              : { right: 60 })
+          }
         >
-          {tooltipContent}
+          {title}
         </ReactTooltip>
       ) : null}
-      <div
-        className={cx(classes.childrenContainer, {
-          [classes.cursor]: hasOverflow || !overflowCheck,
-        })}
+      <S.ChildrenContainer
+        $isPointer={hasOverflow || !overflowCheck}
         data-for={id}
         data-tip
         data-event={controlChecker ? 'click' : null}
         ref={childrenRef}
       >
         {children}
-      </div>
-    </div>
+      </S.ChildrenContainer>
+    </S.Container>
   );
 };
 
-export default withStyles(styles)(Tooltip);
+export default AppTooltip;
