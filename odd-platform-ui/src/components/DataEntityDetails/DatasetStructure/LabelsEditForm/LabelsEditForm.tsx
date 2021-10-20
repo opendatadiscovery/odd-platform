@@ -205,6 +205,7 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
             customEndAdornment={{
               variant: 'loader',
               isShow: loading,
+              sx: { mr: 5 },
             }}
           />
         )}

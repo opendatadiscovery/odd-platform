@@ -205,40 +205,42 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
             </Grid>
             <Grid item className={classes.typeCol}>
-              <AppTooltip
-                control="byClick"
-                title={
-                  <>
-                    <LabelsEditFormContainer
-                      datasetFieldId={datasetField.id}
-                      btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
-                    />
-                    <InternalDescriptionFormDialogContainer
-                      datasetFieldId={datasetField.id}
-                      btnCreateEl={<MenuItem>Edit Description</MenuItem>}
-                    />
-                  </>
-                }
-              >
-                <div className={classes.optionsBtn}>
+              <div className={classes.optionsBtn}>
+                <AppTooltip
+                  control="byClick"
+                  title={
+                    <>
+                      <LabelsEditFormContainer
+                        datasetFieldId={datasetField.id}
+                        btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
+                      />
+                      <InternalDescriptionFormDialogContainer
+                        datasetFieldId={datasetField.id}
+                        btnCreateEl={<MenuItem>Edit Description</MenuItem>}
+                      />
+                    </>
+                  }
+                >
                   <AppIconButton
                     size="medium"
                     color="primaryLight"
                     icon={<KebabIcon />}
                   />
-                </div>
-              </AppTooltip>
+                </AppTooltip>
+              </div>
               <DatasetStructureFieldTypeLabel
                 typeName={datasetField.type.type}
               />
-              <AppTooltip
-                title={`Logical type: ${datasetField.type.logicalType}`}
-                type="dark"
-              >
-                <InformationIcon
-                  sx={{ display: 'flex', alignItems: 'center' }}
-                />
-              </AppTooltip>
+              <div>
+                <AppTooltip
+                  title={`Logical type: ${datasetField.type.logicalType}`}
+                  type="dark"
+                >
+                  <InformationIcon
+                    sx={{ display: 'flex', alignItems: 'center' }}
+                  />
+                </AppTooltip>
+              </div>
             </Grid>
           </Grid>
           <Grid item xs={2} container className={classes.columnDivided}>

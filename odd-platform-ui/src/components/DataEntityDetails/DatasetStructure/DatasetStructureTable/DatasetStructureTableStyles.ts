@@ -19,6 +19,7 @@ export const columnBasicStyles = (theme: Theme) => ({
     width: '72px',
     display: 'flex',
     justifyContent: 'flex-end',
+    alignItems: 'center',
     paddingRight: theme.spacing(2),
     '& > *': {
       marginRight: theme.spacing(1),
