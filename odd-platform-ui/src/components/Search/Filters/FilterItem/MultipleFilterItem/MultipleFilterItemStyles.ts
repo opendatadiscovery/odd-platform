@@ -25,9 +25,6 @@ export const styles = (theme: Theme) =>
       borderRadius: '2px',
     },
     filterCount: { color: theme.palette.texts.hint },
-    autoComplete: {
-      width: '192px',
-    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

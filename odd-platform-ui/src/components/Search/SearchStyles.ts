@@ -36,13 +36,13 @@ export const styles = (theme: Theme) =>
       flexGrow: 1,
       maxWidth: '100%',
       justifySelf: 'stretch',
+      marginLeft: theme.spacing(1),
       [theme.breakpoints.up(maxContentWidth + maxSidebarWidth)]: {
         width: `${maxContentWidth}px`,
       },
     },
     searchInput: {
       justifyContent: 'flex-start',
-      marginLeft: '-4px',
     },
   });
 

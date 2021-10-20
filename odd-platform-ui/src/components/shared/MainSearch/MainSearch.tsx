@@ -149,6 +149,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
               customEndAdornment={{
                 variant: 'loader',
                 isShow: loadingSuggestions,
+                sx: { mr: 5 },
               }}
             />
           )}

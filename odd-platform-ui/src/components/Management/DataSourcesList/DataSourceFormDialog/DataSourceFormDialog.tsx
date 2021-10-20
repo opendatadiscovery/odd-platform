@@ -24,9 +24,7 @@ import {
   createFilterOptions,
   FormControlLabel,
   Grid,
-  InputLabel,
   MenuItem,
-  Select,
   Typography,
 } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce/lib';
@@ -356,21 +354,13 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
               control={control}
               render={({ field }) => (
                 <>
-                  <InputLabel shrink id="pulling-interval">
-                    Pulling Interval
-                  </InputLabel>
-                  <Select
-                    {...field}
-                    fullWidth
-                    variant="outlined"
-                    labelId="pulling-interval"
-                  >
+                  <AppTextField {...field} label="Pulling Interval" select>
                     {['minutes', 'hours', 'days', 'weeks'].map(value => (
                       <MenuItem key={value} value={value}>
                         {capitalize(value)}
                       </MenuItem>
                     ))}
-                  </Select>
+                  </AppTextField>
                 </>
               )}
             />

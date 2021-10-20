@@ -11,9 +11,6 @@ export const styles = (theme: Theme) =>
       marginBottom: theme.spacing(0.5),
       color: theme.palette.text.secondary,
     },
-    singleSelect: {
-      width: '192px',
-    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

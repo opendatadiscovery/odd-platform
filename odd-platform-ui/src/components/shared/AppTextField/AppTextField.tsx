@@ -13,6 +13,7 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import { SxProps } from '@mui/system';
+import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 
 type AdornmentVariant = 'loader' | 'clear' | 'search';
 interface AdornmentProps {
@@ -45,16 +46,22 @@ interface AppTextFieldProps
     | 'multiline'
     | 'name'
     | 'fullWidth'
+    | 'select'
+    | 'SelectProps'
+    | 'onSelect'
+    | 'id'
   > {
   size?: TextFieldSizes;
 
   customStartAdornment?: AdornmentProps;
   customEndAdornment?: AdornmentProps;
+  selectNative?: boolean;
 }
 
 const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
   (
     {
+      children,
       size = 'medium',
       onClick,
       sx,
@@ -77,6 +84,11 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
       multiline,
       name,
       fullWidth = true,
+      select,
+      SelectProps,
+      onSelect,
+      id,
+      selectNative,
     },
     ref
   ) => {
@@ -121,7 +133,7 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
                 alignItems="center"
                 justifyContent="flex-end"
                 width="max-content"
-                sx={position || { mr: 5 }}
+                sx={position}
               >
                 <CircularProgress color="inherit" size={20} />
               </Grid>
@@ -134,10 +146,11 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
 
     return (
       <StyledAppTextField
+        $size={size}
+        $isLabeled={!!label}
         variant="outlined"
         fullWidth={fullWidth}
         InputLabelProps={{ shrink: true }}
-        $size={size}
         sx={sx}
         placeholder={placeholder}
         value={value}
@@ -156,6 +169,14 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
         maxRows={maxRows}
         multiline={multiline}
         name={name}
+        select={select || selectNative}
+        SelectProps={{
+          ...SelectProps,
+          IconComponent: DropdownIcon,
+          native: selectNative,
+        }}
+        onSelect={onSelect}
+        id={id}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
           ...InputProps,
@@ -181,7 +202,9 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
             </>
           ),
         }}
-      />
+      >
+        {children}
+      </StyledAppTextField>
     );
   }
 );

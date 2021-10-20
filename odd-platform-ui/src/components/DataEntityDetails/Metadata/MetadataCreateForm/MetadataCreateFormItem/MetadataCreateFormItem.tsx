@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Autocomplete,
-  InputLabel,
-  MenuItem,
-  Select,
-  Typography,
-} from '@mui/material';
+import { Autocomplete, MenuItem, Typography } from '@mui/material';
 import { capitalize, values } from 'lodash';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce/lib';
@@ -215,34 +209,24 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
               defaultValue={selectedType}
               rules={{ required: true }}
               render={({ field }) => (
-                <>
-                  <InputLabel shrink id="metadata-type">
-                    Type
-                  </InputLabel>
-                  <Select
-                    {...field}
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Type"
-                    labelId="metadata-type"
-                    disabled={!!selectedField?.type}
-                    inputProps={{
-                      onChange: (
-                        e: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setSelectedType(
-                          e.target.value as MetadataFieldType
-                        );
-                      },
-                    }}
-                  >
-                    {values(MetadataFieldType).map(type => (
-                      <MenuItem key={type} value={type}>
-                        {capitalize(type)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </>
+                <AppTextField
+                  {...field}
+                  label="Type"
+                  placeholder="Type"
+                  select
+                  disabled={!!selectedField?.type}
+                  inputProps={{
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                      setSelectedType(e.target.value as MetadataFieldType);
+                    },
+                  }}
+                >
+                  {values(MetadataFieldType).map(type => (
+                    <MenuItem key={type} value={type}>
+                      {capitalize(type)}
+                    </MenuItem>
+                  ))}
+                </AppTextField>
               )}
             />
           </div>

@@ -5,7 +5,9 @@ import {
   inputAdornmentClasses,
   inputBaseClasses,
   inputLabelClasses,
+  nativeSelectClasses,
   outlinedInputClasses,
+  selectClasses,
   TextField,
   textFieldClasses,
 } from '@mui/material';
@@ -16,6 +18,7 @@ export type TextFieldSizes = 'large' | 'medium' | 'small';
 
 interface AppTextFieldStyleProps {
   $size: TextFieldSizes;
+  $isLabeled?: boolean;
 }
 
 const isLarge = (size: string) => size === 'large';
@@ -28,7 +31,7 @@ const inputYPaddingsBySize = (size: TextFieldSizes) => {
 export const StyledAppTextField = styled(
   TextField,
   shouldForwardProp(['$size', '$isLabeled'])
-)<AppTextFieldStyleProps>(({ theme, $size }) => ({
+)<AppTextFieldStyleProps>(({ theme, $size, $isLabeled }) => ({
   [`&.${textFieldClasses.root}`]: {
     [`& .${outlinedInputClasses.notchedOutline}`]: {
       border: 'none',
@@ -42,7 +45,7 @@ export const StyledAppTextField = styled(
       borderRadius: '4px',
       backgroundColor: theme.palette.textField.normal.background,
       padding: 0,
-      marginTop: theme.spacing(2),
+      marginTop: $isLabeled ? theme.spacing(2) : 0,
       '&:hover': {
         borderColor:
           theme.palette.textField.hover[
@@ -83,9 +86,18 @@ export const StyledAppTextField = styled(
       transform: 'none',
       border: 'none',
       outline: 'none !important',
+      top: theme.spacing(-0.5),
+    },
+    [`& .${inputLabelClasses.asterisk}`]: {
+      color: theme.palette.warning.main,
     },
   },
-  // overriding DatePicker endAdornment button
+  // overriding MUI select and native select icon position
+  [`& .${selectClasses.icon}, .${nativeSelectClasses.icon}`]: {
+    top: 'calc(50% - 8px)',
+    right: '8px',
+  },
+  // overriding DatePicker input's endAdornment button
   [`& .${outlinedInputClasses.root}`]: {
     [`& .${inputAdornmentClasses.root}`]: {
       [`& .${buttonBaseClasses.root}`]: {

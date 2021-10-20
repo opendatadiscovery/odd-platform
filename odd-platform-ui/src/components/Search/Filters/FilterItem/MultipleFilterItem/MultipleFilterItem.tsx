@@ -196,7 +196,6 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
     <Grid container className={classes.container}>
       <Grid item xs={12}>
         <Autocomplete
-          className={classes.autoComplete}
           fullWidth
           id={`filter-${facetName}`}
           open={autocompleteOpen}

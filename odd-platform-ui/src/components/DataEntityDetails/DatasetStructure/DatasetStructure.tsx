@@ -1,18 +1,13 @@
-import {
-  Grid,
-  Typography,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material';
-import React from 'react';
+import { Grid, Typography } from '@mui/material';
+import React, { ChangeEvent } from 'react';
 import { useHistory } from 'react-router-dom';
-import { toPairs, round } from 'lodash';
+import { round, toPairs } from 'lodash';
 import {
+  DataSetApiGetDataSetStructureByVersionIdRequest,
+  DataSetApiGetDataSetStructureLatestRequest,
   DataSetFieldTypeTypeEnum,
   DataSetStats,
   DataSetVersion,
-  DataSetApiGetDataSetStructureLatestRequest,
-  DataSetApiGetDataSetStructureByVersionIdRequest,
 } from 'generated-sources';
 import { datasetStructurePath } from 'lib/paths';
 import { isComplexField } from 'lib/helpers';
@@ -21,6 +16,7 @@ import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { StylesType } from './DatasetStructureStyles';
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
@@ -66,8 +62,10 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     }
   }, [fetchDataSetStructureLatest, dataEntityId]);
 
-  const handleRevisionChange = (e: SelectChangeEvent<number>) => {
-    const newVersionId = e.target.value as number;
+  const handleRevisionChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newVersionId = (e.target.value as unknown) as number;
     fetchDataSetStructure({
       dataEntityId,
       versionId: newVersionId,
@@ -135,16 +133,11 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                   <Typography variant="subtitle2">
                     Current Revision:
                   </Typography>
-                  <Select
-                    native
-                    className={classes.revisionSelect}
-                    classes={{
-                      root: classes.revisionSelect,
-                      select: classes.revisionSelectSelect,
-                    }}
-                    labelId="revision-select-label"
+                  <AppTextField
+                    sx={{ width: 52, ml: 1 }}
                     id="revision-select"
-                    variant="outlined"
+                    type="number"
+                    selectNative
                     defaultValue={datasetStructureVersion}
                     onChange={handleRevisionChange}
                   >
@@ -153,7 +146,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                         {rev.version}
                       </option>
                     ))}
-                  </Select>
+                  </AppTextField>
                 </>
               ) : null}
             </Grid>
