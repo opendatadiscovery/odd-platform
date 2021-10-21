@@ -70,7 +70,7 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
     (): DataSourceFormDataValues => ({
       name: '',
       oddrn: '',
-      namespaceName: '',
+      namespaceName: dataSource?.namespace?.name || '',
       connectionUrl: '',
       description: '',
       ...dataSource,
@@ -209,7 +209,7 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
           name: newValue,
         };
       }
-      onChange(newField?.name);
+      onChange(newField?.name || '');
     },
     []
   );
