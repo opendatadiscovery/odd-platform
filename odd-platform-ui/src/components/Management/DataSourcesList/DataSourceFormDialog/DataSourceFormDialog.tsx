@@ -68,12 +68,11 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
 }) => {
   const getDefaultValues = React.useCallback(
     (): DataSourceFormDataValues => ({
-      name: '',
-      oddrn: '',
+      name: dataSource?.name || '',
+      oddrn: dataSource?.oddrn || '',
       namespaceName: dataSource?.namespace?.name || '',
-      connectionUrl: '',
-      description: '',
-      ...dataSource,
+      connectionUrl: dataSource?.connectionUrl || '',
+      description: dataSource?.description || '',
       active: !!dataSource?.active,
       pullingInterval: dataSource?.pullingInterval
         ? reduce(
