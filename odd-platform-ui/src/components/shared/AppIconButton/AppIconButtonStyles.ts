@@ -1,6 +1,6 @@
 import { IconButton, iconButtonClasses } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { shouldForwardProp } from 'lib/helpers';
+import { propsChecker } from 'lib/helpers';
 
 export type IconButtonColors =
   | 'primaryLight'
@@ -14,10 +14,10 @@ export interface AppIconButtonStyleProps {
   $open?: boolean;
 }
 
-export const StyledIconButton = styled(
-  IconButton,
-  shouldForwardProp(['$color'])
-)<AppIconButtonStyleProps>(({ theme, $color, $open }) => ({
+export const StyledIconButton = styled(IconButton, {
+  shouldForwardProp: (propName: PropertyKey) =>
+    propsChecker(propName, ['$color', '$open']),
+})<AppIconButtonStyleProps>(({ theme, $color, $open }) => ({
   [`&.${iconButtonClasses.sizeSmall}`]: {
     width: $color === 'expand' ? '21px' : '16px',
     height: '16px',

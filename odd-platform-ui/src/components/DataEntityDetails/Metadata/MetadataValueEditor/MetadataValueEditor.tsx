@@ -64,6 +64,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
             <AppDatePicker
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
+              sx={{ mt: 1 }}
               label={labeled ? defaultText : ''}
               disableMaskedInput
               defaultDate={
@@ -91,6 +92,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
             {...field}
             defaultValue={metadataValue || 'true'}
             className={classes.radioGroup}
+            sx={{ mt: 1 }}
           >
             <Grid container>
               <Grid item sm={6}>
@@ -124,6 +126,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
       render={({ field }) => (
         <AppTextField
           {...field}
+          sx={{ mt: 1 }}
           size={size}
           fullWidth
           label={labeled ? 'Value' : null}

@@ -210,7 +210,8 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
             placeholder="Enter tag name…"
             customEndAdornment={{
               variant: 'loader',
-              isShow: loading,
+              showAdornment: loading,
+              position: { mr: 4 },
             }}
           />
         )}

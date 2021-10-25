@@ -1,5 +1,6 @@
 import { styled } from '@mui/material/styles';
 import {
+  autocompleteClasses,
   buttonBaseClasses,
   formHelperTextClasses,
   inputAdornmentClasses,
@@ -12,7 +13,7 @@ import {
   textFieldClasses,
 } from '@mui/material';
 import { breakpointDownLgBody2, pxToRem } from 'theme/typography';
-import { shouldForwardProp } from 'lib/helpers';
+import { propsChecker } from 'lib/helpers';
 
 export type TextFieldSizes = 'large' | 'medium' | 'small';
 
@@ -28,16 +29,20 @@ const inputYPaddingsBySize = (size: TextFieldSizes) => {
   return 0.75;
 };
 
-export const StyledAppTextField = styled(
-  TextField,
-  shouldForwardProp(['$size', '$isLabeled'])
-)<AppTextFieldStyleProps>(({ theme, $size, $isLabeled }) => ({
+export const StyledAppTextField = styled(TextField, {
+  shouldForwardProp: (propName: PropertyKey) =>
+    propsChecker(propName, ['$size', '$isLabeled']),
+})<AppTextFieldStyleProps>(({ theme, $size, $isLabeled }) => ({
   [`&.${textFieldClasses.root}`]: {
     [`& .${outlinedInputClasses.notchedOutline}`]: {
       border: 'none',
       top: 0,
     },
     [`& .${outlinedInputClasses.root}`]: {
+      [`& .${autocompleteClasses.input}`]: {
+        // border: '1px solid red',
+        padding: theme.spacing(inputYPaddingsBySize($size), 1),
+      },
       border: '1px solid',
       borderColor:
         theme.palette.textField[isLarge($size) ? 'active' : 'normal']
@@ -61,7 +66,7 @@ export const StyledAppTextField = styled(
       outlineColor: theme.palette.textField.active.border,
     },
     [`& .${outlinedInputClasses.error}`]: {
-      borderColor: theme.palette.textField.error?.border,
+      borderColor: `${theme.palette.textField.error?.border} !important`,
     },
     [`& .${outlinedInputClasses.disabled}`]: {
       borderColor: theme.palette.textField.disabled?.border,
@@ -86,7 +91,7 @@ export const StyledAppTextField = styled(
       transform: 'none',
       border: 'none',
       outline: 'none !important',
-      top: theme.spacing(-0.5),
+      top: theme.spacing(-0.25),
     },
     [`& .${inputLabelClasses.asterisk}`]: {
       color: theme.palette.warning.main,

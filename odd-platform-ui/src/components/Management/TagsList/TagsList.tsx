@@ -14,6 +14,8 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
@@ -98,13 +100,15 @@ const TagsListView: React.FC<TagsListProps> = ({
           fullWidth={false}
           customStartAdornment={{
             variant: 'search',
-            isShow: true,
+            showAdornment: true,
             onCLick: handleSearch,
+            icon: <SearchIcon />,
           }}
           customEndAdornment={{
             variant: 'clear',
-            isShow: !!searchText,
+            showAdornment: !!searchText,
             onCLick: () => setSearchText(''),
+            icon: <ClearIcon />,
           }}
           InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}

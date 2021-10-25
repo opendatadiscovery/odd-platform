@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles';
-import { shouldForwardProp } from 'lib/helpers';
+import { propsChecker } from 'lib/helpers';
 
 interface ContainerProps {
   $maxWidth?: number;
@@ -9,10 +9,10 @@ interface ChildrenContainerProps {
   $isPointer: boolean;
 }
 
-export const Container = styled(
-  'div',
-  shouldForwardProp(['$maxWidth'])
-)<ContainerProps>(({ theme, $maxWidth }) => ({
+export const Container = styled('div', {
+  shouldForwardProp: (propName: PropertyKey) =>
+    propsChecker(propName, ['$maxWidth']),
+})<ContainerProps>(({ theme, $maxWidth }) => ({
   margin: 'auto 0',
   overflow: 'auto',
   '& .__react_component_tooltip:after, .__react_component_tooltip:before': {
@@ -46,9 +46,9 @@ export const Container = styled(
   },
 }));
 
-export const ChildrenContainer = styled(
-  'div',
-  shouldForwardProp(['$isPointer'])
-)<ChildrenContainerProps>(({ theme, $isPointer }) => ({
+export const ChildrenContainer = styled('div', {
+  shouldForwardProp: (propName: PropertyKey) =>
+    propsChecker(propName, ['$isPointer']),
+})<ChildrenContainerProps>(({ theme, $isPointer }) => ({
   cursor: $isPointer ? 'pointer' : 'auto',
 }));

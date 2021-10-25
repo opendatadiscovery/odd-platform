@@ -1,6 +1,6 @@
 import { AlertStatus } from 'generated-sources';
 import { styled } from '@mui/material/styles';
-import { shouldForwardProp } from 'lib/helpers';
+import { propsChecker } from 'lib/helpers';
 
 interface FilledContainerProps {
   $typeName: AlertStatus;
@@ -14,10 +14,10 @@ export const Container = styled('div')(({ theme }) => ({
   alignItems: 'center',
 }));
 
-export const FilledContainer = styled(
-  'span',
-  shouldForwardProp(['$typeName'])
-)<FilledContainerProps>(({ theme, $typeName }) => ({
+export const FilledContainer = styled('span', {
+  shouldForwardProp: (propName: PropertyKey) =>
+    propsChecker(propName, ['$typeName']),
+})<FilledContainerProps>(({ theme, $typeName }) => ({
   fontSize: theme.typography.body2.fontSize,
   lineHeight: theme.typography.body2.lineHeight,
   borderRadius: '12px',

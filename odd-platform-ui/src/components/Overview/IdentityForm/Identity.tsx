@@ -220,7 +220,8 @@ const Identity: React.FC<IdentityProps> = ({
                         placeholder="Search name"
                         customEndAdornment={{
                           variant: 'loader',
-                          isShow: optionsLoading,
+                          showAdornment: optionsLoading,
+                          position: { mr: 4 },
                         }}
                       />
                       {possibleOwners.length ? (

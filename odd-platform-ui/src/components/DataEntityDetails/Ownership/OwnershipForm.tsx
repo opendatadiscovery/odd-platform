@@ -285,7 +285,6 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           rules={{ required: true }}
           render={({ field }) => (
             <Autocomplete
-              classes={{ root: classes.formField }}
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
               fullWidth
@@ -311,12 +310,12 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
                 <AppTextField
                   {...params}
                   ref={params.InputProps.ref}
-                  name="name"
                   label="Owner name"
                   placeholder="Search name"
                   customEndAdornment={{
                     variant: 'loader',
-                    isShow: ownersLoading,
+                    showAdornment: ownersLoading,
+                    position: { mr: 4 },
                   }}
                 />
               )}
@@ -344,7 +343,6 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
         defaultValue={dataEntityOwnership?.role?.name || ''}
         render={({ field }) => (
           <Autocomplete
-            classes={{ root: classes.formField }}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...field}
             fullWidth
@@ -370,12 +368,12 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
               <AppTextField
                 {...params}
                 ref={params.InputProps.ref}
-                name="roleName"
                 label="Role"
                 placeholder="Search role"
                 customEndAdornment={{
                   variant: 'loader',
-                  isShow: rolesLoading,
+                  showAdornment: rolesLoading,
+                  position: { mr: 4 },
                 }}
               />
             )}

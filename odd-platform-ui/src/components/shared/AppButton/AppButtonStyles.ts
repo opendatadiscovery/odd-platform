@@ -1,7 +1,7 @@
 import { styled } from '@mui/material/styles';
-import { buttonClasses, Button } from '@mui/material';
+import { Button, buttonClasses } from '@mui/material';
 import { breakpointDownLgBody2 } from 'theme/typography';
-import { shouldForwardProp } from 'lib/helpers';
+import { propsChecker } from 'lib/helpers';
 
 export type ButtonColors =
   | 'primary'
@@ -17,10 +17,10 @@ interface AppButtonStyleProps {
 
 const isTertiary = (color: string) => color === 'tertiary';
 
-export const StyledAppButton = styled(
-  Button,
-  shouldForwardProp(['$color'])
-)<AppButtonStyleProps>(({ theme, $color }) => ({
+export const StyledAppButton = styled(Button, {
+  shouldForwardProp: (propName: PropertyKey) =>
+    propsChecker(propName, ['$color']),
+})<AppButtonStyleProps>(({ theme, $color }) => ({
   // overrides of MUI Button styles
   [`&.${buttonClasses.root}`]: {
     minWidth: 0,

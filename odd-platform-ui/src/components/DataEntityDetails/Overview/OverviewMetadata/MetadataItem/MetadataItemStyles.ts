@@ -14,7 +14,7 @@ export const styles = (theme: Theme) =>
     labelContainer: {
       display: 'flex',
       overflow: 'hidden',
-      marginTop: theme.spacing(2),
+      marginTop: theme.spacing(1),
     },
     label: {
       wordBreak: 'break-word',
@@ -48,7 +48,7 @@ export const styles = (theme: Theme) =>
       alignItems: 'center',
     },
     formActionBtns: {
-      marginTop: theme.spacing(2),
+      marginTop: theme.spacing(1),
       display: 'flex',
       alignItems: 'center',
       marginLeft: theme.spacing(1),

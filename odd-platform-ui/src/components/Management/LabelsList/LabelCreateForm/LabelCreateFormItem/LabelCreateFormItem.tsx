@@ -3,6 +3,7 @@ import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { styles, StylesType } from './LabelCreateFormItemStyles';
 
 interface LabelCreateFormItemProps extends StylesType {
@@ -33,8 +34,9 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
             name={`labels.${itemIndex}.name`}
             customEndAdornment={{
               variant: 'clear',
-              isShow: !!field.value,
+              showAdornment: !!field.value,
               onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}

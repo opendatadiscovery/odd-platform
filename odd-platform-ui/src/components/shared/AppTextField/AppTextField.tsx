@@ -1,26 +1,20 @@
 import React from 'react';
-import {
-  CircularProgress,
-  Grid,
-  TextFieldProps,
-  Theme,
-} from '@mui/material';
+import { CircularProgress, TextFieldProps, Theme } from '@mui/material';
 import {
   StyledAppTextField,
   TextFieldSizes,
 } from 'components/shared/AppTextField/AppTextFieldStyles';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
 import { SxProps } from '@mui/system';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 
 type AdornmentVariant = 'loader' | 'clear' | 'search';
 interface AdornmentProps {
   variant: AdornmentVariant;
-  isShow: boolean;
+  showAdornment: boolean;
+  icon?: React.ReactNode;
   onCLick?: () => void;
-  sx?: SxProps<Theme>;
+  position?: SxProps<Theme>;
 }
 
 interface AppTextFieldProps
@@ -92,57 +86,27 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
     },
     ref
   ) => {
-    const adornment = (
-      variant?: AdornmentVariant,
-      isShow?: boolean,
-      onCLick?: () => void,
-      position?: SxProps<Theme>
-    ) => {
-      switch (variant) {
-        case 'clear':
-          return (
-            isShow && (
-              <AppIconButton
-                sx={position || { mx: 1 }}
-                size="small"
-                color="unfilled"
-                icon={<ClearIcon />}
-                disabled={disabled}
-                onClick={onCLick}
-              />
-            )
+    const setAdornment = ({
+      icon,
+      variant,
+      showAdornment,
+      onCLick,
+      position,
+    }: AdornmentProps) =>
+      variant === 'loader'
+        ? showAdornment && (
+            <CircularProgress sx={position} color="inherit" size={20} />
+          )
+        : showAdornment && (
+            <AppIconButton
+              sx={position || { mx: 1 }}
+              size="small"
+              color="unfilled"
+              icon={icon}
+              disabled={disabled}
+              onClick={onCLick}
+            />
           );
-        case 'search':
-          return (
-            isShow && (
-              <AppIconButton
-                sx={position || { mx: 1 }}
-                size="small"
-                color="unfilled"
-                icon={<SearchIcon />}
-                disabled={disabled}
-                onClick={onCLick}
-              />
-            )
-          );
-        case 'loader':
-          return (
-            isShow && (
-              <Grid
-                container
-                alignItems="center"
-                justifyContent="flex-end"
-                width="max-content"
-                sx={position}
-              >
-                <CircularProgress color="inherit" size={20} />
-              </Grid>
-            )
-          );
-        default:
-          return null;
-      }
-    };
 
     return (
       <StyledAppTextField
@@ -182,22 +146,12 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
           ...InputProps,
           startAdornment: (
             <>
-              {adornment(
-                customStartAdornment?.variant,
-                customStartAdornment?.isShow,
-                customStartAdornment?.onCLick,
-                customStartAdornment?.sx
-              )}
+              {customStartAdornment && setAdornment(customStartAdornment)}
             </>
           ),
           endAdornment: (
             <>
-              {adornment(
-                customEndAdornment?.variant,
-                customEndAdornment?.isShow,
-                customEndAdornment?.onCLick,
-                customEndAdornment?.sx
-              )}
+              {customEndAdornment && setAdornment(customEndAdornment)}
               {InputProps?.endAdornment}
             </>
           ),

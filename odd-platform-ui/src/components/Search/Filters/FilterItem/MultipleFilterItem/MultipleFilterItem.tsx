@@ -223,7 +223,8 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
               ref={params.InputProps.ref}
               customEndAdornment={{
                 variant: 'loader',
-                isShow: autocompleteOpen && facetOptionsLoading,
+                showAdornment: autocompleteOpen && facetOptionsLoading,
+                position: { mr: -2 },
               }}
             />
           )}

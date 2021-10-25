@@ -14,6 +14,7 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
 
 interface AppSearchProps extends StylesType {
   className?: string;
@@ -143,13 +144,14 @@ const MainSearch: React.FC<AppSearchProps> = ({
               onKeyDown={handleKeyDown}
               customStartAdornment={{
                 variant: 'search',
-                isShow: true,
+                showAdornment: true,
                 onCLick: createSearch,
+                icon: <SearchIcon />,
               }}
               customEndAdornment={{
                 variant: 'loader',
-                isShow: loadingSuggestions,
-                sx: { mr: 5 },
+                showAdornment: loadingSuggestions,
+                position: { mr: 4 },
               }}
             />
           )}

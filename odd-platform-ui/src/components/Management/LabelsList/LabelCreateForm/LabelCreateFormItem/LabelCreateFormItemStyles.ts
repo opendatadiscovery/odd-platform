@@ -10,7 +10,7 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'flex-end',
       alignItems: 'center',
-      paddingBottom: theme.spacing(1.5),
+      paddingBottom: theme.spacing(0.5),
       borderBottom: '1px solid',
       borderBottomColor: theme.palette.backgrounds.primary,
     },

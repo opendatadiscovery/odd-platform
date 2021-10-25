@@ -15,6 +15,8 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateFormContainer from './LabelCreateForm/LabelCreateFormContainer';
 import { StylesType } from './LabelsListStyles';
@@ -98,13 +100,15 @@ const LabelsListView: React.FC<LabelsListProps> = ({
           value={searchText}
           customStartAdornment={{
             variant: 'search',
-            isShow: true,
+            showAdornment: true,
             onCLick: handleSearch,
+            icon: <SearchIcon />,
           }}
           customEndAdornment={{
             variant: 'clear',
-            isShow: !!searchText,
+            showAdornment: !!searchText,
             onCLick: () => setSearchText(''),
+            icon: <ClearIcon />,
           }}
           InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}

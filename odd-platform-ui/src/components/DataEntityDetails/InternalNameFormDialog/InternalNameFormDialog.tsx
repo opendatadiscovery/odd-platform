@@ -9,6 +9,7 @@ import { Controller, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './InternalNameFormDialogStyles';
 
 interface InternalNameFormDialogProps extends StylesType {
@@ -94,8 +95,9 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
             onKeyDown={handleKeyDown}
             customEndAdornment={{
               variant: 'clear',
-              isShow: !!field.value,
+              showAdornment: !!field.value,
               onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}

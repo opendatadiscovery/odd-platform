@@ -9,6 +9,7 @@ import {
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './TagEditFormStyles';
 
 interface TagEditFormProps extends StylesType {
@@ -75,8 +76,9 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
             placeholder="Tag Name"
             customEndAdornment={{
               variant: 'clear',
-              isShow: !!field.value,
+              showAdornment: !!field.value,
               onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}

@@ -13,6 +13,8 @@ import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import { Grid, Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceFormContainer from './NamespaceForm/NamespaceFormContainer';
 import NamespaceListSkeleton from './NamespaceListSkeleton/NamespaceListSkeleton';
@@ -101,13 +103,15 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
           value={searchText}
           customStartAdornment={{
             variant: 'search',
-            isShow: true,
+            showAdornment: true,
             onCLick: handleSearch,
+            icon: <SearchIcon />,
           }}
           customEndAdornment={{
             variant: 'clear',
-            isShow: !!searchText,
+            showAdornment: !!searchText,
             onCLick: () => setSearchText(''),
+            icon: <ClearIcon />,
           }}
           InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}

@@ -6,7 +6,6 @@ import createStyles from '@mui/styles/createStyles';
 export const styles = (theme: Theme) =>
   createStyles({
     container: {},
-    formField: {},
     form: {
       '& > *': {
         marginTop: theme.spacing(1.5),

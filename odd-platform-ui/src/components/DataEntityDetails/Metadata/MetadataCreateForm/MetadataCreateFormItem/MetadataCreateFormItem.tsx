@@ -175,7 +175,8 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
                 placeholder="Metadata Name"
                 customEndAdornment={{
                   variant: 'loader',
-                  isShow: loading,
+                  showAdornment: loading,
+                  position: { mr: -2 },
                 }}
               />
             )}

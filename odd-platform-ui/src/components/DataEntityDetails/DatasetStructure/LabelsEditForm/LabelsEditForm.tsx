@@ -204,8 +204,8 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
             placeholder="Enter label name…"
             customEndAdornment={{
               variant: 'loader',
-              isShow: loading,
-              sx: { mr: 5 },
+              showAdornment: loading,
+              position: { mr: 4 },
             }}
           />
         )}

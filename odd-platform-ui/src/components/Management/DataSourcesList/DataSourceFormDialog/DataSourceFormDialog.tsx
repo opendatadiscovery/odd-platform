@@ -279,8 +279,9 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
             required
             customEndAdornment={{
               variant: 'clear',
-              isShow: !!field.value,
+              showAdornment: !!field.value,
               onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}
@@ -295,15 +296,16 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
         render={({ field }) => (
           <AppTextField
             {...field}
-            sx={{ mt: 1.25 }}
+            sx={{ mt: 1.5 }}
             label="ODDRN"
             placeholder="e.g. //kafka/"
             required
             disabled={!!dataSource}
             customEndAdornment={{
               variant: 'clear',
-              isShow: !!field.value,
+              showAdornment: !!field.value,
               onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}
@@ -324,8 +326,9 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
             required
             customEndAdornment={{
               variant: 'clear',
-              isShow: !!field.value,
+              showAdornment: !!field.value,
               onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}
@@ -417,7 +420,8 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
                 label="Namespace"
                 customEndAdornment={{
                   variant: 'loader',
-                  isShow: loading,
+                  showAdornment: loading,
+                  position: { mr: 4 },
                 }}
               />
             )}
@@ -451,8 +455,9 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
             maxRows={4}
             customEndAdornment={{
               variant: 'clear',
-              isShow: !!field.value,
+              showAdornment: !!field.value,
               onCLick: () => setValue('description', ''),
+              icon: <ClearIcon />,
             }}
           />
         )}

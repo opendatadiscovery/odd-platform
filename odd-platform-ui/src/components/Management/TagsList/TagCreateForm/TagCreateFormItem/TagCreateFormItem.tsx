@@ -4,6 +4,7 @@ import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { styles, StylesType } from './TagCreateFormItemStyles';
 
 interface TagCreateFormItemProps extends StylesType {
@@ -34,8 +35,9 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
             name={`tags.${itemIndex}.name`}
             customEndAdornment={{
               variant: 'clear',
-              isShow: !!field.value,
+              showAdornment: !!field.value,
               onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}

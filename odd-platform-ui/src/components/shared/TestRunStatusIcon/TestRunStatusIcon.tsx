@@ -8,6 +8,6 @@ export interface TestRunStatusIconProps {
 
 const TestRunStatusIcon: React.FC<TestRunStatusIconProps> = ({
   typeName,
-}) => <S.Content typeName={typeName} />;
+}) => <S.Content $typeName={typeName} />;
 
 export default TestRunStatusIcon;
