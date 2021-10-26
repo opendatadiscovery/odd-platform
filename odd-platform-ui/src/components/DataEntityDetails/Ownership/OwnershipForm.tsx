@@ -349,6 +349,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
         name="roleName"
         control={methods.control}
         defaultValue={dataEntityOwnership?.role?.name || ''}
+        rules={{ required: true, validate: value => !!value?.trim() }}
         render={({ field }) => (
           <Autocomplete
             classes={{ root: classes.formField }}
