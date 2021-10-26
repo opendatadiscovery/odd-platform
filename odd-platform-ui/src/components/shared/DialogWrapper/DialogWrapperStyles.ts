@@ -13,9 +13,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { propsChecker } from 'lib/helpers';
 
-export const closeButton = { ml: 1 };
-
-export const StyledDialog = styled(Dialog, {
+export const Container = styled(Dialog, {
   shouldForwardProp: propsChecker,
 })<{
   $isLoading?: boolean;
@@ -24,7 +22,7 @@ export const StyledDialog = styled(Dialog, {
   pointerEvents: $isLoading ? 'none' : 'all',
 }));
 
-export const StyledDialogTitle = styled(DialogTitle, {
+export const Title = styled(DialogTitle, {
   shouldForwardProp: propsChecker,
 })<{
   $isLoading?: boolean;
@@ -38,20 +36,20 @@ export const StyledDialogTitle = styled(DialogTitle, {
   alignItems: 'baseline',
 }));
 
-export const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+export const Content = styled(DialogContent)(({ theme }) => ({
   [`&.${dialogContentClasses.root}`]: {
     padding: theme.spacing(0.75, 3, 1.75, 3),
   },
 }));
 
-export const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
+export const Actions = styled(DialogActions)(({ theme }) => ({
   [`&.${dialogActionsClasses.root}`]: {
     padding: theme.spacing(1.75, 3, 3, 3),
   },
   flexWrap: 'wrap',
 }));
 
-export const StyledProgress = styled(LinearProgress, {
+export const Loader = styled(LinearProgress, {
   shouldForwardProp: propsChecker,
 })<{
   $isLoading?: boolean;
@@ -61,5 +59,4 @@ export const StyledProgress = styled(LinearProgress, {
 
 export const ErrorText = styled(Typography)(({ theme }) => ({
   flexBasis: '100%',
-  marginBottom: theme.spacing(1),
 }));

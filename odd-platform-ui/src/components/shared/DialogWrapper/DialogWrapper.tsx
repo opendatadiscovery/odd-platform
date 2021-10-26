@@ -2,15 +2,7 @@ import React from 'react';
 import { DialogProps } from '@mui/material';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import {
-  ErrorText,
-  StyledDialog,
-  StyledDialogActions,
-  StyledDialogContent,
-  StyledDialogTitle,
-  StyledProgress,
-  closeButton,
-} from './DialogWrapperStyles';
+import * as S from './DialogWrapperStyles';
 
 interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
   renderOpenBtn(openBtnProps: {
@@ -56,7 +48,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
     <>
       {renderOpenBtn({ handleOpen, handleClose })}
       {open ? (
-        <StyledDialog
+        <S.Container
           $isLoading={isLoading}
           open={open}
           onClose={handleClose}
@@ -65,14 +57,11 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           scroll={scroll}
           aria-labelledby="max-width-dialog-title"
         >
-          <StyledProgress color="primary" $isLoading={isLoading} />
-          <StyledDialogTitle
-            $isLoading={isLoading}
-            id="max-width-dialog-title"
-          >
+          <S.Loader color="primary" $isLoading={isLoading} />
+          <S.Title $isLoading={isLoading} id="max-width-dialog-title">
             {title}
             <AppIconButton
-              sx={closeButton}
+              sx={{ ml: 1 }}
               size="small"
               color="unfilled"
               icon={<ClearIcon />}
@@ -83,19 +72,23 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
                 handleClose();
               }}
             />
-          </StyledDialogTitle>
-          <StyledDialogContent id={dialogContentId}>
+          </S.Title>
+          <S.Content id={dialogContentId}>
             {renderContent({ handleOpen, handleClose })}
-          </StyledDialogContent>
-          <StyledDialogActions disableSpacing>
+          </S.Content>
+          <S.Actions disableSpacing>
             {errorText && (
-              <ErrorText variant="subtitle2" color="error">
+              <S.ErrorText
+                variant="subtitle2"
+                color="error"
+                sx={{ mb: 1 }}
+              >
                 {errorText}
-              </ErrorText>
+              </S.ErrorText>
             )}
             {renderActions({ handleOpen })}
-          </StyledDialogActions>
-        </StyledDialog>
+          </S.Actions>
+        </S.Container>
       ) : null}
     </>
   );
