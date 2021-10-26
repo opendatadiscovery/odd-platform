@@ -23,32 +23,6 @@ export const components: Components = {
       },
     },
   },
-  MuiDialog: {
-    styleOverrides: {
-      paperWidthXs: { maxWidth: '368px' },
-    },
-  },
-  MuiDialogTitle: {
-    styleOverrides: {
-      root: {
-        padding: '24px 24px 0 24px',
-      },
-    },
-  },
-  MuiDialogContent: {
-    styleOverrides: {
-      root: {
-        padding: '14px 24px 28px 24px',
-      },
-    },
-  },
-  MuiDialogActions: {
-    styleOverrides: {
-      root: {
-        padding: '0px 24px 24px 24px',
-      },
-    },
-  },
   MuiCheckbox: {
     styleOverrides: {
       root: {

@@ -1,22 +1,18 @@
 import React from 'react';
-import cx from 'classnames';
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogProps,
-  DialogTitle,
-  LinearProgress,
-  Typography,
-} from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
+import { DialogProps } from '@mui/material';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { styles, StylesType } from './DialogWrapperStyles';
+import {
+  ErrorText,
+  StyledDialog,
+  StyledDialogActions,
+  StyledDialogContent,
+  StyledDialogTitle,
+  StyledProgress,
+  closeButton,
+} from './DialogWrapperStyles';
 
-interface DialogWrapperProps
-  extends Omit<DialogProps, 'title' | 'open' | 'classes'>,
-    StylesType {
+interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
   renderOpenBtn(openBtnProps: {
     handleOpen: () => void;
     handleClose: () => void;
@@ -35,7 +31,6 @@ interface DialogWrapperProps
 }
 
 const DialogWrapper: React.FC<DialogWrapperProps> = ({
-  classes,
   renderOpenBtn,
   title,
   renderContent,
@@ -61,11 +56,8 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
     <>
       {renderOpenBtn({ handleOpen, handleClose })}
       {open ? (
-        <Dialog
-          className={cx(
-            classes.container,
-            isLoading ? classes.loading : ''
-          )}
+        <StyledDialog
+          $isLoading={isLoading}
           open={open}
           onClose={handleClose}
           fullWidth
@@ -73,13 +65,14 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           scroll={scroll}
           aria-labelledby="max-width-dialog-title"
         >
-          <LinearProgress color="secondary" className={classes.spinner} />
-          <DialogTitle
-            className={classes.title}
+          <StyledProgress color="primary" $isLoading={isLoading} />
+          <StyledDialogTitle
+            $isLoading={isLoading}
             id="max-width-dialog-title"
           >
             {title}
             <AppIconButton
+              sx={closeButton}
               size="small"
               color="unfilled"
               icon={<ClearIcon />}
@@ -90,26 +83,22 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
                 handleClose();
               }}
             />
-          </DialogTitle>
-          <DialogContent className={classes.content} id={dialogContentId}>
+          </StyledDialogTitle>
+          <StyledDialogContent id={dialogContentId}>
             {renderContent({ handleOpen, handleClose })}
-          </DialogContent>
-          <DialogActions className={classes.actions} disableSpacing>
+          </StyledDialogContent>
+          <StyledDialogActions disableSpacing>
             {errorText && (
-              <Typography
-                className={classes.error}
-                variant="subtitle2"
-                color="error"
-              >
+              <ErrorText variant="subtitle2" color="error">
                 {errorText}
-              </Typography>
+              </ErrorText>
             )}
             {renderActions({ handleOpen })}
-          </DialogActions>
-        </Dialog>
+          </StyledDialogActions>
+        </StyledDialog>
       ) : null}
     </>
   );
 };
 
-export default withStyles(styles)(DialogWrapper);
+export default DialogWrapper;

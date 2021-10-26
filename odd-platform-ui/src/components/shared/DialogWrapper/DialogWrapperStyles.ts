@@ -1,40 +1,65 @@
-import { Theme } from '@mui/material';
+import {
+  Dialog,
+  DialogActions,
+  dialogActionsClasses,
+  dialogClasses,
+  DialogContent,
+  dialogContentClasses,
+  DialogTitle,
+  dialogTitleClasses,
+  LinearProgress,
+  Typography,
+} from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { propsChecker } from 'lib/helpers';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+export const closeButton = { ml: 1 };
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {},
-    title: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    content: {},
-    actions: {
-      flexWrap: 'wrap',
-    },
-    spinner: {
-      display: 'none',
-    },
-    loading: {
-      '& $title, & $content, & $actions': {
-        pointerEvents: 'none',
-        opacity: 0.7,
-      },
-      '& $spinner': {
-        display: 'block',
-      },
-      '& $title': {
-        marginTop: 0,
-      },
-    },
-    error: {
-      flexBasis: '100%',
-      height: '24px',
-      margin: theme.spacing(1, 0),
-    },
-  });
+export const StyledDialog = styled(Dialog, {
+  shouldForwardProp: propsChecker,
+})<{
+  $isLoading?: boolean;
+}>(({ theme, $isLoading }) => ({
+  [`& .${dialogClasses.paperWidthXs}`]: { maxWidth: '368px' },
+  pointerEvents: $isLoading ? 'none' : 'all',
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const StyledDialogTitle = styled(DialogTitle, {
+  shouldForwardProp: propsChecker,
+})<{
+  $isLoading?: boolean;
+}>(({ theme, $isLoading }) => ({
+  [`&.${dialogTitleClasses.root}`]: {
+    padding: theme.spacing(3, 3, 0.75, 3),
+    paddingTop: theme.spacing($isLoading ? 2.5 : 3),
+  },
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'baseline',
+}));
+
+export const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+  [`&.${dialogContentClasses.root}`]: {
+    padding: theme.spacing(0.75, 3, 1.75, 3),
+  },
+}));
+
+export const StyledDialogActions = styled(DialogActions)(({ theme }) => ({
+  [`&.${dialogActionsClasses.root}`]: {
+    padding: theme.spacing(1.75, 3, 3, 3),
+  },
+  flexWrap: 'wrap',
+}));
+
+export const StyledProgress = styled(LinearProgress, {
+  shouldForwardProp: propsChecker,
+})<{
+  $isLoading?: boolean;
+}>(({ theme, $isLoading }) => ({
+  display: $isLoading ? 'block' : 'none',
+}));
+
+export const ErrorText = styled(Typography)(({ theme }) => ({
+  flexBasis: '100%',
+  marginBottom: theme.spacing(1),
+}));
