@@ -411,10 +411,10 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
             handleHomeEndKeys
             selectOnFocus
             clearIcon={<ClearIcon />}
+            sx={{ mt: 1.25 }}
             renderInput={params => (
               <AppTextField
                 {...params}
-                sx={{ mt: 1.25 }}
                 ref={params.InputProps.ref}
                 placeholder="Namespace"
                 label="Namespace"

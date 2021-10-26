@@ -15,8 +15,7 @@ export const Container = styled('div')(({ theme }) => ({
 }));
 
 export const FilledContainer = styled('span', {
-  shouldForwardProp: (propName: PropertyKey) =>
-    propsChecker(propName, ['$typeName']),
+  shouldForwardProp: propsChecker,
 })<FilledContainerProps>(({ theme, $typeName }) => ({
   fontSize: theme.typography.body2.fontSize,
   lineHeight: theme.typography.body2.lineHeight,

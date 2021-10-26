@@ -18,8 +18,7 @@ interface AppButtonStyleProps {
 const isTertiary = (color: string) => color === 'tertiary';
 
 export const StyledAppButton = styled(Button, {
-  shouldForwardProp: (propName: PropertyKey) =>
-    propsChecker(propName, ['$color']),
+  shouldForwardProp: propsChecker,
 })<AppButtonStyleProps>(({ theme, $color }) => ({
   // overrides of MUI Button styles
   [`&.${buttonClasses.root}`]: {

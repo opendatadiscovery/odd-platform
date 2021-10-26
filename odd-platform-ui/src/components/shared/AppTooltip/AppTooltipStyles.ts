@@ -10,8 +10,7 @@ interface ChildrenContainerProps {
 }
 
 export const Container = styled('div', {
-  shouldForwardProp: (propName: PropertyKey) =>
-    propsChecker(propName, ['$maxWidth']),
+  shouldForwardProp: propsChecker,
 })<ContainerProps>(({ theme, $maxWidth }) => ({
   margin: 'auto 0',
   overflow: 'auto',
@@ -47,8 +46,7 @@ export const Container = styled('div', {
 }));
 
 export const ChildrenContainer = styled('div', {
-  shouldForwardProp: (propName: PropertyKey) =>
-    propsChecker(propName, ['$isPointer']),
+  shouldForwardProp: propsChecker,
 })<ChildrenContainerProps>(({ theme, $isPointer }) => ({
   cursor: $isPointer ? 'pointer' : 'auto',
 }));

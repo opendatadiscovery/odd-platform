@@ -86,27 +86,34 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
     },
     ref
   ) => {
-    const setAdornment = ({
+    const buildAdornment = ({
       icon,
       variant,
       showAdornment,
       onCLick,
       position,
-    }: AdornmentProps) =>
-      variant === 'loader'
-        ? showAdornment && (
-            <CircularProgress sx={position} color="inherit" size={20} />
-          )
-        : showAdornment && (
-            <AppIconButton
-              sx={position || { mx: 1 }}
-              size="small"
-              color="unfilled"
-              icon={icon}
-              disabled={disabled}
-              onClick={onCLick}
-            />
-          );
+    }: AdornmentProps) => {
+      if (!showAdornment) {
+        return undefined;
+      }
+
+      if (variant === 'loader') {
+        return (
+          <CircularProgress sx={position} color="inherit" size={20} />
+        );
+      }
+
+      return (
+        <AppIconButton
+          sx={position || { mx: 1 }}
+          size="small"
+          color="unfilled"
+          icon={icon}
+          disabled={disabled}
+          onClick={onCLick}
+        />
+      );
+    };
 
     return (
       <StyledAppTextField
@@ -146,12 +153,13 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
           ...InputProps,
           startAdornment: (
             <>
-              {customStartAdornment && setAdornment(customStartAdornment)}
+              {customStartAdornment &&
+                buildAdornment(customStartAdornment)}
             </>
           ),
           endAdornment: (
             <>
-              {customEndAdornment && setAdornment(customEndAdornment)}
+              {customEndAdornment && buildAdornment(customEndAdornment)}
               {InputProps?.endAdornment}
             </>
           ),

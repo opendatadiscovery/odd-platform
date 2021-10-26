@@ -15,8 +15,7 @@ export interface AppIconButtonStyleProps {
 }
 
 export const StyledIconButton = styled(IconButton, {
-  shouldForwardProp: (propName: PropertyKey) =>
-    propsChecker(propName, ['$color', '$open']),
+  shouldForwardProp: propsChecker,
 })<AppIconButtonStyleProps>(({ theme, $color, $open }) => ({
   [`&.${iconButtonClasses.sizeSmall}`]: {
     width: $color === 'expand' ? '21px' : '16px',

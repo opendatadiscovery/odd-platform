@@ -3,8 +3,7 @@ import { DataQualityTestRunStatusEnum } from 'generated-sources';
 import { propsChecker } from 'lib/helpers';
 
 export const Content = styled('div', {
-  shouldForwardProp: (propName: PropertyKey) =>
-    propsChecker(propName, ['$typeName']),
+  shouldForwardProp: propsChecker,
 })<{
   $typeName: DataQualityTestRunStatusEnum;
 }>(({ theme, $typeName }) => ({

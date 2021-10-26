@@ -30,8 +30,7 @@ const inputYPaddingsBySize = (size: TextFieldSizes) => {
 };
 
 export const StyledAppTextField = styled(TextField, {
-  shouldForwardProp: (propName: PropertyKey) =>
-    propsChecker(propName, ['$size', '$isLabeled']),
+  shouldForwardProp: propsChecker,
 })<AppTextFieldStyleProps>(({ theme, $size, $isLabeled }) => ({
   [`&.${textFieldClasses.root}`]: {
     [`& .${outlinedInputClasses.notchedOutline}`]: {
