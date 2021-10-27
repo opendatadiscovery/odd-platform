@@ -7,7 +7,7 @@ on:
 
 jobs:
   images:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     env:
       REGISTRY: 436866023604.dkr.ecr.eu-central-1.amazonaws.com
     steps:
