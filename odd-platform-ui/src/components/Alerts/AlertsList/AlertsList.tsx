@@ -10,7 +10,7 @@ import {
 } from 'generated-sources';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import cx from 'classnames';
 import AlertListSkeleton from 'components/Alerts/AlertsList/AlertSkeletonItem/AlertSkeletonItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
@@ -78,7 +78,7 @@ const AlertsList: React.FC<AlertsListProps> = ({
           item
           container
           className={cx(classes.col, classes.colStatus)}
-          justify="center"
+          justifyContent="center"
         >
           <Typography variant="caption">Status</Typography>
         </Grid>

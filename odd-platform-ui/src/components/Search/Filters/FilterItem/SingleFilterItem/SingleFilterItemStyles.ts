@@ -1,4 +1,7 @@
-import { createStyles, WithStyles, Theme } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -7,9 +10,6 @@ export const styles = (theme: Theme) =>
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(0.5),
       color: theme.palette.text.secondary,
-    },
-    singleSelect: {
-      width: '192px',
     },
   });
 

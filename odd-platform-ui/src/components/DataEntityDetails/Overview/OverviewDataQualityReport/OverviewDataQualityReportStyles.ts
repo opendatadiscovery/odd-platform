@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import {
   DataQualityTestRunStatusEnum,
   DataSetTestReport,
@@ -31,22 +33,22 @@ export const styles = (theme: Theme) =>
     },
     countLabel: {
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        color: theme.palette.runStatus.success,
+        color: theme.palette.runStatus.SUCCESS,
       },
       [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        color: theme.palette.runStatus.failed,
+        color: theme.palette.runStatus.FAILED,
       },
       [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        color: theme.palette.runStatus.broken,
+        color: theme.palette.runStatus.BROKEN,
       },
       [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        color: theme.palette.runStatus.skipped,
+        color: theme.palette.runStatus.SKIPPED,
       },
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        color: theme.palette.runStatus.aborted,
+        color: theme.palette.runStatus.ABORTED,
       },
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        color: theme.palette.runStatus.unknown,
+        color: theme.palette.runStatus.UNKNOWN,
       },
     },
     barsContainer: {
@@ -68,13 +70,13 @@ export const styles = (theme: Theme) =>
         height: '8px',
         width: '100%',
         [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-          backgroundColor: theme.palette.runStatus.success,
+          backgroundColor: theme.palette.runStatus.SUCCESS,
           maxWidth: `${
             (succRelation * 200) / (Math.round(succRelation) + 1)
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-          backgroundColor: theme.palette.runStatus.failed,
+          backgroundColor: theme.palette.runStatus.FAILED,
           maxWidth: `${
             ((datasetQualityTestReport?.failedTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *
@@ -82,7 +84,7 @@ export const styles = (theme: Theme) =>
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-          backgroundColor: theme.palette.runStatus.broken,
+          backgroundColor: theme.palette.runStatus.BROKEN,
           maxWidth: `${
             ((datasetQualityTestReport?.brokenTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *
@@ -90,7 +92,7 @@ export const styles = (theme: Theme) =>
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-          backgroundColor: theme.palette.runStatus.skipped,
+          backgroundColor: theme.palette.runStatus.SKIPPED,
           maxWidth: `${
             ((datasetQualityTestReport?.skippedTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *
@@ -98,7 +100,7 @@ export const styles = (theme: Theme) =>
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-          backgroundColor: theme.palette.runStatus.aborted,
+          backgroundColor: theme.palette.runStatus.ABORTED,
           maxWidth: `${
             ((datasetQualityTestReport?.abortedTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *
@@ -106,7 +108,7 @@ export const styles = (theme: Theme) =>
           }%`,
         },
         [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-          backgroundColor: theme.palette.runStatus.unknown,
+          backgroundColor: theme.palette.runStatus.UNKNOWN,
           maxWidth: `${
             ((datasetQualityTestReport?.unknownTotal || 0) /
               (datasetQualityTestReport?.total || 1)) *

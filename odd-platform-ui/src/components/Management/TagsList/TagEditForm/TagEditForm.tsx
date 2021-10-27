@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  TextField,
-  Typography,
-  FormControlLabel,
-  Checkbox,
-  InputAdornment,
-} from '@material-ui/core';
+import { Typography, FormControlLabel, Checkbox } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Tag,
@@ -14,7 +8,8 @@ import {
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './TagEditFormStyles';
 
 interface TagEditFormProps extends StylesType {
@@ -76,22 +71,14 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
         defaultValue={tag.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
             placeholder="Tag Name"
-            variant="outlined"
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => field.onChange('')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              showAdornment: !!field.value,
+              onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}
@@ -123,7 +110,6 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
       form="tag-edit-form"
       color="primary"
       fullWidth
-      onClick={() => {}}
       disabled={!formState.isValid}
     >
       Save

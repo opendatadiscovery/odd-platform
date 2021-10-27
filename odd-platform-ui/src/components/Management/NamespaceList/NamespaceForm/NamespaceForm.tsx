@@ -1,5 +1,4 @@
 import React from 'react';
-import { InputAdornment, TextField, Typography } from '@material-ui/core';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Namespace,
@@ -7,9 +6,11 @@ import {
   NamespaceApiUpdateNamespaceRequest,
   NamespaceApiCreateNamespaceRequest,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import { Typography } from '@mui/material';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './NamespaceFormStyles';
 
 interface NamespaceFormProps extends StylesType {
@@ -90,22 +91,14 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
         defaultValue={namespace?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
             placeholder="Namespace Name"
-            variant="outlined"
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => field.onChange('')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              showAdornment: !!field.value,
+              onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}
@@ -120,7 +113,6 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
       form="namespace-edit-form"
       color="primary"
       fullWidth
-      onClick={() => {}}
       disabled={!formState.isValid}
     >
       Save

@@ -1,6 +1,7 @@
 import React from 'react';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Grid, withStyles } from '@material-ui/core';
+import Skeleton from '@mui/material/Skeleton';
+import { Grid } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { mainSkeletonHeight } from 'lib/constants';
 import { styles, StylesType } from './DatasetStructureSkeletonStyles';
 
@@ -36,7 +37,7 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
     <Grid
       key={key}
       container
-      justify="space-between"
+      justifyContent="space-between"
       className={classes.structureSkeleton}
     >
       <Grid item xs={3} container wrap="wrap">
@@ -47,7 +48,7 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
-      <Grid item xs={9} container justify="flex-end">
+      <Grid item xs={9} container justifyContent="flex-end">
         <Grid item xs={2} className={classes.largeItem}>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
@@ -67,12 +68,12 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
       <Grid
         container
         className={classes.largeItem}
-        justify="space-between"
+        justifyContent="space-between"
       >
         <Grid item xs={5}>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={2} container justify="flex-end">
+        <Grid item xs={2} container justifyContent="flex-end">
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
       </Grid>

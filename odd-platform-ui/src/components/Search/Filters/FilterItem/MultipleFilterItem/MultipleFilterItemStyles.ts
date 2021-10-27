@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -22,9 +25,6 @@ export const styles = (theme: Theme) =>
       borderRadius: '2px',
     },
     filterCount: { color: theme.palette.texts.hint },
-    autoComplete: {
-      width: '192px',
-    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

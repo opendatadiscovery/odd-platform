@@ -1,4 +1,4 @@
-import createPalette from '@material-ui/core/styles/createPalette';
+import createPalette from '@mui/material/styles/createPalette';
 
 const colors = {
   black: '#000000',
@@ -85,19 +85,22 @@ export const palette = createPalette({
   },
   divider: colors.black10,
   entityType: {
-    SET: colors.red5,
-    TRANSFORMER: colors.purple5,
-    CONSUMER: colors.blue5,
-    INPUT: colors.green5,
-    QUALITY_TEST: colors.orange5,
+    DATA_SET: colors.red5,
+    DATA_TRANSFORMER: colors.purple5,
+    DATA_CONSUMER: colors.blue5,
+    DATA_INPUT: colors.green5,
+    DATA_QUALITY_TEST: colors.orange5,
+    // colors will be updated by design
+    DATA_TRANSFORMER_RUN: colors.transparent,
+    DATA_QUALITY_TEST_RUN: colors.transparent,
   },
   runStatus: {
-    success: colors.green60,
-    failed: colors.red50,
-    broken: colors.orange50,
-    skipped: colors.blue50,
-    aborted: colors.purple30,
-    unknown: colors.black30,
+    SUCCESS: colors.green60,
+    FAILED: colors.red50,
+    BROKEN: colors.orange50,
+    SKIPPED: colors.blue50,
+    ABORTED: colors.purple30,
+    UNKNOWN: colors.black30,
   },
   reportStatus: {
     success: { background: colors.green10, border: colors.green20 },
@@ -149,10 +152,32 @@ export const palette = createPalette({
       hover: { background: colors.blue10, color: colors.blue60 },
       active: { background: colors.blue50, color: colors.white },
     },
+    expandText: {
+      normal: { background: colors.blue5, color: colors.blue60 },
+      hover: { background: colors.blue10, color: colors.blue60 },
+      active: { background: colors.blue20, color: colors.blue60 },
+    },
     unfilled: {
       normal: { background: colors.transparent, color: colors.black30 },
       hover: { background: colors.transparent, color: colors.black70 },
       active: { background: colors.transparent, color: colors.black90 },
+    },
+    collapse: {
+      normal: {
+        background: colors.black20,
+        color: colors.white,
+        border: colors.black90,
+      },
+      hover: {
+        background: colors.black20,
+        color: colors.white,
+        border: colors.black90,
+      },
+      active: {
+        background: colors.black20,
+        color: colors.white,
+        border: colors.black90,
+      },
     },
   },
   tag: {
@@ -176,23 +201,36 @@ export const palette = createPalette({
     },
   },
   structureLabel: {
-    STRING: { border: colors.orange20 },
-    BOOLEAN: { border: colors.purple20 },
-    INTEGER: { border: colors.green20 },
-    NUMBER: { border: colors.pink60 },
-    BINARY: { border: colors.red20 },
-    DATETIME: { border: colors.blue20 },
-    STRUCT: { border: colors.black20 },
-    LIST: { border: colors.lightGreen60 },
-    MAP: { border: colors.turquoise40 },
+    TYPE_STRING: { border: colors.orange20 },
+    TYPE_BOOLEAN: { border: colors.purple20 },
+    TYPE_INTEGER: { border: colors.green20 },
+    TYPE_NUMBER: { border: colors.pink60 },
+    TYPE_BINARY: { border: colors.red20 },
+    TYPE_DATETIME: { border: colors.blue20 },
+    TYPE_STRUCT: { border: colors.black20 },
+    TYPE_LIST: { border: colors.lightGreen60 },
+    TYPE_MAP: { border: colors.turquoise40 },
+    // colors will be updated by design
+    TYPE_CHAR: { border: colors.transparent },
+    TYPE_TIME: { border: colors.transparent },
+    TYPE_UNION: { border: colors.transparent },
+    TYPE_DURATION: { border: colors.transparent },
+    TYPE_UNKNOWN: { border: colors.transparent },
   },
   alert: {
-    open: {
+    OPEN: {
       background: colors.red10,
       border: colors.red20,
       color: colors.red5,
     },
-    resolved: { background: colors.blue10, border: colors.blue20 },
+    RESOLVED: { background: colors.blue10, border: colors.blue20 },
+  },
+  textField: {
+    normal: { border: colors.black20, background: colors.white },
+    hover: { border: colors.black50, color: colors.blue60 },
+    active: { border: colors.blue50 },
+    error: { border: colors.red50 },
+    disabled: { border: colors.black10 },
   },
   background: { default: colors.white },
 });

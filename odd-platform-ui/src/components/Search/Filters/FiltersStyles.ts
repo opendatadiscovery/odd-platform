@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { toolbarHeight } from 'lib/constants';
 
 export const styles = (theme: Theme) =>
@@ -13,7 +15,6 @@ export const styles = (theme: Theme) =>
     },
     listContainer: {
       height: `calc(100vh - 110px - ${toolbarHeight}px)`,
-      paddingRight: theme.spacing(2),
     },
     facetsLoaderContainer: {
       padding: theme.spacing(0, 3),

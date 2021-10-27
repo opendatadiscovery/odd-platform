@@ -1,4 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -11,16 +14,14 @@ export const styles = (theme: Theme) =>
         boxShadow: theme.shadows[8],
       },
       '&:hover $actionsContainer': {
-        paddingBottom: '0 !important',
+        visibility: 'visible',
         display: 'flex',
         justifyContent: 'flex-end',
-        '& > * + *': {
-          marginLeft: theme.spacing(1),
-        },
       },
     },
+    nameContainer: { minHeight: '40px' },
     actionsContainer: {
-      display: 'none',
+      visibility: 'hidden',
     },
     pullingValue: { color: 'green' },
     descriptionContainer: {

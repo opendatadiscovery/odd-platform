@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -10,13 +13,14 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'nowrap',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       '& $label': {
         marginRight: theme.spacing(2),
       },
     },
     label: {
       color: theme.palette.texts.secondary,
+      lineHeight: theme.typography.h3.lineHeight,
     },
     value: {
       wordBreak: 'break-all',

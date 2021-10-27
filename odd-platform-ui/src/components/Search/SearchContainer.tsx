@@ -1,5 +1,5 @@
 import { RouteComponentProps } from 'react-router-dom';
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {

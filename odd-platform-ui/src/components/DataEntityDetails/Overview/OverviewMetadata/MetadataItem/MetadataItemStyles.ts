@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -11,6 +14,7 @@ export const styles = (theme: Theme) =>
     labelContainer: {
       display: 'flex',
       overflow: 'hidden',
+      marginTop: theme.spacing(1),
     },
     label: {
       wordBreak: 'break-word',
@@ -44,6 +48,7 @@ export const styles = (theme: Theme) =>
       alignItems: 'center',
     },
     formActionBtns: {
+      marginTop: theme.spacing(1),
       display: 'flex',
       alignItems: 'center',
       marginLeft: theme.spacing(1),

@@ -1,4 +1,6 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import {
   maxContentWidth,
   maxSidebarWidth,
@@ -28,19 +30,19 @@ export const styles = (theme: Theme) =>
       position: 'fixed',
       top: `${toolbarHeight}px`,
       left: 0,
+      paddingRight: theme.spacing(2),
     },
     resultsContainer: {
-      paddingLeft: `16px !important`,
       flexGrow: 1,
       maxWidth: '100%',
       justifySelf: 'stretch',
+      marginLeft: theme.spacing(1),
       [theme.breakpoints.up(maxContentWidth + maxSidebarWidth)]: {
         width: `${maxContentWidth}px`,
       },
     },
     searchInput: {
       justifyContent: 'flex-start',
-      marginLeft: '-4px',
     },
   });
 

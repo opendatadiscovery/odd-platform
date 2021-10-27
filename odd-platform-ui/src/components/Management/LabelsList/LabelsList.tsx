@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Typography,
-  TextField,
-  InputAdornment,
-  IconButton,
-  Grid,
-} from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import {
   Label,
   LabelApiDeleteLabelRequest,
@@ -14,14 +8,15 @@ import {
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabelsSkeletonItem from 'components/Management/LabelsList/LabelsSkeletonItem/LabelsSkeletonItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateFormContainer from './LabelCreateForm/LabelCreateFormContainer';
 import { StylesType } from './LabelsListStyles';
@@ -98,31 +93,24 @@ const LabelsListView: React.FC<LabelsListProps> = ({
         </Typography>
       </div>
       <div className={classes.caption}>
-        <TextField
+        <AppTextField
           placeholder="Search label..."
-          classes={{ root: classes.searchInput }}
+          sx={{ minWidth: '340px' }}
+          fullWidth={false}
           value={searchText}
-          InputProps={{
-            'aria-label': 'search',
-            disableUnderline: true,
-            startAdornment: (
-              <InputAdornment position="end">
-                <IconButton disableRipple onClick={handleSearch}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-            endAdornment: searchText && (
-              <InputAdornment position="start">
-                <AppButton
-                  size="small"
-                  color="unfilled"
-                  icon={<CancelIcon />}
-                  onClick={() => setSearchText('')}
-                />
-              </InputAdornment>
-            ),
+          customStartAdornment={{
+            variant: 'search',
+            showAdornment: true,
+            onCLick: handleSearch,
+            icon: <SearchIcon />,
           }}
+          customEndAdornment={{
+            variant: 'clear',
+            showAdornment: !!searchText,
+            onCLick: () => setSearchText(''),
+            icon: <ClearIcon />,
+          }}
+          InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
@@ -131,7 +119,7 @@ const LabelsListView: React.FC<LabelsListProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<AddIcon />}
+              startIcon={<AddIcon />}
             >
               Create label
             </AppButton>

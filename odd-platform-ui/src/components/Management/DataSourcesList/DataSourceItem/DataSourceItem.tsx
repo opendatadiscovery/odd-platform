@@ -1,6 +1,7 @@
 import React from 'react';
-import { Grid, Paper, Typography, withStyles } from '@material-ui/core';
-import { formatDistanceToNowStrict, addSeconds } from 'date-fns';
+import { Grid, Paper, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
+import { addSeconds, formatDistanceToNowStrict } from 'date-fns';
 import {
   DataSource,
   DataSourceApiDeleteDataSourceRequest,
@@ -9,10 +10,10 @@ import cx from 'classnames';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
-import AppButton from 'components/shared/AppButton/AppButton';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceFormDialog/DataSourceFormDialogContainer';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './DataSourceItemStyles';
 
 interface DataSourceItemProps extends StylesType {
@@ -35,7 +36,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
   return (
     <Paper elevation={0} className={classes.container}>
       <Grid container alignItems="flex-start" spacing={2}>
-        <Grid item xs={8}>
+        <Grid item xs={8} className={classes.nameContainer}>
           <Typography variant="h4" title={dataSource.name}>
             {dataSource.name}
           </Typography>
@@ -47,7 +48,8 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
               <AppButton
                 size="medium"
                 color="primaryLight"
-                icon={<EditIcon />}
+                startIcon={<EditIcon />}
+                sx={{ mr: 1 }}
               >
                 Edit
               </AppButton>
@@ -66,7 +68,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
               <AppButton
                 size="medium"
                 color="primaryLight"
-                icon={<DeleteIcon />}
+                startIcon={<DeleteIcon />}
               >
                 Delete
               </AppButton>

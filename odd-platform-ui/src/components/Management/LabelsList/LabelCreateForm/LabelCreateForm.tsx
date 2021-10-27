@@ -1,14 +1,14 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
-import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
+import { Typography } from '@mui/material';
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
-  LabelFormData,
   Label,
   LabelApiCreateLabelRequest,
+  LabelFormData,
 } from 'generated-sources';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
+import AppButton from 'components/shared/AppButton/AppButton';
 import LabelCreateFormItem from './LabelCreateFormItem/LabelCreateFormItem';
 import { StylesType } from './LabelCreateFormStyles';
 
@@ -85,7 +85,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
   const formContent = () => (
     <>
       <FormProvider {...methods}>
-        <form id="label-create-form">
+        <form id="label-create-form" className={classes.container}>
           {fields.map((item, index) => (
             <LabelCreateFormItem
               key={item.id}
@@ -98,7 +98,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
             size="medium"
             form="tag-create-form"
             color="primaryLight"
-            icon={<AddIcon />}
+            startIcon={<AddIcon />}
             onClick={handleAppend}
           >
             Create label

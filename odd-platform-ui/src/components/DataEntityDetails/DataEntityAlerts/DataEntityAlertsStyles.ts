@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const alertsColWidthStyles = {
   col: {
@@ -21,6 +24,7 @@ export const alertsColWidthStyles = {
     flex: '0 0 43%',
   },
   colStatus: {
+    justifyContent: 'center',
     flex: '0 0 8%',
   },
   colUpdatedBy: {
@@ -39,7 +43,7 @@ export const styles = (theme: Theme) =>
   createStyles({
     container: {},
     alertsTableHeader: {
-      color: theme.palette.text.hint,
+      color: theme.palette.texts.hint,
       borderBottom: '1px solid',
       borderBottomColor: theme.palette.divider,
     },

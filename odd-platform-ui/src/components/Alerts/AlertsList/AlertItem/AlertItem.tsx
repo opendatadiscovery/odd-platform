@@ -1,15 +1,16 @@
-import { Grid, MenuItem, Typography, withStyles } from '@material-ui/core';
+import { Grid, MenuItem, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Alert } from 'generated-sources';
 import cx from 'classnames';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
-import Tooltip from 'components/shared/Tooltip/Tooltip';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { styles, StylesType } from './AlertItemStyles';
 
 interface AlertItemProps extends StylesType {
@@ -27,7 +28,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
       item
       container
       className={cx(classes.col, classes.colName)}
-      justify="space-between"
+      justifyContent="space-between"
       wrap="nowrap"
     >
       <div className={classes.alertName}>
@@ -38,17 +39,18 @@ const AlertItem: React.FC<AlertItemProps> = ({
               : '#'
           }
         >
-          <Typography
-            variant="body1"
-            noWrap
+          <AppTooltip
             title={
               alert.dataEntity?.internalName ||
               alert.dataEntity?.externalName
             }
+            offset={{ right: 80 }}
           >
-            {alert.dataEntity?.internalName ||
-              alert.dataEntity?.externalName}
-          </Typography>
+            <Typography variant="body1" noWrap>
+              {alert.dataEntity?.internalName ||
+                alert.dataEntity?.externalName}
+            </Typography>
+          </AppTooltip>
         </Link>
       </div>
       <div className={classes.typesList}>
@@ -66,7 +68,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
       item
       container
       className={cx(classes.col, classes.colStatus)}
-      justify="center"
+      justifyContent="center"
     >
       <AlertStatusItem typeName={alert.status} />
     </Grid>
@@ -87,24 +89,24 @@ const AlertItem: React.FC<AlertItemProps> = ({
           format(alert.statusUpdatedAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
     </Grid>
-    <Grid item className={cx(classes.col, classes.colActionBtn)}>
-      <Tooltip
-        tooltipControl="byClick"
-        tooltipContent={
+    <Grid
+      item
+      className={cx(classes.col, classes.colActionBtn, classes.optionsBtn)}
+    >
+      <AppTooltip
+        control="byClick"
+        title={
           <MenuItem onClick={alertStatusHandler}>
             {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
           </MenuItem>
         }
-        place="bottom"
-        type="light"
       >
-        <AppButton
-          className={classes.optionsBtn}
+        <AppIconButton
           size="medium"
           color="primaryLight"
           icon={<KebabIcon />}
         />
-      </Tooltip>
+      </AppTooltip>
     </Grid>
   </Grid>
 );

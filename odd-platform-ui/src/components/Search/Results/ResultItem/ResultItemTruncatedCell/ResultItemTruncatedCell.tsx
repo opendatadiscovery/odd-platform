@@ -1,11 +1,13 @@
 import React, { MouseEvent } from 'react';
-import { Menu, MenuItem, withStyles } from '@material-ui/core';
+import { Menu, MenuItem } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import TruncateMarkup from 'react-truncate-markup';
 import { Link } from 'react-router-dom';
 import { DataEntity, DataEntityRef } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import MoreIcon from 'components/shared/Icons/MoreIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './ResultItemTruncatedCellStyles';
 
 type TruncatedCellType =
@@ -34,12 +36,11 @@ const ResultItemTruncatedCell: React.FC<ResultItemProps> = ({
     let anchorEl;
     return (
       <>
-        <AppButton
+        <AppIconButton
           ref={el => {
             anchorEl = el;
           }}
           color="expand"
-          size="small"
           icon={<MoreIcon />}
           edge="end"
           aria-label=""
@@ -52,7 +53,7 @@ const ResultItemTruncatedCell: React.FC<ResultItemProps> = ({
         />
         <Menu
           anchorEl={anchorEl || null}
-          getContentAnchorEl={null}
+          // getContentAnchorEl={null}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           id={`menu-${menuName}-${searchResult.id}`}
@@ -84,7 +85,7 @@ const ResultItemTruncatedCell: React.FC<ResultItemProps> = ({
         : item.internalName || item.externalName;
     return (
       <TruncateMarkup.Atom key={key}>
-        <AppButton color="primaryLight" size="small" onClick={() => {}}>
+        <AppButton color="primaryLight" size="small">
           <Link target="__blank" to={linkTo}>
             {linkContent}
           </Link>

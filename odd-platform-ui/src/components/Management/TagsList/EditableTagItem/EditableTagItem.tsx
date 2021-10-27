@@ -1,9 +1,9 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { Tag, TagApiDeleteTagRequest } from 'generated-sources';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import {
   styles,
@@ -11,6 +11,7 @@ import {
 } from 'components/Management/TagsList/EditableTagItem/EditableTagItemStyles';
 import cx from 'classnames';
 import TagEditFormContainer from 'components/Management/TagsList/TagEditForm/TagEditFormContainer';
+import AppButton from 'components/shared/AppButton/AppButton';
 
 interface EditableTagItemProps extends StylesType {
   tag: Tag;
@@ -46,8 +47,8 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<EditIcon />}
-              onClick={() => {}}
+              startIcon={<EditIcon />}
+              sx={{ mr: 1 }}
             >
               Edit
             </AppButton>
@@ -64,8 +65,7 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<DeleteIcon />}
-              onClick={() => {}}
+              startIcon={<DeleteIcon />}
             >
               Delete
             </AppButton>

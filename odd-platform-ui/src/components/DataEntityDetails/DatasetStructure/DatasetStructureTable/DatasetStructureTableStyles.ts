@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const columnBasicStyles = (theme: Theme) => ({
   collapseCol: {
@@ -16,6 +19,7 @@ export const columnBasicStyles = (theme: Theme) => ({
     width: '72px',
     display: 'flex',
     justifyContent: 'flex-end',
+    alignItems: 'center',
     paddingRight: theme.spacing(2),
     '& > *': {
       marginRight: theme.spacing(1),
@@ -53,7 +57,7 @@ export const styles = (theme: Theme) =>
       marginTop: theme.spacing(2.5),
     },
     tableHeader: {
-      color: theme.palette.text.hint,
+      color: theme.palette.texts.hint,
       '& > *': {
         borderBottom: '1px solid',
         borderBottomColor: theme.palette.backgrounds.primary,

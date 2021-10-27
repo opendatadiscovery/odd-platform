@@ -1,22 +1,21 @@
-import React from 'react';
-import {
-  Grid,
-  Typography,
-  TextField,
-  CircularProgress,
-} from '@material-ui/core';
+import React, { HTMLAttributes } from 'react';
 import {
   Autocomplete,
-  AutocompleteInputChangeReason,
   AutocompleteRenderOptionState,
+  Grid,
+} from '@mui/material';
+
+import {
+  AutocompleteInputChangeReason,
   createFilterOptions,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
+
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  SearchFilter,
-  SearchApiGetFiltersForFacetRequest,
   CountableSearchFilter,
   MultipleFacetType,
+  SearchApiGetFiltersForFacetRequest,
+  SearchFilter,
 } from 'generated-sources';
 import {
   FacetStateUpdate,
@@ -25,7 +24,9 @@ import {
 } from 'redux/interfaces/search';
 import { StylesType } from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemStyles';
 import SelectedFilterOption from 'components/Search/Filters/FilterItem/SelectedFilterOption/SelectedFilterOption';
-import ChevronDownIcon from 'components/shared/Icons/ChevronDownIcon';
+import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 
 interface FilterItemProps extends StylesType {
   searchId: string;
@@ -141,6 +142,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
   };
 
   const fillOptionMatches = (
+    props: HTMLAttributes<HTMLLIElement>,
     option: FilterOption,
     state: AutocompleteRenderOptionState
   ) => {
@@ -150,10 +152,12 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
         : option.name;
     if (!state.inputValue) {
       return (
-        <Grid container justify="space-between">
-          <span>{formattedOptionName}</span>
-          <span className={classes.filterCount}>{option.count}</span>
-        </Grid>
+        <li {...props}>
+          <Grid container justifyContent="space-between">
+            <span>{formattedOptionName}</span>
+            <span className={classes.filterCount}>{option.count}</span>
+          </Grid>
+        </li>
       );
     }
 
@@ -173,31 +177,26 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
     );
 
     return (
-      <Grid container justify="space-between">
-        <span>
-          {string}
-          <span className={classes.highlightedOption}>
-            {highlightedText}
+      <li {...props}>
+        <Grid container justifyContent="space-between">
+          <span>
+            {string}
+            <span className={classes.highlightedOption}>
+              {highlightedText}
+            </span>
+            {endString}
           </span>
-          {endString}
-        </span>
-        <span className={classes.filterCount}>{option.count}</span>
-      </Grid>
+          <span className={classes.filterCount}>{option.count}</span>
+        </Grid>
+      </li>
     );
   };
 
   return (
     <Grid container className={classes.container}>
       <Grid item xs={12}>
-        <Typography variant="h5" className={classes.caption}>
-          {name}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
         <Autocomplete
-          className={classes.autoComplete}
           fullWidth
-          popupIcon={<ChevronDownIcon />}
           id={`filter-${facetName}`}
           open={autocompleteOpen}
           onOpen={() => setAutocompleteOpen(true)}
@@ -213,22 +212,19 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
           value={{ name: searchText }}
           noOptionsText={facetOptionsLoading ? '' : 'No options'}
           renderOption={fillOptionMatches}
+          popupIcon={<DropdownIcon />}
+          clearIcon={<ClearIcon />}
           renderInput={params => (
-            <TextField
+            <AppTextField
               {...params}
+              sx={{ mt: 2 }}
               placeholder="Search by name"
-              variant="outlined"
-              fullWidth
-              InputProps={{
-                ...params.InputProps,
-                endAdornment: (
-                  <>
-                    {autocompleteOpen && facetOptionsLoading ? (
-                      <CircularProgress color="inherit" size={20} />
-                    ) : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                ),
+              label={name}
+              ref={params.InputProps.ref}
+              customEndAdornment={{
+                variant: 'loader',
+                showAdornment: autocompleteOpen && facetOptionsLoading,
+                position: { mr: -2 },
               }}
             />
           )}

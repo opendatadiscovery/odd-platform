@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { columnBasicStyles } from '../DatasetStructureTableStyles';
 
 export const styles = (theme: Theme) =>
@@ -22,34 +24,8 @@ export const styles = (theme: Theme) =>
       },
     },
     rowChildren: {},
-    collapseBtn: {
-      height: '14px',
-      width: '14px',
-      borderRadius: '2px',
-      backgroundColor: theme.palette.text.secondary,
-      color: theme.palette.common.white,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      '& > *': {
-        width: '6px',
-        height: '6px',
-      },
-    },
-    collapseBtnOpen: {
-      backgroundColor: theme.palette.backgrounds.darken,
-    },
     treeDividerContainer: {
-      width: '14px',
-      minWidth: '14px',
       marginRight: '5px',
-    },
-    treeDivider: {
-      cursor: 'pointer',
-      padding: theme.spacing(0.25, 0, 0, 0),
-      backgroundColor: 'transparent',
-      border: 'none',
-      outline: 'none',
     },
     nameContainer: {
       display: 'flex',
@@ -81,7 +57,7 @@ export const styles = (theme: Theme) =>
       opacity: 0,
     },
     colStatsPct: {
-      color: theme.palette.text.hint,
+      color: theme.palette.texts.hint,
       fontSize: theme.typography.body1.fontSize,
       fontWeight: theme.typography.body1.fontWeight,
       lineHeight: theme.typography.body1.lineHeight,

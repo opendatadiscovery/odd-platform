@@ -1,15 +1,10 @@
 import React from 'react';
-import {
-  withStyles,
-  Grid,
-  TextField,
-  Checkbox,
-  FormControlLabel,
-  InputAdornment,
-} from '@material-ui/core';
+import { Grid, Checkbox, FormControlLabel } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { styles, StylesType } from './TagCreateFormItemStyles';
 
 interface TagCreateFormItemProps extends StylesType {
@@ -34,23 +29,15 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
         defaultValue=""
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
             placeholder="Tag Name"
-            variant="outlined"
             name={`tags.${itemIndex}.name`}
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => field.onChange('')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              showAdornment: !!field.value,
+              onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}

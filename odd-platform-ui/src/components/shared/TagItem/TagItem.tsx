@@ -1,8 +1,9 @@
 import React from 'react';
-import { Typography, withStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import cx from 'classnames';
-import AppButton from 'components/shared/AppButton/AppButton';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './TagItemStyles';
 
 interface TagItemProps extends StylesType {
@@ -31,12 +32,12 @@ const TagItem: React.FC<TagItemProps> = ({
   >
     {label}
     {removable && (
-      <AppButton
-        className={classes.removeBtn}
+      <AppIconButton
         size="small"
         color="unfilled"
-        icon={<CancelIcon />}
+        icon={<ClearIcon />}
         onClick={onRemoveClick}
+        sx={{ ml: 0.25 }}
       />
     )}
   </Typography>

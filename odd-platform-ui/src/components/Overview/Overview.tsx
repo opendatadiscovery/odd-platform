@@ -1,26 +1,26 @@
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import {
-  DataEntityRef,
-  DataEntityApiGetMyObjectsRequest,
-  DataEntityApiGetMyObjectsWithUpstreamRequest,
-  DataEntityApiGetMyObjectsWithDownstreamRequest,
-  DataEntityApiGetPopularRequest,
-  AssociatedOwner,
   AlertTotals,
+  AssociatedOwner,
+  DataEntityApiGetMyObjectsRequest,
+  DataEntityApiGetMyObjectsWithDownstreamRequest,
+  DataEntityApiGetMyObjectsWithUpstreamRequest,
+  DataEntityApiGetPopularRequest,
+  DataEntityRef,
   TagApiGetPopularTagListRequest,
 } from 'generated-sources';
 import { alertsPath } from 'lib/paths';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
 import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import StarIcon from 'components/shared/Icons/StarIcon';
 import CatalogIcon from 'components/shared/Icons/CatalogIcon';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import AppButton from 'components/shared/AppButton/AppButton';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import { StylesType } from './OverviewStyles';
 import OverviewDataEntityContainer from './DataEntityList/DataEntityListContainer';
@@ -124,17 +124,14 @@ const Overview: React.FC<OverviewProps> = ({
               xs={3}
               className={cx(classes.infoBarItem, classes.alertsContainer)}
             >
-              <Grid container justify="space-between">
+              <Grid container justifyContent="space-between">
                 <Typography variant="subtitle1">Alerts</Typography>
                 <Link to={alertsPath()}>
-                  <AppButton
-                    size="small"
-                    color="dropdown"
-                    onClick={() => {}}
-                    className={classes.showAllAlerts}
-                  >
-                    See All
-                  </AppButton>
+                  <div className={classes.showAllAlerts}>
+                    <AppButton size="small" color="dropdown">
+                      See All
+                    </AppButton>
+                  </div>
                 </Link>
               </Grid>
               <Grid container className={classes.alerts}>

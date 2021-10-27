@@ -1,15 +1,15 @@
 import React from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import cx from 'classnames';
 import {
   DataQualityApiGetDatasetTestReportRequest,
-  DataSetTestReport,
   DataQualityTestRunStatusEnum,
+  DataSetTestReport,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import { dataEntityTestReportPath } from 'lib/paths';
 import OverviewDataQualityReportSkeleton from 'components/DataEntityDetails/Overview/OverviewDataQualityReport/OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './OverviewDataQualityReportStyles';
 
 interface OverviewDataQualityReportProps extends StylesType {
@@ -40,12 +40,17 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
         <OverviewDataQualityReportSkeleton />
       ) : (
         <Grid container direction="column">
-          <Grid item container wrap="nowrap" justify="space-between">
+          <Grid
+            item
+            container
+            wrap="nowrap"
+            justifyContent="space-between"
+          >
             <Grid item>
               <Typography variant="h4">Test report</Typography>
             </Grid>
             <Grid item>
-              <AppButton size="small" color="tertiary" onClick={() => {}}>
+              <AppButton size="small" color="tertiary">
                 <Link to={dataEntityTestReportPath(dataEntityId)}>
                   See all
                 </Link>

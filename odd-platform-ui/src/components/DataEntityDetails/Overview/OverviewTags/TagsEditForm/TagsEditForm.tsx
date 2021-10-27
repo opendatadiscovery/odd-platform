@@ -1,29 +1,26 @@
 import React from 'react';
+import { Autocomplete, Typography } from '@mui/material';
 import {
-  CircularProgress,
-  TextField,
-  Typography,
-} from '@material-ui/core';
-import {
-  Tag,
   DataEntityApiCreateDataEntityTagsRelationsRequest,
+  Tag,
   TagApiGetPopularTagListRequest,
   TagsResponse,
 } from 'generated-sources';
 import {
-  Autocomplete,
   AutocompleteInputChangeReason,
   createFilterOptions,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { compact } from 'lodash';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import TagItem from 'components/shared/TagItem/TagItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { StylesType } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import cx from 'classnames';
+import AppButton from 'components/shared/AppButton/AppButton';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 
 interface TagsEditProps extends StylesType {
   dataEntityId: number;
@@ -205,45 +202,40 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
         blurOnSelect
         freeSolo
         value={{ name: searchText }}
+        clearIcon={<ClearIcon />}
         renderInput={params => (
-          <TextField
+          <AppTextField
             {...params}
-            className={classes.tagInput}
+            ref={params.InputProps.ref}
             placeholder="Enter tag name…"
-            variant="outlined"
-            fullWidth
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
-                  {params.InputProps.endAdornment}
-                </>
-              ),
+            customEndAdornment={{
+              variant: 'loader',
+              showAdornment: loading,
+              position: { mr: 4 },
             }}
           />
         )}
-        renderOption={option => (
-          <div
-            className={cx(classes.optionsContainer, {
-              [classes.importantOptionContainer]: option.important,
-            })}
-          >
-            <div className={classes.optionItem}>
-              <Typography variant="body1">
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="tag"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
+        renderOption={(props, option) => (
+          <li {...props}>
+            <div
+              className={cx(classes.optionsContainer, {
+                [classes.importantOptionContainer]: option.important,
+              })}
+            >
+              <div className={classes.optionItem}>
+                <Typography variant="body1">
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="tag"
+                      optionName={option.name}
+                    />
+                  )}
+                </Typography>
+              </div>
             </div>
-          </div>
+          </li>
         )}
       />
       <FormProvider {...methods}>
@@ -276,7 +268,6 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
         form="tags-create-form"
         color="primary"
         fullWidth
-        onClick={() => {}}
       >
         Save
       </AppButton>

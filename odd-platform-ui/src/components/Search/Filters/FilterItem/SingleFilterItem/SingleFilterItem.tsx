@@ -1,12 +1,12 @@
 import React from 'react';
-import { Grid, Typography, Select, MenuItem } from '@material-ui/core';
+import { Grid, MenuItem } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
 import {
   FacetStateUpdate,
   OptionalFacetNames,
   SearchFilterStateSynced,
 } from 'redux/interfaces/search';
-import ChevronDownIcon from 'components/shared/Icons/ChevronDownIcon';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { StylesType } from './SingleFilterItemStyles';
 
 interface FilterItemProps extends StylesType {
@@ -40,22 +40,12 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
 
   return facetOptions.length ? (
     <Grid container className={classes.container}>
-      <Grid item xs={12}>
-        <Typography
-          variant="h5"
-          id={`${facetName}-select-label`}
-          className={classes.caption}
-        >
-          {name}
-        </Typography>
-      </Grid>
-      <Grid item xs={12}>
-        <Select
-          className={classes.singleSelect}
-          IconComponent={ChevronDownIcon}
-          labelId={`${facetName}-select-label`}
+      <Grid container item xs={12}>
+        <AppTextField
+          sx={{ mt: 2 }}
+          label={name}
+          select
           id={`filter-${facetName}`}
-          variant="outlined"
           value={
             selectedOptions?.length ? selectedOptions[0].entityId : 'All'
           }
@@ -75,7 +65,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
               {option.name}
             </MenuItem>
           ))}
-        </Select>
+        </AppTextField>
       </Grid>
     </Grid>
   ) : null;

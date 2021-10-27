@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -22,9 +25,6 @@ export const styles = (theme: Theme) =>
       borderRadius: '4px',
       padding: theme.spacing(0.25, 0.5, 0.25, 1),
       color: theme.palette.texts.info,
-    },
-    removeBtn: {
-      marginLeft: theme.spacing(0.25),
     },
   });
 

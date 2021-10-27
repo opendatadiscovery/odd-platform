@@ -1,4 +1,4 @@
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { createDataEntitiesSearch, fetchIdentity } from 'redux/thunks';
 import { getIdentity } from 'redux/selectors/profile.selectors';

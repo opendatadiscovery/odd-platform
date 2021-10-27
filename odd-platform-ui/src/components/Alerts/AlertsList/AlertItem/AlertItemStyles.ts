@@ -1,4 +1,6 @@
-import { createStyles, WithStyles, Theme } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { alertsMainColWidthStyles } from 'components/Alerts/AlertsList/AlertsListStyles';
 
 export const styles = (theme: Theme) =>
@@ -17,15 +19,12 @@ export const styles = (theme: Theme) =>
     typesList: {
       display: 'flex',
       flexWrap: 'nowrap',
-      marginLeft: theme.spacing(1.25),
-      '& > * + *': {
-        marginLeft: theme.spacing(0.5),
-      },
     },
+    dataEntityLink: { overflow: 'hidden' },
     optionsBtn: {
       opacity: 0,
     },
-    alertName: { maxWidth: '118px' },
+    alertName: { overflow: 'auto' },
     ...alertsMainColWidthStyles,
   });
 

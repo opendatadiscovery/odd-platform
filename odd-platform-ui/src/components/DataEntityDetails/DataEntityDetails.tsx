@@ -1,25 +1,24 @@
-import { Typography, Grid } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import cx from 'classnames';
 import {
-  dataEntityOverviewPath,
-  datasetStructurePath,
-  dataEntityLineagePath,
-  dataEntityTestReportPath,
   dataEntityAlertsPath,
   dataEntityHistoryPath,
+  dataEntityLineagePath,
+  dataEntityOverviewPath,
+  dataEntityTestReportPath,
+  datasetStructurePath,
 } from 'lib/paths';
 import {
-  DataEntityDetails,
   DataEntityApiGetDataEntityDetailsRequest,
+  DataEntityDetails,
 } from 'generated-sources';
-import { FetchStatus, ErrorState } from 'redux/interfaces';
+import { ErrorState, FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
@@ -30,6 +29,7 @@ import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDe
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import QualityTestHistoryContainer from 'components/DataEntityDetails/QualityTestRunsHistory/QualityTestRunsHistoryContainer';
+import AppButton from 'components/shared/AppButton/AppButton';
 import OverviewContainer from './Overview/OverviewContainer';
 import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
 import LineageContainer from './Lineage/LineageContainer';
@@ -117,19 +117,27 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     <div className={classes.container}>
       {dataEntityDetails && dataEntityFetchingStatus !== 'fetching' ? (
         <>
-          <Grid container justify="space-between" alignItems="center">
+          <Grid
+            container
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Grid item className={classes.caption}>
               <Grid container item alignItems="center">
-                <Typography variant="h1" noWrap>
+                <Typography
+                  variant="h1"
+                  noWrap
+                  className={classes.entityTypeLabel}
+                >
                   {dataEntityDetails.internalName
                     ? dataEntityDetails.internalName
                     : dataEntityDetails.externalName}
                 </Typography>
                 {dataEntityDetails.types.map(type => (
                   <EntityTypeItem
+                    sx={{ ml: 0.5 }}
                     key={type.id}
                     typeName={type.name}
-                    className={classes.entityTypeLabel}
                   />
                 ))}
                 <div className={cx(classes.internalNameEditBtnContainer)}>
@@ -137,11 +145,10 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                     dataEntityId={dataEntityId}
                     btnCreateEl={
                       <AppButton
-                        className={classes.internalNameEditBtn}
-                        onClick={() => {}}
-                        size="medium"
+                        size="small"
                         color="tertiary"
-                        icon={
+                        sx={{ ml: 1 }}
+                        startIcon={
                           dataEntityDetails.internalName ? (
                             <EditIcon />
                           ) : (
@@ -171,7 +178,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             <Grid item className={classes.updatedAt}>
               {dataEntityDetails.updatedAt ? (
                 <>
-                  <TimeGapIcon classes={{ root: classes.updatedAtIcon }} />
+                  <TimeGapIcon />
                   <Typography variant="body1">
                     {formatDistanceToNowStrict(
                       dataEntityDetails.updatedAt,

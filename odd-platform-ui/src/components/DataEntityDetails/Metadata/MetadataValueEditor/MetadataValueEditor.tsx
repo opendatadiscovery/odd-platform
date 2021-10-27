@@ -1,18 +1,21 @@
 import React from 'react';
 import {
-  TextField,
-  Grid,
-  RadioGroup,
-  Radio,
   FormControlLabel,
-  withStyles,
+  Grid,
+  Radio,
+  RadioGroup,
   TextFieldProps,
-} from '@material-ui/core';
-import { KeyboardDatePicker } from '@material-ui/pickers';
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { Controller, useFormContext } from 'react-hook-form';
-import { format } from 'date-fns';
+import { format, isAfter, isBefore, isValid } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';
-import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
+import AppDatePicker, {
+  maxDate,
+  metadataDatePickerInputFormat,
+  minDate,
+} from 'components/shared/AppDatePicker/AppDatePicker';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { styles, StylesType } from './MetadataValueEditorStyles';
 
 interface MetadataValueEditFieldProps extends StylesType {
@@ -31,26 +34,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   labeled,
   size,
 }) => {
-  const { control, setValue } = useFormContext();
-
-  const [selectedDate, setSelectedDate] = React.useState<string>(
-    metadataType === MetadataFieldType.DATETIME && metadataValue
-      ? format(new Date(metadataValue), 'dd/MM/yyyy')
-      : ''
-  );
-  const setDate = (date: MaterialUiPickersDate) => {
-    if (date && date.toDateString() !== 'Invalid Date') {
-      setValue(fieldName, format(date, "yyyy-MM-dd'T'HH:mm:ss"), {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-    } else {
-      setValue(fieldName, null, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
-    }
-  };
+  const { control } = useFormContext();
 
   const defaultText =
     metadataType === MetadataFieldType.ARRAY ? 'item1,item2,...' : 'Value';
@@ -61,45 +45,37 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
         control={control}
         name={fieldName}
         defaultValue={
-          metadataValue && format(new Date(metadataValue), 'dd/MM/yyyy')
+          metadataValue &&
+          format(new Date(metadataValue), metadataDatePickerInputFormat)
         }
-        rules={{ required: 'Invalid date' }}
-        render={({ field: { ref }, fieldState }) => (
+        rules={{
+          validate: {
+            isValid: d => isValid(d) || 'Date is invalid',
+            greaterThan: v =>
+              isAfter(new Date(v), minDate) ||
+              `Date should be greater than ${minDate.toDateString()}`,
+            lessThan: v =>
+              isBefore(new Date(v), maxDate) ||
+              `Date should be less than ${maxDate.toDateString()}`,
+          },
+        }}
+        render={({ field, fieldState }) => (
           <>
-            <KeyboardDatePicker
-              className={classes.pickerErrorMessage}
+            <AppDatePicker
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...field}
+              sx={{ mt: 1 }}
               label={labeled ? defaultText : ''}
-              disableToolbar
-              variant="inline"
-              inputVariant="outlined"
-              format="dd/MM/yyyy"
-              placeholder="DD/MM/YYYY"
-              fullWidth
-              id="date-picker-inline"
-              autoOk
-              size={size}
-              inputProps={{ ref }}
-              inputValue={selectedDate}
-              value={selectedDate || null}
-              onAccept={date => {
-                if (date) setSelectedDate(format(date, 'dd/MM/yyyy'));
-                setDate(date);
-              }}
-              onChange={date => {
-                setSelectedDate('');
-                setDate(date);
-              }}
-              KeyboardButtonProps={{
-                'aria-label': 'change date',
-              }}
+              disableMaskedInput
+              defaultDate={
+                metadataType === MetadataFieldType.DATETIME &&
+                metadataValue
+                  ? metadataValue
+                  : ''
+              }
+              showInputError={!!fieldState.error?.message}
+              inputHelperText={fieldState.error?.message}
             />
-            <div className={classes.formErrorContainer}>
-              {fieldState.error?.message && (
-                <p className={classes.formErrorMessage}>
-                  {fieldState.error?.message}
-                </p>
-              )}
-            </div>
           </>
         )}
       />
@@ -116,6 +92,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
             {...field}
             defaultValue={metadataValue || 'true'}
             className={classes.radioGroup}
+            sx={{ mt: 1 }}
           >
             <Grid container>
               <Grid item sm={6}>
@@ -147,13 +124,14 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
       defaultValue={metadataValue || ''}
       rules={{ required: true }}
       render={({ field }) => (
-        <TextField
+        <AppTextField
           {...field}
+          sx={{ mt: 1 }}
           size={size}
           fullWidth
           label={labeled ? 'Value' : null}
           placeholder={labeled ? '' : defaultText}
-          variant="outlined"
+          // variant="outlined"
           inputProps={{
             type:
               metadataType &&

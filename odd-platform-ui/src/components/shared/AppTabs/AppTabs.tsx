@@ -1,15 +1,9 @@
-import React, { ChangeEvent } from 'react';
-import {
-  withStyles,
-  Tabs,
-  Tab,
-  TabProps,
-  Typography,
-} from '@material-ui/core';
+import React, { ChangeEvent, SyntheticEvent } from 'react';
+import { Skeleton, Tab, TabProps, Tabs, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { Link, LinkProps } from 'react-router-dom';
 import cx from 'classnames';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import { Skeleton } from '@material-ui/lab';
 import { styles, StylesType } from './AppTabsStyles';
 
 const LinkTab: React.ComponentType<
@@ -48,10 +42,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
     number | boolean | undefined
   >(selectedTab);
 
-  const handleChange = (
-    event: ChangeEvent<Record<string, never>>,
-    newTab: number
-  ) => {
+  const handleChange = (event: SyntheticEvent, newTab: number) => {
     setCurrent(newTab);
     handleTabChange(newTab);
   };

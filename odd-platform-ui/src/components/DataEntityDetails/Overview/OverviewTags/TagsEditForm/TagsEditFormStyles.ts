@@ -1,8 +1,11 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
-    container: {},
+    container: { marginBottom: theme.spacing(1.5) },
     annotation: {
       marginTop: theme.spacing(4),
       marginBottom: theme.spacing(2),
@@ -14,7 +17,7 @@ export const styles = (theme: Theme) =>
     tagItemImportant: {
       backgroundColor: theme.palette.tag.important.normal.background,
     },
-    tagInput: {},
+    tagInput: { marginTop: theme.spacing(1.5) },
     optionsContainer: {
       position: 'relative',
     },

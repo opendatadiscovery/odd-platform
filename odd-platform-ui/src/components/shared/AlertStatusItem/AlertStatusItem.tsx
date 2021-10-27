@@ -1,28 +1,18 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core';
-import cx from 'classnames';
 import { capitalize } from 'lodash';
-import {
-  styles,
-  StylesType,
-} from 'components/shared/AlertStatusItem/AlertStatusItemStyles';
+import * as S from 'components/shared/AlertStatusItem/AlertStatusItemStyles';
 import { AlertStatus } from 'generated-sources';
 
-interface AlertStatusItemProps extends StylesType {
-  className?: string;
+interface AlertStatusItemProps {
   typeName: AlertStatus;
 }
 
-const AlertStatusItem: React.FC<AlertStatusItemProps> = ({
-  className,
-  typeName,
-  classes,
-}) => (
-  <div className={cx(classes.container, className)} title={typeName}>
-    <span className={cx(classes.filledContainer, typeName)}>
+const AlertStatusItem: React.FC<AlertStatusItemProps> = ({ typeName }) => (
+  <S.Container title={typeName}>
+    <S.FilledContainer $typeName={typeName}>
       {capitalize(typeName)}
-    </span>
-  </div>
+    </S.FilledContainer>
+  </S.Container>
 );
 
-export default withStyles(styles)(AlertStatusItem);
+export default AlertStatusItem;

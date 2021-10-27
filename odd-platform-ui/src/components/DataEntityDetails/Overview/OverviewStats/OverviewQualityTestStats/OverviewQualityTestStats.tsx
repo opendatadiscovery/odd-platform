@@ -1,5 +1,6 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { Link } from 'react-router-dom';
 import {
   DataEntityDetails,
@@ -9,10 +10,10 @@ import {
 import { entries } from 'lodash';
 import { dataEntityDetailsPath, dataEntityHistoryPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import cx from 'classnames';
 import { format, formatDistanceStrict } from 'date-fns';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './OverviewQualityTestStatsStyles';
 
 interface OverviewQualityTestStatsProps extends StylesType {
@@ -30,17 +31,16 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
   qualityTest,
 }) => (
   <Grid container>
-    <Grid item>
+    <Grid item className={classes.typeLabel}>
       <EntityTypeItem
         typeName={DataEntityTypeNameEnum.QUALITY_TEST}
         fullName
-        className={classes.typeLabel}
       />
     </Grid>
     <Grid container className={classes.statsContainer}>
       <Grid item className={classes.links}>
         <Grid item container>
-          <Grid item container alignItems="baseline">
+          <Grid item container alignItems="baseline" sx={{ mb: 1 }}>
             <Typography variant="h2" className={classes.linkCount}>
               {datasetsList?.length || 0}
             </Typography>
@@ -52,10 +52,9 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             {datasetsList?.map(dataset => (
               <AppButton
                 key={dataset.id}
-                className={classes.link}
-                size="small"
+                sx={{ my: 0.25 }}
+                size="medium"
                 color="tertiary"
-                onClick={() => {}}
               >
                 <Link to={dataEntityDetailsPath(dataset.id)}>
                   {dataset.internalName || dataset.externalName}
@@ -72,12 +71,7 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
           <Grid item>
             {suiteUrl ? (
-              <AppButton
-                className={classes.link}
-                size="small"
-                color="tertiary"
-                onClick={() => {}}
-              >
+              <AppButton sx={{ my: 0.25 }} size="medium" color="tertiary">
                 <Link to={{ pathname: suiteUrl }} target="_blank">
                   {suiteName || suiteUrl}
                 </Link>

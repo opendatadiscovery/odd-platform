@@ -1,13 +1,5 @@
 import React from 'react';
 import {
-  Typography,
-  TextField,
-  InputAdornment,
-  IconButton,
-  CircularProgress,
-  Grid,
-} from '@material-ui/core';
-import {
   Namespace,
   NamespaceApiDeleteNamespaceRequest,
   NamespaceApiGetNamespaceListRequest,
@@ -15,12 +7,14 @@ import {
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import { Grid, Typography } from '@mui/material';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceFormContainer from './NamespaceForm/NamespaceFormContainer';
 import NamespaceListSkeleton from './NamespaceListSkeleton/NamespaceListSkeleton';
@@ -102,31 +96,24 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
         </Typography>
       </div>
       <div className={classes.caption}>
-        <TextField
+        <AppTextField
           placeholder="Search namespace..."
-          classes={{ root: classes.searchInput }}
+          sx={{ minWidth: '340px' }}
+          fullWidth={false}
           value={searchText}
-          InputProps={{
-            'aria-label': 'search',
-            disableUnderline: true,
-            startAdornment: (
-              <InputAdornment position="end">
-                <IconButton disableRipple onClick={handleSearch}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-            endAdornment: searchText && (
-              <InputAdornment position="start">
-                <AppButton
-                  size="small"
-                  color="unfilled"
-                  icon={<CancelIcon />}
-                  onClick={() => setSearchText('')}
-                />
-              </InputAdornment>
-            ),
+          customStartAdornment={{
+            variant: 'search',
+            showAdornment: true,
+            onCLick: handleSearch,
+            icon: <SearchIcon />,
           }}
+          customEndAdornment={{
+            variant: 'clear',
+            showAdornment: !!searchText,
+            onCLick: () => setSearchText(''),
+            icon: <ClearIcon />,
+          }}
+          InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
@@ -135,7 +122,7 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<AddIcon />}
+              startIcon={<AddIcon />}
             >
               Create namespace
             </AppButton>

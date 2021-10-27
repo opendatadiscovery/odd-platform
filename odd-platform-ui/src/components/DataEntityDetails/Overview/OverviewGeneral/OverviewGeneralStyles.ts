@@ -1,19 +1,17 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
     container: {},
-    addOwnerBtn: {
-      marginTop: theme.spacing(0.25),
-    },
     ownershipList: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'flex-start',
     },
-    generalItem: {
-      padding: '1px 8px !important',
-    },
+    ownersContainer: { marginTop: theme.spacing(2) },
     ownerItem: {
       display: 'flex',
       alignItems: 'center',
@@ -39,7 +37,6 @@ export const styles = (theme: Theme) =>
     },
     ownerActionBtns: {
       opacity: 0,
-      marginLeft: theme.spacing(1.25),
     },
   });
 

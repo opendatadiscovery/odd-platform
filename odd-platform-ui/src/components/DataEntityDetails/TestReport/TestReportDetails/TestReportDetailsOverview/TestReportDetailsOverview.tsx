@@ -1,10 +1,10 @@
 import React from 'react';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import TestReportDetailsOverviewSkeleton from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import Tooltip from 'components/shared/Tooltip/Tooltip';
 import { format, formatDistanceStrict } from 'date-fns';
 import { DataQualityTest } from 'generated-sources';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { StylesType } from './TestReportDetailsOverviewStyles';
 
 interface TestReportDetailsOverviewProps extends StylesType {
@@ -86,7 +86,7 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                 value && (
                   <Grid key={key} container>
                     <Grid item xs={4} className={classes.paramName}>
-                      <Tooltip tooltipContent={key} place="bottom">
+                      <AppTooltip title={key}>
                         <Typography
                           variant="body1"
                           color="textSecondary"
@@ -94,14 +94,14 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                         >
                           {key}
                         </Typography>
-                      </Tooltip>
+                      </AppTooltip>
                     </Grid>
                     <Grid item xs={8}>
-                      <Tooltip tooltipContent={value} place="bottom">
+                      <AppTooltip title={value}>
                         <Typography variant="body1" noWrap>
                           {value}
                         </Typography>
-                      </Tooltip>
+                      </AppTooltip>
                     </Grid>
                   </Grid>
                 )

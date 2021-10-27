@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { colWidthStyles } from 'components/Search/Results/ResultsStyles';
 
 export const styles = (theme: Theme) =>
@@ -19,13 +21,6 @@ export const styles = (theme: Theme) =>
       textDecoration: 'none',
       flexGrow: 1,
       overflow: 'hidden',
-    },
-    typesList: {
-      display: 'flex',
-      flexWrap: 'nowrap',
-      '& > *': {
-        marginLeft: theme.spacing(1),
-      },
     },
     ...colWidthStyles,
   });

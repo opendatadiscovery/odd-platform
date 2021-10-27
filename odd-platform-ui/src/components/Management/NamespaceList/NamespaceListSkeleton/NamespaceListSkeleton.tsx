@@ -1,6 +1,7 @@
 import React from 'react';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Grid, withStyles } from '@material-ui/core';
+import { withStyles } from '@mui/styles';
+import { Grid } from '@mui/material';
+import { Skeleton } from '@mui/lab';
 import { styles, StylesType } from './NamespaceListSkeletonStyles';
 
 interface SkeletonProps extends StylesType {

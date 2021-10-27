@@ -1,5 +1,4 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import {
   DataEntityDetails,
@@ -8,6 +7,8 @@ import {
 import { dataEntityDetailsPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { Grid, Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import { styles, StylesType } from './OverviewDataConsumerStatsStyles';
 
 interface OverviewDataConsumerStatsProps extends StylesType {
@@ -52,7 +53,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
         {inputs?.map(input => (
           <AppButton
             key={input.id}
-            className={classes.refItem}
+            sx={{ my: 0.25 }}
             size="small"
             color="tertiary"
             onClick={() => {}}

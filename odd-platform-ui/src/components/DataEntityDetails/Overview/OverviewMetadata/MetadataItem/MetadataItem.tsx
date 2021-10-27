@@ -1,21 +1,22 @@
 import React from 'react';
-import { Typography, Grid } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import { format } from 'date-fns';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
-  MetadataFieldValue,
-  MetadataFieldType,
-  DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
-  MetadataFieldValueUpdateFormData,
   DataEntityApiDeleteDataEntityMetadataFieldValueRequest,
+  DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
+  MetadataFieldType,
+  MetadataFieldValue,
+  MetadataFieldValueUpdateFormData,
 } from 'generated-sources';
 import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
-import MetadataValueEditField from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import { StylesType } from './MetadataItemStyles';
 
 interface MetadataItemProps extends StylesType {
@@ -96,7 +97,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
               className={classes.editForm}
               onSubmit={methods.handleSubmit(handleUpdate)}
             >
-              <MetadataValueEditField
+              <MetadataValueEditor
                 fieldName="value"
                 metadataType={metadataItem.field.type}
                 metadataValue={metadataItem.value}
@@ -128,7 +129,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
             </Typography>
             {isCustom ? (
               <div className={classes.actions}>
-                <AppButton
+                <AppIconButton
                   size="small"
                   color="tertiary"
                   icon={<EditIcon />}
@@ -147,11 +148,11 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                   }
                   onConfirm={handleDelete}
                   actionBtn={
-                    <AppButton
+                    <AppIconButton
                       size="small"
                       color="tertiary"
                       icon={<DeleteIcon />}
-                      onClick={() => {}}
+                      sx={{ ml: 0.5 }}
                     />
                   }
                 />

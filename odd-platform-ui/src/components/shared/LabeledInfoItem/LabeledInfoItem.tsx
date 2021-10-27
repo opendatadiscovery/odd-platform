@@ -3,9 +3,9 @@ import {
   Grid,
   Typography,
   TypographyProps,
-  withStyles,
   GridSize,
-} from '@material-ui/core';
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import cx from 'classnames';
 import { styles, StylesType } from './LabeledInfoItemStyles';
 

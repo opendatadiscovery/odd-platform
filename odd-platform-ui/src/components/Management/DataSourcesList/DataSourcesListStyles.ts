@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -21,9 +24,6 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'center',
       padding: theme.spacing(1),
-    },
-    searchInput: {
-      minWidth: '340px',
     },
     datasourceItem: {
       '& + $datasourceItem': {

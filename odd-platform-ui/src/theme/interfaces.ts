@@ -1,4 +1,9 @@
-import { TypeBackground } from '@material-ui/core/styles/createPalette';
+import { TypeBackground } from '@mui/material/styles/createPalette';
+import {
+  AlertStatus,
+  DataEntityTypeNameEnum,
+  DataSetFieldTypeTypeEnum,
+} from 'generated-sources';
 
 // palette interfaces
 interface ItemColors {
@@ -7,10 +12,11 @@ interface ItemColors {
   color?: string;
 }
 
-interface ButtonTypeCondition {
+interface ItemCondition {
   normal: ItemColors;
   hover: ItemColors;
   active: ItemColors;
+  error?: ItemColors;
   disabled?: ItemColors;
 }
 
@@ -24,33 +30,17 @@ interface ReportStatus {
 }
 
 interface RunStatus {
-  success: string;
-  failed: string;
-  broken: string;
-  skipped: string;
-  aborted: string;
-  unknown: string;
+  SUCCESS: string;
+  FAILED: string;
+  BROKEN: string;
+  SKIPPED: string;
+  ABORTED: string;
+  UNKNOWN: string;
 }
 
-interface EntityType {
-  SET: string;
-  TRANSFORMER: string;
-  CONSUMER: string;
-  INPUT: string;
-  QUALITY_TEST: string;
-}
+type EntityType = Record<DataEntityTypeNameEnum, string>;
 
-interface StructureLabelType {
-  STRING: ItemColors;
-  BOOLEAN: ItemColors;
-  INTEGER: ItemColors;
-  NUMBER: ItemColors;
-  BINARY: ItemColors;
-  DATETIME: ItemColors;
-  STRUCT: ItemColors;
-  LIST: ItemColors;
-  MAP: ItemColors;
-}
+type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 
 interface TextType {
   primary: string;
@@ -60,13 +50,15 @@ interface TextType {
 }
 
 interface ButtonType {
-  primary: ButtonTypeCondition;
-  primaryLight: ButtonTypeCondition;
-  secondary: ButtonTypeCondition;
-  tertiary: ButtonTypeCondition;
-  dropdown: ButtonTypeCondition;
-  expand: ButtonTypeCondition;
-  unfilled: ButtonTypeCondition;
+  primary: ItemCondition;
+  primaryLight: ItemCondition;
+  secondary: ItemCondition;
+  tertiary: ItemCondition;
+  dropdown: ItemCondition;
+  expand: ItemCondition;
+  expandText: ItemCondition;
+  unfilled: ItemCondition;
+  collapse: ItemCondition;
 }
 
 interface BackgroundType extends TypeBackground {
@@ -76,16 +68,13 @@ interface BackgroundType extends TypeBackground {
 }
 
 interface TagType {
-  main: ButtonTypeCondition;
-  important: ButtonTypeCondition;
+  main: ItemCondition;
+  important: ItemCondition;
 }
 
-interface AlertType {
-  open: ItemColors;
-  resolved: ItemColors;
-}
+type AlertType = Record<AlertStatus, ItemColors>;
 
-declare module '@material-ui/core/styles/createPalette' {
+declare module '@mui/material/styles' {
   interface Palette {
     entityType: EntityType;
     reportStatus: ReportStatus;
@@ -96,6 +85,7 @@ declare module '@material-ui/core/styles/createPalette' {
     alert: AlertType;
     backgrounds: Partial<BackgroundType>;
     texts: TextType;
+    textField: ItemCondition;
   }
   interface PaletteOptions {
     entityType?: EntityType;
@@ -107,5 +97,6 @@ declare module '@material-ui/core/styles/createPalette' {
     alert?: AlertType;
     backgrounds?: Partial<BackgroundType>;
     texts?: TextType;
+    textField?: ItemCondition;
   }
 }

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Typography, Grid, Collapse } from '@material-ui/core';
+import { Collapse, Grid, Typography } from '@mui/material';
 import { MetadataFieldValue } from 'generated-sources';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import MetadataCreateFormContainer from 'components/DataEntityDetails/Metadata/MetadataCreateForm/MetadataCreateFormContainer';
+import AppButton from 'components/shared/AppButton/AppButton';
 import MetadataItemContainer from './MetadataItem/MetadataItemContainer';
 import { StylesType } from './OverviewMetadataStyles';
 
@@ -49,8 +49,8 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
         <AppButton
           size="small"
           color="tertiary"
-          className={classes.viewAllBtn}
           onClick={() => setPredefOpen(!predefOpen)}
+          sx={{ mt: 0.75 }}
         >
           {predefOpen
             ? 'Hide'
@@ -83,7 +83,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           ) : null}
         </Collapse>
         <AppButton
-          className={classes.viewAllBtn}
+          sx={{ mt: 0.75 }}
           size="small"
           color="tertiary"
           onClick={() => setCustomOpen(!customOpen)}
@@ -111,8 +111,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
                     <AppButton
                       size="medium"
                       color="primaryLight"
-                      onClick={() => {}}
-                      icon={<AddIcon />}
+                      startIcon={<AddIcon />}
                     >
                       Add metadata
                     </AppButton>
@@ -137,7 +136,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
               xs={12}
               container
               alignItems="center"
-              justify="flex-start"
+              justifyContent="flex-start"
               wrap="nowrap"
             >
               <Typography variant="subtitle2">Not created.</Typography>
@@ -145,7 +144,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
                 dataEntityId={dataEntityId}
                 btnCreateEl={
                   <AppButton
-                    onClick={() => {}}
+                    sx={{ ml: 0.5 }}
                     size="small"
                     color="tertiary"
                   >

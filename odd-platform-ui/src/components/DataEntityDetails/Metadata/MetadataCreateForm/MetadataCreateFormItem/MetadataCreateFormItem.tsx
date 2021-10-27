@@ -1,14 +1,7 @@
 import React from 'react';
-import {
-  CircularProgress,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  Typography,
-} from '@material-ui/core';
+import { Autocomplete, MenuItem, Typography } from '@mui/material';
 import { capitalize, values } from 'lodash';
-import { Autocomplete, createFilterOptions } from '@material-ui/lab';
+import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { Controller, useFormContext } from 'react-hook-form';
 import {
@@ -20,6 +13,9 @@ import {
 import MetadataValueEditField from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import cx from 'classnames';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import { StylesType } from './MetadataCreateFormItemStyles';
 
 interface MetadataCreateFormItemProps extends StylesType {
@@ -146,8 +142,10 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
         name={`metadata.${itemIndex}.name`}
         defaultValue=""
         control={control}
-        render={({ field: { onChange } }) => (
+        render={({ field }) => (
           <Autocomplete
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...field}
             fullWidth
             id="metadata-name-search"
             open={autocompleteOpen}
@@ -157,7 +155,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
             onClose={() => {
               setAutocompleteOpen(false);
             }}
-            onChange={handleOptionChange(onChange)}
+            onChange={handleOptionChange(field.onChange)}
             onInputChange={handleInputChange}
             getOptionLabel={getOptionLabel}
             options={options}
@@ -165,38 +163,36 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
             loading={loading}
             handleHomeEndKeys
             selectOnFocus
+            clearIcon={<ClearIcon />}
+            popupIcon={<DropdownIcon />}
             renderInput={params => (
-              <TextField
+              <AppTextField
                 {...params}
                 {...register(`metadata[${itemIndex}].name`, {
                   required: true,
                 })}
+                ref={params.InputProps.ref}
                 placeholder="Metadata Name"
-                variant="outlined"
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <>
-                      {loading ? (
-                        <CircularProgress color="inherit" size={20} />
-                      ) : null}
-                      {params.InputProps.endAdornment}
-                    </>
-                  ),
+                customEndAdornment={{
+                  variant: 'loader',
+                  showAdornment: loading,
+                  position: { mr: -2 },
                 }}
               />
             )}
-            renderOption={option => (
-              <Typography variant="body2">
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="custom data"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
+            renderOption={(props, option) => (
+              <li {...props}>
+                <Typography variant="body2">
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="custom data"
+                      optionName={option.name}
+                    />
+                  )}
+                </Typography>
+              </li>
             )}
           />
         )}
@@ -214,34 +210,24 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
               defaultValue={selectedType}
               rules={{ required: true }}
               render={({ field }) => (
-                <>
-                  <InputLabel shrink id="metadata-type">
-                    Type
-                  </InputLabel>
-                  <Select
-                    {...field}
-                    fullWidth
-                    variant="outlined"
-                    placeholder="Type"
-                    labelId="metadata-type"
-                    disabled={!!selectedField?.type}
-                    inputProps={{
-                      onChange: (
-                        e: React.ChangeEvent<HTMLInputElement>
-                      ) => {
-                        setSelectedType(
-                          e.target.value as MetadataFieldType
-                        );
-                      },
-                    }}
-                  >
-                    {values(MetadataFieldType).map(type => (
-                      <MenuItem key={type} value={type}>
-                        {capitalize(type)}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </>
+                <AppTextField
+                  {...field}
+                  label="Type"
+                  placeholder="Type"
+                  select
+                  disabled={!!selectedField?.type}
+                  inputProps={{
+                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                      setSelectedType(e.target.value as MetadataFieldType);
+                    },
+                  }}
+                >
+                  {values(MetadataFieldType).map(type => (
+                    <MenuItem key={type} value={type}>
+                      {capitalize(type)}
+                    </MenuItem>
+                  ))}
+                </AppTextField>
               )}
             />
           </div>

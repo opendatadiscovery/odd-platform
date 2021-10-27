@@ -1,6 +1,7 @@
 import React from 'react';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Grid, GridSize, withStyles } from '@material-ui/core';
+import Skeleton from '@mui/material/Skeleton';
+import { Grid, GridSize } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import cx from 'classnames';
 import { mainSkeletonHeight } from 'lib/constants';
 import { styles, StylesType } from './OverviewSkeletonStyles';
@@ -53,7 +54,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
           <Grid
             item
             container
-            justify="space-between"
+            justifyContent="space-between"
             wrap="nowrap"
             className={classes.smallItem}
           >
@@ -62,7 +63,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
           <Grid
             item
             container
-            justify="space-between"
+            justifyContent="space-between"
             wrap="nowrap"
             className={classes.smallItem}
           >
@@ -84,7 +85,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
           <Grid
             item
             container
-            justify="space-between"
+            justifyContent="space-between"
             wrap="nowrap"
             className={classes.smallItem}
           >
@@ -93,7 +94,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
           <Grid
             item
             container
-            justify="space-between"
+            justifyContent="space-between"
             wrap="nowrap"
             className={classes.smallItem}
           >
@@ -120,7 +121,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
             xs={12}
             className={cx(classes.smallItem, classes.container)}
           >
-            <Grid container justify="space-between" wrap="nowrap">
+            <Grid container justifyContent="space-between" wrap="nowrap">
               {skeletonSmallItem(6)}
               {skeletonSmallItem(2)}
             </Grid>
@@ -147,7 +148,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
           <Grid
             item
             container
-            justify="space-between"
+            justifyContent="space-between"
             wrap="nowrap"
             className={classes.smallItem}
           >
@@ -156,7 +157,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
           <Grid
             item
             container
-            justify="space-between"
+            justifyContent="space-between"
             wrap="nowrap"
             className={classes.smallItem}
           >

@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -12,11 +15,6 @@ export const styles = (theme: Theme) =>
     caption: {},
     tagsContainer: { margin: theme.spacing(0, -0.5, 0, -0.5) },
     tagItem: { margin: theme.spacing(0.5) },
-    viewAllBtn: {
-      display: 'flex',
-      marginTop: theme.spacing(1.25),
-      marginLeft: theme.spacing(0.5),
-    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

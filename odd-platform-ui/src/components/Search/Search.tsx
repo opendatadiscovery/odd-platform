@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { mapValues, values } from 'lodash';
 import {

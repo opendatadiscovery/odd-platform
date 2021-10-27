@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -7,7 +10,7 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       justifyContent: 'flex-end',
       alignItems: 'center',
-      paddingBottom: theme.spacing(1.5),
+      paddingBottom: theme.spacing(0.5),
       borderBottom: '1px solid',
       borderBottomColor: theme.palette.backgrounds.primary,
     },

@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import {
   maxContentWidthWithoutSidebar,
   toolbarHeight,
@@ -29,17 +31,13 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'flex-end',
-      '& p': { marginLeft: theme.spacing(0.5) },
+      '& p': { marginLeft: theme.spacing(1) },
     },
-    updatedAtIcon: { fontSize: theme.typography.h1.fontSize },
     entityTypeLabel: {
-      marginLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
     },
     internalNameEditBtnContainer: {
       display: 'none',
-    },
-    internalNameEditBtn: {
-      marginLeft: '8px',
     },
     originalLabel: {
       marginRight: '4px',

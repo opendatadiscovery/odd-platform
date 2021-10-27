@@ -1,9 +1,10 @@
 import React from 'react';
-import { withStyles, Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { Link } from 'react-router-dom';
 import {
-  DataEntityTypeNameEnum,
   DataEntityDetails,
+  DataEntityTypeNameEnum,
 } from 'generated-sources';
 import { dataEntityDetailsPath } from 'lib/paths';
 import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
@@ -27,11 +28,10 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
   unknownTargetsCount,
 }) => (
   <Grid container>
-    <Grid item xs={12}>
+    <Grid item xs={12} className={classes.typeLabel}>
       <EntityTypeItem
         typeName={DataEntityTypeNameEnum.TRANSFORMER}
         fullName
-        className={classes.typeLabel}
       />
     </Grid>
     <Grid
@@ -56,14 +56,14 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         xs={12}
         direction="column"
         alignItems="flex-start"
+        className={classes.refs}
       >
         {sources?.map(source => (
           <AppButton
             key={source.id}
-            className={classes.refItem}
-            size="small"
+            size="medium"
             color="tertiary"
-            onClick={() => {}}
+            sx={{ my: 0.25 }}
           >
             <Link to={dataEntityDetailsPath(source.id)}>
               {source.internalName || source.externalName}
@@ -100,14 +100,14 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         xs={12}
         direction="column"
         alignItems="flex-start"
+        className={classes.refs}
       >
         {targets?.map(target => (
           <AppButton
             key={target.id}
-            className={classes.refItem}
-            size="small"
+            sx={{ my: 0.25 }}
+            size="medium"
             color="tertiary"
-            onClick={() => {}}
           >
             <Link to={dataEntityDetailsPath(target.id)}>
               {target.internalName || target.externalName}

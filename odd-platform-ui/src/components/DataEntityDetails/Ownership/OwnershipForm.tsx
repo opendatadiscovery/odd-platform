@@ -1,20 +1,16 @@
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce/lib';
+import { Autocomplete, Typography } from '@mui/material';
 import {
-  Typography,
-  TextField,
-  CircularProgress,
-} from '@material-ui/core';
-import {
-  useForm,
   Controller,
   ControllerRenderProps,
+  useForm,
 } from 'react-hook-form';
 import {
-  Owner,
-  OwnerApiGetOwnerListRequest,
   DataEntityApiCreateOwnershipRequest,
   DataEntityApiUpdateOwnershipRequest,
+  Owner,
+  OwnerApiGetOwnerListRequest,
   OwnerList,
   Ownership,
   OwnershipFormData,
@@ -22,16 +18,17 @@ import {
   RoleApiGetRoleListRequest,
   RoleList,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
-  Autocomplete,
   AutocompleteInputChangeReason,
   createFilterOptions,
   FilterOptionsState,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './OwnershipFormStyles';
 
 interface OwnershipFormProps extends StylesType {
@@ -288,7 +285,6 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           rules={{ required: true }}
           render={({ field }) => (
             <Autocomplete
-              classes={{ root: classes.formField }}
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
               fullWidth
@@ -302,44 +298,40 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
               options={ownerOptions}
               filterOptions={getOwnerFilterOptions}
               loading={ownersLoading}
-              getOptionSelected={(option, value) =>
+              isOptionEqualToValue={(option, value) =>
                 option.name === value.name
               }
               handleHomeEndKeys
               selectOnFocus
               blurOnSelect
               freeSolo
+              clearIcon={<ClearIcon />}
               renderInput={params => (
-                <TextField
+                <AppTextField
                   {...params}
-                  name="name"
+                  ref={params.InputProps.ref}
                   label="Owner name"
                   placeholder="Search name"
-                  variant="outlined"
-                  InputProps={{
-                    ...params.InputProps,
-                    endAdornment: (
-                      <>
-                        {ownersLoading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </>
-                    ),
+                  customEndAdornment={{
+                    variant: 'loader',
+                    showAdornment: ownersLoading,
+                    position: { mr: 4 },
                   }}
                 />
               )}
-              renderOption={option => (
-                <Typography variant="body2">
-                  {option.id ? (
-                    option.name
-                  ) : (
-                    <AutocompleteSuggestion
-                      optionLabel="owner"
-                      optionName={option.name}
-                    />
-                  )}
-                </Typography>
+              renderOption={(props, option) => (
+                <li {...props}>
+                  <Typography variant="body2">
+                    {option.id ? (
+                      option.name
+                    ) : (
+                      <AutocompleteSuggestion
+                        optionLabel="owner"
+                        optionName={option.name}
+                      />
+                    )}
+                  </Typography>
+                </li>
               )}
             />
           )}
@@ -351,7 +343,6 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
         defaultValue={dataEntityOwnership?.role?.name || ''}
         render={({ field }) => (
           <Autocomplete
-            classes={{ root: classes.formField }}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...field}
             fullWidth
@@ -365,44 +356,40 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
             options={rolesOptions}
             filterOptions={getRoleFilterOptions}
             loading={rolesLoading}
-            getOptionSelected={(option, value) =>
+            isOptionEqualToValue={(option, value) =>
               option.name === value.name
             }
             handleHomeEndKeys
             selectOnFocus
             blurOnSelect
             freeSolo
+            clearIcon={<ClearIcon />}
             renderInput={params => (
-              <TextField
+              <AppTextField
                 {...params}
-                name="roleName"
+                ref={params.InputProps.ref}
                 label="Role"
                 placeholder="Search role"
-                variant="outlined"
-                InputProps={{
-                  ...params.InputProps,
-                  endAdornment: (
-                    <>
-                      {rolesLoading ? (
-                        <CircularProgress color="inherit" size={20} />
-                      ) : null}
-                      {params.InputProps.endAdornment}
-                    </>
-                  ),
+                customEndAdornment={{
+                  variant: 'loader',
+                  showAdornment: rolesLoading,
+                  position: { mr: 4 },
                 }}
               />
             )}
-            renderOption={option => (
-              <Typography variant="body2">
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="role"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
+            renderOption={(props, option) => (
+              <li {...props}>
+                <Typography variant="body2">
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="role"
+                      optionName={option.name}
+                    />
+                  )}
+                </Typography>
+              </li>
             )}
           />
         )}
@@ -416,7 +403,6 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       color="primary"
       type="submit"
       form="owner-add-form"
-      onClick={() => {}}
       fullWidth
       disabled={!methods.formState.isValid || !methods.formState.isDirty}
     >

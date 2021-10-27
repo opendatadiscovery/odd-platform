@@ -1,6 +1,7 @@
 import React from 'react';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Grid, withStyles } from '@material-ui/core';
+import Skeleton from '@mui/material/Skeleton';
+import { Grid } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { mainSkeletonHeight } from 'lib/constants';
 import { styles, StylesType } from './OwnersSkeletonItemStyles';
 

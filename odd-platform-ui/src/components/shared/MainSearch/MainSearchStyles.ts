@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const searchHeight = 40;
 export const styles = (theme: Theme) =>
@@ -42,12 +45,7 @@ export const styles = (theme: Theme) =>
       alignItems: 'center',
       flexGrow: 1,
     },
-    suggestionItemTypes: {
-      marginLeft: theme.spacing(0.5),
-      '& > * + *': {
-        marginLeft: theme.spacing(0.25),
-      },
-    },
+    name: { marginRight: theme.spacing(1) },
   });
 
 export type StylesType = WithStyles<typeof styles>;

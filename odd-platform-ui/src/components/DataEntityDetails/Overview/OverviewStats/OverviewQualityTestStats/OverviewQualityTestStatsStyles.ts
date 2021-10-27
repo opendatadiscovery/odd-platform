@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
 
 export const styles = (theme: Theme) =>
@@ -12,7 +14,6 @@ export const styles = (theme: Theme) =>
       },
     },
     typeLabel: {
-      marginLeft: 0,
       marginBottom: theme.spacing(1.25),
     },
     links: {},
@@ -31,28 +32,28 @@ export const styles = (theme: Theme) =>
     overview: {
       '& > *': {
         marginBottom: theme.spacing(1),
-        marginLeft: theme.spacing(0.5),
+        marginLeft: theme.spacing(0.25),
         '&:last-child': { marginLeft: 0 },
       },
     },
     latestRunStatus: {
       [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        color: theme.palette.runStatus.success,
+        color: theme.palette.runStatus.SUCCESS,
       },
       [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        color: theme.palette.runStatus.failed,
+        color: theme.palette.runStatus.FAILED,
       },
       [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        color: theme.palette.runStatus.broken,
+        color: theme.palette.runStatus.BROKEN,
       },
       [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        color: theme.palette.runStatus.skipped,
+        color: theme.palette.runStatus.SKIPPED,
       },
       [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        color: theme.palette.runStatus.aborted,
+        color: theme.palette.runStatus.ABORTED,
       },
       [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        color: theme.palette.runStatus.unknown,
+        color: theme.palette.runStatus.UNKNOWN,
       },
     },
     parameters: {

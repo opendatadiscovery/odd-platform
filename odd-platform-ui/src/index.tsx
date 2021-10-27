@@ -3,11 +3,15 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
-import { ThemeProvider } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import {
+  StyledEngineProvider,
+  Theme,
+  ThemeProvider,
+} from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
 
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 import configureStore from './redux/store';
 import * as serviceWorker from './serviceWorker';
@@ -15,18 +19,25 @@ import theme from './theme/mui.theme';
 
 import AppContainer from './components/AppContainer';
 
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
 const store = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <BrowserRouter>
-          <AppContainer />
-        </BrowserRouter>
-      </MuiPickersUtilsProvider>
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <BrowserRouter>
+            <AppContainer />
+          </BrowserRouter>
+        </LocalizationProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
   </Provider>,
   document.getElementById('root')
 );

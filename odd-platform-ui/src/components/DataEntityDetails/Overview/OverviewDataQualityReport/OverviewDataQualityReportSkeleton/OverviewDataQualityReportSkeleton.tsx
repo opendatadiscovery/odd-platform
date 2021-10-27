@@ -1,6 +1,7 @@
 import React from 'react';
-import Skeleton from '@material-ui/lab/Skeleton';
-import { Grid, withStyles } from '@material-ui/core';
+import Skeleton from '@mui/material/Skeleton';
+import { Grid } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import cx from 'classnames';
 import {
   styles,
@@ -22,7 +23,11 @@ const OverviewDataQualityReportSkeleton: React.FC<SkeletonProps> = ({
 
   const skeleton = (key: number) => (
     <Grid key={key} container className={classes.container}>
-      <Grid container justify="space-between" className={classes.skeleton}>
+      <Grid
+        container
+        justifyContent="space-between"
+        className={classes.skeleton}
+      >
         <Grid item xs={8}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
@@ -32,7 +37,7 @@ const OverviewDataQualityReportSkeleton: React.FC<SkeletonProps> = ({
       </Grid>
       <Grid
         container
-        justify="space-between"
+        justifyContent="space-between"
         className={cx(classes.generalStats, classes.skeleton)}
       >
         <Grid item xs={4}>

@@ -1,13 +1,14 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import {
   Namespace,
   NamespaceApiDeleteNamespaceRequest,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
+import { withStyles } from '@mui/styles';
+import AppButton from 'components/shared/AppButton/AppButton';
 import NamespaceFormContainer from '../NamespaceForm/NamespaceFormContainer';
 import { styles, StylesType } from './EditableNamespaceItemStyles';
 
@@ -42,8 +43,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<EditIcon />}
-              onClick={() => {}}
+              startIcon={<EditIcon />}
             >
               Edit
             </AppButton>
@@ -60,8 +60,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<DeleteIcon />}
-              onClick={() => {}}
+              startIcon={<DeleteIcon />}
             >
               Delete
             </AppButton>

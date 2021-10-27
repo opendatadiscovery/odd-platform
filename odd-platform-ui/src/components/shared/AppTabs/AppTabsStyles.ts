@@ -1,4 +1,7 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const primaryTabsHeight = 32;
 export const styles = (theme: Theme) =>
@@ -37,7 +40,7 @@ export const styles = (theme: Theme) =>
         minHeight: '32px',
       },
       '&.vertical': { alignItems: 'flex-start' },
-      '&.vertical .MuiTabs-scrollable .MuiTabs-flexContainerVertical': {
+      '&.vertical .MuiTabs-scrollableY .MuiTabs-flexContainerVertical': {
         alignItems: 'flex-start',
       },
     },
@@ -51,6 +54,7 @@ export const styles = (theme: Theme) =>
       },
     },
     tabItem: {
+      padding: theme.spacing(0.75, 1.5),
       color: theme.palette.texts.secondary,
       fontSize: theme.typography.body1.fontSize,
       textTransform: 'none',
@@ -92,7 +96,7 @@ export const styles = (theme: Theme) =>
         '&.vertical': { marginBottom: theme.spacing(0.5) },
         '&:not(.vertical)': { marginRight: theme.spacing(0.5) },
       },
-      '&.vertical .MuiTab-wrapper': {
+      '&.vertical': {
         alignItems: 'flex-start',
       },
     },

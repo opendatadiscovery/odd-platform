@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Grid,
-  Typography,
-  TextField,
-  CircularProgress,
-} from '@material-ui/core';
+import { Autocomplete, Grid, Typography } from '@mui/material';
 import {
   Controller,
   ControllerRenderProps,
@@ -12,22 +7,23 @@ import {
 } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  Autocomplete,
   AutocompleteInputChangeReason,
   createFilterOptions,
   FilterOptionsState,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
 import {
   AssociatedOwner,
+  IdentityApiAssociateOwnerRequest,
   Owner,
-  OwnerList,
   OwnerApiGetOwnerListRequest,
   OwnerFormData,
-  IdentityApiAssociateOwnerRequest,
+  OwnerList,
 } from 'generated-sources';
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './IdentityStyles';
 
 interface IdentityProps extends StylesType {
@@ -153,7 +149,7 @@ const Identity: React.FC<IdentityProps> = ({
   return (
     <div className={classes.container}>
       <Grid container>
-        <Grid item xs={12} container justify="center">
+        <Grid item xs={12} container justifyContent="center">
           <UserSyncIcon classes={{ root: classes.captionIcon }} />
         </Grid>
         <Grid
@@ -206,34 +202,26 @@ const Identity: React.FC<IdentityProps> = ({
                   options={options}
                   filterOptions={getFilterOptions}
                   loading={optionsLoading}
-                  getOptionSelected={(option, value) =>
+                  isOptionEqualToValue={(option, value) =>
                     option.name === value.name
                   }
                   handleHomeEndKeys
                   selectOnFocus
                   blurOnSelect
                   freeSolo
+                  clearIcon={<ClearIcon />}
                   renderInput={params => (
                     <>
-                      <TextField
+                      <AppTextField
                         {...params}
+                        ref={params.InputProps.ref}
                         name="name"
                         label="Owner name"
                         placeholder="Search name"
-                        variant="outlined"
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment: (
-                            <>
-                              {optionsLoading ? (
-                                <CircularProgress
-                                  color="inherit"
-                                  size={20}
-                                />
-                              ) : null}
-                              {params.InputProps.endAdornment}
-                            </>
-                          ),
+                        customEndAdornment={{
+                          variant: 'loader',
+                          showAdornment: optionsLoading,
+                          position: { mr: 4 },
                         }}
                       />
                       {possibleOwners.length ? (
@@ -262,28 +250,29 @@ const Identity: React.FC<IdentityProps> = ({
                       ) : null}
                     </>
                   )}
-                  renderOption={option => (
-                    <Typography variant="body2">
-                      {option.id ? (
-                        option.name
-                      ) : (
-                        <AutocompleteSuggestion
-                          optionLabel="owner"
-                          optionName={option.name}
-                        />
-                      )}
-                    </Typography>
+                  renderOption={(props, option) => (
+                    <li {...props}>
+                      <Typography variant="body2">
+                        {option.id ? (
+                          option.name
+                        ) : (
+                          <AutocompleteSuggestion
+                            optionLabel="owner"
+                            optionName={option.name}
+                          />
+                        )}
+                      </Typography>
+                    </li>
                   )}
                 />
               )}
             />
             <AppButton
-              className={classes.submitBtn}
+              sx={{ mt: 2 }}
               size="large"
               color="primary"
               type="submit"
               form="owner-connect-form"
-              onClick={() => {}}
               fullWidth
               disabled={
                 !methods.formState.isValid || !methods.formState.isDirty

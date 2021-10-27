@@ -3,17 +3,17 @@ import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import gfm from 'remark-gfm';
 import cx from 'classnames';
-import { Typography, Grid } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import {
-  InternalDescription,
-  DataEntityDetailsBaseObject,
   DataEntityApiUpsertDataEntityInternalDescriptionRequest,
+  DataEntityDetailsBaseObject,
+  InternalDescription,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { StylesType } from './OverviewDescriptionStyles';
 
 interface OverviewDescriptionProps extends StylesType {
@@ -86,7 +86,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               onClick={onEditClick}
               size="medium"
               color="primaryLight"
-              icon={
+              startIcon={
                 dataEntityInternalDescription ? <EditIcon /> : <AddIcon />
               }
             >
@@ -114,6 +114,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
                 onClick={handleDescriptionUpdate}
                 size="medium"
                 color="primaryLight"
+                sx={{ mr: 0.5 }}
               >
                 Save
               </AppButton>
@@ -139,7 +140,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
                 xs={12}
                 container
                 alignItems="center"
-                justify="flex-start"
+                justifyContent="flex-start"
                 wrap="nowrap"
               >
                 <Typography variant="subtitle2">Not created.</Typography>

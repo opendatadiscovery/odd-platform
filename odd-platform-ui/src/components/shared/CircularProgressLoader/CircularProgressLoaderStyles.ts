@@ -1,10 +1,13 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
     container: {
       padding: theme.spacing(0.75, 1),
-      backgroundColor: theme.palette.entityType.CONSUMER,
+      backgroundColor: theme.palette.entityType.DATA_CONSUMER,
       borderRadius: theme.spacing(2),
       justifyContent: 'space-between',
       flexWrap: 'nowrap',

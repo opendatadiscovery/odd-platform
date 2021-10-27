@@ -1,5 +1,6 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import cx from 'classnames';
 import { formatDistanceStrict } from 'date-fns';
 import { values } from 'lodash';
@@ -7,7 +8,7 @@ import {
   DataQualityTestExpectation,
   DataQualityTestRunStatusEnum,
 } from 'generated-sources';
-import LatestRunIcon from 'components/shared/LatestTestRunIcon/LatestTestRunIcon';
+import TestRunStatusIcon from 'components/shared/TestRunStatusIcon/TestRunStatusIcon';
 import { styles, StylesType } from './TestitemStyles';
 
 interface TestItemProps extends StylesType {
@@ -37,18 +38,18 @@ const TestItem: React.FC<TestItemProps> = ({
     })}
   >
     <Grid item>
-      {latestRunStatus && <LatestRunIcon typeName={latestRunStatus} />}
+      {latestRunStatus && <TestRunStatusIcon typeName={latestRunStatus} />}
     </Grid>
     <Grid container item wrap="nowrap">
       <Grid item xs={2}>
         <Typography variant="body1">{testName}</Typography>
       </Grid>
-      <Grid container item xs={9} justify="center">
+      <Grid container item xs={9} justifyContent="center">
         <Typography variant="body1" className={classes.expectationItem}>
           {values(testExpectations).join(', ')}
         </Typography>
       </Grid>
-      <Grid item container xs={2} justify="flex-end">
+      <Grid item container xs={2} justifyContent="flex-end">
         <Typography variant="body1">
           {testEndTime &&
             testStartTime &&

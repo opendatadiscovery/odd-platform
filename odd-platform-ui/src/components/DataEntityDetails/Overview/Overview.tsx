@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography } from '@material-ui/core';
+import { Grid, Paper, Typography } from '@mui/material';
 import React from 'react';
 import { DataEntityDetails } from 'generated-sources';
 import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
@@ -77,7 +77,7 @@ const Overview: React.FC<OverviewProps> = ({
           <OverviewSkeleton width={randomSkeletonPercentWidth()} />
         )}
       />
-    ): null}
+    ) : null}
   </>
 );
 

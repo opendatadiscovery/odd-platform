@@ -1,5 +1,5 @@
 import React, { SyntheticEvent } from 'react';
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import { select } from 'd3-selection';
 import { linkHorizontal } from 'd3-shape';
 import { DefaultLinkObject } from 'd3';

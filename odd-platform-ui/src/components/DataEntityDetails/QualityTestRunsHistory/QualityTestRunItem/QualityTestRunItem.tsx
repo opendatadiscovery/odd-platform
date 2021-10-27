@@ -1,5 +1,6 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { DataQualityTestRun } from 'generated-sources';
 import cx from 'classnames';
 import { format, formatDistanceStrict } from 'date-fns';

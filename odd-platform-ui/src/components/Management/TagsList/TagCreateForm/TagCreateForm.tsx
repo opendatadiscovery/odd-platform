@@ -1,14 +1,14 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
-import { useForm, useFieldArray, FormProvider } from 'react-hook-form';
+import { Typography } from '@mui/material';
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
-  TagFormData,
   Tag,
   TagApiCreateTagRequest,
+  TagFormData,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
+import AppButton from 'components/shared/AppButton/AppButton';
 import TagCreateFormItem from './TagCreateFormItem/TagCreateFormItem';
 import { StylesType } from './TagCreateFormStyles';
 
@@ -87,7 +87,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
   const formContent = () => (
     <>
       <FormProvider {...methods}>
-        <form id="tag-create-form">
+        <form id="tag-create-form" className={classes.container}>
           {fields.map((item, index) => (
             <TagCreateFormItem
               key={item.id}
@@ -100,7 +100,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
             size="medium"
             form="tag-create-form"
             color="primaryLight"
-            icon={<AddIcon />}
+            startIcon={<AddIcon />}
             onClick={handleAppend}
           >
             Create tag

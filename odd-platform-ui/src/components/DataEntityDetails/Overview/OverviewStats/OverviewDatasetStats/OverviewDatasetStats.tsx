@@ -1,5 +1,6 @@
 import React from 'react';
-import { withStyles, Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
@@ -21,12 +22,8 @@ const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({
   stats,
 }) => (
   <Grid container>
-    <Grid item xs={12}>
-      <EntityTypeItem
-        typeName={DataEntityTypeNameEnum.SET}
-        fullName
-        className={classes.typeLabel}
-      />
+    <Grid item xs={12} className={classes.typeLabel}>
+      <EntityTypeItem typeName={DataEntityTypeNameEnum.SET} fullName />
     </Grid>
     <Grid item container xs={4} className={classes.statsItem}>
       <Grid item xs={12}>

@@ -1,4 +1,7 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -40,13 +43,13 @@ export const styles = (theme: Theme) =>
       '& + $typesCountItem': { marginLeft: theme.spacing(5) },
     },
     typesCountItemPct: {
-      color: theme.palette.text.hint,
+      color: theme.palette.texts.hint,
       fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.body2.fontWeight,
       lineHeight: theme.typography.body2.lineHeight,
     },
     statIcon: {},
-    columnsName: { color: theme.palette.text.hint },
+    columnsName: { color: theme.palette.texts.hint },
   });
 
 export type StylesType = WithStyles<typeof styles>;

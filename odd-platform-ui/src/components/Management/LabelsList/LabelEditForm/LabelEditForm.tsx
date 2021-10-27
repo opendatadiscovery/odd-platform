@@ -1,14 +1,15 @@
 import React from 'react';
-import { InputAdornment, TextField, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import {
   Label,
   LabelFormData,
   LabelApiUpdateLabelRequest,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './LabelEditFormStyles';
 
 interface LabelEditFormProps extends StylesType {
@@ -74,22 +75,14 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
         defaultValue={label.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
             placeholder="Label Name"
-            variant="outlined"
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => field.onChange('')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              showAdornment: !!field.value,
+              onCLick: () => field.onChange(''),
+              icon: <ClearIcon />,
             }}
           />
         )}
@@ -104,7 +97,6 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
       form="label-edit-form"
       color="primary"
       fullWidth
-      onClick={() => {}}
       disabled={!formState.isValid}
     >
       Save

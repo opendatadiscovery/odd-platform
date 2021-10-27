@@ -1,4 +1,5 @@
-import { Typography, withStyles } from '@material-ui/core';
+import { Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import React from 'react';
 import { Alert } from 'generated-sources';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
@@ -17,7 +18,7 @@ const AlertBanner: React.FC<AlertBannerProps> = ({
 }) => (
   <div className={classes.container}>
     <div className={classes.description}>
-      <AlertIcon className={classes.icon} />
+      <AlertIcon sx={{ mr: 1 }} />
       <Typography variant="body1">{alert.description}</Typography>
     </div>
     <div className={classes.actions}>

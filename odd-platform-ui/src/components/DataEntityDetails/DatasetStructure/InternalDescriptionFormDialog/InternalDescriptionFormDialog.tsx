@@ -1,14 +1,15 @@
-import { Typography, TextField, InputAdornment } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import React from 'react';
 import {
-  InternalDescriptionFormData,
   DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
   InternalDescription,
+  InternalDescriptionFormData,
 } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './InternalDescriptionFormDialogStyles';
 
 interface InternalDescriptionFormDialogProps extends StylesType {
@@ -97,25 +98,16 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
         name="internalDescription"
         defaultValue={datasetFieldIdInternalDescription || ''}
         render={({ field }) => (
-          <TextField
+          <AppTextField
             {...field}
-            fullWidth
-            type="text"
-            variant="outlined"
             label="Description"
             placeholder="Enter description"
             onKeyDown={handleKeyDown}
-            InputProps={{
-              endAdornment: field.value && (
-                <InputAdornment position="start">
-                  <AppButton
-                    size="small"
-                    color="unfilled"
-                    icon={<CancelIcon />}
-                    onClick={() => setValue('internalDescription', '')}
-                  />
-                </InputAdornment>
-              ),
+            customEndAdornment={{
+              variant: 'clear',
+              showAdornment: !!field.value,
+              onCLick: () => setValue('internalDescription', ''),
+              icon: <ClearIcon />,
             }}
           />
         )}
@@ -131,7 +123,6 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
         form="datasetfield-internal-description"
         color="primary"
         fullWidth
-        onClick={() => {}}
       >
         Save
       </AppButton>

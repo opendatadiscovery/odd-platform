@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Typography,
-  TextField,
-  InputAdornment,
-  IconButton,
-  Grid,
-} from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import {
   Tag,
   TagApiDeleteTagRequest,
@@ -14,13 +8,14 @@ import {
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
@@ -98,31 +93,24 @@ const TagsListView: React.FC<TagsListProps> = ({
         </Typography>
       </div>
       <div className={classes.caption}>
-        <TextField
+        <AppTextField
           placeholder="Search tag..."
-          classes={{ root: classes.searchInput }}
           value={searchText}
-          InputProps={{
-            'aria-label': 'search',
-            disableUnderline: true,
-            startAdornment: (
-              <InputAdornment position="end">
-                <IconButton disableRipple onClick={handleSearch}>
-                  <SearchIcon />
-                </IconButton>
-              </InputAdornment>
-            ),
-            endAdornment: searchText && (
-              <InputAdornment position="start">
-                <AppButton
-                  size="small"
-                  color="unfilled"
-                  icon={<CancelIcon />}
-                  onClick={() => setSearchText('')}
-                />
-              </InputAdornment>
-            ),
+          sx={{ minWidth: '340px' }}
+          fullWidth={false}
+          customStartAdornment={{
+            variant: 'search',
+            showAdornment: true,
+            onCLick: handleSearch,
+            icon: <SearchIcon />,
           }}
+          customEndAdornment={{
+            variant: 'clear',
+            showAdornment: !!searchText,
+            onCLick: () => setSearchText(''),
+            icon: <ClearIcon />,
+          }}
+          InputProps={{ 'aria-label': 'search' }}
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
@@ -131,7 +119,7 @@ const TagsListView: React.FC<TagsListProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<AddIcon />}
+              startIcon={<AddIcon />}
             >
               Create tag
             </AppButton>

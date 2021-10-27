@@ -1,33 +1,33 @@
 import React from 'react';
-import { Collapse, Typography, Grid, MenuItem } from '@material-ui/core';
+import { Collapse, Grid, MenuItem, Typography } from '@mui/material';
 import cx from 'classnames';
 import { round } from 'lodash';
 import {
   DataSetField,
+  DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
   DataSetFieldTypeTypeEnum,
   DataSetStats,
   InternalDescription,
-  DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
 } from 'generated-sources';
 import {
   DataSetFormattedStats,
-  DatasetStatsLabelMap,
   DataSetFormattedStatsKeys,
+  DatasetStatsLabelMap,
 } from 'redux/interfaces/datasetStructure';
 import { format } from 'date-fns';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import LineBreakIcon from 'components/shared/Icons/LineBreakIcon';
+import InformationIcon from 'components/shared/Icons/InformationIcon';
 import LabelsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/LabelsEditForm/LabelsEditFormContainer';
 import InternalDescriptionFormDialogContainer from 'components/DataEntityDetails/DatasetStructure/InternalDescriptionFormDialog/InternalDescriptionFormDialogContainer';
 import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
-import InformationIcon from 'components/shared/Icons/InformationIcon';
-import Tooltip from 'components/shared/Tooltip/Tooltip';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { StylesType } from './DatasetStructureItemStyles';
 
 interface DatasetStructureItemProps extends StylesType {
@@ -116,20 +116,19 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   let collapseBlock;
   if (childFields?.length) {
     collapseBlock = (
-      <button
-        className={classes.treeDivider}
-        type="button"
+      <AppIconButton
+        color="collapse"
+        open={open}
+        icon={
+          open ? (
+            <MinusIcon width={6} height={6} />
+          ) : (
+            <PlusIcon width={6} height={6} />
+          )
+        }
         aria-label="expand row"
         onClick={() => setOpen(!open)}
-      >
-        <div
-          className={cx(classes.collapseBtn, {
-            [classes.collapseBtnOpen]: open,
-          })}
-        >
-          {open ? <MinusIcon /> : <PlusIcon />}
-        </div>
-      </button>
+      />
     );
   }
 
@@ -150,16 +149,13 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
               <Grid item container>
                 <Grid item xs={12} className={classes.nameContainer}>
-                  <Tooltip
-                    tooltipContent={datasetField.name}
-                    place="bottom"
-                  >
+                  <AppTooltip title={datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
                         (datasetField.isValue && 'Value') ||
                         datasetField.name}
                     </Typography>
-                  </Tooltip>
+                  </AppTooltip>
                   <div
                     className={
                       datasetField.labels ? classes.labelsList : ''
@@ -175,9 +171,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   xs={12}
                   className={classes.descriptionContainer}
                 >
-                  <Tooltip
-                    tooltipContent={datasetField.internalDescription}
-                    place="bottom"
+                  <AppTooltip
+                    title={datasetField.internalDescription}
+                    offset={{ right: 160 }}
                   >
                     <Typography
                       className={classes.internalDescription}
@@ -185,18 +181,15 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     >
                       {datasetField.internalDescription}
                     </Typography>
-                  </Tooltip>
-                  <Tooltip
-                    tooltipContent={datasetField.externalDescription}
-                    place="bottom"
-                  >
+                  </AppTooltip>
+                  <AppTooltip title={datasetField.externalDescription}>
                     <Typography
                       className={classes.externalDescription}
                       noWrap
                     >
                       {datasetField.externalDescription}
                     </Typography>
-                  </Tooltip>
+                  </AppTooltip>
                   {datasetField.type.type ===
                     DataSetFieldTypeTypeEnum.STRUCT &&
                   childFields.length ? (
@@ -204,7 +197,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                       variant="subtitle2"
                       className={classes.childKeys}
                     >
-                      <LineBreakIcon />
+                      <LineBreakIcon sx={{ mr: 0.5 }} />
                       {childFields?.map(field => field.name).join(', ')}
                     </Typography>
                   ) : null}
@@ -212,41 +205,42 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
             </Grid>
             <Grid item className={classes.typeCol}>
-              <Tooltip
-                tooltipControl="byClick"
-                tooltipContent={
-                  <>
-                    <LabelsEditFormContainer
-                      datasetFieldId={datasetField.id}
-                      btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
-                    />
-                    <InternalDescriptionFormDialogContainer
-                      datasetFieldId={datasetField.id}
-                      btnCreateEl={<MenuItem>Edit Description</MenuItem>}
-                    />
-                  </>
-                }
-                place="bottom"
-                type="light"
-              >
-                <AppButton
-                  className={classes.optionsBtn}
-                  size="medium"
-                  color="primaryLight"
-                  icon={<KebabIcon />}
-                />
-              </Tooltip>
+              <div className={classes.optionsBtn}>
+                <AppTooltip
+                  control="byClick"
+                  title={
+                    <>
+                      <LabelsEditFormContainer
+                        datasetFieldId={datasetField.id}
+                        btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
+                      />
+                      <InternalDescriptionFormDialogContainer
+                        datasetFieldId={datasetField.id}
+                        btnCreateEl={<MenuItem>Edit Description</MenuItem>}
+                      />
+                    </>
+                  }
+                >
+                  <AppIconButton
+                    size="medium"
+                    color="primaryLight"
+                    icon={<KebabIcon />}
+                  />
+                </AppTooltip>
+              </div>
               <DatasetStructureFieldTypeLabel
-                type={datasetField.type.type}
+                typeName={datasetField.type.type}
               />
-              <Tooltip
-                tooltipContent={`Logical type: ${datasetField.type.logicalType}`}
-                place="bottom"
-                type="dark"
-                classes={{ childrenContainer: classes.logicalTypeIcon }}
-              >
-                <InformationIcon />
-              </Tooltip>
+              <div>
+                <AppTooltip
+                  title={`Logical type: ${datasetField.type.logicalType}`}
+                  type="dark"
+                >
+                  <InformationIcon
+                    sx={{ display: 'flex', alignItems: 'center' }}
+                  />
+                </AppTooltip>
+              </div>
             </Grid>
           </Grid>
           <Grid item xs={2} container className={classes.columnDivided}>

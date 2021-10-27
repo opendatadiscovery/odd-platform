@@ -1,25 +1,20 @@
 import React from 'react';
 import cx from 'classnames';
-import {
-  TextField,
-  InputAdornment,
-  IconButton,
-  Typography,
-  CircularProgress,
-} from '@material-ui/core';
-import SearchIcon from '@material-ui/icons/Search';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete, Typography } from '@mui/material';
 import { Link, useHistory } from 'react-router-dom';
 import {
-  SearchApiSearchRequest,
-  SearchFacetsData,
   DataEntityRef,
   SearchApiGetSearchSuggestionsRequest,
+  SearchApiSearchRequest,
+  SearchFacetsData,
 } from 'generated-sources';
-import { searchPath, dataEntityDetailsPath } from 'lib/paths';
+import { dataEntityDetailsPath, searchPath } from 'lib/paths';
 import { StylesType } from 'components/shared/MainSearch/MainSearchStyles';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { useDebouncedCallback } from 'use-debounce/lib';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
 
 interface AppSearchProps extends StylesType {
   className?: string;
@@ -135,52 +130,49 @@ const MainSearch: React.FC<AppSearchProps> = ({
             endAdornment: classes.clearIconContainer,
           }}
           freeSolo
+          filterOptions={option => option}
+          clearIcon={<ClearIcon />}
           renderInput={params => (
-            <TextField
+            <AppTextField
               {...params}
+              ref={params.InputProps.ref}
+              size="large"
               placeholder={
                 placeholder ||
                 'Search data tables, feature groups, jobs and ML models via keywords'
               }
-              InputProps={{
-                ...params.InputProps,
-                disableUnderline: true,
-                classes: {
-                  root: classes.inputInput,
-                },
-                startAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton disableRipple onClick={createSearch}>
-                      <SearchIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <>
-                    {loadingSuggestions ? (
-                      <CircularProgress color="inherit" size={20} />
-                    ) : null}
-                    {params.InputProps.endAdornment}
-                  </>
-                ),
-              }}
               onKeyDown={handleKeyDown}
+              customStartAdornment={{
+                variant: 'search',
+                showAdornment: true,
+                onCLick: createSearch,
+                icon: <SearchIcon />,
+              }}
+              customEndAdornment={{
+                variant: 'loader',
+                showAdornment: loadingSuggestions,
+                position: { mr: 4 },
+              }}
             />
           )}
-          renderOption={option => (
-            <Link
-              to={option.id ? dataEntityDetailsPath(option.id) : '#'}
-              className={classes.suggestionItem}
-            >
-              <Typography variant="body2">
-                {option.internalName || option.externalName}
-              </Typography>
-              <div className={classes.suggestionItemTypes}>
+          renderOption={(props, option) => (
+            <li {...props}>
+              <Link
+                to={option.id ? dataEntityDetailsPath(option.id) : '#'}
+                className={classes.suggestionItem}
+              >
+                <Typography variant="body1" className={classes.name}>
+                  {option.internalName || option.externalName}
+                </Typography>
                 {option.types?.map(type => (
-                  <EntityTypeItem key={type.id} typeName={type.name} />
+                  <EntityTypeItem
+                    sx={{ mr: 0.5 }}
+                    key={type.id}
+                    typeName={type.name}
+                  />
                 ))}
-              </div>
-            </Link>
+              </Link>
+            </li>
           )}
         />
       </div>

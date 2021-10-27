@@ -4,7 +4,7 @@ import {
   DataQualityTestRun,
 } from 'generated-sources';
 import cx from 'classnames';
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import { StylesType } from 'components/DataEntityDetails/QualityTestRunsHistory/QualityTestRunsHistoryStyles';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import QualityTestRunItem from 'components/DataEntityDetails/QualityTestRunsHistory/QualityTestRunItem/QualityTestRunItem';

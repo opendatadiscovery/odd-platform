@@ -1,4 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
 import { primaryTabsHeight } from 'components/shared/AppTabs/AppTabsStyles';
 import { searchHeight } from 'components/shared/MainSearch/MainSearchStyles';
 import { toolbarHeight } from 'lib/constants';
@@ -45,7 +47,7 @@ export const styles = (theme: Theme) =>
     listContainer: {
       height: `calc(100vh - ${toolbarHeight}px - ${searchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
         8
-      )}px)`,
+      )})`,
       overflow: 'auto',
     },
     resultItem: {

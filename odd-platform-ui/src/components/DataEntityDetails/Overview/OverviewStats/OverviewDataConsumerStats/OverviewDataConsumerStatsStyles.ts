@@ -1,4 +1,5 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
+import { createStyles, WithStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -10,7 +11,7 @@ export const styles = (theme: Theme) =>
     },
     statCount: {},
     statLabel: {
-      color: theme.palette.text.hint,
+      color: theme.palette.texts.hint,
       marginLeft: theme.spacing(0.5),
     },
     typeLabel: {

@@ -3,7 +3,7 @@ import {
   StylesType,
   styles,
 } from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestionStyles';
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 
 interface AutocompleteSuggestionProps extends StylesType {
   optionLabel: string;

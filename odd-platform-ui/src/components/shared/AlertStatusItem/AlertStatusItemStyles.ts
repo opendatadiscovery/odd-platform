@@ -1,31 +1,27 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { AlertStatus } from 'generated-sources';
+import { styled } from '@mui/material/styles';
+import { propsChecker } from 'lib/helpers';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      display: 'inline-flex',
-      alignItems: 'center',
-    },
-    filledContainer: {
-      fontSize: theme.typography.body2.fontSize,
-      lineHeight: theme.typography.body2.lineHeight,
-      borderRadius: '12px',
-      borderWidth: '1px',
-      borderStyle: 'solid',
-      padding: theme.spacing(0.25, 1),
-      marginLeft: theme.spacing(0.5),
-      [`&.${AlertStatus.OPEN}`]: {
-        backgroundColor: theme.palette.alert.open.background,
-        borderColor: theme.palette.alert.open.border,
-        marginLeft: 0,
-      },
-      [`&.${AlertStatus.RESOLVED}`]: {
-        backgroundColor: theme.palette.alert.resolved.background,
-        borderColor: theme.palette.alert.resolved.border,
-        marginLeft: 0,
-      },
-    },
-  });
+interface FilledContainerProps {
+  $typeName: AlertStatus;
+}
 
-export type StylesType = WithStyles<typeof styles>;
+const typeChecker = (type: AlertStatus) =>
+  type === 'OPEN' ? 'OPEN' : 'RESOLVED';
+
+export const Container = styled('div')(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+}));
+
+export const FilledContainer = styled('span', {
+  shouldForwardProp: propsChecker,
+})<FilledContainerProps>(({ theme, $typeName }) => ({
+  fontSize: theme.typography.body2.fontSize,
+  lineHeight: theme.typography.body2.lineHeight,
+  borderRadius: '12px',
+  border: '1px solid',
+  padding: theme.spacing(0.25, 1),
+  backgroundColor: theme.palette.alert[typeChecker($typeName)].background,
+  borderColor: theme.palette.alert[typeChecker($typeName)].border,
+}));

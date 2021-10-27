@@ -1,4 +1,4 @@
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import {
   registerDataSource,
   updateDataSource,
@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces/state';
 import { getIsDatasourceCreating } from 'redux/selectors/datasources.selectors';
 import { fetchNamespaceList } from 'redux/thunks/namespace.thunks';
-import DataSourceFormDialog from './DataSourceFormDialog';
+import DataSourceFormDialog from 'components/Management/DataSourcesList/DataSourceFormDialog/DataSourceFormDialog';
 import { styles } from './DataSourceFormDialogStyles';
 
 const mapStateToProps = (state: RootState) => ({

@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
@@ -46,11 +46,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
               </Typography>
             </Link>
             {item.types?.map(type => (
-              <EntityTypeItem
-                key={type.id}
-                typeName={type.name}
-                className={classes.entityTypeItem}
-              />
+              <EntityTypeItem key={type.id} typeName={type.name} />
             ))}
           </Grid>
         </li>

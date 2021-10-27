@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import {
   hierarchy,
   HierarchyPointLink,
@@ -9,7 +9,7 @@ import { select, selectAll } from 'd3-selection';
 import { zoom as d3zoom, zoomIdentity } from 'd3-zoom';
 import { entries, maxBy } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { FormControl, Select, Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import cx from 'classnames';
 import {
   DataEntityLineageById,
@@ -24,10 +24,11 @@ import {
   DataEntityLineageEdge,
   DataEntityLineageNode,
 } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
 import AppTabs from 'components/shared/AppTabs/AppTabs';
 import TargetIcon from 'components/shared/Icons/TargetIcon';
 import CircularProgressLoader from 'components/shared/CircularProgressLoader/CircularProgressLoader';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
 import { StylesType } from './AppGraphStyles';
@@ -225,8 +226,9 @@ const AppGraph: React.FC<AppGraphProps> = ({
     };
   };
 
-  const handleDepthChange = (e: React.ChangeEvent<{ value: unknown }>) =>
-    setSelectedDepth(e.target.value as number);
+  const handleDepthChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => setSelectedDepth((e.target.value as unknown) as number);
 
   const transformation: { translate: Point; scale: number } = {
     translate: { x: 0, y: 0 },
@@ -361,7 +363,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
         <AppButton
           color="primaryLight"
           size="medium"
-          icon={<TargetIcon />}
+          startIcon={<TargetIcon />}
           onClick={centerRoot}
         >
           Main
@@ -376,24 +378,22 @@ const AppGraph: React.FC<AppGraphProps> = ({
           }
         />
         <Typography variant="subtitle2">Depth:</Typography>
-        <FormControl variant="filled" size="small">
-          <Select
-            native
-            type="number"
-            labelId="depth-select-label"
-            id="depth-select"
-            variant="outlined"
-            defaultValue={selectedDepth}
-            onChange={handleDepthChange}
-          >
-            {new Array(20).fill(0).map((_, i) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <option key={i + 1} value={i + 1}>
-                {i + 1}
-              </option>
-            ))}
-          </Select>
-        </FormControl>
+        <AppTextField
+          sx={{ width: 48 }}
+          selectNative
+          size="small"
+          type="number"
+          id="depth-select"
+          defaultValue={selectedDepth}
+          onChange={handleDepthChange}
+        >
+          {new Array(20).fill(0).map((_, i) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <option key={i + 1} value={i + 1}>
+              {i + 1}
+            </option>
+          ))}
+        </AppTextField>
       </div>
       <svg className={cx(classes.layer, svgInstanceRef)}>
         <g className={gInstanceRef}>

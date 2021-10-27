@@ -3,7 +3,7 @@ import { HierarchyPointNode } from 'd3-hierarchy';
 import { select } from 'd3-selection';
 import { interpolateString } from 'd3-interpolate';
 import cx from 'classnames';
-import { withStyles } from '@material-ui/core';
+import withStyles from '@mui/styles/withStyles';
 import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';

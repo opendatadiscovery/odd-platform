@@ -1,11 +1,12 @@
 import React from 'react';
-import { Grid, Typography, withStyles } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { Owner, OwnerApiDeleteOwnerRequest } from 'generated-sources';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import OwnerFormContainer from 'components/Management/OwnersList/OwnerForm/OwnerFormContainer';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { styles, StylesType } from './EditableOwnerItemStyles';
 
 interface EditableOwnerItemProps extends StylesType {
@@ -37,7 +38,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
             <AppButton
               color="primaryLight"
               size="medium"
-              icon={<EditIcon />}
+              startIcon={<EditIcon />}
             >
               Edit
             </AppButton>
@@ -54,7 +55,8 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              icon={<DeleteIcon />}
+              startIcon={<DeleteIcon />}
+              sx={{ ml: 1 }}
             >
               Delete
             </AppButton>

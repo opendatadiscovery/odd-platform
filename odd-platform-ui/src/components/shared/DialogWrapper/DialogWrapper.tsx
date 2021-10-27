@@ -7,11 +7,11 @@ import {
   DialogProps,
   DialogTitle,
   LinearProgress,
-  withStyles,
   Typography,
-} from '@material-ui/core';
-import AppButton from 'components/shared/AppButton/AppButton';
-import CancelIcon from 'components/shared/Icons/CancelIcon';
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { styles, StylesType } from './DialogWrapperStyles';
 
 interface DialogWrapperProps
@@ -77,13 +77,12 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           <DialogTitle
             className={classes.title}
             id="max-width-dialog-title"
-            disableTypography
           >
             {title}
-            <AppButton
+            <AppIconButton
               size="small"
               color="unfilled"
-              icon={<CancelIcon />}
+              icon={<ClearIcon />}
               onClick={() => {
                 if (clearState) {
                   clearState();

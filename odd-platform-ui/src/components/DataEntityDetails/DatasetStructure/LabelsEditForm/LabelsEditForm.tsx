@@ -1,26 +1,23 @@
 import React from 'react';
+import { Autocomplete, Typography } from '@mui/material';
 import {
-  Typography,
-  TextField,
-  CircularProgress,
-} from '@material-ui/core';
-import {
-  Autocomplete,
   AutocompleteInputChangeReason,
   createFilterOptions,
-} from '@material-ui/lab';
+} from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
-  Label,
   DatasetFieldApiUpsertDatasetFieldLabelsRequest,
+  Label,
   LabelApiGetLabelListRequest,
   LabelsResponse,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { StylesType } from './LabelsEditFormStyles';
 
 interface LabelsEditProps extends StylesType {
@@ -199,41 +196,36 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
         blurOnSelect
         freeSolo
         value={{ name: searchText }}
+        clearIcon={<ClearIcon />}
         renderInput={params => (
-          <TextField
+          <AppTextField
             {...params}
-            className={classes.labelInput}
+            ref={params.InputProps.ref}
             placeholder="Enter label name…"
-            variant="outlined"
-            fullWidth
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <>
-                  {loading ? (
-                    <CircularProgress color="inherit" size={20} />
-                  ) : null}
-                  {params.InputProps.endAdornment}
-                </>
-              ),
+            customEndAdornment={{
+              variant: 'loader',
+              showAdornment: loading,
+              position: { mr: 4 },
             }}
           />
         )}
-        renderOption={option => (
-          <div className={classes.optionsContainer}>
-            <div className={classes.optionItem}>
-              <Typography variant="body1">
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="label"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
+        renderOption={(props, option) => (
+          <li {...props}>
+            <div className={classes.optionsContainer}>
+              <div className={classes.optionItem}>
+                <Typography variant="body1">
+                  {option.id ? (
+                    option.name
+                  ) : (
+                    <AutocompleteSuggestion
+                      optionLabel="label"
+                      optionName={option.name}
+                    />
+                  )}
+                </Typography>
+              </div>
             </div>
-          </div>
+          </li>
         )}
       />
       <FormProvider {...methods}>
@@ -265,7 +257,6 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
         form="label-create-form"
         color="primary"
         fullWidth
-        onClick={() => {}}
       >
         Save
       </AppButton>

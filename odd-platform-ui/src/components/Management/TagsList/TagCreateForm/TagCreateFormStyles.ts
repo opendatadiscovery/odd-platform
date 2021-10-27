@@ -1,5 +1,9 @@
-import { Theme, createStyles, WithStyles } from '@material-ui/core';
+import { Theme } from '@mui/material';
 
-export const styles = (theme: Theme) => createStyles({});
+import { WithStyles } from '@mui/styles';
+import createStyles from '@mui/styles/createStyles';
+
+export const styles = (theme: Theme) =>
+  createStyles({ container: { marginTop: theme.spacing(1.5) } });
 
 export type StylesType = WithStyles<typeof styles>;

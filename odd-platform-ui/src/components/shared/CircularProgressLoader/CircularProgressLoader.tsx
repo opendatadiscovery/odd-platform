@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  CircularProgress,
-  Grid,
-  Typography,
-  withStyles,
-} from '@material-ui/core';
+import { CircularProgress, Grid, Typography } from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
 import { styles, StylesType } from './CircularProgressLoaderStyles';
 
 interface CircularProgressLoaderProps extends StylesType {

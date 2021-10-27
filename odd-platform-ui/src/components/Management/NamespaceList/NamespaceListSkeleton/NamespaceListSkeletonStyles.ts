@@ -1,5 +1,6 @@
-import { createStyles, Theme, WithStyles } from '@material-ui/core';
 import { colWidthStyles } from 'components/Search/Results/ResultsStyles';
+import { createStyles, WithStyles } from '@mui/styles';
+import { Theme } from '@mui/material/styles';
 
 export const styles = (theme: Theme) =>
   createStyles({
