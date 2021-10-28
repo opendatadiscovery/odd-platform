@@ -1,7 +1,7 @@
 import React from 'react';
 import { Collapse, Grid, MenuItem, Typography } from '@mui/material';
 import cx from 'classnames';
-import { round } from 'lodash';
+import round from 'lodash/round';
 import {
   DataSetField,
   DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,

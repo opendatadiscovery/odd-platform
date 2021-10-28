@@ -16,7 +16,7 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint", "prettier", "mui-unused-classes"],
+  "plugins": ["@typescript-eslint", "prettier", "mui-unused-classes", "lodash"],
   "extends": [
     "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
@@ -47,7 +47,8 @@
         "AppSvgIcon",
         "AppTextField"
       ]
-    }]
+    }],
+    "lodash/import-scope": [2, "method"]
   },
   "overrides": [
     {

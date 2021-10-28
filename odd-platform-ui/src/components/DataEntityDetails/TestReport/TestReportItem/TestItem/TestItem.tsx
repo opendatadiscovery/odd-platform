@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import cx from 'classnames';
 import { formatDistanceStrict } from 'date-fns';
-import { values } from 'lodash';
+import values from 'lodash/values';
 import {
   DataQualityTestExpectation,
   DataQualityTestRunStatusEnum,

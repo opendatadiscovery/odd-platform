@@ -1,7 +1,8 @@
 import { Grid, Typography } from '@mui/material';
 import React, { ChangeEvent } from 'react';
 import { useHistory } from 'react-router-dom';
-import { round, toPairs } from 'lodash';
+import round from 'lodash/round';
+import toPairs from 'lodash/toPairs';
 import {
   DataSetApiGetDataSetStructureByVersionIdRequest,
   DataSetApiGetDataSetStructureLatestRequest,

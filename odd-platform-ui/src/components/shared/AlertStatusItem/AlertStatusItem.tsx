@@ -1,5 +1,5 @@
 import React from 'react';
-import { capitalize } from 'lodash';
+import capitalize from 'lodash/capitalize';
 import * as S from 'components/shared/AlertStatusItem/AlertStatusItemStyles';
 import { AlertStatus } from 'generated-sources';
 

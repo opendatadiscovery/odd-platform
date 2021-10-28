@@ -7,7 +7,8 @@ import {
 } from 'd3-hierarchy';
 import { select, selectAll } from 'd3-selection';
 import { zoom as d3zoom, zoomIdentity } from 'd3-zoom';
-import { entries, maxBy } from 'lodash';
+import entries from 'lodash/entries';
+import maxBy from 'lodash/maxBy';
 import { v4 as uuidv4 } from 'uuid';
 import { Typography } from '@mui/material';
 import cx from 'classnames';

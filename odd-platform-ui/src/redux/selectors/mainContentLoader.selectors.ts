@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { compact } from 'lodash';
+import compact from 'lodash/compact';
 import {
   getDataEntitiesListFetching,
   getDataEntityDetailsFetching,

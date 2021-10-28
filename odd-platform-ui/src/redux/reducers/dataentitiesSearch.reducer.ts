@@ -13,7 +13,11 @@ import {
   SearchFacetNames,
   SearchFilterStateSynced,
 } from 'redux/interfaces';
-import { mapValues, get, values, reduce, assignWith } from 'lodash';
+import mapValues from 'lodash/mapValues';
+import get from 'lodash/get';
+import values from 'lodash/values';
+import reduce from 'lodash/reduce';
+import assignWith from 'lodash/assignWith';
 
 export const initialState: SearchState = {
   searchId: '',

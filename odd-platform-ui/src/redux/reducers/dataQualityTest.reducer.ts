@@ -7,7 +7,7 @@ import {
   DataQualityTestRunList,
   DataQualityTestRunStatusEnum,
 } from 'generated-sources';
-import { uniq } from 'lodash';
+import uniq from 'lodash/uniq';
 
 export const initialState: DataQualityTestState = {
   qualityTestsById: {},
