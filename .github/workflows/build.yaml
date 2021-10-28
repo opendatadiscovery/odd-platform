@@ -85,7 +85,7 @@ jobs:
           curl -sSL -o ./argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
           chmod +x ./argocd
       - name: Login into ArgoCD
-        run: ./argocd login ${{ secrets.ARGOCD_SERVER }} --name ${{ secrets.ARGOCD_LOGIN }} --password ${{ secrets.ARGOCD_PASSWORD }}
+        run: ./argocd login ${{ secrets.ARGOCD_SERVER }} --name ${{ secrets.ARGOCD_LOGIN }} --password ${{ secrets.ARGOCD_PASSWORD }} --grpc-web
       - name: Sync ODD Platform application
         run: ./argocd app sync odd-platform
 
