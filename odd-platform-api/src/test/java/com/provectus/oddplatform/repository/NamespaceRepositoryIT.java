@@ -19,7 +19,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ContextConfiguration(initializers = {NamespaceRepositoryIT.Initializer.class})
-@RequiredArgsConstructor(onConstructor_ = {@Autowred})
+@RequiredArgsConstructor(onConstructor_ = {@Autowired})
 @Testcontainers
 public class NamespaceRepositoryIT {
     @Container
