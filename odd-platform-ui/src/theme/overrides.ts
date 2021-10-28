@@ -85,31 +85,6 @@ export const components: Components = {
       },
     },
   },
-  MuiTooltip: {
-    styleOverrides: {
-      tooltip: {
-        fontSize: '.9rem',
-      },
-    },
-  },
-  MuiTabs: {
-    styleOverrides: {
-      flexContainer: { alignItems: 'center' },
-      scrollButtons: {
-        width: '20px',
-        '&.Mui-disabled': {
-          opacity: 0.2,
-        },
-      },
-    },
-  },
-  MuiTab: {
-    styleOverrides: {
-      root: {
-        minHeight: '32px',
-      },
-    },
-  },
   MuiLink: {
     styleOverrides: {
       root: {

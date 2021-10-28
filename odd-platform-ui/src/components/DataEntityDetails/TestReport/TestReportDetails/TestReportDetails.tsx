@@ -66,8 +66,7 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
       <Grid container wrap="wrap" justifyContent="center">
         {tabs.length && selectedTab >= 0 ? (
           <AppTabs
-            className={classes.tabsContainer}
-            variant="secondary"
+            type="secondary"
             items={tabs}
             selectedTab={selectedTab}
             handleTabChange={() => {}}

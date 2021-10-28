@@ -137,8 +137,7 @@ const Results: React.FC<ResultsProps> = ({
         <SearchTabsSkeleton length={tabs.length} />
       ) : (
         <AppTabs
-          variant="primary"
-          classes={{ container: classes.tabsContainer }}
+          type="primary"
           items={tabs}
           selectedTab={selectedTab}
           handleTabChange={onSearchTypeChange}

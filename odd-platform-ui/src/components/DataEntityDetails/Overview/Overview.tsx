@@ -27,7 +27,7 @@ const Overview: React.FC<OverviewProps> = ({
 }) => (
   <>
     {dataEntityDetails && !isDataEntityDetailsFetching ? (
-      <Grid container spacing={2}>
+      <Grid container spacing={2} className={classes.container}>
         <Grid item xs={8}>
           <Paper elevation={9} className={classes.sectionContainer}>
             <OverviewStatsContainer dataEntityId={dataEntityId} />

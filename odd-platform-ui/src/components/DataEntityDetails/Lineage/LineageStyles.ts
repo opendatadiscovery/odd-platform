@@ -6,6 +6,7 @@ import createStyles from '@mui/styles/createStyles';
 export const styles = (theme: Theme) =>
   createStyles({
     container: {
+      marginTop: theme.spacing(2),
       width: '100%',
       display: 'flex',
       justifyContent: 'stretch',

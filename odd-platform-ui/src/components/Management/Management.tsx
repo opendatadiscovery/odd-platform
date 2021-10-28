@@ -41,7 +41,7 @@ const Management: React.FC<ManagementProps> = ({ classes, viewType }) => {
               {tabs.length && selectedTab >= 0 ? (
                 <AppTabs
                   orientation="vertical"
-                  variant="menu"
+                  type="menu"
                   items={tabs}
                   selectedTab={selectedTab}
                   handleTabChange={() => {}}

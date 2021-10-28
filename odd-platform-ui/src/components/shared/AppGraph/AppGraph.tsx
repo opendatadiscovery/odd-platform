@@ -369,7 +369,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
           Main
         </AppButton>
         <AppTabs
-          variant="secondarySmall"
+          type="secondarySmall"
           orientation="horizontal"
           items={[{ name: 'Full' }, { name: 'Compact' }]}
           selectedTab={compactView ? 1 : 0}
