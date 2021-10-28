@@ -80,7 +80,12 @@ jobs:
     needs: ["update_tag"]
     runs-on: self-hosted
     steps:
-      - name: Sync odd-platform application
+      - name: Install ArgoCD CLI
         run: |
-          docker run --rm argoproj/argocd-cli:v0.10.6 argocd login argocd.dev.odd.provectus.io --name ${{ secrets.ARGOCD_LOGIN }} --password ${{ secrets.ARGOCD_PASSWORD }} ; argocd app sync odd-platform
+          curl -sSL -o ./argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          chmod -x ./argocd
+      - name: Login into ArgoCD
+        run: ./argocd login ${{ secrets.ARGOCD_SERVER }} --name ${{ secrets.ARGOCD_LOGIN }} --password ${{ secrets.ARGOCD_PASSWORD }}
+      - name: Sync ODD Platform application
+        run: ./argocd app sync odd-platform
 
