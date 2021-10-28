@@ -77,7 +77,7 @@ jobs:
           git commit --allow-empty -m "update tag"
           git push
   argocd_sync:
-    needs: ["images"]
+    needs: ["update_tag"]
     runs-on: self-hosted
     steps:
       - name: Sync odd-platform application
