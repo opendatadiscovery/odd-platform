@@ -76,3 +76,11 @@ jobs:
           git add .
           git commit --allow-empty -m "update tag"
           git push
+  argocd_sync:
+    needs: ["images"]
+    runs-on: self-hosted
+    steps:
+      - name: Sync odd-platform application
+        run: |
+          docker run --rm argoproj/argocd-cli:v0.10.6 argocd login argocd.dev.odd.provectus.io --name ${{ secrets.ARGOCD_LOGIN }} --password ${{ secrets.ARGOCD_PASSWORD }} ; argocd app sync odd-platform
+
