@@ -6,7 +6,6 @@ import ManagementContainer from './Management/ManagementContainer';
 import DataEntityDetailsContainer from './DataEntityDetails/DataEntityDetailsContainer';
 import OverviewContainer from './Overview/OverviewContainer';
 import SearchContainer from './Search/SearchContainer';
-import AppLoadingSpinnerContainer from './shared/AppLoadingSpinner/AppLoadingSpinnerContainer';
 import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
 import AlertsContainer from './Alerts/AlertsContainer';
 
@@ -20,7 +19,6 @@ const App: React.FC<AppProps> = ({ fetchDataEntitiesTypes }) => {
   }, []);
   return (
     <div className="App">
-      <AppLoadingSpinnerContainer />
       <Switch>
         <Route path={['/']} component={AppToolbarContainer} />
       </Switch>
