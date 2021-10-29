@@ -2,7 +2,7 @@ import { createSelector } from 'reselect';
 import { RootState, AlertsState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 import { Alert, AlertStatus } from 'generated-sources';
-import { map } from 'lodash';
+import map from 'lodash/map';
 import { getDataEntityId } from './dataentity.selectors';
 
 const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;

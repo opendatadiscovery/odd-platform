@@ -22,19 +22,36 @@ import InternalNameFormDialogContainer from 'components/DataEntityDetails/Intern
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
-import TestReportContainer from 'components/DataEntityDetails/TestReport/TestReportContainer';
-import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
-import DataEntityAlertsContainer from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsContainer';
 import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
-import QualityTestHistoryContainer from 'components/DataEntityDetails/QualityTestRunsHistory/QualityTestRunsHistoryContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import OverviewContainer from './Overview/OverviewContainer';
-import DatasetStructureContainer from './DatasetStructure/DatasetStructureContainer';
-import LineageContainer from './Lineage/LineageContainer';
+import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import { StylesType } from './DataEntityDetailsStyles';
 import AlertBannersContainer from './AlertBanners/AlertBannersContainer';
+
+// lazy components
+const OverviewContainer = React.lazy(
+  () => import('./Overview/OverviewContainer')
+);
+const DatasetStructureContainer = React.lazy(
+  () => import('./DatasetStructure/DatasetStructureContainer')
+);
+const LineageContainer = React.lazy(
+  () => import('./Lineage/LineageContainer')
+);
+const TestReportContainer = React.lazy(
+  () => import('./TestReport/TestReportContainer')
+);
+const TestReportDetailsContainer = React.lazy(
+  () => import('./TestReport/TestReportDetails/TestReportDetailsContainer')
+);
+const DataEntityAlertsContainer = React.lazy(
+  () => import('./DataEntityAlerts/DataEntityAlertsContainer')
+);
+const QualityTestHistoryContainer = React.lazy(
+  () => import('./QualityTestRunsHistory/QualityTestRunsHistoryContainer')
+);
 
 interface DataEntityDetailsProps extends StylesType {
   viewType: string;
@@ -212,47 +229,49 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         />
       ) : null}
       {dataEntityFetchingStatus !== 'errorFetching' ? (
-        <Switch>
-          <Route
-            exact
-            path="/dataentities/:dataEntityId/overview"
-            component={OverviewContainer}
-          />
-          <Route
-            exact
-            path="/dataentities/:dataEntityId/structure/:versionId?"
-            component={DatasetStructureContainer}
-          />
-          <Route
-            exact
-            path="/dataentities/:dataEntityId/lineage"
-            component={LineageContainer}
-          />
-          <Route
-            exact
-            path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
-            component={TestReportContainer}
-          />
-          <Route
-            exact
-            path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
-            component={TestReportDetailsContainer}
-          />
-          <Route
-            exact
-            path="/dataentities/:dataEntityId/alerts"
-            component={DataEntityAlertsContainer}
-          />
-          <Route
-            exact
-            path="/dataentities/:dataEntityId/history"
-            component={QualityTestHistoryContainer}
-          />
-          <Redirect
-            from="/dataentities/:dataEntityId"
-            to="/dataentities/:dataEntityId/overview"
-          />
-        </Switch>
+        <React.Suspense fallback={<AppLoadingPage />}>
+          <Switch>
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/overview"
+              component={OverviewContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/structure/:versionId?"
+              component={DatasetStructureContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/lineage"
+              component={LineageContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+              component={TestReportContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+              component={TestReportDetailsContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/alerts"
+              component={DataEntityAlertsContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/history"
+              component={QualityTestHistoryContainer}
+            />
+            <Redirect
+              from="/dataentities/:dataEntityId"
+              to="/dataentities/:dataEntityId/overview"
+            />
+          </Switch>
+        </React.Suspense>
       ) : null}
       <AppErrorPage
         fetchStatus={dataEntityFetchingStatus}

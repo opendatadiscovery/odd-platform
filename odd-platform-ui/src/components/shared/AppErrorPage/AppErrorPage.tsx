@@ -1,26 +1,23 @@
 import { Grid, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorState, FetchStatus } from 'redux/interfaces/loader';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { StylesType, styles } from './AppErrorPageStyles';
 
-interface AppErrorPageProps extends StylesType {
+interface AppErrorPageProps {
   fetchStatus: FetchStatus;
   error?: ErrorState;
 }
 
 const AppErrorPage: React.FC<AppErrorPageProps> = ({
-  classes,
   fetchStatus,
   error,
 }) =>
   fetchStatus === 'errorFetching' ? (
-    <div className={classes.container}>
+    <Grid sx={{ mt: 10 }}>
       <Grid container alignItems="center" justifyContent="center">
         <Grid item>
-          <Typography variant="h1" className={classes.errorCode}>
+          <Typography variant="errorCode" sx={{ mr: 4 }}>
             {error?.statusCode}
           </Typography>
         </Grid>
@@ -36,7 +33,7 @@ const AppErrorPage: React.FC<AppErrorPageProps> = ({
           </Grid>
         </Grid>
       </Grid>
-    </div>
+    </Grid>
   ) : null;
 
-export default withStyles(styles)(AppErrorPage);
+export default AppErrorPage;

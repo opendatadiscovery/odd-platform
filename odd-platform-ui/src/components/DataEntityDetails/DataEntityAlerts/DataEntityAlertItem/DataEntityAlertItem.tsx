@@ -4,7 +4,7 @@ import withStyles from '@mui/styles/withStyles';
 import { Alert } from 'generated-sources';
 import cx from 'classnames';
 import { format } from 'date-fns';
-import { lowerCase } from 'lodash';
+import lowerCase from 'lodash/lowerCase';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';

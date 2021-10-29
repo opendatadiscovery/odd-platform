@@ -1,5 +1,8 @@
 import React from 'react';
-import { capitalize, split, slice, join } from 'lodash';
+import capitalize from 'lodash/capitalize';
+import split from 'lodash/split';
+import slice from 'lodash/slice';
+import join from 'lodash/join';
 
 interface Props {
   value: string | undefined;

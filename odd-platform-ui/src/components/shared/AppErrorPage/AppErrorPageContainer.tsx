@@ -1,8 +1,6 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import AppErrorPage from './AppErrorPage';
-import { styles } from './AppErrorPageStyles';
 
 const mapStateToProps = (state: RootState) => ({
   errorType: '',
@@ -10,7 +8,4 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(AppErrorPage));
+export default connect(mapStateToProps, mapDispatchToProps)(AppErrorPage);

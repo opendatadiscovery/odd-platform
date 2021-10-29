@@ -7,7 +7,7 @@ import {
   DataEntityTypeNameEnum,
   DataQualityTest,
 } from 'generated-sources';
-import { entries } from 'lodash';
+import entries from 'lodash/entries';
 import { dataEntityDetailsPath, dataEntityHistoryPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import cx from 'classnames';

@@ -3,7 +3,8 @@ import { Grid, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import cx from 'classnames';
-import { get, Dictionary } from 'lodash';
+import get from 'lodash/get';
+import { Dictionary } from 'lodash/index';
 import {
   DataEntityTypeNameEnum,
   DataEntity,
