@@ -69,7 +69,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Catalog', link: '/search' },
     { name: 'Management', link: '/management' },
-    { name: 'Alerts', link: '/alerts' },
+    { name: 'Alerts', link: '/alerts/' },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number | boolean>(
@@ -130,7 +130,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
             <Grid item className={classes.tabsContainer}>
               {tabs.length ? (
                 <AppTabs
-                  variant="menu"
+                  type="menu"
                   items={tabs}
                   selectedTab={selectedTab}
                   handleTabChange={handleTabClick}

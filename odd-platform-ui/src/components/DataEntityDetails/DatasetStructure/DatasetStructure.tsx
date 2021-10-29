@@ -139,6 +139,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                     id="revision-select"
                     type="number"
                     selectNative
+                    size="small"
                     defaultValue={datasetStructureVersion}
                     onChange={handleRevisionChange}
                   >

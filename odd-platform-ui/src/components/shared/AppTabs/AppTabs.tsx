@@ -1,14 +1,11 @@
 import React, { SyntheticEvent } from 'react';
-import { Skeleton, Tab, TabProps, Tabs, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import { Link, LinkProps } from 'react-router-dom';
-import cx from 'classnames';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import { styles, StylesType } from './AppTabsStyles';
-
-const LinkTab: React.ComponentType<
-  TabProps & LinkProps
-> = Tab as React.ComponentType<TabProps & LinkProps>;
+import { TabsProps } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { TabType } from 'components/shared/AppTabs/interfaces';
+import AppTab from 'components/shared/AppTabs/AppTab/AppTab';
+import AppLinkTab from 'components/shared/AppTabs/AppTab/AppLinkTab';
+import AppTabLabel from 'components/shared/AppTabs/AppTabLabel/AppTabLabel';
+import { TabsContainer } from './AppTabsStyles';
 
 export type AppTabItem<ValueT = number | string> = {
   name: string;
@@ -18,25 +15,23 @@ export type AppTabItem<ValueT = number | string> = {
   hidden?: boolean;
 };
 
-interface AppTabsProps extends StylesType {
-  className?: string;
+interface AppTabsProps
+  extends Pick<TabsProps, 'value' | 'onChange' | 'orientation' | 'sx'> {
   items: AppTabItem[];
   handleTabChange: (newTab: number) => void;
   selectedTab?: number | boolean;
-  variant: 'primary' | 'secondary' | 'secondarySmall' | 'menu';
-  orientation?: 'horizontal' | 'vertical';
+  type: TabType;
   isHintUpdated?: boolean;
 }
 
 const AppTabs: React.FC<AppTabsProps> = ({
-  classes,
-  className,
   items,
   handleTabChange,
   selectedTab,
-  variant,
+  type,
   orientation,
   isHintUpdated = false,
+  sx,
 }) => {
   const [currentTab, setCurrent] = React.useState<
     number | boolean | undefined
@@ -52,86 +47,50 @@ const AppTabs: React.FC<AppTabsProps> = ({
   }, [selectedTab]);
 
   return (
-    <div className={cx(classes.container, className)}>
-      <Tabs
-        value={currentTab}
-        onChange={handleChange}
-        variant="scrollable"
-        orientation={orientation}
-        scrollButtons="auto"
-        classes={{
-          root: cx(classes.tabsContainer, variant, orientation),
-          indicator: cx(classes.tabIndicator, variant),
-        }}
-      >
-        {items.map(item =>
-          item.link ? (
-            <LinkTab
-              hidden={item.hidden}
-              key={item.name}
-              label={
-                <Typography
-                  variant="body1"
-                  className={classes.tabItemLabel}
-                  component="span"
-                >
-                  {item.name}
-                  {item.hint !== undefined &&
-                    variant === 'primary' &&
-                    !isHintUpdated && (
-                      <div className={classes.hintContainer}>
-                        <NumberFormatted value={item.hint} precision={0} />
-                      </div>
-                    )}
-                  {variant === 'primary' && isHintUpdated && (
-                    <div className={classes.hintContainer}>
-                      <Skeleton width="18px" height="27px" />
-                    </div>
-                  )}
-                </Typography>
-              }
-              to={item.link}
-              component={Link}
-              classes={{
-                root: cx(classes.tabItem, variant, orientation),
-                selected: cx(classes.tabItemSelected, variant),
-              }}
-            />
-          ) : (
-            <Tab
-              hidden={item.hidden}
-              key={item.name}
-              label={
-                <Typography
-                  variant="body1"
-                  className={classes.tabItemLabel}
-                  component="span"
-                >
-                  {item.name}
-                  {item.hint !== undefined &&
-                    variant === 'primary' &&
-                    !isHintUpdated && (
-                      <div className={classes.hintContainer}>
-                        <NumberFormatted value={item.hint} precision={0} />
-                      </div>
-                    )}
-                  {variant === 'primary' && isHintUpdated && (
-                    <div className={classes.hintContainer}>
-                      <Skeleton width="18px" height="27px" />
-                    </div>
-                  )}
-                </Typography>
-              }
-              classes={{
-                root: cx(classes.tabItem, variant, orientation),
-                selected: cx(classes.tabItemSelected, variant),
-              }}
-            />
-          )
-        )}
-      </Tabs>
-    </div>
+    <TabsContainer
+      $type={type}
+      value={currentTab}
+      onChange={handleChange}
+      variant="scrollable"
+      orientation={orientation}
+      scrollButtons="auto"
+      sx={sx}
+    >
+      {items.map(item =>
+        item.link ? (
+          <AppLinkTab
+            type={type}
+            hidden={item.hidden}
+            key={item.name}
+            label={
+              <AppTabLabel
+                name={item.name}
+                showHint={type === 'primary'}
+                hint={item.hint}
+                isHintUpdated={isHintUpdated}
+              />
+            }
+            to={item.link}
+            component={Link}
+          />
+        ) : (
+          <AppTab
+            type={type}
+            hidden={item.hidden}
+            key={item.name}
+            label={
+              <AppTabLabel
+                name={item.name}
+                showHint={type === 'primary'}
+                hint={item.hint}
+                isHintUpdated={isHintUpdated}
+              />
+            }
+          />
+        )
+      )}
+    </TabsContainer>
   );
 };
 
-export default withStyles(styles)(AppTabs);
+export default AppTabs;

@@ -1,9 +1,8 @@
 import { Theme } from '@mui/material';
 import { WithStyles } from '@mui/styles';
 import createStyles from '@mui/styles/createStyles';
-import { primaryTabsHeight } from 'components/shared/AppTabs/AppTabsStyles';
 import { searchHeight } from 'components/shared/MainSearch/MainSearchStyles';
-import { toolbarHeight } from 'lib/constants';
+import { primaryTabsHeight, toolbarHeight } from 'lib/constants';
 
 const tabsContainerMargin = 16;
 export const colWidthStyles = {
@@ -39,6 +38,7 @@ export const styles = (theme: Theme) =>
       marginBottom: `${tabsContainerMargin}px`,
     },
     resultsTableHeader: {
+      marginTop: theme.spacing(2),
       '& > *': {
         borderBottom: '1px solid',
         borderBottomColor: theme.palette.divider,

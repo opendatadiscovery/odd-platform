@@ -211,8 +211,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
           <AlertBannersContainer dataEntityId={dataEntityId} />
           {tabs.length && selectedTab >= 0 ? (
             <AppTabs
-              className={classes.tabsContainer}
-              variant="primary"
+              type="primary"
               items={tabs}
               selectedTab={selectedTab}
               handleTabChange={() => {}}

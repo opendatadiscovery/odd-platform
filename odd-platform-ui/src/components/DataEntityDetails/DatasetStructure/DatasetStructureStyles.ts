@@ -5,7 +5,7 @@ import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
-    container: {},
+    container: { marginTop: theme.spacing(2) },
     dataCount: {
       display: 'flex',
       marginRight: theme.spacing(3),

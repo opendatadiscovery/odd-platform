@@ -5,7 +5,7 @@ import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
-    container: {},
+    container: { marginTop: theme.spacing(2) },
     testReportContainer: {
       margin: theme.spacing(0.25, 0, 4, 0),
       justifyContent: 'space-between',

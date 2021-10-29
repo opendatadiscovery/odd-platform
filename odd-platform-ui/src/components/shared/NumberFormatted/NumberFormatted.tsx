@@ -1,4 +1,5 @@
 import React from 'react';
+import { Typography } from '@mui/material';
 
 interface Props {
   value: string | number | undefined;
@@ -18,9 +19,13 @@ const NumberFormatted: React.FC<Props> = ({ value, precision = 0 }) => {
     );
   }, [value]);
   return (
-    <span title={numVal && numVal > 1000 ? numVal.toLocaleString() : ''}>
+    <Typography
+      component="span"
+      variant="h6"
+      title={numVal && numVal > 1000 ? numVal.toLocaleString() : ''}
+    >
       {formatNumber()}
-    </span>
+    </Typography>
   );
 };
 
