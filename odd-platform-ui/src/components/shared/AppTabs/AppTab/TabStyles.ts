@@ -17,7 +17,7 @@ const LinkTab: React.ComponentType<
   Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>
 >;
 
-const getTabTypes = (
+const getTabStylesByType = (
   theme: Theme,
   type: TabType,
   $hidden?: boolean
@@ -74,7 +74,10 @@ const getTabTypes = (
   }
 };
 
-const getSelectedTabTypes = (theme: Theme, type: TabType): CSSObject => {
+const getSelectedTabStylesByType = (
+  theme: Theme,
+  type: TabType
+): CSSObject => {
   switch (type) {
     case 'primary':
       return {};
@@ -115,7 +118,7 @@ const tabStyles = (
   },
   [`&.${tabClasses.selected}`]: {
     color: theme.palette.texts.primary,
-    ...getSelectedTabTypes(theme, type),
+    ...getSelectedTabStylesByType(theme, type),
     alignItems: 'center',
   },
 
@@ -123,7 +126,7 @@ const tabStyles = (
   color: theme.palette.texts.secondary,
   fontSize: theme.typography.body1.fontSize,
   textTransform: 'none',
-  ...getTabTypes(theme, type, $hidden),
+  ...getTabStylesByType(theme, type, $hidden),
 });
 
 export const TabContainer = styled(Tab, {

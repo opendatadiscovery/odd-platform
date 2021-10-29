@@ -16,8 +16,8 @@ const AppTabLabel: React.FC<AppTabLabelProps> = ({
   hint,
   isHintUpdated,
 }) => {
-  const hintOrSkeleton = (hintUpdated?: boolean) =>
-    hintUpdated ? (
+  const getLabelContent = (hintIsUpdating?: boolean) =>
+    hintIsUpdating ? (
       <S.HintContainer>
         <Skeleton width="18px" height="27px" />
       </S.HintContainer>
@@ -31,7 +31,7 @@ const AppTabLabel: React.FC<AppTabLabelProps> = ({
     <S.Container variant="body1">
       {name}
       {showHint && hint !== undefined
-        ? hintOrSkeleton(isHintUpdated)
+        ? getLabelContent(isHintUpdated)
         : null}
     </S.Container>
   );
