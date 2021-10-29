@@ -1,17 +1,15 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce/lib';
-import { mapValues, values } from 'lodash';
+import mapValues from 'lodash/mapValues';
+import values from 'lodash/values';
 import {
   SearchApiGetSearchFacetListRequest,
   SearchApiSearchRequest,
   SearchApiUpdateSearchFacetsRequest,
   SearchFacetsData,
 } from 'generated-sources';
-import {
-  SearchFacetsByName,
-  SearchFacetStateById,
-} from 'redux/interfaces/search';
+import { SearchFacetsByName } from 'redux/interfaces/search';
 import { ErrorState, FetchStatus } from 'redux/interfaces/loader';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';

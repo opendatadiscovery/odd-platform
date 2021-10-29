@@ -1,5 +1,5 @@
 import { getType } from 'typesafe-actions';
-import { filter } from 'lodash';
+import filter from 'lodash/filter';
 import * as actions from 'redux/actions';
 import { Action } from 'redux/interfaces';
 import { NamespacesState } from 'redux/interfaces/state';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import {
   DataSource,
   DataSourceApiGetDataSourceListRequest,
@@ -10,8 +10,8 @@ import {
 import { SearchType } from 'redux/interfaces/search';
 import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemContainer';
 import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
-import CircularProgressLoader from 'components/shared/CircularProgressLoader/CircularProgressLoader';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import { StylesType } from './FiltersStyles';
 
 interface FiltersProps extends StylesType {
@@ -87,11 +87,15 @@ const Filters: React.FC<FiltersProps> = ({
           facetName="tags"
           name="Tag"
         />
-        <div className={classes.facetsLoaderContainer}>
+        <Grid
+          container
+          justifyContent="center"
+          className={classes.facetsLoaderContainer}
+        >
           {(isSearchFacetsUpdating || isDatasourceListFetching) && (
-            <CircularProgressLoader text="Updating filters" />
+            <AppCircularProgress size={16} text="Updating filters" />
           )}
-        </div>
+        </Grid>
       </div>
     </div>
   );

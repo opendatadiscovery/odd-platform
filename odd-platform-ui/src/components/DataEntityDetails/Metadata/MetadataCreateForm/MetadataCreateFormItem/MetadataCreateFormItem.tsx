@@ -1,6 +1,7 @@
 import React from 'react';
 import { Autocomplete, MenuItem, Typography } from '@mui/material';
-import { capitalize, values } from 'lodash';
+import capitalize from 'lodash/capitalize';
+import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { Controller, useFormContext } from 'react-hook-form';

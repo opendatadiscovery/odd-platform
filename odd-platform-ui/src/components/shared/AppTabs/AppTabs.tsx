@@ -1,4 +1,4 @@
-import React, { ChangeEvent, SyntheticEvent } from 'react';
+import React, { SyntheticEvent } from 'react';
 import { Skeleton, Tab, TabProps, Tabs, Typography } from '@mui/material';
 import withStyles from '@mui/styles/withStyles';
 import { Link, LinkProps } from 'react-router-dom';

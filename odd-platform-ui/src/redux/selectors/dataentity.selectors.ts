@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { get } from 'lodash';
+import get from 'lodash/get';
 import { RootState, DataEntitiesState } from 'redux/interfaces';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import {
