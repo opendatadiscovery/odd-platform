@@ -88,4 +88,9 @@ export const typography = createTypography(palette as Palette, {
     fontWeight: 400,
     color: palette.texts.hint,
   },
+  errorCode: {
+    fontSize: pxToRem(72),
+    lineHeight: pxToRem(84),
+    fontWeight: 500,
+  },
 });
