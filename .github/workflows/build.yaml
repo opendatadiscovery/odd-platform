@@ -87,5 +87,5 @@ jobs:
       - name: Login into ArgoCD
         run: ./argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_LOGIN }} --password '${{ secrets.ARGOCD_PASSWORD }}' --grpc-web
       - name: Sync ODD Platform application
-        run: ./argocd app sync odd-platform
+        run: ./argocd app sync environments --force --resource argoproj.io:Application:odd-platform
 
