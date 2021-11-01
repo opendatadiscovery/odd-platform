@@ -27,7 +27,7 @@ export const colWidthStyles = {
 
 export const styles = (theme: Theme) =>
   createStyles({
-    container: {},
+    container: { marginTop: theme.spacing(2) },
     resultsTable: {},
     runsTableHeader: {
       color: '#B3BAC5',
