@@ -59,6 +59,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
       {items.map(item =>
         item.link ? (
           <AppLinkTab
+            $orientation={orientation}
             type={type}
             hidden={item.hidden}
             key={item.name}
@@ -75,6 +76,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
           />
         ) : (
           <AppTab
+            $orientation={orientation}
             type={type}
             hidden={item.hidden}
             key={item.name}

@@ -4,6 +4,7 @@ import {
   Tab,
   tabClasses,
   TabProps,
+  TabsProps,
 } from '@mui/material';
 import { styled, Theme } from '@mui/material/styles';
 import { propsChecker } from 'lib/helpers';
@@ -109,11 +110,12 @@ const getSelectedTabStylesByType = (
 const tabStyles = (
   theme: Theme,
   type: TabType,
-  $hidden?: boolean
+  $hidden?: boolean,
+  $orientation?: TabsProps['orientation']
 ): CSSObject => ({
   [`&.${buttonBaseClasses.root}`]: {
     [`&.${tabClasses.root}`]: {
-      alignItems: 'center',
+      alignItems: $orientation === 'vertical' ? 'flex-start' : 'center',
     },
   },
   [`&.${tabClasses.selected}`]: {
@@ -131,12 +133,20 @@ const tabStyles = (
 
 export const TabContainer = styled(Tab, {
   shouldForwardProp: propsChecker,
-})<{ $type: TabType; $hidden?: boolean }>(({ theme, $type, $hidden }) =>
-  tabStyles(theme, $type, $hidden)
+})<{
+  $type: TabType;
+  $hidden?: boolean;
+  $orientation?: TabsProps['orientation'];
+}>(({ theme, $type, $hidden, $orientation }) =>
+  tabStyles(theme, $type, $hidden, $orientation)
 );
 
 export const LinkTabContainer = styled(LinkTab, {
   shouldForwardProp: propsChecker,
-})<{ $type: TabType; $hidden?: boolean }>(({ theme, $type, $hidden }) =>
-  tabStyles(theme, $type, $hidden)
+})<{
+  $type: TabType;
+  $hidden?: boolean;
+  $orientation?: TabsProps['orientation'];
+}>(({ theme, $type, $hidden, $orientation }) =>
+  tabStyles(theme, $type, $hidden, $orientation)
 );

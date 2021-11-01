@@ -1,5 +1,5 @@
 import React from 'react';
-import { TabProps } from '@mui/material';
+import { TabProps, TabsProps } from '@mui/material';
 import { TabType } from 'components/shared/AppTabs/interfaces';
 import { LinkProps } from 'react-router-dom';
 import { LinkTabContainer } from 'components/shared/AppTabs/AppTab/TabStyles';
@@ -8,11 +8,13 @@ interface AppLinkTabProps
   extends Pick<LinkProps, 'to' | 'component'>,
     Pick<TabProps, 'key' | 'label' | 'hidden'> {
   type: TabType;
+  $orientation?: TabsProps['orientation'];
 }
 
 const AppLinkTab: React.FC<AppLinkTabProps> = ({
   type,
   hidden,
+  $orientation,
   ...props
 }) => (
   <LinkTabContainer
@@ -20,6 +22,7 @@ const AppLinkTab: React.FC<AppLinkTabProps> = ({
     {...props}
     $type={type}
     $hidden={hidden}
+    $orientation={$orientation}
   />
 );
 

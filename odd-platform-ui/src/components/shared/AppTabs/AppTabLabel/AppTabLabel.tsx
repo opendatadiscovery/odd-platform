@@ -1,5 +1,5 @@
 import React from 'react';
-import { Skeleton } from '@mui/material';
+import { Skeleton, Typography } from '@mui/material';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import * as S from './AppTabLabelStyles';
 
@@ -23,7 +23,9 @@ const AppTabLabel: React.FC<AppTabLabelProps> = ({
       </S.HintContainer>
     ) : (
       <S.HintContainer>
-        <NumberFormatted value={hint} precision={0} />
+        <Typography variant="h6" component="span">
+          <NumberFormatted value={hint} precision={0} />
+        </Typography>
       </S.HintContainer>
     );
 

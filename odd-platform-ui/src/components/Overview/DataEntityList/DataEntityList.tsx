@@ -46,7 +46,11 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
               </Typography>
             </Link>
             {item.types?.map(type => (
-              <EntityTypeItem key={type.id} typeName={type.name} />
+              <EntityTypeItem
+                sx={{ ml: 0.5 }}
+                key={type.id}
+                typeName={type.name}
+              />
             ))}
           </Grid>
         </li>

@@ -1,18 +1,25 @@
 import React from 'react';
-import { TabProps } from '@mui/material';
+import { TabProps, TabsProps } from '@mui/material';
 import { TabType } from 'components/shared/AppTabs/interfaces';
 import { TabContainer } from 'components/shared/AppTabs/AppTab/TabStyles';
 
 export interface AppTabProps extends TabProps {
   type: TabType;
+  $orientation?: TabsProps['orientation'];
 }
 
-const AppTab: React.FC<AppTabProps> = ({ type, hidden, ...props }) => (
+const AppTab: React.FC<AppTabProps> = ({
+  type,
+  hidden,
+  $orientation,
+  ...props
+}) => (
   <TabContainer
     // eslint-disable-next-line react/jsx-props-no-spreading
     {...props}
     $type={type}
     $hidden={hidden}
+    $orientation={$orientation}
   />
 );
 

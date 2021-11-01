@@ -5,7 +5,6 @@ export const Container = styled(Typography)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   '& span': {
-    marginLeft: '4px',
     backgroundColor: theme.palette.backgrounds.primary,
     borderRadius: '4px',
     lineHeight: '1.1rem',
@@ -17,5 +16,6 @@ export const HintContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   height: '16px',
+  marginLeft: theme.spacing(0.5),
   '& > span': { minWidth: '28px' },
 }));
