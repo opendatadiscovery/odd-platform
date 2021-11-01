@@ -5,7 +5,7 @@ import createStyles from '@mui/styles/createStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
-    container: {},
+    container: { marginTop: 0 },
     caption: { marginBottom: theme.spacing(3) },
     sectionContainer: {
       padding: 0,

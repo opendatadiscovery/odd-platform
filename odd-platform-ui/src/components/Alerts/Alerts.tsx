@@ -75,8 +75,7 @@ const Alerts: React.FC<AlertsProps> = ({
         Alerts
       </Typography>
       <AppTabs
-        variant="primary"
-        classes={{ container: classes.tabsContainer }}
+        type="primary"
         items={tabs}
         selectedTab={selectedTab}
         handleTabChange={alertsFilterUpdateAction}

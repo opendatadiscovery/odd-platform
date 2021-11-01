@@ -1,6 +1,7 @@
 import { Action, DataEntitiesState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
-import { keyBy, omit } from 'lodash';
+import keyBy from 'lodash/keyBy';
+import omit from 'lodash/omit';
 import { DataEntityDetails } from 'generated-sources';
 import * as actions from 'redux/actions';
 

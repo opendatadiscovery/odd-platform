@@ -14,3 +14,6 @@ export const maxContentWidthWithoutSidebar = 1440;
 
 // main skeleton height constant
 export const mainSkeletonHeight = '100%';
+
+// tabs height
+export const primaryTabsHeight = 32;

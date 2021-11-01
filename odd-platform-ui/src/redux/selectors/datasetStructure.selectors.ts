@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { RootState, DatasetStructureState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
-import { isNumber } from 'lodash';
+import isNumber from 'lodash/isNumber';
 
 const getDatasetStructureState = ({
   datasetStructure,

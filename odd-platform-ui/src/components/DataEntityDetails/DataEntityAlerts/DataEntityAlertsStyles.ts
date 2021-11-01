@@ -41,7 +41,7 @@ export const alertsColWidthStyles = {
 
 export const styles = (theme: Theme) =>
   createStyles({
-    container: {},
+    container: { marginTop: theme.spacing(2) },
     alertsTableHeader: {
       color: theme.palette.texts.hint,
       borderBottom: '1px solid',

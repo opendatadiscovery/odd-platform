@@ -2,7 +2,7 @@ import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
 import { Action } from 'redux/interfaces';
 import { OwnersState } from 'redux/interfaces/state';
-import { filter } from 'lodash';
+import filter from 'lodash/filter';
 
 export const initialState: OwnersState = {
   byId: {},

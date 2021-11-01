@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { RootState, DataQualityTestState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { getDataEntityId } from './dataentity.selectors';
 
 const getDataQualityTestState = ({

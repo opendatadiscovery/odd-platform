@@ -1,5 +1,5 @@
 import { Action, LoaderState } from 'redux/interfaces';
-import { get } from 'lodash';
+import get from 'lodash/get';
 
 export const initialState: LoaderState = {
   statuses: {},
@@ -20,7 +20,7 @@ const reducer = (state = initialState, action: Action): LoaderState => {
         statuses: {
           ...state.statuses,
           [requestName]: 'fetching',
-        }
+        },
       };
     case 'SUCCESS':
       return {
@@ -28,7 +28,7 @@ const reducer = (state = initialState, action: Action): LoaderState => {
         statuses: {
           ...state.statuses,
           [requestName]: 'fetched',
-        }
+        },
       };
     case 'FAILURE':
       return {
@@ -40,7 +40,7 @@ const reducer = (state = initialState, action: Action): LoaderState => {
         errors: {
           ...state.errors,
           [requestName]: get(action, 'payload'),
-        }
+        },
       };
     default:
       return state;

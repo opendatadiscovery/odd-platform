@@ -1028,7 +1028,8 @@ public class DataEntityRepositoryImpl
                 .select(SEARCH_ENTRYPOINT.SEARCH_VECTOR.as(searchVectorAlias))
                 .from(SEARCH_ENTRYPOINT)
                 .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-                .where(ftsCondition(ftsConfig.getQuery()));
+                .where(ListUtils.emptyIfNull(config.getCteSelectConditions()))
+                .and(ftsCondition(ftsConfig.getQuery()));
         } else {
             dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
                 .from(DATA_ENTITY)

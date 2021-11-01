@@ -4,6 +4,8 @@ import {
   DataEntityTypeNameEnum,
   DataSetFieldTypeTypeEnum,
 } from 'generated-sources';
+import { TypographyStyle } from '@mui/material';
+import { TypographyStyleOptions } from '@mui/material/styles/createTypography';
 
 // palette interfaces
 interface ItemColors {
@@ -98,5 +100,20 @@ declare module '@mui/material/styles' {
     backgrounds?: Partial<BackgroundType>;
     texts?: TextType;
     textField?: ItemCondition;
+  }
+}
+
+// typography interfaces
+declare module '@mui/material/styles/createTypography' {
+  interface Typography {
+    errorCode: TypographyStyle;
+  }
+  interface TypographyOptions {
+    errorCode?: TypographyStyleOptions;
+  }
+}
+declare module '@mui/material/Typography/Typography' {
+  interface TypographyPropsVariantOverrides {
+    errorCode: true;
   }
 }

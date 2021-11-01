@@ -1,7 +1,8 @@
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
 import { Action, MetaDataState } from 'redux/interfaces';
-import { filter, uniq } from 'lodash';
+import filter from 'lodash/filter';
+import uniq from 'lodash/uniq';
 
 export const initialState: MetaDataState = {
   dataEntityMetadata: {},

@@ -7,7 +7,8 @@ import {
 } from 'd3-hierarchy';
 import { select, selectAll } from 'd3-selection';
 import { zoom as d3zoom, zoomIdentity } from 'd3-zoom';
-import { entries, maxBy } from 'lodash';
+import entries from 'lodash/entries';
+import maxBy from 'lodash/maxBy';
 import { v4 as uuidv4 } from 'uuid';
 import { Typography } from '@mui/material';
 import cx from 'classnames';
@@ -26,9 +27,9 @@ import {
 } from 'generated-sources';
 import AppTabs from 'components/shared/AppTabs/AppTabs';
 import TargetIcon from 'components/shared/Icons/TargetIcon';
-import CircularProgressLoader from 'components/shared/CircularProgressLoader/CircularProgressLoader';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
 import { StylesType } from './AppGraphStyles';
@@ -352,7 +353,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
 
   return isLineageFetching ? (
     <div className={classes.loaderContainer}>
-      <CircularProgressLoader text="Loading lineage" />
+      <AppCircularProgress size={16} text="Loading lineage" />
     </div>
   ) : (
     <div
@@ -369,7 +370,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
           Main
         </AppButton>
         <AppTabs
-          variant="secondarySmall"
+          type="secondarySmall"
           orientation="horizontal"
           items={[{ name: 'Full' }, { name: 'Compact' }]}
           selectedTab={compactView ? 1 : 0}
