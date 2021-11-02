@@ -1,22 +1,20 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import withStyles from '@mui/styles/withStyles';
 import {
-  getSearchTotals,
-  getSearchResults,
   getSearchEntityType,
-  getSearchId,
-  getSearchResultsPage,
   getSearchFiltersSynced,
+  getSearchId,
+  getSearchIsCreating,
+  getSearchIsCreatingAndFetching,
   getSearchIsFetching,
   getSearchIsUpdated,
-  getSearchIsCreatingAndFetching,
-  getSearchIsCreating,
+  getSearchResults,
+  getSearchResultsPage,
+  getSearchTotals,
 } from 'redux/selectors/dataentitySearch.selectors';
 import { getDataEntityTypesByName } from 'redux/selectors/dataentity.selectors';
 import { getDataEntitiesSearchResults } from 'redux/thunks/dataentitiesSearch.thunks';
 import Results from './Results';
-import { styles } from './ResultsStyles';
 
 const mapStateToProps = (state: RootState) => ({
   searchId: getSearchId(state),
@@ -36,7 +34,4 @@ const mapDispatchToProps = {
   getDataEntitiesSearchResults,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Results));
+export default connect(mapStateToProps, mapDispatchToProps)(Results);

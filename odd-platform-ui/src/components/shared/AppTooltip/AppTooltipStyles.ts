@@ -13,7 +13,6 @@ export const Container = styled('div', {
   shouldForwardProp: propsChecker,
 })<ContainerProps>(({ theme, $maxWidth }) => ({
   margin: 'auto 0',
-  overflow: 'auto',
   '& .__react_component_tooltip:after, .__react_component_tooltip:before': {
     content: 'none',
   },

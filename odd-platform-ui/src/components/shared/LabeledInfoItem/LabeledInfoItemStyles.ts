@@ -21,9 +21,11 @@ export const styles = (theme: Theme) =>
     label: {
       color: theme.palette.texts.secondary,
       lineHeight: theme.typography.h3.lineHeight,
+      overflow: 'hidden',
     },
     value: {
       wordBreak: 'break-all',
+      overflow: 'hidden',
     },
   });
 

@@ -30,9 +30,20 @@ export const DatasetTypeLabelMap: Map<
   [DataSetFieldTypeTypeEnum.DATETIME, { short: 'Date', plural: 'dates' }],
   [DataSetFieldTypeTypeEnum.BINARY, { short: 'Bin', plural: 'binaries' }],
   [DataSetFieldTypeTypeEnum.NUMBER, { short: 'Dec', plural: 'decimals' }],
-  [DataSetFieldTypeTypeEnum.STRUCT, { short: 'Struct', plural: '' }],
-  [DataSetFieldTypeTypeEnum.LIST, { short: 'List', plural: '' }],
-  [DataSetFieldTypeTypeEnum.MAP, { short: 'Map', plural: '' }],
+  [
+    DataSetFieldTypeTypeEnum.STRUCT,
+    { short: 'Struct', plural: 'structures' },
+  ],
+  [DataSetFieldTypeTypeEnum.LIST, { short: 'List', plural: 'lists' }],
+  [DataSetFieldTypeTypeEnum.MAP, { short: 'Map', plural: 'maps' }],
+  [DataSetFieldTypeTypeEnum.CHAR, { short: 'Char', plural: 'chars' }],
+  [DataSetFieldTypeTypeEnum.TIME, { short: 'Time', plural: 'times' }],
+  [DataSetFieldTypeTypeEnum.UNION, { short: 'Union', plural: 'unions' }],
+  [
+    DataSetFieldTypeTypeEnum.DURATION,
+    { short: 'Dur', plural: 'durations' },
+  ],
+  [DataSetFieldTypeTypeEnum.UNKNOWN, { short: 'Unk', plural: 'unknowns' }],
 ]);
 
 export type DataSetFormattedStatsKeys = keyof Required<DataSetFormattedStats>;

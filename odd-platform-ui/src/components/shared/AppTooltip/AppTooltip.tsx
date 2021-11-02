@@ -13,6 +13,7 @@ interface AppTooltipProps extends Pick<TooltipProps, 'place' | 'offset'> {
   place?: TooltipProps['place'];
   maxWidth?: number;
   sx?: SxProps<Theme>;
+  onMouseEnterCallback?: () => void;
 }
 
 const AppTooltip: React.FC<AppTooltipProps> = ({
@@ -25,6 +26,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   offset,
   maxWidth,
   sx,
+  onMouseEnterCallback,
 }) => {
   const tagList = ['svg'];
 
@@ -53,7 +55,11 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   );
 
   return (
-    <S.Container $maxWidth={maxWidth} sx={sx}>
+    <S.Container
+      $maxWidth={maxWidth}
+      sx={sx}
+      onMouseEnter={onMouseEnterCallback}
+    >
       {hasOverflow || controlChecker || !overflowCheck ? (
         <ReactTooltip
           id={id}

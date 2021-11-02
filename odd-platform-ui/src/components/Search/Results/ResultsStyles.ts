@@ -1,10 +1,14 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+import { Grid } from '@mui/material';
 import { searchHeight } from 'components/shared/MainSearch/MainSearchStyles';
-import { primaryTabsHeight, toolbarHeight } from 'lib/constants';
+import {
+  primaryTabsHeight,
+  tabsContainerMargin,
+  toolbarHeight,
+} from 'lib/constants';
+import { styled } from '@mui/material/styles';
+import { propsChecker } from 'lib/helpers';
 
-const tabsContainerMargin = 16;
+export type ColType = 'col' | 'colxs' | 'colsm' | 'colmd' | 'collg';
 export const colWidthStyles = {
   colxs: {
     flex: '2 0 6%',
@@ -29,34 +33,25 @@ export const colWidthStyles = {
     },
   },
 };
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      marginTop: theme.spacing(2),
-    },
-    tabsContainer: {
-      marginBottom: `${tabsContainerMargin}px`,
-    },
-    resultsTableHeader: {
-      marginTop: theme.spacing(2),
-      '& > *': {
-        borderBottom: '1px solid',
-        borderBottomColor: theme.palette.divider,
-      },
-    },
-    listContainer: {
-      height: `calc(100vh - ${toolbarHeight}px - ${searchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
-        8
-      )})`,
-      overflow: 'auto',
-    },
-    resultItem: {
-      '&:not(:last-of-type)': {
-        borderBottom: '1px solid',
-        borderBottomColor: theme.palette.divider,
-      },
-    },
-    ...colWidthStyles,
-  });
 
-export type StylesType = WithStyles<typeof styles>;
+export const Container = styled(Grid)(({ theme }) => ({}));
+export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.divider,
+}));
+
+export const ColContainer = styled(Grid, {
+  shouldForwardProp: propsChecker,
+})<{
+  $colType: ColType;
+}>(({ theme, $colType }) => ({
+  ...colWidthStyles.col,
+  ...colWidthStyles[$colType],
+}));
+
+export const ListContainer = styled(Grid)(({ theme }) => ({
+  height: `calc(100vh - ${toolbarHeight}px - ${searchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
+    8
+  )})`,
+  overflow: 'auto',
+}));

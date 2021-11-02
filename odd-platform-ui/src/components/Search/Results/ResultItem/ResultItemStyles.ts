@@ -1,28 +1,22 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import { colWidthStyles } from 'components/Search/Results/ResultsStyles';
+import { Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { Link } from 'react-router-dom';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      borderBottom: '1px solid',
-      borderBottomColor: theme.palette.divider,
-      padding: theme.spacing(1.25, 0),
-      textDecoration: 'none',
-      cursor: 'pointer',
-      alignItems: 'center',
-      '&:hover': {
-        backgroundColor: theme.palette.backgrounds.primary,
-      },
-    },
-    itemLink: {
-      color: 'initial',
-      textDecoration: 'none',
-      flexGrow: 1,
-      overflow: 'hidden',
-    },
-    ...colWidthStyles,
-  });
+export const Container = styled(Grid)(({ theme }) => ({
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.divider,
+  padding: theme.spacing(1.25, 0),
+  textDecoration: 'none',
+  cursor: 'pointer',
+  alignItems: 'center',
+  '&:hover': {
+    backgroundColor: theme.palette.backgrounds.primary,
+  },
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const ItemLink = styled(Link)(({ theme }) => ({
+  color: 'initial',
+  textDecoration: 'none',
+  flexGrow: 1,
+  overflow: 'hidden',
+}));
