@@ -21,7 +21,7 @@ import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/E
 import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
 import SearchTabsSkeleton from 'components/Search/Results/SearchTabsSkeleton/SearchTabsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import ResultItemContainer from 'components/Search/Results/ResultItem/ResultItemContainer';
+import ResultItem from 'components/Search/Results/ResultItem/ResultItem';
 import * as S from './ResultsStyles';
 
 interface ResultsProps {
@@ -238,7 +238,7 @@ const Results: React.FC<ResultsProps> = ({
             scrollableTarget="results-list"
           >
             {searchResults.map(searchResult => (
-              <ResultItemContainer
+              <ResultItem
                 dataEntityId={searchResult.id}
                 key={searchResult.id}
                 searchType={searchType}

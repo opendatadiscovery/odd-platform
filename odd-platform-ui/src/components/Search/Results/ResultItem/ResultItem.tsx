@@ -1,13 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
-import {
-  DataEntity,
-  DataEntityApiGetDataEntityDetailsRequest,
-  DataEntityDetails,
-  DataEntityTypeNameEnum,
-  MetadataFieldValue,
-} from 'generated-sources';
+import { DataEntity, DataEntityTypeNameEnum } from 'generated-sources';
 import { SearchTotalsByName, SearchType } from 'redux/interfaces/search';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { dataEntityDetailsPath } from 'lib/paths';
@@ -15,43 +9,22 @@ import ResultItemTruncatedCell from 'components/Search/Results/ResultItem/Result
 import InformationIcon from 'components/shared/Icons/InformationIcon';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { ColContainer } from 'components/Search/Results/ResultsStyles';
-import ResultItemPreview from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreview';
+import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
 import { Container, ItemLink } from './ResultItemStyles';
 
 interface ResultItemProps {
+  dataEntityId: number;
   searchType?: SearchType;
   totals: SearchTotalsByName;
   searchResult: DataEntity;
-  dataEntityDetails: DataEntityDetails;
-  fetchDataEntityDetails: (
-    params: DataEntityApiGetDataEntityDetailsRequest
-  ) => void;
-  isDataEntityLoading: boolean;
-  predefinedMetadata: MetadataFieldValue[];
-  customMetadata: MetadataFieldValue[];
 }
 
 const ResultItem: React.FC<ResultItemProps> = ({
   searchResult,
   searchType,
   totals,
-  dataEntityDetails,
-  fetchDataEntityDetails,
-  isDataEntityLoading,
-  predefinedMetadata,
-  customMetadata,
 }) => {
   const detailsLink = dataEntityDetailsPath(searchResult.id);
-
-  const fetchDetails = React.useCallback(
-    () => fetchDataEntityDetails({ dataEntityId: searchResult.id }),
-    [searchResult.id]
-  );
-
-  const resultItemPreviewHandler = () => {
-    if (!dataEntityDetails) return fetchDetails();
-    return null;
-  };
 
   return (
     <ItemLink to={detailsLink}>
@@ -82,16 +55,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
             <AppTooltip
               maxWidth={285}
               sx={{ ml: 1.25 }}
-              title={
-                <ResultItemPreview
-                  dataEntityDetails={dataEntityDetails}
-                  isDataEntityLoading={isDataEntityLoading}
-                  predefinedMetadata={predefinedMetadata}
-                  customMetadata={customMetadata}
+              renderTitle={({ isTooltipShown }) => (
+                <ResultItemPreviewContainer
+                  dataEntityId={searchResult.id}
+                  fetchData={isTooltipShown}
                 />
-              }
+              )}
               offset={{ right: 140 }}
-              onMouseEnterCallback={resultItemPreviewHandler}
             >
               <InformationIcon
                 sx={{ display: 'flex', alignItems: 'center' }}

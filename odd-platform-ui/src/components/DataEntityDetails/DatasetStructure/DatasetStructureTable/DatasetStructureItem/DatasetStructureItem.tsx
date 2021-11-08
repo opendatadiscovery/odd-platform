@@ -149,7 +149,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
               <Grid item container>
                 <Grid item xs={12} className={classes.nameContainer}>
-                  <AppTooltip title={datasetField.name}>
+                  <AppTooltip renderTitle={() => datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
                         (datasetField.isValue && 'Value') ||
@@ -172,7 +172,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   className={classes.descriptionContainer}
                 >
                   <AppTooltip
-                    title={datasetField.internalDescription}
+                    renderTitle={() => datasetField.internalDescription}
                     offset={{ right: 160 }}
                   >
                     <Typography
@@ -182,7 +182,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                       {datasetField.internalDescription}
                     </Typography>
                   </AppTooltip>
-                  <AppTooltip title={datasetField.externalDescription}>
+                  <AppTooltip
+                    renderTitle={() => datasetField.externalDescription}
+                  >
                     <Typography
                       className={classes.externalDescription}
                       noWrap
@@ -208,7 +210,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               <div className={classes.optionsBtn}>
                 <AppTooltip
                   control="byClick"
-                  title={
+                  renderTitle={() => (
                     <>
                       <LabelsEditFormContainer
                         datasetFieldId={datasetField.id}
@@ -219,7 +221,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                         btnCreateEl={<MenuItem>Edit Description</MenuItem>}
                       />
                     </>
-                  }
+                  )}
                 >
                   <AppIconButton
                     size="medium"
@@ -233,7 +235,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               />
               <div>
                 <AppTooltip
-                  title={`Logical type: ${datasetField.type.logicalType}`}
+                  renderTitle={() =>
+                    `Logical type: ${datasetField.type.logicalType}`
+                  }
                   type="dark"
                 >
                   <InformationIcon

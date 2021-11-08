@@ -9,7 +9,7 @@ import {
   getDataEntityCustomMetadataList,
   getDataEntityPredefinedMetadataList,
 } from 'redux/selectors/metadata.selectors';
-import ResultItem from './ResultItem';
+import ResultItemPreview from './ResultItemPreview';
 
 const mapStateToProps = (
   state: RootState,
@@ -28,4 +28,7 @@ const mapDispatchToProps = {
   fetchDataEntityDetails,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ResultItem);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ResultItemPreview);

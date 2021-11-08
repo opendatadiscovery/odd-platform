@@ -4,6 +4,7 @@ import * as S from 'components/Search/Results/ResultItem/ResultItemPreview/Resul
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import {
+  DataEntityApiGetDataEntityDetailsRequest,
   DataEntityDetails,
   MetadataFieldType,
   MetadataFieldValue,
@@ -13,19 +14,32 @@ import { format } from 'date-fns';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 
 interface ResultItemPreviewProps {
+  dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
   isDataEntityLoading: boolean;
   predefinedMetadata: MetadataFieldValue[];
   customMetadata: MetadataFieldValue[];
+  fetchDataEntityDetails: (
+    params: DataEntityApiGetDataEntityDetailsRequest
+  ) => void;
+  fetchData?: boolean;
 }
 
 const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
+  dataEntityId,
   dataEntityDetails,
   isDataEntityLoading,
   predefinedMetadata,
   customMetadata,
+  fetchDataEntityDetails,
+  fetchData,
 }) => {
   const metadataNum = 5;
+
+  React.useEffect(() => {
+    if (fetchData && !dataEntityDetails)
+      fetchDataEntityDetails({ dataEntityId });
+  }, [fetchData, dataEntityDetails, dataEntityId, fetchDataEntityDetails]);
 
   const getMetadataValue = (metadataItem: MetadataFieldValue) => {
     let metadataVal;
