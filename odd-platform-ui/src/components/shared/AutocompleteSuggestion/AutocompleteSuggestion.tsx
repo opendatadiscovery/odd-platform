@@ -1,26 +1,25 @@
 import React from 'react';
-import {
-  StylesType,
-  styles,
-} from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestionStyles';
-import withStyles from '@mui/styles/withStyles';
+import * as S from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestionStyles';
+import { SxProps } from '@mui/system';
+import { Theme } from '@mui/material';
 
-interface AutocompleteSuggestionProps extends StylesType {
+interface AutocompleteSuggestionProps {
   optionLabel: string;
   optionName: string | undefined;
+  sx?: SxProps<Theme>;
 }
 
 const AutocompleteSuggestion: React.FC<AutocompleteSuggestionProps> = ({
-  classes,
   optionLabel,
   optionName,
+  sx,
 }) => (
-  <span className={classes.container}>
-    <span className={classes.noResultText}>No result.</span>{' '}
-    <span className={classes.createNewOptionText}>
+  <S.Container sx={sx} variant="body2">
+    <S.NoResultText>No result.</S.NoResultText>{' '}
+    <S.CreateNewOptionText>
       Create new {optionLabel} &quot;{optionName}&quot;
-    </span>
-  </span>
+    </S.CreateNewOptionText>
+  </S.Container>
 );
 
-export default withStyles(styles)(AutocompleteSuggestion);
+export default AutocompleteSuggestion;
