@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, Typography } from '@mui/material';
+import { Autocomplete, Box, Typography } from '@mui/material';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -18,9 +18,8 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { StylesType } from './LabelsEditFormStyles';
 
-interface LabelsEditProps extends StylesType {
+interface LabelsEditProps {
   datasetFieldId: number;
   datasetFieldLabels: Label[];
   isLoading: boolean;
@@ -35,7 +34,6 @@ interface LabelsEditProps extends StylesType {
 type DatasetFieldLabelsFormType = { labelNameList: { name: string }[] };
 
 const LabelsEditForm: React.FC<LabelsEditProps> = ({
-  classes,
   datasetFieldId,
   datasetFieldLabels,
   isLoading,
@@ -211,20 +209,16 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
         )}
         renderOption={(props, option) => (
           <li {...props}>
-            <div className={classes.optionsContainer}>
-              <div className={classes.optionItem}>
-                <Typography variant="body1">
-                  {option.id ? (
-                    option.name
-                  ) : (
-                    <AutocompleteSuggestion
-                      optionLabel="label"
-                      optionName={option.name}
-                    />
-                  )}
-                </Typography>
-              </div>
-            </div>
+            <Typography variant="body1">
+              {option.id ? (
+                option.name
+              ) : (
+                <AutocompleteSuggestion
+                  optionLabel="label"
+                  optionName={option.name}
+                />
+              )}
+            </Typography>
           </li>
         )}
       />
@@ -233,7 +227,7 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
           id="label-create-form"
           onSubmit={methods.handleSubmit(handleSubmit)}
         >
-          <div className={classes.labelsList}>
+          <Box sx={{ mt: 1 }}>
             {fields?.map((field, index) => (
               <LabelItem
                 key={field.id}
@@ -243,7 +237,7 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
                 onRemoveClick={handleRemove(index)}
               />
             ))}
-          </div>
+          </Box>
         </form>
       </FormProvider>
     </>
