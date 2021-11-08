@@ -210,12 +210,11 @@ export const palette = createPalette({
     TYPE_STRUCT: { border: colors.black20 },
     TYPE_LIST: { border: colors.lightGreen60 },
     TYPE_MAP: { border: colors.turquoise40 },
-    // colors will be updated by design
-    TYPE_CHAR: { border: colors.transparent },
-    TYPE_TIME: { border: colors.transparent },
-    TYPE_UNION: { border: colors.transparent },
-    TYPE_DURATION: { border: colors.transparent },
-    TYPE_UNKNOWN: { border: colors.transparent },
+    TYPE_CHAR: { border: colors.green40 },
+    TYPE_TIME: { border: colors.purple5 },
+    TYPE_UNION: { border: colors.blue65 },
+    TYPE_DURATION: { border: colors.blue40 },
+    TYPE_UNKNOWN: { border: colors.black10 },
   },
   alert: {
     OPEN: {

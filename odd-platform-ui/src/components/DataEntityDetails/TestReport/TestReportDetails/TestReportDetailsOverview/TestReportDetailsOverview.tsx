@@ -86,7 +86,7 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                 value && (
                   <Grid key={key} container>
                     <Grid item xs={4} className={classes.paramName}>
-                      <AppTooltip title={key}>
+                      <AppTooltip renderContent={() => key}>
                         <Typography
                           variant="body1"
                           color="textSecondary"
@@ -97,7 +97,7 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                       </AppTooltip>
                     </Grid>
                     <Grid item xs={8}>
-                      <AppTooltip title={value}>
+                      <AppTooltip renderContent={() => value}>
                         <Typography variant="body1" noWrap>
                           {value}
                         </Typography>

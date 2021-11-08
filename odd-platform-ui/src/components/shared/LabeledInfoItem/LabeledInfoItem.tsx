@@ -29,7 +29,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
     className={cx(classes.container, { [classes.inline]: inline })}
   >
     <Grid item xs={labelWidth || 'auto'}>
-      <Typography variant={variant} className={classes.label}>
+      <Typography variant={variant} className={classes.label} noWrap>
         {label}
       </Typography>
     </Grid>
@@ -41,7 +41,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
           : 'auto'
       }
     >
-      <Typography variant={variant} className={classes.value}>
+      <Typography variant={variant} className={classes.value} noWrap>
         {children}
       </Typography>
     </Grid>

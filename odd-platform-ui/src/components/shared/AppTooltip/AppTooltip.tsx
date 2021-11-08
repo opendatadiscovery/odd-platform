@@ -6,7 +6,9 @@ import { Theme } from '@mui/material';
 import * as S from './AppTooltipStyles';
 
 interface AppTooltipProps extends Pick<TooltipProps, 'place' | 'offset'> {
-  title: string | JSX.Element | undefined;
+  renderContent: (props: {
+    isTooltipShown?: boolean;
+  }) => React.ReactElement | string | undefined;
   type?: 'light' | 'dark';
   control?: 'byClick' | 'byHover';
   overflowCheck?: boolean;
@@ -16,7 +18,7 @@ interface AppTooltipProps extends Pick<TooltipProps, 'place' | 'offset'> {
 }
 
 const AppTooltip: React.FC<AppTooltipProps> = ({
-  title,
+  renderContent,
   children,
   type = 'light',
   control = 'byHover',
@@ -27,6 +29,10 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   sx,
 }) => {
   const tagList = ['svg'];
+
+  const [isTooltipShown, setIsTooltipShown] = React.useState<boolean>(
+    false
+  );
 
   const childrenRef = React.useRef<HTMLDivElement>(null);
   const [hasOverflow, setOverflow] = React.useState<boolean>(false);
@@ -53,7 +59,12 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   );
 
   return (
-    <S.Container $maxWidth={maxWidth} sx={sx}>
+    <S.Container
+      $maxWidth={maxWidth}
+      sx={sx}
+      onMouseEnter={() => setIsTooltipShown(true)}
+      onMouseLeave={() => setIsTooltipShown(false)}
+    >
       {hasOverflow || controlChecker || !overflowCheck ? (
         <ReactTooltip
           id={id}
@@ -69,7 +80,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
               : { right: 60 })
           }
         >
-          {title}
+          {renderContent({ isTooltipShown })}
         </ReactTooltip>
       ) : null}
       <S.ChildrenContainer
@@ -79,6 +90,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
         data-event={controlChecker ? 'click' : null}
         ref={childrenRef}
       >
+        {/* Tooltip call element (by click or hover) */}
         {children}
       </S.ChildrenContainer>
     </S.Container>

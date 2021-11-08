@@ -1,15 +1,14 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import cx from 'classnames';
 import get from 'lodash/get';
 import { Dictionary } from 'lodash/index';
 import {
-  DataEntityTypeNameEnum,
   DataEntity,
-  SearchApiGetSearchResultsRequest,
   DataEntityType,
+  DataEntityTypeNameEnum,
+  SearchApiGetSearchResultsRequest,
 } from 'generated-sources';
 import {
   CurrentPageInfo,
@@ -22,10 +21,10 @@ import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/E
 import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
 import SearchTabsSkeleton from 'components/Search/Results/SearchTabsSkeleton/SearchTabsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import ResultItem from './ResultItem/ResultItem';
-import { StylesType } from './ResultsStyles';
+import ResultItem from 'components/Search/Results/ResultItem/ResultItem';
+import * as S from './ResultsStyles';
 
-interface ResultsProps extends StylesType {
+interface ResultsProps {
   dataEntityTypesByName: Dictionary<DataEntityType>;
   searchId: string;
   searchType?: SearchType;
@@ -43,7 +42,6 @@ interface ResultsProps extends StylesType {
 }
 
 const Results: React.FC<ResultsProps> = ({
-  classes,
   dataEntityTypesByName,
   searchId,
   searchType,
@@ -133,7 +131,7 @@ const Results: React.FC<ResultsProps> = ({
   }, [searchFiltersSynced, searchId, isSearchCreating]);
 
   return (
-    <div className={classes.container}>
+    <S.Container sx={{ mt: 2 }}>
       {isSearchCreatingAndFetching ? (
         <SearchTabsSkeleton length={tabs.length} />
       ) : (
@@ -145,68 +143,68 @@ const Results: React.FC<ResultsProps> = ({
           isHintUpdated={isSearchUpdated}
         />
       )}
-      <Grid container className={classes.resultsTableHeader} wrap="nowrap">
-        <Grid item className={cx(classes.col, classes.collg)}>
+      <S.ResultsTableHeader container sx={{ mt: 2 }} wrap="nowrap">
+        <S.ColContainer item $colType="collg">
           <Typography variant="caption">Name</Typography>
-        </Grid>
+        </S.ColContainer>
         {searchType &&
         searchType === totals[DataEntityTypeNameEnum.SET]?.id ? (
           <>
-            <Grid item className={cx(classes.col, classes.colxs)}>
+            <S.ColContainer item $colType="colxs">
               <Typography variant="caption">Use</Typography>
-            </Grid>
-            <Grid item className={cx(classes.col, classes.colxs)}>
+            </S.ColContainer>
+            <S.ColContainer item $colType="colxs">
               <Typography variant="caption">Rows</Typography>
-            </Grid>
-            <Grid item className={cx(classes.col, classes.colxs)}>
+            </S.ColContainer>
+            <S.ColContainer item $colType="colxs">
               <Typography variant="caption">Columns</Typography>
-            </Grid>
+            </S.ColContainer>
           </>
         ) : null}
         {searchType &&
         searchType === totals[DataEntityTypeNameEnum.TRANSFORMER]?.id ? (
           <>
-            <Grid item className={cx(classes.col, classes.collg)}>
+            <S.ColContainer item $colType="collg">
               <Typography variant="caption">Sources</Typography>
-            </Grid>
-            <Grid item className={cx(classes.col, classes.collg)}>
+            </S.ColContainer>
+            <S.ColContainer item $colType="collg">
               <Typography variant="caption">Targets</Typography>
-            </Grid>
+            </S.ColContainer>
           </>
         ) : null}
         {searchType &&
         searchType === totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id ? (
           <>
-            <Grid item className={cx(classes.col, classes.collg)}>
+            <S.ColContainer item $colType="collg">
               <Typography variant="caption">Entities</Typography>
-            </Grid>
-            <Grid item className={cx(classes.col, classes.collg)}>
+            </S.ColContainer>
+            <S.ColContainer item $colType="collg">
               <Typography variant="caption">Suite URL</Typography>
-            </Grid>
+            </S.ColContainer>
           </>
         ) : null}
         {searchType &&
         searchType === totals[DataEntityTypeNameEnum.CONSUMER]?.id ? (
-          <Grid item className={cx(classes.col, classes.collg)}>
+          <S.ColContainer item $colType="collg">
             <Typography variant="caption">Source</Typography>
-          </Grid>
+          </S.ColContainer>
         ) : null}
-        <Grid item className={cx(classes.col, classes.colmd)}>
+        <S.ColContainer item $colType="colmd">
           <Typography variant="caption">Namespace</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colmd)}>
+        </S.ColContainer>
+        <S.ColContainer item $colType="colmd">
           <Typography variant="caption">Datasource</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colmd)}>
+        </S.ColContainer>
+        <S.ColContainer item $colType="colmd">
           <Typography variant="caption">Owners</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colsm)}>
+        </S.ColContainer>
+        <S.ColContainer item $colType="colsm">
           <Typography variant="caption">Created</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colsm)}>
+        </S.ColContainer>
+        <S.ColContainer item $colType="colsm">
           <Typography variant="caption">Last Update</Typography>
-        </Grid>
-      </Grid>
+        </S.ColContainer>
+      </S.ResultsTableHeader>
       {isSearchCreating ? (
         <SkeletonWrapper
           length={10}
@@ -218,7 +216,7 @@ const Results: React.FC<ResultsProps> = ({
           )}
         />
       ) : (
-        <div id="results-list" className={classes.listContainer}>
+        <S.ListContainer id="results-list">
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}
@@ -241,9 +239,9 @@ const Results: React.FC<ResultsProps> = ({
           >
             {searchResults.map(searchResult => (
               <ResultItem
+                dataEntityId={searchResult.id}
                 key={searchResult.id}
                 searchType={searchType}
-                classes={{ container: classes.resultItem }}
                 searchResult={searchResult}
                 totals={totals}
               />
@@ -252,9 +250,9 @@ const Results: React.FC<ResultsProps> = ({
           {!isSearchFetching && !pageInfo.total ? (
             <EmptyContentPlaceholder text="No matches found" />
           ) : null}
-        </div>
+        </S.ListContainer>
       )}
-    </div>
+    </S.Container>
   );
 };
 
