@@ -55,7 +55,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             <AppTooltip
               maxWidth={285}
               sx={{ ml: 1.25 }}
-              renderTitle={({ isTooltipShown }) => (
+              renderContent={({ isTooltipShown }) => (
                 <ResultItemPreviewContainer
                   dataEntityId={searchResult.id}
                   fetchData={isTooltipShown}

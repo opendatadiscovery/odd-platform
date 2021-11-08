@@ -6,7 +6,7 @@ import { Theme } from '@mui/material';
 import * as S from './AppTooltipStyles';
 
 interface AppTooltipProps extends Pick<TooltipProps, 'place' | 'offset'> {
-  renderTitle: (props: {
+  renderContent: (props: {
     isTooltipShown?: boolean;
   }) => React.ReactElement | string | undefined;
   type?: 'light' | 'dark';
@@ -18,7 +18,7 @@ interface AppTooltipProps extends Pick<TooltipProps, 'place' | 'offset'> {
 }
 
 const AppTooltip: React.FC<AppTooltipProps> = ({
-  renderTitle,
+  renderContent,
   children,
   type = 'light',
   control = 'byHover',
@@ -80,7 +80,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
               : { right: 60 })
           }
         >
-          {renderTitle({ isTooltipShown })}
+          {renderContent({ isTooltipShown })}
         </ReactTooltip>
       ) : null}
       <S.ChildrenContainer
@@ -90,6 +90,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
         data-event={controlChecker ? 'click' : null}
         ref={childrenRef}
       >
+        {/* Tooltip call element (by click or hover) */}
         {children}
       </S.ChildrenContainer>
     </S.Container>

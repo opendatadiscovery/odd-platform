@@ -40,7 +40,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
           }
         >
           <AppTooltip
-            renderTitle={() =>
+            renderContent={() =>
               alert.dataEntity?.internalName ||
               alert.dataEntity?.externalName
             }
@@ -95,7 +95,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
     >
       <AppTooltip
         control="byClick"
-        renderTitle={() => (
+        renderContent={() => (
           <MenuItem onClick={alertStatusHandler}>
             {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
           </MenuItem>

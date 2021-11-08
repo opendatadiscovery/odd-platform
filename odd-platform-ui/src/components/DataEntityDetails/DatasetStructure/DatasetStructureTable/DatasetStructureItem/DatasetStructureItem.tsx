@@ -149,7 +149,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
               <Grid item container>
                 <Grid item xs={12} className={classes.nameContainer}>
-                  <AppTooltip renderTitle={() => datasetField.name}>
+                  <AppTooltip renderContent={() => datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
                         (datasetField.isValue && 'Value') ||
@@ -172,7 +172,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   className={classes.descriptionContainer}
                 >
                   <AppTooltip
-                    renderTitle={() => datasetField.internalDescription}
+                    renderContent={() => datasetField.internalDescription}
                     offset={{ right: 160 }}
                   >
                     <Typography
@@ -183,7 +183,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     </Typography>
                   </AppTooltip>
                   <AppTooltip
-                    renderTitle={() => datasetField.externalDescription}
+                    renderContent={() => datasetField.externalDescription}
                   >
                     <Typography
                       className={classes.externalDescription}
@@ -210,7 +210,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               <div className={classes.optionsBtn}>
                 <AppTooltip
                   control="byClick"
-                  renderTitle={() => (
+                  renderContent={() => (
                     <>
                       <LabelsEditFormContainer
                         datasetFieldId={datasetField.id}
@@ -235,7 +235,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               />
               <div>
                 <AppTooltip
-                  renderTitle={() =>
+                  renderContent={() =>
                     `Logical type: ${datasetField.type.logicalType}`
                   }
                   type="dark"

@@ -29,7 +29,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
     </Grid>
     <Grid item className={cx(classes.col, classes.colType)}>
       <AppTooltip
-        renderTitle={() => lowerCase(alert.type)}
+        renderContent={() => lowerCase(alert.type)}
         offset={{ right: 80 }}
       >
         <Typography variant="body1" title={alert.type} noWrap>
@@ -63,7 +63,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
     >
       <AppTooltip
         control="byClick"
-        renderTitle={() => (
+        renderContent={() => (
           <MenuItem onClick={alertStatusHandler}>
             {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
           </MenuItem>
