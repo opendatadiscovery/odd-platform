@@ -1022,6 +1022,16 @@ components:
         - type
         - is_nullable
 
+    DatasetFieldUpdateFormData:
+      type: object
+      properties:
+        description:
+          type: string
+        label_names:
+          type: array
+          items:
+            type: string
+
     DataSetStructure:
       type: object
       properties:
