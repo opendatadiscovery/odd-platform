@@ -1,13 +1,11 @@
 import React from 'react';
-import { Collapse, Grid, MenuItem, Typography } from '@mui/material';
+import { Collapse, Grid, Typography } from '@mui/material';
 import cx from 'classnames';
 import round from 'lodash/round';
 import {
   DataSetField,
-  DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
   DataSetFieldTypeTypeEnum,
   DataSetStats,
-  InternalDescription,
 } from 'generated-sources';
 import {
   DataSetFormattedStats,
@@ -23,8 +21,6 @@ import PlusIcon from 'components/shared/Icons/PlusIcon';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import LineBreakIcon from 'components/shared/Icons/LineBreakIcon';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import LabelsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/LabelsEditForm/LabelsEditFormContainer';
-import InternalDescriptionFormDialogContainer from 'components/DataEntityDetails/DatasetStructure/InternalDescriptionFormDialog/InternalDescriptionFormDialogContainer';
 import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
@@ -40,9 +36,6 @@ interface DatasetStructureItemProps extends StylesType {
     field: DataSetField,
     nesting: number
   ) => JSX.Element;
-  updateDataSetFieldDescription: (
-    params: DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest
-  ) => Promise<InternalDescription>;
 }
 
 const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
@@ -212,14 +205,14 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   control="byClick"
                   renderContent={() => (
                     <>
-                      <LabelsEditFormContainer
-                        datasetFieldId={datasetField.id}
-                        btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
-                      />
-                      <InternalDescriptionFormDialogContainer
-                        datasetFieldId={datasetField.id}
-                        btnCreateEl={<MenuItem>Edit Description</MenuItem>}
-                      />
+                      {/* <LabelsEditFormContainer */}
+                      {/*  datasetFieldId={datasetField.id} */}
+                      {/*  btnCreateEl={<MenuItem>Edit Labels</MenuItem>} */}
+                      {/* /> */}
+                      {/* <InternalDescriptionFormDialogContainer */}
+                      {/*  datasetFieldId={datasetField.id} */}
+                      {/*  btnCreateEl={<MenuItem>Edit Description</MenuItem>} */}
+                      {/* /> */}
                     </>
                   )}
                 >

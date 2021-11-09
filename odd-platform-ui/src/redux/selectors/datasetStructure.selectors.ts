@@ -64,42 +64,27 @@ export const getDatasetStructureTypeStats = createSelector(
   }
 );
 
-const getDatasetFieldLabelsUpdatingStatus = createFetchingSelector(
-  'PUT_DATA_SET_FIELD_LABELS'
-);
-
-export const getDatasetFieldLabelsUpdating = createSelector(
-  getDatasetFieldLabelsUpdatingStatus,
-  status => status === 'fetching'
-);
-
 export const datasetFieldId = (_: RootState, fieldId: number) => fieldId;
 
-export const getDatasetFieldLabels = createSelector(
-  getDatasetStructureState,
-  datasetFieldId,
-  (datasetStructureState, fieldId) => {
-    if (!fieldId) return [];
-    return datasetStructureState.fieldById[fieldId]?.labels || [];
-  }
+const getDatasetFieldFormDataUpdatingStatus = createFetchingSelector(
+  'PUT_DATA_SET_FIELD_FORM_DATA'
 );
 
-const getDatasetFieldDescriptionUpdatingStatus = createFetchingSelector(
-  'PUT_DATA_SET_FIELD_INTERNAL_DESCRIPTION'
-);
-
-export const getDatasetFieldDescriptionUpdating = createSelector(
-  getDatasetFieldDescriptionUpdatingStatus,
+export const getDatasetFieldFormDataUpdating = createSelector(
+  getDatasetFieldFormDataUpdatingStatus,
   status => status === 'fetching'
 );
 
-export const getDatasetFieldInternalDescription = createSelector(
+export const getDatasetFieldFormData = createSelector(
   getDatasetStructureState,
   datasetFieldId,
   (datasetStructureState, fieldId) => {
-    if (!fieldId) return '';
-    return (
-      datasetStructureState.fieldById[fieldId]?.internalDescription || ''
-    );
+    if (!fieldId) return { internalDescription: '', labels: [] };
+    return {
+      internalDescription:
+        datasetStructureState.fieldById[fieldId]?.internalDescription ||
+        '',
+      labels: datasetStructureState.fieldById[fieldId]?.labels || [],
+    };
   }
 );

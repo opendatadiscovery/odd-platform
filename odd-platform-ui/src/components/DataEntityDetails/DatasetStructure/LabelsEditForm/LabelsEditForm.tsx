@@ -7,7 +7,7 @@ import {
 import { useDebouncedCallback } from 'use-debounce';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
-  DatasetFieldApiUpsertDatasetFieldLabelsRequest,
+  // DatasetFieldApiUpsertDatasetFieldLabelsRequest,
   Label,
   LabelApiGetLabelListRequest,
   LabelsResponse,
@@ -24,9 +24,9 @@ interface LabelsEditProps extends StylesType {
   datasetFieldId: number;
   datasetFieldLabels: Label[];
   isLoading: boolean;
-  updateDataSetFieldLabels: (
-    params: DatasetFieldApiUpsertDatasetFieldLabelsRequest
-  ) => Promise<Label[]>;
+  // updateDataSetFieldLabels: (
+  //   params: DatasetFieldApiUpsertDatasetFieldLabelsRequest
+  // ) => Promise<Label[]>;
   searchLabels: (
     params: LabelApiGetLabelListRequest
   ) => Promise<LabelsResponse>; // Temp
@@ -39,7 +39,7 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
   datasetFieldId,
   datasetFieldLabels,
   isLoading,
-  updateDataSetFieldLabels,
+  // updateDataSetFieldLabels,
   searchLabels,
   btnCreateEl,
 }) => {
@@ -143,23 +143,23 @@ const LabelsEditForm: React.FC<LabelsEditProps> = ({
   };
 
   const handleSubmit = (data: DatasetFieldLabelsFormType) => {
-    updateDataSetFieldLabels({
-      datasetFieldId,
-      datasetFieldLabelsFormData: {
-        labelNameList: data.labelNameList.map(label => label.name),
-      },
-    }).then(
-      () => {
-        setFormState({ ...initialFormState, isSuccessfulSubmit: true });
-        clearFormState();
-      },
-      (response: Response) => {
-        setFormState({
-          ...initialFormState,
-          error: response.statusText || 'Unable to add labels',
-        });
-      }
-    );
+    // updateDataSetFieldLabels({
+    //   datasetFieldId,
+    //   datasetFieldLabelsFormData: {
+    //     labelNameList: data.labelNameList.map(label => label.name),
+    //   },
+    // }).then(
+    //   () => {
+    //     setFormState({ ...initialFormState, isSuccessfulSubmit: true });
+    //     clearFormState();
+    //   },
+    //   (response: Response) => {
+    //     setFormState({
+    //       ...initialFormState,
+    //       error: response.statusText || 'Unable to add labels',
+    //     });
+    //   }
+    // );
   };
 
   const handleAutocompleteSelect = (

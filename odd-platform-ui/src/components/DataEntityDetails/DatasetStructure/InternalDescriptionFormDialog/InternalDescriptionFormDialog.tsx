@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 import {
-  DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
+  // DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
   InternalDescription,
   InternalDescriptionFormData,
 } from 'generated-sources';
@@ -17,9 +17,9 @@ interface InternalDescriptionFormDialogProps extends StylesType {
   isLoading: boolean;
   datasetFieldId: number;
   datasetFieldIdInternalDescription?: string;
-  updateDataSetFieldDescription: (
-    params: DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest
-  ) => Promise<InternalDescription>;
+  // updateDataSetFieldDescription: (
+  //   params: DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest
+  // ) => Promise<InternalDescription>;
 }
 
 const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps> = ({
@@ -28,7 +28,7 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
   isLoading,
   datasetFieldId,
   datasetFieldIdInternalDescription,
-  updateDataSetFieldDescription,
+  // updateDataSetFieldDescription,
 }) => {
   const {
     handleSubmit,
@@ -56,22 +56,22 @@ const InternalDescriptionFormDialog: React.FC<InternalDescriptionFormDialogProps
   };
 
   const onSubmit = (data: InternalDescriptionFormData) => {
-    updateDataSetFieldDescription({
-      datasetFieldId,
-      internalDescriptionFormData: data,
-    }).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error:
-            response.statusText || 'Unable to add or edit description',
-        });
-      }
-    );
+    // updateDataSetFieldDescription({
+    //   datasetFieldId,
+    //   internalDescriptionFormData: data,
+    // }).then(
+    //   () => {
+    //     setState({ ...initialState, isSuccessfulSubmit: true });
+    //     clearState();
+    //   },
+    //   (response: Response) => {
+    //     setState({
+    //       ...initialState,
+    //       error:
+    //         response.statusText || 'Unable to add or edit description',
+    //     });
+    //   }
+    // );
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
