@@ -13,7 +13,7 @@ import {
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { UseFieldArrayProps, UseFieldArrayReturn } from 'react-hook-form';
+import { UseFieldArrayReturn } from 'react-hook-form';
 
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
 
@@ -21,7 +21,6 @@ interface LabelsAutocompleteProps {
   searchLabels: (
     params: LabelApiGetLabelListRequest
   ) => Promise<LabelsResponse>; // Temp
-  // appendLabel: (value: FilterOption | string | null) => void;
   appendLabel: UseFieldArrayReturn['append'];
 }
 
@@ -130,8 +129,10 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
       renderInput={params => (
         <AppTextField
           {...params}
+          sx={{ mt: 1.5 }}
           ref={params.InputProps.ref}
           placeholder="Enter label name…"
+          label="Label"
           customEndAdornment={{
             variant: 'loader',
             showAdornment: loading,
