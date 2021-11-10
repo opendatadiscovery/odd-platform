@@ -38,8 +38,12 @@ const DatasetFieldInfoEditForm: React.FC<StructureItemInfoEditFormProps> = ({
   btnCreateEl,
 }) => {
   const methods = useForm<DatasetFieldInfoFormType>({
-    mode: 'all',
-    reValidateMode: 'onChange',
+    defaultValues: {
+      labels: datasetFieldFormData.labels.map(label => ({
+        name: label.name,
+      })),
+      internalDescription: datasetFieldFormData.internalDescription,
+    },
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -54,11 +58,6 @@ const DatasetFieldInfoEditForm: React.FC<StructureItemInfoEditFormProps> = ({
   }>(initialFormState);
 
   const onOpen = (handleOpen: () => void) => () => {
-    methods.reset({
-      labels: datasetFieldFormData.labels?.map(label => ({
-        name: label.name,
-      })),
-    });
     if (btnCreateEl.props.onClick) btnCreateEl.props.onClick();
     handleOpen();
   };
@@ -89,10 +88,6 @@ const DatasetFieldInfoEditForm: React.FC<StructureItemInfoEditFormProps> = ({
     );
   };
 
-  const handleRemove = (index: number) => () => {
-    remove(index);
-  };
-
   const formTitle = <Typography variant="h4">Edit information</Typography>;
 
   const formContent = () => (
@@ -103,25 +98,15 @@ const DatasetFieldInfoEditForm: React.FC<StructureItemInfoEditFormProps> = ({
       <Typography variant="h5" color="texts.info">
         Add of edit labels and description
       </Typography>
-      <Controller
-        name="labels"
-        control={methods.control}
-        render={({ field }) => (
-          <LabelsAutocompleteContainer
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...field}
-            appendLabel={append}
-          />
-        )}
-      />
+      <LabelsAutocompleteContainer appendLabel={append} />
       <S.LabelItemsContainer sx={{ mt: 1, mb: 1.5 }}>
-        {fields?.map((label, index) => (
+        {fields.map((label, index) => (
           <LabelItem
             key={label.id}
             labelName={label.name}
             removable
             unfilled
-            onRemoveClick={handleRemove(index)}
+            onRemoveClick={() => remove(index)}
           />
         ))}
       </S.LabelItemsContainer>

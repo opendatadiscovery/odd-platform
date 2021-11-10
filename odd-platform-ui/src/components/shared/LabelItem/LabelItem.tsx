@@ -1,12 +1,9 @@
 import React from 'react';
-import { Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import cx from 'classnames';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { styles, StylesType } from './LabelItemStyles';
+import { Container } from './LabelItemStyles';
 
-interface LabelItemProps extends StylesType {
+interface LabelItemProps {
   labelName: string;
   removable?: boolean;
   onRemoveClick?: () => void;
@@ -14,17 +11,17 @@ interface LabelItemProps extends StylesType {
 }
 
 const LabelItem: React.FC<LabelItemProps> = ({
-  classes,
   labelName,
   removable,
   onRemoveClick,
   unfilled,
 }) => (
-  <Typography
+  <Container
+    $unfilled={unfilled}
+    sx={{ m: 0.25 }}
     noWrap
     variant="body2"
     title={labelName}
-    className={cx(classes.container, { [classes.unfilled]: unfilled })}
   >
     {labelName}
     {removable && (
@@ -36,7 +33,7 @@ const LabelItem: React.FC<LabelItemProps> = ({
         onClick={onRemoveClick}
       />
     )}
-  </Typography>
+  </Container>
 );
 
-export default withStyles(styles)(LabelItem);
+export default LabelItem;
