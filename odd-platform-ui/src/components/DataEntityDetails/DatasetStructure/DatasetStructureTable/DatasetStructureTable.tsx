@@ -1,5 +1,12 @@
 import React from 'react';
 import { Grid } from '@mui/material';
+import {
+  AutoSizer,
+  CellMeasurer,
+  CellMeasurerCache,
+  List,
+  ListRowProps,
+} from 'react-virtualized';
 import { DataSetField } from 'generated-sources';
 import { StylesType } from './DatasetStructureTableStyles';
 import DatasetStructureItemContainer from './DatasetStructureItem/DatasetStructureItemContainer';
@@ -37,6 +44,28 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     [datasetStructureRoot, datasetRowsCount, dataEntityId, versionId]
   );
 
+  const structureItems = datasetStructureRoot.map(field =>
+    field.parentFieldId ? null : renderStructureItem(field, 0)
+  );
+
+  const listRef = React.useRef<List | null>(null);
+
+  const cache = new CellMeasurerCache({
+    defaultHeight: 40,
+  });
+
+  const renderRow = ({ index, key, style, parent }: ListRowProps) => (
+    <CellMeasurer
+      key={key}
+      cache={cache}
+      parent={parent}
+      columnIndex={0}
+      rowIndex={index}
+    >
+      <div style={style}>{structureItems[index]}</div>
+    </CellMeasurer>
+  );
+
   return (
     <>
       <Grid item xs={12} className={classes.container}>
@@ -60,11 +89,26 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
         </Grid>
       </Grid>
       <Grid item xs={12} container>
-        {datasetStructureRoot
-          ? datasetStructureRoot.map(field =>
-              field.parentFieldId ? null : renderStructureItem(field, 0)
-            )
-          : null}
+        {/* {datasetStructureRoot */}
+        {/*  ? datasetStructureRoot.map(field => */}
+        {/*      field.parentFieldId ? null : renderStructureItem(field, 0) */}
+        {/*    ) */}
+        {/*  : null} */}
+        <div style={{ height: '100vh', display: 'flex', width: '100vw' }}>
+          <AutoSizer>
+            {({ width, height }) => (
+              <List
+                ref={listRef}
+                width={width}
+                height={height}
+                rowRenderer={renderRow}
+                rowCount={datasetStructureRoot.length}
+                rowHeight={cache.rowHeight}
+                deferredMeasurementCache={cache}
+              />
+            )}
+          </AutoSizer>
+        </div>
       </Grid>
     </>
   );
