@@ -15,6 +15,11 @@ This docker-compose contains:
 
 All configuration variables are defined in `.env` file. Please adjust them to your data sources' credentials.
 
+ODD Platform requires to define three mandatory env vars:
+* SPRING_DATASOURCE_URL: jdbc:postgresql://{DATABASE_HOSTNAME}:{DATABASE_PORT}/{DATABASE_NAME}
+* SPRING_DATASOURCE_USERNAME: {DATABASE_USERNAME}
+* SPRING_DATASOURCE_PASSWORD: {DATABASE_PASSWORD}
+
 ## Execution
 
 To run the **whole** environment execute:
