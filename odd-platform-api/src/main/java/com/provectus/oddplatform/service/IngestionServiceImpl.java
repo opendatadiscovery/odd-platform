@@ -497,8 +497,8 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private boolean isEntityUpdated(final DataEntityIngestionDto dto, final DataEntityPojo dePojo) {
-        return dePojo.getHollow() ||
-            !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
+        return dePojo.getHollow()
+            || !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
     }
 
     private DatasetVersionPojo mapNewDatasetVersion(final EnrichedDataEntityIngestionDto entity) {
