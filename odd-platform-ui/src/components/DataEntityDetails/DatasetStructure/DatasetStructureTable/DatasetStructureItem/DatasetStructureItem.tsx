@@ -38,11 +38,13 @@ interface DatasetStructureItemProps extends StylesType {
   childFields: DataSetField[];
   renderStructureItem: (
     field: DataSetField,
-    nesting: number
+    nesting: number,
+    onSizeChange: () => void
   ) => JSX.Element;
   updateDataSetFieldDescription: (
     params: DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest
   ) => Promise<InternalDescription>;
+  onSizeChange: () => void;
 }
 
 const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
@@ -53,6 +55,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   datasetField,
   childFields,
   renderStructureItem,
+  onSizeChange,
 }) => {
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
 
@@ -131,6 +134,10 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       />
     );
   }
+
+  React.useEffect(() => {
+    onSizeChange();
+  }, [open]);
 
   return (
     <Grid container className={cx(classes.container)}>
@@ -284,7 +291,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         <Collapse in={open} timeout="auto" unmountOnExit>
           {open && childFields.length
             ? childFields.map(field =>
-                renderStructureItem(field, nesting + 1)
+                renderStructureItem(field, nesting + 1, onSizeChange)
               )
             : null}
         </Collapse>
