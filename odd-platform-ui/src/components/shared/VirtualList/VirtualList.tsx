@@ -1,54 +1,30 @@
-import React, { CSSProperties } from 'react';
-import { VariableSizeList } from 'react-window';
-import AutoSizer from 'react-virtualized-auto-sizer';
-import VirtualRow from 'components/shared/VirtualRow/VirtualRow';
+import React from 'react';
+import {
+  CellMeasurer,
+  CellMeasurerCache,
+} from 'react-virtualized/dist/commonjs/CellMeasurer';
+import { List, ListRowProps } from 'react-virtualized/dist/commonjs/List';
+import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import { DataSetField } from 'generated-sources';
 import DatasetStructureItemContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureItem/DatasetStructureItemContainer';
-import { set } from 'react-hook-form';
 
 interface VirtualListProps {
-  // data: Array<JSX.Element | null>;
-  // rowCount: number;
   dataEntityId: number;
   versionId?: number;
   datasetStructureRoot: DataSetField[];
   datasetRowsCount: number;
 }
 
-export const DynamicListContext = React.createContext<
-  Partial<{ setSize: (index: number, size: number) => void }>
->({});
-
 const VirtualList: React.FC<VirtualListProps> = ({
-  // data,
-  // rowCount,
   dataEntityId,
   datasetRowsCount,
   datasetStructureRoot,
   versionId,
 }) => {
-  const listRef = React.useRef<VariableSizeList | null>(null);
-  const rowRef = React.useRef<HTMLDivElement | null>(null);
-
-  const [sizeMap, setSizeMap] = React.useState<{ [key: string]: number }>(
-    {}
-  );
-
-  const setSize = React.useCallback(
-    (
-      index: number,
-      ref: React.MutableRefObject<HTMLDivElement | null>
-    ) => () => {
-      console.log(index, ref.current?.getBoundingClientRect().height);
-      const rowHeight = ref.current?.getBoundingClientRect().height;
-      setSizeMap({ ...sizeMap, [index]: rowHeight });
-      // if (listRef.current) {
-      //   // console.log('Eff!');
-      //   listRef.current.resetAfterIndex(0);
-      // }
-    },
-    []
-  );
+  const cache = new CellMeasurerCache({
+    defaultHeight: 50,
+    fixedWidth: true,
+  });
 
   const rootStructureItems = datasetStructureRoot.filter(
     field => !field.parentFieldId
@@ -74,42 +50,35 @@ const VirtualList: React.FC<VirtualListProps> = ({
     [datasetStructureRoot, datasetRowsCount, dataEntityId, versionId]
   );
 
-  const renderListItem = ({
-    index,
-    style,
-    data,
-  }: {
-    index: number;
-    style: CSSProperties;
-    data: DataSetField[];
-  }) => {
-    const onSizeChange = setSize(index, rowRef);
-    return (
-      <div style={style} ref={rowRef}>
-        {renderStructureItem(data[index], 0, onSizeChange)}
-      </div>
-    );
-  };
-
-  const getSize = React.useCallback(index => sizeMap[index], []);
-
+  const renderListItem = ({ index, style, key, parent }: ListRowProps) => (
+    <CellMeasurer
+      cache={cache}
+      columnIndex={0}
+      key={key}
+      rowIndex={index}
+      parent={parent}
+    >
+      {({ measure }) => (
+        <div style={style}>
+          {renderStructureItem(rootStructureItems[index], 0, measure)}
+        </div>
+      )}
+    </CellMeasurer>
+  );
   return (
     <div style={{ height: '100vh', width: '100vw' }}>
       <AutoSizer>
         {({ height, width }) => (
-          <VariableSizeList
-            ref={listRef}
-            width={width}
+          <List
             height={height}
-            itemData={rootStructureItems}
-            itemCount={rootStructureItems.length}
-            itemSize={getSize}
-            overscanCount={4}
-          >
-            {({ index, style, data }) =>
-              renderListItem({ index, style, data })
-            }
-          </VariableSizeList>
+            width={width}
+            overscanRowCount={4}
+            rowCount={datasetRowsCount}
+            rowHeight={cache.rowHeight}
+            rowRenderer={renderListItem}
+            deferredMeasurementCache={cache}
+            // onScroll={}
+          />
         )}
       </AutoSizer>
     </div>

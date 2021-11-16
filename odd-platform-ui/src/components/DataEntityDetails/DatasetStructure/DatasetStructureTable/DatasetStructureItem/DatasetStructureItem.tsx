@@ -135,10 +135,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     );
   }
 
-  React.useEffect(() => {
-    onSizeChange();
-  }, [open]);
-
   return (
     <Grid container className={cx(classes.container)}>
       <Grid item container>
@@ -240,18 +236,16 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               <DatasetStructureFieldTypeLabel
                 typeName={datasetField.type.type}
               />
-              <div>
-                <AppTooltip
-                  renderContent={() =>
-                    `Logical type: ${datasetField.type.logicalType}`
-                  }
-                  type="dark"
-                >
-                  <InformationIcon
-                    sx={{ display: 'flex', alignItems: 'center' }}
-                  />
-                </AppTooltip>
-              </div>
+              <AppTooltip
+                renderContent={() =>
+                  `Logical type: ${datasetField.type.logicalType}`
+                }
+                type="dark"
+              >
+                <InformationIcon
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                />
+              </AppTooltip>
             </Grid>
           </Grid>
           <Grid item xs={2} container className={classes.columnDivided}>
@@ -288,7 +282,12 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         </Grid>
       </Grid>
       <Grid item xs={12} className={classes.rowChildren}>
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse
+          in={open}
+          timeout={0}
+          unmountOnExit
+          addEndListener={() => onSizeChange()}
+        >
           {open && childFields.length
             ? childFields.map(field =>
                 renderStructureItem(field, nesting + 1, onSizeChange)
