@@ -1,5 +1,11 @@
 import React from 'react';
-import { Collapse, Grid, MenuItem, Typography } from '@mui/material';
+import {
+  Collapse,
+  Grid,
+  MenuItem,
+  Popover,
+  Typography,
+} from '@mui/material';
 import cx from 'classnames';
 import round from 'lodash/round';
 import {
@@ -25,7 +31,6 @@ import LineBreakIcon from 'components/shared/Icons/LineBreakIcon';
 import LabelsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/LabelsEditForm/LabelsEditFormContainer';
 import InternalDescriptionFormDialogContainer from 'components/DataEntityDetails/DatasetStructure/InternalDescriptionFormDialog/InternalDescriptionFormDialogContainer';
 import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
 import AppMuiTooltip from 'components/shared/AppMuiTooltip/AppMuiTooltip';
@@ -59,6 +64,21 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   onSizeChange,
 }) => {
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
+
+  const popoverOpen = Boolean(anchorEl);
+  const id = popoverOpen ? 'simple-popover' : undefined;
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   let fieldStats = {} as DataSetFormattedStats;
   switch (datasetField.type.type) {
@@ -211,27 +231,32 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
             </Grid>
             <Grid item className={classes.typeCol}>
               <div className={classes.optionsBtn}>
-                <AppTooltip
-                  control="byClick"
-                  renderContent={() => (
-                    <>
-                      <LabelsEditFormContainer
-                        datasetFieldId={datasetField.id}
-                        btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
-                      />
-                      <InternalDescriptionFormDialogContainer
-                        datasetFieldId={datasetField.id}
-                        btnCreateEl={<MenuItem>Edit Description</MenuItem>}
-                      />
-                    </>
-                  )}
+                <AppIconButton
+                  size="medium"
+                  color="primaryLight"
+                  icon={<KebabIcon />}
+                  id={id}
+                  onClick={handleClick}
+                />
+                <Popover
+                  id={id}
+                  open={popoverOpen}
+                  anchorEl={anchorEl}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'center',
+                  }}
                 >
-                  <AppIconButton
-                    size="medium"
-                    color="primaryLight"
-                    icon={<KebabIcon />}
+                  <LabelsEditFormContainer
+                    datasetFieldId={datasetField.id}
+                    btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
                   />
-                </AppTooltip>
+                  <InternalDescriptionFormDialogContainer
+                    datasetFieldId={datasetField.id}
+                    btnCreateEl={<MenuItem>Edit Description</MenuItem>}
+                  />
+                </Popover>
               </div>
               <DatasetStructureFieldTypeLabel
                 typeName={datasetField.type.type}

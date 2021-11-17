@@ -5,7 +5,7 @@ import { IconButtonColors, StyledIconButton } from './AppIconButtonStyles';
 interface AppIconButtonProps
   extends Pick<
     IconButtonProps,
-    'onClick' | 'sx' | 'ref' | 'edge' | 'disabled'
+    'onClick' | 'sx' | 'ref' | 'edge' | 'disabled' | 'id'
   > {
   size?: 'medium' | 'small';
   color: IconButtonColors;
@@ -14,7 +14,10 @@ interface AppIconButtonProps
 }
 
 const AppIconButton: React.FC<AppIconButtonProps> = React.forwardRef(
-  ({ size = 'small', color, icon, open, onClick, sx, disabled }, ref) => (
+  (
+    { size = 'small', color, icon, open, onClick, sx, disabled, id },
+    ref
+  ) => (
     <StyledIconButton
       $color={color}
       $open={open}
@@ -24,6 +27,7 @@ const AppIconButton: React.FC<AppIconButtonProps> = React.forwardRef(
       sx={sx}
       disabled={disabled}
       ref={ref}
+      id={id}
     >
       {icon}
     </StyledIconButton>

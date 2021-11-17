@@ -36,7 +36,7 @@ const AppMuiTooltip: React.FC<AppMuiTooltipProps> = ({
       const { scrollWidth, clientWidth } = el;
       setHover(!hoverStatus && scrollWidth > clientWidth);
     }
-  }, [children]);
+  }, [childrenRef, childrenRef.current, setHover]);
 
   return (
     <S.AppTooltip

@@ -86,10 +86,7 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                 value && (
                   <Grid key={key} container>
                     <Grid item xs={4} className={classes.paramName}>
-                      <AppMuiTooltip
-                        title={() => key}
-                        checkForOverflow={false}
-                      >
+                      <AppMuiTooltip title={() => key}>
                         <Typography
                           variant="body1"
                           color="textSecondary"
@@ -100,10 +97,7 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                       </AppMuiTooltip>
                     </Grid>
                     <Grid item xs={8}>
-                      <AppMuiTooltip
-                        title={() => value}
-                        checkForOverflow={false}
-                      >
+                      <AppMuiTooltip title={() => value}>
                         <Typography variant="body1" noWrap>
                           {value}
                         </Typography>

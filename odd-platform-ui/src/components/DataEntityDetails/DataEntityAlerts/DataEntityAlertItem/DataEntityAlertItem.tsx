@@ -29,10 +29,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colType)}>
-      <AppMuiTooltip
-        title={() => lowerCase(alert.type)}
-        checkForOverflow={false}
-      >
+      <AppMuiTooltip title={() => lowerCase(alert.type)}>
         <Typography variant="body1" title={alert.type} noWrap>
           {lowerCase(alert.type)}
         </Typography>
