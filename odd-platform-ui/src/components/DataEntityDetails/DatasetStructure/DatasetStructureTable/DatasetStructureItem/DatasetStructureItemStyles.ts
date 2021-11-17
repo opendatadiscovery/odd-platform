@@ -34,7 +34,7 @@ export const styles = (theme: Theme) =>
       paddingRight: theme.spacing(9),
     },
     descriptionContainer: {
-      paddingRight: theme.spacing(9),
+      paddingRight: theme.spacing(2.5),
     },
     labelsContainer: {
       display: 'flex',

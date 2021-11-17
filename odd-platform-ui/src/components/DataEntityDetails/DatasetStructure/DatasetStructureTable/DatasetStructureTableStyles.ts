@@ -13,10 +13,10 @@ export const columnBasicStyles = (theme: Theme) => ({
     paddingLeft: theme.spacing(1),
     paddingRight: '5px',
     flexGrow: 1,
-    maxWidth: 'calc(100% - 72px)',
+    maxWidth: 'calc(100% - 140px)',
   },
   typeCol: {
-    width: '72px',
+    width: '140px',
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',

@@ -9,6 +9,7 @@ import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import AppMuiTooltip from 'components/shared/AppMuiTooltip/AppMuiTooltip';
 import { styles, StylesType } from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps extends StylesType {
@@ -28,14 +29,14 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colType)}>
-      <AppTooltip
-        renderContent={() => lowerCase(alert.type)}
-        offset={{ right: 80 }}
+      <AppMuiTooltip
+        title={() => lowerCase(alert.type)}
+        checkForOverflow={false}
       >
         <Typography variant="body1" title={alert.type} noWrap>
           {lowerCase(alert.type)}
         </Typography>
-      </AppTooltip>
+      </AppMuiTooltip>
     </Grid>
     <Grid item className={cx(classes.col, classes.colDescription)}>
       <Typography variant="body1" title={alert.description} noWrap>

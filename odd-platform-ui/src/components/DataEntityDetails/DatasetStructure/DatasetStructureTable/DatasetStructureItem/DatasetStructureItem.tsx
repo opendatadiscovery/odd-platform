@@ -22,12 +22,13 @@ import KebabIcon from 'components/shared/Icons/KebabIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import LineBreakIcon from 'components/shared/Icons/LineBreakIcon';
-import InformationIcon from 'components/shared/Icons/InformationIcon';
 import LabelsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/LabelsEditForm/LabelsEditFormContainer';
 import InternalDescriptionFormDialogContainer from 'components/DataEntityDetails/DatasetStructure/InternalDescriptionFormDialog/InternalDescriptionFormDialogContainer';
 import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import InformationIcon from 'components/shared/Icons/InformationIcon';
+import AppMuiTooltip from 'components/shared/AppMuiTooltip/AppMuiTooltip';
 import { StylesType } from './DatasetStructureItemStyles';
 
 interface DatasetStructureItemProps extends StylesType {
@@ -152,13 +153,13 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
               <Grid item container>
                 <Grid item xs={12} className={classes.nameContainer}>
-                  <AppTooltip renderContent={() => datasetField.name}>
+                  <AppMuiTooltip title={() => datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
                         (datasetField.isValue && 'Value') ||
                         datasetField.name}
                     </Typography>
-                  </AppTooltip>
+                  </AppMuiTooltip>
                   <div
                     className={
                       datasetField.labels ? classes.labelsList : ''
@@ -174,9 +175,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   xs={12}
                   className={classes.descriptionContainer}
                 >
-                  <AppTooltip
-                    renderContent={() => datasetField.internalDescription}
-                    offset={{ right: 160 }}
+                  <AppMuiTooltip
+                    title={() => datasetField.internalDescription}
                   >
                     <Typography
                       className={classes.internalDescription}
@@ -184,9 +184,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     >
                       {datasetField.internalDescription}
                     </Typography>
-                  </AppTooltip>
-                  <AppTooltip
-                    renderContent={() => datasetField.externalDescription}
+                  </AppMuiTooltip>
+                  <AppMuiTooltip
+                    title={() => datasetField.externalDescription}
                   >
                     <Typography
                       className={classes.externalDescription}
@@ -194,7 +194,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     >
                       {datasetField.externalDescription}
                     </Typography>
-                  </AppTooltip>
+                  </AppMuiTooltip>
                   {datasetField.type.type ===
                     DataSetFieldTypeTypeEnum.STRUCT &&
                   childFields.length ? (
@@ -236,16 +236,17 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               <DatasetStructureFieldTypeLabel
                 typeName={datasetField.type.type}
               />
-              <AppTooltip
-                renderContent={() =>
+              <AppMuiTooltip
+                title={() =>
                   `Logical type: ${datasetField.type.logicalType}`
                 }
                 type="dark"
+                checkForOverflow={false}
               >
                 <InformationIcon
                   sx={{ display: 'flex', alignItems: 'center' }}
                 />
-              </AppTooltip>
+              </AppMuiTooltip>
             </Grid>
           </Grid>
           <Grid item xs={2} container className={classes.columnDivided}>

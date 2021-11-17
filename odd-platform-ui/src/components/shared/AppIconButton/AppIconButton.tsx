@@ -13,26 +13,21 @@ interface AppIconButtonProps
   open?: boolean;
 }
 
-const AppIconButton: React.FC<AppIconButtonProps> = ({
-  size = 'small',
-  color,
-  icon,
-  open,
-  onClick,
-  sx,
-  disabled,
-}) => (
-  <StyledIconButton
-    $color={color}
-    $open={open}
-    disableRipple
-    size={size}
-    onClick={onClick}
-    sx={sx}
-    disabled={disabled}
-  >
-    {icon}
-  </StyledIconButton>
+const AppIconButton: React.FC<AppIconButtonProps> = React.forwardRef(
+  ({ size = 'small', color, icon, open, onClick, sx, disabled }, ref) => (
+    <StyledIconButton
+      $color={color}
+      $open={open}
+      disableRipple
+      size={size}
+      onClick={onClick}
+      sx={sx}
+      disabled={disabled}
+      ref={ref}
+    >
+      {icon}
+    </StyledIconButton>
+  )
 );
 
 export default AppIconButton;

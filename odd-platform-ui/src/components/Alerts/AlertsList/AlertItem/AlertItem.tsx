@@ -11,6 +11,7 @@ import { dataEntityDetailsPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import AppMuiTooltip from 'components/shared/AppMuiTooltip/AppMuiTooltip';
 import { styles, StylesType } from './AlertItemStyles';
 
 interface AlertItemProps extends StylesType {
@@ -39,18 +40,17 @@ const AlertItem: React.FC<AlertItemProps> = ({
               : '#'
           }
         >
-          <AppTooltip
-            renderContent={() =>
+          <AppMuiTooltip
+            title={() =>
               alert.dataEntity?.internalName ||
               alert.dataEntity?.externalName
             }
-            offset={{ right: 80 }}
           >
             <Typography variant="body1" noWrap>
               {alert.dataEntity?.internalName ||
                 alert.dataEntity?.externalName}
             </Typography>
-          </AppTooltip>
+          </AppMuiTooltip>
         </Link>
       </div>
       <div className={classes.typesList}>
