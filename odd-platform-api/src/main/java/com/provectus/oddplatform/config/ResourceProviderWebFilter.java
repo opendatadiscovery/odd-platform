@@ -16,7 +16,7 @@ public class ResourceProviderWebFilter implements WebFilter {
 
         if (requestPath.startsWith("/api")
             || requestPath.startsWith("/ingestion")
-            || requestPath.startsWith("/health")) {
+            || requestPath.startsWith("/actuator")) {
             return chain.filter(exchange);
         }
 
