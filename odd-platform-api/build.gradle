@@ -8,7 +8,7 @@ plugins {
 group = 'com.provectus'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
-sourceCompatibility = '13'
+sourceCompatibility = '17'
 
 apply from: 'jooq.generate.gradle'
 
@@ -107,7 +107,7 @@ sourceSets {
 
 jib {
     from {
-        image = 'adoptopenjdk/openjdk13:x86_64-alpine-jre-13.0.2_8'
+        image = 'openjdk:17-alpine'
     }
     to {
         image = 'opendatadiscovery/odd-platform'

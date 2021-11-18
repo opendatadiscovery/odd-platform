@@ -49,11 +49,11 @@ jobs:
           key: ${{ runner.os }}-platform-${{ hashFiles('**/build.gradle') }}
           restore-keys: |
             ${{ runner.os }}-platform-
-      - name: Set up JDK 13
+      - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
-          java-version: '13'
-          distribution: 'adopt'
+          java-version: '17'
+          distribution: 'temurin'
       - name: Build with Gradle
         env:
           NODE_ENV: production
