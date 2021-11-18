@@ -11,7 +11,7 @@ import { dataEntityDetailsPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
-import AppMuiTooltip from 'components/shared/AppMuiTooltip/AppMuiTooltip';
+import AppPopover from 'components/shared/AppPopover/AppPopover';
 import { styles, StylesType } from './AlertItemStyles';
 
 interface AlertItemProps extends StylesType {
@@ -40,7 +40,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
               : '#'
           }
         >
-          <AppMuiTooltip
+          <AppTooltip
             title={() =>
               alert.dataEntity?.internalName ||
               alert.dataEntity?.externalName
@@ -50,7 +50,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
               {alert.dataEntity?.internalName ||
                 alert.dataEntity?.externalName}
             </Typography>
-          </AppMuiTooltip>
+          </AppTooltip>
         </Link>
       </div>
       <div className={classes.typesList}>
@@ -93,20 +93,23 @@ const AlertItem: React.FC<AlertItemProps> = ({
       item
       className={cx(classes.col, classes.colActionBtn, classes.optionsBtn)}
     >
-      <AppTooltip
-        control="byClick"
-        renderContent={() => (
-          <MenuItem onClick={alertStatusHandler}>
-            {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
-          </MenuItem>
+      <AppPopover
+        renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+          <AppIconButton
+            ariaDescribedBy={ariaDescribedBy}
+            size="medium"
+            color="primaryLight"
+            icon={<KebabIcon />}
+            onClick={onClick}
+          />
         )}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 100 }}
       >
-        <AppIconButton
-          size="medium"
-          color="primaryLight"
-          icon={<KebabIcon />}
-        />
-      </AppTooltip>
+        <MenuItem onClick={alertStatusHandler}>
+          {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
+        </MenuItem>
+      </AppPopover>
     </Grid>
   </Grid>
 );

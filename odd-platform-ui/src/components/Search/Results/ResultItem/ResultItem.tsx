@@ -9,7 +9,7 @@ import ResultItemTruncatedCell from 'components/Search/Results/ResultItem/Result
 import InformationIcon from 'components/shared/Icons/InformationIcon';
 import { ColContainer } from 'components/Search/Results/ResultsStyles';
 import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
-import AppMuiTooltip from 'components/shared/AppMuiTooltip/AppMuiTooltip';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { Container, ItemLink } from './ResultItemStyles';
 
 interface ResultItemProps {
@@ -52,9 +52,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
             >
               {searchResult.internalName || searchResult.externalName}
             </Typography>
-            <AppMuiTooltip
+            <AppTooltip
               maxWidth={285}
-              sx={{ ml: 1.25 }}
+              sx={{ ml: 1.25, pr: 0.25 }}
               checkForOverflow={false}
               title={({ open }) => (
                 <ResultItemPreviewContainer
@@ -66,7 +66,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
               <InformationIcon
                 sx={{ display: 'flex', alignItems: 'center' }}
               />
-            </AppMuiTooltip>
+            </AppTooltip>
           </ColContainer>
           <Grid
             container

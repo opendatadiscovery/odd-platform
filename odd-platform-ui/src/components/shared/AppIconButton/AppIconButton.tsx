@@ -11,27 +11,33 @@ interface AppIconButtonProps
   color: IconButtonColors;
   icon: React.ReactNode;
   open?: boolean;
+  ariaDescribedBy?: IconButtonProps['aria-describedby'];
 }
 
-const AppIconButton: React.FC<AppIconButtonProps> = React.forwardRef(
-  (
-    { size = 'small', color, icon, open, onClick, sx, disabled, id },
-    ref
-  ) => (
-    <StyledIconButton
-      $color={color}
-      $open={open}
-      disableRipple
-      size={size}
-      onClick={onClick}
-      sx={sx}
-      disabled={disabled}
-      ref={ref}
-      id={id}
-    >
-      {icon}
-    </StyledIconButton>
-  )
+const AppIconButton: React.FC<AppIconButtonProps> = ({
+  size = 'small',
+  color,
+  icon,
+  open,
+  onClick,
+  sx,
+  disabled,
+  ariaDescribedBy,
+  id,
+}) => (
+  <StyledIconButton
+    aria-describedby={ariaDescribedBy}
+    $color={color}
+    $open={open}
+    id={id}
+    disableRipple
+    size={size}
+    onClick={onClick}
+    sx={sx}
+    disabled={disabled}
+  >
+    {icon}
+  </StyledIconButton>
 );
 
 export default AppIconButton;

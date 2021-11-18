@@ -4,7 +4,7 @@ import TestReportDetailsOverviewSkeleton from 'components/DataEntityDetails/Test
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { format, formatDistanceStrict } from 'date-fns';
 import { DataQualityTest } from 'generated-sources';
-import AppMuiTooltip from 'components/shared/AppMuiTooltip/AppMuiTooltip';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { StylesType } from './TestReportDetailsOverviewStyles';
 
 interface TestReportDetailsOverviewProps extends StylesType {
@@ -86,7 +86,7 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                 value && (
                   <Grid key={key} container>
                     <Grid item xs={4} className={classes.paramName}>
-                      <AppMuiTooltip title={() => key}>
+                      <AppTooltip title={() => key}>
                         <Typography
                           variant="body1"
                           color="textSecondary"
@@ -94,14 +94,14 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
                         >
                           {key}
                         </Typography>
-                      </AppMuiTooltip>
+                      </AppTooltip>
                     </Grid>
                     <Grid item xs={8}>
-                      <AppMuiTooltip title={() => value}>
+                      <AppTooltip title={() => value}>
                         <Typography variant="body1" noWrap>
                           {value}
                         </Typography>
-                      </AppMuiTooltip>
+                      </AppTooltip>
                     </Grid>
                   </Grid>
                 )

@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Collapse,
-  Grid,
-  MenuItem,
-  Popover,
-  Typography,
-} from '@mui/material';
+import { Collapse, Grid, MenuItem, Typography } from '@mui/material';
 import cx from 'classnames';
 import round from 'lodash/round';
 import {
@@ -33,8 +27,9 @@ import InternalDescriptionFormDialogContainer from 'components/DataEntityDetails
 import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import AppMuiTooltip from 'components/shared/AppMuiTooltip/AppMuiTooltip';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { StylesType } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetStructureItemStyles';
+import AppPopover from 'components/shared/AppPopover/AppPopover';
 
 interface DatasetStructureItemProps extends StylesType {
   initialStateOpen?: boolean;
@@ -64,21 +59,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   onSizeChange,
 }) => {
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
-
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-
-  const popoverOpen = Boolean(anchorEl);
-  const id = popoverOpen ? 'simple-popover' : undefined;
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   let fieldStats = {} as DataSetFormattedStats;
   switch (datasetField.type.type) {
@@ -173,13 +153,13 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
               <Grid item container>
                 <Grid item xs={12} className={classes.nameContainer}>
-                  <AppMuiTooltip title={() => datasetField.name}>
+                  <AppTooltip title={() => datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
                         (datasetField.isValue && 'Value') ||
                         datasetField.name}
                     </Typography>
-                  </AppMuiTooltip>
+                  </AppTooltip>
                   <div
                     className={
                       datasetField.labels ? classes.labelsList : ''
@@ -195,7 +175,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   xs={12}
                   className={classes.descriptionContainer}
                 >
-                  <AppMuiTooltip
+                  <AppTooltip
                     title={() => datasetField.internalDescription}
                   >
                     <Typography
@@ -204,8 +184,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     >
                       {datasetField.internalDescription}
                     </Typography>
-                  </AppMuiTooltip>
-                  <AppMuiTooltip
+                  </AppTooltip>
+                  <AppTooltip
                     title={() => datasetField.externalDescription}
                   >
                     <Typography
@@ -214,7 +194,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     >
                       {datasetField.externalDescription}
                     </Typography>
-                  </AppMuiTooltip>
+                  </AppTooltip>
                   {datasetField.type.type ===
                     DataSetFieldTypeTypeEnum.STRUCT &&
                   childFields.length ? (
@@ -231,37 +211,33 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
             </Grid>
             <Grid item className={classes.typeCol}>
               <div className={classes.optionsBtn}>
-                <AppIconButton
-                  size="medium"
-                  color="primaryLight"
-                  icon={<KebabIcon />}
-                  id={id}
-                  onClick={handleClick}
-                />
-                <Popover
-                  id={id}
-                  open={popoverOpen}
-                  anchorEl={anchorEl}
-                  onClose={handleClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'center',
-                  }}
+                <AppPopover
+                  renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+                    <AppIconButton
+                      ariaDescribedBy={ariaDescribedBy}
+                      size="medium"
+                      color="primaryLight"
+                      icon={<KebabIcon />}
+                      onClick={onClick}
+                    />
+                  )}
                 >
-                  <LabelsEditFormContainer
-                    datasetFieldId={datasetField.id}
-                    btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
-                  />
-                  <InternalDescriptionFormDialogContainer
-                    datasetFieldId={datasetField.id}
-                    btnCreateEl={<MenuItem>Edit Description</MenuItem>}
-                  />
-                </Popover>
+                  <>
+                    <LabelsEditFormContainer
+                      datasetFieldId={datasetField.id}
+                      btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
+                    />
+                    <InternalDescriptionFormDialogContainer
+                      datasetFieldId={datasetField.id}
+                      btnCreateEl={<MenuItem>Edit Description</MenuItem>}
+                    />
+                  </>
+                </AppPopover>
               </div>
               <DatasetStructureFieldTypeLabel
                 typeName={datasetField.type.type}
               />
-              <AppMuiTooltip
+              <AppTooltip
                 title={() =>
                   `Logical type: ${datasetField.type.logicalType}`
                 }
@@ -271,7 +247,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 <InformationIcon
                   sx={{ display: 'flex', alignItems: 'center' }}
                 />
-              </AppMuiTooltip>
+              </AppTooltip>
             </Grid>
           </Grid>
           <Grid item xs={2} container className={classes.columnDivided}>
