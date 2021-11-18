@@ -34,7 +34,7 @@ import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/Dataset
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
 import AppMuiTooltip from 'components/shared/AppMuiTooltip/AppMuiTooltip';
-import { StylesType } from './DatasetStructureItemStyles';
+import { StylesType } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetStructureItemStyles';
 
 interface DatasetStructureItemProps extends StylesType {
   initialStateOpen?: boolean;

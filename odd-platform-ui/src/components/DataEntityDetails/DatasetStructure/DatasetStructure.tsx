@@ -157,7 +157,6 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             <DatasetStructureTableContainer
               dataEntityId={dataEntityId}
               versionId={versionIdParam}
-              datasetRowsCount={datasetStats?.rowsCount}
             />
           ) : null}
         </Grid>

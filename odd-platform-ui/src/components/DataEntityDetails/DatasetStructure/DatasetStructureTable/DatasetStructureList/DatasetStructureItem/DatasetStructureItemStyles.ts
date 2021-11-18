@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material';
 import { WithStyles } from '@mui/styles';
 import createStyles from '@mui/styles/createStyles';
-import { columnBasicStyles } from '../DatasetStructureTableStyles';
+import { columnBasicStyles } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureTableStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({

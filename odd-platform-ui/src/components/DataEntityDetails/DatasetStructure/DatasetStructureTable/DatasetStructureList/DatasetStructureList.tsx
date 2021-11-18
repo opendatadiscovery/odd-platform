@@ -6,16 +6,16 @@ import {
 import { List, ListRowProps } from 'react-virtualized/dist/commonjs/List';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import { DataSetField } from 'generated-sources';
-import DatasetStructureItemContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureItem/DatasetStructureItemContainer';
+import DatasetStructureItemContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetStructureItemContainer';
 
-interface VirtualListProps {
+interface DatasetStructureListProps {
   dataEntityId: number;
   versionId?: number;
   datasetStructureRoot: DataSetField[];
   datasetRowsCount: number;
 }
 
-const VirtualList: React.FC<VirtualListProps> = ({
+const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   dataEntityId,
   datasetRowsCount,
   datasetStructureRoot,
@@ -26,8 +26,9 @@ const VirtualList: React.FC<VirtualListProps> = ({
     fixedWidth: true,
   });
 
-  const rootStructureItems = datasetStructureRoot.filter(
-    field => !field.parentFieldId
+  const rootStructureItems = React.useMemo(
+    () => datasetStructureRoot.filter(field => !field.parentFieldId),
+    [datasetStructureRoot]
   );
 
   const renderStructureItem = React.useCallback(
@@ -65,6 +66,7 @@ const VirtualList: React.FC<VirtualListProps> = ({
       )}
     </CellMeasurer>
   );
+
   return (
     <div style={{ height: '100vh', width: '100vw' }}>
       <AutoSizer>
@@ -77,7 +79,6 @@ const VirtualList: React.FC<VirtualListProps> = ({
             rowHeight={cache.rowHeight}
             rowRenderer={renderListItem}
             deferredMeasurementCache={cache}
-            // onScroll={}
           />
         )}
       </AutoSizer>
@@ -85,4 +86,4 @@ const VirtualList: React.FC<VirtualListProps> = ({
   );
 };
 
-export default VirtualList;
+export default DatasetStructureList;
