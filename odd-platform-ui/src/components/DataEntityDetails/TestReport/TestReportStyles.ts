@@ -33,9 +33,6 @@ export const styles = (theme: Theme) =>
         borderTopColor: theme.palette.divider,
       },
     },
-    testStatusItem: {
-      marginLeft: theme.spacing(0.5),
-    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

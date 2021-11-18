@@ -75,44 +75,26 @@ const TestReport: React.FC<TestReportProps> = ({
             <Grid container className={classes.testReportContainer}>
               <Grid container item className={classes.testReport}>
                 <TestRunStatusItem
-                  classes={{
-                    filledContainer: classes.testStatusItem,
-                  }}
                   count={datasetTestReport?.successTotal}
                   typeName={DataQualityTestRunStatusEnum.SUCCESS}
                 />
                 <TestRunStatusItem
-                  classes={{
-                    filledContainer: classes.testStatusItem,
-                  }}
                   count={datasetTestReport?.failedTotal}
                   typeName={DataQualityTestRunStatusEnum.FAILED}
                 />
                 <TestRunStatusItem
-                  classes={{
-                    filledContainer: classes.testStatusItem,
-                  }}
                   count={datasetTestReport?.brokenTotal}
                   typeName={DataQualityTestRunStatusEnum.BROKEN}
                 />
                 <TestRunStatusItem
-                  classes={{
-                    filledContainer: classes.testStatusItem,
-                  }}
                   count={datasetTestReport?.abortedTotal}
                   typeName={DataQualityTestRunStatusEnum.ABORTED}
                 />
                 <TestRunStatusItem
-                  classes={{
-                    filledContainer: classes.testStatusItem,
-                  }}
                   count={datasetTestReport?.skippedTotal}
                   typeName={DataQualityTestRunStatusEnum.SKIPPED}
                 />
                 <TestRunStatusItem
-                  classes={{
-                    filledContainer: classes.testStatusItem,
-                  }}
                   count={datasetTestReport?.unknownTotal}
                   typeName={DataQualityTestRunStatusEnum.UNKNOWN}
                 />
