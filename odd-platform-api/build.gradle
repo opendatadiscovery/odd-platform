@@ -8,7 +8,7 @@ plugins {
 group = 'com.provectus'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
-sourceCompatibility = '13'
+sourceCompatibility = '17'
 
 apply from: 'jooq.generate.gradle'
 
@@ -31,6 +31,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
     implementation "org.springframework.session:spring-session-core"
+    implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
     implementation "com.provectus.oddplatform:odd-platform-ingestion-contract:$oddIngestionApiVersion"
     implementation project(':odd-platform-api-contract')
@@ -106,7 +107,7 @@ sourceSets {
 
 jib {
     from {
-        image = 'adoptopenjdk/openjdk13:x86_64-alpine-jre-13.0.2_8'
+        image = 'openjdk:17-alpine'
     }
     to {
         image = 'opendatadiscovery/odd-platform'

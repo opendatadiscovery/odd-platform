@@ -46,13 +46,19 @@ metrics:
 
 management:
   endpoints:
-    enabled: false
+    enabled-by-default: false
     web:
-      base-path: /
-  info:
-    enabled: true
-  health:
-    enabled: true
+      exposure:
+        include: health, prometheus, env, info
+  endpoint:
+    health:
+      enabled: true
+    prometheus:
+      enabled: true
+    env:
+      enabled: true
+    info:
+      enabled: true
 
 logging:
   level:
