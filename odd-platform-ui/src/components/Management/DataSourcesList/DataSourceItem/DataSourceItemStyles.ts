@@ -1,37 +1,28 @@
-import { Theme } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+export const ActionsContainer = styled(Grid)(({ theme }) => ({
+  visibility: 'hidden',
+  display: 'flex',
+  justifyContent: 'flex-end',
+}));
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      width: 'calc(100% - 8px)',
-      padding: theme.spacing(2, 2, 2, 2),
-      margin: '0 auto',
-      alignItems: 'flex-start',
-      '&:hover': {
-        boxShadow: theme.shadows[8],
-      },
-      '&:hover $actionsContainer': {
-        visibility: 'visible',
-        display: 'flex',
-        justifyContent: 'flex-end',
-      },
-    },
-    nameContainer: { minHeight: '40px' },
-    actionsContainer: {
-      visibility: 'hidden',
-    },
-    pullingValue: { color: 'green' },
-    descriptionContainer: {
-      '& > *': {
-        marginBottom: theme.spacing(1),
-      },
-      '& > *:last-child': {
-        marginBottom: theme.spacing(0),
-      },
-    },
-  });
+export const DescriptionContainer = styled(Grid)(({ theme }) => ({
+  '& > *': {
+    marginBottom: theme.spacing(1),
+  },
+  '& > *:last-child': {
+    marginBottom: theme.spacing(0),
+  },
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const Container = styled(Paper)(({ theme }) => ({
+  width: 'calc(100% - 8px)',
+  padding: theme.spacing(2, 2, 2, 2),
+  margin: '0 auto',
+  alignItems: 'flex-start',
+  // '&:hover': {
+  //   boxShadow: theme.shadows[8],
+  //   [`${ActionsContainer}`]: { visibility: 'visible' },
+  // },
+}));

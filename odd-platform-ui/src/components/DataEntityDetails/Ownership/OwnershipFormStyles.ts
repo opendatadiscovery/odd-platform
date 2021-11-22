@@ -11,12 +11,6 @@ export const styles = (theme: Theme) =>
         marginTop: theme.spacing(1.5),
       },
     },
-    existingOwner: {
-      '& $existingOwnerLabel': {
-        marginRight: theme.spacing(0.5),
-      },
-    },
-    existingOwnerLabel: {},
   });
 
 export type StylesType = WithStyles<typeof styles>;

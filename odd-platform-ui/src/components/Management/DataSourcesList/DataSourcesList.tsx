@@ -146,11 +146,12 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             dataLength={dataSourcesList.length}
           >
             {dataSourcesList.map(dataSource => (
-              <DataSourceItemContainer
-                classes={{ container: classes.datasourceItem }}
-                key={dataSource.id}
-                dataSource={dataSource}
-              />
+              <Grid sx={{ mb: 1 }}>
+                <DataSourceItemContainer
+                  key={dataSource.id}
+                  dataSource={dataSource}
+                />
+              </Grid>
             ))}
           </InfiniteScroll>
         </Grid>

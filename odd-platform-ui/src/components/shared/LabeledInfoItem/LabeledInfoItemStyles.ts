@@ -1,32 +1,37 @@
-import { Theme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { propsChecker } from 'lib/helpers';
+import { DataQualityTestRunStatusEnum } from 'generated-sources';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      alignItems: 'flex-start',
-      flexDirection: 'column',
-    },
-    inline: {
+export const Container = styled(Grid, {
+  shouldForwardProp: propsChecker,
+})<{
+  $inline?: boolean;
+}>(({ theme, $inline }) => {
+  if ($inline)
+    return {
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'nowrap',
       alignItems: 'center',
-      '& $label': {
-        marginRight: theme.spacing(2),
-      },
-    },
-    label: {
-      color: theme.palette.texts.secondary,
-      lineHeight: theme.typography.h3.lineHeight,
-      overflow: 'hidden',
-    },
-    value: {
-      wordBreak: 'break-all',
-      overflow: 'hidden',
-    },
-  });
+    };
 
-export type StylesType = WithStyles<typeof styles>;
+  return { alignItems: 'flex-start', flexDirection: 'column' };
+});
+
+export const Label = styled(Typography)(({ theme }) => ({
+  color: theme.palette.texts.secondary,
+  lineHeight: theme.typography.h3.lineHeight,
+  overflow: 'hidden',
+}));
+
+export const Value = styled(Typography, {
+  shouldForwardProp: propsChecker,
+})<{
+  $runStatus?: DataQualityTestRunStatusEnum;
+  $valueColor?: string;
+}>(({ theme, $runStatus, $valueColor }) => ({
+  wordBreak: 'break-all',
+  overflow: 'hidden',
+  color: $runStatus ? theme.palette.runStatus[$runStatus] : $valueColor,
+}));

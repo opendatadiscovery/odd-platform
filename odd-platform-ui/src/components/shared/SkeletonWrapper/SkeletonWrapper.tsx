@@ -1,8 +1,6 @@
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
-import { styles, StylesType } from './SkeletonWrapperStyles';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   renderContent: (contentProps: {
     randomSkeletonPercentWidth: () => string;
     key?: number;
@@ -11,7 +9,6 @@ interface SkeletonProps extends StylesType {
 }
 
 const SkeletonWrapper: React.FC<SkeletonProps> = ({
-  classes,
   length = 1,
   renderContent,
 }) => {
@@ -22,11 +19,11 @@ const SkeletonWrapper: React.FC<SkeletonProps> = ({
     <>
       {[...Array(length)].map((_, key) => (
         // eslint-disable-next-line react/no-array-index-key
-        <div key={key} className={classes.container}>
+        <div key={key} style={{ width: '100%' }}>
           {renderContent({ randomSkeletonPercentWidth, key })}
         </div>
       ))}
     </>
   );
 };
-export default withStyles(styles)(SkeletonWrapper);
+export default SkeletonWrapper;

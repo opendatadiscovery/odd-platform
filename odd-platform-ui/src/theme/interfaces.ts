@@ -23,20 +23,13 @@ interface ItemCondition {
   disabled?: ItemColors;
 }
 
-interface RunStatus {
-  SUCCESS: string;
-  FAILED: string;
-  BROKEN: string;
-  SKIPPED: string;
-  ABORTED: string;
-  UNKNOWN: string;
-}
-
 type EntityType = Record<DataEntityTypeNameEnum, string>;
 
 type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 
 type ReportStatus = Record<DataQualityTestRunStatusEnum, ItemColors>;
+
+type RunStatus = Record<DataQualityTestRunStatusEnum, string>;
 
 interface TextType {
   primary: string;
