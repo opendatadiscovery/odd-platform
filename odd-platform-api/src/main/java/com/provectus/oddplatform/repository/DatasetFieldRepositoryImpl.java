@@ -242,21 +242,19 @@ public class DatasetFieldRepositoryImpl
             .leftJoin(df2)
             .on(df.PARENT_FIELD_ODDRN.eq(df2.ODDRN))
             .where(df.ID.eq(id))
-            .fetchOptional(this::getDatasetFieldDto);
+            .fetchOptional(this::mapRecordToDatasetFieldDto);
         return dtoOptional.orElseThrow(
             () -> new IllegalArgumentException(String.format("DatasetField not found by id = %s", id)));
     }
 
     @NotNull
-    private DatasetFieldDto getDatasetFieldDto(final Record record) {
-        final DatasetFieldDto dto = new DatasetFieldDto();
+    private DatasetFieldDto mapRecordToDatasetFieldDto(final Record record) {
         final DatasetFieldPojo pojo = record.into(DatasetFieldPojo.class);
         final Long parentFieldId = record.get("parent_field_id", Long.class);
 
-        dto.setDatasetFieldPojo(pojo);
-        if (parentFieldId != null) {
-            dto.setParentFieldId(parentFieldId);
-        }
-        return dto;
+        return DatasetFieldDto.builder()
+            .datasetFieldPojo(pojo)
+            .parentFieldId(parentFieldId)
+            .build();
     }
 }

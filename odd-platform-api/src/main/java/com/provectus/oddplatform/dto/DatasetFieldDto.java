@@ -15,5 +15,5 @@ import lombok.NoArgsConstructor;
 public class DatasetFieldDto {
     private DatasetFieldPojo datasetFieldPojo;
     private Set<LabelPojo> labelPojos;
-    private long parentFieldId;
+    private Long parentFieldId;
 }
