@@ -12,7 +12,8 @@ public interface DatasetFieldRepository extends CRUDRepository<DatasetFieldPojo>
 
     void updateSearchVectors(final long datasetFieldId);
 
-    DatasetFieldDto updateDatasetField(final long datasetFieldId, DatasetFieldUpdateFormData datasetFieldUpdateFormData);
+    DatasetFieldDto updateDatasetField(final long datasetFieldId,
+                                       DatasetFieldUpdateFormData datasetFieldUpdateFormData);
 
     DatasetFieldDto getDto(long id);
 }

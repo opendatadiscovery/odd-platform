@@ -178,9 +178,8 @@ public class DatasetFieldRepositoryImpl
 
     @Override
     @Transactional
-    public DatasetFieldDto updateDatasetField(long datasetFieldId,
-                                              DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
-
+    public DatasetFieldDto updateDatasetField(final long datasetFieldId,
+                                              final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         setDescription(datasetFieldId, datasetFieldUpdateFormData.getDescription());
 
         final Set<String> names = new HashSet<>(datasetFieldUpdateFormData.getLabelNames());
@@ -220,12 +219,12 @@ public class DatasetFieldRepositoryImpl
 
         labelRepository.createRelations(datasetFieldId, toRelate);
 
-        Set<LabelPojo> labelPojos = Stream.concat(
+        final Set<LabelPojo> labelPojos = Stream.concat(
                 labelsToCreate.stream(),
-                currentLabels.stream().filter(label -> !idsToDelete.contains(label.getId())))
+                existingLabels.stream())
             .collect(Collectors.toSet());
 
-        DatasetFieldDto dto = getDto(datasetFieldId);
+        final DatasetFieldDto dto = getDto(datasetFieldId);
         dto.setLabelPojos(labelPojos);
 
         updateSearchVectors(datasetFieldId);
@@ -234,18 +233,18 @@ public class DatasetFieldRepositoryImpl
 
     @Override
     public DatasetFieldDto getDto(final long id) {
-        DatasetField df = DATASET_FIELD.as("df");
-        DatasetField df2 = DATASET_FIELD.as("df2");
+        final DatasetField df = DATASET_FIELD.as("df");
+        final DatasetField df2 = DATASET_FIELD.as("df2");
 
-        Optional<DatasetFieldDto> dtoOptional = dslContext.select(df.asterisk(), df2.ID.as("parent_field_id"))
+        final Optional<DatasetFieldDto> dtoOptional = dslContext.select(df.asterisk(), df2.ID.as("parent_field_id"))
             .from(df)
             .leftJoin(df2)
             .on(df.PARENT_FIELD_ODDRN.eq(df2.ODDRN))
             .where(df.ID.eq(id))
             .fetchOptional(record -> {
-                DatasetFieldDto dto = new DatasetFieldDto();
-                DatasetFieldPojo pojo = record.into(DatasetFieldPojo.class);
-                Long parentFieldId = record.get("parent_field_id", Long.class);
+                final DatasetFieldDto dto = new DatasetFieldDto();
+                final DatasetFieldPojo pojo = record.into(DatasetFieldPojo.class);
+                final Long parentFieldId = record.get("parent_field_id", Long.class);
 
                 dto.setDatasetFieldPojo(pojo);
                 if (parentFieldId != null) {
@@ -256,5 +255,4 @@ public class DatasetFieldRepositoryImpl
         return dtoOptional.orElseThrow(
             () -> new IllegalArgumentException(String.format("DatasetField not found by id = %s", id)));
     }
-
 }

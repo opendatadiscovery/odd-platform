@@ -78,7 +78,6 @@ public class LabelRepositoryImpl
             .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)
                 .and(LABEL_TO_DATASET_FIELD.LABEL_ID.in(labels)))
             .execute();
-
     }
 
     @Override
@@ -100,7 +99,6 @@ public class LabelRepositoryImpl
                 .loadRecords(records)
                 .fields(LABEL_TO_DATASET_FIELD.fields())
                 .execute();
-
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }

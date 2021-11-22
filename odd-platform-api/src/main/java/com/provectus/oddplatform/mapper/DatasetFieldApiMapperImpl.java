@@ -18,7 +18,7 @@ public class DatasetFieldApiMapperImpl implements DatasetFieldApiMapper {
 
     @Override
     public DataSetField mapDto(final DatasetFieldDto dto) {
-        DatasetFieldPojo pojo = dto.getDatasetFieldPojo();
+        final DatasetFieldPojo pojo = dto.getDatasetFieldPojo();
         return new DataSetField()
             .id(pojo.getId())
             .parentFieldId(dto.getParentFieldId())
