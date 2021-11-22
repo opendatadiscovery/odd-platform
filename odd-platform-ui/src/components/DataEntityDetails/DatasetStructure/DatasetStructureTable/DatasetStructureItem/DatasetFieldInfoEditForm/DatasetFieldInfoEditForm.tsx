@@ -59,6 +59,12 @@ const DatasetFieldInfoEditForm: React.FC<StructureItemInfoEditFormProps> = ({
 
   const onOpen = (handleOpen: () => void) => () => {
     if (btnCreateEl.props.onClick) btnCreateEl.props.onClick();
+    methods.reset({
+      labels: datasetFieldFormData.labels.map(label => ({
+        name: label.name,
+      })),
+      internalDescription: datasetFieldFormData.internalDescription,
+    });
     handleOpen();
   };
 
