@@ -18,6 +18,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
@@ -241,18 +242,21 @@ public class DatasetFieldRepositoryImpl
             .leftJoin(df2)
             .on(df.PARENT_FIELD_ODDRN.eq(df2.ODDRN))
             .where(df.ID.eq(id))
-            .fetchOptional(record -> {
-                final DatasetFieldDto dto = new DatasetFieldDto();
-                final DatasetFieldPojo pojo = record.into(DatasetFieldPojo.class);
-                final Long parentFieldId = record.get("parent_field_id", Long.class);
-
-                dto.setDatasetFieldPojo(pojo);
-                if (parentFieldId != null) {
-                    dto.setParentFieldId(parentFieldId);
-                }
-                return dto;
-            });
+            .fetchOptional(this::getDatasetFieldDto);
         return dtoOptional.orElseThrow(
             () -> new IllegalArgumentException(String.format("DatasetField not found by id = %s", id)));
+    }
+
+    @NotNull
+    private DatasetFieldDto getDatasetFieldDto(final Record record) {
+        final DatasetFieldDto dto = new DatasetFieldDto();
+        final DatasetFieldPojo pojo = record.into(DatasetFieldPojo.class);
+        final Long parentFieldId = record.get("parent_field_id", Long.class);
+
+        dto.setDatasetFieldPojo(pojo);
+        if (parentFieldId != null) {
+            dto.setParentFieldId(parentFieldId);
+        }
+        return dto;
     }
 }
