@@ -146,7 +146,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             dataLength={dataSourcesList.length}
           >
             {dataSourcesList.map(dataSource => (
-              <Grid sx={{ mb: 1 }}>
+              <Grid key={dataSource.id} sx={{ mb: 1 }}>
                 <DataSourceItemContainer
                   key={dataSource.id}
                   dataSource={dataSource}
