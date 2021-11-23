@@ -59,6 +59,7 @@ class PojoSuffixDefaultGeneratorStrategy extends DefaultGeneratorStrategy {
 }
 
 class DockerGeneratorTask extends DefaultTask {
+    @Internal
     final DockerGeneratorExtension extension = project.extensions.getByName("jooq") as DockerGeneratorExtension
 
     private static final String LINE_BREAK_REGEX = "((\\r?\\n)|(\\r))";

@@ -1,41 +1,41 @@
 import { ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
-import { Dictionary } from 'lodash';
 import {
-  DataSource,
-  DataEntity,
-  DataEntityDetails,
-  MetadataField,
-  Tag,
-  Label,
-  MetadataFieldValue,
-  Owner,
-  DataSetField,
-  DataSetVersion,
-  Ownership,
-  DataEntityType,
-  DataEntitySubType,
-  DataEntityRef,
+  Alert,
+  AlertTotals,
   AssociatedOwner,
+  DataEntity,
+  DataEntityRef,
+  DataEntitySubType,
+  DataEntityType,
   DataQualityTest,
   DataQualityTestRun,
+  DataSetField,
   DataSetTestReport,
-  AlertTotals,
-  Alert,
+  DataSetVersion,
+  DataSource,
+  Label,
+  MetadataField,
+  MetadataFieldValue,
   Namespace,
+  Owner,
+  Ownership,
+  Tag,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
-import { LoaderState } from './loader';
+// eslint-disable-next-line lodash/import-scope
+import { Dictionary } from 'lodash';
 import { DataSetStructureTypesCount } from './datasetStructure';
 import {
-  SearchTotalsByName,
-  SearchFacetsByName,
   FacetOptionsByName,
+  SearchFacetsByName,
+  SearchTotalsByName,
 } from './search';
 import { DataEntityLineageById } from './dataentityLineage';
 import { CurrentPageInfo } from './common';
 import { DataEntityDetailsState } from './dataentities';
+import { LoaderState } from './loader';
 
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };

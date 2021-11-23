@@ -131,7 +131,6 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           fullWidth
           label={labeled ? 'Value' : null}
           placeholder={labeled ? '' : defaultText}
-          // variant="outlined"
           inputProps={{
             type:
               metadataType &&

@@ -19,7 +19,6 @@ import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
-import org.jooq.SelectOnConditionStep;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,15 +37,12 @@ public class LabelRepositoryImpl
     implements LabelRepository {
 
     private final JooqFTSHelper jooqFTSHelper;
-    private final DatasetFieldRepository datasetFieldRepository;
 
     public LabelRepositoryImpl(final DSLContext dslContext,
                                final JooqQueryHelper jooqQueryHelper,
-                               final JooqFTSHelper jooqFTSHelper,
-                               final DatasetFieldRepository datasetFieldRepository) {
+                               final JooqFTSHelper jooqFTSHelper) {
         super(dslContext, jooqQueryHelper, LABEL, LABEL.ID, LABEL.IS_DELETED, LABEL.NAME, LABEL.NAME, LabelPojo.class);
         this.jooqFTSHelper = jooqFTSHelper;
-        this.datasetFieldRepository = datasetFieldRepository;
     }
 
     @Override
@@ -82,8 +78,6 @@ public class LabelRepositoryImpl
             .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)
                 .and(LABEL_TO_DATASET_FIELD.LABEL_ID.in(labels)))
             .execute();
-
-        datasetFieldRepository.updateSearchVectors(datasetFieldId);
     }
 
     @Override
@@ -105,8 +99,6 @@ public class LabelRepositoryImpl
                 .loadRecords(records)
                 .fields(LABEL_TO_DATASET_FIELD.fields())
                 .execute();
-
-            datasetFieldRepository.updateSearchVectors(datasetFieldId);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
