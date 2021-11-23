@@ -21,8 +21,8 @@ export const Container = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2, 2, 2, 2),
   margin: '0 auto',
   alignItems: 'flex-start',
-  // '&:hover': {
-  //   boxShadow: theme.shadows[8],
-  //   [`${ActionsContainer}`]: { visibility: 'visible' },
-  // },
+  '&:hover': {
+    boxShadow: theme.shadows[8],
+    [`${ActionsContainer}`]: { visibility: 'visible' },
+  },
 }));
