@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces/state';
 import {
-  getDatasetFieldFormData,
+  getDatasetFieldData,
   getDatasetFieldFormDataUpdating,
 } from 'redux/selectors/datasetStructure.selectors';
 import { updateDataSetFieldFormData } from 'redux/thunks';
@@ -11,7 +11,7 @@ const mapStateToProps = (
   state: RootState,
   { datasetFieldId }: { datasetFieldId: number }
 ) => ({
-  datasetFieldFormData: getDatasetFieldFormData(state, datasetFieldId),
+  datasetFieldFormData: getDatasetFieldData(state, datasetFieldId),
   isLoading: getDatasetFieldFormDataUpdating(state),
 });
 

@@ -13,7 +13,7 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 import LabelsAutocompleteContainer from './LabelsAutocomplete/LabelsAutocompleteContainer';
 import * as S from './DatasetFieldInfoEditFormStyles';
 
-interface StructureItemInfoEditFormProps {
+interface DataSetFieldInfoEditFormProps {
   datasetFieldId: number;
   datasetFieldFormData: {
     internalDescription: string;
@@ -30,7 +30,7 @@ type DatasetFieldInfoFormType = {
   internalDescription: string;
 };
 
-const DatasetFieldInfoEditForm: React.FC<StructureItemInfoEditFormProps> = ({
+const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
   datasetFieldId,
   datasetFieldFormData,
   isLoading,
@@ -102,7 +102,7 @@ const DatasetFieldInfoEditForm: React.FC<StructureItemInfoEditFormProps> = ({
       onSubmit={methods.handleSubmit(handleFormSubmit)}
     >
       <Typography variant="h5" color="texts.info">
-        Add of edit labels and description
+        Add or edit labels and description
       </Typography>
       <LabelsAutocompleteContainer appendLabel={append} />
       <S.LabelItemsContainer sx={{ mt: 1, mb: 1.5 }}>

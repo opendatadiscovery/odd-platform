@@ -75,7 +75,7 @@ export const getDatasetFieldFormDataUpdating = createSelector(
   status => status === 'fetching'
 );
 
-export const getDatasetFieldFormData = createSelector(
+export const getDatasetFieldData = createSelector(
   getDatasetStructureState,
   datasetFieldId,
   (datasetStructureState, fieldId) => {
