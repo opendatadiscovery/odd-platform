@@ -229,19 +229,19 @@ public class DatasetFieldRepositoryImpl
 
         final List<Long> createdIds = labelRepository.bulkCreate(labelsToCreate).stream()
             .map(LabelPojo::getId)
-                .collect(Collectors.toList());
+            .collect(Collectors.toList());
 
-            final Set<Long> toRelate = Stream.concat(
-                createdIds.stream(),
-                existingLabels.stream().map(LabelPojo::getId).filter(not(idsToDelete::contains))
-            ).collect(Collectors.toSet());
+        final Set<Long> toRelate = Stream.concat(
+            createdIds.stream(),
+            existingLabels.stream().map(LabelPojo::getId).filter(not(idsToDelete::contains))
+        ).collect(Collectors.toSet());
 
-            labelRepository.createRelations(datasetFieldId, toRelate);
+        labelRepository.createRelations(datasetFieldId, toRelate);
 
-            return Stream.concat(
-                    labelsToCreate.stream(),
-                    existingLabels.stream())
-                .collect(Collectors.toSet());
+        return Stream.concat(
+                labelsToCreate.stream(),
+                existingLabels.stream())
+            .collect(Collectors.toSet());
     }
 
     @Override
