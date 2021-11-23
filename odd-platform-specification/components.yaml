@@ -1087,16 +1087,6 @@ components:
       items:
         $ref: '#/components/schemas/LabelFormData'
 
-    DatasetFieldLabelsFormData:
-      type: object
-      properties:
-        label_name_list:
-          type: array
-          items:
-            type: string
-      required:
-        - label_name_list
-
     DataEntityLineageNode:
       type: object
       properties:
