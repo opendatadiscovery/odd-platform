@@ -1,10 +1,9 @@
 import { createAsyncAction } from 'typesafe-actions';
 import { DataSetStructure } from 'generated-sources';
-import { PartialEntityUpdateParams } from 'redux/interfaces';
 import {
-  UpdateDataSetFieldInternalDescriptionParams,
-  UpdateDataSetFieldLabelsParams,
-} from 'redux/interfaces/datasetStructure';
+  PartialEntityUpdateParams,
+  UpdateDataSetFieldFormDataParams,
+} from 'redux/interfaces';
 
 export const fetchDataSetStructureAction = createAsyncAction(
   'GET_DATA_SET_STRUCTURE__REQUEST',
@@ -19,14 +18,8 @@ export const fetchDataSetStructureAction = createAsyncAction(
   undefined
 >();
 
-export const updateDataSetFieldInternalDescriptionParamsAction = createAsyncAction(
-  'PUT_DATA_SET_FIELD_INTERNAL_DESCRIPTION__REQUEST',
-  'PUT_DATA_SET_FIELD_INTERNAL_DESCRIPTION__SUCCESS',
-  'PUT_DATA_SET_FIELD_INTERNAL_DESCRIPTION__FAILURE'
-)<undefined, UpdateDataSetFieldInternalDescriptionParams, undefined>();
-
-export const updateDataSetFieldLabelsParamsAction = createAsyncAction(
-  'PUT_DATA_SET_FIELD_LABELS__REQUEST',
-  'PUT_DATA_SET_FIELD_LABELS__SUCCESS',
-  'PUT_DATA_SET_FIELD_LABELS__FAILURE'
-)<undefined, UpdateDataSetFieldLabelsParams, undefined>();
+export const updateDataSetFieldFormDataParamsAction = createAsyncAction(
+  'PUT_DATA_SET_FIELD_FORM_DATA__REQUEST',
+  'PUT_DATA_SET_FIELD_FORM_DATA__SUCCESS',
+  'PUT_DATA_SET_FIELD_FORM_DATA__FAILURE'
+)<undefined, UpdateDataSetFieldFormDataParams, undefined>();

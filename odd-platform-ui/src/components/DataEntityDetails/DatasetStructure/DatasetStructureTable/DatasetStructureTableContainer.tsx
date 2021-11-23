@@ -1,9 +1,8 @@
 import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { updateDataSetFieldDescription } from 'redux/thunks/datasetStructure.thunks';
 import { getDatasetStructure } from 'redux/selectors/datasetStructure.selectors';
-import DatasetStructureItem from './DatasetStructureTable';
+import DatasetStructureTable from './DatasetStructureTable';
 import { styles } from './DatasetStructureTableStyles';
 
 const mapStateToProps = (
@@ -22,11 +21,9 @@ const mapStateToProps = (
   }),
 });
 
-const mapDispatchToProps = {
-  updateDataSetFieldDescription,
-};
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(DatasetStructureItem));
+)(withStyles(styles)(DatasetStructureTable));

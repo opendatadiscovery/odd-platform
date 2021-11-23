@@ -5,7 +5,6 @@ import { RootState } from 'redux/interfaces';
 import {
   fetchDataSetStructure,
   fetchDataSetStructureLatest,
-  updateDataSetFieldDescription,
 } from 'redux/thunks/datasetStructure.thunks';
 import {
   getDatasetStats,
@@ -52,7 +51,6 @@ const mapStateToProps = (
 const mapDispatchToProps = {
   fetchDataSetStructureLatest,
   fetchDataSetStructure,
-  updateDataSetFieldDescription,
 };
 
 export default connect(
