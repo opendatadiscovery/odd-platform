@@ -190,40 +190,45 @@ public class DatasetFieldRepositoryImpl
             currentPojo.setInternalDescription(newDescription);
         }
 
-        Set<LabelPojo> labels = updateDatasetFieldLabels(datasetFieldId, datasetFieldUpdateFormData);
+        final Set<LabelPojo> labels = updateDatasetFieldLabels(datasetFieldId, datasetFieldUpdateFormData);
         dto.setLabelPojos(labels);
 
         updateSearchVectors(datasetFieldId);
         return dto;
     }
 
-    private Set<LabelPojo> updateDatasetFieldLabels(long datasetFieldId, DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
+    private Set<LabelPojo> updateDatasetFieldLabels(final long datasetFieldId,
+                                                    final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         final Set<LabelPojo> currentLabels = new HashSet<>(labelRepository.listByDatasetFieldId(datasetFieldId));
         final Set<String> names = new HashSet<>(datasetFieldUpdateFormData.getLabelNames());
 
-        final Set<String> currentLabelsNames = currentLabels.stream().map(LabelPojo::getName).collect(Collectors.toSet());
+        final Set<String> currentLabelsNames =
+            currentLabels.stream().map(LabelPojo::getName).collect(Collectors.toSet());
 
-        if (!SetUtils.isEqualSet(currentLabelsNames, names)) {
-            final List<LabelPojo> existingLabels = labelRepository.listByNames(names);
+        if (SetUtils.isEqualSet(currentLabelsNames, names)) {
+            return currentLabels;
+        }
 
-            final List<String> existingLabelsNames = existingLabels.stream()
-                .map(LabelPojo::getName)
-                .collect(Collectors.toList());
+        final List<LabelPojo> existingLabels = labelRepository.listByNames(names);
 
-            final List<Long> idsToDelete = currentLabels.stream()
-                .filter(l -> !names.contains(l.getName()))
-                .map(LabelPojo::getId)
-                .collect(Collectors.toList());
+        final List<String> existingLabelsNames = existingLabels.stream()
+            .map(LabelPojo::getName)
+            .collect(Collectors.toList());
 
-            labelRepository.deleteRelations(datasetFieldId, idsToDelete);
+        final List<Long> idsToDelete = currentLabels.stream()
+            .filter(l -> !names.contains(l.getName()))
+            .map(LabelPojo::getId)
+            .collect(Collectors.toList());
 
-            final List<LabelPojo> labelsToCreate = names.stream()
-                .filter(n -> !currentLabelsNames.contains(n) && !existingLabelsNames.contains(n))
-                .map(n -> new LabelPojo().setName(n))
-                .collect(Collectors.toList());
+        labelRepository.deleteRelations(datasetFieldId, idsToDelete);
 
-            final List<Long> createdIds = labelRepository.bulkCreate(labelsToCreate).stream()
-                .map(LabelPojo::getId)
+        final List<LabelPojo> labelsToCreate = names.stream()
+            .filter(n -> !currentLabelsNames.contains(n) && !existingLabelsNames.contains(n))
+            .map(n -> new LabelPojo().setName(n))
+            .collect(Collectors.toList());
+
+        final List<Long> createdIds = labelRepository.bulkCreate(labelsToCreate).stream()
+            .map(LabelPojo::getId)
                 .collect(Collectors.toList());
 
             final Set<Long> toRelate = Stream.concat(
@@ -237,9 +242,6 @@ public class DatasetFieldRepositoryImpl
                     labelsToCreate.stream(),
                     existingLabels.stream())
                 .collect(Collectors.toSet());
-        } else {
-            return currentLabels;
-        }
     }
 
     @Override
