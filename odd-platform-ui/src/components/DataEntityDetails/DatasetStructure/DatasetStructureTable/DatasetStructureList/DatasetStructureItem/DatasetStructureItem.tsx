@@ -133,7 +133,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     <Grid container className={cx(classes.container)}>
       <Grid item container>
         <Grid item xs={12} container className={classes.rowInfo}>
-          <Grid item xs={6} container>
+          <Grid item xs={6} container wrap="nowrap">
             <Grid
               item
               container

@@ -16,7 +16,6 @@ export const columnBasicStyles = (theme: Theme) => ({
     maxWidth: 'calc(100% - 140px)',
   },
   typeCol: {
-    width: '140px',
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
