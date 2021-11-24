@@ -73,7 +73,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       break;
     case DataSetFieldTypeTypeEnum.DATETIME:
       fieldStats = datasetField.stats
-        ?.dateTimeStats as DataSetFormattedStats;
+        ?.datetimeStats as DataSetFormattedStats;
       break;
     case DataSetFieldTypeTypeEnum.BINARY:
       fieldStats = datasetField.stats
