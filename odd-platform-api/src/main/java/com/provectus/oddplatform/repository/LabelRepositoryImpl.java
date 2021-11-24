@@ -94,7 +94,7 @@ public class LabelRepositoryImpl
         final InsertSetStep<LabelToDatasetFieldRecord> insertStep = dslContext.insertInto(LABEL_TO_DATASET_FIELD);
 
         for (int i = 0; i < records.size() - 1; i++) {
-            insertStep.set(records.get(i));
+            insertStep.set(records.get(i)).newRecord();
         }
 
         insertStep.set(records.get(records.size() - 1))
