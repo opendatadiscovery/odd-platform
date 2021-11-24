@@ -81,7 +81,6 @@ public class LabelRepositoryImpl
     }
 
     @Override
-    @Transactional
     public void createRelations(final long datasetFieldId, final Collection<Long> labels) {
         if (labels.isEmpty()) {
             return;
