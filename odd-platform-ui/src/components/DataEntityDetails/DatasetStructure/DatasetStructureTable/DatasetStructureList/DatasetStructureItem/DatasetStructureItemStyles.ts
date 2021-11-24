@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material';
 import { WithStyles } from '@mui/styles';
 import createStyles from '@mui/styles/createStyles';
-import { columnBasicStyles } from '../DatasetStructureTableStyles';
+import { columnBasicStyles } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureTableStyles';
 
 export const styles = (theme: Theme) =>
   createStyles({
@@ -34,7 +34,7 @@ export const styles = (theme: Theme) =>
       paddingRight: theme.spacing(9),
     },
     descriptionContainer: {
-      paddingRight: theme.spacing(9),
+      paddingRight: theme.spacing(2.5),
     },
     labelsContainer: {
       display: 'flex',
