@@ -6,7 +6,6 @@ import com.provectus.oddplatform.model.tables.records.LabelRecord;
 import com.provectus.oddplatform.model.tables.records.LabelToDatasetFieldRecord;
 import com.provectus.oddplatform.repository.util.JooqFTSHelper;
 import com.provectus.oddplatform.repository.util.JooqQueryHelper;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +13,7 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record3;
@@ -81,7 +81,6 @@ public class LabelRepositoryImpl
     }
 
     @Override
-    @Transactional
     public void createRelations(final long datasetFieldId, final Collection<Long> labels) {
         if (labels.isEmpty()) {
             return;
@@ -92,16 +91,15 @@ public class LabelRepositoryImpl
             .map(p -> dslContext.newRecord(LABEL_TO_DATASET_FIELD, p))
             .collect(Collectors.toList());
 
-        try {
-            // TODO: bad idea, will not throw error
-            dslContext.loadInto(LABEL_TO_DATASET_FIELD)
-                .onDuplicateKeyIgnore()
-                .loadRecords(records)
-                .fields(LABEL_TO_DATASET_FIELD.fields())
-                .execute();
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        final InsertSetStep<LabelToDatasetFieldRecord> insertStep = dslContext.insertInto(LABEL_TO_DATASET_FIELD);
+
+        for (int i = 0; i < records.size() - 1; i++) {
+            insertStep.set(records.get(i));
         }
+
+        insertStep.set(records.get(records.size() - 1))
+            .onDuplicateKeyIgnore()
+            .execute();
     }
 
     @Override
