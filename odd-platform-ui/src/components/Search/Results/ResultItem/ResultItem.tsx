@@ -7,9 +7,9 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { dataEntityDetailsPath } from 'lib/paths';
 import ResultItemTruncatedCell from 'components/Search/Results/ResultItem/ResultItemTruncatedCell/ResultItemTruncatedCell';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { ColContainer } from 'components/Search/Results/ResultsStyles';
 import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { Container, ItemLink } from './ResultItemStyles';
 
 interface ResultItemProps {
@@ -54,14 +54,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </Typography>
             <AppTooltip
               maxWidth={285}
-              sx={{ ml: 1.25 }}
-              renderContent={({ isTooltipShown }) => (
+              sx={{ ml: 1.25, pr: 0.25 }}
+              checkForOverflow={false}
+              title={({ open }) => (
                 <ResultItemPreviewContainer
                   dataEntityId={searchResult.id}
-                  fetchData={isTooltipShown}
+                  fetchData={open}
                 />
               )}
-              offset={{ right: 140 }}
             >
               <InformationIcon
                 sx={{ display: 'flex', alignItems: 'center' }}

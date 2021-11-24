@@ -5,12 +5,13 @@ import { IconButtonColors, StyledIconButton } from './AppIconButtonStyles';
 interface AppIconButtonProps
   extends Pick<
     IconButtonProps,
-    'onClick' | 'sx' | 'ref' | 'edge' | 'disabled'
+    'onClick' | 'sx' | 'ref' | 'edge' | 'disabled' | 'id'
   > {
   size?: 'medium' | 'small';
   color: IconButtonColors;
   icon: React.ReactNode;
   open?: boolean;
+  ariaDescribedBy?: IconButtonProps['aria-describedby'];
 }
 
 const AppIconButton: React.FC<AppIconButtonProps> = ({
@@ -21,10 +22,14 @@ const AppIconButton: React.FC<AppIconButtonProps> = ({
   onClick,
   sx,
   disabled,
+  ariaDescribedBy,
+  id,
 }) => (
   <StyledIconButton
+    aria-describedby={ariaDescribedBy}
     $color={color}
     $open={open}
+    id={id}
     disableRipple
     size={size}
     onClick={onClick}

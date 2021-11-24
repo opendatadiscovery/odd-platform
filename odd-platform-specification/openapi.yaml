@@ -1245,11 +1245,11 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - metadata
-  /api/datasetfields/{dataset_field_id}/description:
+  /api/datasetfields/{dataset_field_id}:
     put:
-      summary: Upsert DatasetField's internal description
-      description: Upserts DatasetField's internal description in string format
-      operationId: upsertDatasetFieldInternalDescription
+      summary: Update DatasetField's labels and description
+      description: Updates DatasetField's labels and description
+      operationId: updateDatasetField
       parameters:
         - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
       requestBody:
@@ -1257,36 +1257,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/InternalDescriptionFormData'
+              $ref: './components.yaml/#/components/schemas/DatasetFieldUpdateFormData'
       responses:
-        '200':
+        '201':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/InternalDescription'
-      tags:
-        - datasetField
-  /api/datasetfields/{dataset_field_id}/labels:
-    put:
-      summary: Upsert DatasetField's labels
-      description: Upserts DatasetField's labels
-      operationId: upsertDatasetFieldLabels
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/DatasetFieldLabelsFormData'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/LabelList'
+                $ref: './components.yaml/#/components/schemas/DataSetField'
       tags:
         - datasetField
 

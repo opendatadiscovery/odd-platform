@@ -64,14 +64,10 @@ export const DatasetStatsLabelMap: Map<
   ['medianValue', 'Median'],
 ]);
 
-export interface UpdateDataSetFieldInternalDescriptionParams {
+export interface UpdateDataSetFieldFormDataParams {
   datasetFieldId: number;
-  internalDescription: string;
-}
-
-export interface UpdateDataSetFieldLabelsParams {
-  datasetFieldId: number;
-  labels: Label[];
+  internalDescription?: string;
+  labels?: Label[];
 }
 
 export type DataSetStructureTypesCount = Partial<

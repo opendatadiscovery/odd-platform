@@ -9,6 +9,7 @@ import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import AppPopover from 'components/shared/AppPopover/AppPopover';
 import { styles, StylesType } from './DataEntityAlertItemStyles';
 
 interface DataEntityAlertItemProps extends StylesType {
@@ -28,10 +29,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       </Typography>
     </Grid>
     <Grid item className={cx(classes.col, classes.colType)}>
-      <AppTooltip
-        renderContent={() => lowerCase(alert.type)}
-        offset={{ right: 80 }}
-      >
+      <AppTooltip title={() => lowerCase(alert.type)}>
         <Typography variant="body1" title={alert.type} noWrap>
           {lowerCase(alert.type)}
         </Typography>
@@ -61,20 +59,23 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       item
       className={cx(classes.col, classes.colActionBtn, classes.optionsBtn)}
     >
-      <AppTooltip
-        control="byClick"
-        renderContent={() => (
-          <MenuItem onClick={alertStatusHandler}>
-            {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
-          </MenuItem>
+      <AppPopover
+        renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+          <AppIconButton
+            ariaDescribedBy={ariaDescribedBy}
+            size="medium"
+            color="primaryLight"
+            icon={<KebabIcon />}
+            onClick={onClick}
+          />
         )}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        transformOrigin={{ vertical: 'top', horizontal: 100 }}
       >
-        <AppIconButton
-          size="medium"
-          color="primaryLight"
-          icon={<KebabIcon />}
-        />
-      </AppTooltip>
+        <MenuItem onClick={alertStatusHandler}>
+          {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
+        </MenuItem>
+      </AppPopover>
     </Grid>
   </Grid>
 );
