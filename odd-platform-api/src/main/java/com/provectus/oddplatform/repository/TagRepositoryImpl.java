@@ -113,7 +113,7 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
         final InsertSetStep<TagToDataEntityRecord> insertStep = dslContext.insertInto(TAG_TO_DATA_ENTITY);
 
         for (int i = 0; i < records.size() - 1; i++) {
-            insertStep.set(records.get(i));
+            insertStep.set(records.get(i)).newRecord();
         }
 
         insertStep.set(records.get(records.size() - 1))
