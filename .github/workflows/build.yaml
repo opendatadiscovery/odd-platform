@@ -49,7 +49,6 @@ jobs:
             ${{ runner.os }}-node-
       - name: Build with Gradle
         env:
-          NODE_ENV: production
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms2048m -Xmx2048m"
