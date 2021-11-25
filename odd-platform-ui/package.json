@@ -40,11 +40,9 @@
     ]
   },
   "dependencies": {
-    "@date-io/date-fns": "^1.3.13",
     "@mui/icons-material": "^5.0.1",
     "@mui/lab": "^5.0.0-alpha.48",
     "@mui/material": "^5.0.1",
-    "@mui/styled-engine-sc": "^5.1.0",
     "@mui/styles": "^5.0.1",
     "@mui/system": "^5.0.4",
     "@reduxjs/toolkit": "^1.5.0",
@@ -59,7 +57,6 @@
     "date-fns": "^2.18.0",
     "github-markdown-css": "^4.0.0",
     "lodash": "^4.17.21",
-    "query-string": "^6.14.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-hook-form": "^7.6.6",
@@ -81,6 +78,8 @@
     "uuid": "^3.4.0"
   },
   "devDependencies": {
+    "@date-io/date-fns": "^1.3.13",
+    "@mui/styled-engine-sc": "^5.1.0",
     "@types/d3": "^6.3.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@types/classnames": "^2.2.11",
