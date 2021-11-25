@@ -1,27 +1,22 @@
 import React, { MouseEvent } from 'react';
 import {
-  AppBar,
-  Typography,
-  Toolbar,
-  IconButton,
-  Menu,
-  MenuItem,
-  useScrollTrigger,
   Grid,
+  IconButton,
+  Typography,
+  useScrollTrigger,
 } from '@mui/material';
 import {
+  AssociatedOwner,
   SearchApiSearchRequest,
   SearchFacetsData,
-  AssociatedOwner,
 } from 'generated-sources';
-import { useHistory, Link, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { searchPath } from 'lib/paths';
-import { AccountCircle } from '@mui/icons-material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { StylesType } from './AppToolbarStyles';
+import * as S from './AppToolbarStyles';
 
-interface AppToolbarProps extends StylesType {
+interface AppToolbarProps {
   identity?: AssociatedOwner;
   fetchIdentity: () => Promise<AssociatedOwner | void>;
   createDataEntitiesSearch: (
@@ -30,7 +25,6 @@ interface AppToolbarProps extends StylesType {
 }
 
 const AppToolbar: React.FC<AppToolbarProps> = ({
-  classes,
   identity,
   createDataEntitiesSearch,
   fetchIdentity,
@@ -109,25 +103,19 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   };
 
   return (
-    <AppBar
-      position="fixed"
-      elevation={elevation}
-      classes={{
-        root: classes.lightBg,
-      }}
-    >
-      <Toolbar disableGutters className={classes.container}>
-        <Grid container className={classes.contentContainer}>
-          <Grid item xs={3} className={classes.logoContainer}>
-            <Link to="/" className={classes.title}>
-              <div className={classes.logo} />
+    <S.Bar position="fixed" elevation={elevation}>
+      <S.Container disableGutters>
+        <S.ContentContainer container>
+          <S.LogoContainer item xs={3}>
+            <S.Title to="/">
+              <S.Logo />
               <Typography variant="h4" noWrap>
                 Platform
               </Typography>
-            </Link>
-          </Grid>
-          <Grid item xs={9} className={classes.actionsContainer}>
-            <Grid item className={classes.tabsContainer}>
+            </S.Title>
+          </S.LogoContainer>
+          <S.ActionsContainer item xs={9}>
+            <Grid item sx={{ pl: 1 }}>
               {tabs.length ? (
                 <AppTabs
                   type="menu"
@@ -137,11 +125,9 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
                 />
               ) : null}
             </Grid>
-            <Grid item className={classes.sectionDesktop}>
-              <AccountCircle className={classes.userAvatar} />
-              <p className={classes.userName}>
-                {identity?.identity.username}
-              </p>
+            <S.SectionDesktop item>
+              <S.UserAvatar />
+              <S.UserName>{identity?.identity.username}</S.UserName>
               <IconButton
                 edge="end"
                 aria-label="account of current user"
@@ -153,12 +139,11 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
               >
                 <ArrowDropDownIcon />
               </IconButton>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Toolbar>
-      <Menu
-        classes={{ paper: classes.menu }}
+            </S.SectionDesktop>
+          </S.ActionsContainer>
+        </S.ContentContainer>
+      </S.Container>
+      <S.UserMenu
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
@@ -167,12 +152,9 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        {/* <MenuItem onClick={handleMenuClose}>Profile</MenuItem> */}
-        <MenuItem className={classes.menuItem} onClick={handleLogout}>
-          Logout
-        </MenuItem>
-      </Menu>
-    </AppBar>
+        <S.UserMenuItem onClick={handleLogout}>Logout</S.UserMenuItem>
+      </S.UserMenu>
+    </S.Bar>
   );
 };
 
