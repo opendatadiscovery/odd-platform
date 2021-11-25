@@ -1,21 +1,18 @@
 import {
-  DataSetApi,
   Configuration,
-  DataSetStructure,
-  DatasetFieldApi,
-  InternalDescription,
-  Label,
-  DataSetApiGetDataSetStructureLatestRequest,
+  DataSetApi,
   DataSetApiGetDataSetStructureByVersionIdRequest,
-  DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
-  DatasetFieldApiUpsertDatasetFieldLabelsRequest,
+  DataSetApiGetDataSetStructureLatestRequest,
+  DataSetField,
+  DatasetFieldApi,
+  DatasetFieldApiUpdateDatasetFieldRequest,
+  DataSetStructure,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
-import { PartialEntityUpdateParams } from 'redux/interfaces';
 import {
-  UpdateDataSetFieldInternalDescriptionParams,
-  UpdateDataSetFieldLabelsParams,
-} from 'redux/interfaces/datasetStructure';
+  PartialEntityUpdateParams,
+  UpdateDataSetFieldFormDataParams,
+} from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 
@@ -68,36 +65,20 @@ export const fetchDataSetStructure = createThunk<
   })
 );
 
-export const updateDataSetFieldDescription = createThunk<
-  DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
-  InternalDescription,
-  UpdateDataSetFieldInternalDescriptionParams
+export const updateDataSetFieldFormData = createThunk<
+  DatasetFieldApiUpdateDatasetFieldRequest,
+  DataSetField,
+  UpdateDataSetFieldFormDataParams
 >(
-  (params: DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest) =>
-    datasetFieldApiClient.upsertDatasetFieldInternalDescription(params),
-  actions.updateDataSetFieldInternalDescriptionParamsAction,
+  (params: DatasetFieldApiUpdateDatasetFieldRequest) =>
+    datasetFieldApiClient.updateDatasetField(params),
+  actions.updateDataSetFieldFormDataParamsAction,
   (
-    response: InternalDescription,
-    request: DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest
+    response: DataSetField,
+    request: DatasetFieldApiUpdateDatasetFieldRequest
   ) => ({
     datasetFieldId: request.datasetFieldId,
     internalDescription: response.internalDescription,
-  })
-);
-
-export const updateDataSetFieldLabels = createThunk<
-  DatasetFieldApiUpsertDatasetFieldLabelsRequest,
-  Label[],
-  UpdateDataSetFieldLabelsParams
->(
-  (params: DatasetFieldApiUpsertDatasetFieldLabelsRequest) =>
-    datasetFieldApiClient.upsertDatasetFieldLabels(params),
-  actions.updateDataSetFieldLabelsParamsAction,
-  (
-    response: Label[],
-    request: DatasetFieldApiUpsertDatasetFieldLabelsRequest
-  ) => ({
-    datasetFieldId: request.datasetFieldId,
-    labels: response,
+    labels: response.labels,
   })
 );

@@ -6,7 +6,6 @@ import com.provectus.oddplatform.model.tables.records.LabelRecord;
 import com.provectus.oddplatform.model.tables.records.LabelToDatasetFieldRecord;
 import com.provectus.oddplatform.repository.util.JooqFTSHelper;
 import com.provectus.oddplatform.repository.util.JooqQueryHelper;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +13,12 @@ import java.util.stream.Collectors;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
-import org.jooq.SelectOnConditionStep;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,15 +37,12 @@ public class LabelRepositoryImpl
     implements LabelRepository {
 
     private final JooqFTSHelper jooqFTSHelper;
-    private final DatasetFieldRepository datasetFieldRepository;
 
     public LabelRepositoryImpl(final DSLContext dslContext,
                                final JooqQueryHelper jooqQueryHelper,
-                               final JooqFTSHelper jooqFTSHelper,
-                               final DatasetFieldRepository datasetFieldRepository) {
+                               final JooqFTSHelper jooqFTSHelper) {
         super(dslContext, jooqQueryHelper, LABEL, LABEL.ID, LABEL.IS_DELETED, LABEL.NAME, LABEL.NAME, LabelPojo.class);
         this.jooqFTSHelper = jooqFTSHelper;
-        this.datasetFieldRepository = datasetFieldRepository;
     }
 
     @Override
@@ -82,12 +78,9 @@ public class LabelRepositoryImpl
             .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)
                 .and(LABEL_TO_DATASET_FIELD.LABEL_ID.in(labels)))
             .execute();
-
-        datasetFieldRepository.updateSearchVectors(datasetFieldId);
     }
 
     @Override
-    @Transactional
     public void createRelations(final long datasetFieldId, final Collection<Long> labels) {
         if (labels.isEmpty()) {
             return;
@@ -98,18 +91,15 @@ public class LabelRepositoryImpl
             .map(p -> dslContext.newRecord(LABEL_TO_DATASET_FIELD, p))
             .collect(Collectors.toList());
 
-        try {
-            // TODO: bad idea, will not throw error
-            dslContext.loadInto(LABEL_TO_DATASET_FIELD)
-                .onDuplicateKeyIgnore()
-                .loadRecords(records)
-                .fields(LABEL_TO_DATASET_FIELD.fields())
-                .execute();
+        final InsertSetStep<LabelToDatasetFieldRecord> insertStep = dslContext.insertInto(LABEL_TO_DATASET_FIELD);
 
-            datasetFieldRepository.updateSearchVectors(datasetFieldId);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        for (int i = 0; i < records.size() - 1; i++) {
+            insertStep.set(records.get(i)).newRecord();
         }
+
+        insertStep.set(records.get(records.size() - 1))
+            .onDuplicateKeyIgnore()
+            .execute();
     }
 
     @Override

@@ -1,13 +1,11 @@
 import React from 'react';
-import { Collapse, Grid, MenuItem, Typography } from '@mui/material';
+import { Collapse, Grid, Typography } from '@mui/material';
 import cx from 'classnames';
 import round from 'lodash/round';
 import {
   DataSetField,
-  DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest,
   DataSetFieldTypeTypeEnum,
   DataSetStats,
-  InternalDescription,
 } from 'generated-sources';
 import {
   DataSetFormattedStats,
@@ -18,17 +16,16 @@ import { format } from 'date-fns';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
-import KebabIcon from 'components/shared/Icons/KebabIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import LineBreakIcon from 'components/shared/Icons/LineBreakIcon';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import LabelsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/LabelsEditForm/LabelsEditFormContainer';
-import InternalDescriptionFormDialogContainer from 'components/DataEntityDetails/DatasetStructure/InternalDescriptionFormDialog/InternalDescriptionFormDialogContainer';
 import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { StylesType } from './DatasetStructureItemStyles';
+import AppButton from 'components/shared/AppButton/AppButton';
+import DatasetFieldInfoEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureItem/DatasetFieldInfoEditForm/DatasetFieldInfoEditFormContainer';
+import { StylesType } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetStructureItemStyles';
 
 interface DatasetStructureItemProps extends StylesType {
   initialStateOpen?: boolean;
@@ -38,11 +35,10 @@ interface DatasetStructureItemProps extends StylesType {
   childFields: DataSetField[];
   renderStructureItem: (
     field: DataSetField,
-    nesting: number
+    nesting: number,
+    onSizeChange: () => void
   ) => JSX.Element;
-  updateDataSetFieldDescription: (
-    params: DatasetFieldApiUpsertDatasetFieldInternalDescriptionRequest
-  ) => Promise<InternalDescription>;
+  onSizeChange: () => void;
 }
 
 const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
@@ -53,6 +49,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   datasetField,
   childFields,
   renderStructureItem,
+  onSizeChange,
 }) => {
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
 
@@ -73,7 +70,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       break;
     case DataSetFieldTypeTypeEnum.DATETIME:
       fieldStats = datasetField.stats
-        ?.dateTimeStats as DataSetFormattedStats;
+        ?.datetimeStats as DataSetFormattedStats;
       break;
     case DataSetFieldTypeTypeEnum.BINARY:
       fieldStats = datasetField.stats
@@ -136,7 +133,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     <Grid container className={cx(classes.container)}>
       <Grid item container>
         <Grid item xs={12} container className={classes.rowInfo}>
-          <Grid item xs={6} container>
+          <Grid item xs={6} container wrap="nowrap">
             <Grid
               item
               container
@@ -149,7 +146,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               </Grid>
               <Grid item container>
                 <Grid item xs={12} className={classes.nameContainer}>
-                  <AppTooltip renderContent={() => datasetField.name}>
+                  <AppTooltip title={() => datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
                         (datasetField.isValue && 'Value') ||
@@ -172,8 +169,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   className={classes.descriptionContainer}
                 >
                   <AppTooltip
-                    renderContent={() => datasetField.internalDescription}
-                    offset={{ right: 160 }}
+                    title={() => datasetField.internalDescription}
                   >
                     <Typography
                       className={classes.internalDescription}
@@ -183,7 +179,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     </Typography>
                   </AppTooltip>
                   <AppTooltip
-                    renderContent={() => datasetField.externalDescription}
+                    title={() => datasetField.externalDescription}
                   >
                     <Typography
                       className={classes.externalDescription}
@@ -208,43 +204,29 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
             </Grid>
             <Grid item className={classes.typeCol}>
               <div className={classes.optionsBtn}>
-                <AppTooltip
-                  control="byClick"
-                  renderContent={() => (
-                    <>
-                      <LabelsEditFormContainer
-                        datasetFieldId={datasetField.id}
-                        btnCreateEl={<MenuItem>Edit Labels</MenuItem>}
-                      />
-                      <InternalDescriptionFormDialogContainer
-                        datasetFieldId={datasetField.id}
-                        btnCreateEl={<MenuItem>Edit Description</MenuItem>}
-                      />
-                    </>
-                  )}
-                >
-                  <AppIconButton
-                    size="medium"
-                    color="primaryLight"
-                    icon={<KebabIcon />}
-                  />
-                </AppTooltip>
+                <DatasetFieldInfoEditFormContainer
+                  datasetFieldId={datasetField.id}
+                  btnCreateEl={
+                    <AppButton size="medium" color="primaryLight">
+                      Edit
+                    </AppButton>
+                  }
+                />
               </div>
               <DatasetStructureFieldTypeLabel
                 typeName={datasetField.type.type}
               />
-              <div>
-                <AppTooltip
-                  renderContent={() =>
-                    `Logical type: ${datasetField.type.logicalType}`
-                  }
-                  type="dark"
-                >
-                  <InformationIcon
-                    sx={{ display: 'flex', alignItems: 'center' }}
-                  />
-                </AppTooltip>
-              </div>
+              <AppTooltip
+                title={() =>
+                  `Logical type: ${datasetField.type.logicalType}`
+                }
+                type="dark"
+                checkForOverflow={false}
+              >
+                <InformationIcon
+                  sx={{ display: 'flex', alignItems: 'center' }}
+                />
+              </AppTooltip>
             </Grid>
           </Grid>
           <Grid item xs={2} container className={classes.columnDivided}>
@@ -281,10 +263,15 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         </Grid>
       </Grid>
       <Grid item xs={12} className={classes.rowChildren}>
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse
+          in={open}
+          timeout={0}
+          unmountOnExit
+          addEndListener={() => onSizeChange()}
+        >
           {open && childFields.length
             ? childFields.map(field =>
-                renderStructureItem(field, nesting + 1)
+                renderStructureItem(field, nesting + 1, onSizeChange)
               )
             : null}
         </Collapse>

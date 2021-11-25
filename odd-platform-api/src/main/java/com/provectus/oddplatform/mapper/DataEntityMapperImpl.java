@@ -12,6 +12,7 @@ import com.provectus.oddplatform.api.contract.model.DataEntitySubType;
 import com.provectus.oddplatform.api.contract.model.DataEntityType;
 import com.provectus.oddplatform.api.contract.model.DataEntityTypeDictionary;
 import com.provectus.oddplatform.api.contract.model.DataQualityTestExpectation;
+import com.provectus.oddplatform.api.contract.model.DataQualityTestRun;
 import com.provectus.oddplatform.api.contract.model.DataSetStats;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto;
 import com.provectus.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
@@ -169,11 +170,15 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto) {
         final DataQualityTestDetailsDto dqDto = dto.getDataQualityTestDetailsDto();
 
+        final DataQualityTestRun latestRun = dqDto.getLatestTaskRun() != null
+            ? dataQualityMapper.mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.getLatestTaskRun())
+            : null;
+
         return mapPojo(dto)
             .suiteName(dqDto.getSuiteName())
             .suiteUrl(dqDto.getSuiteUrl())
             .expectation(mapDataQualityTestExpectation(dqDto))
-            .latestRun(dataQualityMapper.mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.getLatestTaskRun()))
+            .latestRun(latestRun)
             .linkedUrlList(dqDto.getLinkedUrlList())
             .datasetsList(dqDto
                 .getDatasetList()

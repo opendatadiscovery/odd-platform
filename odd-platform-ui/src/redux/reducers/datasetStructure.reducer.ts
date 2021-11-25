@@ -1,7 +1,10 @@
-import { Action, DatasetStructureState } from 'redux/interfaces';
+import {
+  Action,
+  DatasetStructureState,
+  DataSetStructureTypesCount,
+} from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
-import { DataSetStructureTypesCount } from '../interfaces/datasetStructure';
 
 export const initialState: DatasetStructureState = {
   fieldById: {},
@@ -61,9 +64,7 @@ const reducer = (
             : null),
         },
       };
-    case getType(
-      actions.updateDataSetFieldInternalDescriptionParamsAction.success
-    ):
+    case getType(actions.updateDataSetFieldFormDataParamsAction.success):
       return {
         ...state,
         fieldById: {
@@ -71,16 +72,6 @@ const reducer = (
           [action.payload.datasetFieldId]: {
             ...state.fieldById[action.payload.datasetFieldId],
             internalDescription: action.payload.internalDescription,
-          },
-        },
-      };
-    case getType(actions.updateDataSetFieldLabelsParamsAction.success):
-      return {
-        ...state,
-        fieldById: {
-          ...state.fieldById,
-          [action.payload.datasetFieldId]: {
-            ...state.fieldById[action.payload.datasetFieldId],
             labels: action.payload.labels,
           },
         },

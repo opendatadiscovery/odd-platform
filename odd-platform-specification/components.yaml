@@ -836,7 +836,7 @@ components:
           $ref: '#/components/schemas/StringFieldStat'
         binary_stats:
           $ref: '#/components/schemas/BinaryFieldStat'
-        date_time_stats:
+        datetime_stats:
           $ref: '#/components/schemas/DateTimeFieldStat'
       required:
         - name
@@ -1022,6 +1022,16 @@ components:
         - type
         - is_nullable
 
+    DatasetFieldUpdateFormData:
+      type: object
+      properties:
+        description:
+          type: string
+        label_names:
+          type: array
+          items:
+            type: string
+
     DataSetStructure:
       type: object
       properties:
@@ -1076,16 +1086,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/LabelFormData'
-
-    DatasetFieldLabelsFormData:
-      type: object
-      properties:
-        label_name_list:
-          type: array
-          items:
-            type: string
-      required:
-        - label_name_list
 
     DataEntityLineageNode:
       type: object

@@ -8,12 +8,12 @@ import com.provectus.oddplatform.model.tables.records.TagToDataEntityRecord;
 import com.provectus.oddplatform.repository.util.JooqFTSHelper;
 import com.provectus.oddplatform.repository.util.JooqQueryHelper;
 import com.provectus.oddplatform.utils.Page;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
@@ -110,16 +110,15 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .map(p -> dslContext.newRecord(TAG_TO_DATA_ENTITY, p))
             .collect(Collectors.toList());
 
-        try {
-            // TODO: bad idea, will not throw error
-            dslContext.loadInto(TAG_TO_DATA_ENTITY)
-                .onDuplicateKeyIgnore()
-                .loadRecords(records)
-                .fields(TAG_TO_DATA_ENTITY.fields())
-                .execute();
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
+        final InsertSetStep<TagToDataEntityRecord> insertStep = dslContext.insertInto(TAG_TO_DATA_ENTITY);
+
+        for (int i = 0; i < records.size() - 1; i++) {
+            insertStep.set(records.get(i)).newRecord();
         }
+
+        insertStep.set(records.get(records.size() - 1))
+            .onDuplicateKeyIgnore()
+            .execute();
     }
 
     @Override
