@@ -29,7 +29,6 @@ jobs:
           distribution: 'temurin'
       - name: Run codestyle check
         env:
-          NODE_ENV: production
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms512m -Xmx512m"
