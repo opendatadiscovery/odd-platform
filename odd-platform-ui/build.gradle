@@ -18,7 +18,8 @@ tasks.register("buildUI", NpmTask) {
 
     dependsOn npmInstall
     environment = [
-        'BUILD_PATH': "${project.buildDir}/ui"
+        'BUILD_PATH': "${project.buildDir}/ui",
+        'NODE_ENV': "development"
     ]
     args = ['run', 'build']
 }
