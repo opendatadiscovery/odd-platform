@@ -1033,7 +1033,7 @@ paths:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - name: lineage_depth
           in: query
-          required: true
+          required: false
           schema:
             type: integer
             format: int32
@@ -1174,6 +1174,24 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/DataQualityTestRunList'
+      tags:
+        - dataQuality
+  /api/dataentitygroups/{data_entity_group_id}/children:
+    get:
+      summary: ///
+      description: ///
+      operationId: ///
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityGroupIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRefPageableList'
       tags:
         - dataQuality
   /api/metadata/fields:

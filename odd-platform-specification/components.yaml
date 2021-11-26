@@ -272,6 +272,8 @@ components:
           $ref: '#/components/schemas/DataEntitySubType'
         tags:
           $ref: '#/components/schemas/TagList'
+        data_entity_group:
+          $ref: '#/components/schemas/DataEntityRef'
         created_at:
           type: string
           format: date-time
@@ -327,6 +329,7 @@ components:
         - $ref: '#/components/schemas/DataConsumer'
         - $ref: '#/components/schemas/DataInput'
         - $ref: '#/components/schemas/DataQualityTest'
+        - $ref: '#/components/schemas/DataEntityGroup'
 
     DataEntityType:
       type: object
@@ -472,6 +475,14 @@ components:
       items:
         $ref: '#/components/schemas/DataEntityRef'
 
+    DataEntityRefPageableList:
+      type: object
+      properties:
+        items:
+          $ref: '#/components/schemas/DataEntityRef'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+
     DataTransformer:
       allOf:
         - $ref: '#/components/schemas/DataEntityBaseObject'
@@ -561,6 +572,20 @@ components:
           $ref: '#/components/schemas/PageInfo'
       required:
         - items
+
+    DataEntityGroup:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            entities:
+              $ref: '#/components/schemas/DataEntityRefList'
+            parent_deg:
+              $ref: '#/components/schemas/DataEntityRef'
+            group_oddrn:
+              type: string
+          required:
+            - entities
 
     DataSetTestReport:
       type: object
@@ -1453,6 +1478,14 @@ components:
 
     DatasetFieldIdParam:
       name: dataset_field_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    DataEntityGroupIdParam:
+      name: data_entity_group_id
       in: path
       required: true
       schema:
