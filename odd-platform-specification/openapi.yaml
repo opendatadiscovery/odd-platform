@@ -1056,7 +1056,7 @@ paths:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
         - name: lineage_depth
           in: query
-          required: true
+          required: false
           schema:
             type: integer
             format: int32
@@ -1178,9 +1178,9 @@ paths:
         - dataQuality
   /api/dataentitygroups/{data_entity_group_id}/children:
     get:
-      summary: ///
-      description: ///
-      operationId: ///
+      summary: Get DataEntityGroup children
+      description: Gets DataEntityGroup children
+      operationId: getDataEntityGroupsChildren
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityGroupIdParam'
         - $ref: './components.yaml/#/components/parameters/PageParam'
@@ -1193,7 +1193,7 @@ paths:
               schema:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefPageableList'
       tags:
-        - dataQuality
+        - dataEntity
   /api/metadata/fields:
     get:
       summary: Get custom metadata fields

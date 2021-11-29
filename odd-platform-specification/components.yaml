@@ -347,6 +347,7 @@ components:
             - DATA_INPUT
             - DATA_QUALITY_TEST
             - DATA_QUALITY_TEST_RUN
+            - DATA_ENTITY_GROUP
       required:
         - id
         - name
