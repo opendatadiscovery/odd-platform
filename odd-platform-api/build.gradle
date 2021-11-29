@@ -15,14 +15,6 @@ apply from: 'jooq.generate.gradle'
 final boolean skipUIBundle = project.hasProperty("skipUIBundle") &&
         Boolean.parseBoolean(project.property("skipUIBundle").toString())
 
-repositories {
-    maven {
-        name = "oddGHPRepository"
-        url = 'https://maven.pkg.github.com/opendatadiscovery/odd-platform-ingestion-contract'
-        credentials(PasswordCredentials)
-    }
-}
-
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-webflux"
     implementation "org.springframework.boot:spring-boot-starter-jooq"
@@ -33,7 +25,7 @@ dependencies {
     implementation "org.springframework.session:spring-session-core"
     implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
-    implementation "com.provectus.oddplatform:odd-platform-ingestion-contract:$oddIngestionApiVersion"
+    implementation "org.opendatadiscovery:odd-platform-ingestion-contract:$oddIngestionApiVersion"
     implementation project(':odd-platform-api-contract')
 
     if (!skipUIBundle) {

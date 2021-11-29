@@ -1,6 +1,5 @@
 package com.provectus.oddplatform.dto;
 
-import com.provectus.oddplatform.ingestion.contract.model.DataSetField;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 
 @Data
 @Builder

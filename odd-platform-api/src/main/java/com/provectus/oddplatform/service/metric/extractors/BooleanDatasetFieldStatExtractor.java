@@ -1,12 +1,11 @@
 package com.provectus.oddplatform.service.metric.extractors;
 
-import com.provectus.oddplatform.ingestion.contract.model.BooleanFieldStat;
 import com.provectus.oddplatform.service.metric.dto.MetricDataTriplet;
 import com.provectus.oddplatform.utils.Pair;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.sdk.metrics.data.PointData;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.BooleanFieldStat;
 import org.springframework.stereotype.Component;
 
 import static com.provectus.oddplatform.service.metric.extractors.ExtractorUtils.longPointData;

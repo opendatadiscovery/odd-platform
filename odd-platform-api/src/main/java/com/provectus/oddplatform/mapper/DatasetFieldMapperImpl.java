@@ -1,11 +1,11 @@
 package com.provectus.oddplatform.mapper;
 
-import com.provectus.oddplatform.ingestion.contract.model.DataSetField;
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import com.provectus.oddplatform.utils.JSONSerDeUtils;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.jooq.JSONB;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.springframework.stereotype.Component;
 
 @Component

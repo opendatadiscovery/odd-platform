@@ -1,8 +1,8 @@
 package com.provectus.oddplatform.mapper;
 
-import com.provectus.oddplatform.ingestion.contract.model.DataSetField;
 import com.provectus.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import java.util.List;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 
 public interface DatasetFieldMapper {
     DatasetFieldPojo mapField(final DataSetField field);
