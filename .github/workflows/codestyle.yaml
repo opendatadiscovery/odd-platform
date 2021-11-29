@@ -32,4 +32,4 @@ jobs:
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms512m -Xmx512m"
-        run: ./gradlew clean checkstyleMain checkstyleTest ${{ github.event.inputs.buildOptions }} -PoddGHPRepositoryUsername=github-actions -PoddGHPRepositoryPassword=${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew clean checkstyleMain checkstyleTest ${{ github.event.inputs.buildOptions }}
