@@ -5,7 +5,7 @@ plugins {
     id 'checkstyle'
 }
 
-group = 'com.provectus'
+group = 'org.opendatadiscovery'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
 sourceCompatibility = '17'
@@ -74,7 +74,7 @@ dependencies {
 }
 
 jooq {
-    basePackageName = "com.provectus.oddplatform.model"
+    basePackageName = "org.opendatadiscovery.oddplatform.model"
     includeMatches = ".*"
     excludes = "FLYWAY_SCHEMA_HISTORY"
     imageName = "postgres:13.2-alpine"
