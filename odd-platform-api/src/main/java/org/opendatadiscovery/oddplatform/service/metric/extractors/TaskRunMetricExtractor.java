@@ -13,6 +13,8 @@ import org.opendatadiscovery.oddplatform.service.metric.dto.MetricDataTriplet;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
+import static org.opendatadiscovery.oddplatform.service.metric.extractors.ExtractorUtils.longPointData;
+
 @Component
 public class TaskRunMetricExtractor implements MetricExtractor {
     @Override
@@ -34,8 +36,8 @@ public class TaskRunMetricExtractor implements MetricExtractor {
             Attributes.of(AttributeKey.stringKey("job_oddrn"), taskRun.getDataEntityOddrn());
 
         return Stream.of(
-            Pair.of(MetricDataTriplet.TASK_RUN_DURATION, ExtractorUtils.longPointData(duration, attributes)),
-            Pair.of(MetricDataTriplet.DF_NULLS_COUNT, ExtractorUtils.longPointData(status, attributes))
+            Pair.of(MetricDataTriplet.TASK_RUN_DURATION, longPointData(duration, attributes)),
+            Pair.of(MetricDataTriplet.DF_NULLS_COUNT, longPointData(status, attributes))
         );
     }
 }

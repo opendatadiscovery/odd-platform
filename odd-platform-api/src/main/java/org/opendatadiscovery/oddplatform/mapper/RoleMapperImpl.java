@@ -10,7 +10,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RoleMapperImpl implements CRUDMapper<Role, RoleList, RoleFormData, RoleUpdateFormData, RolePojo> {
+public class RoleMapperImpl implements RoleMapper {
     @Override
     public RolePojo mapForm(final RoleFormData form) {
         return new RolePojo().setName(form.getName());

@@ -9,7 +9,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OwnerMapperImpl implements CRUDMapper<Owner, OwnerList, OwnerFormData, OwnerFormData, OwnerPojo> {
+public class OwnerMapperImpl implements OwnerMapper {
     @Override
     public OwnerPojo mapForm(final OwnerFormData form) {
         return new OwnerPojo().setName(form.getName());

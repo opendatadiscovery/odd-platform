@@ -10,7 +10,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LabelMapperImpl implements CRUDMapper<Label, LabelsResponse, LabelFormData, LabelFormData, LabelPojo> {
+public class LabelMapperImpl implements LabelMapper {
     @Override
     public LabelPojo mapForm(final LabelFormData form) {
         return new LabelPojo().setName(form.getName());

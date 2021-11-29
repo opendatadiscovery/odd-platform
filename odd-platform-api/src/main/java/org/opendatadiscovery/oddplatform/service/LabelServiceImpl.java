@@ -24,7 +24,7 @@ public class LabelServiceImpl
     extends
     AbstractCRUDService<Label, LabelsResponse, LabelFormData,
         LabelFormData, LabelPojo, LabelMapper, LabelRepository>
-    implements CRUDService<Label, LabelsResponse, LabelFormData, LabelFormData> {
+    implements LabelService {
 
     public LabelServiceImpl(final LabelMapper entityMapper, final LabelRepository entityRepository) {
         super(entityMapper, entityRepository);

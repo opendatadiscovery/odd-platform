@@ -15,7 +15,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TYPE_ENTITY_RELATIO
 @Repository
 public class TypeEntityRelationRepositoryImpl
     extends AbstractCRUDRepository<TypeEntityRelationRecord, TypeEntityRelationPojo>
-    implements CRUDRepository<TypeEntityRelationPojo> {
+    implements TypeEntityRelationRepository {
 
     public TypeEntityRelationRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
         super(dslContext, jooqQueryHelper, TYPE_ENTITY_RELATION, null, null, TypeEntityRelationPojo.class);

@@ -13,6 +13,8 @@ import org.opendatadiscovery.oddplatform.service.metric.dto.MetricDataTriplet;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
+import static org.opendatadiscovery.oddplatform.service.metric.extractors.ExtractorUtils.longPointData;
+
 @Component
 public class DatasetMetricExtractor implements MetricExtractor {
     @Override
@@ -30,7 +32,7 @@ public class DatasetMetricExtractor implements MetricExtractor {
 
         return Pair.of(
             MetricDataTriplet.ROWS_COUNT,
-            ExtractorUtils.longPointData(entity.getDataSet().getRowsCount(), attributes)
+            longPointData(entity.getDataSet().getRowsCount(), attributes)
         );
     }
 }

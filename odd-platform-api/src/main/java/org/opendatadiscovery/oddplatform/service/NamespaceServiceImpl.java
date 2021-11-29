@@ -16,7 +16,7 @@ public class NamespaceServiceImpl
     extends
     AbstractCRUDService<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData,
         NamespacePojo, NamespaceMapper, NamespaceRepository>
-    implements CRUDService<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData> {
+    implements NamespaceService {
 
     private final DataSourceRepository dataSourceRepository;
 
