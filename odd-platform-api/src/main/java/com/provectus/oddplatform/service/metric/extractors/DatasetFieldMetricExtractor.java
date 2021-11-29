@@ -2,20 +2,20 @@ package com.provectus.oddplatform.service.metric.extractors;
 
 import com.provectus.oddplatform.dto.DataEntityType;
 import com.provectus.oddplatform.dto.IngestionDataStructure;
-import com.provectus.oddplatform.ingestion.contract.model.BinaryFieldStat;
-import com.provectus.oddplatform.ingestion.contract.model.BooleanFieldStat;
-import com.provectus.oddplatform.ingestion.contract.model.ComplexFieldStat;
-import com.provectus.oddplatform.ingestion.contract.model.DataSetField;
-import com.provectus.oddplatform.ingestion.contract.model.DateTimeFieldStat;
-import com.provectus.oddplatform.ingestion.contract.model.IntegerFieldStat;
-import com.provectus.oddplatform.ingestion.contract.model.NumberFieldStat;
-import com.provectus.oddplatform.ingestion.contract.model.StringFieldStat;
 import com.provectus.oddplatform.service.metric.dto.MetricDataTriplet;
 import com.provectus.oddplatform.utils.Pair;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.BinaryFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.BooleanFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.ComplexFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DateTimeFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.IntegerFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.NumberFieldStat;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.StringFieldStat;
 import org.springframework.stereotype.Component;
 
 import static java.util.function.Function.identity;

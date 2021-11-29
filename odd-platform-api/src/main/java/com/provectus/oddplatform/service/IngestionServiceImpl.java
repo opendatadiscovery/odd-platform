@@ -12,10 +12,6 @@ import com.provectus.oddplatform.dto.IngestionTaskRun;
 import com.provectus.oddplatform.dto.MetadataBinding;
 import com.provectus.oddplatform.dto.MetadataFieldKey;
 import com.provectus.oddplatform.exception.NotFoundException;
-import com.provectus.oddplatform.ingestion.contract.model.DataEntity;
-import com.provectus.oddplatform.ingestion.contract.model.DataEntityList;
-import com.provectus.oddplatform.ingestion.contract.model.DataQualityTestRun;
-import com.provectus.oddplatform.ingestion.contract.model.DataTransformerRun;
 import com.provectus.oddplatform.mapper.DataEntityTaskRunMapper;
 import com.provectus.oddplatform.mapper.DatasetFieldMapper;
 import com.provectus.oddplatform.mapper.IngestionMapper;
@@ -55,6 +51,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTestRun;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -62,9 +62,9 @@ import static com.provectus.oddplatform.dto.DataEntityType.DATA_CONSUMER;
 import static com.provectus.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST;
 import static com.provectus.oddplatform.dto.DataEntityType.DATA_SET;
 import static com.provectus.oddplatform.dto.DataEntityType.DATA_TRANSFORMER;
-import static com.provectus.oddplatform.ingestion.contract.model.DataEntityType.JOB_RUN;
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
+import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType.JOB_RUN;
 
 @Service
 @RequiredArgsConstructor

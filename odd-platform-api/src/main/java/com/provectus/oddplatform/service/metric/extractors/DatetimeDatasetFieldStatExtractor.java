@@ -1,6 +1,5 @@
 package com.provectus.oddplatform.service.metric.extractors;
 
-import com.provectus.oddplatform.ingestion.contract.model.DateTimeFieldStat;
 import com.provectus.oddplatform.service.metric.dto.MetricDataTriplet;
 import com.provectus.oddplatform.utils.Pair;
 import io.opentelemetry.api.common.Attributes;
@@ -8,6 +7,7 @@ import io.opentelemetry.sdk.metrics.data.PointData;
 import java.time.OffsetDateTime;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.Nullable;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DateTimeFieldStat;
 import org.springframework.stereotype.Component;
 
 import static com.provectus.oddplatform.service.metric.extractors.ExtractorUtils.longPointData;

@@ -1,11 +1,11 @@
 package com.provectus.oddplatform.controller;
 
-import com.provectus.oddplatform.ingestion.contract.api.IngestionApi;
-import com.provectus.oddplatform.ingestion.contract.model.DataEntityList;
 import com.provectus.oddplatform.service.IngestionService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
