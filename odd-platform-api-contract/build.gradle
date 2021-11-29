@@ -19,9 +19,9 @@ openApiGenerate {
     inputSpec = "$projectDir/../odd-platform-specification/openapi.yaml"
     outputDir = "$buildDir/generated"
 
-    apiPackage = "com.provectus.oddplatform.api.contract.api"
-    invokerPackage = "com.provectus.oddplatform.api.contract"
-    modelPackage = "com.provectus.oddplatform.api.contract.model"
+    apiPackage = "org.opendatadiscovery.oddplatform.api.contract.api"
+    invokerPackage = "org.opendatadiscovery.oddplatform.api.contract"
+    modelPackage = "org.opendatadiscovery.oddplatform.api.contract.model"
 
     configOptions = [
             dateLibrary  : "java8",
