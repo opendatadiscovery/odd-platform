@@ -40,6 +40,7 @@ const colors = {
 
   lightGreen60: '#A7FF33',
   lightGreen40: '#D3FF99',
+  lightGreen5: '#F4FFE5',
 
   turquoise40: '#33FF99',
   turquoise20: '#99FFCC',
@@ -93,6 +94,7 @@ export const palette = createPalette({
     // colors will be updated by design
     DATA_TRANSFORMER_RUN: colors.transparent,
     DATA_QUALITY_TEST_RUN: colors.transparent,
+    DATA_ENTITY_GROUP: colors.lightGreen5,
   },
   runStatus: {
     SUCCESS: colors.green60,

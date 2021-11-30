@@ -93,6 +93,11 @@ const Results: React.FC<ResultsProps> = ({
       hint: totals[DataEntityTypeNameEnum.QUALITY_TEST]?.count || 0,
       value: totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id,
     },
+    {
+      name: 'Groups',
+      hint: totals[DataEntityTypeNameEnum.ENTITY_GROUP]?.count || 0,
+      value: totals[DataEntityTypeNameEnum.ENTITY_GROUP]?.id,
+    },
   ];
 
   const [selectedTab] = React.useState<number>(() =>
@@ -187,6 +192,12 @@ const Results: React.FC<ResultsProps> = ({
         searchType === totals[DataEntityTypeNameEnum.CONSUMER]?.id ? (
           <S.ColContainer item $colType="collg">
             <Typography variant="caption">Source</Typography>
+          </S.ColContainer>
+        ) : null}
+        {searchType &&
+        searchType === totals[DataEntityTypeNameEnum.ENTITY_GROUP]?.id ? (
+          <S.ColContainer item $colType="colxs">
+            <Typography variant="caption">Number of entities</Typography>
           </S.ColContainer>
         ) : null}
         <S.ColContainer item $colType="colmd">

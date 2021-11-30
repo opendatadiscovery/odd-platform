@@ -44,6 +44,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             wrap="nowrap"
           >
             <Typography
+              width="inherit"
               variant="body1"
               noWrap
               title={
@@ -63,9 +64,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
                 />
               )}
             >
-              <InformationIcon
-                sx={{ display: 'flex', alignItems: 'center' }}
-              />
+              <InformationIcon sx={{ display: 'flex' }} />
             </AppTooltip>
           </ColContainer>
           <Grid
@@ -148,6 +147,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
               />
             </ColContainer>
           </>
+        ) : null}
+        {searchType &&
+        searchType === totals[DataEntityTypeNameEnum.ENTITY_GROUP]?.id ? (
+          <ColContainer item $colType="colxs">
+            <Typography variant="body1" noWrap>
+              {searchResult?.entitiesCount}
+            </Typography>
+          </ColContainer>
         ) : null}
         <ColContainer item $colType="colmd">
           <Typography

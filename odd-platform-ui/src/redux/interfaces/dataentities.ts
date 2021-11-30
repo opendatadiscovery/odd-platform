@@ -3,10 +3,6 @@ import {
   DataEntityDetails,
 } from 'generated-sources';
 
-export interface UpdateDataEntityParams {
-  dataEntityId: number;
-}
-
 export const DataEntityTypeLabelMap: Map<
   DataEntityTypeNameEnum,
   { short: string; normal: string; plural: string }
@@ -30,6 +26,10 @@ export const DataEntityTypeLabelMap: Map<
   [
     DataEntityTypeNameEnum.QUALITY_TEST,
     { short: 'QT', normal: 'Quality Test', plural: 'Quality Tests' },
+  ],
+  [
+    DataEntityTypeNameEnum.ENTITY_GROUP,
+    { short: 'DEG', normal: 'Groups', plural: 'Groups' },
   ],
 ]);
 
