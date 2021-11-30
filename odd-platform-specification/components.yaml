@@ -585,6 +585,8 @@ components:
               $ref: '#/components/schemas/DataEntityRef'
             group_oddrn:
               type: string
+            entities_count:
+              type: number
           required:
             - entities
 
