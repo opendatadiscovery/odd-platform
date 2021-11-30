@@ -90,9 +90,8 @@ export const palette = createPalette({
     DATA_CONSUMER: colors.blue5,
     DATA_INPUT: colors.green5,
     DATA_QUALITY_TEST: colors.orange5,
-    // colors will be updated by design
-    DATA_TRANSFORMER_RUN: colors.transparent,
-    DATA_QUALITY_TEST_RUN: colors.transparent,
+    DATA_TRANSFORMER_RUN: colors.purple5,
+    DATA_QUALITY_TEST_RUN: colors.orange5,
   },
   runStatus: {
     SUCCESS: colors.green60,
@@ -103,12 +102,12 @@ export const palette = createPalette({
     UNKNOWN: colors.black30,
   },
   reportStatus: {
-    success: { background: colors.green10, border: colors.green20 },
-    failed: { background: colors.red10, border: colors.red20 },
-    broken: { background: colors.orange10, border: colors.orange20 },
-    skipped: { background: colors.blue10, border: colors.blue20 },
-    aborted: { background: colors.purple10, border: colors.purple30 },
-    unknown: { background: colors.black10, border: colors.black20 },
+    SUCCESS: { background: colors.green10, border: colors.green20 },
+    FAILED: { background: colors.red10, border: colors.red20 },
+    BROKEN: { background: colors.orange10, border: colors.orange20 },
+    SKIPPED: { background: colors.blue10, border: colors.blue20 },
+    ABORTED: { background: colors.purple10, border: colors.purple30 },
+    UNKNOWN: { background: colors.black10, border: colors.black20 },
   },
   button: {
     primary: {

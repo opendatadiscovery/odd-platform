@@ -13,7 +13,6 @@ export const styles = (theme: Theme) =>
     tagsList: {
       marginTop: theme.spacing(1),
     },
-    tagItem: { margin: theme.spacing(0.5, 0.5, 0.5, 0) },
     tagItemImportant: {
       backgroundColor: theme.palette.tag.important.normal.background,
     },

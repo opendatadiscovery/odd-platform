@@ -2,6 +2,7 @@ import { TypeBackground } from '@mui/material/styles/createPalette';
 import {
   AlertStatus,
   DataEntityTypeNameEnum,
+  DataQualityTestRunStatusEnum,
   DataSetFieldTypeTypeEnum,
 } from 'generated-sources';
 import { TypographyStyle } from '@mui/material';
@@ -22,27 +23,13 @@ interface ItemCondition {
   disabled?: ItemColors;
 }
 
-interface ReportStatus {
-  success: ItemColors;
-  failed: ItemColors;
-  broken: ItemColors;
-  skipped: ItemColors;
-  aborted: ItemColors;
-  unknown: ItemColors;
-}
-
-interface RunStatus {
-  SUCCESS: string;
-  FAILED: string;
-  BROKEN: string;
-  SKIPPED: string;
-  ABORTED: string;
-  UNKNOWN: string;
-}
-
 type EntityType = Record<DataEntityTypeNameEnum, string>;
 
 type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
+
+type ReportStatus = Record<DataQualityTestRunStatusEnum, ItemColors>;
+
+type RunStatus = Record<DataQualityTestRunStatusEnum, string>;
 
 interface TextType {
   primary: string;

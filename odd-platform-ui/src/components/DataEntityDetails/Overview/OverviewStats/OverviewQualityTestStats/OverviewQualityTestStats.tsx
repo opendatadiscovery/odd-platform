@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import { Link } from 'react-router-dom';
 import {
   DataEntityDetails,
@@ -10,13 +9,12 @@ import {
 import entries from 'lodash/entries';
 import { dataEntityDetailsPath, dataEntityHistoryPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
-import cx from 'classnames';
 import { format, formatDistanceStrict } from 'date-fns';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { styles, StylesType } from './OverviewQualityTestStatsStyles';
+import * as S from './OverviewQualityTestStatsStyles';
 
-interface OverviewQualityTestStatsProps extends StylesType {
+interface OverviewQualityTestStatsProps {
   suiteName: DataEntityDetails['suiteName'];
   suiteUrl: DataEntityDetails['suiteUrl'];
   datasetsList: DataEntityDetails['datasetsList'];
@@ -24,29 +22,26 @@ interface OverviewQualityTestStatsProps extends StylesType {
 }
 
 const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
-  classes,
   suiteName,
   suiteUrl,
   datasetsList,
   qualityTest,
 }) => (
   <Grid container>
-    <Grid item className={classes.typeLabel}>
+    <Grid item sx={{ mb: 1.25 }}>
       <EntityTypeItem
         typeName={DataEntityTypeNameEnum.QUALITY_TEST}
         fullName
       />
     </Grid>
-    <Grid container className={classes.statsContainer}>
-      <Grid item className={classes.links}>
+    <S.StatsContainer container>
+      <Grid item sx={{ mr: 4 }}>
         <Grid item container>
           <Grid item container alignItems="baseline" sx={{ mb: 1 }}>
-            <Typography variant="h2" className={classes.linkCount}>
+            <Typography variant="h2" sx={{ mr: 0.5 }}>
               {datasetsList?.length || 0}
             </Typography>
-            <Typography variant="body2" className={classes.statLabel}>
-              datasets
-            </Typography>
+            <S.StatLabel variant="body2">datasets</S.StatLabel>
           </Grid>
           <Grid item>
             {datasetsList?.map(dataset => (
@@ -63,11 +58,9 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             ))}
           </Grid>
         </Grid>
-        <Grid item container className={classes.suites}>
+        <Grid item container sx={{ mt: 5 }}>
           <Grid item container>
-            <Typography variant="body2" className={classes.statLabel}>
-              Suite
-            </Typography>
+            <S.StatLabel variant="body2">Suite</S.StatLabel>
           </Grid>
           <Grid item>
             {suiteUrl ? (
@@ -80,22 +73,17 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
         </Grid>
       </Grid>
-      <Grid item className={classes.overview}>
+      <S.Overview item sx={{ mr: 4 }}>
         <Grid item container xs={12} alignItems="baseline">
-          <Typography variant="body2" className={classes.statLabel}>
+          <S.StatLabel variant="body2" sx={{ ml: 0.25 }}>
             Overview
-          </Typography>
+          </S.StatLabel>
         </Grid>
         <LabeledInfoItem
           inline
           label="Last start"
           labelWidth={4}
-          classes={{
-            value: cx(
-              classes.latestRunStatus,
-              qualityTest?.latestRun?.status
-            ),
-          }}
+          runStatus={qualityTest.latestRun?.status}
         >
           {qualityTest?.latestRun?.status}
         </LabeledInfoItem>
@@ -127,15 +115,13 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             </AppButton>
           </Link>
         </Grid>
-      </Grid>
+      </S.Overview>
       <Grid item container direction="column">
         <Grid item>
           <Grid item container xs={12} alignItems="baseline">
-            <Typography variant="body2" className={classes.statLabel}>
-              Parameters
-            </Typography>
+            <S.StatLabel variant="body2">Parameters</S.StatLabel>
           </Grid>
-          <Grid container className={classes.parameters}>
+          <Grid container sx={{ mx: 0, mt: 1, mb: 3 }}>
             {entries(qualityTest?.expectation).map(([key, value]) => (
               <LabeledInfoItem inline key={key} label={key} labelWidth={8}>
                 {value}
@@ -143,12 +129,10 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             ))}
           </Grid>
         </Grid>
-        <Grid item className={classes.dataQALinks}>
+        <Grid item sx={{ mb: 3 }}>
           <Grid item container xs={12} alignItems="baseline">
-            <Typography variant="body2" className={classes.statLabel}>
-              Links
-            </Typography>
-            <Grid container className={classes.dataQALinksList}>
+            <S.StatLabel variant="body2">Links</S.StatLabel>
+            <Grid container sx={{ mt: 1 }}>
               <Grid item container xs={12} wrap="nowrap">
                 {qualityTest?.linkedUrlList?.map(link => (
                   <Typography variant="body1">
@@ -159,12 +143,10 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
             </Grid>
           </Grid>
         </Grid>
-        <Grid item className={classes.execution}>
+        <Grid item>
           <Grid item container xs={12} alignItems="baseline">
-            <Typography variant="body2" className={classes.statLabel}>
-              Execution
-            </Typography>
-            <Grid item xs={12} className={classes.executionInfo}>
+            <S.StatLabel variant="body2">Execution</S.StatLabel>
+            <Grid item xs={12} sx={{ mt: 1 }}>
               <Typography variant="body2" color="textSecondary">
                 No information about test execution is available.
               </Typography>
@@ -172,8 +154,8 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
           </Grid>
         </Grid>
       </Grid>
-    </Grid>
+    </S.StatsContainer>
   </Grid>
 );
 
-export default withStyles(styles)(OverviewQualityTestStats);
+export default OverviewQualityTestStats;

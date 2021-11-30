@@ -61,12 +61,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
           </LabeledInfoItem>
         </Grid>
         <Grid item sm={12} className={classes.ownersContainer}>
-          <LabeledInfoItem
-            label="Owners"
-            classes={{
-              value: classes.ownershipList,
-            }}
-          >
+          <LabeledInfoItem label="Owners">
             {ownership?.map(ownershipItem => (
               <span key={ownershipItem.id} className={classes.ownerItem}>
                 {ownershipItem.owner.name}

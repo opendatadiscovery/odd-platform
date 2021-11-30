@@ -76,9 +76,6 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                 count !== 0 && (
                   <TestRunStatusItem
                     key={testType}
-                    classes={{
-                      filledContainer: classes.testStatusItem,
-                    }}
                     count={count}
                     typeName={
                       testType.toUpperCase() as DataQualityTestRunStatusEnum

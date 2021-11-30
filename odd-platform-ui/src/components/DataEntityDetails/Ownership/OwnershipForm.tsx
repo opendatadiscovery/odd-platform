@@ -266,15 +266,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       className={classes.form}
     >
       {dataEntityOwnership ? (
-        <LabeledInfoItem
-          classes={{
-            container: classes.existingOwner,
-            label: classes.existingOwnerLabel,
-          }}
-          inline
-          label="Owner:"
-          labelWidth="auto"
-        >
+        <LabeledInfoItem inline label="Owner:" labelWidth="auto">
           {dataEntityOwnership.owner.name}
         </LabeledInfoItem>
       ) : (

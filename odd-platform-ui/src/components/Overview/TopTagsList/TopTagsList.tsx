@@ -8,9 +8,8 @@ import {
 import { useHistory } from 'react-router-dom';
 import { searchPath } from 'lib/paths';
 import TagItem from 'components/shared/TagItem/TagItem';
-import { StylesType } from './TopTagsListStyles';
 
-interface TopTagsListProps extends StylesType {
+interface TopTagsListProps {
   topTagsList: Tag[];
   createDataEntitiesSearch: (
     params: SearchApiSearchRequest
@@ -18,7 +17,6 @@ interface TopTagsListProps extends StylesType {
 }
 
 const TopTagsList: React.FC<TopTagsListProps> = ({
-  classes,
   topTagsList,
   createDataEntitiesSearch,
 }) => {
@@ -59,7 +57,8 @@ const TopTagsList: React.FC<TopTagsListProps> = ({
           key={tag.id}
           label={tag.name}
           important={tag.important}
-          classes={{ container: classes.tagItem }}
+          cursorPointer
+          sx={{ m: 0.5 }}
         />
       ))}
     </>
