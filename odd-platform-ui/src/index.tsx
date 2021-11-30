@@ -6,9 +6,10 @@ import { Provider } from 'react-redux';
 import {
   StyledEngineProvider,
   Theme,
-  ThemeProvider,
+  ThemeProvider as MuiThemeProvider,
 } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from 'styled-components';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -29,14 +30,16 @@ const store = configureStore();
 ReactDOM.render(
   <Provider store={store}>
     <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <BrowserRouter>
-            <AppContainer />
-          </BrowserRouter>
-        </LocalizationProvider>
-      </ThemeProvider>
+      <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <BrowserRouter>
+              <AppContainer />
+            </BrowserRouter>
+          </LocalizationProvider>
+        </ThemeProvider>
+      </MuiThemeProvider>
     </StyledEngineProvider>
   </Provider>,
   document.getElementById('root')

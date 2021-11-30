@@ -14,7 +14,6 @@ export const styles = (theme: Theme) =>
     },
     caption: {},
     tagsContainer: { margin: theme.spacing(0, -0.5, 0, -0.5) },
-    tagItem: { margin: theme.spacing(0.5) },
   });
 
 export type StylesType = WithStyles<typeof styles>;

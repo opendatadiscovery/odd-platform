@@ -864,7 +864,7 @@ components:
           $ref: '#/components/schemas/StringFieldStat'
         binary_stats:
           $ref: '#/components/schemas/BinaryFieldStat'
-        date_time_stats:
+        datetime_stats:
           $ref: '#/components/schemas/DateTimeFieldStat'
       required:
         - name

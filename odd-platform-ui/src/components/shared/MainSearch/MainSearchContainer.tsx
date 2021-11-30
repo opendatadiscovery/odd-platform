@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
@@ -10,7 +9,6 @@ import {
   fetchSearchSuggestions,
 } from 'redux/thunks';
 import MainSearch from 'components/shared/MainSearch/MainSearch';
-import { styles } from 'components/shared/MainSearch/MainSearchStyles';
 
 const mapStateToProps = (state: RootState) => ({
   query: getSearchQuery(state),
@@ -22,7 +20,4 @@ const mapDispatchToProps = {
   fetchSearchSuggestions,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(MainSearch));
+export default connect(mapStateToProps, mapDispatchToProps)(MainSearch);

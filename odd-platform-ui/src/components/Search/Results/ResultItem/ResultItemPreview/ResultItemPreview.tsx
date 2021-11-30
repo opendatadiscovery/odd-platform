@@ -12,6 +12,9 @@ import {
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
 import { format } from 'date-fns';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
+import cx from 'classnames';
+import gfm from 'remark-gfm';
+import ReactMarkdown from 'react-markdown';
 
 interface ResultItemPreviewProps {
   dataEntityId: number;
@@ -62,6 +65,17 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
     }
     return metadataVal;
   };
+
+  const getDescription = React.useCallback(
+    () => (
+      <ReactMarkdown
+        className="markdown-body"
+        plugins={[gfm]}
+        source={dataEntityDetails?.internalDescription}
+      />
+    ),
+    [dataEntityDetails]
+  );
 
   return (
     <S.Container container>
@@ -127,7 +141,9 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
               </Typography>
             </Grid>
             <S.AboutText variant="body1" color="texts.secondary">
-              {dataEntityDetails?.internalDescription || 'Not created'}
+              {dataEntityDetails?.internalDescription
+                ? getDescription()
+                : 'Not created'}
             </S.AboutText>
           </S.AboutContainer>
         </>

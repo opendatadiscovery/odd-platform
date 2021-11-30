@@ -1,8 +1,14 @@
 import React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import { SvgIconProps } from '@mui/material/SvgIcon';
+import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 
-const EmptyIcon: React.FC<SvgIconProps> = props => (
-  <SvgIcon viewBox="0 0 16 16" {...props} style={{ color: 'transparent' }}>
+const EmptyIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
+  <AppSvgIcon
+    sx={sx}
+    viewBox="0 0 16 16"
+    {...props}
+    style={{ color: 'transparent' }}
+  >
     <circle cx="8" cy="8" r="5" stroke="#A8B0BD" strokeWidth="2" />
     <rect
       x="4"
@@ -13,7 +19,7 @@ const EmptyIcon: React.FC<SvgIconProps> = props => (
       transform="rotate(-45 4 5.41418)"
       fill="#A8B0BD"
     />
-  </SvgIcon>
+  </AppSvgIcon>
 );
 
 export default EmptyIcon;

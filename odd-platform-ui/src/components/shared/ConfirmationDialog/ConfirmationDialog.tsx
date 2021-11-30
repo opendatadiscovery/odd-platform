@@ -1,11 +1,10 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { styles, StylesType } from './ConfirmationDialogStyles';
+import * as S from './ConfirmationDialogStyles';
 
-interface ConfirmationDialogProps extends StylesType {
+interface ConfirmationDialogProps {
   actionBtn: JSX.Element;
   actionTitle: string;
   actionText: JSX.Element | string;
@@ -15,7 +14,6 @@ interface ConfirmationDialogProps extends StylesType {
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
-  classes,
   actionBtn,
   actionTitle,
   actionText,
@@ -41,11 +39,11 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   );
 
   const formActionButtons = () => (
-    <div className={classes.actions}>
+    <S.Actions>
       <AppButton size="large" color="primary" onClick={onClose(onConfirm)}>
         {actionName}
       </AppButton>
-    </div>
+    </S.Actions>
   );
 
   return (
@@ -62,4 +60,4 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   );
 };
 
-export default withStyles(styles)(ConfirmationDialog);
+export default ConfirmationDialog;

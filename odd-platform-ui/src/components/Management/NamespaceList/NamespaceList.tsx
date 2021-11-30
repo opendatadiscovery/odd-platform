@@ -156,9 +156,7 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
         </InfiniteScroll>
       </div>
       {!isFetching && !namespacesList.length ? (
-        <EmptyContentPlaceholder
-          classes={{ container: classes.placeholder }}
-        />
+        <EmptyContentPlaceholder />
       ) : null}
     </div>
   );

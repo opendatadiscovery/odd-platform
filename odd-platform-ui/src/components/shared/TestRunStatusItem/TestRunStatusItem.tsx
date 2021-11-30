@@ -1,40 +1,36 @@
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
-import cx from 'classnames';
-import {
-  styles,
-  StylesType,
-} from 'components/shared/TestRunStatusItem/TestRunStatusItemStyles';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import { SxProps } from '@mui/system';
+import { Theme } from '@mui/material';
+import * as S from './TestRunStatusItemStyles';
 
-interface TestRunStatusItemProps extends StylesType {
-  className?: string;
+interface TestRunStatusItemProps {
   count?: number;
-  typeName?: DataQualityTestRunStatusEnum;
+  typeName: DataQualityTestRunStatusEnum | undefined;
   size?: 'large' | 'small';
+  sx?: SxProps<Theme>;
 }
 
 const TestRunStatusItem: React.FC<TestRunStatusItemProps> = ({
-  className,
   size = 'large',
   typeName,
   count,
-  classes,
+  sx,
 }) => (
-  <div className={cx(classes.container, className)} title={typeName}>
+  <S.Container title={typeName} sx={sx}>
     {size === 'small' ? (
-      <span className={cx(classes.filledContainer, typeName)}>
+      <S.FilledContainer $typeName={typeName} $size={size}>
         {count}
-      </span>
+      </S.FilledContainer>
     ) : (
       <>
-        <span className={classes.count}>{count}</span>
-        <span className={cx(classes.filledContainer, typeName)}>
+        <S.Count>{count}</S.Count>
+        <S.FilledContainer $typeName={typeName} $count={count}>
           {typeName?.toLowerCase()}
-        </span>
+        </S.FilledContainer>
       </>
     )}
-  </div>
+  </S.Container>
 );
 
-export default withStyles(styles)(TestRunStatusItem);
+export default TestRunStatusItem;

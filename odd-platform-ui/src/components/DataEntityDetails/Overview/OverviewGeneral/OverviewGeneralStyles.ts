@@ -6,11 +6,6 @@ import createStyles from '@mui/styles/createStyles';
 export const styles = (theme: Theme) =>
   createStyles({
     container: {},
-    ownershipList: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-start',
-    },
     ownersContainer: { marginTop: theme.spacing(2) },
     ownerItem: {
       display: 'flex',

@@ -1,37 +1,31 @@
 import React from 'react';
-import {
-  Grid,
-  Typography,
-  TypographyProps,
-  GridSize,
-} from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import cx from 'classnames';
-import { styles, StylesType } from './LabeledInfoItemStyles';
+import { Grid, GridSize, TypographyProps } from '@mui/material';
+import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import * as S from './LabeledInfoItemStyles';
 
-interface LabeledInfoItemProps extends StylesType {
+interface LabeledInfoItemProps {
   inline?: boolean;
   label: string;
   variant?: TypographyProps['variant'];
   labelWidth?: GridSize;
+  runStatus?: DataQualityTestRunStatusEnum;
+  valueColor?: string;
 }
 
 const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
-  classes,
   inline,
   label,
   variant = 'body1',
   children,
   labelWidth,
+  runStatus,
+  valueColor,
 }) => (
-  <Grid
-    container
-    className={cx(classes.container, { [classes.inline]: inline })}
-  >
+  <S.Container container $inline={inline}>
     <Grid item xs={labelWidth || 'auto'}>
-      <Typography variant={variant} className={classes.label} noWrap>
+      <S.Label variant={variant} noWrap>
         {label}
-      </Typography>
+      </S.Label>
     </Grid>
     <Grid
       item
@@ -41,11 +35,16 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
           : 'auto'
       }
     >
-      <Typography variant={variant} className={classes.value} noWrap>
+      <S.Value
+        $runStatus={runStatus}
+        $valueColor={valueColor}
+        variant={variant}
+        noWrap
+      >
         {children}
-      </Typography>
+      </S.Value>
     </Grid>
-  </Grid>
+  </S.Container>
 );
 
-export default withStyles(styles)(LabeledInfoItem);
+export default LabeledInfoItem;

@@ -5,6 +5,8 @@ export const Container = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(1),
   width: '269px',
   minHeight: '255px',
+  maxHeight: '400px',
+  overflowY: 'hidden',
 }));
 
 export const AboutContainer = styled(Grid)(({ theme }) => ({
@@ -14,8 +16,5 @@ export const AboutContainer = styled(Grid)(({ theme }) => ({
 }));
 
 export const AboutText = styled(Typography)(({ theme }) => ({
-  display: '-webkit-box',
-  overflow: 'hidden',
-  '-webkit-line-clamp': '4',
-  '-webkit-box-orient': 'vertical',
+  width: '100%',
 }));

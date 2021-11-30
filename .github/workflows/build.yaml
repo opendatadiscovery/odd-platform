@@ -49,11 +49,10 @@ jobs:
             ${{ runner.os }}-node-
       - name: Build with Gradle
         env:
-          NODE_ENV: production
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms2048m -Xmx2048m"
-        run: ./gradlew jibDockerBuild --no-daemon -PoddGHPRepositoryUsername=github-actions -PoddGHPRepositoryPassword=${{ secrets.GITHUB_TOKEN }} --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6}
+        run: ./gradlew jibDockerBuild --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6}
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
   update_tag:

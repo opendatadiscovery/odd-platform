@@ -1,5 +1,4 @@
 import { Grid } from '@mui/material';
-import { searchHeight } from 'components/shared/MainSearch/MainSearchStyles';
 import {
   primaryTabsHeight,
   tabsContainerMargin,
@@ -33,6 +32,8 @@ export const colWidthStyles = {
     },
   },
 };
+
+const searchHeight = 40;
 
 export const Container = styled(Grid)(({ theme }) => ({}));
 export const ResultsTableHeader = styled(Grid)(({ theme }) => ({

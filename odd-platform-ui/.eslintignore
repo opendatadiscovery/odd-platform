@@ -1,2 +1,3 @@
 /src/serviceWorker.ts
 /src/generated-sources/**
+config-overrides.js
