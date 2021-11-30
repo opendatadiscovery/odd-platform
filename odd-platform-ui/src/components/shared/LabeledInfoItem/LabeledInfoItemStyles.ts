@@ -3,11 +3,17 @@ import { styled } from '@mui/material/styles';
 import { propsChecker } from 'lib/helpers';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
 
+interface ValueProps {
+  $runStatus?: DataQualityTestRunStatusEnum;
+  $valueColor?: string;
+  $inline?: boolean;
+}
+
 export const Container = styled(Grid, {
   shouldForwardProp: propsChecker,
 })<{
   $inline?: boolean;
-}>(({ theme, $inline }) => {
+}>(({ $inline }) => {
   if ($inline)
     return {
       display: 'flex',
@@ -27,11 +33,9 @@ export const Label = styled(Typography)(({ theme }) => ({
 
 export const Value = styled(Typography, {
   shouldForwardProp: propsChecker,
-})<{
-  $runStatus?: DataQualityTestRunStatusEnum;
-  $valueColor?: string;
-}>(({ theme, $runStatus, $valueColor }) => ({
+})<ValueProps>(({ theme, $runStatus, $valueColor, $inline }) => ({
   wordBreak: 'break-all',
   overflow: 'hidden',
   color: $runStatus ? theme.palette.runStatus[$runStatus] : $valueColor,
+  marginLeft: $inline ? theme.spacing(0.5) : '',
 }));

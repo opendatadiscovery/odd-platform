@@ -12,7 +12,6 @@ import {
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
 import { format } from 'date-fns';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import cx from 'classnames';
 import gfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
 

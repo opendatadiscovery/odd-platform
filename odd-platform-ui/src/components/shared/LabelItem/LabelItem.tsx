@@ -4,7 +4,7 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { Container } from './LabelItemStyles';
 
 interface LabelItemProps {
-  labelName: string;
+  labelName: string | undefined;
   removable?: boolean;
   onRemoveClick?: () => void;
   unfilled?: boolean;

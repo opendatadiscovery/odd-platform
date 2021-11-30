@@ -13,10 +13,11 @@ import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { StylesType } from './OverviewGeneralStyles';
+import LabelItem from 'components/shared/LabelItem/LabelItem';
+import * as S from './OverviewGeneralStyles';
 import OwnershipFormContainer from '../../Ownership/OwnershipFormContainer';
 
-interface OverviewGeneralProps extends StylesType {
+interface OverviewGeneralProps {
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
   ownership: Ownership[];
@@ -26,7 +27,6 @@ interface OverviewGeneralProps extends StylesType {
 }
 
 const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
-  classes,
   dataEntityId,
   dataEntityDetails,
   ownership,
@@ -37,7 +37,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
 
   return (
     <Grid container>
-      <Grid item container sm={12} className={classes.container}>
+      <Grid item container sm={12}>
         <Grid item sm={12}>
           <LabeledInfoItem inline label="Namespace" labelWidth={4}>
             {dataEntityDetails.dataSource.namespace?.name}
@@ -60,26 +60,29 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
             {dataEntityDetails.viewCount}
           </LabeledInfoItem>
         </Grid>
-        <Grid item sm={12} className={classes.ownersContainer}>
+        <Grid item sm={12} sx={{ mt: 2 }}>
+          <LabeledInfoItem label="ODDRN">
+            <S.OddrnValue>{dataEntityDetails.oddrn}</S.OddrnValue>
+          </LabeledInfoItem>
+        </Grid>
+        <Grid item sm={12} sx={{ mt: 2 }}>
           <LabeledInfoItem label="Owners">
             {ownership?.map(ownershipItem => (
-              <span key={ownershipItem.id} className={classes.ownerItem}>
+              <S.OwnerItem key={ownershipItem.id}>
                 {ownershipItem.owner.name}
-                <span className={classes.ownerRole}>
-                  {ownershipItem.role?.name}
-                </span>
+                <LabelItem labelName={ownershipItem.role?.name} />
                 <OwnershipFormContainer
                   dataEntityId={dataEntityDetails.id}
                   dataEntityOwnership={ownershipItem}
                   ownerEditBtn={
-                    <div className={classes.ownerActionBtns}>
+                    <S.OwnerActionBtns>
                       <AppIconButton
                         size="small"
                         color="tertiary"
                         icon={<EditIcon />}
                         sx={{ ml: 1 }}
                       />
-                    </div>
+                    </S.OwnerActionBtns>
                   }
                 />
                 <ConfirmationDialog
@@ -93,17 +96,17 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
                   }
                   onConfirm={handleOwnershipDelete(ownershipItem.id)}
                   actionBtn={
-                    <div className={classes.ownerActionBtns}>
+                    <S.OwnerActionBtns>
                       <AppIconButton
                         size="small"
                         color="tertiary"
                         icon={<DeleteIcon />}
                         sx={{ ml: 0.5 }}
                       />
-                    </div>
+                    </S.OwnerActionBtns>
                   }
                 />
-              </span>
+              </S.OwnerItem>
             ))}
             <OwnershipFormContainer
               dataEntityId={dataEntityDetails.id}
