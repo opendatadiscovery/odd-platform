@@ -1,34 +1,36 @@
 import React from 'react';
-import { Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import cx from 'classnames';
+import { Theme } from '@mui/material';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { styles, StylesType } from './TagItemStyles';
+import { SxProps } from '@mui/system';
+import * as S from './TagItemStyles';
 
-interface TagItemProps extends StylesType {
+interface TagItemProps {
   label: string;
   important?: boolean;
   removable?: boolean;
   onRemoveClick?: () => void;
   onClick?: () => void;
+  sx?: SxProps<Theme>;
+  cursorPointer?: boolean;
 }
 
 const TagItem: React.FC<TagItemProps> = ({
-  classes,
   label,
   important,
   removable,
   onRemoveClick = () => {},
   onClick,
+  cursorPointer,
+  sx,
 }) => (
-  <Typography
+  <S.Container
     variant="body1"
-    className={cx(classes.container, {
-      [classes.important]: important,
-      [classes.containerRemovable]: removable,
-    })}
+    $important={important}
+    $removable={removable}
+    $cursorPointer={cursorPointer}
     onClick={onClick}
+    sx={sx}
   >
     {label}
     {removable && (
@@ -40,7 +42,7 @@ const TagItem: React.FC<TagItemProps> = ({
         sx={{ ml: 0.25 }}
       />
     )}
-  </Typography>
+  </S.Container>
 );
 
-export default withStyles(styles)(TagItem);
+export default TagItem;

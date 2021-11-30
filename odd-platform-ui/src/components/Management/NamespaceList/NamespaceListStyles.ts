@@ -46,11 +46,6 @@ export const styles = (theme: Theme) =>
     searchInput: {
       minWidth: '340px',
     },
-    placeholder: {
-      alignSelf: 'flex-start',
-      justifySelf: 'flex-start',
-      marginTop: theme.spacing(2),
-    },
   });
 
 export type StylesType = WithStyles<typeof styles>;

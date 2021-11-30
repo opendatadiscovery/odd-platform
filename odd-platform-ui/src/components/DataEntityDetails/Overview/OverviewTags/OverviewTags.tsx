@@ -60,7 +60,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
                 key={tag.id}
                 label={tag.name}
                 important={tag.important}
-                classes={{ container: classes.tagItem }}
+                sx={{ m: 0.5 }}
               />
             ))}
           {tags?.length > visibleLimit ? (
@@ -75,7 +75,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
                           key={tag.id}
                           label={tag.name}
                           important={tag.important}
-                          classes={{ container: classes.tagItem }}
+                          sx={{ m: 0.5 }}
                         />
                       ))
                   : null}

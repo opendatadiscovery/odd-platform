@@ -55,7 +55,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </Typography>
             <AppTooltip
               maxWidth={285}
-              sx={{ ml: 1.25, pr: 0.25 }}
+              sx={{ ml: 1.25, pr: 0.25, flexShrink: 0 }}
               checkForOverflow={false}
               title={({ open }) => (
                 <ResultItemPreviewContainer

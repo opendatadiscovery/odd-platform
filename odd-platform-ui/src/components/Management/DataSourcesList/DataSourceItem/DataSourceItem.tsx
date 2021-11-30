@@ -1,12 +1,10 @@
 import React from 'react';
-import { Grid, Paper, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
+import { Grid, Typography } from '@mui/material';
 import { addSeconds, formatDistanceToNowStrict } from 'date-fns';
 import {
   DataSource,
   DataSourceApiDeleteDataSourceRequest,
 } from 'generated-sources';
-import cx from 'classnames';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
@@ -14,9 +12,9 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceFormDialog/DataSourceFormDialogContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { styles, StylesType } from './DataSourceItemStyles';
+import * as S from './DataSourceItemStyles';
 
-interface DataSourceItemProps extends StylesType {
+interface DataSourceItemProps {
   dataSource: DataSource;
   deleteDataSource: (
     params: DataSourceApiDeleteDataSourceRequest
@@ -24,7 +22,6 @@ interface DataSourceItemProps extends StylesType {
 }
 
 const DataSourceItem: React.FC<DataSourceItemProps> = ({
-  classes,
   dataSource,
   deleteDataSource,
 }) => {
@@ -34,14 +31,14 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
   );
 
   return (
-    <Paper elevation={0} className={classes.container}>
+    <S.Container elevation={0}>
       <Grid container alignItems="flex-start" spacing={2}>
-        <Grid item xs={8} className={classes.nameContainer}>
+        <Grid item xs={8}>
           <Typography variant="h4" title={dataSource.name}>
             {dataSource.name}
           </Typography>
         </Grid>
-        <Grid item sm={4} className={classes.actionsContainer}>
+        <S.ActionsContainer item sm={4}>
           <DataSourceFormDialogContainer
             dataSource={dataSource}
             btnCreateEl={
@@ -74,13 +71,8 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
               </AppButton>
             }
           />
-        </Grid>
-        <Grid
-          item
-          sm={6}
-          container
-          className={classes.descriptionContainer}
-        >
+        </S.ActionsContainer>
+        <S.DescriptionContainer item sm={6} container>
           <LabeledInfoItem
             variant="body2"
             inline
@@ -105,21 +97,14 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
           >
             {dataSource.namespace?.name}
           </LabeledInfoItem>
-        </Grid>
+        </S.DescriptionContainer>
 
-        <Grid
-          item
-          sm={6}
-          container
-          className={classes.descriptionContainer}
-        >
+        <S.DescriptionContainer item sm={6} container>
           <LabeledInfoItem
             variant="body2"
             inline
             label="Receive Data"
-            classes={{
-              value: cx({ [classes.pullingValue]: dataSource.active }),
-            }}
+            valueColor={dataSource.active ? 'green' : ''}
             labelWidth={4}
           >
             <BooleanFormatted value={dataSource.active} />
@@ -144,10 +129,10 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
           >
             {dataSource.connectionUrl}
           </LabeledInfoItem>
-        </Grid>
+        </S.DescriptionContainer>
       </Grid>
-    </Paper>
+    </S.Container>
   );
 };
 
-export default withStyles(styles)(DataSourceItem);
+export default DataSourceItem;

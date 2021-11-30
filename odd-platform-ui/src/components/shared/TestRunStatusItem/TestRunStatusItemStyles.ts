@@ -1,52 +1,32 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
 import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import { styled } from '@mui/material/styles';
+import { propsChecker } from 'lib/helpers';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      display: 'inline-flex',
-      alignItems: 'center',
-    },
-    count: {
-      fontSize: theme.typography.body1.fontSize,
-      lineHeight: theme.typography.body1.lineHeight,
-      fontWeight: theme.typography.fontWeightMedium,
-    },
-    countSmall: {},
-    filledContainer: {
-      fontSize: theme.typography.body2.fontSize,
-      lineHeight: theme.typography.body2.lineHeight,
-      borderRadius: '12px',
-      borderWidth: '1px',
-      borderStyle: 'solid',
-      padding: theme.spacing(0.25, 1),
-      [`&.${DataQualityTestRunStatusEnum.SUCCESS}`]: {
-        backgroundColor: theme.palette.reportStatus.success.background,
-        borderColor: theme.palette.reportStatus.success.border,
-      },
-      [`&.${DataQualityTestRunStatusEnum.FAILED}`]: {
-        backgroundColor: theme.palette.reportStatus.failed.background,
-        borderColor: theme.palette.reportStatus.failed.border,
-      },
-      [`&.${DataQualityTestRunStatusEnum.BROKEN}`]: {
-        backgroundColor: theme.palette.reportStatus.broken.background,
-        borderColor: theme.palette.reportStatus.broken.border,
-      },
-      [`&.${DataQualityTestRunStatusEnum.SKIPPED}`]: {
-        backgroundColor: theme.palette.reportStatus.skipped.background,
-        borderColor: theme.palette.reportStatus.skipped.border,
-      },
-      [`&.${DataQualityTestRunStatusEnum.ABORTED}`]: {
-        backgroundColor: theme.palette.reportStatus.aborted.background,
-        borderColor: theme.palette.reportStatus.aborted.border,
-      },
-      [`&.${DataQualityTestRunStatusEnum.UNKNOWN}`]: {
-        backgroundColor: theme.palette.reportStatus.unknown.background,
-        borderColor: theme.palette.reportStatus.unknown.border,
-      },
-    },
-  });
+export const Container = styled('div')(({ theme }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const Count = styled('span')(({ theme }) => ({
+  fontSize: theme.typography.body1.fontSize,
+  lineHeight: theme.typography.body1.lineHeight,
+  fontWeight: theme.typography.fontWeightMedium,
+}));
+
+export const FilledContainer = styled('span', {
+  shouldForwardProp: propsChecker,
+})<{
+  $typeName?: DataQualityTestRunStatusEnum;
+  $count?: number;
+  $size?: 'large' | 'small';
+}>(({ theme, $typeName, $count, $size }) => ({
+  fontSize: theme.typography.body2.fontSize,
+  lineHeight: theme.typography.body2.lineHeight,
+  borderRadius: '12px',
+  borderWidth: '1px',
+  borderStyle: 'solid',
+  padding: theme.spacing(0.25, 1),
+  backgroundColor: theme.palette.reportStatus[$typeName!].background,
+  borderColor: theme.palette.reportStatus[$typeName!].border,
+  marginLeft: $count || $size === 'small' ? theme.spacing(0.5) : '',
+}));

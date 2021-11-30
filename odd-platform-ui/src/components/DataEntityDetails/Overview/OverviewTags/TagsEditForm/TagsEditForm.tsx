@@ -246,7 +246,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
           <div className={classes.tagsList}>
             {fields?.map((field, index) => (
               <TagItem
-                classes={{ container: classes.tagItem }}
+                sx={{ my: 0.5, mr: 0.5 }}
                 key={field.id}
                 label={field.name}
                 important={field.important}

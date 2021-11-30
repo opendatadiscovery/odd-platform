@@ -1,34 +1,30 @@
-import { Theme } from '@mui/material';
+import { Typography } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { propsChecker } from 'lib/helpers';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+interface ContainerProps {
+  $important?: boolean;
+  $removable?: boolean;
+  $cursorPointer?: boolean;
+}
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      display: 'inline-flex',
-      alignItems: 'center',
-      border: '1px solid',
-      borderColor: theme.palette.tag.main.normal.border,
-      borderRadius: '4px',
-      padding: theme.spacing(0.25, 1),
-      color: theme.palette.tag.main.normal.color,
-      '&:hover': {
-        borderColor: theme.palette.tag.main.hover.border,
-      },
-      '&:active': {
-        borderColor: theme.palette.tag.main.active.border,
-      },
+export const Container = styled(Typography, {
+  shouldForwardProp: propsChecker,
+})<ContainerProps>(
+  ({ theme, $important, $removable, $cursorPointer }) => ({
+    display: 'inline-flex',
+    alignItems: 'center',
+    border: '1px solid',
+    borderRadius: '4px',
+    padding: theme.spacing(0.25, 1),
+    paddingRight: $removable ? theme.spacing(0.5) : '',
+    color: theme.palette.tag.main.normal.color,
+    borderColor:
+      theme.palette.tag[$important ? 'important' : 'main'].normal.border,
+    '&:hover, &:active': {
+      cursor: $cursorPointer ? 'pointer' : 'auto',
+      borderColor:
+        theme.palette.tag[$important ? 'important' : 'main'].hover.border,
     },
-    important: {
-      borderColor: theme.palette.tag.important.normal.border,
-      '&:hover, &:active': {
-        borderColor: theme.palette.tag.important.hover.border,
-      },
-    },
-    containerRemovable: {
-      paddingRight: theme.spacing(0.5),
-    },
-  });
-
-export type StylesType = WithStyles<typeof styles>;
+  })
+);

@@ -29,8 +29,7 @@ jobs:
           distribution: 'temurin'
       - name: Run codestyle check
         env:
-          NODE_ENV: production
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms512m -Xmx512m"
-        run: ./gradlew clean buildlessCheckstyleMain buildlessCheckstyleTest ${{ github.event.inputs.buildOptions }} -PoddGHPRepositoryUsername=github-actions -PoddGHPRepositoryPassword=${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew clean checkstyleMain checkstyleTest ${{ github.event.inputs.buildOptions }}

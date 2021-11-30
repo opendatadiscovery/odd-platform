@@ -1,7 +1,6 @@
 import React from 'react';
-import cx from 'classnames';
-import { Autocomplete, Typography } from '@mui/material';
-import { Link, useHistory } from 'react-router-dom';
+import { Typography } from '@mui/material';
+import { useHistory } from 'react-router-dom';
 import {
   DataEntityRef,
   SearchApiGetSearchSuggestionsRequest,
@@ -9,14 +8,15 @@ import {
   SearchFacetsData,
 } from 'generated-sources';
 import { dataEntityDetailsPath, searchPath } from 'lib/paths';
-import { StylesType } from 'components/shared/MainSearch/MainSearchStyles';
+import * as S from 'components/shared/MainSearch/MainSearchStyles';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
+import { AutocompleteRenderOptionState } from '@mui/material/Autocomplete/Autocomplete';
 
-interface AppSearchProps extends StylesType {
+interface AppSearchProps {
   className?: string;
   query?: string;
   placeholder?: string;
@@ -30,8 +30,6 @@ interface AppSearchProps extends StylesType {
 }
 
 const MainSearch: React.FC<AppSearchProps> = ({
-  classes,
-  className,
   placeholder,
   query,
   suggestions,
@@ -105,10 +103,41 @@ const MainSearch: React.FC<AppSearchProps> = ({
     }
   }, [autocompleteOpen, searchText]);
 
+  const getOptionLabel = (option: unknown) => {
+    const typedOption = option as DataEntityRef;
+    return typedOption.internalName || typedOption.externalName || '';
+  };
+
+  const renderOption = (
+    props: React.HTMLAttributes<HTMLLIElement>,
+    option: unknown,
+    state: AutocompleteRenderOptionState
+  ): React.ReactNode => {
+    const typedOption = option as DataEntityRef;
+    return (
+      <li {...props}>
+        <S.SuggestionItem
+          to={typedOption.id ? dataEntityDetailsPath(typedOption.id) : '#'}
+        >
+          <Typography variant="body1" sx={{ mr: 1 }}>
+            {typedOption.internalName || typedOption.externalName}
+          </Typography>
+          {typedOption.types?.map(type => (
+            <EntityTypeItem
+              sx={{ mr: 0.5 }}
+              key={type.id}
+              typeName={type.name}
+            />
+          ))}
+        </S.SuggestionItem>
+      </li>
+    );
+  };
+
   return (
-    <div className={cx(classes.searchContainer, className)}>
-      <div className={classes.search}>
-        <Autocomplete
+    <S.Container>
+      <S.Search>
+        <S.SearchAutocomplete
           fullWidth
           value={{ externalName: searchText }}
           id="data-entity-search"
@@ -120,15 +149,9 @@ const MainSearch: React.FC<AppSearchProps> = ({
             setAutocompleteOpen(false);
           }}
           onInputChange={handleInputChange}
-          getOptionLabel={option =>
-            option.internalName || option.externalName || ''
-          }
+          getOptionLabel={getOptionLabel}
           options={options}
           loading={loadingSuggestions}
-          className={classes.autocomplete}
-          classes={{
-            endAdornment: classes.clearIconContainer,
-          }}
           freeSolo
           filterOptions={option => option}
           clearIcon={<ClearIcon />}
@@ -155,28 +178,10 @@ const MainSearch: React.FC<AppSearchProps> = ({
               }}
             />
           )}
-          renderOption={(props, option) => (
-            <li {...props}>
-              <Link
-                to={option.id ? dataEntityDetailsPath(option.id) : '#'}
-                className={classes.suggestionItem}
-              >
-                <Typography variant="body1" className={classes.name}>
-                  {option.internalName || option.externalName}
-                </Typography>
-                {option.types?.map(type => (
-                  <EntityTypeItem
-                    sx={{ mr: 0.5 }}
-                    key={type.id}
-                    typeName={type.name}
-                  />
-                ))}
-              </Link>
-            </li>
-          )}
+          renderOption={renderOption}
         />
-      </div>
-    </div>
+      </S.Search>
+    </S.Container>
   );
 };
 

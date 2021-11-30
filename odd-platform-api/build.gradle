@@ -5,7 +5,7 @@ plugins {
     id 'checkstyle'
 }
 
-group = 'com.provectus'
+group = 'org.opendatadiscovery'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
 sourceCompatibility = '17'
@@ -14,14 +14,6 @@ apply from: 'jooq.generate.gradle'
 
 final boolean skipUIBundle = project.hasProperty("skipUIBundle") &&
         Boolean.parseBoolean(project.property("skipUIBundle").toString())
-
-repositories {
-    maven {
-        name = "oddGHPRepository"
-        url = 'https://maven.pkg.github.com/opendatadiscovery/odd-platform-ingestion-contract'
-        credentials(PasswordCredentials)
-    }
-}
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-webflux"
@@ -33,7 +25,7 @@ dependencies {
     implementation "org.springframework.session:spring-session-core"
     implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
-    implementation "com.provectus.oddplatform:odd-platform-ingestion-contract:$oddIngestionApiVersion"
+    implementation "org.opendatadiscovery:odd-platform-ingestion-contract:$oddIngestionApiVersion"
     implementation project(':odd-platform-api-contract')
 
     if (!skipUIBundle) {
@@ -82,7 +74,7 @@ dependencies {
 }
 
 jooq {
-    basePackageName = "com.provectus.oddplatform.model"
+    basePackageName = "org.opendatadiscovery.oddplatform.model"
     includeMatches = ".*"
     excludes = "FLYWAY_SCHEMA_HISTORY"
     imageName = "postgres:13.2-alpine"
