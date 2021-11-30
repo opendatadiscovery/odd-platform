@@ -13,28 +13,22 @@ import {
   DataSource,
   DataSourceApiRegisterDataSourceRequest,
   DataSourceApiUpdateDataSourceRequest,
-  Namespace,
-  NamespaceApiGetNamespaceListRequest,
-  NamespaceList,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import {
-  Autocomplete,
   Checkbox,
-  createFilterOptions,
   FormControlLabel,
   Grid,
   MenuItem,
   Typography,
 } from '@mui/material';
-import { useDebouncedCallback } from 'use-debounce/lib';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { StylesType } from './DataSourceFormDialogStyles';
+import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormStyles';
+import NamespaceAutocompleteContainer from 'components/Management/DataSourcesList/DataSourceForm/NamespaceAutocomplete/NamespaceAutocompleteContainer';
 
-interface DataSourceFormDialogProps extends StylesType {
+interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
   isLoading: boolean;
   dataSource?: DataSource;
@@ -44,26 +38,21 @@ interface DataSourceFormDialogProps extends StylesType {
   updateDataSource: (
     params: DataSourceApiUpdateDataSourceRequest
   ) => Promise<DataSource>;
-  searchNamespace: (
-    params: NamespaceApiGetNamespaceListRequest
-  ) => Promise<NamespaceList>;
 }
 
-type DataSourceFormDataValues = Omit<
+export type DataSourceFormDataValues = Omit<
   DataSourceFormData,
   'pullingInterval'
 > & {
   pullingInterval: { value?: number; format: string };
 };
 
-const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
-  classes,
+const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   dataSource,
   btnCreateEl,
   isLoading,
   registerDataSource,
   updateDataSource,
-  searchNamespace,
 }) => {
   const getDefaultValues = React.useCallback(
     (): DataSourceFormDataValues => ({
@@ -152,101 +141,6 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
     );
   };
 
-  // Namespace autocomplete
-  type FilterOption = Omit<Namespace, 'id' | 'namespace'> &
-    Partial<Namespace>;
-
-  type FilterChangeOption = FilterOption | string | { inputValue: string };
-  const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [options, setOptions] = React.useState<FilterOption[]>([]);
-  const filter = createFilterOptions<FilterOption>();
-  const [searchText, setSearchText] = React.useState<string>('');
-  const [loading, setLoading] = React.useState<boolean>(false);
-
-  const handleNamespaceSearch = React.useCallback(
-    useDebouncedCallback(() => {
-      setLoading(true);
-      searchNamespace({ query: searchText, page: 1, size: 30 }).then(
-        response => {
-          setOptions(response.items);
-          setLoading(false);
-        }
-      );
-    }, 500),
-    [setLoading, searchNamespace, setOptions, searchText]
-  );
-
-  React.useEffect(() => {
-    setLoading(autocompleteOpen);
-    if (autocompleteOpen) {
-      handleNamespaceSearch();
-    }
-  }, [autocompleteOpen, searchText]);
-
-  const handleInputChange = (
-    _: React.ChangeEvent<unknown>,
-    query: string
-  ) => {
-    setSearchText(query);
-  };
-
-  const handleOptionChange = React.useCallback(
-    (onChange: (val?: string) => void) => (
-      _: React.ChangeEvent<unknown>,
-      newValue: FilterChangeOption | null
-    ) => {
-      let newField;
-      if (newValue && typeof newValue === 'object') {
-        if ('name' in newValue) {
-          newField = newValue;
-        }
-      }
-
-      // Create value from keyboard
-      if (typeof newValue === 'string') {
-        newField = {
-          name: newValue,
-        };
-      }
-      onChange(newField?.name || '');
-    },
-    []
-  );
-
-  const getFilterOptions = React.useCallback(
-    (filterOptions, params) => {
-      const filtered = filter(options, params);
-      // Suggest the creation of a new value
-      if (
-        params.inputValue !== '' &&
-        !loading &&
-        !options.some(option => option.name === params.inputValue)
-      ) {
-        return [
-          ...options,
-          {
-            name: params.inputValue,
-          },
-        ];
-      }
-
-      return filtered;
-    },
-    [loading]
-  );
-
-  const getOptionLabel = React.useCallback((option: FilterOption) => {
-    // Value selected with enter, right from the input
-    if (typeof option === 'string') {
-      return option;
-    }
-    // Regular option
-    if ('name' in option && option.name) {
-      return option.name;
-    }
-    return '';
-  }, []);
-
   const formTitle = (
     <Typography variant="h4">
       {dataSource ? 'Edit ' : 'Add '}
@@ -255,14 +149,10 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
   );
 
   const formContent = () => (
-    <form
-      className={classes.container}
-      id="datasource-create-form"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <Typography variant="subtitle2" className={classes.formTitle}>
-        Fields with the <span className={classes.asterisk}>*</span> symbol
-        are required to save the Datasource
+    <form id="datasource-create-form" onSubmit={handleSubmit(onSubmit)}>
+      <Typography variant="subtitle2" fontSize="0.73rem">
+        Fields with the <Asterisk>*</Asterisk> symbol are required to save
+        the Datasource
       </Typography>
       <Controller
         name="name"
@@ -341,16 +231,16 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
           <FormControlLabel
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...field}
-            className={classes.checkboxContainer}
+            sx={{ m: 0, mt: 1.5 }}
             checked={field.value}
-            control={<Checkbox className={classes.pullingCheckbox} />}
+            control={<Checkbox sx={{ mr: 1, p: 0 }} />}
             label="Receive data from current datasource"
             disabled={isCheckboxDisabled}
           />
         )}
       />
       {isPullingOn ? (
-        <Grid container spacing={1} className={classes.intervalContainer}>
+        <Grid container spacing={1} sx={{ mt: 1.5 }}>
           <Grid item xs={6} md={4}>
             <Controller
               name="pullingInterval.format"
@@ -390,57 +280,7 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
         name="namespaceName"
         defaultValue={dataSource?.namespace?.name || ''}
         render={({ field }) => (
-          <Autocomplete
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...field}
-            fullWidth
-            id="namespace-name-search"
-            open={autocompleteOpen}
-            onOpen={() => {
-              setAutocompleteOpen(true);
-            }}
-            onClose={() => {
-              setAutocompleteOpen(false);
-            }}
-            onChange={handleOptionChange(field.onChange)}
-            onInputChange={handleInputChange}
-            getOptionLabel={getOptionLabel}
-            options={options}
-            filterOptions={getFilterOptions}
-            loading={loading}
-            freeSolo
-            handleHomeEndKeys
-            selectOnFocus
-            clearIcon={<ClearIcon />}
-            sx={{ mt: 1.25 }}
-            renderInput={params => (
-              <AppTextField
-                {...params}
-                ref={params.InputProps.ref}
-                placeholder="Namespace"
-                label="Namespace"
-                customEndAdornment={{
-                  variant: 'loader',
-                  showAdornment: loading,
-                  position: { mr: 4 },
-                }}
-              />
-            )}
-            renderOption={(props, option) => (
-              <li {...props}>
-                <Typography variant="body2">
-                  {option.id ? (
-                    option.name
-                  ) : (
-                    <AutocompleteSuggestion
-                      optionLabel="custom namespace"
-                      optionName={option.name}
-                    />
-                  )}
-                </Typography>
-              </li>
-            )}
-          />
+          <NamespaceAutocompleteContainer controllerProps={field} />
         )}
       />
       <Controller
@@ -495,4 +335,4 @@ const DataSourceFormDialog: React.FC<DataSourceFormDialogProps> = ({
   );
 };
 
-export default DataSourceFormDialog;
+export default DataSourceForm;
