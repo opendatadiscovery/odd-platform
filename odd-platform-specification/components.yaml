@@ -272,8 +272,8 @@ components:
           $ref: '#/components/schemas/DataEntitySubType'
         tags:
           $ref: '#/components/schemas/TagList'
-        data_entity_group:
-          $ref: '#/components/schemas/DataEntityRef'
+        data_entity_groups:
+          $ref: '#/components/schemas/DataEntityRefList'
         created_at:
           type: string
           format: date-time
