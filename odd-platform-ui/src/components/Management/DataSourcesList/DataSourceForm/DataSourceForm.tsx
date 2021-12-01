@@ -182,7 +182,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         control={control}
         rules={{
           required: true,
-          validate: value => !!value.trim(),
+          validate: value => !!value?.trim(),
         }}
         render={({ field }) => (
           <AppTextField
@@ -206,7 +206,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         control={control}
         rules={{
           required: true,
-          validate: value => !!value.trim(),
+          validate: value => !!value?.trim(),
         }}
         render={({ field }) => (
           <AppTextField
