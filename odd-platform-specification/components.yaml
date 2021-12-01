@@ -367,12 +367,14 @@ components:
             - KAFKA_TOPIC
             - JOB
             - JOB_RUN
-            - EXPERIMENT
+            - ML_EXPERIMENT
             - ML_MODEL_TRAINING
             - ML_MODEL_INSTANCE
             - DASHBOARD
             - ML_MODEL_ARTIFACT
             - VIEW
+            - DAG
+            - GRAPH_NODE
       required:
         - id
         - name
@@ -581,12 +583,14 @@ components:
           properties:
             entities:
               $ref: '#/components/schemas/DataEntityRefList'
-            parent_deg:
-              $ref: '#/components/schemas/DataEntityRef'
+            parents:
+              $ref: '#/components/schemas/DataEntityRefList'
             group_oddrn:
               type: string
             entities_count:
               type: number
+            has_children:
+              type: boolean
           required:
             - entities
 
