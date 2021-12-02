@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import capitalize from 'lodash/capitalize';
 import reduce from 'lodash/reduce';
 import {
@@ -20,6 +20,7 @@ import {
   FormControlLabel,
   Grid,
   MenuItem,
+  RadioGroup,
   Typography,
 } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -27,6 +28,7 @@ import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormStyles';
 import NamespaceAutocompleteContainer from 'components/Management/DataSourcesList/DataSourceForm/NamespaceAutocomplete/NamespaceAutocompleteContainer';
+import AppRadio from 'components/shared/AppRadio/AppRadio';
 
 interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -61,7 +63,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       namespaceName: dataSource?.namespace?.name || '',
       connectionUrl: dataSource?.connectionUrl || '',
       description: dataSource?.description || '',
-      active: !!dataSource?.active,
+      active: !!dataSource?.active || false,
       pullingInterval: dataSource?.pullingInterval
         ? reduce(
             intervalToDuration({
@@ -94,13 +96,43 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
     reset(getDefaultValues());
   }, [dataSource]);
 
-  const isCheckboxDisabled = watch('connectionUrl', '')?.length === 0;
   const isPullingOn = watch('active', false);
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
     error: string;
     isSuccessfulSubmit: boolean;
   }>(initialState);
+
+  type RadioType = 'URL' | 'ODDRN';
+  const [radioValue, setRadioValue] = React.useState<RadioType>('URL');
+  const isODDRN = () => radioValue === 'ODDRN';
+
+  const handleRadioChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    value: string
+  ) => {
+    setRadioValue(value as RadioType);
+    if (isODDRN()) setValue('connectionUrl', '');
+    setValue('oddrn', '');
+  };
+
+  const recieveDataCheckbox = (
+    <Controller
+      defaultValue={false}
+      name="active"
+      control={control}
+      render={({ field }) => (
+        <FormControlLabel
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...field}
+          sx={{ m: 0, mt: 1.5 }}
+          checked={field.value}
+          control={<Checkbox sx={{ mr: 1, p: 0 }} />}
+          label="Receive data from current datasource"
+        />
+      )}
+    />
+  );
 
   const clearState = () => {
     setState(initialState);
@@ -177,108 +209,127 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           />
         )}
       />
-      <Controller
-        name="oddrn"
-        control={control}
-        rules={{
-          required: true,
-          validate: value => !!value?.trim(),
-        }}
-        render={({ field }) => (
-          <AppTextField
-            {...field}
-            sx={{ mt: 1.5 }}
-            label="ODDRN"
-            placeholder="e.g. //kafka/"
-            required
-            disabled={!!dataSource}
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
-          />
-        )}
-      />
-      <Controller
-        name="connectionUrl"
-        control={control}
-        rules={{
-          required: true,
-          validate: value => !!value?.trim(),
-        }}
-        render={({ field }) => (
-          <AppTextField
-            {...field}
-            sx={{ mt: 1.25 }}
-            label="URL"
-            placeholder="e.g. https://github.com/link/example"
-            required
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => field.onChange(''),
-              icon: <ClearIcon />,
-            }}
-          />
-        )}
-      />
-      <Controller
-        name="active"
-        control={control}
-        render={({ field }) => (
+      <RadioGroup
+        defaultValue={radioValue}
+        value={radioValue}
+        onChange={handleRadioChange}
+        sx={{ mt: 1, ml: 0.5 }}
+      >
+        <Grid container>
           <FormControlLabel
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...field}
-            sx={{ m: 0, mt: 1.5 }}
-            checked={field.value}
-            control={<Checkbox sx={{ mr: 1, p: 0 }} />}
-            label="Receive data from current datasource"
-            disabled={isCheckboxDisabled}
+            value="URL"
+            control={<AppRadio />}
+            label="URL"
           />
-        )}
-      />
-      {isPullingOn ? (
-        <Grid container spacing={1} sx={{ mt: 1.5 }}>
-          <Grid item xs={6} md={4}>
-            <Controller
-              name="pullingInterval.format"
-              control={control}
-              render={({ field }) => (
-                <>
-                  <AppTextField {...field} label="Pulling Interval" select>
-                    {['minutes', 'hours', 'days', 'weeks'].map(value => (
-                      <MenuItem key={value} value={value}>
-                        {capitalize(value)}
-                      </MenuItem>
-                    ))}
-                  </AppTextField>
-                </>
-              )}
-            />
-          </Grid>
-          <Grid item xs={6} md={4}>
-            <Controller
-              name="pullingInterval.value"
-              control={control}
-              render={({ field }) => (
-                <AppTextField
-                  {...field}
-                  label="Value"
-                  placeholder="e.g. 1"
-                  type="number"
-                  inputProps={{ min: 1 }}
-                />
-              )}
-            />
-          </Grid>
+          <FormControlLabel
+            value="ODDRN"
+            control={<AppRadio />}
+            label="ODDRN"
+          />
         </Grid>
-      ) : null}
+      </RadioGroup>
+      {isODDRN() ? (
+        <>
+          <Controller
+            name="oddrn"
+            control={control}
+            rules={{
+              required: isODDRN(),
+              validate: value => !!value?.trim(),
+            }}
+            render={({ field }) => (
+              <AppTextField
+                {...field}
+                sx={{ mt: 1.5 }}
+                label="ODDRN"
+                placeholder="e.g. //kafka/"
+                required
+                // disabled={!!dataSource}
+                customEndAdornment={{
+                  variant: 'clear',
+                  showAdornment: !!field.value,
+                  onCLick: () => field.onChange(''),
+                  icon: <ClearIcon />,
+                }}
+              />
+            )}
+          />
+          {recieveDataCheckbox}
+        </>
+      ) : (
+        <>
+          <Controller
+            name="connectionUrl"
+            control={control}
+            rules={{
+              required: isODDRN(),
+              validate: value => !!value?.trim(),
+            }}
+            render={({ field }) => (
+              <AppTextField
+                {...field}
+                sx={{ mt: 1.25 }}
+                label="URL"
+                placeholder="e.g. https://github.com/link/example"
+                required
+                customEndAdornment={{
+                  variant: 'clear',
+                  showAdornment: !!field.value,
+                  onCLick: () => field.onChange(''),
+                  icon: <ClearIcon />,
+                }}
+              />
+            )}
+          />
+          {recieveDataCheckbox}
+          {isPullingOn && (
+            <Grid container sx={{ mt: 1.5 }}>
+              <Grid item xs={6} md={4} sx={{ mr: 1 }}>
+                <Controller
+                  name="pullingInterval.format"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <AppTextField
+                        {...field}
+                        label="Pulling Interval"
+                        select
+                      >
+                        {['minutes', 'hours', 'days', 'weeks'].map(
+                          value => (
+                            <MenuItem key={value} value={value}>
+                              {capitalize(value)}
+                            </MenuItem>
+                          )
+                        )}
+                      </AppTextField>
+                    </>
+                  )}
+                />
+              </Grid>
+              <Grid item xs={6} md={4}>
+                <Controller
+                  name="pullingInterval.value"
+                  control={control}
+                  render={({ field }) => (
+                    <AppTextField
+                      {...field}
+                      label="Value"
+                      placeholder="e.g. 1"
+                      type="number"
+                      inputProps={{ min: 1 }}
+                    />
+                  )}
+                />
+              </Grid>
+            </Grid>
+          )}
+        </>
+      )}
       <Controller
         control={control}
         name="namespaceName"
-        defaultValue={dataSource?.namespace?.name || ''}
+        defaultValue={dataSource?.namespace?.name}
         render={({ field }) => (
           <NamespaceAutocompleteContainer controllerProps={field} />
         )}
