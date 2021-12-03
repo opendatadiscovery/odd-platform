@@ -1,21 +1,13 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import {
-  styles,
-  StylesType,
-} from 'components/Search/Results/SearchTabsSkeleton/SearchTabsSkeletonStyles';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   length?: number;
 }
 
-const SearchTabsSkeleton: React.FC<SkeletonProps> = ({
-  classes,
-  length,
-}) => (
-  <Grid container className={classes.container} wrap="nowrap">
+const SearchTabsSkeleton: React.FC<SkeletonProps> = ({ length }) => (
+  <Grid container sx={{ pl: 1 }} wrap="nowrap">
     {[...Array(length)].map((_, id) => (
       <Skeleton
         // eslint-disable-next-line react/no-array-index-key
@@ -23,9 +15,9 @@ const SearchTabsSkeleton: React.FC<SkeletonProps> = ({
         component="div"
         width="80px"
         height="33px"
-        className={classes.skeletonItem}
+        sx={{ mr: 1 }}
       />
     ))}
   </Grid>
 );
-export default withStyles(styles)(SearchTabsSkeleton);
+export default SearchTabsSkeleton;
