@@ -1,24 +1,20 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { IconButton, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import cx from 'classnames';
+import { Typography } from '@mui/material';
 import { SearchFilter, SearchFilterState } from 'generated-sources';
 import * as actions from 'redux/actions';
-import CloseIcon from '@mui/icons-material/Close';
 import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
 import { OptionalFacetNames } from 'redux/interfaces/search';
-import { styles, StylesType } from './SelectedFilterOptionStyles';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { Container } from './SelectedFilterOptionStyles';
 
-interface FilterItemProps extends StylesType {
-  className?: string;
+interface FilterItemProps {
   filter: SearchFilter | SearchFilterState;
   facetName: OptionalFacetNames;
 }
 
 const SelectedFilterOption: React.FC<FilterItemProps> = ({
-  classes,
-  className,
   filter,
   facetName,
 }) => {
@@ -37,21 +33,19 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({
   };
 
   return (
-    <div className={cx(classes.container, className)}>
-      <div className={classes.content}>
-        <Typography noWrap title={filterName}>
-          <TextFormatted value={filterName} />
-        </Typography>
-        <IconButton
-          className={classes.removeBtn}
-          onClick={onRemoveClick}
-          size="large"
-        >
-          <CloseIcon fontSize="inherit" />
-        </IconButton>
-      </div>
-    </div>
+    <Container sx={{ mt: 0.5, mx: 0.25 }}>
+      <Typography noWrap title={filterName}>
+        <TextFormatted value={filterName} />
+      </Typography>
+      <AppIconButton
+        sx={{ ml: 0.5 }}
+        size="small"
+        color="unfilled"
+        icon={<ClearIcon />}
+        onClick={onRemoveClick}
+      />
+    </Container>
   );
 };
 
-export default withStyles(styles)(SelectedFilterOption);
+export default SelectedFilterOption;

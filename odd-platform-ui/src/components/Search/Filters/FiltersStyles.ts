@@ -1,25 +1,16 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+import { Grid } from '@mui/material';
 import { toolbarHeight } from 'lib/constants';
+import { styled } from '@mui/material/styles';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      padding: theme.spacing(2, 1, 1.5, 1),
-    },
-    caption: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      marginBottom: theme.spacing(1),
-    },
-    listContainer: {
-      height: `calc(100vh - 110px - ${toolbarHeight}px)`,
-    },
-    facetsLoaderContainer: {
-      padding: theme.spacing(0, 3),
-      marginTop: theme.spacing(2),
-    },
-  });
+export const Container = styled('div')(({ theme }) => ({
+  padding: theme.spacing(2, 1, 1.5, 1),
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const FacetsLoaderContainer = styled(Grid)(({ theme }) => ({
+  padding: theme.spacing(0, 3),
+  justifyContent: 'center',
+}));
+
+export const ListContainer = styled('div')(() => ({
+  height: `calc(100vh - 110px - ${toolbarHeight}px)`,
+}));

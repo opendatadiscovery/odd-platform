@@ -22,13 +22,13 @@ import {
   OptionalFacetNames,
   SearchFilterStateSynced,
 } from 'redux/interfaces/search';
-import { StylesType } from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemStyles';
 import SelectedFilterOption from 'components/Search/Filters/FilterItem/SelectedFilterOption/SelectedFilterOption';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import * as S from './MultipleFilterItemStyles';
 
-interface FilterItemProps extends StylesType {
+interface FilterItemProps {
   searchId: string;
   name: string;
   facetName: OptionalFacetNames;
@@ -41,7 +41,6 @@ interface FilterItemProps extends StylesType {
 }
 
 const MultipleFilterItem: React.FC<FilterItemProps> = ({
-  classes,
   searchId,
   name,
   facetName,
@@ -155,7 +154,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
         <li {...props}>
           <Grid container justifyContent="space-between">
             <span>{formattedOptionName}</span>
-            <span className={classes.filterCount}>{option.count}</span>
+            <S.FilterCount>{option.count}</S.FilterCount>
           </Grid>
         </li>
       );
@@ -181,19 +180,17 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
         <Grid container justifyContent="space-between">
           <span>
             {string}
-            <span className={classes.highlightedOption}>
-              {highlightedText}
-            </span>
+            <S.HighlightedOption>{highlightedText}</S.HighlightedOption>
             {endString}
           </span>
-          <span className={classes.filterCount}>{option.count}</span>
+          <S.FilterCount>{option.count}</S.FilterCount>
         </Grid>
       </li>
     );
   };
 
   return (
-    <Grid container className={classes.container}>
+    <Grid container>
       <Grid item xs={12}>
         <Autocomplete
           fullWidth
@@ -230,22 +227,15 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
           )}
         />
       </Grid>
-      <Grid
-        item
-        xs={12}
-        container
-        className={classes.selectedOptionsContainer}
-        wrap="wrap"
-      >
+      <S.SelectedOptionsContainer item xs={12} container>
         {selectedOptions?.map(option => (
           <SelectedFilterOption
             key={option.entityId}
             facetName={facetName}
             filter={option}
-            className={classes.selectedOption}
           />
         ))}
-      </Grid>
+      </S.SelectedOptionsContainer>
     </Grid>
   );
 };
