@@ -126,7 +126,7 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
-    public Page<AlertDto> listDependentObjectsAlerts(int page, int size, long ownerId) {
+    public Page<AlertDto> listDependentObjectsAlerts(final int page, final int size, final long ownerId) {
         final List<String> ownOddrns = getObjectsOddrnsByOwner(ownerId);
 
         final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
