@@ -180,8 +180,8 @@ public class AlertRepositoryImpl implements AlertRepository {
             .unionAll(dslContext
                 .select(LINEAGE.asterisk())
                 .from(LINEAGE)
-                .join(cteName).on(LINEAGE.CHILD_ODDRN.eq(field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))));
-
+                .join(cteName).on(LINEAGE.CHILD_ODDRN.eq(
+                    field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))));
 
         return name("t2")
             .as(dslContext.withRecursive(cte)
