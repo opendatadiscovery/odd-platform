@@ -9,9 +9,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.jooq.CommonTableExpression;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.Name;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.SelectOnConditionStep;
 import org.opendatadiscovery.oddplatform.dto.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
@@ -25,12 +28,15 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
+import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TYPE;
+import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
 
@@ -120,6 +126,70 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
+    public Page<AlertDto> listDependentObjectsAlerts(final int page, final int size, final long ownerId) {
+        final List<String> ownOddrns = getObjectsOddrnsByOwner(ownerId);
+
+        final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
+
+        final List<Field<?>> selectFields = Stream
+            .of(ALERT.fields(),
+                DATA_ENTITY.fields(),
+                DATA_ENTITY_SUBTYPE.fields())
+            .flatMap(Arrays::stream)
+            .collect(Collectors.toList());
+
+        final List<AlertDto> data = dslContext.with(cte)
+            .select(selectFields)
+            .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
+            .from(DATA_ENTITY)
+            .join(cte.getName())
+            .on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()), String.class)
+                .eq(DATA_ENTITY.ODDRN))
+            .join(ALERT).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+            .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
+            .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID))
+            .where(DATA_ENTITY.ODDRN.notIn(ownOddrns))
+            .groupBy(selectFields)
+            .fetchStream()
+            .map(this::mapRecord)
+            .toList();
+        return Page.<AlertDto>builder()
+            .data(data)
+            .hasNext(true)
+            .total(0L)
+            .build();
+    }
+
+    private List<String> getObjectsOddrnsByOwner(final long ownerId) {
+        return dslContext.select(DATA_ENTITY.ODDRN)
+            .from(DATA_ENTITY)
+            .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
+            .where(OWNERSHIP.OWNER_ID.eq(ownerId))
+            .fetchStreamInto(String.class)
+            .toList();
+    }
+
+    private CommonTableExpression<Record1<String>> getChildOddrnsLinageByOwnOddrnsCte(final List<String> ownOddrns) {
+        final Name cteName = name("t");
+
+        final CommonTableExpression<Record> cte = cteName.as(dslContext
+            .select(LINEAGE.asterisk())
+            .from(LINEAGE)
+            .where(LINEAGE.CHILD_ODDRN.in(ownOddrns))
+            .unionAll(dslContext
+                .select(LINEAGE.asterisk())
+                .from(LINEAGE)
+                .join(cteName).on(LINEAGE.CHILD_ODDRN.eq(
+                    field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))));
+
+        return name("t2")
+            .as(dslContext.withRecursive(cte)
+                .selectDistinct(field(cteName.append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()), String.class))
+                .from(cte.getName()));
+    }
+
+    @Override
     public long count() {
         return dslContext.selectCount()
             .from(ALERT)
@@ -134,6 +204,22 @@ public class AlertRepositoryImpl implements AlertRepository {
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .where(OWNERSHIP.OWNER_ID.eq(ownerId))
+            .fetchOptionalInto(Long.class)
+            .orElse(0L);
+    }
+
+    @Override
+    public long countDependentObjectsAlerts(final long ownerId) {
+        final List<String> ownOddrns = getObjectsOddrnsByOwner(ownerId);
+
+        final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
+
+        return dslContext.with(cte)
+            .select(countDistinct(ALERT.ID))
+            .from(ALERT)
+            .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()))
+                .eq(ALERT.DATA_ENTITY_ODDRN))
+            .where(ALERT.DATA_ENTITY_ODDRN.notIn(ownOddrns))
             .fetchOptionalInto(Long.class)
             .orElse(0L);
     }

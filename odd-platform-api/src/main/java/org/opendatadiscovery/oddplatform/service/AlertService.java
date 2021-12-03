@@ -19,4 +19,6 @@ public interface AlertService {
     Mono<AlertList> getDataEntityAlerts(final long dataEntityId);
 
     Mono<Void> handleExternalAlerts(final List<ExternalAlert> externalAlerts);
+
+    Mono<AlertList> listDependentObjectsAlerts(int page, int size);
 }
