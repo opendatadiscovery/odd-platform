@@ -142,7 +142,9 @@ public class AlertRepositoryImpl implements AlertRepository {
             .select(selectFields)
             .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
             .from(DATA_ENTITY)
-            .join(cte.getName()).on(field(cte.getName() + ".child_oddrn", String.class).eq(DATA_ENTITY.ODDRN))
+            .join(cte.getName())
+            .on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()), String.class)
+                .eq(DATA_ENTITY.ODDRN))
             .join(ALERT).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
@@ -151,8 +153,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .groupBy(selectFields)
             .fetchStream()
             .map(this::mapRecord)
-            .collect(Collectors.toList());
-
+            .toList();
         return Page.<AlertDto>builder()
             .data(data)
             .hasNext(true)
@@ -166,7 +167,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
             .where(OWNERSHIP.OWNER_ID.eq(ownerId))
             .fetchStreamInto(String.class)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private CommonTableExpression<Record1<String>> getChildOddrnsLinageByOwnOddrnsCte(final List<String> ownOddrns) {
@@ -179,11 +180,12 @@ public class AlertRepositoryImpl implements AlertRepository {
             .unionAll(dslContext
                 .select(LINEAGE.asterisk())
                 .from(LINEAGE)
-                .join(cteName).on(LINEAGE.CHILD_ODDRN.eq(field("t.parent_oddrn", String.class)))));
+                .join(cteName).on(LINEAGE.CHILD_ODDRN.eq(field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))));
+
 
         return name("t2")
             .as(dslContext.withRecursive(cte)
-                .selectDistinct(field(cte.getName() + ".child_oddrn", String.class))
+                .selectDistinct(field(cteName.append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()), String.class))
                 .from(cte.getName()));
     }
 
@@ -215,7 +217,8 @@ public class AlertRepositoryImpl implements AlertRepository {
         return dslContext.with(cte)
             .select(countDistinct(ALERT.ID))
             .from(ALERT)
-            .join(cte.getName()).on(field(cte.getName() + ".child_oddrn", String.class).eq(ALERT.DATA_ENTITY_ODDRN))
+            .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()))
+                .eq(ALERT.DATA_ENTITY_ODDRN))
             .where(ALERT.DATA_ENTITY_ODDRN.notIn(ownOddrns))
             .fetchOptionalInto(Long.class)
             .orElse(0L);
