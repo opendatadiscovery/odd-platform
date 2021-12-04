@@ -167,11 +167,17 @@ task buildlessCheckstyleTest(type: Checkstyle) {
     maxWarnings = 0
 }
 
-
 tasks.withType(Checkstyle) {
     reports {
         xml.enabled false
         html.enabled false
+    }
+}
+
+if (hasProperty('buildScan')) {
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
     }
 }
 
