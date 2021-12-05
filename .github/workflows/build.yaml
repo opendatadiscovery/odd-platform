@@ -31,6 +31,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+      - name: Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-shared-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
       - name: Node cache
         uses: actions/cache@v2
         with:
@@ -39,19 +48,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Build with Gradle
-        uses: gradle/gradle-build-action@v2
         env:
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms2048m -Xmx2048m"
-        with:
-          arguments: |
-            jibDockerBuild
-            --no-daemon
-            --scan
-            --image ${{ env.REGISTRY }}/${{ github.event.repository.name }}
-            -Pversion=ci-${GITHUB_SHA::6}
-            -Penv=dev
+        run: ./gradlew jibDockerBuild --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6} -Penv=dev
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
   update_tag:
@@ -86,4 +87,3 @@ jobs:
         run: ./argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_LOGIN }} --password '${{ secrets.ARGOCD_PASSWORD }}' --grpc-web
       - name: Sync ODD Platform application
         run: ./argocd app sync environments --force --resource argoproj.io:Application:odd-platform
-
