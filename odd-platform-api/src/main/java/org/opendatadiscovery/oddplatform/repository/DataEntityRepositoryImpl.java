@@ -999,11 +999,9 @@ public class DataEntityRepositoryImpl
 
     private List<LineagePojo> collectLineage(final CommonTableExpression<Record> cte) {
         return dslContext.withRecursive(cte)
-            .select()
+            .selectDistinct(cte.field(LINEAGE.PARENT_ODDRN), cte.field(LINEAGE.CHILD_ODDRN))
             .from(cte.getName())
             .fetchStreamInto(LineagePojo.class)
-            // TODO: ad-hoc. Implement distinct in recursive CTE
-            .distinct()
             .collect(Collectors.toList());
     }
 

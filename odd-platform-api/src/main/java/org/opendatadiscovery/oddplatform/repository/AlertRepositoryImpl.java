@@ -151,9 +151,8 @@ public class AlertRepositoryImpl implements AlertRepository {
             .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID))
             .where(DATA_ENTITY.ODDRN.notIn(ownOddrns))
             .groupBy(selectFields)
-            .fetchStream()
-            .map(this::mapRecord)
-            .toList();
+            .fetch(this::mapRecord);
+
         return Page.<AlertDto>builder()
             .data(data)
             .hasNext(true)
