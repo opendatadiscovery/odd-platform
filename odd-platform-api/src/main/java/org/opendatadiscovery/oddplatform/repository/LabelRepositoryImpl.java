@@ -95,13 +95,11 @@ public class LabelRepositoryImpl
     }
 
     @Override
-    @Transactional
     public void deleteRelations(final long id) {
         deleteRelations(List.of(id));
     }
 
     @Override
-    @Transactional
     public void deleteRelations(final Collection<Long> ids) {
         if (ids.isEmpty()) {
             return;
