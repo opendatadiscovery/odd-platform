@@ -44,7 +44,6 @@ const ResultItem: React.FC<ResultItemProps> = ({
             wrap="nowrap"
           >
             <Typography
-              width="inherit"
               variant="body1"
               noWrap
               title={
@@ -55,8 +54,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </Typography>
             <AppTooltip
               maxWidth={285}
-              sx={{ ml: 1.25, pr: 0.25, flexShrink: 0 }}
+              sx={{ ml: 1.25, pr: 0.25 }}
               checkForOverflow={false}
+              isOverflowed={false}
               title={({ open }) => (
                 <ResultItemPreviewContainer
                   dataEntityId={searchResult.id}

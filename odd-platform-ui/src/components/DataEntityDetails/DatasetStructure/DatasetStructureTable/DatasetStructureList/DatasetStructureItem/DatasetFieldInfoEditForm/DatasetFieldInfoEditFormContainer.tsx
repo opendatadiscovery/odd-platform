@@ -5,7 +5,7 @@ import {
   getDatasetFieldFormDataUpdating,
 } from 'redux/selectors/datasetStructure.selectors';
 import { updateDataSetFieldFormData } from 'redux/thunks';
-import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm';
+import DatasetFieldInfoEditForm from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
 
 const mapStateToProps = (
   state: RootState,

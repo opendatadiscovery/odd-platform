@@ -1,19 +1,16 @@
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import { DataEntityDetailsState } from 'redux/interfaces/dataentities';
 import OverviewDataConsumerStats from 'components/DataEntityDetails/Overview/OverviewStats/OverviewDataConsumerStats/OverviewDataConsumerStats';
-import { styles, StylesType } from './OverviewStatsStyles';
 import OverviewDatasetStats from './OverviewDatasetStats/OverviewDatasetStats';
 import OverviewTransformerStats from './OverviewTransformerStats/OverviewTransformerStats';
 import OverviewQualityTestStats from './OverviewQualityTestStats/OverviewQualityTestStats';
 
-interface OverviewStatsProps extends StylesType {
+interface OverviewStatsProps {
   dataEntityDetails: DataEntityDetailsState;
 }
 
 const OverviewStats: React.FC<OverviewStatsProps> = ({
-  classes,
   dataEntityDetails,
 }) => (
   <>
@@ -54,6 +51,16 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
               qualityTest={dataEntityDetails}
             />
           );
+        // case DataEntityTypeNameEnum.ENTITY_GROUP:
+        //   return (
+        //     <OverviewEntityGroupStats
+        //       key={type.id}
+        //       entities={dataEntityDetails.sourceList}
+        //       targets={dataEntityDetails.targetList}
+        //       unknownSourcesCount={dataEntityDetails.unknownSourcesCount}
+        //       unknownTargetsCount={dataEntityDetails.unknownTargetsCount}
+        //     />
+        //   );
         default:
           return null;
       }
@@ -61,4 +68,4 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
   </>
 );
 
-export default withStyles(styles)(OverviewStats);
+export default OverviewStats;

@@ -1,9 +1,7 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { getDataEntityDetails } from 'redux/selectors/dataentity.selectors';
 import OverviewStats from './OverviewStats';
-import { styles } from './OverviewStatsStyles';
 
 const mapStateToProps = (
   state: RootState,
@@ -14,7 +12,4 @@ const mapStateToProps = (
 
 const mapDispatchToProps = {};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(OverviewStats));
+export default connect(mapStateToProps, mapDispatchToProps)(OverviewStats);
