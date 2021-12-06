@@ -320,6 +320,7 @@ components:
         - $ref: '#/components/schemas/DataInputDetails'
         - $ref: '#/components/schemas/DataConsumerDetails'
         - $ref: '#/components/schemas/DataQualityTestDetails'
+        - $ref: '#/components/schemas/DataEntityGroupDetails'
 
     DataEntity:
       type: object
@@ -581,18 +582,23 @@ components:
         - $ref: '#/components/schemas/DataEntityBaseObject'
         - type: object
           properties:
-            entities:
-              $ref: '#/components/schemas/DataEntityRefList'
             parents:
               $ref: '#/components/schemas/DataEntityRefList'
             group_oddrn:
               type: string
             entities_count:
               type: number
+
+    DataEntityGroupDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityGroup'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+        - type: object
+          properties:
+            entities:
+              $ref: '#/components/schemas/DataEntityRefList'
             has_children:
               type: boolean
-          required:
-            - entities
 
     DataSetTestReport:
       type: object
