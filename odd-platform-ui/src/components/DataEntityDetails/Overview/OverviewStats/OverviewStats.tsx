@@ -2,6 +2,7 @@ import React from 'react';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import { DataEntityDetailsState } from 'redux/interfaces/dataentities';
 import OverviewDataConsumerStats from 'components/DataEntityDetails/Overview/OverviewStats/OverviewDataConsumerStats/OverviewDataConsumerStats';
+import OverviewEntityGroupStats from 'components/DataEntityDetails/Overview/OverviewStats/OverviewEntityGroupStats/OverviewEntityGroupStats';
 import OverviewDatasetStats from './OverviewDatasetStats/OverviewDatasetStats';
 import OverviewTransformerStats from './OverviewTransformerStats/OverviewTransformerStats';
 import OverviewQualityTestStats from './OverviewQualityTestStats/OverviewQualityTestStats';
@@ -51,16 +52,18 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
               qualityTest={dataEntityDetails}
             />
           );
-        // case DataEntityTypeNameEnum.ENTITY_GROUP:
-        //   return (
-        //     <OverviewEntityGroupStats
-        //       key={type.id}
-        //       entities={dataEntityDetails.sourceList}
-        //       targets={dataEntityDetails.targetList}
-        //       unknownSourcesCount={dataEntityDetails.unknownSourcesCount}
-        //       unknownTargetsCount={dataEntityDetails.unknownTargetsCount}
-        //     />
-        //   );
+        case DataEntityTypeNameEnum.ENTITY_GROUP:
+          return (
+            <OverviewEntityGroupStats
+              key={type.id}
+              dataEntityGroupName={
+                dataEntityDetails.internalName ||
+                dataEntityDetails.externalName
+              }
+              entities={dataEntityDetails.entities}
+              entityGroups={dataEntityDetails.dataEntityGroups}
+            />
+          );
         default:
           return null;
       }

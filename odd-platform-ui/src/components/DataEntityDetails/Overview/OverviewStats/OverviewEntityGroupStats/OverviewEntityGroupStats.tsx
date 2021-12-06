@@ -6,29 +6,27 @@ import {
   DataEntityTypeNameEnum,
 } from 'generated-sources';
 import { dataEntityDetailsPath } from 'lib/paths';
-import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
-import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { StatIconContainer } from './OverviewTransformerStatsStyles';
+import TriangularUnionIcon from 'components/shared/Icons/TriangularUnionIcon';
+import EntitiesListModal from 'components/DataEntityDetails/Overview/OverviewStats/OverviewEntityGroupStats/EntitiesListModal/EntitiesListModal';
+import { StatIconContainer } from './OverviewEntityGroupStatsStyles';
 
-interface OverviewTransformerStatsProps {
-  sources: DataEntityDetails['sourceList'];
-  targets: DataEntityDetails['targetList'];
-  unknownSourcesCount: number;
-  unknownTargetsCount: number;
+interface OverviewEntityGroupStatsProps {
+  dataEntityGroupName: string;
+  entities: DataEntityDetails['entities'];
+  entityGroups: DataEntityDetails['dataEntityGroups'];
 }
 
-const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
-  sources,
-  targets,
-  unknownSourcesCount,
-  unknownTargetsCount,
+const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
+  dataEntityGroupName,
+  entities,
+  entityGroups,
 }) => (
   <Grid container>
     <Grid item xs={12} sx={{ mb: 1.25 }}>
       <EntityTypeItem
-        typeName={DataEntityTypeNameEnum.TRANSFORMER}
+        typeName={DataEntityTypeNameEnum.ENTITY_GROUP}
         fullName
       />
     </Grid>
@@ -40,14 +38,11 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
       alignContent="flex-start"
     >
       <Grid item container xs={12} alignItems="baseline">
-        <StatIconContainer sx={{ mr: 1 }}>
-          <UpstreamIcon />
-        </StatIconContainer>
         <Typography variant="h2" sx={{ mr: 0.5 }}>
-          {(sources?.length || 0) + (unknownSourcesCount || 0)}
+          {entities?.length || 0}
         </Typography>
         <Typography variant="body1" color="texts.hint">
-          sources
+          entities
         </Typography>
       </Grid>
       <Grid
@@ -58,24 +53,28 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         alignItems="flex-start"
         sx={{ mt: 1 }}
       >
-        {sources?.map(source => (
+        {entities?.slice(0, 5).map(entity => (
           <AppButton
-            key={source.id}
+            key={entity.id}
             size="medium"
             color="tertiary"
             sx={{ my: 0.25 }}
           >
-            <Link to={dataEntityDetailsPath(source.id)}>
-              {source.internalName || source.externalName}
+            <Link to={dataEntityDetailsPath(entity.id)}>
+              {entity.internalName || entity.externalName}
             </Link>
           </AppButton>
         ))}
-        {unknownSourcesCount ? (
-          <Typography variant="subtitle1" sx={{ ml: 0.5 }}>
-            {unknownSourcesCount} more source
-            {unknownSourcesCount === 1 ? '' : 's'} unknown
-          </Typography>
-        ) : null}
+        <EntitiesListModal
+          entities={entities}
+          labelFor="Entities"
+          dataEntityGroupName={dataEntityGroupName}
+          openBtnEl={
+            <AppButton size="medium" color="tertiary" sx={{ my: 0.25 }}>
+              Show All
+            </AppButton>
+          }
+        />
       </Grid>
     </Grid>
     <Grid
@@ -87,13 +86,13 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
     >
       <Grid item container xs={12} alignItems="baseline">
         <StatIconContainer sx={{ mr: 1 }}>
-          <DownstreamIcon />
+          <TriangularUnionIcon />
         </StatIconContainer>
         <Typography variant="h2" sx={{ mr: 0.5 }}>
-          {(targets?.length || 0) + (unknownTargetsCount || 0)}
+          {entityGroups?.length || 0}
         </Typography>
         <Typography variant="body1" color="texts.hint">
-          targets
+          upper groups
         </Typography>
       </Grid>
       <Grid
@@ -104,27 +103,31 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         alignItems="flex-start"
         sx={{ mt: 1 }}
       >
-        {targets?.map(target => (
+        {entityGroups?.map(entityGroup => (
           <AppButton
-            key={target.id}
+            key={entityGroup.id}
             sx={{ my: 0.25 }}
             size="medium"
             color="tertiary"
           >
-            <Link to={dataEntityDetailsPath(target.id)}>
-              {target.internalName || target.externalName}
+            <Link to={dataEntityDetailsPath(entityGroup.id)}>
+              {entityGroup.internalName || entityGroup.externalName}
             </Link>
           </AppButton>
         ))}
-        {unknownTargetsCount ? (
-          <Typography variant="subtitle1" sx={{ ml: 0.5 }}>
-            {unknownTargetsCount} more target
-            {unknownTargetsCount === 1 ? '' : 's'} unknown
-          </Typography>
-        ) : null}
+        <EntitiesListModal
+          entities={entityGroups}
+          labelFor="Upper groups"
+          dataEntityGroupName={dataEntityGroupName}
+          openBtnEl={
+            <AppButton size="medium" color="tertiary" sx={{ my: 0.25 }}>
+              Show All
+            </AppButton>
+          }
+        />
       </Grid>
     </Grid>
   </Grid>
 );
 
-export default OverviewTransformerStats;
+export default OverviewEntityGroupStats;
