@@ -65,16 +65,18 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
             </Link>
           </AppButton>
         ))}
-        <EntitiesListModal
-          entities={entities}
-          labelFor="Entities"
-          dataEntityGroupName={dataEntityGroupName}
-          openBtnEl={
-            <AppButton size="medium" color="tertiary" sx={{ my: 0.25 }}>
-              Show All
-            </AppButton>
-          }
-        />
+        {entities && entities?.length > 5 ? (
+          <EntitiesListModal
+            entities={entities}
+            labelFor="Entities"
+            dataEntityGroupName={dataEntityGroupName}
+            openBtnEl={
+              <AppButton size="medium" color="tertiary" sx={{ my: 0.25 }}>
+                Show All
+              </AppButton>
+            }
+          />
+        ) : null}
       </Grid>
     </Grid>
     <Grid
@@ -103,7 +105,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
         alignItems="flex-start"
         sx={{ mt: 1 }}
       >
-        {entityGroups?.map(entityGroup => (
+        {entityGroups?.slice(0, 5).map(entityGroup => (
           <AppButton
             key={entityGroup.id}
             sx={{ my: 0.25 }}
@@ -115,16 +117,18 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
             </Link>
           </AppButton>
         ))}
-        <EntitiesListModal
-          entities={entityGroups}
-          labelFor="Upper groups"
-          dataEntityGroupName={dataEntityGroupName}
-          openBtnEl={
-            <AppButton size="medium" color="tertiary" sx={{ my: 0.25 }}>
-              Show All
-            </AppButton>
-          }
-        />
+        {entityGroups && entityGroups?.length > 5 ? (
+          <EntitiesListModal
+            entities={entityGroups}
+            labelFor="Upper groups"
+            dataEntityGroupName={dataEntityGroupName}
+            openBtnEl={
+              <AppButton size="medium" color="tertiary" sx={{ my: 0.25 }}>
+                Show All
+              </AppButton>
+            }
+          />
+        ) : null}
       </Grid>
     </Grid>
   </Grid>
