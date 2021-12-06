@@ -582,8 +582,6 @@ components:
         - $ref: '#/components/schemas/DataEntityBaseObject'
         - type: object
           properties:
-            parents:
-              $ref: '#/components/schemas/DataEntityRefList'
             group_oddrn:
               type: string
             entities_count:
