@@ -69,6 +69,20 @@ public class LabelRepositoryImpl
 
     @Override
     @Transactional
+    public void delete(final long id) {
+        deleteRelations(id);
+        super.delete(id);
+    }
+
+    @Override
+    @Transactional
+    public void delete(final List<Long> ids) {
+        deleteRelations(ids);
+        super.delete(ids);
+    }
+
+    @Override
+    @Transactional
     public void deleteRelations(final long datasetFieldId, final Collection<Long> labels) {
         if (labels.isEmpty()) {
             return;
@@ -77,6 +91,24 @@ public class LabelRepositoryImpl
         dslContext.delete(LABEL_TO_DATASET_FIELD)
             .where(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)
                 .and(LABEL_TO_DATASET_FIELD.LABEL_ID.in(labels)))
+            .execute();
+    }
+
+    @Override
+    @Transactional
+    public void deleteRelations(final long id) {
+        deleteRelations(List.of(id));
+    }
+
+    @Override
+    @Transactional
+    public void deleteRelations(final Collection<Long> ids) {
+        if (ids.isEmpty()) {
+            return;
+        }
+
+        dslContext.delete(LABEL_TO_DATASET_FIELD)
+            .where(LABEL_TO_DATASET_FIELD.LABEL_ID.in(ids))
             .execute();
     }
 
