@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.ExternalAlert;
 import org.opendatadiscovery.oddplatform.mapper.AlertMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -48,15 +49,21 @@ public class AlertServiceImpl implements AlertService {
     public Mono<AlertTotals> getTotals() {
         final Mono<Long> allCount = Mono.fromCallable(alertRepository::count);
 
-        final Mono<Long> countByOwner = authIdentityProvider.fetchAssociatedOwner()
+        final Mono<OwnerPojo> owner = authIdentityProvider.fetchAssociatedOwner();
+
+        final Mono<Long> countByOwner = owner
             .map(o -> alertRepository.countByOwner(o.getId()))
             .switchIfEmpty(Mono.just(0L));
 
-        return Mono.zipDelayError(allCount, countByOwner)
+        final Mono<Long> countDependent = owner
+            .map(o -> alertRepository.countDependentObjectsAlerts(o.getId()))
+            .switchIfEmpty(Mono.just(0L));
+
+        return Mono.zipDelayError(allCount, countByOwner, countDependent)
             .map(t -> new AlertTotals()
                 .total(t.getT1())
                 .myTotal(t.getT2())
-                .dependentTotal(t.getT2()));
+                .dependentTotal(t.getT3()));
     }
 
     @Override
@@ -99,5 +106,12 @@ public class AlertServiceImpl implements AlertService {
         }).collect(Collectors.toList());
 
         return Mono.fromRunnable(() -> alertRepository.createAlerts(alerts)).then();
+    }
+
+    @Override
+    public Mono<AlertList> listDependentObjectsAlerts(final int page, final int size) {
+        return authIdentityProvider.fetchAssociatedOwner()
+            .map(o -> alertRepository.listDependentObjectsAlerts(page, size, o.getId()))
+            .map(alertMapper::mapAlerts);
     }
 }

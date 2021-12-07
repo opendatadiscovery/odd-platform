@@ -52,7 +52,7 @@ jobs:
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms2048m -Xmx2048m"
-        run: ./gradlew jibDockerBuild --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6}
+        run: ./gradlew jibDockerBuild --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6} -Penv=dev
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
   update_tag:
@@ -87,4 +87,3 @@ jobs:
         run: ./argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_LOGIN }} --password '${{ secrets.ARGOCD_PASSWORD }}' --grpc-web
       - name: Sync ODD Platform application
         run: ./argocd app sync environments --force --resource argoproj.io:Application:odd-platform
-

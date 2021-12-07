@@ -13,9 +13,13 @@ public interface AlertRepository {
 
     Collection<AlertDto> getDataEntityAlerts(long dataEntityId);
 
+    Page<AlertDto> listDependentObjectsAlerts(final int page, final int size, final long ownerId);
+
     long count();
 
     long countByOwner(final long ownerId);
+
+    long countDependentObjectsAlerts(long ownerId);
 
     void updateAlertStatus(final long alertId, final AlertStatusEnum status);
 

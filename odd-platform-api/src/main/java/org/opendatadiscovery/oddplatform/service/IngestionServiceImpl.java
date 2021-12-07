@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
@@ -215,7 +217,10 @@ public class IngestionServiceImpl implements IngestionService {
             .map(e -> new DataEntitySpecificAttributesDelta(
                 e.getKey(),
                 e.getValue().getTypes(),
-                existingDtoDict.get(e.getKey()).getSpecificAttributes().data(),
+                ObjectUtils.defaultIfNull(
+                    existingDtoDict.get(e.getKey()).getSpecificAttributes(),
+                    JSONB.jsonb("{}")
+                ).data(),
                 e.getValue().getSpecificAttributesJson()
             ))
             .collect(Collectors.toList());
@@ -238,7 +243,7 @@ public class IngestionServiceImpl implements IngestionService {
             .flatMap(List::stream)
             .collect(Collectors.toSet());
 
-        lineageRepository.createLineagePaths(lineageRelations);
+        lineageRepository.replaceLineagePaths(lineageRelations);
         dataEntityRepository.createHollow(hollowOddrns);
         dataQualityTestRelationRepository.createRelations(dataStructure.getDataQARelations());
         dataEntityTaskRunRepository.persist(dataEntityTaskRunMapper.mapTaskRun(dataStructure.getTaskRuns()));
@@ -426,23 +431,34 @@ public class IngestionServiceImpl implements IngestionService {
             if (dto.getDataSet().getParentDatasetOddrn() != null) {
                 result.add(new LineagePojo()
                     .setParentOddrn(dto.getDataSet().getParentDatasetOddrn().toLowerCase())
-                    .setChildOddrn(dtoOddrn));
+                    .setChildOddrn(dtoOddrn)
+                    .setEstablisherOddrn(dtoOddrn)
+                );
             }
         }
 
         if (types.contains(DATA_TRANSFORMER)) {
             dto.getDataTransformer().getSourceList().stream()
-                .map(source -> new LineagePojo().setParentOddrn(source.toLowerCase()).setChildOddrn(dtoOddrn))
+                .map(source -> new LineagePojo()
+                    .setParentOddrn(source.toLowerCase())
+                    .setChildOddrn(dtoOddrn)
+                    .setEstablisherOddrn(dtoOddrn))
                 .forEach(result::add);
 
             dto.getDataTransformer().getTargetList().stream()
-                .map(target -> new LineagePojo().setParentOddrn(dtoOddrn).setChildOddrn(target.toLowerCase()))
+                .map(target -> new LineagePojo()
+                    .setParentOddrn(dtoOddrn)
+                    .setChildOddrn(target.toLowerCase())
+                    .setEstablisherOddrn(dtoOddrn))
                 .forEach(result::add);
         }
 
         if (types.contains(DATA_CONSUMER)) {
             dto.getDataConsumer().getInputList().stream()
-                .map(input -> new LineagePojo().setParentOddrn(input.toLowerCase()).setChildOddrn(dtoOddrn))
+                .map(input -> new LineagePojo()
+                    .setParentOddrn(input.toLowerCase())
+                    .setChildOddrn(dtoOddrn)
+                    .setEstablisherOddrn(dtoOddrn))
                 .forEach(result::add);
         }
 
