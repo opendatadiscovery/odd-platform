@@ -6,7 +6,7 @@ import createStyles from '@mui/styles/createStyles';
 export const styles = (theme: Theme) =>
   createStyles({
     container: {
-      marginBottom: theme.spacing(2.75),
+      marginTop: theme.spacing(2),
       '& > * + *': {
         marginTop: theme.spacing(1.25),
       },

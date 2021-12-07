@@ -5,7 +5,7 @@ import { DataEntity, DataEntityTypeNameEnum } from 'generated-sources';
 import { SearchTotalsByName, SearchType } from 'redux/interfaces/search';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { dataEntityDetailsPath } from 'lib/paths';
-import ResultItemTruncatedCell from 'components/Search/Results/ResultItem/ResultItemTruncatedCell/ResultItemTruncatedCell';
+import TruncatedCell from 'components/shared/TruncatedCell/TruncatedCell';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
 import { ColContainer } from 'components/Search/Results/ResultsStyles';
 import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
@@ -109,14 +109,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
         searchType === totals[DataEntityTypeNameEnum.TRANSFORMER]?.id ? (
           <>
             <ColContainer $colType="collg" item container wrap="wrap">
-              <ResultItemTruncatedCell
-                searchResult={searchResult}
+              <TruncatedCell
+                dataEntity={searchResult}
                 truncatedCellType="sourceList"
               />
             </ColContainer>
             <ColContainer item $colType="collg">
-              <ResultItemTruncatedCell
-                searchResult={searchResult}
+              <TruncatedCell
+                dataEntity={searchResult}
                 truncatedCellType="targetList"
               />
             </ColContainer>
@@ -125,8 +125,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
         {searchType &&
         searchType === totals[DataEntityTypeNameEnum.CONSUMER]?.id ? (
           <ColContainer item $colType="collg">
-            <ResultItemTruncatedCell
-              searchResult={searchResult}
+            <TruncatedCell
+              dataEntity={searchResult}
               truncatedCellType="inputList"
             />
           </ColContainer>
@@ -135,14 +135,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
         searchType === totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id ? (
           <>
             <ColContainer item container wrap="wrap" $colType="collg">
-              <ResultItemTruncatedCell
-                searchResult={searchResult}
+              <TruncatedCell
+                dataEntity={searchResult}
                 truncatedCellType="datasetsList"
               />
             </ColContainer>
             <ColContainer item $colType="collg">
-              <ResultItemTruncatedCell
-                searchResult={searchResult}
+              <TruncatedCell
+                dataEntity={searchResult}
                 truncatedCellType="linkedUrlList"
               />
             </ColContainer>
@@ -152,7 +152,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
         searchType === totals[DataEntityTypeNameEnum.ENTITY_GROUP]?.id ? (
           <ColContainer item $colType="colxs">
             <Typography variant="body1" noWrap>
-              {searchResult?.entitiesCount}
+              {searchResult?.itemsCount}
             </Typography>
           </ColContainer>
         ) : null}

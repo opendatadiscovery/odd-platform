@@ -1,16 +1,15 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
 import {
   getDataEntityDetails,
-  getDataEntityIsDataset,
-  getDataEntityDetailsFetchingStatus,
   getDataEntityDetailsFetchingError,
+  getDataEntityDetailsFetchingStatus,
+  getDataEntityIsDataset,
   getDataEntityIsQualityTest,
+  getDataEntityIsGroup,
 } from 'redux/selectors/dataentity.selectors';
 import { fetchDataEntityDetails } from 'redux/thunks/dataentities.thunks';
-import { styles } from './DataEntityDetailsStyles';
 import DataEntityDetailsView from './DataEntityDetails';
 
 interface RouteProps {
@@ -34,6 +33,7 @@ const mapStateToProps = (
   dataEntityDetails: getDataEntityDetails(state, dataEntityId),
   isDataset: getDataEntityIsDataset(state, dataEntityId),
   isQualityTest: getDataEntityIsQualityTest(state, dataEntityId),
+  isGroup: getDataEntityIsGroup(state, dataEntityId),
   dataEntityFetchingStatus: getDataEntityDetailsFetchingStatus(state),
   dataEntityFetchingError: getDataEntityDetailsFetchingError(state),
 });
@@ -45,4 +45,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(DataEntityDetailsView));
+)(DataEntityDetailsView);

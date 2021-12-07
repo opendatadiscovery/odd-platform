@@ -224,3 +224,12 @@ export const getDataEntityIsQualityTest = createSelector(
       type => type.name === DataEntityTypeNameEnum.QUALITY_TEST
     )
 );
+
+export const getDataEntityIsGroup = createSelector(
+  dataEntitiesState,
+  getDataEntityId,
+  (dataEntities, dataEntityId) =>
+    !!dataEntities.byId[dataEntityId]?.types.find(
+      type => type.name === DataEntityTypeNameEnum.ENTITY_GROUP
+    )
+);
