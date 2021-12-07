@@ -37,7 +37,7 @@ public class DataSourceMapperImpl implements DataSourceMapper {
 
     @Override
     public DataSourceDto applyForm(final DataSourceDto pojo, final DataSourceUpdateFormData form) {
-        final DataSourcePojo dataSourcePojo = pojo.getDataSource()
+        final DataSourcePojo dataSourcePojo = pojo.dataSource()
             .setName(form.getName())
             .setDescription(form.getDescription())
             .setConnectionUrl(form.getConnectionUrl())
@@ -52,19 +52,18 @@ public class DataSourceMapperImpl implements DataSourceMapper {
     }
 
     @Override
-    public DataSource mapPojo(final DataSourceDto pojo) {
-        final DataSourcePojo dataSource = pojo.getDataSource();
-        final NamespacePojo namespace = pojo.getNamespace();
+    public DataSource mapPojo(final DataSourceDto dto) {
+        final DataSourcePojo dsPojo = dto.dataSource();
 
         return new DataSource()
-            .id(dataSource.getId())
-            .name(dataSource.getName())
-            .oddrn(dataSource.getOddrn())
-            .description(dataSource.getDescription())
-            .connectionUrl(dataSource.getConnectionUrl())
-            .namespace(namespaceMapper.mapPojo(namespace))
-            .pullingInterval(dataSource.getPullingInterval())
-            .active(dataSource.getActive());
+            .id(dsPojo.getId())
+            .name(dsPojo.getName())
+            .oddrn(dsPojo.getOddrn())
+            .description(dsPojo.getDescription())
+            .connectionUrl(dsPojo.getConnectionUrl())
+            .namespace(namespaceMapper.mapPojo(dto.namespace()))
+            .pullingInterval(dsPojo.getPullingInterval())
+            .active(dsPojo.getActive());
     }
 
     @Override

@@ -10,4 +10,6 @@ public interface DataSourceRepository extends CRUDRepository<DataSourceDto> {
     Collection<DataSourceDto> listActive();
 
     boolean existByNamespace(final long namespaceId);
+
+    void injectOddrn(final long id, final String oddrn);
 }

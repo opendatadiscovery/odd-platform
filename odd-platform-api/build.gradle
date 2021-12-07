@@ -26,6 +26,7 @@ dependencies {
     implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
     implementation "org.opendatadiscovery:odd-platform-ingestion-contract:$oddIngestionApiVersion"
+    implementation "org.opendatadiscovery:oddrn-generator-java:$oddrnGeneratorVersion"
     implementation project(':odd-platform-api-contract')
 
     if (!skipUIBundle) {

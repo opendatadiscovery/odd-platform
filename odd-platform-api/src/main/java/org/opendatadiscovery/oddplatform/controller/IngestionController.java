@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
@@ -12,11 +11,12 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class IngestionController implements IngestionApi {
-
     private final IngestionService ingestionService;
 
     @Override

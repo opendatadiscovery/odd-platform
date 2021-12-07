@@ -19,7 +19,6 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityType;
-import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
 import org.opendatadiscovery.oddplatform.dto.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.IngestionDataStructure;
@@ -37,7 +36,6 @@ import org.opendatadiscovery.oddplatform.mapper.IngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -55,6 +53,9 @@ import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
+import org.opendatadiscovery.oddrn.Generator;
+import org.opendatadiscovery.oddrn.model.ODDPlatformDataSourcePath;
+import org.opendatadiscovery.oddrn.model.OddrnPath;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -91,7 +92,7 @@ public class IngestionServiceImpl implements IngestionService {
 
     @Override
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
-        return fetchDataSourceId(dataEntityList.getDataSourceOddrn())
+        return acquireDataSourceId(dataEntityList.getDataSourceOddrn())
             .map(dsId -> buildStructure(dataEntityList, dsId))
             .map(this::ingestDependencies)
             .flatMap(this::ingestCompanions)
@@ -119,14 +120,33 @@ public class IngestionServiceImpl implements IngestionService {
             .then();
     }
 
-    private Mono<Long> fetchDataSourceId(final String dataSourceOddrn) {
-        return Mono.just(dataSourceOddrn)
-            .map(dataSourceRepository::getByOddrn)
-            .flatMap(o -> o.isEmpty()
-                ? Mono.error(new NotFoundException("Data source with oddrn %s hasn't been found", dataSourceOddrn))
-                : Mono.just(o.get()))
-            .map(DataSourceDto::getDataSource)
-            .map(DataSourcePojo::getId);
+    private Mono<Long> acquireDataSourceId(final String dataSourceOddrn) {
+        return Mono.fromCallable(() -> dataSourceRepository.getByOddrn(dataSourceOddrn))
+            .flatMap(opt -> {
+                if (opt.isPresent()) {
+                    return Mono.just(opt.get().dataSource().getId());
+                }
+
+                final OddrnPath oddrnPath;
+                try {
+                    oddrnPath = new Generator()
+                        .parse(dataSourceOddrn)
+                        .orElseThrow(() -> new IllegalArgumentException("Oddrn parser returned empty object"));
+                } catch (final Exception e) {
+                    return Mono.error(
+                        new RuntimeException(String.format("Couldn't parse %s into OddrnPath", dataSourceOddrn), e));
+                }
+
+                if (!(oddrnPath instanceof ODDPlatformDataSourcePath)) {
+                    return Mono.error(
+                        new NotFoundException("Data source with oddrn %s hasn't been found", dataSourceOddrn));
+                }
+
+                final Long datasourceId = ((ODDPlatformDataSourcePath) oddrnPath).getDatasourceId();
+
+                dataSourceRepository.injectOddrn(datasourceId, dataSourceOddrn);
+                return Mono.just(datasourceId);
+            });
     }
 
     private IngestionDataStructure buildStructure(final DataEntityList dataEntityList,
