@@ -92,6 +92,8 @@ public class IngestionServiceImpl implements IngestionService {
 
     private final MetricService metricService;
 
+    private final Generator oddrnGenerator = new Generator();
+
     @Override
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
         return acquireDataSourceId(dataEntityList.getDataSourceOddrn())
@@ -131,8 +133,7 @@ public class IngestionServiceImpl implements IngestionService {
 
                 final OddrnPath oddrnPath;
                 try {
-                    oddrnPath = new Generator()
-                        .parse(dataSourceOddrn)
+                    oddrnPath = oddrnGenerator.parse(dataSourceOddrn)
                         .orElseThrow(() -> new IllegalArgumentException("Oddrn parser returned empty object"));
                 } catch (final Exception e) {
                     return Mono.error(
