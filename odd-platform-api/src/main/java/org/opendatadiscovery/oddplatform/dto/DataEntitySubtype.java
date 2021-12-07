@@ -17,6 +17,7 @@ public enum DataEntitySubtype {
     ML_MODEL_ARTIFACT,
 
     VIEW,
+    MICROSERVICE,
 
     UNKNOWN
 }

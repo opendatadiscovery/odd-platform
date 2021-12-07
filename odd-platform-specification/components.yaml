@@ -369,6 +369,7 @@ components:
             - DASHBOARD
             - ML_MODEL_ARTIFACT
             - VIEW
+            - MICROSERVICE
       required:
         - id
         - name
