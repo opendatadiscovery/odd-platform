@@ -576,7 +576,7 @@ components:
           properties:
             group_oddrn:
               type: string
-            linked_items_count:
+            items_count:
               type: number
             entities:
               $ref: '#/components/schemas/DataEntityRefList'
