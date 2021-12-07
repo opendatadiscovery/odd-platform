@@ -6,4 +6,8 @@ ALTER TABLE data_source
 
 UPDATE data_source
 SET connection_url = NULL
-WHERE active IS false;
+WHERE active = false;
+
+UPDATE data_source
+SET oddrn = '//oddplatform/datasources/' || data_source.id
+WHERE active = true;
