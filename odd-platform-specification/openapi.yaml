@@ -1191,7 +1191,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataEntityRefPageableList'
+                $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - dataEntity
   /api/metadata/fields:

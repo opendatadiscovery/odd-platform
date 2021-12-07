@@ -479,14 +479,6 @@ components:
       items:
         $ref: '#/components/schemas/DataEntityRef'
 
-    DataEntityRefPageableList:
-      type: object
-      properties:
-        items:
-          $ref: '#/components/schemas/DataEntityRef'
-        page_info:
-          $ref: '#/components/schemas/PageInfo'
-
     DataTransformer:
       allOf:
         - $ref: '#/components/schemas/DataEntityBaseObject'
@@ -584,8 +576,10 @@ components:
           properties:
             group_oddrn:
               type: string
-            entities_count:
+            linked_items_count:
               type: number
+            entities:
+              $ref: '#/components/schemas/DataEntityRefList'
 
     DataEntityGroupDetails:
       allOf:
@@ -593,8 +587,6 @@ components:
         - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
         - type: object
           properties:
-            entities:
-              $ref: '#/components/schemas/DataEntityRefList'
             has_children:
               type: boolean
 
