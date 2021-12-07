@@ -6,51 +6,59 @@ import {
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  Label,
-  LabelApiGetLabelListRequest,
-  LabelsResponse,
+  Namespace,
+  NamespaceApiGetNamespaceListRequest,
+  NamespaceList,
 } from 'generated-sources';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { UseFieldArrayReturn } from 'react-hook-form';
+import { ControllerRenderProps } from 'react-hook-form';
+import { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 
-type FilterOption = Omit<Label, 'id'> & Partial<Label>;
+type FilterOption = Omit<Namespace, 'id' | 'namespace'> &
+  Partial<Namespace>;
 
-interface LabelsAutocompleteProps {
-  searchLabels: (
-    params: LabelApiGetLabelListRequest
-  ) => Promise<LabelsResponse>;
-  appendLabel: UseFieldArrayReturn['append'];
+interface NamespaceAutocompleteProps {
+  searchNamespace: (
+    params: NamespaceApiGetNamespaceListRequest
+  ) => Promise<NamespaceList>;
+  controllerProps: ControllerRenderProps<
+    DataSourceFormDataValues,
+    'namespaceName'
+  >;
 }
 
-const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
-  searchLabels,
-  appendLabel,
+const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
+  searchNamespace,
+  controllerProps,
 }) => {
-  const [options, setOptions] = React.useState<FilterOption[]>([]);
+  type FilterChangeOption = FilterOption | string | { inputValue: string };
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const [searchText, setSearchText] = React.useState<string>('');
+  const [options, setOptions] = React.useState<FilterOption[]>([]);
   const filter = createFilterOptions<FilterOption>();
+  const [searchText, setSearchText] = React.useState<string>('');
+  const [loading, setLoading] = React.useState<boolean>(false);
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      searchLabels({ page: 1, size: 30, query: searchText }).then(
+      searchNamespace({ query: searchText, page: 1, size: 30 }).then(
         response => {
-          setLoading(false);
           setOptions(response.items);
+          setLoading(false);
         }
       );
     }, 500),
-    [searchLabels, setLoading, setOptions, searchText]
+    [searchNamespace, setLoading, setOptions, searchText]
   );
 
   const getOptionLabel = React.useCallback((option: FilterOption) => {
+    // Value selected with enter, right from the input
     if (typeof option === 'string') {
       return option;
     }
+    // Regular option
     if ('name' in option && option.name) {
       return option.name;
     }
@@ -60,23 +68,21 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
       const filtered = filter(options, params);
+      // Suggest the creation of a new value
       if (
         searchText !== '' &&
         !loading &&
-        !options.find(
-          option =>
-            option.name.toLocaleLowerCase() ===
-            searchText.toLocaleLowerCase()
-        )
+        !options.some(option => option.name === params.inputValue)
       ) {
-        return [...options, { name: searchText }];
+        return [...options, { name: params.inputValue }];
       }
+
       return filtered;
     },
-    [searchText, loading, options]
+    [loading, searchText, options]
   );
 
-  const searchInputChange = React.useCallback(
+  const handleInputChange = React.useCallback(
     (
       _: React.ChangeEvent<unknown>,
       query: string,
@@ -98,41 +104,59 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
     }
   }, [autocompleteOpen, searchText]);
 
-  const handleAutocompleteSelect = (
-    _: React.ChangeEvent<unknown>,
-    value: FilterOption | string | null
-  ) => {
-    if (!value) return;
-    setSearchText(''); // Clear input on select
-    appendLabel(typeof value === 'string' ? { name: value } : value);
-  };
+  const handleOptionChange = React.useCallback(
+    (onChange: (val?: string) => void) => (
+      _: React.ChangeEvent<unknown>,
+      newValue: FilterChangeOption | null
+    ) => {
+      let newField;
+      if (newValue && typeof newValue === 'object') {
+        if ('name' in newValue) {
+          newField = newValue;
+        }
+      }
+
+      // Create value from keyboard
+      if (typeof newValue === 'string') {
+        newField = {
+          name: newValue,
+        };
+      }
+      onChange(newField?.name || '');
+    },
+    []
+  );
 
   return (
     <Autocomplete
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...controllerProps}
       fullWidth
-      id="datasetfield-label-add-name-search"
+      id="namespace-name-search"
       open={autocompleteOpen}
-      onOpen={() => setAutocompleteOpen(true)}
-      onClose={() => setAutocompleteOpen(false)}
-      onChange={handleAutocompleteSelect}
-      options={options}
-      onInputChange={searchInputChange}
+      onOpen={() => {
+        setAutocompleteOpen(true);
+      }}
+      onClose={() => {
+        setAutocompleteOpen(false);
+      }}
+      onChange={handleOptionChange(controllerProps.onChange)}
+      onInputChange={handleInputChange}
       getOptionLabel={getOptionLabel}
+      options={options}
       filterOptions={getFilterOptions}
       loading={loading}
+      freeSolo
       handleHomeEndKeys
       selectOnFocus
-      blurOnSelect
-      freeSolo
-      value={{ name: searchText }}
       clearIcon={<ClearIcon />}
+      sx={{ mt: 1.25 }}
       renderInput={params => (
         <AppTextField
           {...params}
-          sx={{ mt: 1.5 }}
           ref={params.InputProps.ref}
-          placeholder="Enter label name…"
-          label="Label"
+          placeholder="Namespace"
+          label="Namespace"
           customEndAdornment={{
             variant: 'loader',
             showAdornment: loading,
@@ -142,12 +166,12 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
       )}
       renderOption={(props, option) => (
         <li {...props}>
-          <Typography variant="body1">
+          <Typography variant="body2">
             {option.id ? (
               option.name
             ) : (
               <AutocompleteSuggestion
-                optionLabel="label"
+                optionLabel="custom namespace"
                 optionName={option.name}
               />
             )}
@@ -158,4 +182,4 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
   );
 };
 
-export default LabelsAutocomplete;
+export default NamespaceAutocomplete;

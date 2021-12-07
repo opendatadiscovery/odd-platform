@@ -683,8 +683,6 @@ components:
           description: Pulling interval in seconds
       required:
         - name
-        - oddrn
-        - connection_url
 
     DataSourceUpdateFormData:
       type: object
