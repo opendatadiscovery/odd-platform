@@ -28,8 +28,8 @@ public class DataSourceServiceImpl
 
     @Override
     public Mono<DataSource> create(final DataSourceFormData createEntityForm) {
-        if (StringUtils.isNotEmpty(createEntityForm.getConnectionUrl()) &&
-            StringUtils.isNotEmpty(createEntityForm.getOddrn())) {
+        if (StringUtils.isNotEmpty(createEntityForm.getConnectionUrl())
+            && StringUtils.isNotEmpty(createEntityForm.getOddrn())) {
             throw new IllegalArgumentException("Can't create data source with both URL and ODDRN defined");
         }
 

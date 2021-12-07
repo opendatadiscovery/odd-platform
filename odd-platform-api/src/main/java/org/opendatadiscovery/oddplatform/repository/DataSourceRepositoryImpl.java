@@ -115,9 +115,8 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
 
         final DataSourcePojo dsPojo = dto.dataSource();
 
-        final Condition checkIfExistsCondition = dsPojo.getConnectionUrl() != null ?
-            DATA_SOURCE.CONNECTION_URL.eq(dsPojo.getConnectionUrl()) :
-            DATA_SOURCE.ODDRN.eq(dsPojo.getOddrn());
+        final Condition checkIfExistsCondition = dsPojo.getConnectionUrl() != null
+            ? DATA_SOURCE.CONNECTION_URL.eq(dsPojo.getConnectionUrl()) : DATA_SOURCE.ODDRN.eq(dsPojo.getOddrn());
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(checkIfExistsCondition)
@@ -127,9 +126,9 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
                     throw new EntityAlreadyExistsException();
                 }
 
-                return create(ds.getId(), dsPojo, namespace);
+                return persist(ds.getId(), dsPojo, namespace);
             })
-            .orElseGet(() -> create(dsPojo, namespace));
+            .orElseGet(() -> persist(dsPojo, namespace));
     }
 
     @Override
@@ -152,7 +151,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     private DataSourceDto update(final DataSourcePojo existing,
                                  final DataSourceDto delta,
                                  final NamespacePojo namespace) {
-        final DataSourceDto updatedDs = create(existing.getId(), delta.dataSource(), namespace);
+        final DataSourceDto updatedDs = persist(existing.getId(), delta.dataSource(), namespace);
 
         final Field<Long> deId = field("data_entity_id", Long.class);
 
@@ -260,11 +259,11 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             .execute();
     }
 
-    private DataSourceDto create(final DataSourcePojo dataSource, final NamespacePojo namespace) {
-        return create(null, dataSource, namespace);
+    private DataSourceDto persist(final DataSourcePojo dataSource, final NamespacePojo namespace) {
+        return persist(null, dataSource, namespace);
     }
 
-    private DataSourceDto create(final Long dsId, final DataSourcePojo dataSource, final NamespacePojo namespace) {
+    private DataSourceDto persist(final Long dsId, final DataSourcePojo dataSource, final NamespacePojo namespace) {
         final DataSourceRecord record = pojoToRecord(dataSource);
 
         record.set(DATA_SOURCE.IS_DELETED, false);
