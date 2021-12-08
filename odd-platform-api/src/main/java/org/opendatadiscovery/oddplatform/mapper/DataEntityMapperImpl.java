@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
@@ -95,6 +96,11 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .map(this::mapType)
             .collect(Collectors.toList());
 
+        final List<DataEntityRef> groups = Optional.ofNullable(dto.getDataEntityGroups()).stream()
+            .flatMap(Collection::stream)
+            .map(this::mapReference)
+            .toList();
+
         final DataEntityDetails details = new DataEntityDetails()
             .id(pojo.getId())
             .externalName(pojo.getExternalName())
@@ -104,6 +110,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .externalDescription(pojo.getExternalDescription())
             .createdAt(addUTC(pojo.getCreatedAt()))
             .updatedAt(addUTC(pojo.getUpdatedAt()))
+            .dataEntityGroups(groups)
             .types(types)
             .subType(mapSubType(dto.getSubtype()))
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
@@ -118,18 +125,18 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .collect(Collectors.toList());
 
         if (typeNames.contains(DataEntityType.NameEnum.SET)) {
-            details.setVersionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().getDatasetVersions()));
+            details.setVersionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().datasetVersions()));
             details.setStats(mapStats(dto.getDataSetDetailsDto()));
         }
 
         if (typeNames.contains(DataEntityType.NameEnum.TRANSFORMER)) {
-            details.setSourceList(dto.getDataTransformerDetailsDto().getSourceList()
+            details.setSourceList(dto.getDataTransformerDetailsDto().sourceList()
                 .stream()
                 .map(this::mapReference)
                 .collect(Collectors.toList()));
 
             details.setTargetList(dto.getDataTransformerDetailsDto()
-                .getTargetList()
+                .targetList()
                 .stream()
                 .map(this::mapReference)
                 .collect(Collectors.toList()));
@@ -137,30 +144,38 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
         if (typeNames.contains(DataEntityType.NameEnum.QUALITY_TEST)) {
             final DataQualityTestExpectation expectation = new DataQualityTestExpectation()
-                .type(dto.getDataQualityTestDetailsDto().getExpectationType());
+                .type(dto.getDataQualityTestDetailsDto().expectationType());
 
-            expectation.putAll(MapUtils.emptyIfNull(dto.getDataQualityTestDetailsDto().getExpectationParameters()));
+            expectation.putAll(MapUtils.emptyIfNull(dto.getDataQualityTestDetailsDto().expectationParameters()));
 
             details.expectation(expectation)
                 .datasetsList(dto.getDataQualityTestDetailsDto()
-                    .getDatasetList()
+                    .datasetList()
                     .stream()
                     .map(this::mapReference)
                     .collect(Collectors.toList()))
-                .linkedUrlList(dto.getDataQualityTestDetailsDto().getLinkedUrlList())
+                .linkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList())
                 .latestRun(dataQualityMapper.mapDataQualityTestRun(
                     dto.getDataEntity().getId(),
-                    dto.getDataQualityTestDetailsDto().getLatestTaskRun())
+                    dto.getDataQualityTestDetailsDto().latestTaskRun())
                 )
-                .suiteName(dto.getDataQualityTestDetailsDto().getSuiteName())
-                .suiteUrl(dto.getDataQualityTestDetailsDto().getSuiteUrl());
+                .suiteName(dto.getDataQualityTestDetailsDto().suiteName())
+                .suiteUrl(dto.getDataQualityTestDetailsDto().suiteUrl());
         }
 
         if (typeNames.contains(DataEntityType.NameEnum.CONSUMER)) {
             details.setInputList(dto.getDataConsumerDetailsDto()
-                .getInputList()
+                .inputList()
                 .stream()
                 .map(this::mapReference).collect(Collectors.toList()));
+        }
+
+        if (typeNames.contains(DataEntityType.NameEnum.ENTITY_GROUP)) {
+            List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
+                .map(this::mapReference)
+                .toList();
+            details.setEntities(dataEntityRefs);
+            details.setHasChildren(dto.getDataEntityGroupDetailsDto().hasChildren());
         }
 
         return details;
@@ -170,18 +185,18 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto) {
         final DataQualityTestDetailsDto dqDto = dto.getDataQualityTestDetailsDto();
 
-        final DataQualityTestRun latestRun = dqDto.getLatestTaskRun() != null
-            ? dataQualityMapper.mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.getLatestTaskRun())
+        final DataQualityTestRun latestRun = dqDto.latestTaskRun() != null
+            ? dataQualityMapper.mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.latestTaskRun())
             : null;
 
         return mapPojo(dto)
-            .suiteName(dqDto.getSuiteName())
-            .suiteUrl(dqDto.getSuiteUrl())
+            .suiteName(dqDto.suiteName())
+            .suiteUrl(dqDto.suiteUrl())
             .expectation(mapDataQualityTestExpectation(dqDto))
             .latestRun(latestRun)
-            .linkedUrlList(dqDto.getLinkedUrlList())
+            .linkedUrlList(dqDto.linkedUrlList())
             .datasetsList(dqDto
-                .getDatasetList()
+                .datasetList()
                 .stream()
                 .map(this::mapRef)
                 .collect(Collectors.toList()));
@@ -238,13 +253,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
     @Override
     public DataEntityRef mapRef(final DataEntityDto dto) {
-        return new DataEntityRef()
-            .id(dto.getDataEntity().getId())
-            .internalName(dto.getDataEntity().getInternalName())
-            .externalName(dto.getDataEntity().getExternalName())
-            .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
-            .hasAlerts(dto.isHasAlerts())
-            .url("");
+        return mapReference(dto);
     }
 
     private DataEntityLineageStream mapStream(final DataEntityLineageStreamDto upstream) {
@@ -261,7 +270,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
     private DataEntityLineageNode mapNode(final DataEntityDimensionsDto dto) {
         final DataEntityPojo dataEntity = dto.getDataEntity();
-        final NamespacePojo namespace = dto.getNamespace();
         final DataSourcePojo dataSource = dto.getDataSource();
 
         return new DataEntityLineageNode()
@@ -277,26 +285,29 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private DataEntityRef mapReference(final DataEntityDto dto) {
         final DataEntityPojo pojo = dto.getDataEntity();
 
+        return mapReference(pojo)
+            .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
+            .hasAlerts(dto.isHasAlerts());
+    }
+
+    private DataEntityRef mapReference(final DataEntityPojo pojo) {
         return new DataEntityRef()
             .id(pojo.getId())
             .externalName(pojo.getExternalName())
             .internalName(pojo.getInternalName())
-            .types(dto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
             .url("");
     }
 
     private DataSetStats mapStats(final DataEntityDetailsDto.DataSetDetailsDto dataSetDetailsDto) {
         return new DataSetStats()
-            .consumersCount(dataSetDetailsDto.getConsumersCount())
-            .fieldsCount(dataSetDetailsDto.getFieldsCount())
-            .rowsCount(dataSetDetailsDto.getRowsCount());
+            .consumersCount(dataSetDetailsDto.consumersCount())
+            .fieldsCount(dataSetDetailsDto.fieldsCount())
+            .rowsCount(dataSetDetailsDto.rowsCount());
     }
 
     private DataQualityTestExpectation mapDataQualityTestExpectation(final DataQualityTestDetailsDto dto) {
-        final DataQualityTestExpectation expectation = new DataQualityTestExpectation().type(dto.getExpectationType());
-
-        expectation.putAll(MapUtils.emptyIfNull(dto.getExpectationParameters()));
-
+        final DataQualityTestExpectation expectation = new DataQualityTestExpectation().type(dto.expectationType());
+        expectation.putAll(MapUtils.emptyIfNull(dto.expectationParameters()));
         return expectation;
     }
 }

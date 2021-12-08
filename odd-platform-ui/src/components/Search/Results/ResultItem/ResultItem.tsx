@@ -152,7 +152,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
         searchType === totals[DataEntityTypeNameEnum.ENTITY_GROUP]?.id ? (
           <ColContainer item $colType="colxs">
             <Typography variant="body1" noWrap>
-              {searchResult?.entitiesCount}
+              {searchResult?.itemsCount}
             </Typography>
           </ColContainer>
         ) : null}

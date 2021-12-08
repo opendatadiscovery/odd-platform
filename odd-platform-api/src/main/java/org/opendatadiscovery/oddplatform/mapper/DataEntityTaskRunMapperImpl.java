@@ -3,7 +3,7 @@ package org.opendatadiscovery.oddplatform.mapper;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.opendatadiscovery.oddplatform.dto.IngestionTaskRun;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.springframework.stereotype.Component;
 
