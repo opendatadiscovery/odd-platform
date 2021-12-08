@@ -109,24 +109,15 @@ public class IngestionMapperImpl implements IngestionMapper {
     }
 
     @Override
-    public List<DataEntityIngestionDto> createIngestionDto(final Collection<DataEntity> dataEntities,
-                                                           final long dataSourceId) {
-        return dataEntities.stream()
-            .map(e -> createIngestionDto(e, dataSourceId))
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public DataEntityPojo dtoToPojo(final EnrichedDataEntityIngestionDto dto) {
+    public <T extends DataEntityIngestionDto> DataEntityPojo dtoToPojo(final T dto) {
         final OffsetDateTime createdAt = dto.getCreatedAt();
         final OffsetDateTime updatedAt = dto.getUpdatedAt();
 
-        // TODO: can be stored in the DataEntityIngestionDto as well
+        // TODO: move pojo to the dto
         final DataEntitySubtypePojo subtype = dataEntityTypeRepository.findSubtypeByName(dto.getSubType());
         final var isExcludedFromSearch = isExcludedFromSearch(dto);
 
-        return new DataEntityPojo()
-            .setId(dto.getId())
+        final var pojo = new DataEntityPojo()
             .setExternalName(dto.getName())
             .setExternalDescription(dto.getExternalDescription())
             .setOddrn(dto.getOddrn().toLowerCase())
@@ -137,49 +128,15 @@ public class IngestionMapperImpl implements IngestionMapper {
             .setHollow(false)
             .setSpecificAttributes(JSONB.jsonb(dto.getSpecificAttributesJson()))
             .setExcludeFromSearch(isExcludedFromSearch);
+
+        if (dto instanceof EnrichedDataEntityIngestionDto entityIngestionDto) {
+            pojo.setId(entityIngestionDto.getId());
+        }
+        return pojo;
     }
 
     @Override
-    public DataEntityPojo dtoToPojo(final DataEntityIngestionDto dto) {
-        final OffsetDateTime createdAt = dto.getCreatedAt();
-        final OffsetDateTime updatedAt = dto.getUpdatedAt();
-
-        // TODO: move pojo to the dto
-        final DataEntitySubtypePojo subtype = dataEntityTypeRepository.findSubtypeByName(dto.getSubType());
-
-        return new DataEntityPojo()
-            .setExternalName(dto.getName())
-            .setExternalDescription(dto.getExternalDescription())
-            .setOddrn(dto.getOddrn().toLowerCase())
-            .setDataSourceId(dto.getDataSourceId())
-            .setCreatedAt(createdAt != null ? createdAt.toLocalDateTime() : null)
-            .setUpdatedAt(updatedAt != null ? updatedAt.toLocalDateTime() : null)
-            .setSubtypeId(subtype.getId())
-            .setHollow(false)
-            .setSpecificAttributes(JSONB.jsonb(dto.getSpecificAttributesJson()));
-    }
-
-    @Override
-    public List<DataEntityPojo> dtoToPojo(final List<EnrichedDataEntityIngestionDto> dtos) {
-        return dtos.stream().map(this::dtoToPojo).collect(Collectors.toList());
-    }
-
-    @Override
-    public DataEntityDto ingestDtoToDto(final DataEntityIngestionDto ingestionDto) {
-        final Set<DataEntityTypePojo> types = ingestionDto.getTypes().stream()
-            .map(DataEntityType::toString)
-            .map(dataEntityTypeRepository::findTypeByName)
-            .collect(Collectors.toSet());
-
-        return DataEntityDto.builder()
-            .dataEntity(dtoToPojo(ingestionDto))
-            .subtype(dataEntityTypeRepository.findSubtypeByName(ingestionDto.getSubType()))
-            .types(types)
-            .build();
-    }
-
-    @Override
-    public DataEntityDto ingestDtoToDto(final EnrichedDataEntityIngestionDto ingestionDto) {
+    public <T extends DataEntityIngestionDto> DataEntityDto ingestDtoToDto(final T ingestionDto) {
         final Set<DataEntityTypePojo> types = ingestionDto.getTypes().stream()
             .map(DataEntityType::toString)
             .map(dataEntityTypeRepository::findTypeByName)
@@ -343,7 +300,7 @@ public class IngestionMapperImpl implements IngestionMapper {
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
-    private boolean isExcludedFromSearch(final EnrichedDataEntityIngestionDto dto) {
+    private <T extends DataEntityIngestionDto> boolean isExcludedFromSearch(final T dto) {
         return Optional.ofNullable(dto)
             .map(DataEntityIngestionDto::getDataEntityGroup)
             .map(group -> group.groupOddrn() != null)

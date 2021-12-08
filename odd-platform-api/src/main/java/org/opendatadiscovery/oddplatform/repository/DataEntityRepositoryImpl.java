@@ -270,11 +270,11 @@ public class DataEntityRepositoryImpl
 
     @Override
     public void createHollow(final Collection<String> oddrns) {
-        InsertValuesStep2<DataEntityRecord, String, Boolean> step
-            = dslContext.insertInto(DATA_ENTITY, DATA_ENTITY.ODDRN, DATA_ENTITY.HOLLOW);
+        var step = dslContext
+            .insertInto(DATA_ENTITY, DATA_ENTITY.ODDRN, DATA_ENTITY.HOLLOW, DATA_ENTITY.EXCLUDE_FROM_SEARCH);
 
         for (final String oddrn : oddrns) {
-            step = step.values(oddrn, true);
+            step = step.values(oddrn, true, true);
         }
 
         step.onDuplicateKeyIgnore().execute();
@@ -1051,6 +1051,11 @@ public class DataEntityRepositoryImpl
         final Set<DataEntityTypePojo> types =
             jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class);
 
+        final var entities = jooqRecordHelper.extractAggRelation(r, AGG_SUB_GROUP_ENTITY_FIELD,
+            DataEntityPojo.class);
+
+        final var childrenCount = r.get("children_count", Integer.class);
+
         return DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(dataEntity)
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
@@ -1061,6 +1066,9 @@ public class DataEntityRepositoryImpl
             .ownership(extractOwnershipRelation(r))
             .types(types)
             .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
+            .groupsDto(new DataEntityDimensionsDto.DataEntityGroupDimensionsDto(
+                entities, entities.size() + childrenCount
+            ))
             .build();
     }
 

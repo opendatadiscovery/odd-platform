@@ -50,16 +50,32 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
     @Override
     public DataEntity mapPojo(final DataEntityDimensionsDto dataEntityDto) {
-        return mapPojo(dataEntityDto.getDataEntity())
-            .types(dataEntityDto.getTypes().stream().map(this::mapType).collect(Collectors.toList()))
+        final List<DataEntityType> types = dataEntityDto.getTypes()
+            .stream()
+            .map(this::mapType)
+            .toList();
+
+        final List<DataEntityType.NameEnum> typeNames = types.stream()
+            .map(DataEntityType::getName)
+            .toList();
+
+        final DataEntity entity = mapPojo(dataEntityDto.getDataEntity())
+            .types(types)
             .subType(mapSubType(dataEntityDto.getSubtype()))
             .ownership(ownershipMapper.mapDtos(dataEntityDto.getOwnership()))
             .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dataEntityDto.getDataSource(),
                 dataEntityDto.getNamespace())))
             .tags(dataEntityDto.getTags() != null
                 ? dataEntityDto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList())
-                : null
-            );
+                : null);
+        if (typeNames.contains(DataEntityType.NameEnum.ENTITY_GROUP)) {
+            final List<DataEntityRef> dataEntityRefs = dataEntityDto.getGroupsDto().entities().stream()
+                .map(this::mapReference)
+                .toList();
+            entity.setEntities(dataEntityRefs);
+            entity.setItemsCount(dataEntityDto.getGroupsDto().itemsCount());
+        }
+        return entity;
     }
 
     private DataEntity mapPojo(final DataEntityPojo pojo) {
