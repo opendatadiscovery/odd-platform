@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.mapper;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -308,41 +307,38 @@ public class IngestionMapperImpl implements IngestionMapper {
         final DataEntity dataEntity,
         final DataEntityType type
     ) {
-        switch (type) {
-            case DATA_SET:
-                return Pair.of(type, createMap(
-                    Pair.of("rows_count", dataEntity.getDataset().getRowsNumber()),
-                    Pair.of("fields_count", dataEntity.getDataset().getFieldList().size()),
-                    Pair.of("consumers_count", 0)
-                ));
+        return switch (type) {
+            case DATA_SET -> Pair.of(type, specAttrsMap(List.of(
+                Pair.of("rows_count", dataEntity.getDataset().getRowsNumber()),
+                Pair.of("fields_count", dataEntity.getDataset().getFieldList().size()),
+                Pair.of("parent_dataset", dataEntity.getDataset().getParentOddrn()),
+                Pair.of("consumers_count", 0)
+            )));
 
-            case DATA_TRANSFORMER:
-                return Pair.of(type, createMap(
-                    Pair.of("source_list", dataEntity.getDataTransformer().getInputs()),
-                    Pair.of("target_list", dataEntity.getDataTransformer().getOutputs()),
-                    Pair.of("source_code_url", dataEntity.getDataTransformer().getSourceCodeUrl())
-                ));
-            case DATA_CONSUMER:
-                return Pair.of(type, createMap(
-                    Pair.of("input_list", dataEntity.getDataConsumer().getInputs())
-                ));
-            case DATA_QUALITY_TEST:
-                return Pair.of(type, createMap(
-                    Pair.of("suite_name", dataEntity.getDataQualityTest().getSuiteName()),
-                    Pair.of("suite_url", dataEntity.getDataQualityTest().getSuiteUrl()),
-                    Pair.of("linked_url_list", dataEntity.getDataQualityTest().getLinkedUrlList()),
-                    Pair.of("dataset_list", dataEntity.getDataQualityTest().getDatasetList()),
-                    Pair.of("expectation", dataEntity.getDataQualityTest().getExpectation())
-                ));
+            case DATA_TRANSFORMER -> Pair.of(type, specAttrsMap(List.of(
+                Pair.of("source_list", dataEntity.getDataTransformer().getInputs()),
+                Pair.of("target_list", dataEntity.getDataTransformer().getOutputs()),
+                Pair.of("source_code_url", dataEntity.getDataTransformer().getSourceCodeUrl())
+            )));
 
-            default:
-                log.warn("There's no specific attributes support for type: {}", type);
-                return null;
-        }
+            case DATA_CONSUMER -> Pair.of(type, specAttrsMap(List.of(
+                Pair.of("input_list", dataEntity.getDataConsumer().getInputs())
+            )));
+
+            case DATA_QUALITY_TEST -> Pair.of(type, specAttrsMap(List.of(
+                Pair.of("suite_name", dataEntity.getDataQualityTest().getSuiteName()),
+                Pair.of("suite_url", dataEntity.getDataQualityTest().getSuiteUrl()),
+                Pair.of("linked_url_list", dataEntity.getDataQualityTest().getLinkedUrlList()),
+                Pair.of("dataset_list", dataEntity.getDataQualityTest().getDatasetList()),
+                Pair.of("expectation", dataEntity.getDataQualityTest().getExpectation())
+            )));
+
+            default -> null;
+        };
     }
 
-    private <K, V> Map<K, V> createMap(final Pair<K, V>... pairs) {
-        return Arrays.stream(pairs)
+    private <K, V> Map<K, V> specAttrsMap(final List<Pair<K, V>> pairs) {
+        return pairs.stream()
             .filter(p -> p.getRight() != null && p.getLeft() != null)
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }

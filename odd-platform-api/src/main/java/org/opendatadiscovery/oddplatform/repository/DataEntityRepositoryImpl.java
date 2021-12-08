@@ -743,7 +743,7 @@ public class DataEntityRepositoryImpl
             labelName
         );
 
-        final SelectConditionStep<Record> vectorSelect = dslContext
+        final SelectOnConditionStep<Record> vectorSelect = dslContext
             .select(vectorFields)
             .select(deId)
             .from(subquery)
@@ -753,8 +753,7 @@ public class DataEntityRepositoryImpl
             .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
-            .where(LABEL.IS_DELETED.isFalse());
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED.isFalse());
 
         jooqFTSHelper.buildSearchEntrypointUpsert(
             vectorSelect,
@@ -824,11 +823,9 @@ public class DataEntityRepositoryImpl
 
     private List<LineagePojo> collectLineage(final CommonTableExpression<Record> cte) {
         return dslContext.withRecursive(cte)
-            .select()
+            .selectDistinct(cte.field(LINEAGE.PARENT_ODDRN), cte.field(LINEAGE.CHILD_ODDRN))
             .from(cte.getName())
             .fetchStreamInto(LineagePojo.class)
-            // TODO: ad-hoc. Implement distinct in recursive CTE
-            .distinct()
             .collect(Collectors.toList());
     }
 

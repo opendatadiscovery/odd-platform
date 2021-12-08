@@ -109,32 +109,37 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     @Override
     @Transactional
     public DataSourceDto create(final DataSourceDto dto) {
-        final NamespacePojo namespace = dto.getNamespace() != null
-            ? namespaceRepository.createIfNotExists(dto.getNamespace())
+        final NamespacePojo namespace = dto.namespace() != null
+            ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
 
+        final DataSourcePojo dsPojo = dto.dataSource();
+
+        final Condition checkIfExistsCondition = dsPojo.getConnectionUrl() != null
+            ? DATA_SOURCE.CONNECTION_URL.eq(dsPojo.getConnectionUrl()) : DATA_SOURCE.ODDRN.eq(dsPojo.getOddrn());
+
         return dslContext.selectFrom(DATA_SOURCE)
-            .where(DATA_SOURCE.ODDRN.eq(dto.getDataSource().getOddrn()))
+            .where(checkIfExistsCondition)
             .fetchOptionalInto(DataSourcePojo.class)
             .map(ds -> {
                 if (!ds.getIsDeleted()) {
                     throw new EntityAlreadyExistsException();
                 }
 
-                return upsert(ds.getId(), dto.getDataSource(), namespace);
+                return persist(ds.getId(), dsPojo, namespace);
             })
-            .orElseGet(() -> upsert(dto.getDataSource(), namespace));
+            .orElseGet(() -> persist(dsPojo, namespace));
     }
 
     @Override
     @Transactional
     public DataSourceDto update(final DataSourceDto dto) {
-        final NamespacePojo namespace = dto.getNamespace() != null
-            ? namespaceRepository.createIfNotExists(dto.getNamespace())
+        final NamespacePojo namespace = dto.namespace() != null
+            ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
 
         return dslContext.selectFrom(DATA_SOURCE)
-            .where(DATA_SOURCE.ID.eq(dto.getDataSource().getId()))
+            .where(DATA_SOURCE.ID.eq(dto.dataSource().getId()))
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchOptionalInto(DataSourcePojo.class)
             .map(ds -> update(ds, dto, namespace))
@@ -146,7 +151,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     private DataSourceDto update(final DataSourcePojo existing,
                                  final DataSourceDto delta,
                                  final NamespacePojo namespace) {
-        final DataSourceDto updatedDs = upsert(existing.getId(), delta.getDataSource(), namespace);
+        final DataSourceDto updatedDs = persist(existing.getId(), delta.dataSource(), namespace);
 
         final Field<Long> deId = field("data_entity_id", Long.class);
 
@@ -230,6 +235,8 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
             .where(DATA_SOURCE.ACTIVE.isTrue())
             .and(DATA_SOURCE.IS_DELETED.isFalse())
+            .and(DATA_SOURCE.CONNECTION_URL.isNotNull())
+            .and(DATA_SOURCE.CONNECTION_URL.notEqual(""))
             .fetchStream()
             .map(this::mapRecord)
             .collect(Collectors.toList());
@@ -244,11 +251,19 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         );
     }
 
-    private DataSourceDto upsert(final DataSourcePojo dataSource, final NamespacePojo namespace) {
-        return upsert(null, dataSource, namespace);
+    @Override
+    public void injectOddrn(final long id, final String oddrn) {
+        dslContext.update(DATA_SOURCE)
+            .set(DATA_SOURCE.ODDRN, oddrn)
+            .where(DATA_SOURCE.ID.eq(id))
+            .execute();
     }
 
-    private DataSourceDto upsert(final Long dsId, final DataSourcePojo dataSource, final NamespacePojo namespace) {
+    private DataSourceDto persist(final DataSourcePojo dataSource, final NamespacePojo namespace) {
+        return persist(null, dataSource, namespace);
+    }
+
+    private DataSourceDto persist(final Long dsId, final DataSourcePojo dataSource, final NamespacePojo namespace) {
         final DataSourceRecord record = pojoToRecord(dataSource);
 
         record.set(DATA_SOURCE.IS_DELETED, false);

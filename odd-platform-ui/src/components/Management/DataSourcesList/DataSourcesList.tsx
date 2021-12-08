@@ -15,10 +15,10 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormContainer';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
 import { StylesType } from './DataSourcesListStyles';
-import DataSourceFormDialogContainer from './DataSourceFormDialog/DataSourceFormDialogContainer';
 
 interface DataSourcesListProps extends StylesType {
   dataSourcesList: DataSource[];

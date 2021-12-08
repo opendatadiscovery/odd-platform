@@ -3,6 +3,15 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.google.cloud.tools.jib' version '3.0.0'
     id 'checkstyle'
+    id "de.undercouch.download" version "4.1.2" apply false
+}
+
+ext {
+    env = findProperty('env') ?: 'prod'
+}
+
+if (env == 'dev') {
+    apply plugin: "de.undercouch.download"
 }
 
 group = 'org.opendatadiscovery'
@@ -25,7 +34,8 @@ dependencies {
     implementation "org.springframework.session:spring-session-core"
     implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
-    implementation "org.opendatadiscovery:odd-platform-ingestion-contract:$oddIngestionApiVersion"
+    implementation "org.opendatadiscovery:ingestion-contract-server:$oddIngestionApiVersion"
+    implementation "org.opendatadiscovery:oddrn-generator-java:$oddrnGeneratorVersion"
     implementation project(':odd-platform-api-contract')
 
     if (!skipUIBundle) {
@@ -105,12 +115,30 @@ jib {
         image = 'opendatadiscovery/odd-platform'
         tags = ['latest', project.version]
     }
-    container {
-        creationTime = 'USE_CURRENT_TIMESTAMP'
-        appRoot = '/app'
-        jvmFlags = ['-Xms1G', '-Xmx1G']
-        ports = ['8080']
-        workingDirectory = '/app'
+    if (env == "dev") {
+        extraDirectories {
+            paths {
+                path {
+                    from = file('build/otlp/')
+                    into = '/app/otlp/'
+                }
+            }
+        }
+        container {
+            creationTime = 'USE_CURRENT_TIMESTAMP'
+            appRoot = '/app'
+            jvmFlags = ['-Xms1G', '-Xmx1G', '-javaagent:/app/otlp/opentelemetry-javaagent.jar']
+            ports = ['8080']
+            workingDirectory = '/app'
+        }
+    } else {
+        container {
+            creationTime = 'USE_CURRENT_TIMESTAMP'
+            appRoot = '/app'
+            jvmFlags = ['-Xms1G', '-Xmx1G']
+            ports = ['8080']
+            workingDirectory = '/app'
+        }
     }
     allowInsecureRegistries = false
 }
@@ -140,11 +168,17 @@ task buildlessCheckstyleTest(type: Checkstyle) {
     maxWarnings = 0
 }
 
-
 tasks.withType(Checkstyle) {
     reports {
         xml.enabled false
         html.enabled false
+    }
+}
+
+if (hasProperty('buildScan')) {
+    buildScan {
+        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+        termsOfServiceAgree = 'yes'
     }
 }
 
@@ -153,4 +187,14 @@ compileJava.dependsOn tasks.jooqDockerGenerate
 test {
     useJUnitPlatform()
     testLogging.showStandardStreams = true
+}
+
+if (env == "dev") {
+    task downloadOtlp(type: Download) {
+        src "https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar"
+        dest "${buildDir}/otlp/opentelemetry-javaagent.jar"
+        overwrite true
+    }
+
+    jibDockerBuild.dependsOn tasks.downloadOtlp
 }

@@ -376,6 +376,7 @@ components:
             - VIEW
             - DAG
             - GRAPH_NODE
+            - MICROSERVICE
       required:
         - id
         - name
@@ -711,8 +712,6 @@ components:
           description: Pulling interval in seconds
       required:
         - name
-        - oddrn
-        - connection_url
 
     DataSourceUpdateFormData:
       type: object

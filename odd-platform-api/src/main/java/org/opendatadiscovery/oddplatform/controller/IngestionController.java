@@ -16,7 +16,6 @@ import reactor.core.scheduler.Schedulers;
 @RequiredArgsConstructor
 @Slf4j
 public class IngestionController implements IngestionApi {
-
     private final IngestionService ingestionService;
 
     @Override
