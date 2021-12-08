@@ -3,28 +3,38 @@ package org.opendatadiscovery.oddplatform.repository.util;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Insert;
+import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Record2;
 import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
+import org.opendatadiscovery.oddplatform.dto.FacetType;
+import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRecord;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
 import static java.util.Collections.emptyMap;
+import static java.util.Objects.requireNonNull;
 import static org.jooq.impl.DSL.coalesce;
+import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TYPE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
@@ -57,6 +67,20 @@ public class JooqFTSHelper {
         Map.entry(LABEL.NAME, "C"),
         Map.entry(ROLE.NAME, "D"),
         Map.entry(OWNER.NAME, "C")
+    );
+
+    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
+        FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
+        FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters))
+    );
+
+    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
+        FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
+        FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
+        FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
+        FacetType.SUBTYPES, filters -> DATA_ENTITY_SUBTYPE.ID.in(extractFilterId(filters)),
+        FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
+        FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
     );
 
     private final DSLContext dslContext;
@@ -115,6 +139,84 @@ public class JooqFTSHelper {
             .onConflict().doUpdate().set(JooqFTSHelper.onConflictSetMap(seTargetField));
     }
 
+    public Condition ftsCondition(final String query) {
+        final Field<Object> conditionField = field(
+            "? @@ plainto_tsquery(?)",
+            SEARCH_ENTRYPOINT.SEARCH_VECTOR,
+            String.format("%s:*", query)
+        );
+
+        return condition(conditionField.toString());
+    }
+
+    public List<Condition> facetStateConditions(final FacetStateDto state,
+                                                 final boolean extended,
+                                                 final boolean skipTypeCondition) {
+        return state.getState().entrySet().stream()
+            .filter(e -> {
+                if (skipTypeCondition) {
+                    return !e.getKey().equals(FacetType.TYPES);
+                }
+                return true;
+            })
+            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), extended))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    // TODO: ad-hoc
+    public Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state,
+                                                                              final boolean skipTypeCondition) {
+        final List<Condition> joinConditions = state.getState().entrySet().stream()
+            .filter(e -> {
+                if (skipTypeCondition) {
+                    return !e.getKey().equals(FacetType.TYPES);
+                }
+
+                return true;
+            })
+            .filter(e -> !e.getKey().equals(FacetType.DATA_SOURCES))
+            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        final List<Condition> cteConditions = state.getState().entrySet().stream()
+            .filter(e -> e.getKey().equals(FacetType.DATA_SOURCES))
+            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        cteConditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.eq(Boolean.FALSE));
+
+        return Pair.of(cteConditions, joinConditions);
+    }
+
+    public Condition compileFacetCondition(final FacetType facetType,
+                                            final List<SearchFilterDto> filters,
+                                            final boolean extended) {
+        final Map<FacetType, Function<List<SearchFilterDto>, Condition>> conditionsDict = extended
+            ? EXTENDED_CONDITIONS
+            : CONDITIONS;
+
+        final Function<List<SearchFilterDto>, Condition> function = conditionsDict.get(facetType);
+
+        if (function == null || filters == null || filters.isEmpty()) {
+            return null;
+        }
+
+        return function.apply(filters);
+    }
+
+    public OrderField<Object> ftsRanking(final Field<?> vectorField, final String query) {
+        requireNonNull(vectorField);
+
+        return field(
+            "ts_rank_cd(?, plainto_tsquery(?))",
+            vectorField,
+            String.format("%s:*", query)
+        ).desc();
+    }
+
     private static Field<Object> concatVectorFields(final Table<? extends Record> cte,
                                                     final List<Field<?>> vectorFields,
                                                     final boolean agg,
@@ -157,5 +259,11 @@ public class JooqFTSHelper {
 
     private static Map<Field<?>, Field<?>> onConflictSetMap(final Field<?> targetField) {
         return Map.of(targetField, field(String.format("excluded.%s", targetField.getName())));
+    }
+
+    private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
+        return filters.stream()
+            .map(SearchFilterDto::getEntityId)
+            .collect(Collectors.toList());
     }
 }

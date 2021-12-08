@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.ingestion;
 
 import java.time.OffsetDateTime;
 import lombok.AllArgsConstructor;

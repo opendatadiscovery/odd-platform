@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.ingestion;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 
 @Getter
@@ -18,6 +20,8 @@ public class IngestionDataStructure {
     private final List<IngestionTaskRun> taskRuns;
     private final List<LineagePojo> lineageRelations;
     private final List<DataQualityTestRelationsPojo> dataQARelations;
+    private final List<GroupEntityRelationsPojo> groupEntityRelations;
+    private final List<GroupParentGroupRelationsPojo> groupParentGroupRelations;
     private final List<AlertPojo> earlyAlerts;
 
     private final List<Long> existingIds;
@@ -30,7 +34,9 @@ public class IngestionDataStructure {
                                   final List<IngestionTaskRun> taskRuns,
                                   final List<LineagePojo> lineageRelations,
                                   final List<DataQualityTestRelationsPojo> dataQARelations,
-                                  final List<AlertPojo> earlyAlerts) {
+                                  final List<AlertPojo> earlyAlerts,
+                                  final List<GroupEntityRelationsPojo> groupEntityRelations,
+                                  final List<GroupParentGroupRelationsPojo> groupParentGroupRelations) {
         this.newEntities = newEntities;
         this.existingEntities = existingEntities;
         this.allEntities = Stream.concat(newEntities.stream(), existingEntities.stream()).collect(Collectors.toList());
@@ -39,6 +45,8 @@ public class IngestionDataStructure {
         this.lineageRelations = lineageRelations;
         this.dataQARelations = dataQARelations;
         this.earlyAlerts = earlyAlerts;
+        this.groupEntityRelations = groupEntityRelations;
+        this.groupParentGroupRelations = groupParentGroupRelations;
 
         this.existingIds = extractIds(existingEntities);
         this.newIds = extractIds(newEntities);

@@ -3,8 +3,8 @@ package org.opendatadiscovery.oddplatform.mapper;
 import java.util.Collection;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityIngestionDto;
-import org.opendatadiscovery.oddplatform.dto.EnrichedDataEntityIngestionDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 

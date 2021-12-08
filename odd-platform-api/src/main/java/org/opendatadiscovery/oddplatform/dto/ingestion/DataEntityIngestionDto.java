@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.ingestion;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.opendatadiscovery.oddplatform.dto.DataEntityType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 
 @Data
@@ -22,7 +23,7 @@ public class DataEntityIngestionDto {
     protected OffsetDateTime createdAt;
     protected OffsetDateTime updatedAt;
     protected Set<DataEntityType> types;
-    protected DataEntitySubtype subType;
+    protected String subType;
     protected Map<String, Object> metadata;
     protected String specificAttributesJson;
 
@@ -30,40 +31,16 @@ public class DataEntityIngestionDto {
     protected DataTransformerIngestionDto dataTransformer;
     protected DataConsumerIngestionDto dataConsumer;
     protected DataQualityTestIngestionDto datasetQualityTest;
+    protected DataEntityGroupDto dataEntityGroup;
 
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class DataSetIngestionDto {
-        private String parentDatasetOddrn;
-        private List<DataSetField> fieldList;
-        private String structureHash;
-        private Long rowsCount;
-    }
+    public record DataSetIngestionDto(String parentDatasetOddrn, List<DataSetField> fieldList,
+                                      String structureHash, Long rowsCount) {}
 
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class DataTransformerIngestionDto {
-        private List<String> sourceList;
-        private List<String> targetList;
-    }
+    public record DataTransformerIngestionDto(List<String> sourceList, List<String> targetList) {}
 
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class DataConsumerIngestionDto {
-        private List<String> inputList;
-    }
+    public record DataConsumerIngestionDto(List<String> inputList) {}
 
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class DataQualityTestIngestionDto {
-        private List<String> datasetList;
-    }
+    public record DataQualityTestIngestionDto(List<String> datasetList) {}
+
+    public record DataEntityGroupDto(List<String> entitiesOddrns, String groupOddrn) {}
 }

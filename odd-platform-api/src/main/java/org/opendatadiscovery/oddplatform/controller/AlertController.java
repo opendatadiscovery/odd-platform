@@ -57,7 +57,7 @@ public class AlertController implements AlertApi {
     public Mono<ResponseEntity<AlertList>> getDependentEntitiesAlerts(final Integer page,
                                                                       final Integer size,
                                                                       final ServerWebExchange exchange) {
-        return alertService.listByOwner(page, size)
+        return alertService.listDependentObjectsAlerts(page, size)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }

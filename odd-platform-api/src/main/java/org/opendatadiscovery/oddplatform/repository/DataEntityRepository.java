@@ -15,7 +15,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 
 public interface DataEntityRepository extends CRUDRepository<DataEntityDimensionsDto> {
-    Collection<DataEntityDimensionsDto> listByOddrns(final Collection<String> oddrns);
 
     Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns);
 
@@ -55,23 +54,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     Optional<Long> incrementViewCount(final long id);
 
     void createHollow(final Collection<String> oddrns);
-
-    Map<SearchFilterId, Long> getSubtypeFacet(final String facetQuery,
-                                              final int page,
-                                              final int size,
-                                              final FacetStateDto state);
-
-    Map<SearchFilterId, Long> getOwnerFacet(final String facetQuery,
-                                            final int page,
-                                            final int size,
-                                            final FacetStateDto state);
-
-    Map<SearchFilterId, Long> getTagFacet(final String facetQuery,
-                                          final int page,
-                                          final int size,
-                                          final FacetStateDto state);
-
-    Map<SearchFilterId, Long> getTypeFacet(final FacetStateDto state);
 
     Long countByState(final FacetStateDto state);
 

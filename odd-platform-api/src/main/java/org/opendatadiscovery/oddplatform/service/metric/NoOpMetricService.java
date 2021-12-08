@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.service.metric;
 
-import org.opendatadiscovery.oddplatform.dto.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;

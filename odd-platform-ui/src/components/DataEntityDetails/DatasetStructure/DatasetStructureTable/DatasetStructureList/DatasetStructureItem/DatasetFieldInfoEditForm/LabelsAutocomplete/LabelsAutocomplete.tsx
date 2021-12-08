@@ -20,7 +20,7 @@ type FilterOption = Omit<Label, 'id'> & Partial<Label>;
 interface LabelsAutocompleteProps {
   searchLabels: (
     params: LabelApiGetLabelListRequest
-  ) => Promise<LabelsResponse>; // Temp
+  ) => Promise<LabelsResponse>;
   appendLabel: UseFieldArrayReturn['append'];
 }
 

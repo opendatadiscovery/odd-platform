@@ -4,12 +4,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
@@ -29,70 +28,55 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     private DataTransformerDetailsDto dataTransformerDetailsDto;
     private DataConsumerDetailsDto dataConsumerDetailsDto;
     private DataQualityTestDetailsDto dataQualityTestDetailsDto;
+    private DataEntityGroupDetailsDto dataEntityGroupDetailsDto;
 
     @Builder(builderMethodName = "detailsBuilder")
     public DataEntityDetailsDto(final DataEntityPojo dataEntity,
                                 final Set<DataEntityTypePojo> types,
                                 final DataEntitySubtypePojo subtype,
                                 final boolean hasAlerts,
+                                final Collection<DataEntityPojo> dataEntityGroups,
                                 final Map<DataEntityType, DataEntityAttributes> specificAttributes,
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
                                 final DataSourcePojo dataSource,
                                 final Collection<TagPojo> tags,
                                 final Collection<MetadataDto> metadata,
+                                final DataEntityGroupDimensionsDto dataEntityGroupDimensionsDto,
                                 final DataSetDetailsDto dataSetDetailsDto,
                                 final DataTransformerDetailsDto dataTransformerDetailsDto,
                                 final DataConsumerDetailsDto dataConsumerDetailsDto,
-                                final DataQualityTestDetailsDto dataQualityTestDetailsDto) {
-        super(dataEntity, types, subtype, hasAlerts, specificAttributes, namespace, ownership, dataSource, tags);
+                                final DataQualityTestDetailsDto dataQualityTestDetailsDto,
+                                final DataEntityGroupDetailsDto dataEntityGroupDetailsDto) {
+        super(dataEntity, types, subtype, hasAlerts, specificAttributes,
+            namespace, ownership, dataSource, tags, dataEntityGroups, dataEntityGroupDimensionsDto);
         this.metadata = metadata;
         this.dataSetDetailsDto = dataSetDetailsDto;
         this.dataTransformerDetailsDto = dataTransformerDetailsDto;
         this.dataConsumerDetailsDto = dataConsumerDetailsDto;
         this.dataQualityTestDetailsDto = dataQualityTestDetailsDto;
+        this.dataEntityGroupDetailsDto = dataEntityGroupDetailsDto;
     }
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DataSetDetailsDto {
-        private Long rowsCount;
-        private Long fieldsCount;
-        private Long consumersCount;
-        private Collection<DatasetVersionPojo> datasetVersions;
+    public record DataSetDetailsDto(Long rowsCount, Long fieldsCount, Long consumersCount,
+                                    Collection<DatasetVersionPojo> datasetVersions) {
     }
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DataTransformerDetailsDto {
-        private Collection<? extends DataEntityDto> sourceList;
-        private Collection<? extends DataEntityDto> targetList;
-        private String sourceCodeUrl;
+    public record DataTransformerDetailsDto(Collection<? extends DataEntityDto> sourceList,
+                                            Collection<? extends DataEntityDto> targetList,
+                                            String sourceCodeUrl) {
     }
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DataQualityTestDetailsDto {
-        private String suiteName;
-        private String suiteUrl;
-        private Collection<? extends DataEntityDto> datasetList;
-        private List<String> linkedUrlList;
-        private String expectationType;
-        private DataEntityTaskRunPojo latestTaskRun;
-        private Map<String, String> expectationParameters;
+    public record DataQualityTestDetailsDto(String suiteName, String suiteUrl,
+                                            Collection<? extends DataEntityDto> datasetList,
+                                            List<String> linkedUrlList, String expectationType,
+                                            DataEntityTaskRunPojo latestTaskRun,
+                                            Map<String, String> expectationParameters) {
     }
 
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DataConsumerDetailsDto {
-        private Collection<? extends DataEntityDto> inputList;
+    public record DataConsumerDetailsDto(Collection<? extends DataEntityDto> inputList) {
+    }
+
+    public record DataEntityGroupDetailsDto(boolean hasChildren) {
     }
 }

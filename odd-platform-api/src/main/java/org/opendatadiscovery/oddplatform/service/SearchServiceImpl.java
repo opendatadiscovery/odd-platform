@@ -159,7 +159,7 @@ public class SearchServiceImpl implements SearchService {
     private Mono<Map<SearchFilterId, Long>> fetchTypeFacet(final FacetStateDto state) {
         // TODO: Bad. Find a way to to make that within the typeFacet query
         return Mono.zip(
-            Mono.fromCallable(() -> dataEntityRepository.getTypeFacet(state)),
+            Mono.fromCallable(() -> searchFacetRepository.getTypeFacet(state)),
             Mono.fromCallable(dataEntityTypeRepository::getTypes).map(types -> types.keySet().stream()
                 .map(t -> SearchFilterId.builder().entityId(t.getId()).name(t.getName()).build())
                 .collect(Collectors.toList()))
@@ -188,11 +188,11 @@ public class SearchServiceImpl implements SearchService {
     ) {
         switch (facetType) {
             case TAGS:
-                return s -> dataEntityRepository.getTagFacet(query, page, size, s);
+                return s -> searchFacetRepository.getTagFacet(query, page, size, s);
             case OWNERS:
-                return s -> dataEntityRepository.getOwnerFacet(query, page, size, s);
+                return s -> searchFacetRepository.getOwnerFacet(query, page, size, s);
             case SUBTYPES:
-                return s -> dataEntityRepository.getSubtypeFacet(query, page, size, s);
+                return s -> searchFacetRepository.getSubtypeFacet(query, page, size, s);
             default:
                 throw new IllegalStateException(String.format("%s facet type is unknown", facetType));
         }

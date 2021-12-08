@@ -11,7 +11,7 @@ import io.opentelemetry.sdk.resources.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.opendatadiscovery.oddplatform.dto.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
 import org.opendatadiscovery.oddplatform.service.metric.dto.MetricDataTriplet;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 

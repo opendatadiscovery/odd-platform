@@ -55,7 +55,11 @@ const AlertItem: React.FC<AlertItemProps> = ({
       </div>
       <div className={classes.typesList}>
         {alert.dataEntity?.types?.map(type => (
-          <EntityTypeItem key={type.id} typeName={type.name} />
+          <EntityTypeItem
+            sx={{ ml: 0.5 }}
+            key={type.id}
+            typeName={type.name}
+          />
         ))}
       </div>
     </Grid>

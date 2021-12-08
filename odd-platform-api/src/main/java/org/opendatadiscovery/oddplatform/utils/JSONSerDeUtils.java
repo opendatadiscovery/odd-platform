@@ -5,14 +5,18 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.JSONB;
 
 public class JSONSerDeUtils {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-        .registerModule(new JavaTimeModule())
-        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        .registerModules(
+            new JavaTimeModule(),
+            new SimpleModule().addDeserializer(JSONB.class, new JSONBDeserializer())
+        ).setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
     public static <T> T deserializeJson(final String data, final Class<T> clazz) {
         try {

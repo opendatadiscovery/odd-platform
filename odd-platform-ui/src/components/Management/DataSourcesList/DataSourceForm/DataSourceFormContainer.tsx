@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import {
   registerDataSource,
   updateDataSource,
@@ -6,9 +5,7 @@ import {
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces/state';
 import { getIsDatasourceCreating } from 'redux/selectors/datasources.selectors';
-import { fetchNamespaceList } from 'redux/thunks/namespace.thunks';
-import DataSourceFormDialog from 'components/Management/DataSourcesList/DataSourceFormDialog/DataSourceFormDialog';
-import { styles } from './DataSourceFormDialogStyles';
+import DataSourceForm from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 
 const mapStateToProps = (state: RootState) => ({
   isLoading: getIsDatasourceCreating(state),
@@ -17,10 +14,9 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = {
   registerDataSource,
   updateDataSource,
-  searchNamespace: fetchNamespaceList,
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(DataSourceFormDialog));
+)(DataSourceForm);
