@@ -55,15 +55,28 @@ const updateDataEntityLineage = (
       'targetId'
     );
 
+    const oppositeEdgeType: keyof DataEntityLineageEdge = setDataByType(
+      lineageType,
+      'targetId',
+      'sourceId'
+    );
+
     return {
       edgesById: data.edges
         ? data.edges.reduce<DataEntityLineageStreamById['edgesById']>(
-            (memo, edge) => ({
-              ...memo,
-              [edge[edgeType]]: memo[edge[edgeType]]
-                ? [...memo[edge[edgeType]], edge]
-                : [edge],
-            }),
+            (memo, edge) => {
+              const edgeRes = Object.keys(memo).includes(
+                edge[oppositeEdgeType].toString()
+              )
+                ? []
+                : [edge];
+              return {
+                ...memo,
+                [edge[edgeType]]: memo[edge[edgeType]]
+                  ? [...memo[edge[edgeType]], ...edgeRes]
+                  : edgeRes,
+              };
+            },
             rootNodeId
               ? { ...state[rootNodeId][lineageType].edgesById }
               : {}
