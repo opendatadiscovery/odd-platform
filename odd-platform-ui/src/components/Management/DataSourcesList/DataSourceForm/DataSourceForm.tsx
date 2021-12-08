@@ -104,15 +104,21 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   }>(initialState);
 
   type RadioType = 'URL' | 'ODDRN';
-  const [radioValue, setRadioValue] = React.useState<RadioType>('URL');
-  const isODDRN = () => radioValue === 'ODDRN';
+  const getDefaultRadioValues = (): RadioType =>
+    dataSource?.connectionUrl ? 'URL' : 'ODDRN';
+  const [radioValue, setRadioValue] = React.useState<RadioType>(
+    getDefaultRadioValues()
+  );
+  const isODDRN = React.useCallback(() => radioValue === 'ODDRN', [
+    radioValue,
+  ]);
 
   const handleRadioChange = (
     event: ChangeEvent<HTMLInputElement>,
     value: string
   ) => {
     setRadioValue(value as RadioType);
-    if (isODDRN()) setValue('connectionUrl', '');
+    setValue('connectionUrl', '');
     setValue('oddrn', '');
   };
 
@@ -217,14 +223,16 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       >
         <Grid container>
           <FormControlLabel
-            value="URL"
-            control={<AppRadio />}
-            label="URL"
-          />
-          <FormControlLabel
+            disabled={!!dataSource}
             value="ODDRN"
             control={<AppRadio />}
             label="ODDRN"
+          />
+          <FormControlLabel
+            disabled={!!dataSource}
+            value="URL"
+            control={<AppRadio />}
+            label="URL"
           />
         </Grid>
       </RadioGroup>
@@ -244,7 +252,6 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
                 label="ODDRN"
                 placeholder="e.g. //kafka/"
                 required
-                // disabled={!!dataSource}
                 customEndAdornment={{
                   variant: 'clear',
                   showAdornment: !!field.value,
