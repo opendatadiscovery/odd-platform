@@ -115,7 +115,11 @@ public class DataEntityServiceImpl
 
         return Mono.zip(dto, targetCount)
             .map(tuple -> {
-                tuple.getT1().getDataSetDetailsDto().setConsumersCount(tuple.getT2());
+                final var oldDetails = tuple.getT1().getDataSetDetailsDto();
+                final var datasetDetails = new DataEntityDetailsDto.DataSetDetailsDto(
+                    oldDetails.rowsCount(), oldDetails.fieldsCount(), tuple.getT2(), oldDetails.datasetVersions()
+                );
+                tuple.getT1().setDataSetDetailsDto(datasetDetails);
                 return tuple.getT1();
             })
             .map(entityMapper::mapDtoDetails);

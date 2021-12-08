@@ -171,7 +171,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         }
 
         if (typeNames.contains(DataEntityType.NameEnum.ENTITY_GROUP)) {
-            List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
+            final List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
                 .map(this::mapReference)
                 .toList();
             details.setEntities(dataEntityRefs);
