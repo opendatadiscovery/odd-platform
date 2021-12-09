@@ -32,7 +32,7 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
     fetchDataEntityGroupLinkedList({
-      dataEntityGroupId: 13,
+      dataEntityGroupId,
       page: pageInfo.page + 1,
       size: 30,
     });
@@ -40,7 +40,6 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
 
   React.useEffect(() => {
     fetchNextPage();
-    console.log('fetch!', dataEntityGroupId);
   }, [dataEntityGroupId]);
 
   return (

@@ -78,6 +78,10 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityFetchingStatus,
   dataEntityFetchingError,
 }) => {
+  React.useEffect(() => {
+    fetchDataEntityDetails({ dataEntityId });
+  }, [fetchDataEntityDetails, dataEntityId]);
+
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
   React.useEffect(() => {
@@ -123,13 +127,9 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         value: 'linked-items',
       },
     ]);
-  }, [dataEntityId, isQualityTest, isDataset]);
+  }, [dataEntityId, isQualityTest, isDataset, dataEntityDetails]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
-
-  React.useEffect(() => {
-    fetchDataEntityDetails({ dataEntityId });
-  }, [fetchDataEntityDetails, dataEntityId]);
 
   React.useEffect(() => {
     setSelectedTab(
