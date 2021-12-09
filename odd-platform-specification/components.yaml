@@ -578,7 +578,7 @@ components:
             group_oddrn:
               type: string
             items_count:
-              type: number
+              type: integer
             entities:
               $ref: '#/components/schemas/DataEntityRefList'
 
