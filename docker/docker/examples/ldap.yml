@@ -30,22 +30,3 @@ services:
   ldap:
     image: rroemhild/test-openldap:latest
     hostname: "ldap"
-
-  prometheus:
-    image: prom/prometheus:v2.30.1
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yaml"
-      - "--enable-feature=remote-write-receiver"
-    volumes:
-      - ${PWD}/docker/config/prometheus.yaml:/etc/prometheus/prometheus.yaml
-      - ${PWD}/docker/config/alert_rules.yaml:/etc/prometheus/alert_rules.yaml
-    ports:
-      - 9090:9090
-
-  alertmanager:
-    image: prom/alertmanager:v0.23.0
-    command: [ "--config.file=/etc/alertmanager/alertmanager.yaml" ]
-    volumes:
-      - ${PWD}/docker/config/alertmanager.yaml:/etc/alertmanager/alertmanager.yaml
-    ports:
-      - 9093:9093
