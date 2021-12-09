@@ -14,25 +14,25 @@ import * as S from './LinkedItemsListStyles';
 
 interface LinkedItemsListProps {
   dataEntityGroupId: number;
-  dataEntityGroupChildren: DataEntity[];
-  pageInfo: CurrentPageInfo;
-  getDataEntityGroupChildren: (
+  dataEntityGroupLinkedList: DataEntity[];
+  pageInfo?: CurrentPageInfo;
+  fetchDataEntityGroupLinkedList: (
     params: DataEntityApiGetDataEntityGroupsChildrenRequest
   ) => void;
-  isLinkedItemsFetching: boolean;
+  isLinkedListFetching: boolean;
 }
 
 const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
   dataEntityGroupId,
-  dataEntityGroupChildren,
+  dataEntityGroupLinkedList,
   pageInfo,
-  getDataEntityGroupChildren,
-  isLinkedItemsFetching,
+  fetchDataEntityGroupLinkedList,
+  isLinkedListFetching,
 }) => {
   const fetchNextPage = () => {
-    if (!pageInfo.hasNext) return;
-    getDataEntityGroupChildren({
-      dataEntityGroupId,
+    if (!pageInfo?.hasNext) return;
+    fetchDataEntityGroupLinkedList({
+      dataEntityGroupId: 13,
       page: pageInfo.page + 1,
       size: 30,
     });
@@ -40,6 +40,7 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
 
   React.useEffect(() => {
     fetchNextPage();
+    console.log('fetch!', dataEntityGroupId);
   }, [dataEntityGroupId]);
 
   return (
@@ -61,7 +62,7 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
           <Typography variant="caption">Last Update</Typography>
         </S.ColContainer>
       </S.ResultsTableHeader>
-      {isLinkedItemsFetching ? (
+      {isLinkedListFetching ? (
         <SkeletonWrapper
           length={10}
           renderContent={({ randomSkeletonPercentWidth, key }) => (
@@ -74,11 +75,11 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
       ) : (
         <S.ListContainer id="linked-items-list">
           <InfiniteScroll
-            dataLength={dataEntityGroupChildren.length}
+            dataLength={dataEntityGroupLinkedList?.length}
             next={fetchNextPage}
-            hasMore={!!pageInfo.hasNext}
+            hasMore={!!pageInfo?.hasNext}
             loader={
-              isLinkedItemsFetching && (
+              isLinkedListFetching && (
                 <SkeletonWrapper
                   length={10}
                   renderContent={({ randomSkeletonPercentWidth, key }) => (
@@ -93,11 +94,11 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
             scrollThreshold="200px"
             scrollableTarget="linked-items-list"
           >
-            {dataEntityGroupChildren.map(linkedItem => (
+            {dataEntityGroupLinkedList?.map(linkedItem => (
               <LinkedItem key={linkedItem.id} linkedItem={linkedItem} />
             ))}
           </InfiniteScroll>
-          {!isLinkedItemsFetching && !pageInfo.total ? (
+          {!isLinkedListFetching && !pageInfo?.total ? (
             <EmptyContentPlaceholder text="No matches found" />
           ) : null}
         </S.ListContainer>

@@ -7,7 +7,6 @@ import {
   getDataEntityDetailsFetchingStatus,
   getDataEntityIsDataset,
   getDataEntityIsQualityTest,
-  getDataEntityIsGroup,
 } from 'redux/selectors/dataentity.selectors';
 import { fetchDataEntityDetails } from 'redux/thunks/dataentities.thunks';
 import DataEntityDetailsView from './DataEntityDetails';
@@ -33,7 +32,6 @@ const mapStateToProps = (
   dataEntityDetails: getDataEntityDetails(state, dataEntityId),
   isDataset: getDataEntityIsDataset(state, dataEntityId),
   isQualityTest: getDataEntityIsQualityTest(state, dataEntityId),
-  isGroup: getDataEntityIsGroup(state, dataEntityId),
   dataEntityFetchingStatus: getDataEntityDetailsFetchingStatus(state),
   dataEntityFetchingError: getDataEntityDetailsFetchingError(state),
 });

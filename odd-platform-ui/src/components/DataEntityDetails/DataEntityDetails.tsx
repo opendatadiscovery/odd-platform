@@ -61,7 +61,6 @@ interface DataEntityDetailsProps {
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
   isQualityTest: boolean;
-  isGroup: boolean;
   fetchDataEntityDetails: (
     params: DataEntityApiGetDataEntityDetailsRequest
   ) => void;
@@ -75,7 +74,6 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityDetails,
   isDataset,
   isQualityTest,
-  isGroup,
   fetchDataEntityDetails,
   dataEntityFetchingStatus,
   dataEntityFetchingError,
@@ -121,7 +119,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       {
         name: 'Linked items',
         link: dataEntityLinkedItemsPath(dataEntityId),
-        hidden: !isGroup && !dataEntityDetails.hasChildren,
+        hidden: !dataEntityDetails?.hasChildren,
         value: 'linked-items',
       },
     ]);

@@ -1,38 +1,39 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
+import { RouteComponentProps } from 'react-router-dom';
+import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
 import {
-  getSearchEntityType,
-  getSearchFiltersSynced,
-  getSearchId,
-  getSearchIsCreating,
-  getSearchIsCreatingAndFetching,
-  getSearchIsFetching,
-  getSearchIsUpdated,
-  getSearchResults,
-  getSearchResultsPage,
-  getSearchTotals,
-} from 'redux/selectors/dataentitySearch.selectors';
-import { getDataEntityTypesByName } from 'redux/selectors/dataentity.selectors';
-import { getDataEntitiesSearchResults } from 'redux/thunks/dataentitiesSearch.thunks';
+  getDataEntityGroupLinkedList,
+  getDataEntityGroupLinkedListPage,
+  getIsDEGLinkedListFetching,
+} from 'redux/selectors/dataentityLinkedList.selectors';
 import LinkedItemsList from './LinkedItemsList';
 
-// needs to be refactored with new redux code for support deg's
-const mapStateToProps = (state: RootState) => ({
-  searchId: getSearchId(state),
-  searchType: getSearchEntityType(state),
-  dataEntityTypesByName: getDataEntityTypesByName(state),
-  totals: getSearchTotals(state),
-  searchResults: getSearchResults(state),
-  pageInfo: getSearchResultsPage(state),
-  searchFiltersSynced: getSearchFiltersSynced(state),
-  isSearchFetching: getSearchIsFetching(state),
-  isSearchCreatingAndFetching: getSearchIsCreatingAndFetching(state),
-  isSearchUpdated: getSearchIsUpdated(state),
-  isSearchCreating: getSearchIsCreating(state),
+interface RouteProps {
+  dataEntityId: string;
+}
+
+type OwnProps = RouteComponentProps<RouteProps>;
+
+const mapStateToProps = (
+  state: RootState,
+  {
+    match: {
+      params: { dataEntityId },
+    },
+  }: OwnProps
+) => ({
+  dataEntityGroupId: parseInt(dataEntityId, 10),
+  dataEntityGroupLinkedList: getDataEntityGroupLinkedList(
+    state,
+    dataEntityId
+  ),
+  pageInfo: getDataEntityGroupLinkedListPage(state),
+  isLinkedListFetching: getIsDEGLinkedListFetching(state),
 });
 
 const mapDispatchToProps = {
-  getDataEntitiesSearchResults,
+  fetchDataEntityGroupLinkedList,
 };
 
 export default connect(

@@ -61,6 +61,13 @@ export interface NamespacesState {
   pageInfo?: CurrentPageInfo;
 }
 
+export interface DataEntityGroupLinkedListState {
+  linkedListByDataEntityGroupId: {
+    [dataEntityGroupId: string]: DataEntity[];
+  };
+  pageInfo?: CurrentPageInfo;
+}
+
 export interface MetaDataState {
   dataEntityMetadata: {
     [dataEntityId: string]: {
@@ -188,6 +195,7 @@ export type RootState = {
   profile: ProfileState;
   dataQualityTest: DataQualityTestState;
   alerts: AlertsState;
+  dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
 };
 
 export type Action = ActionType<typeof actions>;

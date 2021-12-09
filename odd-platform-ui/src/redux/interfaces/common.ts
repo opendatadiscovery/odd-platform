@@ -10,3 +10,9 @@ export interface PartialEntityUpdateParams<T> {
   entityId: number;
   value: T;
 }
+
+export interface PartialEntityUpdateParamsPaginated<T> {
+  entityId: number;
+  value: T;
+  pageInfo: CurrentPageInfo;
+}
