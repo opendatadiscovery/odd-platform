@@ -157,6 +157,7 @@ public class DataEntityRepositoryImpl
     private static final String AGG_GROUP_ENTITY_FIELD = "group_entity";
     private static final String AGG_SUB_GROUP_ENTITY_FIELD = "subgroup_entity";
     private static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
+    final DataEntity parentAlias = DATA_ENTITY.as(AGG_PARENT_ENTITY_FIELD);
 
     public static final TypeReference<Map<String, ?>> SPECIFIC_ATTRIBUTES_TYPE_REFERENCE = new TypeReference<>() {
     };
@@ -442,6 +443,23 @@ public class DataEntityRepositoryImpl
         return dataEntitySelect(config)
             .fetchOptional(this::mapDetailsRecord)
             .map(this::enrichDataEntityDetailsDto);
+    }
+
+    @Override
+    public List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
+                                                                     final Integer page,
+                                                                     final Integer size) {
+        final var config = DataEntitySelectConfig
+            .builder()
+            .joinSelectConditions(List.of(parentAlias.ID.eq(dataEntityGroupId)))
+            .includeDimensions(true)
+            .build();
+        return dataEntitySelect(config)
+            .limit(size)
+            .offset((page - 1) * size)
+            .fetchStream()
+            .map(this::mapDimensionRecord)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -843,7 +861,6 @@ public class DataEntityRepositoryImpl
         final GroupEntityRelations groupsRelations = GROUP_ENTITY_RELATIONS.as("groups");
         final DataEntity groupsAlias = DATA_ENTITY.as(AGG_GROUP_ENTITY_FIELD);
         final DataEntity subGroupEntitiesAlias = DATA_ENTITY.as(AGG_SUB_GROUP_ENTITY_FIELD);
-        final DataEntity parentAlias = DATA_ENTITY.as(AGG_PARENT_ENTITY_FIELD);
         final GroupParentGroupRelations parentsRelations = GROUP_PARENT_GROUP_RELATIONS.as("parents");
         final GroupParentGroupRelations childrenRelations = GROUP_PARENT_GROUP_RELATIONS.as("children");
 
@@ -899,17 +916,17 @@ public class DataEntityRepositoryImpl
             .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)));
 
         if (config.isIncludeDetails()) {
-            joinStep = addDimensionJoins(joinStep, deCte, subGroupEntitiesAlias, childrenRelations)
+            joinStep = addDimensionJoins(joinStep, deCte, subGroupEntitiesAlias,
+                childrenRelations, parentsRelations, parentAlias)
                 .leftJoin(DATASET_VERSION).on(deCte.field(DATA_ENTITY.ODDRN).eq(DATASET_VERSION.DATASET_ODDRN))
                 .leftJoin(METADATA_FIELD_VALUE)
                 .on(deCte.field(DATA_ENTITY.ID).eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
                 .leftJoin(METADATA_FIELD).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
                 .leftJoin(groupsRelations).on(groupsRelations.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
-                .leftJoin(groupsAlias).on(groupsRelations.GROUP_ODDRN.eq(groupsAlias.ODDRN))
-                .leftJoin(parentsRelations).on(parentsRelations.GROUP_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
-                .leftJoin(parentAlias).on(parentsRelations.PARENT_GROUP_ODDRN.eq(parentAlias.ODDRN));
+                .leftJoin(groupsAlias).on(groupsRelations.GROUP_ODDRN.eq(groupsAlias.ODDRN));
         } else if (config.isIncludeDimensions()) {
-            joinStep = addDimensionJoins(joinStep, deCte, subGroupEntitiesAlias, childrenRelations);
+            joinStep = addDimensionJoins(joinStep, deCte, subGroupEntitiesAlias, childrenRelations,
+                parentsRelations, parentAlias);
         }
 
         final SelectHavingStep<Record> groupByStep = joinStep
@@ -925,7 +942,9 @@ public class DataEntityRepositoryImpl
     private SelectOnConditionStep<Record> addDimensionJoins(final SelectOnConditionStep<Record> joinStep,
                                                             final Table<Record> deCte,
                                                             final DataEntity subGroupEntitiesAlias,
-                                                            final GroupParentGroupRelations childrenRelations) {
+                                                            final GroupParentGroupRelations childrenRelations,
+                                                            final GroupParentGroupRelations parentsRelations,
+                                                            final DataEntity parentAlias) {
         final GroupEntityRelations entitiesRelations = GROUP_ENTITY_RELATIONS.as("entities");
         return joinStep
             .leftJoin(TAG_TO_DATA_ENTITY).on(deCte.field(DATA_ENTITY.ID).eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
@@ -938,6 +957,8 @@ public class DataEntityRepositoryImpl
             .on(entitiesRelations.GROUP_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .leftJoin(subGroupEntitiesAlias)
             .on(entitiesRelations.DATA_ENTITY_ODDRN.eq(subGroupEntitiesAlias.ODDRN))
+            .leftJoin(parentsRelations).on(parentsRelations.GROUP_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
+            .leftJoin(parentAlias).on(parentsRelations.PARENT_GROUP_ODDRN.eq(parentAlias.ODDRN))
 
             .leftJoin(childrenRelations).on(childrenRelations.PARENT_GROUP_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)));
     }

@@ -333,4 +333,13 @@ public class DataEntityServiceImpl
                 : Mono.just(optional.get()))
             .map(entityMapper::mapLineageDto);
     }
+
+    @Override
+    public Mono<DataEntityList> getDataEntityGroupsChildren(final Long dataEntityGroupId,
+                                                            final Integer page,
+                                                            final Integer size) {
+        return Mono.fromCallable(() -> entityRepository
+            .getDataEntityGroupsChildren(dataEntityGroupId, page, size))
+            .map(entityMapper::mapPojos);
+    }
 }

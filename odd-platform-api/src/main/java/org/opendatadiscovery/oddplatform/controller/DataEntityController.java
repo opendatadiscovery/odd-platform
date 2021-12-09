@@ -52,6 +52,15 @@ public class DataEntityController
     }
 
     @Override
+    public Mono<ResponseEntity<DataEntityList>> getDataEntityGroupsChildren(final Long dataEntityGroupId,
+                                                                            final Integer page, final Integer size,
+                                                                            final ServerWebExchange exchange) {
+        return entityService.getDataEntityGroupsChildren(dataEntityGroupId, page, size)
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<MetadataFieldValueList>> createDataEntityMetadataFieldValue(
         final Long dataEntityId,
         @Valid final Flux<MetadataObject> metadataObject,

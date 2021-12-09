@@ -54,4 +54,8 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
     Mono<DataEntityLineage> getLineage(final long dataEntityId,
                                        final int lineageDepth,
                                        final LineageStreamKind streamKind);
+
+    Mono<DataEntityList> getDataEntityGroupsChildren(final Long dataEntityGroupId,
+                                                     final Integer page,
+                                                     final Integer size);
 }
