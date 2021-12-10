@@ -22,7 +22,7 @@ public class EnrichedDataEntityIngestionDto extends DataEntityIngestionDto {
             ingestionDto.createdAt, ingestionDto.updatedAt, ingestionDto.types, ingestionDto.subType,
             ingestionDto.metadata, ingestionDto.specificAttributesJson, ingestionDto.dataSet,
             ingestionDto.dataTransformer, ingestionDto.dataConsumer, ingestionDto.datasetQualityTest,
-            ingestionDto.dataEntityGroup);
+            ingestionDto.dataEntityGroup, ingestionDto.dataInput);
 
         this.id = id;
         this.updated = updated;

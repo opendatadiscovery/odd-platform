@@ -47,6 +47,7 @@ public class OAuthSecurityConfiguration {
             .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/ingestion/**"))
             .authorizeExchange(e -> e
                 .pathMatchers("/ingestion/entities").permitAll()
+                .pathMatchers("/actuator/**").permitAll()
                 .pathMatchers("/**").authenticated())
             .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt)
             .logout()

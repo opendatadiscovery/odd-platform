@@ -37,4 +37,5 @@ export interface DataEntityDetailsState extends DataEntityDetails {
   unknownSourcesCount: number;
   unknownTargetsCount: number;
   unknownInputsCount: number;
+  unknownOutputsCount: number;
 }

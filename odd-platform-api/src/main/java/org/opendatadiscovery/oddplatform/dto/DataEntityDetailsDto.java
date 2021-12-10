@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -28,6 +30,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     private DataTransformerDetailsDto dataTransformerDetailsDto;
     private DataConsumerDetailsDto dataConsumerDetailsDto;
     private DataQualityTestDetailsDto dataQualityTestDetailsDto;
+    private DataInputDetailsDto dataInputDetailsDto;
     private DataEntityGroupDetailsDto dataEntityGroupDetailsDto;
 
     @Builder(builderMethodName = "detailsBuilder")
@@ -47,6 +50,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final DataTransformerDetailsDto dataTransformerDetailsDto,
                                 final DataConsumerDetailsDto dataConsumerDetailsDto,
                                 final DataQualityTestDetailsDto dataQualityTestDetailsDto,
+                                final DataInputDetailsDto dataInputDetailsDto,
                                 final DataEntityGroupDetailsDto dataEntityGroupDetailsDto) {
         super(dataEntity, types, subtype, hasAlerts, specificAttributes,
             namespace, ownership, dataSource, tags, dataEntityGroups, dataEntityGroupDimensionsDto);
@@ -55,6 +59,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
         this.dataTransformerDetailsDto = dataTransformerDetailsDto;
         this.dataConsumerDetailsDto = dataConsumerDetailsDto;
         this.dataQualityTestDetailsDto = dataQualityTestDetailsDto;
+        this.dataInputDetailsDto = dataInputDetailsDto;
         this.dataEntityGroupDetailsDto = dataEntityGroupDetailsDto;
     }
 
@@ -78,5 +83,13 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     }
 
     public record DataEntityGroupDetailsDto(boolean hasChildren) {
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DataInputDetailsDto {
+        private Collection<? extends DataEntityDto> outputList;
     }
 }

@@ -56,6 +56,7 @@ import org.opendatadiscovery.oddplatform.dto.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
@@ -99,6 +100,7 @@ import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.val;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataInputDetailsDto;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.UPSTREAM;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
@@ -1032,6 +1034,14 @@ public class DataEntityRepositoryImpl
                     final DataConsumerAttributes dca = (DataConsumerAttributes) attrs;
 
                     dto.setDataConsumerDetailsDto(new DataConsumerDetailsDto(fetcher.apply(dca.getInputListOddrn())));
+                    break;
+
+                case DATA_INPUT:
+                    final DataInputAttributes dia = (DataInputAttributes) attrs;
+
+                    dto.setDataInputDetailsDto(DataInputDetailsDto.builder()
+                        .outputList(fetcher.apply(dia.getOutputListOddrn()))
+                        .build());
                     break;
                 default:
                     break;

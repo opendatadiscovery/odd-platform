@@ -376,6 +376,7 @@ components:
             - VIEW
             - DAG
             - GRAPH_NODE
+            - API_CALL
             - MICROSERVICE
       required:
         - id
@@ -498,6 +499,12 @@ components:
     DataInput:
       allOf:
         - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            output_list:
+              type: array
+              items:
+                $ref: '#/components/schemas/DataEntityRef'
 
     DataInputDetails:
       allOf:

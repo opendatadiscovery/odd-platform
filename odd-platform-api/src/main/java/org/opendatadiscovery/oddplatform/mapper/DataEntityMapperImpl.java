@@ -194,6 +194,13 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             details.setHasChildren(dto.getDataEntityGroupDetailsDto().hasChildren());
         }
 
+        if (typeNames.contains(DataEntityType.NameEnum.INPUT)) {
+            details.setOutputList(dto.getDataInputDetailsDto()
+                .getOutputList()
+                .stream()
+                .map(this::mapReference).collect(Collectors.toList()));
+        }
+
         return details;
     }
 

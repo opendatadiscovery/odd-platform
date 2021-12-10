@@ -32,6 +32,7 @@ public class DataEntityIngestionDto {
     protected DataConsumerIngestionDto dataConsumer;
     protected DataQualityTestIngestionDto datasetQualityTest;
     protected DataEntityGroupDto dataEntityGroup;
+    protected DataInputIngestionDto dataInput;
 
     public record DataSetIngestionDto(String parentDatasetOddrn, List<DataSetField> fieldList,
                                       String structureHash, Long rowsCount) {}
@@ -43,4 +44,12 @@ public class DataEntityIngestionDto {
     public record DataQualityTestIngestionDto(List<String> datasetList) {}
 
     public record DataEntityGroupDto(List<String> entitiesOddrns, String groupOddrn) {}
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DataInputIngestionDto {
+        private List<String> outputs;
+    }
 }

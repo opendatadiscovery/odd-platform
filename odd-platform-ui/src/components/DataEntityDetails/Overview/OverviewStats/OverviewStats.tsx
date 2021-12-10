@@ -3,6 +3,7 @@ import { DataEntityTypeNameEnum } from 'generated-sources';
 import { DataEntityDetailsState } from 'redux/interfaces/dataentities';
 import OverviewDataConsumerStats from 'components/DataEntityDetails/Overview/OverviewStats/OverviewDataConsumerStats/OverviewDataConsumerStats';
 import OverviewEntityGroupStats from 'components/DataEntityDetails/Overview/OverviewStats/OverviewEntityGroupStats/OverviewEntityGroupStats';
+import OverviewDataInputStats from 'components/DataEntityDetails/Overview/OverviewStats/OverviewDataInputStats/OverviewDataInputStats';
 import OverviewDatasetStats from './OverviewDatasetStats/OverviewDatasetStats';
 import OverviewTransformerStats from './OverviewTransformerStats/OverviewTransformerStats';
 import OverviewQualityTestStats from './OverviewQualityTestStats/OverviewQualityTestStats';
@@ -50,6 +51,14 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
               suiteUrl={dataEntityDetails.suiteUrl}
               datasetsList={dataEntityDetails.datasetsList}
               qualityTest={dataEntityDetails}
+            />
+          );
+        case DataEntityTypeNameEnum.INPUT:
+          return (
+            <OverviewDataInputStats
+              key={type.id}
+              outputs={dataEntityDetails.outputList}
+              unknownOutputsCount={dataEntityDetails.unknownOutputsCount}
             />
           );
         case DataEntityTypeNameEnum.ENTITY_GROUP:
