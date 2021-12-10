@@ -494,7 +494,7 @@ components:
         - $ref: '#/components/schemas/DataEntityBaseObject'
         - type: object
           properties:
-            outputs:
+            output_list:
               type: array
               items:
                 $ref: '#/components/schemas/DataEntityRef'
