@@ -29,6 +29,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     private DataTransformerDetailsDto dataTransformerDetailsDto;
     private DataConsumerDetailsDto dataConsumerDetailsDto;
     private DataQualityTestDetailsDto dataQualityTestDetailsDto;
+    private DataInputDetailsDto dataInputDetailsDto;
 
     @Builder(builderMethodName = "detailsBuilder")
     public DataEntityDetailsDto(final DataEntityPojo dataEntity,
@@ -44,13 +45,15 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final DataSetDetailsDto dataSetDetailsDto,
                                 final DataTransformerDetailsDto dataTransformerDetailsDto,
                                 final DataConsumerDetailsDto dataConsumerDetailsDto,
-                                final DataQualityTestDetailsDto dataQualityTestDetailsDto) {
+                                final DataQualityTestDetailsDto dataQualityTestDetailsDto,
+                                final DataInputDetailsDto dataInputDetailsDto) {
         super(dataEntity, types, subtype, hasAlerts, specificAttributes, namespace, ownership, dataSource, tags);
         this.metadata = metadata;
         this.dataSetDetailsDto = dataSetDetailsDto;
         this.dataTransformerDetailsDto = dataTransformerDetailsDto;
         this.dataConsumerDetailsDto = dataConsumerDetailsDto;
         this.dataQualityTestDetailsDto = dataQualityTestDetailsDto;
+        this.dataInputDetailsDto = dataInputDetailsDto;
     }
 
     @Data
@@ -94,5 +97,13 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     @AllArgsConstructor
     public static class DataConsumerDetailsDto {
         private Collection<? extends DataEntityDto> inputList;
+    }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DataInputDetailsDto {
+        private Collection<? extends DataEntityDto> outputList;
     }
 }

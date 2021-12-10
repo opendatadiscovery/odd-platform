@@ -26,6 +26,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityType;
 import org.opendatadiscovery.oddplatform.dto.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataConsumer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataInput;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTest;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
@@ -40,6 +41,7 @@ import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
 import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_CONSUMER;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_INPUT;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST_RUN;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_SET;
@@ -56,7 +58,8 @@ public class IngestionMapperImpl implements IngestionMapper {
         Pair.of(de -> de.getDataTransformerRun() != null, DATA_TRANSFORMER_RUN),
         Pair.of(de -> de.getDataConsumer() != null, DATA_CONSUMER),
         Pair.of(de -> de.getDataQualityTest() != null, DATA_QUALITY_TEST),
-        Pair.of(de -> de.getDataQualityTestRun() != null, DATA_QUALITY_TEST_RUN)
+        Pair.of(de -> de.getDataQualityTestRun() != null, DATA_QUALITY_TEST_RUN),
+        Pair.of(de -> de.getDataInput() != null, DATA_INPUT)
     );
 
     // TODO: filth
@@ -96,6 +99,10 @@ public class IngestionMapperImpl implements IngestionMapper {
 
         if (types.contains(DATA_QUALITY_TEST)) {
             builder = builder.datasetQualityTest(createDataQualityTestIngestionDto(dataEntity.getDataQualityTest()));
+        }
+
+        if (types.contains(DATA_INPUT)) {
+            builder = builder.dataInput(createDataInput(dataEntity.getDataInput()));
         }
 
         return builder.build();
@@ -222,6 +229,12 @@ public class IngestionMapperImpl implements IngestionMapper {
             .build();
     }
 
+    private DataEntityIngestionDto.DataInputIngestionDto createDataInput(final DataInput dataInput) {
+        return DataEntityIngestionDto.DataInputIngestionDto.builder()
+            .outputs(dataInput.getOutputs())
+            .build();
+    }
+
     private Set<DataEntityType> defineTypes(final DataEntity dataEntity) {
         final Set<DataEntityType> types = TYPE_DICT_DISCRIMINATOR.stream()
             .map(disc -> disc.getLeft().test(dataEntity) ? disc.getRight() : null)
@@ -315,6 +328,10 @@ public class IngestionMapperImpl implements IngestionMapper {
                 Pair.of("linked_url_list", dataEntity.getDataQualityTest().getLinkedUrlList()),
                 Pair.of("dataset_list", dataEntity.getDataQualityTest().getDatasetList()),
                 Pair.of("expectation", dataEntity.getDataQualityTest().getExpectation())
+            )));
+
+            case DATA_INPUT -> Pair.of(type, specAttrsMap(List.of(
+                Pair.of("output_list", dataEntity.getDataInput().getOutputs())
             )));
 
             default -> null;

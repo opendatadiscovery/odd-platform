@@ -19,5 +19,7 @@ public enum DataEntitySubtype {
     VIEW,
     MICROSERVICE,
 
+    API_CALL,
+
     UNKNOWN
 }

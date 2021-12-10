@@ -163,6 +163,13 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .map(this::mapReference).collect(Collectors.toList()));
         }
 
+        if (typeNames.contains(DataEntityType.NameEnum.INPUT)) {
+            details.setOutputList(dto.getDataInputDetailsDto()
+                .getOutputList()
+                .stream()
+                .map(this::mapReference).collect(Collectors.toList()));
+        }
+
         return details;
     }
 
@@ -261,7 +268,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
     private DataEntityLineageNode mapNode(final DataEntityDimensionsDto dto) {
         final DataEntityPojo dataEntity = dto.getDataEntity();
-        final NamespacePojo namespace = dto.getNamespace();
         final DataSourcePojo dataSource = dto.getDataSource();
 
         return new DataEntityLineageNode()
