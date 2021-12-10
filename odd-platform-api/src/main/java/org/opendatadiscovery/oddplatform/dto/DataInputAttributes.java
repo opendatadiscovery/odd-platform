@@ -1,10 +1,10 @@
 package org.opendatadiscovery.oddplatform.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import java.util.Set;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
