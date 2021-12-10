@@ -73,35 +73,40 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
         />
       ) : (
         <S.ListContainer id="linked-items-list">
-          <InfiniteScroll
-            dataLength={dataEntityGroupLinkedList?.length}
-            next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
-            loader={
-              isLinkedListFetching && (
-                <SkeletonWrapper
-                  length={10}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <LinkedItemSkeleton
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
-                  )}
-                />
-              )
-            }
-            scrollThreshold="200px"
-            scrollableTarget="linked-items-list"
-          >
-            {dataEntityGroupLinkedList?.map(linkedItem => (
-              <LinkedItem key={linkedItem.id} linkedItem={linkedItem} />
-            ))}
-          </InfiniteScroll>
-          {!isLinkedListFetching && !pageInfo?.total ? (
-            <EmptyContentPlaceholder text="No matches found" />
-          ) : null}
+          {dataEntityGroupLinkedList && (
+            <InfiniteScroll
+              dataLength={dataEntityGroupLinkedList?.length}
+              next={fetchNextPage}
+              hasMore={!!pageInfo?.hasNext}
+              loader={
+                isLinkedListFetching && (
+                  <SkeletonWrapper
+                    length={10}
+                    renderContent={({
+                      randomSkeletonPercentWidth,
+                      key,
+                    }) => (
+                      <LinkedItemSkeleton
+                        width={randomSkeletonPercentWidth()}
+                        key={key}
+                      />
+                    )}
+                  />
+                )
+              }
+              scrollThreshold="200px"
+              scrollableTarget="linked-items-list"
+            >
+              {dataEntityGroupLinkedList?.map(linkedItem => (
+                <LinkedItem key={linkedItem.id} linkedItem={linkedItem} />
+              ))}
+            </InfiniteScroll>
+          )}
         </S.ListContainer>
       )}
+      {!isLinkedListFetching && !pageInfo?.total ? (
+        <EmptyContentPlaceholder text="No linked items" />
+      ) : null}
     </S.Container>
   );
 };
