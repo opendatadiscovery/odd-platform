@@ -25,6 +25,7 @@ const updateDataEntity = (
   let unknownSourcesCount = 0;
   let unknownTargetsCount = 0;
   let unknownInputsCount = 0;
+  let unknownOutputsCount = 0;
   const sourceList = payload.sourceList?.filter(source => {
     if (source.externalName) return true;
     unknownSourcesCount += 1;
@@ -38,6 +39,11 @@ const updateDataEntity = (
   const inputList = payload.inputList?.filter(input => {
     if (input.externalName) return true;
     unknownInputsCount += 1;
+    return false;
+  });
+  const outputList = payload.outputList?.filter(output => {
+    if (output.externalName) return true;
+    unknownOutputsCount += 1;
     return false;
   });
 
@@ -54,6 +60,8 @@ const updateDataEntity = (
         unknownTargetsCount,
         inputList,
         unknownInputsCount,
+        outputList,
+        unknownOutputsCount,
       },
     },
   };
