@@ -497,7 +497,7 @@ components:
             outputs:
               type: array
               items:
-                type: string
+                $ref: '#/components/schemas/DataEntityRef'
 
     DataInputDetails:
       allOf:
