@@ -11,6 +11,7 @@ import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
 import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
+import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
 import { styles, StylesType } from './OverviewTransformerStatsStyles';
 
 interface OverviewTransformerStatsProps extends StylesType {
@@ -18,6 +19,7 @@ interface OverviewTransformerStatsProps extends StylesType {
   targets: DataEntityDetails['targetList'];
   unknownSourcesCount: number;
   unknownTargetsCount: number;
+  dataEntityName: string | undefined;
 }
 
 const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
@@ -26,103 +28,146 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
   targets,
   unknownSourcesCount,
   unknownTargetsCount,
-}) => (
-  <Grid container>
-    <Grid item xs={12} className={classes.typeLabel}>
-      <EntityTypeItem
-        typeName={DataEntityTypeNameEnum.TRANSFORMER}
-        fullName
-      />
-    </Grid>
-    <Grid
-      item
-      container
-      xs={6}
-      alignItems="flex-start"
-      alignContent="flex-start"
-    >
-      <Grid item container xs={12} alignItems="baseline">
-        <UpstreamIcon className={classes.statIcon} />
-        <Typography variant="h2" className={classes.statCount}>
-          {(sources?.length || 0) + (unknownSourcesCount || 0)}
-        </Typography>
-        <Typography variant="body1" className={classes.statLabel}>
-          sources
-        </Typography>
+  dataEntityName,
+}) => {
+  const displayedEntitiesNumber = 10;
+
+  return (
+    <Grid container>
+      <Grid item xs={12} className={classes.typeLabel}>
+        <EntityTypeItem
+          typeName={DataEntityTypeNameEnum.TRANSFORMER}
+          fullName
+        />
       </Grid>
       <Grid
         item
         container
-        xs={12}
-        direction="column"
+        xs={6}
         alignItems="flex-start"
-        className={classes.refs}
+        alignContent="flex-start"
       >
-        {sources?.map(source => (
-          <AppButton
-            key={source.id}
-            size="medium"
-            color="tertiary"
-            sx={{ my: 0.25 }}
-          >
-            <Link to={dataEntityDetailsPath(source.id)}>
-              {source.internalName || source.externalName}
-            </Link>
-          </AppButton>
-        ))}
-        {unknownSourcesCount ? (
-          <Typography variant="subtitle1" className={classes.unknownCount}>
-            {unknownSourcesCount} more source
-            {unknownSourcesCount === 1 ? '' : 's'} unknown
+        <Grid item container xs={12} alignItems="baseline">
+          <UpstreamIcon className={classes.statIcon} />
+          <Typography variant="h2" className={classes.statCount}>
+            {(sources?.length || 0) + (unknownSourcesCount || 0)}
           </Typography>
-        ) : null}
-      </Grid>
-    </Grid>
-    <Grid
-      item
-      container
-      xs={6}
-      alignItems="flex-start"
-      alignContent="flex-start"
-    >
-      <Grid item container xs={12} alignItems="baseline">
-        <DownstreamIcon className={classes.statIcon} />
-        <Typography variant="h2" className={classes.statCount}>
-          {(targets?.length || 0) + (unknownTargetsCount || 0)}
-        </Typography>
-        <Typography variant="body1" className={classes.statLabel}>
-          targets
-        </Typography>
+          <Typography variant="body1" className={classes.statLabel}>
+            sources
+          </Typography>
+        </Grid>
+        <Grid
+          item
+          container
+          xs={12}
+          direction="column"
+          alignItems="flex-start"
+          className={classes.refs}
+        >
+          {sources?.slice(0, displayedEntitiesNumber).map(source => (
+            <AppButton
+              key={source.id}
+              size="medium"
+              color="tertiary"
+              sx={{ my: 0.25 }}
+            >
+              <Link to={dataEntityDetailsPath(source.id)}>
+                {source.internalName || source.externalName}
+              </Link>
+            </AppButton>
+          ))}
+          {unknownSourcesCount ? (
+            <Typography
+              variant="subtitle1"
+              className={classes.unknownCount}
+            >
+              {unknownSourcesCount} more source
+              {unknownSourcesCount === 1 ? '' : 's'} unknown
+            </Typography>
+          ) : null}
+          {sources && sources?.length > displayedEntitiesNumber ? (
+            <EntitiesListModal
+              entities={sources}
+              labelFor="Sources"
+              dataEntityName={dataEntityName}
+              openBtnEl={
+                <AppButton
+                  size="medium"
+                  color="tertiary"
+                  sx={{ my: 0.25 }}
+                >
+                  Show All
+                </AppButton>
+              }
+            />
+          ) : null}
+        </Grid>
       </Grid>
       <Grid
         item
         container
-        xs={12}
-        direction="column"
+        xs={6}
         alignItems="flex-start"
-        className={classes.refs}
+        alignContent="flex-start"
       >
-        {targets?.map(target => (
-          <AppButton
-            key={target.id}
-            sx={{ my: 0.25 }}
-            size="medium"
-            color="tertiary"
-          >
-            <Link to={dataEntityDetailsPath(target.id)}>
-              {target.internalName || target.externalName}
-            </Link>
-          </AppButton>
-        ))}
-        {unknownTargetsCount ? (
-          <Typography variant="subtitle1" className={classes.unknownCount}>
-            {unknownTargetsCount} more target
-            {unknownTargetsCount === 1 ? '' : 's'} unknown
+        <Grid item container xs={12} alignItems="baseline">
+          <DownstreamIcon className={classes.statIcon} />
+          <Typography variant="h2" className={classes.statCount}>
+            {(targets?.length || 0) + (unknownTargetsCount || 0)}
           </Typography>
-        ) : null}
+          <Typography variant="body1" className={classes.statLabel}>
+            targets
+          </Typography>
+        </Grid>
+        <Grid
+          item
+          container
+          xs={12}
+          direction="column"
+          alignItems="flex-start"
+          className={classes.refs}
+        >
+          {targets?.slice(0, displayedEntitiesNumber).map(target => (
+            <AppButton
+              key={target.id}
+              sx={{ my: 0.25 }}
+              size="medium"
+              color="tertiary"
+            >
+              <Link to={dataEntityDetailsPath(target.id)}>
+                {target.internalName || target.externalName}
+              </Link>
+            </AppButton>
+          ))}
+          {unknownTargetsCount ? (
+            <Typography
+              variant="subtitle1"
+              className={classes.unknownCount}
+            >
+              {unknownTargetsCount} more target
+              {unknownTargetsCount === 1 ? '' : 's'} unknown
+            </Typography>
+          ) : null}
+          {targets && targets?.length > displayedEntitiesNumber ? (
+            <EntitiesListModal
+              entities={targets}
+              labelFor="Targets"
+              dataEntityName={dataEntityName}
+              openBtnEl={
+                <AppButton
+                  size="medium"
+                  color="tertiary"
+                  sx={{ my: 0.25 }}
+                >
+                  Show All
+                </AppButton>
+              }
+            />
+          ) : null}
+        </Grid>
       </Grid>
     </Grid>
-  </Grid>
-);
+  );
+};
 
 export default withStyles(styles)(OverviewTransformerStats);
