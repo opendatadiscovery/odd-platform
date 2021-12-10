@@ -17,8 +17,12 @@ export const MainDialog = styled(Dialog, {
   shouldForwardProp: propsChecker,
 })<{
   $isLoading?: boolean;
-}>(({ theme, $isLoading }) => ({
+}>(({ $isLoading }) => ({
   [`& .${dialogClasses.paperWidthXs}`]: { maxWidth: '368px' },
+  [`& .${dialogClasses.paperWidthMd}`]: {
+    maxWidth: '640px',
+    maxHeight: '640px',
+  },
   pointerEvents: $isLoading ? 'none' : 'all',
 }));
 
@@ -53,7 +57,7 @@ export const Progress = styled(LinearProgress, {
   shouldForwardProp: propsChecker,
 })<{
   $isLoading?: boolean;
-}>(({ theme, $isLoading }) => ({
+}>(({ $isLoading }) => ({
   display: $isLoading ? 'block' : 'none',
 }));
 

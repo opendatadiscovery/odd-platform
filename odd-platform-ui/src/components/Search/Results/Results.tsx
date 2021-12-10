@@ -57,47 +57,55 @@ const Results: React.FC<ResultsProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const tabs: AppTabItem<SearchType>[] = [
-    {
-      name: 'All',
-      hint: totals.all,
-      value: 'all',
-    },
-    {
-      name: 'My Objects',
-      hint: totals.myObjectsTotal,
-      value: 'my',
-    },
-    {
-      name: 'Datasets',
-      hint: totals[DataEntityTypeNameEnum.SET]?.count || 0,
-      value: totals[DataEntityTypeNameEnum.SET]?.id,
-    },
-    {
-      name: 'Transformers',
-      hint: totals[DataEntityTypeNameEnum.TRANSFORMER]?.count || 0,
-      value: totals[DataEntityTypeNameEnum.TRANSFORMER]?.id,
-    },
-    {
-      name: 'Data Consumers',
-      hint: totals[DataEntityTypeNameEnum.CONSUMER]?.count || 0,
-      value: totals[DataEntityTypeNameEnum.CONSUMER]?.id,
-    },
-    {
-      name: 'Data Inputs',
-      hint: totals[DataEntityTypeNameEnum.INPUT]?.count || 0,
-      value: totals[DataEntityTypeNameEnum.INPUT]?.id,
-    },
-    {
-      name: 'Quality Tests',
-      hint: totals[DataEntityTypeNameEnum.QUALITY_TEST]?.count || 0,
-      value: totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id,
-    },
-  ];
+  const [tabs, setTabs] = React.useState<AppTabItem<SearchType>[]>([]);
 
-  const [selectedTab] = React.useState<number>(() =>
-    searchType ? tabs.findIndex(tab => tab.value === searchType) : 0
-  );
+  React.useEffect(() => {
+    setTabs([
+      {
+        name: 'All',
+        hint: totals.all,
+        value: 'all',
+      },
+      {
+        name: 'My Objects',
+        hint: totals.myObjectsTotal,
+        value: 'my',
+      },
+      {
+        name: 'Datasets',
+        hint: totals[DataEntityTypeNameEnum.SET]?.count || 0,
+        value: totals[DataEntityTypeNameEnum.SET]?.id,
+      },
+      {
+        name: 'Transformers',
+        hint: totals[DataEntityTypeNameEnum.TRANSFORMER]?.count || 0,
+        value: totals[DataEntityTypeNameEnum.TRANSFORMER]?.id,
+      },
+      {
+        name: 'Data Consumers',
+        hint: totals[DataEntityTypeNameEnum.CONSUMER]?.count || 0,
+        value: totals[DataEntityTypeNameEnum.CONSUMER]?.id,
+      },
+      {
+        name: 'Data Inputs',
+        hint: totals[DataEntityTypeNameEnum.INPUT]?.count || 0,
+        value: totals[DataEntityTypeNameEnum.INPUT]?.id,
+      },
+      {
+        name: 'Quality Tests',
+        hint: totals[DataEntityTypeNameEnum.QUALITY_TEST]?.count || 0,
+        value: totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id,
+      },
+    ]);
+  }, [totals]);
+
+  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
+
+  React.useEffect(() => {
+    setSelectedTab(
+      searchType ? tabs.findIndex(tab => tab.value === searchType) : 0
+    );
+  }, [tabs, searchType]);
 
   const onSearchTypeChange = (newTypeIndex: number) => {
     const newType = tabs[newTypeIndex]?.value

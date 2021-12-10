@@ -14,12 +14,15 @@ interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
     handleClose: () => void;
     handleOpen: () => void;
   }) => JSX.Element;
-  renderActions(actionsProps: { handleOpen: () => void }): JSX.Element;
+  renderActions?: (actionsProps: {
+    handleOpen: () => void;
+  }) => JSX.Element;
   handleCloseSubmittedForm?: boolean;
   isLoading?: boolean;
   errorText?: string;
   dialogContentId?: string;
   clearState?: () => void;
+  maxWidth?: 'xs' | 'md';
 }
 
 const DialogWrapper: React.FC<DialogWrapperProps> = ({
@@ -82,7 +85,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
                 {errorText}
               </S.ErrorText>
             )}
-            {renderActions({ handleOpen })}
+            {renderActions && renderActions({ handleOpen })}
           </S.Actions>
         </S.MainDialog>
       ) : null}
