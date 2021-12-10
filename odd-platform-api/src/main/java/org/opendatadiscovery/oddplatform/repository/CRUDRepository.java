@@ -25,4 +25,6 @@ public interface CRUDRepository<P> {
     void delete(final long id);
 
     void delete(final List<Long> id);
+
+    void deleteAll();
 }
