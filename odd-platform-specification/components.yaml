@@ -369,6 +369,7 @@ components:
             - DASHBOARD
             - ML_MODEL_ARTIFACT
             - VIEW
+            - API_CALL
             - MICROSERVICE
       required:
         - id
@@ -491,6 +492,12 @@ components:
     DataInput:
       allOf:
         - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            outputs:
+              type: array
+              items:
+                type: string
 
     DataInputDetails:
       allOf:
