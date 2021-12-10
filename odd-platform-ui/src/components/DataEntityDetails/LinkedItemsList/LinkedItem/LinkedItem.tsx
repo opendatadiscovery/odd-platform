@@ -33,10 +33,10 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
           </Typography>
         </ColContainer>
         <ColContainer $colType="collg" item container wrap="wrap">
-          <TruncatedCell
-            dataEntity={linkedItem}
-            truncatedCellType="entities"
-          />
+          {/* <TruncatedCell */}
+          {/*  dataEntity={linkedItem} */}
+          {/*  truncatedCellType="entities" */}
+          {/* /> */}
         </ColContainer>
         <ColContainer item $colType="colsm">
           <Grid container direction="column" alignItems="flex-start">

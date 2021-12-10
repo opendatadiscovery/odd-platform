@@ -24,9 +24,9 @@ const reducer = (
           linkedListByDataEntityGroupId: {
             ...memo.linkedListByDataEntityGroupId,
             [action.payload.entityId]: [
-              ...memo.linkedListByDataEntityGroupId[
+              ...(memo.linkedListByDataEntityGroupId[
                 action.payload.entityId
-              ],
+              ] || []),
               linkedItem,
             ],
           },
