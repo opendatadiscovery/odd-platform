@@ -30,6 +30,7 @@ public class DataEntityIngestionDto {
     protected DataTransformerIngestionDto dataTransformer;
     protected DataConsumerIngestionDto dataConsumer;
     protected DataQualityTestIngestionDto datasetQualityTest;
+    protected DataInputIngestionDto dataInput;
 
     @Data
     @Builder
@@ -65,5 +66,13 @@ public class DataEntityIngestionDto {
     @NoArgsConstructor
     public static class DataQualityTestIngestionDto {
         private List<String> datasetList;
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class DataInputIngestionDto {
+        private List<String> outputs;
     }
 }

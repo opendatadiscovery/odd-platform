@@ -53,6 +53,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityType;
+import org.opendatadiscovery.oddplatform.dto.DataInputAttributes;
 import org.opendatadiscovery.oddplatform.dto.DataQualityTestAttributes;
 import org.opendatadiscovery.oddplatform.dto.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.DataTransformerAttributes;
@@ -103,6 +104,7 @@ import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.val;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.*;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.UPSTREAM;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
@@ -1156,9 +1158,9 @@ public class DataEntityRepositoryImpl
                 case DATA_SET:
                     final DataSetAttributes dsa = (DataSetAttributes) attrs;
 
-                    final DataEntityDetailsDto.DataSetDetailsDto dataSetDetailsDto = dto.getDataSetDetailsDto() != null
+                    final DataSetDetailsDto dataSetDetailsDto = dto.getDataSetDetailsDto() != null
                         ? dto.getDataSetDetailsDto()
-                        : new DataEntityDetailsDto.DataSetDetailsDto();
+                        : new DataSetDetailsDto();
 
                     dataSetDetailsDto.setRowsCount(dsa.getRowsCount());
                     dataSetDetailsDto.setFieldsCount(dsa.getFieldsCount());
@@ -1170,7 +1172,7 @@ public class DataEntityRepositoryImpl
                 case DATA_TRANSFORMER:
                     final DataTransformerAttributes dta = (DataTransformerAttributes) attrs;
 
-                    dto.setDataTransformerDetailsDto(DataEntityDetailsDto.DataTransformerDetailsDto.builder()
+                    dto.setDataTransformerDetailsDto(DataTransformerDetailsDto.builder()
                         .sourceList(fetcher.apply(dta.getSourceOddrnList()))
                         .targetList(fetcher.apply(dta.getTargetOddrnList()))
                         .sourceCodeUrl(dta.getSourceCodeUrl())
@@ -1197,6 +1199,14 @@ public class DataEntityRepositoryImpl
 
                     dto.setDataConsumerDetailsDto(DataConsumerDetailsDto.builder()
                         .inputList(fetcher.apply(dca.getInputListOddrn()))
+                        .build());
+                    break;
+
+                case DATA_INPUT:
+                    final DataInputAttributes dia = (DataInputAttributes) attrs;
+
+                    dto.setDataInputDetailsDto(DataInputDetailsDto.builder()
+                        .outputList(fetcher.apply(dia.getOutputListOddrn()))
                         .build());
                     break;
                 default:
@@ -1255,7 +1265,7 @@ public class DataEntityRepositoryImpl
             .sorted((d1, d2) -> d2.getVersion().compareTo(d1.getVersion()))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        return DataEntityDetailsDto.detailsBuilder()
+        return detailsBuilder()
             .dataEntity(dataEntity)
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
@@ -1265,7 +1275,7 @@ public class DataEntityRepositoryImpl
             .ownership(extractOwnershipRelation(r))
             .types(types)
             .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
-            .dataSetDetailsDto(DataEntityDetailsDto.DataSetDetailsDto.builder()
+            .dataSetDetailsDto(DataSetDetailsDto.builder()
                 .datasetVersions(datasetVersions)
                 .build())
             .metadata(extractMetadataRelation(r))
