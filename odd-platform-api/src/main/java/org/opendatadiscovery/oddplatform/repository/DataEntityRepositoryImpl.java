@@ -107,7 +107,6 @@ import static org.jooq.impl.DSL.val;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataInputDetailsDto;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataSetDetailsDto;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataTransformerDetailsDto;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.detailsBuilder;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.UPSTREAM;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
@@ -1268,7 +1267,7 @@ public class DataEntityRepositoryImpl
             .sorted((d1, d2) -> d2.getVersion().compareTo(d1.getVersion()))
             .collect(Collectors.toCollection(LinkedHashSet::new));
 
-        return detailsBuilder()
+        return DataEntityDetailsDto.detailsBuilder()
             .dataEntity(dataEntity)
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
