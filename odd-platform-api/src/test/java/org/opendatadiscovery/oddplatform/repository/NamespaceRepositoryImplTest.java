@@ -5,12 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseRepositoryTest;
 import org.opendatadiscovery.oddplatform.misc.TestDataUtils;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.jdbc.Sql;
 
 /**
  * Integration test for {@link NamespaceRepository}
@@ -25,19 +25,12 @@ class NamespaceRepositoryImplTest extends BaseRepositoryTest {
     TestDataUtils testDataUtils = new TestDataUtils();
 
     /**
-     * Tear down database entries
-     */
-    @BeforeEach
-    void tearDown() {
-        namespaceRepository.deleteAll();
-    }
-
-    /**
      * Test case: Save {@link NamespacePojo} into db
      * Expected result: {@link NamespacePojo} successfully saved into db
      */
     @Test
-    void name() {
+    @Sql({"/scripts/dropAll.sql", "/scripts/createAll.sql"})
+    void test_createNamespacePojo_Success() {
         //given
         NamespacePojo expectedNamespacePojo = testDataUtils.createTestNamespacePojo("Test name 1", 12L);
 
@@ -56,11 +49,12 @@ class NamespaceRepositoryImplTest extends BaseRepositoryTest {
      * Expected result: Result from db is empty
      */
     @Test
-    void name_one() {
+    @Sql({"/scripts/dropAll.sql", "/scripts/createAll.sql"})
+    void test_getNamespacePojoFromDB_Success() {
         //given
 
         //when
-        final Optional<NamespacePojo> actualNamespacePojo = namespaceRepository.get(14L);
+        final Optional<NamespacePojo> actualNamespacePojo = namespaceRepository.get(12L);
 
         //then
         assertFalse(actualNamespacePojo.isPresent());

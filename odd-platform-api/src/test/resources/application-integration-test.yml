@@ -1,6 +1,3 @@
 spring:
   datasource:
     url: jdbc:tc:postgresql:13.2-alpine:///test-db
-  jpa:
-    hibernate:
-      ddl-auto: create

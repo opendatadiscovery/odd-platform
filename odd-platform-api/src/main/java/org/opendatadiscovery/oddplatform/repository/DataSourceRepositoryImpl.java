@@ -214,11 +214,6 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     }
 
     @Override
-    public void deleteAll() {
-        dslContext.delete(DATA_SOURCE).execute();
-    }
-
-    @Override
     public Optional<DataSourceDto> getByOddrn(final String oddrn) {
         return dslContext
             .select(DATA_SOURCE.asterisk())
