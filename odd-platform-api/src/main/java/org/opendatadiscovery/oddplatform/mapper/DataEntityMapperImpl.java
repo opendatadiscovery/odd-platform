@@ -125,12 +125,14 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         if (typeNames.contains(DataEntityType.NameEnum.TRANSFORMER)) {
             details.setSourceList(dto.getDataTransformerDetailsDto().getSourceList()
                 .stream()
+                .distinct()
                 .map(this::mapReference)
                 .collect(Collectors.toList()));
 
             details.setTargetList(dto.getDataTransformerDetailsDto()
                 .getTargetList()
                 .stream()
+                .distinct()
                 .map(this::mapReference)
                 .collect(Collectors.toList()));
         }
@@ -145,6 +147,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .datasetsList(dto.getDataQualityTestDetailsDto()
                     .getDatasetList()
                     .stream()
+                    .distinct()
                     .map(this::mapReference)
                     .collect(Collectors.toList()))
                 .linkedUrlList(dto.getDataQualityTestDetailsDto().getLinkedUrlList())
@@ -160,6 +163,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             details.setInputList(dto.getDataConsumerDetailsDto()
                 .getInputList()
                 .stream()
+                .distinct()
                 .map(this::mapReference).collect(Collectors.toList()));
         }
 
@@ -167,6 +171,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             details.setOutputList(dto.getDataInputDetailsDto()
                 .getOutputList()
                 .stream()
+                .distinct()
                 .map(this::mapReference).collect(Collectors.toList()));
         }
 
