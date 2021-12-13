@@ -186,7 +186,7 @@ public class JooqFTSHelper {
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
-        cteConditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.eq(Boolean.FALSE));
+        cteConditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
 
         return Pair.of(cteConditions, joinConditions);
     }
