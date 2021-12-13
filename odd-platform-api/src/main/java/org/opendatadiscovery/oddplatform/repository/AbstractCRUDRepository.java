@@ -134,7 +134,6 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
             .execute();
     }
 
-
     protected List<Condition> getCondition(final long id) {
         return List.of(idField.eq(id));
     }
