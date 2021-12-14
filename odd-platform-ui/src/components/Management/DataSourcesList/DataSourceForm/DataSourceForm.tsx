@@ -109,9 +109,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   const [radioValue, setRadioValue] = React.useState<RadioType>(
     getDefaultRadioValues()
   );
-  const isODDRN = React.useCallback(() => radioValue === 'ODDRN', [
-    radioValue,
-  ]);
+  const isODDRN = () => radioValue === 'ODDRN';
 
   const handleRadioChange = (
     event: ChangeEvent<HTMLInputElement>,
@@ -240,9 +238,10 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         <>
           <Controller
             name="oddrn"
+            shouldUnregister
             control={control}
             rules={{
-              required: isODDRN(),
+              required: true,
               validate: value => !!value?.trim(),
             }}
             render={({ field }) => (
@@ -267,9 +266,10 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         <>
           <Controller
             name="connectionUrl"
+            shouldUnregister
             control={control}
             rules={{
-              required: isODDRN(),
+              required: true,
               validate: value => !!value?.trim(),
             }}
             render={({ field }) => (

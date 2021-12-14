@@ -29,6 +29,10 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
           return (
             <OverviewTransformerStats
               key={type.id}
+              dataEntityName={
+                dataEntityDetails?.externalName ||
+                dataEntityDetails?.internalName
+              }
               sources={dataEntityDetails.sourceList}
               targets={dataEntityDetails.targetList}
               unknownSourcesCount={dataEntityDetails.unknownSourcesCount}
@@ -39,6 +43,10 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
           return (
             <OverviewDataConsumerStats
               key={type.id}
+              dataEntityName={
+                dataEntityDetails?.externalName ||
+                dataEntityDetails?.internalName
+              }
               inputs={dataEntityDetails.inputList}
               unknownInputsCount={dataEntityDetails.unknownInputsCount}
             />
@@ -57,6 +65,10 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
           return (
             <OverviewDataInputStats
               key={type.id}
+              dataEntityName={
+                dataEntityDetails?.externalName ||
+                dataEntityDetails?.internalName
+              }
               outputs={dataEntityDetails.outputList}
               unknownOutputsCount={dataEntityDetails.unknownOutputsCount}
             />
