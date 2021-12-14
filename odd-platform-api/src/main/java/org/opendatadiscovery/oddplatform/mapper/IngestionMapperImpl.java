@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -313,25 +315,25 @@ public class IngestionMapperImpl implements IngestionMapper {
             )));
 
             case DATA_TRANSFORMER -> Pair.of(type, specAttrsMap(List.of(
-                Pair.of("source_list", Set.of(dataEntity.getDataTransformer().getInputs())),
-                Pair.of("target_list", Set.of(dataEntity.getDataTransformer().getOutputs())),
+                Pair.of("source_list", new HashSet<>(dataEntity.getDataTransformer().getInputs())),
+                Pair.of("target_list", new HashSet<>(dataEntity.getDataTransformer().getOutputs())),
                 Pair.of("source_code_url", dataEntity.getDataTransformer().getSourceCodeUrl())
             )));
 
             case DATA_CONSUMER -> Pair.of(type, specAttrsMap(List.of(
-                Pair.of("input_list", Set.of(dataEntity.getDataConsumer().getInputs()))
+                Pair.of("input_list", new HashSet<>(dataEntity.getDataConsumer().getInputs()))
             )));
 
             case DATA_QUALITY_TEST -> Pair.of(type, specAttrsMap(List.of(
                 Pair.of("suite_name", dataEntity.getDataQualityTest().getSuiteName()),
                 Pair.of("suite_url", dataEntity.getDataQualityTest().getSuiteUrl()),
                 Pair.of("linked_url_list", dataEntity.getDataQualityTest().getLinkedUrlList()),
-                Pair.of("dataset_list", Set.of(dataEntity.getDataQualityTest().getDatasetList())),
+                Pair.of("dataset_list", new HashSet<>(dataEntity.getDataQualityTest().getDatasetList())),
                 Pair.of("expectation", dataEntity.getDataQualityTest().getExpectation())
             )));
 
             case DATA_INPUT -> Pair.of(type, specAttrsMap(List.of(
-                Pair.of("output_list", Set.of(dataEntity.getDataInput().getOutputs()))
+                Pair.of("output_list", new HashSet<>(dataEntity.getDataInput().getOutputs()))
             )));
 
             default -> null;
