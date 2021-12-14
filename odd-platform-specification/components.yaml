@@ -1179,6 +1179,16 @@ components:
         - upstream
         - downstream
 
+    DataEntityGroupLineageList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityLineageStream'
+      required:
+        - items
+
     MetadataFieldType:
       type: string
       enum:

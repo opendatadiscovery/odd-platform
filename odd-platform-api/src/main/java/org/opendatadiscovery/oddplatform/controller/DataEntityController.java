@@ -6,6 +6,7 @@ import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -199,6 +200,15 @@ public class DataEntityController
                                                                                 final ServerWebExchange exchange) {
         return entityService
             .getLineage(dataEntityId, lineageDepth, LineageStreamKind.UPSTREAM)
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityGroupLineageList>> getDataEntityGroupsLineage(final Long dataEntityGroupId,
+                                                                                       final ServerWebExchange exch) {
+        return entityService
+            .getDataEntityGroupLineage(dataEntityGroupId)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }

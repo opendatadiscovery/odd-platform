@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -341,5 +342,14 @@ public class DataEntityServiceImpl
         return Mono.fromCallable(() -> entityRepository
             .getDataEntityGroupsChildren(dataEntityGroupId, page, size))
             .map(entityMapper::mapPojos);
+    }
+
+    @Override
+    public Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId) {
+        return Mono.fromCallable(() -> entityRepository.getDataEntityGroupLineage(dataEntityGroupId))
+            .flatMap(optional -> optional.isEmpty()
+                ? Mono.error(new NotFoundException())
+                : Mono.just(optional.get()))
+            .map(entityMapper::mapGroupLineageDto);
     }
 }

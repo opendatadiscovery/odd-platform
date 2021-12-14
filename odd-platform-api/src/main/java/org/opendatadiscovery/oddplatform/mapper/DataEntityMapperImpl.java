@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdge;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageNode;
@@ -26,6 +27,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
@@ -277,6 +279,15 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .root(mapNode(dto.getDataEntityDto()))
             .upstream(mapStream(dto.getUpstream()))
             .downstream(mapStream(dto.getDownstream()));
+    }
+
+    @Override
+    public DataEntityGroupLineageList mapGroupLineageDto(final DataEntityGroupLineageDto dataEntityGroupLineageDto) {
+        final List<DataEntityLineageStream> lineageStreams = dataEntityGroupLineageDto.lineageItems().stream()
+            .map(this::mapStream)
+            .toList();
+        return new DataEntityGroupLineageList()
+            .items(lineageStreams);
     }
 
     @Override

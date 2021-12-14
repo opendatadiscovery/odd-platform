@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataQualityTes
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataTransformerDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityType;
@@ -58,6 +60,7 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.DataEntity;
 import org.opendatadiscovery.oddplatform.model.tables.GroupEntityRelations;
 import org.opendatadiscovery.oddplatform.model.tables.GroupParentGroupRelations;
@@ -701,6 +704,44 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
+    public Optional<DataEntityGroupLineageDto> getDataEntityGroupLineage(final Long dataEntityGroupId) {
+        final List<String> entitiesOddrns = getDEGEntitiesOddrns(dataEntityGroupId);
+        if (CollectionUtils.isEmpty(entitiesOddrns)) {
+            return Optional.empty();
+        }
+
+        final Map<String, DataEntityDimensionsDto> dtoDict = listAllByOddrns(entitiesOddrns)
+            .stream()
+            .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
+
+        final List<LineagePojo> lineageRelations = getLineageRelations(entitiesOddrns);
+        final List<Set<String>> oddrnRelations = lineageRelations.stream()
+            .map(lineagePojo -> Set.of(lineagePojo.getChildOddrn(), lineagePojo.getParentOddrn()))
+            .collect(Collectors.toList());
+        final List<Set<String>> combinedOddrnsList = combineOddrnsInDEGLineage(oddrnRelations);
+
+        final List<DataEntityLineageStreamDto> items = combinedOddrnsList.stream()
+            .map(combinedOddrns -> {
+                final DataEntityLineageStreamDto dto = new DataEntityLineageStreamDto();
+                final List<DataEntityDimensionsDto> nodes = combinedOddrns.stream()
+                    .map(dtoDict::get)
+                    .toList();
+                dto.setNodes(nodes);
+                final List<Pair<Long, Long>> edges = combinedOddrns.stream()
+                    .flatMap(oddrn -> lineageRelations.stream()
+                        .filter(relations -> relations.getChildOddrn().equals(oddrn))
+                        .map(r -> Pair.of(
+                            dtoDict.get(r.getParentOddrn()).getDataEntity().getId(),
+                            dtoDict.get(r.getChildOddrn()).getDataEntity().getId()
+                        ))).toList();
+                dto.setEdges(edges);
+                return dto;
+            }).toList();
+
+        return Optional.of(new DataEntityGroupLineageDto(items));
+    }
+
+    @Override
     public Optional<DataEntityLineageDto> getLineage(final long dataEntityId,
                                                      final int lineageDepth,
                                                      final LineageStreamKind streamKind) {
@@ -734,6 +775,62 @@ public class DataEntityRepositoryImpl
             .upstream(getLineageStream(dtoDict, upstreamRelations))
             .downstream(getLineageStream(dtoDict, downstreamRelations))
             .build();
+    }
+
+    private List<Set<String>> combineOddrnsInDEGLineage(final List<Set<String>> oddrnRelations) {
+        final List<Set<String>> result = new ArrayList<>();
+        oddrnRelations.forEach(relations -> {
+            final Set<String> combinedRelations = result.stream()
+                .filter(rel -> rel.stream().anyMatch(relations::contains))
+                .findFirst()
+                .orElseGet(() -> {
+                    final Set<String> newRelationSet = new HashSet<>();
+                    result.add(newRelationSet);
+                    return newRelationSet;
+                });
+            combinedRelations.addAll(relations);
+        });
+        if (result.size() == oddrnRelations.size()) {
+            return result;
+        } else {
+            return combineOddrnsInDEGLineage(result);
+        }
+    }
+
+    private List<String> getDEGEntitiesOddrns(final long dataEntityGroupId) {
+        final Name cteName = name("t");
+        final Field<String> tDataEntityOddrn = field("t.data_entity_oddrn", String.class);
+
+        final String groupOddrn = dslContext.select(DATA_ENTITY.ODDRN)
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ID.eq(dataEntityGroupId))
+            .fetchOptionalInto(String.class)
+            .orElseThrow(NotFoundException::new);
+
+        final var cte = cteName.as(dslContext
+            .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
+            .from(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn))
+            .unionAll(
+                dslContext
+                    .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
+                    .from(GROUP_ENTITY_RELATIONS)
+                    .join(cteName).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(tDataEntityOddrn))
+            ));
+
+        return dslContext.withRecursive(cte)
+            .selectDistinct(cte.field(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
+            .from(cte.getName())
+            .fetchStreamInto(String.class)
+            .collect(Collectors.toList());
+    }
+
+    private List<LineagePojo> getLineageRelations(final List<String> oddrns) {
+        return dslContext.selectDistinct(LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN)
+            .from(LINEAGE)
+            .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.CHILD_ODDRN.in(oddrns)))
+            .fetchStreamInto(LineagePojo.class)
+            .collect(Collectors.toList());
     }
 
     private void calculateStructureVectors(final Collection<Long> dataEntityIds) {

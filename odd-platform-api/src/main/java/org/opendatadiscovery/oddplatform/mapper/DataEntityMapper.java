@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -14,6 +15,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTypeDictio
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTypePojo;
@@ -33,6 +35,8 @@ public interface DataEntityMapper
     DataEntityTypeDictionary mapTypeDict(final Map<DataEntityTypePojo, List<DataEntitySubtypePojo>> typeDict);
 
     DataEntityLineage mapLineageDto(final DataEntityLineageDto dataEntityLineageDto);
+
+    DataEntityGroupLineageList mapGroupLineageDto(final DataEntityGroupLineageDto dataEntityGroupLineageDto);
 
     DataEntityRef mapRef(final DataEntityDto dto);
 }

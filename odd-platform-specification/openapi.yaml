@@ -1194,6 +1194,22 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - dataEntity
+  /api/dataentitygroups/{data_entity_group_id}/lineage:
+    get:
+      summary: Get DataEntityGroup lineage
+      description: Gets DataEntityGroup lineage graph, which shows lineage for DEG children
+      operationId: getDataEntityGroupsLineage
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityGroupIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityGroupLineageList'
+      tags:
+        - dataEntity
   /api/metadata/fields:
     get:
       summary: Get custom metadata fields

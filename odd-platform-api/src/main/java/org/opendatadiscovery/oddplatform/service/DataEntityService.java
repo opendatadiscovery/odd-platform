@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -58,4 +59,6 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
     Mono<DataEntityList> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                      final Integer page,
                                                      final Integer size);
+
+    Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId);
 }

@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
@@ -39,6 +40,8 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     Optional<DataEntityLineageDto> getLineage(final long dataEntityId,
                                               final int lineageDepth,
                                               final LineageStreamKind streamKind);
+
+    Optional<DataEntityGroupLineageDto> getDataEntityGroupLineage(final Long dataEntityGroupId);
 
     Page<DataEntityDimensionsDto> findByState(final FacetStateDto state, final int page, final int size);
 
