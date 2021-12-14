@@ -2,7 +2,7 @@ import { Action, DataEntitiesState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import keyBy from 'lodash/keyBy';
 import omit from 'lodash/omit';
-import { DataEntityDetails } from 'generated-sources';
+import { DataEntity, DataEntityDetails } from 'generated-sources';
 import * as actions from 'redux/actions';
 
 export const initialState: DataEntitiesState = {
@@ -66,6 +66,26 @@ const updateDataEntity = (
     },
   };
 };
+
+const createDataEntityGroupLinkedList = (
+  state: DataEntitiesState,
+  payload: DataEntity[]
+) =>
+  payload.reduce(
+    (memo: DataEntitiesState, linkedItem) => ({
+      ...memo,
+      byId: {
+        ...memo.byId,
+        [linkedItem.id]: {
+          ...memo.byId?.[linkedItem.id],
+          ...linkedItem,
+        },
+      },
+    }),
+    {
+      ...state,
+    }
+  );
 
 const reducer = (
   state = initialState,
@@ -135,6 +155,11 @@ const reducer = (
         ...state,
         popular: action.payload,
       };
+    case getType(actions.fetchDataEntityGroupLinkedListAction.success):
+      return createDataEntityGroupLinkedList(
+        state,
+        action.payload.value.items
+      );
     default:
       return state;
   }

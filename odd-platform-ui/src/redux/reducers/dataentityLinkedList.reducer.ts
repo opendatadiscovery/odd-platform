@@ -4,7 +4,7 @@ import { Action } from 'redux/interfaces';
 import { DataEntityGroupLinkedListState } from 'redux/interfaces/state';
 
 export const initialState: DataEntityGroupLinkedListState = {
-  linkedListByDataEntityGroupId: {},
+  linkedItemsIdsByDataEntityGroupId: {},
   pageInfo: {
     total: 0,
     page: 0,
@@ -21,13 +21,13 @@ const reducer = (
       return action.payload.value.items.reduce(
         (memo: DataEntityGroupLinkedListState, linkedItem) => ({
           ...memo,
-          linkedListByDataEntityGroupId: {
-            ...memo.linkedListByDataEntityGroupId,
+          linkedItemsIdsByDataEntityGroupId: {
+            ...memo.linkedItemsIdsByDataEntityGroupId,
             [action.payload.entityId]: [
-              ...(memo.linkedListByDataEntityGroupId[
+              ...(memo.linkedItemsIdsByDataEntityGroupId?.[
                 action.payload.entityId
               ] || []),
-              linkedItem,
+              linkedItem.id,
             ],
           },
         }),

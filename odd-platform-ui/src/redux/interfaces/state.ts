@@ -62,8 +62,8 @@ export interface NamespacesState {
 }
 
 export interface DataEntityGroupLinkedListState {
-  linkedListByDataEntityGroupId: {
-    [dataEntityGroupId: string]: DataEntity[];
+  linkedItemsIdsByDataEntityGroupId: {
+    [dataEntityGroupId: string]: number[];
   };
   pageInfo?: CurrentPageInfo;
 }
