@@ -1005,9 +1005,10 @@ public class DataEntityRepositoryImpl
             switch (t) {
                 case DATA_SET:
                     final DataSetAttributes dsa = (DataSetAttributes) attrs;
-                    final Collection<DatasetVersionPojo> datasetVersions = Optional.ofNullable(dto.getDataSetDetailsDto())
-                        .map(DataEntityDetailsDto.DataSetDetailsDto::datasetVersions)
-                        .orElse(null);
+                    final Collection<DatasetVersionPojo> datasetVersions =
+                        Optional.ofNullable(dto.getDataSetDetailsDto())
+                            .map(DataEntityDetailsDto.DataSetDetailsDto::datasetVersions)
+                            .orElse(null);
                     dto.setDataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(
                         dsa.getRowsCount(), dsa.getFieldsCount(), dsa.getConsumersCount(), datasetVersions
                     ));
@@ -1017,8 +1018,8 @@ public class DataEntityRepositoryImpl
                     final DataTransformerAttributes dta = (DataTransformerAttributes) attrs;
                     final DataTransformerDetailsDto dataTransformerDetailsDto =
                         new DataTransformerDetailsDto(fetcher.apply(dta.getSourceOddrnList()),
-                        fetcher.apply(dta.getTargetOddrnList()),
-                        dta.getSourceCodeUrl());
+                            fetcher.apply(dta.getTargetOddrnList()),
+                            dta.getSourceCodeUrl());
                     dto.setDataTransformerDetailsDto(dataTransformerDetailsDto);
 
                     break;

@@ -456,7 +456,7 @@ public class IngestionServiceImpl implements IngestionService {
     private List<LineagePojo> extractLineageRelations(final DataEntityIngestionDto dto) {
         final Set<DataEntityType> types = dto.getTypes();
 
-        final ArrayList<LineagePojo> result = new ArrayList<>();
+        final List<LineagePojo> result = new ArrayList<>();
 
         final String dtoOddrn = dto.getOddrn().toLowerCase();
 
