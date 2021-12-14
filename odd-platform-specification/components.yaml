@@ -582,8 +582,6 @@ components:
         - $ref: '#/components/schemas/DataEntityBaseObject'
         - type: object
           properties:
-            group_oddrn:
-              type: string
             items_count:
               type: integer
             entities:

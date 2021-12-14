@@ -17,7 +17,7 @@ public class GroupParentGroupRelationRepositoryImpl implements GroupParentGroupR
 
     @Override
     public void createRelations(final Collection<GroupParentGroupRelationsPojo> pojos) {
-        InsertValuesStep2<GroupParentGroupRelationsRecord, String, String> step = dslContext.insertInto(
+        var step = dslContext.insertInto(
             GROUP_PARENT_GROUP_RELATIONS,
             GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN,
             GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN

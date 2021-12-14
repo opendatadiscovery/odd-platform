@@ -1,8 +1,7 @@
--- create 2 tables, skip_search to data entity
 CREATE TABLE IF NOT EXISTS group_entity_relations
 (
-    group_oddrn       varchar(255),
-    data_entity_oddrn varchar(255),
+    group_oddrn       varchar,
+    data_entity_oddrn varchar,
 
     CONSTRAINT group_entity_relations_pk PRIMARY KEY (group_oddrn, data_entity_oddrn),
 
@@ -12,8 +11,8 @@ CREATE TABLE IF NOT EXISTS group_entity_relations
 
 CREATE TABLE IF NOT EXISTS group_parent_group_relations
 (
-    group_oddrn       varchar(255),
-    parent_group_oddrn varchar(255),
+    group_oddrn       varchar,
+    parent_group_oddrn varchar,
 
     CONSTRAINT group_parent_group_relations_pk PRIMARY KEY (group_oddrn, parent_group_oddrn),
 
@@ -23,4 +22,4 @@ CREATE TABLE IF NOT EXISTS group_parent_group_relations
 
 ALTER TABLE data_entity ADD COLUMN IF NOT EXISTS exclude_from_search boolean DEFAULT FALSE;
 
-UPDATE data_entity SET exclude_from_search = false;
+UPDATE data_entity SET exclude_from_search = hollow;

@@ -21,5 +21,3 @@ VALUES ((SELECT id from data_entity_type WHERE name = 'DATA_ENTITY_GROUP'),
         (SELECT id from data_entity_subtype WHERE name = 'DAG')),
        ((SELECT id from data_entity_type WHERE name = 'DATA_SET'),
         (SELECT id from data_entity_subtype WHERE name = 'GRAPH_NODE')) ON CONFLICT DO NOTHING;
-
--- TODO decide about ML_MODEL

@@ -211,7 +211,6 @@ public class IngestionServiceImpl implements IngestionService {
             .map(this::mapTaskRun)
             .collect(Collectors.toList());
 
-        //todo check this
         final List<LineagePojo> lineageRelations = Stream
             .concat(enrichedNewDtos.stream(), enrichedExistingDtos.stream())
             .map(this::extractLineageRelations)

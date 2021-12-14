@@ -41,6 +41,7 @@ import org.jooq.TableField;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataConsumerDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataTransformerDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
@@ -63,6 +64,7 @@ import org.opendatadiscovery.oddplatform.model.tables.GroupParentGroupRelations;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -861,7 +863,7 @@ public class DataEntityRepositoryImpl
         final GroupParentGroupRelations childrenRelations = GROUP_PARENT_GROUP_RELATIONS.as("children");
         final DataEntity parentAlias = DATA_ENTITY.as(AGG_PARENT_ENTITY_FIELD);
 
-        final var dataEntitySelect = getDataEntityCTESelect(config, searchVectorAlias);
+        final Select<Record> dataEntitySelect = getDataEntityCTESelect(config, searchVectorAlias);
         final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
 
         final List<Field<?>> selectFields = Stream
@@ -1003,7 +1005,7 @@ public class DataEntityRepositoryImpl
             switch (t) {
                 case DATA_SET:
                     final DataSetAttributes dsa = (DataSetAttributes) attrs;
-                    final var datasetVersions = Optional.ofNullable(dto.getDataSetDetailsDto())
+                    final Collection<DatasetVersionPojo> datasetVersions = Optional.ofNullable(dto.getDataSetDetailsDto())
                         .map(DataEntityDetailsDto.DataSetDetailsDto::datasetVersions)
                         .orElse(null);
                     dto.setDataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(
@@ -1013,8 +1015,8 @@ public class DataEntityRepositoryImpl
                     break;
                 case DATA_TRANSFORMER:
                     final DataTransformerAttributes dta = (DataTransformerAttributes) attrs;
-                    final var dataTransformerDetailsDto = new DataEntityDetailsDto.DataTransformerDetailsDto(
-                        fetcher.apply(dta.getSourceOddrnList()),
+                    final DataTransformerDetailsDto dataTransformerDetailsDto =
+                        new DataTransformerDetailsDto(fetcher.apply(dta.getSourceOddrnList()),
                         fetcher.apply(dta.getTargetOddrnList()),
                         dta.getSourceCodeUrl());
                     dto.setDataTransformerDetailsDto(dataTransformerDetailsDto);
@@ -1022,10 +1024,10 @@ public class DataEntityRepositoryImpl
                     break;
                 case DATA_QUALITY_TEST:
                     final DataQualityTestAttributes dqta = (DataQualityTestAttributes) attrs;
-                    final var latestTaskRun = dataEntityTaskRunRepository
+                    final DataEntityTaskRunPojo latestTaskRun = dataEntityTaskRunRepository
                         .getLatestRun(dto.getDataEntity().getOddrn())
                         .orElse(null);
-                    final var dataQualityTestDetailsDto =
+                    final DataQualityTestDetailsDto dataQualityTestDetailsDto =
                         new DataQualityTestDetailsDto(dqta.getSuiteName(), dqta.getSuiteUrl(),
                             fetcher.apply(dqta.getDatasetOddrnList()), dqta.getLinkedUrlList(),
                             dqta.getExpectation().getType(), latestTaskRun,
@@ -1092,9 +1094,9 @@ public class DataEntityRepositoryImpl
         final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
         final Set<DataEntityTypePojo> types =
             jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class);
-        final var groups = jooqRecordHelper.extractAggRelation(r, AGG_GROUP_ENTITY_FIELD,
+        final Set<DataEntityPojo> groups = jooqRecordHelper.extractAggRelation(r, AGG_GROUP_ENTITY_FIELD,
             DataEntityPojo.class);
-        final var parents = jooqRecordHelper.extractAggRelation(r, AGG_PARENT_ENTITY_FIELD,
+        final Set<DataEntityPojo> parents = jooqRecordHelper.extractAggRelation(r, AGG_PARENT_ENTITY_FIELD,
             DataEntityPojo.class);
         final boolean hasChildren = r.get(CHILDREN_COUNT_FIELD, Integer.class) != 0;
 
@@ -1116,8 +1118,7 @@ public class DataEntityRepositoryImpl
             .ownership(extractOwnershipRelation(r))
             .types(types)
             .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
-            .dataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(
-                null, null, null, datasetVersions))
+            .dataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(datasetVersions))
             .metadata(extractMetadataRelation(r))
             .dataEntityGroupDimensionsDto(mapGroupDimensionsDto(r))
             .dataEntityGroupDetailsDto(
@@ -1126,9 +1127,9 @@ public class DataEntityRepositoryImpl
     }
 
     private DataEntityDimensionsDto.DataEntityGroupDimensionsDto mapGroupDimensionsDto(final Record r) {
-        final var entities = jooqRecordHelper.extractAggRelation(r, AGG_SUB_GROUP_ENTITY_FIELD,
+        final Set<DataEntityPojo> entities = jooqRecordHelper.extractAggRelation(r, AGG_SUB_GROUP_ENTITY_FIELD,
             DataEntityPojo.class);
-        final var childrenCount = r.get(CHILDREN_COUNT_FIELD, Integer.class);
+        final Integer childrenCount = r.get(CHILDREN_COUNT_FIELD, Integer.class);
         return new DataEntityDimensionsDto.DataEntityGroupDimensionsDto(
             entities, entities.size() + childrenCount);
     }
@@ -1257,7 +1258,7 @@ public class DataEntityRepositoryImpl
         private LimitOffset cteLimitOffset;
         private List<Condition> selectConditions;
         private boolean includeDimensions;
-        private boolean includeDimensionsAndDetails; // includes both dimensions and details fields
+        private boolean includeDimensionsAndDetails;
         private boolean includeHollow;
         private SortField<?> orderBy;
         private Fts fts;

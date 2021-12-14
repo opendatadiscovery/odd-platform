@@ -124,9 +124,9 @@ public class IngestionMapperImpl implements IngestionMapper {
 
         // TODO: move pojo to the dto
         final DataEntitySubtypePojo subtype = dataEntityTypeRepository.findSubtypeByName(dto.getSubType());
-        final var isExcludedFromSearch = isExcludedFromSearch(dto);
+        final boolean isExcludedFromSearch = isExcludedFromSearch(dto);
 
-        final var pojo = new DataEntityPojo()
+        final DataEntityPojo pojo = new DataEntityPojo()
             .setExternalName(dto.getName())
             .setExternalDescription(dto.getExternalDescription())
             .setOddrn(dto.getOddrn().toLowerCase())

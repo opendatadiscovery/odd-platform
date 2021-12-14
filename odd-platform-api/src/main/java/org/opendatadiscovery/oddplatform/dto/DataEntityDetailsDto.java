@@ -65,6 +65,9 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
 
     public record DataSetDetailsDto(Long rowsCount, Long fieldsCount, Long consumersCount,
                                     Collection<DatasetVersionPojo> datasetVersions) {
+        public DataSetDetailsDto(Collection<DatasetVersionPojo> datasetVersions) {
+            this(null, null, null, datasetVersions);
+        }
     }
 
     public record DataTransformerDetailsDto(Collection<? extends DataEntityDto> sourceList,
