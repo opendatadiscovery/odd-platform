@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTypePojo;
@@ -24,6 +25,7 @@ public class DataEntityDimensionsDto extends DataEntityDto {
     protected List<OwnershipDto> ownership;
     protected DataSourcePojo dataSource;
     protected Collection<TagPojo> tags;
+    protected DataEntityGroupDimensionsDto groupsDto;
 
     @Builder(builderMethodName = "dimensionsBuilder")
     public DataEntityDimensionsDto(final DataEntityPojo dataEntity,
@@ -34,11 +36,17 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final NamespacePojo namespace,
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
-                                   final Collection<TagPojo> tags) {
-        super(dataEntity, types, subtype, hasAlerts, specificAttributes);
+                                   final Collection<TagPojo> tags,
+                                   final Collection<DataEntityPojo> dataEntityGroups,
+                                   final DataEntityGroupDimensionsDto groupsDto) {
+        super(dataEntity, types, subtype, hasAlerts, dataEntityGroups, specificAttributes);
         this.namespace = namespace;
         this.ownership = ownership;
         this.dataSource = dataSource;
         this.tags = tags;
+        this.groupsDto = groupsDto;
+    }
+
+    public record DataEntityGroupDimensionsDto(Collection<DataEntityPojo> entities, Integer itemsCount) {
     }
 }

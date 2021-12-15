@@ -28,5 +28,5 @@ export const FilledContainer = styled('span', {
   padding: theme.spacing(0.25, 1),
   backgroundColor: theme.palette.reportStatus[$typeName!].background,
   borderColor: theme.palette.reportStatus[$typeName!].border,
-  marginLeft: $count || $size === 'small' ? theme.spacing(0.5) : '',
+  marginLeft: theme.spacing(0.5),
 }));

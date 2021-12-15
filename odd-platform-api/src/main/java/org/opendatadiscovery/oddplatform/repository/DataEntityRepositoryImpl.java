@@ -1,9 +1,11 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,14 +13,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -27,9 +25,7 @@ import org.jooq.CommonTableExpression;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.InsertValuesStep2;
 import org.jooq.Name;
-import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record3;
@@ -43,31 +39,35 @@ import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.opendatadiscovery.oddplatform.dto.DataConsumerAttributes;
-import org.opendatadiscovery.oddplatform.dto.DataEntityAttributes;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataConsumerDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataTransformerDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityType;
-import org.opendatadiscovery.oddplatform.dto.DataInputAttributes;
-import org.opendatadiscovery.oddplatform.dto.DataQualityTestAttributes;
-import org.opendatadiscovery.oddplatform.dto.DataSetAttributes;
-import org.opendatadiscovery.oddplatform.dto.DataTransformerAttributes;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
-import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
-import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
-import org.opendatadiscovery.oddplatform.dto.SearchFilterId;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import org.opendatadiscovery.oddplatform.model.tables.DataEntity;
+import org.opendatadiscovery.oddplatform.model.tables.GroupEntityRelations;
+import org.opendatadiscovery.oddplatform.model.tables.GroupParentGroupRelations;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -94,10 +94,8 @@ import org.springframework.transaction.annotation.Transactional;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
-import static java.util.Objects.requireNonNull;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
-import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
@@ -105,8 +103,6 @@ import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.val;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataInputDetailsDto;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataSetDetailsDto;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataTransformerDetailsDto;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.UPSTREAM;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
@@ -117,6 +113,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TYPE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
+import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
+import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
@@ -130,7 +128,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
-import static org.opendatadiscovery.oddplatform.model.Tables.TYPE_SUBTYPE_RELATION;
 
 @Repository
 @Slf4j
@@ -151,26 +148,10 @@ public class DataEntityRepositoryImpl
     private static final String AGG_OWNER_FIELD = "owner";
     private static final String AGG_ROLE_FIELD = "role";
     private static final String AGG_ALERT_FIELD = "alert";
-
-    private static final Collector<Record3<Long, String, Integer>, ?, Map<SearchFilterId, Long>> FACET_COLLECTOR
-        = Collectors.toMap(
-        r -> SearchFilterId.builder().entityId(r.component1()).name(r.component2()).build(),
-        r -> r.component3().longValue()
-    );
-
-    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
-        FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
-        FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters))
-    );
-
-    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
-        FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
-        FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
-        FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
-        FacetType.SUBTYPES, filters -> DATA_ENTITY_SUBTYPE.ID.in(extractFilterId(filters)),
-        FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
-        FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
-    );
+    private static final String AGG_GROUP_ENTITY_FIELD = "group_entity";
+    private static final String AGG_SUB_GROUP_ENTITY_FIELD = "subgroup_entity";
+    private static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
+    private static final String CHILDREN_COUNT_FIELD = "children_count";
 
     public static final TypeReference<Map<String, ?>> SPECIFIC_ATTRIBUTES_TYPE_REFERENCE = new TypeReference<>() {
     };
@@ -198,6 +179,7 @@ public class DataEntityRepositoryImpl
     public Optional<DataEntityDimensionsDto> get(final long id) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
+            .includeDimensions(true)
             .build();
 
         return dataEntitySelect(config).fetchOptional(this::mapDimensionRecord);
@@ -252,6 +234,7 @@ public class DataEntityRepositoryImpl
                 r.changed(DATA_ENTITY.INTERNAL_DESCRIPTION, false);
                 r.changed(DATA_ENTITY.INTERNAL_NAME, false);
                 r.changed(DATA_ENTITY.VIEW_COUNT, false);
+                r.changed(DATA_ENTITY.EXCLUDE_FROM_SEARCH, false);
             })
             .collect(Collectors.toList());
 
@@ -283,11 +266,11 @@ public class DataEntityRepositoryImpl
 
     @Override
     public void createHollow(final Collection<String> oddrns) {
-        InsertValuesStep2<DataEntityRecord, String, Boolean> step
-            = dslContext.insertInto(DATA_ENTITY, DATA_ENTITY.ODDRN, DATA_ENTITY.HOLLOW);
+        var step = dslContext
+            .insertInto(DATA_ENTITY, DATA_ENTITY.ODDRN, DATA_ENTITY.HOLLOW, DATA_ENTITY.EXCLUDE_FROM_SEARCH);
 
         for (final String oddrn : oddrns) {
-            step = step.values(oddrn, true);
+            step = step.values(oddrn, true, true);
         }
 
         step.onDuplicateKeyIgnore().execute();
@@ -298,173 +281,8 @@ public class DataEntityRepositoryImpl
         return Page.<DataEntityDimensionsDto>builder()
             .hasNext(false)
             .total(fetchCount(query))
-            .data(listByConfig(DataEntitySelectConfig.emptyConfig()))
+            .data(listByConfig(DataEntitySelectConfig.builder().includeDimensions(true).build()))
             .build();
-    }
-
-    @Override
-    public Map<SearchFilterId, Long> getSubtypeFacet(final String facetQuery,
-                                                     final int page,
-                                                     final int size,
-                                                     final FacetStateDto state) {
-        final Long selectedType = state.selectedDataEntityType().orElse(null);
-
-        if (selectedType == null) {
-            return Map.of();
-        }
-
-        var select = dslContext.select(
-            DATA_ENTITY_SUBTYPE.ID,
-            DATA_ENTITY_SUBTYPE.NAME,
-            countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-            .from(DATA_ENTITY_SUBTYPE)
-            .leftJoin(DATA_ENTITY)
-            .on(DATA_ENTITY.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
-            .join(TYPE_SUBTYPE_RELATION).on(TYPE_SUBTYPE_RELATION.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
-            .leftJoin(SEARCH_ENTRYPOINT)
-            .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
-
-        if (StringUtils.isNotEmpty(state.getQuery())) {
-            select = select.and(ftsCondition(state.getQuery()));
-        }
-
-        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!dataSourceIds.isEmpty()) {
-            select = select.join(DATA_SOURCE)
-                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-                .and(DATA_SOURCE.ID.in(dataSourceIds));
-        }
-
-        return select
-            .where(DATA_ENTITY_SUBTYPE.NAME.containsIgnoreCase(StringUtils.isNotEmpty(facetQuery) ? facetQuery : ""))
-            .and(TYPE_SUBTYPE_RELATION.TYPE_ID.eq(selectedType))
-            .groupBy(DATA_ENTITY_SUBTYPE.ID, DATA_ENTITY_SUBTYPE.NAME)
-            .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
-            .limit(size)
-            .offset((page - 1) * size)
-            .fetchStream()
-            .collect(FACET_COLLECTOR);
-    }
-
-    @Override
-    public Map<SearchFilterId, Long> getOwnerFacet(final String facetQuery,
-                                                   final int page,
-                                                   final int size,
-                                                   final FacetStateDto state) {
-        var select = dslContext.select(OWNER.ID, OWNER.NAME, countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-            .from(OWNER)
-            .leftJoin(OWNERSHIP).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
-            .leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(OWNERSHIP.DATA_ENTITY_ID));
-
-        if (StringUtils.isNotEmpty(state.getQuery())) {
-            select = select.and(ftsCondition(state.getQuery()));
-        }
-
-        select = select
-            .leftJoin(DATA_ENTITY)
-            .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse());
-
-        final Long selectedType = state.selectedDataEntityType().orElse(null);
-
-        if (selectedType != null) {
-            select = select
-                .leftJoin(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-                .leftJoin(DATA_ENTITY_TYPE)
-                .on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
-                .and(DATA_ENTITY_TYPE.ID.eq(selectedType));
-        }
-
-        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!dataSourceIds.isEmpty()) {
-            select = select.join(DATA_SOURCE)
-                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-                .and(DATA_SOURCE.ID.in(dataSourceIds));
-        }
-
-        return select
-            .where(OWNER.NAME.containsIgnoreCase((StringUtils.isNotEmpty(facetQuery) ? facetQuery : "")))
-            .and(OWNER.IS_DELETED.isFalse())
-            .groupBy(OWNER.ID, OWNER.NAME)
-            .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
-            .limit(size)
-            .offset((page - 1) * size)
-            .fetchStream()
-            .collect(FACET_COLLECTOR);
-    }
-
-    @Override
-    public Map<SearchFilterId, Long> getTagFacet(final String facetQuery,
-                                                 final int page,
-                                                 final int size,
-                                                 final FacetStateDto state) {
-        var select = dslContext.select(TAG.ID, TAG.NAME, countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-            .from(TAG)
-            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
-            .leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID));
-
-        if (StringUtils.isNotEmpty(state.getQuery())) {
-            select = select.and(ftsCondition(state.getQuery()));
-        }
-
-        select = select
-            .leftJoin(DATA_ENTITY)
-            .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse());
-
-        final Long selectedType = state.selectedDataEntityType().orElse(null);
-
-        if (selectedType != null) {
-            select = select
-                .leftJoin(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-                .leftJoin(DATA_ENTITY_TYPE)
-                .on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
-                .and(DATA_ENTITY_TYPE.ID.eq(selectedType));
-        }
-
-        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!dataSourceIds.isEmpty()) {
-            select = select.join(DATA_SOURCE)
-                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-                .and(DATA_SOURCE.ID.in(dataSourceIds));
-        }
-
-        return select
-            .where(TAG.NAME.containsIgnoreCase(StringUtils.isNotEmpty(facetQuery) ? facetQuery : ""))
-            .and(TAG.IS_DELETED.isFalse())
-            .groupBy(TAG.ID, TAG.NAME)
-            .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
-            .limit(size)
-            .offset((page - 1) * size)
-            .fetchStream()
-            .collect(FACET_COLLECTOR);
-    }
-
-    @Override
-    public Map<SearchFilterId, Long> getTypeFacet(final FacetStateDto state) {
-        var select = dslContext.select(DATA_ENTITY_TYPE.ID, DATA_ENTITY_TYPE.NAME, countDistinct(DATA_ENTITY.ID))
-            .from(TYPE_ENTITY_RELATION)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_ID))
-            .join(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .leftJoin(DATA_ENTITY_TYPE).on(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(DATA_ENTITY_TYPE.ID))
-            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
-            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
-            .join(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-            .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID))
-            .where(facetStateConditions(state, true, true))
-            .and(DATA_ENTITY.HOLLOW.isFalse());
-
-        if (StringUtils.isNotEmpty(state.getQuery())) {
-            select = select.and(ftsCondition(state.getQuery()));
-        }
-
-        return select
-            .groupBy(DATA_ENTITY_TYPE.ID, DATA_ENTITY_TYPE.NAME)
-            .fetchStream()
-            .collect(FACET_COLLECTOR);
     }
 
     @Override
@@ -483,11 +301,12 @@ public class DataEntityRepositoryImpl
             .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
             .join(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
             .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID))
-            .where(facetStateConditions(state, true, true))
-            .and(DATA_ENTITY.HOLLOW.isFalse());
+            .where(jooqFTSHelper.facetStateConditions(state, true, true))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
-            query = query.and(ftsCondition(state.getQuery()));
+            query = query.and(jooqFTSHelper.ftsCondition(state.getQuery()));
         }
 
         if (owner != null) {
@@ -498,17 +317,10 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public Collection<DataEntityDimensionsDto> listByOddrns(final Collection<String> oddrns) {
-        return listByConfig(DataEntitySelectConfig.builder()
-            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
-            .build());
-    }
-
-    @Override
     public Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
-            .includeDetails(true)
+            .includeDimensionsAndDetails(true)
             .build();
 
         return enrichDataEntityDetailsDto(dataEntitySelect(config)
@@ -537,6 +349,7 @@ public class DataEntityRepositoryImpl
 
         DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(conditionValues)))
+            .includeDimensions(true)
             .includeHollow(!skipHollow);
 
         if (page != null && size != null) {
@@ -554,7 +367,8 @@ public class DataEntityRepositoryImpl
                                                     final Long subTypeId) {
         DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig
             .builder()
-            .joinSelectConditions(singletonList(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(typeId)))
+            .selectConditions(singletonList(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(typeId)))
+            .includeDimensions(true)
             .cteLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
 
         if (subTypeId != null) {
@@ -568,7 +382,8 @@ public class DataEntityRepositoryImpl
     @Override
     public List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
-            .joinSelectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
+            .selectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
+            .includeDimensions(true)
             .build();
 
         return dataEntitySelect(config)
@@ -585,7 +400,7 @@ public class DataEntityRepositoryImpl
                                                      final long ownerId,
                                                      final LineageStreamKind streamKind) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
-            .joinSelectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
+            .selectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
             .build();
 
         final Set<String> associatedOddrns = dataEntitySelect(config)
@@ -607,6 +422,7 @@ public class DataEntityRepositoryImpl
     public List<? extends DataEntityDto> listPopular(final int page, final int size) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
+            .includeDimensions(true)
             .orderBy(DATA_ENTITY.VIEW_COUNT.sort(SortOrder.DESC))
             .build();
 
@@ -617,12 +433,29 @@ public class DataEntityRepositoryImpl
     public Optional<DataEntityDetailsDto> getDetails(final long id) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
-            .includeDetails(true)
+            .includeDimensionsAndDetails(true)
             .build();
 
         return dataEntitySelect(config)
             .fetchOptional(this::mapDetailsRecord)
             .map(this::enrichDataEntityDetailsDto);
+    }
+
+    @Override
+    public List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
+                                                                     final Integer page,
+                                                                     final Integer size) {
+        final var config = DataEntitySelectConfig
+            .builder()
+            .selectConditions(List.of(DATA_ENTITY.as(AGG_PARENT_ENTITY_FIELD).ID.eq(dataEntityGroupId)))
+            .includeDimensions(true)
+            .build();
+        return dataEntitySelect(config)
+            .limit(size)
+            .offset((page - 1) * size)
+            .fetchStream()
+            .map(this::mapDimensionRecord)
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -638,7 +471,7 @@ public class DataEntityRepositoryImpl
                                                      final int size,
                                                      final OwnerPojo owner) {
         final Pair<List<Condition>, List<Condition>> conditionsPair =
-            resultFacetStateConditions(state, state.isMyObjects());
+            jooqFTSHelper.resultFacetStateConditions(state, state.isMyObjects());
 
         final List<Condition> joinConditions = new ArrayList<>(conditionsPair.getRight());
 
@@ -649,7 +482,8 @@ public class DataEntityRepositoryImpl
         DataEntitySelectConfig.DataEntitySelectConfigBuilder builder = DataEntitySelectConfig
             .builder()
             .cteSelectConditions(conditionsPair.getLeft())
-            .joinSelectConditions(joinConditions);
+            .includeDimensions(true)
+            .selectConditions(joinConditions);
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
             builder = builder.fts(
@@ -723,7 +557,8 @@ public class DataEntityRepositoryImpl
             .select(DATA_ENTITY.ID.as(dataEntityId))
             .from(DATA_ENTITY)
             .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(DATA_ENTITY.HOLLOW.isFalse());
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
 
         jooqFTSHelper
             .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR)
@@ -761,7 +596,9 @@ public class DataEntityRepositoryImpl
             .select(vectorFields)
             .from(NAMESPACE)
             .join(DATA_SOURCE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
-            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
+            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
             .where(DATA_ENTITY.ID.in(dataEntityIds))
             .and(NAMESPACE.IS_DELETED.isFalse());
 
@@ -780,7 +617,9 @@ public class DataEntityRepositoryImpl
             .select(DATA_ENTITY.ID.as(dataEntityId))
             .select(vectorFields)
             .from(DATA_SOURCE)
-            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID)).and(DATA_ENTITY.HOLLOW.isFalse())
+            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
             .where(DATA_ENTITY.ID.in(dataEntityIds))
             .and(DATA_SOURCE.IS_DELETED.isFalse());
 
@@ -805,6 +644,7 @@ public class DataEntityRepositoryImpl
             .join(METADATA_FIELD_VALUE).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
             .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
             .where(DATA_ENTITY.ID.in(dataEntityIds))
             .and(METADATA_FIELD.IS_DELETED.isFalse());
 
@@ -828,7 +668,7 @@ public class DataEntityRepositoryImpl
             .select(SEARCH_ENTRYPOINT.SEARCH_VECTOR.as(searchVectorAlias))
             .from(SEARCH_ENTRYPOINT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-            .where(ftsCondition(query))
+            .where(jooqFTSHelper.ftsCondition(query))
             .and(DATA_ENTITY.HOLLOW.isFalse())
             .limit(SUGGESTION_LIMIT);
 
@@ -854,13 +694,51 @@ public class DataEntityRepositoryImpl
             .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .groupBy(selectFields)
             .orderBy(
-                ftsRanking(searchVectorAlias, query),
+                jooqFTSHelper.ftsRanking(searchVectorAlias, query),
                 deCte.field(DATA_ENTITY.INTERNAL_NAME),
                 deCte.field(DATA_ENTITY.EXTERNAL_NAME)
             )
             .fetchStream()
             .map(this::mapDtoRecord)
             .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<DataEntityGroupLineageDto> getDataEntityGroupLineage(final Long dataEntityGroupId) {
+        final List<String> entitiesOddrns = getDEGEntitiesOddrns(dataEntityGroupId);
+        if (CollectionUtils.isEmpty(entitiesOddrns)) {
+            return Optional.empty();
+        }
+
+        final Map<String, DataEntityDimensionsDto> dtoDict = listAllByOddrns(entitiesOddrns)
+            .stream()
+            .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
+
+        final List<LineagePojo> lineageRelations = getLineageRelations(entitiesOddrns);
+        final List<Set<String>> oddrnRelations = lineageRelations.stream()
+            .map(lineagePojo -> Set.of(lineagePojo.getChildOddrn(), lineagePojo.getParentOddrn()))
+            .collect(Collectors.toList());
+        final List<Set<String>> combinedOddrnsList = combineOddrnsInDEGLineage(oddrnRelations);
+
+        final List<DataEntityLineageStreamDto> items = combinedOddrnsList.stream()
+            .map(combinedOddrns -> {
+                final DataEntityLineageStreamDto dto = new DataEntityLineageStreamDto();
+                final List<DataEntityDimensionsDto> nodes = combinedOddrns.stream()
+                    .map(dtoDict::get)
+                    .toList();
+                dto.setNodes(nodes);
+                final List<Pair<Long, Long>> edges = combinedOddrns.stream()
+                    .flatMap(oddrn -> lineageRelations.stream()
+                        .filter(relations -> relations.getChildOddrn().equals(oddrn))
+                        .map(r -> Pair.of(
+                            dtoDict.get(r.getParentOddrn()).getDataEntity().getId(),
+                            dtoDict.get(r.getChildOddrn()).getDataEntity().getId()
+                        ))).toList();
+                dto.setEdges(edges);
+                return dto;
+            }).toList();
+
+        return Optional.of(new DataEntityGroupLineageDto(items));
     }
 
     @Override
@@ -897,6 +775,62 @@ public class DataEntityRepositoryImpl
             .upstream(getLineageStream(dtoDict, upstreamRelations))
             .downstream(getLineageStream(dtoDict, downstreamRelations))
             .build();
+    }
+
+    private List<Set<String>> combineOddrnsInDEGLineage(final List<Set<String>> oddrnRelations) {
+        final List<Set<String>> result = new ArrayList<>();
+        oddrnRelations.forEach(relations -> {
+            final Set<String> combinedRelations = result.stream()
+                .filter(rel -> rel.stream().anyMatch(relations::contains))
+                .findFirst()
+                .orElseGet(() -> {
+                    final Set<String> newRelationSet = new HashSet<>();
+                    result.add(newRelationSet);
+                    return newRelationSet;
+                });
+            combinedRelations.addAll(relations);
+        });
+        if (result.size() == oddrnRelations.size()) {
+            return result;
+        } else {
+            return combineOddrnsInDEGLineage(result);
+        }
+    }
+
+    private List<String> getDEGEntitiesOddrns(final long dataEntityGroupId) {
+        final Name cteName = name("t");
+        final Field<String> tDataEntityOddrn = field("t.data_entity_oddrn", String.class);
+
+        final String groupOddrn = dslContext.select(DATA_ENTITY.ODDRN)
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ID.eq(dataEntityGroupId))
+            .fetchOptionalInto(String.class)
+            .orElseThrow(NotFoundException::new);
+
+        final var cte = cteName.as(dslContext
+            .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
+            .from(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn))
+            .unionAll(
+                dslContext
+                    .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
+                    .from(GROUP_ENTITY_RELATIONS)
+                    .join(cteName).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(tDataEntityOddrn))
+            ));
+
+        return dslContext.withRecursive(cte)
+            .selectDistinct(cte.field(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
+            .from(cte.getName())
+            .fetchStreamInto(String.class)
+            .collect(Collectors.toList());
+    }
+
+    private List<LineagePojo> getLineageRelations(final List<String> oddrns) {
+        return dslContext.selectDistinct(LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN)
+            .from(LINEAGE)
+            .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.CHILD_ODDRN.in(oddrns)))
+            .fetchStreamInto(LineagePojo.class)
+            .collect(Collectors.toList());
     }
 
     private void calculateStructureVectors(final Collection<Long> dataEntityIds) {
@@ -1020,39 +954,13 @@ public class DataEntityRepositoryImpl
     private SelectLimitStep<Record> dataEntitySelect(final DataEntitySelectConfig config) {
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
         final Field<?> searchVectorAlias = field("sv_alias");
-        final DataEntitySelectConfig.Fts ftsConfig = config.getFts();
+        final DataEntity groupsAlias = DATA_ENTITY.as(AGG_GROUP_ENTITY_FIELD);
+        final DataEntity subGroupEntitiesAlias = DATA_ENTITY.as(AGG_SUB_GROUP_ENTITY_FIELD);
+        final GroupEntityRelations groupsRelations = GROUP_ENTITY_RELATIONS.as("groups");
+        final GroupParentGroupRelations childrenRelations = GROUP_PARENT_GROUP_RELATIONS.as("children");
+        final DataEntity parentAlias = DATA_ENTITY.as(AGG_PARENT_ENTITY_FIELD);
 
-        Select<Record> dataEntitySelect;
-
-        if (ftsConfig != null) {
-            dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
-                .select(SEARCH_ENTRYPOINT.SEARCH_VECTOR.as(searchVectorAlias))
-                .from(SEARCH_ENTRYPOINT)
-                .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-                .where(ListUtils.emptyIfNull(config.getCteSelectConditions()))
-                .and(ftsCondition(ftsConfig.getQuery()));
-        } else {
-            dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
-                .from(DATA_ENTITY)
-                .where(ListUtils.emptyIfNull(config.getCteSelectConditions()));
-        }
-
-        if (config.getOrderBy() != null) {
-            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
-                .orderBy(config.getOrderBy());
-        }
-
-        if (!config.isIncludeHollow()) {
-            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
-                .and(DATA_ENTITY.HOLLOW.isFalse());
-        }
-
-        if (config.getCteLimitOffset() != null) {
-            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
-                .limit(config.getCteLimitOffset().getLimit())
-                .offset(config.getCteLimitOffset().getOffset());
-        }
-
+        final Select<Record> dataEntitySelect = getDataEntityCTESelect(config, searchVectorAlias);
         final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
 
         final List<Field<?>> selectFields = Stream
@@ -1069,17 +977,29 @@ public class DataEntityRepositoryImpl
             .asMaterialized(dataEntitySelect)
             .select(selectFields)
             .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
-            .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
-            .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
-            .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
-            .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
             .select(jsonArrayAgg(field(ALERT.asterisk().toString())).as(AGG_ALERT_FIELD));
 
-        if (config.isIncludeDetails()) {
+        if (config.isIncludeDimensionsAndDetails()) {
             selectStep = selectStep
+                .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
+                .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
+                .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
+                .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
                 .select(jsonArrayAgg(field(DATASET_VERSION.asterisk().toString())).as(AGG_DSV_FIELD))
                 .select(jsonArrayAgg(field(METADATA_FIELD.asterisk().toString())).as(AGG_MF_FIELD))
-                .select(jsonArrayAgg(field(METADATA_FIELD_VALUE.asterisk().toString())).as(AGG_MFV_FIELD));
+                .select(jsonArrayAgg(field(METADATA_FIELD_VALUE.asterisk().toString())).as(AGG_MFV_FIELD))
+                .select(jsonArrayAgg(field(groupsAlias.asterisk().toString())).as(AGG_GROUP_ENTITY_FIELD))
+                .select(jsonArrayAgg(field(subGroupEntitiesAlias.asterisk().toString())).as(AGG_SUB_GROUP_ENTITY_FIELD))
+                .select(jsonArrayAgg(field(parentAlias.asterisk().toString())).as(AGG_PARENT_ENTITY_FIELD))
+                .select(countDistinct(field(childrenRelations.GROUP_ODDRN)).as(CHILDREN_COUNT_FIELD));
+        } else if (config.isIncludeDimensions()) {
+            selectStep = selectStep
+                .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
+                .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
+                .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
+                .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
+                .select(jsonArrayAgg(field(subGroupEntitiesAlias.asterisk().toString())).as(AGG_SUB_GROUP_ENTITY_FIELD))
+                .select(countDistinct(field(childrenRelations.GROUP_ODDRN)).as(CHILDREN_COUNT_FIELD));
         }
 
         SelectOnConditionStep<Record> joinStep = selectStep
@@ -1087,30 +1007,53 @@ public class DataEntityRepositoryImpl
             .leftJoin(TYPE_ENTITY_RELATION).on(deCte.field(DATA_ENTITY.ID).eq(TYPE_ENTITY_RELATION.DATA_ENTITY_ID))
             .leftJoin(DATA_ENTITY_TYPE).on(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(DATA_ENTITY_TYPE.ID))
             .leftJoin(DATA_ENTITY_SUBTYPE).on(deCte.field(DATA_ENTITY.SUBTYPE_ID).eq(DATA_ENTITY_SUBTYPE.ID))
-            .leftJoin(TAG_TO_DATA_ENTITY).on(deCte.field(DATA_ENTITY.ID).eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
-            .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .leftJoin(DATA_SOURCE).on(deCte.field(DATA_ENTITY.DATA_SOURCE_ID).eq(DATA_SOURCE.ID))
             .leftJoin(NAMESPACE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
-            .leftJoin(OWNERSHIP).on(deCte.field(DATA_ENTITY.ID).eq(OWNERSHIP.DATA_ENTITY_ID))
-            .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
-            .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
             .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)));
 
-        if (config.isIncludeDetails()) {
-            joinStep = joinStep
+        if (config.isIncludeDimensionsAndDetails()) {
+            joinStep = addDimensionJoins(joinStep, deCte, parentAlias, subGroupEntitiesAlias, childrenRelations)
                 .leftJoin(DATASET_VERSION).on(deCte.field(DATA_ENTITY.ODDRN).eq(DATASET_VERSION.DATASET_ODDRN))
                 .leftJoin(METADATA_FIELD_VALUE)
                 .on(deCte.field(DATA_ENTITY.ID).eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
-                .leftJoin(METADATA_FIELD).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID));
+                .leftJoin(METADATA_FIELD).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
+                .leftJoin(groupsRelations).on(groupsRelations.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
+                .leftJoin(groupsAlias).on(groupsRelations.GROUP_ODDRN.eq(groupsAlias.ODDRN));
+        } else if (config.isIncludeDimensions()) {
+            joinStep = addDimensionJoins(joinStep, deCte, parentAlias, subGroupEntitiesAlias, childrenRelations);
         }
 
         final SelectHavingStep<Record> groupByStep = joinStep
-            .where(ListUtils.emptyIfNull(config.getJoinSelectConditions()))
+            .where(ListUtils.emptyIfNull(config.getSelectConditions()))
             .groupBy(selectFields);
 
-        return ftsConfig != null
-            ? groupByStep.orderBy(ftsRanking(searchVectorAlias, ftsConfig.getQuery()))
+        return config.getFts() != null
+            ? groupByStep.orderBy(jooqFTSHelper.ftsRanking(searchVectorAlias, config.getFts().query()))
             : groupByStep;
+    }
+
+    private SelectOnConditionStep<Record> addDimensionJoins(final SelectOnConditionStep<Record> joinStep,
+                                                            final Table<Record> deCte,
+                                                            final DataEntity parentAlias,
+                                                            final DataEntity subGroupEntitiesAlias,
+                                                            final GroupParentGroupRelations childrenRelations) {
+        final GroupEntityRelations entitiesRelations = GROUP_ENTITY_RELATIONS.as("entities");
+        final GroupParentGroupRelations parentsRelations = GROUP_PARENT_GROUP_RELATIONS.as("parents");
+        return joinStep
+            .leftJoin(TAG_TO_DATA_ENTITY).on(deCte.field(DATA_ENTITY.ID).eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
+            .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
+            .leftJoin(OWNERSHIP).on(deCte.field(DATA_ENTITY.ID).eq(OWNERSHIP.DATA_ENTITY_ID))
+            .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
+            .leftJoin(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
+
+            .leftJoin(entitiesRelations)
+            .on(entitiesRelations.GROUP_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
+            .leftJoin(subGroupEntitiesAlias)
+            .on(entitiesRelations.DATA_ENTITY_ODDRN.eq(subGroupEntitiesAlias.ODDRN))
+            .leftJoin(parentsRelations).on(parentsRelations.GROUP_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
+            .leftJoin(parentAlias).on(parentsRelations.PARENT_GROUP_ODDRN.eq(parentAlias.ODDRN))
+
+            .leftJoin(childrenRelations).on(childrenRelations.PARENT_GROUP_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)));
     }
 
     private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto detailsDto) {
@@ -1159,49 +1102,40 @@ public class DataEntityRepositoryImpl
             switch (t) {
                 case DATA_SET:
                     final DataSetAttributes dsa = (DataSetAttributes) attrs;
-
-                    final DataSetDetailsDto dataSetDetailsDto = dto.getDataSetDetailsDto() != null
-                        ? dto.getDataSetDetailsDto()
-                        : new DataSetDetailsDto();
-
-                    dataSetDetailsDto.setRowsCount(dsa.getRowsCount());
-                    dataSetDetailsDto.setFieldsCount(dsa.getFieldsCount());
-                    dataSetDetailsDto.setConsumersCount(dsa.getConsumersCount());
-
-                    dto.setDataSetDetailsDto(dataSetDetailsDto);
+                    final Collection<DatasetVersionPojo> datasetVersions =
+                        Optional.ofNullable(dto.getDataSetDetailsDto())
+                            .map(DataEntityDetailsDto.DataSetDetailsDto::datasetVersions)
+                            .orElse(null);
+                    dto.setDataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(
+                        dsa.getRowsCount(), dsa.getFieldsCount(), dsa.getConsumersCount(), datasetVersions
+                    ));
 
                     break;
                 case DATA_TRANSFORMER:
                     final DataTransformerAttributes dta = (DataTransformerAttributes) attrs;
-
-                    dto.setDataTransformerDetailsDto(DataTransformerDetailsDto.builder()
-                        .sourceList(fetcher.apply(dta.getSourceOddrnList()))
-                        .targetList(fetcher.apply(dta.getTargetOddrnList()))
-                        .sourceCodeUrl(dta.getSourceCodeUrl())
-                        .build());
+                    final DataTransformerDetailsDto dataTransformerDetailsDto =
+                        new DataTransformerDetailsDto(fetcher.apply(dta.getSourceOddrnList()),
+                            fetcher.apply(dta.getTargetOddrnList()),
+                            dta.getSourceCodeUrl());
+                    dto.setDataTransformerDetailsDto(dataTransformerDetailsDto);
 
                     break;
                 case DATA_QUALITY_TEST:
                     final DataQualityTestAttributes dqta = (DataQualityTestAttributes) attrs;
-
-                    dto.setDataQualityTestDetailsDto(DataQualityTestDetailsDto.builder()
-                        .suiteName(dqta.getSuiteName())
-                        .suiteUrl(dqta.getSuiteUrl())
-                        .datasetList(fetcher.apply(dqta.getDatasetOddrnList()))
-                        .linkedUrlList(dqta.getLinkedUrlList())
-                        .latestTaskRun(dataEntityTaskRunRepository
-                            .getLatestRun(dto.getDataEntity().getOddrn())
-                            .orElse(null))
-                        .expectationType(dqta.getExpectation().getType())
-                        .expectationParameters(dqta.getExpectation().getAdditionalProperties())
-                        .build());
+                    final DataEntityTaskRunPojo latestTaskRun = dataEntityTaskRunRepository
+                        .getLatestRun(dto.getDataEntity().getOddrn())
+                        .orElse(null);
+                    final DataQualityTestDetailsDto dataQualityTestDetailsDto =
+                        new DataQualityTestDetailsDto(dqta.getSuiteName(), dqta.getSuiteUrl(),
+                            fetcher.apply(dqta.getDatasetOddrnList()), dqta.getLinkedUrlList(),
+                            dqta.getExpectation().getType(), latestTaskRun,
+                            dqta.getExpectation().getAdditionalProperties());
+                    dto.setDataQualityTestDetailsDto(dataQualityTestDetailsDto);
                     break;
                 case DATA_CONSUMER:
                     final DataConsumerAttributes dca = (DataConsumerAttributes) attrs;
 
-                    dto.setDataConsumerDetailsDto(DataConsumerDetailsDto.builder()
-                        .inputList(fetcher.apply(dca.getInputListOddrn()))
-                        .build());
+                    dto.setDataConsumerDetailsDto(new DataConsumerDetailsDto(fetcher.apply(dca.getInputListOddrn())));
                     break;
 
                 case DATA_INPUT:
@@ -1236,7 +1170,6 @@ public class DataEntityRepositoryImpl
     private DataEntityDimensionsDto mapDimensionRecord(final Record r) {
         final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
         final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
-
         final Set<DataEntityTypePojo> types =
             jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class);
 
@@ -1250,15 +1183,20 @@ public class DataEntityRepositoryImpl
             .ownership(extractOwnershipRelation(r))
             .types(types)
             .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
+            .groupsDto(mapGroupDimensionsDto(r))
             .build();
     }
 
     private DataEntityDetailsDto mapDetailsRecord(final Record r) {
         final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
         final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
-
         final Set<DataEntityTypePojo> types =
             jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class);
+        final Set<DataEntityPojo> groups = jooqRecordHelper.extractAggRelation(r, AGG_GROUP_ENTITY_FIELD,
+            DataEntityPojo.class);
+        final Set<DataEntityPojo> parents = jooqRecordHelper.extractAggRelation(r, AGG_PARENT_ENTITY_FIELD,
+            DataEntityPojo.class);
+        final boolean hasChildren = r.get(CHILDREN_COUNT_FIELD, Integer.class) != 0;
 
         // ad-hoc solution until https://github.com/opendatadiscovery/odd-platform/issues/123 is fixed
         final Set<DatasetVersionPojo> datasetVersions = jooqRecordHelper
@@ -1272,16 +1210,26 @@ public class DataEntityRepositoryImpl
             .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
+            .dataEntityGroups(Sets.union(groups, parents))
             .specificAttributes(extractSpecificAttributes(dataEntity, types))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
             .types(types)
             .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
-            .dataSetDetailsDto(DataSetDetailsDto.builder()
-                .datasetVersions(datasetVersions)
-                .build())
+            .dataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(datasetVersions))
             .metadata(extractMetadataRelation(r))
+            .dataEntityGroupDimensionsDto(mapGroupDimensionsDto(r))
+            .dataEntityGroupDetailsDto(
+                new DataEntityDetailsDto.DataEntityGroupDetailsDto(hasChildren))
             .build();
+    }
+
+    private DataEntityDimensionsDto.DataEntityGroupDimensionsDto mapGroupDimensionsDto(final Record r) {
+        final Set<DataEntityPojo> entities = jooqRecordHelper.extractAggRelation(r, AGG_SUB_GROUP_ENTITY_FIELD,
+            DataEntityPojo.class);
+        final Integer childrenCount = r.get(CHILDREN_COUNT_FIELD, Integer.class);
+        return new DataEntityDimensionsDto.DataEntityGroupDimensionsDto(
+            entities, entities.size() + childrenCount);
     }
 
     private List<MetadataDto> extractMetadataRelation(final Record r) {
@@ -1366,118 +1314,57 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
-    private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
-        return filters.stream()
-            .map(SearchFilterDto::getEntityId)
-            .collect(Collectors.toList());
-    }
+    private Select<Record> getDataEntityCTESelect(final DataEntitySelectConfig config,
+                                                  final Field<?> searchVectorAlias) {
+        Select<Record> dataEntitySelect;
 
-    private Condition ftsCondition(final String query) {
-        final Field<Object> conditionField = field(
-            "? @@ plainto_tsquery(?)",
-            SEARCH_ENTRYPOINT.SEARCH_VECTOR,
-            String.format("%s:*", query)
-        );
-
-        return condition(conditionField.toString());
-    }
-
-    private OrderField<Object> ftsRanking(final Field<?> vectorField, final String query) {
-        requireNonNull(vectorField);
-
-        return field(
-            "ts_rank_cd(?, plainto_tsquery(?))",
-            vectorField,
-            String.format("%s:*", query)
-        ).desc();
-    }
-
-    private List<Condition> facetStateConditions(final FacetStateDto state,
-                                                 final boolean extended,
-                                                 final boolean skipTypeCondition) {
-        return state.getState().entrySet().stream()
-            .filter(e -> {
-                if (skipTypeCondition) {
-                    return !e.getKey().equals(FacetType.TYPES);
-                }
-
-                return true;
-            })
-            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), extended))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-    }
-
-    // TODO: ad-hoc
-    private Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state,
-                                                                              final boolean skipTypeCondition) {
-        final List<Condition> joinConditions = state.getState().entrySet().stream()
-            .filter(e -> {
-                if (skipTypeCondition) {
-                    return !e.getKey().equals(FacetType.TYPES);
-                }
-
-                return true;
-            })
-            .filter(e -> !e.getKey().equals(FacetType.DATA_SOURCES))
-            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-
-        final List<Condition> cteConditions = state.getState().entrySet().stream()
-            .filter(e -> e.getKey().equals(FacetType.DATA_SOURCES))
-            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-
-        return Pair.of(cteConditions, joinConditions);
-    }
-
-    private Condition compileFacetCondition(final FacetType facetType,
-                                            final List<SearchFilterDto> filters,
-                                            final boolean extended) {
-        final Map<FacetType, Function<List<SearchFilterDto>, Condition>> conditionsDict = extended
-            ? EXTENDED_CONDITIONS
-            : CONDITIONS;
-
-        final Function<List<SearchFilterDto>, Condition> function = conditionsDict.get(facetType);
-
-        if (function == null || filters == null || filters.isEmpty()) {
-            return null;
+        if (config.getFts() != null) {
+            dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
+                .select(SEARCH_ENTRYPOINT.SEARCH_VECTOR.as(searchVectorAlias))
+                .from(SEARCH_ENTRYPOINT)
+                .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
+                .where(ListUtils.emptyIfNull(config.getCteSelectConditions()))
+                .and(jooqFTSHelper.ftsCondition(config.getFts().query()));
+        } else {
+            dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
+                .from(DATA_ENTITY)
+                .where(ListUtils.emptyIfNull(config.getCteSelectConditions()));
         }
 
-        return function.apply(filters);
+        if (config.getOrderBy() != null) {
+            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
+                .orderBy(config.getOrderBy());
+        }
+
+        if (!config.isIncludeHollow()) {
+            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
+                .and(DATA_ENTITY.HOLLOW.isFalse());
+        }
+
+        if (config.getCteLimitOffset() != null) {
+            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
+                .limit(config.getCteLimitOffset().limit())
+                .offset(config.getCteLimitOffset().offset());
+        }
+        return dataEntitySelect;
     }
 
-    @NoArgsConstructor
-    @AllArgsConstructor
     @Builder
     @Data
     private static class DataEntitySelectConfig {
         private List<Condition> cteSelectConditions;
         private LimitOffset cteLimitOffset;
-        private List<Condition> joinSelectConditions;
-        private boolean includeDetails;
+        private List<Condition> selectConditions;
+        private boolean includeDimensions;
+        private boolean includeDimensionsAndDetails;
         private boolean includeHollow;
         private SortField<?> orderBy;
         private Fts fts;
 
-        @RequiredArgsConstructor
-        @Data
-        private static class LimitOffset {
-            private final int limit;
-            private final int offset;
+        private record LimitOffset(int limit, int offset) {
         }
 
-        @RequiredArgsConstructor
-        @Data
-        private static class Fts {
-            private final Field<?> vectorField;
-            private final String query;
-        }
-
-        public static DataEntitySelectConfig emptyConfig() {
-            return new DataEntitySelectConfig();
+        private record Fts(Field<?> vectorField, String query) {
         }
     }
 }

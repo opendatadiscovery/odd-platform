@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
@@ -8,7 +7,6 @@ import {
   getDataEntityIsDataset,
 } from 'redux/selectors/dataentity.selectors';
 import Overview from './Overview';
-import { styles } from './OverviewStyles';
 
 interface RouteProps {
   dataEntityId: string;
@@ -32,7 +30,4 @@ const mapStateToProps = (
 
 const mapDispatchToProps = {};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Overview));
+export default connect(mapStateToProps, mapDispatchToProps)(Overview);

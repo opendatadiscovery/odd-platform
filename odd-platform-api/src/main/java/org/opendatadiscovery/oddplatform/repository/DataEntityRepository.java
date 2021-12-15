@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
@@ -15,7 +16,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 
 public interface DataEntityRepository extends CRUDRepository<DataEntityDimensionsDto> {
-    Collection<DataEntityDimensionsDto> listByOddrns(final Collection<String> oddrns);
 
     Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns);
 
@@ -41,6 +41,8 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
                                               final int lineageDepth,
                                               final LineageStreamKind streamKind);
 
+    Optional<DataEntityGroupLineageDto> getDataEntityGroupLineage(final Long dataEntityGroupId);
+
     Page<DataEntityDimensionsDto> findByState(final FacetStateDto state, final int page, final int size);
 
     Page<DataEntityDimensionsDto> findByState(final FacetStateDto state,
@@ -55,23 +57,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     Optional<Long> incrementViewCount(final long id);
 
     void createHollow(final Collection<String> oddrns);
-
-    Map<SearchFilterId, Long> getSubtypeFacet(final String facetQuery,
-                                              final int page,
-                                              final int size,
-                                              final FacetStateDto state);
-
-    Map<SearchFilterId, Long> getOwnerFacet(final String facetQuery,
-                                            final int page,
-                                            final int size,
-                                            final FacetStateDto state);
-
-    Map<SearchFilterId, Long> getTagFacet(final String facetQuery,
-                                          final int page,
-                                          final int size,
-                                          final FacetStateDto state);
-
-    Map<SearchFilterId, Long> getTypeFacet(final FacetStateDto state);
 
     Long countByState(final FacetStateDto state);
 
@@ -94,4 +79,7 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     void calculateMetadataVectors(final Collection<Long> ids);
 
     List<DataEntityDto> getQuerySuggestions(final String query);
+
+    List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
+                                                              final Integer page, final Integer size);
 }

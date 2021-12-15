@@ -31,6 +31,9 @@ export const dataEntityAlertsPath = (datasetId: number) =>
 export const dataEntityHistoryPath = (datasetId: number) =>
   `${dataEntityDetailsPath(datasetId)}/history`;
 
+export const dataEntityLinkedItemsPath = (datasetId: number) =>
+  `${dataEntityDetailsPath(datasetId)}/linked-items`;
+
 // Test reports details
 export const testReportDetailsOverviewPath = (
   datasetId: number,

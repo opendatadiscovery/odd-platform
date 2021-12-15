@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.attributes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;

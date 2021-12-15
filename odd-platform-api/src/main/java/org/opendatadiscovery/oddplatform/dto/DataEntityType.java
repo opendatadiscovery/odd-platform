@@ -7,5 +7,6 @@ public enum DataEntityType {
     DATA_QUALITY_TEST,
     DATA_QUALITY_TEST_RUN,
     DATA_CONSUMER,
-    DATA_INPUT
+    DATA_INPUT,
+    DATA_ENTITY_GROUP
 }

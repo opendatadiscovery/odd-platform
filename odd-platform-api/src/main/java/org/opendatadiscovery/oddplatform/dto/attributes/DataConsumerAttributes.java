@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.attributes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;
@@ -9,12 +9,12 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-public class DataInputAttributes extends DataEntityAttributes {
-    @JsonProperty("output_list")
-    private Set<String> outputListOddrn;
+public class DataConsumerAttributes extends DataEntityAttributes {
+    @JsonProperty("input_list")
+    private Set<String> inputListOddrn;
 
     @Override
     public Set<String> getDependentOddrns() {
-        return outputListOddrn;
+        return inputListOddrn;
     }
 }

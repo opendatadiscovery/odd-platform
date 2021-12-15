@@ -8,23 +8,27 @@ import MoreIcon from 'components/shared/Icons/MoreIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { styles, StylesType } from './ResultItemTruncatedCellStyles';
+import {
+  styles,
+  StylesType,
+} from 'components/shared/TruncatedCell/TruncatedCellStyles';
 
 type TruncatedCellType =
   | 'sourceList'
   | 'targetList'
   | 'inputList'
   | 'datasetsList'
-  | 'linkedUrlList';
+  | 'linkedUrlList'
+  | 'entities';
 
-interface ResultItemProps extends StylesType {
-  searchResult: DataEntity;
+interface TruncatedCellProps extends StylesType {
+  dataEntity: DataEntity;
   truncatedCellType: TruncatedCellType;
 }
 
-const ResultItemTruncatedCell: React.FC<ResultItemProps> = ({
+const TruncatedCell: React.FC<TruncatedCellProps> = ({
   classes,
-  searchResult,
+  dataEntity,
   truncatedCellType,
 }) => {
   const [isMenuOpen, setIsMenuOpen] = React.useState<boolean>(false);
@@ -44,7 +48,7 @@ const ResultItemTruncatedCell: React.FC<ResultItemProps> = ({
           icon={<MoreIcon />}
           edge="end"
           aria-label=""
-          aria-controls={`menu-${menuName}-${searchResult.id}`}
+          aria-controls={`menu-${menuName}-${dataEntity.id}`}
           aria-haspopup="true"
           onClick={(event: MouseEvent) => {
             event.stopPropagation();
@@ -56,7 +60,7 @@ const ResultItemTruncatedCell: React.FC<ResultItemProps> = ({
           // getContentAnchorEl={null}
           anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
           transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-          id={`menu-${menuName}-${searchResult.id}`}
+          id={`menu-${menuName}-${dataEntity.id}`}
           keepMounted
           open={isMenuOpen}
           onClose={() => setIsMenuOpen(false)}
@@ -100,14 +104,14 @@ const ResultItemTruncatedCell: React.FC<ResultItemProps> = ({
       lineHeight="16px"
       ellipsis={dataRefListEllipsis(
         truncatedCellType,
-        searchResult[truncatedCellType]
+        dataEntity[truncatedCellType]
       )}
     >
       <div className={classes.truncatedList}>
-        {searchResult[truncatedCellType]?.map(getTruncateMarkupAtom)}
+        {dataEntity[truncatedCellType]?.map(getTruncateMarkupAtom)}
       </div>
     </TruncateMarkup>
   );
 };
 
-export default withStyles(styles)(ResultItemTruncatedCell);
+export default withStyles(styles)(TruncatedCell);

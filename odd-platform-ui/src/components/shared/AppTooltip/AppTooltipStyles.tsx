@@ -17,6 +17,7 @@ interface TooltipStyleProps {
 
 interface ChildrenContainerProps {
   $isCursorPointer: boolean;
+  $isOverflowed: boolean;
 }
 
 const getTooltipStylesByType = (
@@ -65,7 +66,9 @@ export const AppTooltip = styled(
 
 export const ChildrenContainer = styled('div', {
   shouldForwardProp: propsChecker,
-})<ChildrenContainerProps>(({ theme, $isCursorPointer }) => ({
-  cursor: $isCursorPointer ? 'pointer' : 'auto',
-  overflow: 'hidden',
-}));
+})<ChildrenContainerProps>(
+  ({ theme, $isCursorPointer, $isOverflowed }) => ({
+    cursor: $isCursorPointer ? 'pointer' : 'auto',
+    overflow: $isOverflowed ? 'hidden' : 'initial',
+  })
+);

@@ -38,6 +38,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
       <S.Value
         $runStatus={runStatus}
         $valueColor={valueColor}
+        $inline={inline}
         variant={variant}
         noWrap
       >

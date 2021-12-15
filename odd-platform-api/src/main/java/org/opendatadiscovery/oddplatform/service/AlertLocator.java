@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
-import org.opendatadiscovery.oddplatform.dto.IngestionTaskRun;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 
 public interface AlertLocator {

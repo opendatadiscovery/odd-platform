@@ -29,9 +29,8 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { StylesType } from './OwnershipFormStyles';
 
-interface OwnershipFormProps extends StylesType {
+interface OwnershipFormProps {
   dataEntityId: number;
   dataEntityOwnership?: Ownership;
   ownerEditBtn: JSX.Element;
@@ -49,7 +48,6 @@ interface OwnershipFormProps extends StylesType {
 }
 
 const OwnershipForm: React.FC<OwnershipFormProps> = ({
-  classes,
   dataEntityId,
   dataEntityOwnership,
   ownerEditBtn,
@@ -263,7 +261,6 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
     <form
       id="owner-add-form"
       onSubmit={methods.handleSubmit(ownershipUpdate)}
-      className={classes.form}
     >
       {dataEntityOwnership ? (
         <LabeledInfoItem inline label="Owner:" labelWidth="auto">
@@ -360,6 +357,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
             renderInput={params => (
               <AppTextField
                 {...params}
+                sx={{ mt: 1.5 }}
                 ref={params.InputProps.ref}
                 label="Role"
                 placeholder="Search role"
