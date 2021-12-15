@@ -13,6 +13,7 @@ interface AppTooltipProps
   type?: S.TooltipColorTypes;
   maxWidth?: number;
   checkForOverflow?: boolean;
+  isOverflowed?: boolean;
 }
 
 const AppTooltip: React.FC<AppTooltipProps> = ({
@@ -23,6 +24,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   type = 'light',
   maxWidth = 320,
   checkForOverflow = true,
+  isOverflowed = true,
   sx,
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
@@ -36,7 +38,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
       const { scrollWidth, clientWidth } = el;
       setHover(!hoverStatus && scrollWidth > clientWidth);
     }
-  }, [childrenRef, childrenRef.current, setHover]);
+  }, [children, childrenRef, childrenRef.current]);
 
   return (
     <S.AppTooltip
@@ -55,6 +57,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
         }}
         onMouseLeave={() => setOpen(false)}
         $isCursorPointer={hoverStatus}
+        $isOverflowed={isOverflowed}
         ref={childrenRef}
       >
         {children}

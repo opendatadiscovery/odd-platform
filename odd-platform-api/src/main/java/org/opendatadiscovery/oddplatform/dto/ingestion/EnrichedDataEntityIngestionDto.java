@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.ingestion;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,7 +22,7 @@ public class EnrichedDataEntityIngestionDto extends DataEntityIngestionDto {
             ingestionDto.createdAt, ingestionDto.updatedAt, ingestionDto.types, ingestionDto.subType,
             ingestionDto.metadata, ingestionDto.specificAttributesJson, ingestionDto.dataSet,
             ingestionDto.dataTransformer, ingestionDto.dataConsumer, ingestionDto.datasetQualityTest,
-            ingestionDto.dataInput);
+            ingestionDto.dataEntityGroup, ingestionDto.dataInput);
 
         this.id = id;
         this.updated = updated;

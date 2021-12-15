@@ -1,16 +1,14 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { Ownership } from 'generated-sources';
 import { RootState } from 'redux/interfaces';
 import {
-  fetchOwnersList,
   createDataEntityOwnership,
-  updateDataEntityOwnership,
+  fetchOwnersList,
   fetchRoleList,
+  updateDataEntityOwnership,
 } from 'redux/thunks/owners.thunks';
 import { getDataEntityOwnerUpdating } from 'redux/selectors/dataentity.selectors';
 import OwnershipForm from './OwnershipForm';
-import { styles } from './OwnershipFormStyles';
 
 const mapStateToProps = (
   state: RootState,
@@ -27,7 +25,4 @@ const mapDispatchToProps = {
   searchRoles: fetchRoleList,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(OwnershipForm));
+export default connect(mapStateToProps, mapDispatchToProps)(OwnershipForm);

@@ -2,11 +2,11 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
-import cx from 'classnames';
 import {
   dataEntityAlertsPath,
   dataEntityHistoryPath,
   dataEntityLineagePath,
+  dataEntityLinkedItemsPath,
   dataEntityOverviewPath,
   dataEntityTestReportPath,
   datasetStructurePath,
@@ -27,7 +27,9 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
-import { StylesType } from './DataEntityDetailsStyles';
+import LabelItem from 'components/shared/LabelItem/LabelItem';
+import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
+import * as S from './DataEntityDetailsStyles';
 import AlertBannersContainer from './AlertBanners/AlertBannersContainer';
 
 // lazy components
@@ -53,7 +55,7 @@ const QualityTestHistoryContainer = React.lazy(
   () => import('./QualityTestRunsHistory/QualityTestRunsHistoryContainer')
 );
 
-interface DataEntityDetailsProps extends StylesType {
+interface DataEntityDetailsProps {
   viewType: string;
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
@@ -67,7 +69,6 @@ interface DataEntityDetailsProps extends StylesType {
 }
 
 const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
-  classes,
   viewType,
   dataEntityId,
   dataEntityDetails,
@@ -77,6 +78,10 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityFetchingStatus,
   dataEntityFetchingError,
 }) => {
+  React.useEffect(() => {
+    fetchDataEntityDetails({ dataEntityId });
+  }, [fetchDataEntityDetails, dataEntityId]);
+
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
   React.useEffect(() => {
@@ -115,14 +120,16 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         link: dataEntityAlertsPath(dataEntityId),
         value: 'alerts',
       },
+      {
+        name: 'Linked items',
+        link: dataEntityLinkedItemsPath(dataEntityId),
+        hidden: !dataEntityDetails?.hasChildren,
+        value: 'linked-items',
+      },
     ]);
-  }, [dataEntityId, isQualityTest, isDataset]);
+  }, [dataEntityId, isQualityTest, isDataset, dataEntityDetails]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
-
-  React.useEffect(() => {
-    fetchDataEntityDetails({ dataEntityId });
-  }, [fetchDataEntityDetails, dataEntityId]);
 
   React.useEffect(() => {
     setSelectedTab(
@@ -131,21 +138,18 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   }, [tabs, viewType]);
 
   return (
-    <div className={classes.container}>
+    <S.Container>
       {dataEntityDetails && dataEntityFetchingStatus !== 'fetching' ? (
         <>
           <Grid
             container
             justifyContent="space-between"
             alignItems="center"
+            wrap="nowrap"
           >
-            <Grid item className={classes.caption}>
+            <S.Caption item>
               <Grid container item alignItems="center">
-                <Typography
-                  variant="h1"
-                  noWrap
-                  className={classes.entityTypeLabel}
-                >
+                <Typography variant="h1" noWrap sx={{ mr: 1 }}>
                   {dataEntityDetails.internalName
                     ? dataEntityDetails.internalName
                     : dataEntityDetails.externalName}
@@ -157,7 +161,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                     typeName={type.name}
                   />
                 ))}
-                <div className={cx(classes.internalNameEditBtnContainer)}>
+                <S.InternalNameEditBtnContainer>
                   <InternalNameFormDialogContainer
                     dataEntityId={dataEntityId}
                     btnCreateEl={
@@ -181,22 +185,22 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                       </AppButton>
                     }
                   />
-                </div>
+                </S.InternalNameEditBtnContainer>
               </Grid>
               {dataEntityDetails.internalName && (
                 <Grid container alignItems="center">
-                  <div className={classes.originalLabel}>Original</div>
-                  <Typography variant="body1" noWrap>
+                  <LabelItem labelName="Original" variant="body1" />
+                  <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
                     {dataEntityDetails.externalName}
                   </Typography>
                 </Grid>
               )}
-            </Grid>
-            <Grid item className={classes.updatedAt}>
+            </S.Caption>
+            <Grid container item alignItems="center" width="auto">
               {dataEntityDetails.updatedAt ? (
                 <>
                   <TimeGapIcon />
-                  <Typography variant="body1">
+                  <Typography variant="body1" sx={{ ml: 1 }}>
                     {formatDistanceToNowStrict(
                       dataEntityDetails.updatedAt,
                       {
@@ -209,14 +213,16 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             </Grid>
           </Grid>
           <AlertBannersContainer dataEntityId={dataEntityId} />
-          {tabs.length && selectedTab >= 0 ? (
-            <AppTabs
-              type="primary"
-              items={tabs}
-              selectedTab={selectedTab}
-              handleTabChange={() => {}}
-            />
-          ) : null}
+          <Grid sx={{ mt: 2 }}>
+            {tabs.length && selectedTab >= 0 ? (
+              <AppTabs
+                type="primary"
+                items={tabs}
+                selectedTab={selectedTab}
+                handleTabChange={() => {}}
+              />
+            ) : null}
+          </Grid>
         </>
       ) : null}
       {dataEntityFetchingStatus === 'fetching' ? (
@@ -266,6 +272,11 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
               path="/dataentities/:dataEntityId/history"
               component={QualityTestHistoryContainer}
             />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/linked-items"
+              component={LinkedItemsListContainer}
+            />
             <Redirect
               from="/dataentities/:dataEntityId"
               to="/dataentities/:dataEntityId/overview"
@@ -277,7 +288,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         fetchStatus={dataEntityFetchingStatus}
         error={dataEntityFetchingError}
       />
-    </div>
+    </S.Container>
   );
 };
 

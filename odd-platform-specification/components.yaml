@@ -272,6 +272,8 @@ components:
           $ref: '#/components/schemas/DataEntitySubType'
         tags:
           $ref: '#/components/schemas/TagList'
+        data_entity_groups:
+          $ref: '#/components/schemas/DataEntityRefList'
         created_at:
           type: string
           format: date-time
@@ -318,6 +320,7 @@ components:
         - $ref: '#/components/schemas/DataInputDetails'
         - $ref: '#/components/schemas/DataConsumerDetails'
         - $ref: '#/components/schemas/DataQualityTestDetails'
+        - $ref: '#/components/schemas/DataEntityGroupDetails'
 
     DataEntity:
       type: object
@@ -327,6 +330,7 @@ components:
         - $ref: '#/components/schemas/DataConsumer'
         - $ref: '#/components/schemas/DataInput'
         - $ref: '#/components/schemas/DataQualityTest'
+        - $ref: '#/components/schemas/DataEntityGroup'
 
     DataEntityType:
       type: object
@@ -344,6 +348,7 @@ components:
             - DATA_INPUT
             - DATA_QUALITY_TEST
             - DATA_QUALITY_TEST_RUN
+            - DATA_ENTITY_GROUP
       required:
         - id
         - name
@@ -363,12 +368,14 @@ components:
             - KAFKA_TOPIC
             - JOB
             - JOB_RUN
-            - EXPERIMENT
+            - ML_EXPERIMENT
             - ML_MODEL_TRAINING
             - ML_MODEL_INSTANCE
             - DASHBOARD
             - ML_MODEL_ARTIFACT
             - VIEW
+            - DAG
+            - GRAPH_NODE
             - API_CALL
             - MICROSERVICE
       required:
@@ -569,6 +576,25 @@ components:
           $ref: '#/components/schemas/PageInfo'
       required:
         - items
+
+    DataEntityGroup:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityBaseObject'
+        - type: object
+          properties:
+            items_count:
+              type: integer
+            entities:
+              $ref: '#/components/schemas/DataEntityRefList'
+
+    DataEntityGroupDetails:
+      allOf:
+        - $ref: '#/components/schemas/DataEntityGroup'
+        - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
+        - type: object
+          properties:
+            has_children:
+              type: boolean
 
     DataSetTestReport:
       type: object
@@ -1153,6 +1179,16 @@ components:
         - upstream
         - downstream
 
+    DataEntityGroupLineageList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityLineageStream'
+      required:
+        - items
+
     MetadataFieldType:
       type: string
       enum:
@@ -1459,6 +1495,14 @@ components:
 
     DatasetFieldIdParam:
       name: dataset_field_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    DataEntityGroupIdParam:
+      name: data_entity_group_id
       in: path
       required: true
       schema:

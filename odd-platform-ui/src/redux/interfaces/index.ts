@@ -6,3 +6,4 @@ export * from './datasetStructure';
 export * from './dataQualityTest';
 export * from './alert';
 export * from './common';
+export * from './dataEntityGroup';

@@ -8,25 +8,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityType;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
-import org.opendatadiscovery.oddplatform.dto.EnrichedDataEntityIngestionDto;
-import org.opendatadiscovery.oddplatform.dto.IngestionDataStructure;
-import org.opendatadiscovery.oddplatform.dto.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.dto.MetadataBinding;
 import org.opendatadiscovery.oddplatform.dto.MetadataFieldKey;
+import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
@@ -41,6 +43,8 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelat
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
@@ -51,6 +55,8 @@ import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepos
 import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetStructureRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetVersionRepository;
+import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
+import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
@@ -64,6 +70,7 @@ import reactor.core.publisher.Mono;
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_CONSUMER;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_ENTITY_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_SET;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_TRANSFORMER;
@@ -85,6 +92,8 @@ public class IngestionServiceImpl implements IngestionService {
     private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
     private final AlertRepository alertRepository;
+    private final GroupEntityRelationRepository groupEntityRelationRepository;
+    private final GroupParentGroupRelationRepository groupParentGroupRelationRepository;
 
     private final IngestionMapper ingestionMapper;
     private final DatasetFieldMapper datasetFieldMapper;
@@ -159,19 +168,19 @@ public class IngestionServiceImpl implements IngestionService {
             .map(de -> ingestionMapper.createIngestionDto(de, dataSourceId))
             .collect(Collectors.toMap(DataEntityIngestionDto::getOddrn, identity()));
 
-        final Map<String, DataEntityPojo> existingDtoDict = dataEntityRepository
+        final Map<String, DataEntityPojo> existingPojoDict = dataEntityRepository
             .listAllByOddrns(dtoDict.keySet()).stream()
             .map(DataEntityDto::getDataEntity)
             .collect(Collectors.toMap(DataEntityPojo::getOddrn, identity()));
 
         final Map<Boolean, List<DataEntityIngestionDto>> dtoPartitions = dtoDict.values()
             .stream()
-            .collect(Collectors.partitioningBy(d -> existingDtoDict.containsKey(d.getOddrn())));
+            .collect(Collectors.partitioningBy(d -> existingPojoDict.containsKey(d.getOddrn())));
 
         final List<EnrichedDataEntityIngestionDto> enrichedExistingDtos = dtoPartitions.get(true)
             .stream()
             .map(existingDto -> {
-                final DataEntityPojo existingPojo = existingDtoDict.get(existingDto.getOddrn());
+                final DataEntityPojo existingPojo = existingPojoDict.get(existingDto.getOddrn());
 
                 return new EnrichedDataEntityIngestionDto(
                     existingPojo.getId(),
@@ -181,10 +190,12 @@ public class IngestionServiceImpl implements IngestionService {
             })
             .collect(Collectors.toList());
 
-        dataEntityRepository.bulkUpdate(enrichedExistingDtos.stream()
+        final List<DataEntityDto> dataEntityDtos = enrichedExistingDtos.stream()
             .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .map(ingestionMapper::ingestDtoToDto)
-            .collect(Collectors.toList()));
+            .collect(Collectors.toList());
+
+        dataEntityRepository.bulkUpdate(dataEntityDtos);
 
         final List<EnrichedDataEntityIngestionDto> enrichedNewDtos = dataEntityRepository
             .bulkCreate(ingestionMapper.ingestDtoToDto(dtoPartitions.get(false)))
@@ -212,14 +223,27 @@ public class IngestionServiceImpl implements IngestionService {
             .flatMap(List::stream)
             .collect(Collectors.toList());
 
+        final List<GroupEntityRelationsPojo> groupEntityRelations = Stream
+            .concat(enrichedNewDtos.stream(), enrichedExistingDtos.stream())
+            .map(this::extractGroupEntityRelations)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
+
+        final List<GroupParentGroupRelationsPojo> groupParentGroupRelations = Stream
+            .concat(enrichedNewDtos.stream(), enrichedExistingDtos.stream())
+            .map(this::extractGroupParentGroupRelations)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .collect(Collectors.toList());
+
         final List<DataEntitySpecificAttributesDelta> dataTransformerAttrsDelta = dtoDict.entrySet()
             .stream()
-            .filter(e -> existingDtoDict.containsKey(e.getKey()))
+            .filter(e -> existingPojoDict.containsKey(e.getKey()))
             .map(e -> new DataEntitySpecificAttributesDelta(
                 e.getKey(),
                 e.getValue().getTypes(),
                 ObjectUtils.defaultIfNull(
-                    existingDtoDict.get(e.getKey()).getSpecificAttributes(),
+                    existingPojoDict.get(e.getKey()).getSpecificAttributes(),
                     JSONB.jsonb("{}")
                 ).data(),
                 e.getValue().getSpecificAttributesJson()
@@ -232,6 +256,8 @@ public class IngestionServiceImpl implements IngestionService {
             .taskRuns(taskRuns)
             .lineageRelations(lineageRelations)
             .dataQARelations(dataQATestRelations)
+            .groupEntityRelations(groupEntityRelations)
+            .groupParentGroupRelations(groupParentGroupRelations)
             .earlyAlerts(alertLocator.locateEarlyBackIncSchema(dataTransformerAttrsDelta))
             .build();
     }
@@ -248,8 +274,14 @@ public class IngestionServiceImpl implements IngestionService {
         dataEntityRepository.createHollow(hollowOddrns);
         dataQualityTestRelationRepository.createRelations(dataStructure.getDataQARelations());
         dataEntityTaskRunRepository.persist(dataEntityTaskRunMapper.mapTaskRun(dataStructure.getTaskRuns()));
+        ingestDataEntityGroupRelations(dataStructure);
 
         return dataStructure;
+    }
+
+    private void ingestDataEntityGroupRelations(final IngestionDataStructure dataStructure) {
+        groupEntityRelationRepository.createOrUpdateRelations(dataStructure.getGroupEntityRelations());
+        groupParentGroupRelationRepository.createRelations(dataStructure.getGroupParentGroupRelations());
     }
 
     private Mono<IngestionDataStructure> ingestCompanions(final IngestionDataStructure dataStructure) {
@@ -279,7 +311,7 @@ public class IngestionServiceImpl implements IngestionService {
         final Map<String, List<DatasetFieldPojo>> datasetFields = datasetDict.values().stream()
             .collect(Collectors.toMap(
                 EnrichedDataEntityIngestionDto::getOddrn,
-                dto -> datasetFieldMapper.mapFields(dto.getDataSet().getFieldList())
+                dto -> datasetFieldMapper.mapFields(dto.getDataSet().fieldList())
             ));
 
         return Mono.fromCallable(() -> datasetStructureRepository.bulkCreate(versions, datasetFields));
@@ -308,7 +340,7 @@ public class IngestionServiceImpl implements IngestionService {
         final Map<String, List<DatasetFieldPojo>> datasetFields = datasetDict.values().stream()
             .collect(Collectors.toMap(
                 EnrichedDataEntityIngestionDto::getOddrn,
-                dto -> datasetFieldMapper.mapFields(dto.getDataSet().getFieldList())
+                dto -> datasetFieldMapper.mapFields(dto.getDataSet().fieldList())
             ));
 
         return Mono.zipDelayError(versions, Mono.just(datasetFields))
@@ -316,7 +348,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<Integer> ingestMetadata(final IngestionDataStructure dataStructure) {
-        final HashMap<MetadataFieldKey, Map<Long, Object>> allMetadata = new HashMap<>();
+        final Map<MetadataFieldKey, Map<Long, Object>> allMetadata = new HashMap<>();
 
         for (final EnrichedDataEntityIngestionDto entity : dataStructure.getAllEntities()) {
             if (entity.getMetadata() == null) {
@@ -411,7 +443,7 @@ public class IngestionServiceImpl implements IngestionService {
                                                 final DatasetVersionPojo fetchedVersion) {
         final EnrichedDataEntityIngestionDto dto = datasetDict.get(fetchedVersion.getDatasetOddrn());
 
-        if (fetchedVersion.getVersionHash().equals(dto.getDataSet().getStructureHash())) {
+        if (fetchedVersion.getVersionHash().equals(dto.getDataSet().structureHash())) {
             log.debug("No change in dataset structure with ID: {} found", fetchedVersion.getId());
             return null;
         }
@@ -424,14 +456,14 @@ public class IngestionServiceImpl implements IngestionService {
     private List<LineagePojo> extractLineageRelations(final DataEntityIngestionDto dto) {
         final Set<DataEntityType> types = dto.getTypes();
 
-        final ArrayList<LineagePojo> result = new ArrayList<>();
+        final List<LineagePojo> result = new ArrayList<>();
 
         final String dtoOddrn = dto.getOddrn().toLowerCase();
 
         if (types.contains(DATA_SET)) {
-            if (dto.getDataSet().getParentDatasetOddrn() != null) {
+            if (dto.getDataSet().parentDatasetOddrn() != null) {
                 result.add(new LineagePojo()
-                    .setParentOddrn(dto.getDataSet().getParentDatasetOddrn().toLowerCase())
+                    .setParentOddrn(dto.getDataSet().parentDatasetOddrn().toLowerCase())
                     .setChildOddrn(dtoOddrn)
                     .setEstablisherOddrn(dtoOddrn)
                 );
@@ -439,14 +471,14 @@ public class IngestionServiceImpl implements IngestionService {
         }
 
         if (types.contains(DATA_TRANSFORMER)) {
-            dto.getDataTransformer().getSourceList().stream()
+            dto.getDataTransformer().sourceList().stream()
                 .map(source -> new LineagePojo()
                     .setParentOddrn(source.toLowerCase())
                     .setChildOddrn(dtoOddrn)
                     .setEstablisherOddrn(dtoOddrn))
                 .forEach(result::add);
 
-            dto.getDataTransformer().getTargetList().stream()
+            dto.getDataTransformer().targetList().stream()
                 .map(target -> new LineagePojo()
                     .setParentOddrn(dtoOddrn)
                     .setChildOddrn(target.toLowerCase())
@@ -455,7 +487,7 @@ public class IngestionServiceImpl implements IngestionService {
         }
 
         if (types.contains(DATA_CONSUMER)) {
-            dto.getDataConsumer().getInputList().stream()
+            dto.getDataConsumer().inputList().stream()
                 .map(input -> new LineagePojo()
                     .setParentOddrn(input.toLowerCase())
                     .setChildOddrn(dtoOddrn)
@@ -467,10 +499,29 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private List<DataQualityTestRelationsPojo> extractDataQARelations(final EnrichedDataEntityIngestionDto dto) {
-        return dto.getTypes().contains(DATA_QUALITY_TEST) ? dto.getDatasetQualityTest().getDatasetList()
+        return dto.getTypes().contains(DATA_QUALITY_TEST) ? dto.getDatasetQualityTest().datasetList()
             .stream()
             .map(dsOddrn -> new DataQualityTestRelationsPojo(dsOddrn, dto.getOddrn()))
             .collect(Collectors.toList()) : emptyList();
+    }
+
+    private List<GroupEntityRelationsPojo> extractGroupEntityRelations(final EnrichedDataEntityIngestionDto dto) {
+        if (!dto.getTypes().contains(DATA_ENTITY_GROUP)
+            || CollectionUtils.isEmpty(dto.getDataEntityGroup().entitiesOddrns())) {
+            return emptyList();
+        }
+        return dto.getDataEntityGroup().entitiesOddrns().stream()
+            .map(entityOddrn -> new GroupEntityRelationsPojo(dto.getOddrn(), entityOddrn))
+            .collect(Collectors.toList());
+    }
+
+    private Optional<GroupParentGroupRelationsPojo> extractGroupParentGroupRelations(
+        final EnrichedDataEntityIngestionDto dto) {
+        if (!dto.getTypes().contains(DATA_ENTITY_GROUP)
+            || dto.getDataEntityGroup().groupOddrn() == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new GroupParentGroupRelationsPojo(dto.getOddrn(), dto.getDataEntityGroup().groupOddrn()));
     }
 
     private IngestionTaskRun mapTaskRun(final DataEntity dataEntity) {
@@ -546,6 +597,6 @@ public class IngestionServiceImpl implements IngestionService {
         return new DatasetVersionPojo()
             .setDatasetOddrn(entity.getOddrn())
             .setVersion(version)
-            .setVersionHash(entity.getDataSet().getStructureHash());
+            .setVersionHash(entity.getDataSet().structureHash());
     }
 }

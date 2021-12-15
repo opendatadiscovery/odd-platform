@@ -23,7 +23,7 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import { StylesType } from './OverviewStyles';
-import OverviewDataEntityContainer from './DataEntityList/DataEntityListContainer';
+import DataEntityListContainer from './DataEntityList/DataEntityListContainer';
 import TopTagsListContainer from './TopTagsList/TopTagsListContainer';
 import IdentityContainer from './IdentityForm/IdentityContainer';
 
@@ -178,7 +178,7 @@ const Overview: React.FC<OverviewProps> = ({
           {identity?.owner ? (
             <Grid container spacing={2} className={classes.dataContainer}>
               <Grid item xs={3}>
-                <OverviewDataEntityContainer
+                <DataEntityListContainer
                   dataEntitiesList={myEntities}
                   entityListName="My Objects"
                   entityListIcon={<CatalogIcon />}
@@ -186,7 +186,7 @@ const Overview: React.FC<OverviewProps> = ({
                 />
               </Grid>
               <Grid item xs={3}>
-                <OverviewDataEntityContainer
+                <DataEntityListContainer
                   dataEntitiesList={myEntitiesUpstream}
                   entityListName="Upstream dependents"
                   entityListIcon={<UpstreamIcon />}
@@ -194,7 +194,7 @@ const Overview: React.FC<OverviewProps> = ({
                 />
               </Grid>
               <Grid item xs={3}>
-                <OverviewDataEntityContainer
+                <DataEntityListContainer
                   dataEntitiesList={myEntitiesDownstream}
                   entityListName="Downstream dependents"
                   entityListIcon={<DownstreamIcon />}
@@ -202,7 +202,7 @@ const Overview: React.FC<OverviewProps> = ({
                 />
               </Grid>
               <Grid item xs={3}>
-                <OverviewDataEntityContainer
+                <DataEntityListContainer
                   dataEntitiesList={popularEntities}
                   entityListName="Popular"
                   entityListIcon={<StarIcon />}

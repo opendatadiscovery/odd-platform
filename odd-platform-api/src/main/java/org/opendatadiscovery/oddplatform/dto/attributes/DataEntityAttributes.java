@@ -1,7 +1,8 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.attributes;
 
 import java.util.Map;
 import java.util.Set;
+import org.opendatadiscovery.oddplatform.dto.DataEntityType;
 
 public abstract class DataEntityAttributes {
     public static final Map<DataEntityType, Class<? extends DataEntityAttributes>> TYPE_TO_ATTR_CLASS = Map.of(

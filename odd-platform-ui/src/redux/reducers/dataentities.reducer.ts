@@ -135,6 +135,19 @@ const reducer = (
         ...state,
         popular: action.payload,
       };
+    case getType(actions.fetchDataEntityGroupLinkedListAction.success):
+      return {
+        ...state,
+        byId: action.payload.value.items.reduce(
+          (memo: DataEntitiesState['byId'], linkedItem) => ({
+            ...memo,
+            [linkedItem.id]: {
+              ...linkedItem,
+            },
+          }),
+          state.byId
+        ),
+      };
     default:
       return state;
   }

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import { Link } from 'react-router-dom';
 import {
   DataEntityDetails,
@@ -12,9 +11,9 @@ import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
-import { styles, StylesType } from './OverviewTransformerStatsStyles';
+import { StatIconContainer } from './OverviewTransformerStatsStyles';
 
-interface OverviewTransformerStatsProps extends StylesType {
+interface OverviewTransformerStatsProps {
   sources: DataEntityDetails['sourceList'];
   targets: DataEntityDetails['targetList'];
   unknownSourcesCount: number;
@@ -23,7 +22,6 @@ interface OverviewTransformerStatsProps extends StylesType {
 }
 
 const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
-  classes,
   sources,
   targets,
   unknownSourcesCount,
@@ -34,7 +32,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
 
   return (
     <Grid container>
-      <Grid item xs={12} className={classes.typeLabel}>
+      <Grid item xs={12} sx={{ mb: 1.25 }}>
         <EntityTypeItem
           typeName={DataEntityTypeNameEnum.TRANSFORMER}
           fullName
@@ -48,11 +46,13 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         alignContent="flex-start"
       >
         <Grid item container xs={12} alignItems="baseline">
-          <UpstreamIcon className={classes.statIcon} />
-          <Typography variant="h2" className={classes.statCount}>
+          <StatIconContainer sx={{ mr: 1 }}>
+            <UpstreamIcon />
+          </StatIconContainer>
+          <Typography variant="h2" sx={{ mr: 0.5 }}>
             {(sources?.length || 0) + (unknownSourcesCount || 0)}
           </Typography>
-          <Typography variant="body1" className={classes.statLabel}>
+          <Typography variant="body1" color="texts.hint">
             sources
           </Typography>
         </Grid>
@@ -62,7 +62,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
           xs={12}
           direction="column"
           alignItems="flex-start"
-          className={classes.refs}
+          sx={{ mt: 1 }}
         >
           {sources?.slice(0, displayedEntitiesNumber).map(source => (
             <AppButton
@@ -77,10 +77,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             </AppButton>
           ))}
           {unknownSourcesCount ? (
-            <Typography
-              variant="subtitle1"
-              className={classes.unknownCount}
-            >
+            <Typography variant="subtitle1" sx={{ ml: 0.5 }}>
               {unknownSourcesCount} more source
               {unknownSourcesCount === 1 ? '' : 's'} unknown
             </Typography>
@@ -111,11 +108,13 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
         alignContent="flex-start"
       >
         <Grid item container xs={12} alignItems="baseline">
-          <DownstreamIcon className={classes.statIcon} />
-          <Typography variant="h2" className={classes.statCount}>
+          <StatIconContainer sx={{ mr: 1 }}>
+            <DownstreamIcon />
+          </StatIconContainer>
+          <Typography variant="h2" sx={{ mr: 0.5 }}>
             {(targets?.length || 0) + (unknownTargetsCount || 0)}
           </Typography>
-          <Typography variant="body1" className={classes.statLabel}>
+          <Typography variant="body1" color="texts.hint">
             targets
           </Typography>
         </Grid>
@@ -125,7 +124,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
           xs={12}
           direction="column"
           alignItems="flex-start"
-          className={classes.refs}
+          sx={{ mt: 1 }}
         >
           {targets?.slice(0, displayedEntitiesNumber).map(target => (
             <AppButton
@@ -140,10 +139,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
             </AppButton>
           ))}
           {unknownTargetsCount ? (
-            <Typography
-              variant="subtitle1"
-              className={classes.unknownCount}
-            >
+            <Typography variant="subtitle1" sx={{ ml: 0.5 }}>
               {unknownTargetsCount} more target
               {unknownTargetsCount === 1 ? '' : 's'} unknown
             </Typography>
@@ -170,4 +166,4 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
   );
 };
 
-export default withStyles(styles)(OverviewTransformerStats);
+export default OverviewTransformerStats;

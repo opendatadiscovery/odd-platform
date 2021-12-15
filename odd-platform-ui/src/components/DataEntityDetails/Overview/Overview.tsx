@@ -1,4 +1,4 @@
-import { Grid, Paper, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { DataEntityDetails } from 'generated-sources';
 import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
@@ -7,11 +7,11 @@ import OverviewDescriptionContainer from './OverviewDescription/OverviewDescript
 import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
 import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
 import OverviewTags from './OverviewTags/OverviewTags';
-import { StylesType } from './OverviewStyles';
+import { SectionContainer } from './OverviewStyles';
 import OverviewGeneralContainer from './OverviewGeneral/OverviewGeneralContainer';
 import OverviewDataQualityReportContainer from './OverviewDataQualityReport/OverviewDataQualityReportContainer';
 
-interface OverviewProps extends StylesType {
+interface OverviewProps {
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
@@ -19,7 +19,6 @@ interface OverviewProps extends StylesType {
 }
 
 const Overview: React.FC<OverviewProps> = ({
-  classes,
   dataEntityId,
   dataEntityDetails,
   isDataset,
@@ -27,47 +26,43 @@ const Overview: React.FC<OverviewProps> = ({
 }) => (
   <>
     {dataEntityDetails && !isDataEntityDetailsFetching ? (
-      <Grid container spacing={2} className={classes.container}>
+      <Grid container spacing={2} sx={{ mt: 0 }}>
         <Grid item xs={8}>
-          <Paper elevation={9} className={classes.sectionContainer}>
+          <SectionContainer elevation={9}>
             <OverviewStatsContainer dataEntityId={dataEntityId} />
-          </Paper>
-          <Typography variant="h3" className={classes.sectionCaption}>
+          </SectionContainer>
+          <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
             Metadata
           </Typography>
-          <Paper square elevation={0} className={classes.sectionContainer}>
+          <SectionContainer square elevation={0}>
             <OverviewMetadataContainer dataEntityId={dataEntityId} />
-          </Paper>
-          <Typography variant="h3" className={classes.sectionCaption}>
+          </SectionContainer>
+          <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
             About
           </Typography>
-          <Paper square elevation={0} className={classes.sectionContainer}>
+          <SectionContainer square elevation={0}>
             <OverviewDescriptionContainer dataEntityId={dataEntityId} />
-          </Paper>
+          </SectionContainer>
         </Grid>
         <Grid item xs={4}>
-          <Paper square elevation={0} className={classes.sectionContainer}>
+          <SectionContainer square elevation={0}>
             <OverviewGeneralContainer
               dataEntityId={dataEntityDetails.id}
             />
-          </Paper>
+          </SectionContainer>
           {isDataset ? (
-            <Paper
-              square
-              elevation={0}
-              className={classes.sectionContainer}
-            >
+            <SectionContainer square elevation={0}>
               <OverviewDataQualityReportContainer
                 dataEntityId={dataEntityId}
               />
-            </Paper>
+            </SectionContainer>
           ) : null}
-          <Paper square elevation={0} className={classes.sectionContainer}>
+          <SectionContainer square elevation={0}>
             <OverviewTags
               tags={dataEntityDetails.tags}
               dataEntityId={dataEntityId}
             />
-          </Paper>
+          </SectionContainer>
         </Grid>
       </Grid>
     ) : null}

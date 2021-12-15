@@ -11,6 +11,7 @@ import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -115,7 +116,11 @@ public class DataEntityServiceImpl
 
         return Mono.zip(dto, targetCount)
             .map(tuple -> {
-                tuple.getT1().getDataSetDetailsDto().setConsumersCount(tuple.getT2());
+                final var oldDetails = tuple.getT1().getDataSetDetailsDto();
+                final var datasetDetails = new DataEntityDetailsDto.DataSetDetailsDto(
+                    oldDetails.rowsCount(), oldDetails.fieldsCount(), tuple.getT2(), oldDetails.datasetVersions()
+                );
+                tuple.getT1().setDataSetDetailsDto(datasetDetails);
                 return tuple.getT1();
             })
             .map(entityMapper::mapDtoDetails);
@@ -328,5 +333,23 @@ public class DataEntityServiceImpl
                 ? Mono.error(new NotFoundException())
                 : Mono.just(optional.get()))
             .map(entityMapper::mapLineageDto);
+    }
+
+    @Override
+    public Mono<DataEntityList> getDataEntityGroupsChildren(final Long dataEntityGroupId,
+                                                            final Integer page,
+                                                            final Integer size) {
+        return Mono.fromCallable(() -> entityRepository
+            .getDataEntityGroupsChildren(dataEntityGroupId, page, size))
+            .map(entityMapper::mapPojos);
+    }
+
+    @Override
+    public Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId) {
+        return Mono.fromCallable(() -> entityRepository.getDataEntityGroupLineage(dataEntityGroupId))
+            .flatMap(optional -> optional.isEmpty()
+                ? Mono.error(new NotFoundException())
+                : Mono.just(optional.get()))
+            .map(entityMapper::mapGroupLineageDto);
     }
 }

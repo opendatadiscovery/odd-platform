@@ -5,7 +5,7 @@ import io.opentelemetry.sdk.metrics.data.PointData;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.DataEntityType;
-import org.opendatadiscovery.oddplatform.dto.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.BinaryFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.BooleanFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.ComplexFieldStat;
@@ -36,7 +36,7 @@ public class DatasetFieldMetricExtractor implements MetricExtractor {
         final Stream<Pair<MetricDataTriplet, ? extends PointData>> metricStream = dataStructure.getAllEntities()
             .stream()
             .filter(de -> de.getTypes().contains(DataEntityType.DATA_SET))
-            .flatMap(de -> de.getDataSet().getFieldList().stream()
+            .flatMap(de -> de.getDataSet().fieldList().stream()
                 .filter(f -> f.getStats() != null)
                 .flatMap(f -> buildMetrics(de.getOddrn(), f)));
 
