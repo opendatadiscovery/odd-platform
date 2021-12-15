@@ -10,8 +10,8 @@ import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import LabelsAutocompleteContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/LabelsAutocomplete/LabelsAutocompleteContainer';
-import * as S from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/DatasetFieldInfoEditFormStyles';
+import LabelsAutocompleteContainer from './LabelsAutocomplete/LabelsAutocompleteContainer';
+import * as S from './DatasetFieldInfoEditFormStyles';
 
 interface DataSetFieldInfoEditFormProps {
   datasetFieldId: number;

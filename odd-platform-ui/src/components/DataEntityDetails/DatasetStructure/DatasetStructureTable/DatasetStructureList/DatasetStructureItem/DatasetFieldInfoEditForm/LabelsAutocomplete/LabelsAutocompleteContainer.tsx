@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { fetchLabelsList } from 'redux/thunks/labels.thunks';
-import LabelsAutocomplete from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/LabelsAutocomplete/LabelsAutocomplete';
+import LabelsAutocomplete from './LabelsAutocomplete';
 
 const mapStateToProps = () => ({});
 

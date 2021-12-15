@@ -104,7 +104,7 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
           )}
         </S.ListContainer>
       )}
-      {!isLinkedListFetching && !pageInfo?.total ? (
+      {isLinkedListFetching && !pageInfo?.total ? (
         <EmptyContentPlaceholder text="No linked items" />
       ) : null}
     </S.Container>

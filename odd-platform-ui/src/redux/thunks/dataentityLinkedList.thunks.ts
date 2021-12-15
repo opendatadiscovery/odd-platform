@@ -4,7 +4,7 @@ import {
   DataEntityApiGetDataEntityGroupsChildrenRequest,
   DataEntityList,
 } from 'generated-sources';
-import { PartialEntityUpdateParamsPaginated } from 'redux/interfaces';
+import { DataEntityGroupLinkedList } from 'redux/interfaces';
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
@@ -15,7 +15,7 @@ const apiClient = new DataEntityApi(apiClientConf);
 export const fetchDataEntityGroupLinkedList = createThunk<
   DataEntityApiGetDataEntityGroupsChildrenRequest,
   DataEntityList,
-  PartialEntityUpdateParamsPaginated<DataEntityList>
+  DataEntityGroupLinkedList<DataEntityList>
 >(
   (params: DataEntityApiGetDataEntityGroupsChildrenRequest) =>
     apiClient.getDataEntityGroupsChildren(params),

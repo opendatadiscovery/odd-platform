@@ -32,12 +32,7 @@ const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
             {linkedItem.internalName || linkedItem.externalName}
           </Typography>
         </ColContainer>
-        <ColContainer $colType="collg" item container wrap="wrap">
-          {/* <TruncatedCell */}
-          {/*  dataEntity={linkedItem} */}
-          {/*  truncatedCellType="entities" */}
-          {/* /> */}
-        </ColContainer>
+        <ColContainer $colType="collg" item container wrap="wrap" />
         <ColContainer item $colType="colsm">
           <Grid container direction="column" alignItems="flex-start">
             {linkedItem.ownership?.map(ownership => (

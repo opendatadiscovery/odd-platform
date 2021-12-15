@@ -20,9 +20,7 @@ const reducer = (
     case getType(actions.fetchDataEntityGroupLinkedListAction.success):
       return action.payload.value.items.reduce(
         (memo: DataEntityGroupLinkedListState, linkedItem) => ({
-          ...memo,
           linkedItemsIdsByDataEntityGroupId: {
-            ...memo.linkedItemsIdsByDataEntityGroupId,
             [action.payload.entityId]: [
               ...(memo.linkedItemsIdsByDataEntityGroupId?.[
                 action.payload.entityId

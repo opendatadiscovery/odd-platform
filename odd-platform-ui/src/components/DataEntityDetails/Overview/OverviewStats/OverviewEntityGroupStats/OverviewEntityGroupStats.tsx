@@ -9,7 +9,7 @@ import { dataEntityDetailsPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TriangularUnionIcon from 'components/shared/Icons/TriangularUnionIcon';
-import EntitiesListModal from 'components/DataEntityDetails/Overview/OverviewStats/OverviewEntityGroupStats/EntitiesListModal/EntitiesListModal';
+import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
 import { StatIconContainer } from './OverviewEntityGroupStatsStyles';
 
 interface OverviewEntityGroupStatsProps {
@@ -69,7 +69,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           <EntitiesListModal
             entities={entities}
             labelFor="Entities"
-            dataEntityGroupName={dataEntityGroupName}
+            dataEntityName={dataEntityGroupName}
             openBtnEl={
               <AppButton size="medium" color="tertiary" sx={{ my: 0.25 }}>
                 Show All
@@ -121,7 +121,7 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
           <EntitiesListModal
             entities={entityGroups}
             labelFor="Upper groups"
-            dataEntityGroupName={dataEntityGroupName}
+            dataEntityName={dataEntityGroupName}
             openBtnEl={
               <AppButton size="medium" color="tertiary" sx={{ my: 0.25 }}>
                 Show All
