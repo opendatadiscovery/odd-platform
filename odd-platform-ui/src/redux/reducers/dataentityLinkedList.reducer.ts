@@ -18,22 +18,22 @@ const reducer = (
 ): DataEntityGroupLinkedListState => {
   switch (action.type) {
     case getType(actions.fetchDataEntityGroupLinkedListAction.success):
-      return action.payload.value.items.reduce(
-        (memo: DataEntityGroupLinkedListState, linkedItem) => ({
-          linkedItemsIdsByDataEntityGroupId: {
+      return {
+        ...state,
+        linkedItemsIdsByDataEntityGroupId: action.payload.value.items.reduce(
+          (
+            memo: DataEntityGroupLinkedListState['linkedItemsIdsByDataEntityGroupId'],
+            linkedItem
+          ) => ({
+            ...memo,
             [action.payload.entityId]: [
-              ...(memo.linkedItemsIdsByDataEntityGroupId?.[
-                action.payload.entityId
-              ] || []),
+              ...(memo?.[action.payload.entityId] || []),
               linkedItem.id,
             ],
-          },
-        }),
-        {
-          ...state,
-          pageInfo: action.payload.pageInfo,
-        }
-      );
+          }),
+          { ...state, pageInfo: action.payload.pageInfo }
+        ),
+      };
     default:
       return state;
   }
