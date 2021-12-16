@@ -2,84 +2,24 @@ package org.opendatadiscovery.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.common.collect.Sets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.CommonTableExpression;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
-import org.jooq.Field;
-import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.Record3;
-import org.jooq.Select;
-import org.jooq.SelectConditionStep;
-import org.jooq.SelectHavingStep;
-import org.jooq.SelectLimitStep;
-import org.jooq.SelectOnConditionStep;
-import org.jooq.SelectSelectStep;
-import org.jooq.SortField;
-import org.jooq.SortOrder;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
+import org.jooq.*;
+import org.opendatadiscovery.oddplatform.dto.*;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataConsumerDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataTransformerDetailsDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityType;
-import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
-import org.opendatadiscovery.oddplatform.dto.LineageDepth;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
-import org.opendatadiscovery.oddplatform.dto.MetadataDto;
-import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
-import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
-import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
-import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
-import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttributes;
-import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
-import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
+import org.opendatadiscovery.oddplatform.dto.attributes.*;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.DataEntity;
 import org.opendatadiscovery.oddplatform.model.tables.GroupEntityRelations;
 import org.opendatadiscovery.oddplatform.model.tables.GroupParentGroupRelations;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTypePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TypeEntityRelationPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.*;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
 import org.opendatadiscovery.oddplatform.model.tables.records.LineageRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
@@ -90,44 +30,22 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
-import static org.jooq.impl.DSL.countDistinct;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
-import static org.jooq.impl.DSL.name;
-import static org.jooq.impl.DSL.val;
+import static org.jooq.impl.DSL.*;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataInputDetailsDto;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.UPSTREAM;
-import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TYPE;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
-import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
-import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
-import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
-import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
-import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
-import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
-import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
-import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
-import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
-import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
+import static org.opendatadiscovery.oddplatform.model.Tables.*;
 
 @Repository
 @Slf4j
@@ -695,7 +613,7 @@ public class DataEntityRepositoryImpl
                 deCte.field(DATA_ENTITY.EXTERNAL_NAME)
             )
             .fetchStream()
-            .map(this::mapDtoRecord)
+            .map(r -> mapDtoRecord(r, true))
             .collect(Collectors.toList());
     }
 
@@ -738,6 +656,7 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
+    @Transactional
     public Optional<DataEntityLineageDto> getLineage(final long dataEntityId,
                                                      final int lineageDepth,
                                                      final LineageStreamKind streamKind) {
@@ -762,15 +681,57 @@ public class DataEntityRepositoryImpl
             upstreamRelations.stream().flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
         ).collect(Collectors.toSet());
 
-        final Map<String, DataEntityDimensionsDto> dtoDict = listAllByOddrns(oddrnsToFetch)
+        final Map<DataEntityDto, Set<String>> groupRepository = fetchGroupRepository(oddrnsToFetch);
+
+        final Map<String, DataEntityDimensionsDto> dtoRepository = listAllByOddrns(oddrnsToFetch)
             .stream()
             .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
 
         return DataEntityLineageDto.builder()
             .dataEntityDto(dto)
-            .upstream(getLineageStream(dtoDict, upstreamRelations))
-            .downstream(getLineageStream(dtoDict, downstreamRelations))
+            .upstream(getLineageStream(dtoRepository, groupRepository, upstreamRelations))
+            .downstream(getLineageStream(dtoRepository, groupRepository, downstreamRelations))
             .build();
+    }
+
+    private Map<DataEntityDto, Set<String>> fetchGroupRepository(final Collection<String> childOddrns) {
+        if (CollectionUtils.isEmpty(childOddrns)) {
+            return Map.of();
+        }
+
+        final Name cteName = name("t1");
+        final String deOddrnsField = "de_oddrns";
+
+        final SelectHavingStep<Record2<String, String[]>> cteSelect = dslContext
+            .select(
+                GROUP_ENTITY_RELATIONS.GROUP_ODDRN,
+                arrayAgg(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN).as(deOddrnsField)
+            )
+            .from(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(childOddrns))
+            .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN);
+
+        final Table<Record2<String, String[]>> cteTable = cteSelect.asTable(cteName);
+
+        return dslContext.with(cteName)
+            .as(cteSelect)
+            .select(DATA_ENTITY.fields())
+//            .select(DATA_ENTITY_TYPE.fields())
+            .select(DATA_ENTITY_SUBTYPE.fields())
+            .select(cteTable.field(deOddrnsField))
+//            .select(field(count(ALERT.ID).ne(0)).as("has_alerts"))
+            .from(cteName)
+            // TODO: handle DEG types
+            .join(DATA_ENTITY).on(cteTable.field(GROUP_ENTITY_RELATIONS.GROUP_ODDRN).eq(DATA_ENTITY.ODDRN))
+            .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+            .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
+            .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID))
+            .fetchStream()
+            .map(r -> Tuples.of(
+                mapDtoRecord(r, false),
+                jooqRecordHelper.extractAggRelation(r, deOddrnsField, String.class)
+            ))
+            .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
     }
 
     private List<Set<String>> combineOddrnsInDEGLineage(final List<Set<String>> oddrnRelations) {
@@ -875,24 +836,47 @@ public class DataEntityRepositoryImpl
         ).execute();
     }
 
-    private DataEntityLineageStreamDto getLineageStream(final Map<String, DataEntityDimensionsDto> dtoDict,
+    private DataEntityLineageStreamDto getLineageStream(final Map<String, DataEntityDimensionsDto> dtoRepository,
+                                                        final Map<DataEntityDto, Set<String>> groupRepository,
                                                         final List<LineagePojo> relations) {
         final List<Pair<Long, Long>> edges = relations.stream()
             .map(r -> Pair.of(
-                dtoDict.get(r.getParentOddrn()).getDataEntity().getId(),
-                dtoDict.get(r.getChildOddrn()).getDataEntity().getId()
+                dtoRepository.get(r.getParentOddrn()).getDataEntity().getId(),
+                dtoRepository.get(r.getChildOddrn()).getDataEntity().getId()
             ))
             .collect(Collectors.toList());
 
         final List<DataEntityDimensionsDto> nodes = relations.stream()
             .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
             .distinct()
-            .map(dtoDict::get)
+            .map(deOddrn -> Optional.ofNullable(dtoRepository.get(deOddrn))
+                .orElseThrow(() -> new IllegalArgumentException(
+                    String.format("Entity with oddrn %s weren't fetched", deOddrn)))
+            )
             .collect(Collectors.toList());
+
+        final Map<Long, Long> groupRelations = groupRepository.entrySet()
+            .stream()
+            .flatMap(e -> e.getValue()
+                .stream()
+                .map(deOddrn -> {
+                    final long groupId = e.getKey().getDataEntity().getId();
+
+                    final long entityId = Optional.ofNullable(dtoRepository.get(deOddrn))
+                        .map(d -> d.getDataEntity().getId())
+                        .orElseThrow(() -> new IllegalArgumentException(
+                            String.format("Entity with oddrn %s weren't fetched", deOddrn)));
+
+                    return Tuples.of(entityId, groupId);
+                }))
+            .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
+
 
         return DataEntityLineageStreamDto.builder()
             .edges(edges)
             .nodes(nodes)
+            .groups(groupRepository.keySet())
+            .groupsRelations(groupRelations)
             .build();
     }
 
@@ -1146,8 +1130,9 @@ public class DataEntityRepositoryImpl
         });
     }
 
-    private DataEntityDto mapDtoRecord(final Record r) {
-        final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
+    private DataEntityDto mapDtoRecord(final Record r, final boolean remap) {
+        final Record deRecord = remap ? jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY) : r;
+
         final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
 
         final Set<DataEntityTypePojo> types =
@@ -1187,10 +1172,10 @@ public class DataEntityRepositoryImpl
         final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
         final Set<DataEntityTypePojo> types =
             jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class);
-        final Set<DataEntityPojo> groups = jooqRecordHelper.extractAggRelation(r, AGG_GROUP_ENTITY_FIELD,
-            DataEntityPojo.class);
-        final Set<DataEntityPojo> parents = jooqRecordHelper.extractAggRelation(r, AGG_PARENT_ENTITY_FIELD,
-            DataEntityPojo.class);
+        final Set<DataEntityPojo> groups =
+            jooqRecordHelper.extractAggRelation(r, AGG_GROUP_ENTITY_FIELD, DataEntityPojo.class);
+        final Set<DataEntityPojo> parents =
+            jooqRecordHelper.extractAggRelation(r, AGG_PARENT_ENTITY_FIELD, DataEntityPojo.class);
         final boolean hasChildren = r.get(CHILDREN_COUNT_FIELD, Integer.class) != 0;
 
         // ad-hoc solution until https://github.com/opendatadiscovery/odd-platform/issues/123 is fixed
@@ -1214,17 +1199,18 @@ public class DataEntityRepositoryImpl
             .dataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(datasetVersions))
             .metadata(extractMetadataRelation(r))
             .dataEntityGroupDimensionsDto(mapGroupDimensionsDto(r))
-            .dataEntityGroupDetailsDto(
-                new DataEntityDetailsDto.DataEntityGroupDetailsDto(hasChildren))
+            .dataEntityGroupDetailsDto(new DataEntityDetailsDto.DataEntityGroupDetailsDto(hasChildren))
             .build();
     }
 
     private DataEntityDimensionsDto.DataEntityGroupDimensionsDto mapGroupDimensionsDto(final Record r) {
-        final Set<DataEntityPojo> entities = jooqRecordHelper.extractAggRelation(r, AGG_SUB_GROUP_ENTITY_FIELD,
-            DataEntityPojo.class);
-        final Integer childrenCount = r.get(CHILDREN_COUNT_FIELD, Integer.class);
+        final Set<DataEntityPojo> entities =
+            jooqRecordHelper.extractAggRelation(r, AGG_SUB_GROUP_ENTITY_FIELD, DataEntityPojo.class);
+
         return new DataEntityDimensionsDto.DataEntityGroupDimensionsDto(
-            entities, entities.size() + childrenCount);
+            entities,
+            entities.size() + r.get(CHILDREN_COUNT_FIELD, Integer.class)
+        );
     }
 
     private List<MetadataDto> extractMetadataRelation(final Record r) {
@@ -1287,7 +1273,8 @@ public class DataEntityRepositoryImpl
 
     private Map<DataEntityType, DataEntityAttributes> extractSpecificAttributes(
         final DataEntityPojo dataEntity,
-        final Collection<DataEntityTypePojo> types) {
+        final Collection<DataEntityTypePojo> types
+    ) {
         if (dataEntity.getHollow()) {
             return emptyMap();
         }
