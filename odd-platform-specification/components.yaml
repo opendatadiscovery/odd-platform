@@ -378,6 +378,9 @@ components:
             - GRAPH_NODE
             - API_CALL
             - MICROSERVICE
+            - DATABASE_SERVICE
+            - API_SERVICE
+            - KAFKA_SERVICE
       required:
         - id
         - name
