@@ -396,6 +396,7 @@ public class DataEntityRepositoryImpl
                                                      final LineageStreamKind streamKind) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .selectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
+            .includeDimensions(true)
             .build();
 
         final Set<String> associatedOddrns = dataEntitySelect(config)
