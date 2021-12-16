@@ -7,6 +7,8 @@ import {
   DataEntityLineageNode,
   DataEntityLineageStream,
 } from 'generated-sources';
+import isEmpty from 'lodash/isEmpty';
+import { notEmpty } from 'lib/helpers';
 import { DataEntityLineageState } from '../interfaces';
 import { DataEntityLineageStreamById } from '../interfaces/dataentityLineage';
 
@@ -21,6 +23,95 @@ enum DataEntityLineageStreamTypeEnum {
   DOWNSTREAM = 'downstream',
 }
 
+const setDataByType = (
+  type: DataEntityLineageStreamTypeEnum,
+  firstData: any,
+  secondData: any
+) => (type === 'downstream' ? firstData : secondData);
+
+const filteringOfNeighborsEdges = (edges: DataEntityLineageEdge[]) => {
+  const filteredEdges: DataEntityLineageEdge[] = edges
+    .map(edge => {
+      const isEdgeCyclical = !!edges.find(
+        el =>
+          el.sourceId === edge.targetId && el.targetId === edge.sourceId
+      );
+      // const updatedEdge = { ...edge, isEdgeCyclical };
+      return isEdgeCyclical && edge.sourceId > edge.targetId
+        ? undefined
+        : edge;
+    })
+    .filter(notEmpty);
+
+  return filteredEdges;
+};
+
+const filteringOfDistantEdges = (
+  entityId: number,
+  rootNodeId: number | undefined,
+  edges: DataEntityLineageEdge[] | undefined,
+  lineageType: DataEntityLineageStreamTypeEnum
+) => {
+  const edgeType: keyof DataEntityLineageEdge = setDataByType(
+    lineageType,
+    'sourceId',
+    'targetId'
+  );
+
+  const oppositeEdgeType: keyof DataEntityLineageEdge = setDataByType(
+    lineageType,
+    'targetId',
+    'sourceId'
+  );
+
+  const edgesMap = new Map<number, number[]>();
+  const queue: number[] = [rootNodeId || entityId];
+  const filteredDistantEdges = new Array<DataEntityLineageEdge>();
+  const allAddedIds = new Set<number>();
+
+  edges?.reduce((map, edge) => {
+    if (!map.has(edge[edgeType])) {
+      return map.set(edge[edgeType], [edge[oppositeEdgeType]]);
+    }
+    map.get(edge[edgeType])?.push(edge[oppositeEdgeType]);
+    return map;
+  }, edgesMap);
+
+  while (!isEmpty(queue)) {
+    const source = queue.shift()!;
+
+    const levelIds = edgesMap.get(source);
+
+    if (
+      Array.isArray(levelIds) &&
+      levelIds !== null &&
+      !isEmpty(levelIds)
+    ) {
+      const nonAddedIds = levelIds.filter(id => !allAddedIds.has(id));
+
+      filteredDistantEdges.push(
+        ...nonAddedIds.map(id =>
+          lineageType === 'downstream'
+            ? {
+                sourceId: source,
+                targetId: id,
+              }
+            : {
+                sourceId: id,
+                targetId: source,
+              }
+        )
+      );
+
+      nonAddedIds.forEach(id => allAddedIds.add(id));
+
+      queue.push(...nonAddedIds);
+    }
+  }
+
+  return filteredDistantEdges;
+};
+
 const updateDataEntityLineage = (
   state: DataEntityLineageState,
   entityId: number,
@@ -28,12 +119,6 @@ const updateDataEntityLineage = (
   rootNodeId: number | undefined,
   lineageType: DataEntityLineageStreamTypeEnum
 ) => {
-  const setDataByType = (
-    type: DataEntityLineageStreamTypeEnum,
-    firstData: any,
-    secondData: any
-  ) => (type === 'downstream' ? firstData : secondData);
-
   const oppositeType: DataEntityLineageStreamTypeEnum = setDataByType(
     lineageType,
     DataEntityLineageStreamTypeEnum.UPSTREAM,
@@ -55,33 +140,27 @@ const updateDataEntityLineage = (
       'targetId'
     );
 
-    const oppositeEdgeType: keyof DataEntityLineageEdge = setDataByType(
-      lineageType,
-      'targetId',
-      'sourceId'
+    const { edges } = data;
+    const filteredDistantEdges = filteringOfDistantEdges(
+      entityId,
+      rootNodeId,
+      edges,
+      lineageType
     );
+    const filteredEdges = filteringOfNeighborsEdges(filteredDistantEdges);
 
     return {
-      edgesById: data.edges
-        ? data.edges.reduce<DataEntityLineageStreamById['edgesById']>(
-            (memo, edge) => {
-              const edgeRes = Object.keys(memo).includes(
-                edge[oppositeEdgeType].toString()
-              )
-                ? []
-                : [edge];
-              return {
-                ...memo,
-                [edge[edgeType]]: memo[edge[edgeType]]
-                  ? [...memo[edge[edgeType]], ...edgeRes]
-                  : edgeRes,
-              };
-            },
-            rootNodeId
-              ? { ...state[rootNodeId][lineageType].edgesById }
-              : {}
-          )
-        : {},
+      edgesById: filteredEdges.reduce<
+        DataEntityLineageStreamById['edgesById']
+      >(
+        (memo, edge) => ({
+          ...memo,
+          [edge[edgeType]]: memo[edge[edgeType]]
+            ? [...memo[edge[edgeType]], edge]
+            : [edge],
+        }),
+        rootNodeId ? { ...state[rootNodeId][lineageType].edgesById } : {}
+      ),
       nodesById: data.nodes
         ? data.nodes.reduce<DataEntityLineageStreamById['nodesById']>(
             (memo, node) => ({
