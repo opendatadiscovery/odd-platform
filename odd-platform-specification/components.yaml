@@ -1138,6 +1138,9 @@ components:
             $ref: '#/components/schemas/DataEntityType'
         data_source:
           $ref: '#/components/schemas/DataSource'
+        group_id:
+          type: integer
+          format: int64
       required:
         - id
         - name
@@ -1167,6 +1170,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataEntityLineageEdge'
+        groups:
+          $ref: '#/components/schemas/DataEntityRefList'
 
     DataEntityLineage:
       type: object
