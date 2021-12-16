@@ -36,7 +36,6 @@ const filteringOfNeighborsEdges = (edges: DataEntityLineageEdge[]) => {
         el =>
           el.sourceId === edge.targetId && el.targetId === edge.sourceId
       );
-      // const updatedEdge = { ...edge, isEdgeCyclical };
       return isEdgeCyclical && edge.sourceId > edge.targetId
         ? undefined
         : edge;
