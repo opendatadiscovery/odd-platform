@@ -458,12 +458,12 @@ public class IngestionServiceImpl implements IngestionService {
 
         final List<LineagePojo> result = new ArrayList<>();
 
-        final String dtoOddrn = dto.getOddrn().toLowerCase();
+        final String dtoOddrn = dto.getOddrn();
 
         if (types.contains(DATA_SET)) {
             if (dto.getDataSet().parentDatasetOddrn() != null) {
                 result.add(new LineagePojo()
-                    .setParentOddrn(dto.getDataSet().parentDatasetOddrn().toLowerCase())
+                    .setParentOddrn(dto.getDataSet().parentDatasetOddrn())
                     .setChildOddrn(dtoOddrn)
                     .setEstablisherOddrn(dtoOddrn)
                 );
@@ -473,7 +473,7 @@ public class IngestionServiceImpl implements IngestionService {
         if (types.contains(DATA_TRANSFORMER)) {
             dto.getDataTransformer().sourceList().stream()
                 .map(source -> new LineagePojo()
-                    .setParentOddrn(source.toLowerCase())
+                    .setParentOddrn(source)
                     .setChildOddrn(dtoOddrn)
                     .setEstablisherOddrn(dtoOddrn))
                 .forEach(result::add);
@@ -481,7 +481,7 @@ public class IngestionServiceImpl implements IngestionService {
             dto.getDataTransformer().targetList().stream()
                 .map(target -> new LineagePojo()
                     .setParentOddrn(dtoOddrn)
-                    .setChildOddrn(target.toLowerCase())
+                    .setChildOddrn(target)
                     .setEstablisherOddrn(dtoOddrn))
                 .forEach(result::add);
         }
@@ -489,7 +489,7 @@ public class IngestionServiceImpl implements IngestionService {
         if (types.contains(DATA_CONSUMER)) {
             dto.getDataConsumer().inputList().stream()
                 .map(input -> new LineagePojo()
-                    .setParentOddrn(input.toLowerCase())
+                    .setParentOddrn(input)
                     .setChildOddrn(dtoOddrn)
                     .setEstablisherOddrn(dtoOddrn))
                 .forEach(result::add);

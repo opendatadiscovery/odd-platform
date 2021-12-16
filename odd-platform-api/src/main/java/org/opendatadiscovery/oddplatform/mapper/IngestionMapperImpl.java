@@ -77,7 +77,7 @@ public class IngestionMapperImpl implements IngestionMapper {
 
         DataEntityIngestionDto.DataEntityIngestionDtoBuilder builder = DataEntityIngestionDto.builder()
             .name(dataEntity.getName())
-            .oddrn(dataEntity.getOddrn().toLowerCase())
+            .oddrn(dataEntity.getOddrn())
             .externalDescription(dataEntity.getDescription())
             .dataSourceId(dataSourceId)
             .createdAt(dataEntity.getCreatedAt())
@@ -129,7 +129,7 @@ public class IngestionMapperImpl implements IngestionMapper {
         final DataEntityPojo pojo = new DataEntityPojo()
             .setExternalName(dto.getName())
             .setExternalDescription(dto.getExternalDescription())
-            .setOddrn(dto.getOddrn().toLowerCase())
+            .setOddrn(dto.getOddrn())
             .setDataSourceId(dto.getDataSourceId())
             .setCreatedAt(createdAt != null ? createdAt.toLocalDateTime() : null)
             .setUpdatedAt(updatedAt != null ? updatedAt.toLocalDateTime() : null)
