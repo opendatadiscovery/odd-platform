@@ -338,17 +338,12 @@ public class DataEntityRepositoryImpl
                                                           final Integer page,
                                                           final Integer size,
                                                           final boolean skipHollow) {
-        final Set<String> conditionValues = CollectionUtils.emptyIfNull(oddrns)
-            .stream()
-            .map(String::toLowerCase)
-            .collect(Collectors.toSet());
-
-        if (conditionValues.isEmpty()) {
+        if (CollectionUtils.isEmpty(oddrns)) {
             return emptyList();
         }
 
         DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
-            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(conditionValues)))
+            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(oddrns)))
             .includeDimensions(true)
             .includeHollow(!skipHollow);
 
@@ -1093,7 +1088,6 @@ public class DataEntityRepositoryImpl
     private void enrichDataEntityDetailsDto(final DataEntityDetailsDto dto,
                                             final Map<String, DataEntityDimensionsDto> depsRepository) {
         final Function<Collection<String>, Collection<? extends DataEntityDto>> fetcher = oddrns -> oddrns.stream()
-            .map(String::toLowerCase)
             .map(depsRepository::get)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
