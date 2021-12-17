@@ -378,23 +378,23 @@ const AppGraph: React.FC<AppGraphProps> = ({
             setCompactView(newViewIndex > 0)
           }
         />
-        {/* <Typography variant="subtitle2">Depth:</Typography> */}
-        {/* <AppTextField */}
-        {/*  sx={{ width: 48 }} */}
-        {/*  selectNative */}
-        {/*  size="small" */}
-        {/*  type="number" */}
-        {/*  id="depth-select" */}
-        {/*  defaultValue={selectedDepth} */}
-        {/*  onChange={handleDepthChange} */}
-        {/* > */}
-        {/*  {new Array(20).fill(0).map((_, i) => ( */}
-        {/*    // eslint-disable-next-line react/no-array-index-key */}
-        {/*    <option key={i + 1} value={i + 1}> */}
-        {/*      {i + 1} */}
-        {/*    </option> */}
-        {/*  ))} */}
-        {/* </AppTextField>  */}
+        <Typography variant="subtitle2">Depth:</Typography>
+        <AppTextField
+          sx={{ width: 48 }}
+          selectNative
+          size="small"
+          type="number"
+          id="depth-select"
+          defaultValue={selectedDepth}
+          onChange={handleDepthChange}
+        >
+          {new Array(20).fill(0).map((_, i) => (
+            // eslint-disable-next-line react/no-array-index-key
+            <option key={i + 1} value={i + 1}>
+              {i + 1}
+            </option>
+          ))}
+        </AppTextField>
       </div>
       <svg className={cx(classes.layer, svgInstanceRef)}>
         <g className={gInstanceRef}>
