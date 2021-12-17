@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
 import {
   DataEntityDetails,
   DataEntityTypeNameEnum,
@@ -11,7 +10,10 @@ import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
-import { StatIconContainer } from './OverviewTransformerStatsStyles';
+import {
+  StatIconContainer,
+  EntityLink,
+} from './OverviewTransformerStatsStyles';
 
 interface OverviewTransformerStatsProps {
   sources: DataEntityDetails['sourceList'];
@@ -71,9 +73,9 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
               color="tertiary"
               sx={{ my: 0.25 }}
             >
-              <Link to={dataEntityDetailsPath(source.id)}>
+              <EntityLink to={dataEntityDetailsPath(source.id)}>
                 {source.internalName || source.externalName}
-              </Link>
+              </EntityLink>
             </AppButton>
           ))}
           {unknownSourcesCount ? (
@@ -133,9 +135,9 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
               size="medium"
               color="tertiary"
             >
-              <Link to={dataEntityDetailsPath(target.id)}>
+              <EntityLink to={dataEntityDetailsPath(target.id)}>
                 {target.internalName || target.externalName}
-              </Link>
+              </EntityLink>
             </AppButton>
           ))}
           {unknownTargetsCount ? (

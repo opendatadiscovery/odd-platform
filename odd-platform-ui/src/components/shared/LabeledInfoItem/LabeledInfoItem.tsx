@@ -34,6 +34,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
           ? ((12 - labelWidth) as GridSize)
           : 'auto'
       }
+      style={{ width: '100%' }}
     >
       <S.Value
         $runStatus={runStatus}
