@@ -12,9 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
@@ -35,11 +33,9 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
 
     @Builder(builderMethodName = "detailsBuilder")
     public DataEntityDetailsDto(final DataEntityPojo dataEntity,
-                                final Set<DataEntityTypePojo> types,
-                                final DataEntitySubtypePojo subtype,
                                 final boolean hasAlerts,
                                 final Collection<DataEntityPojo> dataEntityGroups,
-                                final Map<DataEntityType, DataEntityAttributes> specificAttributes,
+                                final Map<DataEntityTypeDto, DataEntityAttributes> specificAttributes,
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
                                 final DataSourcePojo dataSource,
@@ -52,8 +48,9 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final DataQualityTestDetailsDto dataQualityTestDetailsDto,
                                 final DataInputDetailsDto dataInputDetailsDto,
                                 final DataEntityGroupDetailsDto dataEntityGroupDetailsDto) {
-        super(dataEntity, types, subtype, hasAlerts, specificAttributes,
-            namespace, ownership, dataSource, tags, dataEntityGroups, dataEntityGroupDimensionsDto);
+        super(dataEntity, hasAlerts, specificAttributes, namespace, ownership,
+            dataSource, tags, dataEntityGroups, dataEntityGroupDimensionsDto);
+
         this.metadata = metadata;
         this.dataSetDetailsDto = dataSetDetailsDto;
         this.dataTransformerDetailsDto = dataTransformerDetailsDto;

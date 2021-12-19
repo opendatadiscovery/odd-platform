@@ -6,7 +6,7 @@ import io.opentelemetry.sdk.metrics.data.LongPointData;
 import io.opentelemetry.sdk.metrics.data.MetricData;
 import io.opentelemetry.sdk.metrics.data.PointData;
 import java.util.stream.Stream;
-import org.opendatadiscovery.oddplatform.dto.DataEntityType;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
 import org.opendatadiscovery.oddplatform.service.metric.dto.MetricDataTriplet;
@@ -21,7 +21,7 @@ public class DatasetMetricExtractor implements MetricExtractor {
     public Stream<MetricData> extract(final IngestionDataStructure dataStructure) {
         final Stream<Pair<MetricDataTriplet, ? extends PointData>> metricStream = dataStructure.getAllEntities()
             .stream()
-            .filter(de -> de.getTypes().contains(DataEntityType.DATA_SET))
+            .filter(de -> de.getTypes().contains(DataEntityTypeDto.DATA_SET))
             .map(this::buildMetrics);
 
         return gaugeStream(metricStream);

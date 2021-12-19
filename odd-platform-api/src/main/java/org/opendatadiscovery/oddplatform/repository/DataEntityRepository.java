@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
@@ -11,7 +10,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
-import org.opendatadiscovery.oddplatform.dto.SearchFilterId;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 
@@ -23,8 +22,8 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDimensionsDto> listByType(final int page,
                                              final int size,
-                                             final long typeId,
-                                             final Long subTypeId);
+                                             final int typeId,
+                                             final Integer subTypeId);
 
     List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId);
 
@@ -50,9 +49,9 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
                                               final int size,
                                               final OwnerPojo owner);
 
-    List<DataEntityDto> bulkCreate(final List<DataEntityDto> dtos);
+    List<DataEntityPojo> bulkCreate(final List<DataEntityPojo> pojos);
 
-    List<DataEntityDto> bulkUpdate(final List<DataEntityDto> dtos);
+    List<DataEntityPojo> bulkUpdate(final List<DataEntityPojo> pojos);
 
     Optional<Long> incrementViewCount(final long id);
 

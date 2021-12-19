@@ -16,7 +16,10 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
+import org.jooq.TableField;
 import org.jooq.UpdatableRecord;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
+import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.util.StringUtils;
@@ -146,33 +149,6 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return StringUtils.hasLength(nameQuery) ? List.of(nameField.containsIgnoreCase(nameQuery)) : emptyList();
     }
 
-    protected <T> Page<T> pageifyResult(final Map<Record, List<T>> result,
-                                        final int page,
-                                        final Supplier<Long> emptyRecordTotalCounter) {
-        switch (result.size()) {
-            case 0:
-                return Page.<T>builder()
-                    .data(List.of())
-                    .total(emptyRecordTotalCounter.get())
-                    .hasNext(false)
-                    .build();
-            case 1:
-                final Map.Entry<Record, List<T>> record = result.entrySet().stream().findFirst().get();
-
-                final Long total = record.getKey().get(PAGE_METADATA_TOTAL_FIELD, Long.class);
-                final boolean hasNext = record.getKey().get(PAGE_METADATA_NEXT_FIELD, Boolean.class);
-
-                return Page.<T>builder()
-                    .data(record.getValue())
-                    .total(total)
-                    .hasNext(hasNext)
-                    .build();
-            default:
-                throw new RuntimeException(
-                    "Unexpected behaviour in pagination: total and is_next differ from record to record");
-        }
-    }
-
     // TODO: remove empty record from the end of the query
     protected <E> List<E> bulkInsert(final Collection<E> entities, final Class<E> entityClass) {
         final List<R> records = entities.stream()
@@ -230,31 +206,11 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return r.into(pojoClass);
     }
 
-    protected Select<?> paginate(final Select<?> original,
-                                 final int offset,
-                                 final int limit) {
-        final Table<?> u = original.asTable("u");
-        final Field<Integer> totalRows = count().over().as(PAGE_METADATA_TOTAL_FIELD);
-        final Field<Integer> row = rowNumber()
-            .over()
-            .orderBy(u.fields(idField));
+    protected R changedToFalse(final R record, final Collection<TableField<R, ?>> fields) {
+        for (final TableField<R, ?> field : fields) {
+            record.changed(field, false);
+        }
 
-        final Table<?> t = dslContext
-            .select(u.asterisk())
-            .select(totalRows, row)
-            .from(u)
-            .orderBy(u.fields(idField))
-            .limit(limit)
-            .offset(offset)
-            .asTable("t");
-
-        return dslContext
-            .select(t.fields(original.getSelect().toArray(Field[]::new)))
-            .select(
-                field(max(t.field(row)).over().eq(t.field(totalRows))).as(PAGE_METADATA_NEXT_FIELD),
-                t.field(totalRows)
-            )
-            .from(t)
-            .orderBy(t.fields(idField));
+        return record;
     }
 }

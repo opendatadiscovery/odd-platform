@@ -43,7 +43,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
-import org.opendatadiscovery.oddplatform.repository.DataEntityTypeRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
@@ -65,7 +64,6 @@ public class DataEntityServiceImpl
 
     private final MetadataFieldValueRepository metadataFieldValueRepository;
     private final MetadataFieldRepository metadataFieldRepository;
-    private final DataEntityTypeRepository dataEntityTypeRepository;
     private final TagRepository tagRepository;
     private final LineageRepository lineageRepository;
 
@@ -77,7 +75,6 @@ public class DataEntityServiceImpl
                                  final AuthIdentityProvider authIdentityProvider,
                                  final MetadataFieldValueRepository metadataFieldValueRepository,
                                  final MetadataFieldRepository metadataFieldRepository,
-                                 final DataEntityTypeRepository dataEntityTypeRepository,
                                  final TagRepository tagRepository,
                                  final LineageRepository lineageRepository,
                                  final MetadataFieldMapper metadataFieldMapper,
@@ -87,7 +84,6 @@ public class DataEntityServiceImpl
         this.authIdentityProvider = authIdentityProvider;
         this.metadataFieldValueRepository = metadataFieldValueRepository;
         this.metadataFieldRepository = metadataFieldRepository;
-        this.dataEntityTypeRepository = dataEntityTypeRepository;
         this.tagRepository = tagRepository;
         this.lineageRepository = lineageRepository;
         this.metadataFieldMapper = metadataFieldMapper;
@@ -96,9 +92,7 @@ public class DataEntityServiceImpl
 
     @Override
     public Mono<DataEntityTypeDictionary> getDataEntityTypes() {
-        return Mono
-            .fromCallable(dataEntityTypeRepository::getTypes)
-            .map(entityMapper::mapTypeDict);
+        return Mono.just(entityMapper.getTypeDict());
     }
 
     @Override
@@ -136,8 +130,8 @@ public class DataEntityServiceImpl
     @Override
     public Mono<DataEntityList> list(final Integer page,
                                      final Integer size,
-                                     final long entityType,
-                                     final Long entitySubType) {
+                                     final int entityType,
+                                     final Integer entitySubType) {
         return Mono
             .fromCallable(() -> entityRepository.listByType(page, size, entityType, entitySubType))
             .map(entityMapper::mapPojos);

@@ -26,7 +26,6 @@ import org.opendatadiscovery.oddplatform.mapper.FacetStateMapper;
 import org.opendatadiscovery.oddplatform.mapper.SearchMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
-import org.opendatadiscovery.oddplatform.repository.DataEntityTypeRepository;
 import org.opendatadiscovery.oddplatform.repository.SearchFacetRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -41,7 +40,6 @@ public class SearchServiceImpl implements SearchService {
     private final DataEntityMapper dataEntityMapper;
     private final SearchFacetRepository searchFacetRepository;
     private final DataEntityRepository dataEntityRepository;
-    private final DataEntityTypeRepository dataEntityTypeRepository;
 
     private final AuthIdentityProvider authIdentityProvider;
 
@@ -157,19 +155,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     private Mono<Map<SearchFilterId, Long>> fetchTypeFacet(final FacetStateDto state) {
-        // TODO: Bad. Find a way to to make that within the typeFacet query
-        return Mono.zip(
-            Mono.fromCallable(() -> searchFacetRepository.getTypeFacet(state)),
-            Mono.fromCallable(dataEntityTypeRepository::getTypes).map(types -> types.keySet().stream()
-                .map(t -> SearchFilterId.builder().entityId(t.getId()).name(t.getName()).build())
-                .collect(Collectors.toList()))
-        ).map(tuple -> {
-            for (final SearchFilterId t : tuple.getT2()) {
-                tuple.getT1().merge(t, 0L, (sf1, sf2) -> sf1);
-            }
-
-            return tuple.getT1();
-        });
+        return Mono.fromCallable(() -> searchFacetRepository.getTypeFacet(state));
     }
 
     private Mono<SearchFacetsPojo> fetchFacetState(final UUID searchId) {

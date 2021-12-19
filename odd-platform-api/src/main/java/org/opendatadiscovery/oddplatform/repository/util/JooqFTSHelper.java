@@ -33,8 +33,6 @@ import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TYPE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
@@ -49,7 +47,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 @RequiredArgsConstructor
 @Slf4j
 public class JooqFTSHelper {
-    private static final Map<Field<?>, String> WEIGHTS = Map.ofEntries(
+    private static final Map<Field<?>, String> FTS_WEIGHTS = Map.ofEntries(
         Map.entry(DATA_ENTITY.INTERNAL_NAME, "A"),
         Map.entry(DATA_ENTITY.EXTERNAL_NAME, "A"),
         Map.entry(DATA_ENTITY.INTERNAL_DESCRIPTION, "B"),
@@ -70,15 +68,17 @@ public class JooqFTSHelper {
     );
 
     private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
-        FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
+        // TODO
+        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_IDS.contains(extractFilterId(filters).toArray(Integer[]::new)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters))
     );
 
     private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
-        FacetType.TYPES, filters -> DATA_ENTITY_TYPE.ID.in(extractFilterId(filters)),
+        // TODO
+        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_IDS.contains(extractFilterId(filters).toArray(Integer[]::new)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
         FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
-        FacetType.SUBTYPES, filters -> DATA_ENTITY_SUBTYPE.ID.in(extractFilterId(filters)),
+        FacetType.SUBTYPES, filters -> DATA_ENTITY.SUBTYPE_ID.in(extractFilterId(filters)),
         FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
         FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
     );
@@ -235,7 +235,7 @@ public class JooqFTSHelper {
     private static Pair<Field<?>, String> getWeightRelation(final Field<?> field,
                                                             final Table<? extends Record> cte,
                                                             final Map<Field<?>, Field<?>> remappingConfig) {
-        final String weight = WEIGHTS.get(field);
+        final String weight = FTS_WEIGHTS.get(field);
         final Field<?> coalesce = coalesce(cte.field(field), "");
 
         if (weight == null) {
@@ -245,7 +245,7 @@ public class JooqFTSHelper {
                 return null;
             }
 
-            final String remappedFieldWeight = WEIGHTS.get(remappedField);
+            final String remappedFieldWeight = FTS_WEIGHTS.get(remappedField);
 
             if (remappedFieldWeight == null) {
                 log.warn("Couldn't find weight neither for the remapped field {} nor the original {}",

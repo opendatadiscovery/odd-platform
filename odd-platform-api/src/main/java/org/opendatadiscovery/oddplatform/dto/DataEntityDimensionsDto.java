@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
@@ -29,17 +27,15 @@ public class DataEntityDimensionsDto extends DataEntityDto {
 
     @Builder(builderMethodName = "dimensionsBuilder")
     public DataEntityDimensionsDto(final DataEntityPojo dataEntity,
-                                   final Collection<DataEntityTypePojo> types,
-                                   final DataEntitySubtypePojo subtype,
                                    final boolean hasAlerts,
-                                   final Map<DataEntityType, DataEntityAttributes> specificAttributes,
+                                   final Map<DataEntityTypeDto, DataEntityAttributes> specificAttributes,
                                    final NamespacePojo namespace,
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
                                    final Collection<TagPojo> tags,
                                    final Collection<DataEntityPojo> dataEntityGroups,
                                    final DataEntityGroupDimensionsDto groupsDto) {
-        super(dataEntity, types, subtype, hasAlerts, dataEntityGroups, specificAttributes);
+        super(dataEntity, hasAlerts, dataEntityGroups, specificAttributes);
         this.namespace = namespace;
         this.ownership = ownership;
         this.dataSource = dataSource;
