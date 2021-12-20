@@ -11,11 +11,14 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record3;
+import org.jooq.SelectHavingStep;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
@@ -41,6 +44,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class SearchFacetRepositoryImpl implements SearchFacetRepository {
     private final DSLContext dslContext;
     private final JooqFTSHelper jooqFTSHelper;
@@ -81,7 +85,7 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
         final String deCountField = "data_entity_count";
 
         var select = dslContext
-            .select(field("unnest({0})", DATA_ENTITY.TYPE_IDS, Integer.class).as(typeIdUnnestedField))
+            .select(field("unnest(?)", DATA_ENTITY.TYPE_IDS).as(typeIdUnnestedField))
             .select(count(DATA_ENTITY.ID).as(deCountField))
             .from(DATA_ENTITY);
 

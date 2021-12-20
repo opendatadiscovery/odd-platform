@@ -285,6 +285,11 @@ public class IngestionMapperImpl implements IngestionMapper {
                 Pair.of("expectation", dataEntity.getDataQualityTest().getExpectation())
             )));
 
+            case DATA_ENTITY_GROUP -> Pair.of(type, specAttrsMap(List.of(
+                Pair.of("entities_list", new HashSet<>(dataEntity.getDataEntityGroup().getEntitiesList())),
+                Pair.of("group_oddrn", dataEntity.getDataEntityGroup().getGroupOddrn())
+            )));
+
             case DATA_INPUT -> Pair.of(type, specAttrsMap(List.of(
                 Pair.of("output_list", new HashSet<>(dataEntity.getDataInput().getOutputs()))
             )));

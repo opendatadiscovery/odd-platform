@@ -71,6 +71,10 @@ public enum DataEntityTypeDto {
     }
 
     public static Set<DataEntityTypeDto> findByIds(final Integer[] ids) {
+        if (ids == null) {
+            return emptySet();
+        }
+
         return findByIds(Arrays.stream(ids).collect(Collectors.toSet()));
     }
 }

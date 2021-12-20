@@ -23,6 +23,8 @@ public class DataEntityDimensionsDto extends DataEntityDto {
     protected List<OwnershipDto> ownership;
     protected DataSourcePojo dataSource;
     protected Collection<TagPojo> tags;
+    protected Collection<DataEntityPojo> parentGroups;
+
     protected DataEntityGroupDimensionsDto groupsDto;
 
     @Builder(builderMethodName = "dimensionsBuilder")
@@ -33,9 +35,8 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
                                    final Collection<TagPojo> tags,
-                                   final Collection<DataEntityPojo> dataEntityGroups,
                                    final DataEntityGroupDimensionsDto groupsDto) {
-        super(dataEntity, hasAlerts, dataEntityGroups, specificAttributes);
+        super(dataEntity, hasAlerts, specificAttributes);
         this.namespace = namespace;
         this.ownership = ownership;
         this.dataSource = dataSource;
@@ -43,6 +44,8 @@ public class DataEntityDimensionsDto extends DataEntityDto {
         this.groupsDto = groupsDto;
     }
 
-    public record DataEntityGroupDimensionsDto(Collection<DataEntityPojo> entities, Integer itemsCount) {
+    public record DataEntityGroupDimensionsDto(Collection<DataEntityPojo> entities,
+                                               int itemsCount,
+                                               boolean hasChildren) {
     }
 }

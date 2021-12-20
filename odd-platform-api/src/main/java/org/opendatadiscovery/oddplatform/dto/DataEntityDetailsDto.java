@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.dto;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,12 +28,10 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     private DataConsumerDetailsDto dataConsumerDetailsDto;
     private DataQualityTestDetailsDto dataQualityTestDetailsDto;
     private DataInputDetailsDto dataInputDetailsDto;
-    private DataEntityGroupDetailsDto dataEntityGroupDetailsDto;
 
     @Builder(builderMethodName = "detailsBuilder")
     public DataEntityDetailsDto(final DataEntityPojo dataEntity,
                                 final boolean hasAlerts,
-                                final Collection<DataEntityPojo> dataEntityGroups,
                                 final Map<DataEntityTypeDto, DataEntityAttributes> specificAttributes,
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
@@ -46,10 +43,9 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final DataTransformerDetailsDto dataTransformerDetailsDto,
                                 final DataConsumerDetailsDto dataConsumerDetailsDto,
                                 final DataQualityTestDetailsDto dataQualityTestDetailsDto,
-                                final DataInputDetailsDto dataInputDetailsDto,
-                                final DataEntityGroupDetailsDto dataEntityGroupDetailsDto) {
+                                final DataInputDetailsDto dataInputDetailsDto) {
         super(dataEntity, hasAlerts, specificAttributes, namespace, ownership,
-            dataSource, tags, dataEntityGroups, dataEntityGroupDimensionsDto);
+            dataSource, tags, dataEntityGroupDimensionsDto);
 
         this.metadata = metadata;
         this.dataSetDetailsDto = dataSetDetailsDto;
@@ -57,10 +53,11 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
         this.dataConsumerDetailsDto = dataConsumerDetailsDto;
         this.dataQualityTestDetailsDto = dataQualityTestDetailsDto;
         this.dataInputDetailsDto = dataInputDetailsDto;
-        this.dataEntityGroupDetailsDto = dataEntityGroupDetailsDto;
     }
 
-    public record DataSetDetailsDto(Long rowsCount, Long fieldsCount, Long consumersCount,
+    public record DataSetDetailsDto(Long rowsCount,
+                                    Long fieldsCount,
+                                    Long consumersCount,
                                     Collection<DatasetVersionPojo> datasetVersions) {
         public DataSetDetailsDto(final Collection<DatasetVersionPojo> datasetVersions) {
             this(null, null, null, datasetVersions);
@@ -69,21 +66,17 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
 
     public record DataTransformerDetailsDto(Collection<? extends DataEntityDto> sourceList,
                                             Collection<? extends DataEntityDto> targetList,
-                                            String sourceCodeUrl) {
-    }
+                                            String sourceCodeUrl) {}
 
-    public record DataQualityTestDetailsDto(String suiteName, String suiteUrl,
+    public record DataQualityTestDetailsDto(String suiteName,
+                                            String suiteUrl,
                                             Collection<? extends DataEntityDto> datasetList,
-                                            List<String> linkedUrlList, String expectationType,
+                                            List<String> linkedUrlList,
+                                            String expectationType,
                                             DataEntityTaskRunPojo latestTaskRun,
-                                            Map<String, String> expectationParameters) {
-    }
+                                            Map<String, String> expectationParameters) {}
 
-    public record DataConsumerDetailsDto(Collection<? extends DataEntityDto> inputList) {
-    }
-
-    public record DataEntityGroupDetailsDto(boolean hasChildren) {
-    }
+    public record DataConsumerDetailsDto(Collection<? extends DataEntityDto> inputList) {}
 
     @Data
     @Builder

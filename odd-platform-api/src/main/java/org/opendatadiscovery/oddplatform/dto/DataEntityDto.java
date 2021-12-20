@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.dto;
 
-import java.util.Collection;
 import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +15,5 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 public class DataEntityDto {
     protected DataEntityPojo dataEntity;
     protected boolean hasAlerts;
-    protected Collection<DataEntityPojo> dataEntityGroups;
     protected Map<DataEntityTypeDto, DataEntityAttributes> specificAttributes;
 }

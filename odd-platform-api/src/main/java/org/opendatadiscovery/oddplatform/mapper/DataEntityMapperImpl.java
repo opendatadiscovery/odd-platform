@@ -123,7 +123,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 String.format("No subtype with id %d for entity %s was found", subtypeId,
                     dto.getDataEntity().getOddrn())));
 
-        final List<DataEntityRef> groups = Optional.ofNullable(dto.getDataEntityGroups()).stream()
+        final List<DataEntityRef> groups = Optional.ofNullable(dto.getParentGroups()).stream()
             .flatMap(Collection::stream)
             .map(this::mapReference)
             .toList();
@@ -201,7 +201,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .map(this::mapReference)
                 .toList();
             details.setEntities(dataEntityRefs);
-            details.setHasChildren(dto.getDataEntityGroupDetailsDto().hasChildren());
+            details.setHasChildren(dto.getGroupsDto().hasChildren());
         }
 
         if (types.contains(DataEntityTypeDto.DATA_INPUT)) {

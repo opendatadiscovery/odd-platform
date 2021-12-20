@@ -56,8 +56,8 @@ public class MetadataFieldMapperImpl implements MetadataFieldMapper {
     @Override
     public MetadataFieldValue mapDto(final MetadataDto dto) {
         return new MetadataFieldValue()
-            .field(mapField(dto.getMetadataField()))
-            .value(dto.getMetadataFieldValue().getValue());
+            .field(mapField(dto.metadataField()))
+            .value(dto.metadataFieldValue().getValue());
     }
 
     @Override

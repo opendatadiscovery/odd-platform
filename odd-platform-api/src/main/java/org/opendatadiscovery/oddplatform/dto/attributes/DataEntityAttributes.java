@@ -10,6 +10,7 @@ public abstract class DataEntityAttributes {
         DataEntityTypeDto.DATA_TRANSFORMER, DataTransformerAttributes.class,
         DataEntityTypeDto.DATA_CONSUMER, DataConsumerAttributes.class,
         DataEntityTypeDto.DATA_QUALITY_TEST, DataQualityTestAttributes.class,
+        DataEntityTypeDto.DATA_ENTITY_GROUP, DataEntityGroupAttributes.class,
         DataEntityTypeDto.DATA_INPUT, DataInputAttributes.class
     );
 

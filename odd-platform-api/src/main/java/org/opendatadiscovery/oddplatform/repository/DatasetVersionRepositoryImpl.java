@@ -120,10 +120,18 @@ public class DatasetVersionRepositoryImpl
 
     @Override
     public List<DatasetVersionPojo> getVersions(final long datasetId) {
-        return dslContext.select(DATASET_VERSION.asterisk())
+        return dslContext.select(DATASET_VERSION.fields())
             .from(DATASET_VERSION)
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
             .where(DATA_ENTITY.ID.eq(datasetId))
+            .fetchStreamInto(DatasetVersionPojo.class)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DatasetVersionPojo> getVersions(final String datasetOddrn) {
+        return dslContext.selectFrom(DATASET_VERSION)
+            .where(DATASET_VERSION.DATASET_ODDRN.eq(datasetOddrn))
             .fetchStreamInto(DatasetVersionPojo.class)
             .collect(Collectors.toList());
     }

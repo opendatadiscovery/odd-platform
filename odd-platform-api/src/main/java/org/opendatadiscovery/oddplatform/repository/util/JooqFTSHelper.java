@@ -1,10 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -26,8 +21,16 @@ import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRe
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
+import static java.util.function.Predicate.not;
 import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.field;
@@ -68,14 +71,14 @@ public class JooqFTSHelper {
     );
 
     private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
-        // TODO
-        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_IDS.contains(extractFilterId(filters).toArray(Integer[]::new)),
+        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_IDS
+            .contains(extractFilterId(filters).stream().map(Long::intValue).toArray(Integer[]::new)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters))
     );
 
     private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
-        // TODO
-        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_IDS.contains(extractFilterId(filters).toArray(Integer[]::new)),
+        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_IDS
+            .contains(extractFilterId(filters).stream().map(Long::intValue).toArray(Integer[]::new)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
         FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
         FacetType.SUBTYPES, filters -> DATA_ENTITY.SUBTYPE_ID.in(extractFilterId(filters)),
@@ -150,8 +153,8 @@ public class JooqFTSHelper {
     }
 
     public List<Condition> facetStateConditions(final FacetStateDto state,
-                                                 final boolean extended,
-                                                 final boolean skipTypeCondition) {
+                                                final boolean extended,
+                                                final boolean skipTypeCondition) {
         return state.getState().entrySet().stream()
             .filter(e -> {
                 if (skipTypeCondition) {
@@ -166,8 +169,20 @@ public class JooqFTSHelper {
 
     // TODO: ad-hoc
     public Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state,
-                                                                              final boolean skipTypeCondition) {
+                                                                             final boolean skipTypeCondition) {
+        final Predicate<Map.Entry<FacetType, List<SearchFilterDto>>> entryPredicate =
+            e -> e.getKey().equals(FacetType.DATA_SOURCES)
+                || e.getKey().equals(FacetType.TYPES)
+                || e.getKey().equals(FacetType.SUBTYPES);
+
         final List<Condition> joinConditions = state.getState().entrySet().stream()
+            .filter(not(entryPredicate))
+            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        final List<Condition> cteConditions = state.getState().entrySet().stream()
+            .filter(entryPredicate)
             .filter(e -> {
                 if (skipTypeCondition) {
                     return !e.getKey().equals(FacetType.TYPES);
@@ -175,13 +190,6 @@ public class JooqFTSHelper {
 
                 return true;
             })
-            .filter(e -> !e.getKey().equals(FacetType.DATA_SOURCES))
-            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-
-        final List<Condition> cteConditions = state.getState().entrySet().stream()
-            .filter(e -> e.getKey().equals(FacetType.DATA_SOURCES))
             .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -192,8 +200,8 @@ public class JooqFTSHelper {
     }
 
     public Condition compileFacetCondition(final FacetType facetType,
-                                            final List<SearchFilterDto> filters,
-                                            final boolean extended) {
+                                           final List<SearchFilterDto> filters,
+                                           final boolean extended) {
         final Map<FacetType, Function<List<SearchFilterDto>, Condition>> conditionsDict = extended
             ? EXTENDED_CONDITIONS
             : CONDITIONS;
