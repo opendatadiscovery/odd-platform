@@ -1,53 +1,80 @@
-drop table if exists flyway_schema_history cascade;
+delete
+from flyway_schema_history;
 
-drop table if exists type_subtype_relation cascade;
+delete
+from type_subtype_relation;
 
-drop table if exists type_entity_relation cascade;
+delete
+from type_entity_relation;
 
-drop table if exists data_entity_type cascade;
+delete
+from data_entity_type;
 
-drop table if exists data_entity_task_run cascade;
+delete
+from data_entity_task_run;
 
-drop table if exists metadata_field_value cascade;
+delete
+from metadata_field_value;
 
-drop table if exists metadata_field cascade;
+delete
+from metadata_field;
 
-drop table if exists search_entrypoint cascade;
+delete
+from search_entrypoint;
 
-drop table if exists search_facets cascade;
+delete
+from search_facets;
 
-drop table if exists tag_to_data_entity cascade;
+delete
+from tag_to_data_entity;
 
-drop table if exists tag cascade;
+delete
+from tag;
 
-drop table if exists label_to_dataset_field cascade;
+delete
+from label_to_dataset_field;
 
-drop table if exists label cascade;
+delete
+from label;
 
-drop table if exists lineage cascade;
+delete
+from lineage;
 
-drop table if exists ownership cascade;
+delete
+from ownership;
 
-drop table if exists role cascade;
+delete
+from role;
 
-drop table if exists user_owner_mapping cascade;
+delete
+from user_owner_mapping;
 
-drop table if exists owner cascade;
+delete
+from owner;
 
-drop table if exists data_quality_test_relations cascade;
+delete
+from data_quality_test_relations;
 
-drop table if exists alert cascade;
+delete
+from alert;
 
-drop table if exists dataset_structure cascade;
+delete
+from dataset_structure;
 
-drop table if exists dataset_version cascade;
+delete
+from dataset_version;
 
-drop table if exists data_entity cascade;
+delete
+from data_entity;
 
-drop table if exists data_source cascade;
+delete
+from data_source;
 
-drop table if exists namespace cascade;
+delete
+from namespace;
 
-drop table if exists data_entity_subtype cascade;
+delete
+from data_entity_subtype;
 
-drop table if exists dataset_field cascade;
+delete
+from dataset_field;

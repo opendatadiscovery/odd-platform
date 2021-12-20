@@ -14,5 +14,4 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("integration-test")
 @SpringBootTest
 public abstract class BaseIntegrationTest {
-
 }

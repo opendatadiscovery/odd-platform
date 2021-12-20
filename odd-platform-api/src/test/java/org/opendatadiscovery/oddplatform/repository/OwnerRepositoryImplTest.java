@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 
 /**
- * Integration test for {@link OwnerRepository}
+ * Integration test for {@link OwnerRepository}.
  *
  * @author matmalik on 10.12.2021
  */

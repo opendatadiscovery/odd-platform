@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform;
 
 /**
- * Base test class for service layer
+ * Base test class for service layer.
  *
  * @author matmalik on 10.12.2021
  */
