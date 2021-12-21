@@ -34,3 +34,12 @@ export interface LineageStreamParams {
   dataEntityLineage: DataEntityLineage;
   rootNodeId?: number;
 }
+
+export interface GroupedDataEntityLineageNode
+  extends DataEntityLineageNode {
+  nodesRelatedWithDEG?: DataEntityLineageNode[];
+}
+
+export interface GroupedNodesByGroupId {
+  [groupId: string]: DataEntityLineageNode[];
+}

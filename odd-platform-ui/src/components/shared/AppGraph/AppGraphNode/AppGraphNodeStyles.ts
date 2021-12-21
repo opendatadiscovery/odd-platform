@@ -55,6 +55,9 @@ export const styles = (theme: Theme) =>
       [`&.${DataEntityTypeNameEnum.QUALITY_TEST}`]: {
         fill: theme.palette.entityType.DATA_QUALITY_TEST,
       },
+      [`&.${DataEntityTypeNameEnum.ENTITY_GROUP}`]: {
+        fill: theme.palette.entityType.DATA_ENTITY_GROUP,
+      },
     },
     typeLabel: {
       fill: theme.palette.common.black,
@@ -79,6 +82,17 @@ export const styles = (theme: Theme) =>
       fill: 'transparent',
       stroke: theme.palette.button.primaryLight.normal.color,
     },
+    groupedItemsBtn: {
+      cursor: 'pointer',
+      fill: theme.palette.button.dropdown.normal.color,
+      fontSize: theme.typography.body1.fontSize,
+      fontWeight: theme.typography.body1.fontWeight,
+      lineHeight: theme.typography.body1.lineHeight,
+      '&:hover': {
+        fill: theme.palette.button.tertiary.normal.color,
+      },
+    },
+    groupedItemsList: {},
   });
 
 export type StylesType = WithStyles<typeof styles>;

@@ -115,7 +115,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
 
   const nodeSizeInitial = {
     x: 200,
-    y: 140,
+    y: 160,
     mx: 300,
     my: 24,
   };
@@ -123,7 +123,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
   const [nodeSize, setNodeSize] = React.useState(nodeSizeInitial);
 
   React.useEffect(() => {
-    setNodeSize({ ...nodeSizeInitial, y: compactView ? 56 : 140 });
+    setNodeSize({ ...nodeSizeInitial, y: compactView ? 56 : 160 });
   }, [compactView]);
 
   React.useEffect(() => {

@@ -9,8 +9,14 @@ import {
 } from 'generated-sources';
 import isEmpty from 'lodash/isEmpty';
 import { notEmpty } from 'lib/helpers';
+import compact from 'lodash/compact';
+import { mockData } from 'redux/reducers/MOCK';
 import { DataEntityLineageState } from '../interfaces';
-import { DataEntityLineageStreamById } from '../interfaces/dataentityLineage';
+import {
+  DataEntityLineageStreamById,
+  GroupedDataEntityLineageNode,
+  GroupedNodesByGroupId,
+} from '../interfaces/dataentityLineage';
 
 export const initialState: DataEntityLineageState = {};
 export const dataEntityLineageInitialState = {
@@ -22,6 +28,79 @@ enum DataEntityLineageStreamTypeEnum {
   UPSTREAM = 'upstream',
   DOWNSTREAM = 'downstream',
 }
+
+const groupingNodes = (
+  nodes: DataEntityLineageNode[],
+  groups: DataEntityLineageNode[]
+): GroupedNodesByGroupId => {
+  let groupedNodesByGroupId = {};
+  const groupNodesByGroupId = (groupId: number) =>
+    nodes.reduce<GroupedNodesByGroupId>(
+      (memo, node) => ({
+        ...memo,
+        [groupId]: compact([
+          ...(memo?.[groupId] || []),
+          groupId === node?.groupId ? node : undefined,
+        ]),
+      }),
+      {}
+    );
+
+  groups.forEach(group => {
+    groupedNodesByGroupId = {
+      ...groupedNodesByGroupId,
+      ...groupNodesByGroupId(group.id),
+    };
+  });
+
+  return groupedNodesByGroupId;
+};
+
+const updateGroupNodesWithRelatedNodes = (
+  groups: DataEntityLineageNode[],
+  groupedNodesByGroupId: GroupedNodesByGroupId
+): GroupedDataEntityLineageNode[] =>
+  groups.map(groupNode => ({
+    ...groupNode,
+    nodesRelatedWithDEG: groupedNodesByGroupId[groupNode.id],
+  }));
+
+const updateNodesList = (
+  nodes: DataEntityLineageNode[],
+  groupNodes: GroupedDataEntityLineageNode[]
+): GroupedDataEntityLineageNode[] => nodes.concat(groupNodes);
+
+const filterEdgesByGroupedNodes = (
+  rootNodeId: number,
+  edges: DataEntityLineageEdge[],
+  nodes: GroupedDataEntityLineageNode[],
+  edgeType: keyof DataEntityLineageEdge,
+  oppositeEdgeType: keyof DataEntityLineageEdge
+) =>
+  edges
+    .map(edge => {
+      const isEdgeGrouped = !!nodes.find(
+        node =>
+          edge[edgeType] === rootNodeId &&
+          edge[oppositeEdgeType] === node.id
+      );
+      return isEdgeGrouped ? undefined : edge;
+    })
+    .filter(notEmpty);
+
+const updateEdgesList = (
+  rootNodeId: number,
+  edges: DataEntityLineageEdge[],
+  groupNodes: GroupedDataEntityLineageNode[],
+  lineageType: DataEntityLineageStreamTypeEnum
+) =>
+  groupNodes
+    .map(node =>
+      lineageType === 'downstream'
+        ? { sourceId: rootNodeId, targetId: node.id }
+        : { sourceId: node.id, targetId: rootNodeId }
+    )
+    .concat(edges);
 
 const setDataByType = (
   type: DataEntityLineageStreamTypeEnum,
@@ -139,6 +218,12 @@ const updateDataEntityLineage = (
       'targetId'
     );
 
+    const oppositeEdgeType: keyof DataEntityLineageEdge = setDataByType(
+      lineageType,
+      'targetId',
+      'sourceId'
+    );
+
     const { edges } = data;
     const filteredDistantEdges = filteringOfDistantEdges(
       entityId,
@@ -148,20 +233,68 @@ const updateDataEntityLineage = (
     );
     const filteredEdges = filteringOfNeighborsEdges(filteredDistantEdges);
 
+    const groupedNodesByGroupId = groupingNodes(
+      mockData[lineageType].nodes,
+      mockData[lineageType].groups
+    );
+
+    const groupNodesWithRelatedNodes = updateGroupNodesWithRelatedNodes(
+      mockData[lineageType].groups,
+      groupedNodesByGroupId
+    );
+
+    const nodesWithGroupedNodes = updateNodesList(
+      mockData[lineageType].nodes,
+      groupNodesWithRelatedNodes
+    );
+
+    const groupedNodes = Object.values(groupedNodesByGroupId).flat();
+
+    const filteredEdgesByGroupedNodes = filterEdgesByGroupedNodes(
+      mockData.root.id,
+      mockData[lineageType].edges,
+      groupedNodes,
+      edgeType,
+      oppositeEdgeType
+    );
+
+    const edgesWithGroupEdges = updateEdgesList(
+      mockData.root.id,
+      filteredEdgesByGroupedNodes,
+      groupNodesWithRelatedNodes,
+      lineageType
+    );
+
+    // const resultNodes =
+    //   data.groups && data.groups?.length > 0
+    //     ? nodesWithGroupedNodes
+    //     : data.nodes;
+    //
+    // const resultEdges =
+    //   data.groups && data.groups?.length > 0
+    //     ? edgesWithGroupEdges
+    //     : filteredEdges;
+
+    const resultNodes = nodesWithGroupedNodes;
+
+    const resultEdges = edgesWithGroupEdges;
+
     return {
-      edgesById: filteredEdges.reduce<
-        DataEntityLineageStreamById['edgesById']
-      >(
-        (memo, edge) => ({
-          ...memo,
-          [edge[edgeType]]: memo[edge[edgeType]]
-            ? [...memo[edge[edgeType]], edge]
-            : [edge],
-        }),
-        rootNodeId ? { ...state[rootNodeId][lineageType].edgesById } : {}
-      ),
-      nodesById: data.nodes
-        ? data.nodes.reduce<DataEntityLineageStreamById['nodesById']>(
+      edgesById: resultEdges
+        ? resultEdges.reduce<DataEntityLineageStreamById['edgesById']>(
+            (memo, edge) => ({
+              ...memo,
+              [edge[edgeType]]: memo[edge[edgeType]]
+                ? [...memo[edge[edgeType]], edge]
+                : [edge],
+            }),
+            rootNodeId
+              ? { ...state[rootNodeId][lineageType].edgesById }
+              : {}
+          )
+        : {},
+      nodesById: resultNodes
+        ? resultNodes.reduce<DataEntityLineageStreamById['nodesById']>(
             (memo, node) => ({
               ...memo,
               [node.id]: node,
@@ -172,6 +305,31 @@ const updateDataEntityLineage = (
           )
         : {},
     };
+
+    // return {
+    //   edgesById: filteredEdges.reduce<
+    //     DataEntityLineageStreamById['edgesById']
+    //   >(
+    //     (memo, edge) => ({
+    //       ...memo,
+    //       [edge[edgeType]]: memo[edge[edgeType]]
+    //         ? [...memo[edge[edgeType]], edge]
+    //         : [edge],
+    //     }),
+    //     rootNodeId ? { ...state[rootNodeId][lineageType].edgesById } : {}
+    //   ),
+    //   nodesById: data.nodes
+    //     ? data.nodes.reduce<DataEntityLineageStreamById['nodesById']>(
+    //         (memo, node) => ({
+    //           ...memo,
+    //           [node.id]: node,
+    //         }),
+    //         rootNodeId
+    //           ? { ...state[rootNodeId][lineageType].nodesById }
+    //           : {}
+    //       )
+    //     : {},
+    // };
   };
 
   return {

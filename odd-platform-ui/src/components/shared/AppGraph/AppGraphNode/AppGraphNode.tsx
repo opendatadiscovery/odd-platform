@@ -131,10 +131,10 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
 
   const [showLoadMore, setShowLoadMore] = React.useState<boolean>(false);
 
-  const handleMouseEnter = () => setShowLoadMore(true);
-  const handleMouseLeave = () => setShowLoadMore(false);
+  const handleLoadMoreMouseEnter = () => setShowLoadMore(true);
+  const handleLoadMoreMouseLeave = () => setShowLoadMore(false);
 
-  const buttonHandler = () => {
+  const loadMoreButtonHandler = () => {
     if (parent?.children) {
       fetchMoreLineage(data.id, parent?.children[0].depth).then(() =>
         setShowLoadMore(false)
@@ -182,6 +182,85 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     loadMoreSpinnerTransform();
   }, [commitTransform, loadMoreSpinnerTransform]);
 
+  // grouped items list
+  let groupedItemsListRef: SVGGElement;
+
+  const groupedItemsListLayoutInitial = {
+    x: nodeSize.x,
+    y: nodeSize.y / 2,
+    width: 180,
+    height: 24,
+    my: 12,
+    mx: 8,
+  };
+
+  const [listSize, setListSize] = React.useState(
+    groupedItemsListLayoutInitial
+  );
+
+  const listItemHeight = 10;
+  const calculateListHeight = () =>
+    data.nodesRelatedWithDEG
+      ? listItemHeight * data.nodesRelatedWithDEG?.length
+      : listItemHeight;
+
+  React.useEffect(() => {
+    setListSize({
+      ...groupedItemsListLayoutInitial,
+      height: calculateListHeight(),
+    });
+  }, [compactView]);
+
+  const groupedItemsList = () => (
+    <g
+      ref={n => {
+        if (n) groupedItemsListRef = n;
+      }}
+      className={classes.groupedItemsList}
+    >
+      <rect
+        width={loadMoreLayout.width}
+        height={loadMoreLayout.height}
+        rx={16}
+      />
+      <text
+        textAnchor="middle"
+        fontSize={12}
+        fill="#0066CC"
+        x={loadMoreLayout.width / 2}
+        y={loadMoreLayout.height / 2 + loadMoreLayout.my}
+      >
+        Load more
+      </text>
+    </g>
+  );
+
+  const [showList, setShowList] = React.useState<boolean>(false);
+
+  const handleListMouseEnter = () => setShowList(true);
+  const handleListMouseLeave = () => setShowList(false);
+
+  const groupedItemsBtn = () => (
+    <>
+      <text
+        className="wrap-text"
+        width={nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth}
+        onMouseEnter={handleListMouseEnter}
+        onMouseLeave={handleListMouseLeave}
+      >
+        <title>{`${
+          data.nodesRelatedWithDEG && data.nodesRelatedWithDEG.length
+        } entities`}</title>
+        <tspan
+          x={attributeLayout.labelWidth}
+          y={attributeLayout.height * 2}
+          className={cx(classes.groupedItemsBtn, 'visible-text')}
+        />
+        <tspan className="ellip">...</tspan>
+      </text>
+    </>
+  );
+
   return (
     <g
       id={data.d3attrs.id}
@@ -190,8 +269,8 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
       }}
       style={initialStyle}
       transform={transform}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={handleLoadMoreMouseEnter}
+      onMouseLeave={handleLoadMoreMouseLeave}
     >
       <rect
         width={nodeSize.x + loadMoreLayout.width + loadMoreLayout.mx}
@@ -333,6 +412,22 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
                 </tspan>
               )}
             </text>
+            {data.nodesRelatedWithDEG &&
+              data.nodesRelatedWithDEG?.length > 0 && (
+                <>
+                  <text className={classes.attribute}>
+                    <tspan
+                      className={classes.attributeLabel}
+                      key={`dsl-${data.id}`}
+                      x={0}
+                      y={attributeLayout.height * 2}
+                    >
+                      Items
+                    </tspan>
+                  </text>
+                  {groupedItemsBtn()}
+                </>
+              )}
           </g>
           {data.types?.map((type, i) => (
             <g
@@ -372,7 +467,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           }}
           transform={loadMoreTransformTranslate}
           className={classes.button}
-          onClick={buttonHandler}
+          onClick={loadMoreButtonHandler}
         >
           <rect
             width={loadMoreLayout.width}
@@ -408,6 +503,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           )}
         </g>
       )}
+      {showList ? groupedItemsList() : null}
     </g>
   );
 };
