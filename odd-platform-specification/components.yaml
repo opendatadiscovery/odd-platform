@@ -1141,6 +1141,7 @@ components:
         group_id:
           type: integer
           format: int64
+          nullable: true
       required:
         - id
         - name
@@ -1173,7 +1174,7 @@ components:
         groups:
           type: array
           items:
-            $ref: '#/components/schemas/DataEntityLineageEdge'
+            $ref: '#/components/schemas/DataEntityLineageNode'
 
     DataEntityLineage:
       type: object
