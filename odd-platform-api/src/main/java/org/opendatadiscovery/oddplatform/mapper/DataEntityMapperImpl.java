@@ -24,7 +24,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpec
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
@@ -38,6 +37,8 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
+
+import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.*;
 
 @Component
 @RequiredArgsConstructor
@@ -72,14 +73,68 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 ? dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList())
                 : null);
 
-        if (types.contains(DataEntityTypeDto.DATA_ENTITY_GROUP)) {
-            final List<DataEntityRef> groupEntities = dto.getGroupsDto().entities()
+        if (types.contains(DataEntityTypeDto.DATA_SET)) {
+            entity.setStats(mapStats(dto.getDataSetDetailsDto()));
+        }
+
+        if (types.contains(DataEntityTypeDto.DATA_TRANSFORMER)) {
+            entity.setSourceList(dto.getDataTransformerDetailsDto().sourceList()
                 .stream()
+                .distinct()
+                .map(this::mapReference)
+                .collect(Collectors.toList()));
+
+            entity.setTargetList(dto.getDataTransformerDetailsDto()
+                .targetList()
+                .stream()
+                .distinct()
+                .map(this::mapReference)
+                .collect(Collectors.toList()));
+        }
+
+        if (types.contains(DataEntityTypeDto.DATA_QUALITY_TEST)) {
+            final DataQualityTestExpectation expectation = new DataQualityTestExpectation()
+                .type(dto.getDataQualityTestDetailsDto().expectationType());
+
+            expectation.putAll(MapUtils.emptyIfNull(dto.getDataQualityTestDetailsDto().expectationParameters()));
+
+            entity.expectation(expectation)
+                .datasetsList(dto.getDataQualityTestDetailsDto()
+                    .datasetList()
+                    .stream()
+                    .distinct()
+                    .map(this::mapReference)
+                    .collect(Collectors.toList()))
+                .linkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList())
+                .latestRun(dataQualityMapper.mapDataQualityTestRun(
+                    dto.getDataEntity().getId(),
+                    dto.getDataQualityTestDetailsDto().latestTaskRun())
+                )
+                .suiteName(dto.getDataQualityTestDetailsDto().suiteName())
+                .suiteUrl(dto.getDataQualityTestDetailsDto().suiteUrl());
+        }
+
+        if (types.contains(DataEntityTypeDto.DATA_CONSUMER)) {
+            entity.setInputList(dto.getDataConsumerDetailsDto()
+                .inputList()
+                .stream()
+                .distinct()
+                .map(this::mapReference).collect(Collectors.toList()));
+        }
+
+        if (types.contains(DataEntityTypeDto.DATA_ENTITY_GROUP) && dto.getGroupsDto() != null) {
+            final List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
                 .map(this::mapReference)
                 .toList();
+            entity.setEntities(dataEntityRefs);
+        }
 
-            entity.setEntities(groupEntities);
-            entity.setItemsCount(dto.getGroupsDto().itemsCount());
+        if (types.contains(DataEntityTypeDto.DATA_INPUT)) {
+            entity.setOutputList(dto.getDataInputDetailsDto()
+                .outputList()
+                .stream()
+                .distinct()
+                .map(this::mapReference).collect(Collectors.toList()));
         }
 
         return entity;
@@ -147,7 +202,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .viewCount(pojo.getViewCount());
 
         if (types.contains(DataEntityTypeDto.DATA_SET)) {
-            details.setVersionList(datasetVersionMapper.mapPojo(dto.getDataSetDetailsDto().datasetVersions()));
+            details.setVersionList(datasetVersionMapper.mapPojo(dto.getDatasetVersions()));
             details.setStats(mapStats(dto.getDataSetDetailsDto()));
         }
 
@@ -206,7 +261,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
         if (types.contains(DataEntityTypeDto.DATA_INPUT)) {
             details.setOutputList(dto.getDataInputDetailsDto()
-                .getOutputList()
+                .outputList()
                 .stream()
                 .distinct()
                 .map(this::mapReference).collect(Collectors.toList()));

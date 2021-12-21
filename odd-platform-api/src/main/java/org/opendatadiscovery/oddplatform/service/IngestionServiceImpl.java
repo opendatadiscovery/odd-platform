@@ -164,7 +164,7 @@ public class IngestionServiceImpl implements IngestionService {
             .collect(Collectors.toMap(DataEntityIngestionDto::getOddrn, identity()));
 
         final Map<String, DataEntityPojo> existingPojoDict = dataEntityRepository
-            .listAllByOddrns(dtoDict.keySet()).stream()
+            .listDtosByOddrns(dtoDict.keySet()).stream()
             .map(DataEntityDto::getDataEntity)
             .collect(Collectors.toMap(DataEntityPojo::getOddrn, identity()));
 

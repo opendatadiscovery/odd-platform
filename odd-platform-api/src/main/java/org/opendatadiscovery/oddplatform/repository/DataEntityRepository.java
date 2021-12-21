@@ -15,10 +15,11 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 
 public interface DataEntityRepository extends CRUDRepository<DataEntityDimensionsDto> {
-
     Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns);
 
-    List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns);
+    List<DataEntityDto> listDtosByOddrns(final Collection<String> oddrns);
+
+    List<DataEntityDimensionsDto> listDimensionsByOddrns(final Collection<String> oddrns);
 
     List<DataEntityDimensionsDto> listByType(final int page,
                                              final int size,

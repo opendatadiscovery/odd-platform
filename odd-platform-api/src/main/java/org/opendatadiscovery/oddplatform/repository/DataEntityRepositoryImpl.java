@@ -1,18 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -39,10 +27,10 @@ import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataConsumerDetailsDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataQualityTestDetailsDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataTransformerDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataConsumerDetailsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataQualityTestDetailsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataTransformerDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
@@ -80,6 +68,18 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -127,15 +127,11 @@ public class DataEntityRepositoryImpl
     private static final String DATA_ENTITY_CTE_NAME = "dataEntityCTE";
 
     private static final String AGG_TAGS_FIELD = "tag";
-    private static final String AGG_MF_FIELD = "metadata_field";
-    private static final String AGG_MFV_FIELD = "metadata_field_value";
     private static final String AGG_OWNERSHIP_FIELD = "ownership";
     private static final String AGG_OWNER_FIELD = "owner";
     private static final String AGG_ROLE_FIELD = "role";
     private static final String AGG_ALERT_FIELD = "alert";
-    private static final String AGG_SUB_GROUP_ENTITY_FIELD = "subgroup_entity";
     private static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
-    private static final String CHILDREN_COUNT_FIELD = "children_count";
 
     public static final TypeReference<Map<String, ?>> SPECIFIC_ATTRIBUTES_TYPE_REFERENCE = new TypeReference<>() {
     };
@@ -272,14 +268,30 @@ public class DataEntityRepositoryImpl
             .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
             .build();
 
-        return enrichDataEntityDetailsDto(dataEntitySelect(config)
+        return enrichDataEntityDimensionsDto(dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDetailsRecord)
             .collect(Collectors.toList()));
     }
 
     @Override
-    public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns) {
+    public List<DataEntityDto> listDtosByOddrns(final Collection<String> oddrns) {
+        if (CollectionUtils.isEmpty(oddrns)) {
+            return emptyList();
+        }
+
+        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+            .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(oddrns)))
+            .build();
+
+        return dataEntitySelect(config)
+            .fetchStream()
+            .map(this::mapDtoRecord)
+            .toList();
+    }
+
+    @Override
+    public List<DataEntityDimensionsDto> listDimensionsByOddrns(final Collection<String> oddrns) {
         return listAllByOddrns(oddrns, null, null, false);
     }
 
@@ -380,6 +392,7 @@ public class DataEntityRepositoryImpl
 
         return dataEntitySelect(config)
             .fetchOptional(this::mapDetailsRecord)
+            .map(this::enrichDataEntityDimensionsDto)
             .map(this::enrichDataEntityDetailsDto);
     }
 
@@ -387,18 +400,20 @@ public class DataEntityRepositoryImpl
     public List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                                      final Integer page,
                                                                      final Integer size) {
+        // TODO: probably doesn't work
         final DataEntitySelectConfig config = DataEntitySelectConfig
             .builder()
             .selectConditions(List.of(DATA_ENTITY.as(AGG_PARENT_ENTITY_FIELD).ID.eq(dataEntityGroupId)))
             .build();
 
-        return dataEntitySelect(config)
+        final List<DataEntityDimensionsDto> entities = dataEntitySelect(config)
             .limit(size)
             .offset((page - 1) * size)
             .fetchStream()
             .map(this::mapDimensionRecord)
-            .map(this::enrichDataEntityDimensionsDto)
-            .collect(Collectors.toList());
+            .toList();
+
+        return enrichDataEntityDimensionsDto(entities);
     }
 
     @Override
@@ -442,11 +457,10 @@ public class DataEntityRepositoryImpl
             .limit(size)
             .fetchStream()
             .map(this::mapDimensionRecord)
-            .map(this::enrichDataEntityDimensionsDto)
-            .collect(Collectors.toList());
+            .toList();
 
         return Page.<DataEntityDimensionsDto>builder()
-            .data(entities)
+            .data(enrichDataEntityDimensionsDto(entities))
             .hasNext(true)
             .total(total)
             .build();
@@ -642,7 +656,7 @@ public class DataEntityRepositoryImpl
             return Optional.empty();
         }
 
-        final Map<String, DataEntityDimensionsDto> dtoDict = listAllByOddrns(entitiesOddrns)
+        final Map<String, DataEntityDimensionsDto> dtoDict = listDimensionsByOddrns(entitiesOddrns)
             .stream()
             .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
 
@@ -698,7 +712,7 @@ public class DataEntityRepositoryImpl
             upstreamRelations.stream().flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
         ).collect(Collectors.toSet());
 
-        final Map<String, DataEntityDimensionsDto> dtoDict = listAllByOddrns(oddrnsToFetch)
+        final Map<String, DataEntityDimensionsDto> dtoDict = listDimensionsByOddrns(oddrnsToFetch)
             .stream()
             .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
 
@@ -876,11 +890,12 @@ public class DataEntityRepositoryImpl
     }
 
     private List<DataEntityDimensionsDto> listByConfig(final DataEntitySelectConfig config) {
-        return dataEntitySelect(config)
+        final List<DataEntityDimensionsDto> entities = dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDimensionRecord)
-            .map(this::enrichDataEntityDimensionsDto)
-            .collect(Collectors.toList());
+            .toList();
+
+        return enrichDataEntityDimensionsDto(entities);
     }
 
     private SelectLimitStep<Record> dataEntitySelect(final DataEntitySelectConfig config) {
@@ -924,14 +939,14 @@ public class DataEntityRepositoryImpl
             : groupByStep;
     }
 
-    private void enrichDataSetDetails(final DataEntityDetailsDto dto) {
+    private void enrichDatasetVersions(final DataEntityDetailsDto dto) {
         if (!ArrayUtils.contains(dto.getDataEntity().getTypeIds(), DataEntityTypeDto.DATA_SET.getId())) {
             return;
         }
 
         final List<DatasetVersionPojo> versions = datasetVersionRepository.getVersions(dto.getDataEntity().getOddrn());
 
-        dto.setDataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(versions));
+        dto.setDatasetVersions(versions);
     }
 
     private void enrichDetailsWithMetadata(final DataEntityDetailsDto dto) {
@@ -992,51 +1007,53 @@ public class DataEntityRepositoryImpl
         dto.setParentGroups(parentGroups);
     }
 
-    private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto detailsDto) {
-        final Set<String> deps = detailsDto.getSpecificAttributes().values().stream()
+    private <T extends DataEntityDimensionsDto> T enrichDataEntityDimensionsDto(final T dto) {
+        final Set<String> deps = dto.getSpecificAttributes().values().stream()
             .map(DataEntityAttributes::getDependentOddrns)
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
 
-        final Map<String, DataEntityDimensionsDto> depsRepository = listAllByOddrns(deps)
+        final Map<String, DataEntityDto> depsRepository = listDtosByOddrns(deps)
             .stream()
-            .collect(Collectors.toMap(dto -> dto.getDataEntity().getOddrn(), identity()));
+            .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
 
-        enrichDataEntityDetailsDto(detailsDto, depsRepository);
-        enrichDetailsWithMetadata(detailsDto);
-        enrichDataSetDetails(detailsDto);
+        enrichDataEntityDimensionsDto(dto, depsRepository);
+        enrichDEGDetails(dto);
+        enrichParentDEGs(dto);
 
-        return enrichDataEntityDimensionsDto(detailsDto);
+        return dto;
     }
 
-    private <T extends DataEntityDimensionsDto> T enrichDataEntityDimensionsDto(final T detailsDto) {
-        enrichDEGDetails(detailsDto);
-        enrichParentDEGs(detailsDto);
+    private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto dto) {
+        enrichDetailsWithMetadata(dto);
+        enrichDatasetVersions(dto);
 
-        return detailsDto;
+        return dto;
     }
 
-    private List<DataEntityDetailsDto> enrichDataEntityDetailsDto(final List<DataEntityDetailsDto> detailsDtos) {
-        final Set<String> deps = detailsDtos.stream().map(DataEntityDto::getSpecificAttributes)
+    private <T extends DataEntityDimensionsDto> List<T> enrichDataEntityDimensionsDto(final List<T> dtos) {
+        final Set<String> deps = dtos.stream().map(DataEntityDto::getSpecificAttributes)
             .map(Map::values)
             .flatMap(Collection::stream)
             .map(DataEntityAttributes::getDependentOddrns)
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
 
-        final Map<String, DataEntityDimensionsDto> depsRepository = listAllByOddrns(deps)
+        final Map<String, DataEntityDto> depsRepository = listDtosByOddrns(deps)
             .stream()
             .collect(Collectors.toMap(dto -> dto.getDataEntity().getOddrn(), identity()));
 
-        for (final DataEntityDetailsDto detailsDto : detailsDtos) {
-            enrichDataEntityDetailsDto(detailsDto, depsRepository);
+        for (final T dto : dtos) {
+            enrichDataEntityDimensionsDto(dto, depsRepository);
+//            enrichDEGDetails(dto);
+//            enrichParentDEGs(dto);
         }
 
-        return detailsDtos;
+        return dtos;
     }
 
-    private void enrichDataEntityDetailsDto(final DataEntityDetailsDto dto,
-                                            final Map<String, DataEntityDimensionsDto> depsRepository) {
+    private void enrichDataEntityDimensionsDto(final DataEntityDimensionsDto dto,
+                                               final Map<String, DataEntityDto> depsRepository) {
         final Function<Collection<String>, Collection<? extends DataEntityDto>> fetcher = oddrns -> oddrns.stream()
             .map(depsRepository::get)
             .filter(Objects::nonNull)
@@ -1046,15 +1063,15 @@ public class DataEntityRepositoryImpl
             switch (t) {
                 case DATA_SET:
                     final DataSetAttributes dsa = (DataSetAttributes) attrs;
-                    final Collection<DatasetVersionPojo> datasetVersions =
-                        Optional.ofNullable(dto.getDataSetDetailsDto())
-                            .map(DataEntityDetailsDto.DataSetDetailsDto::datasetVersions)
-                            .orElse(null);
+
                     dto.setDataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(
-                        dsa.getRowsCount(), dsa.getFieldsCount(), dsa.getConsumersCount(), datasetVersions
+                        dsa.getRowsCount(),
+                        dsa.getFieldsCount(),
+                        dsa.getConsumersCount()
                     ));
 
                     break;
+
                 case DATA_TRANSFORMER:
                     final DataTransformerAttributes dta = (DataTransformerAttributes) attrs;
                     final DataTransformerDetailsDto dataTransformerDetailsDto =
@@ -1064,6 +1081,7 @@ public class DataEntityRepositoryImpl
                     dto.setDataTransformerDetailsDto(dataTransformerDetailsDto);
 
                     break;
+
                 case DATA_QUALITY_TEST:
                     final DataQualityTestAttributes dqta = (DataQualityTestAttributes) attrs;
                     final DataEntityTaskRunPojo latestTaskRun = dataEntityTaskRunRepository
@@ -1076,6 +1094,7 @@ public class DataEntityRepositoryImpl
                             dqta.getExpectation().getAdditionalProperties());
                     dto.setDataQualityTestDetailsDto(dataQualityTestDetailsDto);
                     break;
+
                 case DATA_CONSUMER:
                     final DataConsumerAttributes dca = (DataConsumerAttributes) attrs;
 
@@ -1085,10 +1104,9 @@ public class DataEntityRepositoryImpl
                 case DATA_INPUT:
                     final DataInputAttributes dia = (DataInputAttributes) attrs;
 
-                    dto.setDataInputDetailsDto(DataInputDetailsDto.builder()
-                        .outputList(fetcher.apply(dia.getOutputListOddrn()))
-                        .build());
+                    dto.setDataInputDetailsDto(new DataInputDetailsDto(fetcher.apply(dia.getOutputListOddrn())));
                     break;
+
                 default:
                     break;
             }
