@@ -402,7 +402,6 @@ public class DataEntityRepositoryImpl
     public List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                                      final Integer page,
                                                                      final Integer size) {
-        // TODO: probably doesn't work
         final DataEntitySelectConfig config = DataEntitySelectConfig
             .builder()
             .selectConditions(List.of(DATA_ENTITY.as(AGG_PARENT_ENTITY_FIELD).ID.eq(dataEntityGroupId)))

@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
@@ -32,6 +33,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.MetadataFieldKey;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -52,6 +54,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Predicate.not;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.*;
 
 @Service
 @Slf4j
@@ -97,32 +100,22 @@ public class DataEntityServiceImpl
 
     @Override
     public Mono<DataEntityDetails> getDetails(final long dataEntityId) {
-        final Mono<DataEntityDetailsDto> dto = Mono
+        return Mono
             .fromCallable(() -> entityRepository.getDetails(dataEntityId))
             .flatMap(optional -> optional.isEmpty()
                 ? Mono.error(new NotFoundException())
                 : Mono.just(optional.get()))
-            .map(this::incrementViewCount);
+            .map(this::incrementViewCount)
+            .map(dto -> {
+                if (ArrayUtils.contains(dto.getDataEntity().getTypeIds(), DataEntityTypeDto.DATA_SET)) {
+                    final Long targetCount = lineageRepository.getTargetsCount(dataEntityId).orElse(0L);
 
-        final Mono<Long> targetCount = Mono
-            .fromCallable(() -> lineageRepository.getTargetsCount(dataEntityId))
-            .map(opt -> opt.orElse(0L));
+                    final DataSetDetailsDto oldDetails = dto.getDataSetDetailsDto();
+                    dto.setDataSetDetailsDto(
+                        new DataSetDetailsDto(oldDetails.rowsCount(), oldDetails.fieldsCount(), targetCount));
+                }
 
-        return Mono.zip(dto, targetCount)
-            .map(tuple -> {
-                // TODO
-                return tuple.getT1();
-//                final var oldDetails = tuple.getT1().getDataSetDetailsDto();
-//
-//                final var datasetDetails = new DataEntityDetailsDto.DataSetDetailsDto(
-//                    oldDetails.rowsCount(),
-//                    oldDetails.fieldsCount(),
-//                    tuple.getT2(),
-//                    oldDetails.datasetVersions()
-//                );
-//
-//                tuple.getT1().setDataSetDetailsDto(datasetDetails);
-//                return tuple.getT1();
+                return dto;
             })
             .map(entityMapper::mapDtoDetails);
     }
