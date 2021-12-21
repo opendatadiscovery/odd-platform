@@ -229,7 +229,8 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
             .map(s -> Pair.of(subtypeToSearchFilter(s), 0L));
 
         return Stream.concat(subtypes, allSubtypes)
-            .filter(s -> StringUtils.containsIgnoreCase(facetQuery, s.getLeft().getName()))
+            .filter(s -> StringUtils.isEmpty(facetQuery)
+                || StringUtils.containsIgnoreCase(facetQuery, s.getLeft().getName()))
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (c1, c2) -> c1 == 0 ? c2 : c1));
     }
 
