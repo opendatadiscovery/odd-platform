@@ -2,12 +2,15 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import java.time.ZoneOffset;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.dto.AlertDto;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
@@ -19,9 +22,13 @@ public class AlertMapperImpl implements AlertMapper {
 
     @Override
     public Alert mapAlert(final AlertDto alert) {
+        final DataEntityRef dataEntity = dataEntityMapper
+            .mapRef(alert.getDataEntity())
+            .hasAlerts(true);
+
         return new Alert()
             .id(alert.getAlert().getId())
-            .dataEntity(dataEntityMapper.mapRef(alert.getDataEntityDto()))
+            .dataEntity(dataEntity)
             .description(alert.getAlert().getDescription())
             .type(AlertType.valueOf(alert.getAlert().getType()))
             .status(AlertStatus.fromValue(alert.getAlert().getStatus()))

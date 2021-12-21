@@ -1,27 +1,39 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record3;
+import org.jooq.SelectHavingStep;
+import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterId;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchFacetsRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
+import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 
+import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TYPE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
@@ -29,11 +41,10 @@ import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_FACETS;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
-import static org.opendatadiscovery.oddplatform.model.Tables.TYPE_SUBTYPE_RELATION;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class SearchFacetRepositoryImpl implements SearchFacetRepository {
     private final DSLContext dslContext;
     private final JooqFTSHelper jooqFTSHelper;
@@ -67,6 +78,77 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
     }
 
     @Override
+    public Map<SearchFilterId, Long> getTypeFacet(final FacetStateDto state) {
+        final ArrayList<Condition> conditions = new ArrayList<>();
+
+        final String typeIdUnnestedField = "type_id";
+        final String deCountField = "data_entity_count";
+
+        var select = dslContext
+            .select(field("unnest(?)", DATA_ENTITY.TYPE_IDS).as(typeIdUnnestedField))
+            .select(count(DATA_ENTITY.ID).as(deCountField))
+            .from(DATA_ENTITY);
+
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            select = select.join(SEARCH_ENTRYPOINT)
+                .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .and(jooqFTSHelper.ftsCondition(state.getQuery()));
+        }
+
+        final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
+        if (!CollectionUtils.isEmpty(dataSourceIds)) {
+            conditions.add(DATA_ENTITY.DATA_SOURCE_ID.in(dataSourceIds));
+        }
+
+        final Set<Long> ownerIds = state.getFacetEntitiesIds(FacetType.OWNERS);
+        if (!CollectionUtils.isEmpty(ownerIds)) {
+            select = select.join(OWNERSHIP)
+                .on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .and(OWNERSHIP.OWNER_ID.in(ownerIds));
+        }
+
+        final Set<Long> namespaceIds = state.getFacetEntitiesIds(FacetType.NAMESPACES);
+        if (!CollectionUtils.isEmpty(namespaceIds)) {
+            select = select.join(DATA_SOURCE)
+                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+                .and(DATA_SOURCE.NAMESPACE_ID.in(namespaceIds));
+        }
+
+        final Set<Long> tagIds = state.getFacetEntitiesIds(FacetType.TAGS);
+        if (!CollectionUtils.isEmpty(tagIds)) {
+            select = select.join(TAG_TO_DATA_ENTITY)
+                .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .and(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds));
+        }
+
+        final Set<Long> subtypeIds = state.getFacetEntitiesIds(FacetType.SUBTYPES);
+        if (!CollectionUtils.isEmpty(subtypeIds)) {
+            conditions.add(DATA_ENTITY.SUBTYPE_ID.in(subtypeIds));
+        }
+
+        final Stream<Pair<SearchFilterId, Long>> types = select
+            .where(conditions)
+            .groupBy(field(typeIdUnnestedField))
+            .fetchStream()
+            .map(r -> {
+                final Integer typeId = r.get(typeIdUnnestedField, Integer.class);
+
+                final DataEntityTypeDto type = DataEntityTypeDto.findById(typeId)
+                    .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("There's no type with id %d", typeId)));
+
+                return Pair.of(typeToSearchFilter(type), r.get(deCountField, Long.class));
+            });
+
+        final Stream<Pair<SearchFilterId, Long>> allTypes = Arrays
+            .stream(DataEntityTypeDto.values())
+            .map(s -> Pair.of(typeToSearchFilter(s), 0L));
+
+        return Stream.concat(types, allTypes)
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (c1, c2) -> c1 == 0 ? c2 : c1));
+    }
+
+    @Override
     public Map<SearchFilterId, Long> getSubtypeFacet(final String facetQuery,
                                                      final int page,
                                                      final int size,
@@ -77,38 +159,79 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
             return Map.of();
         }
 
-        var select = dslContext.select(
-            DATA_ENTITY_SUBTYPE.ID,
-            DATA_ENTITY_SUBTYPE.NAME,
-            countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-            .from(DATA_ENTITY_SUBTYPE)
-            .leftJoin(DATA_ENTITY)
-            .on(DATA_ENTITY.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
-            .join(TYPE_SUBTYPE_RELATION).on(TYPE_SUBTYPE_RELATION.SUBTYPE_ID.eq(DATA_ENTITY_SUBTYPE.ID))
-            .leftJoin(SEARCH_ENTRYPOINT)
-            .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
+        final ArrayList<Condition> conditions = new ArrayList<>();
+
+        var select = dslContext
+            .select(DATA_ENTITY.SUBTYPE_ID, count(DATA_ENTITY.ID))
+            .from(DATA_ENTITY);
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
-            select = select.and(jooqFTSHelper.ftsCondition(state.getQuery()));
+            select = select.join(SEARCH_ENTRYPOINT)
+                .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .and(jooqFTSHelper.ftsCondition(state.getQuery()));
         }
 
         final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
-        if (!dataSourceIds.isEmpty()) {
-            select = select.join(DATA_SOURCE)
-                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-                .and(DATA_SOURCE.ID.in(dataSourceIds));
+        if (!CollectionUtils.isEmpty(dataSourceIds)) {
+            conditions.add(DATA_ENTITY.DATA_SOURCE_ID.in(dataSourceIds));
         }
 
-        return select
-            .where(DATA_ENTITY_SUBTYPE.NAME.containsIgnoreCase(StringUtils.isNotEmpty(facetQuery) ? facetQuery : ""))
-            .and(TYPE_SUBTYPE_RELATION.TYPE_ID.eq(selectedType))
-            .groupBy(DATA_ENTITY_SUBTYPE.ID, DATA_ENTITY_SUBTYPE.NAME)
-            .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
+        final Set<Long> ownerIds = state.getFacetEntitiesIds(FacetType.OWNERS);
+        if (!CollectionUtils.isEmpty(ownerIds)) {
+            select = select.join(OWNERSHIP)
+                .on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .and(OWNERSHIP.OWNER_ID.in(ownerIds));
+        }
+
+        final Set<Long> namespaceIds = state.getFacetEntitiesIds(FacetType.NAMESPACES);
+        if (!CollectionUtils.isEmpty(namespaceIds)) {
+            select = select.join(DATA_SOURCE)
+                .on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
+                .and(DATA_SOURCE.NAMESPACE_ID.in(namespaceIds));
+        }
+
+        final Set<Long> tagIds = state.getFacetEntitiesIds(FacetType.TAGS);
+        if (!CollectionUtils.isEmpty(tagIds)) {
+            select = select.join(TAG_TO_DATA_ENTITY)
+                .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .and(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds));
+        }
+
+        var whereSelect = select
+            .where(conditions)
+            .and(DATA_ENTITY.TYPE_IDS.contains(new Integer[] {selectedType.intValue()}));
+
+        final List<Integer> subtypeIds = subtypeIdsByName(facetQuery);
+
+        if (!subtypeIds.isEmpty()) {
+            whereSelect = whereSelect.and(DATA_ENTITY.SUBTYPE_ID.in(subtypeIds));
+        }
+
+        final Stream<Pair<SearchFilterId, Long>> subtypes = whereSelect
+            .groupBy(DATA_ENTITY.SUBTYPE_ID)
+            .orderBy(count(DATA_ENTITY.ID).desc())
             .limit(size)
             .offset((page - 1) * size)
             .fetchStream()
-            .collect(FACET_COLLECTOR);
+            .map(r -> {
+                final DataEntitySubtypeDto subtype = DataEntitySubtypeDto.findById(r.component1())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                        String.format("There's no subtype with id %d", r.component1())));
+
+                return Pair.of(subtypeToSearchFilter(subtype), r.component2().longValue());
+            });
+
+        final Stream<Pair<SearchFilterId, Long>> allSubtypes = DataEntityTypeDto
+            .findById(selectedType.intValue())
+            .map(DataEntityTypeDto::getSubtypes)
+            .stream()
+            .flatMap(Set::stream)
+            .map(s -> Pair.of(subtypeToSearchFilter(s), 0L));
+
+        return Stream.concat(subtypes, allSubtypes)
+            .filter(s -> StringUtils.isEmpty(facetQuery)
+                || StringUtils.containsIgnoreCase(facetQuery, s.getLeft().getName()))
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight, (c1, c2) -> c1 == 0 ? c2 : c1));
     }
 
     @Override
@@ -127,17 +250,12 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
 
         select = select
             .leftJoin(DATA_ENTITY)
-            .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse());
+            .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID)).and(DATA_ENTITY.HOLLOW.isFalse());
 
         final Long selectedType = state.selectedDataEntityType().orElse(null);
 
         if (selectedType != null) {
-            select = select
-                .leftJoin(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-                .leftJoin(DATA_ENTITY_TYPE)
-                .on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
-                .and(DATA_ENTITY_TYPE.ID.eq(selectedType));
+            select = select.and(DATA_ENTITY.TYPE_IDS.contains(new Integer[] {selectedType.intValue()}));
         }
 
         final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
@@ -180,11 +298,7 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
         final Long selectedType = state.selectedDataEntityType().orElse(null);
 
         if (selectedType != null) {
-            select = select
-                .leftJoin(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-                .leftJoin(DATA_ENTITY_TYPE)
-                .on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
-                .and(DATA_ENTITY_TYPE.ID.eq(selectedType));
+            select = select.and(DATA_ENTITY.TYPE_IDS.contains(new Integer[] {selectedType.intValue()}));
         }
 
         final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
@@ -205,29 +319,24 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
             .collect(FACET_COLLECTOR);
     }
 
-    @Override
-    public Map<SearchFilterId, Long> getTypeFacet(final FacetStateDto state) {
-        var select = dslContext.select(DATA_ENTITY_TYPE.ID, DATA_ENTITY_TYPE.NAME, countDistinct(DATA_ENTITY.ID))
-            .from(TYPE_ENTITY_RELATION)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_ID))
-            .join(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .leftJoin(DATA_ENTITY_TYPE).on(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID.eq(DATA_ENTITY_TYPE.ID))
-            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .leftJoin(TAG).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
-            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .leftJoin(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
-            .join(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID))
-            .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID))
-            .where(jooqFTSHelper.facetStateConditions(state, true, true))
-            .and(DATA_ENTITY.HOLLOW.isFalse());
+    private List<Integer> subtypeIdsByName(final String name) {
+        return Arrays.stream(DataEntitySubtypeDto.values())
+            .filter(s -> StringUtils.containsIgnoreCase(name, s.name()))
+            .map(DataEntitySubtypeDto::getId)
+            .toList();
+    }
 
-        if (StringUtils.isNotEmpty(state.getQuery())) {
-            select = select.and(jooqFTSHelper.ftsCondition(state.getQuery()));
-        }
+    private SearchFilterId subtypeToSearchFilter(final DataEntitySubtypeDto subtype) {
+        return SearchFilterId.builder()
+            .entityId(subtype.getId())
+            .name(subtype.name())
+            .build();
+    }
 
-        return select
-            .groupBy(DATA_ENTITY_TYPE.ID, DATA_ENTITY_TYPE.NAME)
-            .fetchStream()
-            .collect(FACET_COLLECTOR);
+    private SearchFilterId typeToSearchFilter(final DataEntityTypeDto subtype) {
+        return SearchFilterId.builder()
+            .entityId(subtype.getId())
+            .name(subtype.name())
+            .build();
     }
 }

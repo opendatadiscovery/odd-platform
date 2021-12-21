@@ -8,7 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.opendatadiscovery.oddplatform.dto.DataEntityType;
+import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 
 @Data
@@ -22,8 +23,8 @@ public class DataEntityIngestionDto {
     protected String externalDescription;
     protected OffsetDateTime createdAt;
     protected OffsetDateTime updatedAt;
-    protected Set<DataEntityType> types;
-    protected String subType;
+    protected Set<DataEntityTypeDto> types;
+    protected DataEntitySubtypeDto subType;
     protected Map<String, Object> metadata;
     protected String specificAttributesJson;
 
@@ -31,8 +32,8 @@ public class DataEntityIngestionDto {
     protected DataTransformerIngestionDto dataTransformer;
     protected DataConsumerIngestionDto dataConsumer;
     protected DataQualityTestIngestionDto datasetQualityTest;
-    protected DataEntityGroupDto dataEntityGroup;
     protected DataInputIngestionDto dataInput;
+    protected DataEntityGroupDto dataEntityGroup;
 
     public record DataSetIngestionDto(String parentDatasetOddrn, List<DataSetField> fieldList,
                                       String structureHash, Long rowsCount) {}
@@ -43,13 +44,7 @@ public class DataEntityIngestionDto {
 
     public record DataQualityTestIngestionDto(List<String> datasetList) {}
 
-    public record DataEntityGroupDto(List<String> entitiesOddrns, String groupOddrn) {}
+    public record DataInputIngestionDto(List<String> outputs) {}
 
-    @Data
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class DataInputIngestionDto {
-        private List<String> outputs;
-    }
+    public record DataEntityGroupDto(List<String> entitiesOddrns, String groupOddrn) {}
 }
