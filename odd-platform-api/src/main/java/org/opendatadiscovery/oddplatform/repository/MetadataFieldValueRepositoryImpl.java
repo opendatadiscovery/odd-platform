@@ -3,9 +3,11 @@ package org.opendatadiscovery.oddplatform.repository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetStep;
+import org.jooq.Record;
 import org.opendatadiscovery.oddplatform.dto.MetadataDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
@@ -90,10 +92,10 @@ public class MetadataFieldValueRepositoryImpl
             .execute();
     }
 
-    private MetadataDto metadataDto(final org.jooq.Record r) {
-        return MetadataDto.builder()
-            .metadataField(r.into(METADATA_FIELD).into(MetadataFieldPojo.class))
-            .metadataFieldValue(r.into(METADATA_FIELD_VALUE).into(MetadataFieldValuePojo.class))
-            .build();
+    private MetadataDto metadataDto(final Record r) {
+        return new MetadataDto(
+            r.into(METADATA_FIELD).into(MetadataFieldPojo.class),
+            r.into(METADATA_FIELD_VALUE).into(MetadataFieldValuePojo.class)
+        );
     }
 }

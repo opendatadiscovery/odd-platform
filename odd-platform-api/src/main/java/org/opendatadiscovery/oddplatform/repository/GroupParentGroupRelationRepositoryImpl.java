@@ -3,9 +3,7 @@ package org.opendatadiscovery.oddplatform.repository;
 import java.util.Collection;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
-import org.jooq.InsertValuesStep2;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRelationsPojo;
-import org.opendatadiscovery.oddplatform.model.tables.records.GroupParentGroupRelationsRecord;
 import org.springframework.stereotype.Repository;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;

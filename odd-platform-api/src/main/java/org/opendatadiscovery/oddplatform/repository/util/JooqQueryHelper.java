@@ -87,6 +87,16 @@ public class JooqQueryHelper {
             .build();
     }
 
+    public <T> Field<T> getField(final Table<?> table, final Field<T> refField) {
+        final Field<T> f = table.field(refField);
+        if (f == null) {
+            throw new IllegalArgumentException(
+                String.format("Table %s doesn't contains field %s", table.getName(), refField.getName()));
+        }
+
+        return f;
+    }
+
     private static void homogeneityCheck(final List<Field<?>> fields) {
         String tableName = null;
 

@@ -29,8 +29,8 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
 
     Mono<DataEntityList> list(final Integer page,
                               final Integer size,
-                              final long entityType,
-                              final Long entitySubType);
+                              final int entityType,
+                              final Integer entitySubType);
 
     Flux<DataEntityRef> listAssociated(final int page, final int size);
 

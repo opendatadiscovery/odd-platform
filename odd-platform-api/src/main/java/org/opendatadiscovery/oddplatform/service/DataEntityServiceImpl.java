@@ -9,6 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
@@ -32,6 +33,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.MetadataFieldKey;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -43,7 +45,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
-import org.opendatadiscovery.oddplatform.repository.DataEntityTypeRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
@@ -53,6 +54,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Predicate.not;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
 
 @Service
 @Slf4j
@@ -65,7 +67,6 @@ public class DataEntityServiceImpl
 
     private final MetadataFieldValueRepository metadataFieldValueRepository;
     private final MetadataFieldRepository metadataFieldRepository;
-    private final DataEntityTypeRepository dataEntityTypeRepository;
     private final TagRepository tagRepository;
     private final LineageRepository lineageRepository;
 
@@ -77,7 +78,6 @@ public class DataEntityServiceImpl
                                  final AuthIdentityProvider authIdentityProvider,
                                  final MetadataFieldValueRepository metadataFieldValueRepository,
                                  final MetadataFieldRepository metadataFieldRepository,
-                                 final DataEntityTypeRepository dataEntityTypeRepository,
                                  final TagRepository tagRepository,
                                  final LineageRepository lineageRepository,
                                  final MetadataFieldMapper metadataFieldMapper,
@@ -87,7 +87,6 @@ public class DataEntityServiceImpl
         this.authIdentityProvider = authIdentityProvider;
         this.metadataFieldValueRepository = metadataFieldValueRepository;
         this.metadataFieldRepository = metadataFieldRepository;
-        this.dataEntityTypeRepository = dataEntityTypeRepository;
         this.tagRepository = tagRepository;
         this.lineageRepository = lineageRepository;
         this.metadataFieldMapper = metadataFieldMapper;
@@ -96,32 +95,27 @@ public class DataEntityServiceImpl
 
     @Override
     public Mono<DataEntityTypeDictionary> getDataEntityTypes() {
-        return Mono
-            .fromCallable(dataEntityTypeRepository::getTypes)
-            .map(entityMapper::mapTypeDict);
+        return Mono.just(entityMapper.getTypeDict());
     }
 
     @Override
     public Mono<DataEntityDetails> getDetails(final long dataEntityId) {
-        final Mono<DataEntityDetailsDto> dto = Mono
+        return Mono
             .fromCallable(() -> entityRepository.getDetails(dataEntityId))
             .flatMap(optional -> optional.isEmpty()
                 ? Mono.error(new NotFoundException())
                 : Mono.just(optional.get()))
-            .map(this::incrementViewCount);
+            .map(this::incrementViewCount)
+            .map(dto -> {
+                if (ArrayUtils.contains(dto.getDataEntity().getTypeIds(), DataEntityTypeDto.DATA_SET)) {
+                    final Long targetCount = lineageRepository.getTargetsCount(dataEntityId).orElse(0L);
 
-        final Mono<Long> targetCount = Mono
-            .fromCallable(() -> lineageRepository.getTargetsCount(dataEntityId))
-            .map(opt -> opt.orElse(0L));
+                    final DataSetDetailsDto oldDetails = dto.getDataSetDetailsDto();
+                    dto.setDataSetDetailsDto(
+                        new DataSetDetailsDto(oldDetails.rowsCount(), oldDetails.fieldsCount(), targetCount));
+                }
 
-        return Mono.zip(dto, targetCount)
-            .map(tuple -> {
-                final var oldDetails = tuple.getT1().getDataSetDetailsDto();
-                final var datasetDetails = new DataEntityDetailsDto.DataSetDetailsDto(
-                    oldDetails.rowsCount(), oldDetails.fieldsCount(), tuple.getT2(), oldDetails.datasetVersions()
-                );
-                tuple.getT1().setDataSetDetailsDto(datasetDetails);
-                return tuple.getT1();
+                return dto;
             })
             .map(entityMapper::mapDtoDetails);
     }
@@ -136,8 +130,8 @@ public class DataEntityServiceImpl
     @Override
     public Mono<DataEntityList> list(final Integer page,
                                      final Integer size,
-                                     final long entityType,
-                                     final Long entitySubType) {
+                                     final int entityType,
+                                     final Integer entitySubType) {
         return Mono
             .fromCallable(() -> entityRepository.listByType(page, size, entityType, entitySubType))
             .map(entityMapper::mapPojos);
