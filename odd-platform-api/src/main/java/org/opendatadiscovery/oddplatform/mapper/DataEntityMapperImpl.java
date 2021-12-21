@@ -81,7 +81,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             final List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
                 .map(this::mapReference)
                 .toList();
+
             entity.setEntities(dataEntityRefs);
+            entity.setItemsCount(dto.getGroupsDto().itemsCount());
         }
 
         return entity;
@@ -344,16 +346,20 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .map(this::mapType)
             .toList();
 
-        return mapReference(pojo)
-            .types(types)
-            .hasAlerts(dto.isHasAlerts());
+        return mapReference(pojo).hasAlerts(dto.isHasAlerts());
     }
 
     private DataEntityRef mapReference(final DataEntityPojo pojo) {
+        final List<DataEntityType> types = DataEntityTypeDto.findByIds(pojo.getTypeIds())
+            .stream()
+            .map(this::mapType)
+            .toList();
+
         return new DataEntityRef()
             .id(pojo.getId())
             .externalName(pojo.getExternalName())
             .internalName(pojo.getInternalName())
+            .types(types)
             .url("");
     }
 

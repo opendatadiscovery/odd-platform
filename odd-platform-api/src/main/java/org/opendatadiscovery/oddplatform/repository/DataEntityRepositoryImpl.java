@@ -1,12 +1,25 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.CommonTableExpression;
 import org.jooq.Condition;
@@ -68,24 +81,13 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
+import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
@@ -979,7 +981,53 @@ public class DataEntityRepositoryImpl
             entities.size() + childrenCount.intValue(),
             childrenCount != 0L
         ));
+    }
 
+    private <T extends DataEntityDimensionsDto> void enrichDEGDetails(final List<T> dtos) {
+        final Set<String> degOddrns = dtos.stream()
+            .map(DataEntityDto::getDataEntity)
+            .filter(d -> ArrayUtils.contains(d.getTypeIds(), DataEntityTypeDto.DATA_ENTITY_GROUP.getId()))
+            .map(DataEntityPojo::getOddrn)
+            .collect(Collectors.toSet());
+
+        if (degOddrns.isEmpty()) {
+            return;
+        }
+
+        final Map<String, List<DataEntityPojo>> entityRepository = dslContext
+            .select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN)
+            .select(DATA_ENTITY.fields())
+            .from(GROUP_ENTITY_RELATIONS)
+            .leftJoin(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.in(degOddrns))
+            .fetchGroups(GROUP_ENTITY_RELATIONS.GROUP_ODDRN, DataEntityPojo.class);
+
+        final Field<Long> childrenCountField = field("children_count", Long.class);
+
+        final Map<String, Long> countRepository = dslContext
+            .select(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN)
+            .select(count(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN).as(childrenCountField))
+            .from(GROUP_PARENT_GROUP_RELATIONS)
+            .where(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN.in(degOddrns))
+            .groupBy(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN)
+            .fetchMap(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN, childrenCountField);
+
+        for (final T dto : dtos) {
+            final String oddrn = dto.getDataEntity().getOddrn();
+
+            if (!degOddrns.contains(oddrn)) {
+                continue;
+            }
+
+            final List<DataEntityPojo> entityList = ListUtils.emptyIfNull(entityRepository.get(oddrn));
+            final Long childrenCount = ObjectUtils.defaultIfNull(countRepository.get(oddrn), 0L);
+
+            dto.setGroupsDto(new DataEntityDimensionsDto.DataEntityGroupDimensionsDto(
+                entityList,
+                entityList.size() + childrenCount.intValue(),
+                childrenCount != 0L
+            ));
+        }
     }
 
     private <T extends DataEntityDimensionsDto> void enrichParentDEGs(final T dto) {
@@ -1005,6 +1053,43 @@ public class DataEntityRepositoryImpl
             .toList();
 
         dto.setParentGroups(parentGroups);
+    }
+
+    private <T extends DataEntityDimensionsDto> void enrichParentDEGs(final List<T> dto) {
+        final Set<String> oddrns = dto.stream()
+            .map(d -> d.getDataEntity().getOddrn())
+            .collect(Collectors.toSet());
+
+        final Field<String> degOddrnField = field("deg_oddrn", String.class);
+        final String cteName = "cte";
+
+        final SelectOrderByStep<Record> cteSelect = dslContext
+            .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
+            .select(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.as(degOddrnField))
+            .from(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(oddrns))
+            .union(dslContext
+                .select(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN)
+                .select(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.as(degOddrnField))
+                .from(GROUP_PARENT_GROUP_RELATIONS)
+                .where(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN.in(oddrns)));
+
+        final Table<Record> selectTable = cteSelect.asTable(cteName);
+
+        final Field<String> deOddrnField =
+            jooqQueryHelper.getField(selectTable, GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN);
+
+        final Map<String, List<DataEntityPojo>> repository = dslContext.with(cteName)
+            .as(cteSelect)
+            .select(deOddrnField)
+            .select(DATA_ENTITY.fields())
+            .from(cteName)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(jooqQueryHelper.getField(selectTable, degOddrnField)))
+            .fetchGroups(deOddrnField, DataEntityPojo.class);
+
+        for (final T t : dto) {
+            t.setParentGroups(repository.get(t.getDataEntity().getOddrn()));
+        }
     }
 
     private <T extends DataEntityDimensionsDto> T enrichDataEntityDimensionsDto(final T dto) {
@@ -1045,9 +1130,10 @@ public class DataEntityRepositoryImpl
 
         for (final T dto : dtos) {
             enrichDataEntityDimensionsDto(dto, depsRepository);
-//            enrichDEGDetails(dto);
-//            enrichParentDEGs(dto);
         }
+
+        enrichParentDEGs(dtos);
+        enrichDEGDetails(dtos);
 
         return dtos;
     }
