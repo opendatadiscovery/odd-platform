@@ -54,7 +54,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Predicate.not;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.*;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
 
 @Service
 @Slf4j

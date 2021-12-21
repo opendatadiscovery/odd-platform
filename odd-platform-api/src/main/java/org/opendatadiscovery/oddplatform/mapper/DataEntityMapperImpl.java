@@ -38,7 +38,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
-import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.*;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataQualityTestDetailsDto;
 
 @Component
 @RequiredArgsConstructor

@@ -1091,6 +1091,13 @@ public class DataEntityRepositoryImpl
         }
     }
 
+    private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto dto) {
+        enrichDetailsWithMetadata(dto);
+        enrichDatasetVersions(dto);
+
+        return dto;
+    }
+
     private <T extends DataEntityDimensionsDto> T enrichDataEntityDimensionsDto(final T dto) {
         final Set<String> deps = dto.getSpecificAttributes().values().stream()
             .map(DataEntityAttributes::getDependentOddrns)
@@ -1104,13 +1111,6 @@ public class DataEntityRepositoryImpl
         enrichDataEntityDimensionsDto(dto, depsRepository);
         enrichDEGDetails(dto);
         enrichParentDEGs(dto);
-
-        return dto;
-    }
-
-    private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto dto) {
-        enrichDetailsWithMetadata(dto);
-        enrichDatasetVersions(dto);
 
         return dto;
     }
