@@ -1171,7 +1171,9 @@ components:
           items:
             $ref: '#/components/schemas/DataEntityLineageEdge'
         groups:
-          $ref: '#/components/schemas/DataEntityRefList'
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityLineageEdge'
 
     DataEntityLineage:
       type: object

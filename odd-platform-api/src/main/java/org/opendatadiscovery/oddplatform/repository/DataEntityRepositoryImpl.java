@@ -21,6 +21,11 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.CommonTableExpression;
+import org.jooq.Condition;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record3;
@@ -78,12 +83,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static java.util.Collections.*;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
 import static org.jooq.impl.DSL.count;
@@ -91,7 +94,8 @@ import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
-import static org.jooq.impl.DSL.*;
+import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.val;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataInputDetailsDto;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
 import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.UPSTREAM;
@@ -726,43 +730,7 @@ public class DataEntityRepositoryImpl
     }
 
     private Map<DataEntityDto, Set<String>> fetchGroupRepository(final Collection<String> childOddrns) {
-        if (CollectionUtils.isEmpty(childOddrns)) {
-            return Map.of();
-        }
-
-        final Name cteName = name("t1");
-        final String deOddrnsField = "de_oddrns";
-
-        final SelectHavingStep<Record2<String, String[]>> cteSelect = dslContext
-            .select(
-                GROUP_ENTITY_RELATIONS.GROUP_ODDRN,
-                arrayAgg(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN).as(deOddrnsField)
-            )
-            .from(GROUP_ENTITY_RELATIONS)
-            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(childOddrns))
-            .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN);
-
-        final Table<Record2<String, String[]>> cteTable = cteSelect.asTable(cteName);
-
-        return dslContext.with(cteName)
-            .as(cteSelect)
-            .select(DATA_ENTITY.fields())
-//            .select(DATA_ENTITY_TYPE.fields())
-            .select(DATA_ENTITY_SUBTYPE.fields())
-            .select(cteTable.field(deOddrnsField))
-//            .select(field(count(ALERT.ID).ne(0)).as("has_alerts"))
-            .from(cteName)
-            // TODO: handle DEG types
-            .join(DATA_ENTITY).on(cteTable.field(GROUP_ENTITY_RELATIONS.GROUP_ODDRN).eq(DATA_ENTITY.ODDRN))
-            .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
-            .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID))
-            .fetchStream()
-            .map(r -> Tuples.of(
-                mapDtoRecord(r, false),
-                jooqRecordHelper.extractAggRelation(r, deOddrnsField, String.class)
-            ))
-            .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
+        return Map.of();
     }
 
     private List<Set<String>> combineOddrnsInDEGLineage(final List<Set<String>> oddrnRelations) {
@@ -901,7 +869,6 @@ public class DataEntityRepositoryImpl
                     return Tuples.of(entityId, groupId);
                 }))
             .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
-
 
         return DataEntityLineageStreamDto.builder()
             .edges(edges)
@@ -1260,6 +1227,10 @@ public class DataEntityRepositoryImpl
                     break;
             }
         });
+    }
+
+    private DataEntityDto mapDtoRecord(final Record r) {
+        return mapDtoRecord(r, true);
     }
 
     private DataEntityDto mapDtoRecord(final Record r, final boolean remap) {

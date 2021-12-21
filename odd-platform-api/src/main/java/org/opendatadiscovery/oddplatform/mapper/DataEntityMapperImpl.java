@@ -1,10 +1,11 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -323,14 +324,11 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
             nodes.add(mapNode(node, groupId));
         }
+
         return new DataEntityLineageStream()
             .nodes(nodes)
             .edges(stream.getEdges().stream().map(this::mapEdge).collect(Collectors.toList()))
-            .groups(stream.getGroups()
-                .stream()
-                .filter(g -> streamGroups.contains(g.getDataEntity().getId()))
-                .map(this::mapReference)
-                .collect(Collectors.toList()));
+            .groups(List.of());
     }
 
     private DataEntityLineageEdge mapEdge(final Pair<Long, Long> edge) {
