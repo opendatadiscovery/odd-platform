@@ -1,23 +1,12 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -83,12 +72,25 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
+import static org.jooq.impl.DSL.arrayAgg;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
@@ -716,11 +718,25 @@ public class DataEntityRepositoryImpl
             upstreamRelations.stream().flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
         ).collect(Collectors.toSet());
 
-        final Map<DataEntityDto, Set<String>> groupRepository = fetchGroupRepository(oddrnsToFetch);
+        final Map<String, List<String>> groupRelations = fetchGroupRepository(oddrnsToFetch);
 
-        final Map<String, DataEntityDimensionsDto> dtoRepository = listDimensionsByOddrns(oddrnsToFetch)
+        final Map<String, DataEntityDimensionsDto> dtoRepository =
+            listDimensionsByOddrns(SetUtils.union(oddrnsToFetch, groupRelations.keySet()))
+                .stream()
+                .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
+
+        final Map<DataEntityDimensionsDto, List<String>> groupRepository = groupRelations.entrySet()
             .stream()
-            .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
+            .map(e -> {
+                final DataEntityDimensionsDto groupDto = dtoRepository.get(e.getKey());
+                if (groupDto == null) {
+                    return null;
+                }
+
+                return Pair.of(groupDto, e.getValue());
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
         return DataEntityLineageDto.builder()
             .dataEntityDto(dto)
@@ -729,8 +745,22 @@ public class DataEntityRepositoryImpl
             .build();
     }
 
-    private Map<DataEntityDto, Set<String>> fetchGroupRepository(final Collection<String> childOddrns) {
-        return Map.of();
+    private Map<String, List<String>> fetchGroupRepository(final Collection<String> childOddrns) {
+        if (CollectionUtils.isEmpty(childOddrns)) {
+            return Map.of();
+        }
+
+        final Field<String> deOddrnsField = field("de_oddrns", String.class);
+
+        return dslContext
+            .select(
+                GROUP_ENTITY_RELATIONS.GROUP_ODDRN,
+                arrayAgg(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN).as(deOddrnsField)
+            )
+            .from(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(childOddrns))
+            .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN)
+            .fetchGroups(GROUP_ENTITY_RELATIONS.GROUP_ODDRN, deOddrnsField);
     }
 
     private List<Set<String>> combineOddrnsInDEGLineage(final List<Set<String>> oddrnRelations) {
@@ -746,6 +776,7 @@ public class DataEntityRepositoryImpl
                 });
             combinedRelations.addAll(relations);
         });
+
         if (result.size() == oddrnRelations.size()) {
             return result;
         } else {
@@ -836,7 +867,7 @@ public class DataEntityRepositoryImpl
     }
 
     private DataEntityLineageStreamDto getLineageStream(final Map<String, DataEntityDimensionsDto> dtoRepository,
-                                                        final Map<DataEntityDto, Set<String>> groupRepository,
+                                                        final Map<DataEntityDimensionsDto, List<String>> groupRepository,
                                                         final List<LineagePojo> relations) {
         final List<Pair<Long, Long>> edges = relations.stream()
             .map(r -> Pair.of(

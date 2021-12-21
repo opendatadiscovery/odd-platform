@@ -15,6 +15,6 @@ import org.opendatadiscovery.oddplatform.utils.Pair;
 public class DataEntityLineageStreamDto {
     private Collection<DataEntityDimensionsDto> nodes;
     private Collection<Pair<Long, Long>> edges;
-    private Collection<DataEntityDto> groups;
+    private Collection<DataEntityDimensionsDto> groups;
     private Map<Long, Long> groupsRelations;
 }
