@@ -8,13 +8,12 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.SetUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
-import org.opendatadiscovery.oddplatform.dto.DataEntityType;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
@@ -59,11 +58,11 @@ public class AlertLocatorImpl implements AlertLocator {
     @Override
     public List<AlertPojo> locateEarlyBackIncSchema(final List<DataEntitySpecificAttributesDelta> deltas) {
         final Stream<AlertPojo> transformerAlerts = deltas.stream()
-            .filter(d -> d.getDataEntityTypes().contains(DataEntityType.DATA_TRANSFORMER))
+            .filter(d -> d.types().contains(DataEntityTypeDto.DATA_TRANSFORMER))
             .flatMap(this::locateAlertsInDTDelta);
 
         final Stream<AlertPojo> consumerAlerts = deltas.stream()
-            .filter(d -> d.getDataEntityTypes().contains(DataEntityType.DATA_CONSUMER))
+            .filter(d -> d.types().contains(DataEntityTypeDto.DATA_CONSUMER))
             .flatMap(this::locateAlertsInDCDelta);
 
         return Stream.concat(transformerAlerts, consumerAlerts).collect(Collectors.toList());
@@ -86,14 +85,14 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     private Stream<AlertPojo> locateAlertsInDTDelta(final DataEntitySpecificAttributesDelta delta) {
-        final DataTransformerAttributes oldAttr = extractDTAttributes(delta.getOldAttrsJson());
-        final DataTransformerAttributes newAttr = extractDTAttributes(delta.getNewAttrsJson());
+        final DataTransformerAttributes oldAttr = extractDTAttributes(delta.oldAttrsJson());
+        final DataTransformerAttributes newAttr = extractDTAttributes(delta.newAttrsJson());
 
         final Stream<AlertPojo> sourceAlerts = SetUtils
             .difference(oldAttr.getSourceOddrnList(), newAttr.getSourceOddrnList())
             .stream()
             .map(source -> buildAlert(
-                delta.getDataEntityOddrn(),
+                delta.oddrn(),
                 AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA,
                 String.format("Missing source: %s", source)
             ));
@@ -102,7 +101,7 @@ public class AlertLocatorImpl implements AlertLocator {
             .difference(oldAttr.getTargetOddrnList(), newAttr.getTargetOddrnList())
             .stream()
             .map(source -> buildAlert(
-                delta.getDataEntityOddrn(),
+                delta.oddrn(),
                 AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA,
                 String.format("Missing target: %s", source)
             ));
@@ -113,35 +112,35 @@ public class AlertLocatorImpl implements AlertLocator {
     private Stream<AlertPojo> locateAlertsInDCDelta(final DataEntitySpecificAttributesDelta delta) {
         return SetUtils
             .difference(
-                extractDCAttributes(delta.getOldAttrsJson()).getInputListOddrn(),
-                extractDCAttributes(delta.getNewAttrsJson()).getInputListOddrn()
+                extractDCAttributes(delta.oldAttrsJson()).getInputListOddrn(),
+                extractDCAttributes(delta.newAttrsJson()).getInputListOddrn()
             )
             .stream()
             .map(source -> buildAlert(
-                delta.getDataEntityOddrn(),
+                delta.oddrn(),
                 AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA,
                 String.format("Missing input: %s", source)
             ));
     }
 
     private DataTransformerAttributes extractDTAttributes(final String json) {
-        final Map<DataEntityType, ?> specificAttributes =
-            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityType, ?>>() {
+        final Map<DataEntityTypeDto, ?> specificAttributes =
+            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityTypeDto, ?>>() {
             });
 
         return JSONSerDeUtils.deserializeJson(
-            specificAttributes.get(DataEntityType.DATA_TRANSFORMER),
+            specificAttributes.get(DataEntityTypeDto.DATA_TRANSFORMER),
             DataTransformerAttributes.class
         );
     }
 
     private DataConsumerAttributes extractDCAttributes(final String json) {
-        final Map<DataEntityType, ?> specificAttributes =
-            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityType, ?>>() {
+        final Map<DataEntityTypeDto, ?> specificAttributes =
+            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityTypeDto, ?>>() {
             });
 
         return JSONSerDeUtils.deserializeJson(
-            specificAttributes.get(DataEntityType.DATA_CONSUMER),
+            specificAttributes.get(DataEntityTypeDto.DATA_CONSUMER),
             DataConsumerAttributes.class
         );
     }
@@ -165,9 +164,5 @@ public class AlertLocatorImpl implements AlertLocator {
             .setStatusUpdatedAt(LocalDateTime.now());
     }
 
-    @Data
-    private static class DatasetFieldKey {
-        private final String oddrn;
-        private final String typeJson;
-    }
+    private record DatasetFieldKey(String oddrn, String typeJson) {}
 }

@@ -1,11 +1,10 @@
-package org.opendatadiscovery.oddplatform.mapper;
+package org.opendatadiscovery.oddplatform.mapper.ingestion;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jooq.JSONB;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityType;
+import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataConsumer;
@@ -36,27 +35,24 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTypePojo;
-import org.opendatadiscovery.oddplatform.repository.DataEntityTypeRepository;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
-import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_CONSUMER;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_ENTITY_GROUP;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_INPUT;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_QUALITY_TEST_RUN;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_SET;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_TRANSFORMER;
-import static org.opendatadiscovery.oddplatform.dto.DataEntityType.DATA_TRANSFORMER_RUN;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATA_CONSUMER;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATA_ENTITY_GROUP;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATA_INPUT;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATA_QUALITY_TEST;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATA_QUALITY_TEST_RUN;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATA_SET;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATA_TRANSFORMER;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATA_TRANSFORMER_RUN;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class IngestionMapperImpl implements IngestionMapper {
-    private static final List<Pair<Predicate<DataEntity>, DataEntityType>> TYPE_DICT_DISCRIMINATOR = List.of(
+    private static final List<Pair<Predicate<DataEntity>, DataEntityTypeDto>> TYPE_DISCRIMINATOR = List.of(
         Pair.of(de -> de.getDataset() != null, DATA_SET),
         Pair.of(de -> de.getDataTransformer() != null, DATA_TRANSFORMER),
         Pair.of(de -> de.getDataTransformerRun() != null, DATA_TRANSFORMER_RUN),
@@ -67,13 +63,10 @@ public class IngestionMapperImpl implements IngestionMapper {
         Pair.of(de -> de.getDataInput() != null, DATA_INPUT)
     );
 
-    // TODO: filth
-    private final DataEntityTypeRepository dataEntityTypeRepository;
-
     @Override
     public DataEntityIngestionDto createIngestionDto(final DataEntity dataEntity, final long dataSourceId) {
-        final Set<DataEntityType> types = defineTypes(dataEntity);
-        final String subType = dataEntity.getType().toString();
+        final Set<DataEntityTypeDto> types = defineTypes(dataEntity);
+        final DataEntitySubtypeDto subType = DataEntitySubtypeDto.valueOf(dataEntity.getType().getValue());
 
         DataEntityIngestionDto.DataEntityIngestionDtoBuilder builder = DataEntityIngestionDto.builder()
             .name(dataEntity.getName())
@@ -122,45 +115,34 @@ public class IngestionMapperImpl implements IngestionMapper {
         final OffsetDateTime createdAt = dto.getCreatedAt();
         final OffsetDateTime updatedAt = dto.getUpdatedAt();
 
-        // TODO: move pojo to the dto
-        final DataEntitySubtypePojo subtype = dataEntityTypeRepository.findSubtypeByName(dto.getSubType());
-        final boolean isExcludedFromSearch = isExcludedFromSearch(dto);
+        final Integer[] typeIds = dto.getTypes()
+            .stream()
+            .map(DataEntityTypeDto::getId)
+            .toArray(Integer[]::new);
 
         final DataEntityPojo pojo = new DataEntityPojo()
             .setExternalName(dto.getName())
             .setExternalDescription(dto.getExternalDescription())
             .setOddrn(dto.getOddrn())
             .setDataSourceId(dto.getDataSourceId())
+            .setTypeIds(typeIds)
             .setCreatedAt(createdAt != null ? createdAt.toLocalDateTime() : null)
             .setUpdatedAt(updatedAt != null ? updatedAt.toLocalDateTime() : null)
-            .setSubtypeId(subtype.getId())
+            .setSubtypeId(dto.getSubType().getId())
             .setHollow(false)
             .setSpecificAttributes(JSONB.jsonb(dto.getSpecificAttributesJson()))
-            .setExcludeFromSearch(isExcludedFromSearch);
+            .setExcludeFromSearch(isExcludedFromSearch(dto));
 
         if (dto instanceof EnrichedDataEntityIngestionDto entityIngestionDto) {
             pojo.setId(entityIngestionDto.getId());
         }
+
         return pojo;
     }
 
     @Override
-    public <T extends DataEntityIngestionDto> DataEntityDto ingestDtoToDto(final T ingestionDto) {
-        final Set<DataEntityTypePojo> types = ingestionDto.getTypes().stream()
-            .map(DataEntityType::toString)
-            .map(dataEntityTypeRepository::findTypeByName)
-            .collect(Collectors.toSet());
-
-        return DataEntityDto.builder()
-            .dataEntity(dtoToPojo(ingestionDto))
-            .subtype(dataEntityTypeRepository.findSubtypeByName(ingestionDto.getSubType()))
-            .types(types)
-            .build();
-    }
-
-    @Override
-    public List<DataEntityDto> ingestDtoToDto(final Collection<DataEntityIngestionDto> ingestionDtos) {
-        return ingestionDtos.stream().map(this::ingestDtoToDto).collect(Collectors.toList());
+    public <T extends DataEntityIngestionDto> List<DataEntityPojo> dtoToPojo(final Collection<T> dtos) {
+        return dtos.stream().map(this::dtoToPojo).collect(Collectors.toList());
     }
 
     private DataEntityIngestionDto.DataSetIngestionDto createDatasetIngestionDto(final DataSet dataEntity) {
@@ -205,19 +187,19 @@ public class IngestionMapperImpl implements IngestionMapper {
     }
 
     private DataEntityIngestionDto.DataInputIngestionDto createDataInput(final DataInput dataInput) {
-        return DataEntityIngestionDto.DataInputIngestionDto.builder()
-            .outputs(dataInput.getOutputs())
-            .build();
+        return new DataEntityIngestionDto.DataInputIngestionDto(
+            ListUtils.emptyIfNull(dataInput.getOutputs())
+        );
     }
 
-    private Set<DataEntityType> defineTypes(final DataEntity dataEntity) {
-        final Set<DataEntityType> types = TYPE_DICT_DISCRIMINATOR.stream()
-            .map(disc -> disc.getLeft().test(dataEntity) ? disc.getRight() : null)
+    private Set<DataEntityTypeDto> defineTypes(final DataEntity de) {
+        final Set<DataEntityTypeDto> types = TYPE_DISCRIMINATOR.stream()
+            .map(disc -> disc.getLeft().test(de) ? disc.getRight() : null)
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
         if (types.isEmpty()) {
-            throw new IllegalArgumentException("No supported type was found");
+            throw new IllegalArgumentException(String.format("There's no supported type for entity %s", de.getOddrn()));
         }
 
         return types;
@@ -259,13 +241,12 @@ public class IngestionMapperImpl implements IngestionMapper {
         }
     }
 
-    private String specificAttributesAsString(final Collection<DataEntityType> types,
-                                              final DataEntity dataEntity) {
+    private String specificAttributesAsString(final Collection<DataEntityTypeDto> types, final DataEntity dataEntity) {
         return JSONSerDeUtils.serializeJson(defineSpecificAttributes(types, dataEntity));
     }
 
-    private Map<DataEntityType, Map<String, ?>> defineSpecificAttributes(
-        final Collection<DataEntityType> types,
+    private Map<DataEntityTypeDto, Map<String, ?>> defineSpecificAttributes(
+        final Collection<DataEntityTypeDto> types,
         final DataEntity dataEntity
     ) {
         return types.stream()
@@ -274,10 +255,9 @@ public class IngestionMapperImpl implements IngestionMapper {
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
-    // TODO: refactor using models and dtos
-    private Pair<DataEntityType, Map<String, ?>> defineSpecificAttributes(
+    private Pair<DataEntityTypeDto, Map<String, ?>> defineSpecificAttributes(
         final DataEntity dataEntity,
-        final DataEntityType type
+        final DataEntityTypeDto type
     ) {
         return switch (type) {
             case DATA_SET -> Pair.of(type, specAttrsMap(List.of(
@@ -303,6 +283,11 @@ public class IngestionMapperImpl implements IngestionMapper {
                 Pair.of("linked_url_list", dataEntity.getDataQualityTest().getLinkedUrlList()),
                 Pair.of("dataset_list", new HashSet<>(dataEntity.getDataQualityTest().getDatasetList())),
                 Pair.of("expectation", dataEntity.getDataQualityTest().getExpectation())
+            )));
+
+            case DATA_ENTITY_GROUP -> Pair.of(type, specAttrsMap(List.of(
+                Pair.of("entities_list", new HashSet<>(dataEntity.getDataEntityGroup().getEntitiesList())),
+                Pair.of("group_oddrn", dataEntity.getDataEntityGroup().getGroupOddrn())
             )));
 
             case DATA_INPUT -> Pair.of(type, specAttrsMap(List.of(

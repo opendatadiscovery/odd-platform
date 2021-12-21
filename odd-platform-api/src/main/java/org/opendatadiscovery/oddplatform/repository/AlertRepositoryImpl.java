@@ -18,11 +18,8 @@ import org.jooq.Record1;
 import org.jooq.SelectOnConditionStep;
 import org.opendatadiscovery.oddplatform.dto.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
-import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntitySubtypePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTypePojo;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
@@ -30,21 +27,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_SUBTYPE;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TYPE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
-import static org.opendatadiscovery.oddplatform.model.Tables.TYPE_ENTITY_RELATION;
 
 @Repository
 @RequiredArgsConstructor
 public class AlertRepositoryImpl implements AlertRepository {
-    private static final String AGG_TYPES_FIELD = "types";
-
     private final DSLContext dslContext;
     private final JooqRecordHelper jooqRecordHelper;
 
@@ -53,8 +44,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<Field<?>> selectFields = Stream
             .of(
                 ALERT.fields(),
-                DATA_ENTITY.fields(),
-                DATA_ENTITY_SUBTYPE.fields()
+                DATA_ENTITY.fields()
             )
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
@@ -81,8 +71,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<Field<?>> selectFields = Stream
             .of(
                 ALERT.fields(),
-                DATA_ENTITY.fields(),
-                DATA_ENTITY_SUBTYPE.fields()
+                DATA_ENTITY.fields()
             )
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
@@ -111,8 +100,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<Field<?>> selectFields = Stream
             .of(
                 ALERT.fields(),
-                DATA_ENTITY.fields(),
-                DATA_ENTITY_SUBTYPE.fields()
+                DATA_ENTITY.fields()
             )
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
@@ -132,23 +120,17 @@ public class AlertRepositoryImpl implements AlertRepository {
         final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
 
         final List<Field<?>> selectFields = Stream
-            .of(ALERT.fields(),
-                DATA_ENTITY.fields(),
-                DATA_ENTITY_SUBTYPE.fields())
+            .of(ALERT.fields(), DATA_ENTITY.fields())
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
         final List<AlertDto> data = dslContext.with(cte)
             .select(selectFields)
-            .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
             .from(DATA_ENTITY)
             .join(cte.getName())
             .on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()), String.class)
                 .eq(DATA_ENTITY.ODDRN))
             .join(ALERT).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
-            .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
-            .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID))
             .where(DATA_ENTITY.ODDRN.notIn(ownOddrns))
             .groupBy(selectFields)
             .fetch(this::mapRecord);
@@ -259,22 +241,14 @@ public class AlertRepositoryImpl implements AlertRepository {
     private SelectOnConditionStep<Record> baseAlertSelect(final List<Field<?>> selectFields) {
         return dslContext
             .select(selectFields)
-            .select(jsonArrayAgg(field(DATA_ENTITY_TYPE.asterisk().toString())).as(AGG_TYPES_FIELD))
             .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
-            .join(TYPE_ENTITY_RELATION).on(TYPE_ENTITY_RELATION.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .join(DATA_ENTITY_TYPE).on(DATA_ENTITY_TYPE.ID.eq(TYPE_ENTITY_RELATION.DATA_ENTITY_TYPE_ID))
-            .join(DATA_ENTITY_SUBTYPE).on(DATA_ENTITY_SUBTYPE.ID.eq(DATA_ENTITY.SUBTYPE_ID));
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN));
     }
 
     private AlertDto mapRecord(final Record r) {
         return new AlertDto(
             jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class),
-            DataEntityDto.builder()
-                .dataEntity(jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class))
-                .types(jooqRecordHelper.extractAggRelation(r, AGG_TYPES_FIELD, DataEntityTypePojo.class))
-                .subtype(jooqRecordHelper.extractRelation(r, DATA_ENTITY_SUBTYPE, DataEntitySubtypePojo.class))
-                .build()
+            jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class)
         );
     }
 }
