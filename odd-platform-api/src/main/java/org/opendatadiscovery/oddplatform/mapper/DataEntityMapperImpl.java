@@ -328,7 +328,11 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         return new DataEntityLineageStream()
             .nodes(nodes)
             .edges(stream.getEdges().stream().map(this::mapEdge).collect(Collectors.toList()))
-            .groups(List.of());
+            .groups(stream.getGroups()
+                .stream()
+                .filter(g -> streamGroups.contains(g.getDataEntity().getId()))
+                .map(this::mapNode)
+                .collect(Collectors.toList()));
     }
 
     private DataEntityLineageEdge mapEdge(final Pair<Long, Long> edge) {
