@@ -750,17 +750,14 @@ public class DataEntityRepositoryImpl
             return Map.of();
         }
 
-        final Field<String> deOddrnsField = field("de_oddrns", String.class);
-
         return dslContext
             .select(
                 GROUP_ENTITY_RELATIONS.GROUP_ODDRN,
-                arrayAgg(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN).as(deOddrnsField)
+                GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN
             )
             .from(GROUP_ENTITY_RELATIONS)
             .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(childOddrns))
-            .groupBy(GROUP_ENTITY_RELATIONS.GROUP_ODDRN)
-            .fetchGroups(GROUP_ENTITY_RELATIONS.GROUP_ODDRN, deOddrnsField);
+            .fetchGroups(GROUP_ENTITY_RELATIONS.GROUP_ODDRN, GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN);
     }
 
     private List<Set<String>> combineOddrnsInDEGLineage(final List<Set<String>> oddrnRelations) {
@@ -897,9 +894,9 @@ public class DataEntityRepositoryImpl
                         .orElseThrow(() -> new IllegalArgumentException(
                             String.format("Entity with oddrn %s weren't fetched", deOddrn)));
 
-                    return Tuples.of(entityId, groupId);
+                    return Pair.of(entityId, groupId);
                 }))
-            .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
+            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
         return DataEntityLineageStreamDto.builder()
             .edges(edges)

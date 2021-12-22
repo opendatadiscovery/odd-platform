@@ -1141,7 +1141,6 @@ components:
         group_id:
           type: integer
           format: int64
-          nullable: true
       required:
         - id
         - name
