@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
@@ -14,7 +13,6 @@ import { getNamespaceList } from 'redux/selectors/namespace.selectors';
 import { fetchNamespaceList } from 'redux/thunks/namespace.thunks';
 import * as actions from 'redux/actions';
 import Filters from './Filters';
-import { styles } from './FiltersStyles';
 
 const mapStateToProps = (state: RootState) => ({
   searchType: getSearchEntityType(state),
@@ -30,7 +28,4 @@ const mapDispatchToProps = {
   clearDataEntitySearchFilters: actions.clearDataEntitySearchFiltersAction,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Filters));
+export default connect(mapStateToProps, mapDispatchToProps)(Filters);

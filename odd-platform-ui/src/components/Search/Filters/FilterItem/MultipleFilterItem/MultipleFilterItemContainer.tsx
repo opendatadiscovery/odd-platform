@@ -1,14 +1,12 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  getSearchId,
   getSearchFacetsByType,
+  getSearchId,
   getSelectedSearchFacetOptions,
 } from 'redux/selectors/dataentitySearch.selectors';
 import { OptionalFacetNames } from 'redux/interfaces/search';
 import MultipleFilterItem from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItem';
-import { styles } from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemStyles';
 import * as actions from 'redux/actions';
 import { getFacetOptions } from 'redux/thunks/dataentitiesSearch.thunks';
 
@@ -29,4 +27,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(MultipleFilterItem));
+)(MultipleFilterItem);
