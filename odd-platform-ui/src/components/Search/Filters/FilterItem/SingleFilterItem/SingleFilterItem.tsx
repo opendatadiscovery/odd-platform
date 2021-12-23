@@ -7,9 +7,8 @@ import {
   SearchFilterStateSynced,
 } from 'redux/interfaces/search';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
-import { StylesType } from './SingleFilterItemStyles';
 
-interface FilterItemProps extends StylesType {
+interface FilterItemProps {
   name: string;
   facetName: OptionalFacetNames;
   facetOptions: SearchFilter[];
@@ -18,7 +17,6 @@ interface FilterItemProps extends StylesType {
 }
 
 const SingleFilterItem: React.FC<FilterItemProps> = ({
-  classes,
   name,
   facetName,
   facetOptions,
@@ -39,7 +37,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
   );
 
   return facetOptions.length ? (
-    <Grid container className={classes.container}>
+    <Grid container>
       <Grid container item xs={12}>
         <AppTextField
           sx={{ mt: 2 }}

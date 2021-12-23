@@ -12,9 +12,9 @@ import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/Mu
 import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import { StylesType } from './FiltersStyles';
+import * as S from './FiltersStyles';
 
-interface FiltersProps extends StylesType {
+interface FiltersProps {
   searchType?: SearchType;
   datasources: DataSource[];
   namespaces: Namespace[];
@@ -30,7 +30,6 @@ interface FiltersProps extends StylesType {
 }
 
 const Filters: React.FC<FiltersProps> = ({
-  classes,
   searchType,
   datasources,
   namespaces,
@@ -46,8 +45,8 @@ const Filters: React.FC<FiltersProps> = ({
   }, []);
 
   return (
-    <div className={classes.container}>
-      <div className={classes.caption}>
+    <S.Container>
+      <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
         <Typography variant="h4">Filters</Typography>
         <AppButton
           color="tertiary"
@@ -56,8 +55,8 @@ const Filters: React.FC<FiltersProps> = ({
         >
           Clear All
         </AppButton>
-      </div>
-      <div className={classes.listContainer}>
+      </Grid>
+      <S.ListContainer>
         <SingleFilterItemContainer
           key="ds"
           facetName="datasources"
@@ -87,17 +86,13 @@ const Filters: React.FC<FiltersProps> = ({
           facetName="tags"
           name="Tag"
         />
-        <Grid
-          container
-          justifyContent="center"
-          className={classes.facetsLoaderContainer}
-        >
+        <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
           {(isSearchFacetsUpdating || isDatasourceListFetching) && (
             <AppCircularProgress size={16} text="Updating filters" />
           )}
-        </Grid>
-      </div>
-    </div>
+        </S.FacetsLoaderContainer>
+      </S.ListContainer>
+    </S.Container>
   );
 };
 
