@@ -17,9 +17,9 @@ import { searchPath } from 'lib/paths';
 import { useHistory } from 'react-router-dom';
 import FiltersContainer from './Filters/FiltersContainer';
 import ResultsContainer from './Results/ResultsContainer';
-import { StylesType } from './SearchStyles';
+import * as S from './SearchStyles';
 
-interface SearchProps extends StylesType {
+interface SearchProps {
   searchIdParam?: string;
   searchId: string;
   searchQuery: string;
@@ -41,7 +41,6 @@ interface SearchProps extends StylesType {
 }
 
 const Search: React.FC<SearchProps> = ({
-  classes,
   searchIdParam,
   searchId,
   searchQuery,
@@ -106,20 +105,17 @@ const Search: React.FC<SearchProps> = ({
 
   return (
     <>
-      <div className={classes.container}>
-        <Grid container className={classes.contentContainer} spacing={2}>
-          <Grid item xs={3} className={classes.filtersContainer}>
+      <S.Container>
+        <S.ContentContainer container spacing={2}>
+          <S.FiltersContainer item xs={3}>
             <FiltersContainer />
-          </Grid>
-          <Grid item xs={9} className={classes.resultsContainer}>
-            <MainSearchContainer
-              className={classes.searchInput}
-              placeholder="Search"
-            />
+          </S.FiltersContainer>
+          <S.ResultsContainer item xs={9}>
+            <MainSearchContainer placeholder="Search" />
             <ResultsContainer />
-          </Grid>
-        </Grid>
-      </div>
+          </S.ResultsContainer>
+        </S.ContentContainer>
+      </S.Container>
       <AppErrorPage fetchStatus={searchFetchStatus} error={searchError} />
     </>
   );

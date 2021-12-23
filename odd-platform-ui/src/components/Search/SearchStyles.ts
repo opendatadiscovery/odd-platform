@@ -1,49 +1,26 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import {
-  maxContentWidth,
-  maxSidebarWidth,
-  toolbarHeight,
-} from 'lib/constants';
+import { Grid } from '@mui/material';
+import { maxSidebarWidth } from 'lib/constants';
+import { styled } from '@mui/material/styles';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      paddingTop: theme.spacing(2),
-      height: `calc(100vh - 5px - ${toolbarHeight}px)`,
-      overflow: 'hidden',
-      display: 'flex',
-      justifyContent: 'center',
-    },
-    contentContainer: {
-      position: 'relative',
-      paddingLeft: `${maxSidebarWidth}px`,
-      paddingRight: theme.spacing(2),
-      [theme.breakpoints.up(maxContentWidth + maxSidebarWidth)]: {
-        justifyContent: 'center',
-      },
-    },
-    filtersContainer: {
-      width: '100%',
-      maxWidth: `${maxSidebarWidth}px`,
-      position: 'fixed',
-      top: `${toolbarHeight}px`,
-      left: 0,
-      paddingRight: theme.spacing(2),
-    },
-    resultsContainer: {
-      flexGrow: 1,
-      maxWidth: '100%',
-      justifySelf: 'stretch',
-      marginLeft: theme.spacing(1),
-      [theme.breakpoints.up(maxContentWidth + maxSidebarWidth)]: {
-        width: `${maxContentWidth}px`,
-      },
-    },
-    searchInput: {
-      justifyContent: 'flex-start',
-    },
-  });
+export const Container = styled('div')(({ theme }) => ({
+  paddingTop: theme.spacing(2),
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const ContentContainer = styled(Grid)(({ theme }) => ({
+  paddingLeft: `${maxSidebarWidth}px`,
+  paddingRight: theme.spacing(2),
+}));
+
+export const FiltersContainer = styled(Grid)(({ theme }) => ({
+  width: '100%',
+  maxWidth: `${maxSidebarWidth}px`,
+  position: 'fixed',
+  left: 0,
+  paddingRight: theme.spacing(2),
+}));
+
+export const ResultsContainer = styled(Grid)(({ theme }) => ({
+  flexGrow: 1,
+  maxWidth: '100%',
+  marginLeft: theme.spacing(1),
+}));

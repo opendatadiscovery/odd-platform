@@ -1,14 +1,16 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import { colWidthStyles } from 'components/Search/Results/ResultsStyles';
+import { Grid } from '@mui/material';
+import {
+  ColType,
+  colWidthStyles,
+} from 'components/Search/Results/ResultsStyles';
+import { styled } from '@mui/material/styles';
+import { propsChecker } from 'lib/helpers';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      padding: theme.spacing(1.25, 0),
-    },
-    ...colWidthStyles,
-  });
-
-export type StylesType = WithStyles<typeof styles>;
+export const ColContainer = styled(Grid, {
+  shouldForwardProp: propsChecker,
+})<{
+  $colType: ColType;
+}>(({ theme, $colType }) => ({
+  ...colWidthStyles.col,
+  ...colWidthStyles[$colType],
+}));

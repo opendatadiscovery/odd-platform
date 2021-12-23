@@ -1,5 +1,4 @@
 import { RouteComponentProps } from 'react-router-dom';
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
@@ -18,7 +17,6 @@ import {
   updateDataEntitiesSearch,
 } from 'redux/thunks';
 import Search from './Search';
-import { styles } from './SearchStyles';
 
 interface RouteProps {
   searchId: string;
@@ -51,7 +49,4 @@ const mapDispatchToProps = {
   createDataEntitiesSearch,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Search));
+export default connect(mapStateToProps, mapDispatchToProps)(Search);
