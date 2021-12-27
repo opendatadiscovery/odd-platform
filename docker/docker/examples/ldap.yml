@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:13.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    ports:
+      - 5432:5432
+
+  odd-platform:
+    image: opendatadiscovery/odd-platform:latest
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/${POSTGRES_DATABASE}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - AUTH_TYPE=LDAP
+      - SPRING_LDAP_URLS=ldap://ldap:10389
+      - SPRING_LDAP_DN_PATTERN=cn={0},ou=people,dc=planetexpress,dc=com
+    depends_on:
+      - database
+      - ldap
+    ports:
+      - 8080:8080
+
+  ldap:
+    image: rroemhild/test-openldap:latest
+    hostname: "ldap"
