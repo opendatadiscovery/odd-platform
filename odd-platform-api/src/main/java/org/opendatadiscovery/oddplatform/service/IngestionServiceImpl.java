@@ -180,7 +180,7 @@ public class IngestionServiceImpl implements IngestionService {
                 return new EnrichedDataEntityIngestionDto(
                     existingPojo.getId(),
                     existingDto,
-                    existingDto.getUpdatedAt() == null || isEntityUpdated(existingDto, existingPojo)
+                    isEntityUpdated(existingDto, existingPojo)
                 );
             })
             .collect(Collectors.toList());
@@ -580,8 +580,11 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private boolean isEntityUpdated(final DataEntityIngestionDto dto, final DataEntityPojo dePojo) {
-        return dePojo.getHollow()
-            || !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
+        if (dePojo.getHollow() || dePojo.getUpdatedAt() == null || dto.getUpdatedAt() == null) {
+            return true;
+        }
+
+        return !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
     }
 
     private DatasetVersionPojo mapNewDatasetVersion(final EnrichedDataEntityIngestionDto entity) {
