@@ -174,6 +174,7 @@ public class AlertRepositoryImpl implements AlertRepository {
     public long count() {
         return dslContext.selectCount()
             .from(ALERT)
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .fetchOptionalInto(Long.class)
             .orElse(0L);
     }
@@ -185,6 +186,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .where(OWNERSHIP.OWNER_ID.eq(ownerId))
+            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .fetchOptionalInto(Long.class)
             .orElse(0L);
     }
@@ -201,6 +203,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()))
                 .eq(ALERT.DATA_ENTITY_ODDRN))
             .where(ALERT.DATA_ENTITY_ODDRN.notIn(ownOddrns))
+            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .fetchOptionalInto(Long.class)
             .orElse(0L);
     }
