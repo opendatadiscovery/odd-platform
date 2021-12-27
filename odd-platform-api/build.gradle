@@ -60,6 +60,10 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-sdk-metrics")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp-metrics")
 
+
+    implementation("org.springframework.boot:spring-boot-starter-data-ldap")
+    implementation("org.springframework.security:spring-security-ldap")
+
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
 

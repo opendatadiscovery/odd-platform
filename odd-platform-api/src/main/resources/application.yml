@@ -7,6 +7,10 @@ spring:
     sql-dialect: postgres
   codec:
     max-in-memory-size: 20MB
+  ldap:
+    urls: ""
+    dn:
+      pattern: ""
 #  security:
 #    oauth2:
 #      resourceserver:
