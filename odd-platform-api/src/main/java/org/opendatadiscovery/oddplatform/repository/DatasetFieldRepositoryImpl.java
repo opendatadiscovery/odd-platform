@@ -22,6 +22,7 @@ import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
+import org.jooq.SelectOnConditionStep;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.model.tables.DatasetField;
@@ -154,7 +155,7 @@ public class DatasetFieldRepositoryImpl
             labelName
         );
 
-        final SelectConditionStep<Record> vectorSelect = dslContext
+        final SelectOnConditionStep<Record> vectorSelect = dslContext
             .select(vectorFields)
             .select(deId)
             .from(subquery)
@@ -164,8 +165,7 @@ public class DatasetFieldRepositoryImpl
             .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
-            .where(LABEL.IS_DELETED.isFalse());
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED);
 
         jooqFTSHelper.buildSearchEntrypointUpsert(
             vectorSelect,
