@@ -49,6 +49,13 @@ const setDataByType = (
   secondData: any
 ) => (type === 'downstream' ? firstData : secondData);
 
+const getOrCalculate = (
+  type: DataEntityLineageStreamTypeEnum,
+  calculateType: DataEntityLineageStreamTypeEnum,
+  data: any,
+  consumer: () => any
+) => (type === calculateType ? consumer() : data);
+
 const groupingNodes = (
   groupIdsBySourceId: Map<number, number[]>,
   sourceIdByDepth: Map<number, number[]>,
@@ -76,17 +83,22 @@ const groupingNodes = (
       return map;
     }, new Map<number, number[]>());
 
-    const sourceIdsByGroupId = new Map<number, number[]>();
+    const groupIdsBySourceIdByDepth = new Map<number, number[]>();
 
     Array.from(groupIdsBySourceId.keys())
       .filter(s => sourceIds?.includes(s))
-      .forEach(s => sourceIdsByGroupId.set(s, groupIdsBySourceId.get(s)!));
+      .forEach(s =>
+        groupIdsBySourceIdByDepth.set(s, groupIdsBySourceId.get(s)!)
+      );
+    // console.log('groupIdsBySourceId', groupIdsBySourceId);
+    // console.log('sourceIdsByGroupId', sourceIdsByGroupId);
 
     const resultSourceIdsByGroupId = new Map<number, number[]>();
     const generatedGroupIdByGroupId = new Map<number, number>();
 
-    Array.from(sourceIdsByGroupId.keys()).forEach(sourceId => {
-      const groupIds = sourceIdsByGroupId.get(sourceId);
+    Array.from(groupIdsBySourceIdByDepth.keys()).forEach(sourceId => {
+      const groupIds = groupIdsBySourceIdByDepth.get(sourceId);
+
       if (groupIds !== undefined && groupIds.length >= 1) {
         const maxGroup = groupIds.reduce(
           ({ groupId, size }, currentGroupId) => {
@@ -111,6 +123,12 @@ const groupingNodes = (
       }
     });
 
+    Array.from(resultSourceIdsByGroupId.keys()).forEach(groupId => {
+      if (resultSourceIdsByGroupId.get(groupId)!.length < minGroupSize) {
+        resultSourceIdsByGroupId.delete(groupId);
+      }
+    });
+
     // fill generatedGroupIdByGroupId Map with groupId -> generated groupId
     Array.from(resultSourceIdsByGroupId.keys()).forEach(groupId =>
       generatedGroupIdByGroupId.set(groupId, generateNumberId())
@@ -132,8 +150,7 @@ const groupingNodes = (
 const filterEdges = (
   rootNodeId: number,
   edges: DataEntityLineageEdge[],
-  lineageType: DataEntityLineageStreamTypeEnum,
-  sourceIdMapByDepth: Map<number, number[]>
+  lineageType: DataEntityLineageStreamTypeEnum
 ): FilterEdges => {
   const edgeType: keyof DataEntityLineageEdge = setDataByType(
     lineageType,
@@ -149,6 +166,7 @@ const filterEdges = (
 
   type Queue = Array<{ sourceId: number; depth: number }>;
 
+  const sourceIdMapByDepth = new Map<number, number[]>();
   const queue: Queue = [{ sourceId: rootNodeId, depth: 0 }];
   const filteredEdges = new Array<DataEntityLineageEdge>();
   const crossEdges = new Array<DataEntityLineageEdge>();
@@ -189,6 +207,7 @@ const filterEdges = (
               }
         )
       );
+
       const addedIds = targetIds.filter(id => allAddedIds.has(id));
       crossEdges.push(
         ...addedIds.map(id =>
@@ -231,6 +250,9 @@ const updateDataEntityLineage = (
   rootNodeId: number,
   lineageType: DataEntityLineageStreamTypeEnum
 ): DataEntityLineageState => {
+  const getStreamDataFromState = (type: DataEntityLineageStreamTypeEnum) =>
+    state[rootNodeId]?.[type] || dataEntityLineageInitialState;
+
   lineage[lineageType].nodes.forEach(node => {
     if (!localState.nodeIds.has(node.id)) {
       localState.allNodes.push(node);
@@ -249,17 +271,6 @@ const updateDataEntityLineage = (
 
   localState.excludedIds.add(lineage.root.id);
 
-  const oppositeType: DataEntityLineageStreamTypeEnum = setDataByType(
-    lineageType,
-    DataEntityLineageStreamTypeEnum.UPSTREAM,
-    DataEntityLineageStreamTypeEnum.DOWNSTREAM
-  );
-
-  const getStreamDataFromState = (type: DataEntityLineageStreamTypeEnum) =>
-    rootNodeId !== entityId
-      ? state[rootNodeId]?.[type]
-      : state[entityId]?.[type] || dataEntityLineageInitialState;
-
   const setRootNode = (rootNode: DataEntityLineageNode) =>
     rootNodeId !== entityId ? state[rootNodeId].root : rootNode;
 
@@ -270,24 +281,26 @@ const updateDataEntityLineage = (
   );
 
   const createStreamData = (): DataEntityLineageStreamById => {
-    const sourceIdMapByDepth = new Map<number, number[]>();
     const groupIdsBySourceId = Array.from(localState.allNodes).reduce(
       (map, node) => {
-        if (node.groupId && !map.has(node.id)) {
-          map.set(node.id, [node.groupId]);
-        } else if (node.groupId) {
-          map.get(node.id)?.push(node.groupId);
+        if (
+          node.groupIdList &&
+          node.groupIdList?.length > 0 &&
+          !map.has(node.id)
+        ) {
+          map.set(node.id, [...node.groupIdList]);
+        } else if (node.groupIdList && node.groupIdList?.length > 0) {
+          map.get(node.id)?.push(...node.groupIdList);
         }
         return map;
       },
       new Map<number, number[]>()
     );
 
-    const { filteredEdges, crossEdges } = filterEdges(
+    const { filteredEdges, sourceIdMapByDepth, crossEdges } = filterEdges(
       rootNodeId,
       Array.from(localState.allEdges),
-      lineageType,
-      sourceIdMapByDepth
+      lineageType
     );
 
     const groupedNodes = groupingNodes(
@@ -314,6 +327,11 @@ const updateDataEntityLineage = (
         : edge.targetId,
     }));
 
+    const resultEdges: DataEntityLineageEdge[] = uniqWith(
+      replacedEdges,
+      isEqual
+    );
+
     const replacedCrossEdges = crossEdges.map(edge => ({
       sourceId: depthGroupIdBySourceId.has(edge.sourceId)
         ? depthGroupIdBySourceId.get(edge.sourceId)!
@@ -325,11 +343,6 @@ const updateDataEntityLineage = (
 
     const resultCrossEdges: DataEntityLineageEdge[] = uniqWith(
       replacedCrossEdges,
-      isEqual
-    );
-
-    const resultEdges: DataEntityLineageEdge[] = uniqWith(
-      replacedEdges,
       isEqual
     );
 
@@ -377,16 +390,18 @@ const updateDataEntityLineage = (
   return {
     ...state,
     [rootNodeId || entityId]: {
-      downstream: setDataByType(
+      downstream: getOrCalculate(
         lineageType,
-        createStreamData(),
-        getStreamDataFromState(oppositeType)
+        DataEntityLineageStreamTypeEnum.DOWNSTREAM,
+        getStreamDataFromState(DataEntityLineageStreamTypeEnum.DOWNSTREAM),
+        createStreamData
       ),
       root: setRootNode(lineage.root),
-      upstream: setDataByType(
+      upstream: getOrCalculate(
         lineageType,
-        getStreamDataFromState(oppositeType),
-        createStreamData()
+        DataEntityLineageStreamTypeEnum.UPSTREAM,
+        getStreamDataFromState(DataEntityLineageStreamTypeEnum.UPSTREAM),
+        createStreamData
       ),
     },
   };

@@ -50,7 +50,11 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   hasChildren,
 }) => {
   const detailsLink =
-    parent && data.externalName ? dataEntityDetailsPath(data.id) : '#';
+    parent && data.externalName
+      ? dataEntityDetailsPath(
+          data.originalGroupId ? data.originalGroupId : data.id
+        )
+      : '#';
 
   let nodeRef: SVGGElement;
   const titleLayout = {
