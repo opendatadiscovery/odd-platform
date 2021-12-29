@@ -1138,9 +1138,11 @@ components:
             $ref: '#/components/schemas/DataEntityType'
         data_source:
           $ref: '#/components/schemas/DataSource'
-        group_id:
-          type: integer
-          format: int64
+        group_id_list:
+          type: array
+          items:
+            type: integer
+            format: int64
       required:
         - id
         - name

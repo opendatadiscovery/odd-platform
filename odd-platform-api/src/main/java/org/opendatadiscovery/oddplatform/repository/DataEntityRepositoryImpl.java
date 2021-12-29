@@ -1,6 +1,18 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -70,27 +82,15 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
-import static org.jooq.impl.DSL.arrayAgg;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.mapping;
+import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
@@ -199,7 +199,7 @@ public class DataEntityRepositoryImpl
                 DATA_ENTITY.VIEW_COUNT,
                 DATA_ENTITY.EXCLUDE_FROM_SEARCH
             )))
-            .collect(Collectors.toList());
+            .collect(toList());
 
         dslContext.batchUpdate(records).execute();
 
@@ -277,7 +277,7 @@ public class DataEntityRepositoryImpl
         return enrichDataEntityDimensionsDto(dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDetailsRecord)
-            .collect(Collectors.toList()));
+            .collect(toList()));
     }
 
     @Override
@@ -330,7 +330,7 @@ public class DataEntityRepositoryImpl
             .of(DATA_ENTITY.TYPE_IDS.contains(new Integer[] {typeId}),
                 subTypeId != null ? DATA_ENTITY.SUBTYPE_ID.eq(subTypeId) : null)
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         final DataEntitySelectConfig config = DataEntitySelectConfig
             .builder()
@@ -352,7 +352,7 @@ public class DataEntityRepositoryImpl
             .offset((page - 1) * size)
             .fetchStream()
             .map(this::mapDtoRecord)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     @Override
@@ -374,7 +374,7 @@ public class DataEntityRepositoryImpl
             .flatMap(lp -> Stream.of(lp.getParentOddrn(), lp.getChildOddrn()))
             .distinct()
             .filter(not(associatedOddrns::contains))
-            .collect(Collectors.toList());
+            .collect(toList());
 
         return listAllByOddrns(oddrns, page, size, true);
     }
@@ -651,7 +651,7 @@ public class DataEntityRepositoryImpl
             )
             .fetchStream()
             .map(r -> mapDtoRecord(r, true))
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     @Override
@@ -668,7 +668,7 @@ public class DataEntityRepositoryImpl
         final List<LineagePojo> lineageRelations = getLineageRelations(entitiesOddrns);
         final List<Set<String>> oddrnRelations = lineageRelations.stream()
             .map(lineagePojo -> Set.of(lineagePojo.getChildOddrn(), lineagePojo.getParentOddrn()))
-            .collect(Collectors.toList());
+            .collect(toList());
         final List<Set<String>> combinedOddrnsList = combineOddrnsInDEGLineage(oddrnRelations);
 
         final List<DataEntityLineageStreamDto> items = combinedOddrnsList.stream()
@@ -806,7 +806,7 @@ public class DataEntityRepositoryImpl
             .selectDistinct(cte.field(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
             .from(cte.getName())
             .fetchStreamInto(String.class)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private List<LineagePojo> getLineageRelations(final List<String> oddrns) {
@@ -814,7 +814,7 @@ public class DataEntityRepositoryImpl
             .from(LINEAGE)
             .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.CHILD_ODDRN.in(oddrns)))
             .fetchStreamInto(LineagePojo.class)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private void calculateStructureVectors(final Collection<Long> dataEntityIds) {
@@ -863,26 +863,28 @@ public class DataEntityRepositoryImpl
         ).execute();
     }
 
-    private DataEntityLineageStreamDto getLineageStream(final Map<String, DataEntityDimensionsDto> dtoRepository,
-                                                        final Map<DataEntityDimensionsDto, List<String>> groupRepository,
-                                                        final List<LineagePojo> relations) {
+    private DataEntityLineageStreamDto getLineageStream(
+        final Map<String, DataEntityDimensionsDto> dtoRepository,
+        final Map<DataEntityDimensionsDto, List<String>> groupRepository,
+        final List<LineagePojo> relations
+    ) {
         final List<Pair<Long, Long>> edges = relations.stream()
             .map(r -> Pair.of(
                 dtoRepository.get(r.getParentOddrn()).getDataEntity().getId(),
                 dtoRepository.get(r.getChildOddrn()).getDataEntity().getId()
             ))
-            .collect(Collectors.toList());
+            .collect(toList());
 
         final List<DataEntityDimensionsDto> nodes = relations.stream()
             .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
             .distinct()
             .map(deOddrn -> Optional.ofNullable(dtoRepository.get(deOddrn))
                 .orElseThrow(() -> new IllegalArgumentException(
-                    String.format("Entity with oddrn %s weren't fetched", deOddrn)))
+                    String.format("Entity with oddrn %s wasn't fetched", deOddrn)))
             )
-            .collect(Collectors.toList());
+            .collect(toList());
 
-        final Map<Long, Long> groupRelations = groupRepository.entrySet()
+        final Map<Long, List<Long>> groupRelations = groupRepository.entrySet()
             .stream()
             .flatMap(e -> e.getValue()
                 .stream()
@@ -892,11 +894,11 @@ public class DataEntityRepositoryImpl
                     final long entityId = Optional.ofNullable(dtoRepository.get(deOddrn))
                         .map(d -> d.getDataEntity().getId())
                         .orElseThrow(() -> new IllegalArgumentException(
-                            String.format("Entity with oddrn %s weren't fetched", deOddrn)));
+                            String.format("Entity with oddrn %s wasn't fetched", deOddrn)));
 
                     return Pair.of(entityId, groupId);
                 }))
-            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, toList())));
 
         return DataEntityLineageStreamDto.builder()
             .edges(edges)
@@ -946,7 +948,7 @@ public class DataEntityRepositoryImpl
             .selectDistinct(cte.field(LINEAGE.PARENT_ODDRN), cte.field(LINEAGE.CHILD_ODDRN))
             .from(cte.getName())
             .fetchStreamInto(LineagePojo.class)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private List<DataEntityDimensionsDto> listByConfig(final DataEntitySelectConfig config) {
@@ -972,7 +974,7 @@ public class DataEntityRepositoryImpl
                 DATA_SOURCE.fields()
             )
             .flatMap(Arrays::stream)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         final SelectHavingStep<Record> groupByStep = dslContext.with(deCteName)
             .asMaterialized(dataEntitySelect)
@@ -1201,7 +1203,7 @@ public class DataEntityRepositoryImpl
         final Function<Collection<String>, Collection<? extends DataEntityDto>> fetcher = oddrns -> oddrns.stream()
             .map(depsRepository::get)
             .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         dto.getSpecificAttributes().forEach((t, attrs) -> {
             switch (t) {
@@ -1333,7 +1335,7 @@ public class DataEntityRepositoryImpl
                     .role(role)
                     .build();
             })
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     private Map<DataEntityTypeDto, DataEntityAttributes> extractSpecificAttributes(final DataEntityPojo dataEntity
