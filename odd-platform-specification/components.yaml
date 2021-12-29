@@ -1174,6 +1174,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/DataEntityLineageNode'
+      required:
+        - nodes
+        - edges
+        - groups
 
     DataEntityLineage:
       type: object

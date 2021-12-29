@@ -127,7 +127,11 @@ const AppGraph: React.FC<AppGraphProps> = ({
   }, [compactView]);
 
   React.useEffect(() => {
-    const params = { dataEntityId, lineageDepth: selectedDepth };
+    const params = {
+      dataEntityId,
+      lineageDepth: selectedDepth,
+      rootNodeId: dataEntityId,
+    };
     fetchDataEntityDownstreamLineage(params);
     fetchDataEntityUpstreamLineage(params);
   }, [selectedDepth, dataEntityId]);

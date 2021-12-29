@@ -9,6 +9,8 @@ import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityLineage } from 'generated-sources';
+import GroupedEntitiesListModal from 'components/shared/AppGraph/AppGraphNode/GroupedEntitiesListModal/GroupedEntitiesListModal';
+import NodeListButton from 'components/shared/AppGraph/AppGraphNode/NodeListButton/NodeListButton';
 import { styles, StylesType } from './AppGraphNodeStyles';
 
 interface AppGraphNodeProps extends StylesType {
@@ -182,85 +184,6 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     loadMoreSpinnerTransform();
   }, [commitTransform, loadMoreSpinnerTransform]);
 
-  // grouped items list
-  let groupedItemsListRef: SVGGElement;
-
-  const groupedItemsListLayoutInitial = {
-    x: nodeSize.x,
-    y: nodeSize.y / 2,
-    width: 180,
-    height: 24,
-    my: 12,
-    mx: 8,
-  };
-
-  const [listSize, setListSize] = React.useState(
-    groupedItemsListLayoutInitial
-  );
-
-  const listItemHeight = 10;
-  const calculateListHeight = () =>
-    data.nodesRelatedWithDEG
-      ? listItemHeight * data.nodesRelatedWithDEG?.length
-      : listItemHeight;
-
-  React.useEffect(() => {
-    setListSize({
-      ...groupedItemsListLayoutInitial,
-      height: calculateListHeight(),
-    });
-  }, [compactView]);
-
-  const groupedItemsList = () => (
-    <g
-      ref={n => {
-        if (n) groupedItemsListRef = n;
-      }}
-      className={classes.groupedItemsList}
-    >
-      <rect
-        width={loadMoreLayout.width}
-        height={loadMoreLayout.height}
-        rx={16}
-      />
-      <text
-        textAnchor="middle"
-        fontSize={12}
-        fill="#0066CC"
-        x={loadMoreLayout.width / 2}
-        y={loadMoreLayout.height / 2 + loadMoreLayout.my}
-      >
-        Load more
-      </text>
-    </g>
-  );
-
-  const [showList, setShowList] = React.useState<boolean>(false);
-
-  const handleListMouseEnter = () => setShowList(true);
-  const handleListMouseLeave = () => setShowList(false);
-
-  const groupedItemsBtn = () => (
-    <>
-      <text
-        className="wrap-text"
-        width={nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth}
-        onMouseEnter={handleListMouseEnter}
-        onMouseLeave={handleListMouseLeave}
-      >
-        <title>{`${
-          data.nodesRelatedWithDEG && data.nodesRelatedWithDEG.length
-        } entities`}</title>
-        <tspan
-          x={attributeLayout.labelWidth}
-          y={attributeLayout.height * 2}
-          className={cx(classes.groupedItemsBtn, 'visible-text')}
-        />
-        <tspan className="ellip">...</tspan>
-      </text>
-    </>
-  );
-
   return (
     <g
       id={data.d3attrs.id}
@@ -282,16 +205,17 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         height={nodeSize.y}
         fill="transparent"
       />
-      <Link to={detailsLink}>
-        <g className={classes.container}>
-          <rect
-            rx={8}
-            width={nodeSize.x}
-            height={nodeSize.y}
-            className={!parent ? classes.rootNodeRect : ''}
-          />
-          <g transform={`translate(${titleLayout.x},${titleLayout.y})`}>
-            {data.externalName ? (
+
+      <g className={classes.container}>
+        <rect
+          rx={8}
+          width={nodeSize.x}
+          height={nodeSize.y}
+          className={!parent ? classes.rootNodeRect : ''}
+        />
+        <g transform={`translate(${titleLayout.x},${titleLayout.y})`}>
+          {data.externalName ? (
+            <Link to={detailsLink}>
               <text
                 className={cx(classes.title, 'wrap-text')}
                 width={nodeSize.x - titleLayout.x * 2}
@@ -300,166 +224,179 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
                 <tspan x={0} y={0} className="visible-text" />
                 <tspan className="ellip">...</tspan>
               </text>
-            ) : (
-              <>
-                <circle
-                  cx="5"
-                  cy="0"
-                  r="5"
-                  stroke="#091E42"
-                  strokeWidth="2"
-                />
-                <rect
-                  x="0"
-                  y="0.81418"
-                  width="2"
-                  height="9.37199"
-                  rx="1"
-                  transform="rotate(-45 -4 -1.81418)"
-                  fill="#091E42"
-                />
-              </>
-            )}
-          </g>
-          <g
-            transform={`translate(${titleLayout.x},${
-              nodeSize.y - typeLayout.my
-            })`}
+            </Link>
+          ) : (
+            <>
+              <circle
+                cx="5"
+                cy="0"
+                r="5"
+                stroke="#091E42"
+                strokeWidth="2"
+              />
+              <rect
+                x="0"
+                y="0.81418"
+                width="2"
+                height="9.37199"
+                rx="1"
+                transform="rotate(-45 -4 -1.81418)"
+                fill="#091E42"
+              />
+            </>
+          )}
+        </g>
+        <g
+          transform={`translate(${titleLayout.x},${
+            nodeSize.y - typeLayout.my
+          })`}
+        >
+          <text className={classes.attribute}>
+            <tspan
+              x={0}
+              y={0}
+              className={classes.placeholder}
+              style={{
+                display:
+                  compactView && !data.externalName && !data.internalName
+                    ? 'initial'
+                    : 'none',
+              }}
+            >
+              No Information
+            </tspan>
+          </text>
+        </g>
+        <g
+          transform={`translate(${attributeLayout.x},${attributeLayout.y})`}
+          style={{ display: compactView ? 'none' : 'initial' }}
+        >
+          <text className={classes.attribute}>
+            <tspan
+              className={classes.attributeLabel}
+              key={`nsl-${data.id}`}
+              x={0}
+              y={0}
+            >
+              Space
+            </tspan>
+          </text>
+          <text
+            className={cx(classes.attribute, 'wrap-text')}
+            width={
+              nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
+            }
           >
-            <text className={classes.attribute}>
+            <title>{data.dataSource?.namespace?.name}</title>
+            <tspan
+              x={attributeLayout.labelWidth}
+              y={0}
+              className="visible-text"
+            />
+            <tspan className="ellip">...</tspan>
+            {!data.dataSource?.namespace && (
               <tspan
-                x={0}
+                x={attributeLayout.labelWidth}
                 y={0}
                 className={classes.placeholder}
-                style={{
-                  display:
-                    compactView && !data.externalName && !data.internalName
-                      ? 'initial'
-                      : 'none',
-                }}
               >
                 No Information
               </tspan>
-            </text>
-          </g>
-          <g
-            transform={`translate(${attributeLayout.x},${attributeLayout.y})`}
-            style={{ display: compactView ? 'none' : 'initial' }}
+            )}
+          </text>
+          <text className={classes.attribute}>
+            <tspan
+              className={classes.attributeLabel}
+              key={`dsl-${data.id}`}
+              x={0}
+              y={attributeLayout.height}
+            >
+              Source
+            </tspan>
+          </text>
+          <text
+            className={cx(classes.attribute, 'wrap-text')}
+            width={
+              nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
+            }
           >
-            <text className={classes.attribute}>
-              <tspan
-                className={classes.attributeLabel}
-                key={`nsl-${data.id}`}
-                x={0}
-                y={0}
-              >
-                Space
-              </tspan>
-            </text>
-            <text
-              className={cx(classes.attribute, 'wrap-text')}
-              width={
-                nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
-              }
-            >
-              <title>{data.dataSource?.namespace?.name}</title>
-              <tspan
-                x={attributeLayout.labelWidth}
-                y={0}
-                className="visible-text"
-              />
-              <tspan className="ellip">...</tspan>
-              {!data.dataSource?.namespace && (
-                <tspan
-                  x={attributeLayout.labelWidth}
-                  y={0}
-                  className={classes.placeholder}
-                >
-                  No Information
-                </tspan>
-              )}
-            </text>
-            <text className={classes.attribute}>
-              <tspan
-                className={classes.attributeLabel}
-                key={`dsl-${data.id}`}
-                x={0}
-                y={attributeLayout.height}
-              >
-                Source
-              </tspan>
-            </text>
-            <text
-              className={cx(classes.attribute, 'wrap-text')}
-              width={
-                nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
-              }
-            >
-              <title>{data.dataSource?.name}</title>
+            <title>{data.dataSource?.name}</title>
+            <tspan
+              x={attributeLayout.labelWidth}
+              y={attributeLayout.height}
+              className="visible-text"
+            />
+            <tspan className="ellip">...</tspan>
+            {!data.dataSource && (
               <tspan
                 x={attributeLayout.labelWidth}
                 y={attributeLayout.height}
-                className="visible-text"
-              />
-              <tspan className="ellip">...</tspan>
-              {!data.dataSource && (
-                <tspan
-                  x={attributeLayout.labelWidth}
-                  y={attributeLayout.height}
-                  className={classes.placeholder}
-                >
-                  No Information
-                </tspan>
-              )}
-            </text>
-            {data.nodesRelatedWithDEG &&
-              data.nodesRelatedWithDEG?.length > 0 && (
-                <>
-                  <text className={classes.attribute}>
-                    <tspan
-                      className={classes.attributeLabel}
-                      key={`dsl-${data.id}`}
-                      x={0}
-                      y={attributeLayout.height * 2}
-                    >
-                      Items
-                    </tspan>
-                  </text>
-                  {groupedItemsBtn()}
-                </>
-              )}
-          </g>
-          {data.types?.map((type, i) => (
-            <g
-              key={type.id}
-              transform={`translate(${
-                titleLayout.x + i * (typeLayout.width + typeLayout.mx)
-              },${nodeSize.y - typeLayout.my - typeLayout.height})`}
-            >
-              <rect
-                className={cx(classes.type, type.name)}
-                width={typeLayout.width}
-                height={typeLayout.height}
-                rx={4}
-              />
-              <text
-                className={classes.typeLabel}
-                textAnchor="middle"
-                fontSize={12}
-                x={typeLayout.width / 2}
-                y={typeLayout.height / 2 + 1}
+                className={classes.placeholder}
               >
-                <tspan alignmentBaseline="middle">
-                  {DataEntityTypeLabelMap.get(type.name)?.short}
-                  <title>
-                    {DataEntityTypeLabelMap.get(type.name)?.normal}
-                  </title>
-                </tspan>
-              </text>
-            </g>
-          ))}
+                No Information
+              </tspan>
+            )}
+          </text>
+          {data.nodesRelatedWithDEG &&
+            data.nodesRelatedWithDEG?.length > 0 && (
+              <>
+                <text className={classes.attribute}>
+                  <tspan
+                    className={classes.attributeLabel}
+                    key={`dsl-${data.id}`}
+                    x={0}
+                    y={attributeLayout.height * 2}
+                  >
+                    Items
+                  </tspan>
+                </text>
+                <GroupedEntitiesListModal
+                  entities={data.nodesRelatedWithDEG}
+                  dataEntityName={data.internalName || data.externalName}
+                  fetchMoreLineage={fetchMoreLineage}
+                  openBtnEl={
+                    <NodeListButton
+                      text={`${
+                        data.nodesRelatedWithDEG &&
+                        data.nodesRelatedWithDEG.length
+                      } entities`}
+                    />
+                  }
+                />
+              </>
+            )}
         </g>
-      </Link>
+        {data.types?.map((type, i) => (
+          <g
+            key={type.id}
+            transform={`translate(${
+              titleLayout.x + i * (typeLayout.width + typeLayout.mx)
+            },${nodeSize.y - typeLayout.my - typeLayout.height})`}
+          >
+            <rect
+              className={cx(classes.type, type.name)}
+              width={typeLayout.width}
+              height={typeLayout.height}
+              rx={4}
+            />
+            <text
+              className={classes.typeLabel}
+              textAnchor="middle"
+              fontSize={12}
+              x={typeLayout.width / 2}
+              y={typeLayout.height / 2 + 1}
+            >
+              <tspan alignmentBaseline="middle">
+                {DataEntityTypeLabelMap.get(type.name)?.short}
+                <title>
+                  {DataEntityTypeLabelMap.get(type.name)?.normal}
+                </title>
+              </tspan>
+            </text>
+          </g>
+        ))}
+      </g>
+
       {!hasChildren && showLoadMore && (
         <g
           ref={n => {
@@ -503,7 +440,6 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           )}
         </g>
       )}
-      {showList ? groupedItemsList() : null}
     </g>
   );
 };

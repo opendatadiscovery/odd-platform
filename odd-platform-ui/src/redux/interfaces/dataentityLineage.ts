@@ -27,19 +27,38 @@ export interface DataEntityLineageStreamById<
 }
 
 export interface DataEntityLineageRootNodeId {
-  rootNodeId?: number;
+  rootNodeId: number;
 }
 
 export interface LineageStreamParams {
   dataEntityLineage: DataEntityLineage;
-  rootNodeId?: number;
+  rootNodeId: number;
 }
 
 export interface GroupedDataEntityLineageNode
   extends DataEntityLineageNode {
   nodesRelatedWithDEG?: DataEntityLineageNode[];
+  originalGroupId?: number;
 }
 
-export interface GroupedNodesByGroupId {
-  [groupId: string]: DataEntityLineageNode[];
+export interface LocalState {
+  allNodes: Array<DataEntityLineageNode | GroupedDataEntityLineageNode>;
+  nodeIds: Set<number>;
+  allEdges: DataEntityLineageEdge[];
+  allGroups: DataEntityLineageNode[];
+  groupIds: Set<number>;
+  excludedIds: Set<number>;
+}
+
+export interface GroupingNodes {
+  groupId: number;
+  depthGroupId: number;
+  depth: number;
+  sourceIds: number[];
+}
+
+export interface FilterEdges {
+  filteredEdges: DataEntityLineageEdge[];
+  sourceIdMapByDepth: Map<number, number[]>;
+  crossEdges: DataEntityLineageEdge[];
 }
