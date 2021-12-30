@@ -8,16 +8,10 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * Integration test for {@link NamespaceRepository}.
- *
- * @author matmalik on 10.12.2021
- */
 @Sql({"/scripts/clear_namespace_table.sql"})
 @DisplayName("Integration tests for NamespaceRepository")
 class NamespaceRepositoryImplTest extends BaseIntegrationTest {
@@ -46,7 +40,7 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
         namespaceRepository.create(pojo);
         final NamespacePojo secondPojo = new NamespacePojo()
             .setName("Name").setId(13L);
-        NamespacePojo result = namespaceRepository.createIfNotExists(secondPojo);
+        final NamespacePojo result = namespaceRepository.createIfNotExists(secondPojo);
 
         assertEquals(pojo.getId(), result.getId());
         assertEquals(pojo.getName(), result.getName());
@@ -67,10 +61,9 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
 
         namespaceRepository.create(pojo);
         namespaceRepository.delete(pojo.getId());
-        Optional<NamespacePojo> namespaceOpt = namespaceRepository.get(pojo.getId());
+        final Optional<NamespacePojo> namespaceOpt = namespaceRepository.get(pojo.getId());
 
         assertTrue(namespaceOpt.isEmpty());
     }
-
 }
 

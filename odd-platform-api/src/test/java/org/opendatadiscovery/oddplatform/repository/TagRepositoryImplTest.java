@@ -12,5 +12,4 @@ public class TagRepositoryImplTest extends BaseIntegrationTest {
     @Test
     public void test() {
     }
-
 }

@@ -14,14 +14,6 @@ import org.testcontainers.utility.DockerImageName;
 
 import static org.testcontainers.containers.PostgreSQLContainer.POSTGRESQL_PORT;
 
-
-/**
- * Base integration test configuration class.
- * If you want to create new Integration test,
- * your test should be extended from this base test
- *
- * @author matmalik
- */
 @ActiveProfiles("integration-test")
 @SpringBootTest
 @ContextConfiguration(initializers = {BaseIntegrationTest.Initializer.class})
@@ -39,7 +31,7 @@ public abstract class BaseIntegrationTest {
 
         @SneakyThrows
         public void initialize(final ConfigurableApplicationContext configurableApplicationContext) {
-            String newDbName = DatabaseGenerator.createDatabaseInContainer();
+            final String newDbName = DatabaseGenerator.createDatabaseInContainer();
             TestPropertyValues.of(
                 "spring.datasource.url=" + "jdbc:postgresql://" + POSTGRE_SQL_CONTAINER.getContainerIpAddress() + ":"
                     + POSTGRE_SQL_CONTAINER.getMappedPort(POSTGRESQL_PORT) + "/" + newDbName,
@@ -47,7 +39,6 @@ public abstract class BaseIntegrationTest {
                 "spring.datasource.password=" + POSTGRE_SQL_CONTAINER.getPassword()
             ).applyTo(configurableApplicationContext.getEnvironment());
         }
-
     }
 
     static class DatabaseGenerator {
@@ -56,11 +47,10 @@ public abstract class BaseIntegrationTest {
 
         @SneakyThrows
         static String createDatabaseInContainer() {
-            String dbName = "odd" + index.getAndIncrement();
-            String command = "CREATE DATABASE " + dbName + " OWNER test;";
+            final String dbName = "odd" + index.getAndIncrement();
+            final String command = "CREATE DATABASE " + dbName + " OWNER test;";
             POSTGRE_SQL_CONTAINER.execInContainer("psql", "-U", "test", "-c", command);
             return dbName;
         }
-
     }
 }
