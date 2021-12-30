@@ -11,11 +11,6 @@ import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
  */
 class OwnerRepositoryImplTest extends BaseIntegrationTest {
 
-    @BeforeEach
-    void setUp() {
-        //setup
-    }
-
     @Test
     void name() {
         //test
