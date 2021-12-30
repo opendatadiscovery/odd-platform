@@ -21,6 +21,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
+import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
 import org.opendatadiscovery.oddplatform.dto.MetadataBinding;
@@ -231,6 +232,7 @@ public class IngestionServiceImpl implements IngestionService {
         final List<DataEntitySpecificAttributesDelta> dataTransformerAttrsDelta = dtoDict.entrySet()
             .stream()
             .filter(e -> existingPojoDict.containsKey(e.getKey()))
+            .filter(e -> !DataEntitySubtypeDto.MICROSERVICE.equals(e.getValue().getSubType()))
             .map(e -> new DataEntitySpecificAttributesDelta(
                 e.getKey(),
                 e.getValue().getTypes(),
