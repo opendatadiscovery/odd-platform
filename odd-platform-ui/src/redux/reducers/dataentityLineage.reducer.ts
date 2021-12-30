@@ -64,6 +64,7 @@ const groupingNodes = (
   excludedIds: Set<number>
 ): GroupingNodes[] => {
   const groupedNodes: GroupingNodes[] = [];
+
   Array.from(sourceIdByDepth.keys()).forEach(depth => {
     const sourceIds = sourceIdByDepth
       .get(depth)
@@ -90,8 +91,6 @@ const groupingNodes = (
       .forEach(s =>
         groupIdsBySourceIdByDepth.set(s, groupIdsBySourceId.get(s)!)
       );
-    // console.log('groupIdsBySourceId', groupIdsBySourceId);
-    // console.log('sourceIdsByGroupId', sourceIdsByGroupId);
 
     const resultSourceIdsByGroupId = new Map<number, number[]>();
     const generatedGroupIdByGroupId = new Map<number, number>();
@@ -384,6 +383,7 @@ const updateDataEntityLineage = (
         }),
         {}
       ),
+      crossEdges: [...resultCrossEdges],
     };
   };
 

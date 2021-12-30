@@ -7,11 +7,11 @@ export const styles = (theme: Theme) =>
   createStyles({
     path: {
       fill: 'none',
-      stroke: theme.palette.texts.hint,
+      stroke: '#99CCFF',
       strokeWidth: 1,
     },
     arrow: {
-      fill: theme.palette.texts.hint,
+      fill: '#99CCFF',
     },
   });
 

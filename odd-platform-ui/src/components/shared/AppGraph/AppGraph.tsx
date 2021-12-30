@@ -30,6 +30,7 @@ import TargetIcon from 'components/shared/Icons/TargetIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
+import AppGraphCrossLink from 'components/shared/AppGraph/AppGraphCrossLink/AppGraphCrossLink';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
 import { StylesType } from './AppGraphStyles';
@@ -81,6 +82,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
       edgesById: {
         [entityId: number]: DataEntityLineageEdge[];
       };
+      crossEdges: DataEntityLineageEdge[];
     };
     downstream: {
       nodesById: {
@@ -89,24 +91,37 @@ const AppGraph: React.FC<AppGraphProps> = ({
       edgesById: {
         [entityId: number]: DataEntityLineageEdge[];
       };
+      crossEdges: DataEntityLineageEdge[];
     };
   }>();
 
   const defaultTreeState = {
     nodesUp: [],
     linksUp: [],
+    crossLinksUp: [],
     nodesDown: [],
     linksDown: [],
+    crossLinksDown: [],
     depth: { upstream: 0, downstream: 0 },
   };
   const [
-    { nodesUp, linksUp, nodesDown, linksDown, depth },
+    {
+      nodesUp,
+      linksUp,
+      crossLinksUp,
+      nodesDown,
+      linksDown,
+      crossLinksDown,
+      depth,
+    },
     setTreeState,
   ] = React.useState<{
     nodesUp: HierarchyPointNode<TreeNodeDatum>[];
     linksUp: HierarchyPointLink<TreeNodeDatum>[];
+    crossLinksUp: HierarchyPointLink<TreeNodeDatum>[];
     nodesDown: HierarchyPointNode<TreeNodeDatum>[];
     linksDown: HierarchyPointLink<TreeNodeDatum>[];
+    crossLinksDown: HierarchyPointLink<TreeNodeDatum>[];
     depth: {
       upstream: number;
       downstream: number;
@@ -198,6 +213,19 @@ const AppGraph: React.FC<AppGraphProps> = ({
 
     const nUp = rootNodeUp.descendants();
     const lUp = rootNodeUp.links();
+
+    const crossLUp = parsedData?.upstream?.crossEdges?.map(edge =>
+      edge.sourceId === parsedData.root.id
+        ? {
+            source: nUp.find(node => node.data.id === edge.targetId)!,
+            target: nUp.find(node => node.data.id === edge.sourceId)!,
+          }
+        : {
+            target: nUp.find(node => node.data.id === edge.targetId)!,
+            source: nUp.find(node => node.data.id === edge.sourceId)!,
+          }
+    );
+
     const treeDown = d3tree<TreeNodeDatum>()
       .nodeSize([nodeSize.y + nodeSize.my, nodeSize.x + nodeSize.mx])
       .separation((a, b) =>
@@ -219,11 +247,25 @@ const AppGraph: React.FC<AppGraphProps> = ({
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
 
+    const crossLDown = parsedData?.downstream?.crossEdges?.map(edge =>
+      edge.targetId !== parsedData.root.id
+        ? {
+            source: nDown.find(node => node.data.id === edge.targetId)!,
+            target: nDown.find(node => node.data.id === edge.sourceId)!,
+          }
+        : {
+            target: nDown.find(node => node.data.id === edge.targetId)!,
+            source: nDown.find(node => node.data.id === edge.sourceId)!,
+          }
+    );
+
     return {
       nodesUp: nUp,
       linksUp: lUp,
+      crossLinksUp: crossLUp,
       nodesDown: nDown,
       linksDown: lDown,
+      crossLinksDown: crossLDown,
       depth: {
         upstream: maxBy(nUp, node => node.depth)?.depth || 0,
         downstream: maxBy(nDown, node => node.depth)?.depth || 0,
@@ -334,10 +376,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
       upstream: {
         ...data.upstream,
         nodesById: parseData(data.upstream?.nodesById),
+        crossEdges: data?.upstream?.crossEdges,
       },
       downstream: {
         ...data.downstream,
         nodesById: parseData(data.downstream?.nodesById),
+        crossEdges: data?.downstream?.crossEdges,
       },
     });
   }, [data]);
@@ -402,6 +446,25 @@ const AppGraph: React.FC<AppGraphProps> = ({
       </div>
       <svg className={cx(classes.layer, svgInstanceRef)}>
         <g className={gInstanceRef}>
+          {crossLinksDown?.map(linkData => (
+            <AppGraphCrossLink
+              key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
+              linkData={linkData}
+              nodeSize={nodeSize}
+              enableLegacyTransitions={enableLegacyTransitions}
+              transitionDuration={transitionDuration}
+            />
+          ))}
+          {crossLinksUp?.map(linkData => (
+            <AppGraphCrossLink
+              key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
+              reverse
+              linkData={linkData}
+              nodeSize={nodeSize}
+              enableLegacyTransitions={enableLegacyTransitions}
+              transitionDuration={transitionDuration}
+            />
+          ))}
           {nodesUp?.map(node => (
             <AppGraphNode
               key={`node-${node.x}${node.y}`}

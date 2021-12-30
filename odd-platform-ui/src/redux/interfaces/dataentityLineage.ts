@@ -24,6 +24,7 @@ export interface DataEntityLineageStreamById<
     // Id of parent entity in the tree. It is source_id of DataEntityLineageEdge for downstream, and target_id for upstream
     [entityId: number]: EdgeT[];
   };
+  crossEdges: EdgeT[];
 }
 
 export interface DataEntityLineageRootNodeId {

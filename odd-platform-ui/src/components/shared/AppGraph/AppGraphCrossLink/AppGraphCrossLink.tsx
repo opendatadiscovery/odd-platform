@@ -4,7 +4,7 @@ import { select } from 'd3-selection';
 import { linkHorizontal } from 'd3-shape';
 import { DefaultLinkObject } from 'd3';
 import { TreeLinkDatum } from 'redux/interfaces/graph';
-import { styles, StylesType } from './AppGraphLinkStyles';
+import { styles, StylesType } from './AppGraphCrossLinkStyles';
 
 interface AppGraphLinkProps extends StylesType {
   linkData: TreeLinkDatum;
@@ -19,7 +19,7 @@ interface AppGraphLinkProps extends StylesType {
   transitionDuration: number;
 }
 
-const AppGraphLink: React.FC<AppGraphLinkProps> = ({
+const AppGraphCrossLink: React.FC<AppGraphLinkProps> = ({
   classes,
   linkData,
   nodeSize,
@@ -31,11 +31,11 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
   const { source, target } = linkData;
   const coords = {
     source: reverse
-      ? [source.y, source.x + nodeSize.y / 2]
-      : [source.y + nodeSize.x, source.x + nodeSize.y / 2],
+      ? [source.y + nodeSize.x, source.x + nodeSize.y / 1.5]
+      : [source.y, source.x + nodeSize.y / 1.5],
     target: reverse
-      ? [target.y + nodeSize.x, target.x + nodeSize.y / 2]
-      : [target.y, target.x + nodeSize.y / 2],
+      ? [target.y, target.x + nodeSize.y / 1.5]
+      : [target.y + nodeSize.x, target.x + nodeSize.y / 1.5],
   };
 
   const applyOpacity = (opacity: number, done = () => {}) => {
@@ -62,7 +62,7 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
     <>
       <defs>
         <marker
-          id="head"
+          id="crossHead"
           orient="auto"
           markerWidth="13"
           markerHeight="14"
@@ -81,10 +81,10 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
         d={drawPath()}
         data-source-id={source.id}
         data-target-id={target.id}
-        markerEnd="url(#head)"
+        markerEnd="url(#crossHead)"
       />
     </>
   );
 };
 
-export default withStyles(styles)(AppGraphLink);
+export default withStyles(styles)(AppGraphCrossLink);
