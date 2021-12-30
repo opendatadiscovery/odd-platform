@@ -411,6 +411,12 @@ const reducer = (
   state = initialState,
   action: Action
 ): DataEntityLineageState => {
+  localState.allNodes = [];
+  localState.allGroups = [];
+  localState.allEdges = [];
+  localState.excludedIds = new Set();
+  localState.groupIds = new Set();
+  localState.nodeIds = new Set();
   switch (action.type) {
     case getType(actions.fetchDataEntityDownstreamLineageAction.success):
       return updateDataEntityLineage(
