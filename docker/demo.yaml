@@ -40,8 +40,6 @@ services:
       - MYSQL_DATABASE=${MYSQLDATABASE}
       - MYSQL_USER=${MYSQLUSER}
       - MYSQL_PASSWORD=${MYSQLPASSWORD}
-      - FLASK_ENVIRONMENT=${FLASK_ENVIRONMENT}
-      - FLASK_APP=${FLASK_APP}
     ports:
       - 8084:8080
     depends_on:
@@ -50,13 +48,11 @@ services:
   postgresql-adapter:
     image: ghcr.io/opendatadiscovery/adapters/odd-postgresql-adapter:latest
     environment:
-      - PGHOST=${PGHOST}
-      - PGPORT=${PGPORT}
-      - PGDATABASE=${PGDATABASE}
-      - PGUSER=${PGUSER}
-      - PGPASSWORD=${PGPASSWORD}
-      - FLASK_ENVIRONMENT=${FLASK_ENVIRONMENT}
-      - FLASK_APP=${FLASK_APP}
+      - POSTGRES_HOST=${PGHOST}
+      - POSTGRES_PORT=${PGPORT}
+      - POSTGRES_DATABASE=${PGDATABASE}
+      - POSTGRES_USER=${PGUSER}
+      - POSTGRES_PASSWORD=${PGPASSWORD}
     ports:
       - 8085:8080
     depends_on:
@@ -69,8 +65,6 @@ services:
       - AWS_REGION=${AWS_REGION}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - FLASK_ENVIRONMENT=${FLASK_ENVIRONMENT}
-      - FLASK_APP=${FLASK_APP}
     ports:
       - 8086:8080
     depends_on:
@@ -84,8 +78,6 @@ services:
       - REDSHIFT_DATABASE=${REDSHIFT_DATABASE}
       - REDSHIFT_USER=${REDSHIFT_USER}
       - REDSHIFT_PASSWORD=${REDSHIFT_PASSWORD}
-      - FLASK_ENVIRONMENT=${FLASK_ENVIRONMENT}
-      - FLASK_APP=${FLASK_APP}
     ports:
       - 8087:8080
     depends_on:
