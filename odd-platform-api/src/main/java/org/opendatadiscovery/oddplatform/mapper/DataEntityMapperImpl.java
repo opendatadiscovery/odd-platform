@@ -1,8 +1,12 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -38,6 +42,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
+import static java.util.Collections.emptyList;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataQualityTestDetailsDto;
 
 @Component
@@ -307,10 +312,29 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         return mapReference(pojo);
     }
 
-    private DataEntityLineageStream mapStream(final DataEntityLineageStreamDto upstream) {
+    private DataEntityLineageStream mapStream(final DataEntityLineageStreamDto stream) {
+        final Map<Long, List<Long>> groupsRelations = stream.getGroupsRelations();
+
+        final Set<Long> streamGroups = new HashSet<>();
+        final List<DataEntityLineageNode> nodes = new ArrayList<>();
+
+        for (final DataEntityDimensionsDto node : stream.getNodes()) {
+            final List<Long> groupIds = groupsRelations.get(node.getDataEntity().getId());
+            if (groupIds != null) {
+                streamGroups.addAll(groupIds);
+            }
+
+            nodes.add(mapNode(node, groupIds));
+        }
+
         return new DataEntityLineageStream()
-            .nodes(upstream.getNodes().stream().map(this::mapNode).collect(Collectors.toList()))
-            .edges(upstream.getEdges().stream().map(this::mapEdge).collect(Collectors.toList()));
+            .nodes(nodes)
+            .edges(stream.getEdges().stream().map(this::mapEdge).collect(Collectors.toList()))
+            .groups(stream.getGroups()
+                .stream()
+                .filter(g -> streamGroups.contains(g.getDataEntity().getId()))
+                .map(this::mapNode)
+                .collect(Collectors.toList()));
     }
 
     private DataEntityLineageEdge mapEdge(final Pair<Long, Long> edge) {
@@ -320,6 +344,10 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private DataEntityLineageNode mapNode(final DataEntityDimensionsDto dto) {
+        return mapNode(dto, emptyList());
+    }
+
+    private DataEntityLineageNode mapNode(final DataEntityDimensionsDto dto, final List<Long> groupId) {
         final DataEntityPojo dataEntity = dto.getDataEntity();
         final DataSourcePojo dataSource = dto.getDataSource();
 
@@ -333,6 +361,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .types(types)
             .externalName(dataEntity.getExternalName())
             .internalName(dataEntity.getInternalName())
+            .groupIdList(groupId)
             .dataSource(dataSource != null
                 ? dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace()))
                 : null);

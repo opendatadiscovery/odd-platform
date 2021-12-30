@@ -6,7 +6,6 @@ import { DataEntityTypeNameEnum } from 'generated-sources';
 export const styles = (theme: Theme) =>
   createStyles({
     container: {
-      cursor: 'pointer',
       fill: theme.palette.background.default,
       rx: 2,
       '&:hover': {
@@ -54,6 +53,9 @@ export const styles = (theme: Theme) =>
       },
       [`&.${DataEntityTypeNameEnum.QUALITY_TEST}`]: {
         fill: theme.palette.entityType.DATA_QUALITY_TEST,
+      },
+      [`&.${DataEntityTypeNameEnum.ENTITY_GROUP}`]: {
+        fill: theme.palette.entityType.DATA_ENTITY_GROUP,
       },
     },
     typeLabel: {

@@ -40,7 +40,14 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
 
-  const handleOpen = React.useCallback(() => setOpen(true), [setOpen]);
+  const handleOpen = React.useCallback(
+    (e?: React.MouseEvent) => {
+      e?.preventDefault();
+      e?.stopPropagation();
+      setOpen(true);
+    },
+    [setOpen]
+  );
   const handleClose = React.useCallback(() => setOpen(false), [setOpen]);
 
   React.useEffect(() => {

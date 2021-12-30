@@ -1,0 +1,28 @@
+import React from 'react';
+import { styled } from '@mui/material/styles';
+
+interface NodeListIconProps {
+  text: string;
+  onClick?: React.MouseEventHandler<SVGTextElement> | undefined;
+}
+
+const StyledText = styled('text')(({ theme }) => ({
+  cursor: 'pointer',
+  fill: theme.palette.button.dropdown.normal.color,
+  fontWeight: theme.typography.body1.fontWeight,
+  lineHeight: theme.typography.body1.lineHeight,
+  '&:hover': {
+    fill: theme.palette.button.tertiary.normal.color,
+  },
+}));
+
+const NodeListButton: React.FC<NodeListIconProps> = ({
+  text,
+  onClick,
+}) => (
+  <StyledText onClick={onClick} x="50" y="40" fontSize="14" fill="black">
+    {text}
+  </StyledText>
+);
+
+export default NodeListButton;

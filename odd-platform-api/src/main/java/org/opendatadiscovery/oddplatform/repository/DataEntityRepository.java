@@ -81,5 +81,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     List<DataEntityDto> getQuerySuggestions(final String query);
 
     List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
-                                                              final Integer page, final Integer size);
+                                                              final Integer page,
+                                                              final Integer size);
 }
