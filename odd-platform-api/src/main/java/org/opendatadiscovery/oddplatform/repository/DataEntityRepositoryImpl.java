@@ -33,9 +33,11 @@ import org.jooq.Record3;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.SelectLimitStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectOrderByStep;
+import org.jooq.SelectSelectStep;
 import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.Table;
@@ -650,7 +652,7 @@ public class DataEntityRepositoryImpl
                 deCte.field(DATA_ENTITY.EXTERNAL_NAME)
             )
             .fetchStream()
-            .map(r -> mapDtoRecord(r, true))
+            .map(this::mapDtoRecord)
             .collect(toList());
     }
 
@@ -976,23 +978,34 @@ public class DataEntityRepositoryImpl
             .flatMap(Arrays::stream)
             .collect(toList());
 
-        final SelectHavingStep<Record> groupByStep = dslContext.with(deCteName)
+        SelectSelectStep<Record> selectStep = dslContext.with(deCteName)
             .asMaterialized(dataEntitySelect)
-            .select(selectFields)
-            .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
-            .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
-            .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
-            .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
-            .from(deCteName)
-            .leftJoin(DATA_SOURCE)
-            .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
-            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .leftJoin(TAG_TO_DATA_ENTITY)
-            .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
-            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
-            .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
-            .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
-            .leftJoin(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID))
+            .select(selectFields);
+
+        if (config.isDimensions()) {
+            selectStep = selectStep
+                .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
+                .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
+                .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
+                .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD));
+        }
+
+        SelectJoinStep<Record> fromStep = selectStep.from(deCteName);
+
+        if (config.isDimensions()) {
+            fromStep = fromStep
+                .leftJoin(DATA_SOURCE)
+                .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
+                .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+                .leftJoin(TAG_TO_DATA_ENTITY)
+                .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+                .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+                .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+                .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
+                .leftJoin(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID));
+        }
+
+        final SelectHavingStep<Record> groupByStep = fromStep
             .where(ListUtils.emptyIfNull(config.getSelectConditions()))
             .groupBy(selectFields);
 
@@ -1260,11 +1273,7 @@ public class DataEntityRepositoryImpl
     }
 
     private DataEntityDto mapDtoRecord(final Record r) {
-        return mapDtoRecord(r, true);
-    }
-
-    private DataEntityDto mapDtoRecord(final Record r, final boolean remap) {
-        final Record deRecord = remap ? jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY) : r;
+        final Record deRecord = jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY);
 
         final DataEntityPojo dataEntity = jooqRecordHelper.extractRelation(deRecord, DATA_ENTITY, DataEntityPojo.class);
 
@@ -1402,6 +1411,10 @@ public class DataEntityRepositoryImpl
         private LimitOffset cteLimitOffset;
         private List<Condition> selectConditions;
         private boolean includeHollow;
+
+        @Builder.Default
+        private boolean dimensions = true;
+
         private SortField<?> orderBy;
         private Fts fts;
 
