@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
@@ -10,7 +9,6 @@ import {
 } from 'redux/selectors/datasources.selectors';
 import { fetchDataSourcesList } from 'redux/thunks/datasources.thunks';
 import DataSourcesListView from './DataSourcesList';
-import { styles } from './DataSourcesListStyles';
 
 const mapStateToProps = (state: RootState) => ({
   dataSourcesList: getDataSourcesList(state),
@@ -27,4 +25,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(DataSourcesListView));
+)(DataSourcesListView);

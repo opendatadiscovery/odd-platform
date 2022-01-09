@@ -24,7 +24,7 @@ export const styles = (theme: Theme) =>
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      width: 'calc(100% - 8px)',
+      width: '100%',
     },
     tagsTableHeader: {
       flexWrap: 'nowrap',
