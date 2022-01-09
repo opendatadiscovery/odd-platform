@@ -1,15 +1,16 @@
 import React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import { SvgIconProps } from '@mui/material/SvgIcon';
+import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 
-const UserSyncIcon: React.FC<SvgIconProps> = props => (
-  <SvgIcon
+const UserSyncIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
+  <AppSvgIcon
     width="78"
     height="41"
     viewBox="0 0 78 41"
+    sx={sx}
     {...props}
     style={{ color: 'transparent' }}
   >
-    {/* <svg width="78" height="41" viewBox="0 0 78 41" fill="none" xmlns="http://www.w3.org/2000/svg"> */}
     <circle
       cx="46.9141"
       cy="19.1215"
@@ -37,8 +38,7 @@ const UserSyncIcon: React.FC<SvgIconProps> = props => (
       d="M40.8411 7.62146C79.8411 -1.37856 83.9772 19.152 62.3177 28.7111M67.6149 30.1308L62.3713 28.7258L63.7764 23.4822"
       stroke="#091E42"
     />
-    {/* </svg> */}
-  </SvgIcon>
+  </AppSvgIcon>
 );
 
 export default UserSyncIcon;
