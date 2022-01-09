@@ -1,21 +1,19 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import { Label, LabelApiDeleteLabelRequest } from 'generated-sources';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import AppButton from 'components/shared/AppButton/AppButton';
 import LabelEditFormContainer from '../LabelEditForm/LabelEditFormContainer';
-import { styles, StylesType } from './EditableLabelItemStyles';
+import * as S from './EditableLabelItemStyles';
 
-interface EditableLabelItemProps extends StylesType {
+interface EditableLabelItemProps {
   label: Label;
   deleteLabel: (params: LabelApiDeleteLabelRequest) => Promise<void>;
 }
 
 const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
-  classes,
   label,
   deleteLabel,
 }) => {
@@ -25,13 +23,13 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
   );
 
   return (
-    <Grid container className={classes.container}>
+    <S.Container container>
       <Grid item>
         <Typography variant="body1" noWrap title={label.name}>
           {label.name}
         </Typography>
       </Grid>
-      <Grid item className={classes.actionsContainer}>
+      <S.ActionsContainer item>
         <LabelEditFormContainer
           label={label}
           editBtn={
@@ -39,6 +37,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
               size="medium"
               color="primaryLight"
               startIcon={<EditIcon />}
+              sx={{ mr: 1 }}
             >
               Edit
             </AppButton>
@@ -61,9 +60,9 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
             </AppButton>
           }
         />
-      </Grid>
-    </Grid>
+      </S.ActionsContainer>
+    </S.Container>
   );
 };
 
-export default withStyles(styles)(EditableLabelItem);
+export default EditableLabelItem;

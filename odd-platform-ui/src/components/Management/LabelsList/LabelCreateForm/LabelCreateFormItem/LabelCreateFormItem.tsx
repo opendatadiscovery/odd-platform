@@ -1,19 +1,17 @@
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
 import { useFormContext, Controller } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { styles, StylesType } from './LabelCreateFormItemStyles';
+import * as S from './LabelCreateFormItemStyles';
 
-interface LabelCreateFormItemProps extends StylesType {
+interface LabelCreateFormItemProps {
   itemIndex: number;
   onItemRemove: () => void;
   fieldsLength?: number;
 }
 
 const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
-  classes,
   itemIndex,
   onItemRemove,
   fieldsLength,
@@ -41,15 +39,15 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
           />
         )}
       />
-      <div className={classes.labelItemButtons}>
+      <S.LabelItemButtons sx={{ mt: 1, mb: 1.5 }}>
         {fieldsLength && fieldsLength > 1 && (
           <AppButton size="small" color="dropdown" onClick={onItemRemove}>
             Delete
           </AppButton>
         )}
-      </div>
+      </S.LabelItemButtons>
     </>
   );
 };
 
-export default withStyles(styles)(LabelCreateFormItem);
+export default LabelCreateFormItem;

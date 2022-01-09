@@ -19,9 +19,9 @@ import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
 import LabelCreateFormContainer from './LabelCreateForm/LabelCreateFormContainer';
-import { StylesType } from './LabelsListStyles';
+import * as S from './LabelsListStyles';
 
-interface LabelsListProps extends StylesType {
+interface LabelsListProps {
   labelsList: Label[];
   isFetching: boolean;
   isDeleting: boolean;
@@ -32,7 +32,6 @@ interface LabelsListProps extends StylesType {
 }
 
 const LabelsListView: React.FC<LabelsListProps> = ({
-  classes,
   labelsList,
   isFetching,
   isDeleting,
@@ -85,14 +84,14 @@ const LabelsListView: React.FC<LabelsListProps> = ({
   };
 
   return (
-    <div className={classes.container}>
-      <div className={classes.caption}>
+    <Grid container flexDirection="column" alignItems="center">
+      <S.Caption container sx={{ mb: 1 }}>
         <Typography variant="h1">Labels</Typography>
-        <Typography variant="subtitle1" className={classes.totalCountText}>
+        <Typography variant="subtitle1" color="texts.info">
           <NumberFormatted value={totalLabels} /> labels overall
         </Typography>
-      </div>
-      <div className={classes.caption}>
+      </S.Caption>
+      <S.Caption container sx={{ mb: 2 }}>
         <AppTextField
           placeholder="Search label..."
           sx={{ minWidth: '340px' }}
@@ -125,20 +124,19 @@ const LabelsListView: React.FC<LabelsListProps> = ({
             </AppButton>
           }
         />
-      </div>
-      <Grid container className={classes.labelsTableHeader}>
+      </S.Caption>
+      <S.TableHeader container>
         <Grid item xs={12}>
-          <Typography variant="subtitle2" className={classes.rowName}>
+          <Typography variant="subtitle2" color="texts.hint">
             Name
           </Typography>
         </Grid>
-      </Grid>
+      </S.TableHeader>
       <Grid container>
         <Grid item xs={12}>
           <InfiniteScroll
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
-            className={classes.labelsItem}
             dataLength={labelsList.length}
             scrollThreshold="200px"
             loader={
@@ -168,7 +166,7 @@ const LabelsListView: React.FC<LabelsListProps> = ({
       {!isFetching && !labelsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
-    </div>
+    </Grid>
   );
 };
 
