@@ -23,7 +23,7 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
-import DataEntityListContainer from './DataEntityList/DataEntityListContainer';
+import DataEntityList from './DataEntityList/DataEntityList';
 import TopTagsListContainer from './TopTagsList/TopTagsListContainer';
 import IdentityContainer from './IdentityForm/IdentityContainer';
 
@@ -171,7 +171,7 @@ const Overview: React.FC<OverviewProps> = ({
               sx={{ mt: 3.5, mx: 'auto' }}
             >
               <Grid item xs={3}>
-                <DataEntityListContainer
+                <DataEntityList
                   dataEntitiesList={myEntities}
                   entityListName="My Objects"
                   entityListIcon={<CatalogIcon />}
@@ -179,7 +179,7 @@ const Overview: React.FC<OverviewProps> = ({
                 />
               </Grid>
               <Grid item xs={3}>
-                <DataEntityListContainer
+                <DataEntityList
                   dataEntitiesList={myEntitiesUpstream}
                   entityListName="Upstream dependents"
                   entityListIcon={<UpstreamIcon />}
@@ -187,7 +187,7 @@ const Overview: React.FC<OverviewProps> = ({
                 />
               </Grid>
               <Grid item xs={3}>
-                <DataEntityListContainer
+                <DataEntityList
                   dataEntitiesList={myEntitiesDownstream}
                   entityListName="Downstream dependents"
                   entityListIcon={<DownstreamIcon />}
@@ -195,7 +195,7 @@ const Overview: React.FC<OverviewProps> = ({
                 />
               </Grid>
               <Grid item xs={3}>
-                <DataEntityListContainer
+                <DataEntityList
                   dataEntitiesList={popularEntities}
                   entityListName="Popular"
                   entityListIcon={<StarIcon />}
