@@ -1,9 +1,9 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
-import { StylesType } from './ManagementStyles';
+import * as S from './ManagementStyles';
 
 // lazy components
 const NamespaceListContainer = React.lazy(
@@ -22,11 +22,11 @@ const DataSourcesListContainer = React.lazy(
   () => import('./DataSourcesList/DataSourcesListContainer')
 );
 
-interface ManagementProps extends StylesType {
+interface ManagementProps {
   viewType: string;
 }
 
-const Management: React.FC<ManagementProps> = ({ classes, viewType }) => {
+const Management: React.FC<ManagementProps> = ({ viewType }) => {
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Namespaces', link: '/management/namespaces' },
     { name: 'Datasources', link: '/management/datasources' },
@@ -46,61 +46,57 @@ const Management: React.FC<ManagementProps> = ({ classes, viewType }) => {
   }, [tabs]);
 
   return (
-    <div className={classes.container}>
-      <Grid container className={classes.contentContainer} wrap="nowrap">
-        <Grid item xs={3} className={classes.sidebarContainer}>
-          <div className={classes.sidebar}>
-            <div className={classes.tabsContainer}>
-              {tabs.length && selectedTab >= 0 ? (
-                <AppTabs
-                  orientation="vertical"
-                  type="menu"
-                  items={tabs}
-                  selectedTab={selectedTab}
-                  handleTabChange={() => {}}
-                />
-              ) : null}
-            </div>
-          </div>
+    <S.Container container wrap="nowrap">
+      <S.SidebarContainer item xs={3}>
+        <Grid sx={{ p: 0.5 }}>
+          {tabs.length && selectedTab >= 0 ? (
+            <AppTabs
+              orientation="vertical"
+              type="menu"
+              items={tabs}
+              selectedTab={selectedTab}
+              handleTabChange={() => {}}
+            />
+          ) : null}
         </Grid>
-        <Grid item xs={9} className={classes.content}>
-          <React.Suspense fallback={<AppLoadingPage />}>
-            <Switch>
-              <Route
-                exact
-                path="/management/namespaces"
-                component={NamespaceListContainer}
-              />
-              <Route
-                exact
-                path="/management/datasources"
-                component={DataSourcesListContainer}
-              />
-              <Route
-                exact
-                path="/management/owners"
-                component={OwnersListContainer}
-              />
-              <Route
-                exact
-                path="/management/tags"
-                component={TagsListContainer}
-              />
-              <Route
-                exact
-                path="/management/labels"
-                component={LabelsListContainer}
-              />
-              <Redirect
-                exact
-                from="/management"
-                to="/management/namespaces"
-              />
-            </Switch>
-          </React.Suspense>
-        </Grid>
-      </Grid>
-    </div>
+      </S.SidebarContainer>
+      <S.ContentContainer item xs={9}>
+        <React.Suspense fallback={<AppLoadingPage />}>
+          <Switch>
+            <Route
+              exact
+              path="/management/namespaces"
+              component={NamespaceListContainer}
+            />
+            <Route
+              exact
+              path="/management/datasources"
+              component={DataSourcesListContainer}
+            />
+            <Route
+              exact
+              path="/management/owners"
+              component={OwnersListContainer}
+            />
+            <Route
+              exact
+              path="/management/tags"
+              component={TagsListContainer}
+            />
+            <Route
+              exact
+              path="/management/labels"
+              component={LabelsListContainer}
+            />
+            <Redirect
+              exact
+              from="/management"
+              to="/management/namespaces"
+            />
+          </Switch>
+        </React.Suspense>
+      </S.ContentContainer>
+    </S.Container>
   );
 };
 
