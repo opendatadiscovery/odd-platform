@@ -1,9 +1,10 @@
 import { Theme } from '@mui/material';
 import { WithStyles } from '@mui/styles';
 import createStyles from '@mui/styles/createStyles';
-import { maxContentWidthWithoutSidebar } from 'lib/constants';
-
-const maxTagsContainerWidth = 920;
+import {
+  maxContentWidthWithoutSidebar,
+  maxTagsContainerWidth,
+} from 'lib/constants';
 
 export const styles = (theme: Theme) =>
   createStyles({
