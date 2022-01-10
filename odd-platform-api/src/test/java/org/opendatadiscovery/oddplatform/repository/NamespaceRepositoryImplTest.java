@@ -16,30 +16,33 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("Integration tests for NamespaceRepository")
 class NamespaceRepositoryImplTest extends BaseIntegrationTest {
 
+    public static final String TEST_NAME = "Test name";
+    public static final long TEST_ID = 12L;
+
     @Autowired
     private NamespaceRepository namespaceRepository;
 
     @Test
-    @DisplayName("Test creates namespace pojo, expected success")
-    void testCreateNamespacePojo_Success() {
+    @DisplayName("Test creates namespace pojo, expecting namespace pojo in db")
+    void testCreateNamespacePojoInDB() {
         final NamespacePojo expectedNamespacePojo = new NamespacePojo()
-            .setName("Test name 1").setId(12L);
+            .setName(TEST_NAME).setId(TEST_ID);
 
         namespaceRepository.create(expectedNamespacePojo);
-        final Optional<NamespacePojo> actualNamespacePojo = namespaceRepository.get(12L);
+        final Optional<NamespacePojo> actualNamespacePojo = namespaceRepository.get(TEST_ID);
 
         assertTrue(actualNamespacePojo.isPresent());
         assertEquals(expectedNamespacePojo.getName(), actualNamespacePojo.get().getName());
     }
 
     @Test
-    @DisplayName("Test createIfNotExists method")
+    @DisplayName("Test creates namespace pojo if not exist in db, expecting namespace pojo in db")
     void testCreateIfNotExists() {
         final NamespacePojo pojo = new NamespacePojo()
-            .setName("Name").setId(12L);
+            .setName(TEST_NAME).setId(TEST_ID);
         namespaceRepository.create(pojo);
         final NamespacePojo secondPojo = new NamespacePojo()
-            .setName("Name").setId(13L);
+            .setName(TEST_NAME).setId(13L);
         final NamespacePojo result = namespaceRepository.createIfNotExists(secondPojo);
 
         assertEquals(pojo.getId(), result.getId());
@@ -47,17 +50,17 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Test gets namespace pojo from db, expected success")
-    void testGetNamespacePojoFromDB_Success() {
-        final Optional<NamespacePojo> actualNamespacePojo = namespaceRepository.get(12L);
+    @DisplayName("Test checks initially no namespace pojo in db, expecting empty db")
+    void testNoNamespacePojoInDBInitially() {
+        final Optional<NamespacePojo> actualNamespacePojo = namespaceRepository.get(TEST_ID);
         assertFalse(actualNamespacePojo.isPresent());
     }
 
     @Test
-    @DisplayName("Soft delete namespace from db")
+    @DisplayName("Test softly deletes namespace pojo from db, expecting empty db")
     void testDeleteNamespaceFromDB() {
         final NamespacePojo pojo = new NamespacePojo()
-            .setName("Test name 1").setId(12L);
+            .setName(TEST_NAME).setId(TEST_ID);
 
         namespaceRepository.create(pojo);
         namespaceRepository.delete(pojo.getId());

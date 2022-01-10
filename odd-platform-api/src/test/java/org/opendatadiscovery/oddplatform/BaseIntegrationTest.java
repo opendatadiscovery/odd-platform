@@ -29,7 +29,6 @@ public abstract class BaseIntegrationTest {
 
     static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
-        @SneakyThrows
         public void initialize(final ConfigurableApplicationContext configurableApplicationContext) {
             final String newDbName = DatabaseGenerator.createDatabaseInContainer();
             TestPropertyValues.of(
