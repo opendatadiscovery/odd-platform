@@ -1,4 +1,3 @@
-import { withStyles } from '@mui/styles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
@@ -6,11 +5,10 @@ import {
   updateNamespace,
 } from 'redux/thunks/namespace.thunks';
 import {
-  getIsNamespaceUpdating,
   getIsNamespaceCreating,
+  getIsNamespaceUpdating,
 } from 'redux/selectors/namespace.selectors';
 import NamespaceForm from './NamespaceForm';
-import { styles } from './NamespaceFormStyles';
 
 const mapStateToProps = (state: RootState) => ({
   isLoading:
@@ -22,7 +20,4 @@ const mapDispatchToProps = {
   updateNamespace,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(NamespaceForm));
+export default connect(mapStateToProps, mapDispatchToProps)(NamespaceForm);

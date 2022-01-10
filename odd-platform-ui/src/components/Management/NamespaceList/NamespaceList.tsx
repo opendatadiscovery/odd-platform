@@ -15,12 +15,13 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceFormContainer from './NamespaceForm/NamespaceFormContainer';
-import NamespaceListSkeleton from './NamespaceListSkeleton/NamespaceListSkeleton';
-import { StylesType } from './NamespaceListStyles';
+import NamespaceSkeletonItem from './NamespaceListSkeleton/NamespaceListSkeleton';
+import * as S from './NamespaceListStyles';
 
-interface NamespaceListProps extends StylesType {
+interface NamespaceListProps {
   namespacesList: Namespace[];
   isFetching: boolean;
   isDeleting: boolean;
@@ -35,7 +36,6 @@ interface NamespaceListProps extends StylesType {
 }
 
 const NamespaceListView: React.FC<NamespaceListProps> = ({
-  classes,
   namespacesList,
   isFetching,
   isDeleting,
@@ -88,14 +88,14 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
   };
 
   return (
-    <div className={classes.container}>
-      <div className={classes.caption}>
+    <Grid container flexDirection="column" alignItems="center">
+      <S.Caption container sx={{ mb: 1 }}>
         <Typography variant="h1">Namespaces</Typography>
-        <Typography variant="subtitle1" className={classes.totalCountText}>
+        <Typography variant="subtitle1" color="texts.info">
           <NumberFormatted value={totalNamespaces} /> namespaces overall
         </Typography>
-      </div>
-      <div className={classes.caption}>
+      </S.Caption>
+      <S.Caption container sx={{ mb: 2 }}>
         <AppTextField
           placeholder="Search namespace..."
           sx={{ minWidth: '340px' }}
@@ -128,37 +128,50 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
             </AppButton>
           }
         />
-      </div>
-      <Grid container className={classes.namespacesTableHeader}>
+      </S.Caption>
+      <S.TableHeader container>
         <Grid item xs={12}>
-          <Typography variant="subtitle2" className={classes.rowName}>
+          <Typography variant="subtitle2" color="texts.hint">
             Name
           </Typography>
         </Grid>
+      </S.TableHeader>
+      <Grid container>
+        <Grid item xs={12}>
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            dataLength={namespacesList.length}
+            scrollThreshold="200px"
+            scrollableTarget="namespaces-list"
+            loader={
+              isFetching ? (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <NamespaceSkeletonItem
+                      key={key}
+                      width={randomSkeletonPercentWidth()}
+                    />
+                  )}
+                />
+              ) : null
+            }
+          >
+            {namespacesList?.map(namespace => (
+              <EditableNamespaceItem
+                key={namespace.id}
+                namespace={namespace}
+                deleteNamespace={deleteNamespace}
+              />
+            ))}
+          </InfiniteScroll>
+        </Grid>
       </Grid>
-      <div id="namespaces-list" className={classes.listContainer}>
-        <InfiniteScroll
-          next={fetchNextPage}
-          hasMore={!!pageInfo?.hasNext}
-          className={classes.namespacesItem}
-          dataLength={namespacesList.length}
-          scrollThreshold="200px"
-          scrollableTarget="namespaces-list"
-          loader={isFetching ? <NamespaceListSkeleton length={5} /> : null}
-        >
-          {namespacesList?.map(namespace => (
-            <EditableNamespaceItem
-              key={namespace.id}
-              namespace={namespace}
-              deleteNamespace={deleteNamespace}
-            />
-          ))}
-        </InfiniteScroll>
-      </div>
       {!isFetching && !namespacesList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
-    </div>
+    </Grid>
   );
 };
 

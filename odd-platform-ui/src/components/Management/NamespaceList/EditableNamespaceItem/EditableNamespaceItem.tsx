@@ -7,12 +7,11 @@ import {
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import { withStyles } from '@mui/styles';
 import AppButton from 'components/shared/AppButton/AppButton';
 import NamespaceFormContainer from '../NamespaceForm/NamespaceFormContainer';
-import { styles, StylesType } from './EditableNamespaceItemStyles';
+import * as S from './EditableNamespaceItemStyles';
 
-interface EditableNamespaceItemProps extends StylesType {
+interface EditableNamespaceItemProps {
   namespace: Namespace;
   deleteNamespace: (
     params: NamespaceApiDeleteNamespaceRequest
@@ -20,7 +19,6 @@ interface EditableNamespaceItemProps extends StylesType {
 }
 
 const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
-  classes,
   namespace,
   deleteNamespace,
 }) => {
@@ -30,13 +28,13 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
   );
 
   return (
-    <Grid container className={classes.container}>
+    <S.Container container>
       <Grid item>
         <Typography variant="body1" noWrap title={namespace.name}>
           {namespace.name}
         </Typography>
       </Grid>
-      <Grid item className={classes.actionsContainer}>
+      <S.ActionsContainer item>
         <NamespaceFormContainer
           namespace={namespace}
           btnEl={
@@ -44,6 +42,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
               size="medium"
               color="primaryLight"
               startIcon={<EditIcon />}
+              sx={{ mr: 0.5 }}
             >
               Edit
             </AppButton>
@@ -66,9 +65,9 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
             </AppButton>
           }
         />
-      </Grid>
-    </Grid>
+      </S.ActionsContainer>
+    </S.Container>
   );
 };
 
-export default withStyles(styles)(EditableNamespaceItem);
+export default EditableNamespaceItem;
