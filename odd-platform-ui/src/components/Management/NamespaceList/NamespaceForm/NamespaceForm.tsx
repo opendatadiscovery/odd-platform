@@ -129,6 +129,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
+      clearState={clearState}
     />
   );
 };

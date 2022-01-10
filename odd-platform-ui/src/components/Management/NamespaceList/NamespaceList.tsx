@@ -143,7 +143,6 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
             hasMore={!!pageInfo?.hasNext}
             dataLength={namespacesList.length}
             scrollThreshold="200px"
-            scrollableTarget="namespaces-list"
             loader={
               isFetching ? (
                 <SkeletonWrapper
