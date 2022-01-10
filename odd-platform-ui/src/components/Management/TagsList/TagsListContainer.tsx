@@ -1,16 +1,14 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  getTagsList,
-  getIsTagDeleting,
-  getTagsListPage,
   getIsTagCreating,
+  getIsTagDeleting,
   getIsTagsListFetching,
+  getTagsList,
+  getTagsListPage,
 } from 'redux/selectors/tags.selectors';
-import { fetchTagsList, deleteTag } from 'redux/thunks/tags.thunks';
+import { deleteTag, fetchTagsList } from 'redux/thunks/tags.thunks';
 import TagsListView from './TagsList';
-import { styles } from './TagsListStyles';
 
 const mapStateToProps = (state: RootState) => ({
   tagsList: getTagsList(state),
@@ -25,7 +23,4 @@ const mapDispatchToProps = {
   deleteTag,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(TagsListView));
+export default connect(mapStateToProps, mapDispatchToProps)(TagsListView);
