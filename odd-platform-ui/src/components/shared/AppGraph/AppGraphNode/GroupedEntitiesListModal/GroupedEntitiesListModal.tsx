@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import {
   DataEntityLineage,
   DataEntityLineageNode,
@@ -8,6 +8,7 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
+import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import * as S from './GroupedEntitiesListModalStyles';
 
 interface GroupedEntitiesListModalProps {
@@ -34,13 +35,23 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
   const listItem = (item: DataEntityLineageNode) => (
     <Link to={dataEntityDetailsPath(item.id)}>
       <S.ListItemContainer container>
-        <Typography
-          noWrap
-          maxWidth={450}
-          title={item.internalName || item.externalName}
-        >
-          {item.internalName || item.externalName}
-        </Typography>
+        <Grid maxWidth="370px">
+          <Typography
+            noWrap
+            title={item.internalName || item.externalName}
+          >
+            {item.internalName || item.externalName}
+          </Typography>
+        </Grid>
+        <Grid flex="auto" wrap="nowrap" sx={{ ml: 1 }}>
+          {item.types?.map(type => (
+            <EntityTypeItem
+              sx={{ mr: 0.5 }}
+              key={type.id}
+              typeName={type.name}
+            />
+          ))}
+        </Grid>
         <AppButton
           color="primaryLight"
           size="medium"
