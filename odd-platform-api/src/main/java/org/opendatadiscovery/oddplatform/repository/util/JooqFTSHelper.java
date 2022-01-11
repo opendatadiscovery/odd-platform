@@ -13,7 +13,6 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Insert;
-import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Record2;
 import org.jooq.Select;
@@ -143,9 +142,9 @@ public class JooqFTSHelper {
 
     public Condition ftsCondition(final String query) {
         final Field<Object> conditionField = field(
-            "? @@ plainto_tsquery(?)",
+            "? @@ to_tsquery(?)",
             SEARCH_ENTRYPOINT.SEARCH_VECTOR,
-            query
+            String.format("%s:*", query)
         );
 
         return condition(conditionField.toString());
@@ -218,9 +217,9 @@ public class JooqFTSHelper {
         requireNonNull(vectorField);
 
         return field(
-            "ts_rank(?, plainto_tsquery(?))",
+            "ts_rank(?, to_tsquery(?))",
             vectorField,
-            query
+            String.format("%s:*", query)
         );
     }
 
