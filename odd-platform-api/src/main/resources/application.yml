@@ -72,4 +72,4 @@ logging:
           interceptor: info
       jooq:
         tools:
-          LoggerListener: debug
+          LoggerListener: info
