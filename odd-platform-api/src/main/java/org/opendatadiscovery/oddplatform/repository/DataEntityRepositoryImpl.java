@@ -27,6 +27,7 @@ import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Name;
+import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record3;
@@ -452,7 +453,7 @@ public class DataEntityRepositoryImpl
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
             builder = builder.fts(
-                new DataEntitySelectConfig.Fts(SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR, state.getQuery()));
+                new DataEntitySelectConfig.Fts(state.getQuery()));
         }
 
         final SelectLimitStep<Record> baseQuery = dataEntitySelect(builder.build());
@@ -626,15 +627,17 @@ public class DataEntityRepositoryImpl
 
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
 
-        final Field<?> searchVectorAlias = field("sv_alias", Object.class);
+        final Field<?> rankField = jooqFTSHelper.ftsRankField(SEARCH_ENTRYPOINT.SEARCH_VECTOR, query);
+        final Field<Object> rankFieldAlias = field("rank", Object.class);
 
         final Select<Record> dataEntitySelect = dslContext
             .select(DATA_ENTITY.fields())
-            .select(SEARCH_ENTRYPOINT.SEARCH_VECTOR.as(searchVectorAlias))
+            .select(rankField.as(rankFieldAlias))
             .from(SEARCH_ENTRYPOINT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
             .where(jooqFTSHelper.ftsCondition(query))
             .and(DATA_ENTITY.HOLLOW.isFalse())
+            .orderBy(rankFieldAlias.desc())
             .limit(SUGGESTION_LIMIT);
 
         final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
@@ -646,11 +649,7 @@ public class DataEntityRepositoryImpl
             .from(deCteName)
             .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .groupBy(deCte.fields())
-            .orderBy(
-                jooqFTSHelper.ftsRanking(searchVectorAlias, query),
-                deCte.field(DATA_ENTITY.INTERNAL_NAME),
-                deCte.field(DATA_ENTITY.EXTERNAL_NAME)
-            )
+            .orderBy(jooqQueryHelper.getField(deCte, rankFieldAlias).desc())
             .fetchStream()
             .map(this::mapDtoRecord)
             .collect(toList());
@@ -964,9 +963,8 @@ public class DataEntityRepositoryImpl
 
     private SelectLimitStep<Record> dataEntitySelect(final DataEntitySelectConfig config) {
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
-        final Field<?> searchVectorAlias = field("sv_alias");
 
-        final Select<Record> dataEntitySelect = cteDataEntitySelect(config, searchVectorAlias);
+        final Select<Record> dataEntitySelect = cteDataEntitySelect(config);
         final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
 
         final List<Field<?>> selectFields = Stream
@@ -1010,7 +1008,7 @@ public class DataEntityRepositoryImpl
             .groupBy(selectFields);
 
         return config.getFts() != null
-            ? groupByStep.orderBy(jooqFTSHelper.ftsRanking(searchVectorAlias, config.getFts().query()))
+            ? groupByStep.orderBy(jooqQueryHelper.getField(deCte, config.getFts().rankFieldAlias()).desc())
             : groupByStep;
     }
 
@@ -1368,13 +1366,22 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
-    private Select<Record> cteDataEntitySelect(final DataEntitySelectConfig config,
-                                               final Field<?> searchVectorAlias) {
+    private Select<Record> cteDataEntitySelect(final DataEntitySelectConfig config) {
         Select<Record> dataEntitySelect;
 
+        final ArrayList<OrderField<?>> orderFields = new ArrayList<>();
+
         if (config.getFts() != null) {
-            dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
-                .select(SEARCH_ENTRYPOINT.SEARCH_VECTOR.as(searchVectorAlias))
+            final Field<?> rankField = jooqFTSHelper.ftsRankField(
+                SEARCH_ENTRYPOINT.SEARCH_VECTOR,
+                config.getFts().query()
+            );
+
+            orderFields.add(config.getFts().rankFieldAlias().desc());
+
+            dataEntitySelect = dslContext
+                .select(DATA_ENTITY.fields())
+                .select(rankField.as(config.getFts().rankFieldAlias()))
                 .from(SEARCH_ENTRYPOINT)
                 .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
                 .where(ListUtils.emptyIfNull(config.getCteSelectConditions()))
@@ -1391,8 +1398,11 @@ public class DataEntityRepositoryImpl
         }
 
         if (config.getOrderBy() != null) {
-            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)
-                .orderBy(config.getOrderBy());
+            orderFields.add(config.getOrderBy());
+        }
+
+        if (!orderFields.isEmpty()) {
+            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect).orderBy(orderFields);
         }
 
         if (config.getCteLimitOffset() != null) {
@@ -1421,7 +1431,10 @@ public class DataEntityRepositoryImpl
         private record LimitOffset(int limit, int offset) {
         }
 
-        private record Fts(Field<?> vectorField, String query) {
+        private record Fts(Field<?> rankFieldAlias, String query) {
+            Fts(final String query) {
+                this(field("rank", Object.class), query);
+            }
         }
     }
 }

@@ -145,7 +145,7 @@ public class JooqFTSHelper {
         final Field<Object> conditionField = field(
             "? @@ plainto_tsquery(?)",
             SEARCH_ENTRYPOINT.SEARCH_VECTOR,
-            String.format("%s:*", query)
+            query
         );
 
         return condition(conditionField.toString());
@@ -214,14 +214,14 @@ public class JooqFTSHelper {
         return function.apply(filters);
     }
 
-    public OrderField<Object> ftsRanking(final Field<?> vectorField, final String query) {
+    public Field<?> ftsRankField(final Field<?> vectorField, final String query) {
         requireNonNull(vectorField);
 
         return field(
-            "ts_rank_cd(?, plainto_tsquery(?))",
+            "ts_rank(?, plainto_tsquery(?))",
             vectorField,
-            String.format("%s:*", query)
-        ).desc();
+            query
+        );
     }
 
     private static Field<Object> concatVectorFields(final Table<? extends Record> cte,
