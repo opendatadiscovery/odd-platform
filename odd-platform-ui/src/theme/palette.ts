@@ -68,6 +68,7 @@ export const palette = createPalette({
     secondary: colors.black50,
     hint: colors.black30,
     info: colors.black70,
+    action: colors.blue60,
   },
   warning: {
     main: colors.red50,

@@ -12,20 +12,21 @@ export type IconButtonColors =
 export interface AppIconButtonStyleProps {
   $color: IconButtonColors;
   $open?: boolean;
+  $height?: number;
 }
 
 export const StyledIconButton = styled(IconButton, {
   shouldForwardProp: propsChecker,
-})<AppIconButtonStyleProps>(({ theme, $color, $open }) => ({
+})<AppIconButtonStyleProps>(({ theme, $color, $open, $height }) => ({
   [`&.${iconButtonClasses.sizeSmall}`]: {
     width: $color === 'expand' ? '21px' : '16px',
-    height: '16px',
+    height: $height ? `${$height}px` : '16px',
     padding: '3px',
     borderRadius: $color === 'collapse' ? '2px' : '4px',
   },
   [`&.${iconButtonClasses.sizeMedium}`]: {
     width: '24px',
-    height: '24px',
+    height: $height ? `${$height}px` : '24px',
     padding: '7px',
     borderRadius: '16px',
   },
