@@ -1,8 +1,6 @@
 import { styled } from '@mui/material/styles';
 import { Popover, popoverClasses } from '@mui/material';
 
-export const Container = styled('div')(({ theme }) => ({}));
-
 export const AppPopover = styled(Popover)(({ theme }) => ({
   [`&.${popoverClasses.root}`]: {
     [`& .${popoverClasses.paper}`]: {

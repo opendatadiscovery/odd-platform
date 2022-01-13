@@ -1,9 +1,8 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  fetchDataEntityUpstreamLineage,
   fetchDataEntityDownstreamLineage,
+  fetchDataEntityUpstreamLineage,
 } from 'redux/thunks/dataentityLineage.thunks';
 import {
   getDataEntityLineage,
@@ -11,7 +10,6 @@ import {
   getDataEntityLineageStreamFetching,
 } from 'redux/selectors/dataentityLineage.selectors';
 import AppGraph from './AppGraph';
-import { styles } from './AppGraphStyles';
 
 const mapStateToProps = (
   state: RootState,
@@ -27,7 +25,4 @@ const mapDispatchToProps = {
   fetchDataEntityUpstreamLineage,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(AppGraph));
+export default connect(mapStateToProps, mapDispatchToProps)(AppGraph);

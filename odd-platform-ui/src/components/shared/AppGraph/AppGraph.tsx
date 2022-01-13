@@ -11,7 +11,6 @@ import entries from 'lodash/entries';
 import maxBy from 'lodash/maxBy';
 import { v4 as uuidv4 } from 'uuid';
 import { Typography } from '@mui/material';
-import cx from 'classnames';
 import {
   DataEntityLineageById,
   DataEntityLineageRootNodeId,
@@ -30,12 +29,11 @@ import TargetIcon from 'components/shared/Icons/TargetIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import AppGraphCrossLink from 'components/shared/AppGraph/AppGraphCrossLink/AppGraphCrossLink';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
-import { StylesType } from './AppGraphStyles';
+import * as S from './AppGraphStyles';
 
-export interface AppGraphProps extends StylesType {
+export interface AppGraphProps {
   dataEntityId: number;
   data: DataEntityLineageById;
   fetchDataEntityDownstreamLineage: (
@@ -51,7 +49,6 @@ export interface AppGraphProps extends StylesType {
 }
 
 const AppGraph: React.FC<AppGraphProps> = ({
-  classes,
   dataEntityId,
   data,
   fetchDataEntityDownstreamLineage,
@@ -400,15 +397,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
   }, [ref.current]);
 
   return isLineageFetching ? (
-    <div className={classes.loaderContainer}>
+    <S.LoaderContainer>
       <AppCircularProgress size={16} text="Loading lineage" />
-    </div>
+    </S.LoaderContainer>
   ) : (
-    <div
-      className={cx(classes.container, zoomable ? 'rd3t-grabbable' : '')}
-      ref={ref}
-    >
-      <div className={classes.actionsContainer}>
+    <S.Container className={zoomable ? 'rd3t-grabbable' : ''} ref={ref}>
+      <S.ActionsContainer>
         <AppButton
           color="primaryLight"
           size="medium"
@@ -443,11 +437,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
             </option>
           ))}
         </AppTextField>
-      </div>
-      <svg className={cx(classes.layer, svgInstanceRef)}>
+      </S.ActionsContainer>
+      <S.Layer className={svgInstanceRef}>
         <g className={gInstanceRef}>
           {crossLinksDown?.map(linkData => (
-            <AppGraphCrossLink
+            <AppGraphLink
+              crossLink
               key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
               linkData={linkData}
               nodeSize={nodeSize}
@@ -456,7 +451,8 @@ const AppGraph: React.FC<AppGraphProps> = ({
             />
           ))}
           {crossLinksUp?.map(linkData => (
-            <AppGraphCrossLink
+            <AppGraphLink
+              crossLink
               key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
               reverse
               linkData={linkData}
@@ -496,6 +492,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
               hasChildren={!!node.children?.length}
             />
           ))}
+
           {linksUp?.map(linkData => (
             <AppGraphLink
               key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
@@ -516,8 +513,8 @@ const AppGraph: React.FC<AppGraphProps> = ({
             />
           ))}
         </g>
-      </svg>
-    </div>
+      </S.Layer>
+    </S.Container>
   );
 };
 

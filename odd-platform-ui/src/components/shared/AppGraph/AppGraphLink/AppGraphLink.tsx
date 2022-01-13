@@ -1,12 +1,11 @@
 import React from 'react';
-import withStyles from '@mui/styles/withStyles';
 import { select } from 'd3-selection';
 import { linkHorizontal } from 'd3-shape';
 import { DefaultLinkObject } from 'd3';
 import { TreeLinkDatum } from 'redux/interfaces/graph';
-import { styles, StylesType } from './AppGraphLinkStyles';
+import * as S from './AppGraphLinkStyles';
 
-interface AppGraphLinkProps extends StylesType {
+interface AppGraphLinkProps {
   linkData: TreeLinkDatum;
   nodeSize: {
     x: number;
@@ -15,27 +14,37 @@ interface AppGraphLinkProps extends StylesType {
     my: number;
   };
   reverse?: boolean;
+  crossLink?: boolean;
   enableLegacyTransitions: boolean;
   transitionDuration: number;
 }
 
 const AppGraphLink: React.FC<AppGraphLinkProps> = ({
-  classes,
   linkData,
   nodeSize,
   reverse,
+  crossLink,
   enableLegacyTransitions,
   transitionDuration,
 }) => {
   let linkRef: SVGPathElement;
   const { source, target } = linkData;
-  const coords = {
+  const coords: DefaultLinkObject = {
     source: reverse
       ? [source.y, source.x + nodeSize.y / 2]
       : [source.y + nodeSize.x, source.x + nodeSize.y / 2],
     target: reverse
       ? [target.y + nodeSize.x, target.x + nodeSize.y / 2]
       : [target.y, target.x + nodeSize.y / 2],
+  };
+
+  const crossLinkCoords: DefaultLinkObject = {
+    source: reverse
+      ? [source.y + nodeSize.x, source.x + nodeSize.y / 1.5]
+      : [source.y, source.x + nodeSize.y / 1.5],
+    target: reverse
+      ? [target.y, target.x + nodeSize.y / 1.5]
+      : [target.y + nodeSize.x, target.x + nodeSize.y / 1.5],
   };
 
   const applyOpacity = (opacity: number, done = () => {}) => {
@@ -56,35 +65,35 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
   }, []);
 
   const drawPath = () =>
-    linkHorizontal()(coords as DefaultLinkObject) || undefined;
+    linkHorizontal()(crossLink ? crossLinkCoords : coords) || undefined;
 
   return (
     <>
       <defs>
         <marker
-          id="head"
+          id={crossLink ? 'crossHead' : 'head'}
           orient="auto"
           markerWidth="13"
           markerHeight="14"
           refX="11"
           refY="5.6"
         >
-          <path d="M 0 0 12 6 0 12 3 6" className={classes.arrow} />
+          <S.Arrow d="M 0 0 12 6 0 12 3 6" $crossLink={crossLink} />
         </marker>
       </defs>
-      <path
+      <S.Path
         ref={l => {
           if (l) linkRef = l;
         }}
         style={{ opacity: 0 }}
-        className={classes.path}
         d={drawPath()}
         data-source-id={source.id}
         data-target-id={target.id}
-        markerEnd="url(#head)"
+        markerEnd={crossLink ? 'url(#crossHead)' : 'url(#head)'}
+        $crossLink={crossLink}
       />
     </>
   );
 };
 
-export default withStyles(styles)(AppGraphLink);
+export default AppGraphLink;
