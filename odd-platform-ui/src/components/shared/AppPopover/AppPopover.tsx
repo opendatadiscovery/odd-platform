@@ -35,7 +35,7 @@ const AppPopover: React.FC<AppPopoverProps> = ({
   const id = open ? 'appPopover' : undefined;
 
   return (
-    <S.Container>
+    <div>
       {renderOpenBtn({ onClick: handleClick, ariaDescribedBy: id })}
       <S.AppPopover
         // eslint-disable-next-line react/jsx-props-no-spreading
@@ -50,7 +50,7 @@ const AppPopover: React.FC<AppPopoverProps> = ({
       >
         {children}
       </S.AppPopover>
-    </S.Container>
+    </div>
   );
 };
 export default AppPopover;

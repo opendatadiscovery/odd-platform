@@ -1,40 +1,35 @@
-import { Theme } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+export const Container = styled('div')(({ theme }) => ({
+  width: '100%',
+  height: 'inherit',
+  backgroundColor: theme.palette.backgrounds.primary,
+  fontSize: '0.6rem',
+  position: 'relative',
+}));
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      width: '100%',
-      height: 'inherit',
-      backgroundColor: theme.palette.backgrounds.primary,
-      fontSize: '0.6rem',
-      position: 'relative',
-    },
-    layer: {
-      width: '100%',
-      height: '100vh',
-    },
-    actionsContainer: {
-      position: 'absolute',
-      top: 0,
-      right: 0,
-      padding: theme.spacing(1),
-      display: 'inline-flex',
-      alignItems: 'center',
-      '& > * + *': {
-        marginLeft: theme.spacing(1),
-      },
-    },
-    loaderContainer: {
-      width: '100%',
-      height: 'inherit',
-      backgroundColor: theme.palette.backgrounds.primary,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  });
+export const LoaderContainer = styled('div')(({ theme }) => ({
+  width: '100%',
+  height: 'inherit',
+  backgroundColor: theme.palette.backgrounds.primary,
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const ActionsContainer = styled('div')(({ theme }) => ({
+  position: 'absolute',
+  top: 0,
+  right: 0,
+  padding: theme.spacing(1),
+  display: 'inline-flex',
+  alignItems: 'center',
+  '& > * + *': {
+    marginLeft: theme.spacing(1),
+  },
+}));
+
+export const Layer = styled('svg')(() => ({
+  width: '100%',
+  height: '100vh',
+}));

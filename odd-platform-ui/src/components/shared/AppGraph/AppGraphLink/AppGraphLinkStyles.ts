@@ -1,18 +1,23 @@
-import { Theme } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+interface CrossLinkProps {
+  $crossLink?: boolean;
+}
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    path: {
-      fill: 'none',
-      stroke: theme.palette.texts.hint,
-      strokeWidth: 1,
-    },
-    arrow: {
-      fill: theme.palette.texts.hint,
-    },
-  });
+export const Path = styled('path')<CrossLinkProps>(
+  ({ theme, $crossLink }) => ({
+    fill: 'none',
+    stroke: $crossLink
+      ? theme.palette.button.primaryLight.active.background
+      : theme.palette.texts.hint,
+    strokeWidth: 1,
+  })
+);
 
-export type StylesType = WithStyles<typeof styles>;
+export const Arrow = styled('path')<CrossLinkProps>(
+  ({ theme, $crossLink }) => ({
+    fill: $crossLink
+      ? theme.palette.button.primaryLight.active.background
+      : theme.palette.texts.hint,
+  })
+);
