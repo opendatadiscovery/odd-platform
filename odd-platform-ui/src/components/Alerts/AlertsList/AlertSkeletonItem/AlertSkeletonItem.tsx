@@ -1,19 +1,14 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import { mainSkeletonHeight } from 'lib/constants';
-import { styles, StylesType } from './AlertSkeletonItemStyles';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   width: string;
 }
 
-const AlertSkeletonItem: React.FC<SkeletonProps> = ({
-  classes,
-  width,
-}) => (
-  <Grid container className={classes.container} wrap="nowrap">
+const AlertSkeletonItem: React.FC<SkeletonProps> = ({ width }) => (
+  <Grid container sx={{ py: 1.25, px: 1 }} wrap="nowrap">
     <Grid item xs={3}>
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
@@ -25,4 +20,4 @@ const AlertSkeletonItem: React.FC<SkeletonProps> = ({
     </Grid>
   </Grid>
 );
-export default withStyles(styles)(AlertSkeletonItem);
+export default AlertSkeletonItem;

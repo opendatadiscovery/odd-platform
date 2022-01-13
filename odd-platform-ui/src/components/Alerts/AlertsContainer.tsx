@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
@@ -11,7 +10,6 @@ import {
 import { getAlertTotals } from 'redux/selectors/alert.selectors';
 import * as actions from 'redux/actions';
 import Alerts from './Alerts';
-import { styles } from './AlertsStyles';
 
 interface RouteProps {
   viewType: string;
@@ -39,7 +37,4 @@ const mapDispatchToProps = {
   alertsFilterUpdateAction: actions.changeAlertsFilterAction,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Alerts));
+export default connect(mapStateToProps, mapDispatchToProps)(Alerts);

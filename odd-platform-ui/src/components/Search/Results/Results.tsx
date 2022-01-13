@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
@@ -144,7 +144,7 @@ const Results: React.FC<ResultsProps> = ({
   }, [searchFiltersSynced, searchId, isSearchCreating]);
 
   return (
-    <S.Container sx={{ mt: 2 }}>
+    <Grid sx={{ mt: 2 }}>
       {isSearchCreatingAndFetching ? (
         <SearchTabsSkeleton length={tabs.length} />
       ) : (
@@ -271,7 +271,7 @@ const Results: React.FC<ResultsProps> = ({
           ) : null}
         </S.ListContainer>
       )}
-    </S.Container>
+    </Grid>
   );
 };
 
