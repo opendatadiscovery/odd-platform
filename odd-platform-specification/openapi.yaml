@@ -1302,6 +1302,80 @@ paths:
       tags:
         - datasetField
 
+  /api/datasetfields/{dataset_field_id}/enumValues:
+    get:
+      summary: Get field's enum values
+      description: Get all posible values for this field with description
+      operationId: getEnumValues
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/EnumValueList'
+      tags:
+        - datasetField
+    post:
+      summary: Create new enum value
+      description: Creates new enum value with description
+      operationId: createEnumValue
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/EnumValueFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/EnumValue'
+      tags:
+        - datasetField
+
+  /api/datasetfields/{dataset_field_id}/enumValues/{enum_value_id}:
+    put:
+      summary: Update EnumValue's name and description
+      description: Update EnumValue's name and description
+      operationId: updateEnumValue
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+        - $ref: './components.yaml/#/components/parameters/EnumValueIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/EnumValueFormData'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/EnumValue'
+      tags:
+        - datasetField
+    delete:
+      summary: Delete EnumValue
+      description: Deletes EnumValue's name and description
+      operationId: deleteEnumValue
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+        - $ref: './components.yaml/#/components/parameters/EnumValueIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - datasetField
+
   /api/alerts:
     get:
       summary: Get all alerts
