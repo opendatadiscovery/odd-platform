@@ -1094,7 +1094,7 @@ components:
         id:
           type: integer
           format: int64
-        value:
+        name:
           type: string
         description:
           type: string
