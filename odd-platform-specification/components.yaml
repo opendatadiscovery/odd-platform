@@ -1083,9 +1083,12 @@ components:
         - data_set_version
 
     EnumValueList:
-      type: array
-      items:
-        $ref: '#/components/schemas/EnumValue'
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnumValue'
 
     EnumValue:
       description: DatasetField enum value
