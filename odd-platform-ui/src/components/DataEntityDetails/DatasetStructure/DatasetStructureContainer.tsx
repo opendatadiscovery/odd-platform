@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
@@ -16,7 +15,6 @@ import {
   getDatasetVersionId,
 } from 'redux/selectors/datasetStructure.selectors';
 import DatasetStructure from './DatasetStructure';
-import { styles } from './DatasetStructureStyles';
 
 interface RouteProps {
   dataEntityId: string;
@@ -56,4 +54,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(DatasetStructure));
+)(DatasetStructure);
