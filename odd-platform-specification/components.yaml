@@ -1085,7 +1085,7 @@ components:
     EnumValueList:
       type: array
       items:
-        $ref: '#/components/schemas/Label'
+        $ref: '#/components/schemas/EnumValue'
 
     EnumValue:
       description: DatasetField enum value
