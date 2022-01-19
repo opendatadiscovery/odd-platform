@@ -1,10 +1,12 @@
 import { Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-export const Container = styled('span')(({ theme }) => ({
+export const Container = styled(Typography)<{
+  component: React.ElementType;
+}>(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  '& span span': {
+  '& span': {
     backgroundColor: theme.palette.backgrounds.primary,
     borderRadius: '4px',
     lineHeight: '1.1rem',

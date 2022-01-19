@@ -178,7 +178,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4">
+    <Typography variant="h4" component="span">
       {dataSource ? 'Edit ' : 'Add '}
       Datasource
     </Typography>

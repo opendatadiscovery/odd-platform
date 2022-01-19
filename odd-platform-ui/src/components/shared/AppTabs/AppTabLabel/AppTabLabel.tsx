@@ -30,13 +30,11 @@ const AppTabLabel: React.FC<AppTabLabelProps> = ({
     );
 
   return (
-    <S.Container>
-      <Typography variant="body1" component="span">
-        {name}
-        {showHint && hint !== undefined
-          ? getLabelContent(isHintUpdated)
-          : null}
-      </Typography>
+    <S.Container variant="body1" component="span">
+      {name}
+      {showHint && hint !== undefined
+        ? getLabelContent(isHintUpdated)
+        : null}
     </S.Container>
   );
 };

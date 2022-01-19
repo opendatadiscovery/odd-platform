@@ -71,7 +71,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4">
+    <Typography variant="h4" component="span">
       {dataEntityInternalName ? 'Edit ' : 'Add '}
       business name
     </Typography>

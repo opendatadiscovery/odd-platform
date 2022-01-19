@@ -32,7 +32,11 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     }
   };
 
-  const formTitle = <Typography variant="h4">{actionTitle}</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      {actionTitle}
+    </Typography>
+  );
 
   const formContent = () => (
     <Typography variant="subtitle1">{actionText}</Typography>

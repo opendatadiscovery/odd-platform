@@ -80,7 +80,11 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
     if (!fields.length) handleAppend();
   };
 
-  const formTitle = <Typography variant="h4">Create Label</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      Create Label
+    </Typography>
+  );
 
   const formContent = () => (
     <>

@@ -65,7 +65,11 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
     );
   };
 
-  const formTitle = <Typography variant="h4">Edit Label</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      Edit Label
+    </Typography>
+  );
 
   const formContent = () => (
     <form id="label-edit-form" onSubmit={handleSubmit(handleUpdate)}>
