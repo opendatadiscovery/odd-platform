@@ -1,20 +1,22 @@
 import React from 'react';
-import { Collapse, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { MetadataFieldValue } from 'generated-sources';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import MetadataCreateFormContainer from 'components/DataEntityDetails/Metadata/MetadataCreateForm/MetadataCreateFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import MetadataItemContainer from './MetadataItem/MetadataItemContainer';
-import { StylesType } from './OverviewMetadataStyles';
+import {
+  SubtitleContainer,
+  CollapseContainer,
+} from './OverviewMetadataStyles';
 
-interface OverviewMetadataProps extends StylesType {
+interface OverviewMetadataProps {
   dataEntityId: number;
   predefinedMetadata: MetadataFieldValue[];
   customMetadata: MetadataFieldValue[];
 }
 
 const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
-  classes,
   dataEntityId,
   predefinedMetadata = [],
   customMetadata = [],
@@ -28,12 +30,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
   if (predefinedMetadata?.length > visibleLimit) {
     collapsedPredefined = (
       <>
-        <Collapse
-          className={classes.collapseContainer}
-          in={predefOpen}
-          timeout="auto"
-          unmountOnExit
-        >
+        <CollapseContainer in={predefOpen} timeout="auto" unmountOnExit>
           {predefOpen ? (
             <Grid container>
               {predefinedMetadata?.slice(visibleLimit).map(item => (
@@ -45,7 +42,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
               ))}
             </Grid>
           ) : null}
-        </Collapse>
+        </CollapseContainer>
         <AppButton
           size="small"
           color="tertiary"
@@ -64,12 +61,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
   if (customMetadata?.length > visibleLimit) {
     collapsedCustom = (
       <>
-        <Collapse
-          className={classes.collapseContainer}
-          in={customOpen}
-          timeout="auto"
-          unmountOnExit
-        >
+        <CollapseContainer in={customOpen} timeout="auto" unmountOnExit>
           {customOpen ? (
             <Grid container>
               {customMetadata?.slice(visibleLimit + 1).map(item => (
@@ -81,7 +73,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
               ))}
             </Grid>
           ) : null}
-        </Collapse>
+        </CollapseContainer>
         <AppButton
           sx={{ mt: 0.75 }}
           size="small"
@@ -100,10 +92,8 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
       <Grid item container>
         <Grid container>
           <Grid item xs={12}>
-            <div className={classes.subtitleContainer}>
-              <Typography variant="h4" className={classes.subtitle}>
-                Custom
-              </Typography>
+            <SubtitleContainer>
+              <Typography variant="h4">Custom</Typography>
               <div>
                 <MetadataCreateFormContainer
                   dataEntityId={dataEntityId}
@@ -118,7 +108,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
                   }
                 />
               </div>
-            </div>
+            </SubtitleContainer>
           </Grid>
           {customMetadata.length ? (
             customMetadata
@@ -160,11 +150,9 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
       <Grid item container>
         <Grid container>
           <Grid item xs={12}>
-            <div className={classes.subtitleContainer}>
-              <Typography variant="h4" className={classes.subtitle}>
-                Pre-defined
-              </Typography>
-            </div>
+            <SubtitleContainer>
+              <Typography variant="h4">Pre-defined</Typography>
+            </SubtitleContainer>
           </Grid>
           {predefinedMetadata?.slice(0, visibleLimit).map(item => (
             <MetadataItemContainer

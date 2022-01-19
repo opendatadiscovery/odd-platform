@@ -1,16 +1,23 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid, GridSize } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import cx from 'classnames';
 import { mainSkeletonHeight } from 'lib/constants';
-import { styles, StylesType } from './OverviewSkeletonStyles';
+import {
+  SmallItem,
+  Container,
+  LargeItem,
+  OverviewAboutSkeletonContainer,
+  OverviewMetadataSkeletonContainer,
+  SkeletonLeftSide,
+  TabItem,
+  SmallItemContainer,
+} from './OverviewSkeletonStyles';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   width: string;
 }
 
-const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
+const OverviewSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   const skeletonSmallItem = (xs: GridSize, key?: number) => (
     <Grid key={key} item xs={xs}>
       <Skeleton width={width} height={mainSkeletonHeight} />
@@ -18,195 +25,134 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ classes, width }) => {
   );
 
   const skeletonMediumItem = (key: number) => (
-    <Grid
-      key={key}
-      container
-      item
-      xs={12}
-      wrap="nowrap"
-      className={classes.smallItem}
-    >
+    <SmallItem key={key} container item xs={12} wrap="nowrap">
       {skeletonSmallItem(3)}
       {skeletonSmallItem(4)}
-    </Grid>
+    </SmallItem>
   );
 
   const skeletonLargeItem = (key: number) => (
-    <Grid
-      key={key}
-      item
-      container
-      wrap="nowrap"
-      className={cx(classes.smallItem)}
-    >
+    <SmallItem key={key} item container wrap="nowrap">
       {skeletonSmallItem(4)}
       {skeletonSmallItem(4)}
-    </Grid>
+    </SmallItem>
   );
 
   return (
-    <Grid container className={classes.container}>
-      <Grid container className={classes.overviewGeneralSkeletonContainer}>
-        <Grid item xs={8} container className={classes.skeletonLeftSide}>
-          <Grid item xs={2} className={classes.largeItem}>
+    <Container container>
+      <Grid container>
+        <SkeletonLeftSide item xs={8} container>
+          <LargeItem item xs={2}>
             <Skeleton width={width} height={mainSkeletonHeight} />
-          </Grid>
-          <Grid
+          </LargeItem>
+          <SmallItem
             item
             container
             justifyContent="space-between"
             wrap="nowrap"
-            className={classes.smallItem}
           >
             {[...Array(3)].map((_, id) => skeletonSmallItem(2, id))}
-          </Grid>
-          <Grid
+          </SmallItem>
+          <SmallItem
             item
             container
             justifyContent="space-between"
             wrap="nowrap"
-            className={classes.smallItem}
           >
             {[...Array(3)].map((_, id) => skeletonSmallItem(2, id))}
-          </Grid>
-        </Grid>
+          </SmallItem>
+        </SkeletonLeftSide>
         <Grid item xs={4} container>
           {[...Array(3)].map((_, id) => skeletonMediumItem(id))}
         </Grid>
       </Grid>
-      <Grid
-        container
-        className={classes.overviewMetadataSkeletonContainer}
-      >
+      <OverviewMetadataSkeletonContainer container>
         <Grid item xs={8} container>
-          <Grid item xs={2} className={classes.largeItem}>
+          <LargeItem item xs={2}>
             <Skeleton width={width} height={mainSkeletonHeight} />
-          </Grid>
-          <Grid
+          </LargeItem>
+          <SmallItem
             item
             container
             justifyContent="space-between"
             wrap="nowrap"
-            className={classes.smallItem}
           >
             {skeletonSmallItem(4)}
-          </Grid>
-          <Grid
+          </SmallItem>
+          <SmallItem
             item
             container
             justifyContent="space-between"
             wrap="nowrap"
-            className={classes.smallItem}
           >
             {skeletonSmallItem(4)}
-          </Grid>
+          </SmallItem>
           {[...Array(4)].map((_, id) => skeletonLargeItem(id))}
         </Grid>
         <Grid item xs={4} container>
-          <Grid
-            container
-            item
-            xs={12}
-            wrap="wrap"
-            className={classes.smallItem}
-          >
+          <SmallItem container item xs={12} wrap="wrap">
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
-          </Grid>
-          <Grid
-            container
-            item
-            xs={12}
-            className={cx(classes.smallItem, classes.container)}
-          >
+          </SmallItem>
+          <SmallItemContainer container item xs={12}>
             <Grid container justifyContent="space-between" wrap="nowrap">
               {skeletonSmallItem(6)}
               {skeletonSmallItem(2)}
             </Grid>
-          </Grid>
-          <Grid
-            container
-            item
-            xs={8}
-            wrap="wrap"
-            className={classes.smallItem}
-          >
+          </SmallItemContainer>
+          <SmallItem container item xs={8} wrap="wrap">
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
-          </Grid>
+          </SmallItem>
         </Grid>
-      </Grid>
-      <Grid container className={classes.overviewAboutSkeletonContainer}>
+      </OverviewMetadataSkeletonContainer>
+      <OverviewAboutSkeletonContainer container>
         <Grid item xs={8} container>
-          <Grid item xs={2} className={classes.largeItem}>
+          <LargeItem item xs={2}>
             <Skeleton width={width} height={mainSkeletonHeight} />
-          </Grid>
-          <Grid
+          </LargeItem>
+          <SmallItem
             item
             container
             justifyContent="space-between"
             wrap="nowrap"
-            className={classes.smallItem}
           >
             {skeletonSmallItem(4)}
-          </Grid>
-          <Grid
+          </SmallItem>
+          <SmallItem
             item
             container
             justifyContent="space-between"
             wrap="nowrap"
-            className={classes.smallItem}
           >
             {skeletonSmallItem(4)}
-          </Grid>
-          <Grid
-            item
-            container
-            wrap="nowrap"
-            className={cx(classes.smallItem, classes.container)}
-          >
+          </SmallItem>
+          <SmallItemContainer item container wrap="nowrap">
             <Skeleton width={width} height={mainSkeletonHeight} />
-          </Grid>
-          <Grid
-            item
-            container
-            wrap="nowrap"
-            className={cx(classes.smallItem)}
-          >
+          </SmallItemContainer>
+          <SmallItem item container wrap="nowrap">
             <Skeleton width={width} height={mainSkeletonHeight} />
-          </Grid>
+          </SmallItem>
         </Grid>
         <Grid item xs={4} container>
-          <Grid
-            container
-            item
-            xs={8}
-            wrap="wrap"
-            className={cx(classes.smallItem, classes.container)}
-          >
-            <Grid item xs={8} container className={classes.largeItem}>
+          <SmallItemContainer container item xs={8} wrap="wrap">
+            <LargeItem item xs={8} container>
               <Skeleton width={width} height={mainSkeletonHeight} />
-            </Grid>
-          </Grid>
-          <Grid
-            item
-            container
-            xs={8}
-            className={cx(classes.largeItem, classes.tabItem)}
-            wrap="nowrap"
-          >
+            </LargeItem>
+          </SmallItemContainer>
+          <TabItem item container xs={8} wrap="nowrap">
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
-          </Grid>
+          </TabItem>
         </Grid>
-      </Grid>
-    </Grid>
+      </OverviewAboutSkeletonContainer>
+    </Container>
   );
 };
 
-export default withStyles(styles)(OverviewSkeleton);
+export default OverviewSkeleton;

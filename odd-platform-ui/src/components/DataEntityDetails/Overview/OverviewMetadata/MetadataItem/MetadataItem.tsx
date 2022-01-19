@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
@@ -17,9 +17,18 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
-import { StylesType } from './MetadataItemStyles';
+import {
+  Container,
+  LabelContainer,
+  Actions,
+  EditForm,
+  Label,
+  Value,
+  ValueContainer,
+  FormActionBtns,
+} from './MetadataItemStyles';
 
-interface MetadataItemProps extends StylesType {
+interface MetadataItemProps {
   dataEntityId: number;
   metadataItem: MetadataFieldValue;
   deleteDataEntityCustomMetadata: (
@@ -31,7 +40,6 @@ interface MetadataItemProps extends StylesType {
 }
 
 const MetadataItem: React.FC<MetadataItemProps> = ({
-  classes,
   dataEntityId,
   metadataItem,
   deleteDataEntityCustomMetadata,
@@ -80,30 +88,27 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   const isNestedField = (fieldName: string) => fieldName?.indexOf('.') > 0;
 
   return (
-    <Grid container className={classes.container}>
-      <Grid item sm={5} className={classes.labelContainer}>
-        <Typography variant="subtitle1" className={classes.label} noWrap>
+    <Container container>
+      <LabelContainer item sm={5}>
+        <Label variant="subtitle1" noWrap>
           {isNestedField(metadataItem.field.name) ? (
             metadataItem.field.name
           ) : (
             <TextFormatted value={metadataItem.field.name} />
           )}
-        </Typography>
-      </Grid>
+        </Label>
+      </LabelContainer>
       <Grid item container sm={7} zeroMinWidth wrap="nowrap">
         {editMode ? (
           <FormProvider {...methods}>
-            <form
-              className={classes.editForm}
-              onSubmit={methods.handleSubmit(handleUpdate)}
-            >
+            <EditForm onSubmit={methods.handleSubmit(handleUpdate)}>
               <MetadataValueEditor
                 fieldName="value"
                 metadataType={metadataItem.field.type}
                 metadataValue={metadataItem.value}
                 size="small"
               />
-              <div className={classes.formActionBtns}>
+              <FormActionBtns>
                 <AppButton
                   type="submit"
                   size="medium"
@@ -119,16 +124,14 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 >
                   Cancel
                 </AppButton>
-              </div>
-            </form>
+              </FormActionBtns>
+            </EditForm>
           </FormProvider>
         ) : (
-          <div className={classes.valueContainer}>
-            <Typography variant="body1" className={classes.value}>
-              {metadataVal}
-            </Typography>
+          <ValueContainer>
+            <Value variant="body1">{metadataVal}</Value>
             {isCustom ? (
-              <div className={classes.actions}>
+              <Actions>
                 <AppIconButton
                   size="small"
                   color="tertiary"
@@ -156,12 +159,12 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                     />
                   }
                 />
-              </div>
+              </Actions>
             ) : null}
-          </div>
+          </ValueContainer>
         )}
       </Grid>
-    </Grid>
+    </Container>
   );
 };
 

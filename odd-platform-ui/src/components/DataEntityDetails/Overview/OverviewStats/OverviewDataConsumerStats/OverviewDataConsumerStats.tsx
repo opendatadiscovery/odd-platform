@@ -8,18 +8,20 @@ import { dataEntityDetailsPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Grid, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
-import { styles, StylesType } from './OverviewDataConsumerStatsStyles';
+import {
+  StatLabel,
+  TypeLabel,
+  UnknownCount,
+} from './OverviewDataConsumerStatsStyles';
 
-interface OverviewDataConsumerStatsProps extends StylesType {
+interface OverviewDataConsumerStatsProps {
   inputs: DataEntityDetails['inputList'];
   unknownInputsCount: number;
   dataEntityName: string | undefined;
 }
 
 const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
-  classes,
   inputs,
   unknownInputsCount,
   dataEntityName,
@@ -28,12 +30,12 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
 
   return (
     <Grid container>
-      <Grid item xs={12} className={classes.typeLabel}>
+      <TypeLabel item xs={12}>
         <EntityTypeItem
           typeName={DataEntityTypeNameEnum.CONSUMER}
           fullName
         />
-      </Grid>
+      </TypeLabel>
       <Grid
         item
         container
@@ -42,12 +44,10 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
         alignContent="flex-start"
       >
         <Grid item container xs={12} alignItems="baseline">
-          <Typography variant="h2" className={classes.statCount}>
+          <Typography variant="h2">
             {(inputs?.length || 0) + (unknownInputsCount || 0)}
           </Typography>
-          <Typography variant="body1" className={classes.statLabel}>
-            inputs
-          </Typography>
+          <StatLabel variant="body1">inputs</StatLabel>
         </Grid>
         <Grid
           item
@@ -70,13 +70,10 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
             </AppButton>
           ))}
           {unknownInputsCount ? (
-            <Typography
-              variant="subtitle1"
-              className={classes.unknownCount}
-            >
+            <UnknownCount variant="subtitle1">
               {unknownInputsCount} more source
               {unknownInputsCount === 1 ? '' : 's'} unknown
-            </Typography>
+            </UnknownCount>
           ) : null}
           {inputs && inputs?.length > displayedEntitiesNumber ? (
             <EntitiesListModal
@@ -100,4 +97,4 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
   );
 };
 
-export default withStyles(styles)(OverviewDataConsumerStats);
+export default OverviewDataConsumerStats;
