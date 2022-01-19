@@ -73,7 +73,9 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4">{owner ? 'Edit' : 'Add'} Owner</Typography>
+    <Typography variant="h4" component="span">
+      {owner ? 'Edit' : 'Add'} Owner
+    </Typography>
   );
 
   const formContent = () => (

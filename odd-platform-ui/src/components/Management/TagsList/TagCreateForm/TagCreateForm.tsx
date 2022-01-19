@@ -80,7 +80,11 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
     if (!fields.length) handleAppend();
   };
 
-  const formTitle = <Typography variant="h4">Create Tag</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      Create Tag
+    </Typography>
+  );
 
   const formContent = () => (
     <>

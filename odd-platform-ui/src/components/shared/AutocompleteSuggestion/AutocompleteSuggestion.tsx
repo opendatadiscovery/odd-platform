@@ -14,7 +14,7 @@ const AutocompleteSuggestion: React.FC<AutocompleteSuggestionProps> = ({
   optionName,
   sx,
 }) => (
-  <S.Container sx={sx} variant="body2">
+  <S.Container sx={sx} variant="body2" component="span">
     <S.NoResultText>No result.</S.NoResultText>{' '}
     <S.CreateNewOptionText>
       Create new {optionLabel} &quot;{optionName}&quot;

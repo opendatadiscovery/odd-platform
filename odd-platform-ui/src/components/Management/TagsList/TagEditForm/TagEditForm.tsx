@@ -60,7 +60,11 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
     );
   };
 
-  const formTitle = <Typography variant="h4">Edit Tag</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      Edit Tag
+    </Typography>
+  );
 
   const formContent = () => (
     <form id="tag-edit-form" onSubmit={handleSubmit(handleUpdate)}>

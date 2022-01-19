@@ -252,7 +252,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4">
+    <Typography variant="h4" component="span">
       {dataEntityOwnership ? 'Edit' : 'Add'} owner
     </Typography>
   );

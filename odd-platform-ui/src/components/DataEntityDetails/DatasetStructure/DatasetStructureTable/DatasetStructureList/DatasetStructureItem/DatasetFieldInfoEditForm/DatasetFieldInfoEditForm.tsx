@@ -94,7 +94,11 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
     );
   };
 
-  const formTitle = <Typography variant="h4">Edit information</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      Edit information
+    </Typography>
+  );
 
   const formContent = () => (
     <form

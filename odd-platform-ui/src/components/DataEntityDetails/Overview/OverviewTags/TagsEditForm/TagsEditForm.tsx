@@ -181,7 +181,11 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
     remove(index);
   };
 
-  const formTitle = <Typography variant="h4">Edit Tags</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      Edit Tags
+    </Typography>
+  );
 
   const formContent = () => (
     <>

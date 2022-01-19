@@ -76,7 +76,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4">
+    <Typography variant="h4" component="span">
       {namespace ? 'Edit' : 'Add'} Namespace
     </Typography>
   );

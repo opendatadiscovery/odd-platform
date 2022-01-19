@@ -84,7 +84,9 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4">Add Custom Metadata</Typography>
+    <Typography variant="h4" component="span">
+      Add Custom Metadata
+    </Typography>
   );
 
   const formContent = () => (
