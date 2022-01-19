@@ -1319,8 +1319,8 @@ paths:
       tags:
         - datasetField
     post:
-      summary: Create new enum value
-      description: Creates new enum value with description
+      summary: Enum Value CRUD
+      description: Creates/updates/deletes enum values with their description
       operationId: createEnumValue
       parameters:
         - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
@@ -1332,47 +1332,11 @@ paths:
               $ref: './components.yaml/#/components/schemas/BulkEnumValueFormData'
       responses:
         '201':
-          description: The resource has been successfully created
+          description: The resource has been successfully modified
           content:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/EnumValueList'
-      tags:
-        - datasetField
-
-  /api/datasetfields/{dataset_field_id}/enumValues/{enum_value_id}:
-    put:
-      summary: Update EnumValue's name and description
-      description: Update EnumValue's name and description
-      operationId: updateEnumValue
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
-        - $ref: './components.yaml/#/components/parameters/EnumValueIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/EnumValueFormData'
-      responses:
-        '201':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/EnumValue'
-      tags:
-        - datasetField
-    delete:
-      summary: Delete EnumValue
-      description: Deletes EnumValue's name and description
-      operationId: deleteEnumValue
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
-        - $ref: './components.yaml/#/components/parameters/EnumValueIdParam'
-      responses:
-        '204':
-          $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - datasetField
 

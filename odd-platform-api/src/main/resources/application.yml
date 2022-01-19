@@ -66,10 +66,5 @@ management:
 
 logging:
   level:
-    org:
-      springframework:
-        transaction:
-          interceptor: info
-      jooq:
-        tools:
-          LoggerListener: info
+    org.springframework.transaction.interceptor: info
+    org.jooq.tools.LoggerListener: info
