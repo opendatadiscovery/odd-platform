@@ -1,16 +1,14 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  getLabelsList,
-  getIsLabelDeleting,
-  getLabelsListPage,
   getIsLabelCreating,
+  getIsLabelDeleting,
   getIsLabelsListFetching,
+  getLabelsList,
+  getLabelsListPage,
 } from 'redux/selectors/labels.selectors';
-import { fetchLabelsList, deleteLabel } from 'redux/thunks/labels.thunks';
+import { deleteLabel, fetchLabelsList } from 'redux/thunks/labels.thunks';
 import LabelsListView from './LabelsList';
-import { styles } from './LabelsListStyles';
 
 const mapStateToProps = (state: RootState) => ({
   labelsList: getLabelsList(state),
@@ -28,4 +26,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(LabelsListView));
+)(LabelsListView);

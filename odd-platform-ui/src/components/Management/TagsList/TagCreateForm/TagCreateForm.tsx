@@ -10,9 +10,8 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TagCreateFormItem from './TagCreateFormItem/TagCreateFormItem';
-import { StylesType } from './TagCreateFormStyles';
 
-interface TagCreateFormProps extends StylesType {
+interface TagCreateFormProps {
   btnCreateEl: JSX.Element;
   isLoading: boolean;
   createTag: (params: TagApiCreateTagRequest) => Promise<Tag[]>;
@@ -23,7 +22,6 @@ interface TagCreateFormData {
 }
 
 const TagCreateForm: React.FC<TagCreateFormProps> = ({
-  classes,
   btnCreateEl,
   isLoading,
   createTag,
@@ -87,7 +85,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
   const formContent = () => (
     <>
       <FormProvider {...methods}>
-        <form id="tag-create-form" className={classes.container}>
+        <form id="tag-create-form">
           {fields.map((item, index) => (
             <TagCreateFormItem
               key={item.id}
