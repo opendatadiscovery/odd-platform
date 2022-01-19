@@ -258,7 +258,6 @@ const Results: React.FC<ResultsProps> = ({
           >
             {searchResults.map(searchResult => (
               <ResultItem
-                dataEntityId={searchResult.id}
                 key={searchResult.id}
                 searchType={searchType}
                 searchResult={searchResult}

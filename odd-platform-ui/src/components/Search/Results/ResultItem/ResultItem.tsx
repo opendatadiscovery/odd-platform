@@ -13,7 +13,6 @@ import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { Container, ItemLink } from './ResultItemStyles';
 
 interface ResultItemProps {
-  dataEntityId: number;
   searchType?: SearchType;
   totals: SearchTotalsByName;
   searchResult: DataEntity;
@@ -110,14 +109,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
           <>
             <ColContainer $colType="collg" item container wrap="wrap">
               <TruncatedCell
-                dataEntity={searchResult}
-                truncatedCellType="sourceList"
+                dataList={searchResult.sourceList}
+                externalEntityId={searchResult.id}
               />
             </ColContainer>
             <ColContainer item $colType="collg">
               <TruncatedCell
-                dataEntity={searchResult}
-                truncatedCellType="targetList"
+                dataList={searchResult.targetList}
+                externalEntityId={searchResult.id}
               />
             </ColContainer>
           </>
@@ -126,8 +125,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
         searchType === totals[DataEntityTypeNameEnum.CONSUMER]?.id ? (
           <ColContainer item $colType="collg">
             <TruncatedCell
-              dataEntity={searchResult}
-              truncatedCellType="inputList"
+              dataList={searchResult.inputList}
+              externalEntityId={searchResult.id}
             />
           </ColContainer>
         ) : null}
@@ -136,14 +135,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
           <>
             <ColContainer item container wrap="wrap" $colType="collg">
               <TruncatedCell
-                dataEntity={searchResult}
-                truncatedCellType="datasetsList"
+                dataList={searchResult.datasetsList}
+                externalEntityId={searchResult.id}
               />
             </ColContainer>
             <ColContainer item $colType="collg">
               <TruncatedCell
-                dataEntity={searchResult}
-                truncatedCellType="linkedUrlList"
+                dataList={searchResult.linkedUrlList}
+                externalEntityId={searchResult.id}
               />
             </ColContainer>
           </>
