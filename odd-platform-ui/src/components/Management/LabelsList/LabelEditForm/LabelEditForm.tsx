@@ -10,9 +10,8 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { StylesType } from './LabelEditFormStyles';
 
-interface LabelEditFormProps extends StylesType {
+interface LabelEditFormProps {
   editBtn: JSX.Element;
   label: Label;
   isLoading: boolean;
@@ -20,7 +19,6 @@ interface LabelEditFormProps extends StylesType {
 }
 
 const LabelEditForm: React.FC<LabelEditFormProps> = ({
-  classes,
   editBtn,
   label,
   isLoading,

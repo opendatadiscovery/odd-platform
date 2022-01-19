@@ -14,7 +14,7 @@ export const Container = styled(Grid)(({ theme }) => ({
   },
 }));
 
-export const ItemLink = styled(Link)(({ theme }) => ({
+export const ItemLink = styled(Link)(() => ({
   color: 'initial',
   textDecoration: 'none',
   flexGrow: 1,

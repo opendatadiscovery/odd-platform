@@ -1,26 +1,12 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
 import { maxContentWidthWithoutSidebar } from 'lib/constants';
+import { styled } from '@mui/material/styles';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      margin: '0 auto',
-      padding: theme.spacing(2),
-      width: `${maxContentWidthWithoutSidebar}px`,
-      [theme.breakpoints.up(maxContentWidthWithoutSidebar)]: {
-        width: '100%',
-        maxWidth: `${maxContentWidthWithoutSidebar}px`,
-        justifyContent: 'center',
-      },
-    },
-    caption: {
-      marginBottom: theme.spacing(2.75),
-    },
-    tabsContainer: {
-      marginBottom: theme.spacing(2),
-    },
-  });
-
-export type StylesType = WithStyles<typeof styles>;
+export const Container = styled('div')(({ theme }) => ({
+  margin: '0 auto',
+  padding: theme.spacing(2),
+  width: `${maxContentWidthWithoutSidebar}px`,
+  [theme.breakpoints.up(maxContentWidthWithoutSidebar)]: {
+    width: '100%',
+    maxWidth: `${maxContentWidthWithoutSidebar}px`,
+  },
+}));

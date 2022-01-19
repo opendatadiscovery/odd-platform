@@ -1,16 +1,14 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  getOwnersList,
-  getIsOwnerDeleting,
-  getOwnersListPage,
   getIsOwnerCreating,
+  getIsOwnerDeleting,
   getIsOwnersListFetching,
+  getOwnersList,
+  getOwnersListPage,
 } from 'redux/selectors/owners.selectors';
-import { fetchOwnersList, deleteOwner } from 'redux/thunks/owners.thunks';
+import { deleteOwner, fetchOwnersList } from 'redux/thunks/owners.thunks';
 import OwnersListView from './OwnersList';
-import { styles } from './OwnersListStyles';
 
 const mapStateToProps = (state: RootState) => ({
   ownersList: getOwnersList(state),
@@ -28,4 +26,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(OwnersListView));
+)(OwnersListView);

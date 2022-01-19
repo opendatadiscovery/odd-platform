@@ -1,14 +1,13 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import { dataEntityDetailsPath } from 'lib/paths';
-import { StylesType } from './DataEntityListStyles';
+import * as S from './DataEntityListStyles';
 
-interface OverviewDataEntityProps extends StylesType {
+interface OverviewDataEntityProps {
   dataEntitiesList: DataEntityRef[];
   entityListName: string;
   entityListIcon?: JSX.Element;
@@ -16,35 +15,29 @@ interface OverviewDataEntityProps extends StylesType {
 }
 
 const DataEntityList: React.FC<OverviewDataEntityProps> = ({
-  classes,
   dataEntitiesList,
   entityListName,
   entityListIcon,
   isFetching,
 }) => (
-  <Grid item className={classes.container}>
-    <Typography variant="h4" className={classes.sectionCaption}>
+  <Grid item>
+    <S.SectionCaption variant="h4" sx={{ mb: 2 }}>
       {entityListIcon}
       {entityListName}
-    </Typography>
-    <ul className={classes.listLinks}>
+    </S.SectionCaption>
+    <S.ListLinksContainer>
       {dataEntitiesList.map(item => (
         <li key={item.id}>
           <Grid container alignItems="center" wrap="nowrap">
-            <Link
-              to={dataEntityDetailsPath(item.id)}
-              className={classes.listLink}
-            >
-              {item.hasAlerts ? (
-                <AlertIcon className={classes.alert} />
-              ) : null}
+            <S.ListLink to={dataEntityDetailsPath(item.id)}>
+              {item.hasAlerts ? <AlertIcon sx={{ mr: 0.5 }} /> : null}
               <Typography
                 noWrap
                 title={item.internalName || item.externalName}
               >
                 {item.internalName || item.externalName}
               </Typography>
-            </Link>
+            </S.ListLink>
             {item.types?.map(type => (
               <EntityTypeItem
                 sx={{ ml: 0.5 }}
@@ -58,7 +51,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
       {!isFetching && !dataEntitiesList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
-    </ul>
+    </S.ListLinksContainer>
   </Grid>
 );
 

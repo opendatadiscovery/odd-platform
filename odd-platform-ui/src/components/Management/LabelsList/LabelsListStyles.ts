@@ -1,40 +1,15 @@
-import { Theme } from '@mui/material';
+import { Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+export const Caption = styled(Grid)(() => ({
+  alignItems: 'center',
+  justifyContent: 'space-between',
+}));
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      '& > :first-child': {
-        marginBottom: theme.spacing(1),
-      },
-    },
-    labelsTableHeader: {
-      borderBottom: '1px solid',
-      borderBottomColor: theme.palette.divider,
-      '& > *': {
-        padding: theme.spacing(0, 1),
-      },
-    },
-    rowName: { color: theme.palette.texts.hint },
-    caption: {
-      marginBottom: theme.spacing(2),
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      width: 'calc(100% - 8px)',
-    },
-    labelsItem: { display: 'flex', flexWrap: 'wrap' },
-    totalCountText: {
-      color: theme.palette.texts.info,
-    },
-    searchInput: {
-      minWidth: '340px',
-    },
-  });
-
-export type StylesType = WithStyles<typeof styles>;
+export const TableHeader = styled(Grid)(({ theme }) => ({
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.divider,
+  '& > *': {
+    padding: theme.spacing(0, 1),
+  },
+}));

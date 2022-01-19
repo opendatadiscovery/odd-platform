@@ -1,47 +1,21 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import {
-  maxContentWidth,
-  maxSidebarWidth,
-  toolbarHeight,
-} from 'lib/constants';
+import { Grid } from '@mui/material';
+import { maxContentWidth, maxSidebarWidth } from 'lib/constants';
+import { styled } from '@mui/material/styles';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      padding: theme.spacing(2),
-      display: 'flex',
-      justifyContent: 'center',
-    },
-    contentContainer: {
-      position: 'relative',
-      paddingLeft: `${maxSidebarWidth}px`,
-      [theme.breakpoints.up(maxContentWidth + maxSidebarWidth)]: {
-        paddingLeft: `${maxSidebarWidth}px`,
-        paddingRight: 0,
-      },
-    },
-    sidebarContainer: {
-      width: '100%',
-      maxWidth: `${maxSidebarWidth}px`,
-      position: 'fixed',
-      top: `${toolbarHeight}px`,
-      left: theme.spacing(2),
-      marginTop: theme.spacing(2),
-    },
-    content: {
-      flexGrow: 1,
-      maxWidth: `${maxContentWidth}px`,
-      [theme.breakpoints.up(maxContentWidth + maxSidebarWidth)]: {
-        justifyContent: 'center',
-        width: `${maxContentWidth}px`,
-      },
-    },
-    sidebar: {
-      padding: theme.spacing(0.5),
-    },
-    tabsContainer: {},
-  });
+export const Container = styled(Grid)(({ theme }) => ({
+  position: 'relative',
+  padding: theme.spacing(2),
+  paddingLeft: `${maxSidebarWidth + 16}px`,
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const SidebarContainer = styled(Grid)(({ theme }) => ({
+  width: '100%',
+  maxWidth: `${maxSidebarWidth}px`,
+  position: 'fixed',
+  left: theme.spacing(2),
+}));
+
+export const ContentContainer = styled(Grid)(() => ({
+  flexGrow: 1,
+  maxWidth: `${maxContentWidth}px`,
+}));

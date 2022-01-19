@@ -1,7 +1,16 @@
-import { Theme } from '@mui/material';
+import { Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { propsChecker } from 'lib/helpers';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+type AlertColType =
+  | 'col'
+  | 'name'
+  | 'description'
+  | 'updatedBy'
+  | 'status'
+  | 'createdTime'
+  | 'updatedAt'
+  | 'actionBtn';
 
 export const alertsMainColWidthStyles = {
   col: {
@@ -14,39 +23,41 @@ export const alertsMainColWidthStyles = {
       paddingRight: 0,
     },
   },
-  colName: {
+  name: {
     flex: '0 0 14%',
   },
-  colDescription: {
+  description: {
     flex: '0 0 43%',
   },
-  colUpdatedBy: {
+  updatedBy: {
     flex: '0 0 9%',
   },
-  colStatus: {
+  status: {
     flex: '0 0 7%',
   },
-  colCreatedTime: {
+  createdTime: {
     flex: '0 0 12%',
   },
-  colUpdatedAt: {
+  updatedAt: {
     flex: '0 0 12%',
   },
-  colActionBtn: {
+  actionBtn: {
     flex: '0 0 3%',
     overflow: 'visible',
   },
 };
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: { marginTop: theme.spacing(2) },
-    alertsTableHeader: {
-      color: theme.palette.texts.hint,
-      borderBottom: '1px solid',
-      borderBottomColor: theme.palette.divider,
-    },
-    ...alertsMainColWidthStyles,
-  });
+export const AlertsTableHeader = styled(Grid)(({ theme }) => ({
+  color: theme.palette.texts.hint,
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.divider,
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const ColContainer = styled(Grid, {
+  shouldForwardProp: propsChecker,
+})<{
+  $colType: AlertColType;
+}>(({ $colType }) => ({
+  ...alertsMainColWidthStyles.col,
+  ...alertsMainColWidthStyles[$colType],
+}));

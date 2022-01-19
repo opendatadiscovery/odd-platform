@@ -1,7 +1,7 @@
 import { Grid, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-export const ActionsContainer = styled(Grid)(({ theme }) => ({
+export const ActionsContainer = styled(Grid)(() => ({
   visibility: 'hidden',
   display: 'flex',
   justifyContent: 'flex-end',
@@ -17,7 +17,7 @@ export const DescriptionContainer = styled(Grid)(({ theme }) => ({
 }));
 
 export const Container = styled(Paper)(({ theme }) => ({
-  width: 'calc(100% - 8px)',
+  width: '100%',
   padding: theme.spacing(2, 2, 2, 2),
   margin: '0 auto',
   alignItems: 'flex-start',

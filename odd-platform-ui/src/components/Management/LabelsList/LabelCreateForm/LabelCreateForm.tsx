@@ -10,9 +10,8 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import LabelCreateFormItem from './LabelCreateFormItem/LabelCreateFormItem';
-import { StylesType } from './LabelCreateFormStyles';
 
-interface LabelCreateFormProps extends StylesType {
+interface LabelCreateFormProps {
   btnCreateEl: JSX.Element;
   isLoading: boolean;
   createLabel: (params: LabelApiCreateLabelRequest) => Promise<Label[]>;
@@ -23,7 +22,6 @@ interface LabelCreateFormData {
 }
 
 const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
-  classes,
   btnCreateEl,
   isLoading,
   createLabel,
@@ -89,7 +87,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
   const formContent = () => (
     <>
       <FormProvider {...methods}>
-        <form id="label-create-form" className={classes.container}>
+        <form id="label-create-form">
           {fields.map((item, index) => (
             <LabelCreateFormItem
               key={item.id}

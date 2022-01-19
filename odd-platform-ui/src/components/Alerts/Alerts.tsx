@@ -11,10 +11,10 @@ import {
 import { alertsPath } from 'lib/paths';
 import { AlertViewType } from 'redux/interfaces/alert';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import { StylesType } from './AlertsStyles';
+import * as S from './AlertsStyles';
 import AlertsListContainer from './AlertsList/AlertsListContainer';
 
-interface AlertsProps extends StylesType {
+interface AlertsProps {
   totals: AlertTotals;
   viewType: string;
   alertsFilterUpdateAction: () => void;
@@ -31,7 +31,6 @@ interface AlertsProps extends StylesType {
 }
 
 const Alerts: React.FC<AlertsProps> = ({
-  classes,
   viewType,
   totals,
   alertsFilterUpdateAction,
@@ -70,8 +69,8 @@ const Alerts: React.FC<AlertsProps> = ({
   );
 
   return (
-    <div className={classes.container}>
-      <Typography variant="h1" className={classes.caption}>
+    <S.Container>
+      <Typography variant="h1" sx={{ mb: 2.75 }}>
         Alerts
       </Typography>
       <AppTabs
@@ -106,7 +105,7 @@ const Alerts: React.FC<AlertsProps> = ({
         />
         <Redirect from="/alerts" to={alertsPath()} />
       </Switch>
-    </div>
+    </S.Container>
   );
 };
 
