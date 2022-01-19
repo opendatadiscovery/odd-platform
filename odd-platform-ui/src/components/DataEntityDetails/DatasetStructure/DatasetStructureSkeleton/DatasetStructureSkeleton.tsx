@@ -1,29 +1,19 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import { mainSkeletonHeight } from 'lib/constants';
-import { styles, StylesType } from './DatasetStructureSkeletonStyles';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   width: string;
   structureRowLength?: number;
 }
 
 const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
-  classes,
   structureRowLength = 8,
   width,
 }) => {
   const structureRowItem = (key: number) => (
-    <Grid
-      key={key}
-      item
-      xs={1}
-      className={classes.largeItem}
-      container
-      wrap="wrap"
-    >
+    <Grid key={key} item xs={1} height="34px" container wrap="wrap">
       <Grid item xs={12}>
         <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
@@ -38,24 +28,24 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
       key={key}
       container
       justifyContent="space-between"
-      className={classes.structureSkeleton}
+      sx={{ pt: 5, pl: 5 }}
     >
       <Grid item xs={3} container wrap="wrap">
-        <Grid item xs={10} className={classes.mediumItem}>
+        <Grid item xs={10} height="26px">
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={10} className={classes.smallItem}>
+        <Grid item xs={10} height="20px">
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
       <Grid item xs={9} container justifyContent="flex-end">
-        <Grid item xs={2} className={classes.largeItem}>
+        <Grid item xs={2} height="34px">
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={2} className={classes.largeItem}>
+        <Grid item xs={2} height="34px">
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
-        <Grid item xs={2} className={classes.largeItem}>
+        <Grid item xs={2} height="34px">
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
         {[...Array(4)].map((_, id) => structureRowItem(id))}
@@ -64,12 +54,8 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
   );
 
   return (
-    <Grid container className={classes.container}>
-      <Grid
-        container
-        className={classes.largeItem}
-        justifyContent="space-between"
-      >
+    <Grid container sx={{ px: 1 }}>
+      <Grid container height="34px" justifyContent="space-between">
         <Grid item xs={5}>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
@@ -81,4 +67,4 @@ const DatasetStructureSkeleton: React.FC<SkeletonProps> = ({
     </Grid>
   );
 };
-export default withStyles(styles)(DatasetStructureSkeleton);
+export default DatasetStructureSkeleton;

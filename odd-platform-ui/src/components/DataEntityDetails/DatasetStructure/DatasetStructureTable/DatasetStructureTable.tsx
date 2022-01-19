@@ -2,41 +2,38 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { DataSetField } from 'generated-sources';
 import DatasetStructureList from './DatasetStructureList/DatasetStructureList';
-import { StylesType } from './DatasetStructureTableStyles';
+import * as S from './DatasetStructureTableStyles';
 
-interface DatasetStructureTableProps extends StylesType {
+interface DatasetStructureTableProps {
   dataEntityId: number;
   versionId?: number;
   datasetStructureRoot: DataSetField[];
 }
 
 const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
-  classes,
   dataEntityId,
   versionId,
   datasetStructureRoot,
 }) => (
-  <>
-    <Grid item xs={12} className={classes.container}>
-      <Grid container className={classes.tableHeader}>
-        <Grid item xs={6} container>
-          <Grid item className={classes.nameCol}>
-            Column
-          </Grid>
-        </Grid>
-        <Grid item xs={2} container className={classes.columnDivided}>
-          <Grid item xs={6} className={classes.uniqCol}>
-            Unique
-          </Grid>
-          <Grid item xs={6} className={classes.missingCol}>
-            Missing
-          </Grid>
-        </Grid>
-        <Grid item xs={4} className={classes.statsCol}>
-          Stats
-        </Grid>
+  <S.Container item xs={12} sx={{ mt: 2.5 }}>
+    <S.TableHeader container>
+      <Grid item xs={6} container>
+        <S.ColContainer item $colType="name">
+          Column
+        </S.ColContainer>
       </Grid>
-    </Grid>
+      <Grid item xs={2} container>
+        <S.ColContainer item xs={6} $colType="uniq">
+          Unique
+        </S.ColContainer>
+        <S.ColContainer item xs={6} $colType="missing">
+          Missing
+        </S.ColContainer>
+      </Grid>
+      <S.ColContainer item xs={4} $colType="stats">
+        Stats
+      </S.ColContainer>
+    </S.TableHeader>
     <Grid item xs={12} container>
       <DatasetStructureList
         dataEntityId={dataEntityId}
@@ -45,6 +42,6 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
         datasetRowsCount={datasetStructureRoot.length}
       />
     </Grid>
-  </>
+  </S.Container>
 );
 export default DatasetStructureTable;
