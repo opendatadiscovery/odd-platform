@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -87,8 +87,13 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   const isCustom = metadataItem.field.origin === 'INTERNAL';
   const isNestedField = (fieldName: string) => fieldName?.indexOf('.') > 0;
 
+  const [hover, setHover] = useState(false);
   return (
-    <Container container>
+    <Container
+      container
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
       <LabelContainer item sm={5}>
         <Label variant="subtitle1" noWrap>
           {isNestedField(metadataItem.field.name) ? (
@@ -131,7 +136,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
           <ValueContainer>
             <Value variant="body1">{metadataVal}</Value>
             {isCustom ? (
-              <Actions>
+              <Actions $hover={hover}>
                 <AppIconButton
                   size="small"
                   color="tertiary"
