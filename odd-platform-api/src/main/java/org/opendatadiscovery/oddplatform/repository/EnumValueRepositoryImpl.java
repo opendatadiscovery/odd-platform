@@ -1,8 +1,10 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -58,28 +60,53 @@ public class EnumValueRepositoryImpl implements EnumValueRepository {
         final Map<Boolean, List<EnumValuePojo>> partitions = pojos.stream()
             .collect(Collectors.partitioningBy(p -> p.getId() != null));
 
-        bulkCreate(partitions.get(false));
+        bulkCreate(datasetFieldId, partitions.get(false));
         bulkUpdate(partitions.get(true));
 
         return getEnumValues(datasetFieldId);
     }
 
-    private void bulkCreate(final List<EnumValuePojo> pojos) {
+    private void bulkCreate(final Long datasetFieldId, final List<EnumValuePojo> pojos) {
         if (pojos.isEmpty()) {
             return;
         }
-        var step = dslContext.insertInto(
-            ENUM_VALUE,
-            ENUM_VALUE.NAME,
-            ENUM_VALUE.DESCRIPTION,
-            ENUM_VALUE.DATASET_FIELD_ID
-        );
+        final Map<String, EnumValueRecord> recordMap = pojos.stream()
+            .collect(Collectors.toMap(
+                EnumValuePojo::getName,
+                pojo -> dslContext.newRecord(ENUM_VALUE, pojo)
+            ));
+        final Set<String> existingNames = new HashSet<>();
+        final List<EnumValueRecord> updatableRecords = dslContext.select()
+            .from(ENUM_VALUE)
+            .where(ENUM_VALUE.NAME.in(recordMap.keySet())
+                .and(ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId))
+                .and(ENUM_VALUE.IS_DELETED.isTrue()))
+            .fetchStream()
+            .map(r -> {
+                existingNames.add(r.get(ENUM_VALUE.NAME));
+                final EnumValueRecord updatableRecord = recordMap.get(r.get(ENUM_VALUE.NAME));
+                updatableRecord.set(ENUM_VALUE.ID, r.get(ENUM_VALUE.ID));
+                updatableRecord.set(ENUM_VALUE.IS_DELETED, false);
+                return updatableRecord;
+            }).toList();
 
-        for (final var p : pojos) {
-            step = step.values(p.getName(), p.getDescription(), p.getDatasetFieldId());
+        dslContext.batchUpdate(updatableRecords).execute();
+
+        if (existingNames.size() != pojos.size()) {
+            var step = dslContext.insertInto(
+                ENUM_VALUE,
+                ENUM_VALUE.NAME,
+                ENUM_VALUE.DESCRIPTION,
+                ENUM_VALUE.DATASET_FIELD_ID
+            );
+
+            for (final var p : pojos) {
+                if (!existingNames.contains(p.getName())) {
+                    step = step.values(p.getName(), p.getDescription(), p.getDatasetFieldId());
+                }
+            }
+            step.execute();
         }
-
-        step.execute();
     }
 
     private void bulkUpdate(final List<EnumValuePojo> pojos) {
