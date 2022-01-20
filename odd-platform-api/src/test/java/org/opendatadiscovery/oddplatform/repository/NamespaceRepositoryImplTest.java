@@ -92,7 +92,6 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
         final NamespacePojo actualNamespacePojo = namespaceRepository.update(tmpNamespacePojo);
 
         assertEquals(expectedNamespacePojo.getId(), actualNamespacePojo.getId());
-        // TODO: 20.01.2022 matmalik add assertNotEquals updated at, after it is implemented
         assertNotEquals(expectedNamespacePojo.getName(), actualNamespacePojo.getName());
     }
 
@@ -105,11 +104,11 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
             .setName(UUID.randomUUID().toString());
         final NamespacePojo pojo2 = new NamespacePojo()
             .setName(UUID.randomUUID().toString());
-        List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
+        final List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
 
         final List<NamespacePojo> expectedPojoList = namespaceRepository.bulkCreate(pojoList);
 
-        for (NamespacePojo namespacePojo : expectedPojoList) {
+        for (final NamespacePojo namespacePojo : expectedPojoList) {
             assertTrue(namespaceRepository.get(namespacePojo.getId()).isPresent());
         }
     }
@@ -123,13 +122,13 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
             .setName(UUID.randomUUID().toString());
         final NamespacePojo pojo2 = new NamespacePojo()
             .setName(UUID.randomUUID().toString());
-        List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
+        final List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
 
         final List<NamespacePojo> expectedPojoList = namespaceRepository.bulkCreate(pojoList);
         final List<Long> pojoIdList = expectedPojoList.stream().map(NamespacePojo::getId).collect(Collectors.toList());
         namespaceRepository.delete(pojoIdList);
 
-        for (NamespacePojo namespacePojo : expectedPojoList) {
+        for (final NamespacePojo namespacePojo : expectedPojoList) {
             assertFalse(namespaceRepository.get(namespacePojo.getId()).isPresent());
         }
     }
@@ -143,14 +142,14 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
             .setName(UUID.randomUUID().toString());
         final NamespacePojo pojo2 = new NamespacePojo()
             .setName(UUID.randomUUID().toString());
-        List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
+        final List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
 
         final List<NamespacePojo> expectedPojoList = namespaceRepository.bulkCreate(pojoList);
         final List<String> expectedPojoListName =
             expectedPojoList.stream().map(NamespacePojo::getName).collect(Collectors.toList());
 
-        List<NamespacePojo> tmpPojoList = new ArrayList<>();
-        for (NamespacePojo namespacePojo : expectedPojoList) {
+        final List<NamespacePojo> tmpPojoList = new ArrayList<>();
+        for (final NamespacePojo namespacePojo : expectedPojoList) {
             final NamespacePojo tmpPojo = namespaceRepository.get(namespacePojo.getId()).orElseGet(NamespacePojo::new);
             tmpPojo.setName(UUID.randomUUID().toString());
             tmpPojoList.add(tmpPojo);
@@ -160,7 +159,6 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
         final List<String> actualNamespacePojosNames =
             actualNamespacePojos.stream().map(NamespacePojo::getName).collect(Collectors.toList());
 
-
         final boolean anyMatch = expectedPojoListName.stream()
             .anyMatch(actualNamespacePojosNames::contains);
 
@@ -168,7 +166,7 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
     }
 
     /**
-     * Test case: Test create namespace pojo then delete it and then create again
+     * Test case: Test create namespace pojo then delete it and then create again.
      * Expected result: Namespace pojo will not be created again, as it was not actually deleted
      */
     @Test
@@ -184,8 +182,5 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
         assertEquals(expectedNamespacePojo.getId(), actualNamespacePojo.getId());
         assertEquals(expectedNamespacePojo.getName(), actualNamespacePojo.getName());
     }
-
-    //test
-    //создать сущность, удалить и потом создать заново
 }
 
