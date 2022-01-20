@@ -1,22 +1,9 @@
-import { Theme } from '@mui/material';
+import { Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      marginTop: theme.spacing(2),
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'stretch',
-      alignItems: 'stretch',
-      justifySelf: 'stretch',
-      flexGrow: 1,
-    },
-    title: {
-      display: 'block',
-    },
-  });
-
-export type StylesType = WithStyles<typeof styles>;
+export const Container = styled(Grid)(() => ({
+  justifyContent: 'stretch',
+  alignItems: 'stretch',
+  justifySelf: 'stretch',
+  flexGrow: 1,
+}));
