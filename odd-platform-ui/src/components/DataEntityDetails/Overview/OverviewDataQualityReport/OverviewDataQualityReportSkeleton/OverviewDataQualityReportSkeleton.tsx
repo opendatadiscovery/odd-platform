@@ -1,19 +1,16 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import cx from 'classnames';
 import {
-  styles,
-  StylesType,
+  ReportSkeleton,
+  SkeletonStatItem,
 } from './OverviewDataQualityReportSkeletonStyles';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   length?: number;
 }
 
 const OverviewDataQualityReportSkeleton: React.FC<SkeletonProps> = ({
-  classes,
   length,
 }) => {
   const randomSkeletonWidth = () => {
@@ -22,23 +19,19 @@ const OverviewDataQualityReportSkeleton: React.FC<SkeletonProps> = ({
   };
 
   const skeleton = (key: number) => (
-    <Grid key={key} container className={classes.container}>
-      <Grid
-        container
-        justifyContent="space-between"
-        className={classes.skeleton}
-      >
+    <Grid key={key} container>
+      <ReportSkeleton container justifyContent="space-between">
         <Grid item xs={8}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
         <Grid item xs={2}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
-      </Grid>
-      <Grid
+      </ReportSkeleton>
+      <ReportSkeleton
         container
         justifyContent="space-between"
-        className={cx(classes.generalStats, classes.skeleton)}
+        sx={{ mt: 3 }}
       >
         <Grid item xs={4}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
@@ -46,56 +39,41 @@ const OverviewDataQualityReportSkeleton: React.FC<SkeletonProps> = ({
         <Grid item xs={4}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
-      </Grid>
-      <Grid container className={classes.skeleton}>
+      </ReportSkeleton>
+      <ReportSkeleton container>
         <Grid item xs={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
-      </Grid>
-      <Grid
-        container
-        className={cx(classes.statItem, classes.skeletonStatItem)}
-      >
+      </ReportSkeleton>
+      <SkeletonStatItem container sx={{ mt: 1 }}>
         <Grid item xs={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
-      </Grid>
-      <Grid
-        container
-        className={cx(classes.statItem, classes.skeletonStatItem)}
-      >
+      </SkeletonStatItem>
+      <SkeletonStatItem container sx={{ mt: 1 }}>
         <Grid item xs={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
-      </Grid>
-      <Grid
-        container
-        className={cx(classes.statItem, classes.skeletonStatItem)}
-      >
+      </SkeletonStatItem>
+      <SkeletonStatItem container sx={{ mt: 1 }}>
         <Grid item xs={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
-      </Grid>
-      <Grid
-        container
-        className={cx(classes.statItem, classes.skeletonStatItem)}
-      >
+      </SkeletonStatItem>
+      <SkeletonStatItem container sx={{ mt: 1 }}>
         <Grid item xs={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
-      </Grid>
-      <Grid
-        container
-        className={cx(classes.statItem, classes.skeletonStatItem)}
-      >
+      </SkeletonStatItem>
+      <SkeletonStatItem container sx={{ mt: 1 }}>
         <Grid item xs={6}>
           <Skeleton width={`${randomSkeletonWidth()}%`} height="100%" />
         </Grid>
-      </Grid>
+      </SkeletonStatItem>
     </Grid>
   );
 
   return <>{[...Array(length)].map((_, id) => skeleton(id))}</>;
 };
 
-export default withStyles(styles)(OverviewDataQualityReportSkeleton);
+export default OverviewDataQualityReportSkeleton;

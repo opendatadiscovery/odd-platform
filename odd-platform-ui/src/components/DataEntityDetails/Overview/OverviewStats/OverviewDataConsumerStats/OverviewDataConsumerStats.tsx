@@ -9,11 +9,7 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Grid, Typography } from '@mui/material';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
-import {
-  StatLabel,
-  TypeLabel,
-  UnknownCount,
-} from './OverviewDataConsumerStatsStyles';
+import { StatLabel } from './OverviewDataConsumerStatsStyles';
 
 interface OverviewDataConsumerStatsProps {
   inputs: DataEntityDetails['inputList'];
@@ -30,12 +26,12 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
 
   return (
     <Grid container>
-      <TypeLabel item xs={12}>
+      <Grid sx={{ ml: 0, mb: 1.25 }} item xs={12}>
         <EntityTypeItem
           typeName={DataEntityTypeNameEnum.CONSUMER}
           fullName
         />
-      </TypeLabel>
+      </Grid>
       <Grid
         item
         container
@@ -47,7 +43,9 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
           <Typography variant="h2">
             {(inputs?.length || 0) + (unknownInputsCount || 0)}
           </Typography>
-          <StatLabel variant="body1">inputs</StatLabel>
+          <StatLabel sx={{ ml: 0.5 }} variant="body1">
+            inputs
+          </StatLabel>
         </Grid>
         <Grid
           item
@@ -70,10 +68,10 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
             </AppButton>
           ))}
           {unknownInputsCount ? (
-            <UnknownCount variant="subtitle1">
+            <Typography sx={{ ml: 0.5 }} variant="subtitle1">
               {unknownInputsCount} more source
               {unknownInputsCount === 1 ? '' : 's'} unknown
-            </UnknownCount>
+            </Typography>
           ) : null}
           {inputs && inputs?.length > displayedEntitiesNumber ? (
             <EntitiesListModal

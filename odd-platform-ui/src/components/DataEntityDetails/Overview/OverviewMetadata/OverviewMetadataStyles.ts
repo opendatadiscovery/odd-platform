@@ -1,4 +1,3 @@
-import { Collapse } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 export const SubtitleContainer = styled('div')(({ theme }) => ({
@@ -7,8 +6,4 @@ export const SubtitleContainer = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'space-between',
   marginBottom: theme.spacing(1),
-}));
-
-export const CollapseContainer = styled(Collapse)(({ theme }) => ({
-  marginTop: theme.spacing(0.5),
 }));

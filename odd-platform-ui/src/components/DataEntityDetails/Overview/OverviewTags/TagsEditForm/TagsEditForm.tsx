@@ -16,13 +16,15 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import TagItem from 'components/shared/TagItem/TagItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import { StylesType } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
-import cx from 'classnames';
+import {
+  OptionsContainer,
+  TagsList,
+} from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import AppButton from 'components/shared/AppButton/AppButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 
-interface TagsEditProps extends StylesType {
+interface TagsEditProps {
   dataEntityId: number;
   dataEntityTags?: Tag[];
   isLoading: boolean;
@@ -36,7 +38,6 @@ interface TagsEditProps extends StylesType {
 }
 
 const TagsEditForm: React.FC<TagsEditProps> = ({
-  classes,
   dataEntityId,
   dataEntityTags,
   isLoading,
@@ -221,12 +222,8 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
         )}
         renderOption={(props, option) => (
           <li {...props}>
-            <div
-              className={cx(classes.optionsContainer, {
-                [classes.importantOptionContainer]: option.important,
-              })}
-            >
-              <div className={classes.optionItem}>
+            <OptionsContainer $isimportant={option.important}>
+              <div>
                 <Typography variant="body1">
                   {option.id ? (
                     option.name
@@ -238,7 +235,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
                   )}
                 </Typography>
               </div>
-            </div>
+            </OptionsContainer>
           </li>
         )}
       />
@@ -247,7 +244,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
           id="tags-create-form"
           onSubmit={methods.handleSubmit(handleSubmit)}
         >
-          <div className={classes.tagsList}>
+          <TagsList>
             {fields?.map((field, index) => (
               <TagItem
                 sx={{ my: 0.5, mr: 0.5 }}
@@ -258,7 +255,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
                 onRemoveClick={handleRemove(index)}
               />
             ))}
-          </div>
+          </TagsList>
         </form>
       </FormProvider>
     </>

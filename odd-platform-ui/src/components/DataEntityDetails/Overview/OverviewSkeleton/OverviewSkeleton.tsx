@@ -2,16 +2,7 @@ import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid, GridSize } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
-import {
-  SmallItem,
-  Container,
-  LargeItem,
-  OverviewAboutSkeletonContainer,
-  OverviewMetadataSkeletonContainer,
-  SkeletonLeftSide,
-  TabItem,
-  SmallItemContainer,
-} from './OverviewSkeletonStyles';
+import { SmallItem, LargeItem } from './OverviewSkeletonStyles';
 
 interface SkeletonProps {
   width: string;
@@ -39,9 +30,9 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   );
 
   return (
-    <Container container>
+    <Grid container sx={{ mt: 6 }}>
       <Grid container>
-        <SkeletonLeftSide item xs={8} container>
+        <Grid sx={{ pr: 6 }} item xs={8} container>
           <LargeItem item xs={2}>
             <Skeleton width={width} height={mainSkeletonHeight} />
           </LargeItem>
@@ -61,12 +52,12 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ width }) => {
           >
             {[...Array(3)].map((_, id) => skeletonSmallItem(2, id))}
           </SmallItem>
-        </SkeletonLeftSide>
+        </Grid>
         <Grid item xs={4} container>
           {[...Array(3)].map((_, id) => skeletonMediumItem(id))}
         </Grid>
       </Grid>
-      <OverviewMetadataSkeletonContainer container>
+      <Grid sx={{ mt: 6 }} container>
         <Grid item xs={8} container>
           <LargeItem item xs={2}>
             <Skeleton width={width} height={mainSkeletonHeight} />
@@ -96,12 +87,12 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ width }) => {
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
           </SmallItem>
-          <SmallItemContainer container item xs={12}>
+          <SmallItem container item xs={12} sx={{ mt: 6 }}>
             <Grid container justifyContent="space-between" wrap="nowrap">
               {skeletonSmallItem(6)}
               {skeletonSmallItem(2)}
             </Grid>
-          </SmallItemContainer>
+          </SmallItem>
           <SmallItem container item xs={8} wrap="wrap">
             <Skeleton width={width} height={mainSkeletonHeight} />
             <Skeleton width={width} height={mainSkeletonHeight} />
@@ -109,8 +100,8 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ width }) => {
             <Skeleton width={width} height={mainSkeletonHeight} />
           </SmallItem>
         </Grid>
-      </OverviewMetadataSkeletonContainer>
-      <OverviewAboutSkeletonContainer container>
+      </Grid>
+      <Grid sx={{ mt: 6 }} container>
         <Grid item xs={8} container>
           <LargeItem item xs={2}>
             <Skeleton width={width} height={mainSkeletonHeight} />
@@ -131,27 +122,39 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ width }) => {
           >
             {skeletonSmallItem(4)}
           </SmallItem>
-          <SmallItemContainer item container wrap="nowrap">
+          <SmallItem sx={{ mt: 6 }} item container wrap="nowrap">
             <Skeleton width={width} height={mainSkeletonHeight} />
-          </SmallItemContainer>
+          </SmallItem>
           <SmallItem item container wrap="nowrap">
             <Skeleton width={width} height={mainSkeletonHeight} />
           </SmallItem>
         </Grid>
         <Grid item xs={4} container>
-          <SmallItemContainer container item xs={8} wrap="wrap">
+          <SmallItem sx={{ mt: 6 }} container item xs={8} wrap="wrap">
             <LargeItem item xs={8} container>
               <Skeleton width={width} height={mainSkeletonHeight} />
             </LargeItem>
-          </SmallItemContainer>
-          <TabItem item container xs={8} wrap="nowrap">
-            <Skeleton width={width} height={mainSkeletonHeight} />
-            <Skeleton width={width} height={mainSkeletonHeight} />
-            <Skeleton width={width} height={mainSkeletonHeight} />
-          </TabItem>
+          </SmallItem>
+          <LargeItem item container xs={8} wrap="nowrap">
+            <Skeleton
+              sx={{ mr: 1 }}
+              width={width}
+              height={mainSkeletonHeight}
+            />
+            <Skeleton
+              sx={{ mr: 1 }}
+              width={width}
+              height={mainSkeletonHeight}
+            />
+            <Skeleton
+              sx={{ mr: 1 }}
+              width={width}
+              height={mainSkeletonHeight}
+            />
+          </LargeItem>
         </Grid>
-      </OverviewAboutSkeletonContainer>
-    </Container>
+      </Grid>
+    </Grid>
   );
 };
 

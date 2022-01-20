@@ -1,27 +1,12 @@
-import { Theme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+import { styled } from '@mui/material/styles';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    statsItem: {
-      display: 'flex',
-      alignItems: 'center',
-    },
-    statIcon: {
-      fontSize: theme.typography.h5.fontSize,
-      marginRight: theme.spacing(1),
-    },
-    statLabel: {
-      color: '#B3BAC5',
-      textTransform: 'uppercase',
-    },
-    statValue: {},
-    typeLabel: {
-      marginLeft: 0,
-      marginBottom: theme.spacing(1.25),
-    },
-  });
-
-export type StylesType = WithStyles<typeof styles>;
+export const StatsItem = styled(Grid)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
+export const StatLabel = styled(Typography)(({ theme }) => ({
+  color: theme.palette.texts.hint,
+  textTransform: 'uppercase',
+}));

@@ -1,14 +1,11 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Collapse, Grid, Typography } from '@mui/material';
 import { MetadataFieldValue } from 'generated-sources';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import MetadataCreateFormContainer from 'components/DataEntityDetails/Metadata/MetadataCreateForm/MetadataCreateFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import MetadataItemContainer from './MetadataItem/MetadataItemContainer';
-import {
-  SubtitleContainer,
-  CollapseContainer,
-} from './OverviewMetadataStyles';
+import { SubtitleContainer } from './OverviewMetadataStyles';
 
 interface OverviewMetadataProps {
   dataEntityId: number;
@@ -30,7 +27,12 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
   if (predefinedMetadata?.length > visibleLimit) {
     collapsedPredefined = (
       <>
-        <CollapseContainer in={predefOpen} timeout="auto" unmountOnExit>
+        <Collapse
+          in={predefOpen}
+          timeout="auto"
+          unmountOnExit
+          sx={{ mt: 0.5 }}
+        >
           {predefOpen ? (
             <Grid container>
               {predefinedMetadata?.slice(visibleLimit).map(item => (
@@ -42,7 +44,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
               ))}
             </Grid>
           ) : null}
-        </CollapseContainer>
+        </Collapse>
         <AppButton
           size="small"
           color="tertiary"
@@ -61,7 +63,12 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
   if (customMetadata?.length > visibleLimit) {
     collapsedCustom = (
       <>
-        <CollapseContainer in={customOpen} timeout="auto" unmountOnExit>
+        <Collapse
+          in={customOpen}
+          timeout="auto"
+          unmountOnExit
+          sx={{ mt: 0.5 }}
+        >
           {customOpen ? (
             <Grid container>
               {customMetadata?.slice(visibleLimit + 1).map(item => (
@@ -73,7 +80,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
               ))}
             </Grid>
           ) : null}
-        </CollapseContainer>
+        </Collapse>
         <AppButton
           sx={{ mt: 0.75 }}
           size="small"

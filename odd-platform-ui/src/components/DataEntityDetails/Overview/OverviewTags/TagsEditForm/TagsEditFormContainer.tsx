@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { updateDataEntityTags } from 'redux/thunks/dataentities.thunks';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
@@ -8,7 +7,6 @@ import {
 } from 'redux/selectors/dataentity.selectors';
 import { fetchTagsList } from 'redux/thunks';
 import TagsEditForm from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditForm';
-import { styles } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 
 const mapStateToProps = (
   state: RootState,
@@ -23,7 +21,4 @@ const mapDispatchToProps = {
   searchTags: fetchTagsList,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(TagsEditForm));
+export default connect(mapStateToProps, mapDispatchToProps)(TagsEditForm);
