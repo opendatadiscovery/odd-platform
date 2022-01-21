@@ -10,7 +10,7 @@ interface LineageProps {
 }
 
 const Lineage: React.FC<LineageProps> = ({ dataEntityId }) => (
-  <Container container sx={{ mt: 2 }}>
+  <Container>
     <AppGraphContainer dataEntityId={dataEntityId} />
   </Container>
 );
