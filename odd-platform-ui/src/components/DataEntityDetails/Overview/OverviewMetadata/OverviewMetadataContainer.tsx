@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
@@ -10,7 +9,6 @@ import {
   updateDataEntityCustomMetadata,
 } from 'redux/thunks/metadata.thunks';
 import OverviewMetadata from './OverviewMetadata';
-import { styles } from './OverviewMetadataStyles';
 
 const mapStateToProps = (
   state: RootState,
@@ -31,4 +29,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(OverviewMetadata));
+)(OverviewMetadata);

@@ -5,16 +5,15 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import MetadataCreateFormContainer from 'components/DataEntityDetails/Metadata/MetadataCreateForm/MetadataCreateFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import MetadataItemContainer from './MetadataItem/MetadataItemContainer';
-import { StylesType } from './OverviewMetadataStyles';
+import { SubtitleContainer } from './OverviewMetadataStyles';
 
-interface OverviewMetadataProps extends StylesType {
+interface OverviewMetadataProps {
   dataEntityId: number;
   predefinedMetadata: MetadataFieldValue[];
   customMetadata: MetadataFieldValue[];
 }
 
 const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
-  classes,
   dataEntityId,
   predefinedMetadata = [],
   customMetadata = [],
@@ -29,10 +28,10 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
     collapsedPredefined = (
       <>
         <Collapse
-          className={classes.collapseContainer}
           in={predefOpen}
           timeout="auto"
           unmountOnExit
+          sx={{ mt: 0.5 }}
         >
           {predefOpen ? (
             <Grid container>
@@ -65,10 +64,10 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
     collapsedCustom = (
       <>
         <Collapse
-          className={classes.collapseContainer}
           in={customOpen}
           timeout="auto"
           unmountOnExit
+          sx={{ mt: 0.5 }}
         >
           {customOpen ? (
             <Grid container>
@@ -100,25 +99,21 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
       <Grid item container>
         <Grid container>
           <Grid item xs={12}>
-            <div className={classes.subtitleContainer}>
-              <Typography variant="h4" className={classes.subtitle}>
-                Custom
-              </Typography>
-              <div>
-                <MetadataCreateFormContainer
-                  dataEntityId={dataEntityId}
-                  btnCreateEl={
-                    <AppButton
-                      size="medium"
-                      color="primaryLight"
-                      startIcon={<AddIcon />}
-                    >
-                      Add metadata
-                    </AppButton>
-                  }
-                />
-              </div>
-            </div>
+            <SubtitleContainer>
+              <Typography variant="h4">Custom</Typography>
+              <MetadataCreateFormContainer
+                dataEntityId={dataEntityId}
+                btnCreateEl={
+                  <AppButton
+                    size="medium"
+                    color="primaryLight"
+                    startIcon={<AddIcon />}
+                  >
+                    Add metadata
+                  </AppButton>
+                }
+              />
+            </SubtitleContainer>
           </Grid>
           {customMetadata.length ? (
             customMetadata
@@ -160,11 +155,9 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
       <Grid item container>
         <Grid container>
           <Grid item xs={12}>
-            <div className={classes.subtitleContainer}>
-              <Typography variant="h4" className={classes.subtitle}>
-                Pre-defined
-              </Typography>
-            </div>
+            <SubtitleContainer>
+              <Typography variant="h4">Pre-defined</Typography>
+            </SubtitleContainer>
           </Grid>
           {predefinedMetadata?.slice(0, visibleLimit).map(item => (
             <MetadataItemContainer

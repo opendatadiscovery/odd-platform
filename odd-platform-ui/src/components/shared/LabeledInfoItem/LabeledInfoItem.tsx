@@ -23,7 +23,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
 }) => (
   <S.Container container $inline={inline}>
     <Grid item xs={labelWidth || 'auto'}>
-      <S.Label variant={variant} noWrap>
+      <S.Label variant={variant} noWrap component="span">
         {label}
       </S.Label>
     </Grid>
@@ -41,6 +41,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
         $valueColor={valueColor}
         $inline={inline}
         variant={variant}
+        component="span"
         noWrap
       >
         {children}
