@@ -2,8 +2,6 @@ import React from 'react';
 import { HierarchyPointNode } from 'd3-hierarchy';
 import { select } from 'd3-selection';
 import { interpolateString } from 'd3-interpolate';
-import cx from 'classnames';
-import withStyles from '@mui/styles/withStyles';
 import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
@@ -11,9 +9,24 @@ import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityLineage } from 'generated-sources';
 import GroupedEntitiesListModal from 'components/shared/AppGraph/AppGraphNode/GroupedEntitiesListModal/GroupedEntitiesListModal';
 import NodeListButton from 'components/shared/AppGraph/AppGraphNode/NodeListButton/NodeListButton';
-import { styles, StylesType } from './AppGraphNodeStyles';
+import {
+  Attribute,
+  AttributeLabel,
+  Container,
+  LoadMoreButton,
+  LoadMoreButtonName,
+  LoadMoreSpinner,
+  LoadMoreSpinnerBackground,
+  Placeholder,
+  RootNodeRect,
+  Title,
+  TypeContainer,
+  TypeLabel,
+  UnknownEntityNameCircle,
+  UnknownEntityNameCrossedLine,
+} from './AppGraphNodeStyles';
 
-interface AppGraphNodeProps extends StylesType {
+interface AppGraphNodeProps {
   data: TreeNodeDatum;
   position: Point;
   parent: HierarchyPointNode<TreeNodeDatum> | null;
@@ -36,7 +49,6 @@ interface AppGraphNodeProps extends StylesType {
 }
 
 const AppGraphNode: React.FC<AppGraphNodeProps> = ({
-  classes,
   data,
   transitionDuration,
   position,
@@ -210,43 +222,28 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         fill="transparent"
       />
 
-      <g className={classes.container}>
-        <rect
-          rx={8}
+      <Container>
+        <RootNodeRect
           width={nodeSize.x}
           height={nodeSize.y}
-          className={!parent ? classes.rootNodeRect : ''}
+          $parent={!!parent}
         />
         <g transform={`translate(${titleLayout.x},${titleLayout.y})`}>
           {data.externalName ? (
             <Link to={detailsLink}>
-              <text
-                className={cx(classes.title, 'wrap-text')}
+              <Title
+                className="wrap-text"
                 width={nodeSize.x - titleLayout.x * 2}
               >
                 <title>{data.internalName || data.externalName}</title>
                 <tspan x={0} y={0} className="visible-text" />
                 <tspan className="ellip">...</tspan>
-              </text>
+              </Title>
             </Link>
           ) : (
             <>
-              <circle
-                cx="5"
-                cy="0"
-                r="5"
-                stroke="#091E42"
-                strokeWidth="2"
-              />
-              <rect
-                x="0"
-                y="0.81418"
-                width="2"
-                height="9.37199"
-                rx="1"
-                transform="rotate(-45 -4 -1.81418)"
-                fill="#091E42"
-              />
+              <UnknownEntityNameCircle />
+              <UnknownEntityNameCrossedLine />
             </>
           )}
         </g>
@@ -255,38 +252,29 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
             nodeSize.y - typeLayout.my
           })`}
         >
-          <text className={classes.attribute}>
-            <tspan
+          <Attribute>
+            <Placeholder
               x={0}
               y={0}
-              className={classes.placeholder}
-              style={{
-                display:
-                  compactView && !data.externalName && !data.internalName
-                    ? 'initial'
-                    : 'none',
-              }}
+              $show={
+                compactView && !data.externalName && !data.internalName
+              }
             >
               No Information
-            </tspan>
-          </text>
+            </Placeholder>
+          </Attribute>
         </g>
         <g
           transform={`translate(${attributeLayout.x},${attributeLayout.y})`}
           style={{ display: compactView ? 'none' : 'initial' }}
         >
-          <text className={classes.attribute}>
-            <tspan
-              className={classes.attributeLabel}
-              key={`nsl-${data.id}`}
-              x={0}
-              y={0}
-            >
+          <Attribute>
+            <AttributeLabel key={`nsl-${data.id}`} x={0} y={0}>
               Space
-            </tspan>
-          </text>
-          <text
-            className={cx(classes.attribute, 'wrap-text')}
+            </AttributeLabel>
+          </Attribute>
+          <Attribute
+            className="wrap-text"
             width={
               nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
             }
@@ -298,28 +286,25 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               className="visible-text"
             />
             <tspan className="ellip">...</tspan>
-            {!data.dataSource?.namespace && (
-              <tspan
-                x={attributeLayout.labelWidth}
-                y={0}
-                className={classes.placeholder}
-              >
-                No Information
-              </tspan>
-            )}
-          </text>
-          <text className={classes.attribute}>
-            <tspan
-              className={classes.attributeLabel}
+            <Placeholder
+              x={attributeLayout.labelWidth}
+              y={0}
+              $show={!data.dataSource?.namespace}
+            >
+              No Information
+            </Placeholder>
+          </Attribute>
+          <Attribute>
+            <AttributeLabel
               key={`dsl-${data.id}`}
               x={0}
               y={attributeLayout.height}
             >
               Source
-            </tspan>
-          </text>
-          <text
-            className={cx(classes.attribute, 'wrap-text')}
+            </AttributeLabel>
+          </Attribute>
+          <Attribute
+            className="wrap-text"
             width={
               nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
             }
@@ -331,29 +316,26 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               className="visible-text"
             />
             <tspan className="ellip">...</tspan>
-            {!data.dataSource && (
-              <tspan
-                x={attributeLayout.labelWidth}
-                y={attributeLayout.height}
-                className={classes.placeholder}
-              >
-                No Information
-              </tspan>
-            )}
-          </text>
+            <Placeholder
+              x={attributeLayout.labelWidth}
+              y={attributeLayout.height}
+              $show={!data.dataSource}
+            >
+              No Information
+            </Placeholder>
+          </Attribute>
           {data.nodesRelatedWithDEG &&
             data.nodesRelatedWithDEG?.length > 0 && (
               <>
-                <text className={classes.attribute}>
-                  <tspan
-                    className={classes.attributeLabel}
+                <Attribute>
+                  <AttributeLabel
                     key={`dsl-${data.id}`}
                     x={0}
                     y={attributeLayout.height * 2}
                   >
                     Items
-                  </tspan>
-                </text>
+                  </AttributeLabel>
+                </Attribute>
                 <GroupedEntitiesListModal
                   entities={data.nodesRelatedWithDEG}
                   dataEntityName={data.internalName || data.externalName}
@@ -377,16 +359,12 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               titleLayout.x + i * (typeLayout.width + typeLayout.mx)
             },${nodeSize.y - typeLayout.my - typeLayout.height})`}
           >
-            <rect
-              className={cx(classes.type, type.name)}
+            <TypeContainer
+              $typeName={type.name}
               width={typeLayout.width}
               height={typeLayout.height}
-              rx={4}
             />
-            <text
-              className={classes.typeLabel}
-              textAnchor="middle"
-              fontSize={12}
+            <TypeLabel
               x={typeLayout.width / 2}
               y={typeLayout.height / 2 + 1}
             >
@@ -396,18 +374,17 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
                   {DataEntityTypeLabelMap.get(type.name)?.normal}
                 </title>
               </tspan>
-            </text>
+            </TypeLabel>
           </g>
         ))}
-      </g>
+      </Container>
 
       {!hasChildren && showLoadMore && (
-        <g
+        <LoadMoreButton
           ref={n => {
             if (n) loadMoreRef = n;
           }}
           transform={loadMoreTransformTranslate}
-          className={classes.button}
           onClick={loadMoreButtonHandler}
         >
           <rect
@@ -417,35 +394,30 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           />
           {isStreamFetching ? (
             <g>
-              <circle
-                className={classes.loadMoreSpinnerBack}
+              <LoadMoreSpinnerBackground
                 cx={centerX}
                 cy={centerY}
                 r={radius}
                 strokeWidth={strokeWidth}
               />
-              <circle
-                className={classes.loadMoreSpinner}
+              <LoadMoreSpinner
                 ref={n => {
                   if (n) loadMoreSpinnerRef = n;
                 }}
               />
             </g>
           ) : (
-            <text
-              textAnchor="middle"
-              fontSize={12}
-              fill="#0066CC"
+            <LoadMoreButtonName
               x={loadMoreLayout.width / 2}
               y={loadMoreLayout.height / 2 + loadMoreLayout.my}
             >
               Load more
-            </text>
+            </LoadMoreButtonName>
           )}
-        </g>
+        </LoadMoreButton>
       )}
     </g>
   );
 };
 
-export default withStyles(styles)(AppGraphNode);
+export default AppGraphNode;
