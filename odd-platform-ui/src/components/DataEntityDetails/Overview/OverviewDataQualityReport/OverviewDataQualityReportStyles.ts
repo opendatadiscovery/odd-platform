@@ -14,6 +14,7 @@ export const Container = styled('div')(() => ({
   justifySelf: 'stretch',
   flexGrow: 1,
 }));
+
 export const CountLabel = styled(Typography, {
   shouldForwardProp: propsChecker,
 })<{
@@ -21,6 +22,7 @@ export const CountLabel = styled(Typography, {
 }>(({ theme, $dataQualityTestRunStatus }) => ({
   color: theme.palette.runStatus[$dataQualityTestRunStatus],
 }));
+
 export const Bar = styled('div', { shouldForwardProp: propsChecker })<{
   $datasetQualityTestReport?: DataSetTestReport;
   $dataQualityTestRunStatus: DataQualityTestRunStatusEnum;

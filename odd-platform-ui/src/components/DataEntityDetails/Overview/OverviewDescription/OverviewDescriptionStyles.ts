@@ -7,6 +7,7 @@ export const CaptionContainer = styled('div')(({ theme }) => ({
   justifyContent: 'space-between',
   marginBottom: theme.spacing(0.5),
 }));
+
 export const Preview = styled(
   ReactMarkdown
 )<ReactMarkdown.ReactMarkdownProps>(({ theme }) => ({

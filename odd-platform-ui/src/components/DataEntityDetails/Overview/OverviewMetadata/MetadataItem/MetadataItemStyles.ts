@@ -5,22 +5,26 @@ import { propsChecker } from 'lib/helpers';
 export const Container = styled(Grid)(() => ({
   alignItems: 'center',
 }));
+
 export const LabelContainer = styled(Grid)(({ theme }) => ({
   display: 'flex',
   overflow: 'hidden',
   marginTop: theme.spacing(1),
 }));
+
 export const Label = styled(Typography)(({ theme }) => ({
   wordBreak: 'break-word',
   maxHeight: '5rem',
   overflow: 'auto',
   paddingRight: theme.spacing(1),
 }));
+
 export const EditForm = styled('form')(() => ({
   display: 'flex',
   width: '100%',
   alignItems: 'center',
 }));
+
 export const ValueContainer = styled('div')(({ theme }) => ({
   padding: theme.spacing(0.5),
   border: '1px solid',
@@ -48,6 +52,7 @@ export const Actions = styled('div', { shouldForwardProp: propsChecker })<{
   marginLeft: theme.spacing(0.5),
   display: 'inline',
 }));
+
 export const Value = styled(Typography)(() => ({
   display: 'inline',
   wordBreak: 'break-word',
