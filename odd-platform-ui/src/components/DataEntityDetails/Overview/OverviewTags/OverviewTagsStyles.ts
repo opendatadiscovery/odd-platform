@@ -6,7 +6,3 @@ export const CaptionContainer = styled('div')(({ theme }) => ({
   justifyContent: 'space-between',
   marginBottom: theme.spacing(2.25),
 }));
-
-export const TagsContainer = styled('div')(({ theme }) => ({
-  margin: theme.spacing(0, -0.5, 0, -0.5),
-}));

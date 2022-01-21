@@ -1,12 +1,12 @@
 import React from 'react';
-import { Collapse, Grid, Typography } from '@mui/material';
+import { Box, Collapse, Grid, Typography } from '@mui/material';
 import { Tag } from 'generated-sources';
 import TagItem from 'components/shared/TagItem/TagItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import TagsEditContainer from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { TagsContainer, CaptionContainer } from './OverviewTagsStyles';
+import { CaptionContainer } from './OverviewTagsStyles';
 
 interface OverviewTagsProps {
   dataEntityId: number;
@@ -47,7 +47,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
         />
       </CaptionContainer>
       {tags?.length ? (
-        <TagsContainer>
+        <Box sx={{ mx: -0.5, my: 0 }}>
           {tags
             .slice(0, visibleLimit)
             .sort(tagsCompare)
@@ -86,7 +86,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
               </AppButton>
             </>
           ) : null}
-        </TagsContainer>
+        </Box>
       ) : (
         <Grid
           item

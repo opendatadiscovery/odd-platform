@@ -1,8 +1,9 @@
 import React from 'react';
-import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
+import { SvgIconProps } from '@mui/material/SvgIcon';
+import AppSvgIcon from './AppSvgIcon';
 
 const UserIcon: React.FC<SvgIconProps> = props => (
-  <SvgIcon viewBox="0 0 17 16" {...props}>
+  <AppSvgIcon viewBox="0 0 17 16" {...props}>
     <circle
       cx="8.6665"
       cy="6"
@@ -19,7 +20,7 @@ const UserIcon: React.FC<SvgIconProps> = props => (
       strokeLinecap="round"
       fill="none"
     />
-  </SvgIcon>
+  </AppSvgIcon>
 );
 
 export default UserIcon;

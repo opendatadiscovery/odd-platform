@@ -35,27 +35,35 @@ export const Bar = styled('div', {
   const succRelation =
     ($testReport?.successTotal || 0) / ($testReport?.total || 1);
   const otherStatusesAdjustment = 200 / (Math.round(1 - succRelation) + 1);
-  const success = {
-    backgroundColor: theme.palette.runStatus[$testRunStatus],
-    maxWidth: `${(succRelation * 200) / (Math.round(succRelation) + 1)}%`,
-  };
-  const fail = {
-    backgroundColor: theme.palette.runStatus[$testRunStatus],
-    maxWidth: `${
-      ((($testReport &&
-        $testReport[
-          `${$testRunStatus.toLowerCase()}Total` as keyof DataSetTestReport
-        ]) ||
-        0) /
-        ($testReport?.total || 1)) *
-      otherStatusesAdjustment
-    }%`,
+
+  const successMaxWidth = (totalPercentTestReport: number) =>
+    `${
+      (totalPercentTestReport * 200) /
+      (Math.round(totalPercentTestReport) + 1)
+    }%`;
+  const failMaxWidth = (
+    testRunStatus: DataQualityTestRunStatusEnum,
+    adjustment: number,
+    testReport?: DataSetTestReport
+  ) => {
+    const keyTestRunStatus = `${testRunStatus.toLowerCase()}Total` as keyof DataSetTestReport;
+    const runStatusTotalTestReport =
+      testReport && testReport[keyTestRunStatus];
+    const totalPercentTestReport =
+      (runStatusTotalTestReport || 0) / (testReport?.total || 1);
+    return totalPercentTestReport * adjustment;
   };
   return {
+    backgroundColor: theme.palette.runStatus[$testRunStatus],
     height: '8px',
     width: '100%',
-    ...($testRunStatus === DataQualityTestRunStatusEnum.SUCCESS
-      ? success
-      : fail),
+    maxWidth:
+      $testRunStatus === DataQualityTestRunStatusEnum.SUCCESS
+        ? successMaxWidth(succRelation)
+        : `${failMaxWidth(
+            $testRunStatus,
+            otherStatusesAdjustment,
+            $testReport
+          )}%`,
   };
 });
