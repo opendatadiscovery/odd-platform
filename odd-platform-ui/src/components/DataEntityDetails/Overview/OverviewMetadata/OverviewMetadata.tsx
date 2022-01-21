@@ -101,20 +101,18 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           <Grid item xs={12}>
             <SubtitleContainer>
               <Typography variant="h4">Custom</Typography>
-              <div>
-                <MetadataCreateFormContainer
-                  dataEntityId={dataEntityId}
-                  btnCreateEl={
-                    <AppButton
-                      size="medium"
-                      color="primaryLight"
-                      startIcon={<AddIcon />}
-                    >
-                      Add metadata
-                    </AppButton>
-                  }
-                />
-              </div>
+              <MetadataCreateFormContainer
+                dataEntityId={dataEntityId}
+                btnCreateEl={
+                  <AppButton
+                    size="medium"
+                    color="primaryLight"
+                    startIcon={<AddIcon />}
+                  >
+                    Add metadata
+                  </AppButton>
+                }
+              />
             </SubtitleContainer>
           </Grid>
           {customMetadata.length ? (

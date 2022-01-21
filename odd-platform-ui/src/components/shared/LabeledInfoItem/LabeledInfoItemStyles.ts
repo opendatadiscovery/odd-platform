@@ -7,6 +7,7 @@ interface ValueProps {
   $runStatus?: DataQualityTestRunStatusEnum;
   $valueColor?: string;
   $inline?: boolean;
+  component: React.ElementType;
 }
 
 export const Container = styled(Grid, {
@@ -25,11 +26,13 @@ export const Container = styled(Grid, {
   return { alignItems: 'flex-start', flexDirection: 'column' };
 });
 
-export const Label = styled(Typography)(({ theme }) => ({
-  color: theme.palette.texts.secondary,
-  lineHeight: theme.typography.h3.lineHeight,
-  overflow: 'hidden',
-}));
+export const Label = styled(Typography)<{ component: React.ElementType }>(
+  ({ theme }) => ({
+    color: theme.palette.texts.secondary,
+    lineHeight: theme.typography.h3.lineHeight,
+    overflow: 'hidden',
+  })
+);
 
 export const Value = styled(Typography, {
   shouldForwardProp: propsChecker,

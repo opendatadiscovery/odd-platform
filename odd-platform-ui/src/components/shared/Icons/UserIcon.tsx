@@ -2,8 +2,8 @@ import React from 'react';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 import AppSvgIcon from './AppSvgIcon';
 
-const UserIcon: React.FC<SvgIconProps> = props => (
-  <AppSvgIcon viewBox="0 0 17 16" {...props}>
+const UserIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
+  <AppSvgIcon sx={sx} viewBox="0 0 17 16" {...props}>
     <circle
       cx="8.6665"
       cy="6"

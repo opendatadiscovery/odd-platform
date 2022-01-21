@@ -10,6 +10,7 @@ interface LabelItemProps {
   onRemoveClick?: () => void;
   unfilled?: boolean;
   variant?: TypographyProps['variant'];
+  component?: React.ElementType;
 }
 
 const LabelItem: React.FC<LabelItemProps> = ({
@@ -18,12 +19,14 @@ const LabelItem: React.FC<LabelItemProps> = ({
   onRemoveClick,
   unfilled,
   variant = 'body2',
+  component = 'span',
 }) => (
   <Container
     $unfilled={unfilled}
     sx={{ m: 0.25 }}
     noWrap
     variant={variant}
+    component={component}
     title={labelName}
   >
     {labelName}

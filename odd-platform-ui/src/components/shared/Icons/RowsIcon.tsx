@@ -2,8 +2,8 @@ import React from 'react';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 import AppSvgIcon from './AppSvgIcon';
 
-const RowsIcon: React.FC<SvgIconProps> = props => (
-  <AppSvgIcon viewBox="0 0 16 16" {...props}>
+const RowsIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
+  <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props}>
     <path
       fillRule="evenodd"
       clipRule="evenodd"
