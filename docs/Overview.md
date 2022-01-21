@@ -1,3 +1,6 @@
+---
+showToc: true
+---
 # Overview
 > ODD makes all your data entities reliable, observable, and easily discoverable.
 
