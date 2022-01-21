@@ -18,39 +18,38 @@ export const Container = styled('div')(() => ({
 export const CountLabel = styled(Typography, {
   shouldForwardProp: propsChecker,
 })<{
-  $dataQualityTestRunStatus: DataQualityTestRunStatusEnum;
-}>(({ theme, $dataQualityTestRunStatus }) => ({
-  color: theme.palette.runStatus[$dataQualityTestRunStatus],
+  $testRunStatus: DataQualityTestRunStatusEnum;
+}>(({ theme, $testRunStatus }) => ({
+  color: theme.palette.runStatus[$testRunStatus],
 }));
 
 export const Bar = styled('div', { shouldForwardProp: propsChecker })<{
-  $datasetQualityTestReport?: DataSetTestReport;
-  $dataQualityTestRunStatus: DataQualityTestRunStatusEnum;
-}>(({ theme, $dataQualityTestRunStatus, $datasetQualityTestReport }) => {
+  $testReport?: DataSetTestReport;
+  $testRunStatus: DataQualityTestRunStatusEnum;
+}>(({ theme, $testRunStatus, $testReport }) => {
   const succRelation =
-    ($datasetQualityTestReport?.successTotal || 0) /
-    ($datasetQualityTestReport?.total || 1);
+    ($testReport?.successTotal || 0) / ($testReport?.total || 1);
   const otherStatusesAdjustment = 200 / (Math.round(1 - succRelation) + 1);
   const success = {
-    backgroundColor: theme.palette.runStatus[$dataQualityTestRunStatus],
+    backgroundColor: theme.palette.runStatus[$testRunStatus],
     maxWidth: `${(succRelation * 200) / (Math.round(succRelation) + 1)}%`,
   };
   const fail = {
-    backgroundColor: theme.palette.runStatus[$dataQualityTestRunStatus],
+    backgroundColor: theme.palette.runStatus[$testRunStatus],
     maxWidth: `${
-      ((($datasetQualityTestReport &&
-        $datasetQualityTestReport[
-          `${$dataQualityTestRunStatus.toLowerCase()}Total` as keyof DataSetTestReport
+      ((($testReport &&
+        $testReport[
+          `${$testRunStatus.toLowerCase()}Total` as keyof DataSetTestReport
         ]) ||
         0) /
-        ($datasetQualityTestReport?.total || 1)) *
+        ($testReport?.total || 1)) *
       otherStatusesAdjustment
     }%`,
   };
   return {
     height: '8px',
     width: '100%',
-    ...($dataQualityTestRunStatus === DataQualityTestRunStatusEnum.SUCCESS
+    ...($testRunStatus === DataQualityTestRunStatusEnum.SUCCESS
       ? success
       : fail),
   };

@@ -79,50 +79,36 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $dataQualityTestRunStatus={
-                DataQualityTestRunStatusEnum.SUCCESS
-              }
+              $testRunStatus={DataQualityTestRunStatusEnum.SUCCESS}
             >
               passed
             </CountLabel>
           </Grid>
           <Grid item container sx={{ mt: 0.5, mb: 0.5 }}>
             <Bar
-              $datasetQualityTestReport={datasetQualityTestReport}
-              $dataQualityTestRunStatus={
-                DataQualityTestRunStatusEnum.SUCCESS
-              }
+              $testReport={datasetQualityTestReport}
+              $testRunStatus={DataQualityTestRunStatusEnum.SUCCESS}
             />
             <Grid item container wrap="nowrap">
               <Bar
-                $datasetQualityTestReport={datasetQualityTestReport}
-                $dataQualityTestRunStatus={
-                  DataQualityTestRunStatusEnum.FAILED
-                }
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.FAILED}
               />
               <Bar
-                $datasetQualityTestReport={datasetQualityTestReport}
-                $dataQualityTestRunStatus={
-                  DataQualityTestRunStatusEnum.BROKEN
-                }
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.BROKEN}
               />
               <Bar
-                $datasetQualityTestReport={datasetQualityTestReport}
-                $dataQualityTestRunStatus={
-                  DataQualityTestRunStatusEnum.SKIPPED
-                }
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.SKIPPED}
               />
               <Bar
-                $datasetQualityTestReport={datasetQualityTestReport}
-                $dataQualityTestRunStatus={
-                  DataQualityTestRunStatusEnum.ABORTED
-                }
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.ABORTED}
               />
               <Bar
-                $datasetQualityTestReport={datasetQualityTestReport}
-                $dataQualityTestRunStatus={
-                  DataQualityTestRunStatusEnum.UNKNOWN
-                }
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.UNKNOWN}
               />
             </Grid>
           </Grid>
@@ -132,9 +118,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $dataQualityTestRunStatus={
-                DataQualityTestRunStatusEnum.FAILED
-              }
+              $testRunStatus={DataQualityTestRunStatusEnum.FAILED}
             >
               failed
             </CountLabel>
@@ -145,9 +129,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $dataQualityTestRunStatus={
-                DataQualityTestRunStatusEnum.BROKEN
-              }
+              $testRunStatus={DataQualityTestRunStatusEnum.BROKEN}
             >
               broken
             </CountLabel>
@@ -158,9 +140,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $dataQualityTestRunStatus={
-                DataQualityTestRunStatusEnum.ABORTED
-              }
+              $testRunStatus={DataQualityTestRunStatusEnum.ABORTED}
             >
               aborted
             </CountLabel>
@@ -171,9 +151,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $dataQualityTestRunStatus={
-                DataQualityTestRunStatusEnum.SKIPPED
-              }
+              $testRunStatus={DataQualityTestRunStatusEnum.SKIPPED}
             >
               skipped
             </CountLabel>
@@ -184,9 +162,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $dataQualityTestRunStatus={
-                DataQualityTestRunStatusEnum.UNKNOWN
-              }
+              $testRunStatus={DataQualityTestRunStatusEnum.UNKNOWN}
             >
               unknown
             </CountLabel>
