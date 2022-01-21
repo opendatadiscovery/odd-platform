@@ -15,18 +15,23 @@ export const Container = styled('div')(() => ({
   flexGrow: 1,
 }));
 
+interface CountLabelProps {
+  $testRunStatus: DataQualityTestRunStatusEnum;
+}
+
+interface BarProps extends CountLabelProps {
+  $testReport?: DataSetTestReport;
+}
+
 export const CountLabel = styled(Typography, {
   shouldForwardProp: propsChecker,
-})<{
-  $testRunStatus: DataQualityTestRunStatusEnum;
-}>(({ theme, $testRunStatus }) => ({
+})<CountLabelProps>(({ theme, $testRunStatus }) => ({
   color: theme.palette.runStatus[$testRunStatus],
 }));
 
-export const Bar = styled('div', { shouldForwardProp: propsChecker })<{
-  $testReport?: DataSetTestReport;
-  $testRunStatus: DataQualityTestRunStatusEnum;
-}>(({ theme, $testRunStatus, $testReport }) => {
+export const Bar = styled('div', {
+  shouldForwardProp: propsChecker,
+})<BarProps>(({ theme, $testRunStatus, $testReport }) => {
   const succRelation =
     ($testReport?.successTotal || 0) / ($testReport?.total || 1);
   const otherStatusesAdjustment = 200 / (Math.round(1 - succRelation) + 1);
