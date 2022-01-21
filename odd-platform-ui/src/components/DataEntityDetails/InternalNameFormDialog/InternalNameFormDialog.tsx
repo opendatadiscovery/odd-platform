@@ -10,9 +10,8 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { StylesType } from './InternalNameFormDialogStyles';
 
-interface InternalNameFormDialogProps extends StylesType {
+interface InternalNameFormDialogProps {
   btnCreateEl: JSX.Element;
   isLoading: boolean;
   dataEntityId: number;
@@ -23,7 +22,6 @@ interface InternalNameFormDialogProps extends StylesType {
 }
 
 const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
-  classes,
   btnCreateEl,
   isLoading,
   dataEntityId,
@@ -78,11 +76,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   );
 
   const formContent = () => (
-    <form
-      id="dataentity-internal-name"
-      onSubmit={handleSubmit(onSubmit)}
-      className={classes.form}
-    >
+    <form id="dataentity-internal-name" onSubmit={handleSubmit(onSubmit)}>
       <Controller
         control={control}
         name="internalName"

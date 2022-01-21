@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, MenuItem, Typography } from '@mui/material';
+import { Autocomplete, Box, MenuItem, Typography } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
@@ -12,25 +12,20 @@ import {
   MetadataFieldType,
 } from 'generated-sources';
 import MetadataValueEditField from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
-import cx from 'classnames';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
-import { StylesType } from './MetadataCreateFormItemStyles';
 
-interface MetadataCreateFormItemProps extends StylesType {
+interface MetadataCreateFormItemProps {
   itemIndex: number;
-  onItemRemove: () => void;
   searchMetadata: (
     params: MetadataApiGetMetadataFieldListRequest
   ) => Promise<MetadataFieldList>;
 }
 
 const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
-  classes,
   itemIndex,
-  onItemRemove,
   searchMetadata,
 }) => {
   const { register, control } = useFormContext();
@@ -200,11 +195,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
       />
       {selectedField && (
         <>
-          <div
-            className={cx(classes.metadataTypeContainer, {
-              [classes.hidden]: selectedField.type,
-            })}
-          >
+          <Box sx={{ mt: 1.5 }} display={selectedField.type ? 'none' : ''}>
             <Controller
               name={`metadata.${itemIndex}.type`}
               control={control}
@@ -231,22 +222,25 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
                 </AppTextField>
               )}
             />
-          </div>
-          <div
-            className={cx(classes.typeContainer, {
-              [classes.hidden]: !selectedField.type,
-            })}
-          >
-            <span className={classes.typeTitle}>Type:</span>
+          </Box>
+          <Box sx={{ mt: 1.5 }} display={selectedField.type ? '' : 'none'}>
+            <Typography
+              variant="body2"
+              color="texts.secondary"
+              component="span"
+              sx={{ mr: 0.5 }}
+            >
+              Type:
+            </Typography>
             {capitalize(selectedType)}
-          </div>
-          <div className={classes.metadataValueContainer}>
+          </Box>
+          <Box sx={{ mt: 1.5 }}>
             <MetadataValueEditField
               fieldName={`metadata.${itemIndex}.value`}
               metadataType={selectedType}
               labeled
             />
-          </div>
+          </Box>
         </>
       )}
     </>
