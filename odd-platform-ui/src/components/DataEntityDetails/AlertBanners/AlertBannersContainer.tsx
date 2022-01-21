@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { getDataEntityOpenAlertList } from 'redux/selectors/alert.selectors';
@@ -7,7 +6,6 @@ import {
   updateAlertStatus,
 } from 'redux/thunks/alerts.thunks';
 import AlertBanners from './AlertBanners';
-import { styles } from './AlertBannersStyles';
 
 const mapStateToProps = (
   state: RootState,
@@ -21,7 +19,4 @@ const mapDispatchToProps = {
   updateAlertStatus,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(AlertBanners));
+export default connect(mapStateToProps, mapDispatchToProps)(AlertBanners);
