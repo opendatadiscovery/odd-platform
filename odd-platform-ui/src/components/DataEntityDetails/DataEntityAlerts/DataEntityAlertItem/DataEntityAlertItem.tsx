@@ -1,8 +1,6 @@
 import React from 'react';
-import { Grid, MenuItem, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
+import { MenuItem, Typography } from '@mui/material';
 import { Alert } from 'generated-sources';
-import cx from 'classnames';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
@@ -10,55 +8,55 @@ import KebabIcon from 'components/shared/Icons/KebabIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
-import { styles, StylesType } from './DataEntityAlertItemStyles';
+import { ColContainer } from '../DataEntityAlertsStyles';
+import {
+  ActionButtonsContainer,
+  Container,
+} from './DataEntityAlertItemStyles';
 
-interface DataEntityAlertItemProps extends StylesType {
+interface DataEntityAlertItemProps {
   alert: Alert;
   alertStatusHandler: () => void;
 }
 
 const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
-  classes,
   alert,
   alertStatusHandler,
 }) => (
-  <Grid container className={classes.container}>
-    <Grid item className={cx(classes.col, classes.colDate)}>
+  <Container container>
+    <ColContainer item $colType="date">
       <Typography variant="body1">
         {alert.createdAt && format(alert.createdAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
-    </Grid>
-    <Grid item className={cx(classes.col, classes.colType)}>
+    </ColContainer>
+    <ColContainer item $colType="type">
       <AppTooltip title={() => lowerCase(alert.type)}>
         <Typography variant="body1" title={alert.type} noWrap>
           {lowerCase(alert.type)}
         </Typography>
       </AppTooltip>
-    </Grid>
-    <Grid item className={cx(classes.col, classes.colDescription)}>
+    </ColContainer>
+    <ColContainer item $colType="description">
       <Typography variant="body1" title={alert.description} noWrap>
         {alert.description}
       </Typography>
-    </Grid>
-    <Grid item className={cx(classes.col, classes.colStatus)}>
+    </ColContainer>
+    <ColContainer item $colType="status">
       <AlertStatusItem typeName={alert.status} />
-    </Grid>
-    <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
+    </ColContainer>
+    <ColContainer item $colType="updatedBy">
       <Typography variant="body1">
         {alert.statusUpdatedBy?.owner?.name ||
           alert.statusUpdatedBy?.identity.username}
       </Typography>
-    </Grid>
-    <Grid item className={cx(classes.col, classes.colUpdatedTime)}>
+    </ColContainer>
+    <ColContainer item $colType="updatedTime">
       <Typography variant="body1">
         {alert.statusUpdatedAt &&
           format(alert.statusUpdatedAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
-    </Grid>
-    <Grid
-      item
-      className={cx(classes.col, classes.colActionBtn, classes.optionsBtn)}
-    >
+    </ColContainer>
+    <ActionButtonsContainer item $colType="actionBtn">
       <AppPopover
         renderOpenBtn={({ onClick, ariaDescribedBy }) => (
           <AppIconButton
@@ -76,8 +74,8 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
           {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
         </MenuItem>
       </AppPopover>
-    </Grid>
-  </Grid>
+    </ActionButtonsContainer>
+  </Container>
 );
 
-export default withStyles(styles)(DataEntityAlertItem);
+export default DataEntityAlertItem;

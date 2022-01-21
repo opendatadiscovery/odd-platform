@@ -9,7 +9,7 @@ import {
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from 'styled-components';
+import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -35,7 +35,9 @@ ReactDOM.render(
           <CssBaseline />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <BrowserRouter>
-              <AppContainer />
+              <StyleSheetManager disableVendorPrefixes>
+                <AppContainer />
+              </StyleSheetManager>
             </BrowserRouter>
           </LocalizationProvider>
         </ThemeProvider>

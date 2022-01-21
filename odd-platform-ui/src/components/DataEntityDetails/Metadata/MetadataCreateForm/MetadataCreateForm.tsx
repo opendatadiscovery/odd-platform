@@ -12,9 +12,8 @@ import {
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import MetadataCreateFormItemContainer from './MetadataCreateFormItem/MetadataCreateFormItemContainer';
-import { StylesType } from './MetadataCreateFormStyles';
 
-interface MetadataCreateFormProps extends StylesType {
+interface MetadataCreateFormProps {
   dataEntityId: number;
   metadataOptions: MetadataField[];
   isLoading: boolean;
@@ -28,7 +27,6 @@ interface MetadataCreateFormProps extends StylesType {
 }
 
 const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
-  classes,
   dataEntityId,
   isLoading,
   createDataEntityCustomMetadata,
@@ -40,7 +38,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
       metadata: [{}],
     },
   });
-  const { fields, append, remove } = useFieldArray({
+  const { fields } = useFieldArray({
     control: methods.control,
     name: 'metadata',
   });
@@ -75,14 +73,6 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
     );
   };
 
-  const handleAppend = React.useCallback(() => {
-    append({});
-  }, [append]);
-
-  const handleRemove = (index: number) => () => {
-    remove(index);
-  };
-
   const formTitle = (
     <Typography variant="h4" component="span">
       Add Custom Metadata
@@ -95,13 +85,11 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
         <form
           id="metadata-create-form"
           onSubmit={methods.handleSubmit(createMetadata)}
-          className={classes.container}
         >
           {fields.map((item, index) => (
             <MetadataCreateFormItemContainer
               key={item.id}
               itemIndex={index}
-              onItemRemove={handleRemove(index)}
             />
           ))}
         </form>

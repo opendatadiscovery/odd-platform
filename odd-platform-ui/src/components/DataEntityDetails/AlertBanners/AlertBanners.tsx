@@ -6,10 +6,10 @@ import {
   AlertList,
   AlertStatus,
 } from 'generated-sources';
-import { StylesType } from './AlertBannersStyles';
+import { Box } from '@mui/material';
 import AlertBanner from './AlertBanner/AlertBanner';
 
-interface AlertBannersProps extends StylesType {
+interface AlertBannersProps {
   dataEntityId: number;
   alerts: Alert[];
   fetchDataEntityAlerts: (
@@ -21,7 +21,6 @@ interface AlertBannersProps extends StylesType {
 }
 
 const AlertBanners: React.FC<AlertBannersProps> = ({
-  classes,
   dataEntityId,
   alerts,
   fetchDataEntityAlerts,
@@ -42,15 +41,16 @@ const AlertBanners: React.FC<AlertBannersProps> = ({
   );
 
   return alerts?.length ? (
-    <div className={classes.container}>
+    <Box sx={{ mt: 2 }}>
       {alerts?.map(alert => (
         <AlertBanner
+          sx={{ mt: 1.25 }}
           key={alert.id}
           alert={alert}
           resolveAlert={resolveAlertHandler(alert.id)}
         />
       ))}
-    </div>
+    </Box>
   ) : null;
 };
 

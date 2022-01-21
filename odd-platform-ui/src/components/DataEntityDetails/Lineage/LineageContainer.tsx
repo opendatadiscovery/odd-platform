@@ -1,9 +1,7 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
-import LineageStructure from './Lineage';
-import { styles } from './LineageStyles';
+import Lineage from './Lineage';
 
 interface RouteProps {
   dataEntityId: string;
@@ -25,7 +23,4 @@ const mapStateToProps = (
 
 const mapDispatchToProps = {};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(LineageStructure));
+export default connect(mapStateToProps, mapDispatchToProps)(Lineage);
