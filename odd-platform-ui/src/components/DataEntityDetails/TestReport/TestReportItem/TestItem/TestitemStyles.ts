@@ -1,23 +1,18 @@
-import { Theme } from '@mui/material';
+import { Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      flexWrap: 'nowrap',
-      padding: theme.spacing(0.75, 1),
-      alignItems: 'center',
-      borderRadius: '4px',
-      '&:hover:not($active)': {
-        backgroundColor: theme.palette.backgrounds.primary,
-      },
+export const Container = styled(Grid)<{ $active: boolean }>(
+  ({ theme, $active }) => ({
+    flexWrap: 'nowrap',
+    padding: theme.spacing(0.75, 1),
+    alignItems: 'center',
+    borderRadius: '4px',
+    backgroundColor: $active
+      ? theme.palette.backgrounds.secondary
+      : 'inherit',
+    '&:hover': {
+      backgroundColor:
+        theme.palette.backgrounds[$active ? 'secondary' : 'primary'],
     },
-    active: {
-      backgroundColor: theme.palette.backgrounds.secondary,
-    },
-    expectationItem: { marginRight: theme.spacing(0.5) },
-  });
-
-export type StylesType = WithStyles<typeof styles>;
+  })
+);

@@ -8,6 +8,7 @@ interface ValueProps {
   $valueColor?: string;
   $inline?: boolean;
   component: React.ElementType;
+  $valueLineHeight?: number;
 }
 
 export const Container = styled(Grid, {
@@ -28,6 +29,7 @@ export const Container = styled(Grid, {
 
 export const Label = styled(Typography)<{ component: React.ElementType }>(
   ({ theme }) => ({
+    display: 'block',
     color: theme.palette.texts.secondary,
     lineHeight: theme.typography.h3.lineHeight,
     overflow: 'hidden',
@@ -36,9 +38,12 @@ export const Label = styled(Typography)<{ component: React.ElementType }>(
 
 export const Value = styled(Typography, {
   shouldForwardProp: propsChecker,
-})<ValueProps>(({ theme, $runStatus, $valueColor, $inline }) => ({
-  wordBreak: 'break-all',
-  overflow: 'hidden',
-  color: $runStatus ? theme.palette.runStatus[$runStatus] : $valueColor,
-  marginLeft: $inline ? theme.spacing(0.5) : '',
-}));
+})<ValueProps>(
+  ({ theme, $runStatus, $valueColor, $inline, $valueLineHeight }) => ({
+    wordBreak: 'break-all',
+    overflow: 'hidden',
+    color: $runStatus ? theme.palette.runStatus[$runStatus] : $valueColor,
+    marginLeft: $inline ? theme.spacing(0.5) : '',
+    lineHeight: $valueLineHeight ? `${$valueLineHeight}px` : 'inherit',
+  })
+);

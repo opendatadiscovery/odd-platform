@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
@@ -15,7 +14,6 @@ import {
   getTestReportListBySuiteName,
 } from 'redux/selectors/dataQualityTest.selectors';
 import TestReport from './TestReport';
-import { styles } from './TestReportStyles';
 
 interface RouteProps {
   dataEntityId: string;
@@ -52,7 +50,4 @@ const mapDispatchToProps = {
   fetchDataSetQualityTestRuns,
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(TestReport));
+export default connect(mapStateToProps, mapDispatchToProps)(TestReport);

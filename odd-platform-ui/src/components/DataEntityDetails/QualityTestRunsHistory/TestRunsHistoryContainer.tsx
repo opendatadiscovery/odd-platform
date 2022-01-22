@@ -1,14 +1,13 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
 import { fetchDataSetQualityTestRuns } from 'redux/thunks';
 import {
   getDatasetTestRunsFetching,
+  getQualityTestNameByTestId,
   getQualityTestRunsList,
 } from 'redux/selectors/dataQualityTest.selectors';
-import { styles } from 'components/DataEntityDetails/QualityTestRunsHistory/QualityTestRunsHistoryStyles';
-import QualityTestRunsHistory from 'components/DataEntityDetails/QualityTestRunsHistory/QualityTestRunsHistory';
+import TestRunsHistory from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunsHistory';
 
 interface RouteProps {
   dataEntityId: string;
@@ -24,8 +23,9 @@ const mapStateToProps = (
     },
   }: OwnProps
 ) => ({
-  dataqatestId: parseInt(dataEntityId, 10),
-  testRunsList: getQualityTestRunsList(state, dataEntityId),
+  dataQATestId: parseInt(dataEntityId, 10),
+  dataQATestName: getQualityTestNameByTestId(state, dataEntityId),
+  dataQATestRunsList: getQualityTestRunsList(state, dataEntityId),
   isTestRunsListFetching: getDatasetTestRunsFetching(state),
 });
 
@@ -36,4 +36,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(QualityTestRunsHistory));
+)(TestRunsHistory);

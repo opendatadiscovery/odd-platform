@@ -22,7 +22,7 @@ interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
   errorText?: string;
   dialogContentId?: string;
   clearState?: () => void;
-  maxWidth?: 'xs' | 'md';
+  maxWidth?: 'xs' | 'sm' | 'md';
 }
 
 const DialogWrapper: React.FC<DialogWrapperProps> = ({

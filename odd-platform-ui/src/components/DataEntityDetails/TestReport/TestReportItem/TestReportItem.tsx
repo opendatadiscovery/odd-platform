@@ -12,9 +12,9 @@ import { dataEntityTestPath } from 'lib/paths';
 import { Link } from 'react-router-dom';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { StylesType } from './TestReportItemStyles';
+import { TestReportBySuitNameHeader } from './TestReportItemStyles';
 
-interface TestReportItemProps extends StylesType {
+interface TestReportItemProps {
   suitName: string;
   dataSetId: number;
   dataqatestId: number;
@@ -23,7 +23,6 @@ interface TestReportItemProps extends StylesType {
 }
 
 const TestReportItem: React.FC<TestReportItemProps> = ({
-  classes,
   suitName,
   dataSetId,
   dataqatestId,
@@ -54,8 +53,8 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   );
 
   return (
-    <Grid container className={classes.container}>
-      <Grid container wrap="nowrap" className={classes.testReportHeader}>
+    <Grid container direction="column" wrap="nowrap">
+      <TestReportBySuitNameHeader container wrap="nowrap">
         <Grid item>{collapseBtn}</Grid>
         <Grid
           item
@@ -66,11 +65,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
           <Grid item>
             <Typography variant="body1">{suitName}</Typography>
           </Grid>
-          <Grid
-            item
-            container
-            className={classes.testReportBySuitNameContainer}
-          >
+          <Grid item container justifyContent="flex-end">
             {Object.entries(dataQATestReport).map(
               ([testType, count]) =>
                 count !== 0 && (
@@ -86,7 +81,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
             )}
           </Grid>
         </Grid>
-      </Grid>
+      </TestReportBySuitNameHeader>
       <Collapse in={open} timeout="auto" unmountOnExit>
         {open && dataQATestList.length
           ? dataQATestList.map(dataQATest => (
