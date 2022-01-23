@@ -1,20 +1,27 @@
 # Overview
-> ODD makes all your data entities reliable, observable, and easily discoverable.
+> Open Data Discovery makes all your data entities reliable, observable, and easily discoverable.
 
 [About ODD](#about-odd) \
 [The platform for your business](#the-platform-for-your-business) \
 [Features and use cases](#features-and-use-cases) \
 [Start using ODD](#Start-using-ODD)
 ## About ODD
-ff \
-df \
-df \
- df \
- d 
+The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams:
+* Free open-source and community-driven
+* ML first citizen
+* AI-based UX 
+* End-to-end microservices lineage support
+* Flexible data quality integration options
+* Auto-generated ML experiment lineage and metadata
 
 ## The platform for your business
-ff
+ODD's **target audience** includes large-scale companies challenging data mesh concept,
+small and mid-scale companies seeking OSS data catalogue solution and also
+DS teams aiming at better data governance. \
+Roles \
+With the Platform you will be able to:
+
 ## Features and use cases 
-Dive into ODD opportunities with list of all ODD features and use cases for different types of users.
-## Start using ODD {#about-ODD}
-Get started right now or [schedule demo](https://calendly.com/germanosin/opendatadiscovery-demo?month=2022-01). 
+Dive into ODD opportunities with a list of ODD features and use cases for different types of users.
+## Start using ODD
+[Get started](https://github.com/opendatadiscovery/odd-platform/blob/main/docker/README.md) right now or [schedule demo](https://calendly.com/germanosin/opendatadiscovery-demo?month=2022-01) for free. 
