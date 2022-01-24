@@ -19,7 +19,7 @@ export const alertsColWidthStyles = {
     flex: '0 0 12%',
   },
   description: {
-    flex: '0 0 43%',
+    flex: '0 0 40%',
   },
   status: {
     justifyContent: 'center',
@@ -32,7 +32,7 @@ export const alertsColWidthStyles = {
     flex: '0 0 12%',
   },
   actionBtn: {
-    flex: '0 0 3%',
+    flex: '0 0 6%',
     overflow: 'visible',
   },
 };
@@ -49,6 +49,7 @@ export const ColContainer = styled(Grid, {
   paddingLeft: '8px',
   '&:last-of-type': {
     paddingRight: 0,
+    paddingLeft: 0,
   },
   ...alertsColWidthStyles[$colType],
 }));
