@@ -27,7 +27,12 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
 }) => (
   <S.Container container $inline={inline}>
     <Grid item xs={labelWidth || 'auto'}>
-      <S.Label title={typeof label === 'string' ? label : ''} variant={variant} noWrap component="span">
+      <S.Label
+        title={typeof label === 'string' ? label : ''}
+        variant={variant}
+        noWrap
+        component="span"
+      >
         {label}
       </S.Label>
     </Grid>

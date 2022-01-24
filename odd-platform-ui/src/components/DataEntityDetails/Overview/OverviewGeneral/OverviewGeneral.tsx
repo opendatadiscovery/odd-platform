@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format } from 'date-fns';
+import { useCopyToClipboard } from 'lib/hooks';
 import {
   DataEntityApiDeleteOwnershipRequest,
   DataEntityDetails,
@@ -36,17 +37,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
   const handleOwnershipDelete = (ownershipId: number) => () =>
     deleteDataEntityOwnership({ dataEntityId, ownershipId });
 
-  const copyRef = React.createRef<HTMLElement>();
-  const copyToClipboard = () => {
-    if (copyRef.current) {
-      const range = document.createRange();
-      range.selectNode(copyRef.current);
-      window?.getSelection()?.removeAllRanges(); // clear current selection
-      window?.getSelection()?.addRange(range); // to select text
-      document.execCommand('copy');
-      window?.getSelection()?.removeAllRanges(); // to deselect
-    }
-  };
+  const { copyRef, copyToClipboard } = useCopyToClipboard();
   return (
     <Grid container>
       <Grid item container sm={12}>
@@ -74,13 +65,9 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
         </Grid>
         <Grid item sm={12} sx={{ mt: 2 }}>
           <LabeledInfoItem
-            labelWidth={12}
+            fullWidthTitle
             label={
-              <Grid
-                sx={{ width: '100%' }}
-                container
-                justifyContent="space-between"
-              >
+              <Grid container justifyContent="space-between">
                 <Grid item>ODDRN</Grid>
                 <Grid item sx={{ cursor: 'pointer' }}>
                   <AppIconButton
