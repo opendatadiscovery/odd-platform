@@ -5,7 +5,7 @@ import * as S from './LabeledInfoItemStyles';
 
 interface LabeledInfoItemProps {
   inline?: boolean;
-  label: string;
+  label: string | React.ReactNode;
   variant?: TypographyProps['variant'];
   labelWidth?: GridSize;
   runStatus?: DataQualityTestRunStatusEnum;
@@ -27,7 +27,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
 }) => (
   <S.Container container $inline={inline}>
     <Grid item xs={labelWidth || 'auto'}>
-      <S.Label title={label} variant={variant} noWrap component="span">
+      <S.Label title={typeof label === 'string' ? label : ''} variant={variant} noWrap component="span">
         {label}
       </S.Label>
     </Grid>
@@ -38,7 +38,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
           ? ((12 - labelWidth) as GridSize)
           : 'auto'
       }
-      style={{ width: '100%' }}
+      sx={{ width: '100%' }}
     >
       <S.Value
         $runStatus={runStatus}
