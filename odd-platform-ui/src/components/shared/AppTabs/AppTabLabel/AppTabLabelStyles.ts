@@ -2,8 +2,9 @@ import { CSSObject, Typography } from '@mui/material';
 import { styled, Theme } from '@mui/material/styles';
 import { HintType } from 'components/shared/AppTabs/interfaces';
 import { propsChecker } from 'lib/helpers';
+import { ElementType } from 'react';
 
-const getTabStylesByType = (
+const getTabHintStylesByType = (
   theme: Theme,
   hintType: HintType
 ): CSSObject => {
@@ -36,7 +37,7 @@ const getTabStylesByType = (
 };
 
 export const Container = styled(Typography)<{
-  component: React.ElementType;
+  component: ElementType;
 }>(() => ({
   display: 'flex',
   alignItems: 'center',
@@ -49,5 +50,5 @@ export const HintContainer = styled('div', {
   alignItems: 'center',
   justifyContent: 'center',
   marginLeft: theme.spacing(0.5),
-  ...getTabStylesByType(theme, $hintType),
+  ...getTabHintStylesByType(theme, $hintType),
 }));
