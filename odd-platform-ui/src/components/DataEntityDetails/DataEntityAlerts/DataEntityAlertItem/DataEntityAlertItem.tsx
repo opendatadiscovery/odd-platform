@@ -1,13 +1,11 @@
 import React from 'react';
-import { MenuItem, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Alert } from 'generated-sources';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
-import KebabIcon from 'components/shared/Icons/KebabIcon';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
-import AppPopover from 'components/shared/AppPopover/AppPopover';
+import AppButton from 'components/shared/AppButton/AppButton';
 import { ColContainer } from '../DataEntityAlertsStyles';
 import {
   ActionButtonsContainer,
@@ -57,23 +55,13 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
       </Typography>
     </ColContainer>
     <ActionButtonsContainer item $colType="actionBtn">
-      <AppPopover
-        renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-          <AppIconButton
-            ariaDescribedBy={ariaDescribedBy}
-            size="medium"
-            color="primaryLight"
-            icon={<KebabIcon />}
-            onClick={onClick}
-          />
-        )}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 100 }}
+      <AppButton
+        size="medium"
+        color="primaryLight"
+        onClick={alertStatusHandler}
       >
-        <MenuItem onClick={alertStatusHandler}>
-          {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
-        </MenuItem>
-      </AppPopover>
+        {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'}
+      </AppButton>
     </ActionButtonsContainer>
   </Container>
 );

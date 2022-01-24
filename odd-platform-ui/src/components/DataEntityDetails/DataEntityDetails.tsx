@@ -12,6 +12,8 @@ import {
   datasetStructurePath,
 } from 'lib/paths';
 import {
+  AlertList,
+  DataEntityApiGetDataEntityAlertsRequest,
   DataEntityApiGetDataEntityDetailsRequest,
   DataEntityDetails,
 } from 'generated-sources';
@@ -30,7 +32,6 @@ import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
 import * as S from './DataEntityDetailsStyles';
-import AlertBannersContainer from './AlertBanners/AlertBannersContainer';
 
 // lazy components
 const OverviewContainer = React.lazy(
@@ -52,7 +53,7 @@ const DataEntityAlertsContainer = React.lazy(
   () => import('./DataEntityAlerts/DataEntityAlertsContainer')
 );
 const QualityTestHistoryContainer = React.lazy(
-  () => import('./QualityTestRunsHistory/QualityTestRunsHistoryContainer')
+  () => import('./QualityTestRunsHistory/TestRunsHistoryContainer')
 );
 
 interface DataEntityDetailsProps {
@@ -64,8 +65,12 @@ interface DataEntityDetailsProps {
   fetchDataEntityDetails: (
     params: DataEntityApiGetDataEntityDetailsRequest
   ) => void;
+  fetchDataEntityAlerts: (
+    params: DataEntityApiGetDataEntityAlertsRequest
+  ) => Promise<AlertList>;
   dataEntityFetchingStatus: FetchStatus;
   dataEntityFetchingError?: ErrorState;
+  openAlertsCount: number;
 }
 
 const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
@@ -75,12 +80,18 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   isDataset,
   isQualityTest,
   fetchDataEntityDetails,
+  fetchDataEntityAlerts,
   dataEntityFetchingStatus,
   dataEntityFetchingError,
+  openAlertsCount,
 }) => {
   React.useEffect(() => {
     fetchDataEntityDetails({ dataEntityId });
   }, [fetchDataEntityDetails, dataEntityId]);
+
+  React.useEffect(() => {
+    fetchDataEntityAlerts({ dataEntityId });
+  }, []);
 
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
@@ -119,6 +130,8 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         name: 'Alerts',
         link: dataEntityAlertsPath(dataEntityId),
         value: 'alerts',
+        hint: openAlertsCount,
+        hintType: 'alert',
       },
       {
         name: 'Linked items',
@@ -212,7 +225,6 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
               ) : null}
             </Grid>
           </Grid>
-          <AlertBannersContainer dataEntityId={dataEntityId} />
           <Grid sx={{ mt: 2 }}>
             {tabs.length && selectedTab >= 0 ? (
               <AppTabs

@@ -1,27 +1,15 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import {
-  styles,
-  StylesType,
-} from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemSkeleton/TestReportItemSkeletonStyles';
 import { mainSkeletonHeight } from 'lib/constants';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   width: string;
 }
 
-const TestReportItemSkeleton: React.FC<SkeletonProps> = ({
-  classes,
-  width,
-}) => {
+const TestReportItemSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   const skeletonItem = () => (
-    <Grid
-      container
-      justifyContent="space-between"
-      className={classes.item}
-    >
+    <Grid container justifyContent="space-between" sx={{ mb: 2 }}>
       <Grid item xs={2}>
         <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
@@ -35,8 +23,8 @@ const TestReportItemSkeleton: React.FC<SkeletonProps> = ({
   );
 
   return (
-    <Grid container className={classes.container}>
-      <Grid container item xs={4} className={classes.item}>
+    <Grid container sx={{ py: 1.25, px: 1 }}>
+      <Grid container item xs={4} sx={{ mb: 2 }}>
         <Skeleton width={width} height={mainSkeletonHeight} />
       </Grid>
       {skeletonItem()}
@@ -45,4 +33,4 @@ const TestReportItemSkeleton: React.FC<SkeletonProps> = ({
   );
 };
 
-export default withStyles(styles)(TestReportItemSkeleton);
+export default TestReportItemSkeleton;

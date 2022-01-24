@@ -19,6 +19,7 @@ export const MainDialog = styled(Dialog, {
   $isLoading?: boolean;
 }>(({ $isLoading }) => ({
   [`& .${dialogClasses.paperWidthXs}`]: { maxWidth: '368px' },
+  [`& .${dialogClasses.paperWidthSm}`]: { maxWidth: '560px' },
   [`& .${dialogClasses.paperWidthMd}`]: {
     maxWidth: '640px',
     maxHeight: '640px',
@@ -37,7 +38,7 @@ export const Title = styled(DialogTitle, {
   },
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'baseline',
+  alignItems: 'center',
 }));
 
 export const Content = styled(DialogContent)(({ theme }) => ({

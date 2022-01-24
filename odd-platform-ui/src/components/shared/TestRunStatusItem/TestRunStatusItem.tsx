@@ -6,7 +6,7 @@ import * as S from './TestRunStatusItemStyles';
 
 interface TestRunStatusItemProps {
   count?: number;
-  typeName: DataQualityTestRunStatusEnum | undefined;
+  typeName: DataQualityTestRunStatusEnum;
   size?: 'large' | 'small';
   sx?: SxProps<Theme>;
 }
@@ -19,13 +19,11 @@ const TestRunStatusItem: React.FC<TestRunStatusItemProps> = ({
 }) => (
   <S.Container title={typeName} sx={sx}>
     {size === 'small' ? (
-      <S.FilledContainer $typeName={typeName} $size={size}>
-        {count}
-      </S.FilledContainer>
+      <S.FilledContainer $typeName={typeName}>{count}</S.FilledContainer>
     ) : (
       <>
         <S.Count>{count}</S.Count>
-        <S.FilledContainer $typeName={typeName} $count={count}>
+        <S.FilledContainer $typeName={typeName}>
           {typeName?.toLowerCase()}
         </S.FilledContainer>
       </>
