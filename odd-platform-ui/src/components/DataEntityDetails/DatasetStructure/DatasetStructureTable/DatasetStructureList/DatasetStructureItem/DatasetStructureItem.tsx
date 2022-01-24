@@ -26,6 +26,7 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
 import DatasetFieldInfoEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/DatasetFieldInfoEditFormContainer';
 import { StylesType } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetStructureItemStyles';
+import DatasetFieldEnumsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsEditFormContainer';
 
 interface DatasetStructureItemProps extends StylesType {
   initialStateOpen?: boolean;
@@ -204,6 +205,18 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
             </Grid>
             <Grid item className={classes.typeCol}>
               <div className={classes.optionsBtn}>
+                <DatasetFieldEnumsEditFormContainer
+                  datasetFieldId={datasetField.id}
+                  btnCreateEl={
+                    <AppButton
+                      size="medium"
+                      color="primaryLight"
+                      sx={{ mr: 0.5 }}
+                    >
+                      Add values
+                    </AppButton>
+                  }
+                />
                 <DatasetFieldInfoEditFormContainer
                   datasetFieldId={datasetField.id}
                   btnCreateEl={

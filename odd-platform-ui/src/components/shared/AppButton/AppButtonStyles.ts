@@ -30,6 +30,7 @@ export const StyledAppButton = styled(Button, {
     fontWeight: theme.typography.body1.fontWeight,
     fontSize: theme.typography.body1.fontSize,
     lineHeight: theme.typography.body1.lineHeight,
+    whiteSpace: 'nowrap',
     ...breakpointDownLgBody2,
   },
   [`&.${buttonClasses.text}`]: {
