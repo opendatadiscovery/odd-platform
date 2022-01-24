@@ -11,9 +11,8 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { StylesType } from './OwnerFormStyles';
 
-interface OwnerFormProps extends StylesType {
+interface OwnerFormProps {
   btnCreateEl: JSX.Element;
   owner?: Owner;
   isLoading: boolean;
@@ -22,7 +21,6 @@ interface OwnerFormProps extends StylesType {
 }
 
 const OwnerForm: React.FC<OwnerFormProps> = ({
-  classes,
   btnCreateEl,
   owner,
   isLoading,
@@ -75,15 +73,13 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4">{owner ? 'Edit' : 'Add'} Owner</Typography>
+    <Typography variant="h4" component="span">
+      {owner ? 'Edit' : 'Add'} Owner
+    </Typography>
   );
 
   const formContent = () => (
-    <form
-      id="owner-create-form"
-      onSubmit={handleSubmit(handleSudmit)}
-      className={classes.container}
-    >
+    <form id="owner-create-form" onSubmit={handleSubmit(handleSudmit)}>
       <Controller
         name="name"
         control={control}

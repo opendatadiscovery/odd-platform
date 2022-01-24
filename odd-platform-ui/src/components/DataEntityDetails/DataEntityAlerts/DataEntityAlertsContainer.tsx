@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
@@ -8,7 +7,6 @@ import {
 } from 'redux/selectors/alert.selectors';
 import { updateAlertStatus } from 'redux/thunks';
 import DataEntityAlerts from './DataEntityAlerts';
-import { styles } from './DataEntityAlertsStyles';
 
 interface RouteProps {
   dataEntityId: string;
@@ -34,4 +32,4 @@ const mapDispatchToProps = { updateAlertStatus };
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(DataEntityAlerts));
+)(DataEntityAlerts);

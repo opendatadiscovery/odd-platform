@@ -35,7 +35,6 @@ export const colWidthStyles = {
 
 const searchHeight = 40;
 
-export const Container = styled(Grid)(({ theme }) => ({}));
 export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
@@ -45,7 +44,7 @@ export const ColContainer = styled(Grid, {
   shouldForwardProp: propsChecker,
 })<{
   $colType: ColType;
-}>(({ theme, $colType }) => ({
+}>(({ $colType }) => ({
   ...colWidthStyles.col,
   ...colWidthStyles[$colType],
 }));

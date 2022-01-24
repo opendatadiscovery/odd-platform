@@ -30,7 +30,7 @@ const AppTabLabel: React.FC<AppTabLabelProps> = ({
     );
 
   return (
-    <S.Container variant="body1">
+    <S.Container variant="body1" component="span">
       {name}
       {showHint && hint !== undefined
         ? getLabelContent(isHintUpdated)

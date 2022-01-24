@@ -19,9 +19,9 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
-import { StylesType } from './TagsListStyles';
+import * as S from './TagsListStyles';
 
-interface TagsListProps extends StylesType {
+interface TagsListProps {
   tagsList: Tag[];
   isFetching: boolean;
   isDeleting: boolean;
@@ -32,7 +32,6 @@ interface TagsListProps extends StylesType {
 }
 
 const TagsListView: React.FC<TagsListProps> = ({
-  classes,
   tagsList,
   isFetching,
   isDeleting,
@@ -85,14 +84,14 @@ const TagsListView: React.FC<TagsListProps> = ({
   };
 
   return (
-    <div className={classes.container}>
-      <div className={classes.caption}>
+    <Grid container flexDirection="column" alignItems="center">
+      <S.Caption container sx={{ mb: 1 }}>
         <Typography variant="h1">Tags</Typography>
-        <Typography variant="subtitle1" className={classes.totalCountText}>
+        <Typography variant="subtitle1" color="texts.info">
           <NumberFormatted value={totalTags} /> tags overall
         </Typography>
-      </div>
-      <div className={classes.caption}>
+      </S.Caption>
+      <S.Caption container sx={{ mb: 2 }}>
         <AppTextField
           placeholder="Search tag..."
           value={searchText}
@@ -125,25 +124,24 @@ const TagsListView: React.FC<TagsListProps> = ({
             </AppButton>
           }
         />
-      </div>
-      <Grid container className={classes.tagsTableHeader}>
-        <Grid item className={classes.col}>
-          <Typography variant="subtitle2" className={classes.rowName}>
+      </S.Caption>
+      <S.TableHeader container>
+        <S.Col item>
+          <Typography variant="subtitle2" color="texts.hint">
             Name
           </Typography>
-        </Grid>
-        <Grid item className={classes.col}>
-          <Typography variant="subtitle2" className={classes.rowName}>
+        </S.Col>
+        <S.Col item>
+          <Typography variant="subtitle2" color="texts.hint">
             Priority
           </Typography>
-        </Grid>
-      </Grid>
+        </S.Col>
+      </S.TableHeader>
       <Grid container>
         <Grid item xs={12}>
           <InfiniteScroll
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
-            className={classes.tagsItem}
             dataLength={tagsList.length}
             scrollThreshold="200px"
             loader={
@@ -173,7 +171,7 @@ const TagsListView: React.FC<TagsListProps> = ({
       {!isFetching && !tagsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
-    </div>
+    </Grid>
   );
 };
 

@@ -1,48 +1,22 @@
-import { Theme } from '@mui/material';
+import { Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+export const Caption = styled(Grid)(() => ({
+  alignItems: 'center',
+  justifyContent: 'space-between',
+}));
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      '& > :first-child': {
-        marginBottom: theme.spacing(1),
-      },
-    },
-    col: {
-      minWidth: '285px',
-      display: 'flex',
-      alignItems: 'center',
-      overflow: 'hidden',
-    },
-    caption: {
-      marginBottom: theme.spacing(2),
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      width: 'calc(100% - 8px)',
-    },
-    tagsTableHeader: {
-      flexWrap: 'nowrap',
-      paddingLeft: theme.spacing(1),
-      borderBottom: '1px solid',
-      borderBottomColor: theme.palette.divider,
-    },
-    rowName: { color: theme.palette.texts.hint },
-    tagsItem: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    totalCountText: {
-      color: theme.palette.texts.info,
-    },
-    searchInput: {
-      minWidth: '340px',
-    },
-  });
+export const TableHeader = styled(Grid)(({ theme }) => ({
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.divider,
+  '& > *': {
+    padding: theme.spacing(0, 1),
+  },
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const Col = styled(Grid)(() => ({
+  minWidth: '285px',
+  display: 'flex',
+  alignItems: 'center',
+  overflow: 'hidden',
+}));

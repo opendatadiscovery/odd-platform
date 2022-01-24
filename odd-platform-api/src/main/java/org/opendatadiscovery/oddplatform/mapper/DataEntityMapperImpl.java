@@ -82,6 +82,46 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             entity.setStats(mapStats(dto.getDataSetDetailsDto()));
         }
 
+        if (types.contains(DataEntityTypeDto.DATA_TRANSFORMER)) {
+            entity.setSourceList(dto.getDataTransformerDetailsDto().sourceList()
+                .stream()
+                .distinct()
+                .map(this::mapReference)
+                .collect(Collectors.toList()));
+
+            entity.setTargetList(dto.getDataTransformerDetailsDto()
+                .targetList()
+                .stream()
+                .distinct()
+                .map(this::mapReference)
+                .collect(Collectors.toList()));
+        }
+
+        if (types.contains(DataEntityTypeDto.DATA_QUALITY_TEST)) {
+            entity.datasetsList(dto.getDataQualityTestDetailsDto()
+                    .datasetList()
+                    .stream()
+                    .distinct()
+                    .map(this::mapReference)
+                    .collect(Collectors.toList()));
+        }
+
+        if (types.contains(DataEntityTypeDto.DATA_CONSUMER)) {
+            entity.setInputList(dto.getDataConsumerDetailsDto()
+                .inputList()
+                .stream()
+                .distinct()
+                .map(this::mapReference).collect(Collectors.toList()));
+        }
+
+        if (types.contains(DataEntityTypeDto.DATA_INPUT)) {
+            entity.setOutputList(dto.getDataInputDetailsDto()
+                .outputList()
+                .stream()
+                .distinct()
+                .map(this::mapReference).collect(Collectors.toList()));
+        }
+
         if (types.contains(DataEntityTypeDto.DATA_ENTITY_GROUP) && dto.getGroupsDto() != null) {
             final List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
                 .map(this::mapReference)

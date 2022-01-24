@@ -11,9 +11,8 @@ import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { StylesType } from './NamespaceFormStyles';
 
-interface NamespaceFormProps extends StylesType {
+interface NamespaceFormProps {
   btnEl: JSX.Element;
   namespace?: Namespace;
   isLoading: boolean;
@@ -26,7 +25,6 @@ interface NamespaceFormProps extends StylesType {
 }
 
 const NamespaceForm: React.FC<NamespaceFormProps> = ({
-  classes,
   btnEl,
   namespace,
   isLoading,
@@ -78,7 +76,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
   };
 
   const formTitle = (
-    <Typography variant="h4">
+    <Typography variant="h4" component="span">
       {namespace ? 'Edit' : 'Add'} Namespace
     </Typography>
   );
@@ -131,6 +129,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
+      clearState={clearState}
     />
   );
 };

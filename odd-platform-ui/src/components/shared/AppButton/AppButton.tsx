@@ -1,9 +1,6 @@
 import React from 'react';
 import { ButtonProps } from '@mui/material';
-import {
-  ButtonColors,
-  StyledAppButton,
-} from 'components/shared/AppButton/AppButtonStyles';
+import { ButtonColors, StyledAppButton } from './AppButtonStyles';
 
 interface AppButtonProps
   extends Pick<

@@ -36,6 +36,7 @@ interface TextType {
   secondary: string;
   info: string;
   hint: string;
+  action: string;
 }
 
 interface ButtonType {

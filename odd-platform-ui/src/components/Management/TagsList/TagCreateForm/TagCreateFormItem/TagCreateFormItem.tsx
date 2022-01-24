@@ -1,20 +1,18 @@
 import React from 'react';
-import { Grid, Checkbox, FormControlLabel } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import { useFormContext, Controller } from 'react-hook-form';
+import { FormControlLabel } from '@mui/material';
+import { Controller, useFormContext } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { styles, StylesType } from './TagCreateFormItemStyles';
+import * as S from './TagCreateFormItemStyles';
 
-interface TagCreateFormItemProps extends StylesType {
+interface TagCreateFormItemProps {
   itemIndex: number;
   onItemRemove: () => void;
   fieldsLength?: number;
 }
 
 const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
-  classes,
   itemIndex,
   onItemRemove,
   fieldsLength,
@@ -42,7 +40,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
           />
         )}
       />
-      <Grid container className={classes.tagItemButtons}>
+      <S.TagItemBtnsContainer container sx={{ mt: 1, mb: 1.5 }}>
         <Controller
           name={`tags.${itemIndex}.important`}
           control={control}
@@ -51,9 +49,9 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
             <FormControlLabel
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
-              className={classes.checkboxContainer}
+              sx={{ ml: 0.5, mr: 0 }}
               checked={field.value}
-              control={<Checkbox className={classes.importantCheckbox} />}
+              control={<S.ImportantCheckbox sx={{ mr: 1 }} />}
               label="Important"
             />
           )}
@@ -63,9 +61,9 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
             Delete
           </AppButton>
         )}
-      </Grid>
+      </S.TagItemBtnsContainer>
     </>
   );
 };
 
-export default withStyles(styles)(TagCreateFormItem);
+export default TagCreateFormItem;

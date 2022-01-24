@@ -1,7 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
-import cx from 'classnames';
 import {
   DataQualityApiGetDatasetTestReportRequest,
   DataQualityTestRunStatusEnum,
@@ -10,9 +9,13 @@ import {
 import { dataEntityTestReportPath } from 'lib/paths';
 import OverviewDataQualityReportSkeleton from 'components/DataEntityDetails/Overview/OverviewDataQualityReport/OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { StylesType } from './OverviewDataQualityReportStyles';
+import {
+  Bar,
+  CountLabel,
+  Container,
+} from './OverviewDataQualityReportStyles';
 
-interface OverviewDataQualityReportProps extends StylesType {
+interface OverviewDataQualityReportProps {
   isDatasetTestReportFetching: boolean;
   dataEntityId: number;
   datasetQualityTestReport?: DataSetTestReport;
@@ -22,7 +25,6 @@ interface OverviewDataQualityReportProps extends StylesType {
 }
 
 const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
-  classes,
   dataEntityId,
   datasetQualityTestReport,
   fetchDataSetQualityTestReport,
@@ -35,7 +37,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
   }, []);
 
   return (
-    <div className={classes.container}>
+    <Container>
       {isDatasetTestReportFetching ? (
         <OverviewDataQualityReportSkeleton />
       ) : (
@@ -57,157 +59,117 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
               </AppButton>
             </Grid>
           </Grid>
-          <Grid item container className={classes.totalScore}>
+          <Grid item container sx={{ mt: 2.75, mb: 2 }}>
             <Grid item container xs={6} alignItems="baseline">
-              <Typography variant="h4" className={classes.countValue}>
+              <Typography variant="h4" sx={{ mr: 0.5 }}>
                 {datasetQualityTestReport?.total}
               </Typography>
-              <Typography
-                variant="subtitle2"
-                className={classes.countLabel}
-              >
-                tests
-              </Typography>
+              <Typography variant="subtitle2">tests</Typography>
             </Grid>
             <Grid item container xs={6} alignItems="baseline">
-              <Typography variant="h4" className={classes.countValue}>
+              <Typography variant="h4" sx={{ mr: 0.5 }}>
                 {datasetQualityTestReport?.score}%
               </Typography>
-              <Typography
-                variant="subtitle2"
-                className={classes.countLabel}
-              >
-                score
-              </Typography>
+              <Typography variant="subtitle2">score</Typography>
             </Grid>
           </Grid>
-          <Grid item container className={classes.countContainer}>
-            <Typography variant="body1" className={classes.countValue}>
+          <Grid item container>
+            <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.successTotal}
             </Typography>
-            <Typography
+            <CountLabel
               variant="body1"
-              className={cx(
-                classes.countLabel,
-                DataQualityTestRunStatusEnum.SUCCESS
-              )}
+              $testRunStatus={DataQualityTestRunStatusEnum.SUCCESS}
             >
               passed
-            </Typography>
+            </CountLabel>
           </Grid>
-          <Grid item container className={classes.barsContainer}>
-            <div
-              className={cx(
-                classes.bar,
-                DataQualityTestRunStatusEnum.SUCCESS
-              )}
+          <Grid item container sx={{ mt: 0.5, mb: 0.5 }}>
+            <Bar
+              $testReport={datasetQualityTestReport}
+              $testRunStatus={DataQualityTestRunStatusEnum.SUCCESS}
             />
             <Grid item container wrap="nowrap">
-              <div
-                className={cx(
-                  classes.bar,
-                  DataQualityTestRunStatusEnum.FAILED
-                )}
+              <Bar
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.FAILED}
               />
-              <div
-                className={cx(
-                  classes.bar,
-                  DataQualityTestRunStatusEnum.BROKEN
-                )}
+              <Bar
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.BROKEN}
               />
-              <div
-                className={cx(
-                  classes.bar,
-                  DataQualityTestRunStatusEnum.SKIPPED
-                )}
+              <Bar
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.SKIPPED}
               />
-              <div
-                className={cx(
-                  classes.bar,
-                  DataQualityTestRunStatusEnum.ABORTED
-                )}
+              <Bar
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.ABORTED}
               />
-              <div
-                className={cx(
-                  classes.bar,
-                  DataQualityTestRunStatusEnum.UNKNOWN
-                )}
+              <Bar
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataQualityTestRunStatusEnum.UNKNOWN}
               />
             </Grid>
           </Grid>
-          <Grid item container className={classes.countContainer}>
-            <Typography variant="body1" className={classes.countValue}>
+          <Grid item container>
+            <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.failedTotal}
             </Typography>
-            <Typography
+            <CountLabel
               variant="body1"
-              className={cx(
-                classes.countLabel,
-                DataQualityTestRunStatusEnum.FAILED
-              )}
+              $testRunStatus={DataQualityTestRunStatusEnum.FAILED}
             >
               failed
-            </Typography>
+            </CountLabel>
           </Grid>
-          <Grid item container className={classes.countContainer}>
-            <Typography variant="body1" className={classes.countValue}>
+          <Grid item container sx={{ mt: 0.25 }}>
+            <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.brokenTotal}
             </Typography>
-            <Typography
+            <CountLabel
               variant="body1"
-              className={cx(
-                classes.countLabel,
-                DataQualityTestRunStatusEnum.BROKEN
-              )}
+              $testRunStatus={DataQualityTestRunStatusEnum.BROKEN}
             >
               broken
-            </Typography>
+            </CountLabel>
           </Grid>
-          <Grid item container className={classes.countContainer}>
-            <Typography variant="body1" className={classes.countValue}>
+          <Grid item container sx={{ mt: 0.25 }}>
+            <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.abortedTotal}
             </Typography>
-            <Typography
+            <CountLabel
               variant="body1"
-              className={cx(
-                classes.countLabel,
-                DataQualityTestRunStatusEnum.ABORTED
-              )}
+              $testRunStatus={DataQualityTestRunStatusEnum.ABORTED}
             >
               aborted
-            </Typography>
+            </CountLabel>
           </Grid>
-          <Grid item container className={classes.countContainer}>
-            <Typography variant="body1" className={classes.countValue}>
+          <Grid item container sx={{ mt: 0.25 }}>
+            <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.skippedTotal}
             </Typography>
-            <Typography
+            <CountLabel
               variant="body1"
-              className={cx(
-                classes.countLabel,
-                DataQualityTestRunStatusEnum.SKIPPED
-              )}
+              $testRunStatus={DataQualityTestRunStatusEnum.SKIPPED}
             >
               skipped
-            </Typography>
+            </CountLabel>
           </Grid>
-          <Grid item container className={classes.countContainer}>
-            <Typography variant="body1" className={classes.countValue}>
+          <Grid item container sx={{ mt: 0.25 }}>
+            <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.unknownTotal}
             </Typography>
-            <Typography
+            <CountLabel
               variant="body1"
-              className={cx(
-                classes.countLabel,
-                DataQualityTestRunStatusEnum.UNKNOWN
-              )}
+              $testRunStatus={DataQualityTestRunStatusEnum.UNKNOWN}
             >
               unknown
-            </Typography>
+            </CountLabel>
           </Grid>
         </Grid>
       )}
-    </div>
+    </Container>
   );
 };
 

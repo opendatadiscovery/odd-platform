@@ -1,13 +1,11 @@
-import withStyles from '@mui/styles/withStyles';
 import { updateDataEntityInternalName } from 'redux/thunks';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces/state';
 import {
-  getDataEntityInternalNameUpdating,
   getDataEntityInternalName,
+  getDataEntityInternalNameUpdating,
 } from 'redux/selectors/dataentity.selectors';
 import InternalNameFormDialog from './InternalNameFormDialog';
-import { styles } from './InternalNameFormDialogStyles';
 
 const mapStateToProps = (
   state: RootState,
@@ -24,4 +22,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(InternalNameFormDialog));
+)(InternalNameFormDialog);

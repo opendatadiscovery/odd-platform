@@ -12,6 +12,10 @@ interface AppIconButtonProps
   icon: React.ReactNode;
   open?: boolean;
   ariaDescribedBy?: IconButtonProps['aria-describedby'];
+  ariaControls?: IconButtonProps['aria-controls'];
+  ariaHaspopup?: IconButtonProps['aria-haspopup'];
+  ariaExpanded?: IconButtonProps['aria-expanded'];
+  height?: number;
 }
 
 const AppIconButton: React.FC<AppIconButtonProps> = ({
@@ -22,13 +26,23 @@ const AppIconButton: React.FC<AppIconButtonProps> = ({
   onClick,
   sx,
   disabled,
-  ariaDescribedBy,
   id,
+  ariaDescribedBy,
+  ariaControls,
+  ariaExpanded,
+  ariaHaspopup,
+  edge,
+  height,
 }) => (
   <StyledIconButton
     aria-describedby={ariaDescribedBy}
+    aria-haspopup={ariaHaspopup}
+    aria-expanded={ariaExpanded}
+    aria-controls={ariaControls}
+    edge={edge}
     $color={color}
     $open={open}
+    $height={height}
     id={id}
     disableRipple
     size={size}
