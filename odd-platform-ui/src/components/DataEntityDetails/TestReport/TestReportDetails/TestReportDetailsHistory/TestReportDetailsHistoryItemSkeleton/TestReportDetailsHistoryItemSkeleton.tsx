@@ -1,22 +1,16 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import {
-  styles,
-  StylesType,
-} from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistoryItemSkeleton/TestReportDetailsHistoryItemSkeletonStyles';
 import { mainSkeletonHeight } from 'lib/constants';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   width: string;
 }
 
 const TestReportDetailsHistoryItemSkeleton: React.FC<SkeletonProps> = ({
-  classes,
   width,
 }) => (
-  <Grid container className={classes.container} wrap="nowrap">
+  <Grid container sx={{ py: 1.25 }} wrap="nowrap">
     <Grid item container xs={8}>
       <Skeleton width={width} height={mainSkeletonHeight} />
     </Grid>
@@ -25,4 +19,4 @@ const TestReportDetailsHistoryItemSkeleton: React.FC<SkeletonProps> = ({
     </Grid>
   </Grid>
 );
-export default withStyles(styles)(TestReportDetailsHistoryItemSkeleton);
+export default TestReportDetailsHistoryItemSkeleton;

@@ -4,20 +4,18 @@ import TestReportDetailsOverviewSkeleton from 'components/DataEntityDetails/Test
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { format, formatDistanceStrict } from 'date-fns';
 import { DataQualityTest } from 'generated-sources';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
-import { StylesType } from './TestReportDetailsOverviewStyles';
+import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 
-interface TestReportDetailsOverviewProps extends StylesType {
+interface TestReportDetailsOverviewProps {
   qualityTest: DataQualityTest;
   isDatasetTestListFetching: boolean;
 }
 
 const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
-  classes,
   qualityTest,
   isDatasetTestListFetching,
 }) => (
-  <Grid className={classes.container}>
+  <Grid container direction="column">
     {isDatasetTestListFetching ? (
       <SkeletonWrapper
         renderContent={({ randomSkeletonPercentWidth }) => (
@@ -28,107 +26,57 @@ const TestReportDetailsOverview: React.FC<TestReportDetailsOverviewProps> = ({
       />
     ) : (
       <>
-        <Grid className={classes.statContainer}>
-          <Grid container className={classes.statItem}>
-            <Grid item xs={4}>
-              <Typography variant="body1" color="textSecondary">
-                Date
-              </Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="body1">
-                {qualityTest?.latestRun?.startTime &&
-                  format(
-                    qualityTest?.latestRun?.startTime,
-                    'd MMM yyyy, HH:MM a'
-                  )}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid container className={classes.statItem}>
-            <Grid item xs={4}>
-              <Typography variant="body1" color="textSecondary">
-                Duration
-              </Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="body1">
-                {qualityTest?.latestRun?.startTime &&
-                  qualityTest?.latestRun.endTime &&
-                  formatDistanceStrict(
-                    qualityTest?.latestRun.endTime,
-                    qualityTest?.latestRun.startTime,
-                    {
-                      addSuffix: false,
-                    }
-                  )}
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid container className={classes.statItem}>
-            <Grid item xs={4}>
-              <Typography variant="body1" color="textSecondary">
-                Severity
-              </Typography>
-            </Grid>
-            <Grid item xs={8}>
-              <Typography variant="body2" />
-            </Grid>
-          </Grid>
+        <Grid sx={{ mt: 2 }}>
+          <LabeledInfoItem label="Date" inline labelWidth={4}>
+            {qualityTest?.latestRun?.startTime &&
+              format(
+                qualityTest?.latestRun?.startTime,
+                'd MMM yyyy, HH:MM a'
+              )}
+          </LabeledInfoItem>
+          <LabeledInfoItem label="Duration" inline labelWidth={4}>
+            {qualityTest?.latestRun?.startTime &&
+              qualityTest?.latestRun.endTime &&
+              formatDistanceStrict(
+                qualityTest?.latestRun.endTime,
+                qualityTest?.latestRun.startTime,
+                {
+                  addSuffix: false,
+                }
+              )}
+          </LabeledInfoItem>
+          <LabeledInfoItem label="Severity" inline labelWidth={4} />
         </Grid>
-        <Grid className={classes.paramContainer}>
-          <Typography variant="h4" className={classes.statItem}>
-            Parameters
-          </Typography>
+        <Grid sx={{ mt: 2 }}>
           {qualityTest?.expectation &&
             Object.entries(qualityTest.expectation).map(
               ([key, value]) =>
                 value && (
-                  <Grid key={key} container>
-                    <Grid item xs={4} className={classes.paramName}>
-                      <AppTooltip title={() => key}>
-                        <Typography
-                          variant="body1"
-                          color="textSecondary"
-                          noWrap
-                        >
-                          {key}
-                        </Typography>
-                      </AppTooltip>
-                    </Grid>
-                    <Grid item xs={8}>
-                      <AppTooltip title={() => value}>
-                        <Typography variant="body1" noWrap>
-                          {value}
-                        </Typography>
-                      </AppTooltip>
-                    </Grid>
-                  </Grid>
+                  <LabeledInfoItem
+                    key={key}
+                    label={key}
+                    inline
+                    labelWidth={4}
+                  >
+                    {value}
+                  </LabeledInfoItem>
                 )
             )}
         </Grid>
-        <Grid className={classes.paramContainer}>
-          <Typography variant="h4" className={classes.statItem}>
-            Links
-          </Typography>
-          <Grid container>
-            <Grid item xs={4}>
-              {qualityTest?.linkedUrlList?.map(link => (
-                <Typography variant="body1">{link}</Typography>
-              ))}
-            </Grid>
+        <Grid sx={{ mt: 2 }}>
+          <Typography variant="h4">Links</Typography>
+          <Grid container item xs={4} sx={{ mt: 1 }}>
+            {qualityTest?.linkedUrlList?.map(link => (
+              <Typography variant="body1">{link}</Typography>
+            ))}
           </Grid>
         </Grid>
-        <Grid className={classes.paramContainer}>
-          <Typography variant="h4" className={classes.statItem}>
-            Execution
-          </Typography>
-          <Grid container>
-            <Grid item xs={12}>
-              <Typography variant="body2" color="textSecondary">
-                No information about test execution is available.
-              </Typography>
-            </Grid>
+        <Grid sx={{ mt: 2 }}>
+          <Typography variant="h4">Execution</Typography>
+          <Grid container item xs={12} sx={{ mt: 1 }}>
+            <Typography variant="body2" color="texts.secondary">
+              No information about test execution is available.
+            </Typography>
           </Grid>
         </Grid>
       </>

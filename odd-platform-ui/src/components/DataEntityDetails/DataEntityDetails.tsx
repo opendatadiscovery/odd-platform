@@ -52,7 +52,7 @@ const DataEntityAlertsContainer = React.lazy(
   () => import('./DataEntityAlerts/DataEntityAlertsContainer')
 );
 const QualityTestHistoryContainer = React.lazy(
-  () => import('./QualityTestRunsHistory/QualityTestRunsHistoryContainer')
+  () => import('./QualityTestRunsHistory/TestRunsHistoryContainer')
 );
 
 interface DataEntityDetailsProps {
