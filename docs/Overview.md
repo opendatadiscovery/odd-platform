@@ -5,12 +5,12 @@
 [Start using ODD](#start-using-odd)
 ## About ODD
 The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams: \
- ✔️ Free open-source and community-driven \
- ✔️ ML first citizen \
- ✔️ AI-based UX \
- ✔️ End-to-end microservices lineage support \
- ✔️ Flexible data quality integration options \
- ✔️ Auto-generated ML experiment lineage and metadata
+   ✔️ Free open-source and community-driven \
+   ✔️ ML first citizen \
+   ✔️ AI-based UX \
+   ✔️ End-to-end microservices lineage support \
+   ✔️ Flexible data quality integration options \
+   ✔️ Auto-generated ML experiment lineage and metadata
 
 ## The platform for your business
 ![](.gitbook/img/audience.svg) ODD's **target audience** includes large-scale 
