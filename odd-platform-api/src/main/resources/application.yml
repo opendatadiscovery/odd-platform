@@ -63,6 +63,9 @@ management:
       enabled: true
     info:
       enabled: true
+  health:
+    ldap:
+      enabled: false
 
 logging:
   level:
