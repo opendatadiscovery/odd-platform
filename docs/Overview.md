@@ -19,9 +19,9 @@ small and mid-scale companies seeking
 OSS data catalogue solution and also
 DS teams
 aiming at better data governance. 
-***
+___
 ![](.gitbook/img/alltogether.svg) **An ecosystem for all data team members**. Platform functionality covers requirements of Data Scientists and Engineers as well as Data Analysts, Architects, QA and BI Engineers. 
-***
+___
 ![](.gitbook/img/onboarding.svg) **Onboarding to data** helps newcomers get such important information as data structure, data owners and pipelines.
 
 ## Features and use cases 
