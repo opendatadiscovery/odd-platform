@@ -3,7 +3,6 @@
 [The platform for your business](#the-platform-for-your-business) \
 [Features and use cases](#features-and-use-cases) \
 [Start using ODD](#start-using-odd)
-> Open Data Discovery makes all your data entities reliable, observable, and easily discoverable.
 ## About ODD
 The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams: \
  ✔️ Free open-source and community-driven \
@@ -14,7 +13,7 @@ The open-source Data Discovery Platform improves productivity, collaboration, an
  ✔️ Auto-generated ML experiment lineage and metadata
 
 ## The platform for your business
-![](.gitbook/img/audience.png) ODD's **target audience** includes large-scale 
+![](../.gitbook/img/audience.png) ODD's **target audience** includes large-scale 
 companies challenging data mesh concept,
 small and mid-scale companies seeking 
 OSS data catalogue solution and also
@@ -30,9 +29,5 @@ Dive into ODD opportunities with a list of ODD features and use cases for differ
 
 
 <!---
-ODD's **target audience** includes large-scale companies challenging data mesh concept,
-small and mid-scale companies seeking OSS data catalogue solution and also
-DS teams aiming at better data governance. \
-Roles \
-With the Platform you will be able to:
+> Open Data Discovery makes all your data entities reliable, observable, and easily discoverable.
 -->
