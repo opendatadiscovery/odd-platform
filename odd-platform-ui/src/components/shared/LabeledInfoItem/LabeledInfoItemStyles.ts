@@ -33,6 +33,7 @@ export const Label = styled(Typography)<{ component: React.ElementType }>(
     color: theme.palette.texts.secondary,
     lineHeight: theme.typography.h3.lineHeight,
     overflow: 'hidden',
+    width: 'inherit',
   })
 );
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format } from 'date-fns';
-import { useCopyToClipboard } from 'lib/hooks';
 import {
   DataEntityApiDeleteOwnershipRequest,
   DataEntityDetails,
@@ -11,11 +10,12 @@ import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
+import CopyIcon from 'components/shared/Icons/CopyIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
-import CopyIcon from 'components/shared/Icons/CopyIcon';
+import CopyButton from 'components/shared/CopyButton/CopyButton';
 import * as S from './OverviewGeneralStyles';
 import OwnershipFormContainer from '../../Ownership/OwnershipFormContainer';
 
@@ -37,7 +37,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
   const handleOwnershipDelete = (ownershipId: number) => () =>
     deleteDataEntityOwnership({ dataEntityId, ownershipId });
 
-  const { copyRef, copyToClipboard } = useCopyToClipboard();
+  const copyRef = React.createRef<HTMLElement>();
   return (
     <Grid container>
       <Grid item container sm={12}>
@@ -65,30 +65,21 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
         </Grid>
         <Grid item sm={12} sx={{ mt: 2 }}>
           <LabeledInfoItem
-            fullWidthTitle
+            labelWidth={12}
             label={
               <Grid container justifyContent="space-between">
                 <Grid item>ODDRN</Grid>
-                <Grid item sx={{ cursor: 'pointer' }}>
-                  <AppIconButton
-                    icon={<CopyIcon />}
+                <Grid item>
+                  <CopyButton
+                    copyString={dataEntityDetails.oddrn}
                     color="tertiary"
-                    onClick={copyToClipboard}
+                    icon={<CopyIcon />}
                   />
-                  <Typography
-                    variant="body1"
-                    component="span"
-                    onClick={copyToClipboard}
-                  >
-                    Copy
-                  </Typography>
                 </Grid>
               </Grid>
             }
           >
-            <S.OddrnValue ref={copyRef}>
-              {dataEntityDetails.oddrn}
-            </S.OddrnValue>
+            <S.OddrnValue>{dataEntityDetails.oddrn}</S.OddrnValue>
           </LabeledInfoItem>
         </Grid>
         <Grid item sm={12} sx={{ mt: 2 }}>
