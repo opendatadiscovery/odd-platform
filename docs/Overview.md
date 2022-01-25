@@ -18,9 +18,11 @@ companies challenging data mesh concept,
 small and mid-scale companies seeking 
 OSS data catalogue solution and also
 DS teams
-aiming at better data governance. \
-![](.gitbook/img/alltogether.svg) **An ecosystem for all data team members**. Platform functionality covers requirements of Data Scientists and Engineers as well as Data Analysts, Architects, QA and BI Engineers. \
-[img] **Onboarding to data** helps newcomers get such important information as data structure, data owners and pipelines.
+aiming at better data governance. 
+***
+![](.gitbook/img/alltogether.svg) **An ecosystem for all data team members**. Platform functionality covers requirements of Data Scientists and Engineers as well as Data Analysts, Architects, QA and BI Engineers. 
+***
+![](.gitbook/img/onboarding.svg) **Onboarding to data** helps newcomers get such important information as data structure, data owners and pipelines.
 
 ## Features and use cases 
 Dive into ODD opportunities with a list of ODD features and use cases for different types of users.
