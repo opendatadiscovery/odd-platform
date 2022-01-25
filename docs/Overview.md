@@ -13,7 +13,7 @@ The open-source Data Discovery Platform improves productivity, collaboration, an
  ✔️ Auto-generated ML experiment lineage and metadata
 
 ## The platform for your business
-![](../.gitbook/img/audience.png) ODD's **target audience** includes large-scale 
+![](.gitbook/img/audience.png) ODD's **target audience** includes large-scale 
 companies challenging data mesh concept,
 small and mid-scale companies seeking 
 OSS data catalogue solution and also
