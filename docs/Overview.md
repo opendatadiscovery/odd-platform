@@ -26,7 +26,7 @@ aiming at better data governance. \
 ## Features and use cases 
 Dive into ODD opportunities with a list of ODD features and use cases for different types of users.
 ## Start using ODD
-[Get started](https://github.com/opendatadiscovery/odd-platform/blob/main/docker/README.md) right now or [schedule demo](https://calendly.com/germanosin/opendatadiscovery-demo?month=2022-01) for free. To get more info go to [opendatadiscovery.org](https://opendatadiscovery.org/)
+[Get started](https://github.com/opendatadiscovery/odd-platform/blob/main/docker/README.md) right now or [schedule demo](https://calendly.com/germanosin/opendatadiscovery-demo?month=2022-01) for free. See also [opendatadiscovery.org](https://opendatadiscovery.org/)
 
 
 <!---
