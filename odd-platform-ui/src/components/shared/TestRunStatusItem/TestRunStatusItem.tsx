@@ -1,12 +1,12 @@
 import React from 'react';
-import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import { DataQualityTestRunStatus } from 'generated-sources';
 import { SxProps } from '@mui/system';
 import { Theme } from '@mui/material';
 import * as S from './TestRunStatusItemStyles';
 
 interface TestRunStatusItemProps {
   count?: number;
-  typeName: DataQualityTestRunStatusEnum;
+  typeName: DataQualityTestRunStatus;
   size?: 'large' | 'small';
   sx?: SxProps<Theme>;
 }

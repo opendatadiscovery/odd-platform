@@ -5,7 +5,7 @@ import {
   DataEntity,
   DataEntityList,
   DataQualityTestRunList,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
 } from 'generated-sources';
 import uniq from 'lodash/uniq';
 
@@ -21,7 +21,7 @@ export const initialState: DataQualityTestState = {
 const latestRunStatusesCounter = (
   arr: DataEntity[],
   suiteName: string,
-  statusType: DataQualityTestRunStatusEnum
+  statusType: DataQualityTestRunStatus
 ): number =>
   arr.filter(
     item =>
@@ -68,32 +68,32 @@ const createDataSetQualityTestList = (
                 success: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.SUCCESS
+                  DataQualityTestRunStatus.SUCCESS
                 ),
                 failed: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.FAILED
+                  DataQualityTestRunStatus.FAILED
                 ),
                 broken: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.BROKEN
+                  DataQualityTestRunStatus.BROKEN
                 ),
                 aborted: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.ABORTED
+                  DataQualityTestRunStatus.ABORTED
                 ),
                 skipped: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.SKIPPED
+                  DataQualityTestRunStatus.SKIPPED
                 ),
                 unknown: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.UNKNOWN
+                  DataQualityTestRunStatus.UNKNOWN
                 ),
               },
             }

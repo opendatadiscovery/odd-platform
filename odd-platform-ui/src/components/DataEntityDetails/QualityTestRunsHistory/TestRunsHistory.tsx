@@ -2,7 +2,7 @@ import React from 'react';
 import {
   DataQualityApiGetRunsRequest,
   DataQualityTestRun,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
 } from 'generated-sources';
 import capitalize from 'lodash/capitalize';
 import { Grid, MenuItem, Typography } from '@mui/material';
@@ -29,11 +29,15 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
   fetchDataSetQualityTestRuns,
 }) => {
   React.useEffect(() => {
-    fetchDataSetQualityTestRuns({ dataqatestId: dataQATestId });
+    fetchDataSetQualityTestRuns({
+      dataqatestId: dataQATestId,
+      page: 1,
+      size: 10,
+    });
   }, [fetchDataSetQualityTestRuns, dataQATestId]);
 
   const [alertStatus, setAlertStatus] = React.useState<
-    DataQualityTestRunStatusEnum | 'All'
+    DataQualityTestRunStatus | 'All'
   >('All');
 
   const filterDataQATestRunsByStatus = (
@@ -54,12 +58,12 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
         <MenuItem value="All" onClick={() => setAlertStatus('All')}>
           Show all statuses
         </MenuItem>
-        {Object.keys(DataQualityTestRunStatusEnum)?.map(option => (
+        {Object.keys(DataQualityTestRunStatus)?.map(option => (
           <MenuItem
             key={option}
             value={option}
             onClick={() =>
-              setAlertStatus(option as DataQualityTestRunStatusEnum)
+              setAlertStatus(option as DataQualityTestRunStatus)
             }
           >
             {capitalize(option)}

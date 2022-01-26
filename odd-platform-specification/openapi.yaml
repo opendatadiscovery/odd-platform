@@ -1167,6 +1167,13 @@ paths:
       operationId: getRuns
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataQATestIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: './components.yaml/#/components/schemas/DataQualityTestRunStatus'
       responses:
         '200':
           description: OK

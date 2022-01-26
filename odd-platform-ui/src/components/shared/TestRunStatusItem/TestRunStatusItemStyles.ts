@@ -1,4 +1,4 @@
-import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import { DataQualityTestRunStatus } from 'generated-sources';
 import { styled } from '@mui/material/styles';
 import { propsChecker } from 'lib/helpers';
 
@@ -16,7 +16,7 @@ export const Count = styled('span')(({ theme }) => ({
 export const FilledContainer = styled('span', {
   shouldForwardProp: propsChecker,
 })<{
-  $typeName: DataQualityTestRunStatusEnum;
+  $typeName: DataQualityTestRunStatus;
 }>(({ theme, $typeName }) => ({
   fontSize: theme.typography.body2.fontSize,
   lineHeight: theme.typography.body2.lineHeight,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, GridSize, TypographyProps } from '@mui/material';
-import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import { DataQualityTestRunStatus } from 'generated-sources';
 import * as S from './LabeledInfoItemStyles';
 
 interface LabeledInfoItemProps {
@@ -8,7 +8,7 @@ interface LabeledInfoItemProps {
   label: string;
   variant?: TypographyProps['variant'];
   labelWidth?: GridSize;
-  runStatus?: DataQualityTestRunStatusEnum;
+  runStatus?: DataQualityTestRunStatus;
   valueColor?: string;
   valueLineHeight?: number;
   valueWrap?: boolean;
