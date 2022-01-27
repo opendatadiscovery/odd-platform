@@ -1,6 +1,6 @@
 # ODD components for your ecosystem
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.\
-![](.gitbook/img/architecture.png) \
+![](.gitbook/img/architecturex3.png) \
 <img src=".gitbook/img/architecture.png" alt="drawing" width="500"/> \
 <img src=".gitbook/img/architecture.png" alt="drawing" width="200%"/>
 
