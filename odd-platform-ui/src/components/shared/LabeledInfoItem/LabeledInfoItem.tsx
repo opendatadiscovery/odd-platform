@@ -10,6 +10,8 @@ interface LabeledInfoItemProps {
   labelWidth?: GridSize;
   runStatus?: DataQualityTestRunStatusEnum;
   valueColor?: string;
+  valueLineHeight?: number;
+  valueWrap?: boolean;
 }
 
 const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
@@ -20,10 +22,12 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   labelWidth,
   runStatus,
   valueColor,
+  valueLineHeight,
+  valueWrap = false,
 }) => (
   <S.Container container $inline={inline}>
     <Grid item xs={labelWidth || 'auto'}>
-      <S.Label variant={variant} noWrap>
+      <S.Label title={label} variant={variant} noWrap component="span">
         {label}
       </S.Label>
     </Grid>
@@ -40,8 +44,11 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
         $runStatus={runStatus}
         $valueColor={valueColor}
         $inline={inline}
+        $valueLineHeight={valueLineHeight}
         variant={variant}
-        noWrap
+        component="span"
+        noWrap={!valueWrap}
+        title={children?.toString()}
       >
         {children}
       </S.Value>

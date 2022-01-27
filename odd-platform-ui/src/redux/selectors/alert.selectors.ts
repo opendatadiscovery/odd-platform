@@ -46,7 +46,7 @@ export const getAlertListPageInfo = createSelector(
   alertsState => alertsState.pageInfo
 );
 
-export const getDataEntityOpenAlertList = createSelector(
+export const getDataEntityOpenAlertListCount = createSelector(
   getAlertsState,
   getDataEntityId,
   (alertsState, dataEntityId) =>
@@ -57,7 +57,7 @@ export const getDataEntityOpenAlertList = createSelector(
         return memo;
       },
       []
-    )
+    ).length
 );
 
 export const getDataEntityAlertsList = createSelector(

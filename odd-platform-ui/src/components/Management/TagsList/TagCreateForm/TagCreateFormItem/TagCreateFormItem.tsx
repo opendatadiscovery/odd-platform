@@ -1,7 +1,6 @@
 import React from 'react';
-import { Grid, Checkbox, FormControlLabel } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import { useFormContext, Controller } from 'react-hook-form';
+import { FormControlLabel } from '@mui/material';
+import { Controller, useFormContext } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';

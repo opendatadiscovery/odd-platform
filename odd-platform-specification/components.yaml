@@ -539,6 +539,8 @@ components:
                 - BROKEN
                 - ABORTED
                 - UNKNOWN
+          required:
+            - status
 
     DataQualityTestExpectation:
       type: object

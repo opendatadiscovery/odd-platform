@@ -1,15 +1,14 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import RowsIcon from 'components/shared/Icons/RowsIcon';
 import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import UserIcon from 'components/shared/Icons/UserIcon';
-import { styles, StylesType } from './OverviewDatasetStatsStyles';
+import { StatLabel } from './OverviewDatasetStatsStyles';
 
-interface OverviewDatasetStatsProps extends StylesType {
+interface OverviewDatasetStatsProps {
   stats: {
     rowsCount: number;
     fieldsCount: number;
@@ -18,48 +17,41 @@ interface OverviewDatasetStatsProps extends StylesType {
 }
 
 const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({
-  classes,
   stats,
 }) => (
   <Grid container>
-    <Grid item xs={12} className={classes.typeLabel}>
+    <Grid item xs={12} sx={{ ml: 0, mb: 1.25 }}>
       <EntityTypeItem typeName={DataEntityTypeNameEnum.SET} fullName />
     </Grid>
-    <Grid item container xs={4} className={classes.statsItem}>
+    <Grid alignItems="center" item container xs={4}>
       <Grid item xs={12}>
-        <Typography variant="h6" className={classes.statLabel}>
-          Rows
-        </Typography>
+        <StatLabel variant="h6">Rows</StatLabel>
       </Grid>
       <Grid item container xs={12} wrap="nowrap" alignItems="center">
-        <RowsIcon className={classes.statIcon} />
-        <Typography variant="h2" className={classes.statValue}>
+        <RowsIcon sx={{ mr: 1 }} />
+        <Typography variant="h2">
           <NumberFormatted value={stats?.rowsCount} />
         </Typography>
       </Grid>
     </Grid>
-    <Grid item container xs={4} className={classes.statsItem}>
+    <Grid alignItems="center" item container xs={4}>
       <Grid item xs={12}>
-        <Typography variant="h6" className={classes.statLabel}>
-          Columns
-        </Typography>
+        <StatLabel variant="h6">Columns</StatLabel>
       </Grid>
       <Grid item container xs={12} wrap="nowrap" alignItems="center">
-        <ColumnsIcon className={classes.statIcon} />
-        <Typography variant="h2" className={classes.statValue}>
+        <ColumnsIcon sx={{ mr: 1 }} />
+        <Typography variant="h2">
           <NumberFormatted value={stats?.fieldsCount} />
         </Typography>
       </Grid>
     </Grid>
-    <Grid item container xs={4} className={classes.statsItem}>
+    <Grid alignItems="center" item container xs={4}>
       <Grid item xs={12}>
-        <Typography variant="h6" className={classes.statLabel}>
-          Used by
-        </Typography>
+        <StatLabel variant="h6">Used by</StatLabel>
       </Grid>
       <Grid item container xs={12} wrap="nowrap" alignItems="center">
-        <UserIcon className={classes.statIcon} />
-        <Typography variant="h2" className={classes.statValue}>
+        <UserIcon sx={{ mr: 1 }} />
+        <Typography variant="h2">
           <NumberFormatted value={stats?.consumersCount} />
         </Typography>
       </Grid>
@@ -67,4 +59,4 @@ const OverviewDatasetStats: React.FC<OverviewDatasetStatsProps> = ({
   </Grid>
 );
 
-export default withStyles(styles)(OverviewDatasetStats);
+export default OverviewDatasetStats;

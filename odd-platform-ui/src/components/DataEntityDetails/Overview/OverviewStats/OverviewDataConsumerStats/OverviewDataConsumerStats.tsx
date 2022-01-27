@@ -8,18 +8,15 @@ import { dataEntityDetailsPath } from 'lib/paths';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Grid, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
-import { styles, StylesType } from './OverviewDataConsumerStatsStyles';
 
-interface OverviewDataConsumerStatsProps extends StylesType {
+interface OverviewDataConsumerStatsProps {
   inputs: DataEntityDetails['inputList'];
   unknownInputsCount: number;
   dataEntityName: string | undefined;
 }
 
 const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
-  classes,
   inputs,
   unknownInputsCount,
   dataEntityName,
@@ -28,7 +25,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
 
   return (
     <Grid container>
-      <Grid item xs={12} className={classes.typeLabel}>
+      <Grid sx={{ ml: 0, mb: 1.25 }} item xs={12}>
         <EntityTypeItem
           typeName={DataEntityTypeNameEnum.CONSUMER}
           fullName
@@ -42,10 +39,13 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
         alignContent="flex-start"
       >
         <Grid item container xs={12} alignItems="baseline">
-          <Typography variant="h2" className={classes.statCount}>
+          <Typography variant="h2">
             {(inputs?.length || 0) + (unknownInputsCount || 0)}
           </Typography>
-          <Typography variant="body1" className={classes.statLabel}>
+          <Typography
+            sx={{ ml: 0.5, color: 'texts.hint' }}
+            variant="body1"
+          >
             inputs
           </Typography>
         </Grid>
@@ -70,10 +70,7 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
             </AppButton>
           ))}
           {unknownInputsCount ? (
-            <Typography
-              variant="subtitle1"
-              className={classes.unknownCount}
-            >
+            <Typography sx={{ ml: 0.5 }} variant="subtitle1">
               {unknownInputsCount} more source
               {unknownInputsCount === 1 ? '' : 's'} unknown
             </Typography>
@@ -100,4 +97,4 @@ const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
   );
 };
 
-export default withStyles(styles)(OverviewDataConsumerStats);
+export default OverviewDataConsumerStats;

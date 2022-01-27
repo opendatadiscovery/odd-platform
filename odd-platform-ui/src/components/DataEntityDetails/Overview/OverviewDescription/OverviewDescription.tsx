@@ -1,8 +1,6 @@
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
 import ReactMde from 'react-mde';
 import gfm from 'remark-gfm';
-import cx from 'classnames';
 import { Grid, Typography } from '@mui/material';
 import {
   DataEntityApiUpsertDataEntityInternalDescriptionRequest,
@@ -14,9 +12,13 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { StylesType } from './OverviewDescriptionStyles';
+import {
+  CaptionContainer,
+  FormActions,
+  Preview,
+} from './OverviewDescriptionStyles';
 
-interface OverviewDescriptionProps extends StylesType {
+interface OverviewDescriptionProps {
   dataEntityId: number;
   dataEntityInternalDescription: DataEntityDetailsBaseObject['internalDescription'];
   dataEntityExternalDescription: DataEntityDetailsBaseObject['externalDescription'];
@@ -26,7 +28,6 @@ interface OverviewDescriptionProps extends StylesType {
 }
 
 const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
-  classes,
   dataEntityId,
   dataEntityInternalDescription,
   dataEntityExternalDescription,
@@ -63,9 +64,9 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
 
   const getPreview = React.useCallback(
     () => (
-      <ReactMarkdown
-        className={cx('markdown-body', classes.preview)}
+      <Preview
         plugins={[gfm]}
+        className="markdown-body"
         source={
           editMode ? internalDescription : dataEntityInternalDescription
         }
@@ -76,11 +77,9 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
 
   return (
     <>
-      <div className={classes.container}>
-        <div className={classes.captionContainer}>
-          <Typography variant="h4" className={classes.caption}>
-            Custom
-          </Typography>
+      <div>
+        <CaptionContainer>
+          <Typography variant="h4">Custom</Typography>
           {editMode ? null : (
             <AppButton
               onClick={onEditClick}
@@ -93,7 +92,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               {dataEntityInternalDescription ? 'Edit' : 'Add'} description
             </AppButton>
           )}
-        </div>
+        </CaptionContainer>
         {editMode ? (
           <div>
             <ReactMde
@@ -109,7 +108,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
                 },
               }}
             />
-            <div className={classes.formActions}>
+            <FormActions>
               <AppButton
                 onClick={handleDescriptionUpdate}
                 size="medium"
@@ -128,7 +127,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               <Typography variant="subtitle2" color="error">
                 {error}
               </Typography>
-            </div>
+            </FormActions>
           </div>
         ) : (
           <div>
@@ -160,8 +159,8 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
         <div>
           <Typography variant="h4">Pre-defined</Typography>
           <Typography variant="subtitle1">
-            <ReactMarkdown
-              className={cx('markdown-body', classes.preview)}
+            <Preview
+              className="markdown-body"
               plugins={[gfm]}
               source={dataEntityExternalDescription}
             />
