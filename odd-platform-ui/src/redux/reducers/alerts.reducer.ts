@@ -35,8 +35,12 @@ const reducer = (state = initialState, action: Action): AlertsState => {
           ),
         },
         allIds: [
-          ...(action.payload.pageInfo.page > 1 ? state.allIds : []),
-          ...(action.payload.items?.map(alert => alert.id) || []),
+          ...Array.from(
+            new Set([
+              ...(action.payload.pageInfo.page > 1 ? state.allIds : []),
+              ...(action.payload.items?.map(alert => alert.id) || []),
+            ])
+          ),
         ],
         pageInfo: action.payload.pageInfo,
       };
