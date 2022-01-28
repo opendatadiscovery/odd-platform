@@ -148,16 +148,13 @@ const Results: React.FC<ResultsProps> = ({
       {isSearchCreatingAndFetching ? (
         <SearchTabsSkeleton length={tabs.length} />
       ) : (
-        tabs.length &&
-        selectedTab >= 0 && (
-          <AppTabs
-            type="primary"
-            items={tabs}
-            selectedTab={selectedTab}
-            handleTabChange={onSearchTypeChange}
-            isHintUpdated={isSearchUpdated}
-          />
-        )
+        <AppTabs
+          type="primary"
+          items={tabs}
+          selectedTab={selectedTab === -1 ? false : selectedTab}
+          handleTabChange={onSearchTypeChange}
+          isHintUpdated={isSearchUpdated}
+        />
       )}
       <S.ResultsTableHeader container sx={{ mt: 2 }} wrap="nowrap">
         <S.ColContainer item $colType="collg">
