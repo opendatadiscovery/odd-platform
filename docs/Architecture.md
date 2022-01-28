@@ -1,4 +1,8 @@
 
+[Adapters](#adapters) \
+[Push-client](#push-client) \
+[Push and pull strategies](#push-and-pull-strategies) \
+[ODD Specification metadata](#odd-specification-metadata) \
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.\
 \
 ![](.gitbook/img/architecture.svg) 
@@ -10,6 +14,7 @@ Adapters are lightweight services that gather metadata in a standardized format.
 Push-clients are providers that send information to the central repository via APIs. \
 \
 *\\ why do we offer it especially for ETL\ELT?* *need more info here*\
+## ODD Specification metadata
 
 # Push and pull strategies
 The metadata discovery process is very similar to that of gathering metrics,logs and traces. It can be done through a pull or push model (or both). Each of the models has a range of use cases it suits best. ODD uses both models to effectively cover all core use cases.
@@ -20,7 +25,7 @@ Pull model is preferred when:    *|need more details*
 * latency on index update is ok
 * there is already an adapter
 
-## Push model
+## Push strategy
 Push model supports the process where individual metadata providers push the information to the central repository via APIs. The model is more preferred for use cases like Airflow job runs and quality check runs.            *|need more details*
 
 
