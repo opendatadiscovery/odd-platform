@@ -1,53 +1,71 @@
 import React from 'react';
-import { Typography } from '@mui/material';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { Grid, Typography } from '@mui/material';
+import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
-  DataSetField,
-  DatasetFieldApiUpdateDatasetFieldRequest,
+  DatasetFieldApiCreateEnumValueRequest,
+  DatasetFieldApiGetEnumValuesRequest,
+  EnumValueFormData,
+  EnumValueList,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { LabelItemsContainer } from './DatasetFieldEnumsEditFormStyles';
+import AddIcon from 'components/shared/Icons/AddIcon';
+import DatasetFieldEnumsFormItem from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsFormItem/DatasetFieldEnumsFormItem';
+import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
+import {
+  ActionsContainer,
+  HeaderContainer,
+  TitleContainer,
+} from './DatasetFieldEnumsEditFormStyles';
 
-interface DataSetFieldInfoEditFormProps {
+interface DataSetFieldEnumEditFormProps {
   datasetFieldId: number;
-  datasetFieldFormData: {
-    internalDescription: string;
-    labels: { name: string }[];
-  };
-  isLoading: boolean;
-  updateDataSetFieldFormData: (
-    params: DatasetFieldApiUpdateDatasetFieldRequest
-  ) => Promise<DataSetField>;
+  datasetFieldName: string;
+  datasetFieldEnums: EnumValueList['items'];
+  isFetching: boolean;
+  isCreating: boolean;
+  fetchDataSetFieldEnum: (
+    params: DatasetFieldApiGetEnumValuesRequest
+  ) => Promise<EnumValueList>;
+  createDataSetFieldEnum: (
+    params: DatasetFieldApiCreateEnumValueRequest
+  ) => Promise<EnumValueList>;
   btnCreateEl: JSX.Element;
 }
-type DatasetFieldInfoFormType = {
-  labels: { name: string }[];
-  internalDescription: string;
-};
 
-const DatasetFieldEnumsEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
+interface DatasetFieldEnumsFormData {
+  enums: EnumValueFormData[];
+}
+
+const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
   datasetFieldId,
-  datasetFieldFormData,
-  isLoading,
-  updateDataSetFieldFormData,
+  datasetFieldName,
+  datasetFieldEnums,
+  isFetching,
+  isCreating,
+  fetchDataSetFieldEnum,
+  createDataSetFieldEnum,
   btnCreateEl,
 }) => {
-  const methods = useForm<DatasetFieldInfoFormType>({
-    defaultValues: {
-      labels: datasetFieldFormData.labels.map(label => ({
-        name: label.name,
-      })),
-      internalDescription: datasetFieldFormData.internalDescription,
-    },
+  const defaultEnums =
+    datasetFieldEnums && datasetFieldEnums?.length > 0
+      ? {
+          enums: datasetFieldEnums?.map(enumItem => ({
+            id: enumItem.id,
+            name: enumItem.name,
+            description: enumItem.description,
+          })),
+        }
+      : { enums: [{ name: '', description: '' }] };
+
+  const methods = useForm<DatasetFieldEnumsFormData>({
+    defaultValues: defaultEnums,
+    mode: 'onChange',
   });
 
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
-    name: 'labels',
+    name: 'enums',
   });
 
   const initialFormState = { error: '', isSuccessfulSubmit: false };
@@ -56,14 +74,13 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
     isSuccessfulSubmit: boolean;
   }>(initialFormState);
 
+  React.useEffect(() => {
+    methods.reset(defaultEnums);
+  }, [datasetFieldEnums]);
+
   const onOpen = (handleOpen: () => void) => () => {
     if (btnCreateEl.props.onClick) btnCreateEl.props.onClick();
-    methods.reset({
-      labels: datasetFieldFormData.labels.map(label => ({
-        name: label.name,
-      })),
-      internalDescription: datasetFieldFormData.internalDescription,
-    });
+    fetchDataSetFieldEnum({ datasetFieldId });
     handleOpen();
   };
 
@@ -72,12 +89,15 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
     methods.reset();
   };
 
-  const handleFormSubmit = (data: DatasetFieldInfoFormType) => {
-    updateDataSetFieldFormData({
+  const handleFormSubmit = (data: DatasetFieldEnumsFormData) => {
+    createDataSetFieldEnum({
       datasetFieldId,
-      datasetFieldUpdateFormData: {
-        labelNames: data.labels.map(label => label.name),
-        description: data.internalDescription,
+      bulkEnumValueFormData: {
+        items: data.enums.map(enumItem => ({
+          id: enumItem.id,
+          name: enumItem.name,
+          description: enumItem.description,
+        })),
       },
     }).then(
       () => {
@@ -87,66 +107,92 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
       (response: Response) => {
         setFormState({
           ...initialFormState,
-          error: response.statusText || 'Unable to update info',
+          error: response.statusText || 'Unable to update enums',
         });
       }
     );
   };
 
-  const formTitle = <Typography variant="h4">Edit values</Typography>;
+  const handleAppend = () => {
+    append({
+      name: '',
+      description: '',
+    });
+  };
 
-  const formContent = () => (
-    <form
-      id="dataset-field-info-form"
-      onSubmit={methods.handleSubmit(handleFormSubmit)}
-    >
-      <Typography variant="h5" color="texts.info">
-        Add or edit labels and description
-      </Typography>
-      <LabelItemsContainer sx={{ mt: 1, mb: 1.5 }}>
-        {fields.map((label, index) => (
-          <LabelItem
-            key={label.id}
-            labelName={label.name}
-            removable
-            unfilled
-            onRemoveClick={() => remove(index)}
-          />
-        ))}
-      </LabelItemsContainer>
-      <Controller
-        control={methods.control}
-        name="internalDescription"
-        defaultValue={datasetFieldFormData.internalDescription || ''}
-        render={({ field }) => (
-          <AppTextField
-            {...field}
-            label="Description"
-            placeholder="Enter description"
-            customEndAdornment={{
-              variant: 'clear',
-              showAdornment: !!field.value,
-              onCLick: () => methods.setValue('internalDescription', ''),
-              icon: <ClearIcon />,
-            }}
-          />
-        )}
-      />
-    </form>
+  const handleRemove = React.useCallback(
+    (index: number) => () => {
+      remove(index);
+    },
+    [remove]
   );
 
-  const formActionButtons = () => (
+  const formTitle = (
+    <HeaderContainer container>
+      <TitleContainer container>
+        <Typography variant="h3">
+          {`Values for ${datasetFieldName}`}
+        </Typography>
+        <Typography variant="body2" color="texts.secondary">
+          Custom values
+        </Typography>
+      </TitleContainer>
+      <AppButton
+        size="medium"
+        color="primaryLight"
+        startIcon={<AddIcon />}
+        onClick={handleAppend}
+      >
+        Add value
+      </AppButton>
+    </HeaderContainer>
+  );
+
+  const formContent = () => (
     <>
+      {isFetching ? (
+        <Grid container justifyContent="center">
+          <AppCircularProgress
+            background="transparent"
+            progressBackground="dark"
+            size={30}
+          />
+        </Grid>
+      ) : (
+        <FormProvider {...methods}>
+          <form
+            id="dataset-field-enums-form"
+            onSubmit={methods.handleSubmit(handleFormSubmit)}
+          >
+            {fields.map((item, idx) => (
+              <DatasetFieldEnumsFormItem
+                key={item.id}
+                itemIndex={idx}
+                onItemRemove={handleRemove(idx)}
+              />
+            ))}
+          </form>
+        </FormProvider>
+      )}
+    </>
+  );
+
+  const formActionButtons = (handleClose: () => void) => (
+    <ActionsContainer>
       <AppButton
         size="large"
         type="submit"
-        form="dataset-field-info-form"
+        form="dataset-field-enums-form"
         color="primary"
-        fullWidth
+        disabled={!methods.formState.isValid}
+        sx={{ mr: 1 }}
       >
         Save
       </AppButton>
-    </>
+      <AppButton size="large" color="primaryLight" onClick={handleClose}>
+        Cancel
+      </AppButton>
+    </ActionsContainer>
   );
 
   return (
@@ -156,10 +202,12 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
       }
       title={formTitle}
       renderContent={formContent}
-      renderActions={formActionButtons}
+      renderActions={({ handleClose }) => formActionButtons(handleClose)}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isCreating}
       errorText={error}
+      maxWidth="xl"
+      clearState={clearFormState}
     />
   );
 };

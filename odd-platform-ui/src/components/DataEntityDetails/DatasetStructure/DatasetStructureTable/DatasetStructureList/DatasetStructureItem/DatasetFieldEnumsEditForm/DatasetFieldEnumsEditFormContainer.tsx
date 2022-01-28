@@ -1,22 +1,28 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces/state';
 import {
-  getDatasetFieldData,
-  getDatasetFieldFormDataUpdating,
+  getDatasetFieldEnums,
+  getDatasetFieldEnumsCreating,
+  getDatasetFieldEnumsFetching,
 } from 'redux/selectors/datasetStructure.selectors';
-import { updateDataSetFieldFormData } from 'redux/thunks';
+import {
+  createDataSetFieldEnum,
+  fetchDataSetFieldEnum,
+} from 'redux/thunks';
 import DatasetFieldEnumsEditForm from './DatasetFieldEnumsEditForm';
 
 const mapStateToProps = (
   state: RootState,
   { datasetFieldId }: { datasetFieldId: number }
 ) => ({
-  datasetFieldFormData: getDatasetFieldData(state, datasetFieldId),
-  isLoading: getDatasetFieldFormDataUpdating(state),
+  datasetFieldEnums: getDatasetFieldEnums(state, datasetFieldId),
+  isFetching: getDatasetFieldEnumsFetching(state),
+  isCreating: getDatasetFieldEnumsCreating(state),
 });
 
 const mapDispatchToProps = {
-  updateDataSetFieldFormData,
+  fetchDataSetFieldEnum,
+  createDataSetFieldEnum,
 };
 
 export default connect(

@@ -5,12 +5,15 @@ import {
 } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
+import { EnumValue } from 'generated-sources';
+import uniqBy from 'lodash/uniqBy';
 
 export const initialState: DatasetStructureState = {
   fieldById: {},
   allFieldIdsByVersion: {},
   statsByVersionId: {},
   latestVersionByDataset: {},
+  fieldEnumsByFieldId: {},
 };
 
 const reducer = (
@@ -63,6 +66,7 @@ const reducer = (
               }
             : null),
         },
+        fieldEnumsByFieldId: state.fieldEnumsByFieldId,
       };
     case getType(actions.updateDataSetFieldFormDataParamsAction.success):
       return {
@@ -73,6 +77,39 @@ const reducer = (
             ...state.fieldById[action.payload.datasetFieldId],
             internalDescription: action.payload.internalDescription,
             labels: action.payload.labels,
+          },
+        },
+      };
+    case getType(actions.fetchDataSetFieldEnumAction.success):
+      return {
+        ...state,
+        fieldEnumsByFieldId:
+          action.payload.value.items?.reduce(
+            (
+              memo: DatasetStructureState['fieldEnumsByFieldId'],
+              enumItem: EnumValue
+            ) => ({
+              ...memo,
+              [action.payload.entityId]: uniqBy(
+                [...(memo[action.payload.entityId] || []), enumItem],
+                'id'
+              ),
+            }),
+            { ...state.fieldEnumsByFieldId }
+          ) || [],
+      };
+    case getType(actions.createDataSetFieldEnumAction.success):
+      return {
+        ...state,
+        fieldEnumsByFieldId: {
+          ...state.fieldEnumsByFieldId,
+          [action.payload.entityId]: action.payload.value.items || [],
+        },
+        fieldById: {
+          ...state.fieldById,
+          [action.payload.entityId]: {
+            ...state.fieldById[action.payload.entityId],
+            enumValueCount: action.payload.value.items?.length,
           },
         },
       };

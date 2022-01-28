@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collapse, Grid, Typography } from '@mui/material';
+import { ButtonProps, Collapse, Grid, Typography } from '@mui/material';
 import round from 'lodash/round';
 import {
   DataSetField,
@@ -25,6 +25,7 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
 import DatasetFieldInfoEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/DatasetFieldInfoEditFormContainer';
 import DatasetFieldEnumsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsEditFormContainer';
+import { ButtonColors } from 'components/shared/AppButton/AppButtonStyles';
 import { ColContainer } from '../../DatasetStructureTableStyles';
 import * as S from './DatasetStructureItemStyles';
 
@@ -129,6 +130,24 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     );
   }
 
+  const setEnumFormOpenBtn = React.useMemo(() => {
+    let btnColor: ButtonColors = 'primaryLight';
+    let btnText = 'Add values';
+    let btnSize: ButtonProps['size'] = 'medium';
+    const count = datasetField.enumValueCount;
+    if (count && count > 0) {
+      btnColor = 'valueCount';
+      btnText = `${count} value${count > 1 ? 's' : ''}`;
+      btnSize = 'small';
+    }
+
+    return (
+      <AppButton size={btnSize} color={btnColor} sx={{ mr: 0.5 }}>
+        {btnText}
+      </AppButton>
+    );
+  }, [datasetField.enumValueCount]);
+
   return (
     <Grid container>
       <Grid item container>
@@ -198,19 +217,17 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 </Grid>
               </Grid>
             </ColContainer>
-            <S.OptionsBtnContainer>
-              <DatasetFieldEnumsEditFormContainer
-                datasetFieldId={datasetField.id}
-                btnCreateEl={
-                  <AppButton
-                    size="medium"
-                    color="primaryLight"
-                    sx={{ mr: 0.5 }}
-                  >
-                    Add values
-                  </AppButton>
-                }
-              />
+            <S.OptionsBtnContainer sx={{ mr: 1 }}>
+              {datasetField.type.type ===
+                DataSetFieldTypeTypeEnum.INTEGER ||
+              datasetField.type.type ===
+                DataSetFieldTypeTypeEnum.STRING ? (
+                <DatasetFieldEnumsEditFormContainer
+                  datasetFieldId={datasetField.id}
+                  datasetFieldName={datasetField.name}
+                  btnCreateEl={setEnumFormOpenBtn}
+                />
+              ) : null}
               <DatasetFieldInfoEditFormContainer
                 datasetFieldId={datasetField.id}
                 btnCreateEl={

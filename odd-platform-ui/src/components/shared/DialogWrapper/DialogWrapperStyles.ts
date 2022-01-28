@@ -24,6 +24,7 @@ export const MainDialog = styled(Dialog, {
     maxWidth: '640px',
     maxHeight: '640px',
   },
+  [`& .${dialogClasses.paperWidthXl}`]: { maxWidth: '800px' },
   pointerEvents: $isLoading ? 'none' : 'all',
 }));
 

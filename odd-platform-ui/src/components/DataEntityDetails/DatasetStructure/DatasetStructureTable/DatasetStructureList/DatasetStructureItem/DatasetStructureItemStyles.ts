@@ -2,6 +2,9 @@ import { Grid } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 export const OptionsBtnContainer = styled(Grid)(() => ({
+  display: 'flex',
+  flexWrap: 'nowrap',
+  alignItems: 'center',
   opacity: 0,
 }));
 
