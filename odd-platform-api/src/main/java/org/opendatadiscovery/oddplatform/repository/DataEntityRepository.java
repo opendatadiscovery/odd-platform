@@ -17,7 +17,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 public interface DataEntityRepository extends CRUDRepository<DataEntityDimensionsDto> {
     Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns);
 
-    List<DataEntityDto> listDtosByOddrns(final Collection<String> oddrns);
+    List<DataEntityDto> listDtosByOddrns(final Collection<String> oddrns, final boolean includeHollow);
 
     List<DataEntityDimensionsDto> listDimensionsByOddrns(final Collection<String> oddrns);
 

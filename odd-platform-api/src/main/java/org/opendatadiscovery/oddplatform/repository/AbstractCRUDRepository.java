@@ -204,7 +204,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return r.into(pojoClass);
     }
 
-    protected R changedToFalse(final R record, final Collection<TableField<R, ?>> fields) {
+    protected R ignoreUpdate(final R record, final Collection<TableField<R, ?>> fields) {
         for (final TableField<R, ?> field : fields) {
             record.changed(field, false);
         }
