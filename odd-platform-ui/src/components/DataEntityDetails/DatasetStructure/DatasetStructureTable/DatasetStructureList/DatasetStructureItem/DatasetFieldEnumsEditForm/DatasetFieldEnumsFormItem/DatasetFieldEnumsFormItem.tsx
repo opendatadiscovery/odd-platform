@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { HTMLInputTypeAttribute } from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import {
   Container,
   EditBtnContainer,
@@ -13,21 +14,40 @@ import {
 
 interface DatasetFieldEnumsFormItemProps {
   itemIndex: number;
+  itemId: number;
   onItemRemove: () => void;
+  enumValueType: DataSetFieldTypeTypeEnum;
 }
 
 const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
   itemIndex,
   onItemRemove,
+  enumValueType,
+  itemId,
 }) => {
   const { control, getValues } = useFormContext();
   const [editMode, setEditMode] = React.useState<boolean>(false);
 
   React.useEffect(() => {
-    if (!getValues(`enums.${itemIndex}.name`)) {
+    if (typeof itemId !== 'number') {
       setEditMode(true);
     }
   }, [itemIndex]);
+
+  const setTextFieldType = (): HTMLInputTypeAttribute => {
+    if (enumValueType === DataSetFieldTypeTypeEnum.INTEGER)
+      return 'number';
+    return 'text';
+  };
+
+  const setTextValidationByType = (value: number | string) => {
+    if (
+      enumValueType === DataSetFieldTypeTypeEnum.STRING &&
+      typeof value === 'string'
+    )
+      return !!value.trim();
+    return Number.isInteger(Number(value));
+  };
 
   return (
     <Container container>
@@ -36,13 +56,17 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
           <Controller
             name={`enums.${itemIndex}.name`}
             control={control}
-            rules={{ required: true, validate: value => !!value.trim() }}
+            rules={{
+              required: true,
+              validate: setTextValidationByType,
+            }}
             render={({ field }) => (
               <ValueNameContainer sx={{ mr: 1 }}>
                 <AppTextField
                   {...field}
                   placeholder="Name of value"
                   name={`enums.${itemIndex}.name`}
+                  type={setTextFieldType()}
                   customEndAdornment={{
                     variant: 'clear',
                     showAdornment: !!field.value,

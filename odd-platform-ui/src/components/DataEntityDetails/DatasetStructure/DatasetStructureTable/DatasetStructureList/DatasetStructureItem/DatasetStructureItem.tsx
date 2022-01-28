@@ -225,6 +225,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 <DatasetFieldEnumsEditFormContainer
                   datasetFieldId={datasetField.id}
                   datasetFieldName={datasetField.name}
+                  enumValueType={datasetField.type.type}
                   btnCreateEl={setEnumFormOpenBtn}
                 />
               ) : null}

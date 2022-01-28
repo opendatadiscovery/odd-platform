@@ -4,6 +4,7 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
   DatasetFieldApiCreateEnumValueRequest,
   DatasetFieldApiGetEnumValuesRequest,
+  DataSetFieldTypeTypeEnum,
   EnumValueFormData,
   EnumValueList,
 } from 'generated-sources';
@@ -31,6 +32,7 @@ interface DataSetFieldEnumEditFormProps {
     params: DatasetFieldApiCreateEnumValueRequest
   ) => Promise<EnumValueList>;
   btnCreateEl: JSX.Element;
+  enumValueType: DataSetFieldTypeTypeEnum;
 }
 
 interface DatasetFieldEnumsFormData {
@@ -46,6 +48,7 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
   fetchDataSetFieldEnum,
   createDataSetFieldEnum,
   btnCreateEl,
+  enumValueType,
 }) => {
   const defaultEnums =
     datasetFieldEnums && datasetFieldEnums?.length > 0
@@ -167,8 +170,10 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
             {fields.map((item, idx) => (
               <DatasetFieldEnumsFormItem
                 key={item.id}
+                itemId={item.id}
                 itemIndex={idx}
                 onItemRemove={handleRemove(idx)}
+                enumValueType={enumValueType}
               />
             ))}
           </form>
