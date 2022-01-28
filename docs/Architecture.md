@@ -1,7 +1,6 @@
-# ODD components for your ecosystem
+
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.\
-![](.gitbook/img/architectureF.svg) \
-<img src=".gitbook/img/architecturex4.jpg" alt="drawing" width="1000"/> 
+![](.gitbook/img/architecture.svg) 
 
 ## Adapters
 Adapters are lightweight services that gather metadata in a standardized format. They are designed to be source-specific and expose only the information that could be gathered from a particular data source.
@@ -22,3 +21,9 @@ Pull model is preferred when:    *|need more details*
 
 ## Push model
 Push model supports the process where individual metadata providers push the information to the central repository via APIs. The model is more preferred for use cases like Airflow job runs and quality check runs.            *|need more details*
+
+
+<!---
+<img src=".gitbook/img/architecturex4.jpg" alt="drawing" width="1000"/> 
+-->
+
