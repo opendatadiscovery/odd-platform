@@ -1,5 +1,6 @@
 
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.\
+\
 ![](.gitbook/img/architecture.svg) 
 
 ## Adapters
