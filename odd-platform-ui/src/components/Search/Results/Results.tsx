@@ -151,7 +151,7 @@ const Results: React.FC<ResultsProps> = ({
         <AppTabs
           type="primary"
           items={tabs}
-          selectedTab={selectedTab === -1 ? false : selectedTab}
+          selectedTab={selectedTab}
           handleTabChange={onSearchTypeChange}
           isHintUpdated={isSearchUpdated}
         />
