@@ -1,5 +1,5 @@
 # Table of contents
 
-* [Overview](Overview.md)
+* [Overview](README.md)
 * [Architecture](Architecture.md)
 * [Glossary](GLOSSARY.md)
