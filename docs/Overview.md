@@ -4,7 +4,7 @@
 [Features and use cases](#features-and-use-cases) \
 [Start using ODD](#start-using-odd)
 ## About ODD
-\\The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams: \
+The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams: \
    ✔️ Free open-source and community-driven \
    ✔️ ML first citizen \
    ✔️ AI-based UX \
