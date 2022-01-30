@@ -4,7 +4,7 @@
 [ODD Specification metadata](#odd-specification-metadata) \
 [Push and pull strategies](#push-and-pull-strategies) \
 \
-The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.\
+aaThe diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.\
 \
 ![](.gitbook/img/architecture.svg)
 
