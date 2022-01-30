@@ -1,21 +1,10 @@
 # Architecture
-
-<<<<<<< HEAD
 [Adapters](#adapters) \
 [Push-client](#push-client) \
 [ODD Specification metadata](#odd-specification-metadata) \
 [Push and pull strategies](#push-and-pull-strategies) \
-\
-=======
-[Adapters](Architecture.md#adapters)\
-[Push-client](Architecture.md#push-client)\
-[Push and pull strategies](Architecture.md#push-and-pull-strategies)\
-[ODD Specification metadata](Architecture.md#odd-specification-metadata)\
->>>>>>> b8673d70f3da4a2c2ea7e1a783f614ef54819437
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.\
 \
-
-
 ![](.gitbook/img/architecture.svg)
 
 ### Adapters
