@@ -4,7 +4,7 @@
 [Features and use cases](#features-and-use-cases) \
 [Start using ODD](#start-using-odd)
 ## About ODD
-The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams: \
+/The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams: \
    ✔️ Free open-source and community-driven \
    ✔️ ML first citizen \
    ✔️ AI-based UX \
@@ -24,7 +24,7 @@ aiming at better data governance. \
 ![](.gitbook/img/onboarding.svg) **Onboarding to data** helps newcomers get such important information as data structure, data owners and pipelines.
 
 ## Features and use cases 
-Dive into ODD opportunities with a list of ODD features and use cases for different types of users.
+Dive into ODD opportunities with a list of ODD [features](Features.md) and use cases for different types of users.
 ## Start using ODD
 [Get started](https://github.com/opendatadiscovery/odd-platform/blob/main/docker/README.md) right now or [schedule demo](https://calendly.com/germanosin/opendatadiscovery-demo?month=2022-01) for free. See also [opendatadiscovery.org](https://opendatadiscovery.org/)
 
