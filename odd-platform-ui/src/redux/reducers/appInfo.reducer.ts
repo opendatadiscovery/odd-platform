@@ -5,7 +5,6 @@ import { Action, AppInfoState } from 'redux/interfaces';
 export const initialState: AppInfoState = { appInfo: {} };
 
 const reducer = (state = initialState, action: Action): AppInfoState => {
-  console.log(action);
   switch (action.type) {
     case getType(actions.fetchAppInfo.success):
       return action.payload

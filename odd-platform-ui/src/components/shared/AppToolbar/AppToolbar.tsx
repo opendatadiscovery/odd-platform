@@ -30,7 +30,7 @@ interface AppToolbarProps {
 
 const AppToolbar: React.FC<AppToolbarProps> = ({
   identity,
-  version = 'checkProp',
+  version,
   createDataEntitiesSearch,
   fetchIdentity,
   fetchAppInfo,
@@ -163,12 +163,16 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         onClose={handleMenuClose}
       >
         <S.UserMenuItem onClick={handleLogout}>Logout</S.UserMenuItem>
-        <Divider />
-        <S.CaptionsWrapper>
-          <Typography variant="caption">
-            ODD Platform v.{version}
-          </Typography>
-        </S.CaptionsWrapper>
+        {version && (
+          <>
+            <Divider />
+            <S.CaptionsWrapper>
+              <Typography variant="caption">
+                ODD Platform v.{version}
+              </Typography>
+            </S.CaptionsWrapper>
+          </>
+        )}
       </S.UserMenu>
     </S.Bar>
   );
