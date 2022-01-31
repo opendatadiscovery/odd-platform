@@ -1,6 +1,7 @@
 # Table of contents
 
-* [Overview](Overview.md)
+* [Overview](README.md)
 * [Architecture](Architecture.md)
 * [Features](Features.md)
+* [Use cases](Use cases.md)
 * [Glossary](GLOSSARY.md)
