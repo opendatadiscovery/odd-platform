@@ -1,5 +1,7 @@
 ALTER TABLE alert
-    ALTER COLUMN description TYPE varchar;
+    ALTER COLUMN description TYPE varchar,
+    ALTER COLUMN data_entity_oddrn TYPE varchar,
+    ALTER COLUMN messenger_entity_oddrn TYPE varchar;
 
 ALTER TABLE data_entity
     ALTER COLUMN internal_name TYPE varchar,
