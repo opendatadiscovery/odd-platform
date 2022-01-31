@@ -6,6 +6,7 @@ import {
   menuClasses,
   MenuItem,
   Toolbar,
+  Typography,
 } from '@mui/material';
 import {
   maxContentWidth,
@@ -15,6 +16,7 @@ import {
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { AccountCircle } from '@mui/icons-material';
+import { flexbox } from '@mui/system';
 
 export const Bar = styled(AppBar)(({ theme }) => ({
   [`&.${appBarClasses.root}`]: {
@@ -114,4 +116,11 @@ export const UserMenu = styled(Menu)(({ theme }) => ({
 export const UserMenuItem = styled(MenuItem)(({ theme }) => ({
   padding: theme.spacing(0.75, 1),
   '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
+}));
+
+export const CaptionsWrapper = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  padding: theme.spacing(0, 1),
 }));

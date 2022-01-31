@@ -3,6 +3,7 @@ import { ActionType } from 'typesafe-actions';
 import {
   Alert,
   AlertTotals,
+  AppInfo,
   AssociatedOwner,
   DataEntity,
   DataEntityRef,
@@ -179,8 +180,12 @@ export interface AlertsState {
 export interface ProfileState {
   owner?: AssociatedOwner;
 }
+export interface AppInfoState {
+  appInfo?: AppInfo;
+}
 
 export type RootState = {
+  appInfo: AppInfoState;
   dataSources: DataSourcesState;
   search: SearchState;
   loader: LoaderState;

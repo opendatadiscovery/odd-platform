@@ -15,6 +15,7 @@ import profile from './profile.reducer';
 import dataQualityTest from './dataQualityTest.reducer';
 import alerts from './alerts.reducer';
 import dataEntityGroupLinkedList from './dataentityLinkedList.reducer';
+import appInfo from './appInfo.reducer';
 
 export default combineReducers<RootState>({
   namespaces,
@@ -32,4 +33,5 @@ export default combineReducers<RootState>({
   dataQualityTest,
   alerts,
   dataEntityGroupLinkedList,
+  appInfo,
 });
