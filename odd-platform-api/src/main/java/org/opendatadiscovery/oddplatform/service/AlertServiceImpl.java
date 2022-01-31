@@ -69,10 +69,17 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Mono<AlertStatus> updateStatus(final long alertId,
                                           final AlertStatus alertStatus) {
-        return Mono.fromCallable(() -> {
-            alertRepository.updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()));
-            return alertStatus;
-        });
+        return authIdentityProvider.getUsername()
+            .map(username -> {
+                alertRepository
+                    .updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()), username);
+                return alertStatus;
+            })
+            .switchIfEmpty(Mono.defer(() -> {
+                alertRepository
+                    .updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()), null);
+                return Mono.just(alertStatus);
+            }));
     }
 
     @Override

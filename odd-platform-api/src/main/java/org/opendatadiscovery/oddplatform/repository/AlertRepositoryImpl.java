@@ -209,10 +209,11 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
-    public void updateAlertStatus(final long alertId, final AlertStatusEnum status) {
+    public void updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName) {
         dslContext.update(ALERT)
             .set(ALERT.STATUS, status.toString())
             .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
+            .set(ALERT.STATUS_UPDATED_BY, userName)
             .where(ALERT.ID.eq(alertId))
             .execute();
     }

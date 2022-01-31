@@ -21,7 +21,7 @@ public interface AlertRepository {
 
     long countDependentObjectsAlerts(long ownerId);
 
-    void updateAlertStatus(final long alertId, final AlertStatusEnum status);
+    void updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName);
 
     void createAlerts(final Collection<AlertPojo> alerts);
 }
