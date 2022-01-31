@@ -196,11 +196,10 @@ public class DataEntityRepositoryImpl
 
         final List<DataEntityRecord> records = pojos.stream()
             .map(e -> dslContext.newRecord(recordTable, e))
-            .map(r -> changedToFalse(r, List.of(
+            .map(r -> ignoreUpdate(r, List.of(
                 DATA_ENTITY.INTERNAL_DESCRIPTION,
                 DATA_ENTITY.INTERNAL_NAME,
-                DATA_ENTITY.VIEW_COUNT,
-                DATA_ENTITY.EXCLUDE_FROM_SEARCH
+                DATA_ENTITY.VIEW_COUNT
             )))
             .collect(toList());
 
@@ -284,13 +283,14 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public List<DataEntityDto> listDtosByOddrns(final Collection<String> oddrns) {
+    public List<DataEntityDto> listDtosByOddrns(final Collection<String> oddrns, final boolean includeHollow) {
         if (CollectionUtils.isEmpty(oddrns)) {
             return emptyList();
         }
 
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(oddrns)))
+            .includeHollow(includeHollow)
             .build();
 
         return dataEntitySelect(config)
@@ -1176,7 +1176,7 @@ public class DataEntityRepositoryImpl
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
 
-        final Map<String, DataEntityDto> depsRepository = listDtosByOddrns(deps)
+        final Map<String, DataEntityDto> depsRepository = listDtosByOddrns(deps, false)
             .stream()
             .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
 
@@ -1195,7 +1195,7 @@ public class DataEntityRepositoryImpl
             .flatMap(Set::stream)
             .collect(Collectors.toSet());
 
-        final Map<String, DataEntityDto> depsRepository = listDtosByOddrns(deps)
+        final Map<String, DataEntityDto> depsRepository = listDtosByOddrns(deps, false)
             .stream()
             .collect(Collectors.toMap(dto -> dto.getDataEntity().getOddrn(), identity()));
 
