@@ -49,6 +49,7 @@ interface ButtonType {
   expandText: ItemCondition;
   unfilled: ItemCondition;
   collapse: ItemCondition;
+  valueCount: ItemCondition;
 }
 
 interface BackgroundType extends TypeBackground {

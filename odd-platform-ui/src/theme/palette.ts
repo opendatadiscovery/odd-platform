@@ -181,6 +181,11 @@ export const palette = createPalette({
         border: colors.black90,
       },
     },
+    valueCount: {
+      normal: { background: colors.black10, color: colors.black50 },
+      hover: { background: colors.black15, color: colors.black70 },
+      active: { background: colors.black15, color: colors.black90 },
+    },
   },
   tag: {
     main: {

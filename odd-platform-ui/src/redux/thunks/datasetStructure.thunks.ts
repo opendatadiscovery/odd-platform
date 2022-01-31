@@ -5,8 +5,11 @@ import {
   DataSetApiGetDataSetStructureLatestRequest,
   DataSetField,
   DatasetFieldApi,
+  DatasetFieldApiCreateEnumValueRequest,
+  DatasetFieldApiGetEnumValuesRequest,
   DatasetFieldApiUpdateDatasetFieldRequest,
   DataSetStructure,
+  EnumValueList,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import {
@@ -80,5 +83,39 @@ export const updateDataSetFieldFormData = createThunk<
     datasetFieldId: request.datasetFieldId,
     internalDescription: response.internalDescription,
     labels: response.labels,
+  })
+);
+
+export const fetchDataSetFieldEnum = createThunk<
+  DatasetFieldApiGetEnumValuesRequest,
+  EnumValueList,
+  PartialEntityUpdateParams<EnumValueList>
+>(
+  (params: DatasetFieldApiGetEnumValuesRequest) =>
+    datasetFieldApiClient.getEnumValues(params),
+  actions.fetchDataSetFieldEnumAction,
+  (
+    response: EnumValueList,
+    request: DatasetFieldApiGetEnumValuesRequest
+  ) => ({
+    entityId: request.datasetFieldId,
+    value: response,
+  })
+);
+
+export const createDataSetFieldEnum = createThunk<
+  DatasetFieldApiCreateEnumValueRequest,
+  EnumValueList,
+  PartialEntityUpdateParams<EnumValueList>
+>(
+  (params: DatasetFieldApiCreateEnumValueRequest) =>
+    datasetFieldApiClient.createEnumValue(params),
+  actions.createDataSetFieldEnumAction,
+  (
+    response: EnumValueList,
+    request: DatasetFieldApiCreateEnumValueRequest
+  ) => ({
+    entityId: request.datasetFieldId,
+    value: response,
   })
 );

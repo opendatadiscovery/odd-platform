@@ -1302,6 +1302,44 @@ paths:
       tags:
         - datasetField
 
+  /api/datasetfields/{dataset_field_id}/enum_values:
+    get:
+      summary: Get field's enum values
+      description: Get all posible values for this field with description
+      operationId: getEnumValues
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/EnumValueList'
+      tags:
+        - datasetField
+    post:
+      summary: Enum Value CRUD
+      description: Creates/updates/deletes enum values with their description
+      operationId: createEnumValue
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DatasetFieldIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/BulkEnumValueFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/EnumValueList'
+      tags:
+        - datasetField
+
   /api/alerts:
     get:
       summary: Get all alerts

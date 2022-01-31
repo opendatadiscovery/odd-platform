@@ -66,7 +66,8 @@ public class DatasetVersionMapperImpl implements DatasetVersionMapper {
             .isValue(pojo.getIsValue())
             .externalDescription(pojo.getExternalDescription())
             .internalDescription(pojo.getInternalDescription())
-            .labels(mapLabels(dto.getLabelPojos()));
+            .labels(mapLabels(dto.getLabelPojos()))
+            .enumValueCount(dto.getEnumValueCount());
     }
 
     private List<Label> mapLabels(final Collection<LabelPojo> pojos) {
