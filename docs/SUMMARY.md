@@ -3,5 +3,5 @@
 * [Overview](README.md)
 * [Architecture](Architecture.md)
 * [Features](Features.md)
-* [Use cases](Use cases.md)
+* [Use cases](Use_cases.md)
 * [Glossary](GLOSSARY.md)
