@@ -1,10 +1,8 @@
 ALTER TABLE alert
-    ALTER COLUMN description TYPE varchar,
     ALTER COLUMN data_entity_oddrn TYPE varchar,
     ALTER COLUMN messenger_entity_oddrn TYPE varchar;
 
 ALTER TABLE data_entity
-    ALTER COLUMN internal_name TYPE varchar,
     ALTER COLUMN external_name TYPE varchar,
     ALTER COLUMN oddrn TYPE varchar;
 
@@ -18,17 +16,13 @@ ALTER TABLE data_quality_test_relations
     ALTER COLUMN data_quality_test_oddrn TYPE varchar;
 
 ALTER TABLE data_source
-    ALTER COLUMN name TYPE varchar,
-    ALTER COLUMN oddrn TYPE varchar,
-    ALTER COLUMN description TYPE varchar,
-    ALTER COLUMN connection_url TYPE varchar;
+    ALTER COLUMN oddrn TYPE varchar;
 
 ALTER TABLE dataset_field
     ALTER COLUMN name TYPE varchar,
     ALTER COLUMN oddrn TYPE varchar,
     ALTER COLUMN parent_field_oddrn TYPE varchar,
-    ALTER COLUMN external_description TYPE varchar,
-    ALTER COLUMN internal_description TYPE varchar;
+    ALTER COLUMN external_description TYPE varchar;
 
 ALTER TABLE dataset_version
     ALTER COLUMN version_hash TYPE varchar,
@@ -48,4 +42,3 @@ ALTER TABLE lineage
 
 ALTER TABLE metadata_field
     ALTER COLUMN name TYPE varchar;
-
