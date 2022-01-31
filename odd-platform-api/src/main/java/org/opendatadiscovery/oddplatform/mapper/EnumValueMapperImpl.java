@@ -12,8 +12,10 @@ public class EnumValueMapperImpl implements EnumValueMapper {
     public EnumValuePojo mapForm(final EnumValueFormData form, final Long datasetFieldId) {
         final EnumValuePojo pojo = new EnumValuePojo();
         pojo.setId(form.getId());
-        pojo.setName(form.getName());
-        pojo.setDescription(form.getDescription());
+        pojo.setName(form.getName().trim());
+        if (form.getDescription() != null) {
+            pojo.setDescription(form.getDescription().trim());
+        }
         pojo.setDatasetFieldId(datasetFieldId);
         return pojo;
     }
