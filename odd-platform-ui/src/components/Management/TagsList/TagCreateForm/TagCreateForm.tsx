@@ -28,12 +28,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
 }) => {
   const methods = useForm<TagCreateFormData>({
     defaultValues: {
-      tags: [
-        {
-          name: '',
-          important: false,
-        },
-      ],
+      tags: [{ name: '', important: false }],
     },
     mode: 'onChange',
   });

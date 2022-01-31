@@ -16,4 +16,5 @@ public class DatasetFieldDto {
     private DatasetFieldPojo datasetFieldPojo;
     private Set<LabelPojo> labelPojos;
     private Long parentFieldId;
+    private Integer enumValueCount;
 }
