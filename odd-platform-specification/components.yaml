@@ -574,6 +574,7 @@ components:
           $ref: '#/components/schemas/PageInfo'
       required:
         - items
+        - page_info
 
     DataEntityGroup:
       allOf:

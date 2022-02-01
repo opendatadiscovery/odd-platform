@@ -102,6 +102,12 @@ export const getQualityTestRunsList = createSelector(
     )
 );
 
+export const getQualityTestRunsListPage = createSelector(
+  getDataQualityTestState,
+  // getDataQATestId,
+  dataQualityTestState => dataQualityTestState.qualityTestRunsPageInfo
+);
+
 export const getQualityTestByTestId = createSelector(
   getDataQualityTestState,
   getDataQATestId,

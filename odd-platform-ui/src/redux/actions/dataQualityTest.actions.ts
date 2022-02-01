@@ -4,7 +4,10 @@ import {
   DataQualityTestRunList,
   DataSetTestReport,
 } from 'generated-sources';
-import { PartialEntityUpdateParams } from 'redux/interfaces';
+import {
+  PaginatedResponse,
+  PartialEntityUpdateParams,
+} from 'redux/interfaces';
 
 export const fetchDataSetQualityTestReportAction = createAsyncAction(
   'GET_DATA_SET_QUALITY_TEST_REPORT__REQUEST',
@@ -24,6 +27,6 @@ export const fetchDataSetQualityTestRunsAction = createAsyncAction(
   'GET_DATA_SET_QUALITY_TEST_RUNS_REPORT__FAILURE'
 )<
   undefined,
-  PartialEntityUpdateParams<DataQualityTestRunList>,
+  PaginatedResponse<PartialEntityUpdateParams<DataQualityTestRunList>>,
   undefined
 >();

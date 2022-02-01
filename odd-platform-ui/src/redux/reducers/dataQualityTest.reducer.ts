@@ -1,4 +1,9 @@
-import { Action, DataQualityTestState } from 'redux/interfaces';
+import {
+  Action,
+  CurrentPageInfo,
+  DataQualityTestState,
+  PaginatedResponse,
+} from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
 import {
@@ -14,6 +19,11 @@ export const initialState: DataQualityTestState = {
   allSuiteNamesByDatasetId: {},
   qualityTestRunsById: {},
   allTestRunIdsByTestId: {},
+  qualityTestRunsPageInfo: {
+    total: 0,
+    page: 0,
+    hasNext: true,
+  },
   datasetTestReportByEntityId: {},
   testReportBySuiteName: {},
 };
@@ -108,7 +118,8 @@ const createDataSetQualityTestList = (
 const createDataSetQualityRunsList = (
   state: DataQualityTestState,
   payload: DataQualityTestRunList,
-  dataQATestId: number | string
+  dataQATestId: number | string,
+  pageInfo: CurrentPageInfo
 ) =>
   payload.items.reduce(
     (memo: DataQualityTestState, dataQualityTestRun) => ({
@@ -130,6 +141,9 @@ const createDataSetQualityRunsList = (
     }),
     {
       ...state,
+      allTestRunIdsByTestId:
+        pageInfo.page > 1 ? { ...state.allTestRunIdsByTestId } : {},
+      qualityTestRunsPageInfo: pageInfo,
     }
   );
 
@@ -155,7 +169,8 @@ const reducer = (
       return createDataSetQualityRunsList(
         state,
         action.payload.value,
-        action.payload.entityId
+        action.payload.entityId,
+        action.payload.pageInfo
       );
     default:
       return state;

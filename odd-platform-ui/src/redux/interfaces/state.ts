@@ -110,6 +110,7 @@ export interface DataQualityTestState {
   allTestRunIdsByTestId: {
     [qualityTestId: string]: DataQualityTestRun['id'][];
   };
+  qualityTestRunsPageInfo: CurrentPageInfo;
   datasetTestReportByEntityId: {
     [dataEntityId: string]: DataSetTestReport;
   };

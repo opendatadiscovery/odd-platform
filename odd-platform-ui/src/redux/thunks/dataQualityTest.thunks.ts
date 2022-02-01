@@ -9,7 +9,10 @@ import {
   DataQualityTestRunList,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
-import { PartialEntityUpdateParams } from 'redux/interfaces';
+import {
+  PaginatedResponse,
+  PartialEntityUpdateParams,
+} from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 
@@ -53,7 +56,7 @@ export const fetchDataSetQualityTestList = createThunk<
 export const fetchDataSetQualityTestRuns = createThunk<
   DataQualityApiGetRunsRequest,
   DataQualityTestRunList,
-  PartialEntityUpdateParams<DataQualityTestRunList>
+  PaginatedResponse<PartialEntityUpdateParams<DataQualityTestRunList>>
 >(
   (params: DataQualityApiGetRunsRequest) =>
     datasetQualityTestApiClient.getRuns(params),
@@ -64,5 +67,9 @@ export const fetchDataSetQualityTestRuns = createThunk<
   ) => ({
     entityId: request.dataqatestId,
     value: response,
+    pageInfo: {
+      ...response.pageInfo,
+      page: request.page,
+    },
   })
 );
