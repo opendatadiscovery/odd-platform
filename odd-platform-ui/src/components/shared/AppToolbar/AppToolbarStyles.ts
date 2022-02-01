@@ -6,7 +6,6 @@ import {
   menuClasses,
   MenuItem,
   Toolbar,
-  Typography,
 } from '@mui/material';
 import {
   maxContentWidth,
@@ -16,7 +15,6 @@ import {
 import { styled } from '@mui/material/styles';
 import { Link } from 'react-router-dom';
 import { AccountCircle } from '@mui/icons-material';
-import { flexbox } from '@mui/system';
 
 export const Bar = styled(AppBar)(({ theme }) => ({
   [`&.${appBarClasses.root}`]: {

@@ -64,9 +64,6 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   React.useEffect(() => {
     fetchIdentity();
-  }, []);
-
-  React.useEffect(() => {
     fetchAppInfo();
   }, []);
 
