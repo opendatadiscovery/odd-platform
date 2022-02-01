@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AlertMapperImpl implements AlertMapper {
     private final DataEntityMapper dataEntityMapper;
+    private final OwnerMapper ownerMapper;
 
     @Override
     public Alert mapAlert(final AlertDto alert) {
@@ -26,14 +27,18 @@ public class AlertMapperImpl implements AlertMapper {
             .mapRef(alert.getDataEntity())
             .hasAlerts(true);
 
+        final AssociatedOwner associatedOwner = new AssociatedOwner()
+            .identity(new Identity().username(alert.getAlert().getStatusUpdatedBy()));
+        if (alert.getOwner() != null) {
+            associatedOwner.setOwner(ownerMapper.mapPojo(alert.getOwner()));
+        }
         return new Alert()
             .id(alert.getAlert().getId())
             .dataEntity(dataEntity)
             .description(alert.getAlert().getDescription())
             .type(AlertType.valueOf(alert.getAlert().getType()))
             .status(AlertStatus.fromValue(alert.getAlert().getStatus()))
-            .statusUpdatedBy(new AssociatedOwner()
-                .identity(new Identity().username(alert.getAlert().getStatusUpdatedBy())))
+            .statusUpdatedBy(associatedOwner)
             .statusUpdatedAt(alert.getAlert().getStatusUpdatedAt().atOffset(ZoneOffset.UTC))
             .createdAt(alert.getAlert().getCreatedAt().atOffset(ZoneOffset.UTC));
     }
