@@ -56,7 +56,7 @@ export const fetchDataSetQualityTestList = createThunk<
 export const fetchDataSetQualityTestRuns = createThunk<
   DataQualityApiGetRunsRequest,
   DataQualityTestRunList,
-  PaginatedResponse<PartialEntityUpdateParams<DataQualityTestRunList>>
+  PartialEntityUpdateParams<PaginatedResponse<DataQualityTestRunList>>
 >(
   (params: DataQualityApiGetRunsRequest) =>
     datasetQualityTestApiClient.getRuns(params),
@@ -66,10 +66,12 @@ export const fetchDataSetQualityTestRuns = createThunk<
     request: DataQualityApiGetRunsRequest
   ) => ({
     entityId: request.dataqatestId,
-    value: response,
-    pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
+    value: {
+      items: response.items,
+      pageInfo: {
+        ...response.pageInfo,
+        page: request.page,
+      },
     },
   })
 );

@@ -9,10 +9,9 @@ import { Grid, MenuItem, Typography } from '@mui/material';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import DataSourceSkeletonItem from 'components/Management/DataSourcesList/DataSourceSkeletonItem/DataSourceSkeletonItem';
-import DataSourceItemContainer from 'components/Management/DataSourcesList/DataSourceItem/DataSourceItemContainer';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CurrentPageInfo } from 'redux/interfaces';
+import TestRunSkeletonItem from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunSkeletonItem/TestRunSkeletonItem';
 import TestRunItem from './TestRunItem/TestRunItem';
 import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
 
@@ -41,20 +40,41 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
     DataQualityTestRunStatus | 'All'
   >('All');
 
+  const statusForFetchingRuns =
+    alertStatus === 'All' ? undefined : alertStatus;
+
   React.useEffect(() => {
     fetchDataSetQualityTestRuns({
       dataqatestId: dataQATestId,
       page: 1,
       size: pageSize,
+      status: statusForFetchingRuns,
     });
-  }, [fetchDataSetQualityTestRuns, dataQATestId]);
+  }, [fetchDataSetQualityTestRuns, dataQATestId, statusForFetchingRuns]);
 
-  const filterDataQATestRunsByStatus = (
-    dataQATestRun: DataQualityTestRun
-  ) => {
-    if (alertStatus === 'All') return true;
-    return dataQATestRun.status === alertStatus;
+  const fetchNextPage = () => {
+    fetchDataSetQualityTestRuns({
+      dataqatestId: dataQATestId,
+      page: pageInfo.page + 1,
+      size: pageSize,
+      status: statusForFetchingRuns,
+    });
   };
+
+  const testRunItemSkeleton = React.useMemo(
+    () => (
+      <SkeletonWrapper
+        length={5}
+        renderContent={({ randomSkeletonPercentWidth, key }) => (
+          <TestRunSkeletonItem
+            width={randomSkeletonPercentWidth()}
+            key={key}
+          />
+        )}
+      />
+    ),
+    []
+  );
 
   return (
     <Grid container sx={{ mt: 2 }}>
@@ -94,43 +114,25 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
         </ColContainer>
       </RunsTableHeader>
       <Grid container>
-        {/* <InfiniteScroll */}
-        {/*  next={fetchNextPage} */}
-        {/*  hasMore={!!pageInfo?.hasNext} */}
-        {/*  loader={ */}
-        {/*    isDataSourcesListFetching ? ( */}
-        {/*      <SkeletonWrapper */}
-        {/*        length={5} */}
-        {/*        renderContent={({ randomSkeletonPercentWidth, key }) => ( */}
-        {/*          <DataSourceSkeletonItem */}
-        {/*            width={randomSkeletonPercentWidth()} */}
-        {/*            key={key} */}
-        {/*          /> */}
-        {/*        )} */}
-        {/*      /> */}
-        {/*    ) : null */}
-        {/*  } */}
-        {/*  dataLength={dataQATestRunsList.length} */}
-        {/* > */}
-        {/*  {dataQATestRunsList?.map(dataQATestRun => ( */}
-        {/*    <TestRunItem */}
-        {/*      key={dataQATestRun.id} */}
-        {/*      dataQATestRun={dataQATestRun} */}
-        {/*      dataQATestId={dataQATestId} */}
-        {/*      dataQATestName={dataQATestName} */}
-        {/*    /> */}
-        {/*  ))} */}
-        {/* </InfiniteScroll> */}
-        {dataQATestRunsList?.map(dataQATestRun => (
-          <TestRunItem
-            key={dataQATestRun.id}
-            dataQATestRun={dataQATestRun}
-            dataQATestId={dataQATestId}
-            dataQATestName={dataQATestName}
-          />
-        ))}
+        <Grid item xs={12}>
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            loader={isTestRunsListFetching ? testRunItemSkeleton : null}
+            dataLength={dataQATestRunsList.length}
+          >
+            {dataQATestRunsList?.map(dataQATestRun => (
+              <TestRunItem
+                key={dataQATestRun.id}
+                dataQATestRun={dataQATestRun}
+                dataQATestId={dataQATestId}
+                dataQATestName={dataQATestName}
+              />
+            ))}
+          </InfiniteScroll>
+        </Grid>
       </Grid>
-      {!isTestRunsListFetching && !dataQATestRunsList?.length ? (
+      {!isTestRunsListFetching && !dataQATestRunsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Grid>

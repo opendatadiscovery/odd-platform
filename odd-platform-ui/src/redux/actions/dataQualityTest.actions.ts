@@ -27,6 +27,6 @@ export const fetchDataSetQualityTestRunsAction = createAsyncAction(
   'GET_DATA_SET_QUALITY_TEST_RUNS_REPORT__FAILURE'
 )<
   undefined,
-  PaginatedResponse<PartialEntityUpdateParams<DataQualityTestRunList>>,
+  PartialEntityUpdateParams<PaginatedResponse<DataQualityTestRunList>>,
   undefined
 >();

@@ -1,6 +1,5 @@
 import {
   Action,
-  CurrentPageInfo,
   DataQualityTestState,
   PaginatedResponse,
 } from 'redux/interfaces';
@@ -117,9 +116,8 @@ const createDataSetQualityTestList = (
 
 const createDataSetQualityRunsList = (
   state: DataQualityTestState,
-  payload: DataQualityTestRunList,
-  dataQATestId: number | string,
-  pageInfo: CurrentPageInfo
+  payload: PaginatedResponse<DataQualityTestRunList>,
+  dataQATestId: number | string
 ) =>
   payload.items.reduce(
     (memo: DataQualityTestState, dataQualityTestRun) => ({
@@ -142,8 +140,10 @@ const createDataSetQualityRunsList = (
     {
       ...state,
       allTestRunIdsByTestId:
-        pageInfo.page > 1 ? { ...state.allTestRunIdsByTestId } : {},
-      qualityTestRunsPageInfo: pageInfo,
+        payload.pageInfo.page > 1
+          ? { ...state.allTestRunIdsByTestId }
+          : {},
+      qualityTestRunsPageInfo: payload.pageInfo,
     }
   );
 
@@ -169,8 +169,7 @@ const reducer = (
       return createDataSetQualityRunsList(
         state,
         action.payload.value,
-        action.payload.entityId,
-        action.payload.pageInfo
+        action.payload.entityId
       );
     default:
       return state;

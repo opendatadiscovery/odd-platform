@@ -9,7 +9,6 @@ import {
   getQualityTestRunsListPage,
 } from 'redux/selectors/dataQualityTest.selectors';
 import TestRunsHistory from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunsHistory';
-import { getDataSourcesListPage } from 'redux/selectors/datasources.selectors';
 
 interface RouteProps {
   dataEntityId: string;
