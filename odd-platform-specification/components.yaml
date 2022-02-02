@@ -1262,6 +1262,7 @@ components:
         - FLOAT
         - BOOLEAN
         - ARRAY
+        - JSON
 
     MetadataFieldOrigin:
       type: string
@@ -1333,7 +1334,8 @@ components:
       type: object
       properties:
         name:
-          type: string
+          type: 
+            $ref: '#/components/schemas/MetadataFieldType'
         type:
           type: string
       required:
