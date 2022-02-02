@@ -41,6 +41,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             item
             justifyContent="flex-start"
             wrap="nowrap"
+            $noPaddings
           >
             <Typography
               variant="body1"

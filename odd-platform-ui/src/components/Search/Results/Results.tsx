@@ -104,6 +104,19 @@ const Results: React.FC<ResultsProps> = ({
     ]);
   }, [totals]);
 
+  // Find out dynamically size of scrollbar width of client's browser
+  // For Chrome default is 15px
+  const [scrollbarWidth, setScrollbarWidth] = React.useState('15px');
+  React.useEffect(() => {
+    const scrollDiv = document.createElement('div');
+    scrollDiv.style.overflow = 'scroll';
+    document.body.appendChild(scrollDiv);
+    setScrollbarWidth(
+      `${scrollDiv.offsetWidth - scrollDiv.clientWidth}px`
+    );
+    document.body.removeChild(scrollDiv);
+  }, []);
+
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
   React.useEffect(() => {
@@ -222,6 +235,9 @@ const Results: React.FC<ResultsProps> = ({
         </S.ColContainer>
         <S.ColContainer item $colType="colsm">
           <Typography variant="caption">Last Update</Typography>
+        </S.ColContainer>
+        <S.ColContainer item $noPaddings $colType="col">
+          <S.ScrollbarSizedBox $width={scrollbarWidth} />
         </S.ColContainer>
       </S.ResultsTableHeader>
       {isSearchCreating ? (
