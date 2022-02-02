@@ -16,3 +16,16 @@ To collect data from decentralized sources ODD uses a pull strategy (read more a
 To connect your data sources with the Platform use the [API](https://github.com/opendatadiscovery/odd-platform/tree/main/odd-platform-specification). 
 
 ## End-to-end Data Objects Lineage
+*In progress*
+## End-to-end Microservices Lineage 
+*In progress*
+## Meta Data Storage 
+*In progress*
+## Manual Object Tagging 
+*In progress*
+## Data Quality Test Results Import
+*In progress*
+## ML Experiment Logging 
+*In progress*
+## Pipeline monitoring and alerting 
+*In progress*
