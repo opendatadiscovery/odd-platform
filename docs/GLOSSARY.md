@@ -5,6 +5,6 @@
 ### Push strategy 
 
 ## Platform entities 
-### Alert
+### Alerts
 ### Label
 ### Tag
