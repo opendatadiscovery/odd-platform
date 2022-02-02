@@ -8,13 +8,13 @@ Developing the model I deal with PII. It requires to choose confidential info an
 The ODD Platform provides sensitive search mechanism which helps to look for sensitive data using [tags](GLOSSARY.md#tag), [labels](GLOSSARY.md#label) and metadata.
 ### Scenario
 1. A DS creates an ML-model. It's data source has to have the parameters: \
-- Customer age, gender, LTV (???), country and city of contract
-- Customer accounts information (number of accounts, accounts’ currency)
-- Monthly earnings and spending, savings
-- Monthly cashback amounts and selected cashback categories
- - Transaction categories, MCCs
- - Transaction timestamp, latitude and longitude
-- Transaction types (debit, credit).
+- Customer age, gender, LTV (???), country and city of contract \
+- Customer accounts information (number of accounts, accounts’ currency) \
+- Monthly earnings and spending, savings \
+- Monthly cashback amounts and selected cashback categories \
+ - Transaction categories, MCCs \
+ - Transaction timestamp, latitude and longitude \
+- Transaction types (debit, credit). \
 2. I have found the following objects in DWH     (*my own dwh??*):
 
 - Dim_Customers: customer full name, date of birth, customer ID and preferred Geo details filled in during    registration process
