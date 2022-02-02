@@ -140,7 +140,13 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         value: 'linked-items',
       },
     ]);
-  }, [dataEntityId, isQualityTest, isDataset, dataEntityDetails]);
+  }, [
+    dataEntityId,
+    isQualityTest,
+    isDataset,
+    dataEntityDetails,
+    openAlertsCount,
+  ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
