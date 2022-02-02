@@ -1334,10 +1334,9 @@ components:
       type: object
       properties:
         name:
-          type: 
-            $ref: '#/components/schemas/MetadataFieldType'
-        type:
           type: string
+        type:
+          $ref: '#/components/schemas/MetadataFieldType'
       required:
         - name
         - type
