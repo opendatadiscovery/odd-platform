@@ -41,10 +41,6 @@ const Alerts: React.FC<AlertsProps> = ({
 }) => {
   React.useEffect(() => {
     fetchAlertsTotals();
-    fetchAllAlertList({
-      page: 1,
-      size: 30,
-    });
   }, []);
 
   const tabs: AppTabItem<AlertViewType>[] = [

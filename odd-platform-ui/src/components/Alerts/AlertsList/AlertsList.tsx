@@ -47,6 +47,13 @@ const AlertsList: React.FC<AlertsListProps> = ({
     fetchNextPage();
   }, [fetchAlerts]);
 
+  React.useEffect(() => {
+    fetchAlerts({
+      page: 1,
+      size: 30,
+    });
+  }, []);
+
   const alertStatusHandler = React.useCallback(
     (alertId: Alert['id'], alertStatus: AlertStatus) => () => {
       updateAlertStatus({
