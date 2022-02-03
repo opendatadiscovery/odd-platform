@@ -1,11 +1,4 @@
-import {
-  AppBar,
-  appBarClasses,
-  Grid,
-  Menu,
-  menuClasses,
-  Toolbar,
-} from '@mui/material';
+import { AppBar, appBarClasses, Grid, Toolbar } from '@mui/material';
 import {
   maxContentWidth,
   maxSidebarWidth,
@@ -101,11 +94,4 @@ export const UserName = styled('p')(({ theme }) => ({
   fontSize: '15px',
   color: theme.palette.text.primary,
   margin: theme.spacing(0, 1),
-}));
-
-export const UserMenu = styled(Menu)(({ theme }) => ({
-  [`& .${menuClasses.paper}`]: {
-    minWidth: '160px',
-    padding: theme.spacing(1, 0),
-  },
 }));

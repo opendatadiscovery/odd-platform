@@ -6,7 +6,7 @@ import MoreIcon from 'components/shared/Icons/MoreIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import * as S from './TruncatedCellMenuStyles';
+import AppMenu from 'components/shared/AppMenu/AppMenu';
 
 interface TruncatedCellMenuProps {
   dataList: DataEntityRef[] | string[] | undefined;
@@ -41,7 +41,7 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
         onClick={handleMenuOpen}
         height={20}
       />
-      <S.ListMenu
+      <AppMenu
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         transformOrigin={{ vertical: 'top', horizontal: 'left' }}
@@ -76,7 +76,7 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
             </Link>
           )
         )}
-      </S.ListMenu>
+      </AppMenu>
     </>
   );
 };

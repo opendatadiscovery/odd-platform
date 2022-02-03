@@ -60,11 +60,6 @@ export const components: Components = {
       },
     },
   },
-  MuiMenu: {
-    styleOverrides: {
-      paper: { padding: '12px 8px' },
-    },
-  },
   MuiList: {
     styleOverrides: {
       padding: { paddingTop: 0, paddingBottom: 0 },
