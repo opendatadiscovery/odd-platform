@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
@@ -34,8 +35,12 @@ public class DataQualityServiceImpl implements DataQualityService {
     }
 
     @Override
-    public Mono<DataQualityTestRunList> getDataQualityTestRuns(final long dataQualityTestId) {
-        return Mono.fromCallable(() -> dataQualityRepository.getDataQualityTestRuns(dataQualityTestId))
-            .map(runs -> dataQualityMapper.mapDataQualityTestRuns(dataQualityTestId, runs));
+    public Mono<DataQualityTestRunList> getDataQualityTestRuns(final long dataQualityTestId,
+                                                               final DataQualityTestRunStatus status,
+                                                               final Integer page,
+                                                               final Integer size) {
+        return Mono.fromCallable(() -> dataQualityRepository
+            .getDataQualityTestRuns(dataQualityTestId, status, page, size))
+            .map(pageInfo -> dataQualityMapper.mapDataQualityTestRuns(dataQualityTestId, pageInfo));
     }
 }

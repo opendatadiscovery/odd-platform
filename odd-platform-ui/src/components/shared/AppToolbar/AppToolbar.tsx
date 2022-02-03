@@ -1,11 +1,13 @@
 import React, { MouseEvent } from 'react';
 import {
+  Divider,
   Grid,
   IconButton,
   Typography,
   useScrollTrigger,
 } from '@mui/material';
 import {
+  AppInfo,
   AssociatedOwner,
   SearchApiSearchRequest,
   SearchFacetsData,
@@ -20,16 +22,20 @@ import * as S from './AppToolbarStyles';
 
 interface AppToolbarProps {
   identity?: AssociatedOwner;
+  version?: string;
   fetchIdentity: () => Promise<AssociatedOwner | void>;
   createDataEntitiesSearch: (
     params: SearchApiSearchRequest
   ) => Promise<SearchFacetsData>;
+  fetchAppInfo: () => Promise<AppInfo | void>;
 }
 
 const AppToolbar: React.FC<AppToolbarProps> = ({
   identity,
+  version,
   createDataEntitiesSearch,
   fetchIdentity,
+  fetchAppInfo,
 }) => {
   const location = useLocation();
   const history = useHistory();
@@ -60,6 +66,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   React.useEffect(() => {
     fetchIdentity();
+    fetchAppInfo();
   }, []);
 
   const [tabs] = React.useState<AppTabItem[]>([
@@ -155,6 +162,16 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         onClose={handleMenuClose}
       >
         <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
+        {version && (
+          <>
+            <Divider />
+            <S.CaptionsWrapper>
+              <Typography variant="caption">
+                ODD Platform v.{version}
+              </Typography>
+            </S.CaptionsWrapper>
+          </>
+        )}
       </AppMenu>
     </S.Bar>
   );

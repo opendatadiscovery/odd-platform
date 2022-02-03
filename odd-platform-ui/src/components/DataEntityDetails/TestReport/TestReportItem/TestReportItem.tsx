@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   DataQualityTest,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
 } from 'generated-sources';
 import { Collapse, Grid, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
@@ -73,7 +73,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                     key={testType}
                     count={count}
                     typeName={
-                      testType.toUpperCase() as DataQualityTestRunStatusEnum
+                      testType.toUpperCase() as DataQualityTestRunStatus
                     }
                     size="small"
                   />

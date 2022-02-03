@@ -531,14 +531,7 @@ components:
             status_reason:
               type: string
             status:
-              type: string
-              enum:
-                - SUCCESS
-                - FAILED
-                - SKIPPED
-                - BROKEN
-                - ABORTED
-                - UNKNOWN
+              $ref: '#/components/schemas/DataQualityTestRunStatus'
           required:
             - status
 
@@ -581,6 +574,7 @@ components:
           $ref: '#/components/schemas/PageInfo'
       required:
         - items
+        - page_info
 
     DataEntityGroup:
       allOf:
@@ -761,6 +755,16 @@ components:
         - NAMESPACE
         - OWNER
         - TAG
+
+    DataQualityTestRunStatus:
+      type: string
+      enum:
+        - SUCCESS
+        - FAILED
+        - SKIPPED
+        - BROKEN
+        - ABORTED
+        - UNKNOWN
 
     MultipleFacetType:
       type: string
@@ -1521,6 +1525,12 @@ components:
         dependent_total:
           type: integer
           format: int64
+
+    AppInfo:
+      type: object
+      properties:
+        projectVersion:
+          type: string
 
   parameters:
     PageParam:

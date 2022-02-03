@@ -3,7 +3,7 @@ import {
   DataQualityApiGetDataEntityDataQATestsRequest,
   DataQualityApiGetDatasetTestReportRequest,
   DataQualityTest,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
   DataSetTestReport,
 } from 'generated-sources';
 import { Grid, Paper, Typography } from '@mui/material';
@@ -76,27 +76,27 @@ const TestReport: React.FC<TestReportProps> = ({
               <TestReportContainer container item>
                 <TestRunStatusItem
                   count={datasetTestReport?.successTotal}
-                  typeName={DataQualityTestRunStatusEnum.SUCCESS}
+                  typeName={DataQualityTestRunStatus.SUCCESS}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.failedTotal}
-                  typeName={DataQualityTestRunStatusEnum.FAILED}
+                  typeName={DataQualityTestRunStatus.FAILED}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.brokenTotal}
-                  typeName={DataQualityTestRunStatusEnum.BROKEN}
+                  typeName={DataQualityTestRunStatus.BROKEN}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.abortedTotal}
-                  typeName={DataQualityTestRunStatusEnum.ABORTED}
+                  typeName={DataQualityTestRunStatus.ABORTED}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.skippedTotal}
-                  typeName={DataQualityTestRunStatusEnum.SKIPPED}
+                  typeName={DataQualityTestRunStatus.SKIPPED}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.unknownTotal}
-                  typeName={DataQualityTestRunStatusEnum.UNKNOWN}
+                  typeName={DataQualityTestRunStatus.UNKNOWN}
                 />
               </TestReportContainer>
               <Grid container item justifyContent="flex-end">
