@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {
   DataQualityApiGetDatasetTestReportRequest,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
   DataSetTestReport,
 } from 'generated-sources';
 import { dataEntityTestReportPath } from 'lib/paths';
@@ -79,7 +79,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatusEnum.SUCCESS}
+              $testRunStatus={DataQualityTestRunStatus.SUCCESS}
             >
               passed
             </CountLabel>
@@ -87,28 +87,28 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
           <Grid item container sx={{ mt: 0.5, mb: 0.5 }}>
             <Bar
               $testReport={datasetQualityTestReport}
-              $testRunStatus={DataQualityTestRunStatusEnum.SUCCESS}
+              $testRunStatus={DataQualityTestRunStatus.SUCCESS}
             />
             <Grid item container wrap="nowrap">
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatusEnum.FAILED}
+                $testRunStatus={DataQualityTestRunStatus.FAILED}
               />
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatusEnum.BROKEN}
+                $testRunStatus={DataQualityTestRunStatus.BROKEN}
               />
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatusEnum.SKIPPED}
+                $testRunStatus={DataQualityTestRunStatus.SKIPPED}
               />
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatusEnum.ABORTED}
+                $testRunStatus={DataQualityTestRunStatus.ABORTED}
               />
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatusEnum.UNKNOWN}
+                $testRunStatus={DataQualityTestRunStatus.UNKNOWN}
               />
             </Grid>
           </Grid>
@@ -118,7 +118,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatusEnum.FAILED}
+              $testRunStatus={DataQualityTestRunStatus.FAILED}
             >
               failed
             </CountLabel>
@@ -129,7 +129,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatusEnum.BROKEN}
+              $testRunStatus={DataQualityTestRunStatus.BROKEN}
             >
               broken
             </CountLabel>
@@ -140,7 +140,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatusEnum.ABORTED}
+              $testRunStatus={DataQualityTestRunStatus.ABORTED}
             >
               aborted
             </CountLabel>
@@ -151,7 +151,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatusEnum.SKIPPED}
+              $testRunStatus={DataQualityTestRunStatus.SKIPPED}
             >
               skipped
             </CountLabel>
@@ -162,7 +162,7 @@ const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatusEnum.UNKNOWN}
+              $testRunStatus={DataQualityTestRunStatus.UNKNOWN}
             >
               unknown
             </CountLabel>

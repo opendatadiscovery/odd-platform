@@ -6,6 +6,7 @@ import {
   getDatasetTestRunsFetching,
   getQualityTestNameByTestId,
   getQualityTestRunsList,
+  getQualityTestRunsListPage,
 } from 'redux/selectors/dataQualityTest.selectors';
 import TestRunsHistory from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunsHistory';
 
@@ -27,6 +28,7 @@ const mapStateToProps = (
   dataQATestName: getQualityTestNameByTestId(state, dataEntityId),
   dataQATestRunsList: getQualityTestRunsList(state, dataEntityId),
   isTestRunsListFetching: getDatasetTestRunsFetching(state),
+  pageInfo: getQualityTestRunsListPage(state),
 });
 
 const mapDispatchToProps = {

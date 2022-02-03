@@ -71,7 +71,7 @@ public class JooqQueryHelper {
                 .build();
         }
 
-        final ArrayList<T> data = new ArrayList<>();
+        final List<T> data = new ArrayList<>();
         boolean hasNext = true;
         for (final R record : records) {
             data.add(recordMapper.apply(record));
