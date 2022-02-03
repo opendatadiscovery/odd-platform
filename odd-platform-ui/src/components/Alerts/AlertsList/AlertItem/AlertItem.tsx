@@ -1,4 +1,4 @@
-import { MenuItem, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
@@ -10,6 +10,7 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { ColContainer } from '../AlertsListStyles';
 import * as S from './AlertItemStyles';
 
@@ -101,9 +102,9 @@ const AlertItem: React.FC<AlertItemProps> = ({
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
           transformOrigin={{ vertical: 'top', horizontal: 100 }}
         >
-          <MenuItem onClick={alertStatusHandler}>
+          <AppMenuItem onClick={alertStatusHandler}>
             {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
-          </MenuItem>
+          </AppMenuItem>
         </AppPopover>
       </S.OptionsBtn>
     </ColContainer>

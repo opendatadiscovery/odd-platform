@@ -14,6 +14,7 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { searchPath } from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import AppMenuItem from '../AppMenuItem/AppMenuItem';
 import * as S from './AppToolbarStyles';
 
 interface AppToolbarProps {
@@ -152,7 +153,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        <S.UserMenuItem onClick={handleLogout}>Logout</S.UserMenuItem>
+        <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
       </S.UserMenu>
     </S.Bar>
   );

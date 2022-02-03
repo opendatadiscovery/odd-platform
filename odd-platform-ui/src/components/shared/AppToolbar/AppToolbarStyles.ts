@@ -4,7 +4,6 @@ import {
   Grid,
   Menu,
   menuClasses,
-  MenuItem,
   Toolbar,
 } from '@mui/material';
 import {
@@ -109,9 +108,4 @@ export const UserMenu = styled(Menu)(({ theme }) => ({
     minWidth: '160px',
     padding: theme.spacing(1, 0),
   },
-}));
-
-export const UserMenuItem = styled(MenuItem)(({ theme }) => ({
-  padding: theme.spacing(0.75, 1),
-  '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
 }));

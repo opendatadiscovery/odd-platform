@@ -49,11 +49,6 @@ export const components: Components = {
       },
     },
   },
-  MuiMenuItem: {
-    styleOverrides: {
-      root: { fontSize: '14px', lineHeight: '20px' },
-    },
-  },
   MuiPaper: {
     styleOverrides: {
       root: {

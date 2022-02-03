@@ -1,10 +1,11 @@
 import React from 'react';
-import { MenuItem, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
 import MoreIcon from 'components/shared/Icons/MoreIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import * as S from './TruncatedCellMenuStyles';
 
 interface TruncatedCellMenuProps {
@@ -54,7 +55,7 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
       >
         {dataList?.map((item: DataEntityRef | string) =>
           typeof item === 'string' ? (
-            <MenuItem key={item}>{item}</MenuItem>
+            <AppMenuItem key={item}>{item}</AppMenuItem>
           ) : (
             <Link
               key={item.id}
@@ -62,7 +63,7 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
               target="_blank"
               onClick={handleMenuClose}
             >
-              <MenuItem>
+              <AppMenuItem>
                 <Typography
                   variant="body1"
                   color="texts.action"
@@ -71,7 +72,7 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
                 >
                   {item.internalName || item.externalName}
                 </Typography>
-              </MenuItem>
+              </AppMenuItem>
             </Link>
           )
         )}
