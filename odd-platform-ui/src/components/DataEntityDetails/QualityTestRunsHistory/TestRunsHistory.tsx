@@ -34,47 +34,24 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
   fetchDataSetQualityTestRuns,
   pageInfo,
 }) => {
-  const pageSize = 3;
+  const pageSize = 100;
 
   const [alertStatus, setAlertStatus] = React.useState<
     DataQualityTestRunStatus | 'All'
   >('All');
 
-  const statusForFetchingRuns =
-    alertStatus === 'All' ? undefined : alertStatus;
-
-  React.useEffect(() => {
+  const fetchPage = (page?: number) => {
     fetchDataSetQualityTestRuns({
       dataqatestId: dataQATestId,
-      page: 1,
+      page: page || pageInfo.page + 1,
       size: pageSize,
-      status: statusForFetchingRuns,
-    });
-  }, [fetchDataSetQualityTestRuns, dataQATestId, statusForFetchingRuns]);
-
-  const fetchNextPage = () => {
-    fetchDataSetQualityTestRuns({
-      dataqatestId: dataQATestId,
-      page: pageInfo.page + 1,
-      size: pageSize,
-      status: statusForFetchingRuns,
+      status: alertStatus === 'All' ? undefined : alertStatus,
     });
   };
 
-  const testRunItemSkeleton = React.useMemo(
-    () => (
-      <SkeletonWrapper
-        length={5}
-        renderContent={({ randomSkeletonPercentWidth, key }) => (
-          <TestRunSkeletonItem
-            width={randomSkeletonPercentWidth()}
-            key={key}
-          />
-        )}
-      />
-    ),
-    []
-  );
+  React.useEffect(() => {
+    fetchPage(1);
+  }, [fetchDataSetQualityTestRuns, dataQATestId, alertStatus]);
 
   return (
     <Grid container sx={{ mt: 2 }}>
@@ -116,9 +93,21 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
       <Grid container>
         <Grid item xs={12}>
           <InfiniteScroll
-            next={fetchNextPage}
+            next={fetchPage}
             hasMore={!!pageInfo?.hasNext}
-            loader={isTestRunsListFetching ? testRunItemSkeleton : null}
+            loader={
+              isTestRunsListFetching ? (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <TestRunSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              ) : null
+            }
             dataLength={dataQATestRunsList.length}
           >
             {dataQATestRunsList?.map(dataQATestRun => (
