@@ -1522,6 +1522,12 @@ components:
           type: integer
           format: int64
 
+    AppInfo:
+      type: object
+      properties:
+        projectVersion:
+          type: string
+
   parameters:
     PageParam:
       name: page

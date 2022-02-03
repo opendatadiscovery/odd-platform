@@ -28,6 +28,7 @@ tags:
   - name: metadata
   - name: datasetField
   - name: alert
+  - name: appInfo
 paths:
   /api/identity/whoami:
     get:
@@ -1431,6 +1432,21 @@ paths:
                 $ref: './components.yaml/#/components/schemas/AlertStatus'
       tags:
         - alert
+
+  /api/appInfo:
+    get:
+      summary: Get application info
+      description: Gets application info
+      operationId: getAppInfo
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/AppInfo'
+      tags:
+        - appInfo
 
   /ingestion/datasources/active:
     get:

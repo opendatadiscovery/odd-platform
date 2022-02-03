@@ -115,3 +115,10 @@ export const UserMenuItem = styled(MenuItem)(({ theme }) => ({
   padding: theme.spacing(0.75, 1),
   '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
 }));
+
+export const CaptionsWrapper = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  padding: theme.spacing(0, 1),
+}));
