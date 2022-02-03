@@ -9,7 +9,8 @@ export type ButtonColors =
   | 'secondary'
   | 'tertiary'
   | 'dropdown'
-  | 'expandText';
+  | 'expandText'
+  | 'valueCount';
 
 interface AppButtonStyleProps {
   $color: ButtonColors;

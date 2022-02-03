@@ -3,6 +3,7 @@ import { ActionType } from 'typesafe-actions';
 import {
   Alert,
   AlertTotals,
+  AppInfo,
   AssociatedOwner,
   DataEntity,
   DataEntityRef,
@@ -14,6 +15,7 @@ import {
   DataSetTestReport,
   DataSetVersion,
   DataSource,
+  EnumValue,
   Label,
   MetadataField,
   MetadataFieldValue,
@@ -39,19 +41,19 @@ import { LoaderState } from './loader';
 
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
-  allIds: number[];
+  allIds: DataSource['id'][];
   pageInfo?: CurrentPageInfo;
 }
 
 export interface TagsState {
   byId: { [tagId: number]: Tag };
-  allIds: number[];
+  allIds: Tag['id'][];
   pageInfo?: CurrentPageInfo;
 }
 
 export interface LabelsState {
   byId: { [labelId: number]: Label };
-  allIds: number[];
+  allIds: Label['id'][];
   pageInfo?: CurrentPageInfo;
 }
 
@@ -92,6 +94,9 @@ export interface DatasetStructureState {
   };
   latestVersionByDataset: {
     [datasetId: string]: DataSetVersion['id'];
+  };
+  fieldEnumsByFieldId: {
+    [fieldId: number]: EnumValue[];
   };
 }
 
@@ -180,8 +185,12 @@ export interface AlertsState {
 export interface ProfileState {
   owner?: AssociatedOwner;
 }
+export interface AppInfoState {
+  appInfo?: AppInfo;
+}
 
 export type RootState = {
+  appInfo: AppInfoState;
   dataSources: DataSourcesState;
   search: SearchState;
   loader: LoaderState;

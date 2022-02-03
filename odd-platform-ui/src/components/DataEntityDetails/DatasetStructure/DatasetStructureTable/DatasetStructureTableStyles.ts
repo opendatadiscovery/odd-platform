@@ -6,8 +6,8 @@ export type ColType = 'name' | 'uniq' | 'missing' | 'stats';
 
 export const columnBasicStyles = (theme: Theme) => ({
   name: {
-    paddingLeft: theme.spacing(1),
     flexGrow: 1,
+    width: '68%',
     maxWidth: 'calc(100% - 140px)',
   },
   uniq: {

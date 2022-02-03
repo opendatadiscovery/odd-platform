@@ -34,9 +34,10 @@ const AppTabs: React.FC<AppTabsProps> = ({
   isHintUpdated = false,
   sx,
 }) => {
+  const selectedTabState = selectedTab === -1 ? false : selectedTab;
   const [currentTab, setCurrent] = React.useState<
     number | boolean | undefined
-  >(selectedTab);
+  >(selectedTabState);
 
   const handleChange = (event: SyntheticEvent, newTab: number) => {
     setCurrent(newTab);
@@ -44,7 +45,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
   };
 
   React.useEffect(() => {
-    setCurrent(selectedTab);
+    setCurrent(selectedTabState);
   }, [selectedTab]);
 
   return (

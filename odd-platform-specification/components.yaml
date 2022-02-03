@@ -1029,6 +1029,8 @@ components:
           type: string
         labels:
           $ref: '#/components/schemas/LabelList'
+        enum_value_count:
+          type: integer
       required:
         - id
         - oddrn
@@ -1085,6 +1087,50 @@ components:
       required:
         - field_list
         - data_set_version
+
+    EnumValueList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnumValue'
+
+    EnumValue:
+      description: DatasetField enum value
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - name
+
+    EnumValueFormData:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+
+    BulkEnumValueFormData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnumValueFormData'
 
     Label:
       description: DatasetField label
@@ -1480,6 +1526,12 @@ components:
           type: integer
           format: int64
 
+    AppInfo:
+      type: object
+      properties:
+        projectVersion:
+          type: string
+
   parameters:
     PageParam:
       name: page
@@ -1557,6 +1609,14 @@ components:
 
     AlertIdParam:
       name: alert_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    EnumValueIdParam:
+      name: enum_value_id
       in: path
       required: true
       schema:

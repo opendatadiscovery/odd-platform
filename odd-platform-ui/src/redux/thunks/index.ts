@@ -11,3 +11,4 @@ export * from './namespace.thunks';
 export * from './profile.thunks';
 export * from './alerts.thunks';
 export * from './dataentityLinkedList.thunks';
+export * from './appInfo.thunks';

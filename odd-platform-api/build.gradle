@@ -82,6 +82,10 @@ dependencies {
     jooqGenerationContainer("org.testcontainers:postgresql:$testContainersVersion")
 }
 
+springBoot {
+    buildInfo()
+}
+
 jooq {
     basePackageName = "org.opendatadiscovery.oddplatform.model"
     includeMatches = ".*"
