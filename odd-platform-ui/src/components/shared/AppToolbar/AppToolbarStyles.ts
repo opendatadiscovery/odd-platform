@@ -100,5 +100,5 @@ export const CaptionsWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  padding: theme.spacing(0, 1),
+  padding: theme.spacing(0.75, 2),
 }));

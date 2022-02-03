@@ -164,7 +164,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
         {version && (
           <>
-            <Divider />
+            <AppMenuItem divider />
             <S.CaptionsWrapper>
               <Typography variant="caption">
                 ODD Platform v.{version}

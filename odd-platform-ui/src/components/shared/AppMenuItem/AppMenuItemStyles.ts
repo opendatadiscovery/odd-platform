@@ -8,4 +8,7 @@ export const StyledAppMenuItem = styled(MenuItem)(() => ({
     lineHeight: '20px',
     '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
   },
+  [`&.${menuItemClasses.divider}`]: {
+    padding: 0,
+  },
 }));
