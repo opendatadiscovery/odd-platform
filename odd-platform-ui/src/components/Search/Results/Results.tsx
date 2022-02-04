@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
 import { Dictionary } from 'lodash/index';
+import { useScrollBarWidth } from 'lib/hooks';
 import {
   DataEntity,
   DataEntityType,
@@ -103,18 +104,10 @@ const Results: React.FC<ResultsProps> = ({
       },
     ]);
   }, [totals]);
-
-  // Find out dynamically size of scrollbar width of client's browser
-  // For Chrome default is 15px
-  const [scrollbarWidth, setScrollbarWidth] = React.useState('15px');
+  const [scrollbarWidth, setScrollbarWidth] = React.useState('0px');
   React.useEffect(() => {
-    const scrollDiv = document.createElement('div');
-    scrollDiv.style.overflow = 'scroll';
-    document.body.appendChild(scrollDiv);
-    setScrollbarWidth(
-      `${scrollDiv.offsetWidth - scrollDiv.clientWidth}px`
-    );
-    document.body.removeChild(scrollDiv);
+    const newWidth = useScrollBarWidth();
+    setScrollbarWidth(newWidth);
   }, []);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -169,7 +162,11 @@ const Results: React.FC<ResultsProps> = ({
           isHintUpdated={isSearchUpdated}
         />
       )}
-      <S.ResultsTableHeader container sx={{ mt: 2 }} wrap="nowrap">
+      <S.ResultsTableHeader
+        container
+        sx={{ mt: 2, pr: scrollbarWidth }}
+        wrap="nowrap"
+      >
         <S.ColContainer item $colType="collg">
           <Typography variant="caption">Name</Typography>
         </S.ColContainer>
@@ -236,9 +233,9 @@ const Results: React.FC<ResultsProps> = ({
         <S.ColContainer item $colType="colsm">
           <Typography variant="caption">Last Update</Typography>
         </S.ColContainer>
-        <S.ColContainer item $noPaddings $colType="col">
+        {/* <S.ColContainer item $noPaddings $colType="col">
           <S.ScrollbarSizedBox $width={scrollbarWidth} />
-        </S.ColContainer>
+        </S.ColContainer> */}
       </S.ResultsTableHeader>
       {isSearchCreating ? (
         <SkeletonWrapper

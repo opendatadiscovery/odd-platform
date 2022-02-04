@@ -31,10 +31,6 @@ export const colWidthStyles = {
       paddingRight: 0,
     },
   },
-  noPaddings: {
-    paddingLeft: 0,
-    paddingRight: 0,
-  },
 };
 
 const searchHeight = 40;
@@ -44,22 +40,26 @@ export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
   borderBottomColor: theme.palette.divider,
 }));
 
-export const ScrollbarSizedBox = styled('div', {
-  shouldForwardProp: propsChecker,
-})<{ $width?: string }>(({ theme, $width }) => ({
-  width: $width,
-  height: theme.typography.caption.lineHeight,
-}));
+// export const ScrollbarSizedBox = styled('div', {
+//   shouldForwardProp: propsChecker,
+// })<{ $width?: string }>(({ theme, $width }) => ({
+//   width: $width,
+//   height: theme.typography.caption.lineHeight,
+// }));
 
 export const ColContainer = styled(Grid, {
   shouldForwardProp: propsChecker,
 })<{
   $colType: ColType;
-  $noPaddings?: boolean;
-}>(({ $colType, $noPaddings }) => ({
+}>(({ $colType }) => ({
   ...colWidthStyles.col,
   ...colWidthStyles[$colType],
-  ...($noPaddings && colWidthStyles.noPaddings),
+}));
+
+export const NameContainer = styled(Grid)(() => ({
+  ...colWidthStyles.col,
+  paddingRight: '0',
+  paddingLeft: '0',
 }));
 
 export const ListContainer = styled(Grid)(({ theme }) => ({
