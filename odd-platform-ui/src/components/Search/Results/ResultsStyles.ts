@@ -40,13 +40,6 @@ export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
   borderBottomColor: theme.palette.divider,
 }));
 
-// export const ScrollbarSizedBox = styled('div', {
-//   shouldForwardProp: propsChecker,
-// })<{ $width?: string }>(({ theme, $width }) => ({
-//   width: $width,
-//   height: theme.typography.caption.lineHeight,
-// }));
-
 export const ColContainer = styled(Grid, {
   shouldForwardProp: propsChecker,
 })<{

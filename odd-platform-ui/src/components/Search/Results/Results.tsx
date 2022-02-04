@@ -104,7 +104,7 @@ const Results: React.FC<ResultsProps> = ({
       },
     ]);
   }, [totals]);
-  const [scrollbarWidth, setScrollbarWidth] = React.useState('0px');
+  const [scrollbarWidth, setScrollbarWidth] = React.useState('15px');
   React.useEffect(() => {
     const newWidth = useScrollBarWidth();
     setScrollbarWidth(newWidth);
@@ -233,9 +233,6 @@ const Results: React.FC<ResultsProps> = ({
         <S.ColContainer item $colType="colsm">
           <Typography variant="caption">Last Update</Typography>
         </S.ColContainer>
-        {/* <S.ColContainer item $noPaddings $colType="col">
-          <S.ScrollbarSizedBox $width={scrollbarWidth} />
-        </S.ColContainer> */}
       </S.ResultsTableHeader>
       {isSearchCreating ? (
         <SkeletonWrapper
