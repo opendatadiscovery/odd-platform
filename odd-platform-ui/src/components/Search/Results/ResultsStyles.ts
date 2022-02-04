@@ -51,8 +51,9 @@ export const ColContainer = styled(Grid, {
 
 export const NameContainer = styled(Grid)(() => ({
   ...colWidthStyles.col,
-  paddingRight: '0',
-  paddingLeft: '0',
+  padding: 0,
+  justifyContent: 'flex-start',
+  flexWrap: 'nowrap',
 }));
 
 export const ListContainer = styled(Grid)(({ theme }) => ({

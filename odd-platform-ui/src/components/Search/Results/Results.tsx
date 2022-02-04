@@ -104,11 +104,7 @@ const Results: React.FC<ResultsProps> = ({
       },
     ]);
   }, [totals]);
-  const [scrollbarWidth, setScrollbarWidth] = React.useState('15px');
-  React.useEffect(() => {
-    const newWidth = useScrollBarWidth();
-    setScrollbarWidth(newWidth);
-  }, []);
+  const scrollbarWidth = useScrollBarWidth();
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 

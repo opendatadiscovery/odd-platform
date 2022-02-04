@@ -38,12 +38,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
           justifyContent="space-between"
           wrap="nowrap"
         >
-          <NameContainer
-            container
-            item
-            justifyContent="flex-start"
-            wrap="nowrap"
-          >
+          <NameContainer container item>
             <Typography
               variant="body1"
               noWrap
