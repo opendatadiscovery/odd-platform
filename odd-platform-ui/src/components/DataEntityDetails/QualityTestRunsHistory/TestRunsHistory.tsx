@@ -34,7 +34,7 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
   fetchDataSetQualityTestRuns,
   pageInfo,
 }) => {
-  const pageSize = 100;
+  const pageSize = 50;
 
   const [alertStatus, setAlertStatus] = React.useState<
     DataQualityTestRunStatus | 'All'
