@@ -6,9 +6,7 @@
 \
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.\
 \
-![](.gitbook/img/architecture.svg) 
-
-![](.gitbook/img/arch2.png)
+![](.gitbook/img/architecture2.png) 
 ### Adapters
 
 Adapters are lightweight services that gather metadata in a standardized format. They are designed to be source-specific and expose only the information that could be gathered from a particular data source.
