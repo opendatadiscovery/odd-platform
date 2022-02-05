@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import {
   DataEntityApiDeleteOwnershipRequest,
@@ -37,7 +37,6 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
   const handleOwnershipDelete = (ownershipId: number) => () =>
     deleteDataEntityOwnership({ dataEntityId, ownershipId });
 
-  const copyRef = React.createRef<HTMLElement>();
   return (
     <Grid container>
       <Grid item container sm={12}>
@@ -71,6 +70,9 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
                 <Grid item>ODDRN</Grid>
                 <Grid item>
                   <CopyButton
+                    text="Copy"
+                    position="right"
+                    msDelay={3000}
                     copyString={dataEntityDetails.oddrn}
                     color="tertiary"
                     icon={<CopyIcon />}
