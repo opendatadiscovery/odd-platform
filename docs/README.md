@@ -1,8 +1,8 @@
 # Overview
 [About ODD](#about-odd) \
 [The platform for your business](#the-platform-for-your-business) \
-[Features and use cases](#features-and-use-cases) \
-[Start using ODD](#start-using-odd)
+[Features](#features) \
+[Use cases](#use-cases)
 ## About ODD
 The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams: \
    ✔️ Free open-source and community-driven \
@@ -20,10 +20,10 @@ aiming at better data governance. \
  \
 ![](.gitbook/img/alltogether.png) **An ecosystem for all data team members**. Platform functionality covers requirements of Data Scientists and Engineers, Product and Project Managers as well as Data Analysts, Architects, QA and BI Engineers.
 
-## Features and use cases 
+## Features
 Dive into ODD opportunities with a [list of ODD features](Features.md) and [use cases](Use_cases.md) for different types of users.
-## Start using ODD
-[Get started](https://github.com/opendatadiscovery/odd-platform/blob/main/docker/README.md) right now or [schedule demo](https://calendly.com/germanosin/opendatadiscovery-demo?month=2022-01) for free. See also [opendatadiscovery.org](https://opendatadiscovery.org/)
+
+## Use cases
 
 
 <!---
