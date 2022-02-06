@@ -1,6 +1,6 @@
 # Features
 [Federation Data Catalogue](#federation-data-catalogue) \
-End-to-end Data Objects Lineage] \
+End-to-end Data Objects Lineage \
 End-to-end Microservices Lineage \
 Meta Data Storage \
 Manual Object Tagging \
