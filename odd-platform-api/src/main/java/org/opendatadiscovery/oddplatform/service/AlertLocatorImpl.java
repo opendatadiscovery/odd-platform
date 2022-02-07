@@ -23,7 +23,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 
-
 import static java.util.function.Function.identity;
 
 @Component

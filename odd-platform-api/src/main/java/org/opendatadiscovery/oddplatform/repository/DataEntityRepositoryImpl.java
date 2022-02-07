@@ -65,7 +65,6 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttribute
 import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -97,6 +96,7 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
@@ -140,7 +140,7 @@ public class DataEntityRepositoryImpl
     private static final String AGG_OWNERSHIP_FIELD = "ownership";
     private static final String AGG_OWNER_FIELD = "owner";
     private static final String AGG_ROLE_FIELD = "role";
-    private static final String AGG_ALERT_FIELD = "alert";
+    private static final String HAS_ALERTS_FIELD = "has_alerts";
     private static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
 
     public static final TypeReference<Map<String, ?>> SPECIFIC_ATTRIBUTES_TYPE_REFERENCE = new TypeReference<>() {
@@ -646,9 +646,8 @@ public class DataEntityRepositoryImpl
         return dslContext.with(deCteName)
             .asMaterialized(dataEntitySelect)
             .select(deCte.fields())
-            .select(jsonArrayAgg(field(ALERT.asterisk().toString())).as(AGG_ALERT_FIELD))
+            .select(hasAlerts(deCte))
             .from(deCteName)
-            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .groupBy(deCte.fields())
             .orderBy(jooqQueryHelper.getField(deCte, rankFieldAlias).desc())
             .fetchStream()
@@ -987,7 +986,7 @@ public class DataEntityRepositoryImpl
                 .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
                 .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
                 .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
-                .select(jsonArrayAgg(field(ALERT.asterisk().toString())).as(AGG_ALERT_FIELD));
+                .select(hasAlerts(deCte));
         }
 
         SelectJoinStep<Record> fromStep = selectStep.from(deCteName);
@@ -1002,9 +1001,7 @@ public class DataEntityRepositoryImpl
                 .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
                 .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
                 .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
-                .leftJoin(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID))
-                .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN))
-                    .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())));
+                .leftJoin(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID));
         }
 
         final SelectHavingStep<Record> groupByStep = fromStep
@@ -1014,6 +1011,12 @@ public class DataEntityRepositoryImpl
         return config.getFts() != null
             ? groupByStep.orderBy(jooqQueryHelper.getField(deCte, config.getFts().rankFieldAlias()).desc())
             : groupByStep;
+    }
+
+    private Field<Boolean> hasAlerts(final Table<Record> deCte) {
+        return field(exists(dslContext.selectOne().from(ALERT)
+                .where(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
+                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))).as(HAS_ALERTS_FIELD);
     }
 
     private void enrichDatasetVersions(final DataEntityDetailsDto dto) {
@@ -1271,7 +1274,7 @@ public class DataEntityRepositoryImpl
 
         return DataEntityDto.builder()
             .dataEntity(dataEntity)
-            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
+            .hasAlerts(r.get(field(HAS_ALERTS_FIELD), Boolean.TYPE))
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .build();
     }
@@ -1282,7 +1285,7 @@ public class DataEntityRepositoryImpl
 
         return DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(dataEntity)
-            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
+            .hasAlerts(r.get(field(HAS_ALERTS_FIELD), Boolean.TYPE))
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
@@ -1297,7 +1300,7 @@ public class DataEntityRepositoryImpl
 
         return DataEntityDetailsDto.detailsBuilder()
             .dataEntity(dataEntity)
-            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
+            .hasAlerts(r.get(field(HAS_ALERTS_FIELD), Boolean.TYPE))
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
