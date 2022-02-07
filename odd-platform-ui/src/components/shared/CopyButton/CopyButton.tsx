@@ -18,7 +18,7 @@ interface CopyButtonProps {
   position?: Positions;
 }
 const CopyButton: React.FC<CopyButtonProps> = ({
-  text,
+  text = '',
   fallbackText = 'Copying',
   eventCopyText = 'Copied!',
   color,
