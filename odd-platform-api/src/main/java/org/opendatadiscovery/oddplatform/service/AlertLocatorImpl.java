@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.SetUtils;
-import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
+import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
@@ -22,6 +22,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
+
 
 import static java.util.function.Function.identity;
 
@@ -160,9 +161,10 @@ public class AlertLocatorImpl implements AlertLocator {
             .setDescription(description)
             .setMessengerEntityOddrn(messengerOddrn)
             .setType(alertType.getValue())
-            .setStatus(AlertStatus.OPEN.getValue())
+            .setStatus(AlertStatusEnum.OPEN.name())
             .setStatusUpdatedAt(LocalDateTime.now());
     }
 
-    private record DatasetFieldKey(String oddrn, String typeJson) {}
+    private record DatasetFieldKey(String oddrn, String typeJson) {
+    }
 }
