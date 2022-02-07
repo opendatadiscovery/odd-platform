@@ -54,11 +54,11 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
     @Override
     @Transactional
     public P create(final P pojo) {
-        final R record = pojoToRecord(pojo);
+        final R jooqRecord = pojoToRecord(pojo);
 
         final List<Condition> whereClause = collisionIdentifiers.stream()
-            .map(ci -> ci.eq(record.get(ci)))
-            .collect(Collectors.toList());
+            .map(ci -> ci.eq(jooqRecord.get(ci)))
+            .toList();
 
         final Optional<R> getResultRecordOpt = dslContext
             .selectFrom(recordTable)
@@ -72,9 +72,9 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                 throw new EntityAlreadyExistsException();
             }
 
-            record.set(deletedField, false);
-            record.set(idField, getResultRecord.get(idField));
-            return update(recordToPojo(record));
+            jooqRecord.set(deletedField, false);
+            jooqRecord.set(idField, getResultRecord.get(idField));
+            return update(recordToPojo(jooqRecord));
         }
 
         return super.create(pojo);
@@ -120,7 +120,7 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
 
         final List<P> updateResult = super.bulkUpdate(update.stream()
             .map(this::recordToPojo)
-            .collect(Collectors.toList()));
+            .toList());
 
         final Set<List<String>> updateColIds = update.stream()
             .map(this::extractRecordCollisionValues)
@@ -130,13 +130,13 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
             .stream()
             .filter(r -> !updateColIds.contains(extractRecordCollisionValues(r)))
             .map(this::recordToPojo)
-            .collect(Collectors.toList());
+            .toList();
 
         final List<P> createResult = super.bulkCreate(create);
 
         return Stream
             .concat(createResult.stream(), updateResult.stream())
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
@@ -182,8 +182,8 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
         return List.of(condition, deletedField.isFalse());
     }
 
-    private List<String> extractRecordCollisionValues(final R record) {
-        return collisionIdentifiers.stream().map(record::get).collect(Collectors.toList());
+    private List<String> extractRecordCollisionValues(final R jooqRecord) {
+        return collisionIdentifiers.stream().map(jooqRecord::get).toList();
     }
 
     private List<Condition> matchConditionsWithValues(final List<String> values) {

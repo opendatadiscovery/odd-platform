@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
@@ -48,7 +47,7 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .where(addSoftDeleteFilter(TAG.NAME.in(names)))
             .fetchStream()
             .map(this::recordToPojo)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
@@ -59,7 +58,7 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
             .where(addSoftDeleteFilter(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId)))
             .fetchStreamInto(pojoClass)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
@@ -83,32 +82,32 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .groupBy(tagCte.fields())
             .orderBy(DSL.field(COUNT_FIELD).desc())
             .fetchStream()
-            .collect(Collectors.toList());
+            .toList();
 
         return jooqQueryHelper.pageifyResult(records, this::mapTag, () -> fetchCount(query));
     }
 
     @Override
-    public void deleteRelations(final long dataEntityId, final Collection<Long> tags) {
-        if (tags.isEmpty()) {
+    public void deleteRelations(final long dataEntityId, final Collection<Long> tagIds) {
+        if (tagIds.isEmpty()) {
             return;
         }
 
         dslContext.delete(TAG_TO_DATA_ENTITY)
-            .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId).and(TAG_TO_DATA_ENTITY.TAG_ID.in(tags)))
+            .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId).and(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds)))
             .execute();
     }
 
     @Override
-    public void createRelations(final long dataEntityId, final Collection<Long> tags) {
-        if (tags.isEmpty()) {
+    public void createRelations(final long dataEntityId, final Collection<Long> tagIds) {
+        if (tagIds.isEmpty()) {
             return;
         }
 
-        final List<TagToDataEntityRecord> records = tags.stream()
+        final List<TagToDataEntityRecord> records = tagIds.stream()
             .map(t -> new TagToDataEntityPojo().setDataEntityId(dataEntityId).setTagId(t))
             .map(p -> dslContext.newRecord(TAG_TO_DATA_ENTITY, p))
-            .collect(Collectors.toList());
+            .toList();
 
         final InsertSetStep<TagToDataEntityRecord> insertStep = dslContext.insertInto(TAG_TO_DATA_ENTITY);
 
@@ -145,10 +144,10 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
         return updatedPojo;
     }
 
-    private TagDto mapTag(final Record record) {
+    private TagDto mapTag(final Record jooqRecord) {
         return new TagDto(
-            record.into(TagPojo.class),
-            record.get(COUNT_FIELD, Long.class)
+            jooqRecord.into(TagPojo.class),
+            jooqRecord.get(COUNT_FIELD, Long.class)
         );
     }
 }
