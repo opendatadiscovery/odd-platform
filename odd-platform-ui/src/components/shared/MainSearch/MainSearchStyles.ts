@@ -1,5 +1,5 @@
 import { Autocomplete, autocompleteClasses } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 export const Container = styled('div')(({ theme }) => ({

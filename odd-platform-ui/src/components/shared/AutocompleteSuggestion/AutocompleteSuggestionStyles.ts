@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const Container = styled(Typography)<{
   component: React.ElementType;

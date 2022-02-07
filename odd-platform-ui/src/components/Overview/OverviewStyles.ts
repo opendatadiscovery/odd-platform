@@ -4,7 +4,7 @@ import {
   maxContentWidthWithoutSidebar,
   maxTagsContainerWidth,
 } from 'lib/constants';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({
   margin: '0 auto',
@@ -37,7 +37,7 @@ export const AllAlertsBtnContainer = styled(Link)(({ theme }) => ({
   lineHeight: theme.typography.subtitle2.lineHeight,
 }));
 
-export const InfoBarItemAlerts = styled(InfoBarItem)(() => ({
+export const InfoBarItemAlerts = styled(InfoBarItem)(({ theme }) => ({
   '&:hover': {
     [`${AllAlertsBtnContainer}`]: { visibility: 'visible' },
   },

@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { Popover, popoverClasses } from '@mui/material';
 
 export const AppPopover = styled(Popover)(({ theme }) => ({

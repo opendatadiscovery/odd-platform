@@ -12,7 +12,7 @@ import {
   maxSidebarWidth,
   toolbarHeight,
 } from 'lib/constants';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { AccountCircle } from '@mui/icons-material';
 

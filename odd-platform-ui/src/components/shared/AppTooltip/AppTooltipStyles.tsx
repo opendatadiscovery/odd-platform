@@ -1,12 +1,7 @@
 import React from 'react';
-import { styled, Theme } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
-import {
-  CSSObject,
-  Tooltip,
-  TooltipProps,
-  tooltipClasses,
-} from '@mui/material';
+import { Theme } from '@mui/material/styles';
+import { Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
+import styled, { CSSObject } from 'styled-components';
 
 export type TooltipColorTypes = 'light' | 'dark';
 
@@ -49,10 +44,7 @@ export const AppTooltip = styled(
   ({ className, ...props }: TooltipProps) => (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <Tooltip {...props} classes={{ popper: className }} />
-  ),
-  {
-    shouldForwardProp: propsChecker,
-  }
+  )
 )<TooltipStyleProps>(({ theme, $type, $maxWidth }) => ({
   [`&.${tooltipClasses.popper}`]: {
     [`& .${tooltipClasses.tooltip}`]: {
@@ -64,9 +56,7 @@ export const AppTooltip = styled(
   },
 }));
 
-export const ChildrenContainer = styled('div', {
-  shouldForwardProp: propsChecker,
-})<ChildrenContainerProps>(
+export const ChildrenContainer = styled('div')<ChildrenContainerProps>(
   ({ theme, $isCursorPointer, $isOverflowed }) => ({
     cursor: $isCursorPointer ? 'pointer' : 'auto',
     overflow: $isOverflowed ? 'hidden' : 'initial',

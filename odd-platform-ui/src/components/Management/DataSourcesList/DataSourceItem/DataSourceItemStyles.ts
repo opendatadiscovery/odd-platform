@@ -1,8 +1,8 @@
 import { Grid, Paper } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled, { CSSObject } from 'styled-components';
 
 export const ActionsContainer = styled(Grid)(() => ({
-  visibility: 'hidden',
+  opacity: 0,
   display: 'flex',
   justifyContent: 'flex-end',
 }));
@@ -23,6 +23,6 @@ export const Container = styled(Paper)(({ theme }) => ({
   alignItems: 'flex-start',
   '&:hover': {
     boxShadow: theme.shadows[8],
-    [`${ActionsContainer}`]: { visibility: 'visible' },
+    [`${ActionsContainer}`]: { opacity: 1 },
   },
 }));

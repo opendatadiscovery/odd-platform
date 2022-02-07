@@ -35,19 +35,7 @@
     "no-multiple-empty-lines": "error",
     "prefer-const": "error",
     "prettier/prettier": "warn",
-    "react/jsx-props-no-spreading": ["error", {
-      "exceptions": [
-        "TextField",
-        "Select",
-        "RadioGroup",
-        "SvgIcon",
-        "OutlinedTextField",
-        "FormProvider",
-        "li",
-        "AppSvgIcon",
-        "AppTextField"
-      ]
-    }],
+    "react/jsx-props-no-spreading": "off",
     "lodash/import-scope": [2, "method"]
   },
   "overrides": [

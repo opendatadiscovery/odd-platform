@@ -1,6 +1,6 @@
 import React from 'react';
 import SvgIcon, { SvgIconProps } from '@mui/material/SvgIcon';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 const AppSvgIcon = styled(SvgIcon)<SvgIconProps>(
   ({ theme, width, height }) => ({

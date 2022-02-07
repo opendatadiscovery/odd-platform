@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { Grid } from '@mui/material';
 
 export const ListItemContainer = styled(Grid)(({ theme }) => ({

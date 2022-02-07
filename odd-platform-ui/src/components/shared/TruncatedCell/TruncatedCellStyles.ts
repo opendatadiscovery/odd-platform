@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const TruncatedList = styled('div')(({ theme }) => ({
   width: '100%',
@@ -9,7 +9,7 @@ export const TruncatedList = styled('div')(({ theme }) => ({
   },
 }));
 
-export const LinkContent = styled(Typography)(() => ({
+export const LinkContent = styled(Typography)(({ theme }) => ({
   borderRadius: 'inherit',
   letterSpacing: 'inherit',
   fontWeight: 'inherit',
