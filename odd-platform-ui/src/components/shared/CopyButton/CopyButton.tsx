@@ -5,6 +5,7 @@ import { ButtonColors } from '../AppButton/AppButtonStyles';
 import AppIconButton from '../AppIconButton/AppIconButton';
 import { IconButtonColors } from '../AppIconButton/AppIconButtonStyles';
 import AddIcon from '../Icons/AddIcon';
+import AlertIcon from '../Icons/AlertIcon';
 import { Text, Positions } from './CopyButtonStyles';
 
 interface CopyButtonProps {
@@ -43,19 +44,21 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       .then(async () => {
         setShowCopying(true);
         await navigator.clipboard.writeText(copyString);
+      })
+      .finally(async () => {
         setShowCopying(false);
-      })
-      .then(async () => {
         setShowCopy(true);
-        setTimeout(() => setShowCopy(false), msDelay * 3);
+        setTimeout(() => {
+          setShowCopy(false);
+          setError('');
+        }, msDelay);
       })
-      .catch(value => setError(value)) // no navigator.clipboard
-      .finally(() => setShowCopying(false));
+      .catch(e => setError('Copy error')); // no navigator.clipboard
   };
   let buttonIcon = icon;
   let tooltipText = text;
   if (showCopy) {
-    buttonIcon = <AddIcon sx={{ p: 0, m: 0 }} />;
+    buttonIcon = error ? <AlertIcon /> : <AddIcon />;
     tooltipText = error || eventCopyText;
   } else if (showCopying) {
     buttonIcon = <CircularProgress size={16} />;
