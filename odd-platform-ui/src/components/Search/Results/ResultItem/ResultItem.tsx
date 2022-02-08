@@ -53,7 +53,6 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </Typography>
             <AppTooltip
               maxWidth={285}
-              sx={{ ml: 1.25, pr: 0.25 }}
               checkForOverflow={false}
               isOverflowed={false}
               title={({ open }) => (
@@ -63,7 +62,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
                 />
               )}
             >
-              <InformationIcon sx={{ display: 'flex' }} />
+              <InformationIcon sx={{ display: 'flex', ml: 1.25 }} />
             </AppTooltip>
           </ColContainer>
           <Grid

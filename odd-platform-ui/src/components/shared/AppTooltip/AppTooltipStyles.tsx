@@ -57,7 +57,7 @@ export const AppTooltip = styled(
 }));
 
 export const ChildrenContainer = styled('div')<ChildrenContainerProps>(
-  ({ theme, $isCursorPointer, $isOverflowed }) => ({
+  ({ $isCursorPointer, $isOverflowed }) => ({
     cursor: $isCursorPointer ? 'pointer' : 'auto',
     overflow: $isOverflowed ? 'hidden' : 'initial',
   })

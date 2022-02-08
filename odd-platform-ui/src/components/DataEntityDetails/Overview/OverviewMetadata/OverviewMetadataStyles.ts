@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const SubtitleContainer = styled('div')(({ theme }) => ({
   width: '100%',

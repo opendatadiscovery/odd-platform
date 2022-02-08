@@ -1,5 +1,5 @@
 import { Paper } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const SectionContainer = styled(Paper)(({ theme }) => ({
   '& > *': {

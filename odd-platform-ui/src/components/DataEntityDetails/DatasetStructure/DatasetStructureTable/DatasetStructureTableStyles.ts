@@ -1,10 +1,9 @@
-import { Grid, Theme } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import { Grid } from '@mui/material';
+import styled from 'styled-components';
 
 export type ColType = 'name' | 'uniq' | 'missing' | 'stats';
 
-export const columnBasicStyles = (theme: Theme) => ({
+export const columnBasicStyles = {
   name: {
     flexGrow: 1,
     width: '68%',
@@ -19,18 +18,16 @@ export const columnBasicStyles = (theme: Theme) => ({
     flexGrow: 1,
   },
   stats: {},
-});
+};
 
-export const Container = styled(Grid)(() => ({
+export const Container = styled(Grid)(({ theme }) => ({
   position: 'relative',
 }));
 
-export const ColContainer = styled(Grid, {
-  shouldForwardProp: propsChecker,
-})<{
+export const ColContainer = styled(Grid)<{
   $colType: ColType;
-}>(({ theme, $colType }) => ({
-  ...columnBasicStyles(theme)[$colType],
+}>(({ $colType }) => ({
+  ...columnBasicStyles[$colType],
 }));
 
 export const TableHeader = styled(Grid)(({ theme }) => ({

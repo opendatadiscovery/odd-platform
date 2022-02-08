@@ -6,7 +6,3 @@ export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
     DataSetFieldTypeTypeEnum.LIST,
     DataSetFieldTypeTypeEnum.MAP,
   ].includes(fieldType);
-
-// checks if a prop of styled component needs to be forwarded
-export const propsChecker = (propForCheck: string) =>
-  !propForCheck.startsWith('$');

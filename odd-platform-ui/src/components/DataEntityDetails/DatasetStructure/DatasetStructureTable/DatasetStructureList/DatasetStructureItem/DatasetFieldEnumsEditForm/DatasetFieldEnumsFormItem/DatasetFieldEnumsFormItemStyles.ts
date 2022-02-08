@@ -1,7 +1,7 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { Grid } from '@mui/material';
 
-export const EditBtnContainer = styled(Grid)(() => ({
+export const EditBtnContainer = styled(Grid)(({ theme }) => ({
   visibility: 'hidden',
 }));
 

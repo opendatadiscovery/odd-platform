@@ -7,15 +7,22 @@ describe('NumberFormatted', () => {
   const setupComponent = (props?: Partial<NumberFormattedProps>) =>
     render(<NumberFormatted value="" {...props} />);
 
-  it('NumberFormatted should return formatted number', () => {
+  it('NumberFormatted should return formatted number from string', () => {
     const formattedNumber = setupComponent({ value: '1000000' });
     expect(getByTestID('number-formatted-component').textContent).toBe(
       '1000K'
     );
   });
 
-  it('NumberFormatted should return empty string with wrong value', () => {
-    const formattedNumber = setupComponent({ value: '10aaa' });
+  it('NumberFormatted should return formatted number from number', () => {
+    const formattedNumber = setupComponent({ value: 250_000_000 });
+    expect(getByTestID('number-formatted-component').textContent).toBe(
+      '250M'
+    );
+  });
+
+  it('NumberFormatted should return empty string with wrong string value', () => {
+    const formattedNumber = setupComponent({ value: 'a10aaa' });
     expect(getByTestID('number-formatted-component').textContent).toBe('');
   });
 

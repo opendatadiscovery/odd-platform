@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { Grid } from '@mui/material';
 
 export const HeaderContainer = styled(Grid)(({ theme }) => ({
@@ -19,7 +19,7 @@ export const FormContainer = styled('form')(({ theme }) => ({
   paddingTop: theme.spacing(1.25),
 }));
 
-export const ActionsContainer = styled('div')(({ theme }) => ({
+export const ActionsContainer = styled('div')(() => ({
   width: '100%',
   display: 'flex',
   justifyContent: 'flex-start',

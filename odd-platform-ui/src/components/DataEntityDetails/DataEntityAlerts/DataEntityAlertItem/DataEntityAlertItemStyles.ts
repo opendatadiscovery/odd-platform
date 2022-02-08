@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import { ColContainer } from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsStyles';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const ActionButtonsContainer = styled(ColContainer)(() => ({
   opacity: 0,
