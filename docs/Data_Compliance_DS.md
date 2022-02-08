@@ -1,5 +1,4 @@
-# Use cases
-## Data compliance for Data Scientists
+# Data compliance for Data Scientists
 **Key words**: Personal Identifiable Information (PII), General Data Protection Regulation (GDPR), confidential data, anonymization, bank secrecy.
 ### Challenge
 As a DS in finance or banking company I have to develop an ML-model for marketing purposes. It aims to introduce customer segments as well as customize communication for each segment. \
