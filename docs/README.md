@@ -23,9 +23,10 @@ aiming at better data governance. \
 ![](.gitbook/img/alltogether.png) **An ecosystem for all data team members**. Platform functionality covers requirements of Data Scientists and Engineers, Product and Project Managers as well as Data Analysts, Architects, QA and BI Engineers.
 ## Pain points
 ### Onboarding to data
-Every time a newcomer join a data team, one faces a challenge of data management processes learning. Unfortunately, it may provoke overcommunication, reading irrelevant documentation and wasting time to get meaningful information.  \
+Every time a newcomer join a data team, one faces a challenge of data management processes learning. Unfortunately, it may provoke overcommunication, reading irrelevant documentation and spending much time to pick out meaningful information.  \
 ODD solutions help figure out data sources, find owners of this data, check DBs structures and get many other attributes that are necessary for working activities.  
 ### Data discovery
+The more data a team has the more complicated connections occur between assets and components. 
 ### Data observability 
 ## Features
 Dive into ODD opportunities with a [list of ODD features](Features.md). 
