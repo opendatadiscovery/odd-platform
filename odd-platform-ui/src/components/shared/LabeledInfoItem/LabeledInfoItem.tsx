@@ -10,11 +10,8 @@ interface LabeledInfoItemProps {
   labelWidth?: GridSize;
   runStatus?: DataQualityTestRunStatusEnum;
   valueColor?: string;
-<<<<<<< HEAD
   valueLineHeight?: number;
   valueWrap?: boolean;
-=======
->>>>>>> 6e06424... first version of copied button
 }
 
 const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
@@ -25,7 +22,6 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   labelWidth,
   runStatus,
   valueColor,
-<<<<<<< HEAD
   valueLineHeight,
   valueWrap = false,
 }) => (
@@ -40,16 +36,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
         {label}
       </S.Label>
     </Grid>
-=======
-}) => (
-  <S.Container container $inline={inline}>
-    <Grid item container xs={labelWidth || 'auto'}>
-      <S.Label variant={variant} noWrap component="span">
-        {label}
-      </S.Label>
-    </Grid>
 
->>>>>>> 6e06424... first version of copied button
     <Grid
       item
       xs={
