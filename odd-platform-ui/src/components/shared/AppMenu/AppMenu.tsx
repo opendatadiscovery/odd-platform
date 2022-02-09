@@ -13,8 +13,11 @@ interface AppMenuProps
     | 'open'
     | 'onClose'
     | 'MenuListProps'
+    | 'keepMounted'
   > {
-  keepMounted?: boolean;
+  minWidth?: number;
+  maxWidth?: number;
+  maxHeight?: number;
 }
 
 const AppMenu: React.FC<AppMenuProps> = ({
@@ -27,6 +30,9 @@ const AppMenu: React.FC<AppMenuProps> = ({
   open,
   onClose,
   MenuListProps,
+  minWidth,
+  maxWidth,
+  maxHeight,
 }) => (
   <StyledAppMenu
     anchorEl={anchorEl}
@@ -37,6 +43,13 @@ const AppMenu: React.FC<AppMenuProps> = ({
     open={open}
     onClose={onClose}
     MenuListProps={MenuListProps}
+    PaperProps={{
+      style: {
+        minWidth: minWidth ? `${minWidth}px` : 0,
+        maxWidth: maxWidth ? `${maxWidth}px` : 'none',
+        maxHeight: maxHeight ? `${maxHeight}px` : 'none',
+      },
+    }}
   >
     {children}
   </StyledAppMenu>

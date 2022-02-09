@@ -1,6 +1,5 @@
 import React, { MouseEvent } from 'react';
 import {
-  Divider,
   Grid,
   IconButton,
   Typography,
@@ -157,20 +156,21 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
         keepMounted
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: -42, horizontal: 'right' }}
         open={isMenuOpen}
         onClose={handleMenuClose}
+        maxWidth={240}
       >
         <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
         {version && (
-          <>
+          <S.CaptionsWrapper>
             <AppMenuItem divider />
-            <S.CaptionsWrapper>
+            <S.CaptionsTypographyWrapper>
               <Typography variant="caption">
                 ODD Platform v.{version}
               </Typography>
-            </S.CaptionsWrapper>
-          </>
+            </S.CaptionsTypographyWrapper>
+          </S.CaptionsWrapper>
         )}
       </AppMenu>
     </S.Bar>

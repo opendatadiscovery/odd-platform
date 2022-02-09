@@ -1,12 +1,11 @@
 import { styled } from '@mui/material/styles';
 import { Menu, menuClasses } from '@mui/material';
-import theme from 'theme/mui.theme';
+import { propsChecker } from 'lib/helpers';
 
-export const StyledAppMenu = styled(Menu)(() => ({
-  [`&.${menuClasses.root}`]: {
-    minWidth: '160px',
-    maxWidth: '240px',
-    height: '300px',
+export const StyledAppMenu = styled(Menu, {
+  shouldForwardProp: propsChecker,
+})(({ theme }) => ({
+  [`&.${menuClasses.paper}`]: {
     padding: theme.spacing(1, 0),
   },
 }));
