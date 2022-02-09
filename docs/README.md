@@ -28,7 +28,7 @@ ODD solutions help figure out data sources, find owners of this data, check DBs 
 ### Data discovery
 The more data a team has the more complicated connections occur between assets and components. ODD provides a search tool with AI-powered suggestion and flexible filters. Also the Platform supports a description option, so you can get detailed info about  entities.
 ### Data observability 
-A problem of observability lack starts when irrelevant data appears in one's production cycle. 
+A problem of observability lack starts when irrelevant data appears in one's production cycle. To clarify when and where this data is and avoid delay use ODD's lineage map and flexible alert system. 
 ## Features
 Dive into ODD opportunities with a [list of ODD features](Features.md). 
 

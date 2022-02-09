@@ -2,6 +2,7 @@
 ## ODD Platform local demo environment
 ## Overview
 **Running Locally with Docker Compose** \
+\
 `docker-compose -f docker/demo.yaml up -d` \
 \
 This docker-compose contains:
@@ -63,7 +64,6 @@ Enabling authentication will bring additional functionality such as:
 1. `User mapping` (Auth identity -> ODD Platform Owner)
 2. `My Objects` in start and search pages
 3. `Upstream/Downstream dependencies` in start page
-4. ...
 
 ODD Platform has several supported authentication mechanisms:
 
@@ -86,17 +86,17 @@ To enable Form Login auth mechanism:
 ODD Platform can be configured to be both OAuth2 client for API calls and OAuth2 Resource server for ingesting entities
 from adapters. To enable OAuth2 auth mechanism:
 
-1. Set  `AUTH_TYPE=OAUTH2` environment variable in **ODD Platform** docker-compose service
+1. Set  `AUTH_TYPE=OAUTH2` environment variable in **ODD Platform** docker-compose service.
 3. Configure OAuth2 + OIDC
    using [this reference page](https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html/oauth2.html#oauth2)
-   via environment variables in ODD Platform docker-compose service
+   via environment variables in ODD Platform docker-compose service.
 4. Configure OAuth2 Authorization Server's issuer URL by setting `SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URL`
-   property via environment variables in ODD Platform docker-compose service
+   property via environment variables in ODD Platform docker-compose service.
 5. Configure OAuth2 section in ODD Platform Puller service using
-   this [reference](https://github.com/opendatadiscovery/odd-platform-puller#readme)
+   this [reference](https://github.com/opendatadiscovery/odd-platform-puller#readme).
 
 ### LDAP
 
 Forward to
 the [LDAP example](https://github.com/opendatadiscovery/odd-platform/blob/main/docker/docker/examples/ldap.yml) to see
-how to configure the Platform to use LDAP auth mechanism
+how to configure the Platform to use LDAP auth mechanism.
