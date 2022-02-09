@@ -10,7 +10,6 @@ import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import CopyIcon from 'components/shared/Icons/CopyIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
@@ -71,11 +70,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
                 <Grid item>
                   <CopyButton
                     text="Copy"
-                    position="right"
-                    msDelay={3000}
-                    copyString={dataEntityDetails.oddrn}
-                    color="tertiary"
-                    icon={<CopyIcon />}
+                    stringToCopy={dataEntityDetails.oddrn}
                   />
                 </Grid>
               </Grid>

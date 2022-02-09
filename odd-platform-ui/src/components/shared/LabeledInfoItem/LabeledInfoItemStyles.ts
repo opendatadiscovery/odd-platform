@@ -37,6 +37,10 @@ export const Label = styled(Typography)<{ component: React.ElementType }>(
   })
 );
 
+export const LabelContainer = styled(Grid)(() => ({
+  width: '100%',
+}));
+
 export const Value = styled(Typography, {
   shouldForwardProp: propsChecker,
 })<ValueProps>(

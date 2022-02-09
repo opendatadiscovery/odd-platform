@@ -1,50 +1,33 @@
 import { CircularProgress } from '@mui/material';
 import React from 'react';
 import AppButton from '../AppButton/AppButton';
-import { ButtonColors } from '../AppButton/AppButtonStyles';
 import AppIconButton from '../AppIconButton/AppIconButton';
-import { IconButtonColors } from '../AppIconButton/AppIconButtonStyles';
-import AddIcon from '../Icons/AddIcon';
 import AlertIcon from '../Icons/AlertIcon';
-import { Text, Positions } from './CopyButtonStyles';
+import CopyIcon from '../Icons/CopyIcon';
+import SuccessIcon from '../Icons/SuccessIcon';
 
 interface CopyButtonProps {
   text?: string;
   fallbackText?: string;
-  eventCopyText?: string;
-  color: ButtonColors | IconButtonColors;
-  icon: React.ReactNode;
-  copyString: string;
+  popupText?: string;
+  stringToCopy: string;
   msDelay?: number;
-  position?: Positions;
 }
 const CopyButton: React.FC<CopyButtonProps> = ({
   text = '',
   fallbackText = 'Copying',
-  eventCopyText = 'Copied!',
-  color,
-  icon,
-  copyString,
-  msDelay = 1000,
-  position = 'right',
+  popupText = 'Copied!',
+  stringToCopy,
+  msDelay = 3000,
 }) => {
   const [error, setError] = React.useState<string>('');
   const [showCopy, setShowCopy] = React.useState<boolean>(false);
   const [showCopying, setShowCopying] = React.useState<boolean>(false);
   const copyToClipboard = async () => {
-    const copy = new Promise<void>((resolve, reject) => {
-      try {
-        resolve();
-      } catch (e) {
-        reject(e);
-      }
-    });
-    // copy-> copying -> copied
-    copy
-      .then(async () => {
-        setShowCopying(true);
-        await navigator.clipboard.writeText(copyString);
-      })
+    // copy(text)-> copying(fallbackText) -> copied(popupText) -> copy(text)
+    setShowCopying(true);
+    await navigator.clipboard
+      .writeText(stringToCopy)
       .finally(async () => {
         setShowCopying(false);
         setShowCopy(true);
@@ -53,79 +36,29 @@ const CopyButton: React.FC<CopyButtonProps> = ({
           setError('');
         }, msDelay);
       })
-      .catch(e => setError('Copy error')); // no navigator.clipboard
+      .catch(() => setError('Copy error')); // no navigator.clipboard
   };
-  let buttonIcon = icon;
-  let tooltipText = text;
+  let buttonIcon = <CopyIcon />;
+  let buttonText = text;
   if (showCopy) {
-    buttonIcon = error ? <AlertIcon /> : <AddIcon />;
-    tooltipText = error || eventCopyText;
+    buttonIcon = error ? <AlertIcon /> : <SuccessIcon />;
+    buttonText = error || popupText;
   } else if (showCopying) {
     buttonIcon = <CircularProgress size={16} />;
-    tooltipText = fallbackText;
+    buttonText = fallbackText;
   }
-  const buttonText = (
-    <Text
-      onClick={copyToClipboard}
-      $color={color as ButtonColors}
-      variant="body1"
-    >
-      {tooltipText}
-    </Text>
-  );
-  const buttonWithText = () => {
-    switch (position) {
-      case 'top':
-        return (
-          <AppButton
-            color={color as ButtonColors}
-            onClick={copyToClipboard}
-            sx={{ display: 'block' }}
-          >
-            {buttonText}
-            {buttonIcon}
-          </AppButton>
-        );
-      case 'bottom':
-        return (
-          <AppButton
-            color={color as ButtonColors}
-            onClick={copyToClipboard}
-            sx={{ display: 'block' }}
-          >
-            {buttonIcon}
-            {buttonText}
-          </AppButton>
-        );
-      case 'left':
-        return (
-          <AppButton
-            color={color as ButtonColors}
-            onClick={copyToClipboard}
-          >
-            {buttonText}
-            {buttonIcon}
-          </AppButton>
-        );
-      default:
-        // case 'right'
-        return (
-          <AppButton
-            color={color as ButtonColors}
-            onClick={copyToClipboard}
-          >
-            {buttonIcon}
-            {buttonText}
-          </AppButton>
-        );
-    }
-  };
   return text ? (
-    buttonWithText()
+    <AppButton
+      color="tertiary"
+      onClick={copyToClipboard}
+      startIcon={buttonIcon}
+    >
+      {buttonText}
+    </AppButton>
   ) : (
     <AppIconButton
       icon={buttonIcon}
-      color={color as IconButtonColors}
+      color="tertiary"
       onClick={copyToClipboard}
     />
   );

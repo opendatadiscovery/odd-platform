@@ -26,7 +26,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   valueWrap = false,
 }) => (
   <S.Container container $inline={inline}>
-    <Grid item container xs={labelWidth || 'auto'}>
+    <S.LabelContainer item xs={labelWidth || 'auto'}>
       <S.Label
         title={typeof label === 'string' ? label : ''}
         variant={variant}
@@ -35,7 +35,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
       >
         {label}
       </S.Label>
-    </Grid>
+    </S.LabelContainer>
 
     <Grid
       item
