@@ -26,8 +26,9 @@ aiming at better data governance. \
 Every time a newcomer join a data team, one faces a challenge of data management processes learning. Unfortunately, it may provoke overcommunication, reading irrelevant documentation and spending much time to pick out meaningful information.  \
 ODD solutions help figure out data sources, find owners of this data, check DBs structures and get many other attributes that are necessary for working activities.  
 ### Data discovery
-The more data a team has the more complicated connections occur between assets and components. 
+The more data a team has the more complicated connections occur between assets and components. ODD provides a search tool with AI-powered suggestion and flexible filters. Also the Platform supports a description option, so you can get detailed info about  entities.
 ### Data observability 
+A problem of observability lack starts when irrelevant data appears in one's production cycle. 
 ## Features
 Dive into ODD opportunities with a [list of ODD features](Features.md). 
 
