@@ -1,4 +1,11 @@
 import { act, fireEvent, screen } from '@testing-library/react';
+import React, { ReactElement } from 'react';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/mui.theme';
+
+export const provideTheme = (component: ReactElement): ReactElement => (
+  <ThemeProvider theme={theme}>{component}</ThemeProvider>
+);
 
 export const flushPromises = () =>
   new Promise(jest.requireActual('timers').setImmediate);
@@ -14,37 +21,6 @@ export const clickByText = async (testId: string) => {
   const button = screen.getByText(testId);
   await act(async () => {
     await fireEvent.click(button);
-  });
-};
-
-export const mouseDownByTestId = async (testId: string) => {
-  const button = screen.getByTestId(testId);
-  await act(async () => {
-    await fireEvent.mouseDown(button);
-  });
-};
-
-export const mouseUpByTestId = async (testId: string) => {
-  const button = screen.getByTestId(testId);
-  await act(async () => {
-    await fireEvent.mouseUp(button);
-  });
-};
-
-export const mouseMoveByTestId = async (
-  testId: string,
-  options?: Record<string, unknown>
-) => {
-  const button = screen.getByTestId(testId);
-  await act(async () => {
-    await fireEvent.mouseMove(button, options);
-  });
-};
-
-export const doubleClickByText = async (text: string) => {
-  const element = screen.getByText(text);
-  await act(async () => {
-    await fireEvent.doubleClick(element);
   });
 };
 
