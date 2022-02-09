@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,8 +39,8 @@ public class IngestionController implements IngestionApi {
         path = "/ingestion/datasource",
         consumes = { "application/json" }
     )
-    public Mono<ResponseEntity<CollectorDataSourceRequest>> registerDataSources(
-        @RequestBody final CollectorDataSourceRequest request
+    public Mono<ResponseEntity<List<CollectorDataSourceRequest>>> registerDataSources(
+        @RequestBody final List<CollectorDataSourceRequest> request
     ) {
         return Mono.just(ResponseEntity.ok(request));
     }
