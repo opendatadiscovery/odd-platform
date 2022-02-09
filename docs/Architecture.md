@@ -30,8 +30,8 @@ Pulling metadata directly from the source is the most straightforward way of gat
 Pulling data from multiple sources without having a standard compels to use multiple source-specific crawlers for each adapter, which is a complex and ineffective solution. ODD solves this issue by providing a universal adapter.\
 Pull model is preferred when:    _|need more details_
 
-* latency on index update is ok
-* there is already an adapter
+* There is no need to get immediate updates.
+* You have already run one of ODD adapters.
 
 ### Push strategy
 
