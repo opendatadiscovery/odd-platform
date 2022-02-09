@@ -1,8 +1,9 @@
 # Quickstart 
 ## ODD Platform local demo environment
 ## Overview
-**Running Locally with Docker Compose** 
+**Running Locally with Docker Compose** \
 `docker-compose -f docker/demo.yaml up -d` \
+\
 This docker-compose contains:
 
 * ODD Platform
