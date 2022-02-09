@@ -1,12 +1,16 @@
 package org.opendatadiscovery.oddplatform.controller;
 
 import javax.validation.Valid;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.service.IngestionService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -28,5 +32,24 @@ public class IngestionController implements IngestionApi {
             .doOnError(t -> log.error(t.getMessage()))
             .flatMap(ingestionService::ingest)
             .map(voidMono -> ResponseEntity.ok().build());
+    }
+
+    @PostMapping(
+        path = "/ingestion/datasource",
+        consumes = { "application/json" }
+    )
+    public Mono<ResponseEntity<CollectorDataSourceRequest>> registerDataSources(
+        @RequestBody final CollectorDataSourceRequest request
+    ) {
+        return Mono.just(ResponseEntity.ok(request));
+    }
+
+    @Data
+    @NoArgsConstructor
+    private static class CollectorDataSourceRequest {
+        private String name;
+        private String oddrn;
+        private String description;
+        private String namespace;
     }
 }
