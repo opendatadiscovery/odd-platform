@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.mapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private final DataSourceMapper dataSourceMapper;
     private final OwnershipMapper ownershipMapper;
     private final TagMapper tagMapper;
-    private final MetadataFieldMapper metadataFieldMapper;
+    private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final DatasetVersionMapper datasetVersionMapper;
     private final DataQualityMapper dataQualityMapper;
 
@@ -99,11 +98,11 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
         if (types.contains(DataEntityTypeDto.DATA_QUALITY_TEST)) {
             entity.datasetsList(dto.getDataQualityTestDetailsDto()
-                    .datasetList()
-                    .stream()
-                    .distinct()
-                    .map(this::mapReference)
-                    .collect(Collectors.toList()));
+                .datasetList()
+                .stream()
+                .distinct()
+                .map(this::mapReference)
+                .collect(Collectors.toList()));
         }
 
         if (types.contains(DataEntityTypeDto.DATA_CONSUMER)) {
@@ -192,7 +191,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace())))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
-            .metadataFieldValues(metadataFieldMapper.mapDtos(dto.getMetadata()))
+            .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
             .viewCount(pojo.getViewCount());
 
         if (types.contains(DataEntityTypeDto.DATA_SET)) {

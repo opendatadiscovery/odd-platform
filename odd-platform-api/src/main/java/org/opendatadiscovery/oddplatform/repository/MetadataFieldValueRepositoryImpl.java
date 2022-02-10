@@ -36,7 +36,7 @@ public class MetadataFieldValueRepositoryImpl
 
         final List<MetadataFieldValueRecord> records = pojos.stream()
             .map(this::pojoToRecord)
-            .collect(Collectors.toList());
+            .toList();
 
         InsertSetStep<MetadataFieldValueRecord> insertStep = dslContext.insertInto(recordTable);
 
