@@ -5,6 +5,7 @@ import {
   MenuItem,
   menuItemClasses,
 } from '@mui/material';
+import { Variant } from '@mui/material/styles/createTypography';
 import { propsChecker } from 'lib/helpers';
 
 interface AppMenuItemStyleProps {
@@ -13,7 +14,8 @@ interface AppMenuItemStyleProps {
 }
 
 interface AppListItemTextProps {
-  $removeTextStyles?: boolean;
+  $removeTextStyles: boolean;
+  $fontValue: Variant;
 }
 
 export const StyledAppMenuItem = styled(MenuItem, {
@@ -34,16 +36,18 @@ export const StyledAppMenuItem = styled(MenuItem, {
 
 export const StyledAppListItemText = styled(ListItemText, {
   shouldForwardProp: propsChecker,
-})<AppListItemTextProps>(({ theme, $removeTextStyles }) => ({
+})<AppListItemTextProps>(({ theme, $removeTextStyles, $fontValue }) => ({
+  [`& span`]: {
+    fontSize: theme.typography[$fontValue].fontSize,
+    lineHeight: theme.typography[$fontValue].lineHeight,
+    fontWeight: theme.typography[$fontValue].fontWeight,
+  },
   [`&.${listItemTextClasses.root}`]: !$removeTextStyles && {
     display: 'inline',
     '& span': {
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
-      fontSize: theme.typography.body1.fontSize,
-      lineHeight: theme.typography.body1.lineHeight,
-      fontWeight: theme.typography.body1.fontWeight,
     },
   },
 }));

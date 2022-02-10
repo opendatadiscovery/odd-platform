@@ -1,5 +1,6 @@
 import React from 'react';
 import { MenuItemProps } from '@mui/material';
+import { Variant } from '@mui/material/styles/createTypography';
 import {
   StyledAppMenuItem,
   StyledAppListItemText,
@@ -13,6 +14,7 @@ interface AppMenuItemProps
   minWidth?: number;
   maxWidth?: number;
   removeTextStyles?: boolean;
+  fontValue?: Variant;
 }
 
 const AppMenuItem: React.FC<AppMenuItemProps> = ({
@@ -23,6 +25,7 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
   maxWidth,
   minWidth,
   removeTextStyles = false,
+  fontValue = 'body1',
 }) => (
   <StyledAppMenuItem
     value={value}
@@ -31,7 +34,10 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
     $maxWidth={maxWidth}
     $minWidth={minWidth}
   >
-    <StyledAppListItemText $removeTextStyles={removeTextStyles}>
+    <StyledAppListItemText
+      $removeTextStyles={removeTextStyles}
+      $fontValue={fontValue}
+    >
       {children}
     </StyledAppListItemText>
   </StyledAppMenuItem>
