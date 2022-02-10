@@ -44,7 +44,7 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
       <AppMenu
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: -4, horizontal: 'left' }}
         id={`menu-${menuId}`}
         keepMounted
         open={open}
