@@ -102,7 +102,7 @@ public class AlertServiceImpl implements AlertService {
                 .setType(AlertType.DISTRIBUTION_ANOMALY.getValue())
                 .setDataEntityOddrn(a.getLabels().get("entity_oddrn"))
                 .setDescription(String.format("Distribution Anomaly. URL: %s", queryUrl))
-                .setStatus(AlertStatus.OPEN.getValue());
+                .setStatus(AlertStatusEnum.OPEN.name());
         }).collect(Collectors.toList());
 
         return Mono.fromRunnable(() -> alertRepository.createAlerts(alerts)).then();
