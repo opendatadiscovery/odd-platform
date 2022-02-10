@@ -24,42 +24,42 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   valueColor,
   valueLineHeight,
   valueWrap = false,
-}) => (
-  <S.Container container $inline={inline}>
-    <S.LabelContainer item xs={labelWidth || 'auto'}>
-      <S.Label
-        title={typeof label === 'string' ? label : ''}
-        variant={variant}
-        noWrap
-        component="span"
-      >
-        {label}
-      </S.Label>
-    </S.LabelContainer>
+}) => {
+  const getXS = () => {
+    if (labelWidth === 12) return 12;
+    if (typeof labelWidth === 'number')
+      return (12 - labelWidth) as GridSize;
+    return 'auto';
+  };
+  return (
+    <S.Container container $inline={inline}>
+      <S.LabelContainer item xs={labelWidth || 'auto'}>
+        <S.Label
+          title={typeof label === 'string' ? label : ''}
+          variant={variant}
+          noWrap
+          component="span"
+        >
+          {label}
+        </S.Label>
+      </S.LabelContainer>
 
-    <Grid
-      item
-      xs={
-        typeof labelWidth === 'number'
-          ? ((12 - labelWidth) as GridSize)
-          : 'auto'
-      }
-      sx={{ width: '100%' }}
-    >
-      <S.Value
-        $runStatus={runStatus}
-        $valueColor={valueColor}
-        $inline={inline}
-        $valueLineHeight={valueLineHeight}
-        variant={variant}
-        component="span"
-        noWrap={!valueWrap}
-        title={children?.toString()}
-      >
-        {children}
-      </S.Value>
-    </Grid>
-  </S.Container>
-);
+      <Grid item xs={getXS()} sx={{ width: '100%' }}>
+        <S.Value
+          $runStatus={runStatus}
+          $valueColor={valueColor}
+          $inline={inline}
+          $valueLineHeight={valueLineHeight}
+          variant={variant}
+          component="span"
+          noWrap={!valueWrap}
+          title={children?.toString()}
+        >
+          {children}
+        </S.Value>
+      </Grid>
+    </S.Container>
+  );
+};
 
 export default LabeledInfoItem;

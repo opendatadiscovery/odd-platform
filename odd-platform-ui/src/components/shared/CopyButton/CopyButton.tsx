@@ -25,18 +25,24 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   const [showCopying, setShowCopying] = React.useState<boolean>(false);
   const copyToClipboard = async () => {
     // copy(text)-> copying(fallbackText) -> copied(popupText) -> copy(text)
+    const showCopyTimeout = async () => {
+      setShowCopying(false);
+      setShowCopy(true);
+      setTimeout(() => {
+        setShowCopy(false);
+        setError('');
+      }, msDelay);
+    };
     setShowCopying(true);
-    await navigator.clipboard
-      .writeText(stringToCopy)
-      .finally(async () => {
-        setShowCopying(false);
-        setShowCopy(true);
-        setTimeout(() => {
-          setShowCopy(false);
-          setError('');
-        }, msDelay);
-      })
-      .catch(() => setError('Copy error')); // no navigator.clipboard
+    if (navigator.clipboard)
+      navigator.clipboard
+        .writeText(stringToCopy)
+        .finally(showCopyTimeout)
+        .catch(() => setError('Copy error'));
+    else {
+      setError('Copy error');
+      showCopyTimeout();
+    }
   };
   let buttonIcon = <CopyIcon />;
   let buttonText = text;
