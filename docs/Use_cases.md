@@ -7,5 +7,6 @@ Develop ML-models meeting confidentiality requirements and being sure that you m
 ### Deprecation for Data Engineer \ Analyst 
 Make dramatic changes of your data with no drama. Provide transparent deprecation process so as to inform all stakeholders in proper time.
 ### Data quality and visibility for Quality Engineer 
+Share data quality KPIs such as completeness, validity, consistency and other ones with your team and users. Use an option to import data from pre-defined libraries or custom frameworks directly to the Platform. 
 ### Data preparation for Viz Engineer
 
