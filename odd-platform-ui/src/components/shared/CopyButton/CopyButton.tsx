@@ -23,9 +23,8 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   const [error, setError] = React.useState<string>('');
   const [showCopy, setShowCopy] = React.useState<boolean>(false);
   const [showCopying, setShowCopying] = React.useState<boolean>(false);
-  const copyToClipboard = async () => {
-    // copy(text)-> copying(fallbackText) -> copied(popupText) -> copy(text)
-    const showCopyTimeout = async () => {
+  const copyToClipboard = () => {
+    const showCopyTimeout = () => {
       setShowCopying(false);
       setShowCopy(true);
       setTimeout(() => {
@@ -33,17 +32,19 @@ const CopyButton: React.FC<CopyButtonProps> = ({
         setError('');
       }, msDelay);
     };
+
     setShowCopying(true);
-    if (navigator.clipboard)
+    if (navigator.clipboard) {
       navigator.clipboard
         .writeText(stringToCopy)
         .finally(showCopyTimeout)
         .catch(() => setError('Copy error'));
-    else {
+    } else {
       setError('Copy error');
       showCopyTimeout();
     }
   };
+
   let buttonIcon = <CopyIcon />;
   let buttonText = text;
   if (showCopy) {
