@@ -1,7 +1,6 @@
 # Architecture
 [Adapters](#adapters) \
 [Push-client](#push-client) \
-[ODD Specification metadata](#odd-specification-metadata) \
 [Push and pull strategies](#push-and-pull-strategies) \
 \
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.
@@ -14,11 +13,7 @@ Adapters are lightweight services that gather metadata in a standardized format.
 
 ### Push-client
 
-Push-clients are providers that send information to the central repository via APIs.\
-\
-_\ why do we offer it especially for ETL\ELT?_ _need more info here_\\
-
-### ODD Specification metadata
+Push-clients are providers that send information directly to the central repository of the Platform.
 
 ## Push and pull strategies
 
@@ -28,11 +23,10 @@ The metadata discovery process is very similar to that of gathering metrics,logs
 
 Pulling metadata directly from the source is the most straightforward way of gathering it. However, an attempt to develop and maintain a centralized fleet of domain-specific crawlers can easily become a problem.\
 Pulling data from multiple sources without having a standard compels to use multiple source-specific crawlers for each adapter, which is a complex and ineffective solution. ODD solves this issue by providing a universal adapter.\
-Pull model is preferred when:    _|need more details_
-
-* There is no need to get immediate updates.
-* You have already run one of ODD adapters.
+Pull model is preferred when:
+* There is no need to get immediate data updates.
+* You have already applied one of ODD adapters to your data sources.
 
 ### Push strategy
 
-Push model supports the process where individual metadata providers push the information to the central repository via APIs. The model is more preferred for use cases like Airflow job runs and quality check runs.            _|need more details_
+Push strategy supports a process where individual metadata providers push the information to the central ODD repository. This strategy solves a problem of immediate data receiving from ETL / ELT engines that have no public APIs. The Push is more preferred for use cases like Airflow job runs and quality check runs.

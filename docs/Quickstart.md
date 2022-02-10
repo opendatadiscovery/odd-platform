@@ -1,5 +1,10 @@
 # Quickstart 
-## ODD Platform local demo environment
+[Overview](#overview) \
+[Configuration](#configuration) \
+[Execution](#execution) \
+[Initial setup](#initial_setup) \
+[Authentication](#authentication)
+
 ## Overview
 **Running Locally with Docker Compose** \
 \
