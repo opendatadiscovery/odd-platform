@@ -159,7 +159,6 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         transformOrigin={{ vertical: -42, horizontal: 'right' }}
         open={isMenuOpen}
         onClose={handleMenuClose}
-        maxWidth={240}
       >
         <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
         {version && (

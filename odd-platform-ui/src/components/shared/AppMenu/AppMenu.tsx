@@ -43,13 +43,9 @@ const AppMenu: React.FC<AppMenuProps> = ({
     open={open}
     onClose={onClose}
     MenuListProps={MenuListProps}
-    PaperProps={{
-      style: {
-        minWidth: minWidth ? `${minWidth}px` : 0,
-        maxWidth: maxWidth ? `${maxWidth}px` : 'none',
-        maxHeight: maxHeight ? `${maxHeight}px` : 'none',
-      },
-    }}
+    $maxHeight={maxHeight}
+    $maxWidth={maxWidth}
+    $minWidth={minWidth}
   >
     {children}
   </StyledAppMenu>
