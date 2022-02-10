@@ -52,6 +52,8 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
           'aria-labelledby': 'menu-open-btn',
         }}
         onClose={handleMenuClose}
+        maxHeight={300}
+        maxWidth={240}
       >
         {dataList?.map((item: DataEntityRef | string) =>
           typeof item === 'string' ? (
