@@ -3,6 +3,7 @@ import { ActionType } from 'typesafe-actions';
 import {
   Alert,
   AlertTotals,
+  AppInfo,
   AssociatedOwner,
   DataEntity,
   DataEntityRef,
@@ -114,6 +115,7 @@ export interface DataQualityTestState {
   allTestRunIdsByTestId: {
     [qualityTestId: string]: DataQualityTestRun['id'][];
   };
+  qualityTestRunsPageInfo: CurrentPageInfo;
   datasetTestReportByEntityId: {
     [dataEntityId: string]: DataSetTestReport;
   };
@@ -183,8 +185,12 @@ export interface AlertsState {
 export interface ProfileState {
   owner?: AssociatedOwner;
 }
+export interface AppInfoState {
+  appInfo?: AppInfo;
+}
 
 export type RootState = {
+  appInfo: AppInfoState;
   dataSources: DataSourcesState;
   search: SearchState;
   loader: LoaderState;

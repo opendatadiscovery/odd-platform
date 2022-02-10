@@ -32,7 +32,11 @@ const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
   fetchDataSetQualityTestRuns,
 }) => {
   React.useEffect(() => {
-    fetchDataSetQualityTestRuns({ dataqatestId: dataQATestId });
+    fetchDataSetQualityTestRuns({
+      dataqatestId: dataQATestId,
+      page: 1,
+      size: 10,
+    });
   }, [fetchDataSetQualityTestRuns, dataQATestId]);
 
   return (

@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import {
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
   DataSetTestReport,
 } from 'generated-sources';
 import { propsChecker } from 'lib/helpers';
@@ -16,7 +16,7 @@ export const Container = styled('div')(() => ({
 }));
 
 interface CountLabelProps {
-  $testRunStatus: DataQualityTestRunStatusEnum;
+  $testRunStatus: DataQualityTestRunStatus;
 }
 
 interface BarProps extends CountLabelProps {
@@ -44,7 +44,7 @@ export const Bar = styled('div', {
       (Math.round(totalPercentTestReport) + 1)
     }%`;
   const calculateOtherStatusesMaxWidth = (
-    testRunStatus: DataQualityTestRunStatusEnum,
+    testRunStatus: DataQualityTestRunStatus,
     adjustment: number,
     testReport?: DataSetTestReport
   ): number => {
@@ -56,7 +56,7 @@ export const Bar = styled('div', {
     return totalPercentTestReport * adjustment;
   };
   const calculatedMaxWidth =
-    $testRunStatus === DataQualityTestRunStatusEnum.SUCCESS
+    $testRunStatus === DataQualityTestRunStatus.SUCCESS
       ? calculateSuccessMaxWidth(succRelation)
       : `${calculateOtherStatusesMaxWidth(
           $testRunStatus,

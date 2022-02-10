@@ -1,11 +1,11 @@
 import { styled } from '@mui/material/styles';
-import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import { DataQualityTestRunStatus } from 'generated-sources';
 import { propsChecker } from 'lib/helpers';
 
 export const Content = styled('div', {
   shouldForwardProp: propsChecker,
 })<{
-  $typeName: DataQualityTestRunStatusEnum;
+  $typeName: DataQualityTestRunStatus;
 }>(({ theme, $typeName }) => ({
   padding: theme.spacing(0.5),
   marginRight: theme.spacing(1),

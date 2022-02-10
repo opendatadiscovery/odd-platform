@@ -56,6 +56,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
           <Controller
             name={`enums.${itemIndex}.name`}
             control={control}
+            defaultValue={getValues(`enums.${itemIndex}.name`)}
             rules={{
               required: true,
               validate: setTextValidationByType,
@@ -79,6 +80,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
           />
           <Controller
             name={`enums.${itemIndex}.description`}
+            defaultValue={getValues(`enums.${itemIndex}.description`)}
             control={control}
             render={({ field }) => (
               <ValueDescriptionContainer sx={{ mr: 1 }}>
