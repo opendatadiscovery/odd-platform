@@ -15,7 +15,7 @@ interface AppMenuItemStyleProps {
 
 interface AppListItemTextProps {
   $removeTextStyles: boolean;
-  $fontValue: Variant;
+  $fontVariant: Variant;
 }
 
 export const StyledAppMenuItem = styled(MenuItem, {
@@ -36,11 +36,11 @@ export const StyledAppMenuItem = styled(MenuItem, {
 
 export const StyledAppListItemText = styled(ListItemText, {
   shouldForwardProp: propsChecker,
-})<AppListItemTextProps>(({ theme, $removeTextStyles, $fontValue }) => ({
+})<AppListItemTextProps>(({ theme, $removeTextStyles, $fontVariant }) => ({
   [`& span`]: {
-    fontSize: theme.typography[$fontValue].fontSize,
-    lineHeight: theme.typography[$fontValue].lineHeight,
-    fontWeight: theme.typography[$fontValue].fontWeight,
+    fontSize: theme.typography[$fontVariant].fontSize,
+    lineHeight: theme.typography[$fontVariant].lineHeight,
+    fontWeight: theme.typography[$fontVariant].fontWeight,
   },
   [`&.${listItemTextClasses.root}`]: !$removeTextStyles && {
     display: 'inline',

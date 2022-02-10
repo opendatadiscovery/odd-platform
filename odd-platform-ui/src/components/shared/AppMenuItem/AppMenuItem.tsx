@@ -14,7 +14,7 @@ interface AppMenuItemProps
   minWidth?: number;
   maxWidth?: number;
   removeTextStyles?: boolean;
-  fontValue?: Variant;
+  fontVariant?: Variant;
 }
 
 const AppMenuItem: React.FC<AppMenuItemProps> = ({
@@ -25,7 +25,7 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
   maxWidth,
   minWidth,
   removeTextStyles = false,
-  fontValue = 'body1',
+  fontVariant = 'body1',
 }) => (
   <StyledAppMenuItem
     value={value}
@@ -36,7 +36,7 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
   >
     <StyledAppListItemText
       $removeTextStyles={removeTextStyles}
-      $fontValue={fontValue}
+      $fontVariant={fontVariant}
     >
       {children}
     </StyledAppListItemText>
