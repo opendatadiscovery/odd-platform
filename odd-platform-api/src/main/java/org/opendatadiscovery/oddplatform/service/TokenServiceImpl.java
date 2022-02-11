@@ -17,5 +17,4 @@ public class TokenServiceImpl extends
     public TokenServiceImpl(final TokenMapper entityMapper, final TokenRepository entityRepository) {
         super(entityMapper, entityRepository);
     }
-
 }
