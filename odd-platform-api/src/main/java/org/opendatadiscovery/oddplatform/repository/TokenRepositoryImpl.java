@@ -67,7 +67,7 @@ public class TokenRepositoryImpl implements TokenRepository {
     }
 
     @Override
-    public List<TokenDto> list(String query) {
+    public List<TokenDto> list(final String query) {
         return dslContext.select(DATA_SOURCE.asterisk())
                 .select(NAMESPACE.asterisk())
                 .select(TOKEN.asterisk())
@@ -81,7 +81,7 @@ public class TokenRepositoryImpl implements TokenRepository {
     }
 
     @Override
-    public Page<TokenDto> list(int page, int size, String query) {
+    public Page<TokenDto> list(final int page, final int size, final String query) {
         final Select<TokenRecord> homogeneousQuery = dslContext
                 .selectFrom(TOKEN)
                 .where(queryCondition(query));
@@ -120,7 +120,7 @@ public class TokenRepositoryImpl implements TokenRepository {
 
     @Override
     @Transactional
-    public TokenDto update(TokenDto dto) {
+    public TokenDto update(final TokenDto dto) {
         return dslContext.selectFrom(TOKEN)
                 .where(TOKEN.ID.eq(dto.tokenPojo().getId()))
                 .fetchOptionalInto(TokenPojo.class)
@@ -130,28 +130,8 @@ public class TokenRepositoryImpl implements TokenRepository {
                 });
     }
 
-    @Override
-    public List<TokenDto> bulkCreate(Collection<TokenDto> pojos) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public List<TokenDto> bulkUpdate(Collection<TokenDto> pojos) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
-    public void delete(long id) {
-
-    }
-
-    @Override
-    public void delete(List<Long> id) {
-
-    }
-
     private TokenDto update(final TokenPojo existing,
-                                 final TokenDto delta) {
+                            final TokenDto delta) {
         final TokenDto updatedDs = persist(existing.getId(), delta.tokenPojo());
 
         final Field<Long> deId = field("data_entity_id", Long.class);
@@ -172,6 +152,22 @@ public class TokenRepositoryImpl implements TokenRepository {
 
         return updatedDs;
     }
+
+    @Override
+    public List<TokenDto> bulkCreate(final Collection<TokenDto> pojos) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public List<TokenDto> bulkUpdate(final Collection<TokenDto> pojos) {
+        throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    public void delete(final long id) {}
+
+    @Override
+    public void delete(final List<Long> id) {}
 
     private Long fetchCount(final String query) {
         return dslContext.selectCount()
