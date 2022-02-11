@@ -1,9 +1,10 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import org.opendatadiscovery.oddplatform.utils.Page;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import org.opendatadiscovery.oddplatform.utils.Page;
 
 public interface CRUDRepository<P> {
     Optional<P> get(final long id);

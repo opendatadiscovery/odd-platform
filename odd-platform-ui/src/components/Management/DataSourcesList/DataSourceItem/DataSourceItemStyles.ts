@@ -1,4 +1,4 @@
-import { Grid, Paper } from '@mui/material';
+import { Box, Grid, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 export const ActionsContainer = styled(Grid)(() => ({

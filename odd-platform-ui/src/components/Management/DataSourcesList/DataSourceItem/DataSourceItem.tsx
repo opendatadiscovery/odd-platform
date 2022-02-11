@@ -11,6 +11,7 @@ import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatte
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormContainer';
+import DataSourceItemTokenContainer from 'components/Management/DataSourcesList/DataSourceItem/DataSourceItemToken/DataSourceItemTokenContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import * as S from './DataSourceItemStyles';
 
@@ -96,6 +97,14 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
             labelWidth={4}
           >
             {dataSource.namespace?.name}
+          </LabeledInfoItem>
+          <LabeledInfoItem
+            variant="body2"
+            inline
+            label="Token"
+            labelWidth={4}
+          >
+            <DataSourceItemTokenContainer dataSource={dataSource} />
           </LabeledInfoItem>
         </S.DescriptionContainer>
 

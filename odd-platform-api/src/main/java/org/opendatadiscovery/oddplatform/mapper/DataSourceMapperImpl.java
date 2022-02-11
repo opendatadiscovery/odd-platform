@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataSourceMapperImpl implements DataSourceMapper {
     private final NamespaceMapper namespaceMapper;
+    private final TokenMapper tokenMapper;
 
     @Override
     public DataSourceDto mapForm(final DataSourceFormData form) {
@@ -32,7 +33,7 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             ? new NamespacePojo().setName(form.getNamespaceName())
             : null;
 
-        return new DataSourceDto(dataSourcePojo, namespace);
+        return new DataSourceDto(dataSourcePojo, namespace, null);
     }
 
     @Override
@@ -48,7 +49,7 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             ? new NamespacePojo().setName(form.getNamespaceName())
             : null;
 
-        return new DataSourceDto(dataSourcePojo, namespace);
+        return new DataSourceDto(dataSourcePojo, namespace, null);
     }
 
     @Override
@@ -63,7 +64,8 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .connectionUrl(dsPojo.getConnectionUrl())
             .namespace(namespaceMapper.mapPojo(dto.namespace()))
             .pullingInterval(dsPojo.getPullingInterval())
-            .active(dsPojo.getActive());
+            .active(dsPojo.getActive())
+            .token(tokenMapper.mapPojoToToken(dto.token()));
     }
 
     @Override

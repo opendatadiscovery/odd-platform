@@ -3,6 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import {
   DataSource,
   DataSourceApiGetDataSourceListRequest,
+  Token,
 } from 'generated-sources';
 import { useDebouncedCallback } from 'use-debounce/lib';
 import { CurrentPageInfo } from 'redux/interfaces/common';
@@ -22,6 +23,7 @@ import * as S from './DataSourcesListStyles';
 
 interface DataSourcesListProps {
   dataSourcesList: DataSource[];
+  tokensList: Token[];
   fetchDataSourcesList: (
     params: DataSourceApiGetDataSourceListRequest
   ) => void;
@@ -33,6 +35,7 @@ interface DataSourcesListProps {
 
 const DataSourcesListView: React.FC<DataSourcesListProps> = ({
   dataSourcesList,
+  tokensList,
   fetchDataSourcesList,
   isCreating,
   isDeleting,
@@ -46,8 +49,16 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
   >(pageInfo?.total);
 
   React.useEffect(() => {
-    if (!searchText) fetchDataSourcesList({ page: 1, size: pageSize });
-  }, [fetchDataSourcesList, isCreating, isDeleting, searchText]);
+    if (!searchText) {
+      fetchDataSourcesList({ page: 1, size: pageSize });
+    }
+  }, [
+    tokensList,
+    fetchDataSourcesList,
+    isCreating,
+    isDeleting,
+    searchText,
+  ]);
 
   React.useEffect(() => {
     if (!searchText) setTotalDataSources(pageInfo?.total);

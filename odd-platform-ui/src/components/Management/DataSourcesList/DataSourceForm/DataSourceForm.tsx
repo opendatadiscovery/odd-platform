@@ -120,7 +120,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
     setValue('oddrn', '');
   };
 
-  const recieveDataCheckbox = (
+  const receiveDataCheckbox = (
     <Controller
       defaultValue={false}
       name="active"
@@ -260,7 +260,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               />
             )}
           />
-          {recieveDataCheckbox}
+          {receiveDataCheckbox}
         </>
       ) : (
         <>
@@ -288,7 +288,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               />
             )}
           />
-          {recieveDataCheckbox}
+          {receiveDataCheckbox}
           {isPullingOn && (
             <Grid container sx={{ mt: 1.5 }}>
               <Grid item xs={6} md={4} sx={{ mr: 1 }}>

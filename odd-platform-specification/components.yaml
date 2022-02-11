@@ -662,6 +662,8 @@ components:
           format: int64
         namespace:
           $ref: '#/components/schemas/Namespace'
+        token:
+          $ref: '#/components/schemas/Token'
         oddrn:
           type: string
         name:
@@ -678,6 +680,7 @@ components:
           description: Pulling interval in seconds
       required:
         - id
+        - token
         - oddrn
         - name
         - active
@@ -734,6 +737,70 @@ components:
           type: integer
           format: int32
           description: Pulling interval in seconds
+
+    Token:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        description:
+          type: string
+        value:
+          type: string
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - value
+        - created_by
+        - created_at
+        - updated_by
+        - updated_at
+
+    TokenList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Token'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    TokenFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        value:
+          type: string
+
+    TokenUpdateFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        value:
+          type: string
 
     PageInfo:
       type: object

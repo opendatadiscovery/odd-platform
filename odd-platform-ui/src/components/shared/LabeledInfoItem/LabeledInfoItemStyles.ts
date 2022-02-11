@@ -15,16 +15,23 @@ export const Container = styled(Grid, {
   shouldForwardProp: propsChecker,
 })<{
   $inline?: boolean;
-}>(({ $inline }) => {
+  $borderTop: boolean;
+}>(({ $inline, $borderTop }) => {
+  const sharedStyles = { ...($borderTop && { borderTop: '1px solid' }) };
   if ($inline)
     return {
+      ...sharedStyles,
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'nowrap',
       alignItems: 'center',
     };
 
-  return { alignItems: 'flex-start', flexDirection: 'column' };
+  return {
+    ...sharedStyles,
+    alignItems: 'flex-start',
+    flexDirection: 'column',
+  };
 });
 
 export const Label = styled(Typography)<{ component: React.ElementType }>(

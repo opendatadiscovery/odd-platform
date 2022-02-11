@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPoj
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -21,6 +22,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 @Data
 public class DataEntityDimensionsDto extends DataEntityDto {
     protected NamespacePojo namespace;
+    protected TokenPojo token;
     protected List<OwnershipDto> ownership;
     protected DataSourcePojo dataSource;
     protected Collection<TagPojo> tags;
@@ -38,6 +40,7 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final boolean hasAlerts,
                                    final Map<DataEntityTypeDto, DataEntityAttributes> specificAttributes,
                                    final NamespacePojo namespace,
+                                   final TokenPojo token,
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
                                    final Collection<TagPojo> tags,
@@ -49,6 +52,7 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final DataInputDetailsDto dataInputDetailsDto) {
         super(dataEntity, hasAlerts, specificAttributes);
         this.namespace = namespace;
+        this.token = token;
         this.ownership = ownership;
         this.dataSource = dataSource;
         this.tags = tags;

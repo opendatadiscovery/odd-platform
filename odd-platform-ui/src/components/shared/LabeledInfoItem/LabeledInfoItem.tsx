@@ -4,17 +4,18 @@ import { DataQualityTestRunStatus } from 'generated-sources';
 import * as S from './LabeledInfoItemStyles';
 
 interface LabeledInfoItemProps {
-  inline?: boolean;
+  inline: boolean;
   label: string;
-  variant?: TypographyProps['variant'];
-  labelWidth?: GridSize;
-  runStatus?: DataQualityTestRunStatus;
-  valueColor?: string;
-  valueLineHeight?: number;
-  valueWrap?: boolean;
+  variant: TypographyProps['variant'];
+  labelWidth: GridSize;
+  runStatus: DataQualityTestRunStatus;
+  valueColor: string;
+  valueLineHeight: number;
+  valueWrap: boolean;
+  borderTop: boolean;
 }
 
-const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
+const LabeledInfoItem: React.FC<Partial<LabeledInfoItemProps>> = ({
   inline,
   label,
   variant = 'body1',
@@ -24,8 +25,9 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   valueColor,
   valueLineHeight,
   valueWrap = false,
+  borderTop = false,
 }) => (
-  <S.Container container $inline={inline}>
+  <S.Container container $inline={inline} $borderTop={borderTop}>
     <Grid item xs={labelWidth || 'auto'}>
       <S.Label title={label} variant={variant} noWrap component="span">
         {label}

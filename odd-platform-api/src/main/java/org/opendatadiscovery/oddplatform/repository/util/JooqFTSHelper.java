@@ -44,6 +44,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
+import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
 
 @Component
 @RequiredArgsConstructor
@@ -66,7 +67,9 @@ public class JooqFTSHelper {
         Map.entry(DATASET_FIELD.EXTERNAL_DESCRIPTION, "C"),
         Map.entry(LABEL.NAME, "C"),
         Map.entry(ROLE.NAME, "D"),
-        Map.entry(OWNER.NAME, "C")
+        Map.entry(OWNER.NAME, "C"),
+        Map.entry(TOKEN.NAME, "B"),
+        Map.entry(TOKEN.VALUE, "D")
     );
 
     private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
