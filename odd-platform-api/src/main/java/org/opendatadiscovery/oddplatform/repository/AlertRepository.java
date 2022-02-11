@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.Collection;
-import org.opendatadiscovery.oddplatform.dto.AlertDto;
-import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 
@@ -23,5 +23,5 @@ public interface AlertRepository {
 
     void updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName);
 
-    void createAlerts(final Collection<AlertPojo> alerts);
+    Collection<AlertPojo> createAlerts(final Collection<AlertPojo> alerts);
 }

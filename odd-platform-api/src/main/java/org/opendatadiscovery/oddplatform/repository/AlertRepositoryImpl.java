@@ -12,15 +12,17 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.CommonTableExpression;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertSetStep;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectOnConditionStep;
-import org.opendatadiscovery.oddplatform.dto.AlertDto;
-import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.model.tables.records.AlertRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
@@ -228,7 +230,7 @@ public class AlertRepositoryImpl implements AlertRepository {
 
     @Override
     @Transactional
-    public void createAlerts(final Collection<AlertPojo> alerts) {
+    public Collection<AlertPojo> createAlerts(final Collection<AlertPojo> alerts) {
         final Set<String> messengerOddrns = alerts.stream()
             .map(AlertPojo::getMessengerEntityOddrn)
             .filter(Objects::nonNull)
@@ -240,14 +242,24 @@ public class AlertRepositoryImpl implements AlertRepository {
             .fetchStreamInto(String.class)
             .collect(Collectors.toSet());
 
-        final List<AlertPojo> filteredAlerts = alerts.stream()
+        final List<AlertRecord> alertRecords = alerts.stream()
             .filter(
                 a -> a.getMessengerEntityOddrn() == null || !existingMessengers.contains(a.getMessengerEntityOddrn()))
-            .collect(Collectors.toList());
+            .map(a -> dslContext.newRecord(ALERT, a))
+            .toList();
 
-        dslContext
-            .batchInsert(filteredAlerts.stream().map(a -> dslContext.newRecord(ALERT, a)).collect(Collectors.toList()))
-            .execute();
+        final InsertSetStep<AlertRecord> insertStep = dslContext.insertInto(ALERT);
+        for (int i = 0; i < alertRecords.size() - 1; i++) {
+            insertStep.set(alertRecords.get(i)).newRecord();
+        }
+
+        return insertStep.set(alertRecords.get(alertRecords.size() - 1))
+            .onDuplicateKeyIgnore()
+            .returning(ALERT.fields())
+            .fetch()
+            .stream()
+            .map(r -> r.into(AlertPojo.class))
+            .toList();
     }
 
     private SelectOnConditionStep<Record> baseAlertSelect(final List<Field<?>> selectFields) {
