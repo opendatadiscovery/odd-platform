@@ -13,6 +13,7 @@ import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record2;
 import org.jooq.Select;
+import org.jooq.SortOrder;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunStatus;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
@@ -64,11 +65,10 @@ public class DataQualityRepositoryImpl implements DataQualityRepository {
         final var baseQuery = dslContext.select(DATA_ENTITY_TASK_RUN.fields())
             .from(DATA_ENTITY_TASK_RUN)
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN))
-            .where(conditions)
-            .orderBy(DATA_ENTITY_TASK_RUN.START_TIME.desc());
+            .where(conditions);
 
-        final Select<? extends Record> select =
-            jooqQueryHelper.paginate(baseQuery, DATA_ENTITY_TASK_RUN.START_TIME, (page - 1) * size, size);
+        final Select<? extends Record> select = jooqQueryHelper.paginate(baseQuery, DATA_ENTITY_TASK_RUN.START_TIME,
+            SortOrder.DESC, (page - 1) * size, size);
 
         final List<? extends Record> records = select
             .fetchStream()
