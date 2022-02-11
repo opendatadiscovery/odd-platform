@@ -269,7 +269,7 @@ public class IngestionServiceImpl implements IngestionService {
         return Mono
             .zipDelayError(
                 ingestDatasetStructure(dataStructure),
-                Mono.fromCallable(() -> metadataIngestionService.ingestMetadata(dataStructure))
+                Mono.defer(() -> metadataIngestionService.ingestMetadata(dataStructure))
             )
             .map(m -> dataStructure);
     }

@@ -33,7 +33,7 @@ public class MetadataIngestionServiceImpl implements MetadataIngestionService {
 
     @Override
     @Transactional
-    public IngestionDataStructure ingestMetadata(final IngestionDataStructure dataStructure) {
+    public Mono<IngestionDataStructure> ingestMetadata(final IngestionDataStructure dataStructure) {
         final List<MetadataInfo> metadataInfos = retrieveMetadataInfoFromDataStructure(dataStructure);
 
         final List<MetadataFieldPojo> metadataFieldPojos = metadataInfos.stream()
@@ -71,7 +71,7 @@ public class MetadataIngestionServiceImpl implements MetadataIngestionService {
         metadataFieldValueRepository.bulkCreate(valuesToCreate);
         metadataFieldValueRepository.bulkUpdate(valuesToUpdate);
 
-        return dataStructure;
+        return Mono.just(dataStructure);
     }
 
     private List<MetadataInfo> retrieveMetadataInfoFromDataStructure(final IngestionDataStructure dataStructure) {

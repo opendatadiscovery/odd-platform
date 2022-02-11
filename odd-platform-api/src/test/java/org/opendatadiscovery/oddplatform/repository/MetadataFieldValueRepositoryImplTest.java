@@ -39,8 +39,7 @@ public class MetadataFieldValueRepositoryImplTest extends BaseIntegrationTest {
             metadataFieldValueRepository.bulkCreate(List.of(firstMetadataFieldValue, secondMetadataFieldValue));
         assertThat(fieldValuePojos)
             .hasSize(2)
-            .extracting(MetadataFieldValuePojo::getValue)
-            .containsExactlyInAnyOrder(firstMetadataFieldValue.getValue(), secondMetadataFieldValue.getValue());
+            .hasSameElementsAs(List.of(firstMetadataFieldValue, secondMetadataFieldValue));
     }
 
     @Test
@@ -51,13 +50,11 @@ public class MetadataFieldValueRepositoryImplTest extends BaseIntegrationTest {
         final MetadataFieldValuePojo metadataFieldValue =
             createMetadataFieldValue(fieldPojo.getId(), dataEntityPojo.getId());
         final MetadataFieldValuePojo valuePojo = metadataFieldValueRepository.create(metadataFieldValue);
-        assertThat(valuePojo.getValue()).isEqualTo(metadataFieldValue.getValue());
-        assertThat(valuePojo.getMetadataFieldId()).isEqualTo(metadataFieldValue.getMetadataFieldId());
-        assertThat(valuePojo.getDataEntityId()).isEqualTo(metadataFieldValue.getDataEntityId());
-        assertThat(valuePojo.getActive()).isEqualTo(metadataFieldValue.getActive());
+        assertThat(valuePojo).isEqualTo(metadataFieldValue);
+
         valuePojo.setValue(UUID.randomUUID().toString());
         final MetadataFieldValuePojo updatedPojo = metadataFieldValueRepository.update(valuePojo);
-        assertThat(updatedPojo.getValue()).isEqualTo(valuePojo.getValue());
+        assertThat(updatedPojo).isEqualTo(valuePojo);
     }
 
     @Test

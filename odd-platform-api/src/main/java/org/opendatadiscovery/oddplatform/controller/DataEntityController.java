@@ -69,7 +69,7 @@ public class DataEntityController
     ) {
         return metadataObject.collectList()
             .publishOn(Schedulers.boundedElastic())
-            .flatMap(moList -> Mono.fromCallable(() -> entityService.createMetadata(dataEntityId, moList)))
+            .flatMap(moList -> Mono.defer(() -> entityService.createMetadata(dataEntityId, moList)))
             .map(ResponseEntity::ok);
     }
 
@@ -147,7 +147,7 @@ public class DataEntityController
     ) {
         return metadataFieldValueUpdateFormData
             .publishOn(Schedulers.boundedElastic())
-            .flatMap(form -> Mono.fromCallable(
+            .flatMap(form -> Mono.defer(
                 () -> entityService.upsertMetadataFieldValue(dataEntityId, metadataFieldId, form)))
             .map(ResponseEntity::ok);
     }

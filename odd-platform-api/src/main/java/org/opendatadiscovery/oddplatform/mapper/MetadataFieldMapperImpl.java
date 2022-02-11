@@ -15,11 +15,14 @@ public class MetadataFieldMapperImpl implements MetadataFieldMapper {
 
     @Override
     public MetadataField mapPojo(final MetadataFieldPojo pojo) {
-        return new MetadataField()
+        final MetadataField metadataField = new MetadataField()
             .id(pojo.getId())
             .name(pojo.getName())
-            .type(MetadataFieldType.valueOf(pojo.getType()))
-            .origin(MetadataFieldOrigin.valueOf(pojo.getOrigin()));
+            .type(MetadataFieldType.valueOf(pojo.getType()));
+        if (pojo.getOrigin() != null) {
+            metadataField.setOrigin(MetadataFieldOrigin.valueOf(pojo.getOrigin()));
+        }
+        return metadataField;
     }
 
     @Override
@@ -31,9 +34,12 @@ public class MetadataFieldMapperImpl implements MetadataFieldMapper {
 
     @Override
     public MetadataFieldPojo mapObject(final MetadataObject object) {
-        return new MetadataFieldPojo()
+        final MetadataFieldPojo fieldPojo = new MetadataFieldPojo()
             .setName(object.getName())
-            .setType(object.getType().getValue())
-            .setOrigin(object.getOrigin().getValue());
+            .setType(object.getType().getValue());
+        if (object.getOrigin() != null) {
+            fieldPojo.setOrigin(object.getOrigin().getValue());
+        }
+        return fieldPojo;
     }
 }

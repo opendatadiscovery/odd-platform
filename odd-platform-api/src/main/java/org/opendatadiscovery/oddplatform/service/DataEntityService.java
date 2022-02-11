@@ -38,7 +38,7 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
 
     Flux<DataEntityRef> listPopular(final int page, final int size);
 
-    MetadataFieldValueList createMetadata(final long dataEntityId, final List<MetadataObject> metadata);
+    Mono<MetadataFieldValueList> createMetadata(final long dataEntityId, final List<MetadataObject> metadata);
 
     Mono<Void> deleteMetadata(final long dataEntityId, final long metadataFieldId);
 
@@ -48,7 +48,7 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
 
     Flux<Tag> upsertTags(final long dataEntityId, final DataEntityTagsFormData tagsFormData);
 
-    MetadataFieldValue upsertMetadataFieldValue(final long dataEntityId,
+    Mono<MetadataFieldValue> upsertMetadataFieldValue(final long dataEntityId,
                                                       final long metadataFieldId,
                                                       final MetadataFieldValueUpdateFormData formData);
 

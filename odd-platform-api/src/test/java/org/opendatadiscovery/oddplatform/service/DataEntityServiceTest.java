@@ -28,6 +28,8 @@ import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.TagRepository;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyCollection;
@@ -90,9 +92,14 @@ public class DataEntityServiceTest {
             .thenReturn(metadataFieldValue);
         doNothing().when(dataEntityRepository).calculateMetadataVectors(List.of(dataEntityId));
 
-        final MetadataFieldValueList metadata = dataEntityService.createMetadata(dataEntityId, List.of(metadataObject));
-        assertThat(metadata.getItems()).hasSize(1);
-        assertThat(metadata.getItems().get(0)).isEqualTo(metadataFieldValue);
+        final Mono<MetadataFieldValueList> metadataMono =
+            dataEntityService.createMetadata(dataEntityId, List.of(metadataObject));
+        StepVerifier.create(metadataMono)
+            .assertNext(l -> assertThat(l.getItems())
+                .hasSize(1)
+                .containsExactly(metadataFieldValue))
+            .expectComplete()
+            .verify();
     }
 
     @Test
@@ -116,8 +123,12 @@ public class DataEntityServiceTest {
             .thenReturn(metadataFieldValue);
         doNothing().when(dataEntityRepository).calculateMetadataVectors(anyCollection());
 
-        final MetadataFieldValue result = dataEntityService.upsertMetadataFieldValue(dataEntityId, fieldId, formData);
-        assertThat(result).isEqualTo(metadataFieldValue);
+        final Mono<MetadataFieldValue> result =
+            dataEntityService.upsertMetadataFieldValue(dataEntityId, fieldId, formData);
+        StepVerifier.create(result)
+            .assertNext(mfv -> assertThat(mfv).isEqualTo(metadataFieldValue))
+            .expectComplete()
+            .verify();
     }
 
     private MetadataFieldPojo createFieldPojo(final Long id, final String name, final MetadataFieldType type,

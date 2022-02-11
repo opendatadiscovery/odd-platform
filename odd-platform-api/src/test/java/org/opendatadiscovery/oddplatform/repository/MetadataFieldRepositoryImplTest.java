@@ -35,8 +35,8 @@ public class MetadataFieldRepositoryImplTest extends BaseIntegrationTest {
         final List<MetadataFieldPojo> list = metadataFieldRepository.list(null);
         assertThat(list)
             .hasSize(3)
-            .extracting(MetadataFieldPojo::getName)
-            .containsExactlyInAnyOrder(first.getName(), second.getName(), third.getName());
+            .usingElementComparatorIgnoringFields("id", "isDeleted")
+            .hasSameElementsAs(List.of(first, second, third));
         final MetadataFieldPojo thirdPojo = list.stream()
             .filter(pojo -> pojo.getName().equals(third.getName()))
             .findFirst()
@@ -47,8 +47,8 @@ public class MetadataFieldRepositoryImplTest extends BaseIntegrationTest {
         final List<MetadataFieldPojo> filteredList = metadataFieldRepository.list(first.getName());
         assertThat(filteredList)
             .hasSize(1)
-            .extracting(MetadataFieldPojo::getName)
-            .containsExactlyInAnyOrder(first.getName());
+            .usingElementComparatorIgnoringFields("id", "isDeleted")
+            .hasSameElementsAs(List.of(first));
     }
 
     @Test
@@ -82,8 +82,8 @@ public class MetadataFieldRepositoryImplTest extends BaseIntegrationTest {
         ));
         assertThat(excludingDeletedMetadata)
             .hasSize(2)
-            .extracting(MetadataFieldPojo::getName)
-            .containsExactlyInAnyOrder(second.getName(), third.getName());
+            .usingElementComparatorIgnoringFields("id", "isDeleted")
+            .hasSameElementsAs(List.of(second, third));
     }
 
     @Test

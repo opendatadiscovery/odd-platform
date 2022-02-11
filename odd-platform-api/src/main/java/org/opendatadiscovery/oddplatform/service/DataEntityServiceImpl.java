@@ -165,7 +165,7 @@ public class DataEntityServiceImpl
 
     @Override
     @Transactional
-    public MetadataFieldValueList createMetadata(final long dataEntityId,
+    public Mono<MetadataFieldValueList> createMetadata(final long dataEntityId,
                                                  final List<MetadataObject> metadataList) {
         final Map<MetadataKey, MetadataObject> metadataObjectMap = metadataList.stream()
             .collect(Collectors.toMap(MetadataKey::new, identity(), (m1, m2) -> m2));
@@ -197,7 +197,7 @@ public class DataEntityServiceImpl
             .collect(Collectors.toList());
 
         entityRepository.calculateMetadataVectors(List.of(dataEntityId));
-        return new MetadataFieldValueList().items(fields);
+        return Mono.just(new MetadataFieldValueList().items(fields));
     }
 
     @Override
@@ -279,7 +279,7 @@ public class DataEntityServiceImpl
 
     @Override
     @Transactional
-    public MetadataFieldValue upsertMetadataFieldValue(final long dataEntityId,
+    public Mono<MetadataFieldValue> upsertMetadataFieldValue(final long dataEntityId,
                                                        final long metadataFieldId,
                                                        final MetadataFieldValueUpdateFormData formData) {
         final MetadataFieldValuePojo metadataFieldValuePojo = new MetadataFieldValuePojo()
@@ -293,7 +293,7 @@ public class DataEntityServiceImpl
         final MetadataFieldValuePojo enrichedPojo = metadataFieldValueRepository.update(metadataFieldValuePojo);
         entityRepository.calculateMetadataVectors(List.of(dataEntityId));
 
-        return metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, enrichedPojo));
+        return Mono.just(metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, enrichedPojo)));
     }
 
     @Override
