@@ -162,13 +162,8 @@ const Overview: React.FC<OverviewProps> = ({
             </S.InfoBarItem>
           </Grid>
           {identity?.owner ? (
-            <Grid
-              container
-              wrap="nowrap"
-              justifyContent="space-between"
-              sx={{ mt: 3.5, mx: 'auto' }}
-            >
-              <Grid item xs={3} sx={{ pr: 3 }}>
+            <S.DataEntityContainer container wrap="nowrap">
+              <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={myEntities}
                   entityListName="My Objects"
@@ -176,7 +171,7 @@ const Overview: React.FC<OverviewProps> = ({
                   isFetching={myDataEntitiesFetching}
                 />
               </Grid>
-              <Grid item xs={3} sx={{ pr: 3 }}>
+              <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={myEntitiesUpstream}
                   entityListName="Upstream dependents"
@@ -184,7 +179,7 @@ const Overview: React.FC<OverviewProps> = ({
                   isFetching={myUpstreamDataEntitiesFetching}
                 />
               </Grid>
-              <Grid item xs={3} sx={{ pr: 3 }}>
+              <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={myEntitiesDownstream}
                   entityListName="Downstream dependents"
@@ -192,7 +187,7 @@ const Overview: React.FC<OverviewProps> = ({
                   isFetching={myDownstreamDataEntitiesFetching}
                 />
               </Grid>
-              <Grid item xs={3} sx={{ pr: 3 }}>
+              <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={popularEntities}
                   entityListName="Popular"
@@ -200,7 +195,7 @@ const Overview: React.FC<OverviewProps> = ({
                   isFetching={popularDataEntitiesFetching}
                 />
               </Grid>
-            </Grid>
+            </S.DataEntityContainer>
           ) : null}
         </>
       )}
