@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { ElementType } from 'react';
 import { Grid, GridSize, TypographyProps } from '@mui/material';
 import { DataQualityTestRunStatus } from 'generated-sources';
-import * as S from './LabeledInfoItemStyles';
+import {
+  Container,
+  ValueContainer,
+  Label,
+  Value,
+} from './LabeledInfoItemStyles';
 
 interface LabeledInfoItemProps {
   inline?: boolean;
@@ -12,6 +17,7 @@ interface LabeledInfoItemProps {
   valueColor?: string;
   valueLineHeight?: number;
   valueWrap?: boolean;
+  valueComponent?: ElementType;
 }
 
 const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
@@ -24,36 +30,38 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   valueColor,
   valueLineHeight,
   valueWrap = false,
+  valueComponent = 'span',
 }) => (
-  <S.Container container $inline={inline}>
+  <Container container $inline={inline}>
     <Grid item xs={labelWidth || 'auto'}>
-      <S.Label title={label} variant={variant} noWrap component="span">
+      <Label title={label} variant={variant} noWrap component="span">
         {label}
-      </S.Label>
+      </Label>
     </Grid>
-    <Grid
+    <ValueContainer
       item
       xs={
         typeof labelWidth === 'number'
           ? ((12 - labelWidth) as GridSize)
           : 'auto'
       }
-      style={{ width: '100%' }}
     >
-      <S.Value
+      <Value
         $runStatus={runStatus}
         $valueColor={valueColor}
         $inline={inline}
         $valueLineHeight={valueLineHeight}
         variant={variant}
-        component="span"
+        component={valueComponent}
         noWrap={!valueWrap}
-        title={children?.toString()}
+        title={
+          typeof children === 'string' ? children?.toString() : undefined
+        }
       >
         {children}
-      </S.Value>
-    </Grid>
-  </S.Container>
+      </Value>
+    </ValueContainer>
+  </Container>
 );
 
 export default LabeledInfoItem;
