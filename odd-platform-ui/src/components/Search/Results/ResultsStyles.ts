@@ -49,9 +49,16 @@ export const ColContainer = styled(Grid, {
   ...colWidthStyles[$colType],
 }));
 
+export const NameContainer = styled(Grid)(() => ({
+  ...colWidthStyles.col,
+  padding: 0,
+  justifyContent: 'flex-start',
+  flexWrap: 'nowrap',
+}));
+
 export const ListContainer = styled(Grid)(({ theme }) => ({
   height: `calc(100vh - ${toolbarHeight}px - ${searchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
     8
   )})`,
-  overflow: 'auto',
+  overflowY: 'scroll',
 }));
