@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, MenuItem } from '@mui/material';
+import { Grid } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
 import {
   FacetStateUpdate,
@@ -7,6 +7,7 @@ import {
   SearchFilterStateSynced,
 } from 'redux/interfaces/search';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 
 interface FilterItemProps {
   name: string;
@@ -48,20 +49,22 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
             selectedOptions?.length ? selectedOptions[0].entityId : 'All'
           }
         >
-          <MenuItem
+          <AppMenuItem
             value="All"
+            maxWidth={190}
             onClick={() => handleFilterSelect({ id: 'All', name: 'All' })}
           >
             All
-          </MenuItem>
+          </AppMenuItem>
           {facetOptions?.map(option => (
-            <MenuItem
+            <AppMenuItem
               key={option.id}
               value={option.id}
               onClick={() => handleFilterSelect(option)}
+              maxWidth={190}
             >
               {option.name}
-            </MenuItem>
+            </AppMenuItem>
           ))}
         </AppTextField>
       </Grid>
