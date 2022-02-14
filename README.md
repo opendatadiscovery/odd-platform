@@ -1,5 +1,5 @@
 
-<p>
+<p> align="center">
 <img src="./images/open-data-discovery-platform-odd-logo.png" width="600px" alt="open-data-discovery-logo"/>&nbsp;
 </p>
 
@@ -40,12 +40,12 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 ### Data Discovery and Observability
 
-* Accumulate scattered data insights in Federated Data Catalogue
+* Accumulate scattered data insights in Federated Data catalogue
 * Gain observability through E2E Data objects Lineage
-* Benefit from cutting-edge E2E Microservices Lineage feature in tracking your data flow through the whole data landscape
+* Benefit from cutting-edge E2E microservices Lineage feature in tracking your data flow through the whole data landscape
 * Be warned and alerted by Pipeline Monitoring tools
-* Store your Meta Data 
-* Use ODD-native modern lightweight UI, AI-based UX
+* Store your metadata 
+* Use ODD-native modern lightweight UI
 
 
 ### ML First citizen
@@ -77,10 +77,10 @@ ODD is an open-source data discovery and observability tool for data teams that 
 ### Deploying to Kubernetes with Helm Charts
 
 * :point_right: **[QUICKSTART](https://github.com/opendatadiscovery/charts/blob/master/QUICKSTART.md)**
-* 
+
 ### Example configurations
 
-There are various example configurations (via docker-compose) within docker/examples directory.
+There are various example configurations (via docker-compose) within **[docker/examples directory](https://github.com/opendatadiscovery/odd-platform/tree/main/docker/docker/examples)**.
 
 <br>
 
