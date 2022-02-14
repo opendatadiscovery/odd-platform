@@ -162,7 +162,7 @@ const Overview: React.FC<OverviewProps> = ({
             </S.InfoBarItem>
           </Grid>
           {identity?.owner ? (
-            <S.DataEntityContainer container wrap="nowrap">
+            <S.DataEntityContainer container>
               <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={myEntities}

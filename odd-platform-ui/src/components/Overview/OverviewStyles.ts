@@ -58,5 +58,6 @@ export const DataEntityContainer = styled(Grid)(({ theme }) => ({
   marginTop: theme.spacing(3.5),
   marginLeft: 'auto',
   marginRight: 'auto',
+  flexWrap: 'nowrap',
   '& > *': { paddingRight: theme.spacing(3) },
 }));
