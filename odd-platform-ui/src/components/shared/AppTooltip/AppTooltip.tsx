@@ -31,8 +31,9 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   const childrenRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (checkForOverflow && childrenRef.current?.firstElementChild) {
-      const el = childrenRef.current.firstElementChild;
+    if (checkForOverflow && childrenRef.current) {
+      const el =
+        childrenRef.current.firstElementChild || childrenRef.current;
       const { scrollWidth, clientWidth } = el;
       setHover(!hoverStatus && scrollWidth > clientWidth);
     }
