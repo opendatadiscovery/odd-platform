@@ -19,6 +19,7 @@ import org.jooq.Record1;
 import org.jooq.SelectOnConditionStep;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
@@ -219,13 +220,16 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
-    public void updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName) {
-        dslContext.update(ALERT)
+    public AlertPojo updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName) {
+        return dslContext.update(ALERT)
             .set(ALERT.STATUS, status.toString())
             .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
             .set(ALERT.STATUS_UPDATED_BY, userName)
             .where(ALERT.ID.eq(alertId))
-            .execute();
+            .returning(ALERT.fields())
+            .fetchOptional()
+            .map(r -> r.into(AlertPojo.class))
+            .orElseThrow(NotFoundException::new);
     }
 
     @Override
