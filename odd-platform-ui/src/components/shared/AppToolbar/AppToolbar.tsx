@@ -1,6 +1,5 @@
 import React, { MouseEvent } from 'react';
 import {
-  Divider,
   Grid,
   IconButton,
   Typography,
@@ -16,6 +15,8 @@ import { useHistory, useLocation } from 'react-router-dom';
 import { searchPath } from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import AppMenu from '../AppMenu/AppMenu';
+import AppMenuItem from '../AppMenuItem/AppMenuItem';
 import * as S from './AppToolbarStyles';
 
 interface AppToolbarProps {
@@ -150,27 +151,27 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
           </S.ActionsContainer>
         </S.ContentContainer>
       </S.Container>
-      <S.UserMenu
+      <AppMenu
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
         keepMounted
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: -42, horizontal: 'right' }}
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        <S.UserMenuItem onClick={handleLogout}>Logout</S.UserMenuItem>
+        <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
         {version && (
-          <>
-            <Divider />
-            <S.CaptionsWrapper>
+          <S.CaptionsWrapper>
+            <AppMenuItem divider />
+            <S.CaptionsTypographyWrapper>
               <Typography variant="caption">
                 ODD Platform v.{version}
               </Typography>
-            </S.CaptionsWrapper>
-          </>
+            </S.CaptionsTypographyWrapper>
+          </S.CaptionsWrapper>
         )}
-      </S.UserMenu>
+      </AppMenu>
     </S.Bar>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, Box, MenuItem, Typography } from '@mui/material';
+import { Autocomplete, Box, Typography } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
@@ -16,6 +16,7 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 
 interface MetadataCreateFormItemProps {
   itemIndex: number;
@@ -215,9 +216,9 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
                   }}
                 >
                   {values(MetadataFieldType).map(type => (
-                    <MenuItem key={type} value={type}>
+                    <AppMenuItem key={type} value={type}>
                       {capitalize(type)}
-                    </MenuItem>
+                    </AppMenuItem>
                   ))}
                 </AppTextField>
               )}
