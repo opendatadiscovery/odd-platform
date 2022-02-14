@@ -162,12 +162,7 @@ const Overview: React.FC<OverviewProps> = ({
             </S.InfoBarItem>
           </Grid>
           {identity?.owner ? (
-            <Grid
-              container
-              wrap="nowrap"
-              justifyContent="space-between"
-              sx={{ mt: 3.5, mx: 'auto' }}
-            >
+            <S.DataEntityContainer container>
               <Grid item xs={3}>
                 <DataEntityList
                   dataEntitiesList={myEntities}
@@ -200,7 +195,7 @@ const Overview: React.FC<OverviewProps> = ({
                   isFetching={popularDataEntitiesFetching}
                 />
               </Grid>
-            </Grid>
+            </S.DataEntityContainer>
           ) : null}
         </>
       )}

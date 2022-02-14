@@ -49,11 +49,6 @@ export const components: Components = {
       },
     },
   },
-  MuiMenuItem: {
-    styleOverrides: {
-      root: { fontSize: '14px', lineHeight: '20px' },
-    },
-  },
   MuiPaper: {
     styleOverrides: {
       root: {
@@ -63,11 +58,6 @@ export const components: Components = {
       elevation9: {
         borderRadius: '8px',
       },
-    },
-  },
-  MuiMenu: {
-    styleOverrides: {
-      paper: { padding: '12px 8px' },
     },
   },
   MuiList: {

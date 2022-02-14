@@ -52,3 +52,12 @@ export const InfoBarStatsText = styled('span')(({ theme }) => ({
   color: theme.palette.texts.hint,
   lineHeight: theme.typography.h2.lineHeight,
 }));
+
+export const DataEntityContainer = styled(Grid)(({ theme }) => ({
+  justifyContent: 'space-between',
+  marginTop: theme.spacing(3.5),
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  flexWrap: 'nowrap',
+  '& > *': { paddingRight: theme.spacing(3) },
+}));

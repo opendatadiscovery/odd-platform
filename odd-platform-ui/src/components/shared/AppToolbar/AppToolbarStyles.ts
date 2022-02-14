@@ -1,12 +1,4 @@
-import {
-  AppBar,
-  appBarClasses,
-  Grid,
-  Menu,
-  menuClasses,
-  MenuItem,
-  Toolbar,
-} from '@mui/material';
+import { AppBar, appBarClasses, Grid, Toolbar } from '@mui/material';
 import {
   maxContentWidth,
   maxSidebarWidth,
@@ -104,21 +96,11 @@ export const UserName = styled('p')(({ theme }) => ({
   margin: theme.spacing(0, 1),
 }));
 
-export const UserMenu = styled(Menu)(({ theme }) => ({
-  [`& .${menuClasses.paper}`]: {
-    minWidth: '160px',
-    padding: theme.spacing(1, 0),
-  },
-}));
+export const CaptionsWrapper = styled('div')(() => ({}));
 
-export const UserMenuItem = styled(MenuItem)(({ theme }) => ({
-  padding: theme.spacing(0.75, 1),
-  '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
-}));
-
-export const CaptionsWrapper = styled('div')(({ theme }) => ({
+export const CaptionsTypographyWrapper = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
-  padding: theme.spacing(0, 1),
+  padding: theme.spacing(0.75, 2),
 }));

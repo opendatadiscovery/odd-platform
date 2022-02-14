@@ -4,8 +4,9 @@ import {
   DataQualityTestRun,
   DataQualityTestRunStatus,
 } from 'generated-sources';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import capitalize from 'lodash/capitalize';
-import { Grid, MenuItem, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
@@ -61,11 +62,11 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
         select
         value={alertStatus}
       >
-        <MenuItem value="All" onClick={() => setAlertStatus('All')}>
+        <AppMenuItem value="All" onClick={() => setAlertStatus('All')}>
           Show all statuses
-        </MenuItem>
+        </AppMenuItem>
         {Object.keys(DataQualityTestRunStatus)?.map(option => (
-          <MenuItem
+          <AppMenuItem
             key={option}
             value={option}
             onClick={() =>
@@ -73,7 +74,7 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
             }
           >
             {capitalize(option)}
-          </MenuItem>
+          </AppMenuItem>
         ))}
       </AppTextField>
       <RunsTableHeader container wrap="nowrap" sx={{ mt: 2 }}>

@@ -7,7 +7,10 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { dataEntityDetailsPath } from 'lib/paths';
 import TruncatedCell from 'components/shared/TruncatedCell/TruncatedCell';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import { ColContainer } from 'components/Search/Results/ResultsStyles';
+import {
+  ColContainer,
+  NameContainer,
+} from 'components/Search/Results/ResultsStyles';
 import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { Container, ItemLink } from './ResultItemStyles';
@@ -35,13 +38,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
           justifyContent="space-between"
           wrap="nowrap"
         >
-          <ColContainer
-            $colType="col"
-            container
-            item
-            justifyContent="flex-start"
-            wrap="nowrap"
-          >
+          <NameContainer container item>
             <Typography
               variant="body1"
               noWrap
@@ -64,7 +61,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             >
               <InformationIcon sx={{ display: 'flex', ml: 1.25 }} />
             </AppTooltip>
-          </ColContainer>
+          </NameContainer>
           <Grid
             container
             item
