@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -181,6 +183,20 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
 
         assertEquals(expectedNamespacePojo.getId(), actualNamespacePojo.getId());
         assertEquals(expectedNamespacePojo.getName(), actualNamespacePojo.getName());
+    }
+
+    @Test
+    void testGetByName() {
+        final NamespacePojo pojo = new NamespacePojo()
+            .setName(UUID.randomUUID().toString());
+        final NamespacePojo createdPojo = namespaceRepository.create(pojo);
+        final Optional<NamespacePojo> namespaceOpt = namespaceRepository.getByName(createdPojo.getName());
+        assertThat(namespaceOpt.isPresent()).isTrue();
+        final Optional<NamespacePojo> nonExistingOpt = namespaceRepository.getByName(UUID.randomUUID().toString());
+        assertThat(nonExistingOpt.isPresent()).isFalse();
+        namespaceRepository.delete(createdPojo.getId());
+        final Optional<NamespacePojo> deletedOpt = namespaceRepository.getByName(createdPojo.getName());
+        assertThat(deletedOpt.isPresent()).isFalse();
     }
 }
 
