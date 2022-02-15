@@ -1,27 +1,28 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import javax.validation.Valid;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource;
+import org.opendatadiscovery.oddplatform.service.DataSourceService;
 import org.opendatadiscovery.oddplatform.service.IngestionService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-import java.util.List;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class IngestionController implements IngestionApi {
     private final IngestionService ingestionService;
+    private final DataSourceService dataSourceService;
 
     @Override
     public Mono<ResponseEntity<Void>> postDataEntityList(
@@ -35,22 +36,20 @@ public class IngestionController implements IngestionApi {
             .map(voidMono -> ResponseEntity.ok().build());
     }
 
-    @PostMapping(
-        path = "/ingestion/datasource",
-        consumes = { "application/json" }
-    )
-    public Mono<ResponseEntity<List<CollectorDataSourceRequest>>> registerDataSources(
-        @RequestBody final List<CollectorDataSourceRequest> request
-    ) {
-        return Mono.just(ResponseEntity.ok(request));
+    @Override
+    public Mono<ResponseEntity<Void>> createDataSource(@Valid final Flux<DataSource> dataSource,
+                                                       final ServerWebExchange exchange) {
+        return dataSource.map(this::createForm)
+            .collectList()
+            .map(dataSourceService::bulkCreate)
+            .map(__ -> ResponseEntity.ok().build());
     }
 
-    @Data
-    @NoArgsConstructor
-    private static class CollectorDataSourceRequest {
-        private String name;
-        private String oddrn;
-        private String description;
-        private String namespace;
+    private DataSourceFormData createForm(final DataSource ds) {
+        return new DataSourceFormData()
+            .oddrn(ds.getOddrn())
+            .name(ds.getName())
+            .active(true)
+            .description(ds.getDescription());
     }
 }

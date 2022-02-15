@@ -187,8 +187,20 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     }
 
     @Override
+    @Transactional
     public List<DataSourceDto> bulkCreate(final Collection<DataSourceDto> pojos) {
-        throw new UnsupportedOperationException("Not implemented");
+        final ArrayList<DataSourceDto> result = new ArrayList<>();
+
+        for (final DataSourceDto pojo : pojos) {
+            try {
+                final DataSourceDto dataSourceDto = create(pojo);
+                result.add(dataSourceDto);
+            } catch (final EntityAlreadyExistsException e) {
+                log.info("Data source with oddrn {} already exists", pojo.dataSource().getOddrn());
+            }
+        }
+
+        return result;
     }
 
     @Override
