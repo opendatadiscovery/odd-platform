@@ -36,7 +36,8 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
     public TagRepositoryImpl(final DSLContext dslContext,
                              final JooqQueryHelper jooqQueryHelper,
                              final JooqFTSHelper jooqFTSHelper) {
-        super(dslContext, jooqQueryHelper, TAG, TAG.ID, TAG.IS_DELETED, TAG.NAME, TAG.NAME, TagPojo.class);
+        super(dslContext, jooqQueryHelper, TAG, TAG.ID, TAG.IS_DELETED, TAG.NAME, TAG.NAME,
+            TAG.UPDATED_AT, TagPojo.class);
 
         this.jooqFTSHelper = jooqFTSHelper;
     }

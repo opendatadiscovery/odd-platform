@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     protected final Table<R> recordTable;
     protected final Field<Long> idField;
     protected final Field<String> nameField;
+    protected final Field<LocalDateTime> updatedAtField;
     protected final Class<P> pojoClass;
 
     @Override
@@ -82,6 +84,9 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     public P update(final P pojo) {
         final R r = pojoToRecord(pojo);
         final Long id = r.get(idField);
+        if (updatedAtField != null) {
+            r.set(updatedAtField, LocalDateTime.now());
+        }
         return dslContext.update(recordTable)
             .set(r)
             .where(idField.eq(id))
@@ -110,8 +115,15 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     }
 
     protected <E> List<E> bulkUpdate(final Collection<E> entities, final Class<E> entityClass) {
+        final LocalDateTime now = LocalDateTime.now();
         final List<R> records = entities.stream()
-            .map(e -> dslContext.newRecord(recordTable, e))
+            .map(e -> {
+                final R record = dslContext.newRecord(recordTable, e);
+                if (updatedAtField != null) {
+                    record.set(updatedAtField, now);
+                }
+                return record;
+            })
             .toList();
 
         dslContext.batchUpdate(records).execute();

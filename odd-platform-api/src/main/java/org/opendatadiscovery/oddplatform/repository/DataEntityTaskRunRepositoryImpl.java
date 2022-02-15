@@ -23,7 +23,7 @@ public class DataEntityTaskRunRepositoryImpl
 
     public DataEntityTaskRunRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
         super(dslContext, jooqQueryHelper, DATA_ENTITY_TASK_RUN, DATA_ENTITY_TASK_RUN.ID,
-            DATA_ENTITY_TASK_RUN.NAME, DataEntityTaskRunPojo.class);
+            DATA_ENTITY_TASK_RUN.NAME, null, DataEntityTaskRunPojo.class);
     }
 
     @Override

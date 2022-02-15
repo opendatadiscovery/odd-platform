@@ -95,6 +95,7 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
 
         assertEquals(expectedNamespacePojo.getId(), actualNamespacePojo.getId());
         assertNotEquals(expectedNamespacePojo.getName(), actualNamespacePojo.getName());
+        assertNotEquals(expectedNamespacePojo.getUpdatedAt(), actualNamespacePojo.getUpdatedAt());
     }
 
     @Test
