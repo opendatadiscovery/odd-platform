@@ -38,9 +38,6 @@ public class NamespaceRepositoryImpl
     @Override
     @Transactional
     public NamespacePojo create(final NamespacePojo pojo) {
-        // TODO: finish after below issues are fixed
-        //  https://github.com/opendatadiscovery/odd-platform/issues/151
-        //  https://github.com/opendatadiscovery/odd-platform/issues/150
         return super.create(pojo);
     }
 
