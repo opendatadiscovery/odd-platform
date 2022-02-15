@@ -28,7 +28,8 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
 
         assertThat(actualRolePojo).isNotNull();
         assertThat(actualRolePojo.getId()).isNotNull();
-        assertThat(actualRolePojo.getName()).isNotNull();
+        assertThat(actualRolePojo.getName()).isNotNull()
+            .isEqualTo(rolePojo.getName());
     }
 
     @Test
@@ -40,7 +41,8 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
 
         assertThat(actualRolePojo).isNotNull();
         assertThat(actualRolePojo.getId()).isNotNull();
-        assertThat(actualRolePojo.getName()).isNotNull();
+        assertThat(actualRolePojo.getName()).isNotNull()
+            .isEqualTo(rolePojo.getName());
     }
 
     @Test
@@ -52,7 +54,9 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         final RolePojo actualRolePojo = roleRepository.createOrGet(rolePojo);
 
         assertThat(actualRolePojo).isNotNull();
-        assertThat(actualRolePojo.getName()).isNotNull();
+        assertThat(actualRolePojo.getName()).isNotNull()
+            .isEqualTo(savedRole.getName());
+        ;
         assertThat(actualRolePojo.getId()).isNotNull()
             .isEqualTo(savedRole.getId());
     }
