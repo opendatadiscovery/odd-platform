@@ -59,3 +59,13 @@ export const Value = styled(Typography)<TypographyProps>(() => ({
   maxHeight: '5rem',
   overflow: 'auto',
 }));
+
+export const Pre = styled('pre')<{
+  $isOpened?: boolean;
+}>(({ $isOpened }) => ({
+  maxWidth: '389px',
+  maxHeight: $isOpened ? 'none' : '60px',
+  // whiteSpace: 'pre-wrap',
+  overflowX: 'auto',
+  overflowY: 'scroll',
+}));
