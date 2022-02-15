@@ -13,10 +13,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Integration tests for TagRepository")
 class TagRepositoryImplTest extends BaseIntegrationTest {
@@ -35,8 +32,8 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
 
         final TagPojo expectedTagPojo = tagRepository.create(tag);
 
-        assertNotNull(expectedTagPojo);
-        assertNotNull(expectedTagPojo.getName());
+        assertThat(expectedTagPojo).isNotNull();
+        assertThat(expectedTagPojo.getName()).isNotNull();
     }
 
     /**
@@ -47,17 +44,16 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Bulk creation of tag pojos, expecting all tags created successfully ")
     void testBulkCreateTag() {
         final int numberOfTestTags = 3;
-        final List<TagPojo> testTagPojoList = createTestTagList(numberOfTestTags);
-        final List<String> testTagPojoNames = testTagPojoList.stream().map(TagPojo::getName).toList();
+        final List<TagPojo> testTagsList = createTestTagList(numberOfTestTags);
+        final List<String> testTagsListNames = testTagsList.stream().map(TagPojo::getName).toList();
 
-        final List<TagPojo> actualTagPojos = tagRepository.bulkCreate(testTagPojoList);
+        final List<TagPojo> actualTagsList = tagRepository.bulkCreate(testTagsList);
 
-        final List<String> actualTagPojoNames = actualTagPojos.stream().map(TagPojo::getName).toList();
-        assertFalse(actualTagPojos.isEmpty());
-        for (final TagPojo tagPojo : actualTagPojos) {
-            assertNotNull(tagPojo.getId());
-        }
-        assertTrue(testTagPojoNames.containsAll(actualTagPojoNames));
+        assertThat(actualTagsList).isNotEmpty()
+            .extracting(TagPojo::getId).doesNotContainNull();
+        assertThat(actualTagsList)
+            .extracting(TagPojo::getName)
+            .containsAll(testTagsListNames);
     }
 
     /**
@@ -70,99 +66,90 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Retrieves several tags by names")
     void testGetTagsByListNames() {
         final int numberOfTestTags = 3;
-        final List<TagPojo> testTagPojoList = createTestTagList(numberOfTestTags);
-        final List<TagPojo> expectedTagPojos = tagRepository.bulkCreate(testTagPojoList);
-        final List<String> tagPojoNames = expectedTagPojos.stream().map(TagPojo::getName).toList();
+        final List<TagPojo> testTagsList = createTestTagList(numberOfTestTags);
+        final List<TagPojo> expectedTagsList = tagRepository.bulkCreate(testTagsList);
+        final List<String> expectedTagsListNames = expectedTagsList.stream().map(TagPojo::getName).toList();
 
-        final List<TagPojo> actualTagPojos = tagRepository.listByNames(tagPojoNames);
-        final List<String> actualTagPojosNames = actualTagPojos.stream().map(TagPojo::getName).toList();
+        final List<TagPojo> actualTagsList = tagRepository.listByNames(expectedTagsListNames);
 
-        assertFalse(actualTagPojos.isEmpty());
-        assertTrue(tagPojoNames.containsAll(actualTagPojosNames));
+        assertThat(actualTagsList).isNotEmpty()
+            .extracting(TagPojo::getName).containsAll(expectedTagsListNames);
     }
 
     @Test
     @DisplayName("Creates tags relations with data entity, expecting all tags are connected to data entity")
     void testCreateRelations() {
         final int numberOfTestTags = 3;
-        final List<TagPojo> testTagPojoList = createTestTagList(numberOfTestTags);
-        final List<TagPojo> savedTagPojos = tagRepository.bulkCreate(testTagPojoList);
-        final List<Long> savedTagPojoIds = savedTagPojos.stream().map(TagPojo::getId).toList();
-        final List<DataEntityPojo> dataEntityPojos = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
-        final Long dataEntityId = dataEntityPojos.get(0).getId();
+        final List<TagPojo> testTagsList = createTestTagList(numberOfTestTags);
+        final List<TagPojo> savedTagsList = tagRepository.bulkCreate(testTagsList);
+        final List<Long> savedTagsListIds = savedTagsList.stream().map(TagPojo::getId).toList();
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final Long dataEntityId = testDataEntityList.get(0).getId();
 
-        tagRepository.createRelations(dataEntityId, savedTagPojoIds);
+        tagRepository.createRelations(dataEntityId, savedTagsListIds);
 
-        final List<TagPojo> actualTagPojos = tagRepository.listByDataEntityId(dataEntityId);
-        assertNotNull(actualTagPojos);
-        assertFalse(actualTagPojos.isEmpty());
-        assertEquals(numberOfTestTags, actualTagPojos.size());
+        final List<TagPojo> actualTagsList = tagRepository.listByDataEntityId(dataEntityId);
+        assertThat(actualTagsList).isNotEmpty()
+            .hasSize(numberOfTestTags);
     }
 
     @Test
     @DisplayName("Creates tags relations where list of tags is empty, expecting no relations are created")
     void testCreateRelationsIsEmpty() {
-        final List<DataEntityPojo> dataEntityPojos = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
-        final Long dataEntityId = dataEntityPojos.get(0).getId();
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final Long dataEntityId = testDataEntityList.get(0).getId();
 
         tagRepository.createRelations(dataEntityId, List.of());
 
-        final List<TagPojo> actualTagPojos = tagRepository.listByDataEntityId(dataEntityId);
-        assertNotNull(actualTagPojos);
-        assertTrue(actualTagPojos.isEmpty());
+        final List<TagPojo> actualTagsList = tagRepository.listByDataEntityId(dataEntityId);
+        assertThat(actualTagsList).isEmpty();
     }
 
     @Test
     @DisplayName("Deletes tags relations with data entity, expecting relations are deleted")
     void testDeleteRelations() {
         final int numberOfTestTags = 3;
-        final List<TagPojo> testTagPojoList = createTestTagList(numberOfTestTags);
+        final List<TagPojo> testTagsList = createTestTagList(numberOfTestTags);
+        final List<TagPojo> savedTagsList = tagRepository.bulkCreate(testTagsList);
+        final List<Long> savedTagsListIds = savedTagsList.stream().map(TagPojo::getId).toList();
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final Long dataEntityId = testDataEntityList.get(0).getId();
 
-        final List<TagPojo> savedTagPojos = tagRepository.bulkCreate(testTagPojoList);
-        final List<Long> savedTagPojoIds = savedTagPojos.stream().map(TagPojo::getId).toList();
-        final List<DataEntityPojo> dataEntityPojos = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
-        final Long dataEntityId = dataEntityPojos.get(0).getId();
-
-        tagRepository.createRelations(dataEntityId, savedTagPojoIds);
+        tagRepository.createRelations(dataEntityId, savedTagsListIds);
 
         //check if relations are created
-        final List<TagPojo> actualTagPojos = tagRepository.listByDataEntityId(dataEntityId);
-        assertNotNull(actualTagPojos);
-        assertFalse(actualTagPojos.isEmpty());
-        assertEquals(numberOfTestTags, actualTagPojos.size());
+        final List<TagPojo> actualTagsList = tagRepository.listByDataEntityId(dataEntityId);
+        assertThat(actualTagsList).isNotEmpty()
+            .hasSize(numberOfTestTags);
 
-        tagRepository.deleteRelations(dataEntityId, savedTagPojoIds);
+        tagRepository.deleteRelations(dataEntityId, savedTagsListIds);
 
-        final List<TagPojo> actualTagPojosAfterDeletion = tagRepository.listByDataEntityId(dataEntityId);
-        assertNotNull(actualTagPojos);
-        assertTrue(actualTagPojosAfterDeletion.isEmpty());
+        final List<TagPojo> actualTagsListAfterDeletion = tagRepository.listByDataEntityId(dataEntityId);
+        assertThat(actualTagsListAfterDeletion).isEmpty();
     }
 
     @Test
     @DisplayName("Deletes tags relations where list of tags is empty, expecting no relations are deleted")
     void testDeleteRelationsIsEmpty() {
         final int numberOfTestTags = 3;
-        final List<TagPojo> testTagPojoList = createTestTagList(numberOfTestTags);
+        final List<TagPojo> testTagsList = createTestTagList(numberOfTestTags);
+        final List<TagPojo> savedTagsList = tagRepository.bulkCreate(testTagsList);
+        final List<Long> savedTagsListIds = savedTagsList.stream().map(TagPojo::getId).toList();
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final Long dataEntityId = testDataEntityList.get(0).getId();
 
-        final List<TagPojo> savedTagPojos = tagRepository.bulkCreate(testTagPojoList);
-        final List<Long> savedTagPojoIds = savedTagPojos.stream().map(TagPojo::getId).toList();
-        final List<DataEntityPojo> dataEntityPojos = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
-        final Long dataEntityId = dataEntityPojos.get(0).getId();
-
-        tagRepository.createRelations(dataEntityId, savedTagPojoIds);
+        tagRepository.createRelations(dataEntityId, savedTagsListIds);
 
         //check if relations are created
-        final List<TagPojo> actualTagPojos = tagRepository.listByDataEntityId(dataEntityId);
-        assertNotNull(actualTagPojos);
-        assertFalse(actualTagPojos.isEmpty());
-        assertEquals(numberOfTestTags, actualTagPojos.size());
+        final List<TagPojo> actualTagsList = tagRepository.listByDataEntityId(dataEntityId);
+        assertThat(actualTagsList).isNotEmpty()
+            .hasSize(numberOfTestTags);
 
         tagRepository.deleteRelations(dataEntityId, List.of());
 
-        final List<TagPojo> actualTagPojosAfterDeletion = tagRepository.listByDataEntityId(dataEntityId);
-        assertNotNull(actualTagPojos);
-        assertFalse(actualTagPojosAfterDeletion.isEmpty());
-        assertEquals(numberOfTestTags, actualTagPojos.size());
+        final List<TagPojo> actualTagsListAfterDeletion = tagRepository.listByDataEntityId(dataEntityId);
+        assertThat(actualTagsListAfterDeletion).isNotEmpty()
+            .hasSize(numberOfTestTags);
     }
 
     @Test
@@ -174,14 +161,16 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
         final String initialName = tag.getName();
 
         final TagPojo createdTag = tagRepository.create(tag);
-        assertNotNull(createdTag.getId());
-        assertEquals(initialName, createdTag.getName());
+        assertThat(createdTag).isNotNull();
+        assertThat(createdTag.getName()).isNotNull()
+            .isEqualTo(initialName);
 
         createdTag.setName(UUID.randomUUID().toString());
         final String newName = createdTag.getName();
 
         final TagPojo actualTag = tagRepository.update(createdTag);
-        assertEquals(newName, actualTag.getName());
+        assertThat(actualTag.getName()).isNotNull()
+            .isEqualTo(newName);
     }
 
     @Test
@@ -191,22 +180,22 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
         final int numberOfPopularTags = 4;
         final String testName = "PopularName";
         final List<Long> expectedPopularTagIds = new ArrayList<>();
-        final List<TagPojo> testTagPojoList = createTestTagList(numberOfTestTags);
+        final List<TagPojo> testTagsList = createTestTagList(numberOfTestTags);
 
-        final List<TagPojo> createdTagPojos = tagRepository.bulkCreate(testTagPojoList);
+        final List<TagPojo> createdTagsList = tagRepository.bulkCreate(testTagsList);
         for (int i = 0; i < numberOfPopularTags; i++) {
-            final TagPojo currentTagPojo = createdTagPojos.get(i);
-            currentTagPojo.setName(testName + i);
-            expectedPopularTagIds.add(currentTagPojo.getId());
+            final TagPojo currentTag = createdTagsList.get(i);
+            currentTag.setName(testName + i);
+            expectedPopularTagIds.add(currentTag.getId());
         }
-        tagRepository.bulkUpdate(createdTagPojos);
+        tagRepository.bulkUpdate(createdTagsList);
 
         final Page<TagDto> listMostPopular = tagRepository.listMostPopular(testName, 1, numberOfTestTags);
 
-        assertEquals(numberOfPopularTags, listMostPopular.getTotal());
-        final List<Long> actualPopularTagIds =
-            listMostPopular.getData().stream().map(TagDto::getTagPojo).map(TagPojo::getId).toList();
-        assertTrue(actualPopularTagIds.containsAll(expectedPopularTagIds));
+        assertThat(listMostPopular.getTotal()).isEqualTo(numberOfPopularTags);
+        assertThat(listMostPopular.getData())
+            .extracting(TagDto::getTagPojo).extracting(TagPojo::getId)
+            .containsAll(expectedPopularTagIds);
     }
 
     /**
