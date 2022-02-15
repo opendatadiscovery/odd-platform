@@ -1,14 +1,14 @@
 import { Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-export const ListLinksContainer = styled('ul')(() => ({
+export const ListLinksContainer = styled('ul')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   padding: 0,
   listStyle: 'none',
   '& li': {
-    marginBottom: '8px',
+    marginBottom: theme.spacing(1),
   },
 }));
 

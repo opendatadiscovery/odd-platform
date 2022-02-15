@@ -20,7 +20,7 @@ import theme from './theme/mui.theme';
 
 import AppContainer from './components/AppContainer';
 
-declare module '@mui/styles/defaultTheme' {
+declare module 'styled-components' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }

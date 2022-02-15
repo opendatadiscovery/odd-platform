@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { Autocomplete, Typography } from '@mui/material';
 import {
   Controller,
@@ -200,7 +200,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   const onAutocompleteChange = (
     field: ControllerRenderProps,
     data: string | null | OwnerFilterOption | RoleFilterOption
-  ) => {
+  ): void => {
     if (!data || typeof data === 'string') {
       field.onChange(data);
     } else {
@@ -281,7 +281,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
               open={ownersAutocompleteOpen}
               onOpen={() => setOwnersAutocompleteOpen(true)}
               onClose={() => setOwnersAutocompleteOpen(false)}
-              onChange={(_, data) => onAutocompleteChange(field, data)}
+              onChange={(_, data) =>
+                onAutocompleteChange(field as ControllerRenderProps, data)
+              }
               onInputChange={onOwnersSearchInputChange}
               getOptionLabel={getOptionLabel}
               options={ownerOptions}
@@ -340,7 +342,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
             open={rolesAutocompleteOpen}
             onOpen={() => setRolesAutocompleteOpen(true)}
             onClose={() => setRolesAutocompleteOpen(false)}
-            onChange={(_, data) => onAutocompleteChange(field, data)}
+            onChange={(_, data) =>
+              onAutocompleteChange(field as ControllerRenderProps, data)
+            }
             onInputChange={onRolesSearchInputChange}
             getOptionLabel={getOptionLabel}
             options={rolesOptions}

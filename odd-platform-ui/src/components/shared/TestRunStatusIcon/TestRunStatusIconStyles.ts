@@ -1,10 +1,7 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { DataQualityTestRunStatus } from 'generated-sources';
-import { propsChecker } from 'lib/helpers';
 
-export const Content = styled('div', {
-  shouldForwardProp: propsChecker,
-})<{
+export const Content = styled('div')<{
   $typeName: DataQualityTestRunStatus;
 }>(({ theme, $typeName }) => ({
   padding: theme.spacing(0.5),

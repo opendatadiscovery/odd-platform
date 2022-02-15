@@ -4,12 +4,15 @@ import split from 'lodash/split';
 import slice from 'lodash/slice';
 import join from 'lodash/join';
 
-interface Props {
+export interface TextFormattedProps {
   value: string | undefined;
   removePrefix?: boolean;
 }
 
-const TextFormatted: React.FC<Props> = ({ value, removePrefix }) => (
+const TextFormatted: React.FC<TextFormattedProps> = ({
+  value,
+  removePrefix,
+}) => (
   <>
     {value &&
       capitalize(

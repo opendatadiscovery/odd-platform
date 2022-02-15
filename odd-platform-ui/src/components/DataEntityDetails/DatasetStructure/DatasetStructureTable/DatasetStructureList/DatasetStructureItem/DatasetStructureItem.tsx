@@ -269,7 +269,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               >
                 {fieldStats?.uniqueCount && rowsCount
                   ? `(${round(
-                      (fieldStats?.uniqueCount * 100) / rowsCount,
+                      (fieldStats.uniqueCount * 100) / rowsCount,
                       0
                     )}%)`
                   : null}
@@ -278,7 +278,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
             <ColContainer item xs={6} $colType="missing">
               <NumberFormatted
                 sx={{ ml: 1 }}
-                value={fieldStats?.nullsCount}
+                value={fieldStats.nullsCount}
               />
               <Typography
                 sx={{ ml: 0.5 }}
@@ -287,7 +287,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               >
                 {fieldStats?.nullsCount && rowsCount
                   ? `${round(
-                      (fieldStats?.nullsCount * 100) / rowsCount,
+                      (fieldStats.nullsCount * 100) / rowsCount,
                       0
                     )}%`
                   : null}

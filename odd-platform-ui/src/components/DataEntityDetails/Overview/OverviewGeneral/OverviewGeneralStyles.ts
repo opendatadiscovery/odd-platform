@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const OddrnValue = styled('span')(({ theme }) => ({
   display: 'block',

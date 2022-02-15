@@ -1,11 +1,10 @@
-import { Grid } from '@mui/material';
+import { Grid, GridProps } from '@mui/material';
 import {
   primaryTabsHeight,
   tabsContainerMargin,
   toolbarHeight,
 } from 'lib/constants';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 
 export type ColType = 'col' | 'colxs' | 'colsm' | 'colmd' | 'collg';
 export const colWidthStyles = {
@@ -40,16 +39,14 @@ export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
   borderBottomColor: theme.palette.divider,
 }));
 
-export const ColContainer = styled(Grid, {
-  shouldForwardProp: propsChecker,
-})<{
+export const ColContainer = styled(Grid)<{
   $colType: ColType;
 }>(({ $colType }) => ({
   ...colWidthStyles.col,
   ...colWidthStyles[$colType],
 }));
 
-export const NameContainer = styled(Grid)(() => ({
+export const NameContainer = styled(Grid)<GridProps>(() => ({
   ...colWidthStyles.col,
   padding: 0,
   justifyContent: 'flex-start',

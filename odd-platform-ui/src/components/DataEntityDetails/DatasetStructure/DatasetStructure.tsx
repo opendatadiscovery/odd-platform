@@ -117,7 +117,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                     >
                       {count
                         ? round(
-                            (count * 100) / datasetStats?.fieldsCount,
+                            (count * 100) / datasetStats.fieldsCount,
                             2
                           )
                         : 0}

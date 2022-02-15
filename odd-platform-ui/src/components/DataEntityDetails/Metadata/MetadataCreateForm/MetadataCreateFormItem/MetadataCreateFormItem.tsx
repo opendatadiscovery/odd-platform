@@ -3,7 +3,7 @@ import { Autocomplete, Box, Typography } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { Controller, useFormContext } from 'react-hook-form';
 import {
   MetadataApiGetMetadataFieldListRequest,

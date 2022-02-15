@@ -10,7 +10,6 @@ interface ConfirmationDialogProps {
   actionText: JSX.Element | string;
   actionName: string;
   onConfirm: () => Promise<unknown>;
-  onCancel?: () => void;
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
@@ -19,7 +18,6 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   actionText,
   actionName,
   onConfirm,
-  onCancel,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const onClose = (action?: () => Promise<unknown>) => () => {
