@@ -57,23 +57,20 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           },
         }}
         render={({ field, fieldState }) => (
-          <>
-            <AppDatePicker
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...field}
-              sx={{ mt: 1 }}
-              label={labeled ? defaultText : ''}
-              disableMaskedInput
-              defaultDate={
-                metadataType === MetadataFieldType.DATETIME &&
-                metadataValue
-                  ? metadataValue
-                  : ''
-              }
-              showInputError={!!fieldState.error?.message}
-              inputHelperText={fieldState.error?.message}
-            />
-          </>
+          <AppDatePicker
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...field}
+            sx={{ mt: 1 }}
+            label={labeled ? defaultText : ''}
+            disableMaskedInput
+            defaultDate={
+              metadataType === MetadataFieldType.DATETIME && metadataValue
+                ? metadataValue
+                : ''
+            }
+            showInputError={!!fieldState.error?.message}
+            inputHelperText={fieldState.error?.message}
+          />
         )}
       />
     );

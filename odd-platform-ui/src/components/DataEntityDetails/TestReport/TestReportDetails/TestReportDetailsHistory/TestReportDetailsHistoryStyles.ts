@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const QualityTestRunItemContainer = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(0.5, 0),

@@ -1,0 +1,20 @@
+import { Menu, menuClasses } from '@mui/material';
+import styled from 'styled-components';
+
+interface AppMenuStyleProps {
+  $minWidth?: number;
+  $maxWidth?: number;
+  $maxHeight?: number;
+}
+
+export const StyledAppMenu = styled(Menu)<AppMenuStyleProps>(
+  ({ theme, $maxHeight, $minWidth, $maxWidth }) => ({
+    maxHeight: $maxHeight ? `${$maxHeight}px !important` : 'none',
+    maxWidth: $maxWidth ? `${$maxWidth}px !important` : 'none',
+    minWidth: $minWidth ? `${$minWidth}px !important` : 0,
+
+    [`&.${menuClasses.paper}`]: {
+      padding: theme.spacing(1, 0),
+    },
+  })
+);

@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 
 export type TestRunHistoryColType = 'sm' | 'md' | 'lg';
 
@@ -10,9 +9,7 @@ export const testRunHistoryColWidthStyles = {
   lg: { flex: '5 0 18%' },
 };
 
-export const ColContainer = styled(Grid, {
-  shouldForwardProp: propsChecker,
-})<{
+export const ColContainer = styled(Grid)<{
   $colType: TestRunHistoryColType;
 }>(({ $colType }) => ({
   display: 'flex',

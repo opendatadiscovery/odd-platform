@@ -7,8 +7,10 @@ import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Select;
+import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
@@ -30,11 +32,19 @@ public class JooqQueryHelper {
     public Select<? extends Record> paginate(final Select<?> baseSelect,
                                              final int page,
                                              final int size) {
-        return paginate(baseSelect, baseSelect.field("id"), page, size);
+        return paginate(baseSelect, baseSelect.field("id"), SortOrder.ASC, page, size);
     }
 
     public Select<? extends Record> paginate(final Select<?> baseSelect,
                                              final Field<?> orderField,
+                                             final int page,
+                                             final int size) {
+        return paginate(baseSelect, orderField, SortOrder.ASC, page, size);
+    }
+
+    public Select<? extends Record> paginate(final Select<?> baseSelect,
+                                             final Field<?> orderField,
+                                             final SortOrder sortOrder,
                                              final int page,
                                              final int size) {
         homogeneityCheck(baseSelect.getSelect());
@@ -42,13 +52,14 @@ public class JooqQueryHelper {
         final Table<?> u = baseSelect.asTable("u");
 
         final Field<Integer> totalRows = count().over().as(PAGE_METADATA_TOTAL_FIELD);
-        final Field<Integer> rowNumber = rowNumber().over().orderBy(u.fields(orderField)).as(PAGE_METADATA_ROW_NUMBER);
+        final Field<Integer> rowNumber = rowNumber().over()
+            .orderBy(u.field(orderField).sort(sortOrder)).as(PAGE_METADATA_ROW_NUMBER);
 
         final Table<?> t = dslContext
             .select(u.fields())
             .select(totalRows, rowNumber)
             .from(u)
-            .orderBy(u.fields(orderField))
+            .orderBy(u.field(orderField).sort(sortOrder))
             .limit(size)
             .offset(page)
             .asTable("t");
@@ -57,7 +68,7 @@ public class JooqQueryHelper {
             .select(t.fields())
             .select(field(t.field(rowNumber).ne(t.field(totalRows))).as(PAGE_METADATA_NEXT_FIELD))
             .from(t)
-            .orderBy(t.fields(orderField));
+            .orderBy(t.field(orderField).sort(sortOrder));
     }
 
     public <T, R extends Record> Page<T> pageifyResult(final List<R> records,
@@ -71,7 +82,7 @@ public class JooqQueryHelper {
                 .build();
         }
 
-        final ArrayList<T> data = new ArrayList<>();
+        final List<T> data = new ArrayList<>();
         boolean hasNext = true;
         for (final R record : records) {
             data.add(recordMapper.apply(record));

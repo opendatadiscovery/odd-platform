@@ -1,10 +1,10 @@
-import { Grid } from '@mui/material';
+import { Grid, GridProps } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {
   maxContentWidthWithoutSidebar,
   maxTagsContainerWidth,
 } from 'lib/constants';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({
   margin: '0 auto',
@@ -37,7 +37,7 @@ export const AllAlertsBtnContainer = styled(Link)(({ theme }) => ({
   lineHeight: theme.typography.subtitle2.lineHeight,
 }));
 
-export const InfoBarItemAlerts = styled(InfoBarItem)(() => ({
+export const InfoBarItemAlerts = styled(InfoBarItem)<GridProps>(() => ({
   '&:hover': {
     [`${AllAlertsBtnContainer}`]: { visibility: 'visible' },
   },
@@ -51,4 +51,13 @@ export const AlertsContainer = styled(Grid)(() => ({
 export const InfoBarStatsText = styled('span')(({ theme }) => ({
   color: theme.palette.texts.hint,
   lineHeight: theme.typography.h2.lineHeight,
+}));
+
+export const DataEntityContainer = styled(Grid)(({ theme }) => ({
+  justifyContent: 'space-between',
+  marginTop: theme.spacing(3.5),
+  marginLeft: 'auto',
+  marginRight: 'auto',
+  flexWrap: 'nowrap',
+  '& > *': { paddingRight: theme.spacing(3) },
 }));

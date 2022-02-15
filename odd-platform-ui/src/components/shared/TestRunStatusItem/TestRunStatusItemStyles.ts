@@ -1,8 +1,8 @@
-import { DataQualityTestRunStatusEnum } from 'generated-sources';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import { DataQualityTestRunStatus } from 'generated-sources';
+import styled from 'styled-components';
+import { Box } from '@mui/material';
 
-export const Container = styled('div')(() => ({
+export const Container = styled(Box)(() => ({
   display: 'inline-flex',
   alignItems: 'center',
 }));
@@ -13,10 +13,8 @@ export const Count = styled('span')(({ theme }) => ({
   fontWeight: theme.typography.fontWeightMedium,
 }));
 
-export const FilledContainer = styled('span', {
-  shouldForwardProp: propsChecker,
-})<{
-  $typeName: DataQualityTestRunStatusEnum;
+export const FilledContainer = styled('span')<{
+  $typeName: DataQualityTestRunStatus;
 }>(({ theme, $typeName }) => ({
   fontSize: theme.typography.body2.fontSize,
   lineHeight: theme.typography.body2.lineHeight,

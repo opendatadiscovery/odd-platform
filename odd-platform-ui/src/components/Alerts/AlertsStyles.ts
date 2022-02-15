@@ -1,5 +1,5 @@
 import { maxContentWidthWithoutSidebar } from 'lib/constants';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({
   margin: '0 auto',

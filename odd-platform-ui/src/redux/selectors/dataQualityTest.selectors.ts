@@ -99,7 +99,12 @@ export const getQualityTestRunsList = createSelector(
   (dataQualityTestState, dataQATestId) =>
     dataQualityTestState.allTestRunIdsByTestId[dataQATestId]?.map(
       testRunId => dataQualityTestState.qualityTestRunsById[testRunId]
-    )
+    ) || []
+);
+
+export const getQualityTestRunsListPage = createSelector(
+  getDataQualityTestState,
+  dataQualityTestState => dataQualityTestState.qualityTestRunsPageInfo
 );
 
 export const getQualityTestByTestId = createSelector(

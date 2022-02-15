@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,6 +44,7 @@ import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataConsumerDetailsDto;
@@ -64,7 +66,6 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttribute
 import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -96,6 +97,7 @@ import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
+import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
@@ -139,7 +141,7 @@ public class DataEntityRepositoryImpl
     private static final String AGG_OWNERSHIP_FIELD = "ownership";
     private static final String AGG_OWNER_FIELD = "owner";
     private static final String AGG_ROLE_FIELD = "role";
-    private static final String AGG_ALERT_FIELD = "alert";
+    private static final String HAS_ALERTS_FIELD = "has_alerts";
     private static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
 
     public static final TypeReference<Map<String, ?>> SPECIFIC_ATTRIBUTES_TYPE_REFERENCE = new TypeReference<>() {
@@ -159,7 +161,8 @@ public class DataEntityRepositoryImpl
                                     final DataEntityTaskRunRepository dataEntityTaskRunRepository,
                                     final MetadataFieldValueRepository metadataFieldValueRepository,
                                     final DatasetVersionRepository datasetVersionRepository) {
-        super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null, DataEntityDimensionsDto.class);
+        super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null,
+            DATA_ENTITY.UPDATED_AT, DataEntityDimensionsDto.class);
 
         this.jooqFTSHelper = jooqFTSHelper;
         this.jooqRecordHelper = jooqRecordHelper;
@@ -194,8 +197,13 @@ public class DataEntityRepositoryImpl
             return List.of();
         }
 
+        final LocalDateTime now = LocalDateTime.now();
         final List<DataEntityRecord> records = pojos.stream()
-            .map(e -> dslContext.newRecord(recordTable, e))
+            .map(e -> {
+                final DataEntityRecord record = dslContext.newRecord(recordTable, e);
+                record.set(DATA_ENTITY.UPDATED_AT, now);
+                return record;
+            })
             .map(r -> ignoreUpdate(r, List.of(
                 DATA_ENTITY.INTERNAL_DESCRIPTION,
                 DATA_ENTITY.INTERNAL_NAME,
@@ -204,7 +212,6 @@ public class DataEntityRepositoryImpl
             .collect(toList());
 
         dslContext.batchUpdate(records).execute();
-
         return pojos;
     }
 
@@ -212,6 +219,7 @@ public class DataEntityRepositoryImpl
     public Optional<Long> incrementViewCount(final long id) {
         return dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
+            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
             .where(DATA_ENTITY.ID.eq(id))
             .returningResult(DATA_ENTITY.VIEW_COUNT)
             .fetchOptional()
@@ -479,6 +487,7 @@ public class DataEntityRepositoryImpl
     public void setDescription(final long dataEntityId, final String description) {
         dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_DESCRIPTION, description)
+            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .execute();
 
@@ -491,6 +500,7 @@ public class DataEntityRepositoryImpl
         final String newBusinessName = businessName != null && businessName.isEmpty() ? null : businessName;
         dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
+            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .execute();
 
@@ -645,9 +655,8 @@ public class DataEntityRepositoryImpl
         return dslContext.with(deCteName)
             .asMaterialized(dataEntitySelect)
             .select(deCte.fields())
-            .select(jsonArrayAgg(field(ALERT.asterisk().toString())).as(AGG_ALERT_FIELD))
+            .select(hasAlerts(deCte))
             .from(deCteName)
-            .leftJoin(ALERT).on(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
             .groupBy(deCte.fields())
             .orderBy(jooqQueryHelper.getField(deCte, rankFieldAlias).desc())
             .fetchStream()
@@ -985,7 +994,8 @@ public class DataEntityRepositoryImpl
                 .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
                 .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
                 .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
-                .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD));
+                .select(jsonArrayAgg(field(OWNERSHIP.asterisk().toString())).as(AGG_OWNERSHIP_FIELD))
+                .select(hasAlerts(deCte));
         }
 
         SelectJoinStep<Record> fromStep = selectStep.from(deCteName);
@@ -1010,6 +1020,12 @@ public class DataEntityRepositoryImpl
         return config.getFts() != null
             ? groupByStep.orderBy(jooqQueryHelper.getField(deCte, config.getFts().rankFieldAlias()).desc())
             : groupByStep;
+    }
+
+    private Field<Boolean> hasAlerts(final Table<Record> deCte) {
+        return field(exists(dslContext.selectOne().from(ALERT)
+            .where(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
+            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))).as(HAS_ALERTS_FIELD);
     }
 
     private void enrichDatasetVersions(final DataEntityDetailsDto dto) {
@@ -1218,28 +1234,23 @@ public class DataEntityRepositoryImpl
 
         dto.getSpecificAttributes().forEach((t, attrs) -> {
             switch (t) {
-                case DATA_SET:
+                case DATA_SET -> {
                     final DataSetAttributes dsa = (DataSetAttributes) attrs;
-
                     dto.setDataSetDetailsDto(new DataEntityDetailsDto.DataSetDetailsDto(
                         dsa.getRowsCount(),
                         dsa.getFieldsCount(),
                         dsa.getConsumersCount()
                     ));
-
-                    break;
-
-                case DATA_TRANSFORMER:
+                }
+                case DATA_TRANSFORMER -> {
                     final DataTransformerAttributes dta = (DataTransformerAttributes) attrs;
                     final DataTransformerDetailsDto dataTransformerDetailsDto =
                         new DataTransformerDetailsDto(fetcher.apply(dta.getSourceOddrnList()),
                             fetcher.apply(dta.getTargetOddrnList()),
                             dta.getSourceCodeUrl());
                     dto.setDataTransformerDetailsDto(dataTransformerDetailsDto);
-
-                    break;
-
-                case DATA_QUALITY_TEST:
+                }
+                case DATA_QUALITY_TEST -> {
                     final DataQualityTestAttributes dqta = (DataQualityTestAttributes) attrs;
                     final DataEntityTaskRunPojo latestTaskRun = dataEntityTaskRunRepository
                         .getLatestRun(dto.getDataEntity().getOddrn())
@@ -1250,22 +1261,17 @@ public class DataEntityRepositoryImpl
                             dqta.getExpectation().getType(), latestTaskRun,
                             dqta.getExpectation().getAdditionalProperties());
                     dto.setDataQualityTestDetailsDto(dataQualityTestDetailsDto);
-                    break;
-
-                case DATA_CONSUMER:
+                }
+                case DATA_CONSUMER -> {
                     final DataConsumerAttributes dca = (DataConsumerAttributes) attrs;
-
                     dto.setDataConsumerDetailsDto(new DataConsumerDetailsDto(fetcher.apply(dca.getInputListOddrn())));
-                    break;
-
-                case DATA_INPUT:
+                }
+                case DATA_INPUT -> {
                     final DataInputAttributes dia = (DataInputAttributes) attrs;
-
                     dto.setDataInputDetailsDto(new DataInputDetailsDto(fetcher.apply(dia.getOutputListOddrn())));
-                    break;
-
-                default:
-                    break;
+                }
+                default -> {
+                }
             }
         });
     }
@@ -1277,7 +1283,7 @@ public class DataEntityRepositoryImpl
 
         return DataEntityDto.builder()
             .dataEntity(dataEntity)
-            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
+            .hasAlerts(r.get(field(HAS_ALERTS_FIELD), Boolean.TYPE))
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .build();
     }
@@ -1288,7 +1294,7 @@ public class DataEntityRepositoryImpl
 
         return DataEntityDimensionsDto.dimensionsBuilder()
             .dataEntity(dataEntity)
-            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
+            .hasAlerts(r.get(field(HAS_ALERTS_FIELD), Boolean.TYPE))
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
@@ -1303,7 +1309,7 @@ public class DataEntityRepositoryImpl
 
         return DataEntityDetailsDto.detailsBuilder()
             .dataEntity(dataEntity)
-            .hasAlerts(!jooqRecordHelper.extractAggRelation(r, AGG_ALERT_FIELD, AlertPojo.class).isEmpty())
+            .hasAlerts(r.get(field(HAS_ALERTS_FIELD), Boolean.TYPE))
             .dataSource(jooqRecordHelper.extractRelation(r, DATA_SOURCE, DataSourcePojo.class))
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
