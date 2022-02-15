@@ -30,8 +30,13 @@ export const Label = styled(Typography)<{ component: React.ElementType }>(
     color: theme.palette.texts.secondary,
     lineHeight: theme.typography.h3.lineHeight,
     overflow: 'hidden',
+    width: 'inherit',
   })
 );
+
+export const LabelContainer = styled(Grid)(() => ({
+  width: '100%',
+}));
 
 export const Value = styled(Typography)<ValueProps>(
   ({ theme, $runStatus, $valueColor, $inline, $valueLineHeight }) => ({
