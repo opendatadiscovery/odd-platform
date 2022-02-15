@@ -33,7 +33,10 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
         final TagPojo expectedTagPojo = tagRepository.create(tag);
 
         assertThat(expectedTagPojo).isNotNull();
-        assertThat(expectedTagPojo.getName()).isNotNull();
+        assertThat(expectedTagPojo.getImportant())
+            .isEqualTo(tag.getImportant());
+        assertThat(expectedTagPojo.getName()).isNotNull()
+            .isEqualTo(tag.getName());
     }
 
     /**
@@ -91,6 +94,25 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
         final List<TagPojo> actualTagsList = tagRepository.listByDataEntityId(dataEntityId);
         assertThat(actualTagsList).isNotEmpty()
             .hasSize(numberOfTestTags);
+    }
+
+    @Test
+    @DisplayName("Creates tags relations with data entity, expecting some of  tags are connected to data entity")
+    void testCreateRelations_SomeTags() {
+        final int numberOfTestTags = 4;
+        final int tagsNotInDE = 2;
+        final List<TagPojo> testTagsList = createTestTagList(numberOfTestTags);
+        final List<TagPojo> savedTagsList = tagRepository.bulkCreate(testTagsList);
+        final List<Long> savedTagsListIds = savedTagsList.stream().map(TagPojo::getId).toList();
+        final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
+        final Long dataEntityId = testDataEntityList.get(0).getId();
+
+        tagRepository.createRelations(dataEntityId, savedTagsListIds.subList(
+            numberOfTestTags - tagsNotInDE, savedTagsListIds.size()));
+
+        final List<TagPojo> actualTagsList = tagRepository.listByDataEntityId(dataEntityId);
+        assertThat(actualTagsList).isNotEmpty()
+            .hasSize(numberOfTestTags - tagsNotInDE);
     }
 
     @Test

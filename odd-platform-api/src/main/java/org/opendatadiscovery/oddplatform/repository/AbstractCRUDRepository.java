@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
@@ -48,7 +49,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return fetchList()
             .stream()
             .map(this::recordToPojo)
-            .toList();
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -64,7 +65,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         final List<? extends Record> records = jooqQueryHelper
             .paginate(baseSelectQuery(query), idField, page - 1, size)
             .fetchStream()
-            .toList();
+            .collect(Collectors.toList());
 
         return jooqQueryHelper.pageifyResult(records, r -> r.into(pojoClass), () -> fetchCount(query));
     }
@@ -124,13 +125,13 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
                 }
                 return record;
             })
-            .toList();
+            .collect(Collectors.toList());
 
         dslContext.batchUpdate(records).execute();
 
         return records.stream()
             .map(r -> r.into(entityClass))
-            .toList();
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -162,7 +163,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     protected <E> List<E> bulkInsert(final Collection<E> entities, final Class<E> entityClass) {
         final List<R> records = entities.stream()
             .map(e -> dslContext.newRecord(recordTable, e))
-            .toList();
+            .collect(Collectors.toList());
 
         InsertSetStep<R> insertStep = dslContext.insertInto(recordTable);
         for (int i = 0; i < records.size() - 1; i++) {
@@ -175,7 +176,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
             .fetch()
             .stream()
             .map(r -> r.into(entityClass))
-            .toList();
+            .collect(Collectors.toList());
     }
 
     protected Long fetchCount(final String nameQuery) {
@@ -198,7 +199,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     protected List<R> fetchList(final String query) {
         return baseSelectQuery(query)
             .fetchStream()
-            .toList();
+            .collect(Collectors.toList());
     }
 
     protected SelectConditionStep<R> baseSelectQuery(final String query) {
@@ -215,11 +216,11 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return r.into(pojoClass);
     }
 
-    protected R ignoreUpdate(final R jooqRecord, final Collection<TableField<R, ?>> fields) {
+    protected R ignoreUpdate(final R record, final Collection<TableField<R, ?>> fields) {
         for (final TableField<R, ?> field : fields) {
-            jooqRecord.changed(field, false);
+            record.changed(field, false);
         }
 
-        return jooqRecord;
+        return record;
     }
 }

@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
@@ -48,7 +49,7 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .where(addSoftDeleteFilter(TAG.NAME.in(names)))
             .fetchStream()
             .map(this::recordToPojo)
-            .toList();
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -59,7 +60,7 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
             .where(addSoftDeleteFilter(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId)))
             .fetchStreamInto(pojoClass)
-            .toList();
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -83,7 +84,7 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
             .groupBy(tagCte.fields())
             .orderBy(DSL.field(COUNT_FIELD).desc())
             .fetchStream()
-            .toList();
+            .collect(Collectors.toList());
 
         return jooqQueryHelper.pageifyResult(records, this::mapTag, () -> fetchCount(query));
     }
@@ -108,7 +109,7 @@ public class TagRepositoryImpl extends AbstractSoftDeleteCRUDRepository<TagRecor
         final List<TagToDataEntityRecord> records = tagIds.stream()
             .map(t -> new TagToDataEntityPojo().setDataEntityId(dataEntityId).setTagId(t))
             .map(p -> dslContext.newRecord(TAG_TO_DATA_ENTITY, p))
-            .toList();
+            .collect(Collectors.toList());
 
         final InsertSetStep<TagToDataEntityRecord> insertStep = dslContext.insertInto(TAG_TO_DATA_ENTITY);
 

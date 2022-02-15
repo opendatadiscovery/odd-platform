@@ -61,7 +61,7 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
 
         final List<Condition> whereClause = collisionIdentifiers.stream()
             .map(ci -> ci.eq(jooqRecord.get(ci)))
-            .toList();
+            .collect(Collectors.toList());
 
         final Optional<R> getResultRecordOpt = dslContext
             .selectFrom(recordTable)
@@ -123,7 +123,7 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
 
         final List<P> updateResult = super.bulkUpdate(update.stream()
             .map(this::recordToPojo)
-            .toList());
+            .collect(Collectors.toList()));
 
         final Set<List<String>> updateColIds = update.stream()
             .map(this::extractRecordCollisionValues)
@@ -133,13 +133,13 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
             .stream()
             .filter(r -> !updateColIds.contains(extractRecordCollisionValues(r)))
             .map(this::recordToPojo)
-            .toList();
+            .collect(Collectors.toList());
 
         final List<P> createResult = super.bulkCreate(create);
 
         return Stream
             .concat(createResult.stream(), updateResult.stream())
-            .toList();
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -186,7 +186,7 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
     }
 
     private List<String> extractRecordCollisionValues(final R jooqRecord) {
-        return collisionIdentifiers.stream().map(jooqRecord::get).toList();
+        return collisionIdentifiers.stream().map(jooqRecord::get).collect(Collectors.toList());
     }
 
     private List<Condition> matchConditionsWithValues(final List<String> values) {
