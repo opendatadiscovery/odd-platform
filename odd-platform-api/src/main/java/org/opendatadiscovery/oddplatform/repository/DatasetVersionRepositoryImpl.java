@@ -52,7 +52,8 @@ public class DatasetVersionRepositoryImpl
     public DatasetVersionRepositoryImpl(final DSLContext dslContext,
                                         final JooqRecordHelper jooqRecordHelper,
                                         final JooqQueryHelper jooqQueryHelper) {
-        super(dslContext, jooqQueryHelper, DATASET_VERSION, DATASET_VERSION.ID, null, DatasetVersionPojo.class);
+        super(dslContext, jooqQueryHelper, DATASET_VERSION, DATASET_VERSION.ID, null,
+            null, DatasetVersionPojo.class);
         this.jooqRecordHelper = jooqRecordHelper;
     }
 

@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -113,8 +114,13 @@ public class EnumValueRepositoryImpl implements EnumValueRepository {
         if (pojos.isEmpty()) {
             return;
         }
+        final LocalDateTime now = LocalDateTime.now();
         final List<EnumValueRecord> records = pojos.stream()
-            .map(e -> dslContext.newRecord(ENUM_VALUE, e))
+            .map(e -> {
+                final EnumValueRecord record = dslContext.newRecord(ENUM_VALUE, e);
+                record.set(ENUM_VALUE.UPDATED_AT, now);
+                return record;
+            })
             .collect(Collectors.toList());
 
         dslContext.batchUpdate(records).execute();
