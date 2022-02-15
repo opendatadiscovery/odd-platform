@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -17,16 +17,7 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
-import {
-  Container,
-  LabelContainer,
-  Actions,
-  EditForm,
-  Label,
-  Value,
-  ValueContainer,
-  FormActionBtns,
-} from './MetadataItemStyles';
+import * as S from './MetadataItemStyles';
 
 interface MetadataItemProps {
   dataEntityId: number;
@@ -64,7 +55,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
       dataEntityId,
       metadataFieldId: metadataItem.field.id,
     });
-
+  const [isJSONOpened, setIsJSONOpened] = useState(false);
   let metadataVal;
   try {
     switch (metadataItem.field.type) {
@@ -77,6 +68,20 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
       case MetadataFieldType.ARRAY:
         metadataVal = JSON.parse(metadataItem.value).join(', ');
         break;
+      case MetadataFieldType.JSON:
+        metadataVal = (
+          <>
+            <S.Pre $isOpened={false}>
+              {JSON.stringify(JSON.parse(metadataItem.value), null, 2)}
+            </S.Pre>
+            {isJSONOpened && (
+              <S.Pre $isOpened>
+                {JSON.stringify(JSON.parse(metadataItem.value), null, 2)}
+              </S.Pre>
+            )}
+          </>
+        );
+        break;
       default:
         metadataVal = metadataItem.value;
     }
@@ -85,30 +90,32 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   }
 
   const isCustom = metadataItem.field.origin === 'INTERNAL';
+  const isJSON = metadataItem.field.type === 'JSON';
+
   const isNestedField = (fieldName: string) => fieldName?.indexOf('.') > 0;
 
   return (
-    <Container container>
-      <LabelContainer item sm={5}>
-        <Label variant="subtitle1" noWrap>
+    <S.Container container>
+      <S.LabelContainer item sm={5}>
+        <S.Label variant="subtitle1" noWrap>
           {isNestedField(metadataItem.field.name) ? (
             metadataItem.field.name
           ) : (
             <TextFormatted value={metadataItem.field.name} />
           )}
-        </Label>
-      </LabelContainer>
+        </S.Label>
+      </S.LabelContainer>
       <Grid item container sm={7} zeroMinWidth wrap="nowrap">
         {editMode ? (
           <FormProvider {...methods}>
-            <EditForm onSubmit={methods.handleSubmit(handleUpdate)}>
+            <S.EditForm onSubmit={methods.handleSubmit(handleUpdate)}>
               <MetadataValueEditor
                 fieldName="value"
                 metadataType={metadataItem.field.type}
                 metadataValue={metadataItem.value}
                 size="small"
               />
-              <FormActionBtns>
+              <S.FormActionBtns>
                 <AppButton
                   type="submit"
                   size="medium"
@@ -124,14 +131,14 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 >
                   Cancel
                 </AppButton>
-              </FormActionBtns>
-            </EditForm>
+              </S.FormActionBtns>
+            </S.EditForm>
           </FormProvider>
         ) : (
-          <ValueContainer>
-            <Value variant="body1">{metadataVal}</Value>
+          <S.ValueContainer>
+            <S.Value variant="body1">{metadataVal}</S.Value>
             {isCustom ? (
-              <Actions>
+              <S.Actions>
                 <AppIconButton
                   size="small"
                   color="tertiary"
@@ -140,6 +147,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                     setEditMode(true);
                   }}
                 />
+                {/* {isJSON && <CopyButton />} */}
                 <ConfirmationDialog
                   actionTitle="Are you sure you want to delete this Metadata?"
                   actionName="Delete Metadata"
@@ -159,12 +167,22 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                     />
                   }
                 />
-              </Actions>
+              </S.Actions>
             ) : null}
-          </ValueContainer>
+            {isJSON && (
+              <AppButton
+                size="small"
+                color="tertiary"
+                sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
+                onClick={() => setIsJSONOpened(!isJSONOpened)}
+              >
+                {isJSONOpened ? 'Hide' : `Show All`}
+              </AppButton>
+            )}
+          </S.ValueContainer>
         )}
       </Grid>
-    </Container>
+    </S.Container>
   );
 };
 

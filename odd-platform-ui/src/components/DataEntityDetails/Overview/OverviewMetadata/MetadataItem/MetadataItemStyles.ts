@@ -1,5 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { propsChecker } from '../../../../../lib/helpers';
 
 export const LabelContainer = styled(Grid)(({ theme }) => ({
   display: 'flex',
@@ -58,4 +59,16 @@ export const Value = styled(Typography)(() => ({
   wordBreak: 'break-word',
   maxHeight: '5rem',
   overflow: 'auto',
+}));
+
+export const Pre = styled('pre', {
+  shouldForwardProp: propsChecker,
+})<{
+  $isOpened?: boolean;
+}>(({ $isOpened }) => ({
+  maxWidth: '389px',
+  maxHeight: $isOpened ? 'none' : '60px',
+  // whiteSpace: 'pre-wrap',
+  overflowX: 'auto',
+  overflowY: 'scroll',
 }));
