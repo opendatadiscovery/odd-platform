@@ -115,7 +115,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                       variant="body2"
                       color="texts.hint"
                     >
-                      {count
+                      {count && datasetStats?.fieldsCount
                         ? round(
                             (count * 100) / datasetStats.fieldsCount,
                             2

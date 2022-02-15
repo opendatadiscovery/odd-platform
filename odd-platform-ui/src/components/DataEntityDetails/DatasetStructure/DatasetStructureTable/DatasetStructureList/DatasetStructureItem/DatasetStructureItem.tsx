@@ -278,7 +278,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
             <ColContainer item xs={6} $colType="missing">
               <NumberFormatted
                 sx={{ ml: 1 }}
-                value={fieldStats.nullsCount}
+                value={fieldStats?.nullsCount}
               />
               <Typography
                 sx={{ ml: 0.5 }}

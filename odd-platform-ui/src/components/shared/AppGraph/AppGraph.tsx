@@ -44,7 +44,6 @@ export interface AppGraphProps {
     params: DataEntityApiGetDataEntityUpstreamLineageRequest &
       DataEntityLineageRootNodeId
   ) => Promise<DataEntityLineage>;
-  isLineageFetching: boolean;
   isStreamFetching: boolean;
 }
 
@@ -53,7 +52,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
   data,
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
-  isLineageFetching,
   isStreamFetching,
 }) => {
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
@@ -69,6 +67,11 @@ const AppGraph: React.FC<AppGraphProps> = ({
   const [selectedDepth, setSelectedDepth] = React.useState<number>(
     defaultDepth
   );
+
+  const [
+    isLineageFetching,
+    setIsLineageFetching,
+  ] = React.useState<boolean>(true);
 
   const [parsedData, setParsedData] = React.useState<{
     root: TreeNodeDatum;
@@ -144,8 +147,9 @@ const AppGraph: React.FC<AppGraphProps> = ({
       lineageDepth: selectedDepth,
       rootNodeId: dataEntityId,
     };
-    fetchDataEntityDownstreamLineage(params);
-    fetchDataEntityUpstreamLineage(params);
+    fetchDataEntityDownstreamLineage(params)
+      .then(() => fetchDataEntityUpstreamLineage(params))
+      .then(() => setIsLineageFetching(false));
   }, [selectedDepth, dataEntityId]);
 
   const fetchUpstreamLineage = (entityId: number, lineageDepth: number) =>
