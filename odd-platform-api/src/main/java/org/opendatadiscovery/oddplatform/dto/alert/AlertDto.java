@@ -11,5 +11,5 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 public class AlertDto {
     private final AlertPojo alert;
     private final DataEntityPojo dataEntity;
-    private final OwnerPojo owner;
+    private final OwnerPojo updatedByOwner;
 }

@@ -137,12 +137,13 @@ public class AlertRepositoryImpl implements AlertRepository {
             .select(selectFields)
             .from(DATA_ENTITY)
             .join(cte.getName())
-            .on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()), String.class)
+            .on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)
                 .eq(DATA_ENTITY.ODDRN))
             .join(ALERT).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
             .where(DATA_ENTITY.ODDRN.notIn(ownOddrns))
+            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
             .fetch(this::mapRecord);
 
@@ -177,7 +178,7 @@ public class AlertRepositoryImpl implements AlertRepository {
 
         return name("t2")
             .as(dslContext.withRecursive(cte)
-                .selectDistinct(field(cteName.append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()), String.class))
+                .selectDistinct(field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class))
                 .from(cte.getName()));
     }
 
@@ -211,7 +212,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         return dslContext.with(cte)
             .select(countDistinct(ALERT.ID))
             .from(ALERT)
-            .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()))
+            .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()))
                 .eq(ALERT.DATA_ENTITY_ODDRN))
             .where(ALERT.DATA_ENTITY_ODDRN.notIn(ownOddrns))
             .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
