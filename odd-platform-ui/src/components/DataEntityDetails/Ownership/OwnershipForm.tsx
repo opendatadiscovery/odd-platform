@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce/lib';
-import { Autocomplete, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import {
   Controller,
   ControllerRenderProps,
@@ -29,6 +29,7 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import AppAutocomplete from '../../shared/AppAutocomplete/AppAutocomplete';
 
 interface OwnershipFormProps {
   dataEntityId: number;
@@ -273,7 +274,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           defaultValue=""
           rules={{ required: true }}
           render={({ field }) => (
-            <Autocomplete
+            <AppAutocomplete
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
               fullWidth
@@ -332,7 +333,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
         defaultValue={dataEntityOwnership?.role?.name || ''}
         rules={{ required: true, validate: value => !!value?.trim() }}
         render={({ field }) => (
-          <Autocomplete
+          <AppAutocomplete
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...field}
             fullWidth

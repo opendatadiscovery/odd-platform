@@ -1,9 +1,5 @@
 import React, { HTMLAttributes } from 'react';
-import {
-  Autocomplete,
-  AutocompleteRenderOptionState,
-  Grid,
-} from '@mui/material';
+import { AutocompleteRenderOptionState, Grid } from '@mui/material';
 
 import {
   AutocompleteInputChangeReason,
@@ -27,6 +23,7 @@ import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import * as S from './MultipleFilterItemStyles';
+import AppAutocomplete from '../../../../shared/AppAutocomplete/AppAutocomplete';
 
 interface FilterItemProps {
   searchId: string;
@@ -192,7 +189,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
   return (
     <Grid container>
       <Grid item xs={12}>
-        <Autocomplete
+        <AppAutocomplete
           fullWidth
           id={`filter-${facetName}`}
           open={autocompleteOpen}

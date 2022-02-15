@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, Grid, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import {
   Controller,
   ControllerRenderProps,
@@ -25,6 +25,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import * as S from './IdentityStyles';
+import AppAutocomplete from '../../shared/AppAutocomplete/AppAutocomplete';
 
 interface IdentityProps {
   identity?: AssociatedOwner;
@@ -186,7 +187,7 @@ const Identity: React.FC<IdentityProps> = ({
               defaultValue=""
               rules={{ required: true }}
               render={({ field }) => (
-                <Autocomplete
+                <AppAutocomplete
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...field}
                   fullWidth

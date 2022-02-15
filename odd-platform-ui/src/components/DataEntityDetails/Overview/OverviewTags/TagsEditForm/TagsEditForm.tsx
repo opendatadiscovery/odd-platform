@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, Typography, Box } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import {
   DataEntityApiCreateDataEntityTagsRelationsRequest,
   Tag,
@@ -20,6 +20,7 @@ import { OptionsContainer } from 'components/DataEntityDetails/Overview/Overview
 import AppButton from 'components/shared/AppButton/AppButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppAutocomplete from '../../../../shared/AppAutocomplete/AppAutocomplete';
 
 interface TagsEditProps {
   dataEntityId: number;
@@ -187,7 +188,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
 
   const formContent = () => (
     <>
-      <Autocomplete
+      <AppAutocomplete
         fullWidth
         id="dataentity-tag-add-name-search"
         open={autocompleteOpen}

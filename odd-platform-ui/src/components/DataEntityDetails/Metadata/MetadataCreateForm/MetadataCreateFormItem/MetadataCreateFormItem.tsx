@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, Box, MenuItem, Typography } from '@mui/material';
+import { Box, MenuItem, Typography } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
@@ -16,6 +16,7 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import AppAutocomplete from '../../../../shared/AppAutocomplete/AppAutocomplete';
 
 interface MetadataCreateFormItemProps {
   itemIndex: number;
@@ -139,7 +140,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
         defaultValue=""
         control={control}
         render={({ field }) => (
-          <Autocomplete
+          <AppAutocomplete
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...field}
             fullWidth

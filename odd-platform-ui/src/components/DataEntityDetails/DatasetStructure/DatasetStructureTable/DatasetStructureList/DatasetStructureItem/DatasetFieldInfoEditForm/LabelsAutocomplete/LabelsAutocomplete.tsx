@@ -1,5 +1,5 @@
 import React from 'react';
-import { Autocomplete, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -14,6 +14,7 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { UseFieldArrayReturn } from 'react-hook-form';
+import AppAutocomplete from '../../../../../../../shared/AppAutocomplete/AppAutocomplete';
 
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
 
@@ -108,7 +109,7 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
   };
 
   return (
-    <Autocomplete
+    <AppAutocomplete
       fullWidth
       id="datasetfield-label-add-name-search"
       open={autocompleteOpen}
