@@ -41,7 +41,8 @@ public class LabelRepositoryImpl
     public LabelRepositoryImpl(final DSLContext dslContext,
                                final JooqQueryHelper jooqQueryHelper,
                                final JooqFTSHelper jooqFTSHelper) {
-        super(dslContext, jooqQueryHelper, LABEL, LABEL.ID, LABEL.IS_DELETED, LABEL.NAME, LABEL.NAME, LabelPojo.class);
+        super(dslContext, jooqQueryHelper, LABEL, LABEL.ID, LABEL.IS_DELETED, LABEL.NAME, LABEL.NAME,
+            LABEL.UPDATED_AT, LabelPojo.class);
         this.jooqFTSHelper = jooqFTSHelper;
     }
 

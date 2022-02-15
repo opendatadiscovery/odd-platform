@@ -14,6 +14,7 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
+import CopyButton from 'components/shared/CopyButton/CopyButton';
 import * as S from './OverviewGeneralStyles';
 import OwnershipFormContainer from '../../Ownership/OwnershipFormContainer';
 
@@ -61,7 +62,20 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
           </LabeledInfoItem>
         </Grid>
         <Grid item sm={12} sx={{ mt: 2 }}>
-          <LabeledInfoItem label="ODDRN">
+          <LabeledInfoItem
+            labelWidth={12}
+            label={
+              <Grid container justifyContent="space-between">
+                <Grid item>ODDRN</Grid>
+                <Grid item>
+                  <CopyButton
+                    text="Copy"
+                    stringToCopy={dataEntityDetails.oddrn}
+                  />
+                </Grid>
+              </Grid>
+            }
+          >
             <S.OddrnValue>{dataEntityDetails.oddrn}</S.OddrnValue>
           </LabeledInfoItem>
         </Grid>

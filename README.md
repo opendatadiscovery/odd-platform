@@ -1,5 +1,5 @@
 
-<p>
+<p> 
 <img src="./images/open-data-discovery-platform-odd-logo.png" width="600px" alt="open-data-discovery-logo"/>&nbsp;
 </p>
 
@@ -13,17 +13,23 @@
 
 <br>
 
-# Open Data Discovery Platform: Next-Gen Data Observability and Reliability 
-
-<p align="center">
-<img src="./images/odd-data-catalog-ui.jpg" width="1000px" alt="odd-data-catalog-ui"/>&nbsp;
-</p>
+# Open Data Discovery Platform: Next-Gen Data Discovery and Observability 
 
 <br>
 
-## Overview
+## Introduction
 
-We’re building a next-generation data discovery and observability tool for enterprises that helps to efficiently democratize data, powers collaboration of data science and data engineering teams, significantly reduces time to data discovery, cuts on data downtime and offers modern, easy-to-use environment with quick time-to-value. ODD makes all your data entities reliable, observable, and easily discoverable.  
+ODD is an open-source data discovery and observability tool for data teams that helps to efficiently democratise data, power collaboration and reduce time on data discovery through modern user-friendly environment. 
+
+### Key wins
+
+* Shorten data discovery phase
+* Have transparency on how and by whom the data is used
+* Foster data culture by continuous compliance and data quality monitoring
+* Accelerate data insights
+* Know the sources of your dashboards and ad hoc reports
+* Deprecate outdated objects responsibly by assessing and mitigating the risks
+
 
 * :point_right: ODD Platform is a reference implementation of **[Open Data Discovery Spec](https://github.com/opendatadiscovery/opendatadiscovery-specification)**.
 
@@ -32,43 +38,32 @@ We’re building a next-generation data discovery and observability tool for ent
 
 ## Features
 
-### Architecture
+### Data Discovery and Observability
 
-* Powered by a universal open standard for metadata collection
-* Much faster and of better quality of data discovery  
-* Democratizes data across an organization, making it self-service
-* Allows building meta catalogs by federating any data catalogs you’re using 
-* Composable and pluggable architecture that can fit any data strategy/business 
-* Easily integrates with other open standards, data catalogs, tools an ML ecosystem
-* Wide variety of data sources (BI, ML, ETL, ELT, data quality tools, warehouses, etc.)
-* A multi-cloud solution not tying you to any particular cloud
-* Quick and easy deployment without having to provide complex infrastructure
-* Fully open-source and community-based - no closed / proprietary agenda  
+* Accumulate scattered data insights in Federated Data catalogue
+* Gain observability through E2E Data objects Lineage
+* Benefit from cutting-edge E2E microservices Lineage feature in tracking your data flow through the whole data landscape
+* Be warned and alerted by Pipeline Monitoring tools
+* Store your metadata 
+* Use ODD-native modern lightweight UI
 
-### Data Discovery 
 
-* Trust your data with truly end-to-end, context-rich data discovery 
-* Enrich entities with custom metadata, descriptions, owners and tags  
-* Rich context, schemas and lineage for all data entities
-* Rich data profiling: overall statistics, labels, descriptions, uniqueness, etc. 
-* Discoverable ML entities - ML pipelines, experiments, feature stores are 1st citizens 
-* Modern lightweight UI and management of your data sources, owners, tags. 
+### ML First citizen
 
-### Data Observability 
+* Save results of your ML Experiments by automatically logging its parameters  
 
-* Truly end-to-end data lineage across all the tools used in the company
-* Alerts for changes and issues informing you what/who’s entities were affected
-* Empowers collaboration between Data Science and Data Engineering teams  
+
+### Data Security & Compliance
+
+* Manage Tags and Labels to prevent any abuse of the data
+* Refer to Tags and Labels to stay compliant with data security standards
+* Have full transparency on how and by whom the data is used
+
 
 ### Data Quality 
 
-* Lets you enrich any data with data quality tests  
-* Easily integrates with any data quality tools
-
-### Data Security & Governance 
-
-* Doesn’t touch actual data for security reasons: operates metadata only  
-* Know what data is PII: label PII and other special data at the column level 
+* Simplify DQ processes by using ODD and Great Expectations compatibility 
+* Integrate ODD with any custom DQ framework
 
 
 ## Getting Started 
@@ -82,10 +77,10 @@ We’re building a next-generation data discovery and observability tool for ent
 ### Deploying to Kubernetes with Helm Charts
 
 * :point_right: **[QUICKSTART](https://github.com/opendatadiscovery/charts/blob/master/QUICKSTART.md)**
-* 
+
 ### Example configurations
 
-There are various example configurations (via docker-compose) within docker/examples directory.
+There are various example configurations (via docker-compose) within **[docker/examples directory](https://github.com/opendatadiscovery/odd-platform/tree/main/docker/docker/examples)**.
 
 <br>
 
