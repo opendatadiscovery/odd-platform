@@ -11,10 +11,7 @@ import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Integration tests for RoleRepository")
 class RolesRepositoryImplTest extends BaseIntegrationTest {
@@ -29,9 +26,9 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
 
         final RolePojo actualRolePojo = roleRepository.create(rolePojo);
 
-        assertNotNull(actualRolePojo);
-        assertNotNull(actualRolePojo.getId());
-        assertNotNull(actualRolePojo.getName());
+        assertThat(actualRolePojo).isNotNull();
+        assertThat(actualRolePojo.getId()).isNotNull();
+        assertThat(actualRolePojo.getName()).isNotNull();
     }
 
     @Test
@@ -40,9 +37,10 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         final RolePojo rolePojo = new RolePojo().setName(UUID.randomUUID().toString());
 
         final RolePojo actualRolePojo = roleRepository.createOrGet(rolePojo);
-        assertNotNull(actualRolePojo);
-        assertNotNull(actualRolePojo.getId());
-        assertNotNull(actualRolePojo.getName());
+
+        assertThat(actualRolePojo).isNotNull();
+        assertThat(actualRolePojo.getId()).isNotNull();
+        assertThat(actualRolePojo.getName()).isNotNull();
     }
 
     @Test
@@ -53,10 +51,10 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         final RolePojo savedRole = roleRepository.create(rolePojo);
         final RolePojo actualRolePojo = roleRepository.createOrGet(rolePojo);
 
-        assertNotNull(actualRolePojo);
-        assertNotNull(actualRolePojo.getId());
-        assertNotNull(actualRolePojo.getName());
-        assertEquals(savedRole.getId(), actualRolePojo.getId());
+        assertThat(actualRolePojo).isNotNull();
+        assertThat(actualRolePojo.getName()).isNotNull();
+        assertThat(actualRolePojo.getId()).isNotNull()
+            .isEqualTo(savedRole.getId());
     }
 
     /**
@@ -71,10 +69,12 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         final List<String> testRoleListNames = getListNames(testRoleList);
 
         final List<RolePojo> actualRoleList = roleRepository.bulkCreate(testRoleList);
-        assertFalse(actualRoleList.isEmpty());
-        actualRoleList.forEach(r -> assertNotNull(r.getId()));
 
-        assertTrue(testRoleListNames.containsAll(getListNames(actualRoleList)));
+        assertThat(actualRoleList)
+            .isNotEmpty()
+            .extracting(RolePojo::getId).doesNotContainNull();
+        assertThat(actualRoleList)
+            .extracting(RolePojo::getName).containsAll(testRoleListNames);
     }
 
     /**
@@ -84,29 +84,28 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Bulk update roles, expecting roles are updated successfully")
     void testBulkUpdateRole() {
-        final int numberOfTestRoles = 3;
+        final int numberOfTestRoles = 4;
         final List<RolePojo> testRoleList = createTestRoleList(numberOfTestRoles);
         final List<String> testRoleListNames = getListNames(testRoleList);
 
         //create roles
         final List<RolePojo> savedRoleList = roleRepository.bulkCreate(testRoleList);
-        assertFalse(savedRoleList.isEmpty());
-        savedRoleList.forEach(r -> assertNotNull(r.getId()));
-        assertTrue(testRoleListNames.containsAll(getListNames(savedRoleList)));
+        assertThat(savedRoleList).isNotEmpty()
+            .extracting(RolePojo::getId).doesNotContainNull();
+        assertThat(savedRoleList)
+            .extracting(RolePojo::getName).containsAll(testRoleListNames);
 
-        //updated roles
+        //update roles
         for (final RolePojo rolePojo : savedRoleList) {
             rolePojo.setName(UUID.randomUUID().toString());
         }
         final List<String> newRoleListNames = getListNames(savedRoleList);
         final List<RolePojo> updatedRoleList = roleRepository.bulkUpdate(savedRoleList);
 
-        assertFalse(updatedRoleList.isEmpty());
-        updatedRoleList.forEach(r -> {
-            assertNotNull(r.getId());
-            assertNotNull(r.getName());
-        });
-        assertTrue(newRoleListNames.containsAll(getListNames(updatedRoleList)));
+        assertThat(updatedRoleList).isNotEmpty()
+            .flatExtracting(RolePojo::getId, RolePojo::getName).doesNotContainNull();
+        assertThat(updatedRoleList)
+            .extracting(RolePojo::getName).isEqualTo(newRoleListNames);
     }
 
     @Test
@@ -116,17 +115,19 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         final RolePojo rolePojo = new RolePojo().setName(initialRoleName);
 
         final RolePojo savedRole = roleRepository.create(rolePojo);
-        assertNotNull(savedRole);
-        assertNotNull(savedRole.getId());
-        assertEquals(initialRoleName, savedRole.getName());
-
+        assertThat(savedRole).isNotNull();
+        assertThat(savedRole.getId()).isNotNull();
+        assertThat(savedRole.getName()).isNotNull()
+            .isEqualTo(initialRoleName);
         final String newRoleName = UUID.randomUUID().toString();
         savedRole.setName(newRoleName);
+
         final RolePojo updatedRole = roleRepository.update(savedRole);
 
-        assertNotNull(updatedRole);
-        assertNotNull(updatedRole.getId());
-        assertEquals(newRoleName, updatedRole.getName());
+        assertThat(updatedRole).isNotNull();
+        assertThat(updatedRole.getId()).isNotNull();
+        assertThat(updatedRole.getName()).isNotNull()
+            .isEqualTo(newRoleName);
     }
 
     @Test
@@ -135,14 +136,14 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         final RolePojo rolePojo = new RolePojo().setName(UUID.randomUUID().toString());
 
         final RolePojo actualRolePojo = roleRepository.create(rolePojo);
-        assertNotNull(actualRolePojo);
+        assertThat(actualRolePojo).isNotNull();
         final Long actualRolePojoId = actualRolePojo.getId();
-        assertNotNull(actualRolePojoId);
-        assertNotNull(actualRolePojo.getName());
+        assertThat(actualRolePojoId).isNotNull();
+        assertThat(actualRolePojo.getName()).isNotNull();
 
         roleRepository.delete(actualRolePojoId);
         final Optional<RolePojo> deletedRole = roleRepository.get(actualRolePojoId);
-        assertFalse(deletedRole.isPresent());
+        assertThat(deletedRole).isEmpty();
     }
 
     @Test
@@ -154,13 +155,23 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         roleRepository.create(rolePojo);
 
         final Optional<RolePojo> actualRole = roleRepository.getByName(testRoleName);
-
-        assertTrue(actualRole.isPresent());
+        assertThat(actualRole).isNotEmpty();
         final RolePojo actualRolePojo = actualRole.get();
-        assertNotNull(actualRolePojo.getId());
-        final String actualRolePojoName = actualRolePojo.getName();
-        assertNotNull(actualRolePojoName);
-        assertEquals(testRoleName, actualRolePojoName);
+        assertThat(actualRolePojo.getId()).isNotNull();
+        assertThat(actualRolePojo.getName()).isNotNull()
+            .isEqualTo(testRoleName);
+    }
+
+    @Test
+    @DisplayName("Gets by name role which is not in db, expecting no role extracted")
+    void testGetByNameRole_DifferentName() {
+        final String testRoleName = UUID.randomUUID().toString();
+        final RolePojo rolePojo = new RolePojo().setName(testRoleName);
+
+        roleRepository.create(rolePojo);
+
+        final Optional<RolePojo> actualRole = roleRepository.getByName(UUID.randomUUID().toString());
+        assertThat(actualRole).isEmpty();
     }
 
     /**
