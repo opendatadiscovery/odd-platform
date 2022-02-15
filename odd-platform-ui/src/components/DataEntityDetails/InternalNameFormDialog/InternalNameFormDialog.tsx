@@ -100,17 +100,15 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   );
 
   const formActionButtons = () => (
-    <>
-      <AppButton
-        size="large"
-        type="submit"
-        form="dataentity-internal-name"
-        color="primary"
-        fullWidth
-      >
-        Save
-      </AppButton>
-    </>
+    <AppButton
+      size="large"
+      type="submit"
+      form="dataentity-internal-name"
+      color="primary"
+      fullWidth
+    >
+      Save
+    </AppButton>
   );
 
   return (

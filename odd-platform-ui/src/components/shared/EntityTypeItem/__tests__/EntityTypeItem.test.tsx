@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { provideTheme } from 'lib/testHelpers';
+import { getByText, provideTheme } from 'lib/testHelpers';
 import EntityTypeItem, { EntityTypeItemProps } from '../EntityTypeItem';
 
 describe('EntityTypeItem', () => {
@@ -13,7 +13,7 @@ describe('EntityTypeItem', () => {
     );
 
   it('EntityTypeItem should return right short text and color', () => {
-    const { getByText } = setupComponent({
+    setupComponent({
       typeName: DataEntityTypeNameEnum.INPUT,
     });
     expect(getByText('DI')).toBeTruthy();
@@ -21,7 +21,7 @@ describe('EntityTypeItem', () => {
   });
 
   it('EntityTypeItem should return right normal text and color', () => {
-    const { getByText } = setupComponent({
+    setupComponent({
       typeName: DataEntityTypeNameEnum.ENTITY_GROUP,
       fullName: true,
     });

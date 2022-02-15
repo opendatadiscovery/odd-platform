@@ -8,7 +8,7 @@ interface FilledContainerProps {
 const typeChecker = (type: AlertStatus) =>
   type === 'OPEN' ? 'OPEN' : 'RESOLVED';
 
-export const Container = styled('div')(({ theme }) => ({
+export const Container = styled('div')(() => ({
   display: 'inline-flex',
   alignItems: 'center',
 }));

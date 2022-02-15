@@ -4,6 +4,7 @@ import {
   Background,
   ProgressBackground,
 } from 'components/shared/AppCircularProgress/interfaces';
+import { CSSObject } from 'theme/interfaces';
 
 export const Container = styled(Grid)<{ $background?: Background }>(
   ({ theme, $background }) => ({
@@ -27,7 +28,7 @@ export const TextContainer = styled(Grid)(({ theme }) => ({
   whiteSpace: 'nowrap',
 }));
 
-export const SpinnerContainer = styled(Grid)(({ theme }) => ({
+export const SpinnerContainer = styled(Grid)<CSSObject>(() => ({
   position: 'relative',
   alignItems: 'center',
 }));

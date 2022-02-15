@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 import { Grid } from '@mui/material';
+import { CSSObject } from 'theme/interfaces';
 
-export const Container = styled(Grid)(({ theme }) => ({
+export const Container = styled(Grid)<CSSObject>(() => ({
   width: '100%',
   height: '100%',
   position: 'fixed',

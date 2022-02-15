@@ -12,14 +12,17 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2020,
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
   "plugins": ["@typescript-eslint", "prettier", "mui-unused-classes", "lodash"],
   "extends": [
-    "airbnb-typescript",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
+    "airbnb",
+    "airbnb-typescript",
     "prettier",
     "prettier/react",
     "prettier/@typescript-eslint"
@@ -36,7 +39,14 @@
     "prefer-const": "error",
     "prettier/prettier": "warn",
     "react/jsx-props-no-spreading": "off",
-    "lodash/import-scope": [2, "method"]
+    "lodash/import-scope": [2, "method"],
+    "react/require-default-props": "off",
+    "react/function-component-definition": [2, {
+      "namedComponents": "arrow-function"
+    }],
+    "default-param-last": "off",
+    "@typescript-eslint/default-param-last": "off",
+    "react/jsx-no-useless-fragment": ["error", { "allowExpressions":  true }]
   },
   "overrides": [
     {

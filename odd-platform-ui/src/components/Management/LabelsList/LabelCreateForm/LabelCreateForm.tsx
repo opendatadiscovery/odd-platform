@@ -85,29 +85,27 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
   );
 
   const formContent = () => (
-    <>
-      <FormProvider {...methods}>
-        <form id="label-create-form">
-          {fields.map((item, index) => (
-            <LabelCreateFormItem
-              key={item.id}
-              itemIndex={index}
-              fieldsLength={fields.length}
-              onItemRemove={handleRemove(index)}
-            />
-          ))}
-          <AppButton
-            size="medium"
-            form="tag-create-form"
-            color="primaryLight"
-            startIcon={<AddIcon />}
-            onClick={handleAppend}
-          >
-            Create label
-          </AppButton>
-        </form>
-      </FormProvider>
-    </>
+    <FormProvider {...methods}>
+      <form id="label-create-form">
+        {fields.map((item, index) => (
+          <LabelCreateFormItem
+            key={item.id}
+            itemIndex={index}
+            fieldsLength={fields.length}
+            onItemRemove={handleRemove(index)}
+          />
+        ))}
+        <AppButton
+          size="medium"
+          form="tag-create-form"
+          color="primaryLight"
+          startIcon={<AddIcon />}
+          onClick={handleAppend}
+        >
+          Create label
+        </AppButton>
+      </form>
+    </FormProvider>
   );
 
   const formActionButtons = () => (

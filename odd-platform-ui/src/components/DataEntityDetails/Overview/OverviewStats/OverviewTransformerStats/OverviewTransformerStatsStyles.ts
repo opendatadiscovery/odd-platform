@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 import { Box } from '@mui/material';
 
 export const StatIconContainer = styled(Box)(({ theme }) => ({
@@ -7,7 +7,7 @@ export const StatIconContainer = styled(Box)(({ theme }) => ({
   color: theme.palette.button?.primaryLight.normal.color,
 }));
 
-export const EntityLink = styled(Link)(({ theme }) => ({
+export const EntityLink = styled(Link)<LinkProps>(() => ({
   textAlign: 'left',
   wordBreak: 'break-all',
 }));

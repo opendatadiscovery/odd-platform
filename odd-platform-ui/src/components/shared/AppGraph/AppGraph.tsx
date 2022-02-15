@@ -285,7 +285,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
     const g = select(`.${gInstanceRef}`);
     if (ref?.current?.offsetWidth && ref?.current?.offsetHeight) {
       transformation.scale = Math.min(
-        ref?.current?.offsetWidth /
+        ref.current.offsetWidth /
           (depth.downstream + depth.upstream + 1) /
           (nodeSize.x + nodeSize.mx),
         1
@@ -297,13 +297,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
       transformation.translate = {
         x:
           upstreamWidth * transformation.scale +
-          (ref?.current?.offsetWidth -
+          (ref.current.offsetWidth -
             (upstreamWidth + downstreamWidth + nodeSize.x) *
               transformation.scale) /
             2,
         y:
-          (ref?.current?.offsetHeight -
-            nodeSize.y * transformation.scale) /
+          (ref.current.offsetHeight - nodeSize.y * transformation.scale) /
           2,
       };
     }

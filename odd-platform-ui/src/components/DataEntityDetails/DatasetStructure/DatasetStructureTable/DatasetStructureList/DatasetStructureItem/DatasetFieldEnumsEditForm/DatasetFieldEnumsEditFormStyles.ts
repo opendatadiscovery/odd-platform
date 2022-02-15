@@ -1,13 +1,13 @@
 import styled from 'styled-components';
-import { Grid } from '@mui/material';
+import { Grid, GridProps } from '@mui/material';
 
-export const HeaderContainer = styled(Grid)(({ theme }) => ({
+export const HeaderContainer = styled(Grid)<GridProps>(() => ({
   justifyContent: 'space-between',
   alignItems: 'center',
   flexWrap: 'nowrap',
 }));
 
-export const TitleContainer = styled(Grid)(({ theme }) => ({
+export const TitleContainer = styled(Grid)<GridProps>(() => ({
   width: 'auto',
   flexDirection: 'column',
   flexWrap: 'nowrap',

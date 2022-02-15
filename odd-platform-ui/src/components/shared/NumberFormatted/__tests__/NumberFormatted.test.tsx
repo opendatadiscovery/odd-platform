@@ -8,26 +8,26 @@ describe('NumberFormatted', () => {
     render(<NumberFormatted value="" {...props} />);
 
   it('NumberFormatted should return formatted number from string', () => {
-    const formattedNumber = setupComponent({ value: '1000000' });
+    setupComponent({ value: '1000000' });
     expect(getByTestID('number-formatted-component').textContent).toBe(
       '1000K'
     );
   });
 
   it('NumberFormatted should return formatted number from number', () => {
-    const formattedNumber = setupComponent({ value: 250_000_000 });
+    setupComponent({ value: 250_000_000 });
     expect(getByTestID('number-formatted-component').textContent).toBe(
       '250M'
     );
   });
 
   it('NumberFormatted should return empty string with wrong string value', () => {
-    const formattedNumber = setupComponent({ value: 'a10aaa' });
+    setupComponent({ value: 'a10aaa' });
     expect(getByTestID('number-formatted-component').textContent).toBe('');
   });
 
   it('NumberFormatted should return empty string with undefined value', () => {
-    const formattedNumber = setupComponent({ value: undefined });
+    setupComponent({ value: undefined });
     expect(getByTestID('number-formatted-component').textContent).toBe('');
   });
 });

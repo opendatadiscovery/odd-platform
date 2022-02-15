@@ -82,29 +82,27 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
   );
 
   const formContent = () => (
-    <>
-      <FormProvider {...methods}>
-        <form id="tag-create-form">
-          {fields.map((item, index) => (
-            <TagCreateFormItem
-              key={item.id}
-              itemIndex={index}
-              onItemRemove={handleRemove(index)}
-              fieldsLength={fields.length}
-            />
-          ))}
-          <AppButton
-            size="medium"
-            form="tag-create-form"
-            color="primaryLight"
-            startIcon={<AddIcon />}
-            onClick={handleAppend}
-          >
-            Create tag
-          </AppButton>
-        </form>
-      </FormProvider>
-    </>
+    <FormProvider {...methods}>
+      <form id="tag-create-form">
+        {fields.map((item, index) => (
+          <TagCreateFormItem
+            key={item.id}
+            itemIndex={index}
+            onItemRemove={handleRemove(index)}
+            fieldsLength={fields.length}
+          />
+        ))}
+        <AppButton
+          size="medium"
+          form="tag-create-form"
+          color="primaryLight"
+          startIcon={<AddIcon />}
+          onClick={handleAppend}
+        >
+          Create tag
+        </AppButton>
+      </form>
+    </FormProvider>
   );
 
   const formActionButtons = () => (

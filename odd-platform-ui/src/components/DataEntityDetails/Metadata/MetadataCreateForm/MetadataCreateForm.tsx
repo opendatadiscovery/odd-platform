@@ -80,21 +80,19 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   );
 
   const formContent = () => (
-    <>
-      <FormProvider {...methods}>
-        <form
-          id="metadata-create-form"
-          onSubmit={methods.handleSubmit(createMetadata)}
-        >
-          {fields.map((item, index) => (
-            <MetadataCreateFormItemContainer
-              key={item.id}
-              itemIndex={index}
-            />
-          ))}
-        </form>
-      </FormProvider>
-    </>
+    <FormProvider {...methods}>
+      <form
+        id="metadata-create-form"
+        onSubmit={methods.handleSubmit(createMetadata)}
+      >
+        {fields.map((item, index) => (
+          <MetadataCreateFormItemContainer
+            key={item.id}
+            itemIndex={index}
+          />
+        ))}
+      </form>
+    </FormProvider>
   );
 
   const formActionButtons = () => (

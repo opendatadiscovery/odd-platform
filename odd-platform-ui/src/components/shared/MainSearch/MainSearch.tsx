@@ -10,11 +10,10 @@ import {
 import { dataEntityDetailsPath, searchPath } from 'lib/paths';
 import * as S from 'components/shared/MainSearch/MainSearchStyles';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
-import { AutocompleteRenderOptionState } from '@mui/material/Autocomplete/Autocomplete';
 
 interface AppSearchProps {
   className?: string;
@@ -110,8 +109,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
 
   const renderOption = (
     props: React.HTMLAttributes<HTMLLIElement>,
-    option: unknown,
-    state: AutocompleteRenderOptionState
+    option: unknown
   ): React.ReactNode => {
     const typedOption = option as DataEntityRef;
     return (

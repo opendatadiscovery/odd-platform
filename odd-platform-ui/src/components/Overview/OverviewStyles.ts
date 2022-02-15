@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Grid, GridProps } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {
   maxContentWidthWithoutSidebar,
@@ -37,7 +37,7 @@ export const AllAlertsBtnContainer = styled(Link)(({ theme }) => ({
   lineHeight: theme.typography.subtitle2.lineHeight,
 }));
 
-export const InfoBarItemAlerts = styled(InfoBarItem)(({ theme }) => ({
+export const InfoBarItemAlerts = styled(InfoBarItem)<GridProps>(() => ({
   '&:hover': {
     [`${AllAlertsBtnContainer}`]: { visibility: 'visible' },
   },

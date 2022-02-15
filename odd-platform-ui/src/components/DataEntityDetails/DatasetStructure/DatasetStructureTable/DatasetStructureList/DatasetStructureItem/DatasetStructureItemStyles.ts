@@ -1,7 +1,7 @@
-import { Grid } from '@mui/material';
+import { Grid, GridProps } from '@mui/material';
 import styled from 'styled-components';
 
-export const OptionsBtnContainer = styled(Grid)(({ theme }) => ({
+export const OptionsBtnContainer = styled(Grid)<GridProps>(() => ({
   display: 'flex',
   flexWrap: 'nowrap',
   alignItems: 'center',

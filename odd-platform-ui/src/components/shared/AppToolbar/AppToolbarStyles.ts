@@ -84,7 +84,7 @@ export const SectionDesktop = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.up('md')]: { display: 'flex' },
 }));
 
-export const UserAvatar = styled(UserIcon)(({ theme }) => ({
+export const UserAvatar = styled(UserIcon)(() => ({
   width: '22px',
   height: '22px',
   borderRadius: '50%',

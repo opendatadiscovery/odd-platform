@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Grid, GridProps } from '@mui/material';
 import {
   primaryTabsHeight,
   tabsContainerMargin,
@@ -46,7 +46,7 @@ export const ColContainer = styled(Grid)<{
   ...colWidthStyles[$colType],
 }));
 
-export const NameContainer = styled(Grid)(({ theme }) => ({
+export const NameContainer = styled(Grid)<GridProps>(() => ({
   ...colWidthStyles.col,
   padding: 0,
   justifyContent: 'flex-start',

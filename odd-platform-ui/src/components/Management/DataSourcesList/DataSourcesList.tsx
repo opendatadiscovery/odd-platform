@@ -4,7 +4,7 @@ import {
   DataSource,
   DataSourceApiGetDataSourceListRequest,
 } from 'generated-sources';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddIcon from 'components/shared/Icons/AddIcon';

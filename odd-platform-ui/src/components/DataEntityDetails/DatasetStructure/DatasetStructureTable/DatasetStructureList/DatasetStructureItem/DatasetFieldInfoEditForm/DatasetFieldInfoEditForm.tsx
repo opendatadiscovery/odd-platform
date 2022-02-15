@@ -142,17 +142,15 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <>
-      <AppButton
-        size="large"
-        type="submit"
-        form="dataset-field-info-form"
-        color="primary"
-        fullWidth
-      >
-        Save
-      </AppButton>
-    </>
+    <AppButton
+      size="large"
+      type="submit"
+      form="dataset-field-info-form"
+      color="primary"
+      fullWidth
+    >
+      Save
+    </AppButton>
   );
 
   return (

@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Typography, TypographyProps } from '@mui/material';
 import styled from 'styled-components';
 
 export const TruncatedList = styled('div')(({ theme }) => ({
@@ -9,7 +9,7 @@ export const TruncatedList = styled('div')(({ theme }) => ({
   },
 }));
 
-export const LinkContent = styled(Typography)(({ theme }) => ({
+export const LinkContent = styled(Typography)<TypographyProps>(() => ({
   borderRadius: 'inherit',
   letterSpacing: 'inherit',
   fontWeight: 'inherit',

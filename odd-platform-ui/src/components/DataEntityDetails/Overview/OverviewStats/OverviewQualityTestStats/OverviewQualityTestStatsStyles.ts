@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
 
-export const StatsContainer = styled(Grid)(({ theme }) => ({
+export const StatsContainer = styled(Grid)(() => ({
   justifyContent: 'space-between',
   '& > *': {
     flex: '0 0 278px',

@@ -259,17 +259,15 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   );
 
   const formActionButtons = () => (
-    <>
-      <AppButton
-        size="large"
-        type="submit"
-        form="tags-create-form"
-        color="primary"
-        fullWidth
-      >
-        Save
-      </AppButton>
-    </>
+    <AppButton
+      size="large"
+      type="submit"
+      form="tags-create-form"
+      color="primary"
+      fullWidth
+    >
+      Save
+    </AppButton>
   );
 
   return (

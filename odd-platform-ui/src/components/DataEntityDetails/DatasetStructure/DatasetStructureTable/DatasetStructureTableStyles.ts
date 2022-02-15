@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Grid, GridProps } from '@mui/material';
 import styled from 'styled-components';
 
 export type ColType = 'name' | 'uniq' | 'missing' | 'stats';
@@ -20,7 +20,7 @@ export const columnBasicStyles = {
   stats: {},
 };
 
-export const Container = styled(Grid)(({ theme }) => ({
+export const Container = styled(Grid)<GridProps>(() => ({
   position: 'relative',
 }));
 

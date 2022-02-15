@@ -1,5 +1,5 @@
 import { Grid, Paper } from '@mui/material';
-import styled, { CSSObject } from 'styled-components';
+import styled from 'styled-components';
 
 export const ActionsContainer = styled(Grid)(() => ({
   opacity: 0,

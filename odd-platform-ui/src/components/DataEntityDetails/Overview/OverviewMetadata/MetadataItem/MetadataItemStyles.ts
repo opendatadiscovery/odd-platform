@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, TypographyProps } from '@mui/material';
 import styled from 'styled-components';
 
 export const LabelContainer = styled(Grid)(({ theme }) => ({
@@ -53,7 +53,7 @@ export const Container = styled(Grid)(() => ({
   },
 }));
 
-export const Value = styled(Typography)(({ theme }) => ({
+export const Value = styled(Typography)<TypographyProps>(() => ({
   display: 'inline',
   wordBreak: 'break-word',
   maxHeight: '5rem',
