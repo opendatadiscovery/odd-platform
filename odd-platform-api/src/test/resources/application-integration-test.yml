@@ -1,0 +1,4 @@
+logging:
+  level:
+    org.springframework.transaction.interceptor: debug
+    org.jooq.tools.LoggerListener: debug

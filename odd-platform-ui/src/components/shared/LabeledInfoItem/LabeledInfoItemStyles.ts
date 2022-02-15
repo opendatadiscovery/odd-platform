@@ -1,10 +1,10 @@
 import { Grid, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { propsChecker } from 'lib/helpers';
-import { DataQualityTestRunStatusEnum } from 'generated-sources';
+import { DataQualityTestRunStatus } from 'generated-sources';
 
 interface ValueProps {
-  $runStatus?: DataQualityTestRunStatusEnum;
+  $runStatus?: DataQualityTestRunStatus;
   $valueColor?: string;
   $inline?: boolean;
   component: React.ElementType;
@@ -33,8 +33,13 @@ export const Label = styled(Typography)<{ component: React.ElementType }>(
     color: theme.palette.texts.secondary,
     lineHeight: theme.typography.h3.lineHeight,
     overflow: 'hidden',
+    width: 'inherit',
   })
 );
+
+export const LabelContainer = styled(Grid)(() => ({
+  width: '100%',
+}));
 
 export const Value = styled(Typography, {
   shouldForwardProp: propsChecker,

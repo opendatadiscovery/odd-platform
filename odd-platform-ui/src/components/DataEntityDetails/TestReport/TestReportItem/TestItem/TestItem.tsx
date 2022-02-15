@@ -4,14 +4,14 @@ import { formatDistanceStrict } from 'date-fns';
 import values from 'lodash/values';
 import {
   DataQualityTestExpectation,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
 } from 'generated-sources';
 import TestRunStatusIcon from 'components/shared/TestRunStatusIcon/TestRunStatusIcon';
 import { Container } from './TestitemStyles';
 
 interface TestItemProps {
   active: boolean;
-  latestRunStatus: DataQualityTestRunStatusEnum | undefined;
+  latestRunStatus: DataQualityTestRunStatus | undefined;
   testName: string;
   testStartTime: Date | undefined;
   testEndTime: Date | undefined;

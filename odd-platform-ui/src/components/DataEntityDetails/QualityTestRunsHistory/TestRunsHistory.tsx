@@ -2,14 +2,19 @@ import React from 'react';
 import {
   DataQualityApiGetRunsRequest,
   DataQualityTestRun,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
 } from 'generated-sources';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import capitalize from 'lodash/capitalize';
-import { Grid, MenuItem, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
-import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
+import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { CurrentPageInfo } from 'redux/interfaces';
+import TestRunSkeletonItem from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunSkeletonItem/TestRunSkeletonItem';
 import TestRunItem from './TestRunItem/TestRunItem';
+import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
 
 interface QualityTestHistoryProps {
   dataQATestId: number;
@@ -19,6 +24,7 @@ interface QualityTestHistoryProps {
   fetchDataSetQualityTestRuns: (
     params: DataQualityApiGetRunsRequest
   ) => void;
+  pageInfo: CurrentPageInfo;
 }
 
 const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
@@ -27,21 +33,26 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
   dataQATestRunsList,
   isTestRunsListFetching,
   fetchDataSetQualityTestRuns,
+  pageInfo,
 }) => {
-  React.useEffect(() => {
-    fetchDataSetQualityTestRuns({ dataqatestId: dataQATestId });
-  }, [fetchDataSetQualityTestRuns, dataQATestId]);
+  const pageSize = 100;
 
   const [alertStatus, setAlertStatus] = React.useState<
-    DataQualityTestRunStatusEnum | 'All'
+    DataQualityTestRunStatus | 'All'
   >('All');
 
-  const filterDataQATestRunsByStatus = (
-    dataQATestRun: DataQualityTestRun
-  ) => {
-    if (alertStatus === 'All') return true;
-    return dataQATestRun.status === alertStatus;
+  const fetchPage = (page?: number) => {
+    fetchDataSetQualityTestRuns({
+      dataqatestId: dataQATestId,
+      page: page || pageInfo.page + 1,
+      size: pageSize,
+      status: alertStatus === 'All' ? undefined : alertStatus,
+    });
   };
+
+  React.useEffect(() => {
+    fetchPage(1);
+  }, [fetchDataSetQualityTestRuns, dataQATestId, alertStatus]);
 
   return (
     <Grid container sx={{ mt: 2 }}>
@@ -51,19 +62,19 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
         select
         value={alertStatus}
       >
-        <MenuItem value="All" onClick={() => setAlertStatus('All')}>
+        <AppMenuItem value="All" onClick={() => setAlertStatus('All')}>
           Show all statuses
-        </MenuItem>
-        {Object.keys(DataQualityTestRunStatusEnum)?.map(option => (
-          <MenuItem
+        </AppMenuItem>
+        {Object.keys(DataQualityTestRunStatus)?.map(option => (
+          <AppMenuItem
             key={option}
             value={option}
             onClick={() =>
-              setAlertStatus(option as DataQualityTestRunStatusEnum)
+              setAlertStatus(option as DataQualityTestRunStatus)
             }
           >
             {capitalize(option)}
-          </MenuItem>
+          </AppMenuItem>
         ))}
       </AppTextField>
       <RunsTableHeader container wrap="nowrap" sx={{ mt: 2 }}>
@@ -81,18 +92,37 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
         </ColContainer>
       </RunsTableHeader>
       <Grid container>
-        {dataQATestRunsList
-          ?.filter(filterDataQATestRunsByStatus)
-          .map(dataQATestRun => (
-            <TestRunItem
-              key={dataQATestRun.id}
-              dataQATestRun={dataQATestRun}
-              dataQATestId={dataQATestId}
-              dataQATestName={dataQATestName}
-            />
-          ))}
+        <Grid item xs={12}>
+          <InfiniteScroll
+            next={fetchPage}
+            hasMore={!!pageInfo?.hasNext}
+            loader={
+              isTestRunsListFetching ? (
+                <SkeletonWrapper
+                  length={5}
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <TestRunSkeletonItem
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              ) : null
+            }
+            dataLength={dataQATestRunsList.length}
+          >
+            {dataQATestRunsList?.map(dataQATestRun => (
+              <TestRunItem
+                key={dataQATestRun.id}
+                dataQATestRun={dataQATestRun}
+                dataQATestId={dataQATestId}
+                dataQATestName={dataQATestName}
+              />
+            ))}
+          </InfiniteScroll>
+        </Grid>
       </Grid>
-      {!isTestRunsListFetching && !dataQATestRunsList?.length ? (
+      {!isTestRunsListFetching && !dataQATestRunsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Grid>

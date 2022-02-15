@@ -3,13 +3,15 @@ package org.opendatadiscovery.oddplatform.mapper;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.Collection;
 import java.util.stream.Collectors;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
+import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,18 +25,20 @@ public class DataQualityMapperImpl implements DataQualityMapper {
             .oddrn(run.getOddrn())
             .startTime(addUTC(run.getStartTime()))
             .endTime(addUTC(run.getEndTime()))
-            .status(DataQualityTestRun.StatusEnum.fromValue(run.getStatus()))
+            .status(DataQualityTestRunStatus.fromValue(run.getStatus()))
             .statusReason(run.getStatusReason());
     }
 
     @Override
     public DataQualityTestRunList mapDataQualityTestRuns(final long dataQualityTestId,
-                                                         final Collection<DataEntityTaskRunPojo> runs) {
-        return new DataQualityTestRunList().items(
-            runs.stream()
+                                                         final Page<DataEntityTaskRunPojo> page) {
+        return new DataQualityTestRunList()
+            .pageInfo(new PageInfo()
+                .total(page.getTotal())
+                .hasNext(page.isHasNext()))
+            .items(page.getData().stream()
                 .map(r -> mapDataQualityTestRun(dataQualityTestId, r))
-                .collect(Collectors.toList())
-        );
+                .collect(Collectors.toList()));
     }
 
     @Override
