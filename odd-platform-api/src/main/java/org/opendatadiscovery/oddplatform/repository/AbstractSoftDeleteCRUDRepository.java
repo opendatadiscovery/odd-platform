@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,9 +34,10 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                                             final Field<Boolean> deletedField,
                                             final Field<String> collisionIdentifier,
                                             final Field<String> nameField,
+                                            final Field<LocalDateTime> updatedAtField,
                                             final Class<P> pojoClass) {
-        this(dslContext, jooqQueryHelper, recordTable, idField, deletedField, List.of(collisionIdentifier), nameField,
-            pojoClass);
+        this(dslContext, jooqQueryHelper, recordTable, idField, deletedField, List.of(collisionIdentifier),
+            nameField, updatedAtField, pojoClass);
     }
 
     public AbstractSoftDeleteCRUDRepository(final DSLContext dslContext,
@@ -45,8 +47,9 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                                             final Field<Boolean> deletedField,
                                             final List<Field<String>> collisionIdentifiers,
                                             final Field<String> nameField,
+                                            final Field<LocalDateTime> updatedAtField,
                                             final Class<P> pojoClass) {
-        super(dslContext, jooqQueryHelper, recordTable, idField, nameField, pojoClass);
+        super(dslContext, jooqQueryHelper, recordTable, idField, nameField, updatedAtField, pojoClass);
         this.deletedField = deletedField;
         this.collisionIdentifiers = List.copyOf(collisionIdentifiers);
     }

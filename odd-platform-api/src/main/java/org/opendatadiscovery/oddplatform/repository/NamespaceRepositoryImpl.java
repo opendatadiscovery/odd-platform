@@ -30,7 +30,7 @@ public class NamespaceRepositoryImpl
                                    final JooqQueryHelper jooqQueryHelper,
                                    final JooqFTSHelper jooqFTSHelper) {
         super(dslContext, jooqQueryHelper, NAMESPACE, NAMESPACE.ID, NAMESPACE.IS_DELETED, NAMESPACE.NAME,
-            NAMESPACE.NAME, NamespacePojo.class);
+            NAMESPACE.NAME, NAMESPACE.UPDATED_AT, NamespacePojo.class);
 
         this.jooqFTSHelper = jooqFTSHelper;
     }
