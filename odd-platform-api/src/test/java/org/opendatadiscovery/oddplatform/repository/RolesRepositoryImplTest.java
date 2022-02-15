@@ -95,7 +95,7 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         assertTrue(testRoleListNames.containsAll(getListNames(savedRoleList)));
 
         //updated roles
-        for (final RolePojo rolePojo: savedRoleList){
+        for (final RolePojo rolePojo : savedRoleList) {
             rolePojo.setName(UUID.randomUUID().toString());
         }
         final List<String> newRoleListNames = getListNames(savedRoleList);
@@ -179,7 +179,7 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         return testRolePojo;
     }
 
-    private List<String> getListNames(List<RolePojo> testRoleList) {
+    private List<String> getListNames(final List<RolePojo> testRoleList) {
         return testRoleList.stream().map(RolePojo::getName).toList();
     }
 }
