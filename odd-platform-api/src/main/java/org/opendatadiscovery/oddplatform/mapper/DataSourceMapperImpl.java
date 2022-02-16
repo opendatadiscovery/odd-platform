@@ -49,14 +49,14 @@ public class DataSourceMapperImpl implements DataSourceMapper {
     }
 
     @Nullable
-    private NamespacePojo getNamespacePojo(String namespaceName) {
+    private NamespacePojo getNamespacePojo(final String namespaceName) {
         return StringUtils.isNotEmpty(namespaceName)
                 ? new NamespacePojo().setName(namespaceName)
                 : null;
     }
 
     @Nullable
-    private TokenPojo getTokenPojo(DataSourceUpdateFormData form) {
+    private TokenPojo getTokenPojo(final DataSourceUpdateFormData form) {
         return ObjectUtils.isNotEmpty(form.getToken())
                 ? tokenMapper.mapTokenToPojo(form.getToken())
                 : null;

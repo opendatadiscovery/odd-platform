@@ -1,16 +1,15 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.time.ZoneOffset;
 import org.opendatadiscovery.oddplatform.api.contract.model.Token;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.springframework.stereotype.Component;
-
-import java.time.ZoneOffset;
 
 @Component
 public class TokenMapperImpl implements TokenMapper {
 
     @Override
-    public Token mapPojoToToken(TokenPojo tokenPojo) {
+    public Token mapPojoToToken(final TokenPojo tokenPojo) {
         return new Token()
                 .id(tokenPojo.getId())
                 .name(tokenPojo.getName())
@@ -23,7 +22,7 @@ public class TokenMapperImpl implements TokenMapper {
     }
 
     @Override
-    public TokenPojo mapTokenToPojo(Token token) {
+    public TokenPojo mapTokenToPojo(final Token token) {
         return new TokenPojo()
                 .setId(token.getId())
                 .setName(token.getName())

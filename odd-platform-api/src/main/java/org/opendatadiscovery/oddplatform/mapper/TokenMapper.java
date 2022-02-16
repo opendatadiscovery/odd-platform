@@ -5,5 +5,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 
 public interface TokenMapper {
     Token mapPojoToToken(TokenPojo pojo);
+
     TokenPojo mapTokenToPojo(Token token);
 }

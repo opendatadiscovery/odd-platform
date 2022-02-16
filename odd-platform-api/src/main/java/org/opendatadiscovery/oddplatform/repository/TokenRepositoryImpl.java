@@ -33,13 +33,13 @@ public class TokenRepositoryImpl implements TokenRepository {
     }
 
     @Override
-    public TokenPojo updateTokenValue(TokenPojo tokenPojo) {
+    public TokenPojo updateTokenValue(final TokenPojo tokenPojo) {
         final Condition checkIfExistsCondition = TOKEN.ID.eq(tokenPojo.getId());
         return persistToken(tokenPojo, checkIfExistsCondition);
     }
 
-    private TokenPojo persistToken(TokenPojo tokenPojo, Condition checkIfExistsCondition) {
-        String username = authIdentityProvider.getUsername().map(u -> u).block();
+    private TokenPojo persistToken(final TokenPojo tokenPojo, final Condition checkIfExistsCondition) {
+        final String username = authIdentityProvider.getUsername().map(u -> u).block();
         return dslContext.selectFrom(TOKEN)
                 .where(checkIfExistsCondition)
                 .fetchOptionalInto(TokenPojo.class)

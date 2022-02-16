@@ -128,8 +128,10 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
 
         final DataSourcePojo dsPojo = dto.dataSource();
 
-        final Condition checkIfExistsCondition = dsPojo.getConnectionUrl() != null && !dsPojo.getConnectionUrl().isEmpty()
-            ? DATA_SOURCE.CONNECTION_URL.eq(dsPojo.getConnectionUrl()) : DATA_SOURCE.ODDRN.eq(dsPojo.getOddrn());
+        final boolean isConnectionUrlExists = dsPojo.getConnectionUrl() != null && !dsPojo.getConnectionUrl().isEmpty();
+        final Condition checkIfExistsCondition = isConnectionUrlExists
+                ? DATA_SOURCE.CONNECTION_URL.eq(dsPojo.getConnectionUrl())
+                : DATA_SOURCE.ODDRN.eq(dsPojo.getOddrn());
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(checkIfExistsCondition)
@@ -275,11 +277,20 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             .execute();
     }
 
-    private DataSourceDto persist(final DataSourcePojo dataSource, final NamespacePojo namespace, final TokenPojo token) {
+    private DataSourceDto persist(
+            final DataSourcePojo dataSource,
+            final NamespacePojo namespace,
+            final TokenPojo token
+    ) {
         return persist(null, dataSource, namespace, token);
     }
 
-    private DataSourceDto persist(final Long dsId, final DataSourcePojo dataSource, final NamespacePojo namespace, final TokenPojo token) {
+    private DataSourceDto persist(
+            final Long dsId,
+            final DataSourcePojo dataSource,
+            final NamespacePojo namespace,
+            final TokenPojo token
+    ) {
         final DataSourceRecord record = pojoToRecord(dataSource);
 
         record.set(DATA_SOURCE.IS_DELETED, false);
@@ -325,7 +336,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             jooqRecordHelper.remapCte(record, dataSourceCteName, DATA_SOURCE).into(DataSourcePojo.class),
             record.into(NAMESPACE).into(NamespacePojo.class),
             record.into(TOKEN).map((map) -> {
-                String value = map.get(TOKEN.VALUE);
+                final String value = map.get(TOKEN.VALUE);
                 map.setValue(TOKEN.VALUE, value.isEmpty() ? "******" : "******" + value.substring(value.length() - 6));
                 return map;
             }).into(TokenPojo.class)
