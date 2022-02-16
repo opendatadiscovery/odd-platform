@@ -21,6 +21,7 @@ export const EditForm = styled('form')(() => ({
 }));
 
 export const ValueContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
   padding: theme.spacing(0.5),
   border: '1px solid',
   borderColor: 'transparent',
@@ -43,7 +44,7 @@ export const FormActionBtns = styled('div')(({ theme }) => ({
 export const Actions = styled('div')(({ theme }) => ({
   opacity: 0,
   marginLeft: theme.spacing(0.5),
-  display: 'inline',
+  display: 'flex',
 }));
 
 export const Container = styled(Grid)(() => ({
@@ -58,14 +59,22 @@ export const Value = styled(Typography)<TypographyProps>(() => ({
   wordBreak: 'break-word',
   maxHeight: '5rem',
   overflow: 'auto',
+  '& > p': {
+    maxWidth: '200px',
+  },
 }));
 
 export const Pre = styled('pre')<{
-  $isOpened?: boolean;
-}>(({ $isOpened }) => ({
+  $isOpened: boolean;
+}>(({ theme, $isOpened }) => ({
+  margin: 0,
   maxWidth: '389px',
   maxHeight: $isOpened ? 'none' : '60px',
-  // whiteSpace: 'pre-wrap',
-  overflowX: 'auto',
   overflowY: 'scroll',
+  fontSize: theme.typography.body1.fontSize,
+  lineHeight: theme.typography.body1.lineHeight,
+  fontWeight: theme.typography.body1.fontWeight,
+  fontFamily: theme.typography.body1.fontFamily,
 }));
+
+export const ValueLeftContainer = styled('div')(() => ({}));

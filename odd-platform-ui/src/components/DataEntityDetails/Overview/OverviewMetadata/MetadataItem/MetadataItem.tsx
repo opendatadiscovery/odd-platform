@@ -129,7 +129,24 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
           </FormProvider>
         ) : (
           <S.ValueContainer>
-            <S.Value variant="body1">{metadataVal}</S.Value>
+            <S.ValueLeftContainer>
+              <S.Value variant="body1">{metadataVal}</S.Value>
+              {isJSON && (
+                <AppButton
+                  size="small"
+                  color="tertiary"
+                  sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
+                  onClick={() => setIsJSONOpened(!isJSONOpened)}
+                  endIcon={
+                    <DropdownIcon
+                      transform={isJSONOpened ? 'rotate(180deg)' : 'none'}
+                    />
+                  }
+                >
+                  {isJSONOpened ? 'Hide' : `Show All`}
+                </AppButton>
+              )}
+            </S.ValueLeftContainer>
             {isCustom ? (
               <S.Actions>
                 <AppIconButton
@@ -162,21 +179,6 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 />
               </S.Actions>
             ) : null}
-            {isJSON && (
-              <AppButton
-                size="small"
-                color="tertiary"
-                sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
-                onClick={() => setIsJSONOpened(!isJSONOpened)}
-                endIcon={
-                  <DropdownIcon
-                    transform={isJSONOpened ? 'rotate(180deg)' : 'none'}
-                  />
-                }
-              >
-                {isJSONOpened ? 'Hide' : `Show All`}
-              </AppButton>
-            )}
           </S.ValueContainer>
         )}
       </Grid>
