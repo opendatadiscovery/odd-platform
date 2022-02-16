@@ -106,9 +106,7 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
-        final OwnershipPojo ownershipPojo = new OwnershipPojo();
-        ownershipPojo.setDataEntityId(dataEntityPojo.getId());
-        ownershipPojo.setOwnerId(ownerPojo.getId());
+        final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojo.getId());
         ownershipRepository.create(ownershipPojo);
 
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
@@ -163,9 +161,7 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
             ));
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
-        final OwnershipPojo ownershipPojo = new OwnershipPojo();
-        ownershipPojo.setDataEntityId(dataEntityPojos.get(2).getId());
-        ownershipPojo.setOwnerId(ownerPojo.getId());
+        final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId());
         ownershipRepository.create(ownershipPojo);
 
         final LineagePojo firstLineagePojo =
@@ -189,8 +185,61 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
             .hasSize(2)
             .extracting(AlertDto::getAlert)
             .containsOnly(
-                findAlertByEntityOddrn(alerts, dataEntityPojos.get(0).getOddrn()),
-                findAlertByEntityOddrn(alerts, dataEntityPojos.get(1).getOddrn())
+                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(0).getOddrn()),
+                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(1).getOddrn())
+            );
+    }
+
+    @Test
+    public void listDependentObjectsAlertsMultipleEntitiesTest() {
+        final List<DataEntityPojo> dataEntityPojos = dataEntityRepository.bulkCreate(
+            List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
+                new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
+                new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
+                new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
+                new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
+                new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
+                new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
+                new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
+            ));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
+        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId()));
+        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(5).getId()));
+        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(6).getId()));
+
+        lineageRepository.replaceLineagePaths(List.of(
+            createLineagePojo(dataEntityPojos.get(0).getOddrn(), dataEntityPojos.get(2).getOddrn()),
+            createLineagePojo(dataEntityPojos.get(2).getOddrn(), dataEntityPojos.get(3).getOddrn()),
+            createLineagePojo(dataEntityPojos.get(3).getOddrn(), dataEntityPojos.get(5).getOddrn()),
+            createLineagePojo(dataEntityPojos.get(5).getOddrn(), dataEntityPojos.get(7).getOddrn()),
+            createLineagePojo(dataEntityPojos.get(1).getOddrn(), dataEntityPojos.get(4).getOddrn()),
+            createLineagePojo(dataEntityPojos.get(4).getOddrn(), dataEntityPojos.get(5).getOddrn()),
+            createLineagePojo(dataEntityPojos.get(4).getOddrn(), dataEntityPojos.get(6).getOddrn())
+        ));
+
+        final Collection<AlertPojo> alerts = alertRepository.createAlerts(List.of(
+            createAlertPojo(dataEntityPojos.get(0).getOddrn()), createAlertPojo(dataEntityPojos.get(1).getOddrn()),
+            createAlertPojo(dataEntityPojos.get(2).getOddrn()), createAlertPojo(dataEntityPojos.get(3).getOddrn()),
+            createAlertPojo(dataEntityPojos.get(4).getOddrn()), createAlertPojo(dataEntityPojos.get(5).getOddrn()),
+            createAlertPojo(dataEntityPojos.get(6).getOddrn()), createAlertPojo(dataEntityPojos.get(7).getOddrn()),
+            createAlertPojo(dataEntityPojos.get(0).getOddrn(), AlertStatusEnum.RESOLVED),
+            createAlertPojo(dataEntityPojos.get(4).getOddrn(), AlertStatusEnum.RESOLVED)
+        ));
+
+        final Page<AlertDto> alertDtoPage = alertRepository.listDependentObjectsAlerts(1, 10, ownerPojo.getId());
+        assertThat(alertDtoPage.getData())
+            .hasSize(4)
+            .extracting(AlertDto::getDataEntity)
+            .containsOnly(dataEntityPojos.get(0), dataEntityPojos.get(1),
+                dataEntityPojos.get(3), dataEntityPojos.get(4));
+        assertThat(alertDtoPage.getData())
+            .hasSize(4)
+            .extracting(AlertDto::getAlert)
+            .containsOnly(
+                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(0).getOddrn()),
+                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(1).getOddrn()),
+                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(3).getOddrn()),
+                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(4).getOddrn())
             );
     }
 
@@ -213,9 +262,7 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
-        final OwnershipPojo ownershipPojo = new OwnershipPojo();
-        ownershipPojo.setDataEntityId(dataEntityPojo.getId());
-        ownershipPojo.setOwnerId(ownerPojo.getId());
+        final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojo.getId());
         ownershipRepository.create(ownershipPojo);
 
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
@@ -237,9 +284,7 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
             ));
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
-        final OwnershipPojo ownershipPojo = new OwnershipPojo();
-        ownershipPojo.setDataEntityId(dataEntityPojos.get(2).getId());
-        ownershipPojo.setOwnerId(ownerPojo.getId());
+        final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId());
         ownershipRepository.create(ownershipPojo);
 
         final LineagePojo firstLineagePojo =
@@ -289,10 +334,18 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
             .setEstablisherOddrn(parentOddrn);
     }
 
-    private AlertPojo findAlertByEntityOddrn(final Collection<AlertPojo> alerts, final String entityOddrn) {
+    private AlertPojo findOpenAlertByEntityOddrn(final Collection<AlertPojo> alerts, final String entityOddrn) {
         return alerts.stream()
-            .filter(a -> a.getDataEntityOddrn().equals(entityOddrn))
+            .filter(a -> a.getDataEntityOddrn().equals(entityOddrn)
+                && a.getStatus().equals(AlertStatusEnum.OPEN.name()))
             .findFirst()
             .orElseThrow();
+    }
+
+    private OwnershipPojo createOwnershipPojo(final Long ownerId, final Long dataEntityId) {
+        final OwnershipPojo ownershipPojo = new OwnershipPojo();
+        ownershipPojo.setDataEntityId(dataEntityId);
+        ownershipPojo.setOwnerId(ownerId);
+        return ownershipPojo;
     }
 }
