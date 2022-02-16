@@ -16,23 +16,13 @@ To collect data from decentralized sources ODD uses a pull strategy (read more a
 To connect your data sources with the Platform use the [API](https://github.com/opendatadiscovery/odd-platform/tree/main/odd-platform-specification). 
 
 ## End-to-end Data Objects Lineage
-The Platform supports a lineage diagram, so you can easily track movement and change of your data entities. \
-ODD supports the following **data objects**: 
-* Datasets
-* Data sources
-* ETL and ML training jobs and their execution scripts
-* Data representation engines (ML model artifacts and BI dashboards)
-* Data quality tests and their scheduling scripts
-
+*In progress*
 ## End-to-end Microservices Lineage 
-This feature helps trace data provenance of your microservice-based app. \
-ODD represents microservices as objects and shows their lineage as a typical diagram.
+*In progress*
 ## Metadata Storage 
-The Storage gathers metadata about all entities of your system.
+*In progress*
 ### Advanced search 
-In your Platform account you may find any required metadata using the following options:
-* Full-text search
-* Filtering by datasources, owners and tags
+*In progress*
 ## Manual Object Tagging 
 *In progress*
 ## Data Quality Test Results Import
