@@ -29,7 +29,6 @@ tags:
   - name: datasetField
   - name: alert
   - name: appInfo
-  - name: token
 paths:
   /api/identity/whoami:
     get:

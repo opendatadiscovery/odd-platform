@@ -1,12 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -27,6 +20,13 @@ import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRe
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static java.util.function.Predicate.not;
@@ -44,7 +44,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
-import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
 
 @Component
 @RequiredArgsConstructor
@@ -67,9 +66,7 @@ public class JooqFTSHelper {
         Map.entry(DATASET_FIELD.EXTERNAL_DESCRIPTION, "C"),
         Map.entry(LABEL.NAME, "C"),
         Map.entry(ROLE.NAME, "D"),
-        Map.entry(OWNER.NAME, "C"),
-        Map.entry(TOKEN.NAME, "B"),
-        Map.entry(TOKEN.VALUE, "D")
+        Map.entry(OWNER.NAME, "C")
     );
 
     private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
