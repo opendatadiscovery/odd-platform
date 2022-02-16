@@ -18,6 +18,8 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import * as S from './MetadataItemStyles';
+import CopyButton from '../../../../shared/CopyButton/CopyButton';
+import DropdownIcon from '../../../../shared/Icons/DropdownIcon';
 
 interface MetadataItemProps {
   dataEntityId: number;
@@ -57,6 +59,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
     });
   const [isJSONOpened, setIsJSONOpened] = useState(false);
   let metadataVal;
+  let JSONVal;
   try {
     switch (metadataItem.field.type) {
       case MetadataFieldType.BOOLEAN:
@@ -69,18 +72,8 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
         metadataVal = JSON.parse(metadataItem.value).join(', ');
         break;
       case MetadataFieldType.JSON:
-        metadataVal = (
-          <>
-            <S.Pre $isOpened={false}>
-              {JSON.stringify(JSON.parse(metadataItem.value), null, 2)}
-            </S.Pre>
-            {isJSONOpened && (
-              <S.Pre $isOpened>
-                {JSON.stringify(JSON.parse(metadataItem.value), null, 2)}
-              </S.Pre>
-            )}
-          </>
-        );
+        JSONVal = JSON.stringify(JSON.parse(metadataItem.value), null, 2);
+        metadataVal = <S.Pre $isOpened={isJSONOpened}>{JSONVal}</S.Pre>;
         break;
       default:
         metadataVal = metadataItem.value;
@@ -147,7 +140,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                     setEditMode(true);
                   }}
                 />
-                {/* {isJSON && <CopyButton />} */}
+                {JSONVal && <CopyButton stringToCopy={JSONVal} />}
                 <ConfirmationDialog
                   actionTitle="Are you sure you want to delete this Metadata?"
                   actionName="Delete Metadata"
@@ -175,6 +168,11 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 color="tertiary"
                 sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
                 onClick={() => setIsJSONOpened(!isJSONOpened)}
+                endIcon={
+                  <DropdownIcon
+                    transform={isJSONOpened ? 'rotate(180deg)' : 'none'}
+                  />
+                }
               >
                 {isJSONOpened ? 'Hide' : `Show All`}
               </AppButton>
