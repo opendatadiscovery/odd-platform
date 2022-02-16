@@ -29,4 +29,4 @@ Pull model is preferred when:
 
 ### Push strategy
 
-Push strategy supports a process where individual metadata providers push the information to the central ODD repository. This strategy solves a problem of immediate data receiving from ETL / ELT engines that have no public APIs. The Push is more preferred for use cases like Airflow job runs and quality check runs.
+Push strategy supports a process where individual metadata providers push the information to the central ODD repository. This strategy solves a problem of immediate data receiving from ETL / ELT engines that have no public APIs or if a data collecting function is not available through the existing API. The Push is more preferred for use cases like Airflow job runs and quality check runs.
