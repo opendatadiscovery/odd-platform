@@ -1,5 +1,8 @@
 package org.opendatadiscovery.oddplatform.dto;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -11,10 +14,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPoj
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
