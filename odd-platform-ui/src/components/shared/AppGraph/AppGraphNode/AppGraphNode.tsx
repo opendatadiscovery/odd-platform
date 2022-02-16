@@ -382,7 +382,10 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
       {!hasChildren && showLoadMore && (
         <LoadMoreButton
           ref={n => {
-            if (n) loadMoreRef = n;
+            if (n) {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              loadMoreRef = n;
+            }
           }}
           transform={loadMoreTransformTranslate}
           onClick={loadMoreButtonHandler}

@@ -4,8 +4,7 @@ import {
   tabsContainerMargin,
   toolbarHeight,
 } from 'lib/constants';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 import {
   ColType,
   colWidthStyles,
@@ -19,9 +18,7 @@ export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
   borderBottomColor: theme.palette.divider,
 }));
 
-export const ColContainer = styled(Grid, {
-  shouldForwardProp: propsChecker,
-})<{
+export const ColContainer = styled(Grid)<{
   $colType: ColType;
 }>(({ $colType }) => ({
   ...colWidthStyles.col,

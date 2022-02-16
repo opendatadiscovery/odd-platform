@@ -1,4 +1,3 @@
-import { DataEntityLineageNode } from 'generated-sources';
 import { HierarchyPointNode } from 'd3-hierarchy';
 import { GroupedDataEntityLineageNode } from 'redux/interfaces/dataentityLineage';
 

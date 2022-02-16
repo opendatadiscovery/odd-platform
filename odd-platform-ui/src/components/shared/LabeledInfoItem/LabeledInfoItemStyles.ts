@@ -1,6 +1,5 @@
 import { Grid, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 import { DataQualityTestRunStatus } from 'generated-sources';
 
 interface ValueProps {
@@ -11,16 +10,11 @@ interface ValueProps {
   $valueLineHeight?: number;
 }
 
-export const Container = styled(Grid, {
-  shouldForwardProp: propsChecker,
-})<{
+export const Container = styled(Grid)<{
   $inline?: boolean;
-  $borderTop: boolean;
-}>(({ $inline, $borderTop }) => {
-  const sharedStyles = { ...($borderTop && { borderTop: '1px solid' }) };
+}>(({ $inline }) => {
   if ($inline)
     return {
-      ...sharedStyles,
       display: 'flex',
       flexDirection: 'row',
       flexWrap: 'nowrap',
@@ -28,7 +22,6 @@ export const Container = styled(Grid, {
     };
 
   return {
-    ...sharedStyles,
     alignItems: 'flex-start',
     flexDirection: 'column',
   };
@@ -40,12 +33,15 @@ export const Label = styled(Typography)<{ component: React.ElementType }>(
     color: theme.palette.texts.secondary,
     lineHeight: theme.typography.h3.lineHeight,
     overflow: 'hidden',
+    width: 'inherit',
   })
 );
 
-export const Value = styled(Typography, {
-  shouldForwardProp: propsChecker,
-})<ValueProps>(
+export const LabelContainer = styled(Grid)(() => ({
+  width: '100%',
+}));
+
+export const Value = styled(Typography)<ValueProps>(
   ({ theme, $runStatus, $valueColor, $inline, $valueLineHeight }) => ({
     wordBreak: 'break-all',
     overflow: 'hidden',

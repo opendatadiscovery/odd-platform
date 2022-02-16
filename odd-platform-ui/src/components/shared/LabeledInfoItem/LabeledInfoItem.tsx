@@ -4,18 +4,17 @@ import { DataQualityTestRunStatus } from 'generated-sources';
 import * as S from './LabeledInfoItemStyles';
 
 interface LabeledInfoItemProps {
-  inline: boolean;
-  label: string;
-  variant: TypographyProps['variant'];
-  labelWidth: GridSize;
-  runStatus: DataQualityTestRunStatus;
-  valueColor: string;
-  valueLineHeight: number;
-  valueWrap: boolean;
-  borderTop: boolean;
+  inline?: boolean;
+  label: string | React.ReactNode;
+  variant?: TypographyProps['variant'];
+  labelWidth?: GridSize;
+  runStatus?: DataQualityTestRunStatus;
+  valueColor?: string;
+  valueLineHeight?: number;
+  valueWrap?: boolean;
 }
 
-const LabeledInfoItem: React.FC<Partial<LabeledInfoItemProps>> = ({
+const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   inline,
   label,
   variant = 'body1',
@@ -25,37 +24,42 @@ const LabeledInfoItem: React.FC<Partial<LabeledInfoItemProps>> = ({
   valueColor,
   valueLineHeight,
   valueWrap = false,
-  borderTop = false,
-}) => (
-  <S.Container container $inline={inline} $borderTop={borderTop}>
-    <Grid item xs={labelWidth || 'auto'}>
-      <S.Label title={label} variant={variant} noWrap component="span">
-        {label}
-      </S.Label>
-    </Grid>
-    <Grid
-      item
-      xs={
-        typeof labelWidth === 'number'
-          ? ((12 - labelWidth) as GridSize)
-          : 'auto'
-      }
-      style={{ width: '100%' }}
-    >
-      <S.Value
-        $runStatus={runStatus}
-        $valueColor={valueColor}
-        $inline={inline}
-        $valueLineHeight={valueLineHeight}
-        variant={variant}
-        component="span"
-        noWrap={!valueWrap}
-        title={children?.toString()}
-      >
-        {children}
-      </S.Value>
-    </Grid>
-  </S.Container>
-);
+}) => {
+  const getXS = () => {
+    if (labelWidth === 12) return 12;
+    if (typeof labelWidth === 'number')
+      return (12 - labelWidth) as GridSize;
+    return 'auto';
+  };
+  return (
+    <S.Container container $inline={inline}>
+      <S.LabelContainer item xs={labelWidth || 'auto'}>
+        <S.Label
+          title={typeof label === 'string' ? label : ''}
+          variant={variant}
+          noWrap
+          component="span"
+        >
+          {label}
+        </S.Label>
+      </S.LabelContainer>
+
+      <Grid item xs={getXS()} sx={{ width: '100%' }}>
+        <S.Value
+          $runStatus={runStatus}
+          $valueColor={valueColor}
+          $inline={inline}
+          $valueLineHeight={valueLineHeight}
+          variant={variant}
+          component="span"
+          noWrap={!valueWrap}
+          title={children?.toString()}
+        >
+          {children}
+        </S.Value>
+      </Grid>
+    </S.Container>
+  );
+};
 
 export default LabeledInfoItem;

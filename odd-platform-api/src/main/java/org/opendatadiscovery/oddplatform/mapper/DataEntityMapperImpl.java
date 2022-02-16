@@ -408,14 +408,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private DataEntityRef mapReference(final DataEntityDto dto) {
-        final DataEntityPojo pojo = dto.getDataEntity();
-
-        final List<DataEntityType> types = DataEntityTypeDto.findByIds(dto.getDataEntity().getTypeIds())
-            .stream()
-            .map(this::mapType)
-            .toList();
-
-        return mapReference(pojo).hasAlerts(dto.isHasAlerts());
+        return mapReference(dto.getDataEntity()).hasAlerts(dto.isHasAlerts());
     }
 
     private DataEntityRef mapReference(final DataEntityPojo pojo) {

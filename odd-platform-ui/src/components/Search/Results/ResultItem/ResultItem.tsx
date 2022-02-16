@@ -7,7 +7,10 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { dataEntityDetailsPath } from 'lib/paths';
 import TruncatedCell from 'components/shared/TruncatedCell/TruncatedCell';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import { ColContainer } from 'components/Search/Results/ResultsStyles';
+import {
+  ColContainer,
+  NameContainer,
+} from 'components/Search/Results/ResultsStyles';
 import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { Container, ItemLink } from './ResultItemStyles';
@@ -24,6 +27,15 @@ const ResultItem: React.FC<ResultItemProps> = ({
   totals,
 }) => {
   const detailsLink = dataEntityDetailsPath(searchResult.id);
+  const ResultItemPreview = React.useCallback(
+    ({ open }) => (
+      <ResultItemPreviewContainer
+        dataEntityId={searchResult.id}
+        fetchData={open}
+      />
+    ),
+    []
+  );
 
   return (
     <ItemLink to={detailsLink}>
@@ -35,13 +47,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
           justifyContent="space-between"
           wrap="nowrap"
         >
-          <ColContainer
-            $colType="col"
-            container
-            item
-            justifyContent="flex-start"
-            wrap="nowrap"
-          >
+          <NameContainer container item>
             <Typography
               variant="body1"
               noWrap
@@ -53,19 +59,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </Typography>
             <AppTooltip
               maxWidth={285}
-              sx={{ ml: 1.25, pr: 0.25 }}
               checkForOverflow={false}
               isOverflowed={false}
-              title={({ open }) => (
-                <ResultItemPreviewContainer
-                  dataEntityId={searchResult.id}
-                  fetchData={open}
-                />
-              )}
+              title={ResultItemPreview}
             >
-              <InformationIcon sx={{ display: 'flex' }} />
+              <InformationIcon sx={{ display: 'flex', ml: 1.25 }} />
             </AppTooltip>
-          </ColContainer>
+          </NameContainer>
           <Grid
             container
             item

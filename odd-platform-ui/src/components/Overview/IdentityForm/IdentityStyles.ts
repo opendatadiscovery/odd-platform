@@ -1,5 +1,5 @@
 import { Grid, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { maxIdentityFormContentWidth } from 'lib/constants';
 
 export const Container = styled('div')(({ theme }) => ({

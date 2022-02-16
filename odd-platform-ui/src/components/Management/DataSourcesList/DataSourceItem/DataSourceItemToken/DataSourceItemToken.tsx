@@ -8,6 +8,7 @@ import * as S from 'components/Management/DataSourcesList/DataSourceItem/DataSou
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
+import CopyButton from 'components/shared/CopyButton/CopyButton';
 
 interface DataSourceItemProps {
   dataSource: DataSource;
@@ -20,7 +21,6 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
   dataSource,
   updateDataSource,
 }) => {
-  const [isCopied, setIsCopied] = useState(false);
   const [isHidden, setIsHidden] = useState(
     isBefore(dataSource.token.updatedAt, subSeconds(new Date(), 1))
   );
@@ -37,19 +37,6 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
     );
     setIsHidden(isBefore(updatedAtUTC, subSeconds(new Date(), 1)));
   }, [dataSource]);
-
-  const onCopy = React.useCallback(
-    () =>
-      navigator.clipboard
-        .writeText(dataSource.token.value)
-        .then(() => setIsCopied(true))
-        .finally(() =>
-          setTimeout(() => {
-            setIsCopied(false);
-          }, 1500)
-        ),
-    [dataSource]
-  );
 
   const onTokenRegenerate = React.useCallback(
     () =>
@@ -86,9 +73,7 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
           }
         />
       ) : (
-        <AppButton size="medium" color="primaryLight" onClick={onCopy}>
-          {isCopied ? 'Copied' : 'Copy'}
-        </AppButton>
+        <CopyButton stringToCopy={dataSource.token.value} text="Copy" />
       )}
     </S.TokenContainer>
   );

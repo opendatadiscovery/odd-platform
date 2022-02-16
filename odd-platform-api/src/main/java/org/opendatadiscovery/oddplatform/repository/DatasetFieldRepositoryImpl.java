@@ -58,7 +58,8 @@ public class DatasetFieldRepositoryImpl
                                       final JooqQueryHelper jooqQueryHelper,
                                       final JooqFTSHelper jooqFTSHelper,
                                       final LabelRepository labelRepository) {
-        super(dslContext, jooqQueryHelper, DATASET_FIELD, DATASET_FIELD.ID, DATASET_FIELD.NAME, DatasetFieldPojo.class);
+        super(dslContext, jooqQueryHelper, DATASET_FIELD, DATASET_FIELD.ID, DATASET_FIELD.NAME,
+            null, DatasetFieldPojo.class);
 
         this.jooqFTSHelper = jooqFTSHelper;
         this.labelRepository = labelRepository;

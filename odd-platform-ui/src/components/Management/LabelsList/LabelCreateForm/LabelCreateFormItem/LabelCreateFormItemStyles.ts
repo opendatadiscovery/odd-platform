@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const LabelItemButtons = styled(Box)(({ theme }) => ({
   display: 'flex',

@@ -4,7 +4,7 @@ import {
   DataSource,
   DataSourceApiGetDataSourceListRequest,
 } from 'generated-sources';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddIcon from 'components/shared/Icons/AddIcon';
@@ -25,7 +25,6 @@ interface DataSourcesListProps {
   fetchDataSourcesList: (
     params: DataSourceApiGetDataSourceListRequest
   ) => void;
-  isCreating: boolean;
   isDeleting: boolean;
   pageInfo?: CurrentPageInfo;
   isDataSourcesListFetching: boolean;

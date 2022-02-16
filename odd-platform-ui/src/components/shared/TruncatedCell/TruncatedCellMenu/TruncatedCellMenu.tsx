@@ -1,11 +1,12 @@
 import React from 'react';
-import { MenuItem, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
 import MoreIcon from 'components/shared/Icons/MoreIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import * as S from './TruncatedCellMenuStyles';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import AppMenu from 'components/shared/AppMenu/AppMenu';
 
 interface TruncatedCellMenuProps {
   dataList: DataEntityRef[] | string[] | undefined;
@@ -40,10 +41,10 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
         onClick={handleMenuOpen}
         height={20}
       />
-      <S.ListMenu
+      <AppMenu
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+        transformOrigin={{ vertical: -4, horizontal: 'left' }}
         id={`menu-${menuId}`}
         keepMounted
         open={open}
@@ -51,10 +52,12 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
           'aria-labelledby': 'menu-open-btn',
         }}
         onClose={handleMenuClose}
+        maxHeight={300}
+        maxWidth={240}
       >
         {dataList?.map((item: DataEntityRef | string) =>
           typeof item === 'string' ? (
-            <MenuItem key={item}>{item}</MenuItem>
+            <AppMenuItem key={item}>{item}</AppMenuItem>
           ) : (
             <Link
               key={item.id}
@@ -62,7 +65,7 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
               target="_blank"
               onClick={handleMenuClose}
             >
-              <MenuItem>
+              <AppMenuItem>
                 <Typography
                   variant="body1"
                   color="texts.action"
@@ -71,11 +74,11 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
                 >
                   {item.internalName || item.externalName}
                 </Typography>
-              </MenuItem>
+              </AppMenuItem>
             </Link>
           )
         )}
-      </S.ListMenu>
+      </AppMenu>
     </>
   );
 };

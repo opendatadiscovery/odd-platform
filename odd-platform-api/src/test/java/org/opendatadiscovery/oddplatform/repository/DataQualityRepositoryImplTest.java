@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -12,9 +13,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPoj
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DataQualityRepositoryImplTest extends BaseIntegrationTest {
 
@@ -54,20 +53,25 @@ public class DataQualityRepositoryImplTest extends BaseIntegrationTest {
             dataQualityRepository.getDataQualityTestRuns(entityId, DataQualityTestRunStatus.SUCCESS,
                 1, 5);
 
-        assertEquals(5, page.getData().size());
-        assertTrue(page.getData().stream()
-            .allMatch(p -> p.getStatus().equals(DataQualityTestRunStatus.SUCCESS.name())));
-        assertEquals(8, page.getTotal());
-        assertTrue(page.isHasNext());
+        assertThat(page.getData())
+            .hasSize(5)
+            .isSortedAccordingTo(Comparator.comparing(DataEntityTaskRunPojo::getStartTime).reversed())
+            .extracting(DataEntityTaskRunPojo::getStatus)
+            .containsOnly(IngestionTaskRun.IngestionTaskRunStatus.SUCCESS.name());
+        assertThat(page.getTotal()).isEqualTo(8);
+        assertThat(page.isHasNext()).isTrue();
 
         final Page<DataEntityTaskRunPojo> secondPage =
             dataQualityRepository.getDataQualityTestRuns(entityId, DataQualityTestRunStatus.SUCCESS,
                 2, 5);
-        assertEquals(3, secondPage.getData().size());
-        assertTrue(secondPage.getData().stream()
-            .allMatch(p -> p.getStatus().equals(DataQualityTestRunStatus.SUCCESS.name())));
-        assertEquals(8, secondPage.getTotal());
-        assertFalse(secondPage.isHasNext());
+
+        assertThat(secondPage.getData())
+            .hasSize(3)
+            .isSortedAccordingTo(Comparator.comparing(DataEntityTaskRunPojo::getStartTime).reversed())
+            .extracting(DataEntityTaskRunPojo::getStatus)
+            .containsOnly(IngestionTaskRun.IngestionTaskRunStatus.SUCCESS.name());
+        assertThat(secondPage.getTotal()).isEqualTo(8);
+        assertThat(secondPage.isHasNext()).isFalse();
     }
 
     private DataEntityPojo createDataEntity() {

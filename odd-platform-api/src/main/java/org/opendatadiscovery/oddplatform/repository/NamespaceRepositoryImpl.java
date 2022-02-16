@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.List;
+import java.util.Optional;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -29,7 +30,7 @@ public class NamespaceRepositoryImpl
                                    final JooqQueryHelper jooqQueryHelper,
                                    final JooqFTSHelper jooqFTSHelper) {
         super(dslContext, jooqQueryHelper, NAMESPACE, NAMESPACE.ID, NAMESPACE.IS_DELETED, NAMESPACE.NAME,
-            NAMESPACE.NAME, NamespacePojo.class);
+            NAMESPACE.NAME, NAMESPACE.UPDATED_AT, NamespacePojo.class);
 
         this.jooqFTSHelper = jooqFTSHelper;
     }
@@ -37,9 +38,6 @@ public class NamespaceRepositoryImpl
     @Override
     @Transactional
     public NamespacePojo create(final NamespacePojo pojo) {
-        // TODO: finish after below issues are fixed
-        //  https://github.com/opendatadiscovery/odd-platform/issues/151
-        //  https://github.com/opendatadiscovery/odd-platform/issues/150
         return super.create(pojo);
     }
 
@@ -53,11 +51,16 @@ public class NamespaceRepositoryImpl
 
     @Override
     public NamespacePojo createIfNotExists(final NamespacePojo namespacePojo) {
+        return getByName(namespacePojo.getName())
+            .orElseGet(() -> super.create(namespacePojo));
+    }
+
+    @Override
+    public Optional<NamespacePojo> getByName(final String name) {
         return dslContext
             .selectFrom(NAMESPACE)
-            .where(addSoftDeleteFilter(NAMESPACE.NAME.eq(namespacePojo.getName())))
-            .fetchOptionalInto(NamespacePojo.class)
-            .orElseGet(() -> super.create(namespacePojo));
+            .where(addSoftDeleteFilter(NAMESPACE.NAME.eq(name)))
+            .fetchOptionalInto(NamespacePojo.class);
     }
 
     private void updateSearchVectors(final long namespaceId) {

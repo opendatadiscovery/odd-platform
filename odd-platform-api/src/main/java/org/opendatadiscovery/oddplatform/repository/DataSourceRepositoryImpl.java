@@ -1,5 +1,11 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
@@ -23,12 +29,6 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
@@ -270,6 +270,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     public void injectOddrn(final long id, final String oddrn) {
         dslContext.update(DATA_SOURCE)
             .set(DATA_SOURCE.ODDRN, oddrn)
+            .set(DATA_SOURCE.UPDATED_AT, LocalDateTime.now())
             .where(DATA_SOURCE.ID.eq(id))
             .execute();
     }
@@ -286,6 +287,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         if (dsId != null) {
             record.set(DATA_SOURCE.ID, dsId);
             record.changed(DATA_SOURCE.ID, false);
+            record.set(DATA_SOURCE.UPDATED_AT, LocalDateTime.now());
         }
 
         if (namespace != null) {

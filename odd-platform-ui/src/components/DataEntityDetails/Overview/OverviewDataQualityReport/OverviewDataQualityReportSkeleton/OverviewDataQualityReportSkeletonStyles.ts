@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import { styled } from '@mui/styles';
+import styled from 'styled-components';
 
 export const ReportSkeleton = styled(Grid)(() => ({
   height: '28px',

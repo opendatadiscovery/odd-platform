@@ -19,7 +19,6 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
-  MenuItem,
   RadioGroup,
   Typography,
 } from '@mui/material';
@@ -29,6 +28,7 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormStyles';
 import NamespaceAutocompleteContainer from 'components/Management/DataSourcesList/DataSourceForm/NamespaceAutocomplete/NamespaceAutocompleteContainer';
 import AppRadio from 'components/shared/AppRadio/AppRadio';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 
 interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -296,21 +296,17 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
                   name="pullingInterval.format"
                   control={control}
                   render={({ field }) => (
-                    <>
-                      <AppTextField
-                        {...field}
-                        label="Pulling Interval"
-                        select
-                      >
-                        {['minutes', 'hours', 'days', 'weeks'].map(
-                          value => (
-                            <MenuItem key={value} value={value}>
-                              {capitalize(value)}
-                            </MenuItem>
-                          )
-                        )}
-                      </AppTextField>
-                    </>
+                    <AppTextField
+                      {...field}
+                      label="Pulling Interval"
+                      select
+                    >
+                      {['minutes', 'hours', 'days', 'weeks'].map(value => (
+                        <AppMenuItem key={value} value={value}>
+                          {capitalize(value)}
+                        </AppMenuItem>
+                      ))}
+                    </AppTextField>
                   )}
                 />
               </Grid>

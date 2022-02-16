@@ -14,6 +14,7 @@ updates:
   - dependency-name: react-scripts
     versions:
     - 4.0.3
+    - 5.0.0
   - dependency-name: lodash
     versions:
     - 4.17.21

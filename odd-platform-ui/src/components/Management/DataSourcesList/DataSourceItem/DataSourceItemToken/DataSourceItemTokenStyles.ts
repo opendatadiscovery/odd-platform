@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-export const TokenContainer = styled(Box)(({ theme }) => ({
+export const TokenContainer = styled(Box)(() => ({
   display: 'inline-flex',
 }));
 
@@ -17,5 +17,6 @@ export const Token = styled(Box)<{ isHidden: boolean }>(
     backgroundColor: isHidden
       ? 'transparent'
       : theme.palette.entityType.DATA_INPUT,
+    marginRight: isHidden ? 0 : theme.spacing(1),
   })
 );

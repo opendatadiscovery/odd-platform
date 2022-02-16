@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 interface CrossLinkProps {
   $crossLink?: boolean;
