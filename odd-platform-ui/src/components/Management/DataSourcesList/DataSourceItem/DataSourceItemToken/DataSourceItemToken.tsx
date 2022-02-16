@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
-import { Typography } from '@mui/material';
 import { isBefore, subSeconds } from 'date-fns';
 import {
   DataSource,
-  Token,
-  TokenApiUpdateTokenRequest,
+  DataSourceApiUpdateDataSourceRequest,
 } from 'generated-sources';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import AppButton from 'components/shared/AppButton/AppButton';
 import * as S from 'components/Management/DataSourcesList/DataSourceItem/DataSourceItemToken/DataSourceItemTokenStyles';
+import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
+import { Typography } from '@mui/material';
+import AppButton from 'components/shared/AppButton/AppButton';
 
 interface DataSourceItemProps {
   dataSource: DataSource;
-  updateToken: (params: TokenApiUpdateTokenRequest) => Promise<Token>;
+  updateDataSource: (
+    params: DataSourceApiUpdateDataSourceRequest
+  ) => Promise<DataSource>;
 }
 
 const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
   dataSource,
-  updateToken,
+  updateDataSource,
 }) => {
   const [isCopied, setIsCopied] = useState(false);
   const [isHidden, setIsHidden] = useState(
@@ -52,11 +53,14 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
 
   const onTokenRegenerate = React.useCallback(
     () =>
-      updateToken({
-        tokenId: dataSource.token.id,
-        tokenUpdateFormData: {
-          ...dataSource.token,
-          value: undefined,
+      updateDataSource({
+        dataSourceId: dataSource.id,
+        dataSourceUpdateFormData: {
+          ...dataSource,
+          token: {
+            ...dataSource.token,
+            value: 'null',
+          },
         },
       }),
     [dataSource]

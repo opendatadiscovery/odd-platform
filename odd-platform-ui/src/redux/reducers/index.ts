@@ -3,7 +3,6 @@ import { RootState } from 'redux/interfaces';
 import loader from './loader-reducer';
 import namespaces from './namespace.reducer';
 import dataSources from './datasources.reducer';
-import tokens from './tokens.reducer';
 import dataEntities from './dataentities.reducer';
 import tags from './tags.reducer';
 import labels from './labels.reducer';
@@ -21,7 +20,6 @@ import appInfo from './appInfo.reducer';
 export default combineReducers<RootState>({
   namespaces,
   dataSources,
-  tokens,
   dataEntities,
   search,
   loader,

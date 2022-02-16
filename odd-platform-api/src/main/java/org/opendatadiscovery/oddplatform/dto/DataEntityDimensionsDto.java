@@ -1,8 +1,5 @@
 package org.opendatadiscovery.oddplatform.dto;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,7 +11,10 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPoj
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -22,7 +22,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 @Data
 public class DataEntityDimensionsDto extends DataEntityDto {
     protected NamespacePojo namespace;
-    protected TokenPojo token;
     protected List<OwnershipDto> ownership;
     protected DataSourcePojo dataSource;
     protected Collection<TagPojo> tags;
@@ -40,7 +39,6 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final boolean hasAlerts,
                                    final Map<DataEntityTypeDto, DataEntityAttributes> specificAttributes,
                                    final NamespacePojo namespace,
-                                   final TokenPojo token,
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
                                    final Collection<TagPojo> tags,
@@ -52,7 +50,6 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final DataInputDetailsDto dataInputDetailsDto) {
         super(dataEntity, hasAlerts, specificAttributes);
         this.namespace = namespace;
-        this.token = token;
         this.ownership = ownership;
         this.dataSource = dataSource;
         this.tags = tags;

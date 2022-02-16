@@ -12,7 +12,6 @@ import org.jooq.Table;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.exception.EntityAlreadyExistsException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
-import org.opendatadiscovery.oddplatform.mapper.TokenMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -45,11 +43,10 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
 public class DataSourceRepositoryImpl implements DataSourceRepository {
     private final DSLContext dslContext;
     private final NamespaceRepository namespaceRepository;
-    private final TokenRepository tokenRepository;
     private final JooqQueryHelper jooqQueryHelper;
     private final JooqRecordHelper jooqRecordHelper;
     private final JooqFTSHelper jooqFTSHelper;
-    private final TokenMapper tokenMapper;
+    private final TokenRepository tokenRepository;
 
     @Override
     public Optional<DataSourceDto> get(final long id) {
@@ -127,9 +124,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
-        final TokenPojo token = tokenRepository.create(
-                tokenMapper.mapPojoToDto(dto.token(), dto.dataSource().getName())
-        ).tokenPojo();
+        final TokenPojo token = tokenRepository.createIfNotExists(dto.token());
 
         final DataSourcePojo dsPojo = dto.dataSource();
 
@@ -155,9 +150,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
-        final TokenPojo token = tokenRepository.create(
-                tokenMapper.mapPojoToDto(dto.token(), dto.dataSource().getName())
-        ).tokenPojo();
+        final TokenPojo token = tokenRepository.updateTokenValue(dto.token());
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(DATA_SOURCE.ID.eq(dto.dataSource().getId()))
@@ -330,14 +323,8 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             jooqRecordHelper.remapCte(record, dataSourceCteName, DATA_SOURCE).into(DataSourcePojo.class),
             record.into(NAMESPACE).into(NamespacePojo.class),
             record.into(TOKEN).map((map) -> {
-                if (map.get(TOKEN.UPDATED_AT).isBefore(LocalDateTime.now().minusSeconds(1))) {
-                    String value = map.get(TOKEN.VALUE);
-                    if (value.isEmpty()) {
-                        map.setValue(TOKEN.VALUE, "******");
-                    } else {
-                        map.setValue(TOKEN.VALUE, "******" + value.substring(value.length() - 6));
-                    }
-                }
+                String value = map.get(TOKEN.VALUE);
+                map.setValue(TOKEN.VALUE, value.isEmpty() ? "******" : "******" + value.substring(value.length() - 6));
                 return map;
             }).into(TokenPojo.class)
         );

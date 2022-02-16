@@ -737,6 +737,8 @@ components:
           type: integer
           format: int32
           description: Pulling interval in seconds
+        token:
+          $ref: '#/components/schemas/Token'
 
     Token:
       type: object
@@ -764,43 +766,8 @@ components:
         - id
         - name
         - value
-        - created_by
         - created_at
-        - updated_by
         - updated_at
-
-    TokenList:
-      type: object
-      properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/Token'
-        page_info:
-          $ref: '#/components/schemas/PageInfo'
-      required:
-        - items
-        - page_info
-
-    TokenFormData:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        value:
-          type: string
-
-    TokenUpdateFormData:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        value:
-          type: string
 
     PageInfo:
       type: object

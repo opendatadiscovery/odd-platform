@@ -23,7 +23,6 @@ import {
   Owner,
   Ownership,
   Tag,
-  Token,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -43,12 +42,6 @@ import { LoaderState } from './loader';
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
   allIds: DataSource['id'][];
-  pageInfo?: CurrentPageInfo;
-}
-
-export interface TokensState {
-  byId: { [tokenId: string]: Token };
-  allIds: Token['id'][];
   pageInfo?: CurrentPageInfo;
 }
 
@@ -199,7 +192,6 @@ export interface AppInfoState {
 export type RootState = {
   appInfo: AppInfoState;
   dataSources: DataSourcesState;
-  tokens: TokensState;
   search: SearchState;
   loader: LoaderState;
   dataEntities: DataEntitiesState;

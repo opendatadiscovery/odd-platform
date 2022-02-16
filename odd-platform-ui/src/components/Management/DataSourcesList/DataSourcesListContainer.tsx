@@ -7,7 +7,6 @@ import {
   getIsDatasourceDeleting,
   getIsDataSourcesListFetching,
 } from 'redux/selectors/datasources.selectors';
-import { getTokensList } from 'redux/selectors/tokens.selectors';
 import { fetchDataSourcesList } from 'redux/thunks';
 import DataSourcesListView from './DataSourcesList';
 
@@ -17,7 +16,6 @@ const mapStateToProps = (state: RootState) => ({
   isDeleting: getIsDatasourceDeleting(state),
   pageInfo: getDataSourcesListPage(state),
   isDataSourcesListFetching: getIsDataSourcesListFetching(state),
-  tokensList: getTokensList(state),
 });
 
 const mapDispatchToProps = {
