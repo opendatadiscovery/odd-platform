@@ -582,6 +582,27 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - dataSource
+  /api/datasources/{data_source_id}/regenerateToken:
+    get:
+      summary: Regenerate data source token
+      description: Regenerate data source token
+      operationId: regenerateDataSourceToken
+      parameters:
+        - name: data_source_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSource'
+      tags:
+        - dataSource
   /api/search:
     post:
       summary: Search by query

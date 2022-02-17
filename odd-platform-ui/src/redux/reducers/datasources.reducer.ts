@@ -57,6 +57,7 @@ const reducer = (
         allIds: [action.payload.id, ...state.allIds],
       };
     case getType(actions.updateDataSourceAction.success):
+    case getType(actions.regenerateDataSourceTokenAction.success):
       return {
         ...state,
         byId: {

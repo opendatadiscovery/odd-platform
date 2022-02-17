@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
@@ -24,15 +25,26 @@ public class DataSourceMapperImpl implements DataSourceMapper {
 
     @Override
     public DataSourceDto mapForm(final DataSourceFormData form) {
-        final DataSourcePojo dataSourcePojo = new DataSourcePojo()
-            .setName(form.getName())
-            .setOddrn(form.getOddrn())
-            .setDescription(form.getDescription())
-            .setActive(form.getActive())
-            .setConnectionUrl(form.getConnectionUrl())
-            .setPullingInterval(form.getPullingInterval());
+        return getDataSourceDto(form, null);
+    }
 
-        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), null);
+
+    @Override
+    public DataSourceDto mapForm(final DataSourceFormData form, final TokenPojo tokenPojo) {
+        return getDataSourceDto(form, tokenPojo);
+    }
+
+    @NotNull
+    private DataSourceDto getDataSourceDto(DataSourceFormData form, TokenPojo o) {
+        final DataSourcePojo dataSourcePojo = new DataSourcePojo()
+                .setName(form.getName())
+                .setOddrn(form.getOddrn())
+                .setDescription(form.getDescription())
+                .setActive(form.getActive())
+                .setConnectionUrl(form.getConnectionUrl())
+                .setPullingInterval(form.getPullingInterval());
+
+        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), o);
     }
 
     @Override

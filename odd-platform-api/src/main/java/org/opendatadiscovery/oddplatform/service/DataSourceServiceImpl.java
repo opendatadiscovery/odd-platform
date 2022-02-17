@@ -6,9 +6,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateFormData;
+import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataSourceMapper;
 import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
+import org.opendatadiscovery.oddplatform.repository.TokenRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -21,9 +24,19 @@ public class DataSourceServiceImpl
         DataSourceDto, DataSourceMapper, DataSourceRepository>
     implements DataSourceService {
 
+    private final TokenService tokenService;
+    private final AuthIdentityProvider authIdentityProvider;
+    private final TokenRepository tokenRepository;
+
     public DataSourceServiceImpl(final DataSourceMapper entityMapper,
-                                 final DataSourceRepository entityRepository) {
+                                 final DataSourceRepository entityRepository,
+                                 final TokenService tokenService,
+                                 final AuthIdentityProvider authIdentityProvider,
+                                 final TokenRepository tokenRepository) {
         super(entityMapper, entityRepository);
+        this.tokenService = tokenService;
+        this.authIdentityProvider = authIdentityProvider;
+        this.tokenRepository = tokenRepository;
     }
 
     @Override
@@ -33,11 +46,33 @@ public class DataSourceServiceImpl
             throw new IllegalArgumentException("Can't create data source with both URL and ODDRN defined");
         }
 
-        return super.create(createEntityForm);
+        return authIdentityProvider.getUsername()
+                .map(username -> tokenService.generateToken(null, username))
+                .switchIfEmpty(Mono.fromCallable(() -> tokenService.generateToken(null, null)))
+                .map(tokenPojo -> {
+                    DataSourceDto dataSourceDto = entityMapper.mapForm(createEntityForm, tokenPojo);
+                    DataSourceDto dto = entityRepository.create(dataSourceDto);
+                    return entityMapper.mapPojo(dto);
+                });
     }
 
     @Override
     public Flux<DataSource> listActive() {
         return Flux.fromIterable(entityRepository.listActive()).map(entityMapper::mapPojo);
+    }
+
+    @Override
+    public Mono<DataSource> regenerateDataSourceToken(final Long dataSourceId) {
+        return Mono.fromCallable(() -> entityRepository.get(dataSourceId))
+                .flatMap(optional -> optional.isEmpty()
+                        ? Mono.error(new NotFoundException())
+                        : Mono.just(optional.get()))
+                .flatMap(dto -> authIdentityProvider.getUsername()
+                        .map(username -> tokenService.generateToken(dto.token(), username))
+                        .switchIfEmpty(Mono.fromCallable(() -> tokenService.generateToken(dto.token(), null)))
+                        .map(tokenPojo -> {
+                            tokenRepository.regenerateToken(tokenPojo);
+                            return entityMapper.mapPojo(dto);
+                        }));
     }
 }

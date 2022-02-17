@@ -8,6 +8,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import org.opendatadiscovery.oddplatform.service.DataSourceService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -64,5 +65,13 @@ public class DataSourceController
         final ServerWebExchange exchange
     ) {
         return update(dataSourceId, dataSourceUpdateFormData);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataSource>> regenerateDataSourceToken(
+        final Long dataSourceId,
+        final ServerWebExchange exchange
+    ) {
+        return entityService.regenerateDataSourceToken(dataSourceId).map(entity -> new ResponseEntity<>(entity, HttpStatus.OK));
     }
 }

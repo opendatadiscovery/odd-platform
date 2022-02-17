@@ -7,6 +7,7 @@ import {
   DataSourceApiUpdateDataSourceRequest,
   DataSourceApiRegisterDataSourceRequest,
   DataSourceApiDeleteDataSourceRequest,
+  DataSourceApiRegenerateDataSourceTokenRequest,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import { DeleteDataSource } from 'redux/interfaces/datasources';
@@ -46,6 +47,17 @@ export const updateDataSource = createThunk<
   (params: DataSourceApiUpdateDataSourceRequest) =>
     apiClient.updateDataSource(params),
   actions.updateDataSourceAction,
+  (result: DataSource) => result
+);
+
+export const regenerateDataSourceToken = createThunk<
+  DataSourceApiRegenerateDataSourceTokenRequest,
+  DataSource,
+  DataSource
+>(
+  (params: DataSourceApiRegenerateDataSourceTokenRequest) =>
+    apiClient.regenerateDataSourceToken(params),
+  actions.regenerateDataSourceTokenAction,
   (result: DataSource) => result
 );
 

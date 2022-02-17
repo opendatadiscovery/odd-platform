@@ -10,9 +10,9 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormContainer';
-import DataSourceItemTokenContainer from 'components/Management/DataSourcesList/DataSourceItem/DataSourceItemToken/DataSourceItemTokenContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
+import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormContainer';
+import DataSourceItemTokenContainer from './DataSourceItemToken/DataSourceItemTokenContainer';
 import * as S from './DataSourceItemStyles';
 
 interface DataSourceItemProps {

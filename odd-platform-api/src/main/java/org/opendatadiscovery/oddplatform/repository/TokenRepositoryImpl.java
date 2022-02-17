@@ -19,11 +19,9 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
 @Slf4j
 public class TokenRepositoryImpl implements TokenRepository {
     private final DSLContext dslContext;
-    private final TokenService tokenService;
-    private final AuthIdentityProvider authIdentityProvider;
 
     @Override
-    public TokenPojo createIfNotExists(final TokenPojo tokenPojo) {
+    public TokenPojo create(final TokenPojo tokenPojo) {
         Condition checkIfExistsCondition = DSL.falseCondition();
         if (ObjectUtils.isNotEmpty(tokenPojo)) {
             final Long tokenPojoId = tokenPojo.getId();
@@ -33,27 +31,25 @@ public class TokenRepositoryImpl implements TokenRepository {
     }
 
     @Override
-    public TokenPojo updateTokenValue(final TokenPojo tokenPojo) {
+    public TokenPojo regenerateToken(final TokenPojo tokenPojo) {
         final Condition checkIfExistsCondition = TOKEN.ID.eq(tokenPojo.getId());
         return persistToken(tokenPojo, checkIfExistsCondition);
     }
 
     private TokenPojo persistToken(final TokenPojo tokenPojo, final Condition checkIfExistsCondition) {
-        final String username = authIdentityProvider.getUsername().map(u -> u).block();
         return dslContext.selectFrom(TOKEN)
                 .where(checkIfExistsCondition)
                 .fetchOptionalInto(TokenPojo.class)
-                .map(pojo -> persist(pojo.getId(), tokenPojo, username))
-                .orElseGet(() -> persist(tokenPojo, username));
+                .map(pojo -> persist(pojo.getId(), tokenPojo))
+                .orElseGet(() -> persist(tokenPojo));
     }
 
-    private TokenPojo persist(final TokenPojo token, final String username) {
-        return persist(null, token, username);
+    private TokenPojo persist(final TokenPojo token) {
+        return persist(null, token);
     }
 
-    private TokenPojo persist(final Long tokenId, final TokenPojo tokenPojo, final String username) {
-        final TokenPojo pojo = tokenService.generateToken(tokenPojo, username);
-        final TokenRecord record = pojoToRecord(pojo);
+    private TokenPojo persist(final Long tokenId, final TokenPojo tokenPojo) {
+        final TokenRecord record = pojoToRecord(tokenPojo);
 
         if (tokenId != null) {
             record.set(TOKEN.ID, tokenId);

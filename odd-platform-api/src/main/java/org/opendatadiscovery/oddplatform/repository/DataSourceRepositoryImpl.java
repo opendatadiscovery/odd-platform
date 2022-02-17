@@ -124,7 +124,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
-        final TokenPojo token = tokenRepository.createIfNotExists(dto.token());
+        final TokenPojo token = tokenRepository.create(dto.token());
 
         final DataSourcePojo dsPojo = dto.dataSource();
 
@@ -152,7 +152,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
-        final TokenPojo token = tokenRepository.updateTokenValue(dto.token());
+        final TokenPojo token = tokenRepository.regenerateToken(dto.token());
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(DATA_SOURCE.ID.eq(dto.dataSource().getId()))
@@ -337,7 +337,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             record.into(NAMESPACE).into(NamespacePojo.class),
             record.into(TOKEN).map((map) -> {
                 final String value = map.get(TOKEN.VALUE);
-                map.setValue(TOKEN.VALUE, value.isEmpty() ? "******" : "******" + value.substring(value.length() - 6));
+                map.setValue(TOKEN.VALUE, "******" + value.substring(value.length() - 6));
                 return map;
             }).into(TokenPojo.class)
         );
