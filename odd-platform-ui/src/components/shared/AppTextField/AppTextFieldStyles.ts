@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import {
   autocompleteClasses,
   buttonBaseClasses,
@@ -13,7 +13,6 @@ import {
   textFieldClasses,
 } from '@mui/material';
 import { breakpointDownLgBody2, pxToRem } from 'theme/typography';
-import { propsChecker } from 'lib/helpers';
 
 export type TextFieldSizes = 'large' | 'medium' | 'small';
 
@@ -29,9 +28,9 @@ const inputYPaddingsBySize = (size: TextFieldSizes) => {
   return 0.75;
 };
 
-export const StyledAppTextField = styled(TextField, {
-  shouldForwardProp: propsChecker,
-})<AppTextFieldStyleProps>(({ theme, $size, $isLabeled }) => ({
+export const StyledAppTextField = styled(
+  TextField
+)<AppTextFieldStyleProps>(({ theme, $size, $isLabeled }) => ({
   [`&.${textFieldClasses.root}`]: {
     [`& .${outlinedInputClasses.notchedOutline}`]: {
       border: 'none',
@@ -39,7 +38,6 @@ export const StyledAppTextField = styled(TextField, {
     },
     [`& .${outlinedInputClasses.root}`]: {
       [`& .${autocompleteClasses.input}`]: {
-        // border: '1px solid red',
         padding: theme.spacing(inputYPaddingsBySize($size), 1),
       },
       border: '1px solid',
@@ -61,7 +59,7 @@ export const StyledAppTextField = styled(TextField, {
       borderColor: isLarge($size)
         ? 'transparent'
         : theme.palette.textField.active.border,
-      outline: isLarge($size) && '2px solid',
+      outline: isLarge($size) ? '2px solid' : 'none',
       outlineColor: theme.palette.textField.active.border,
     },
     [`& .${outlinedInputClasses.error}`]: {

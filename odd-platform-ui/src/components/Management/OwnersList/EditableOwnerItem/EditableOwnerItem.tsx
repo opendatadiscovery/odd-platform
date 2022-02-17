@@ -1,21 +1,19 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import { Owner, OwnerApiDeleteOwnerRequest } from 'generated-sources';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import OwnerFormContainer from 'components/Management/OwnersList/OwnerForm/OwnerFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { styles, StylesType } from './EditableOwnerItemStyles';
+import * as S from './EditableOwnerItemStyles';
 
-interface EditableOwnerItemProps extends StylesType {
+interface EditableOwnerItemProps {
   owner: Owner;
   deleteOwner: (params: OwnerApiDeleteOwnerRequest) => Promise<void>;
 }
 
 const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
-  classes,
   owner,
   deleteOwner,
 }) => {
@@ -25,13 +23,13 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
   );
 
   return (
-    <Grid container className={classes.container}>
+    <S.Container container>
       <Grid item>
         <Typography variant="body1" noWrap title={owner.name}>
           {owner.name}
         </Typography>
       </Grid>
-      <Grid item className={classes.actionsContainer}>
+      <S.ActionsContainer item>
         <OwnerFormContainer
           owner={owner}
           btnCreateEl={
@@ -39,6 +37,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
               color="primaryLight"
               size="medium"
               startIcon={<EditIcon />}
+              sx={{ mr: 0.5 }}
             >
               Edit
             </AppButton>
@@ -62,9 +61,9 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
             </AppButton>
           }
         />
-      </Grid>
-    </Grid>
+      </S.ActionsContainer>
+    </S.Container>
   );
 };
 
-export default withStyles(styles)(EditableOwnerItem);
+export default EditableOwnerItem;

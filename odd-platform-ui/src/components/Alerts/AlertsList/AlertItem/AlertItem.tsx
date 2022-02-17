@@ -1,10 +1,8 @@
-import { Grid, MenuItem, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
+import { Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Alert } from 'generated-sources';
-import cx from 'classnames';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
@@ -12,27 +10,28 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
-import { styles, StylesType } from './AlertItemStyles';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import { ColContainer } from '../AlertsListStyles';
+import * as S from './AlertItemStyles';
 
-interface AlertItemProps extends StylesType {
+interface AlertItemProps {
   alert: Alert;
   alertStatusHandler: () => void;
 }
 
 const AlertItem: React.FC<AlertItemProps> = ({
-  classes,
   alert,
   alertStatusHandler,
 }) => (
-  <Grid container className={classes.container}>
-    <Grid
+  <S.Container container>
+    <ColContainer
       item
       container
-      className={cx(classes.col, classes.colName)}
+      $colType="name"
       justifyContent="space-between"
       wrap="nowrap"
     >
-      <div className={classes.alertName}>
+      <S.NameContainer>
         <Link
           to={
             alert?.dataEntity?.id
@@ -52,8 +51,8 @@ const AlertItem: React.FC<AlertItemProps> = ({
             </Typography>
           </AppTooltip>
         </Link>
-      </div>
-      <div className={classes.typesList}>
+      </S.NameContainer>
+      <S.TypesContainer>
         {alert.dataEntity?.types?.map(type => (
           <EntityTypeItem
             sx={{ ml: 0.5 }}
@@ -61,61 +60,55 @@ const AlertItem: React.FC<AlertItemProps> = ({
             typeName={type.name}
           />
         ))}
-      </div>
-    </Grid>
-    <Grid item className={cx(classes.col, classes.colDescription)}>
+      </S.TypesContainer>
+    </ColContainer>
+    <ColContainer item $colType="description">
       <Typography variant="body1" title={alert.type} noWrap>
         {alert.description}
       </Typography>
-    </Grid>
-    <Grid
-      item
-      container
-      className={cx(classes.col, classes.colStatus)}
-      justifyContent="center"
-    >
+    </ColContainer>
+    <ColContainer item container $colType="status" justifyContent="center">
       <AlertStatusItem typeName={alert.status} />
-    </Grid>
-    <Grid item className={cx(classes.col, classes.colCreatedTime)}>
+    </ColContainer>
+    <ColContainer item $colType="createdTime">
       <Typography variant="body1">
         {alert.createdAt && format(alert.createdAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
-    </Grid>
-    <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
+    </ColContainer>
+    <ColContainer item $colType="updatedBy">
       {/* <Typography variant="body1" noWrap> */}
       {/*  {alert.statusUpdatedBy?.owner?.name || */}
       {/*    alert.statusUpdatedBy?.identity.username} */}
       {/* </Typography> */}
-    </Grid>
-    <Grid item className={cx(classes.col, classes.colUpdatedAt)}>
+    </ColContainer>
+    <ColContainer item $colType="updatedAt">
       <Typography variant="body1">
         {alert.statusUpdatedAt &&
           format(alert.statusUpdatedAt, 'd MMM yyyy, HH:MM a')}
       </Typography>
-    </Grid>
-    <Grid
-      item
-      className={cx(classes.col, classes.colActionBtn, classes.optionsBtn)}
-    >
-      <AppPopover
-        renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-          <AppIconButton
-            ariaDescribedBy={ariaDescribedBy}
-            size="medium"
-            color="primaryLight"
-            icon={<KebabIcon />}
-            onClick={onClick}
-          />
-        )}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 100 }}
-      >
-        <MenuItem onClick={alertStatusHandler}>
-          {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
-        </MenuItem>
-      </AppPopover>
-    </Grid>
-  </Grid>
+    </ColContainer>
+    <ColContainer item $colType="actionBtn">
+      <S.OptionsBtn>
+        <AppPopover
+          renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+            <AppIconButton
+              ariaDescribedBy={ariaDescribedBy}
+              size="medium"
+              color="primaryLight"
+              icon={<KebabIcon />}
+              onClick={onClick}
+            />
+          )}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          transformOrigin={{ vertical: 'top', horizontal: 100 }}
+        >
+          <AppMenuItem onClick={alertStatusHandler}>
+            {alert.status === 'OPEN' ? 'Resolve' : 'Reopen'} alert
+          </AppMenuItem>
+        </AppPopover>
+      </S.OptionsBtn>
+    </ColContainer>
+  </S.Container>
 );
 
-export default withStyles(styles)(AlertItem);
+export default AlertItem;

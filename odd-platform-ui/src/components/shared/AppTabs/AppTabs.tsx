@@ -1,7 +1,7 @@
 import React, { SyntheticEvent } from 'react';
 import { TabsProps } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { TabType } from 'components/shared/AppTabs/interfaces';
+import { HintType, TabType } from 'components/shared/AppTabs/interfaces';
 import AppTab from 'components/shared/AppTabs/AppTab/AppTab';
 import AppLinkTab from 'components/shared/AppTabs/AppTab/AppLinkTab';
 import AppTabLabel from 'components/shared/AppTabs/AppTabLabel/AppTabLabel';
@@ -11,6 +11,7 @@ export type AppTabItem<ValueT = number | string> = {
   name: string;
   link?: string;
   hint?: number | string;
+  hintType?: HintType;
   value?: ValueT;
   hidden?: boolean;
 };
@@ -33,9 +34,10 @@ const AppTabs: React.FC<AppTabsProps> = ({
   isHintUpdated = false,
   sx,
 }) => {
+  const selectedTabState = selectedTab === -1 ? false : selectedTab;
   const [currentTab, setCurrent] = React.useState<
     number | boolean | undefined
-  >(selectedTab);
+  >(selectedTabState);
 
   const handleChange = (event: SyntheticEvent, newTab: number) => {
     setCurrent(newTab);
@@ -43,7 +45,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
   };
 
   React.useEffect(() => {
-    setCurrent(selectedTab);
+    setCurrent(selectedTabState);
   }, [selectedTab]);
 
   return (
@@ -56,8 +58,20 @@ const AppTabs: React.FC<AppTabsProps> = ({
       scrollButtons="auto"
       sx={sx}
     >
-      {items.map(item =>
-        item.link ? (
+      {items.map(item => {
+        const getHintLength = (): number => {
+          if (typeof item.hint === 'string') return item.hint.length;
+          if (typeof item.hint === 'number') return item.hint;
+          return 0;
+        };
+
+        const setHintShowed = (): boolean => {
+          if (getHintLength() === 0 && item.hintType === 'alert')
+            return false;
+          return type === 'primary';
+        };
+
+        return item.link ? (
           <AppLinkTab
             $orientation={orientation}
             type={type}
@@ -66,9 +80,10 @@ const AppTabs: React.FC<AppTabsProps> = ({
             label={
               <AppTabLabel
                 name={item.name}
-                showHint={type === 'primary'}
+                showHint={setHintShowed()}
                 hint={item.hint}
                 isHintUpdated={isHintUpdated}
+                hintType={item.hintType}
               />
             }
             to={item.link}
@@ -83,14 +98,15 @@ const AppTabs: React.FC<AppTabsProps> = ({
             label={
               <AppTabLabel
                 name={item.name}
-                showHint={type === 'primary'}
+                showHint={setHintShowed()}
                 hint={item.hint}
                 isHintUpdated={isHintUpdated}
+                hintType={item.hintType}
               />
             }
           />
-        )
-      )}
+        );
+      })}
     </TabsContainer>
   );
 };

@@ -5,13 +5,12 @@ import {
   AlertApiChangeAlertStatusRequest,
   AlertStatus,
 } from 'generated-sources';
-import cx from 'classnames';
 import DataEntityAlertItem from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertItem/DataEntityAlertItem';
 import DataEntityAlertsSkeleton from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import { StylesType } from './DataEntityAlertsStyles';
+import { AlertsTableHeader, ColContainer } from './DataEntityAlertsStyles';
 
-interface DataEntityAlertsProps extends StylesType {
+interface DataEntityAlertsProps {
   alertsList: Alert[];
   updateAlertStatus: (
     params: AlertApiChangeAlertStatusRequest
@@ -20,7 +19,6 @@ interface DataEntityAlertsProps extends StylesType {
 }
 
 const DataEntityAlerts: React.FC<DataEntityAlertsProps> = ({
-  classes,
   alertsList,
   updateAlertStatus,
   isAlertsFetching,
@@ -41,28 +39,28 @@ const DataEntityAlerts: React.FC<DataEntityAlertsProps> = ({
   );
 
   return (
-    <Grid container className={classes.container}>
-      <Grid container className={classes.alertsTableHeader}>
-        <Grid item className={cx(classes.col, classes.colDate)}>
+    <Grid container sx={{ mt: 2 }}>
+      <AlertsTableHeader container>
+        <ColContainer item $colType="date">
           <Typography variant="caption">Date</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colType)}>
+        </ColContainer>
+        <ColContainer item $colType="type">
           <Typography variant="caption">Alert type</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colDescription)}>
+        </ColContainer>
+        <ColContainer item $colType="description">
           <Typography variant="caption">Description</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colStatus)}>
+        </ColContainer>
+        <ColContainer item $colType="status">
           <Typography variant="caption">Status</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
+        </ColContainer>
+        <ColContainer item $colType="updatedBy">
           <Typography variant="caption">Status updated by</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colUpdatedTime)}>
+        </ColContainer>
+        <ColContainer item $colType="updatedTime">
           <Typography variant="caption">Status updated time</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colActionBtn)} />
-      </Grid>
+        </ColContainer>
+        <ColContainer item $colType="actionBtn" />
+      </AlertsTableHeader>
       {isAlertsFetching ? (
         <DataEntityAlertsSkeleton length={5} />
       ) : (

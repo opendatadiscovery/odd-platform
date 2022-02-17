@@ -4,15 +4,20 @@ import {
   DataQualityTestRun,
 } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import { formatDistanceStrict, format } from 'date-fns';
+import { format, formatDistanceStrict } from 'date-fns';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import TestRunStatusReasonModal from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunStatusReasonModal/TestRunStatusReasonModal';
 import TestReportDetailsHistoryItemSkeleton from './TestReportDetailsHistoryItemSkeleton/TestReportDetailsHistoryItemSkeleton';
-import { StylesType } from './TestReportDetailsHistoryStyles';
+import {
+  QualityTestRunItem,
+  QualityTestRunItemContainer,
+} from './TestReportDetailsHistoryStyles';
 
-interface TestReportDetailsHistoryProps extends StylesType {
-  testRunsList: DataQualityTestRun[];
-  dataqatestId: number;
+interface TestReportDetailsHistoryProps {
+  dataQATestRunsList: DataQualityTestRun[];
+  dataQATestId: number;
+  dataQATestName: string;
   testRunsFetching: boolean;
   fetchDataSetQualityTestRuns: (
     params: DataQualityApiGetRunsRequest
@@ -20,66 +25,52 @@ interface TestReportDetailsHistoryProps extends StylesType {
 }
 
 const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
-  classes,
-  testRunsList,
-  dataqatestId,
+  dataQATestRunsList,
+  dataQATestId,
+  dataQATestName,
   testRunsFetching,
   fetchDataSetQualityTestRuns,
 }) => {
   React.useEffect(() => {
-    if (dataqatestId) fetchDataSetQualityTestRuns({ dataqatestId });
-  }, [fetchDataSetQualityTestRuns, dataqatestId]);
+    fetchDataSetQualityTestRuns({
+      dataqatestId: dataQATestId,
+      page: 1,
+      size: 10,
+    });
+  }, [fetchDataSetQualityTestRuns, dataQATestId]);
 
   return (
-    <div className={classes.container}>
-      {testRunsList?.map(qualityTestRun => (
-        <Grid
-          key={qualityTestRun.id}
-          container
-          className={classes.testRunItemContainer}
-        >
-          <Grid
-            item
-            xs={12}
-            container
-            className={classes.testRunInfoItem}
-            alignItems="center"
-            wrap="nowrap"
-            justifyContent="space-between"
-          >
-            <Typography variant="body1">
-              {qualityTestRun?.startTime &&
-                format(qualityTestRun?.startTime, 'd MMM yyyy, HH:MM a')}
-            </Typography>
-            <Typography variant="body1" align="right">
-              {qualityTestRun?.startTime &&
-                qualityTestRun?.endTime &&
-                formatDistanceStrict(
-                  qualityTestRun?.endTime,
-                  qualityTestRun?.startTime,
-                  { addSuffix: false }
-                )}
-            </Typography>
-          </Grid>
-          <Grid
-            item
-            xs={12}
-            container
-            className={classes.testRunInfoItem}
-            alignItems="center"
-            wrap="nowrap"
-          >
-            {qualityTestRun.status && (
-              <TestRunStatusItem typeName={qualityTestRun.status} />
-            )}
-            <Typography
-              variant="subtitle1"
-              className={classes.statusReason}
-            >
-              {qualityTestRun.statusReason}
-            </Typography>
-          </Grid>
-        </Grid>
+    <Grid container sx={{ mt: 2 }}>
+      {dataQATestRunsList?.map(dataQATestRun => (
+        <TestRunStatusReasonModal
+          key={dataQATestRun.id}
+          dataQATestId={dataQATestId}
+          dataQATestName={dataQATestName}
+          dataQATestRun={dataQATestRun}
+          btnCreateEl={
+            <QualityTestRunItemContainer container>
+              <QualityTestRunItem container>
+                <Typography variant="body1">
+                  {dataQATestRun?.startTime &&
+                    format(
+                      dataQATestRun?.startTime,
+                      'd MMM yyyy, HH:MM a'
+                    )}
+                </Typography>
+                <Typography variant="body1" align="right">
+                  {dataQATestRun?.startTime &&
+                    dataQATestRun?.endTime &&
+                    formatDistanceStrict(
+                      dataQATestRun?.endTime,
+                      dataQATestRun?.startTime,
+                      { addSuffix: false }
+                    )}
+                </Typography>
+                <TestRunStatusItem typeName={dataQATestRun.status} />
+              </QualityTestRunItem>
+            </QualityTestRunItemContainer>
+          }
+        />
       ))}
       {testRunsFetching && (
         <SkeletonWrapper
@@ -92,7 +83,7 @@ const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
           )}
         />
       )}
-    </div>
+    </Grid>
   );
 };
 

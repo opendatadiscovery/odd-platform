@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import { toolbarHeight } from 'lib/constants';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const Container = styled('div')(({ theme }) => ({
   padding: theme.spacing(2, 1, 1.5, 1),

@@ -7,13 +7,15 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { dataEntityDetailsPath } from 'lib/paths';
 import TruncatedCell from 'components/shared/TruncatedCell/TruncatedCell';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import { ColContainer } from 'components/Search/Results/ResultsStyles';
+import {
+  ColContainer,
+  NameContainer,
+} from 'components/Search/Results/ResultsStyles';
 import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { Container, ItemLink } from './ResultItemStyles';
 
 interface ResultItemProps {
-  dataEntityId: number;
   searchType?: SearchType;
   totals: SearchTotalsByName;
   searchResult: DataEntity;
@@ -25,6 +27,15 @@ const ResultItem: React.FC<ResultItemProps> = ({
   totals,
 }) => {
   const detailsLink = dataEntityDetailsPath(searchResult.id);
+  const ResultItemPreview = React.useCallback(
+    ({ open }) => (
+      <ResultItemPreviewContainer
+        dataEntityId={searchResult.id}
+        fetchData={open}
+      />
+    ),
+    []
+  );
 
   return (
     <ItemLink to={detailsLink}>
@@ -36,13 +47,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
           justifyContent="space-between"
           wrap="nowrap"
         >
-          <ColContainer
-            $colType="col"
-            container
-            item
-            justifyContent="flex-start"
-            wrap="nowrap"
-          >
+          <NameContainer container item>
             <Typography
               variant="body1"
               noWrap
@@ -54,19 +59,13 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </Typography>
             <AppTooltip
               maxWidth={285}
-              sx={{ ml: 1.25, pr: 0.25 }}
               checkForOverflow={false}
               isOverflowed={false}
-              title={({ open }) => (
-                <ResultItemPreviewContainer
-                  dataEntityId={searchResult.id}
-                  fetchData={open}
-                />
-              )}
+              title={ResultItemPreview}
             >
-              <InformationIcon sx={{ display: 'flex' }} />
+              <InformationIcon sx={{ display: 'flex', ml: 1.25 }} />
             </AppTooltip>
-          </ColContainer>
+          </NameContainer>
           <Grid
             container
             item
@@ -110,14 +109,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
           <>
             <ColContainer $colType="collg" item container wrap="wrap">
               <TruncatedCell
-                dataEntity={searchResult}
-                truncatedCellType="sourceList"
+                dataList={searchResult.sourceList}
+                externalEntityId={searchResult.id}
               />
             </ColContainer>
             <ColContainer item $colType="collg">
               <TruncatedCell
-                dataEntity={searchResult}
-                truncatedCellType="targetList"
+                dataList={searchResult.targetList}
+                externalEntityId={searchResult.id}
               />
             </ColContainer>
           </>
@@ -126,8 +125,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
         searchType === totals[DataEntityTypeNameEnum.CONSUMER]?.id ? (
           <ColContainer item $colType="collg">
             <TruncatedCell
-              dataEntity={searchResult}
-              truncatedCellType="inputList"
+              dataList={searchResult.inputList}
+              externalEntityId={searchResult.id}
             />
           </ColContainer>
         ) : null}
@@ -136,14 +135,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
           <>
             <ColContainer item container wrap="wrap" $colType="collg">
               <TruncatedCell
-                dataEntity={searchResult}
-                truncatedCellType="datasetsList"
+                dataList={searchResult.datasetsList}
+                externalEntityId={searchResult.id}
               />
             </ColContainer>
             <ColContainer item $colType="collg">
               <TruncatedCell
-                dataEntity={searchResult}
-                truncatedCellType="linkedUrlList"
+                dataList={searchResult.linkedUrlList}
+                externalEntityId={searchResult.id}
               />
             </ColContainer>
           </>

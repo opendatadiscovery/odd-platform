@@ -1,11 +1,15 @@
-import { Action, DataQualityTestState } from 'redux/interfaces';
+import {
+  Action,
+  DataQualityTestState,
+  PaginatedResponse,
+} from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
 import {
   DataEntity,
   DataEntityList,
   DataQualityTestRunList,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
 } from 'generated-sources';
 import uniq from 'lodash/uniq';
 
@@ -14,6 +18,11 @@ export const initialState: DataQualityTestState = {
   allSuiteNamesByDatasetId: {},
   qualityTestRunsById: {},
   allTestRunIdsByTestId: {},
+  qualityTestRunsPageInfo: {
+    total: 0,
+    page: 0,
+    hasNext: true,
+  },
   datasetTestReportByEntityId: {},
   testReportBySuiteName: {},
 };
@@ -21,7 +30,7 @@ export const initialState: DataQualityTestState = {
 const latestRunStatusesCounter = (
   arr: DataEntity[],
   suiteName: string,
-  statusType: DataQualityTestRunStatusEnum
+  statusType: DataQualityTestRunStatus
 ): number =>
   arr.filter(
     item =>
@@ -68,32 +77,32 @@ const createDataSetQualityTestList = (
                 success: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.SUCCESS
+                  DataQualityTestRunStatus.SUCCESS
                 ),
                 failed: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.FAILED
+                  DataQualityTestRunStatus.FAILED
                 ),
                 broken: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.BROKEN
+                  DataQualityTestRunStatus.BROKEN
                 ),
                 aborted: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.ABORTED
+                  DataQualityTestRunStatus.ABORTED
                 ),
                 skipped: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.SKIPPED
+                  DataQualityTestRunStatus.SKIPPED
                 ),
                 unknown: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatusEnum.UNKNOWN
+                  DataQualityTestRunStatus.UNKNOWN
                 ),
               },
             }
@@ -107,7 +116,7 @@ const createDataSetQualityTestList = (
 
 const createDataSetQualityRunsList = (
   state: DataQualityTestState,
-  payload: DataQualityTestRunList,
+  payload: PaginatedResponse<DataQualityTestRunList>,
   dataQATestId: number | string
 ) =>
   payload.items.reduce(
@@ -130,6 +139,11 @@ const createDataSetQualityRunsList = (
     }),
     {
       ...state,
+      allTestRunIdsByTestId:
+        payload.pageInfo.page > 1
+          ? { ...state.allTestRunIdsByTestId }
+          : {},
+      qualityTestRunsPageInfo: payload.pageInfo,
     }
   );
 

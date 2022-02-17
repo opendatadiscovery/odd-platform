@@ -1,16 +1,15 @@
 import {
   buttonBaseClasses,
-  CSSObject,
   Tab,
   tabClasses,
   TabProps,
   TabsProps,
 } from '@mui/material';
-import { styled, Theme } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import { Theme } from '@mui/material/styles';
 import { TabType } from 'components/shared/AppTabs/interfaces';
 import React from 'react';
 import { LinkProps } from 'react-router-dom';
+import styled, { CSSObject } from 'styled-components';
 
 const LinkTab: React.ComponentType<
   Omit<TabProps, 'children'> & Omit<LinkProps, 'children'>
@@ -131,9 +130,7 @@ const tabStyles = (
   ...getTabStylesByType(theme, type, $hidden),
 });
 
-export const TabContainer = styled(Tab, {
-  shouldForwardProp: propsChecker,
-})<{
+export const TabContainer = styled(Tab)<{
   $type: TabType;
   $hidden?: boolean;
   $orientation?: TabsProps['orientation'];
@@ -141,9 +138,7 @@ export const TabContainer = styled(Tab, {
   tabStyles(theme, $type, $hidden, $orientation)
 );
 
-export const LinkTabContainer = styled(LinkTab, {
-  shouldForwardProp: propsChecker,
-})<{
+export const LinkTabContainer = styled(LinkTab)<{
   $type: TabType;
   $hidden?: boolean;
   $orientation?: TabsProps['orientation'];

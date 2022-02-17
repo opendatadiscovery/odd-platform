@@ -9,6 +9,8 @@ import {
   getDataEntityIsQualityTest,
 } from 'redux/selectors/dataentity.selectors';
 import { fetchDataEntityDetails } from 'redux/thunks/dataentities.thunks';
+import { getDataEntityOpenAlertListCount } from 'redux/selectors/alert.selectors';
+import { fetchDataEntityAlerts } from 'redux/thunks';
 import DataEntityDetailsView from './DataEntityDetails';
 
 interface RouteProps {
@@ -34,10 +36,12 @@ const mapStateToProps = (
   isQualityTest: getDataEntityIsQualityTest(state, dataEntityId),
   dataEntityFetchingStatus: getDataEntityDetailsFetchingStatus(state),
   dataEntityFetchingError: getDataEntityDetailsFetchingError(state),
+  openAlertsCount: getDataEntityOpenAlertListCount(state, dataEntityId),
 });
 
 const mapDispatchToProps = {
   fetchDataEntityDetails,
+  fetchDataEntityAlerts,
 };
 
 export default connect(

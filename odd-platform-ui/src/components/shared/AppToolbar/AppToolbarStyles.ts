@@ -1,20 +1,12 @@
-import {
-  AppBar,
-  appBarClasses,
-  Grid,
-  Menu,
-  menuClasses,
-  MenuItem,
-  Toolbar,
-} from '@mui/material';
+import { AppBar, appBarClasses, Grid, Toolbar } from '@mui/material';
 import {
   maxContentWidth,
   maxSidebarWidth,
   toolbarHeight,
 } from 'lib/constants';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { AccountCircle } from '@mui/icons-material';
+import UserIcon from 'components/shared/Icons/UserIcon';
 
 export const Bar = styled(AppBar)(({ theme }) => ({
   [`&.${appBarClasses.root}`]: {
@@ -92,7 +84,7 @@ export const SectionDesktop = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.up('md')]: { display: 'flex' },
 }));
 
-export const UserAvatar = styled(AccountCircle)(({ theme }) => ({
+export const UserAvatar = styled(UserIcon)(() => ({
   width: '22px',
   height: '22px',
   borderRadius: '50%',
@@ -104,14 +96,11 @@ export const UserName = styled('p')(({ theme }) => ({
   margin: theme.spacing(0, 1),
 }));
 
-export const UserMenu = styled(Menu)(({ theme }) => ({
-  [`& .${menuClasses.paper}`]: {
-    minWidth: '160px',
-    padding: theme.spacing(1, 0),
-  },
-}));
+export const CaptionsWrapper = styled('div')(() => ({}));
 
-export const UserMenuItem = styled(MenuItem)(({ theme }) => ({
-  padding: theme.spacing(0.75, 1),
-  '&:hover': { backgroundColor: theme.palette.backgrounds.primary },
+export const CaptionsTypographyWrapper = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  padding: theme.spacing(0.75, 2),
 }));

@@ -10,9 +10,8 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TagCreateFormItem from './TagCreateFormItem/TagCreateFormItem';
-import { StylesType } from './TagCreateFormStyles';
 
-interface TagCreateFormProps extends StylesType {
+interface TagCreateFormProps {
   btnCreateEl: JSX.Element;
   isLoading: boolean;
   createTag: (params: TagApiCreateTagRequest) => Promise<Tag[]>;
@@ -23,19 +22,13 @@ interface TagCreateFormData {
 }
 
 const TagCreateForm: React.FC<TagCreateFormProps> = ({
-  classes,
   btnCreateEl,
   isLoading,
   createTag,
 }) => {
   const methods = useForm<TagCreateFormData>({
     defaultValues: {
-      tags: [
-        {
-          name: '',
-          important: false,
-        },
-      ],
+      tags: [{ name: '', important: false }],
     },
     mode: 'onChange',
   });
@@ -82,32 +75,34 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
     if (!fields.length) handleAppend();
   };
 
-  const formTitle = <Typography variant="h4">Create Tag</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      Create Tag
+    </Typography>
+  );
 
   const formContent = () => (
-    <>
-      <FormProvider {...methods}>
-        <form id="tag-create-form" className={classes.container}>
-          {fields.map((item, index) => (
-            <TagCreateFormItem
-              key={item.id}
-              itemIndex={index}
-              onItemRemove={handleRemove(index)}
-              fieldsLength={fields.length}
-            />
-          ))}
-          <AppButton
-            size="medium"
-            form="tag-create-form"
-            color="primaryLight"
-            startIcon={<AddIcon />}
-            onClick={handleAppend}
-          >
-            Create tag
-          </AppButton>
-        </form>
-      </FormProvider>
-    </>
+    <FormProvider {...methods}>
+      <form id="tag-create-form">
+        {fields.map((item, index) => (
+          <TagCreateFormItem
+            key={item.id}
+            itemIndex={index}
+            onItemRemove={handleRemove(index)}
+            fieldsLength={fields.length}
+          />
+        ))}
+        <AppButton
+          size="medium"
+          form="tag-create-form"
+          color="primaryLight"
+          startIcon={<AddIcon />}
+          onClick={handleAppend}
+        >
+          Create tag
+        </AppButton>
+      </form>
+    </FormProvider>
   );
 
   const formActionButtons = () => (

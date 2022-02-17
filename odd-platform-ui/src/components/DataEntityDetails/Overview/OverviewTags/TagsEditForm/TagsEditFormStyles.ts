@@ -1,38 +1,20 @@
-import { Theme } from '@mui/material';
+import styled from 'styled-components';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: { marginBottom: theme.spacing(1.5) },
-    annotation: {
-      marginTop: theme.spacing(4),
-      marginBottom: theme.spacing(2),
-    },
-    tagsList: {
-      marginTop: theme.spacing(1),
-    },
-    tagItemImportant: {
-      backgroundColor: theme.palette.tag.important.normal.background,
-    },
-    tagInput: { marginTop: theme.spacing(1.5) },
-    optionsContainer: {
-      position: 'relative',
-    },
-    optionItem: {},
-    importantOptionContainer: {
-      '&:after': {
-        position: 'absolute',
-        content: '""',
-        top: '9px',
-        right: '-8px',
-        width: '4px',
-        height: '4px',
-        borderRadius: '50%',
-        backgroundColor: theme.palette.tag.important.hover.background,
-      },
-    },
-  });
-
-export type StylesType = WithStyles<typeof styles>;
+export const OptionsContainer = styled('div')<{ $isImportant?: boolean }>(
+  ({ theme, $isImportant }) =>
+    $isImportant
+      ? {
+          position: 'relative',
+          '&:after': {
+            position: 'absolute',
+            content: '""',
+            top: '9px',
+            right: '-8px',
+            width: '4px',
+            height: '4px',
+            borderRadius: '50%',
+            backgroundColor: theme.palette.tag.important.hover.background,
+          },
+        }
+      : { position: 'relative' }
+);

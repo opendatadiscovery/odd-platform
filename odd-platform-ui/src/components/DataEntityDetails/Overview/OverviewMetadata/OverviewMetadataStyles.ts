@@ -1,20 +1,9 @@
-import { Theme } from '@mui/material';
+import styled from 'styled-components';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {},
-    subtitle: {},
-    subtitleContainer: {
-      width: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: theme.spacing(1),
-    },
-    collapseContainer: { marginTop: theme.spacing(0.5) },
-  });
-
-export type StylesType = WithStyles<typeof styles>;
+export const SubtitleContainer = styled('div')(({ theme }) => ({
+  width: '100%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  marginBottom: theme.spacing(1),
+}));

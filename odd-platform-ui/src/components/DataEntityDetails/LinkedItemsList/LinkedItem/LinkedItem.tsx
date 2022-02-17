@@ -3,7 +3,6 @@ import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity } from 'generated-sources';
 import { dataEntityDetailsPath } from 'lib/paths';
-import TruncatedCell from 'components/shared/TruncatedCell/TruncatedCell';
 import { ColContainer } from 'components/Search/Results/ResultsStyles';
 import { Container, ItemLink } from './LinkedItemStyles';
 

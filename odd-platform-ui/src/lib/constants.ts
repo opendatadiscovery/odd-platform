@@ -11,6 +11,8 @@ export const toolbarHeight = 49;
 export const maxSidebarWidth = 240;
 export const maxContentWidth = 1216;
 export const maxContentWidthWithoutSidebar = 1440;
+export const maxTagsContainerWidth = 920;
+export const maxIdentityFormContentWidth = '320px';
 
 // main skeleton height constant
 export const mainSkeletonHeight = '100%';

@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.SetUtils;
-import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
-import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
@@ -48,7 +48,7 @@ public class AlertLocatorImpl implements AlertLocator {
             .filter(tr -> TASK_RUN_BAD_STATUSES.contains(tr.getStatus()))
             .map(tr -> buildAlert(
                 tr.getDataEntityOddrn(),
-                AlertType.FAILED_DQ_TEST,
+                AlertTypeEnum.FAILED_DQ_TEST,
                 tr.getOddrn(),
                 String.format("Test %s failed with status %s", tr.getTaskName(), tr.getStatus())
             ))
@@ -78,7 +78,7 @@ public class AlertLocatorImpl implements AlertLocator {
             .filter(f -> !latestVersionFields.containsKey(new DatasetFieldKey(f.getOddrn(), f.getType().data())))
             .map(df -> buildAlert(
                 e.getKey(),
-                AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA,
+                AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA,
                 String.format("Missing field: %s", df.getName()))
             )
             .filter(Objects::nonNull);
@@ -93,7 +93,7 @@ public class AlertLocatorImpl implements AlertLocator {
             .stream()
             .map(source -> buildAlert(
                 delta.oddrn(),
-                AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA,
+                AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA,
                 String.format("Missing source: %s", source)
             ));
 
@@ -102,7 +102,7 @@ public class AlertLocatorImpl implements AlertLocator {
             .stream()
             .map(source -> buildAlert(
                 delta.oddrn(),
-                AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA,
+                AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA,
                 String.format("Missing target: %s", source)
             ));
 
@@ -118,7 +118,7 @@ public class AlertLocatorImpl implements AlertLocator {
             .stream()
             .map(source -> buildAlert(
                 delta.oddrn(),
-                AlertType.BACKWARDS_INCOMPATIBLE_SCHEMA,
+                AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA,
                 String.format("Missing input: %s", source)
             ));
     }
@@ -146,23 +146,24 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     private AlertPojo buildAlert(final String dataEntityOddrn,
-                                 final AlertType alertType,
+                                 final AlertTypeEnum alertType,
                                  final String description) {
         return buildAlert(dataEntityOddrn, alertType, null, description);
     }
 
     private AlertPojo buildAlert(final String dataEntityOddrn,
-                                 final AlertType alertType,
+                                 final AlertTypeEnum alertType,
                                  final String messengerOddrn,
                                  final String description) {
         return new AlertPojo()
             .setDataEntityOddrn(dataEntityOddrn)
             .setDescription(description)
             .setMessengerEntityOddrn(messengerOddrn)
-            .setType(alertType.getValue())
-            .setStatus(AlertStatus.OPEN.getValue())
+            .setType(alertType.name())
+            .setStatus(AlertStatusEnum.OPEN.name())
             .setStatusUpdatedAt(LocalDateTime.now());
     }
 
-    private record DatasetFieldKey(String oddrn, String typeJson) {}
+    private record DatasetFieldKey(String oddrn, String typeJson) {
+    }
 }

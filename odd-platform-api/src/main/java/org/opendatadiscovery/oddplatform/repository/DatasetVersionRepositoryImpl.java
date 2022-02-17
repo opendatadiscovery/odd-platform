@@ -29,6 +29,7 @@ import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 
 import static java.util.stream.Collectors.mapping;
+import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
@@ -36,6 +37,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 
@@ -50,7 +52,8 @@ public class DatasetVersionRepositoryImpl
     public DatasetVersionRepositoryImpl(final DSLContext dslContext,
                                         final JooqRecordHelper jooqRecordHelper,
                                         final JooqQueryHelper jooqQueryHelper) {
-        super(dslContext, jooqQueryHelper, DATASET_VERSION, DATASET_VERSION.ID, null, DatasetVersionPojo.class);
+        super(dslContext, jooqQueryHelper, DATASET_VERSION, DATASET_VERSION.ID, null,
+            null, DatasetVersionPojo.class);
         this.jooqRecordHelper = jooqRecordHelper;
     }
 
@@ -63,11 +66,14 @@ public class DatasetVersionRepositoryImpl
         final Map<DatasetVersionPojo, List<DatasetFieldDto>> result = dslContext
             .select(selectFields)
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as("labels"))
+            .select(count(ENUM_VALUE.ID).as("enum_value_count"))
             .from(DATASET_VERSION)
             .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.IS_DELETED.isFalse())
+            .leftJoin(ENUM_VALUE).on(DATASET_FIELD.ID.eq(ENUM_VALUE.DATASET_FIELD_ID)
+                .and(ENUM_VALUE.IS_DELETED.isFalse()))
             .where(DATASET_VERSION.ID.eq(datasetVersionId))
             .groupBy(selectFields)
             .fetchGroups(this::extractDatasetVersion, this::extractDatasetFieldDto);
@@ -98,8 +104,8 @@ public class DatasetVersionRepositoryImpl
         final Map<DatasetVersionPojo, List<DatasetFieldDto>> result = dslContext
             .select(selectFields)
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as("labels"))
+            .select(count(ENUM_VALUE.ID).as("enum_value_count"))
             .from(subquery)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(datasetId))
             .join(DATASET_VERSION)
             .on(DATASET_VERSION.DATASET_ODDRN.eq(subquery.field(DATASET_VERSION.DATASET_ODDRN)))
             .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
@@ -107,6 +113,8 @@ public class DatasetVersionRepositoryImpl
             .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
             .leftJoin(LABEL_TO_DATASET_FIELD).on(DATASET_FIELD.ID.eq(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID))
             .leftJoin(LABEL).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID)).and(LABEL.IS_DELETED.isFalse())
+            .leftJoin(ENUM_VALUE).on(DATASET_FIELD.ID.eq(ENUM_VALUE.DATASET_FIELD_ID)
+                .and(ENUM_VALUE.IS_DELETED.isFalse()))
             .groupBy(selectFields)
             .fetchGroups(this::extractDatasetVersion, this::extractDatasetFieldDto);
 
@@ -232,6 +240,7 @@ public class DatasetVersionRepositoryImpl
         return DatasetFieldDto.builder()
             .datasetFieldPojo(extractDatasetField(record))
             .labelPojos(jooqRecordHelper.extractAggRelation(record, "labels", LabelPojo.class))
+            .enumValueCount(record.get("enum_value_count", Integer.class))
             .build();
     }
 }

@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,9 +34,10 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                                             final Field<Boolean> deletedField,
                                             final Field<String> collisionIdentifier,
                                             final Field<String> nameField,
+                                            final Field<LocalDateTime> updatedAtField,
                                             final Class<P> pojoClass) {
-        this(dslContext, jooqQueryHelper, recordTable, idField, deletedField, List.of(collisionIdentifier), nameField,
-            pojoClass);
+        this(dslContext, jooqQueryHelper, recordTable, idField, deletedField, List.of(collisionIdentifier),
+            nameField, updatedAtField, pojoClass);
     }
 
     public AbstractSoftDeleteCRUDRepository(final DSLContext dslContext,
@@ -45,8 +47,9 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                                             final Field<Boolean> deletedField,
                                             final List<Field<String>> collisionIdentifiers,
                                             final Field<String> nameField,
+                                            final Field<LocalDateTime> updatedAtField,
                                             final Class<P> pojoClass) {
-        super(dslContext, jooqQueryHelper, recordTable, idField, nameField, pojoClass);
+        super(dslContext, jooqQueryHelper, recordTable, idField, nameField, updatedAtField, pojoClass);
         this.deletedField = deletedField;
         this.collisionIdentifiers = List.copyOf(collisionIdentifiers);
     }
@@ -54,10 +57,10 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
     @Override
     @Transactional
     public P create(final P pojo) {
-        final R record = pojoToRecord(pojo);
+        final R jooqRecord = pojoToRecord(pojo);
 
         final List<Condition> whereClause = collisionIdentifiers.stream()
-            .map(ci -> ci.eq(record.get(ci)))
+            .map(ci -> ci.eq(jooqRecord.get(ci)))
             .collect(Collectors.toList());
 
         final Optional<R> getResultRecordOpt = dslContext
@@ -72,9 +75,9 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                 throw new EntityAlreadyExistsException();
             }
 
-            record.set(deletedField, false);
-            record.set(idField, getResultRecord.get(idField));
-            return update(recordToPojo(record));
+            jooqRecord.set(deletedField, false);
+            jooqRecord.set(idField, getResultRecord.get(idField));
+            return update(recordToPojo(jooqRecord));
         }
 
         return super.create(pojo);
@@ -182,8 +185,8 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
         return List.of(condition, deletedField.isFalse());
     }
 
-    private List<String> extractRecordCollisionValues(final R record) {
-        return collisionIdentifiers.stream().map(record::get).collect(Collectors.toList());
+    private List<String> extractRecordCollisionValues(final R jooqRecord) {
+        return collisionIdentifiers.stream().map(jooqRecord::get).collect(Collectors.toList());
     }
 
     private List<Condition> matchConditionsWithValues(final List<String> values) {

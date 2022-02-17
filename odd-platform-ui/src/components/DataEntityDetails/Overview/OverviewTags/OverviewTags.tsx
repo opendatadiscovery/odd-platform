@@ -1,21 +1,19 @@
 import React from 'react';
-import { Collapse, Grid, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
+import { Box, Collapse, Grid, Typography } from '@mui/material';
 import { Tag } from 'generated-sources';
 import TagItem from 'components/shared/TagItem/TagItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import TagsEditContainer from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { styles, StylesType } from './OverviewTagsStyles';
+import { CaptionContainer } from './OverviewTagsStyles';
 
-interface OverviewTagsProps extends StylesType {
+interface OverviewTagsProps {
   dataEntityId: number;
   tags?: Tag[];
 }
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({
-  classes,
   tags,
   dataEntityId,
 }) => {
@@ -32,10 +30,8 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
 
   return (
     <div>
-      <div className={classes.captionContainer}>
-        <Typography variant="h4" className={classes.caption}>
-          Tags
-        </Typography>
+      <CaptionContainer>
+        <Typography variant="h4">Tags</Typography>
         <TagsEditContainer
           dataEntityId={dataEntityId}
           btnEditEl={
@@ -49,9 +45,9 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
             </AppButton>
           }
         />
-      </div>
+      </CaptionContainer>
       {tags?.length ? (
-        <div className={classes.tagsContainer}>
+        <Box sx={{ mx: -0.5, my: 0 }}>
           {tags
             .slice(0, visibleLimit)
             .sort(tagsCompare)
@@ -90,7 +86,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
               </AppButton>
             </>
           ) : null}
-        </div>
+        </Box>
       ) : (
         <Grid
           item
@@ -115,4 +111,4 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
   );
 };
 
-export default withStyles(styles)(OverviewTags);
+export default OverviewTags;

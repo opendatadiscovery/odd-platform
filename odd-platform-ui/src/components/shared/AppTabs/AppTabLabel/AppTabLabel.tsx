@@ -1,6 +1,7 @@
 import React from 'react';
-import { Skeleton, Typography } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import { HintType } from 'components/shared/AppTabs/interfaces';
 import * as S from './AppTabLabelStyles';
 
 interface AppTabLabelProps {
@@ -8,6 +9,7 @@ interface AppTabLabelProps {
   showHint: boolean;
   isHintUpdated?: boolean;
   hint?: number | string;
+  hintType?: HintType;
 }
 
 const AppTabLabel: React.FC<AppTabLabelProps> = ({
@@ -15,22 +17,21 @@ const AppTabLabel: React.FC<AppTabLabelProps> = ({
   showHint,
   hint,
   isHintUpdated,
+  hintType = 'primary',
 }) => {
   const getLabelContent = (hintIsUpdating?: boolean) =>
     hintIsUpdating ? (
-      <S.HintContainer>
+      <S.HintContainer $hintType={hintType}>
         <Skeleton width="18px" height="27px" />
       </S.HintContainer>
     ) : (
-      <S.HintContainer>
-        <Typography variant="h6" component="span">
-          <NumberFormatted value={hint} precision={0} />
-        </Typography>
+      <S.HintContainer $hintType={hintType}>
+        <NumberFormatted value={hint} precision={0} />
       </S.HintContainer>
     );
 
   return (
-    <S.Container variant="body1">
+    <S.Container variant="body1" component="span">
       {name}
       {showHint && hint !== undefined
         ? getLabelContent(isHintUpdated)

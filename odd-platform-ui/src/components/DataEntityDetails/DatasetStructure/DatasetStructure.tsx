@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React, { ChangeEvent } from 'react';
 import { useHistory } from 'react-router-dom';
 import round from 'lodash/round';
@@ -18,11 +18,10 @@ import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
-import { StylesType } from './DatasetStructureStyles';
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
-interface DatasetStructureTableProps extends StylesType {
+interface DatasetStructureTableProps {
   dataEntityId: number;
   datasetStats: DataSetStats;
   datasetVersions?: DataSetVersion[];
@@ -39,7 +38,6 @@ interface DatasetStructureTableProps extends StylesType {
 }
 
 const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
-  classes,
   dataEntityId,
   datasetStats,
   datasetVersions,
@@ -75,7 +73,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   };
 
   return (
-    <div className={classes.container}>
+    <Box sx={{ mt: 2 }}>
       {isDatasetStructureFetching ? (
         <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
@@ -93,42 +91,49 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             alignItems="center"
             container
           >
-            <Grid item xs={8} className={classes.typesCount}>
-              <Typography variant="h5" className={classes.dataCount}>
-                <ColumnsIcon className={classes.statIcon} />
-                <NumberFormatted value={datasetStats?.fieldsCount} />
-                <Typography
-                  variant="body2"
-                  className={classes.columnsName}
-                >
+            <Grid item xs={8} container alignItems="center">
+              <Typography variant="h5" display="flex" sx={{ mr: 3 }}>
+                <ColumnsIcon />
+                <NumberFormatted
+                  sx={{ mx: 0.5 }}
+                  value={datasetStats?.fieldsCount}
+                />
+                <Typography variant="body2" color="texts.hint">
                   columns
                 </Typography>
               </Typography>
               {toPairs(typesCount).map(([type, count]) =>
                 isComplexField(type as DataSetFieldTypeTypeEnum) ? null : (
-                  <Typography
-                    key={type}
-                    variant="h5"
-                    className={classes.typesCountItem}
-                  >
+                  <Typography key={type} variant="h5" sx={{ mr: 5 }}>
                     {count}
                     <DatasetStructureFieldTypeLabel
+                      sx={{ mx: 0.5 }}
                       typeName={type as DataSetFieldTypeTypeEnum}
                     />
-                    <span className={classes.typesCountItemPct}>
-                      {count
+                    <Typography
+                      component="span"
+                      variant="body2"
+                      color="texts.hint"
+                    >
+                      {count && datasetStats?.fieldsCount
                         ? round(
-                            (count * 100) / datasetStats?.fieldsCount,
+                            (count * 100) / datasetStats.fieldsCount,
                             2
                           )
                         : 0}
                       %
-                    </span>
+                    </Typography>
                   </Typography>
                 )
               )}
             </Grid>
-            <Grid item xs={4} className={classes.revisionContainer}>
+            <Grid
+              item
+              xs={4}
+              container
+              alignItems="center"
+              justifyContent="flex-end"
+            >
               {datasetStructureVersion ? (
                 <>
                   <Typography variant="subtitle2">
@@ -161,7 +166,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
           ) : null}
         </Grid>
       )}
-    </div>
+    </Box>
   );
 };
 export default DatasetStructureTable;

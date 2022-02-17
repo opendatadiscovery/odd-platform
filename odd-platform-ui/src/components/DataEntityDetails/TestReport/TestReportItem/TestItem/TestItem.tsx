@@ -1,20 +1,17 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import cx from 'classnames';
 import { formatDistanceStrict } from 'date-fns';
 import values from 'lodash/values';
 import {
   DataQualityTestExpectation,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
 } from 'generated-sources';
 import TestRunStatusIcon from 'components/shared/TestRunStatusIcon/TestRunStatusIcon';
-import { styles, StylesType } from './TestitemStyles';
+import { Container } from './TestitemStyles';
 
-interface TestItemProps extends StylesType {
-  className?: string;
+interface TestItemProps {
   active: boolean;
-  latestRunStatus: DataQualityTestRunStatusEnum | undefined;
+  latestRunStatus: DataQualityTestRunStatus | undefined;
   testName: string;
   testStartTime: Date | undefined;
   testEndTime: Date | undefined;
@@ -22,8 +19,6 @@ interface TestItemProps extends StylesType {
 }
 
 const TestItem: React.FC<TestItemProps> = ({
-  classes,
-  className,
   active,
   latestRunStatus,
   testName,
@@ -31,12 +26,7 @@ const TestItem: React.FC<TestItemProps> = ({
   testEndTime,
   testExpectations,
 }) => (
-  <Grid
-    container
-    className={cx(classes.container, className, {
-      [classes.active]: active,
-    })}
-  >
+  <Container container $active={active}>
     <Grid item>
       {latestRunStatus && <TestRunStatusIcon typeName={latestRunStatus} />}
     </Grid>
@@ -45,7 +35,7 @@ const TestItem: React.FC<TestItemProps> = ({
         <Typography variant="body1">{testName}</Typography>
       </Grid>
       <Grid container item xs={9} justifyContent="center">
-        <Typography variant="body1" className={classes.expectationItem}>
+        <Typography variant="body1" sx={{ mr: 0.5 }}>
           {values(testExpectations).join(', ')}
         </Typography>
       </Grid>
@@ -59,6 +49,6 @@ const TestItem: React.FC<TestItemProps> = ({
         </Typography>
       </Grid>
     </Grid>
-  </Grid>
+  </Container>
 );
-export default withStyles(styles)(TestItem);
+export default TestItem;

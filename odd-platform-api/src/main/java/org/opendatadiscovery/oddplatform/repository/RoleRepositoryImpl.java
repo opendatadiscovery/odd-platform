@@ -15,7 +15,8 @@ public class RoleRepositoryImpl
     implements RoleRepository {
 
     public RoleRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
-        super(dslContext, jooqQueryHelper, ROLE, ROLE.ID, ROLE.IS_DELETED, ROLE.NAME, ROLE.NAME, RolePojo.class);
+        super(dslContext, jooqQueryHelper, ROLE, ROLE.ID, ROLE.IS_DELETED, ROLE.NAME, ROLE.NAME,
+            ROLE.UPDATED_AT, RolePojo.class);
     }
 
     @Override

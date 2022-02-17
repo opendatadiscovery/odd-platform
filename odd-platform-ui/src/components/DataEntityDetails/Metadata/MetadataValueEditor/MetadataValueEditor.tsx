@@ -2,11 +2,9 @@ import React from 'react';
 import {
   FormControlLabel,
   Grid,
-  Radio,
   RadioGroup,
   TextFieldProps,
 } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import { Controller, useFormContext } from 'react-hook-form';
 import { format, isAfter, isBefore, isValid } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';
@@ -16,9 +14,9 @@ import AppDatePicker, {
   minDate,
 } from 'components/shared/AppDatePicker/AppDatePicker';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
-import { styles, StylesType } from './MetadataValueEditorStyles';
+import AppRadio from 'components/shared/AppRadio/AppRadio';
 
-interface MetadataValueEditFieldProps extends StylesType {
+interface MetadataValueEditFieldProps {
   metadataType: MetadataFieldType | '';
   metadataValue?: string;
   fieldName?: string;
@@ -27,7 +25,6 @@ interface MetadataValueEditFieldProps extends StylesType {
 }
 
 const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
-  classes,
   metadataType,
   metadataValue,
   fieldName = 'value',
@@ -60,23 +57,20 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           },
         }}
         render={({ field, fieldState }) => (
-          <>
-            <AppDatePicker
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...field}
-              sx={{ mt: 1 }}
-              label={labeled ? defaultText : ''}
-              disableMaskedInput
-              defaultDate={
-                metadataType === MetadataFieldType.DATETIME &&
-                metadataValue
-                  ? metadataValue
-                  : ''
-              }
-              showInputError={!!fieldState.error?.message}
-              inputHelperText={fieldState.error?.message}
-            />
-          </>
+          <AppDatePicker
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...field}
+            sx={{ mt: 1 }}
+            label={labeled ? defaultText : ''}
+            disableMaskedInput
+            defaultDate={
+              metadataType === MetadataFieldType.DATETIME && metadataValue
+                ? metadataValue
+                : ''
+            }
+            showInputError={!!fieldState.error?.message}
+            inputHelperText={fieldState.error?.message}
+          />
         )}
       />
     );
@@ -91,26 +85,21 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           <RadioGroup
             {...field}
             defaultValue={metadataValue || 'true'}
-            className={classes.radioGroup}
-            sx={{ mt: 1 }}
+            sx={{ ml: 0.5 }}
           >
-            <Grid container>
-              <Grid item sm={6}>
-                <FormControlLabel
-                  key="new"
-                  value="true"
-                  control={<Radio />}
-                  label="Yes"
-                />
-              </Grid>
-              <Grid item sm={6}>
-                <FormControlLabel
-                  key="new"
-                  value="false"
-                  control={<Radio />}
-                  label="No"
-                />
-              </Grid>
+            <Grid container wrap="nowrap">
+              <FormControlLabel
+                key="new"
+                value="true"
+                control={<AppRadio />}
+                label="Yes"
+              />
+              <FormControlLabel
+                key="new"
+                value="false"
+                control={<AppRadio />}
+                label="No"
+              />
             </Grid>
           </RadioGroup>
         )}
@@ -149,4 +138,4 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
   );
 };
 
-export default withStyles(styles)(MetadataValueEditField);
+export default MetadataValueEditField;

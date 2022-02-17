@@ -3,24 +3,24 @@ import { DataQualityTest } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import {
+  dataEntityDetailsPath,
   testReportDetailsHistoryPath,
   testReportDetailsOverviewPath,
 } from 'lib/paths';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import TestReportDetailsOverviewContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewContainer';
 import TestReportDetailsHistoryContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistoryContainer';
-import { StylesType } from './TestReportDetailsStyles';
+import AppButton from 'components/shared/AppButton/AppButton';
 
-interface TestRunDetailsProps extends StylesType {
-  dataqatestId: number;
+interface TestRunDetailsProps {
+  dataQATestId: number;
   dataEntityId: number;
   reportDetailsViewType: string;
   qualityTest: DataQualityTest;
 }
 
 const TestReportDetails: React.FC<TestRunDetailsProps> = ({
-  classes,
-  dataqatestId,
+  dataQATestId,
   dataEntityId,
   reportDetailsViewType,
   qualityTest,
@@ -31,22 +31,16 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
     setTabs([
       {
         name: 'Overview',
-        link: testReportDetailsOverviewPath(dataEntityId, dataqatestId),
+        link: testReportDetailsOverviewPath(dataEntityId, dataQATestId),
         value: 'overview',
       },
       {
         name: 'History',
-        link: testReportDetailsHistoryPath(dataEntityId, dataqatestId),
+        link: testReportDetailsHistoryPath(dataEntityId, dataQATestId),
         value: 'history',
       },
-      // {
-      //   name: 'Retries',
-      //   link: testReportDetailsRetriesPath(dataEntityId, dataqatestId),
-      //   hidden: true,
-      //   value: 'retries',
-      // },
     ]);
-  }, [dataEntityId, dataqatestId]);
+  }, [dataEntityId, dataQATestId]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
@@ -59,11 +53,18 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
   }, [tabs, reportDetailsViewType]);
 
   return (
-    <Grid container className={classes.container}>
-      <Typography variant="h2">
-        {qualityTest?.internalName || qualityTest?.externalName}
-      </Typography>
-      <Grid container wrap="wrap" justifyContent="center">
+    <Grid container sx={{ p: 2 }}>
+      <Grid container justifyContent="space-between">
+        <Typography variant="h2">
+          {qualityTest?.internalName || qualityTest?.externalName}
+        </Typography>
+        <Link to={dataEntityDetailsPath(dataQATestId)}>
+          <AppButton size="small" color="tertiary">
+            Go to page
+          </AppButton>
+        </Link>
+      </Grid>
+      <Grid container wrap="wrap" justifyContent="center" sx={{ mt: 2 }}>
         {tabs.length && selectedTab >= 0 ? (
           <AppTabs
             type="secondary"
@@ -83,11 +84,6 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
             path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/history"
             component={TestReportDetailsHistoryContainer}
           />
-          {/* <Route */}
-          {/*  exact */}
-          {/*  path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/retries" */}
-          {/*  component={TestReportDetailsContainer} */}
-          {/* /> */}
           <Redirect
             from="/dataentities/:dataEntityId/test-reports/:dataqatestId?"
             to="/dataentities/:dataEntityId/test-reports/:dataqatestId?/overview"

@@ -1,25 +1,19 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
+import { Typography } from '@mui/material';
 import { Tag, TagApiDeleteTagRequest } from 'generated-sources';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import {
-  styles,
-  StylesType,
-} from 'components/Management/TagsList/EditableTagItem/EditableTagItemStyles';
-import cx from 'classnames';
 import TagEditFormContainer from 'components/Management/TagsList/TagEditForm/TagEditFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
+import * as S from './EditableTagItemStyles';
 
-interface EditableTagItemProps extends StylesType {
+interface EditableTagItemProps {
   tag: Tag;
   deleteTag: (params: TagApiDeleteTagRequest) => Promise<void>;
 }
 
 const EditableTagItem: React.FC<EditableTagItemProps> = ({
-  classes,
   tag,
   deleteTag,
 }) => {
@@ -29,18 +23,18 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
   );
 
   return (
-    <Grid container className={classes.container}>
-      <Grid item className={classes.col}>
+    <S.Container container>
+      <S.Col item>
         <Typography variant="body1" noWrap title={tag.name}>
           {tag.name}
         </Typography>
-      </Grid>
-      <Grid item className={classes.col}>
+      </S.Col>
+      <S.Col item>
         <Typography variant="body1">
           {tag.important ? 'important' : ''}
         </Typography>
-      </Grid>
-      <Grid item className={cx(classes.col, classes.actionsContainer)}>
+      </S.Col>
+      <S.ActionsContainer item>
         <TagEditFormContainer
           tag={tag}
           editBtn={
@@ -71,9 +65,9 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
             </AppButton>
           }
         />
-      </Grid>
-    </Grid>
+      </S.ActionsContainer>
+    </S.Container>
   );
 };
 
-export default withStyles(styles)(EditableTagItem);
+export default EditableTagItem;

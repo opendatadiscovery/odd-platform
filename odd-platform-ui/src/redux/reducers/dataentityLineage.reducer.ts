@@ -305,7 +305,7 @@ const updateDataEntityLineage = (
     const groupedNodes = groupingNodes(
       groupIdsBySourceId,
       sourceIdMapByDepth,
-      2,
+      4,
       true,
       localState.excludedIds
     );
@@ -417,6 +417,7 @@ const reducer = (
   const upstreamActionType = getType(
     actions.fetchDataEntityUpstreamLineageAction.success
   );
+
   if (
     action.type === (downstreamActionType || upstreamActionType) &&
     action.payload.entityId === action.payload.value.rootNodeId

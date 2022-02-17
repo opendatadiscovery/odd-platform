@@ -3,7 +3,7 @@ import {
   DataQualityApiGetDataEntityDataQATestsRequest,
   DataQualityApiGetDatasetTestReportRequest,
   DataQualityTest,
-  DataQualityTestRunStatusEnum,
+  DataQualityTestRunStatus,
   DataSetTestReport,
 } from 'generated-sources';
 import { Grid, Paper, Typography } from '@mui/material';
@@ -11,10 +11,13 @@ import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatus
 import TestReportItemContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemContainer';
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
 import TestReportItemSkeleton from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
-import DatasetTestReportSkeleton from 'components/DataEntityDetails/TestReport/DatasetTestReportSkeleton/DatasetTestReportSkeleton';
+import TestReportSkeleton from 'components/DataEntityDetails/TestReport/TestReportSkeleton/TestReportSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
-import { StylesType } from './TestReportStyles';
+import {
+  TestReportContainer,
+  TestReportItemCont,
+} from './TestReportStyles';
 
 interface DatasetQualityTestList {
   [suiteName: string]: DataQualityTest[];
@@ -24,7 +27,7 @@ interface TestReportBySuitName {
   [suiteName: string]: DataSetQualityTestsStatusCount;
 }
 
-interface TestReportProps extends StylesType {
+interface TestReportProps {
   dataEntityId: number;
   dataqatestId: number;
   datasetTestReport: DataSetTestReport;
@@ -42,7 +45,6 @@ interface TestReportProps extends StylesType {
 }
 
 const TestReport: React.FC<TestReportProps> = ({
-  classes,
   dataEntityId,
   dataqatestId,
   datasetTestReport,
@@ -60,46 +62,44 @@ const TestReport: React.FC<TestReportProps> = ({
   }, [fetchDataSetQualityTestReport, dataEntityId]);
 
   return (
-    <Grid container className={classes.container}>
+    <Grid container sx={{ mt: 2 }}>
       {datasetQualityTestList ? (
         <>
           {isDatasetTestReportFetching ? (
             <SkeletonWrapper
               renderContent={({ randomSkeletonPercentWidth }) => (
-                <DatasetTestReportSkeleton
-                  width={randomSkeletonPercentWidth()}
-                />
+                <TestReportSkeleton width={randomSkeletonPercentWidth()} />
               )}
             />
           ) : (
-            <Grid container className={classes.testReportContainer}>
-              <Grid container item className={classes.testReport}>
+            <Grid container alignItems="center" wrap="nowrap">
+              <TestReportContainer container item>
                 <TestRunStatusItem
                   count={datasetTestReport?.successTotal}
-                  typeName={DataQualityTestRunStatusEnum.SUCCESS}
+                  typeName={DataQualityTestRunStatus.SUCCESS}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.failedTotal}
-                  typeName={DataQualityTestRunStatusEnum.FAILED}
+                  typeName={DataQualityTestRunStatus.FAILED}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.brokenTotal}
-                  typeName={DataQualityTestRunStatusEnum.BROKEN}
+                  typeName={DataQualityTestRunStatus.BROKEN}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.abortedTotal}
-                  typeName={DataQualityTestRunStatusEnum.ABORTED}
+                  typeName={DataQualityTestRunStatus.ABORTED}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.skippedTotal}
-                  typeName={DataQualityTestRunStatusEnum.SKIPPED}
+                  typeName={DataQualityTestRunStatus.SKIPPED}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.unknownTotal}
-                  typeName={DataQualityTestRunStatusEnum.UNKNOWN}
+                  typeName={DataQualityTestRunStatus.UNKNOWN}
                 />
-              </Grid>
-              <Grid container item className={classes.testCount}>
+              </TestReportContainer>
+              <Grid container item justifyContent="flex-end">
                 <Typography
                   variant="body2"
                   color="textSecondary"
@@ -109,7 +109,7 @@ const TestReport: React.FC<TestReportProps> = ({
           )}
           <>
             {datasetQualityTestList ? (
-              <Grid container spacing={2}>
+              <Grid container sx={{ mt: 4 }}>
                 <Grid item xs={9}>
                   {isDatasetTestListFetching ? (
                     <SkeletonWrapper
@@ -125,10 +125,7 @@ const TestReport: React.FC<TestReportProps> = ({
                       )}
                     />
                   ) : (
-                    <Grid
-                      container
-                      className={classes.testReportItemContainer}
-                    >
+                    <TestReportItemCont container>
                       {Object.entries(datasetQualityTestList).map(
                         ([suitName, dataQATestList]) => (
                           <TestReportItemContainer
@@ -143,7 +140,7 @@ const TestReport: React.FC<TestReportProps> = ({
                           />
                         )
                       )}
-                    </Grid>
+                    </TestReportItemCont>
                   )}
                 </Grid>
                 <Grid item xs={3}>

@@ -1,19 +1,13 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid, GridSize } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import {
-  styles,
-  StylesType,
-} from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewStyles';
 import { mainSkeletonHeight } from 'lib/constants';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   width: string;
 }
 
 const TestReportDetailsOverviewSkeleton: React.FC<SkeletonProps> = ({
-  classes,
   width,
 }) => {
   const skeletonItem = (xs: GridSize) => (
@@ -23,33 +17,33 @@ const TestReportDetailsOverviewSkeleton: React.FC<SkeletonProps> = ({
   );
 
   return (
-    <Grid className={classes.container}>
-      <Grid className={classes.statContainer}>
-        <Grid container className={classes.statItem}>
+    <Grid sx={{ mt: 2 }}>
+      <Grid sx={{ mt: 2 }}>
+        <Grid container sx={{ mt: 1 }}>
           {skeletonItem(4)}
           {skeletonItem(8)}
         </Grid>
-        <Grid container className={classes.statItem}>
+        <Grid container sx={{ mt: 1 }}>
           {skeletonItem(4)}
           {skeletonItem(8)}
         </Grid>
-        <Grid container className={classes.statItem}>
+        <Grid container sx={{ mt: 1 }}>
           {skeletonItem(4)}
           {skeletonItem(8)}
         </Grid>
       </Grid>
-      <Grid className={classes.paramContainer}>
+      <Grid sx={{ mt: 2 }}>
         <Skeleton width={width} height={mainSkeletonHeight} />
         <Grid container>
           {skeletonItem(4)}
           {skeletonItem(8)}
         </Grid>
       </Grid>
-      <Grid className={classes.paramContainer}>
+      <Grid sx={{ mt: 2 }}>
         <Skeleton width={width} height={mainSkeletonHeight} />
         <Grid container>{skeletonItem(4)}</Grid>
       </Grid>
-      <Grid className={classes.paramContainer}>
+      <Grid sx={{ mt: 2 }}>
         <Skeleton width={width} height={mainSkeletonHeight} />
         <Grid container>{skeletonItem(12)}</Grid>
       </Grid>
@@ -57,4 +51,4 @@ const TestReportDetailsOverviewSkeleton: React.FC<SkeletonProps> = ({
   );
 };
 
-export default withStyles(styles)(TestReportDetailsOverviewSkeleton);
+export default TestReportDetailsOverviewSkeleton;
