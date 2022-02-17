@@ -12,8 +12,6 @@ public class TokenMapperImpl implements TokenMapper {
     public Token mapPojoToToken(final TokenPojo tokenPojo) {
         return new Token()
                 .id(tokenPojo.getId())
-                .name(tokenPojo.getName())
-                .description(tokenPojo.getDescription())
                 .value(tokenPojo.getValue())
                 .createdAt(tokenPojo.getCreatedAt().atOffset(ZoneOffset.UTC))
                 .createdBy(tokenPojo.getCreatedBy())
@@ -25,8 +23,6 @@ public class TokenMapperImpl implements TokenMapper {
     public TokenPojo mapTokenToPojo(final Token token) {
         return new TokenPojo()
                 .setId(token.getId())
-                .setName(token.getName())
-                .setDescription(token.getDescription())
                 .setValue(token.getValue())
                 .setCreatedBy(token.getCreatedBy())
                 .setUpdatedBy(token.getUpdatedBy())

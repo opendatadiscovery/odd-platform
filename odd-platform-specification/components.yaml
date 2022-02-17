@@ -746,10 +746,6 @@ components:
         id:
           type: integer
           format: int64
-        name:
-          type: string
-        description:
-          type: string
         value:
           type: string
         created_by:
@@ -764,7 +760,6 @@ components:
           format: date-time
       required:
         - id
-        - name
         - value
         - created_at
         - updated_at
