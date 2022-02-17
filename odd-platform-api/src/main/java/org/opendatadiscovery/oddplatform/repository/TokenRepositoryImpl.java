@@ -38,12 +38,6 @@ public class TokenRepositoryImpl implements TokenRepository {
         return persistToken(tokenPojo, checkIfExistsCondition);
     }
 
-    @Override
-    public TokenPojo getToken(Long tokenId) {
-        final Condition checkIfExistsCondition = TOKEN.ID.eq(tokenId);
-        return recordToPojo(Objects.requireNonNull(dslContext.fetchOne(TOKEN, checkIfExistsCondition)));
-    }
-
     private TokenPojo persistToken(final TokenPojo tokenPojo, final Condition checkIfExistsCondition) {
         return dslContext.selectFrom(TOKEN)
                 .where(checkIfExistsCondition)
