@@ -1,4 +1,3 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { updateDataEntityInternalDescription } from 'redux/thunks/dataentities.thunks';
@@ -7,7 +6,6 @@ import {
   getDataEntityExternalDescription,
 } from 'redux/selectors/dataentity.selectors';
 import OverviewDescription from './OverviewDescription';
-import { styles } from './OverviewDescriptionStyles';
 
 const mapStateToProps = (
   state: RootState,
@@ -30,4 +28,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withStyles(styles)(OverviewDescription));
+)(OverviewDescription);

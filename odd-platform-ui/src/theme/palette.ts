@@ -68,6 +68,7 @@ export const palette = createPalette({
     secondary: colors.black50,
     hint: colors.black30,
     info: colors.black70,
+    action: colors.blue60,
   },
   warning: {
     main: colors.red50,
@@ -179,6 +180,11 @@ export const palette = createPalette({
         color: colors.white,
         border: colors.black90,
       },
+    },
+    valueCount: {
+      normal: { background: colors.black10, color: colors.black50 },
+      hover: { background: colors.black15, color: colors.black70 },
+      active: { background: colors.black15, color: colors.black90 },
     },
   },
   tag: {

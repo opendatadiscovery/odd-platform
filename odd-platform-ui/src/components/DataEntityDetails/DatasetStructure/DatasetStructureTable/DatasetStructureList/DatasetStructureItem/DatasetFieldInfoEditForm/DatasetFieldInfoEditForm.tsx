@@ -94,7 +94,11 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
     );
   };
 
-  const formTitle = <Typography variant="h4">Edit information</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      Edit information
+    </Typography>
+  );
 
   const formContent = () => (
     <form
@@ -138,17 +142,15 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
   );
 
   const formActionButtons = () => (
-    <>
-      <AppButton
-        size="large"
-        type="submit"
-        form="dataset-field-info-form"
-        color="primary"
-        fullWidth
-      >
-        Save
-      </AppButton>
-    </>
+    <AppButton
+      size="large"
+      type="submit"
+      form="dataset-field-info-form"
+      color="primary"
+      fullWidth
+    >
+      Save
+    </AppButton>
   );
 
   return (

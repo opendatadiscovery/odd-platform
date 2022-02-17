@@ -1,10 +1,9 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,23 +17,16 @@ import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UpdatableRecord;
-import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
-import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
+import org.jooq.exception.DataAccessException;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.util.StringUtils;
 
 import static java.util.Collections.emptyList;
-import static org.jooq.impl.DSL.count;
-import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.max;
-import static org.jooq.impl.DSL.rowNumber;
 
-@RequiredArgsConstructor
 @Slf4j
+@RequiredArgsConstructor
 public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> implements CRUDRepository<P> {
-    protected static final String PAGE_METADATA_TOTAL_FIELD = "total";
-    protected static final String PAGE_METADATA_NEXT_FIELD = "next";
 
     protected final DSLContext dslContext;
     protected final JooqQueryHelper jooqQueryHelper;
@@ -42,6 +34,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     protected final Table<R> recordTable;
     protected final Field<Long> idField;
     protected final Field<String> nameField;
+    protected final Field<LocalDateTime> updatedAtField;
     protected final Class<P> pojoClass;
 
     @Override
@@ -64,7 +57,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return fetchList(query)
             .stream()
             .map(this::recordToPojo)
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
@@ -80,17 +73,28 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     @Override
     public P create(final P pojo) {
         final R r = pojoToRecord(pojo);
-        r.store();
-        return recordToPojo(r);
+        return dslContext.insertInto(recordTable)
+            .set(r)
+            .returning()
+            .fetchOptional()
+            .orElseThrow(() -> new DataAccessException("Error inserting record with id = " + r.get(idField)))
+            .into(pojoClass);
     }
 
     @Override
     public P update(final P pojo) {
         final R r = pojoToRecord(pojo);
-        r.changed(idField, false);
-        r.store();
-
-        return recordToPojo(r);
+        final Long id = r.get(idField);
+        if (updatedAtField != null) {
+            r.set(updatedAtField, LocalDateTime.now());
+        }
+        return dslContext.update(recordTable)
+            .set(r)
+            .where(idField.eq(id))
+            .returning()
+            .fetchOptional()
+            .orElseThrow(() -> new DataAccessException("Error updating record with id = " + id))
+            .into(pojoClass);
     }
 
     @Override
@@ -112,8 +116,15 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     }
 
     protected <E> List<E> bulkUpdate(final Collection<E> entities, final Class<E> entityClass) {
+        final LocalDateTime now = LocalDateTime.now();
         final List<R> records = entities.stream()
-            .map(e -> dslContext.newRecord(recordTable, e))
+            .map(e -> {
+                final R record = dslContext.newRecord(recordTable, e);
+                if (updatedAtField != null) {
+                    record.set(updatedAtField, now);
+                }
+                return record;
+            })
             .collect(Collectors.toList());
 
         dslContext.batchUpdate(records).execute();
@@ -149,7 +160,6 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return StringUtils.hasLength(nameQuery) ? List.of(nameField.containsIgnoreCase(nameQuery)) : emptyList();
     }
 
-    // TODO: remove empty record from the end of the query
     protected <E> List<E> bulkInsert(final Collection<E> entities, final Class<E> entityClass) {
         final List<R> records = entities.stream()
             .map(e -> dslContext.newRecord(recordTable, e))
@@ -206,7 +216,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return r.into(pojoClass);
     }
 
-    protected R changedToFalse(final R record, final Collection<TableField<R, ?>> fields) {
+    protected R ignoreUpdate(final R record, final Collection<TableField<R, ?>> fields) {
         for (final TableField<R, ?> field : fields) {
             record.changed(field, false);
         }

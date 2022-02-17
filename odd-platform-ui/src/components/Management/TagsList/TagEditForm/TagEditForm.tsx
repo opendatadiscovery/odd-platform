@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, FormControlLabel, Checkbox } from '@mui/material';
+import { Typography, FormControlLabel, Box } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Tag,
@@ -10,9 +10,9 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { StylesType } from './TagEditFormStyles';
+import * as S from './TagEditFormStyles';
 
-interface TagEditFormProps extends StylesType {
+interface TagEditFormProps {
   editBtn: JSX.Element;
   tag: Tag;
   isLoading: boolean;
@@ -20,7 +20,6 @@ interface TagEditFormProps extends StylesType {
 }
 
 const TagEditForm: React.FC<TagEditFormProps> = ({
-  classes,
   editBtn,
   tag,
   isLoading,
@@ -61,7 +60,11 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
     );
   };
 
-  const formTitle = <Typography variant="h4">Edit Tag</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      Edit Tag
+    </Typography>
+  );
 
   const formContent = () => (
     <form id="tag-edit-form" onSubmit={handleSubmit(handleUpdate)}>
@@ -83,7 +86,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
           />
         )}
       />
-      <div className={classes.tagItemButtons}>
+      <Box sx={{ mt: 1, ml: 1.75 }}>
         <Controller
           name="important"
           control={control}
@@ -92,14 +95,13 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
             <FormControlLabel
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
-              className={classes.checkboxContainer}
               checked={field.value}
-              control={<Checkbox className={classes.pullingCheckbox} />}
+              control={<S.ImportantCheckbox sx={{ mr: 1 }} />}
               label="Important"
             />
           )}
         />
-      </div>
+      </Box>
     </form>
   );
 
@@ -128,6 +130,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
+      clearState={clearState}
     />
   );
 };

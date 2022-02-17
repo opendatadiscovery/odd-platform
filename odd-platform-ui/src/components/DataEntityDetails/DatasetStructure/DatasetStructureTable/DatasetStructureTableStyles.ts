@@ -1,71 +1,39 @@
-import { Theme } from '@mui/material';
+import { Grid, GridProps } from '@mui/material';
+import styled from 'styled-components';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+export type ColType = 'name' | 'uniq' | 'missing' | 'stats';
 
-export const columnBasicStyles = (theme: Theme) => ({
-  collapseCol: {
-    width: '20px',
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  nameCol: {
-    paddingLeft: theme.spacing(1),
-    paddingRight: '5px',
+export const columnBasicStyles = {
+  name: {
     flexGrow: 1,
+    width: '68%',
     maxWidth: 'calc(100% - 140px)',
   },
-  typeCol: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    paddingRight: theme.spacing(2),
-    '& > *': {
-      marginRight: theme.spacing(1),
-    },
-  },
-  uniqCol: {
-    paddingLeft: 0,
-    paddingRight: 0,
-    width: '160px',
+  uniq: {
     display: 'flex',
     flexGrow: 1,
   },
-  missingCol: {
-    paddingLeft: 0,
-    paddingRight: 0,
-    width: '160px',
+  missing: {
     display: 'flex',
     flexGrow: 1,
   },
-  statsCol: {
-    paddingLeft: '20px',
-    paddingRight: 0,
-  },
-  columnDivided: {
-    borderRight: '1px solid',
-    borderRightColor: theme.palette.backgrounds.primary,
-    paddingRight: '15px',
-  },
-});
+  stats: {},
+};
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      position: 'relative',
-      marginTop: theme.spacing(2.5),
-    },
-    tableHeader: {
-      color: theme.palette.texts.hint,
-      '& > *': {
-        borderBottom: '1px solid',
-        borderBottomColor: theme.palette.backgrounds.primary,
-      },
-      '& > $columnDivided': {
-        borderRightColor: 'transparent',
-      },
-    },
-    ...columnBasicStyles(theme),
-  });
+export const Container = styled(Grid)<GridProps>(() => ({
+  position: 'relative',
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const ColContainer = styled(Grid)<{
+  $colType: ColType;
+}>(({ $colType }) => ({
+  ...columnBasicStyles[$colType],
+}));
+
+export const TableHeader = styled(Grid)(({ theme }) => ({
+  color: theme.palette.texts.hint,
+  '& > *': {
+    borderBottom: '1px solid',
+    borderBottomColor: theme.palette.backgrounds.primary,
+  },
+}));

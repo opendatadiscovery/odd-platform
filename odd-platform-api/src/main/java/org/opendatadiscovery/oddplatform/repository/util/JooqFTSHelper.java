@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -140,7 +141,9 @@ public class JooqFTSHelper {
             .onConflict().doUpdate().set(JooqFTSHelper.onConflictSetMap(seTargetField));
     }
 
-    public Condition ftsCondition(final String query) {
+    public Condition ftsCondition(final String plainQuery) {
+        final String query = String.join("&", plainQuery.split(" "));
+
         final Field<Object> conditionField = field(
             "? @@ to_tsquery(?)",
             SEARCH_ENTRYPOINT.SEARCH_VECTOR,
@@ -213,8 +216,10 @@ public class JooqFTSHelper {
         return function.apply(filters);
     }
 
-    public Field<?> ftsRankField(final Field<?> vectorField, final String query) {
+    public Field<?> ftsRankField(final Field<?> vectorField, final String plainQuery) {
         requireNonNull(vectorField);
+
+        final String query = String.join("&", plainQuery.split(" "));
 
         return field(
             "ts_rank(?, to_tsquery(?))",

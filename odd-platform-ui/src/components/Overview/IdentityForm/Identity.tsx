@@ -24,9 +24,9 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { StylesType } from './IdentityStyles';
+import * as S from './IdentityStyles';
 
-interface IdentityProps extends StylesType {
+interface IdentityProps {
   identity?: AssociatedOwner;
   searchOwners: (
     params: OwnerApiGetOwnerListRequest
@@ -37,7 +37,6 @@ interface IdentityProps extends StylesType {
 }
 
 const Identity: React.FC<IdentityProps> = ({
-  classes,
   identity,
   searchOwners,
   updateIdentityOwner,
@@ -147,17 +146,17 @@ const Identity: React.FC<IdentityProps> = ({
   }, [identity]);
 
   return (
-    <div className={classes.container}>
+    <S.Container>
       <Grid container>
         <Grid item xs={12} container justifyContent="center">
-          <UserSyncIcon classes={{ root: classes.captionIcon }} />
+          <UserSyncIcon sx={{ width: '76px', height: '41px' }} />
         </Grid>
         <Grid
           item
           xs={12}
           container
           alignItems="center"
-          className={classes.caption}
+          sx={{ mt: 2 }}
           direction="column"
         >
           <Typography variant="h3">
@@ -177,10 +176,9 @@ const Identity: React.FC<IdentityProps> = ({
           alignItems="center"
           direction="column"
         >
-          <form
+          <S.FormContainer
             id="owner-connect-form"
             onSubmit={methods.handleSubmit(onSubmit)}
-            className={classes.formContainer}
           >
             <Controller
               name="name"
@@ -225,28 +223,26 @@ const Identity: React.FC<IdentityProps> = ({
                         }}
                       />
                       {possibleOwners.length ? (
-                        <Grid
+                        <S.SuggestedOwnersContainer
                           item
                           xs={12}
                           container
                           direction="column"
                           alignItems="flex-start"
-                          className={classes.suggestedOwnersContainer}
                         >
                           <Typography variant="subtitle2">
                             Maybe it&apos;s you
                           </Typography>
                           {possibleOwners.map(owner => (
-                            <Typography
+                            <S.SuggestedOwnerItem
                               key={owner.id}
                               variant="body1"
-                              className={classes.suggestedOwnerItem}
                               onClick={() => field.onChange(owner.name)}
                             >
                               {owner.name}
-                            </Typography>
+                            </S.SuggestedOwnerItem>
                           ))}
-                        </Grid>
+                        </S.SuggestedOwnersContainer>
                       ) : null}
                     </>
                   )}
@@ -280,10 +276,10 @@ const Identity: React.FC<IdentityProps> = ({
             >
               Sync owner
             </AppButton>
-          </form>
+          </S.FormContainer>
         </Grid>
       </Grid>
-    </div>
+    </S.Container>
   );
 };
 

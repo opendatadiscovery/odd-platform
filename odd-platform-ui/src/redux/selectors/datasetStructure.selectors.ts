@@ -1,7 +1,8 @@
 import { createSelector } from 'reselect';
-import { RootState, DatasetStructureState } from 'redux/interfaces';
+import { DatasetStructureState, RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 import isNumber from 'lodash/isNumber';
+import { EnumValue } from 'generated-sources';
 
 const getDatasetStructureState = ({
   datasetStructure,
@@ -87,4 +88,31 @@ export const getDatasetFieldData = createSelector(
       labels: datasetStructureState.fieldById[fieldId]?.labels || [],
     };
   }
+);
+
+export const getDatasetFieldEnums = createSelector(
+  getDatasetStructureState,
+  datasetFieldId,
+  (datasetStructureState, fieldId) => {
+    if (!fieldId) return [{ name: '', description: '' } as EnumValue];
+    return datasetStructureState.fieldEnumsByFieldId[fieldId] || [];
+  }
+);
+
+const getDatasetFieldEnumsFetchingStatus = createFetchingSelector(
+  'GET_DATA_SET_FIELD_ENUM'
+);
+
+const getDatasetFieldEnumsCreatingStatus = createFetchingSelector(
+  'POST_DATA_SET_FIELD_ENUM'
+);
+
+export const getDatasetFieldEnumsFetching = createSelector(
+  getDatasetFieldEnumsFetchingStatus,
+  statusFetch => statusFetch === 'fetching'
+);
+
+export const getDatasetFieldEnumsCreating = createSelector(
+  getDatasetFieldEnumsCreatingStatus,
+  statusCreate => statusCreate === 'fetching'
 );

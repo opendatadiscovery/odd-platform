@@ -1,9 +1,7 @@
-import withStyles from '@mui/styles/withStyles';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
 import Management from './Management';
-import { styles } from './ManagementStyles';
 
 interface RouteProps {
   viewType: string;
@@ -23,7 +21,4 @@ const mapStateToProps = (
 
 const mapDispatchToProps = {};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withStyles(styles)(Management));
+export default connect(mapStateToProps, mapDispatchToProps)(Management);

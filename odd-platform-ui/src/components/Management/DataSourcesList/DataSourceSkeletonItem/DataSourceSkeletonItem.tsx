@@ -1,36 +1,32 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
 import { mainSkeletonHeight } from 'lib/constants';
-import { styles, StylesType } from './DataSourceSkeletonItemStyles';
+import * as S from '../DataSourceItem/DataSourceItemStyles';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   width: string;
 }
 
-const DataSourceSkeletonItem: React.FC<SkeletonProps> = ({
-  classes,
-  width,
-}) => (
-  <Grid className={classes.container}>
+const DataSourceSkeletonItem: React.FC<SkeletonProps> = ({ width }) => (
+  <S.Container sx={{ mb: 1 }}>
     <Grid container alignItems="flex-start" spacing={2}>
       <Grid item container xs={12}>
         <Grid item xs={2}>
           <Skeleton width={width} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
-      <Grid item xs={6} container className={classes.descriptionContainer}>
+      <S.DescriptionContainer item xs={6} container>
         <Skeleton width={width} height={mainSkeletonHeight} />
         <Skeleton width={width} height={mainSkeletonHeight} />
         <Skeleton width={width} height={mainSkeletonHeight} />
-      </Grid>
-      <Grid item xs={6} container className={classes.descriptionContainer}>
+      </S.DescriptionContainer>
+      <S.DescriptionContainer item xs={6} container>
         <Skeleton width={width} height={mainSkeletonHeight} />
         <Skeleton width={width} height={mainSkeletonHeight} />
         <Skeleton width={width} height={mainSkeletonHeight} />
-      </Grid>
+      </S.DescriptionContainer>
     </Grid>
-  </Grid>
+  </S.Container>
 );
-export default withStyles(styles)(DataSourceSkeletonItem);
+export default DataSourceSkeletonItem;

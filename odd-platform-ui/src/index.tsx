@@ -9,7 +9,7 @@ import {
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { ThemeProvider } from 'styled-components';
+import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
@@ -20,7 +20,7 @@ import theme from './theme/mui.theme';
 
 import AppContainer from './components/AppContainer';
 
-declare module '@mui/styles/defaultTheme' {
+declare module 'styled-components' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
@@ -35,7 +35,9 @@ ReactDOM.render(
           <CssBaseline />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <BrowserRouter>
-              <AppContainer />
+              <StyleSheetManager disableVendorPrefixes>
+                <AppContainer />
+              </StyleSheetManager>
             </BrowserRouter>
           </LocalizationProvider>
         </ThemeProvider>

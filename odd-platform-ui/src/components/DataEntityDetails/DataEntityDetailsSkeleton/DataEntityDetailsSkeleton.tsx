@@ -1,46 +1,30 @@
 import React from 'react';
 import Skeleton from '@mui/material/Skeleton';
 import { Grid } from '@mui/material';
-import withStyles from '@mui/styles/withStyles';
-import { mainSkeletonHeight } from 'lib/constants';
-import { styles, StylesType } from './DataEntityDetailsSkeletonStyles';
 
-interface SkeletonProps extends StylesType {
+interface SkeletonProps {
   width: string;
 }
 
-const DataEntityDetailsSkeleton: React.FC<SkeletonProps> = ({
-  classes,
-  width,
-}) => {
+const DataEntityDetailsSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   const tabsSkeletonItem = (key: number) => (
-    <Grid key={key} item xs={2} className={classes.tabsSkeletonItem}>
-      <Skeleton width={width} height={mainSkeletonHeight} />
+    <Grid key={key} item xs={2}>
+      <Skeleton width={width} height={34} />
     </Grid>
   );
 
   return (
-    <Grid container className={classes.container}>
-      <Grid
-        container
-        justifyContent="space-between"
-        className={classes.dataentityName}
-      >
+    <Grid container>
+      <Grid container justifyContent="space-between">
         <Grid item xs={4}>
-          <Skeleton width={width} height={mainSkeletonHeight} />
+          <Skeleton width={width} height={40} />
         </Grid>
       </Grid>
-      <Grid
-        container
-        item
-        xs={6}
-        className={classes.tabsSkeletonContainer}
-        wrap="nowrap"
-      >
+      <Grid container item xs={6} sx={{ mt: 3 }} wrap="nowrap">
         {[...Array(6)].map((_, id) => tabsSkeletonItem(id))}
       </Grid>
     </Grid>
   );
 };
 
-export default withStyles(styles)(DataEntityDetailsSkeleton);
+export default DataEntityDetailsSkeleton;

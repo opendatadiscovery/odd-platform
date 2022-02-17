@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { DataEntityTypeNameEnum } from 'generated-sources';
 import { Box } from '@mui/material';
 

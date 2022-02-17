@@ -1,7 +1,10 @@
 import React from 'react';
-import * as S from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestionStyles';
 import { SxProps } from '@mui/system';
-import { Theme } from '@mui/material';
+import { Theme, Typography } from '@mui/material';
+import {
+  NoResultText,
+  CreateNewOptionText,
+} from './AutocompleteSuggestionStyles';
 
 interface AutocompleteSuggestionProps {
   optionLabel: string;
@@ -14,12 +17,12 @@ const AutocompleteSuggestion: React.FC<AutocompleteSuggestionProps> = ({
   optionName,
   sx,
 }) => (
-  <S.Container sx={sx} variant="body2">
-    <S.NoResultText>No result.</S.NoResultText>{' '}
-    <S.CreateNewOptionText>
+  <Typography sx={sx} variant="body2" component="span">
+    <NoResultText>No result.</NoResultText>{' '}
+    <CreateNewOptionText>
       Create new {optionLabel} &quot;{optionName}&quot;
-    </S.CreateNewOptionText>
-  </S.Container>
+    </CreateNewOptionText>
+  </Typography>
 );
 
 export default AutocompleteSuggestion;

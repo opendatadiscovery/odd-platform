@@ -1,11 +1,7 @@
 import React, { MouseEvent } from 'react';
+import { Grid, Typography, useScrollTrigger } from '@mui/material';
 import {
-  Grid,
-  IconButton,
-  Typography,
-  useScrollTrigger,
-} from '@mui/material';
-import {
+  AppInfo,
   AssociatedOwner,
   SearchApiSearchRequest,
   SearchFacetsData,
@@ -13,21 +9,28 @@ import {
 import { useHistory, useLocation } from 'react-router-dom';
 import { searchPath } from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AppMenu from 'components/shared/AppMenu/AppMenu';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import * as S from './AppToolbarStyles';
 
 interface AppToolbarProps {
   identity?: AssociatedOwner;
+  version?: string;
   fetchIdentity: () => Promise<AssociatedOwner | void>;
   createDataEntitiesSearch: (
     params: SearchApiSearchRequest
   ) => Promise<SearchFacetsData>;
+  fetchAppInfo: () => Promise<AppInfo | void>;
 }
 
 const AppToolbar: React.FC<AppToolbarProps> = ({
   identity,
+  version,
   createDataEntitiesSearch,
   fetchIdentity,
+  fetchAppInfo,
 }) => {
   const location = useLocation();
   const history = useHistory();
@@ -58,6 +61,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   React.useEffect(() => {
     fetchIdentity();
+    fetchAppInfo();
   }, []);
 
   const [tabs] = React.useState<AppTabItem[]>([
@@ -126,34 +130,42 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
               ) : null}
             </Grid>
             <S.SectionDesktop item>
-              <S.UserAvatar />
+              <S.UserAvatar stroke="currentColor" />
               <S.UserName>{identity?.identity.username}</S.UserName>
-              <IconButton
+              <AppIconButton
+                icon={<DropdownIcon />}
+                color="unfilled"
                 edge="end"
                 aria-label="account of current user"
                 aria-controls={menuId}
                 aria-haspopup="true"
                 onClick={handleProfileMenuOpen}
-                color="inherit"
-                size="large"
-              >
-                <ArrowDropDownIcon />
-              </IconButton>
+              />
             </S.SectionDesktop>
           </S.ActionsContainer>
         </S.ContentContainer>
       </S.Container>
-      <S.UserMenu
+      <AppMenu
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         id={menuId}
         keepMounted
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        transformOrigin={{ vertical: -42, horizontal: 'right' }}
         open={isMenuOpen}
         onClose={handleMenuClose}
       >
-        <S.UserMenuItem onClick={handleLogout}>Logout</S.UserMenuItem>
-      </S.UserMenu>
+        <AppMenuItem onClick={handleLogout}>Logout</AppMenuItem>
+        {version && (
+          <S.CaptionsWrapper>
+            <AppMenuItem divider />
+            <S.CaptionsTypographyWrapper>
+              <Typography variant="caption">
+                ODD Platform v.{version}
+              </Typography>
+            </S.CaptionsTypographyWrapper>
+          </S.CaptionsWrapper>
+        )}
+      </AppMenu>
     </S.Bar>
   );
 };

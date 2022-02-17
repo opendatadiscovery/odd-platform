@@ -1,7 +1,5 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { Link } from 'react-router-dom';
-import cx from 'classnames';
 import {
   AlertTotals,
   AssociatedOwner,
@@ -22,12 +20,12 @@ import CatalogIcon from 'components/shared/Icons/CatalogIcon';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
-import { StylesType } from './OverviewStyles';
-import DataEntityListContainer from './DataEntityList/DataEntityListContainer';
+import * as S from './OverviewStyles';
+import DataEntityList from './DataEntityList/DataEntityList';
 import TopTagsListContainer from './TopTagsList/TopTagsListContainer';
 import IdentityContainer from './IdentityForm/IdentityContainer';
 
-interface OverviewProps extends StylesType {
+interface OverviewProps {
   identity?: AssociatedOwner;
   identityFetched: boolean;
   alertTotals: AlertTotals;
@@ -57,7 +55,6 @@ interface OverviewProps extends StylesType {
 }
 
 const Overview: React.FC<OverviewProps> = ({
-  classes,
   identity,
   identityFetched,
   alertTotals,
@@ -95,7 +92,7 @@ const Overview: React.FC<OverviewProps> = ({
   }, []);
 
   return (
-    <div className={classes.container}>
+    <S.Container>
       {isMainOverviewContentFetching ? (
         <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
@@ -104,81 +101,70 @@ const Overview: React.FC<OverviewProps> = ({
         />
       ) : (
         <>
-          <Grid
-            container
-            alignItems="center"
-            className={classes.searchContainer}
-          >
+          <Grid container justifyContent="center" sx={{ pt: 8, pb: 9 }}>
             <MainSearchContainer />
           </Grid>
-          <Grid container className={classes.tagsContainer}>
+          <S.TagsContainer container>
             <TopTagsListContainer />
-          </Grid>
+          </S.TagsContainer>
           <Grid
             container
-            className={classes.infoBarContainer}
+            justifyContent="space-between"
+            sx={{ mt: 8 }}
             wrap="nowrap"
           >
-            <Grid
-              item
-              xs={3}
-              className={cx(classes.infoBarItem, classes.alertsContainer)}
-            >
+            <S.InfoBarItemAlerts item xs={3}>
               <Grid container justifyContent="space-between">
                 <Typography variant="subtitle1">Alerts</Typography>
-                <Link to={alertsPath()}>
-                  <div className={classes.showAllAlerts}>
-                    <AppButton size="small" color="dropdown">
-                      See All
-                    </AppButton>
-                  </div>
-                </Link>
+                <S.AllAlertsBtnContainer to={alertsPath()}>
+                  <AppButton size="small" color="dropdown">
+                    See All
+                  </AppButton>
+                </S.AllAlertsBtnContainer>
               </Grid>
-              <Grid container className={classes.alerts}>
-                <Grid container className={classes.myAlerts}>
-                  <AlertIcon className={classes.alertIcon} />
-                  <Typography variant="h2" className={classes.alertsCount}>
+              <Grid container wrap="nowrap">
+                <S.AlertsContainer container wrap="nowrap">
+                  <AlertIcon sx={{ mb: -0.25 }} />
+                  <Typography variant="h2" sx={{ my: 0, mx: 0.5 }}>
                     {alertTotals?.myTotal}
                   </Typography>
-                  <span className={classes.infoBarStatsText}>my</span>
-                </Grid>
-                <Grid container className={classes.dependAlerts}>
-                  <Typography variant="h2" className={classes.alertsCount}>
+                  <S.InfoBarStatsText>my</S.InfoBarStatsText>
+                </S.AlertsContainer>
+                <S.AlertsContainer container wrap="nowrap">
+                  <Typography variant="h2" sx={{ my: 0, mx: 0.5 }}>
                     {alertTotals?.dependentTotal}
                   </Typography>
-                  <span className={classes.infoBarStatsText}>
-                    dependent
-                  </span>
-                </Grid>
+                  <S.InfoBarStatsText>dependent</S.InfoBarStatsText>
+                </S.AlertsContainer>
               </Grid>
-            </Grid>
-            <Grid item xs={3} className={classes.infoBarItem}>
+            </S.InfoBarItemAlerts>
+            <S.InfoBarItem item xs={3}>
               <Typography variant="subtitle1">Overall quality</Typography>
               <Typography variant="h2">98%</Typography>
-            </Grid>
-            <Grid item xs={3} className={classes.infoBarItem}>
+            </S.InfoBarItem>
+            <S.InfoBarItem item xs={3}>
               <Typography variant="subtitle1">Downtime</Typography>
               <Typography variant="h2">2</Typography>
-            </Grid>
-            <Grid item xs={3} className={classes.infoBarItem}>
+            </S.InfoBarItem>
+            <S.InfoBarItem item xs={3}>
               <Typography variant="subtitle1">SLA</Typography>
               <Grid container wrap="nowrap" alignItems="center">
                 <Typography variant="h2">98</Typography>
                 <Typography
                   variant="h2"
                   color="textSecondary"
-                  className={classes.slaTargetValue}
+                  sx={{ mr: 0.5 }}
                 >
                   /100
                 </Typography>
-                <span className={classes.infoBarStatsText}>target</span>
+                <S.InfoBarStatsText>target</S.InfoBarStatsText>
               </Grid>
-            </Grid>
+            </S.InfoBarItem>
           </Grid>
           {identity?.owner ? (
-            <Grid container spacing={2} className={classes.dataContainer}>
+            <S.DataEntityContainer container>
               <Grid item xs={3}>
-                <DataEntityListContainer
+                <DataEntityList
                   dataEntitiesList={myEntities}
                   entityListName="My Objects"
                   entityListIcon={<CatalogIcon />}
@@ -186,7 +172,7 @@ const Overview: React.FC<OverviewProps> = ({
                 />
               </Grid>
               <Grid item xs={3}>
-                <DataEntityListContainer
+                <DataEntityList
                   dataEntitiesList={myEntitiesUpstream}
                   entityListName="Upstream dependents"
                   entityListIcon={<UpstreamIcon />}
@@ -194,7 +180,7 @@ const Overview: React.FC<OverviewProps> = ({
                 />
               </Grid>
               <Grid item xs={3}>
-                <DataEntityListContainer
+                <DataEntityList
                   dataEntitiesList={myEntitiesDownstream}
                   entityListName="Downstream dependents"
                   entityListIcon={<DownstreamIcon />}
@@ -202,19 +188,19 @@ const Overview: React.FC<OverviewProps> = ({
                 />
               </Grid>
               <Grid item xs={3}>
-                <DataEntityListContainer
+                <DataEntityList
                   dataEntitiesList={popularEntities}
                   entityListName="Popular"
                   entityListIcon={<StarIcon />}
                   isFetching={popularDataEntitiesFetching}
                 />
               </Grid>
-            </Grid>
+            </S.DataEntityContainer>
           ) : null}
         </>
       )}
       {!identity?.owner && identityFetched ? <IdentityContainer /> : null}
-    </div>
+    </S.Container>
   );
 };
 

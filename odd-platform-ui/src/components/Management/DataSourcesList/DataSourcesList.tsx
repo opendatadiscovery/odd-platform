@@ -4,7 +4,7 @@ import {
   DataSource,
   DataSourceApiGetDataSourceListRequest,
 } from 'generated-sources';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddIcon from 'components/shared/Icons/AddIcon';
@@ -18,9 +18,9 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormContainer';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
-import { StylesType } from './DataSourcesListStyles';
+import * as S from './DataSourcesListStyles';
 
-interface DataSourcesListProps extends StylesType {
+interface DataSourcesListProps {
   dataSourcesList: DataSource[];
   fetchDataSourcesList: (
     params: DataSourceApiGetDataSourceListRequest
@@ -32,7 +32,6 @@ interface DataSourcesListProps extends StylesType {
 }
 
 const DataSourcesListView: React.FC<DataSourcesListProps> = ({
-  classes,
   dataSourcesList,
   fetchDataSourcesList,
   isCreating,
@@ -84,14 +83,14 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
   };
 
   return (
-    <div className={classes.container}>
-      <div className={classes.caption}>
+    <Grid container flexDirection="column" alignItems="center">
+      <S.Caption container sx={{ mb: 1 }}>
         <Typography variant="h1">Datasources</Typography>
-        <Typography variant="subtitle1" className={classes.totalCountText}>
+        <Typography variant="subtitle1" color="texts.info">
           <NumberFormatted value={totalDataSources} /> datasources overall
         </Typography>
-      </div>
-      <div className={classes.caption}>
+      </S.Caption>
+      <S.Caption container sx={{ mb: 2 }}>
         <AppTextField
           placeholder="Search datasource..."
           sx={{ minWidth: '340px' }}
@@ -124,7 +123,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             </AppButton>
           }
         />
-      </div>
+      </S.Caption>
       <Grid container>
         <Grid item xs={12}>
           <InfiniteScroll
@@ -159,7 +158,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
       {!isDataSourcesListFetching && !dataSourcesList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
-    </div>
+    </Grid>
   );
 };
 

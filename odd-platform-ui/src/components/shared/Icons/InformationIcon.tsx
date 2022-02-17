@@ -1,7 +1,7 @@
 import React from 'react';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import { Theme } from '@mui/material';
 
 const styles = ({ theme }: { theme?: Theme }) => ({

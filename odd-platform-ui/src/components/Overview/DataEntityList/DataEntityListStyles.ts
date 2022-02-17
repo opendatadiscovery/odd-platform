@@ -1,53 +1,42 @@
-import { Theme } from '@mui/material';
+import { Typography } from '@mui/material';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+export const ListLinksContainer = styled('ul')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  padding: 0,
+  listStyle: 'none',
+  '& li': {
+    marginBottom: theme.spacing(1),
+  },
+}));
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {},
-    listLinks: {
-      display: 'flex',
-      flexDirection: 'column',
-      padding: 0,
-      listStyle: 'none',
-      '& li': {
-        marginBottom: '8px',
-        '& a': {},
-      },
-    },
-    listLink: {
-      overflow: 'hidden',
-      padding: theme.spacing(0.25),
-      display: 'flex',
-      alignItems: 'center',
-      textDecoration: 'none',
+export const ListLink = styled(Link)(({ theme }) => ({
+  overflow: 'hidden',
+  padding: theme.spacing(0.25),
+  display: 'flex',
+  alignItems: 'center',
+  textDecoration: 'none',
+  color: theme.palette.texts?.primary,
+  flexWrap: 'nowrap',
+  '&:hover': {
+    backgroundColor: theme.palette.backgrounds.primary,
+    borderRadius: '4px',
+    '& > *': {
       color: theme.palette.texts?.primary,
-      flexWrap: 'nowrap',
-      '&:hover': {
-        backgroundColor: theme.palette.backgrounds.primary,
-        borderRadius: '4px',
-        '& > *': {
-          color: theme.palette.texts?.primary,
-        },
-      },
-      '&:active': {
-        backgroundColor: theme.palette.backgrounds.secondary,
-      },
     },
-    alert: {
-      marginRight: theme.spacing(0.5),
-    },
-    sectionCaption: {
-      marginBottom: theme.spacing(2),
-      paddingTop: theme.spacing(0.75),
-      color: theme.palette.texts?.primary,
-      display: 'flex',
-      alignItems: 'center',
-      '& > svg ': {
-        marginRight: theme.spacing(0.5),
-      },
-    },
-  });
+  },
+  '&:active': {
+    backgroundColor: theme.palette.backgrounds.secondary,
+  },
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const SectionCaption = styled(Typography)(({ theme }) => ({
+  color: theme.palette.texts?.primary,
+  display: 'flex',
+  alignItems: 'center',
+  '& > svg ': {
+    marginRight: theme.spacing(0.5),
+  },
+}));

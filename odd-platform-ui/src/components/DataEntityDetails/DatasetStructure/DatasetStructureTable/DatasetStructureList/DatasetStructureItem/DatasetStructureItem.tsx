@@ -1,6 +1,5 @@
 import React from 'react';
-import { Collapse, Grid, Typography } from '@mui/material';
-import cx from 'classnames';
+import { ButtonProps, Collapse, Grid, Typography } from '@mui/material';
 import round from 'lodash/round';
 import {
   DataSetField,
@@ -25,9 +24,12 @@ import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
 import DatasetFieldInfoEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/DatasetFieldInfoEditFormContainer';
-import { StylesType } from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetStructureItemStyles';
+import DatasetFieldEnumsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsEditFormContainer';
+import { ButtonColors } from 'components/shared/AppButton/AppButtonStyles';
+import { ColContainer } from '../../DatasetStructureTableStyles';
+import * as S from './DatasetStructureItemStyles';
 
-interface DatasetStructureItemProps extends StylesType {
+interface DatasetStructureItemProps {
   initialStateOpen?: boolean;
   nesting: number;
   rowsCount: DataSetStats['rowsCount'];
@@ -42,7 +44,6 @@ interface DatasetStructureItemProps extends StylesType {
 }
 
 const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
-  classes,
   initialStateOpen = false,
   nesting,
   rowsCount,
@@ -89,7 +90,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       const value = fieldStats[fieldStatName as DataSetFormattedStatsKeys];
       if (label && value) {
         return (
-          <Grid item xs={3} key={fieldStatName}>
+          <Grid item xs={3} key={fieldStatName} sx={{ ml: 1 }}>
             <LabeledInfoItem label={label}>
               {datasetField.type.type ===
               DataSetFieldTypeTypeEnum.DATETIME ? (
@@ -129,23 +130,54 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     );
   }
 
+  const setEnumFormOpenBtn = React.useMemo(() => {
+    let btnColor: ButtonColors = 'primaryLight';
+    let btnText = 'Add values';
+    let btnSize: ButtonProps['size'] = 'medium';
+    const count = datasetField.enumValueCount;
+    if (count && count > 0) {
+      btnColor = 'valueCount';
+      btnText = `${count} value${count > 1 ? 's' : ''}`;
+      btnSize = 'small';
+    }
+
+    return (
+      <AppButton size={btnSize} color={btnColor} sx={{ mr: 0.5 }}>
+        {btnText}
+      </AppButton>
+    );
+  }, [datasetField.enumValueCount]);
+
   return (
-    <Grid container className={cx(classes.container)}>
+    <Grid container>
       <Grid item container>
-        <Grid item xs={12} container className={classes.rowInfo}>
-          <Grid item xs={6} container wrap="nowrap">
-            <Grid
+        <S.RowInfo item xs={12} container>
+          <Grid
+            item
+            xs={6}
+            container
+            wrap="nowrap"
+            justifyContent="space-between"
+          >
+            <ColContainer
               item
               container
-              className={classes.nameCol}
+              $colType="name"
               style={nestedBlockStyle}
               wrap="nowrap"
             >
-              <Grid item className={classes.treeDividerContainer}>
+              <Grid item sx={{ mr: 0.75 }}>
                 {collapseBlock}
               </Grid>
               <Grid item container>
-                <Grid item xs={12} className={classes.nameContainer}>
+                <Grid
+                  item
+                  xs={12}
+                  container
+                  alignItems="center"
+                  justifyContent="flex-start"
+                  sx={{ pr: 9 }}
+                >
                   <AppTooltip title={() => datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
@@ -153,67 +185,62 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                         datasetField.name}
                     </Typography>
                   </AppTooltip>
-                  <div
-                    className={
-                      datasetField.labels ? classes.labelsList : ''
-                    }
-                  >
+                  <div>
                     {datasetField.labels?.map(label => (
                       <LabelItem key={label.id} labelName={label.name} />
                     ))}
                   </div>
                 </Grid>
-                <Grid
-                  item
-                  xs={12}
-                  className={classes.descriptionContainer}
-                >
+                <Grid item xs={12} sx={{ pr: 2.5 }}>
                   <AppTooltip
                     title={() => datasetField.internalDescription}
                   >
-                    <Typography
-                      className={classes.internalDescription}
-                      noWrap
-                    >
+                    <Typography color="texts.info" noWrap>
                       {datasetField.internalDescription}
                     </Typography>
                   </AppTooltip>
                   <AppTooltip
                     title={() => datasetField.externalDescription}
                   >
-                    <Typography
-                      className={classes.externalDescription}
-                      noWrap
-                    >
+                    <Typography color="text.secondary" noWrap>
                       {datasetField.externalDescription}
                     </Typography>
                   </AppTooltip>
                   {datasetField.type.type ===
                     DataSetFieldTypeTypeEnum.STRUCT &&
                   childFields.length ? (
-                    <Typography
-                      variant="subtitle2"
-                      className={classes.childKeys}
-                    >
+                    <Typography variant="subtitle2" color="texts.info">
                       <LineBreakIcon sx={{ mr: 0.5 }} />
                       {childFields?.map(field => field.name).join(', ')}
                     </Typography>
                   ) : null}
                 </Grid>
               </Grid>
-            </Grid>
-            <Grid item className={classes.typeCol}>
-              <div className={classes.optionsBtn}>
-                <DatasetFieldInfoEditFormContainer
+            </ColContainer>
+            <S.OptionsBtnContainer sx={{ mr: 1 }}>
+              {datasetField.type.type ===
+                DataSetFieldTypeTypeEnum.INTEGER ||
+              datasetField.type.type ===
+                DataSetFieldTypeTypeEnum.STRING ? (
+                <DatasetFieldEnumsEditFormContainer
                   datasetFieldId={datasetField.id}
-                  btnCreateEl={
-                    <AppButton size="medium" color="primaryLight">
-                      Edit
-                    </AppButton>
-                  }
+                  datasetFieldName={datasetField.name}
+                  enumValueType={datasetField.type.type}
+                  btnCreateEl={setEnumFormOpenBtn}
                 />
-              </div>
+              ) : null}
+              <DatasetFieldInfoEditFormContainer
+                datasetFieldId={datasetField.id}
+                btnCreateEl={
+                  <AppButton size="medium" color="primaryLight">
+                    Edit
+                  </AppButton>
+                }
+              />
+            </S.OptionsBtnContainer>
+            <S.TypeContainer item>
               <DatasetStructureFieldTypeLabel
+                sx={{ mr: 1 }}
                 typeName={datasetField.type.type}
               />
               <AppTooltip
@@ -227,42 +254,56 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   sx={{ display: 'flex', alignItems: 'center' }}
                 />
               </AppTooltip>
-            </Grid>
+            </S.TypeContainer>
           </Grid>
-          <Grid item xs={2} container className={classes.columnDivided}>
-            <Grid item xs={6} className={classes.uniqCol}>
-              <NumberFormatted value={fieldStats?.uniqueCount} />
-              <span className={classes.colStatsPct}>
+          <S.Divider item xs={2} container>
+            <ColContainer item xs={6} $colType="uniq">
+              <NumberFormatted
+                sx={{ ml: 1 }}
+                value={fieldStats?.uniqueCount}
+              />
+              <Typography
+                sx={{ ml: 0.5 }}
+                variant="body1"
+                color="texts.hint"
+              >
                 {fieldStats?.uniqueCount && rowsCount
                   ? `(${round(
-                      (fieldStats?.uniqueCount * 100) / rowsCount,
+                      (fieldStats.uniqueCount * 100) / rowsCount,
                       0
                     )}%)`
                   : null}
-              </span>
-            </Grid>
-            <Grid item xs={6} className={classes.missingCol}>
-              <NumberFormatted value={fieldStats?.nullsCount} />
-              <span className={classes.colStatsPct}>
+              </Typography>
+            </ColContainer>
+            <ColContainer item xs={6} $colType="missing">
+              <NumberFormatted
+                sx={{ ml: 1 }}
+                value={fieldStats?.nullsCount}
+              />
+              <Typography
+                sx={{ ml: 0.5 }}
+                variant="body1"
+                color="texts.hint"
+              >
                 {fieldStats?.nullsCount && rowsCount
                   ? `${round(
-                      (fieldStats?.nullsCount * 100) / rowsCount,
+                      (fieldStats.nullsCount * 100) / rowsCount,
                       0
                     )}%`
                   : null}
-              </span>
-            </Grid>
-          </Grid>
-          <Grid item xs={4} container className={classes.statsCol}>
+              </Typography>
+            </ColContainer>
+          </S.Divider>
+          <ColContainer item xs={4} container $colType="stats">
             {fieldStats
               ? Object.keys(fieldStats).map(fieldName =>
                   getCustomStat(fieldName)
                 )
               : null}
-          </Grid>
-        </Grid>
+          </ColContainer>
+        </S.RowInfo>
       </Grid>
-      <Grid item xs={12} className={classes.rowChildren}>
+      <Grid item xs={12}>
         <Collapse
           in={open}
           timeout={0}

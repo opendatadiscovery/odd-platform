@@ -1,6 +1,5 @@
 import { Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 
 interface ContainerProps {
   $important?: boolean;
@@ -8,9 +7,7 @@ interface ContainerProps {
   $cursorPointer?: boolean;
 }
 
-export const Container = styled(Typography, {
-  shouldForwardProp: propsChecker,
-})<ContainerProps>(
+export const Container = styled(Typography)<ContainerProps>(
   ({ theme, $important, $removable, $cursorPointer }) => ({
     display: 'inline-flex',
     alignItems: 'center',

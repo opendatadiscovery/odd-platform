@@ -10,7 +10,6 @@ interface ConfirmationDialogProps {
   actionText: JSX.Element | string;
   actionName: string;
   onConfirm: () => Promise<unknown>;
-  onCancel?: () => void;
 }
 
 const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
@@ -19,7 +18,6 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   actionText,
   actionName,
   onConfirm,
-  onCancel,
 }) => {
   const [isLoading, setIsLoading] = React.useState(false);
   const onClose = (action?: () => Promise<unknown>) => () => {
@@ -32,7 +30,11 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     }
   };
 
-  const formTitle = <Typography variant="h4">{actionTitle}</Typography>;
+  const formTitle = (
+    <Typography variant="h4" component="span">
+      {actionTitle}
+    </Typography>
+  );
 
   const formContent = () => (
     <Typography variant="subtitle1">{actionText}</Typography>

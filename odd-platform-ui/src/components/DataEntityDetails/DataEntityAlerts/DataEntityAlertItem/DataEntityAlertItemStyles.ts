@@ -1,25 +1,19 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import { alertsColWidthStyles } from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsStyles';
+import { Grid } from '@mui/material';
+import { ColContainer } from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsStyles';
+import styled from 'styled-components';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      padding: theme.spacing(1.25, 0),
-      borderBottom: '1px solid',
-      borderBottomColor: theme.palette.divider,
-      '&:hover': {
-        backgroundColor: theme.palette.backgrounds.primary,
-        '& $optionsBtn': {
-          opacity: 1,
-        },
-      },
-    },
-    optionsBtn: {
-      opacity: 0,
-    },
-    ...alertsColWidthStyles,
-  });
+export const ActionButtonsContainer = styled(ColContainer)(() => ({
+  opacity: 0,
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const Container = styled(Grid)(({ theme }) => ({
+  padding: theme.spacing(1.25, 0),
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.divider,
+  '&:hover': {
+    backgroundColor: theme.palette.backgrounds.primary,
+    [`${ActionButtonsContainer}`]: {
+      opacity: 1,
+    },
+  },
+}));

@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -255,6 +256,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     public void injectOddrn(final long id, final String oddrn) {
         dslContext.update(DATA_SOURCE)
             .set(DATA_SOURCE.ODDRN, oddrn)
+            .set(DATA_SOURCE.UPDATED_AT, LocalDateTime.now())
             .where(DATA_SOURCE.ID.eq(id))
             .execute();
     }
@@ -271,6 +273,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         if (dsId != null) {
             record.set(DATA_SOURCE.ID, dsId);
             record.changed(DATA_SOURCE.ID, false);
+            record.set(DATA_SOURCE.UPDATED_AT, LocalDateTime.now());
         }
 
         if (namespace != null) {

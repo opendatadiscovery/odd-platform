@@ -10,14 +10,13 @@ import {
 } from 'generated-sources';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import { Grid, Typography } from '@mui/material';
-import cx from 'classnames';
+import { Box, Typography } from '@mui/material';
 import AlertListSkeleton from 'components/Alerts/AlertsList/AlertSkeletonItem/AlertSkeletonItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import { StylesType } from './AlertsListStyles';
+import * as S from './AlertsListStyles';
 import AlertItem from './AlertItem/AlertItem';
 
-interface AlertsListProps extends StylesType {
+interface AlertsListProps {
   alerts: Alert[];
   pageInfo: CurrentPageInfo;
   alertListFetching: boolean;
@@ -33,7 +32,6 @@ interface AlertsListProps extends StylesType {
 }
 
 const AlertsList: React.FC<AlertsListProps> = ({
-  classes,
   alerts,
   pageInfo,
   alertListFetching,
@@ -46,7 +44,10 @@ const AlertsList: React.FC<AlertsListProps> = ({
   };
 
   React.useEffect(() => {
-    fetchNextPage();
+    fetchAlerts({
+      page: 1,
+      size: 30,
+    });
   }, [fetchAlerts]);
 
   const alertStatusHandler = React.useCallback(
@@ -65,34 +66,34 @@ const AlertsList: React.FC<AlertsListProps> = ({
   );
 
   return (
-    <div className={classes.container}>
-      <Grid container className={classes.alertsTableHeader}>
-        <Grid item className={cx(classes.col, classes.colName)}>
+    <Box sx={{ mt: 2 }}>
+      <S.AlertsTableHeader container>
+        <S.ColContainer item $colType="name">
           <Typography variant="caption">Name</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colDescription)}>
+        </S.ColContainer>
+        <S.ColContainer item $colType="description">
           <Typography variant="caption">Description</Typography>
-        </Grid>
+        </S.ColContainer>
 
-        <Grid
+        <S.ColContainer
           item
           container
-          className={cx(classes.col, classes.colStatus)}
+          $colType="status"
           justifyContent="center"
         >
           <Typography variant="caption">Status</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colCreatedTime)}>
+        </S.ColContainer>
+        <S.ColContainer item $colType="createdTime">
           <Typography variant="caption">Created at</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colUpdatedBy)}>
+        </S.ColContainer>
+        <S.ColContainer item $colType="updatedBy">
           {/* <Typography variant="caption">Status updated by</Typography> */}
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colUpdatedAt)}>
+        </S.ColContainer>
+        <S.ColContainer item $colType="updatedAt">
           <Typography variant="caption">Status updated at</Typography>
-        </Grid>
-        <Grid item className={cx(classes.col, classes.colActionBtn)} />
-      </Grid>
+        </S.ColContainer>
+        <S.ColContainer item $colType="actionBtn" />
+      </S.AlertsTableHeader>
       <InfiniteScroll
         dataLength={alerts?.length}
         next={fetchNextPage}
@@ -122,7 +123,7 @@ const AlertsList: React.FC<AlertsListProps> = ({
       {!alertListFetching && !alerts?.length ? (
         <EmptyContentPlaceholder />
       ) : null}
-    </div>
+    </Box>
   );
 };
 

@@ -25,7 +25,8 @@ public class MetadataFieldValueRepositoryImpl
     implements MetadataFieldValueRepository {
 
     public MetadataFieldValueRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
-        super(dslContext, jooqQueryHelper, METADATA_FIELD_VALUE, null, null, MetadataFieldValuePojo.class);
+        super(dslContext, jooqQueryHelper, METADATA_FIELD_VALUE, null, null,
+            null, MetadataFieldValuePojo.class);
     }
 
     @Override

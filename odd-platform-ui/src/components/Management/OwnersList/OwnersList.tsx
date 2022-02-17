@@ -6,7 +6,7 @@ import {
   OwnerApiGetOwnerListRequest,
 } from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
@@ -19,9 +19,9 @@ import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerFormContainer from './OwnerForm/OwnerFormContainer';
-import { StylesType } from './OwnersListStyles';
+import * as S from './OwnersListStyles';
 
-interface OwnersListProps extends StylesType {
+interface OwnersListProps {
   ownersList: Owner[];
   isFetching: boolean;
   isDeleting: boolean;
@@ -32,7 +32,6 @@ interface OwnersListProps extends StylesType {
 }
 
 const OwnersListView: React.FC<OwnersListProps> = ({
-  classes,
   ownersList,
   isFetching,
   isDeleting,
@@ -85,14 +84,14 @@ const OwnersListView: React.FC<OwnersListProps> = ({
   };
 
   return (
-    <div className={classes.container}>
-      <div className={classes.caption}>
+    <Grid container flexDirection="column" alignItems="center">
+      <S.Caption container sx={{ mb: 1 }}>
         <Typography variant="h1">Owners</Typography>
-        <Typography variant="subtitle1" className={classes.totalCountText}>
+        <Typography variant="subtitle1" color="texts.info">
           <NumberFormatted value={totalOwners} /> owners overall
         </Typography>
-      </div>
-      <div className={classes.caption}>
+      </S.Caption>
+      <S.Caption container sx={{ mb: 2 }}>
         <AppTextField
           placeholder="Search owner..."
           sx={{ minWidth: '340px' }}
@@ -125,21 +124,20 @@ const OwnersListView: React.FC<OwnersListProps> = ({
             </AppButton>
           }
         />
-      </div>
-      <Grid container className={classes.tableHeader}>
+      </S.Caption>
+      <S.TableHeader container>
         <Grid item xs={12}>
-          <Typography variant="subtitle2" className={classes.rowName}>
+          <Typography variant="subtitle2" color="texts.hint">
             Name
           </Typography>
         </Grid>
-      </Grid>
+      </S.TableHeader>
       <Grid container>
         <Grid item xs={12}>
           <InfiniteScroll
             next={fetchNextPage}
             hasMore={!!pageInfo?.hasNext}
             dataLength={ownersList.length}
-            className={classes.ownersItem}
             scrollThreshold="200px"
             loader={
               isFetching && (
@@ -168,7 +166,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
       {!isFetching && !ownersList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
-    </div>
+    </Grid>
   );
 };
 

@@ -31,7 +31,8 @@ public class OwnerRepositoryImpl
     public OwnerRepositoryImpl(final DSLContext dslContext,
                                final JooqQueryHelper jooqQueryHelper,
                                final JooqFTSHelper jooqFTSHelper) {
-        super(dslContext, jooqQueryHelper, OWNER, OWNER.ID, OWNER.IS_DELETED, OWNER.NAME, OWNER.NAME, OwnerPojo.class);
+        super(dslContext, jooqQueryHelper, OWNER, OWNER.ID, OWNER.IS_DELETED, OWNER.NAME, OWNER.NAME,
+            OWNER.UPDATED_AT, OwnerPojo.class);
         this.jooqFTSHelper = jooqFTSHelper;
     }
 

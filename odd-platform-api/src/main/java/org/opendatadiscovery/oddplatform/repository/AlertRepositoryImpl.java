@@ -12,14 +12,18 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.CommonTableExpression;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertSetStep;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectOnConditionStep;
-import org.opendatadiscovery.oddplatform.dto.AlertDto;
-import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.model.tables.records.AlertRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
@@ -31,7 +35,9 @@ import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
+import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
+import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
 @RequiredArgsConstructor
@@ -44,7 +50,8 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<Field<?>> selectFields = Stream
             .of(
                 ALERT.fields(),
-                DATA_ENTITY.fields()
+                DATA_ENTITY.fields(),
+                OWNER.fields()
             )
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
@@ -71,7 +78,8 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<Field<?>> selectFields = Stream
             .of(
                 ALERT.fields(),
-                DATA_ENTITY.fields()
+                DATA_ENTITY.fields(),
+                OWNER.fields()
             )
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
@@ -100,7 +108,8 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<Field<?>> selectFields = Stream
             .of(
                 ALERT.fields(),
-                DATA_ENTITY.fields()
+                DATA_ENTITY.fields(),
+                OWNER.fields()
             )
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
@@ -120,7 +129,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
 
         final List<Field<?>> selectFields = Stream
-            .of(ALERT.fields(), DATA_ENTITY.fields())
+            .of(ALERT.fields(), DATA_ENTITY.fields(), OWNER.fields())
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
@@ -128,10 +137,13 @@ public class AlertRepositoryImpl implements AlertRepository {
             .select(selectFields)
             .from(DATA_ENTITY)
             .join(cte.getName())
-            .on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()), String.class)
+            .on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)
                 .eq(DATA_ENTITY.ODDRN))
             .join(ALERT).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+            .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
             .where(DATA_ENTITY.ODDRN.notIn(ownOddrns))
+            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
             .fetch(this::mapRecord);
 
@@ -166,7 +178,7 @@ public class AlertRepositoryImpl implements AlertRepository {
 
         return name("t2")
             .as(dslContext.withRecursive(cte)
-                .selectDistinct(field(cteName.append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()), String.class))
+                .selectDistinct(field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class))
                 .from(cte.getName()));
     }
 
@@ -200,7 +212,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         return dslContext.with(cte)
             .select(countDistinct(ALERT.ID))
             .from(ALERT)
-            .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.CHILD_ODDRN.getUnqualifiedName()))
+            .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()))
                 .eq(ALERT.DATA_ENTITY_ODDRN))
             .where(ALERT.DATA_ENTITY_ODDRN.notIn(ownOddrns))
             .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
@@ -209,17 +221,21 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
-    public void updateAlertStatus(final long alertId, final AlertStatusEnum status) {
-        dslContext.update(ALERT)
+    public AlertPojo updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName) {
+        return dslContext.update(ALERT)
             .set(ALERT.STATUS, status.toString())
             .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
+            .set(ALERT.STATUS_UPDATED_BY, userName)
             .where(ALERT.ID.eq(alertId))
-            .execute();
+            .returning(ALERT.fields())
+            .fetchOptional()
+            .map(r -> r.into(AlertPojo.class))
+            .orElseThrow(NotFoundException::new);
     }
 
     @Override
     @Transactional
-    public void createAlerts(final Collection<AlertPojo> alerts) {
+    public Collection<AlertPojo> createAlerts(final Collection<AlertPojo> alerts) {
         final Set<String> messengerOddrns = alerts.stream()
             .map(AlertPojo::getMessengerEntityOddrn)
             .filter(Objects::nonNull)
@@ -231,27 +247,40 @@ public class AlertRepositoryImpl implements AlertRepository {
             .fetchStreamInto(String.class)
             .collect(Collectors.toSet());
 
-        final List<AlertPojo> filteredAlerts = alerts.stream()
+        final List<AlertRecord> alertRecords = alerts.stream()
             .filter(
                 a -> a.getMessengerEntityOddrn() == null || !existingMessengers.contains(a.getMessengerEntityOddrn()))
-            .collect(Collectors.toList());
+            .map(a -> dslContext.newRecord(ALERT, a))
+            .toList();
 
-        dslContext
-            .batchInsert(filteredAlerts.stream().map(a -> dslContext.newRecord(ALERT, a)).collect(Collectors.toList()))
-            .execute();
+        final InsertSetStep<AlertRecord> insertStep = dslContext.insertInto(ALERT);
+        for (int i = 0; i < alertRecords.size() - 1; i++) {
+            insertStep.set(alertRecords.get(i)).newRecord();
+        }
+
+        return insertStep.set(alertRecords.get(alertRecords.size() - 1))
+            .onDuplicateKeyIgnore()
+            .returning(ALERT.fields())
+            .fetch()
+            .stream()
+            .map(r -> r.into(AlertPojo.class))
+            .toList();
     }
 
     private SelectOnConditionStep<Record> baseAlertSelect(final List<Field<?>> selectFields) {
         return dslContext
             .select(selectFields)
             .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN));
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+            .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
     }
 
     private AlertDto mapRecord(final Record r) {
         return new AlertDto(
             jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class),
-            jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class)
+            jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class),
+            jooqRecordHelper.extractRelation(r, OWNER, OwnerPojo.class)
         );
     }
 }

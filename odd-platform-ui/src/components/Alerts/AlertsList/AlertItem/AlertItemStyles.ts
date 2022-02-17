@@ -1,31 +1,26 @@
-import { Theme } from '@mui/material';
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
-import { alertsMainColWidthStyles } from 'components/Alerts/AlertsList/AlertsListStyles';
+import { Grid } from '@mui/material';
+import styled from 'styled-components';
+import { CSSObject } from 'theme/interfaces';
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: {
-      padding: theme.spacing(1.25, 0),
-      borderBottom: '1px solid',
-      borderBottomColor: theme.palette.divider,
-      '&:hover': {
-        backgroundColor: theme.palette.backgrounds.primary,
-        '& $optionsBtn': {
-          opacity: 1,
-        },
-      },
-    },
-    typesList: {
-      display: 'flex',
-      flexWrap: 'nowrap',
-    },
-    dataEntityLink: { overflow: 'hidden' },
-    optionsBtn: {
-      opacity: 0,
-    },
-    alertName: { overflow: 'auto' },
-    ...alertsMainColWidthStyles,
-  });
+export const OptionsBtn = styled(Grid)(() => ({
+  opacity: 0,
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const Container = styled(Grid)(({ theme }) => ({
+  padding: theme.spacing(1.25, 0),
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.divider,
+  '&:hover': {
+    backgroundColor: theme.palette.backgrounds.primary,
+    [`${OptionsBtn}`]: { opacity: 1 },
+  },
+}));
+
+export const NameContainer = styled('div')(() => ({
+  overflow: 'auto',
+}));
+
+export const TypesContainer = styled('div')<CSSObject>(() => ({
+  display: 'flex',
+  flexWrap: 'nowrap',
+}));

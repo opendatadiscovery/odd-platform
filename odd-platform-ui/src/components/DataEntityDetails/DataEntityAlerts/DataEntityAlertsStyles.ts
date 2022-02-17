@@ -1,53 +1,58 @@
-import { Theme } from '@mui/material';
+import { Grid } from '@mui/material';
+import styled from 'styled-components';
 
-import { WithStyles } from '@mui/styles';
-import createStyles from '@mui/styles/createStyles';
+export type AlertsColType =
+  | 'date'
+  | 'type'
+  | 'description'
+  | 'status'
+  | 'updatedBy'
+  | 'updatedTime'
+  | 'actionBtn';
 
 export const alertsColWidthStyles = {
-  col: {
-    display: 'flex',
-    alignItems: 'center',
-    overflow: 'hidden',
-    paddingRight: '8px',
-    paddingLeft: '8px',
-    '&:last-of-type': {
-      paddingRight: 0,
-    },
-  },
-  colDate: {
+  date: {
     flex: '0 0 12%',
   },
-  colType: {
+  type: {
     flex: '0 0 12%',
   },
-  colDescription: {
-    flex: '0 0 43%',
+  description: {
+    flex: '0 0 40%',
   },
-  colStatus: {
+  status: {
     justifyContent: 'center',
     flex: '0 0 8%',
   },
-  colUpdatedBy: {
+  updatedBy: {
     flex: '0 0 10%',
   },
-  colUpdatedTime: {
+  updatedTime: {
     flex: '0 0 12%',
   },
-  colActionBtn: {
-    flex: '0 0 3%',
+  actionBtn: {
+    flex: '0 0 6%',
     overflow: 'visible',
   },
 };
 
-export const styles = (theme: Theme) =>
-  createStyles({
-    container: { marginTop: theme.spacing(2) },
-    alertsTableHeader: {
-      color: theme.palette.texts.hint,
-      borderBottom: '1px solid',
-      borderBottomColor: theme.palette.divider,
-    },
-    ...alertsColWidthStyles,
-  });
+export const ColContainer = styled(Grid)<{
+  $colType: AlertsColType;
+}>(({ $colType }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  overflow: 'hidden',
+  paddingRight: '8px',
+  paddingLeft: '8px',
+  '&:last-of-type': {
+    paddingRight: 0,
+    paddingLeft: 0,
+  },
+  ...alertsColWidthStyles[$colType],
+}));
 
-export type StylesType = WithStyles<typeof styles>;
+export const AlertsTableHeader = styled(Grid)(({ theme }) => ({
+  color: theme.palette.texts.hint,
+  borderBottom: '1px solid',
+  borderBottomColor: theme.palette.divider,
+}));

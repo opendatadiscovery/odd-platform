@@ -1,5 +1,9 @@
 import { createSelector } from 'reselect';
-import { RootState, DataQualityTestState } from 'redux/interfaces';
+import {
+  RootState,
+  DataQualityTestState,
+  DataEntitiesState,
+} from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 import isEmpty from 'lodash/isEmpty';
 import { getDataEntityId } from './dataentity.selectors';
@@ -12,6 +16,10 @@ export const getDataQATestId = (
   _: RootState,
   dataQATestId: number | string
 ) => dataQATestId;
+
+const getDataEntitiesState = ({
+  dataEntities,
+}: RootState): DataEntitiesState => dataEntities;
 
 const getDatasetTestReportFetchingStatus = createFetchingSelector(
   'GET_DATA_SET_QUALITY_TEST_REPORT'
@@ -91,7 +99,12 @@ export const getQualityTestRunsList = createSelector(
   (dataQualityTestState, dataQATestId) =>
     dataQualityTestState.allTestRunIdsByTestId[dataQATestId]?.map(
       testRunId => dataQualityTestState.qualityTestRunsById[testRunId]
-    )
+    ) || []
+);
+
+export const getQualityTestRunsListPage = createSelector(
+  getDataQualityTestState,
+  dataQualityTestState => dataQualityTestState.qualityTestRunsPageInfo
 );
 
 export const getQualityTestByTestId = createSelector(
@@ -99,4 +112,15 @@ export const getQualityTestByTestId = createSelector(
   getDataQATestId,
   (dataQualityTestState, dataQATestId) =>
     dataQualityTestState.qualityTestsById[dataQATestId]
+);
+
+export const getQualityTestNameByTestId = createSelector(
+  getDataEntitiesState,
+  getDataQualityTestState,
+  getDataQATestId,
+  (dataEntitiesState, dataQualityTestState, dataQATestId) =>
+    dataEntitiesState.byId[dataQATestId]?.internalName ||
+    dataEntitiesState.byId[dataQATestId]?.externalName ||
+    dataQualityTestState.qualityTestsById[dataQATestId]?.internalName ||
+    dataQualityTestState.qualityTestsById[dataQATestId]?.externalName
 );
