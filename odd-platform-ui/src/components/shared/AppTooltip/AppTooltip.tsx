@@ -3,10 +3,7 @@ import { TooltipProps } from '@mui/material';
 import * as S from 'components/shared/AppTooltip/AppTooltipStyles';
 
 interface AppTooltipProps
-  extends Pick<
-    TooltipProps,
-    'placement' | 'children' | 'followCursor' | 'sx'
-  > {
+  extends Pick<TooltipProps, 'placement' | 'followCursor' | 'sx'> {
   title: (props: {
     open?: boolean;
   }) => React.ReactElement | string | undefined;
@@ -14,6 +11,7 @@ interface AppTooltipProps
   maxWidth?: number;
   checkForOverflow?: boolean;
   isOverflowed?: boolean;
+  children?: React.ReactNode | React.ReactElement | string;
 }
 
 const AppTooltip: React.FC<AppTooltipProps> = ({
@@ -33,8 +31,9 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   const childrenRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (checkForOverflow && childrenRef.current?.firstElementChild) {
-      const el = childrenRef.current.firstElementChild;
+    if (checkForOverflow && childrenRef.current) {
+      const el =
+        childrenRef.current.firstElementChild || childrenRef.current;
       const { scrollWidth, clientWidth } = el;
       setHover(!hoverStatus && scrollWidth > clientWidth);
     }
