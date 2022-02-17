@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 import ReactMarkdown from 'react-markdown';
 
 export const CaptionContainer = styled('div')(({ theme }) => ({

@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const FilterCount = styled('span')(({ theme }) => ({
   color: theme.palette.texts.hint,

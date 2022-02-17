@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const CaptionContainer = styled('div')(({ theme }) => ({
   display: 'flex',

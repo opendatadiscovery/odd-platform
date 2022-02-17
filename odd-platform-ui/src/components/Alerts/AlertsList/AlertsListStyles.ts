@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 
 type AlertColType =
   | 'col'
@@ -53,9 +52,7 @@ export const AlertsTableHeader = styled(Grid)(({ theme }) => ({
   borderBottomColor: theme.palette.divider,
 }));
 
-export const ColContainer = styled(Grid, {
-  shouldForwardProp: propsChecker,
-})<{
+export const ColContainer = styled(Grid)<{
   $colType: AlertColType;
 }>(({ $colType }) => ({
   ...alertsMainColWidthStyles.col,

@@ -1,4 +1,3 @@
-import { styled } from '@mui/material/styles';
 import {
   ListItemText,
   listItemTextClasses,
@@ -6,7 +5,7 @@ import {
   menuItemClasses,
 } from '@mui/material';
 import { Variant } from '@mui/material/styles/createTypography';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 
 interface AppMenuItemStyleProps {
   $minWidth?: number;
@@ -18,36 +17,38 @@ interface AppListItemTextProps {
   $fontVariant: Variant;
 }
 
-export const StyledAppMenuItem = styled(MenuItem, {
-  shouldForwardProp: propsChecker,
-})<AppMenuItemStyleProps>(({ theme, $minWidth, $maxWidth }) => ({
-  [`&.${menuItemClasses.root}`]: {
-    '&:hover': {
-      backgroundColor: theme.palette.backgrounds.primary,
+export const StyledAppMenuItem = styled(MenuItem)<AppMenuItemStyleProps>(
+  ({ theme, $minWidth, $maxWidth }) => ({
+    [`&.${menuItemClasses.root}`]: {
+      '&:hover': {
+        backgroundColor: theme.palette.backgrounds.primary,
+      },
+
+      minWidth: $minWidth ? `${$minWidth}px` : 0,
+      maxWidth: $maxWidth ? `${$maxWidth}px` : 'none',
     },
+    [`&.${menuItemClasses.divider}`]: {
+      padding: 0,
+    },
+  })
+);
 
-    minWidth: $minWidth ? `${$minWidth}px` : 0,
-    maxWidth: $maxWidth ? `${$maxWidth}px` : 'none',
-  },
-  [`&.${menuItemClasses.divider}`]: {
-    padding: 0,
-  },
-}));
-
-export const StyledAppListItemText = styled(ListItemText, {
-  shouldForwardProp: propsChecker,
-})<AppListItemTextProps>(({ theme, $removeTextStyles, $fontVariant }) => ({
+export const StyledAppListItemText = styled(
+  ListItemText
+)<AppListItemTextProps>(({ theme, $removeTextStyles, $fontVariant }) => ({
   [`& span`]: {
     fontSize: theme.typography[$fontVariant].fontSize,
     lineHeight: theme.typography[$fontVariant].lineHeight,
     fontWeight: theme.typography[$fontVariant].fontWeight,
   },
-  [`&.${listItemTextClasses.root}`]: !$removeTextStyles && {
-    display: 'inline',
-    '& span': {
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-    },
-  },
+  [`&.${listItemTextClasses.root}`]: !$removeTextStyles
+    ? {
+        display: 'inline',
+        '& span': {
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+        },
+      }
+    : {},
 }));

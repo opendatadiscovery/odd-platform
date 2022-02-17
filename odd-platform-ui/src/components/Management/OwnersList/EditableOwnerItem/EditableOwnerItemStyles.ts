@@ -1,8 +1,8 @@
 import { Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const ActionsContainer = styled(Grid)(() => ({
-  visibility: 'hidden',
+  opacity: 0,
 }));
 
 export const Container = styled(Grid)(({ theme }) => ({
@@ -14,6 +14,6 @@ export const Container = styled(Grid)(({ theme }) => ({
   borderBottomColor: theme.palette.divider,
   '&:hover': {
     backgroundColor: theme.palette.backgrounds.primary,
-    [`${ActionsContainer}`]: { visibility: 'visible' },
+    [`${ActionsContainer}`]: { opacity: 1 },
   },
 }));

@@ -27,6 +27,15 @@ const ResultItem: React.FC<ResultItemProps> = ({
   totals,
 }) => {
   const detailsLink = dataEntityDetailsPath(searchResult.id);
+  const ResultItemPreview = React.useCallback(
+    ({ open }) => (
+      <ResultItemPreviewContainer
+        dataEntityId={searchResult.id}
+        fetchData={open}
+      />
+    ),
+    []
+  );
 
   return (
     <ItemLink to={detailsLink}>
@@ -50,17 +59,11 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </Typography>
             <AppTooltip
               maxWidth={285}
-              sx={{ ml: 1.25, pr: 0.25 }}
               checkForOverflow={false}
               isOverflowed={false}
-              title={({ open }) => (
-                <ResultItemPreviewContainer
-                  dataEntityId={searchResult.id}
-                  fetchData={open}
-                />
-              )}
+              title={ResultItemPreview}
             >
-              <InformationIcon sx={{ display: 'flex' }} />
+              <InformationIcon sx={{ display: 'flex', ml: 1.25 }} />
             </AppTooltip>
           </NameContainer>
           <Grid

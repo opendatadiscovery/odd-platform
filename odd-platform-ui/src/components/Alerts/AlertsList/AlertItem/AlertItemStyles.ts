@@ -1,5 +1,6 @@
 import { Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
+import { CSSObject } from 'theme/interfaces';
 
 export const OptionsBtn = styled(Grid)(() => ({
   opacity: 0,
@@ -19,7 +20,7 @@ export const NameContainer = styled('div')(() => ({
   overflow: 'auto',
 }));
 
-export const TypesContainer = styled('div')(() => ({
+export const TypesContainer = styled('div')<CSSObject>(() => ({
   display: 'flex',
   flexWrap: 'nowrap',
 }));

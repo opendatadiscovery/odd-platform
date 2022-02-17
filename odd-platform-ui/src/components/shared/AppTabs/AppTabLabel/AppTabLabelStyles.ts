@@ -1,8 +1,8 @@
-import { CSSObject, Typography } from '@mui/material';
-import { styled, Theme } from '@mui/material/styles';
+import { Typography } from '@mui/material';
+import { Theme } from '@mui/material/styles';
 import { HintType } from 'components/shared/AppTabs/interfaces';
-import { propsChecker } from 'lib/helpers';
 import { ElementType } from 'react';
+import styled, { CSSObject } from 'styled-components';
 
 const getTabHintStylesByType = (
   theme: Theme,
@@ -43,12 +43,12 @@ export const Container = styled(Typography)<{
   alignItems: 'center',
 }));
 
-export const HintContainer = styled('div', {
-  shouldForwardProp: propsChecker,
-})<{ $hintType: HintType }>(({ theme, $hintType }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginLeft: theme.spacing(0.5),
-  ...getTabHintStylesByType(theme, $hintType),
-}));
+export const HintContainer = styled('div')<{ $hintType: HintType }>(
+  ({ theme, $hintType }) => ({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: theme.spacing(0.5),
+    ...getTabHintStylesByType(theme, $hintType),
+  })
+);

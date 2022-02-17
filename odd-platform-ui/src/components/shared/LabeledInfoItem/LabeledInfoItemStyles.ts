@@ -1,6 +1,5 @@
 import { Grid, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 import { DataQualityTestRunStatus } from 'generated-sources';
 import { ElementType } from 'react';
 
@@ -12,9 +11,7 @@ interface ValueProps {
   $valueLineHeight?: number;
 }
 
-export const Container = styled(Grid, {
-  shouldForwardProp: propsChecker,
-})<{
+export const Container = styled(Grid)<{
   $inline?: boolean;
 }>(({ $inline }) => {
   if ($inline)
@@ -34,17 +31,20 @@ export const Label = styled(Typography)<{ component: ElementType }>(
     color: theme.palette.texts.secondary,
     lineHeight: theme.typography.h3.lineHeight,
     overflow: 'hidden',
+    width: 'inherit',
   })
 );
+
+export const LabelContainer = styled(Grid)(() => ({
+  width: '100%',
+}));
 
 export const ValueContainer = styled(Grid)(() => ({
   width: '100%',
   overflow: 'hidden',
 }));
 
-export const Value = styled(Typography, {
-  shouldForwardProp: propsChecker,
-})<ValueProps>(
+export const Value = styled(Typography)<ValueProps>(
   ({ theme, $runStatus, $valueColor, $inline, $valueLineHeight }) => ({
     wordBreak: 'break-all',
     overflow: 'hidden',

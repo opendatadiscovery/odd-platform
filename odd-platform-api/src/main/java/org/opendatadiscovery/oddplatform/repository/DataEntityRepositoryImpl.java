@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -43,7 +44,6 @@ import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.TableField;
-import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataConsumerDetailsDto;
@@ -58,6 +58,7 @@ import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
@@ -160,7 +161,8 @@ public class DataEntityRepositoryImpl
                                     final DataEntityTaskRunRepository dataEntityTaskRunRepository,
                                     final MetadataFieldValueRepository metadataFieldValueRepository,
                                     final DatasetVersionRepository datasetVersionRepository) {
-        super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null, DataEntityDimensionsDto.class);
+        super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null,
+            DATA_ENTITY.UPDATED_AT, DataEntityDimensionsDto.class);
 
         this.jooqFTSHelper = jooqFTSHelper;
         this.jooqRecordHelper = jooqRecordHelper;
@@ -195,8 +197,13 @@ public class DataEntityRepositoryImpl
             return List.of();
         }
 
+        final LocalDateTime now = LocalDateTime.now();
         final List<DataEntityRecord> records = pojos.stream()
-            .map(e -> dslContext.newRecord(recordTable, e))
+            .map(e -> {
+                final DataEntityRecord record = dslContext.newRecord(recordTable, e);
+                record.set(DATA_ENTITY.UPDATED_AT, now);
+                return record;
+            })
             .map(r -> ignoreUpdate(r, List.of(
                 DATA_ENTITY.INTERNAL_DESCRIPTION,
                 DATA_ENTITY.INTERNAL_NAME,
@@ -205,7 +212,6 @@ public class DataEntityRepositoryImpl
             .collect(toList());
 
         dslContext.batchUpdate(records).execute();
-
         return pojos;
     }
 
@@ -213,6 +219,7 @@ public class DataEntityRepositoryImpl
     public Optional<Long> incrementViewCount(final long id) {
         return dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.VIEW_COUNT, DATA_ENTITY.VIEW_COUNT.plus(1))
+            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
             .where(DATA_ENTITY.ID.eq(id))
             .returningResult(DATA_ENTITY.VIEW_COUNT)
             .fetchOptional()
@@ -480,6 +487,7 @@ public class DataEntityRepositoryImpl
     public void setDescription(final long dataEntityId, final String description) {
         dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_DESCRIPTION, description)
+            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .execute();
 
@@ -492,6 +500,7 @@ public class DataEntityRepositoryImpl
         final String newBusinessName = businessName != null && businessName.isEmpty() ? null : businessName;
         dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
+            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .execute();
 
@@ -1015,8 +1024,8 @@ public class DataEntityRepositoryImpl
 
     private Field<Boolean> hasAlerts(final Table<Record> deCte) {
         return field(exists(dslContext.selectOne().from(ALERT)
-                .where(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
-                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))).as(HAS_ALERTS_FIELD);
+            .where(ALERT.DATA_ENTITY_ODDRN.eq(deCte.field(DATA_ENTITY.ODDRN)))
+            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))).as(HAS_ALERTS_FIELD);
     }
 
     private void enrichDatasetVersions(final DataEntityDetailsDto dto) {
@@ -1344,7 +1353,7 @@ public class DataEntityRepositoryImpl
 
     private Map<DataEntityTypeDto, DataEntityAttributes> extractSpecificAttributes(final DataEntityPojo dataEntity
     ) {
-        if (dataEntity.getHollow()) {
+        if (dataEntity.getHollow() || dataEntity.getSpecificAttributes() == null) {
             return emptyMap();
         }
 

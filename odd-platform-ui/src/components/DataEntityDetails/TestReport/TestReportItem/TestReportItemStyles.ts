@@ -1,5 +1,5 @@
 import { Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const TestReportBySuitNameHeader = styled(Grid)(({ theme }) => ({
   cursor: 'pointer',

@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 
 export type AlertsColType =
   | 'date'
@@ -37,9 +36,7 @@ export const alertsColWidthStyles = {
   },
 };
 
-export const ColContainer = styled(Grid, {
-  shouldForwardProp: propsChecker,
-})<{
+export const ColContainer = styled(Grid)<{
   $colType: AlertsColType;
 }>(({ $colType }) => ({
   display: 'flex',

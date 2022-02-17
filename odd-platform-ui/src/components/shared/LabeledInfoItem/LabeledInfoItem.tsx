@@ -1,16 +1,17 @@
 import React, { ElementType } from 'react';
-import { Grid, GridSize, TypographyProps } from '@mui/material';
+import { GridSize, TypographyProps } from '@mui/material';
 import { DataQualityTestRunStatus } from 'generated-sources';
 import {
   Container,
   ValueContainer,
+  LabelContainer,
   Label,
   Value,
 } from './LabeledInfoItemStyles';
 
 interface LabeledInfoItemProps {
   inline?: boolean;
-  label: string;
+  label: string | React.ReactNode;
   variant?: TypographyProps['variant'];
   labelWidth?: GridSize;
   runStatus?: DataQualityTestRunStatus;
@@ -31,37 +32,45 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   valueLineHeight,
   valueWrap = false,
   valueComponent = 'span',
-}) => (
-  <Container container $inline={inline}>
-    <Grid item xs={labelWidth || 'auto'}>
-      <Label title={label} variant={variant} noWrap component="span">
-        {label}
-      </Label>
-    </Grid>
-    <ValueContainer
-      item
-      xs={
-        typeof labelWidth === 'number'
-          ? ((12 - labelWidth) as GridSize)
-          : 'auto'
-      }
-    >
-      <Value
-        $runStatus={runStatus}
-        $valueColor={valueColor}
-        $inline={inline}
-        $valueLineHeight={valueLineHeight}
-        variant={variant}
-        component={valueComponent}
-        noWrap={!valueWrap}
-        title={
-          typeof children === 'string' ? children?.toString() : undefined
-        }
-      >
-        {children}
-      </Value>
-    </ValueContainer>
-  </Container>
-);
+}) => {
+  const getXS = () => {
+    if (labelWidth === 12) return 12;
+    if (typeof labelWidth === 'number')
+      return (12 - labelWidth) as GridSize;
+    return 'auto';
+  };
+
+  return (
+    <Container container $inline={inline}>
+      <LabelContainer item xs={labelWidth || 'auto'}>
+        <Label
+          title={typeof label === 'string' ? label : ''}
+          variant={variant}
+          noWrap
+          component="span"
+        >
+          {label}
+        </Label>
+      </LabelContainer>
+
+      <ValueContainer item xs={getXS()} sx={{ width: '100%' }}>
+        <Value
+          $runStatus={runStatus}
+          $valueColor={valueColor}
+          $inline={inline}
+          $valueLineHeight={valueLineHeight}
+          variant={variant}
+          component={valueComponent}
+          noWrap={!valueWrap}
+          title={
+            typeof children === 'string' ? children?.toString() : undefined
+          }
+        >
+          {children}
+        </Value>
+      </ValueContainer>
+    </Container>
+  );
+};
 
 export default LabeledInfoItem;
