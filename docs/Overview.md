@@ -32,3 +32,9 @@ Dive into ODD opportunities with a list of ODD [features](Features.md) and use c
 <!---
 > Open Data Discovery makes all your data entities reliable, observable, and easily discoverable.
 -->
+
+<!---
+[Glossary](GLOSSARY.md)
+
+  * [Compliance for Data Scientists](Data_Compliance_DS.md)
+-->

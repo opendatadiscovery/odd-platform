@@ -5,10 +5,3 @@
 * [Architecture](Architecture.md)
 * [Features](Features.md)
 * [Use cases](Use_cases.md)
-
-
-<!---
-[Glossary](GLOSSARY.md)
-
-  * [Compliance for Data Scientists](Data_Compliance_DS.md)
--->
