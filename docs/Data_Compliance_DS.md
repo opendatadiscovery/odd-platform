@@ -1,5 +1,5 @@
 # Data compliance for Data Scientists
-**Key words**: Personal Identifiable Information (PII), General Data Protection Regulation (GDPR), confidential data, anonymization, bank secrecy.
+**Key words**: Personal Identifiable Information (PII), General Data Protection Regulation (GDPR), confidential data, anonymization, financial privacy.
 ### Challenge
 As a DS in finance or banking company I have to develop an ML-model for marketing purposes. It aims to introduce customer segments as well as customize communication for each segment. \
 Developing the model I deal with PII. It requires to choose confidential info and then anonymize it in order to avoid monetary, legal or reputation losses.
