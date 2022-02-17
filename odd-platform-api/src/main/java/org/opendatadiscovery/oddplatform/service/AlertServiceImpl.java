@@ -10,10 +10,10 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
-import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
-import org.opendatadiscovery.oddplatform.dto.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.ExternalAlert;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
+import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.mapper.AlertMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
@@ -69,10 +69,17 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Mono<AlertStatus> updateStatus(final long alertId,
                                           final AlertStatus alertStatus) {
-        return Mono.fromCallable(() -> {
-            alertRepository.updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()));
-            return alertStatus;
-        });
+        return authIdentityProvider.getUsername()
+            .map(username -> {
+                alertRepository
+                    .updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()), username);
+                return alertStatus;
+            })
+            .switchIfEmpty(Mono.defer(() -> {
+                alertRepository
+                    .updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()), null);
+                return Mono.just(alertStatus);
+            }));
     }
 
     @Override
@@ -99,7 +106,7 @@ public class AlertServiceImpl implements AlertService {
             return new AlertPojo()
                 .setCreatedAt(now)
                 .setStatusUpdatedAt(now)
-                .setType(AlertType.DISTRIBUTION_ANOMALY.getValue())
+                .setType(AlertTypeEnum.DISTRIBUTION_ANOMALY.name())
                 .setDataEntityOddrn(a.getLabels().get("entity_oddrn"))
                 .setDescription(String.format("Distribution Anomaly. URL: %s", queryUrl))
                 .setStatus(AlertStatusEnum.OPEN.name());

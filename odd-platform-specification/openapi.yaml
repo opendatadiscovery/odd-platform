@@ -583,7 +583,7 @@ paths:
       tags:
         - dataSource
   /api/datasources/{data_source_id}/regenerateToken:
-    get:
+    put:
       summary: Regenerate data source token
       description: Regenerate data source token
       operationId: regenerateDataSourceToken

@@ -12,6 +12,8 @@ import org.opendatadiscovery.oddplatform.model.tables.records.TokenRecord;
 import org.opendatadiscovery.oddplatform.service.TokenService;
 import org.springframework.stereotype.Repository;
 
+import java.util.Objects;
+
 import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
 
 @Repository
@@ -34,6 +36,12 @@ public class TokenRepositoryImpl implements TokenRepository {
     public TokenPojo regenerateToken(final TokenPojo tokenPojo) {
         final Condition checkIfExistsCondition = TOKEN.ID.eq(tokenPojo.getId());
         return persistToken(tokenPojo, checkIfExistsCondition);
+    }
+
+    @Override
+    public TokenPojo getToken(Long tokenId) {
+        final Condition checkIfExistsCondition = TOKEN.ID.eq(tokenId);
+        return recordToPojo(Objects.requireNonNull(dslContext.fetchOne(TOKEN, checkIfExistsCondition)));
     }
 
     private TokenPojo persistToken(final TokenPojo tokenPojo, final Condition checkIfExistsCondition) {

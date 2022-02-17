@@ -152,13 +152,17 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
-        final TokenPojo token = tokenRepository.regenerateToken(dto.token());
+        final TokenPojo token = dto.token();
+        final String tokenValue = token != null ? token.getValue() : null;
+        final TokenPojo updatedTokenPojo = token != null
+                ? new TokenPojo(token).setValue("******" + tokenValue.substring(tokenValue.length() - 6))
+                : null;
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(DATA_SOURCE.ID.eq(dto.dataSource().getId()))
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchOptionalInto(DataSourcePojo.class)
-            .map(ds -> update(ds, dto, namespace, token))
+            .map(ds -> update(ds, dto, namespace, updatedTokenPojo))
             .orElseThrow(() -> {
                 throw new NotFoundException();
             });

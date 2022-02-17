@@ -6,4 +6,6 @@ public interface TokenRepository {
     TokenPojo create(final TokenPojo tokenPojo);
 
     TokenPojo regenerateToken(final TokenPojo tokenPojo);
+
+    TokenPojo getToken(final Long tokenId);
 }

@@ -48,7 +48,7 @@ const AlertsList: React.FC<AlertsListProps> = ({
       page: 1,
       size: 30,
     });
-  }, []);
+  }, [fetchAlerts]);
 
   const alertStatusHandler = React.useCallback(
     (alertId: Alert['id'], alertStatus: AlertStatus) => () => {

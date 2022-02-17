@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class DataSourceServiceImpl
@@ -47,8 +49,8 @@ public class DataSourceServiceImpl
         }
 
         return authIdentityProvider.getUsername()
-                .map(username -> tokenService.generateToken(null, username))
-                .switchIfEmpty(Mono.fromCallable(() -> tokenService.generateToken(null, null)))
+                .map(tokenService::generateToken)
+                .switchIfEmpty(Mono.fromCallable(() -> tokenService.generateToken(null)))
                 .map(tokenPojo -> {
                     DataSourceDto dataSourceDto = entityMapper.mapForm(createEntityForm, tokenPojo);
                     DataSourceDto dto = entityRepository.create(dataSourceDto);
@@ -68,8 +70,8 @@ public class DataSourceServiceImpl
                         ? Mono.error(new NotFoundException())
                         : Mono.just(optional.get()))
                 .flatMap(dto -> authIdentityProvider.getUsername()
-                        .map(username -> tokenService.generateToken(dto.token(), username))
-                        .switchIfEmpty(Mono.fromCallable(() -> tokenService.generateToken(dto.token(), null)))
+                        .map(username -> tokenService.regenerateToken(dto.token(), username))
+                        .switchIfEmpty(Mono.fromCallable(() -> tokenService.regenerateToken(dto.token(), null)))
                         .map(tokenPojo -> {
                             tokenRepository.regenerateToken(tokenPojo);
                             return entityMapper.mapPojo(dto);

@@ -54,23 +54,15 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setDescription(form.getDescription())
             .setConnectionUrl(form.getConnectionUrl())
             .setPullingInterval(form.getPullingInterval())
-            .setActive(form.getActive())
-            .setTokenId(form.getToken().getId());
+            .setActive(form.getActive());
 
-        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), getTokenPojo(form));
+        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), pojo.token());
     }
 
     @Nullable
     private NamespacePojo getNamespacePojo(final String namespaceName) {
         return StringUtils.isNotEmpty(namespaceName)
                 ? new NamespacePojo().setName(namespaceName)
-                : null;
-    }
-
-    @Nullable
-    private TokenPojo getTokenPojo(final DataSourceUpdateFormData form) {
-        return ObjectUtils.isNotEmpty(form.getToken())
-                ? tokenMapper.mapTokenToPojo(form.getToken())
                 : null;
     }
 

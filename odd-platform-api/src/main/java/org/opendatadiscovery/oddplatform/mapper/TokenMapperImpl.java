@@ -21,16 +21,4 @@ public class TokenMapperImpl implements TokenMapper {
                 .updatedAt(tokenPojo.getUpdatedAt().atOffset(ZoneOffset.UTC))
                 .updatedBy(tokenPojo.getUpdatedBy());
     }
-
-    @Override
-    @NotNull
-    public TokenPojo mapTokenToPojo(final Token token) {
-        return new TokenPojo()
-                .setId(token.getId())
-                .setValue(token.getValue())
-                .setCreatedBy(token.getCreatedBy())
-                .setUpdatedBy(token.getUpdatedBy())
-                .setCreatedAt(token.getCreatedAt().toLocalDateTime())
-                .setUpdatedAt(token.getUpdatedAt().toLocalDateTime());
-    }
 }

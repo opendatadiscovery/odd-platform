@@ -12,19 +12,20 @@ import org.springframework.stereotype.Service;
 public class TokenServiceImpl implements TokenService {
 
     @Override
-    public TokenPojo generateToken(final TokenPojo tokenPojo, final String username) {
-        if (ObjectUtils.isEmpty(tokenPojo)) {
-            return new TokenPojo()
-                    .setCreatedAt(LocalDateTime.now())
-                    .setCreatedBy(username)
-                    .setValue(RandomStringUtils.randomAlphanumeric(40))
-                    .setUpdatedAt(LocalDateTime.now())
-                    .setUpdatedBy(username);
-        } else {
-            return tokenPojo
-                    .setValue(RandomStringUtils.randomAlphanumeric(40))
-                    .setUpdatedAt(LocalDateTime.now())
-                    .setUpdatedBy(username);
-        }
+    public TokenPojo generateToken(final String username) {
+        return new TokenPojo()
+                .setCreatedAt(LocalDateTime.now())
+                .setCreatedBy(username)
+                .setValue(RandomStringUtils.randomAlphanumeric(40))
+                .setUpdatedAt(LocalDateTime.now())
+                .setUpdatedBy(username);
+    }
+
+    @Override
+    public TokenPojo regenerateToken(final TokenPojo tokenPojo, final String username) {
+        return tokenPojo
+                .setValue(RandomStringUtils.randomAlphanumeric(40))
+                .setUpdatedAt(LocalDateTime.now())
+                .setUpdatedBy(username);
     }
 }

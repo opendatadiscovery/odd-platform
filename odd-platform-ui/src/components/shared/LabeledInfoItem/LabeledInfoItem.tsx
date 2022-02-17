@@ -1,7 +1,13 @@
-import React from 'react';
-import { Grid, GridSize, TypographyProps } from '@mui/material';
+import React, { ElementType } from 'react';
+import { GridSize, TypographyProps } from '@mui/material';
 import { DataQualityTestRunStatus } from 'generated-sources';
-import * as S from './LabeledInfoItemStyles';
+import {
+  Container,
+  ValueContainer,
+  LabelContainer,
+  Label,
+  Value,
+} from './LabeledInfoItemStyles';
 
 interface LabeledInfoItemProps {
   inline?: boolean;
@@ -12,6 +18,7 @@ interface LabeledInfoItemProps {
   valueColor?: string;
   valueLineHeight?: number;
   valueWrap?: boolean;
+  valueComponent?: ElementType;
 }
 
 const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
@@ -24,6 +31,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   valueColor,
   valueLineHeight,
   valueWrap = false,
+  valueComponent = 'span',
 }) => {
   const getXS = () => {
     if (labelWidth === 12) return 12;
@@ -31,34 +39,37 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
       return (12 - labelWidth) as GridSize;
     return 'auto';
   };
+
   return (
-    <S.Container container $inline={inline}>
-      <S.LabelContainer item xs={labelWidth || 'auto'}>
-        <S.Label
+    <Container container $inline={inline}>
+      <LabelContainer item xs={labelWidth || 'auto'}>
+        <Label
           title={typeof label === 'string' ? label : ''}
           variant={variant}
           noWrap
           component="span"
         >
           {label}
-        </S.Label>
-      </S.LabelContainer>
+        </Label>
+      </LabelContainer>
 
-      <Grid item xs={getXS()} sx={{ width: '100%' }}>
-        <S.Value
+      <ValueContainer item xs={getXS()} sx={{ width: '100%' }}>
+        <Value
           $runStatus={runStatus}
           $valueColor={valueColor}
           $inline={inline}
           $valueLineHeight={valueLineHeight}
           variant={variant}
-          component="span"
+          component={valueComponent}
           noWrap={!valueWrap}
-          title={children?.toString()}
+          title={
+            typeof children === 'string' ? children?.toString() : undefined
+          }
         >
           {children}
-        </S.Value>
-      </Grid>
-    </S.Container>
+        </Value>
+      </ValueContainer>
+    </Container>
   );
 };
 
