@@ -85,18 +85,18 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
         alertRepository.createAlerts(resolvedPojos);
 
         final Page<AlertDto> firstPage = alertRepository.listAll(1, 4);
-        final Comparator<AlertDto> comparing = getAlertsComparator();
+        final Comparator<AlertDto> comparator = getAlertsComparator();
 
         assertThat(firstPage.getData())
             .hasSize(4)
-            .isSortedAccordingTo(comparing.reversed())
+            .isSortedAccordingTo(comparator)
             .extracting(dto -> dto.getAlert().getStatus())
             .containsOnly(AlertStatusEnum.OPEN.name());
 
         final Page<AlertDto> secondPage = alertRepository.listAll(2, 4);
         assertThat(secondPage.getData())
             .hasSize(3)
-            .isSortedAccordingTo(comparing.reversed())
+            .isSortedAccordingTo(comparator)
             .extracting(dto -> dto.getAlert().getStatus())
             .containsOnly(AlertStatusEnum.OPEN.name());
     }
@@ -115,18 +115,18 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
         alertRepository.createAlerts(openPojos);
         alertRepository.createAlerts(resolvedPojos);
 
-        final Comparator<AlertDto> comparing = getAlertsComparator();
+        final Comparator<AlertDto> comparator = getAlertsComparator();
         final Page<AlertDto> firstPage = alertRepository.listByOwner(1, 3, ownerPojo.getId());
         assertThat(firstPage.getData())
             .hasSize(3)
-            .isSortedAccordingTo(comparing.reversed())
+            .isSortedAccordingTo(comparator)
             .extracting(dto -> dto.getAlert().getStatus())
             .containsOnly(AlertStatusEnum.OPEN.name());
 
         final Page<AlertDto> secondPage = alertRepository.listByOwner(2, 3, ownerPojo.getId());
         assertThat(secondPage.getData())
             .hasSize(1)
-            .isSortedAccordingTo(comparing.reversed())
+            .isSortedAccordingTo(comparator)
             .extracting(dto -> dto.getAlert().getStatus())
             .containsOnly(AlertStatusEnum.OPEN.name());
     }
@@ -325,7 +325,11 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
     }
 
     private Comparator<AlertDto> getAlertsComparator() {
-        return Comparator.comparing(dto -> dto.getAlert().getCreatedAt());
+        final Comparator<AlertDto> createdAtComparator = Comparator.comparing(dto -> dto.getAlert().getCreatedAt());
+        final Comparator<AlertDto> reversedCreatedAtComparator = createdAtComparator.reversed();
+        final Comparator<AlertDto> idComparator = reversedCreatedAtComparator
+            .thenComparing(dto -> dto.getAlert().getId());
+        return idComparator.reversed();
     }
 
     private LineagePojo createLineagePojo(final String parentOddrn, final String childOddrn) {
