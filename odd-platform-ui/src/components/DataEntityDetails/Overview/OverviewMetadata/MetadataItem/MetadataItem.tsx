@@ -132,21 +132,27 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
         ) : (
           <S.ValueContainer>
             <S.ValueLeftContainer>
-              <S.Value variant="body1">{metadataVal}</S.Value>
-              {isJSON && (
-                <AppButton
-                  size="small"
-                  color="tertiary"
-                  sx={{ mt: 1.25 }}
-                  onClick={() => setIsJSONOpened(!isJSONOpened)}
-                  endIcon={
-                    <DropdownIcon
-                      transform={isJSONOpened ? 'rotate(180deg)' : 'none'}
-                    />
-                  }
-                >
-                  {isJSONOpened ? 'Hide' : `Show All`}
-                </AppButton>
+              {isJSON ? (
+                <>
+                  {metadataVal}
+                  <AppButton
+                    size="small"
+                    color="tertiary"
+                    sx={{ mt: 1.25 }}
+                    onClick={() => setIsJSONOpened(!isJSONOpened)}
+                    endIcon={
+                      <DropdownIcon
+                        transform={
+                          isJSONOpened ? 'rotate(180)' : 'rotate(0)'
+                        }
+                      />
+                    }
+                  >
+                    {isJSONOpened ? 'Hide' : `Show All`}
+                  </AppButton>
+                </>
+              ) : (
+                <S.Value variant="body1">{metadataVal}</S.Value>
               )}
             </S.ValueLeftContainer>
             {isCustom ? (
