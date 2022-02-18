@@ -5,6 +5,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import * as S from './TagCreateFormItemStyles';
+import AppCheckbox from '../../../../shared/AppCheckbox/AppCheckbox';
 
 interface TagCreateFormItemProps {
   itemIndex: number;
@@ -51,7 +52,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
               {...field}
               sx={{ ml: 0.5, mr: 0 }}
               checked={field.value}
-              control={<S.ImportantCheckbox sx={{ mr: 1 }} />}
+              control={<AppCheckbox sx={{ mr: 1, p: 0 }} />}
               label="Important"
             />
           )}

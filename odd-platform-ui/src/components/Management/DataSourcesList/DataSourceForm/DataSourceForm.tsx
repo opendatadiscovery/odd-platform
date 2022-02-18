@@ -16,7 +16,6 @@ import {
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
-  Checkbox,
   FormControlLabel,
   Grid,
   RadioGroup,
@@ -29,6 +28,7 @@ import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/D
 import NamespaceAutocompleteContainer from 'components/Management/DataSourcesList/DataSourceForm/NamespaceAutocomplete/NamespaceAutocompleteContainer';
 import AppRadio from 'components/shared/AppRadio/AppRadio';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import AppCheckbox from '../../../shared/AppCheckbox/AppCheckbox';
 
 interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -131,7 +131,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           {...field}
           sx={{ m: 0, mt: 1.5 }}
           checked={field.value}
-          control={<Checkbox sx={{ mr: 1, p: 0 }} />}
+          control={<AppCheckbox sx={{ mr: 1, p: 0 }} />}
           label="Receive data from current datasource"
         />
       )}
