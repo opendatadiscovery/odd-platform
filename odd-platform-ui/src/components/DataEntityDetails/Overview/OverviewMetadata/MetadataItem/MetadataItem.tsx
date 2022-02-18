@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -16,10 +16,10 @@ import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import CopyButton from 'components/shared/CopyButton/CopyButton';
+import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import * as S from './MetadataItemStyles';
-import CopyButton from '../../../../shared/CopyButton/CopyButton';
-import DropdownIcon from '../../../../shared/Icons/DropdownIcon';
 
 interface MetadataItemProps {
   dataEntityId: number;
@@ -57,9 +57,11 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
       dataEntityId,
       metadataFieldId: metadataItem.field.id,
     });
-  const [isJSONOpened, setIsJSONOpened] = useState(false);
+
+  const [isJSONOpened, setIsJSONOpened] = React.useState<boolean>(false);
   let metadataVal;
   let JSONVal;
+
   try {
     switch (metadataItem.field.type) {
       case MetadataFieldType.BOOLEAN:
@@ -135,7 +137,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 <AppButton
                   size="small"
                   color="tertiary"
-                  sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
+                  sx={{ mt: 1.25 }}
                   onClick={() => setIsJSONOpened(!isJSONOpened)}
                   endIcon={
                     <DropdownIcon
@@ -157,7 +159,9 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                     setEditMode(true);
                   }}
                 />
-                {JSONVal && <CopyButton stringToCopy={JSONVal} />}
+                {JSONVal && (
+                  <CopyButton stringToCopy={JSONVal} sx={{ ml: 0.5 }} />
+                )}
                 <ConfirmationDialog
                   actionTitle="Are you sure you want to delete this Metadata?"
                   actionName="Delete Metadata"

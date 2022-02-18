@@ -66,8 +66,8 @@ export const Pre = styled('pre')<{
 }>(({ theme, $isOpened }) => ({
   margin: 0,
   whiteSpace: 'pre-wrap',
-  maxHeight: $isOpened ? 'none' : '60px',
-  overflowY: 'auto',
+  maxHeight: $isOpened ? 'none' : '100px',
+  overflowY: 'hidden',
   fontSize: theme.typography.body1.fontSize,
   lineHeight: theme.typography.body1.lineHeight,
   fontWeight: theme.typography.body1.fontWeight,
