@@ -9,5 +9,5 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 
 public interface DataSourceMapper
     extends CRUDMapper<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData, DataSourceDto> {
-    DataSourceDto mapForm(DataSourceFormData form, TokenPojo tokenPojo);
+    DataSourceDto mapForm(final DataSourceFormData form, final TokenPojo tokenPojo);
 }

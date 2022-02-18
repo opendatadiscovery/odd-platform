@@ -6,13 +6,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.TokenRecord;
-import org.opendatadiscovery.oddplatform.service.TokenService;
 import org.springframework.stereotype.Repository;
-
-import java.util.Objects;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
 
@@ -40,10 +36,10 @@ public class TokenRepositoryImpl implements TokenRepository {
 
     private TokenPojo persistToken(final TokenPojo tokenPojo, final Condition checkIfExistsCondition) {
         return dslContext.selectFrom(TOKEN)
-                .where(checkIfExistsCondition)
-                .fetchOptionalInto(TokenPojo.class)
-                .map(pojo -> persist(pojo.getId(), tokenPojo))
-                .orElseGet(() -> persist(tokenPojo));
+            .where(checkIfExistsCondition)
+            .fetchOptionalInto(TokenPojo.class)
+            .map(pojo -> persist(pojo.getId(), tokenPojo))
+            .orElseGet(() -> persist(tokenPojo));
     }
 
     private TokenPojo persist(final TokenPojo token) {

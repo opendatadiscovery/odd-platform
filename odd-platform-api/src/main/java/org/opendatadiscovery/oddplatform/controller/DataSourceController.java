@@ -72,6 +72,7 @@ public class DataSourceController
         final Long dataSourceId,
         final ServerWebExchange exchange
     ) {
-        return entityService.regenerateDataSourceToken(dataSourceId).map(entity -> new ResponseEntity<>(entity, HttpStatus.OK));
+        return entityService.regenerateDataSourceToken(dataSourceId)
+            .map(entity -> new ResponseEntity<>(entity, HttpStatus.OK));
     }
 }

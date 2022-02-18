@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
@@ -15,8 +16,6 @@ import org.opendatadiscovery.oddplatform.repository.TokenRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -49,13 +48,13 @@ public class DataSourceServiceImpl
         }
 
         return authIdentityProvider.getUsername()
-                .map(tokenService::generateToken)
-                .switchIfEmpty(Mono.fromCallable(() -> tokenService.generateToken(null)))
-                .map(tokenPojo -> {
-                    DataSourceDto dataSourceDto = entityMapper.mapForm(createEntityForm, tokenPojo);
-                    DataSourceDto dto = entityRepository.create(dataSourceDto);
-                    return entityMapper.mapPojo(dto);
-                });
+            .map(tokenService::generateToken)
+            .switchIfEmpty(Mono.fromCallable(() -> tokenService.generateToken(null)))
+            .map(tokenPojo -> {
+                final DataSourceDto dataSourceDto = entityMapper.mapForm(createEntityForm, tokenPojo);
+                final DataSourceDto dto = entityRepository.create(dataSourceDto);
+                return entityMapper.mapPojo(dto);
+            });
     }
 
     @Override
@@ -66,15 +65,15 @@ public class DataSourceServiceImpl
     @Override
     public Mono<DataSource> regenerateDataSourceToken(final Long dataSourceId) {
         return Mono.fromCallable(() -> entityRepository.get(dataSourceId))
-                .flatMap(optional -> optional.isEmpty()
-                        ? Mono.error(new NotFoundException())
-                        : Mono.just(optional.get()))
-                .flatMap(dto -> authIdentityProvider.getUsername()
-                        .map(username -> tokenService.regenerateToken(dto.token(), username))
-                        .switchIfEmpty(Mono.fromCallable(() -> tokenService.regenerateToken(dto.token(), null)))
-                        .map(tokenPojo -> {
-                            tokenRepository.regenerateToken(tokenPojo);
-                            return entityMapper.mapPojo(dto);
-                        }));
+            .filter(Optional::isPresent)
+            .switchIfEmpty(Mono.error(new NotFoundException()))
+            .map(Optional::get)
+            .flatMap(dto -> authIdentityProvider.getUsername()
+                .map(username -> tokenService.regenerateToken(dto.token(), username))
+                .switchIfEmpty(Mono.fromCallable(() -> tokenService.regenerateToken(dto.token(), null)))
+                .map(tokenPojo -> {
+                    tokenRepository.regenerateToken(tokenPojo);
+                    return entityMapper.mapPojo(dto);
+                }));
     }
 }

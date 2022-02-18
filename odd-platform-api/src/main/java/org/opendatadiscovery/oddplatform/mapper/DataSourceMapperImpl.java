@@ -28,23 +28,9 @@ public class DataSourceMapperImpl implements DataSourceMapper {
         return getDataSourceDto(form, null);
     }
 
-
     @Override
     public DataSourceDto mapForm(final DataSourceFormData form, final TokenPojo tokenPojo) {
         return getDataSourceDto(form, tokenPojo);
-    }
-
-    @NotNull
-    private DataSourceDto getDataSourceDto(DataSourceFormData form, TokenPojo o) {
-        final DataSourcePojo dataSourcePojo = new DataSourcePojo()
-                .setName(form.getName())
-                .setOddrn(form.getOddrn())
-                .setDescription(form.getDescription())
-                .setActive(form.getActive())
-                .setConnectionUrl(form.getConnectionUrl())
-                .setPullingInterval(form.getPullingInterval());
-
-        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), o);
     }
 
     @Override
@@ -57,13 +43,6 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setActive(form.getActive());
 
         return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), pojo.token());
-    }
-
-    @Nullable
-    private NamespacePojo getNamespacePojo(final String namespaceName) {
-        return StringUtils.isNotEmpty(namespaceName)
-                ? new NamespacePojo().setName(namespaceName)
-                : null;
     }
 
     @Override
@@ -94,5 +73,23 @@ public class DataSourceMapperImpl implements DataSourceMapper {
         return new DataSourceList()
             .items(mapPojoList(pojos.getData()))
             .pageInfo(pageInfo(pojos));
+    }
+
+    private DataSourceDto getDataSourceDto(final DataSourceFormData form, final TokenPojo tokenPojo) {
+        final DataSourcePojo dataSourcePojo = new DataSourcePojo()
+            .setName(form.getName())
+            .setOddrn(form.getOddrn())
+            .setDescription(form.getDescription())
+            .setActive(form.getActive())
+            .setConnectionUrl(form.getConnectionUrl())
+            .setPullingInterval(form.getPullingInterval());
+
+        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), tokenPojo);
+    }
+
+    private NamespacePojo getNamespacePojo(final String namespaceName) {
+        return StringUtils.isNotEmpty(namespaceName)
+            ? new NamespacePojo().setName(namespaceName)
+            : null;
     }
 }
