@@ -1,0 +1,11 @@
+{
+    "root": "./docs",
+    "plugins": [ "page-toc" ], [ "anchors" ]
+    "pluginsConfig": {
+      "page-toc": {
+        "selector": ".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4",
+        "position": "top",
+        "showByDefault": true
+      }
+    }
+  }
