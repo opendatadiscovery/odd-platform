@@ -25,10 +25,10 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormStyles';
-import NamespaceAutocompleteContainer from 'components/Management/DataSourcesList/DataSourceForm/NamespaceAutocomplete/NamespaceAutocompleteContainer';
 import AppRadio from 'components/shared/AppRadio/AppRadio';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import AppCheckbox from '../../../shared/AppCheckbox/AppCheckbox';
+import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
+import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
 
 interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -129,9 +129,9 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         <FormControlLabel
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...field}
-          sx={{ m: 0, mt: 1.5 }}
+          sx={{ ml: -0.25, mt: 1.5 }}
           checked={field.value}
-          control={<AppCheckbox sx={{ mr: 1, p: 0 }} />}
+          control={<AppCheckbox sx={{ mr: 1 }} />}
           label="Receive data from current datasource"
         />
       )}

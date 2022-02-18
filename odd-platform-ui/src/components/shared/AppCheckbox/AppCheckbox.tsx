@@ -5,7 +5,7 @@ import { StyledAppCheckbox } from './AppCheckboxStyles';
 type AppCheckboxProps = Pick<CheckboxProps, 'sx'>;
 
 const AppCheckbox: React.FC<AppCheckboxProps> = ({ sx }) => (
-  <StyledAppCheckbox sx={sx} />
+  <StyledAppCheckbox disableRipple sx={sx} />
 );
 
 export default AppCheckbox;
