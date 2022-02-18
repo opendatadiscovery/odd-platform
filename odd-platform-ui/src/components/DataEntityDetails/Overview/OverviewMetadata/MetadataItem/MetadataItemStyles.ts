@@ -68,9 +68,9 @@ export const Pre = styled('pre')<{
   $isOpened: boolean;
 }>(({ theme, $isOpened }) => ({
   margin: 0,
-  maxWidth: '389px',
+  whiteSpace: 'pre-wrap',
   maxHeight: $isOpened ? 'none' : '60px',
-  overflowY: 'scroll',
+  overflowY: 'auto',
   fontSize: theme.typography.body1.fontSize,
   lineHeight: theme.typography.body1.lineHeight,
   fontWeight: theme.typography.body1.fontWeight,
