@@ -15,9 +15,7 @@ export const Label = styled(Typography)(({ theme }) => ({
 }));
 
 export const EditForm = styled('form')(() => ({
-  display: 'flex',
   width: '100%',
-  alignItems: 'center',
 }));
 
 export const ValueContainer = styled('div')(({ theme }) => ({
@@ -35,7 +33,6 @@ export const FormActionBtns = styled('div')(({ theme }) => ({
   marginTop: theme.spacing(1),
   display: 'flex',
   alignItems: 'center',
-  marginLeft: theme.spacing(1),
   '& > * + *': {
     marginLeft: theme.spacing(0.5),
   },
