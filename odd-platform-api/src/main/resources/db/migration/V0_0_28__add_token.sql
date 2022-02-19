@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS token
 );
 
 ALTER TABLE data_source
-    ADD COLUMN if not exists token_id bigint,
+    ADD COLUMN IF NOT EXISTS token_id bigint,
     ADD CONSTRAINT data_source_fk_token FOREIGN KEY (token_id) REFERENCES token (id);

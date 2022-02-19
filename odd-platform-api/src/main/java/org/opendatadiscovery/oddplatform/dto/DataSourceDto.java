@@ -7,5 +7,5 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 
 public record DataSourceDto(DataSourcePojo dataSource,
                             @Nullable NamespacePojo namespace,
-                            @Nullable TokenPojo token) {
+                            @Nullable TokenDto token) {
 }

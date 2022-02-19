@@ -16,6 +16,7 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.exception.EntityAlreadyExistsException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -124,14 +125,15 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
-        final TokenPojo token = tokenRepository.create(dto.token());
+
+        final TokenDto token = tokenRepository.create(dto.token().tokenPojo());
 
         final DataSourcePojo dsPojo = dto.dataSource();
 
         final boolean isConnectionUrlExists = dsPojo.getConnectionUrl() != null && !dsPojo.getConnectionUrl().isEmpty();
         final Condition checkIfExistsCondition = isConnectionUrlExists
-                ? DATA_SOURCE.CONNECTION_URL.eq(dsPojo.getConnectionUrl())
-                : DATA_SOURCE.ODDRN.eq(dsPojo.getOddrn());
+            ? DATA_SOURCE.CONNECTION_URL.eq(dsPojo.getConnectionUrl())
+            : DATA_SOURCE.ODDRN.eq(dsPojo.getOddrn());
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(checkIfExistsCondition)
@@ -140,7 +142,6 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
                 if (!ds.getIsDeleted()) {
                     throw new EntityAlreadyExistsException();
                 }
-
                 return persist(ds.getId(), dsPojo, namespace, token);
             })
             .orElseGet(() -> persist(dsPojo, namespace, token));
@@ -152,17 +153,12 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
-        final TokenPojo token = dto.token();
-        final String tokenValue = token != null ? token.getValue() : null;
-        final TokenPojo updatedTokenPojo = token != null
-                ? new TokenPojo(token).setValue("******" + tokenValue.substring(tokenValue.length() - 6))
-                : null;
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(DATA_SOURCE.ID.eq(dto.dataSource().getId()))
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchOptionalInto(DataSourcePojo.class)
-            .map(ds -> update(ds, dto, namespace, updatedTokenPojo))
+            .map(ds -> update(ds, dto, namespace, dto.token()))
             .orElseThrow(() -> {
                 throw new NotFoundException();
             });
@@ -171,8 +167,8 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     private DataSourceDto update(final DataSourcePojo existing,
                                  final DataSourceDto delta,
                                  final NamespacePojo namespace,
-                                 final TokenPojo token) {
-        final DataSourceDto updatedDs = persist(existing.getId(), delta.dataSource(), namespace, token);
+                                 final TokenDto tokenDto) {
+        final DataSourceDto updatedDs = persist(existing.getId(), delta.dataSource(), namespace, tokenDto);
 
         final Field<Long> deId = field("data_entity_id", Long.class);
 
@@ -282,18 +278,18 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     }
 
     private DataSourceDto persist(
-            final DataSourcePojo dataSource,
-            final NamespacePojo namespace,
-            final TokenPojo token
+        final DataSourcePojo dataSource,
+        final NamespacePojo namespace,
+        final TokenDto tokenDto
     ) {
-        return persist(null, dataSource, namespace, token);
+        return persist(null, dataSource, namespace, tokenDto);
     }
 
     private DataSourceDto persist(
-            final Long dsId,
-            final DataSourcePojo dataSource,
-            final NamespacePojo namespace,
-            final TokenPojo token
+        final Long dsId,
+        final DataSourcePojo dataSource,
+        final NamespacePojo namespace,
+        final TokenDto tokenDto
     ) {
         final DataSourceRecord record = pojoToRecord(dataSource);
 
@@ -309,13 +305,13 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             record.set(DATA_SOURCE.NAMESPACE_ID, namespace.getId());
         }
 
-        if (token != null) {
-            record.set(DATA_SOURCE.TOKEN_ID, token.getId());
+        if (tokenDto != null && tokenDto.tokenPojo() != null) {
+            record.set(DATA_SOURCE.TOKEN_ID, tokenDto.tokenPojo().getId());
         }
 
         record.store();
 
-        return new DataSourceDto(recordToPojo(record), namespace, token);
+        return new DataSourceDto(recordToPojo(record), namespace, tokenDto);
     }
 
     private Long fetchCount(final String query) {
@@ -336,22 +332,20 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     }
 
     private DataSourceDto mapRecord(final Record record, final String dataSourceCteName) {
+        final TokenPojo tokenPojo = jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class);
         return new DataSourceDto(
             jooqRecordHelper.remapCte(record, dataSourceCteName, DATA_SOURCE).into(DataSourcePojo.class),
             record.into(NAMESPACE).into(NamespacePojo.class),
-            record.into(TOKEN).map((map) -> {
-                final String value = map.get(TOKEN.VALUE);
-                map.setValue(TOKEN.VALUE, "******" + value.substring(value.length() - 6));
-                return map;
-            }).into(TokenPojo.class)
+            tokenPojo != null ? new TokenDto(tokenPojo) : null
         );
     }
 
     private DataSourceDto mapRecord(final Record record) {
+        final TokenPojo tokenPojo = jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class);
         return new DataSourceDto(
             record.into(DATA_SOURCE).into(DataSourcePojo.class),
             record.into(NAMESPACE).into(NamespacePojo.class),
-            record.into(TOKEN).into(TokenPojo.class)
+            tokenPojo != null ? new TokenDto(tokenPojo) : null
         );
     }
 

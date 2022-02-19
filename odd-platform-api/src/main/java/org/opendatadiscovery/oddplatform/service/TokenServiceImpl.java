@@ -23,6 +23,9 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public TokenPojo regenerateToken(final TokenPojo tokenPojo, final String username) {
+        if (tokenPojo == null) {
+            throw new RuntimeException("Token is null");
+        }
         return tokenPojo
                 .setValue(RandomStringUtils.randomAlphanumeric(40))
                 .setUpdatedAt(LocalDateTime.now())

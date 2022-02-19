@@ -1,9 +1,10 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 
 public interface TokenRepository {
-    TokenPojo create(final TokenPojo tokenPojo);
+    TokenDto create(final TokenPojo tokenPojo);
 
-    TokenPojo regenerateToken(final TokenPojo tokenPojo);
+    TokenDto updateToken(final TokenPojo tokenPojo);
 }

@@ -2,18 +2,15 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
@@ -29,8 +26,8 @@ public class DataSourceMapperImpl implements DataSourceMapper {
     }
 
     @Override
-    public DataSourceDto mapForm(final DataSourceFormData form, final TokenPojo tokenPojo) {
-        return getDataSourceDto(form, tokenPojo);
+    public DataSourceDto mapForm(final DataSourceFormData form, final TokenDto tokenDto) {
+        return getDataSourceDto(form, tokenDto);
     }
 
     @Override
@@ -58,7 +55,7 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .namespace(namespaceMapper.mapPojo(dto.namespace()))
             .pullingInterval(dsPojo.getPullingInterval())
             .active(dsPojo.getActive())
-            .token(tokenMapper.mapPojoToToken(dto.token()));
+            .token(tokenMapper.mapDtoToToken(dto.token()));
     }
 
     @Override
@@ -75,7 +72,7 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .pageInfo(pageInfo(pojos));
     }
 
-    private DataSourceDto getDataSourceDto(final DataSourceFormData form, final TokenPojo tokenPojo) {
+    private DataSourceDto getDataSourceDto(final DataSourceFormData form, final TokenDto tokenDto) {
         final DataSourcePojo dataSourcePojo = new DataSourcePojo()
             .setName(form.getName())
             .setOddrn(form.getOddrn())
@@ -84,7 +81,7 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setConnectionUrl(form.getConnectionUrl())
             .setPullingInterval(form.getPullingInterval());
 
-        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), tokenPojo);
+        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), tokenDto);
     }
 
     private NamespacePojo getNamespacePojo(final String namespaceName) {

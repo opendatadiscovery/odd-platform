@@ -9,6 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataSourceMapper;
 import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
@@ -51,9 +52,9 @@ public class DataSourceServiceImpl
             .map(tokenService::generateToken)
             .switchIfEmpty(Mono.fromCallable(() -> tokenService.generateToken(null)))
             .map(tokenPojo -> {
-                final DataSourceDto dataSourceDto = entityMapper.mapForm(createEntityForm, tokenPojo);
-                final DataSourceDto dto = entityRepository.create(dataSourceDto);
-                return entityMapper.mapPojo(dto);
+                final DataSourceDto dataSourceDto = entityMapper.mapForm(createEntityForm, new TokenDto(tokenPojo));
+                final DataSourceDto createdDto = entityRepository.create(dataSourceDto);
+                return entityMapper.mapPojo(createdDto);
             });
     }
 
@@ -69,11 +70,11 @@ public class DataSourceServiceImpl
             .switchIfEmpty(Mono.error(new NotFoundException()))
             .map(Optional::get)
             .flatMap(dto -> authIdentityProvider.getUsername()
-                .map(username -> tokenService.regenerateToken(dto.token(), username))
-                .switchIfEmpty(Mono.fromCallable(() -> tokenService.regenerateToken(dto.token(), null)))
+                .map(username -> tokenService.regenerateToken(dto.token().tokenPojo(), username))
+                .switchIfEmpty(Mono.fromCallable(() -> tokenService.regenerateToken(dto.token().tokenPojo(), null)))
                 .map(tokenPojo -> {
-                    tokenRepository.regenerateToken(tokenPojo);
-                    return entityMapper.mapPojo(dto);
+                    final TokenDto updatedTokenDto = tokenRepository.updateToken(tokenPojo);
+                    return entityMapper.mapPojo(new DataSourceDto(dto.dataSource(), dto.namespace(), updatedTokenDto));
                 }));
     }
 }

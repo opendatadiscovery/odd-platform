@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import org.opendatadiscovery.oddplatform.api.contract.model.Token;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
+import org.opendatadiscovery.oddplatform.dto.TokenDto;
 
 public interface TokenMapper {
-    Token mapPojoToToken(final TokenPojo pojo);
+    Token mapDtoToToken(final TokenDto dto);
 }
