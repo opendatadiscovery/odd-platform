@@ -7,7 +7,7 @@ const DropdownIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
     sx={sx}
     viewBox="0 0 16 16"
     {...props}
-    style={{ transform: props.transform ? props.transform : 'none' }}
+    transform={props.transform}
   >
     <svg
       width="16"
