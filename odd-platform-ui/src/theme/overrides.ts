@@ -24,24 +24,6 @@ export const components: Components = {
       },
     },
   },
-  MuiCheckbox: {
-    styleOverrides: {
-      root: {
-        color: '#B3BAC5',
-      },
-      colorSecondary: {
-        '&:hover': {
-          backgroundColor: 'unset',
-        },
-        '&$checked:hover': {
-          backgroundColor: 'unset !important',
-        },
-        '&$checked': {
-          color: '#0080FF',
-        },
-      },
-    },
-  },
   MuiLink: {
     styleOverrides: {
       root: {
