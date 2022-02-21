@@ -1,6 +1,5 @@
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 
 export const Container = styled('g')(({ theme }) => ({
   fill: theme.palette.background.default,
@@ -11,13 +10,13 @@ export const Container = styled('g')(({ theme }) => ({
   },
 }));
 
-export const RootNodeRect = styled('rect', {
-  shouldForwardProp: propsChecker,
-})<{ $parent: boolean }>(({ theme, $parent }) => ({
-  stroke: theme.palette.button.primary.normal.border,
-  strokeWidth: $parent ? 0 : 1,
-  rx: 8,
-}));
+export const RootNodeRect = styled('rect')<{ $parent: boolean }>(
+  ({ theme, $parent }) => ({
+    stroke: theme.palette.button.primary.normal.border,
+    strokeWidth: $parent ? 0 : 1,
+    rx: 8,
+  })
+);
 
 export const Title = styled('text')(({ theme }) => ({
   fill: theme.palette.common.black,
@@ -39,16 +38,16 @@ export const AttributeLabel = styled('tspan')(({ theme }) => ({
   fill: theme.palette.text.secondary,
 }));
 
-export const Placeholder = styled('tspan', {
-  shouldForwardProp: propsChecker,
-})<{ $show: boolean }>(({ theme, $show }) => ({
-  fill: theme.palette.texts.hint,
-  display: $show ? 'initial' : 'none',
-}));
+export const Placeholder = styled('tspan')<{ $show: boolean }>(
+  ({ theme, $show }) => ({
+    fill: theme.palette.texts.hint,
+    display: $show ? 'initial' : 'none',
+  })
+);
 
-export const TypeContainer = styled('rect', {
-  shouldForwardProp: propsChecker,
-})<{ $typeName: DataEntityTypeNameEnum }>(({ theme, $typeName }) => ({
+export const TypeContainer = styled('rect')<{
+  $typeName: DataEntityTypeNameEnum;
+}>(({ theme, $typeName }) => ({
   fill: theme.palette.entityType[$typeName],
   rx: 4,
 }));

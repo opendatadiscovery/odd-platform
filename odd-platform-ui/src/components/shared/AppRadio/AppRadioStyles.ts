@@ -1,5 +1,5 @@
 import { Radio, radioClasses } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import styled from 'styled-components';
 
 export const StyledRadio = styled(Radio)(() => ({
   [`&.${radioClasses.root}`]: {

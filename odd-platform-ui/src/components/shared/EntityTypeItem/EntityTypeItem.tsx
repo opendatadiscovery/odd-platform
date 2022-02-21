@@ -4,7 +4,7 @@ import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
 import { BoxProps } from '@mui/material';
 import * as S from './EntityTypeItemStyles';
 
-interface EntityTypeItemProps extends Pick<BoxProps, 'sx'> {
+export interface EntityTypeItemProps extends Pick<BoxProps, 'sx'> {
   typeName: DataEntityTypeNameEnum;
   fullName?: boolean;
 }

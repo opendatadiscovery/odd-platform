@@ -10,12 +10,9 @@ import {
   LinearProgress,
   Typography,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 
-export const MainDialog = styled(Dialog, {
-  shouldForwardProp: propsChecker,
-})<{
+export const MainDialog = styled(Dialog)<{
   $isLoading?: boolean;
 }>(({ $isLoading }) => ({
   [`& .${dialogClasses.paperWidthXs}`]: { maxWidth: '368px' },
@@ -28,9 +25,7 @@ export const MainDialog = styled(Dialog, {
   pointerEvents: $isLoading ? 'none' : 'all',
 }));
 
-export const Title = styled(DialogTitle, {
-  shouldForwardProp: propsChecker,
-})<{
+export const Title = styled(DialogTitle)<{
   $isLoading?: boolean;
 }>(({ theme, $isLoading }) => ({
   [`&.${dialogTitleClasses.root}`]: {
@@ -55,9 +50,7 @@ export const Actions = styled(DialogActions)(({ theme }) => ({
   flexWrap: 'wrap',
 }));
 
-export const Progress = styled(LinearProgress, {
-  shouldForwardProp: propsChecker,
-})<{
+export const Progress = styled(LinearProgress)<{
   $isLoading?: boolean;
 }>(({ $isLoading }) => ({
   display: $isLoading ? 'block' : 'none',

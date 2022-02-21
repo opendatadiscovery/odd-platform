@@ -1,21 +1,20 @@
 import { palette } from 'theme/palette';
 import { breakpoints } from 'theme/breakpoints';
-import createTypography, {
-  TypographyOptions,
-} from '@mui/material/styles/createTypography';
+import createTypography from '@mui/material/styles/createTypography';
 import { Palette } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
+import { CSSObject } from 'styled-components';
 
 export const { pxToRem } = createTypography(palette as Palette, {});
 
-export const breakpointDownLgBody1: TypographyOptions = {
+export const breakpointDownLgBody1: CSSObject = {
   [createTheme({ breakpoints }).breakpoints.down('lg')]: {
     fontSize: pxToRem(14),
     lineHeight: pxToRem(20),
   },
 };
 
-export const breakpointDownLgBody2: TypographyOptions = {
+export const breakpointDownLgBody2: CSSObject = {
   [createTheme({ breakpoints }).breakpoints.down('lg')]: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),

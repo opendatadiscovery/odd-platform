@@ -3,14 +3,11 @@ import {
   ColType,
   colWidthStyles,
 } from 'components/Search/Results/ResultsStyles';
-import { styled } from '@mui/material/styles';
-import { propsChecker } from 'lib/helpers';
+import styled from 'styled-components';
 
-export const ColContainer = styled(Grid, {
-  shouldForwardProp: propsChecker,
-})<{
+export const ColContainer = styled(Grid)<{
   $colType: ColType;
-}>(({ theme, $colType }) => ({
+}>(({ $colType }) => ({
   ...colWidthStyles.col,
   ...colWidthStyles[$colType],
 }));

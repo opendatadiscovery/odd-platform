@@ -44,6 +44,10 @@ const AppDatePicker: React.FC<AppDatePickerProps> = ({
     defaultDate,
   ]);
 
+  const AppDatePickerIcon = React.useCallback(() => <CalendarIcon />, [
+    CalendarIcon,
+  ]);
+
   return (
     <Box sx={sx} width="100%">
       <DatePicker
@@ -63,7 +67,7 @@ const AppDatePicker: React.FC<AppDatePickerProps> = ({
         label={label}
         value={selectedDate}
         components={{
-          OpenPickerIcon: () => <CalendarIcon />,
+          OpenPickerIcon: AppDatePickerIcon,
         }}
         renderInput={params => (
           <AppTextField

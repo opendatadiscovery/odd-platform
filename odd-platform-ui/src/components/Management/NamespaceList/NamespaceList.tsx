@@ -5,7 +5,7 @@ import {
   NamespaceApiGetNamespaceListRequest,
 } from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useDebouncedCallback } from 'use-debounce/lib';
+import { useDebouncedCallback } from 'use-debounce';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';

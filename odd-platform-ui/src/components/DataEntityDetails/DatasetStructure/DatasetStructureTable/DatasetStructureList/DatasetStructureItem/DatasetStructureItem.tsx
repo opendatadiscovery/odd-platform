@@ -269,7 +269,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               >
                 {fieldStats?.uniqueCount && rowsCount
                   ? `(${round(
-                      (fieldStats?.uniqueCount * 100) / rowsCount,
+                      (fieldStats.uniqueCount * 100) / rowsCount,
                       0
                     )}%)`
                   : null}
@@ -287,7 +287,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               >
                 {fieldStats?.nullsCount && rowsCount
                   ? `${round(
-                      (fieldStats?.nullsCount * 100) / rowsCount,
+                      (fieldStats.nullsCount * 100) / rowsCount,
                       0
                     )}%`
                   : null}

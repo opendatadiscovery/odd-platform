@@ -8,6 +8,9 @@ import {
 import { TypographyStyle } from '@mui/material';
 import { TypographyStyleOptions } from '@mui/material/styles/createTypography';
 
+// helpers interfaces
+export type CSSObject = Partial<CSSStyleDeclaration>;
+
 // palette interfaces
 interface ItemColors {
   background?: string;

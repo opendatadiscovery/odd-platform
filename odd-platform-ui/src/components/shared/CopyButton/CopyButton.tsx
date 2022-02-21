@@ -1,10 +1,10 @@
 import { CircularProgress } from '@mui/material';
 import React from 'react';
-import AppButton from '../AppButton/AppButton';
-import AppIconButton from '../AppIconButton/AppIconButton';
-import AlertIcon from '../Icons/AlertIcon';
-import CopyIcon from '../Icons/CopyIcon';
-import SuccessIcon from '../Icons/SuccessIcon';
+import CopyIcon from 'components/shared/Icons/CopyIcon';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import AlertIcon from 'components/shared/Icons/AlertIcon';
+import SuccessIcon from 'components/shared/Icons/SuccessIcon';
+import AppButton from 'components/shared/AppButton/AppButton';
 
 interface CopyButtonProps {
   text?: string;
