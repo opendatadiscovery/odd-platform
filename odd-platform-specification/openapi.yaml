@@ -582,7 +582,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - dataSource
-  /api/datasources/{data_source_id}/regenerateToken:
+  /api/datasources/{data_source_id}/token:
     put:
       summary: Regenerate data source token
       description: Regenerate data source token
