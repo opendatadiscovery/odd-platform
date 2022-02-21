@@ -7,6 +7,7 @@
     "build-only": "react-scripts build",
     "build": "npm run generate && react-scripts build",
     "test": "react-scripts test",
+    "test:CI": "CI=true npm test  -- --coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "eject": "react-scripts eject",
     "tsc": "tsc",
     "generate": "rm -rf ./src/generated-sources && docker run -v `pwd`/..:/mnt -w /mnt --rm openapitools/openapi-generator-cli:v5.1.1 generate -c odd-platform-ui/openapi-config.yaml",
