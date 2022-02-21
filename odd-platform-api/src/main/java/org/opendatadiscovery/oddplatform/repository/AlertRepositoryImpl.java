@@ -59,7 +59,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<AlertDto> data = baseAlertSelect(selectFields)
             .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
-            .orderBy(ALERT.CREATED_AT.desc())
+            .orderBy(ALERT.CREATED_AT.desc(), ALERT.ID.desc())
             .offset((page - 1) * size)
             .limit(size)
             .fetchStream()
@@ -89,7 +89,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .where(OWNERSHIP.OWNER_ID.eq(ownerId))
             .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
-            .orderBy(ALERT.CREATED_AT.desc())
+            .orderBy(ALERT.CREATED_AT.desc(), ALERT.ID.desc())
             .offset((page - 1) * size)
             .limit(size)
             .fetchStream()
@@ -145,6 +145,9 @@ public class AlertRepositoryImpl implements AlertRepository {
             .where(DATA_ENTITY.ODDRN.notIn(ownOddrns))
             .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
+            .orderBy(ALERT.CREATED_AT.desc(), ALERT.ID.desc())
+            .offset((page - 1) * size)
+            .limit(size)
             .fetch(this::mapRecord);
 
         return Page.<AlertDto>builder()
