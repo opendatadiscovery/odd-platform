@@ -1,11 +1,5 @@
-import { Checkbox, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import styled from 'styled-components';
-
-export const ImportantCheckbox = styled(Checkbox)(() => ({
-  width: '14px',
-  height: '14px',
-  padding: 0,
-}));
 
 export const TagItemBtnsContainer = styled(Grid)(({ theme }) => ({
   justifyContent: 'space-between',
