@@ -11,7 +11,6 @@ import {
 } from 'generated-sources';
 import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -39,6 +38,8 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   updateDataEntityCustomMetadata,
 }) => {
   const [editMode, setEditMode] = React.useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+
   const methods = useForm<MetadataFieldValueUpdateFormData>({
     mode: 'onChange',
   });
@@ -58,34 +59,33 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
       metadataFieldId: metadataItem.field.id,
     });
 
-  const [isJSONOpened, setIsJSONOpened] = React.useState<boolean>(false);
   let metadataVal;
-  let JSONVal;
 
-  try {
-    switch (metadataItem.field.type) {
-      case MetadataFieldType.BOOLEAN:
-        metadataVal = <BooleanFormatted value={metadataItem.value} />;
-        break;
-      case MetadataFieldType.DATETIME:
-        metadataVal = format(new Date(metadataItem.value), 'd MMM yyyy');
-        break;
-      case MetadataFieldType.ARRAY:
-        metadataVal = JSON.parse(metadataItem.value).join(', ');
-        break;
-      case MetadataFieldType.JSON:
-        JSONVal = JSON.stringify(JSON.parse(metadataItem.value), null, 2);
-        metadataVal = <S.Pre $isOpened={isJSONOpened}>{JSONVal}</S.Pre>;
-        break;
-      default:
-        metadataVal = metadataItem.value;
-    }
-  } catch {
-    metadataVal = metadataItem.value;
+  switch (metadataItem.field.type) {
+    case MetadataFieldType.BOOLEAN:
+      metadataVal = metadataItem.value === 'true' ? 'Yes' : 'No';
+      break;
+    case MetadataFieldType.DATETIME:
+      metadataVal = format(new Date(metadataItem.value), 'd MMM yyyy');
+      break;
+    case MetadataFieldType.ARRAY:
+      metadataVal = JSON.parse(metadataItem.value).join(', ');
+      break;
+    case MetadataFieldType.JSON:
+      metadataVal = JSON.stringify(
+        JSON.parse(metadataItem.value),
+        null,
+        2
+      );
+      break;
+    default:
+      metadataVal = metadataItem.value;
   }
 
+  const isJSON = metadataItem.field.type === MetadataFieldType.JSON;
+  const isExpandable = isJSON ? true : metadataVal.length > 200;
+
   const isCustom = metadataItem.field.origin === 'INTERNAL';
-  const isJSON = metadataItem.field.type === 'JSON';
 
   const isNestedField = (fieldName: string) => fieldName?.indexOf('.') > 0;
 
@@ -132,27 +132,21 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
         ) : (
           <S.ValueContainer>
             <S.ValueLeftContainer>
-              {isJSON ? (
-                <>
-                  {metadataVal}
-                  <AppButton
-                    size="small"
-                    color="tertiary"
-                    sx={{ mt: 1.25 }}
-                    onClick={() => setIsJSONOpened(!isJSONOpened)}
-                    endIcon={
-                      <DropdownIcon
-                        transform={
-                          isJSONOpened ? 'rotate(180)' : 'rotate(0)'
-                        }
-                      />
-                    }
-                  >
-                    {isJSONOpened ? 'Hide' : `Show All`}
-                  </AppButton>
-                </>
-              ) : (
-                <S.Value variant="body1">{metadataVal}</S.Value>
+              <S.Value $isOpened={isExpanded}>{metadataVal}</S.Value>
+              {isExpandable && (
+                <AppButton
+                  size="small"
+                  color="tertiary"
+                  sx={{ mt: 1.25 }}
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  endIcon={
+                    <DropdownIcon
+                      transform={isExpanded ? 'rotate(180)' : 'rotate(0)'}
+                    />
+                  }
+                >
+                  {isExpanded ? 'Hide' : `Show All`}
+                </AppButton>
               )}
             </S.ValueLeftContainer>
             {isCustom ? (
@@ -165,8 +159,11 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                     setEditMode(true);
                   }}
                 />
-                {JSONVal && (
-                  <CopyButton stringToCopy={JSONVal} sx={{ ml: 0.5 }} />
+                {metadataVal && (
+                  <CopyButton
+                    stringToCopy={metadataVal}
+                    sx={{ ml: 0.5 }}
+                  />
                 )}
                 <ConfirmationDialog
                   actionTitle="Are you sure you want to delete this Metadata?"
@@ -195,5 +192,4 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
     </S.Container>
   );
 };
-
 export default MetadataItem;

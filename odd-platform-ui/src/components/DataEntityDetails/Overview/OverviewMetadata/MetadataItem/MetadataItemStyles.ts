@@ -1,4 +1,4 @@
-import { Grid, Typography, TypographyProps } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
 
 export const LabelContainer = styled(Grid)(({ theme }) => ({
@@ -45,28 +45,19 @@ export const Actions = styled('div')(({ theme }) => ({
 }));
 
 export const Container = styled(Grid)(() => ({
-  alignItems: 'center',
+  alignItems: 'flex-start',
   '&:hover': {
     [`${Actions}`]: { opacity: 1 },
   },
 }));
 
-export const Value = styled(Typography)<TypographyProps>(() => ({
-  display: 'inline',
-  wordBreak: 'break-word',
-  maxHeight: '5rem',
-  overflow: 'auto',
-  '& > p': {
-    maxWidth: '200px',
-  },
-}));
-
-export const Pre = styled('pre')<{
+export const Value = styled('div')<{
   $isOpened: boolean;
 }>(({ theme, $isOpened }) => ({
   margin: 0,
   whiteSpace: 'pre-wrap',
   maxHeight: $isOpened ? 'none' : '100px',
+  maxWidth: '500px',
   overflowY: 'hidden',
   fontSize: theme.typography.body1.fontSize,
   lineHeight: theme.typography.body1.lineHeight,
