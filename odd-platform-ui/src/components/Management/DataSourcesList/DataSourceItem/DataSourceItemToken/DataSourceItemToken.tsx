@@ -20,13 +20,10 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
   dataSource,
   regenerateDataSourceToken,
 }) => {
-  const checkTokenLength = (token: string): boolean =>
-    token.substring(0, 6) === '******';
-
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
 
   React.useEffect(() => {
-    setIsHidden(checkTokenLength(dataSource.token.value));
+    setIsHidden(dataSource.token.value.substring(0, 6) === '******');
   }, [dataSource.token.value]);
 
   const onTokenRegenerate = React.useCallback(
