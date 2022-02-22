@@ -4,7 +4,8 @@ import { Controller, useFormContext } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import * as S from './TagCreateFormItemStyles';
+import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
+import { TagItemBtnsContainer } from './TagCreateFormItemStyles';
 
 interface TagCreateFormItemProps {
   itemIndex: number;
@@ -40,7 +41,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
           />
         )}
       />
-      <S.TagItemBtnsContainer container sx={{ mt: 1, mb: 1.5 }}>
+      <TagItemBtnsContainer container sx={{ mt: 1, mb: 1.5 }}>
         <Controller
           name={`tags.${itemIndex}.important`}
           control={control}
@@ -49,9 +50,9 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
             <FormControlLabel
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
-              sx={{ ml: 0.5, mr: 0 }}
+              sx={{ ml: -0.25 }}
               checked={field.value}
-              control={<S.ImportantCheckbox sx={{ mr: 1 }} />}
+              control={<AppCheckbox sx={{ mr: 1 }} />}
               label="Important"
             />
           )}
@@ -61,7 +62,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
             Delete
           </AppButton>
         )}
-      </S.TagItemBtnsContainer>
+      </TagItemBtnsContainer>
     </>
   );
 };
