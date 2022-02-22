@@ -126,33 +126,48 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
       </S.Caption>
       <Grid container>
         <Grid item xs={12}>
-          <InfiniteScroll
-            next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
-            loader={
-              isDataSourcesListFetching ? (
-                <SkeletonWrapper
-                  length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <DataSourceSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
-                  )}
+          {isDataSourcesListFetching ? (
+            <SkeletonWrapper
+              length={5}
+              renderContent={({ randomSkeletonPercentWidth, key }) => (
+                <DataSourceSkeletonItem
+                  width={randomSkeletonPercentWidth()}
+                  key={key}
                 />
-              ) : null
-            }
-            dataLength={dataSourcesList.length}
-          >
-            {dataSourcesList.map(dataSource => (
-              <Grid key={dataSource.id} sx={{ mb: 1 }}>
-                <DataSourceItemContainer
-                  key={dataSource.id}
-                  dataSource={dataSource}
-                />
-              </Grid>
-            ))}
-          </InfiniteScroll>
+              )}
+            />
+          ) : (
+            <InfiniteScroll
+              next={fetchNextPage}
+              hasMore={!!pageInfo?.hasNext}
+              loader={
+                isDataSourcesListFetching ? (
+                  <SkeletonWrapper
+                    length={5}
+                    renderContent={({
+                      randomSkeletonPercentWidth,
+                      key,
+                    }) => (
+                      <DataSourceSkeletonItem
+                        width={randomSkeletonPercentWidth()}
+                        key={key}
+                      />
+                    )}
+                  />
+                ) : null
+              }
+              dataLength={dataSourcesList.length}
+            >
+              {dataSourcesList.map(dataSource => (
+                <Grid key={dataSource.id} sx={{ mb: 1 }}>
+                  <DataSourceItemContainer
+                    key={dataSource.id}
+                    dataSource={dataSource}
+                  />
+                </Grid>
+              ))}
+            </InfiniteScroll>
+          )}
         </Grid>
       </Grid>
       {!isDataSourcesListFetching && !dataSourcesList.length ? (

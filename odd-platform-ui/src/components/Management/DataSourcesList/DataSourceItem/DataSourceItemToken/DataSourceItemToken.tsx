@@ -1,5 +1,4 @@
 import React from 'react';
-import { isBefore, subSeconds } from 'date-fns';
 import {
   DataSource,
   DataSourceApiRegenerateDataSourceTokenRequest,
@@ -8,7 +7,7 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
 import CopyButton from 'components/shared/CopyButton/CopyButton';
-import * as S from './DataSourceItemTokenStyles';
+import { TokenContainer, Token } from './DataSourceItemTokenStyles';
 
 interface DataSourceItemProps {
   dataSource: DataSource;
@@ -21,22 +20,14 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
   dataSource,
   regenerateDataSourceToken,
 }) => {
-  const [isHidden, setIsHidden] = React.useState(
-    isBefore(dataSource.token.updatedAt, subSeconds(new Date(), 1))
-  );
+  const checkTokenLength = (token: string): boolean =>
+    token.substring(0, 6) === '******';
+
+  const [isHidden, setIsHidden] = React.useState<boolean>(true);
 
   React.useEffect(() => {
-    const { updatedAt } = dataSource.token;
-    const updatedAtUTC = new Date(
-      updatedAt.getUTCFullYear(),
-      updatedAt.getUTCMonth(),
-      updatedAt.getUTCDate(),
-      updatedAt.getUTCHours(),
-      updatedAt.getUTCMinutes(),
-      updatedAt.getUTCSeconds()
-    );
-    setIsHidden(isBefore(updatedAtUTC, subSeconds(new Date(), 1)));
-  }, [dataSource]);
+    setIsHidden(checkTokenLength(dataSource.token.value));
+  }, [dataSource.token.value]);
 
   const onTokenRegenerate = React.useCallback(
     () =>
@@ -47,8 +38,8 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
   );
 
   return (
-    <S.TokenContainer>
-      <S.Token isHidden={isHidden}>{dataSource.token.value}</S.Token>
+    <TokenContainer>
+      <Token $isHidden={isHidden}>{dataSource.token.value}</Token>
       {isHidden ? (
         <ConfirmationDialog
           actionTitle="Are you sure you want to regenerate token for this datasource?"
@@ -68,7 +59,7 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
       ) : (
         <CopyButton stringToCopy={dataSource.token.value} text="Copy" />
       )}
-    </S.TokenContainer>
+    </TokenContainer>
   );
 };
 
