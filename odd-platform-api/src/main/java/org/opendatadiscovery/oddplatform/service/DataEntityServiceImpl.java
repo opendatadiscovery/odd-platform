@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +21,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
-import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldOrigin;
-import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
@@ -35,10 +31,12 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
-import org.opendatadiscovery.oddplatform.dto.MetadataFieldKey;
+import org.opendatadiscovery.oddplatform.dto.MetadataDto;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
+import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
@@ -50,9 +48,11 @@ import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.TagRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
 
@@ -71,6 +71,7 @@ public class DataEntityServiceImpl
     private final LineageRepository lineageRepository;
 
     private final MetadataFieldMapper metadataFieldMapper;
+    private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final TagMapper tagMapper;
 
     public DataEntityServiceImpl(final DataEntityMapper entityMapper,
@@ -81,6 +82,7 @@ public class DataEntityServiceImpl
                                  final TagRepository tagRepository,
                                  final LineageRepository lineageRepository,
                                  final MetadataFieldMapper metadataFieldMapper,
+                                 final MetadataFieldValueMapper metadataFieldValueMapper,
                                  final TagMapper tagMapper) {
         super(entityMapper, entityRepository);
 
@@ -90,6 +92,7 @@ public class DataEntityServiceImpl
         this.tagRepository = tagRepository;
         this.lineageRepository = lineageRepository;
         this.metadataFieldMapper = metadataFieldMapper;
+        this.metadataFieldValueMapper = metadataFieldValueMapper;
         this.tagMapper = tagMapper;
     }
 
@@ -161,56 +164,40 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    // TODO: refactor
-    // TODO: fix non-transactional update of search entrypoint
+    @Transactional
     public Mono<MetadataFieldValueList> createMetadata(final long dataEntityId,
-                                                       final List<MetadataObject> metadataList) {
-        return Mono.just(metadataList)
-            .map(ml -> ml.stream()
-                .collect(Collectors.toMap(
-                    mo -> new MetadataFieldKey(mo.getName(), mo.getType()),
-                    Function.identity(),
-                    (m1, m2) -> m2))
-            )
-            .map(mg -> {
-                final List<MetadataFieldPojo> mfPojos = mg.values()
-                    .stream()
-                    .map(m -> new MetadataFieldPojo().setName(m.getName()).setType(m.getType()))
-                    .collect(Collectors.toList());
+                                                 final List<MetadataObject> metadataList) {
+        final Map<MetadataKey, MetadataObject> metadataObjectMap = metadataList.stream()
+            .collect(Collectors.toMap(MetadataKey::new, identity(), (m1, m2) -> m2));
 
-                final Map<Long, MetadataFieldPojo> metadataFields = metadataFieldRepository
-                    .createIfNotExist(mfPojos)
-                    .stream()
-                    .collect(Collectors.toMap(MetadataFieldPojo::getId, Function.identity()));
+        final List<MetadataFieldPojo> mfPojos = metadataObjectMap.values()
+            .stream()
+            .map(metadataFieldMapper::mapObject)
+            .collect(Collectors.toList());
 
-                final List<MetadataFieldValuePojo> mfvPojos = metadataFields.values().stream()
-                    .map(f -> new MetadataFieldValuePojo()
-                        .setMetadataFieldId(f.getId())
-                        .setValue(mg.get(new MetadataFieldKey(f.getName(), f.getType())).getValue())
-                        .setDataEntityId(dataEntityId))
-                    .collect(Collectors.toList());
+        final Map<Long, MetadataFieldPojo> metadataFields = metadataFieldRepository
+            .createIfNotExist(mfPojos)
+            .stream()
+            .collect(Collectors.toMap(MetadataFieldPojo::getId, identity()));
 
-                final List<MetadataFieldValue> fields = metadataFieldValueRepository
-                    .bulkCreate(mfvPojos)
-                    .stream()
-                    .map(mfv -> {
-                        final MetadataFieldPojo metadataFieldPojo =
-                            metadataFields.get(mfv.getMetadataFieldId());
-                        return new MetadataFieldValue()
-                            .field(new MetadataField()
-                                .id(metadataFieldPojo.getId())
-                                .name(metadataFieldPojo.getName())
-                                .origin(MetadataFieldOrigin
-                                    .fromValue(metadataFieldPojo.getOrigin()))
-                                .type(MetadataFieldType.valueOf(metadataFieldPojo.getType()))
-                            )
-                            .value(mfv.getValue());
-                    })
-                    .collect(Collectors.toList());
+        final List<MetadataFieldValuePojo> mfvPojos = metadataFields.values().stream()
+            .map(metadataFieldPojo -> new MetadataFieldValuePojo()
+                .setMetadataFieldId(metadataFieldPojo.getId())
+                .setValue(metadataObjectMap.get(new MetadataKey(metadataFieldPojo)).getValue())
+                .setDataEntityId(dataEntityId))
+            .toList();
 
-                entityRepository.calculateMetadataVectors(List.of(dataEntityId));
-                return new MetadataFieldValueList().items(fields);
-            });
+        final List<MetadataFieldValue> fields = metadataFieldValueRepository
+            .bulkCreate(mfvPojos)
+            .stream()
+            .map(mfv -> {
+                final MetadataFieldPojo metadataFieldPojo = metadataFields.get(mfv.getMetadataFieldId());
+                return metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, mfv));
+            })
+            .collect(Collectors.toList());
+
+        entityRepository.calculateMetadataVectors(List.of(dataEntityId));
+        return Mono.just(new MetadataFieldValueList().items(fields));
     }
 
     @Override
@@ -251,7 +238,7 @@ public class DataEntityServiceImpl
                 final List<TagPojo> existingTags = tagRepository.listByNames(names);
                 final List<String> existingTagsNames = existingTags.stream()
                     .map(TagPojo::getName)
-                    .collect(Collectors.toList());
+                    .toList();
                 final Set<String> labelNames = labels.stream().map(TagPojo::getName).collect(Collectors.toSet());
 
                 final List<Long> idsToDelete = labels
@@ -272,7 +259,7 @@ public class DataEntityServiceImpl
                     .bulkCreate(tagToCreate)
                     .stream()
                     .map(TagPojo::getId)
-                    .collect(Collectors.toList());
+                    .toList();
 
                 final Set<Long> toRelate = Stream.concat(
                     createdIds.stream(),
@@ -291,30 +278,22 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    // TODO: refactor
-    // TODO: fix non-transactional update of search entrypoint
+    @Transactional
     public Mono<MetadataFieldValue> upsertMetadataFieldValue(final long dataEntityId,
-                                                             final long metadataFieldId,
-                                                             final MetadataFieldValueUpdateFormData formData) {
-        return Mono.just(new MetadataFieldValuePojo()
+                                                       final long metadataFieldId,
+                                                       final MetadataFieldValueUpdateFormData formData) {
+        final MetadataFieldValuePojo metadataFieldValuePojo = new MetadataFieldValuePojo()
             .setDataEntityId(dataEntityId)
             .setMetadataFieldId(metadataFieldId)
-            .setActive(true)
-            .setValue(formData.getValue()))
-            .flatMap(pojo -> {
-                final Optional<MetadataFieldPojo> metadataFieldPojo = metadataFieldRepository.get(metadataFieldId);
-                if (metadataFieldPojo.isEmpty()) {
-                    return Mono.error(new NotFoundException());
-                }
+            .setValue(formData.getValue());
 
-                final MetadataFieldValuePojo enrichedPojo = metadataFieldValueRepository.update(pojo);
+        final MetadataFieldPojo metadataFieldPojo = metadataFieldRepository.get(metadataFieldId)
+            .orElseThrow(NotFoundException::new);
 
-                entityRepository.calculateMetadataVectors(List.of(dataEntityId));
+        final MetadataFieldValuePojo enrichedPojo = metadataFieldValueRepository.update(metadataFieldValuePojo);
+        entityRepository.calculateMetadataVectors(List.of(dataEntityId));
 
-                return Mono.just(new MetadataFieldValue()
-                    .field(metadataFieldMapper.mapPojo(metadataFieldPojo.get()))
-                    .value(enrichedPojo.getValue()));
-            });
+        return Mono.just(metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, enrichedPojo)));
     }
 
     @Override
@@ -334,7 +313,7 @@ public class DataEntityServiceImpl
                                                             final Integer page,
                                                             final Integer size) {
         return Mono.fromCallable(() -> entityRepository
-            .getDataEntityGroupsChildren(dataEntityGroupId, page, size))
+                .getDataEntityGroupsChildren(dataEntityGroupId, page, size))
             .map(entityMapper::mapPojos);
     }
 

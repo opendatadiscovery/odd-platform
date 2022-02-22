@@ -1,4 +1,4 @@
-import { Grid, Typography, TypographyProps } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
 
 export const LabelContainer = styled(Grid)(({ theme }) => ({
@@ -15,12 +15,11 @@ export const Label = styled(Typography)(({ theme }) => ({
 }));
 
 export const EditForm = styled('form')(() => ({
-  display: 'flex',
   width: '100%',
-  alignItems: 'center',
 }));
 
 export const ValueContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
   padding: theme.spacing(0.5),
   border: '1px solid',
   borderColor: 'transparent',
@@ -34,7 +33,6 @@ export const FormActionBtns = styled('div')(({ theme }) => ({
   marginTop: theme.spacing(1),
   display: 'flex',
   alignItems: 'center',
-  marginLeft: theme.spacing(1),
   '& > * + *': {
     marginLeft: theme.spacing(0.5),
   },
@@ -43,19 +41,28 @@ export const FormActionBtns = styled('div')(({ theme }) => ({
 export const Actions = styled('div')(({ theme }) => ({
   opacity: 0,
   marginLeft: theme.spacing(0.5),
-  display: 'inline',
+  display: 'flex',
 }));
 
 export const Container = styled(Grid)(() => ({
-  alignItems: 'center',
+  alignItems: 'flex-start',
   '&:hover': {
     [`${Actions}`]: { opacity: 1 },
   },
 }));
 
-export const Value = styled(Typography)<TypographyProps>(() => ({
-  display: 'inline',
-  wordBreak: 'break-word',
-  maxHeight: '5rem',
-  overflow: 'auto',
+export const Value = styled('div')<{
+  $isOpened: boolean;
+}>(({ theme, $isOpened }) => ({
+  margin: 0,
+  whiteSpace: 'pre-wrap',
+  maxHeight: $isOpened ? 'none' : '100px',
+  maxWidth: '500px',
+  overflowY: 'hidden',
+  fontSize: theme.typography.body1.fontSize,
+  lineHeight: theme.typography.body1.lineHeight,
+  fontWeight: theme.typography.body1.fontWeight,
+  fontFamily: theme.typography.body1.fontFamily,
 }));
+
+export const ValueLeftContainer = styled('div')(() => ({}));

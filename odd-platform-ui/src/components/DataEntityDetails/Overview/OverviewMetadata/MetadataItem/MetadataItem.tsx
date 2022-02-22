@@ -11,22 +11,14 @@ import {
 } from 'generated-sources';
 import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import CopyButton from 'components/shared/CopyButton/CopyButton';
+import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
-import {
-  Container,
-  LabelContainer,
-  Actions,
-  EditForm,
-  Label,
-  Value,
-  ValueContainer,
-  FormActionBtns,
-} from './MetadataItemStyles';
+import * as S from './MetadataItemStyles';
 
 interface MetadataItemProps {
   dataEntityId: number;
@@ -46,6 +38,8 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   updateDataEntityCustomMetadata,
 }) => {
   const [editMode, setEditMode] = React.useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+
   const methods = useForm<MetadataFieldValueUpdateFormData>({
     mode: 'onChange',
   });
@@ -66,16 +60,24 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
     });
 
   let metadataVal;
+
   try {
     switch (metadataItem.field.type) {
       case MetadataFieldType.BOOLEAN:
-        metadataVal = <BooleanFormatted value={metadataItem.value} />;
+        metadataVal = metadataItem.value === 'true' ? 'Yes' : 'No';
         break;
       case MetadataFieldType.DATETIME:
         metadataVal = format(new Date(metadataItem.value), 'd MMM yyyy');
         break;
       case MetadataFieldType.ARRAY:
         metadataVal = JSON.parse(metadataItem.value).join(', ');
+        break;
+      case MetadataFieldType.JSON:
+        metadataVal = JSON.stringify(
+          JSON.parse(metadataItem.value),
+          null,
+          2
+        );
         break;
       default:
         metadataVal = metadataItem.value;
@@ -84,31 +86,35 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
     metadataVal = metadataItem.value;
   }
 
+  const isJSON = metadataItem.field.type === MetadataFieldType.JSON;
+  const isExpandable = isJSON ? true : metadataVal.length > 200;
+
   const isCustom = metadataItem.field.origin === 'INTERNAL';
+
   const isNestedField = (fieldName: string) => fieldName?.indexOf('.') > 0;
 
   return (
-    <Container container>
-      <LabelContainer item sm={5}>
-        <Label variant="subtitle1" noWrap>
+    <S.Container container>
+      <S.LabelContainer item sm={5}>
+        <S.Label variant="subtitle1" noWrap>
           {isNestedField(metadataItem.field.name) ? (
             metadataItem.field.name
           ) : (
             <TextFormatted value={metadataItem.field.name} />
           )}
-        </Label>
-      </LabelContainer>
+        </S.Label>
+      </S.LabelContainer>
       <Grid item container sm={7} zeroMinWidth wrap="nowrap">
         {editMode ? (
           <FormProvider {...methods}>
-            <EditForm onSubmit={methods.handleSubmit(handleUpdate)}>
+            <S.EditForm onSubmit={methods.handleSubmit(handleUpdate)}>
               <MetadataValueEditor
                 fieldName="value"
                 metadataType={metadataItem.field.type}
                 metadataValue={metadataItem.value}
                 size="small"
               />
-              <FormActionBtns>
+              <S.FormActionBtns>
                 <AppButton
                   type="submit"
                   size="medium"
@@ -124,14 +130,31 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 >
                   Cancel
                 </AppButton>
-              </FormActionBtns>
-            </EditForm>
+              </S.FormActionBtns>
+            </S.EditForm>
           </FormProvider>
         ) : (
-          <ValueContainer>
-            <Value variant="body1">{metadataVal}</Value>
+          <S.ValueContainer>
+            <S.ValueLeftContainer>
+              <S.Value $isOpened={isExpanded}>{metadataVal}</S.Value>
+              {isExpandable && (
+                <AppButton
+                  size="small"
+                  color="tertiary"
+                  sx={{ mt: 1.25 }}
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  endIcon={
+                    <DropdownIcon
+                      transform={isExpanded ? 'rotate(180)' : 'rotate(0)'}
+                    />
+                  }
+                >
+                  {isExpanded ? 'Hide' : `Show All`}
+                </AppButton>
+              )}
+            </S.ValueLeftContainer>
             {isCustom ? (
-              <Actions>
+              <S.Actions>
                 <AppIconButton
                   size="small"
                   color="tertiary"
@@ -140,6 +163,12 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                     setEditMode(true);
                   }}
                 />
+                {metadataVal && (
+                  <CopyButton
+                    stringToCopy={metadataVal}
+                    sx={{ ml: 0.5 }}
+                  />
+                )}
                 <ConfirmationDialog
                   actionTitle="Are you sure you want to delete this Metadata?"
                   actionName="Delete Metadata"
@@ -159,13 +188,12 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                     />
                   }
                 />
-              </Actions>
+              </S.Actions>
             ) : null}
-          </ValueContainer>
+          </S.ValueContainer>
         )}
       </Grid>
-    </Container>
+    </S.Container>
   );
 };
-
 export default MetadataItem;
