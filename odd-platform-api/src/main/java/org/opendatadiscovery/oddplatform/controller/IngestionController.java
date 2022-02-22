@@ -1,12 +1,12 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource;
-import org.opendatadiscovery.oddplatform.service.DataSourceService;
+import org.opendatadiscovery.oddplatform.service.DataSourceIngestionService;
 import org.opendatadiscovery.oddplatform.service.IngestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,14 +15,12 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-import javax.validation.Valid;
-
 @RestController
 @RequiredArgsConstructor
 @Slf4j
 public class IngestionController implements IngestionApi {
     private final IngestionService ingestionService;
-    private final DataSourceService dataSourceService;
+    private final DataSourceIngestionService dataSourceIngestionService;
 
     @Override
     public Mono<ResponseEntity<Void>> postDataEntityList(
@@ -39,17 +37,9 @@ public class IngestionController implements IngestionApi {
     @Override
     public Mono<ResponseEntity<Void>> createDataSource(@Valid final Flux<DataSource> dataSource,
                                                        final ServerWebExchange exchange) {
-        return dataSource.map(this::createForm)
+        return dataSource
             .collectList()
-            .map(dataSourceService::bulkCreate)
-            .map(__ -> ResponseEntity.ok().build());
-    }
-
-    private DataSourceFormData createForm(final DataSource ds) {
-        return new DataSourceFormData()
-            .oddrn(ds.getOddrn())
-            .name(ds.getName())
-            .active(true)
-            .description(ds.getDescription());
+            .flatMap(dataSourceIngestionService::createDataSourcesFromIngestion)
+            .map(ignored -> ResponseEntity.ok().build());
     }
 }
