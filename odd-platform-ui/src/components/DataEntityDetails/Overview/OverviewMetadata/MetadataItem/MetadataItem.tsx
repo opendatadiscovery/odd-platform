@@ -61,25 +61,29 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
 
   let metadataVal;
 
-  switch (metadataItem.field.type) {
-    case MetadataFieldType.BOOLEAN:
-      metadataVal = metadataItem.value === 'true' ? 'Yes' : 'No';
-      break;
-    case MetadataFieldType.DATETIME:
-      metadataVal = format(new Date(metadataItem.value), 'd MMM yyyy');
-      break;
-    case MetadataFieldType.ARRAY:
-      metadataVal = JSON.parse(metadataItem.value).join(', ');
-      break;
-    case MetadataFieldType.JSON:
-      metadataVal = JSON.stringify(
-        JSON.parse(metadataItem.value),
-        null,
-        2
-      );
-      break;
-    default:
-      metadataVal = metadataItem.value;
+  try {
+    switch (metadataItem.field.type) {
+      case MetadataFieldType.BOOLEAN:
+        metadataVal = metadataItem.value === 'true' ? 'Yes' : 'No';
+        break;
+      case MetadataFieldType.DATETIME:
+        metadataVal = format(new Date(metadataItem.value), 'd MMM yyyy');
+        break;
+      case MetadataFieldType.ARRAY:
+        metadataVal = JSON.parse(metadataItem.value).join(', ');
+        break;
+      case MetadataFieldType.JSON:
+        metadataVal = JSON.stringify(
+          JSON.parse(metadataItem.value),
+          null,
+          2
+        );
+        break;
+      default:
+        metadataVal = metadataItem.value;
+    }
+  } catch {
+    metadataVal = metadataItem.value;
   }
 
   const isJSON = metadataItem.field.type === MetadataFieldType.JSON;
