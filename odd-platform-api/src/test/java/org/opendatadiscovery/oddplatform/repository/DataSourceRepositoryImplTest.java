@@ -67,49 +67,6 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
                 secondDataSource.dataSource().getOddrn());
     }
 
-//    @Test
-    public void createFromIngestionTest() {
-//        final DataSourceDto firstDataSource = dataSourceRepository.create(
-//            generateDataSource(UUID.randomUUID().toString(), UUID.randomUUID().toString())
-//        );
-//        final DataSourceDto secondDataSource = dataSourceRepository.create(
-//            generateDataSource(UUID.randomUUID().toString(), UUID.randomUUID().toString())
-//        );
-//        dataSourceRepository.delete(firstDataSource.dataSource().getId());
-//
-//        final DataSourceDto firstClone = generateDataSource(
-//            firstDataSource.dataSource().getOddrn(),
-//            firstDataSource.dataSource().getName()
-//        );
-//        final DataSourceDto secondClone = generateDataSource(
-//            secondDataSource.dataSource().getOddrn(),
-//            UUID.randomUUID().toString()
-//        );
-//
-//        final DataSourceDto thirdDataSource = generateDataSource(
-//            UUID.randomUUID().toString(), UUID.randomUUID().toString());
-//        final List<DataSourceDto> fromIngestion = dataSourceRepository.createFromIngestion(
-//            List.of(firstClone, secondClone, thirdDataSource)
-//        );
-//        assertThat(fromIngestion)
-//            .hasSize(3)
-//            .extracting(dto -> dto.dataSource().getOddrn())
-//            .containsExactlyInAnyOrder(firstClone.dataSource().getOddrn(),
-//                secondClone.dataSource().getOddrn(),
-//                thirdDataSource.dataSource().getOddrn());
-//
-//        assertThat(fromIngestion)
-//            .extracting(dto -> dto.dataSource().getId())
-//            .doesNotContainNull()
-//            .contains(firstDataSource.dataSource().getId(),
-//                secondDataSource.dataSource().getId());
-//
-//        assertThat(fromIngestion)
-//            .extracting(dto -> dto.dataSource().getName())
-//            .containsExactlyInAnyOrder(firstClone.dataSource().getName(),
-//                secondDataSource.dataSource().getName(), thirdDataSource.dataSource().getName());
-    }
-
     private DataSourceDto generateDataSource(final String oddrn, final String name) {
         return new DataSourceDto(
             new DataSourcePojo()
