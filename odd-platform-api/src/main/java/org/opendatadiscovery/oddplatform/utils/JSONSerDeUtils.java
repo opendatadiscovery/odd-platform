@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.io.File;
+import java.io.IOException;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.JSONB;
 
@@ -39,6 +41,14 @@ public class JSONSerDeUtils {
         try {
             return OBJECT_MAPPER.readValue(data, tr);
         } catch (final JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static <T> T deserializeJson(final File file, final TypeReference<T> tr) {
+        try {
+            return OBJECT_MAPPER.readValue(file, tr);
+        } catch (final IOException e) {
             throw new RuntimeException(e);
         }
     }
