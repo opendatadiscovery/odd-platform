@@ -76,6 +76,7 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
     testImplementation "org.testcontainers:postgresql:$testContainersVersion"
     testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+    testImplementation "io.projectreactor:reactor-test:$reactorTestVersion"
 
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
     testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
