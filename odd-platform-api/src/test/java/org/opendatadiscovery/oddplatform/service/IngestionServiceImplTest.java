@@ -176,15 +176,15 @@ public class IngestionServiceImplTest {
         List<DataEntityPojo> anyDataEntityList = anyList();
         when(dataEntityRepository.bulkCreate(anyDataEntityList))
             .thenAnswer(invocation -> {
-                List<DataEntityPojo> argument = new ArrayList<>(invocation.getArgument(0)); //TODO: fix explicit list creation
-                return argument.stream()
+                List<DataEntityPojo> receivedDataEntities = invocation.getArgument(0);
+                return receivedDataEntities.stream()
                     .map(i -> i.setId(new Random().nextLong()))
                     .collect(Collectors.toList());
             });
 
         when(metadataFieldRepository.bulkCreate(anyCollection())).thenAnswer(invocation -> {
-                List<MetadataFieldPojo> argument = new ArrayList<>(invocation.getArgument(0)); //TODO: fix explicit list creation
-                return argument.stream()
+                Collection<MetadataFieldPojo> receivedMetadataFields = invocation.getArgument(0);
+                return receivedMetadataFields.stream()
                     .map(e -> e.setId(new Random().nextLong()))
                     .collect(Collectors.toList());
             }
@@ -272,8 +272,8 @@ public class IngestionServiceImplTest {
                     .build())
                 .collect(Collectors.toList()));
         when(metadataFieldRepository.bulkCreate(anyCollection())).thenAnswer(invocation -> {
-                List<MetadataFieldPojo> argument = new ArrayList<>(invocation.getArgument(0)); //TODO: fix explicit list creation
-                return argument.stream()
+                Collection<MetadataFieldPojo> receivedMetadataFields = invocation.getArgument(0);
+                return receivedMetadataFields.stream()
                     .map(e -> e.setId(new Random().nextLong()))
                     .collect(Collectors.toList());
             }
