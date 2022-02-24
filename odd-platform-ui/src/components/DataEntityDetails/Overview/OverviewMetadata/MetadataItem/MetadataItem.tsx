@@ -94,8 +94,8 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   const isNestedField = (fieldName: string) => fieldName?.indexOf('.') > 0;
 
   return (
-    <S.Container container>
-      <S.LabelContainer item sm={5}>
+    <S.Container container wrap="nowrap">
+      <S.LabelContainer item sm={2}>
         <S.Label variant="subtitle1" noWrap>
           {isNestedField(metadataItem.field.name) ? (
             metadataItem.field.name
@@ -104,7 +104,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
           )}
         </S.Label>
       </S.LabelContainer>
-      <Grid item container sm={7} zeroMinWidth wrap="nowrap">
+      <Grid item container wrap="nowrap" zeroMinWidth>
         {editMode ? (
           <FormProvider {...methods}>
             <S.EditForm onSubmit={methods.handleSubmit(handleUpdate)}>
@@ -115,11 +115,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 size="small"
               />
               <S.FormActionBtns>
-                <AppButton
-                  type="submit"
-                  size="medium"
-                  color="primaryLight"
-                >
+                <AppButton type="submit" size="medium" color="primary">
                   Save
                 </AppButton>
                 <AppButton
