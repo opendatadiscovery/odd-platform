@@ -1,6 +1,17 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,18 +61,8 @@ import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionServi
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-import java.nio.file.Paths;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.Map;
-import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -69,7 +70,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.when;
 import static org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils.deserializeJson;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Unit tests for IngestionService")
@@ -176,18 +176,17 @@ public class IngestionServiceImplTest {
     class NewEntities {
 
         @BeforeEach
-        void setup () {
-            List<DataEntityPojo> anyDataEntityList = anyList();
+        void setup() {
+            final List<DataEntityPojo> anyDataEntityList = anyList();
             when(dataEntityRepository.bulkCreate(anyDataEntityList))
                 .thenAnswer(invocation -> {
-                    List<DataEntityPojo> receivedDataEntities = invocation.getArgument(0);
+                    final List<DataEntityPojo> receivedDataEntities = invocation.getArgument(0);
                     return receivedDataEntities.stream()
                         .map(i -> i.setId(new Random().nextLong()))
                         .collect(Collectors.toList());
                 });
             StepVerifier.create(ingestionService.ingest(dataEntityList)).verifyComplete();
         }
-
 
         @Test
         @DisplayName("Ingests data entities")
@@ -207,7 +206,7 @@ public class IngestionServiceImplTest {
         @Test
         @DisplayName("Ingests dependencies")
         void ingestDependencies() {
-            List<DataEntityGroup> actualGroupEntityRelations =
+            final List<DataEntityGroup> actualGroupEntityRelations =
                 dataEntityList.getItems().stream()
                     .map(DataEntity::getDataEntityGroup)
                     .filter(Objects::nonNull)
@@ -227,12 +226,12 @@ public class IngestionServiceImplTest {
         @Test
         @DisplayName("Ingests companions")
         void ingestCompanions() {
-            List<String> actualDatasetOddrns = dataEntityList.getItems().stream()
+            final List<String> actualDatasetOddrns = dataEntityList.getItems().stream()
                 .filter(i -> i.getDataset() != null)
                 .map(DataEntity::getOddrn)
                 .collect(Collectors.toList());
 
-            List<DataSetField> dataSetFields = dataEntityList.getItems().stream()
+            final List<DataSetField> dataSetFields = dataEntityList.getItems().stream()
                 .map(DataEntity::getDataset).filter(Objects::nonNull)
                 .flatMap(i -> i.getFieldList().stream())
                 .collect(Collectors.toList());
@@ -282,7 +281,6 @@ public class IngestionServiceImplTest {
                         .build())
                     .collect(Collectors.toList()));
             StepVerifier.create(ingestionService.ingest(dataEntityList)).expectComplete().verify();
-
         }
 
         @Test
@@ -293,21 +291,23 @@ public class IngestionServiceImplTest {
                 softly.assertThat(dataEntityListCaptor.getValue()).hasSize(dataEntityList.getItems().size());
                 softly.assertThat(dataEntityListCaptor.getValue()).hasOnlyElementsOfType(DataEntityPojo.class);
                 softly.assertThat(dataEntityListCaptor.getValue()).extractingResultOf("getOddrn")
-                    .containsAll(dataEntityList.getItems().stream().map(DataEntity::getOddrn).collect(Collectors.toList()));
+                    .containsAll(dataEntityList.getItems().stream()
+                        .map(DataEntity::getOddrn)
+                        .collect(Collectors.toList()));
             });
         }
 
         @Test
         @DisplayName("Ingests dependencies")
         void ingestDependencies() {
-            List<LineagePojo> actualLineage = deserializeFixture(PATH_TO_LINEAGE_FIXTURE,
+            final List<LineagePojo> actualLineage = deserializeFixture(PATH_TO_LINEAGE_FIXTURE,
                 new TypeReference<>() {
                 });
 
             Mockito.verify(lineageRepository).replaceLineagePaths(lineageCaptor.capture());
             assertThat(lineageCaptor.getValue()).isEqualTo(actualLineage);
 
-            Set<String> actualHollowOddrns = Stream.concat(
+            final Set<String> actualHollowOddrns = Stream.concat(
                     Stream.of(dataEntityList.getDataSourceOddrn()),
                     dataEntityList.getItems().stream()
                         .filter(i -> i.getType() != DataEntityType.DAG)
@@ -316,15 +316,13 @@ public class IngestionServiceImplTest {
             Mockito.verify(dataEntityRepository).createHollow(hollowOddrnCaptor.capture());
             assertThat(hollowOddrnCaptor.getValue()).hasSameElementsAs(actualHollowOddrns);
         }
-
     }
 
-    private <T> T deserializeFixture(final String path, TypeReference<T> tr) {
+    private <T> T deserializeFixture(final String path, final TypeReference<T> tr) {
         try {
             return deserializeJson(Paths.get(path).toFile(), tr);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
 }
