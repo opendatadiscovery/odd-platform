@@ -38,6 +38,7 @@ public class IngestionController implements IngestionApi {
     public Mono<ResponseEntity<Void>> createDataSource(@Valid final Flux<DataSource> dataSource,
                                                        final ServerWebExchange exchange) {
         return dataSource
+            .publishOn(Schedulers.boundedElastic())
             .collectList()
             .flatMap(dataSourceIngestionService::createDataSourcesFromIngestion)
             .map(ignored -> ResponseEntity.ok().build());

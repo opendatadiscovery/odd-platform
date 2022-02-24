@@ -12,8 +12,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource;
-import org.opendatadiscovery.oddplatform.mapper.DataSourceMapper;
-import org.opendatadiscovery.oddplatform.mapper.DataSourceMapperImpl;
+import org.opendatadiscovery.oddplatform.mapper.ingestion.DataSourceIngestionMapper;
+import org.opendatadiscovery.oddplatform.mapper.ingestion.DataSourceIngestionMapperImpl;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
 import reactor.core.publisher.Mono;
@@ -29,13 +29,14 @@ public class DataSourceIngestionServiceTest {
     private DataSourceRepository dataSourceRepository;
 
     @Spy
-    private DataSourceMapper dataSourceMapper = new DataSourceMapperImpl(null);
+    private DataSourceIngestionMapper dataSourceIngestionMapper = new DataSourceIngestionMapperImpl();
 
     private DataSourceIngestionService dataSourceIngestionService;
 
     @BeforeEach
     public void beforeEach() {
-        dataSourceIngestionService = new DataSourceIngestionServiceImpl(dataSourceRepository, dataSourceMapper);
+        dataSourceIngestionService = new DataSourceIngestionServiceImpl(dataSourceRepository,
+            dataSourceIngestionMapper);
     }
 
     @Test

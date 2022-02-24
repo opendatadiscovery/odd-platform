@@ -8,9 +8,4 @@ import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 
 public interface DataSourceMapper
     extends CRUDMapper<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData, DataSourceDto> {
-
-    DataSourceDto mapIngestionModel(final org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource ds);
-
-    org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource mapDtoToIngestionModel(
-        final DataSourceDto dto);
 }

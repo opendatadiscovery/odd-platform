@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource;
-import org.opendatadiscovery.oddplatform.mapper.DataSourceMapper;
+import org.opendatadiscovery.oddplatform.mapper.ingestion.DataSourceIngestionMapper;
 import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +19,13 @@ import reactor.core.publisher.Mono;
 public class DataSourceIngestionServiceImpl implements DataSourceIngestionService {
 
     private final DataSourceRepository dataSourceRepository;
-    private final DataSourceMapper dataSourceMapper;
+    private final DataSourceIngestionMapper dataSourceIngestionMapper;
 
     @Override
     @Transactional
     public Mono<List<DataSource>> createDataSourcesFromIngestion(final List<DataSource> dataSources) {
         final List<DataSourceDto> dtos = dataSources.stream()
-            .map(dataSourceMapper::mapIngestionModel)
+            .map(dataSourceIngestionMapper::mapIngestionModel)
             .toList();
         final List<String> oddrns = exctractOddrns(dtos);
 
@@ -53,7 +53,7 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
                 deletedSplitDataSources.get(true),
                 deletedSplitDataSources.get(false))
             .flatMap(Collection::stream)
-            .map(dataSourceMapper::mapDtoToIngestionModel)
+            .map(dataSourceIngestionMapper::mapDtoToIngestionModel)
             .toList();
 
         return Mono.just(createdDataSources);

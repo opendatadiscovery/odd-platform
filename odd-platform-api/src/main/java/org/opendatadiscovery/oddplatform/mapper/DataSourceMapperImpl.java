@@ -79,24 +79,4 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .items(mapPojoList(pojos.getData()))
             .pageInfo(pageInfo(pojos));
     }
-
-    @Override
-    public DataSourceDto mapIngestionModel(
-        final org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource ds) {
-        final DataSourcePojo dataSourcePojo = new DataSourcePojo()
-            .setOddrn(ds.getOddrn())
-            .setName(ds.getName())
-            .setActive(true)
-            .setDescription(ds.getDescription());
-        return new DataSourceDto(dataSourcePojo, null);
-    }
-
-    @Override
-    public org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource mapDtoToIngestionModel(
-        final DataSourceDto dto) {
-        return new org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource()
-            .oddrn(dto.dataSource().getOddrn())
-            .name(dto.dataSource().getName())
-            .description(dto.dataSource().getDescription());
-    }
 }
