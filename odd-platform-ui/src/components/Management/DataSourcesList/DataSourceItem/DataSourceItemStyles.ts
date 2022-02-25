@@ -1,5 +1,7 @@
-import { Grid, Paper } from '@mui/material';
+import { Grid } from '@mui/material';
+import AppPaper from 'components/shared/AppPaper/AppPaper';
 import styled from 'styled-components';
+// import 
 
 export const ActionsContainer = styled(Grid)(() => ({
   opacity: 0,
@@ -16,7 +18,7 @@ export const DescriptionContainer = styled(Grid)(({ theme }) => ({
   },
 }));
 
-export const Container = styled(Paper)(({ theme }) => ({
+export const Container = styled(AppPaper)(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(2, 2, 2, 2),
   margin: '0 auto',

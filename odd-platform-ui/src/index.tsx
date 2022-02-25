@@ -8,7 +8,6 @@ import {
   Theme,
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -19,6 +18,7 @@ import * as serviceWorker from './serviceWorker';
 import theme from './theme/mui.theme';
 
 import AppContainer from './components/AppContainer';
+import { AppCssBaseline } from 'components/shared/AppCssBaseline/AppCssBaseline';
 
 declare module 'styled-components' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -32,7 +32,7 @@ ReactDOM.render(
     <StyledEngineProvider injectFirst>
       <MuiThemeProvider theme={theme}>
         <ThemeProvider theme={theme}>
-          <CssBaseline />
+          <AppCssBaseline />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <BrowserRouter>
               <StyleSheetManager disableVendorPrefixes>

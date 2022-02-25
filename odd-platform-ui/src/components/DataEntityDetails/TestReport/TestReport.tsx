@@ -6,7 +6,7 @@ import {
   DataQualityTestRunStatus,
   DataSetTestReport,
 } from 'generated-sources';
-import { Grid, Paper, Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import TestReportItemContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemContainer';
 import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
@@ -18,6 +18,7 @@ import {
   TestReportContainer,
   TestReportItemCont,
 } from './TestReportStyles';
+import AppPaper from 'components/shared/AppPaper/AppPaper';
 
 interface DatasetQualityTestList {
   [suiteName: string]: DataQualityTest[];
@@ -145,13 +146,13 @@ const TestReport: React.FC<TestReportProps> = ({
                 </Grid>
                 <Grid item xs={3}>
                   {dataqatestId ? (
-                    <Paper square elevation={0}>
+                    <AppPaper square elevation={0}>
                       <TestReportDetailsContainer
                         dataEntityId={dataEntityId}
                         dataqatestId={dataqatestId}
                         reportDetailsViewType={reportDetailsViewType}
                       />
-                    </Paper>
+                    </AppPaper>
                   ) : null}
                 </Grid>
               </Grid>
