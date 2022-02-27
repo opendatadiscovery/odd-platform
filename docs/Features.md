@@ -42,7 +42,7 @@ Manage your metadata by tagging tables, datasets and quality tests. Tags provide
 >>> *Is it correct that we have  pre-defined? I mean, whether a new user can choose a tag or label before he creates his own?* 
 
 ### Tag both tables and each column
-You may apply **tags** to metadata entities and also **labels** to elements of these entities. 
+You may apply **tags** to metadata entities or use **labels** to mark elements of these entities. 
 >>> *Do we have limits for the number of tags and labels?*
 ## Data Quality Test Results Import
 Monitor test suite results in the Platform and at the same time save test data private because they don't migrate to your ODD account. \
@@ -50,12 +50,12 @@ The Platform is compatible with **Pandas** and **Great expectations**.
 >>> *Do we have some guides for  these integrations?*
 ## ML Experiment Logging 
 The Platform helps track and compare your experiments. It enables you to:
-* Explore a list of your experiment's entities (tables, **smth else?**) using the **Groups** section
+* Explore a list of your experiment's entities (tables, *smth else?*) using the **Groups** section
 * Log the most successful experimtnes by adding the **Custom metadata**. 
 
 >>> *What is pre-defined section under the Custom one? Is it important to inform what kind of metadata can we add (value, date, bool)? Is it ok to mention lineage here?*
 ## Pipeline monitoring and alerting 
-Running pipelines are easier with manageable parameters available in ODD. For example, you may track modifications of your dataset using a revision history option. Also the Platform represents metadata of your entities such as table structure, field type, description and versions.
+Running your pipelines are easier with manageable parameters available in ODD. For example, you may track modifications of your dataset using a revision history option. Also the Platform represents metadata of your entities such as table structure, field type, description and versions.
 ### Alerting 
 In the Platform you may find two types of alerts: 
 * Notifications for cases when somthing goes wrong with entities you assigned to as an owner
