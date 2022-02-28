@@ -8,4 +8,5 @@ import reactor.core.publisher.Mono;
 
 public interface RoleService extends CRUDService<Role, RoleList, RoleFormData, RoleUpdateFormData> {
     Mono<Role> createOrGet(final RoleFormData formData);
+    Role createOrGetModel(final RoleFormData formData);
 }

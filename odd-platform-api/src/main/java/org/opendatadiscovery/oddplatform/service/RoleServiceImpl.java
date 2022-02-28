@@ -27,4 +27,9 @@ public class RoleServiceImpl
             .fromCallable(() -> entityRepository.createOrGet(entityMapper.mapForm(formData)))
             .map(entityMapper::mapPojo);
     }
+
+    @Override
+    public Role createOrGetModel(final RoleFormData formData) {
+        return entityMapper.mapPojo(entityRepository.createOrGet(entityMapper.mapForm(formData)));
+    }
 }

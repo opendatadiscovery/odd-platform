@@ -25,4 +25,9 @@ public class OwnerServiceImpl
             .fromCallable(() -> entityRepository.createOrGet(entityMapper.mapForm(formData)))
             .map(entityMapper::mapPojo);
     }
+
+    @Override
+    public Owner createOrGetModel(final OwnerFormData formData) {
+        return entityMapper.mapPojo(entityRepository.createOrGet(entityMapper.mapForm(formData)));
+    }
 }
