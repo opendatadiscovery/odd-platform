@@ -7,5 +7,6 @@ import reactor.core.publisher.Mono;
 
 public interface OwnerService extends CRUDService<Owner, OwnerList, OwnerFormData, OwnerFormData> {
     Mono<Owner> createOrGet(final OwnerFormData formData);
+
     Owner createOrGetModel(final OwnerFormData formData);
 }

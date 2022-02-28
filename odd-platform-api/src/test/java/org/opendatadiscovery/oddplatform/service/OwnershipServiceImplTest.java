@@ -35,6 +35,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
+ * Unit tests for {@link OwnershipService}.
+ *
  * @author matmalik on 25.02.2022
  */
 @ExtendWith(MockitoExtension.class)
@@ -156,8 +158,8 @@ class OwnershipServiceImplTest {
 
         StepVerifier
             .create(actualOwnershipMono)
-            .expectErrorMatches(throwable -> throwable instanceof NotFoundException &&
-                throwable.getMessage().equals("Ownership with id = [15] was not found"))
+            .expectErrorMatches(throwable -> throwable instanceof NotFoundException
+                && throwable.getMessage().equals("Ownership with id = [15] was not found"))
             .verify();
 
         verify(ownershipRepository, times(1)).get(testOwnershipId);
@@ -172,7 +174,7 @@ class OwnershipServiceImplTest {
      * @return {@link Ownership}
      */
     @NotNull
-    private Ownership createTestOwnership(final long ownershipId, Owner owner, Role role) {
+    private Ownership createTestOwnership(final long ownershipId, final Owner owner, final Role role) {
         final Ownership ownership = new Ownership();
         ownership.setId(ownershipId);
         ownership.setOwner(owner);
@@ -189,7 +191,7 @@ class OwnershipServiceImplTest {
      * @return {@link OwnershipPojo}
      */
     @NotNull
-    private OwnershipPojo createTestOwnershipPojo(final long ownershipId, Owner owner, Role role) {
+    private OwnershipPojo createTestOwnershipPojo(final long ownershipId, final Owner owner, final Role role) {
         final OwnershipPojo ownershipPojo = new OwnershipPojo();
         ownershipPojo.setId(ownershipId);
         ownershipPojo.setOwnerId(owner.getId());
