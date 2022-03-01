@@ -12,5 +12,5 @@ Import test suite results from pre-defined libraries or custom frameworks direct
 There are numerous BI tools and their data preparation capabilities vary. Examine your data sources, metadata and tags using the ODD Platform to predict BI tool performance, set dashboard security levels and prepare the data.
 ### Customer churn analysis for Data Scientist
 An imperfect notification system in your streaming pipeline may cause a problem when a training model receives irrelevant data. Read how to launch enriched notifications provided by ODD & Open Telemetry integration.  
-### Recommendation engine 
+### Recommendation engine with observable and manageable pipelines
 Build training models for your recommendation system without failures and obsolete data. This use case is about how ODD's alerts and end-to-end lineage helps avoid asynchronous run schedules of a model and an Airflow pipeline. 
