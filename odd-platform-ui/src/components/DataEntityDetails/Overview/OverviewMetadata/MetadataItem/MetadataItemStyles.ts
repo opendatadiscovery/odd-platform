@@ -11,6 +11,7 @@ export const Label = styled(Typography)(({ theme }) => ({
   wordBreak: 'break-word',
   maxHeight: '5rem',
   overflow: 'auto',
+  fontSize: theme.typography.body1.fontSize,
   paddingRight: theme.spacing(1),
 }));
 
