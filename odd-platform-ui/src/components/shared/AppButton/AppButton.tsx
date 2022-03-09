@@ -2,7 +2,7 @@ import React from 'react';
 import { ButtonProps } from '@mui/material';
 import { ButtonColors, StyledAppButton } from './AppButtonStyles';
 
-interface AppButtonProps
+export interface AppButtonProps
   extends Pick<
     ButtonProps,
     | 'size'

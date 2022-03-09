@@ -107,7 +107,12 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   };
 
   return (
-    <S.Bar position="fixed" elevation={elevation}>
+    <S.Bar
+      position="fixed"
+      elevation={elevation}
+      role="heading"
+      aria-label="AppToolbar"
+    >
       <S.Container disableGutters>
         <S.ContentContainer container>
           <S.LogoContainer item xs={3}>

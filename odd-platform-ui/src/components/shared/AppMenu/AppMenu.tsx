@@ -46,6 +46,7 @@ const AppMenu: React.FC<AppMenuProps> = ({
     $maxHeight={maxHeight}
     $maxWidth={maxWidth}
     $minWidth={minWidth}
+    aria-label="AppMenu"
   >
     {children}
   </StyledAppMenu>

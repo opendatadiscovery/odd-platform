@@ -33,6 +33,7 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
     divider={divider}
     $maxWidth={maxWidth}
     $minWidth={minWidth}
+    aria-label="AppMenuItem"
   >
     <StyledAppListItemText
       $removeTextStyles={removeTextStyles}

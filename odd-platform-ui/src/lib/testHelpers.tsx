@@ -1,7 +1,19 @@
-import { act, fireEvent, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  screen,
+  render,
+  RenderOptions,
+} from '@testing-library/react';
 import React, { ReactElement } from 'react';
+import { StaticRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { AnyAction, Store } from 'redux';
+import { RootState } from 'redux/interfaces';
+import { configureStore } from '@reduxjs/toolkit';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/mui.theme';
+import rootReducer from 'redux/reducers';
 
 export const provideTheme = (component: ReactElement): ReactElement => (
   <ThemeProvider theme={theme}>{component}</ThemeProvider>
@@ -57,3 +69,34 @@ export const queryByText = (text: string) => screen.queryByText(text);
 export const getByTestID = (testID: string) => screen.getByTestId(testID);
 export const getAllByTestID = (testID: string) =>
   screen.getAllByTestId(testID);
+
+interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  preloadedState?: Partial<RootState>;
+  store?: Store<Partial<RootState>, AnyAction>;
+  pathname?: string;
+}
+
+const customRender = (
+  ui: ReactElement,
+  {
+    preloadedState,
+    store = configureStore<RootState>({
+      reducer: rootReducer,
+      preloadedState,
+    }),
+    pathname,
+    ...renderOptions
+  }: CustomRenderOptions = {}
+) => {
+  // overrides @testing-library/react render.
+  const AllTheProviders: React.FC = ({ children }) => (
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <StaticRouter location={{ pathname }}>{children}</StaticRouter>
+      </Provider>
+    </ThemeProvider>
+  );
+  return render(ui, { wrapper: AllTheProviders, ...renderOptions });
+};
+
+export { customRender as render };
