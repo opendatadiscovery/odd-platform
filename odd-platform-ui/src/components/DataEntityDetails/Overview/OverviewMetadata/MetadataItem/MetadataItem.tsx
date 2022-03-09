@@ -115,13 +115,13 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 size="small"
               />
               <S.FormActionBtns>
-                <AppButton type="submit" size="medium" color="primary">
+                <AppButton type="submit" size="small" color="primary">
                   Save
                 </AppButton>
                 <AppButton
                   onClick={() => setEditMode(false)}
                   type="button"
-                  size="medium"
+                  size="small"
                   color="tertiary"
                 >
                   Cancel
@@ -135,7 +135,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
               <S.Value $isOpened={isExpanded}>{metadataVal}</S.Value>
               {isExpandable && (
                 <AppButton
-                  size="small"
+                  size="medium"
                   color="tertiary"
                   sx={{ mt: 1.25 }}
                   onClick={() => setIsExpanded(!isExpanded)}
