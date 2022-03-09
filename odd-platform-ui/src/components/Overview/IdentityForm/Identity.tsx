@@ -146,7 +146,7 @@ const Identity: React.FC<IdentityProps> = ({
   }, [identity]);
 
   return (
-    <S.Container>
+    <S.Container aria-label="Identity">
       <Grid container>
         <Grid item xs={12} container justifyContent="center">
           <UserSyncIcon sx={{ width: '76px', height: '41px' }} />

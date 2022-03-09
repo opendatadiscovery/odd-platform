@@ -30,7 +30,7 @@ const OverviewSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   );
 
   return (
-    <S.Container>
+    <S.Container aria-label="OverviewSkeleton">
       <Grid container justifyContent="center" sx={{ pt: 8, pb: 9 }}>
         <Skeleton width={width} height="74px" sx={{ maxWidth: '644px' }} />
       </Grid>

@@ -25,7 +25,7 @@ import DataEntityList from './DataEntityList/DataEntityList';
 import TopTagsListContainer from './TopTagsList/TopTagsListContainer';
 import IdentityContainer from './IdentityForm/IdentityContainer';
 
-interface OverviewProps {
+export interface OverviewProps {
   identity?: AssociatedOwner;
   identityFetched: boolean;
   alertTotals: AlertTotals;
