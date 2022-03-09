@@ -100,7 +100,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
         <Grid container>
           <Grid item xs={12}>
             <SubtitleContainer>
-              <Typography variant="h3">Custom</Typography>
+              <Typography variant="h4">Custom</Typography>
               <MetadataCreateFormContainer
                 dataEntityId={dataEntityId}
                 btnCreateEl={
