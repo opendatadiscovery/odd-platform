@@ -14,12 +14,17 @@ import styled from 'styled-components';
 
 export const MainDialog = styled(Dialog)<{
   $isLoading?: boolean;
-}>(({ $isLoading }) => ({
+}>(({ theme, $isLoading }) => ({
   [`& .${dialogClasses.paperWidthXs}`]: { maxWidth: '368px' },
   [`& .${dialogClasses.paperWidthSm}`]: { maxWidth: '560px' },
   [`& .${dialogClasses.paperWidthMd}`]: {
     maxWidth: '640px',
     maxHeight: '640px',
+  },
+  [`& .${dialogClasses.paper}`]: {
+    border: ' 1px solid',
+    borderColor: theme.palette.backgrounds.secondary,
+    borderRadius: '4px',
   },
   [`& .${dialogClasses.paperWidthXl}`]: { maxWidth: '800px' },
   pointerEvents: $isLoading ? 'none' : 'all',

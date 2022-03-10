@@ -17,6 +17,7 @@ const AppTab: React.FC<AppTabProps> = ({
   <TabContainer
     // eslint-disable-next-line react/jsx-props-no-spreading
     {...props}
+    disableRipple
     $type={type}
     $hidden={hidden}
     $orientation={$orientation}
