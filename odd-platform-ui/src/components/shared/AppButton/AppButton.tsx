@@ -32,6 +32,7 @@ const AppButton: React.FC<AppButtonProps> = ({
   form,
 }) => (
   <StyledAppButton
+    aria-label="AppButton"
     $color={color}
     disableRipple
     size={size}
