@@ -14,11 +14,11 @@ import TestReportItemSkeleton from 'components/DataEntityDetails/TestReport/Test
 import TestReportSkeleton from 'components/DataEntityDetails/TestReport/TestReportSkeleton/TestReportSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
+import AppPaper from 'components/shared/AppPaper/AppPaper';
 import {
   TestReportContainer,
   TestReportItemCont,
 } from './TestReportStyles';
-import AppPaper from 'components/shared/AppPaper/AppPaper';
 
 interface DatasetQualityTestList {
   [suiteName: string]: DataQualityTest[];

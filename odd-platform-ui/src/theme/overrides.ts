@@ -18,4 +18,13 @@ export const components: Components = {
       },
     },
   },
+  MuiCssBaseline: {
+    styleOverrides: {
+      'a:-webkit-any-link': {
+        font: 'inherit',
+        color: 'inherit',
+        textDecoration: 'inherit',
+      },
+    },
+  },
 };

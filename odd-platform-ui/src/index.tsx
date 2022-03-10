@@ -13,12 +13,12 @@ import { StyleSheetManager, ThemeProvider } from 'styled-components';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
+import { CssBaseline } from '@mui/material';
 import configureStore from './redux/store';
 import * as serviceWorker from './serviceWorker';
 import theme from './theme/mui.theme';
 
 import AppContainer from './components/AppContainer';
-import { AppCssBaseline } from 'components/shared/AppCssBaseline/AppCssBaseline';
 
 declare module 'styled-components' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -32,7 +32,7 @@ ReactDOM.render(
     <StyledEngineProvider injectFirst>
       <MuiThemeProvider theme={theme}>
         <ThemeProvider theme={theme}>
-          <AppCssBaseline />
+          <CssBaseline />
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <BrowserRouter>
               <StyleSheetManager disableVendorPrefixes>
