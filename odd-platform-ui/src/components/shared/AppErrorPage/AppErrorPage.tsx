@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ErrorState, FetchStatus } from 'redux/interfaces/loader';
 import AppButton from 'components/shared/AppButton/AppButton';
 
-interface AppErrorPageProps {
+export interface AppErrorPageProps {
   fetchStatus: FetchStatus;
   error?: ErrorState;
 }
@@ -14,7 +14,7 @@ const AppErrorPage: React.FC<AppErrorPageProps> = ({
   error,
 }) =>
   fetchStatus === 'errorFetching' ? (
-    <Grid sx={{ mt: 10 }}>
+    <Grid sx={{ mt: 10 }} aria-label="AppErrorPage">
       <Grid container alignItems="center" justifyContent="center">
         <Grid item>
           <Typography variant="errorCode" sx={{ mr: 4 }}>
