@@ -1,5 +1,5 @@
 # Features
-[Federation Data Catalogue](#federation-data-catalogue) \
+[Federation Data Catalog](#federation-data-catalogue) \
 [End-to-end Data Objects Lineage](#end-to-end-data-object-lineage) \
 [End-to-end Microservices Lineage](#end-to-end-microservices-lineage) \
 [Metadata Storage](#metadata-storage) \
@@ -7,7 +7,7 @@
 [Data Quality Test Results Import](#data-quality-test-results-import) \
 [ML Experiment Logging](#ml-experiment-logging) \
 [Pipeline monitoring and alerting](#pipeline-monitoring-and-alerting) 
-## Federation Data Catalogue
+## Federation Data Catalog
 The Catalogue is a tool which helps to bring distributed catalogues together in the Platform. \
 \
 **How it works.** You connect each catalogue to the Platform &rarr; It pulls the data without postprocessing (statistics creation and data cleansing are not supported) to save in ODD servers &rarr; The data from each source automatically occurs in a Platform account. \
@@ -19,11 +19,10 @@ To connect your data sources with the Platform use the [API](https://github.com/
 The Platform supports a lineage diagram, so you can easily track movement and change of your data entities. \
 ODD supports the following **data objects**: 
 * Datasets
-* Data sources
-* ETL and ML training jobs and their execution scripts
-* Data representation engines (ML model artifacts and BI dashboards)
-* Data quality tests and their scheduling scripts
->>> *these points above are entities mentioned in the spec. maybe i should put their names here for better understanding.*
+* Data providers (third-party integrations)
+* ETL and ML training jobs
+* ML model artifacts and BI dashboards
+[Read more](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md#data-model-specification) about how these entities are used in the **ODD Data Model**.
 
 ![](.gitbook/img/lineage.gif) 
 
@@ -31,8 +30,7 @@ ODD supports the following **data objects**:
 This feature helps trace data provenance of your microservice-based app. \
 ODD represents microservices as objects and shows their lineage as a typical diagram.
 ## Metadata Storage 
-The Storage gathers metadata about all elements of your system.
->>> *Here I'd like to say more about the Storage. Is it a DB or smth else? Do we have storage limits for each user? What is a storage format? key-value format or smth else? What is an update frequency?*
+The Storage is a data catalog which gathers metadata from your PostgreSQL sources. Data processing is based on the near real-time approach.  A storage space is not limited.
 ### Advanced search 
 In your Platform account you may find any metadata element using the following options:
 * Full-text search 
