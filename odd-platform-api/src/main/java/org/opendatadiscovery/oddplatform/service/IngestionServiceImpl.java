@@ -1,10 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,8 +20,6 @@ import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
-import org.opendatadiscovery.oddplatform.dto.MetadataBinding;
-import org.opendatadiscovery.oddplatform.dto.MetadataFieldKey;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
@@ -47,8 +41,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
@@ -59,8 +51,7 @@ import org.opendatadiscovery.oddplatform.repository.DatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
-import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
-import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
+import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataSourcePath;
@@ -82,8 +73,6 @@ public class IngestionServiceImpl implements IngestionService {
     private final DataEntityRepository dataEntityRepository;
     private final DatasetVersionRepository datasetVersionRepository;
     private final DatasetStructureRepository datasetStructureRepository;
-    private final MetadataFieldRepository metadataFieldRepository;
-    private final MetadataFieldValueRepository metadataFieldValueRepository;
     private final LineageRepository lineageRepository;
     private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
@@ -98,6 +87,7 @@ public class IngestionServiceImpl implements IngestionService {
     private final MetricService metricService;
 
     private final Generator oddrnGenerator = new Generator();
+    private final MetadataIngestionService metadataIngestionService;
 
     @Override
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
@@ -279,7 +269,7 @@ public class IngestionServiceImpl implements IngestionService {
         return Mono
             .zipDelayError(
                 ingestDatasetStructure(dataStructure),
-                ingestMetadata(dataStructure)
+                Mono.defer(() -> metadataIngestionService.ingestMetadata(dataStructure))
             )
             .map(m -> dataStructure);
     }
@@ -336,98 +326,6 @@ public class IngestionServiceImpl implements IngestionService {
 
         return Mono.zipDelayError(versions, Mono.just(datasetFields))
             .map(t -> datasetStructureRepository.bulkCreate(t.getT1(), t.getT2()));
-    }
-
-    private Mono<Integer> ingestMetadata(final IngestionDataStructure dataStructure) {
-        final Map<MetadataFieldKey, Map<Long, Object>> allMetadata = new HashMap<>();
-
-        for (final EnrichedDataEntityIngestionDto entity : dataStructure.getAllEntities()) {
-            if (entity.getMetadata() == null) {
-                continue;
-            }
-
-            entity.getMetadata().forEach((mfName, mfValue) -> {
-                if (mfValue == null) {
-                    return;
-                }
-
-                final MetadataFieldKey.MetadataTypeEnum fieldType = isDate(mfValue)
-                    ? MetadataFieldKey.MetadataTypeEnum.DATETIME
-                    : MetadataFieldKey.MetadataTypeEnum.getMetadataType(mfValue.getClass());
-
-                if (fieldType.equals(MetadataFieldKey.MetadataTypeEnum.UNKNOWN)) {
-                    log.warn("Unknown metadata field: {}, {}, {}", mfName, mfValue, fieldType);
-                    return;
-                }
-
-                allMetadata.compute(new MetadataFieldKey(mfName, fieldType), (k, map) -> {
-                    if (map == null) {
-                        map = new HashMap<>();
-                    }
-
-                    map.put(entity.getId(), mfValue);
-
-                    return map;
-                });
-            });
-        }
-
-        final Mono<Map<MetadataBinding, MetadataFieldValuePojo>> mfvAll = Mono.just(dataStructure.getAllIds())
-            .map(metadataFieldValueRepository::listByDataEntityIds)
-            .map(mfList -> mfList
-                .stream()
-                .collect(Collectors.toMap(
-                    mf -> new MetadataBinding(mf.getDataEntityId(), mf.getMetadataFieldId()), identity()
-                )));
-
-        final Mono<Map<MetadataFieldKey, MetadataFieldPojo>> metadataFields = Mono
-            .fromCallable(() -> metadataFieldRepository.listByKey(allMetadata.keySet()))
-            .map(mfs -> mfs.stream().collect(Collectors.toMap(
-                mf -> new MetadataFieldKey(mf.getName(), mf.getType()),
-                identity()
-            )))
-            .map(existingMfs -> {
-                final HashMap<MetadataFieldKey, MetadataFieldPojo> newMfs = new HashMap<>();
-                allMetadata.forEach((id, none) -> {
-                    if (!existingMfs.containsKey(id)) {
-                        newMfs.put(id, new MetadataFieldPojo()
-                            .setType(id.getFieldType().toString())
-                            .setName(id.getFieldName())
-                            .setOrigin("EXTERNAL"));
-                    }
-                });
-
-                return Stream.concat(
-                    existingMfs.values().stream(),
-                    metadataFieldRepository.bulkCreate(newMfs.values()).stream()
-                ).collect(Collectors.toMap(
-                    mf -> new MetadataFieldKey(mf.getName(), mf.getType()),
-                    identity()
-                ));
-            });
-
-        return Mono.zip(Mono.just(allMetadata), mfvAll, metadataFields)
-            .map(t -> {
-                final ArrayList<MetadataFieldValuePojo> update = new ArrayList<>();
-                final ArrayList<MetadataFieldValuePojo> create = new ArrayList<>();
-
-                t.getT1().forEach((mfKey, values) -> values.forEach((deId, value) -> {
-                    final MetadataFieldPojo mf = t.getT3().get(mfKey);
-                    final MetadataFieldValuePojo mfValue = t.getT2().get(new MetadataBinding(deId, mf.getId()));
-
-                    if (mfValue != null) {
-                        mfValue.setValue(value.toString());
-                        update.add(mfValue);
-                    } else {
-                        create.add(new MetadataFieldValuePojo(deId, mf.getId(), value.toString(), true));
-                    }
-                }));
-
-                metadataFieldValueRepository.bulkCreate(create);
-                metadataFieldValueRepository.bulkUpdate(update);
-
-                return 0;
-            });
     }
 
     private DatasetVersionPojo incrementVersion(final Map<String, EnrichedDataEntityIngestionDto> datasetDict,
@@ -567,19 +465,6 @@ public class IngestionServiceImpl implements IngestionService {
             dataEntityRepository.calculateSearchEntrypoints(dataStructure.getAllIds());
             return dataStructure;
         });
-    }
-
-    private boolean isDate(final Object object) {
-        return object != null && object.getClass().equals(String.class) && isDate(object.toString());
-    }
-
-    private boolean isDate(final String string) {
-        try {
-            LocalDateTime.parse(string, DateTimeFormatter.ISO_DATE_TIME);
-        } catch (final DateTimeParseException ignored) {
-            return false;
-        }
-        return true;
     }
 
     private boolean isEntityUpdated(final DataEntityIngestionDto dto, final DataEntityPojo dePojo) {

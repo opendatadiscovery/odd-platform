@@ -1,10 +1,11 @@
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Theme } from '@mui/material';
 import React from 'react';
 import CopyIcon from 'components/shared/Icons/CopyIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
 import SuccessIcon from 'components/shared/Icons/SuccessIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { SxProps } from '@mui/system';
 
 interface CopyButtonProps {
   text?: string;
@@ -12,13 +13,16 @@ interface CopyButtonProps {
   popupText?: string;
   stringToCopy: string;
   msDelay?: number;
+  sx?: SxProps<Theme> | undefined;
 }
+
 const CopyButton: React.FC<CopyButtonProps> = ({
   text = '',
   fallbackText = 'Copying',
   popupText = 'Copied!',
   stringToCopy,
   msDelay = 3000,
+  sx,
 }) => {
   const [error, setError] = React.useState<string>('');
   const [showCopy, setShowCopy] = React.useState<boolean>(false);
@@ -59,6 +63,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       color="tertiary"
       onClick={copyToClipboard}
       startIcon={buttonIcon}
+      sx={sx}
     >
       {buttonText}
     </AppButton>
@@ -67,6 +72,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       icon={buttonIcon}
       color="tertiary"
       onClick={copyToClipboard}
+      sx={sx}
     />
   );
 };

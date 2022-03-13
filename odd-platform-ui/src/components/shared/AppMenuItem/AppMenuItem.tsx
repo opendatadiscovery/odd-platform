@@ -28,6 +28,7 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
   fontVariant = 'body1',
 }) => (
   <StyledAppMenuItem
+    disableRipple
     value={value}
     onClick={onClick}
     divider={divider}

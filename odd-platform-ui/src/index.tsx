@@ -8,12 +8,12 @@ import {
   Theme,
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
+import { CssBaseline } from '@mui/material';
 import configureStore from './redux/store';
 import * as serviceWorker from './serviceWorker';
 import theme from './theme/mui.theme';

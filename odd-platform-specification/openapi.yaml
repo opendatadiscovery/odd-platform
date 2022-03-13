@@ -1256,58 +1256,6 @@ paths:
 
       tags:
         - metadata
-    post:
-      summary: Create new custom metadata field
-      description: Creates new custom metadata field
-      operationId: createCustomField
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/MetadataFieldFormData'
-      responses:
-        '201':
-          description: The resource has been successfully created
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/MetadataField'
-      tags:
-        - metadata
-  /api/metadata/fields/{metadata_field_id}:
-    put:
-      summary: Update custom metadata field
-      description: Updates custom metadata field
-      operationId: updateCustomField
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DataEntityMetadataFieldIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/MetadataUpdateCustomFieldFormData'
-      responses:
-        '201':
-          description: The resource has been successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/MetadataField'
-      tags:
-        - metadata
-    delete:
-      summary: Delete custom metadata field
-      description: Deletes custom metadata field
-      operationId: deleteCustomField
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DataEntityMetadataFieldIdParam'
-      responses:
-        '204':
-          $ref: './components.yaml/#/components/responses/Deleted'
-      tags:
-        - metadata
   /api/datasetfields/{dataset_field_id}:
     put:
       summary: Update DatasetField's labels and description

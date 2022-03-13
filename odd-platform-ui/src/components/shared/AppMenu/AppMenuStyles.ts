@@ -15,6 +15,9 @@ export const StyledAppMenu = styled(Menu)<AppMenuStyleProps>(
 
     [`&.${menuClasses.paper}`]: {
       padding: theme.spacing(1, 0),
+      border: ' 1px solid',
+      borderColor: theme.palette.backgrounds.secondary,
+      borderRadius: '4px',
     },
   })
 );

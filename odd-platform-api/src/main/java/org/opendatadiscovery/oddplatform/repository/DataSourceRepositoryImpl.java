@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
@@ -204,7 +205,21 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
 
     @Override
     public List<DataSourceDto> bulkCreate(final Collection<DataSourceDto> pojos) {
-        throw new UnsupportedOperationException("Not implemented");
+        final List<DataSourceRecord> records = pojos.stream()
+            .map(dto -> pojoToRecord(dto.dataSource()))
+            .toList();
+        InsertSetStep<DataSourceRecord> insertStep = dslContext.insertInto(DATA_SOURCE);
+        for (int i = 0; i < records.size() - 1; i++) {
+            insertStep = insertStep.set(records.get(i)).newRecord();
+        }
+
+        return insertStep
+            .set(records.get(records.size() - 1))
+            .returning(DATA_SOURCE.fields())
+            .fetch()
+            .stream()
+            .map(this::mapRecord)
+            .toList();
     }
 
     @Override
@@ -244,6 +259,21 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     }
 
     @Override
+    public List<DataSourceDto> getByOddrns(final List<String> oddrns, final boolean includeDeleted) {
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(DATA_SOURCE.ODDRN.in(oddrns));
+        if (!includeDeleted) {
+            conditions.add(DATA_SOURCE.IS_DELETED.isFalse());
+        }
+        return dslContext.select()
+            .from(DATA_SOURCE)
+            .where(conditions)
+            .fetchStream()
+            .map(this::mapRecord)
+            .toList();
+    }
+
+    @Override
     public Collection<DataSourceDto> listActive() {
         return dslContext
             .select(DATA_SOURCE.asterisk())
@@ -274,6 +304,14 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             .set(DATA_SOURCE.ODDRN, oddrn)
             .set(DATA_SOURCE.UPDATED_AT, LocalDateTime.now())
             .where(DATA_SOURCE.ID.eq(id))
+            .execute();
+    }
+
+    @Override
+    public void restoreDataSources(final List<String> oddrns) {
+        dslContext.update(DATA_SOURCE)
+            .set(DATA_SOURCE.IS_DELETED, false)
+            .where(DATA_SOURCE.ODDRN.in(oddrns))
             .execute();
     }
 
