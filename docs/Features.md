@@ -1,6 +1,6 @@
 # Features
-[Federation Data Catalog](#federation-data-catalogue) \
-[End-to-end Data Objects Lineage](#end-to-end-data-object-lineage) \
+[Federation Data Catalog](#federation-data-catalog) \
+[End-to-end Data Objects Lineage](#end-to-end-data-objects-lineage) \
 [End-to-end Microservices Lineage](#end-to-end-microservices-lineage) \
 [Metadata Storage](#metadata-storage) \
 [Manual Object Tagging](#manual-object-tagging) \
