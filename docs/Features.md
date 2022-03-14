@@ -26,8 +26,7 @@ ODD supports the following **data objects**:
 [Read more](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md#data-model-specification) about how these entities are used in the **ODD Data Model**.
 
 ## End-to-end Microservices Lineage 
-This feature helps trace data provenance of your microservice-based app. \
-ODD represents microservices as objects and shows their lineage as a typical diagram. \
+This feature helps trace data provenance of your microservice-based app. ODD represents microservices as objects and shows their lineage as a typical diagram. \
 The picture below shows the process of metadata ingestion. 
 
 ![](.gitbook/img/microservices_lineage.png)
