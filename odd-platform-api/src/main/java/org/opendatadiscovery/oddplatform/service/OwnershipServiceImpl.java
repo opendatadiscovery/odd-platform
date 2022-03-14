@@ -63,7 +63,8 @@ public class OwnershipServiceImpl implements OwnershipService {
             .createOrGet(new RolePojo().setName(formData.getRoleName()))
             .getId();
 
-        final OwnershipDto ownershipDto = ownershipRepository.updateRole(ownershipId, roleId);
+        ownershipRepository.updateRole(ownershipId, roleId);
+        final OwnershipDto ownershipDto = ownershipRepository.get(ownershipId);
         ownershipRepository.updateSearchVectors(ownershipId);
         final Ownership ownership = ownershipMapper.mapDto(ownershipDto);
 

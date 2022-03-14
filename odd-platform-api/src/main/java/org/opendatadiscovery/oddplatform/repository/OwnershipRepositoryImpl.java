@@ -15,7 +15,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.OwnershipRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
@@ -62,14 +61,14 @@ public class OwnershipRepositoryImpl implements OwnershipRepository {
     }
 
     @Override
-    public OwnershipDto updateRole(final long ownershipId, final long roleId) {
+    public OwnershipPojo updateRole(final long ownershipId, final long roleId) {
         return dslContext.update(OWNERSHIP)
             .set(OWNERSHIP.ROLE_ID, roleId)
             .where(OWNERSHIP.ID.eq(ownershipId))
             .returning()
             .fetchOptional()
             .orElseThrow(() -> new DataAccessException("Error updating ownership record with id = " + ownershipId))
-            .into(OwnershipDto.class);
+            .into(OwnershipPojo.class);
     }
 
     @Override
