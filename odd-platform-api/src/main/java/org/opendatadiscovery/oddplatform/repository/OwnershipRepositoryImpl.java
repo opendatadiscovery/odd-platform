@@ -7,6 +7,7 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.exception.DataAccessException;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
@@ -26,7 +27,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 @Repository
 @RequiredArgsConstructor
 public class OwnershipRepositoryImpl implements OwnershipRepository {
-    private final RoleRepository roleRepository;
     private final DSLContext dslContext;
     private final JooqFTSHelper jooqFTSHelper;
 
@@ -48,16 +48,10 @@ public class OwnershipRepositoryImpl implements OwnershipRepository {
     }
 
     @Override
-    @Transactional
     public OwnershipPojo create(final OwnershipPojo pojo) {
-        final OwnershipRecord record = dslContext.newRecord(OWNERSHIP, pojo);
-        record.store();
-
-        final OwnershipPojo createdOwnership = record.into(OwnershipPojo.class);
-
-        updateSearchVectors(createdOwnership.getId());
-
-        return createdOwnership;
+        final OwnershipRecord ownershipRecord = dslContext.newRecord(OWNERSHIP, pojo);
+        ownershipRecord.store();
+        return ownershipRecord.into(OwnershipPojo.class);
     }
 
     @Override
@@ -68,24 +62,18 @@ public class OwnershipRepositoryImpl implements OwnershipRepository {
     }
 
     @Override
-    @Transactional
-    // TODO: fix ordering: first get and check for existence
-    public OwnershipDto updateRole(final long ownershipId, final String roleName) {
-        final long roleId = roleRepository
-            .createOrGet(new RolePojo().setName(roleName))
-            .getId();
-
-        dslContext.update(OWNERSHIP)
+    public OwnershipDto updateRole(final long ownershipId, final long roleId) {
+        return dslContext.update(OWNERSHIP)
             .set(OWNERSHIP.ROLE_ID, roleId)
             .where(OWNERSHIP.ID.eq(ownershipId))
-            .execute();
-
-        updateSearchVectors(ownershipId);
-
-        return get(ownershipId);
+            .returning()
+            .fetchOptional()
+            .orElseThrow(() -> new DataAccessException("Error updating ownership record with id = " + ownershipId))
+            .into(OwnershipDto.class);
     }
 
-    private void updateSearchVectors(final long ownershipId) {
+    @Override
+    public void updateSearchVectors(final long ownershipId) {
         final Field<Long> dataEntityId = field("data_entity_id", Long.class);
 
         final Field<String> ownerNameAlias = field("owner_name", String.class);

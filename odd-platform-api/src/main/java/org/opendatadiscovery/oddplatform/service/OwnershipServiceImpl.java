@@ -8,10 +8,15 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Role;
 import org.opendatadiscovery.oddplatform.api.contract.model.RoleFormData;
+import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.OwnershipMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.repository.OwnershipRepository;
+import org.opendatadiscovery.oddplatform.repository.RoleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -20,23 +25,23 @@ public class OwnershipServiceImpl implements OwnershipService {
     private final RoleService roleService;
     private final OwnerService ownerService;
     private final OwnershipRepository ownershipRepository;
+    private final RoleRepository roleRepository;
 
     private final OwnershipMapper ownershipMapper;
 
     @Override
+    @Transactional
     public Mono<Ownership> create(final long dataEntityId,
                                   final OwnershipFormData formData) {
-        final Mono<Owner> owner = ownerService.createOrGet(new OwnerFormData().name(formData.getOwnerName()));
-        final Mono<Role> role = roleService.createOrGet(new RoleFormData().name(formData.getRoleName()));
-
-        return Mono.zip(owner, role).map(t -> {
-            final OwnershipPojo pojo = ownershipRepository.create(new OwnershipPojo()
-                .setDataEntityId(dataEntityId)
-                .setOwnerId(t.getT1().getId())
-                .setRoleId(t.getT2().getId()));
-
-            return ownershipMapper.mapModel(pojo, t.getT1(), t.getT2());
-        });
+        final Owner owner = ownerService.createOrGet(new OwnerFormData().name(formData.getOwnerName()));
+        final Role role = roleService.createOrGet(new RoleFormData().name(formData.getRoleName()));
+        final OwnershipPojo ownershipPojo = ownershipRepository.create(new OwnershipPojo()
+            .setDataEntityId(dataEntityId)
+            .setOwnerId(owner.getId())
+            .setRoleId(role.getId()));
+        ownershipRepository.updateSearchVectors(ownershipPojo.getId());
+        final Ownership ownership = ownershipMapper.mapModel(ownershipPojo, owner, role);
+        return Mono.just(ownership);
     }
 
     @Override
@@ -47,10 +52,21 @@ public class OwnershipServiceImpl implements OwnershipService {
     }
 
     @Override
+    @Transactional
     public Mono<Ownership> update(final long ownershipId,
                                   final OwnershipUpdateFormData formData) {
-        return Mono
-            .fromCallable(() -> ownershipRepository.updateRole(ownershipId, formData.getRoleName()))
-            .map(ownershipMapper::mapDto);
+        if (ownershipRepository.get(ownershipId) == null) {
+            return Mono.error(new NotFoundException("Ownership with id = [%s] was not found", ownershipId));
+        }
+
+        final long roleId = roleRepository
+            .createOrGet(new RolePojo().setName(formData.getRoleName()))
+            .getId();
+
+        final OwnershipDto ownershipDto = ownershipRepository.updateRole(ownershipId, roleId);
+        ownershipRepository.updateSearchVectors(ownershipId);
+        final Ownership ownership = ownershipMapper.mapDto(ownershipDto);
+
+        return Mono.just(ownership);
     }
 }
