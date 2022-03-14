@@ -31,6 +31,7 @@ export const TextContainer = styled(Grid)(({ theme }) => ({
 export const SpinnerContainer = styled(Grid)<CSSObject>(() => ({
   position: 'relative',
   alignItems: 'center',
+  justifyContent: 'center',
 }));
 
 export const ProgressBack = styled(CircularProgress)<{
@@ -45,5 +46,4 @@ export const ProgressBack = styled(CircularProgress)<{
 export const Progress = styled(CircularProgress)(({ theme }) => ({
   color: theme.palette.button.primaryLight.normal.color,
   position: 'absolute',
-  left: 0,
 }));
