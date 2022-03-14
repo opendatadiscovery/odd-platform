@@ -79,8 +79,8 @@ class OwnershipServiceImplTest {
         final OwnershipPojo ownershipPojo = createTestOwnershipPojo(testOwnershipId, owner, role);
         final Ownership ownership = createTestOwnership(testOwnershipId, owner, role);
 
-        when(ownerService.createOrGetModel(any(OwnerFormData.class))).thenReturn(owner);
-        when(roleService.createOrGetModel(any(RoleFormData.class))).thenReturn(role);
+        when(ownerService.createOrGet(any(OwnerFormData.class))).thenReturn(owner);
+        when(roleService.createOrGet(any(RoleFormData.class))).thenReturn(role);
         when(ownershipRepository.create(any(OwnershipPojo.class))).thenReturn(ownershipPojo);
         doNothing().when(ownershipRepository).updateSearchVectors(anyLong());
         when(ownershipMapper.mapModel(any(OwnershipPojo.class), any(Owner.class), any(Role.class)))
@@ -98,8 +98,8 @@ class OwnershipServiceImplTest {
                 assertThat(o.getRole().getName()).isEqualTo(testRoleName);
             })
             .verifyComplete();
-        verify(ownerService, only()).createOrGetModel(any(OwnerFormData.class));
-        verify(roleService, only()).createOrGetModel(any(RoleFormData.class));
+        verify(ownerService, only()).createOrGet(any(OwnerFormData.class));
+        verify(roleService, only()).createOrGet(any(RoleFormData.class));
         verify(ownershipRepository, times(1)).create(any(OwnershipPojo.class));
         verify(ownershipRepository, times(1)).updateSearchVectors(testOwnershipId);
         verify(ownershipMapper, only()).mapModel(any(OwnershipPojo.class), any(Owner.class), any(Role.class));

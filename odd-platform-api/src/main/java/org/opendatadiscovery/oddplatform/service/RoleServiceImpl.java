@@ -8,7 +8,6 @@ import org.opendatadiscovery.oddplatform.mapper.RoleMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.repository.RoleRepository;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 @Service
 public class RoleServiceImpl
@@ -22,14 +21,7 @@ public class RoleServiceImpl
     }
 
     @Override
-    public Mono<Role> createOrGet(final RoleFormData formData) {
-        return Mono
-            .fromCallable(() -> entityRepository.createOrGet(entityMapper.mapForm(formData)))
-            .map(entityMapper::mapPojo);
-    }
-
-    @Override
-    public Role createOrGetModel(final RoleFormData formData) {
+    public Role createOrGet(final RoleFormData formData) {
         return entityMapper.mapPojo(entityRepository.createOrGet(entityMapper.mapForm(formData)));
     }
 }

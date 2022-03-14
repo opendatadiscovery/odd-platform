@@ -33,8 +33,8 @@ public class OwnershipServiceImpl implements OwnershipService {
     @Transactional
     public Mono<Ownership> create(final long dataEntityId,
                                   final OwnershipFormData formData) {
-        final Owner owner = ownerService.createOrGetModel(new OwnerFormData().name(formData.getOwnerName()));
-        final Role role = roleService.createOrGetModel(new RoleFormData().name(formData.getRoleName()));
+        final Owner owner = ownerService.createOrGet(new OwnerFormData().name(formData.getOwnerName()));
+        final Role role = roleService.createOrGet(new RoleFormData().name(formData.getRoleName()));
         final OwnershipPojo ownershipPojo = ownershipRepository.create(new OwnershipPojo()
             .setDataEntityId(dataEntityId)
             .setOwnerId(owner.getId())
