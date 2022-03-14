@@ -6,7 +6,7 @@ import {
   StyledAppListItemText,
 } from './AppMenuItemStyles';
 
-interface AppMenuItemProps
+export interface AppMenuItemProps
   extends Pick<
     MenuItemProps,
     'children' | 'onClick' | 'divider' | 'value'
@@ -38,6 +38,7 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
     <StyledAppListItemText
       $removeTextStyles={removeTextStyles}
       $fontVariant={fontVariant}
+      aria-label="AppMenuItemText"
     >
       {children}
     </StyledAppListItemText>
