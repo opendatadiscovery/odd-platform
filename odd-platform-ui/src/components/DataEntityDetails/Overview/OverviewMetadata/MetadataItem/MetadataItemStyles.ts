@@ -57,7 +57,6 @@ export const Value = styled('div')<{
   margin: 0,
   whiteSpace: 'pre-wrap',
   maxHeight: $isOpened ? 'none' : '100px',
-  maxWidth: '500px',
   overflowY: 'hidden',
   fontSize: theme.typography.body1.fontSize,
   lineHeight: theme.typography.body1.lineHeight,
