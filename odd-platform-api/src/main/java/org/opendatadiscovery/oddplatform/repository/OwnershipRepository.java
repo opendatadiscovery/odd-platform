@@ -10,5 +10,7 @@ public interface OwnershipRepository {
 
     void delete(final long ownershipId);
 
-    OwnershipDto updateRole(final long ownershipId, final String roleName);
+    OwnershipDto updateRole(final long ownershipId, final long roleId);
+
+    void updateSearchVectors(final long ownershipId);
 }
