@@ -116,6 +116,8 @@ class OwnershipServiceImplTest {
 
         final OwnershipUpdateFormData ownershipUpdateFormData = new OwnershipUpdateFormData();
         ownershipUpdateFormData.setRoleName(testRoleName);
+        final OwnershipPojo testOwnershipPojo = new OwnershipPojo();
+        testOwnershipPojo.setId(testOwnershipId);
         final Owner owner = createTestOwner(testOwnerId, testOwnerName);
         final Role role = createTestRole(testRoleId, testRoleName);
         final Ownership ownership = createTestOwnership(testOwnershipId, owner, role);
@@ -124,7 +126,7 @@ class OwnershipServiceImplTest {
 
         when(ownershipRepository.get(testOwnershipId)).thenReturn(new OwnershipDto());
         when(roleRepository.createOrGet(any(RolePojo.class))).thenReturn(rolePojo);
-        when(ownershipRepository.updateRole(testOwnershipId, testRoleId)).thenReturn(new OwnershipDto());
+        when(ownershipRepository.updateRole(testOwnershipId, testRoleId)).thenReturn(testOwnershipPojo);
         when(ownershipMapper.mapDto(any(OwnershipDto.class))).thenReturn(ownership);
 
         final Mono<Ownership> actualOwnershipMono = ownershipService.update(testOwnershipId, ownershipUpdateFormData);
@@ -140,7 +142,7 @@ class OwnershipServiceImplTest {
             })
             .verifyComplete();
         verify(ownershipRepository, times(1)).updateRole(testOwnershipId, testRoleId);
-        verify(ownershipRepository, times(1)).get(testOwnershipId);
+        verify(ownershipRepository, times(2)).get(testOwnershipId);
         verify(ownershipRepository, times(1)).updateSearchVectors(testOwnershipId);
         verify(ownershipMapper, only()).mapDto(any(OwnershipDto.class));
         verify(roleRepository, only()).createOrGet(any(RolePojo.class));
