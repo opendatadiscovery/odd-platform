@@ -7,7 +7,6 @@ import org.opendatadiscovery.oddplatform.mapper.OwnerMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.OwnerRepository;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Mono;
 
 @Service
 public class OwnerServiceImpl
@@ -20,9 +19,7 @@ public class OwnerServiceImpl
     }
 
     @Override
-    public Mono<Owner> createOrGet(final OwnerFormData formData) {
-        return Mono
-            .fromCallable(() -> entityRepository.createOrGet(entityMapper.mapForm(formData)))
-            .map(entityMapper::mapPojo);
+    public Owner createOrGet(final OwnerFormData formData) {
+        return entityMapper.mapPojo(entityRepository.createOrGet(entityMapper.mapForm(formData)));
     }
 }
