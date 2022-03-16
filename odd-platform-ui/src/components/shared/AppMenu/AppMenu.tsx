@@ -2,7 +2,7 @@ import React from 'react';
 import { MenuProps } from '@mui/material';
 import { StyledAppMenu } from './AppMenuStyles';
 
-interface AppMenuProps
+export interface AppMenuProps
   extends Pick<
     MenuProps,
     | 'children'
