@@ -69,7 +69,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.when;
-import static org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils.deserializeJson;
+import static org.opendatadiscovery.oddplatform.utils.JSONTestUtils.deserializeJson;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Unit tests for IngestionService")
