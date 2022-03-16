@@ -2,7 +2,7 @@ import React from 'react';
 import { RadioProps } from '@mui/material';
 import * as S from './AppRadioStyles';
 
-type AppRadioProps = RadioProps;
+export type AppRadioProps = RadioProps;
 
 const AppRadio: React.FC<AppRadioProps> = props => (
   <S.StyledRadio
@@ -10,6 +10,7 @@ const AppRadio: React.FC<AppRadioProps> = props => (
     {...props}
     icon={<S.Icon />}
     checkedIcon={<S.IconChecked />}
+    aria-label="AppRadio"
   />
 );
 
