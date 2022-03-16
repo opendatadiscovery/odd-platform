@@ -9,6 +9,7 @@ import { SxProps } from '@mui/system';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 
 type AdornmentVariant = 'loader' | 'clear' | 'search';
+
 interface AdornmentProps {
   variant: AdornmentVariant;
   showAdornment: boolean;
@@ -17,7 +18,7 @@ interface AdornmentProps {
   position?: SxProps<Theme>;
 }
 
-interface AppTextFieldProps
+export interface AppTextFieldProps
   extends Pick<
     TextFieldProps,
     | 'onClick'
@@ -99,7 +100,12 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
 
       if (variant === 'loader') {
         return (
-          <CircularProgress sx={position} color="inherit" size={20} />
+          <CircularProgress
+            sx={position}
+            color="inherit"
+            size={20}
+            aria-label="AppTextFieldCircularProgress"
+          />
         );
       }
 
@@ -164,6 +170,7 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
             </>
           ),
         }}
+        aria-label="AppTextField"
       >
         {children}
       </StyledAppTextField>
