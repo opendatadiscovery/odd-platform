@@ -8,4 +8,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 
 public interface NamespaceMapper
     extends CRUDMapper<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData, NamespacePojo> {
+
+    NamespacePojo createPojoByName(final String name);
 }

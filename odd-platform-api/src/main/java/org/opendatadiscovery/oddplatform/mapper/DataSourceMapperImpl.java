@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
@@ -10,7 +9,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateForm
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
@@ -39,7 +37,9 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setPullingInterval(form.getPullingInterval())
             .setActive(form.getActive());
 
-        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), pojo.token());
+        return new DataSourceDto(dataSourcePojo,
+            namespaceMapper.createPojoByName(form.getNamespaceName()),
+            pojo.token());
     }
 
     @Override
@@ -81,12 +81,6 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setConnectionUrl(form.getConnectionUrl())
             .setPullingInterval(form.getPullingInterval());
 
-        return new DataSourceDto(dataSourcePojo, getNamespacePojo(form.getNamespaceName()), tokenDto);
-    }
-
-    private NamespacePojo getNamespacePojo(final String namespaceName) {
-        return StringUtils.isNotEmpty(namespaceName)
-            ? new NamespacePojo().setName(namespaceName)
-            : null;
+        return new DataSourceDto(dataSourcePojo, namespaceMapper.createPojoByName(form.getNamespaceName()), tokenDto);
     }
 }

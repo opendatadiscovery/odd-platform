@@ -764,6 +764,65 @@ components:
         - created_at
         - updated_at
 
+    CollectorList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Collector'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    Collector:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        token:
+          $ref: '#/components/schemas/Token'
+        name:
+          type: string
+        oddrn:
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - name
+        - oddrn
+        - token
+
+    CollectorFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        namespace_name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+
+    CollectorUpdateFormData:
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        namespace_name:
+          type: string
+        token:
+          $ref: '#/components/schemas/Token'
+
     PageInfo:
       type: object
       properties:

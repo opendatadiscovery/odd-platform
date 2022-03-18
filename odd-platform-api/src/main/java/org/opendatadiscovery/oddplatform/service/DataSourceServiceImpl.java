@@ -7,7 +7,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateFormData;
-import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -27,17 +26,14 @@ public class DataSourceServiceImpl
     implements DataSourceService {
 
     private final TokenService tokenService;
-    private final AuthIdentityProvider authIdentityProvider;
     private final TokenRepository tokenRepository;
 
     public DataSourceServiceImpl(final DataSourceMapper entityMapper,
                                  final DataSourceRepository entityRepository,
                                  final TokenService tokenService,
-                                 final AuthIdentityProvider authIdentityProvider,
                                  final TokenRepository tokenRepository) {
         super(entityMapper, entityRepository);
         this.tokenService = tokenService;
-        this.authIdentityProvider = authIdentityProvider;
         this.tokenRepository = tokenRepository;
     }
 
@@ -48,14 +44,11 @@ public class DataSourceServiceImpl
             throw new IllegalArgumentException("Can't create data source with both URL and ODDRN defined");
         }
 
-        return authIdentityProvider.getUsername()
-            .map(tokenService::generateToken)
-            .switchIfEmpty(Mono.fromCallable(() -> tokenService.generateToken(null)))
-            .map(tokenPojo -> {
-                final DataSourceDto dataSourceDto = entityMapper.mapForm(createEntityForm, new TokenDto(tokenPojo));
-                final DataSourceDto createdDto = entityRepository.create(dataSourceDto);
-                return entityMapper.mapPojo(createdDto);
-            });
+        return tokenService.generateToken().map(tokenPojo -> {
+            final DataSourceDto dataSourceDto = entityMapper.mapForm(createEntityForm, new TokenDto(tokenPojo));
+            final DataSourceDto createdDto = entityRepository.create(dataSourceDto);
+            return entityMapper.mapPojo(createdDto);
+        });
     }
 
     @Override
@@ -69,12 +62,9 @@ public class DataSourceServiceImpl
             .filter(Optional::isPresent)
             .switchIfEmpty(Mono.error(new NotFoundException()))
             .map(Optional::get)
-            .flatMap(dto -> authIdentityProvider.getUsername()
-                .map(username -> tokenService.regenerateToken(dto.token().tokenPojo(), username))
-                .switchIfEmpty(Mono.fromCallable(() -> tokenService.regenerateToken(dto.token().tokenPojo(), null)))
-                .map(tokenPojo -> {
-                    final TokenDto updatedTokenDto = tokenRepository.updateToken(tokenPojo);
-                    return entityMapper.mapPojo(new DataSourceDto(dto.dataSource(), dto.namespace(), updatedTokenDto));
-                }));
+            .flatMap(dto -> tokenService.regenerateToken(dto.token().tokenPojo()).map(tokenPojo -> {
+                final TokenDto updatedTokenDto = tokenRepository.updateToken(tokenPojo);
+                return entityMapper.mapPojo(new DataSourceDto(dto.dataSource(), dto.namespace(), updatedTokenDto));
+            }));
     }
 }

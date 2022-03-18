@@ -250,8 +250,10 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         return dslContext
             .select(DATA_SOURCE.asterisk())
             .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(DATA_SOURCE)
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
             .where(DATA_SOURCE.ODDRN.eq(oddrn))
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchOptional()
@@ -265,8 +267,13 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         if (!includeDeleted) {
             conditions.add(DATA_SOURCE.IS_DELETED.isFalse());
         }
-        return dslContext.select()
+        return dslContext
+            .select(DATA_SOURCE.asterisk())
+            .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(DATA_SOURCE)
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
             .where(conditions)
             .fetchStream()
             .map(this::mapRecord)
@@ -278,8 +285,10 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         return dslContext
             .select(DATA_SOURCE.asterisk())
             .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(DATA_SOURCE)
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
             .where(DATA_SOURCE.ACTIVE.isTrue())
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .and(DATA_SOURCE.CONNECTION_URL.isNotNull())
@@ -312,6 +321,14 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         dslContext.update(DATA_SOURCE)
             .set(DATA_SOURCE.IS_DELETED, false)
             .where(DATA_SOURCE.ODDRN.in(oddrns))
+            .execute();
+    }
+
+    @Override
+    public void setTokenFromCollector(final List<String> dataSourceOddrns, final Long tokenId) {
+        dslContext.update(DATA_SOURCE)
+            .set(DATA_SOURCE.TOKEN_ID, tokenId)
+            .where(DATA_SOURCE.ODDRN.in(dataSourceOddrns))
             .execute();
     }
 

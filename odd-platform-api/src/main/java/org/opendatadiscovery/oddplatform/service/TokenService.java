@@ -1,9 +1,10 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
+import reactor.core.publisher.Mono;
 
 public interface TokenService {
-    TokenPojo generateToken(final String username);
+    Mono<TokenPojo> generateToken();
 
-    TokenPojo regenerateToken(final TokenPojo tokenPojo, final String username);
+    Mono<TokenPojo> regenerateToken(final TokenPojo tokenPojo);
 }

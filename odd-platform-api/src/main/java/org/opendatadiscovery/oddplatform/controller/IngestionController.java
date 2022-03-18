@@ -38,7 +38,7 @@ public class IngestionController implements IngestionApi {
                                                        final ServerWebExchange exchange) {
         return dataSourceList
             .publishOn(Schedulers.boundedElastic())
-            .flatMap(model -> dataSourceIngestionService.createDataSourcesFromIngestion(model.getItems()))
+            .flatMap(dataSourceIngestionService::createDataSourcesFromIngestion)
             .map(ignored -> ResponseEntity.ok().build());
     }
 }
