@@ -36,7 +36,7 @@ public abstract class AbstractIngestionFilter implements WebFilter {
         return matcher.matches(exchange)
             .filter(ServerWebExchangeMatcher.MatchResult::isMatch)
             .switchIfEmpty(Mono.defer(() -> chain.filter(exchange).then(Mono.empty())))
-            .flatMap(__ -> chain.filter(exchange.mutate().request(getRequestDecorator(exchange)).build()))
+            .flatMap(ignored -> chain.filter(exchange.mutate().request(getRequestDecorator(exchange)).build()))
             .onErrorResume(AccessDeniedException.class, e -> writeResponse(exchange, e.getMessage()));
     }
 
@@ -53,7 +53,7 @@ public abstract class AbstractIngestionFilter implements WebFilter {
     protected <T> T readBody(final List<DataBuffer> dataBuffer, final Class<T> clazz) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
             final WritableByteChannel channel = Channels.newChannel(baos);
-            for (DataBuffer buffer : dataBuffer) {
+            for (final DataBuffer buffer : dataBuffer) {
                 channel.write(buffer.asByteBuffer().asReadOnlyBuffer());
             }
             return mapper.readValue(baos.toByteArray(), clazz);
