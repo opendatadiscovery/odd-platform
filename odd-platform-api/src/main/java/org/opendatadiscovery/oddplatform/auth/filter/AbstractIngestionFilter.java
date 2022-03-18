@@ -3,7 +3,9 @@ package org.opendatadiscovery.oddplatform.auth.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayOutputStream;
 import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -31,14 +33,11 @@ public abstract class AbstractIngestionFilter implements WebFilter {
 
     @Override
     public Mono<Void> filter(final ServerWebExchange exchange, final WebFilterChain chain) {
-        final Mono<Void> filterDownstreamChain =
-            chain.filter(exchange.mutate().request(getRequestDecorator(exchange)).build());
-
         return matcher.matches(exchange)
             .filter(ServerWebExchangeMatcher.MatchResult::isMatch)
-            .then(filterDownstreamChain)
-            .onErrorResume(AccessDeniedException.class, e -> writeResponse(exchange, e.getMessage()))
-            .onErrorResume(e -> writeResponse(exchange, e.getMessage()));
+            .switchIfEmpty(Mono.defer(() -> chain.filter(exchange).then(Mono.empty())))
+            .flatMap(__ -> chain.filter(exchange.mutate().request(getRequestDecorator(exchange)).build()))
+            .onErrorResume(AccessDeniedException.class, e -> writeResponse(exchange, e.getMessage()));
     }
 
     protected abstract ServerHttpRequestDecorator getRequestDecorator(final ServerWebExchange exchange);
@@ -51,9 +50,12 @@ public abstract class AbstractIngestionFilter implements WebFilter {
         return bearerToken.substring(BEARER.length());
     }
 
-    protected <T> T readBody(final DataBuffer dataBuffer, final Class<T> clazz) {
+    protected <T> T readBody(final List<DataBuffer> dataBuffer, final Class<T> clazz) {
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            Channels.newChannel(baos).write(dataBuffer.asByteBuffer().asReadOnlyBuffer());
+            final WritableByteChannel channel = Channels.newChannel(baos);
+            for (DataBuffer buffer : dataBuffer) {
+                channel.write(buffer.asByteBuffer().asReadOnlyBuffer());
+            }
             return mapper.readValue(baos.toByteArray(), clazz);
         } catch (Exception e) {
             log.error("Exception while parsing request body");

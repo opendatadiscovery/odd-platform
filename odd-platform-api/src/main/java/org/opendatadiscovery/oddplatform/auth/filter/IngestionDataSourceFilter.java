@@ -13,6 +13,7 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 @Component
 @Slf4j
@@ -30,17 +31,19 @@ public class IngestionDataSourceFilter extends AbstractIngestionFilter {
         return new ServerHttpRequestDecorator(exchange.getRequest()) {
             @Override
             public Flux<DataBuffer> getBody() {
-                return super.getBody().doOnNext(dataBuffer -> {
-                    final DataSourceList body = readBody(dataBuffer, DataSourceList.class);
-                    final String token = resolveToken(exchange.getRequest());
-                    final CollectorDto collectorDto = collectorRepository.getByOddrn(body.getProviderOddrn())
-                        .orElseThrow(() -> new NotFoundException(
-                            String.format("Collector with oddrn %s doesn't exist", body.getProviderOddrn())
-                        ));
-                    if (!collectorDto.tokenDto().tokenPojo().getValue().equals(token)) {
-                        throw new AccessDeniedException("Token is not correct");
-                    }
-                });
+                return super.getBody().collectList()
+                    .publishOn(Schedulers.boundedElastic())
+                    .doOnNext(dataBuffer -> {
+                        final DataSourceList body = readBody(dataBuffer, DataSourceList.class);
+                        final String token = resolveToken(exchange.getRequest());
+                        final CollectorDto collectorDto = collectorRepository.getByOddrn(body.getProviderOddrn())
+                            .orElseThrow(() -> new NotFoundException(
+                                String.format("Collector with oddrn %s doesn't exist", body.getProviderOddrn())
+                            ));
+                        if (!collectorDto.tokenDto().tokenPojo().getValue().equals(token)) {
+                            throw new AccessDeniedException("Token is not correct");
+                        }
+                    }).flatMapIterable(list -> list);
             }
         };
     }

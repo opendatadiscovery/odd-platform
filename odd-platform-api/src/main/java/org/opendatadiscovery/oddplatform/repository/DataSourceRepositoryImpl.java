@@ -30,6 +30,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import static org.jooq.impl.DSL.field;
@@ -205,6 +206,9 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
 
     @Override
     public List<DataSourceDto> bulkCreate(final Collection<DataSourceDto> pojos) {
+        if (CollectionUtils.isEmpty(pojos)) {
+            return List.of();
+        }
         final List<DataSourceRecord> records = pojos.stream()
             .map(dto -> pojoToRecord(dto.dataSource()))
             .toList();
