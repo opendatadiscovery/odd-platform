@@ -6,7 +6,7 @@
 [Manual Object Tagging](#manual-object-tagging) \
 [Data Quality Test Results Import](#data-quality-test-results-import) \
 [ML Experiment Logging](#ml-experiment-logging) \
-[Pipeline monitoring and alerting](#pipeline-monitoring-and-alerting) 
+[Pipeline Monitoring and Alerting](#pipeline-monitoring-and-alerting) 
 ## Federation Data Catalog
 The Catalog is a tool which helps to bring distributed catalogs together in the Platform. \
 \

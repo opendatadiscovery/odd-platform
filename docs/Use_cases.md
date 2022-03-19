@@ -3,9 +3,9 @@
 ### Newcomer onboarding 
 Gather information about your data sources and owners, metadata description and lineage diagram in one place so that a newcomer gets down to real tasks faster. 
 ### Data Compliance for Data Scientists
-Develop ML-models meeting compliance standards and make sure that you manage Personally Identifiable Information (PII) properly.
+Develop ML-models meeting compliance standards and make sure that you manage Personally Identifiable Information (PII) properly. [Read more](dc_data_compliance.md)
 ### Deprecation for Data Engineer \ Analyst 
-Be in control of making dramatic changes to your data. Provide transparent deprecation process so as to inform all stakeholders in proper time and manage risks of downstream failure.
+Be in control of making dramatic changes to your data. Provide transparent deprecation process so as to inform all stakeholders in proper time and manage risks of downstream failure. [Read more](de_deprecation.md)
 ### Data quality and visibility for Quality Engineer 
 Import test suite results from pre-defined libraries or custom frameworks directly to the ODD Platform and share them with your team and other stakeholders to build trustworthy and transparent communication about data health of your product. 
 ### Data preparation for Viz Engineer
