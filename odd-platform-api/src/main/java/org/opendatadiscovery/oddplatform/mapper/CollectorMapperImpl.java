@@ -31,7 +31,13 @@ public class CollectorMapperImpl implements CollectorMapper {
 
     @Override
     public CollectorDto applyForm(final CollectorDto pojo, final CollectorUpdateFormData form) {
-        return null;
+        final CollectorPojo collectorPojo = pojo.collectorPojo()
+            .setName(form.getName())
+            .setDescription(form.getDescription());
+
+        return new CollectorDto(collectorPojo,
+            namespaceMapper.createPojoByName(form.getNamespaceName()),
+            pojo.tokenDto());
     }
 
     @Override
