@@ -22,6 +22,10 @@ const DataSourcesListContainer = React.lazy(
   () => import('./DataSourcesList/DataSourcesListContainer')
 );
 
+const CollectorsListContainer = React.lazy(
+  () => import('./CollectorsList/CollectorsListContainer')
+);
+
 interface ManagementProps {
   viewType: string;
 }
@@ -30,6 +34,7 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Namespaces', link: '/management/namespaces' },
     { name: 'Datasources', link: '/management/datasources' },
+    { name: 'Collectors', link: '/management/collectors' },
     { name: 'Owners', link: '/management/owners' },
     { name: 'Tags', link: '/management/tags' },
     { name: 'Labels', link: '/management/labels' },
@@ -72,6 +77,11 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
               exact
               path="/management/datasources"
               component={DataSourcesListContainer}
+            />
+            <Route
+              exact
+              path="/management/collectors"
+              component={CollectorsListContainer}
             />
             <Route
               exact
