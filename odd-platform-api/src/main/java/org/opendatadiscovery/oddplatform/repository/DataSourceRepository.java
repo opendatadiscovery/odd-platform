@@ -17,4 +17,6 @@ public interface DataSourceRepository extends CRUDRepository<DataSourceDto> {
     void injectOddrn(final long id, final String oddrn);
 
     void restoreDataSources(final List<String> oddrns);
+
+    void setTokenFromCollector(final List<String> dataSourceOddrns, final Long tokenId);
 }

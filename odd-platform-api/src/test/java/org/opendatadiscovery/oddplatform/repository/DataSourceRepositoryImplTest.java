@@ -5,7 +5,9 @@ import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 
@@ -15,6 +17,9 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired
     private DataSourceRepository dataSourceRepository;
+
+    @Autowired
+    private TokenRepository tokenRepository;
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
@@ -67,12 +72,37 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
                 secondDataSource.dataSource().getOddrn());
     }
 
+    @Test
+    public void setTokenFromCollectorTest() {
+        final TokenDto tokenDto = tokenRepository.create(new TokenPojo().setValue(UUID.randomUUID().toString()));
+        final DataSourceDto firstDataSource =
+            generateDataSource(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        final DataSourceDto secondDataSource =
+            generateDataSource(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+        final List<DataSourceDto> dtos =
+            dataSourceRepository.bulkCreate(List.of(firstDataSource, secondDataSource));
+
+        final List<String> oddrns = dtos.stream()
+            .map(DataSourceDto::dataSource)
+            .map(DataSourcePojo::getOddrn)
+            .toList();
+
+        dataSourceRepository.setTokenFromCollector(oddrns, tokenDto.tokenPojo().getId());
+
+        final List<DataSourceDto> dataSourceDtos = dataSourceRepository.getByOddrns(oddrns, false);
+
+        assertThat(dataSourceDtos)
+            .extracting(dto -> dto.token().tokenPojo().getId())
+            .containsOnly(tokenDto.tokenPojo().getId());
+    }
+
     private DataSourceDto generateDataSource(final String oddrn, final String name) {
         return new DataSourceDto(
             new DataSourcePojo()
                 .setOddrn(oddrn)
                 .setName(name),
-            null
+            null,
+            new TokenDto(new TokenPojo().setValue(UUID.randomUUID().toString()))
         );
     }
 }

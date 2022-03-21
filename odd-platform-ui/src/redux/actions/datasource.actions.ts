@@ -15,6 +15,12 @@ export const updateDataSourceAction = createAsyncAction(
   'PUT_DATASOURCE__FAILURE'
 )<undefined, DataSource, undefined>();
 
+export const regenerateDataSourceTokenAction = createAsyncAction(
+  'GET_DATASOURCE_NEW_TOKEN__REQUEST',
+  'GET_DATASOURCE_NEW_TOKEN__SUCCESS',
+  'GET_DATASOURCE_NEW_TOKEN__FAILURE'
+)<undefined, DataSource, undefined>();
+
 export const registerDataSourceAction = createAsyncAction(
   'POST_DATASOURCE__REQUEST',
   'POST_DATASOURCE__SUCCESS',

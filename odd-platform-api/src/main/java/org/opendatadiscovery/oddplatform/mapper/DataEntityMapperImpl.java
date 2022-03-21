@@ -72,7 +72,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .types(types.stream().map(this::mapType).toList())
             .subType(subtype)
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
-            .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace())))
+            .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(dto.getTags() != null
                 ? dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList())
                 : null);
@@ -189,7 +189,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .types(types.stream().map(this::mapType).toList())
             .subType(subtype)
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
-            .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace())))
+            .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
             .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
             .viewCount(pojo.getViewCount());
@@ -402,7 +402,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .internalName(dataEntity.getInternalName())
             .groupIdList(groupId)
             .dataSource(dataSource != null
-                ? dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace()))
+                ? dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null))
                 : null);
     }
 
