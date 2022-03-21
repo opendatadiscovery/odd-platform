@@ -10,6 +10,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.assertj.core.api.SoftAssertions;
@@ -27,6 +28,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityGroup;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
@@ -45,6 +47,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepositoryImpl;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
@@ -163,7 +166,8 @@ public class IngestionServiceImplTest {
 
     @BeforeEach
     void setup() {
-        dataSourceDto = new DataSourceDto(new DataSourcePojo().setId(1L), null);
+        dataSourceDto = new DataSourceDto(new DataSourcePojo().setId(1L), null,
+            new TokenDto(new TokenPojo().setValue(UUID.randomUUID().toString())));
         dataEntityList = deserializeFixture(PATH_TO_DATA_ENTITY_LIST_FIXTURE,
             new TypeReference<>() {
             });

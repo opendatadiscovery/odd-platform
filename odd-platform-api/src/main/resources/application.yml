@@ -42,6 +42,9 @@ auth:
 
   # For dev purposes only -- successful auth redirect URI
   login-form-redirect:
+  ingestion:
+    filter:
+      enabled: false
 
 metrics:
   export:

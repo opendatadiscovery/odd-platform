@@ -5,6 +5,7 @@ import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.repository.CollectorRepository;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
 
 @Component
+@ConditionalOnProperty(value = "auth.ingestion.filter.enabled", havingValue = "true")
 @Slf4j
 public class IngestionDataSourceFilter extends AbstractIngestionFilter {
 
