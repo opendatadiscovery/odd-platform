@@ -19,7 +19,7 @@ The ODD Platform provides a PII-sensitive search mechanism to assist in identify
  - `Dim_Cards`: customer, card, card issuer name and currency \
  - `Fct_transactions`: transaction date, book, payment type, transaction amount, quantity, currency, customer and card \
  - `Dim_currency`: currency ISO3 code, currency name \
- - `Dim_payment_types`: payment type, payment type description \
+ - `Dim_payment_types`: payment type, payment type description
  3. I have designed ways of joining the above tables but do not know if I should anonymize any data.
  4. I go to the ODD Platform and start searching for the tables I need.
 5. I check objects’ tags, labels and metadata.
