@@ -18,7 +18,7 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 import CollectorFormDialogContainer from 'components/Management/CollectorsList/CollectorForm/CollectorFormContainer';
 import CollectorSkeletonItem from './CollectorSkeletonItem/CollectorSkeletonItem';
 import CollectorItemContainer from './CollectorItem/CollectorItemContainer';
-import * as S from './CollectorsListStyles';
+import { CollectorCaption } from './CollectorsListStyles';
 
 interface CollectorsListProps {
   collectorsList: Collector[];
@@ -84,13 +84,13 @@ const CollectorsListView: React.FC<CollectorsListProps> = ({
 
   return (
     <Grid container flexDirection="column" alignItems="center">
-      <S.Caption container sx={{ mb: 1 }}>
+      <CollectorCaption container sx={{ mb: 1 }}>
         <Typography variant="h1">Collectors</Typography>
         <Typography variant="subtitle1" color="texts.info">
           <NumberFormatted value={totalCollectors} /> collectors overall
         </Typography>
-      </S.Caption>
-      <S.Caption container sx={{ mb: 2 }}>
+      </CollectorCaption>
+      <CollectorCaption container sx={{ mb: 2 }}>
         <AppTextField
           placeholder="Search collector..."
           sx={{ minWidth: '340px' }}
@@ -123,7 +123,7 @@ const CollectorsListView: React.FC<CollectorsListProps> = ({
             </AppButton>
           }
         />
-      </S.Caption>
+      </CollectorCaption>
       <Grid container>
         <Grid item xs={12}>
           {isCollectorsListFetching ? (

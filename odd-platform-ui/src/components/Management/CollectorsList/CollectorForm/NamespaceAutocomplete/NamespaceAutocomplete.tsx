@@ -6,6 +6,7 @@ import {
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import {
+  CollectorFormData,
   Namespace,
   NamespaceApiGetNamespaceListRequest,
   NamespaceList,
@@ -14,7 +15,6 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { ControllerRenderProps } from 'react-hook-form';
-import { CollectorFormDataValues } from 'components/Management/CollectorsList/CollectorForm/CollectorForm';
 
 type FilterOption = Omit<Namespace, 'id' | 'namespace'> &
   Partial<Namespace>;
@@ -24,7 +24,7 @@ interface NamespaceAutocompleteProps {
     params: NamespaceApiGetNamespaceListRequest
   ) => Promise<NamespaceList>;
   controllerProps: ControllerRenderProps<
-    CollectorFormDataValues,
+    CollectorFormData,
     'namespaceName'
   >;
 }

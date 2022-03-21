@@ -2,13 +2,13 @@ import { Grid } from '@mui/material';
 import AppPaper from 'components/shared/AppPaper/AppPaper';
 import styled from 'styled-components';
 
-export const ActionsContainer = styled(Grid)(() => ({
+export const CollectorActionsContainer = styled(Grid)(() => ({
   opacity: 0,
   display: 'flex',
   justifyContent: 'flex-end',
 }));
 
-export const DescriptionContainer = styled(Grid)(({ theme }) => ({
+export const CollectorDescriptionContainer = styled(Grid)(({ theme }) => ({
   '& > *': {
     marginBottom: theme.spacing(1),
   },
@@ -17,13 +17,13 @@ export const DescriptionContainer = styled(Grid)(({ theme }) => ({
   },
 }));
 
-export const Container = styled(AppPaper)(({ theme }) => ({
+export const CollectorContainer = styled(AppPaper)(({ theme }) => ({
   width: '100%',
   padding: theme.spacing(2, 2, 2, 2),
   margin: '0 auto',
   alignItems: 'flex-start',
   '&:hover': {
     boxShadow: theme.shadows[8],
-    [`${ActionsContainer}`]: { opacity: 1 },
+    [`${CollectorActionsContainer}`]: { opacity: 1 },
   },
 }));

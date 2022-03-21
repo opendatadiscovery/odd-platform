@@ -12,7 +12,11 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import CollectorFormDialogContainer from 'components/Management/CollectorsList/CollectorForm/CollectorFormContainer';
 import CollectorItemTokenContainer from './CollectorItemToken/CollectorItemTokenContainer';
-import * as S from './CollectorItemStyles';
+import {
+  CollectorActionsContainer,
+  CollectorDescriptionContainer,
+  CollectorContainer,
+} from './CollectorItemStyles';
 
 interface CollectorItemProps {
   collector: Collector;
@@ -31,14 +35,14 @@ const CollectorItem: React.FC<CollectorItemProps> = ({
   );
 
   return (
-    <S.Container elevation={0}>
+    <CollectorContainer elevation={0}>
       <Grid container alignItems="flex-start" spacing={2}>
         <Grid item xs={8}>
           <Typography variant="h4" title={collector.name}>
             {collector.name}
           </Typography>
         </Grid>
-        <S.ActionsContainer item sm={4}>
+        <CollectorActionsContainer item sm={4}>
           <CollectorFormDialogContainer
             collector={collector}
             btnCreateEl={
@@ -53,11 +57,11 @@ const CollectorItem: React.FC<CollectorItemProps> = ({
             }
           />
           <ConfirmationDialog
-            actionTitle="Are you sure you want to delete this datasource?"
+            actionTitle="Are you sure you want to delete this collector?"
             actionName="Delete"
             actionText={
               <Typography variant="subtitle1">
-                Delete &quot;{collector.name}&quot; datasource?
+                Delete &quot;{collector.name}&quot; collector?
               </Typography>
             }
             onConfirm={onDelete}
@@ -71,8 +75,8 @@ const CollectorItem: React.FC<CollectorItemProps> = ({
               </AppButton>
             }
           />
-        </S.ActionsContainer>
-        <S.DescriptionContainer item sm={6} container>
+        </CollectorActionsContainer>
+        <CollectorDescriptionContainer item sm={6} container>
           <LabeledInfoItem
             variant="body2"
             inline
@@ -108,9 +112,9 @@ const CollectorItem: React.FC<CollectorItemProps> = ({
           >
             <CollectorItemTokenContainer collector={collector} />
           </LabeledInfoItem>
-        </S.DescriptionContainer>
+        </CollectorDescriptionContainer>
       </Grid>
-    </S.Container>
+    </CollectorContainer>
   );
 };
 

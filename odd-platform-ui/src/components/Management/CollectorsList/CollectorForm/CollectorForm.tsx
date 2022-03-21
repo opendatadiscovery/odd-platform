@@ -26,8 +26,6 @@ interface CollectorFormDialogProps {
   ) => Promise<Collector>;
 }
 
-export type CollectorFormDataValues = CollectorFormData;
-
 const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   collector,
   btnCreateEl,
@@ -36,7 +34,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   updateCollector,
 }) => {
   const getDefaultValues = React.useCallback(
-    (): CollectorFormDataValues => ({
+    (): CollectorFormData => ({
       name: collector?.name || '',
       namespaceName: collector?.namespace?.name || '',
       description: collector?.description || '',
@@ -50,7 +48,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
     reset,
     setValue,
     formState: { isValid },
-  } = useForm<CollectorFormDataValues>({
+  } = useForm<CollectorFormData>({
     mode: 'all',
     reValidateMode: 'onChange',
     defaultValues: getDefaultValues(),
@@ -71,7 +69,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
     reset();
   };
 
-  const onSubmit = (data: CollectorFormDataValues) => {
+  const onSubmit = (data: CollectorFormData) => {
     const parsedData = { ...data };
     (collector
       ? updateCollector({
@@ -87,24 +85,24 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
       (response: Response) => {
         setState({
           ...initialState,
-          error: response.statusText || 'Unable to register datasource',
+          error: response.statusText || 'Unable to register collector',
         });
       }
     );
   };
 
-  const formTitle = (
+  const collectorFormTitle = (
     <Typography variant="h4" component="span">
       {collector ? 'Edit ' : 'Add '}
-      Datasource
+      Collector
     </Typography>
   );
 
-  const formContent = () => (
-    <form id="datasource-create-form" onSubmit={handleSubmit(onSubmit)}>
+  const collectorFormContent = () => (
+    <form id="collector-create-form" onSubmit={handleSubmit(onSubmit)}>
       <Typography variant="subtitle2" fontSize="0.73rem">
         Fields with the <Asterisk>*</Asterisk> symbol are required to save
-        the Datasource
+        the Collector
       </Typography>
       <Controller
         name="name"
@@ -145,7 +143,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
             {...field}
             sx={{ mt: 1.25 }}
             label="Description"
-            placeholder="Datasource description"
+            placeholder="Collector description"
             multiline
             maxRows={4}
             customEndAdornment={{
@@ -160,11 +158,11 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
     </form>
   );
 
-  const formActionButtons = () => (
+  const collectorFormActionButtons = () => (
     <AppButton
       size="large"
       type="submit"
-      form="datasource-create-form"
+      form="collector-create-form"
       color="primary"
       fullWidth
       disabled={!isValid}
@@ -178,9 +176,9 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
       renderOpenBtn={({ handleOpen }) =>
         React.cloneElement(btnCreateEl, { onClick: handleOpen })
       }
-      title={formTitle}
-      renderContent={formContent}
-      renderActions={formActionButtons}
+      title={collectorFormTitle}
+      renderContent={collectorFormContent}
+      renderActions={collectorFormActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}

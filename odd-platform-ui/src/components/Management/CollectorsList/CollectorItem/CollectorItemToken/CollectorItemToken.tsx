@@ -39,7 +39,7 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({
       <Token $isHidden={isHidden}>{collector.token.value}</Token>
       {isHidden ? (
         <ConfirmationDialog
-          actionTitle="Are you sure you want to regenerate token for this datasource?"
+          actionTitle="Are you sure you want to regenerate token for this collector?"
           actionName="Regenerate"
           actionText={
             <Typography variant="subtitle1">
