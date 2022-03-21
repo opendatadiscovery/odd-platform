@@ -9,7 +9,7 @@ To build the dashboards I have to know the nature of the data since the majority
 ### Solution
 The ODD Platform [tagging system](Features.md#manual-object-tagging) and [meta data storage](Features.md#metadata-storage) can be consulted during dashboard development to reach better performance and set security standards, e.g. row-level security based on the user group.
 ### Scenario
-1. I examine my data source metadata and tags in ODD and find out that it is:
+1. I examine my data source metadata and tags in ODD and find out that it is: \
  - Set to streaming data load mode. \
  - Does not have the KPIs I need but I might be able to calculate them using existing fields. \
  - Has a history depth of ten calendar year. \

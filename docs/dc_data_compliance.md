@@ -8,10 +8,10 @@ During model developing I need confidential and personal information of my custo
 The ODD Platform provides a PII-sensitive search mechanism to assist in identifying confidential data using [tags](Features.md#manual-object-tagging), labels and [metadata](Features.md#metadata-storage) and, therefore, preventing potential monetary, legal or reputational losses.
 ### Scenario
 1. I start developing a new ML-model. Its data source has to have the following parameters: \
- - Customer age, gender, LTV (Lifetime Value), delivery address \
- - Customer payment details (card issuer, account's currency, card type) \
- - Transaction timestamp, payment type (card or cash) \
- - Preferred genres and authors
+ - customer age, gender, LTV (Lifetime Value), delivery address \
+ - customer payment details (card issuer, account's currency, card type) \
+ - transaction timestamp, payment type (card or cash) \
+ - preferred genres and authors
 
 2. I find the following objects in the sources: \
  - `Dim_Customers`: customer full name, date of birth,  delivery address \
