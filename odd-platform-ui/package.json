@@ -7,22 +7,20 @@
     "build-only": "react-scripts build",
     "build": "npm run generate && react-scripts build",
     "test": "react-scripts test",
+    "test:CI": "CI=true npm test  -- --coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "eject": "react-scripts eject",
     "tsc": "tsc",
     "generate": "rm -rf ./src/generated-sources && docker run -v `pwd`/..:/mnt -w /mnt --rm openapitools/openapi-generator-cli:v5.1.1 generate -c odd-platform-ui/openapi-config.yaml",
     "lint": "eslint --ext .tsx,.ts src/",
-    "lint:fix": "eslint --ext .tsx,.ts src/ --fix"
+    "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
+    "prepare": "cd .. && husky install odd-platform-ui/.husky",
+    "pre-commit": "npm run tsc --noEmit && lint-staged"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
       "eslint -c .eslintrc.json --fix",
       "git add"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run tsc --noEmit && lint-staged"
-    }
   },
   "eslintConfig": {
     "extends": "react-app"
