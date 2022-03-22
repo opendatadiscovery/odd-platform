@@ -175,13 +175,16 @@ For more information, please check **[specification.md](https://github.com/opend
 If you have any questions or ideas, please don't hesitate to drop a line to any of us. 
 
 
-| Team Member     | LinkedIn                                      	                  | GitHub                                              |
-|-----------------|-----------------------------------------------------------------------|-----------------------------------------------------|
-|German Osin      |  [LinkedIn](https://www.linkedin.com/in/german-osin-47a9339/)      	  | [germanosin](https://github.com/germanosin)         |
-|Nikita Dementev  |  [LinkedIn](https://www.linkedin.com/in/nikita-dementev/)             | [DementevNikita](https://github.com/DementevNikita) |
-|Sofia Shnaidman  |  [LinkedIn](https://www.linkedin.com/in/sofia-shnaidman-293161a3/)    | [soffest](https://github.com/soffest)               |
-|Roman Zabaluev   |  [LinkedIn](https://www.linkedin.com/in/haarolean/)                   | [Haarolean](https://github.com/haarolean)           |
-|Alexey Kozyurov  |  [LinkedIn](https://www.linkedin.com/in/alexey-kozyurov-1823b1219/)   | [Leshe4ka](https://github.com/Leshe4ka)             |
+| Team Member      | LinkedIn                                      	                     | GitHub                                              |
+|------------------|---------------------------------------------------------------------|-----------------------------------------------------|
+| German Osin      | [LinkedIn](https://www.linkedin.com/in/german-osin-47a9339/)      	 | [germanosin](https://github.com/germanosin)         |
+| Nikita Dementev  | [LinkedIn](https://www.linkedin.com/in/nikita-dementev/)            | [DementevNikita](https://github.com/DementevNikita) |
+| Damir Abdullin   | [LinkedIn](https://www.linkedin.com/in/dabdullin/)                  | [damirabdul](https://github.com/damirabdul)         |
+| Alexey Kozyurov  | [LinkedIn](https://www.linkedin.com/in/alexey-kozyurov-1823b1219/)  | [Leshe4ka](https://github.com/Leshe4ka)             |
+| Pavel Makarichev | [LinkedIn](https://www.linkedin.com/in/pavel-makarichev-8a8730a4/)  | [vixtir](https://github.com/vixtir)                 |
+| Anna Evdokimova-Glinskaia | -                                                                   | [Anna-EG](https://github.com/Anna-EG)               |
+| Roman Zabaluev   | [LinkedIn](https://www.linkedin.com/in/haarolean/)                  | [Haarolean](https://github.com/haarolean)           |
+| Sofia Shnaidman  | [LinkedIn](https://www.linkedin.com/in/sofia-shnaidman-293161a3/)   | [soffest](https://github.com/soffest)               |
 
 
 ## License
