@@ -12,7 +12,7 @@ import {
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
 import { format } from 'date-fns';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import gfm from 'remark-gfm';
+import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
 
 interface ResultItemPreviewProps {
@@ -67,11 +67,9 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
 
   const getDescription = React.useCallback(
     () => (
-      <ReactMarkdown
-        className="markdown-body"
-        plugins={[gfm]}
-        source={dataEntityDetails?.internalDescription}
-      />
+      <ReactMarkdown className="markdown-body" remarkPlugins={[remarkGfm]}>
+        {dataEntityDetails?.internalDescription}
+      </ReactMarkdown>
     ),
     [dataEntityDetails]
   );
