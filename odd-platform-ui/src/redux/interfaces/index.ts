@@ -7,3 +7,4 @@ export * from './dataQualityTest';
 export * from './alert';
 export * from './common';
 export * from './dataEntityGroup';
+export * from './collectors';

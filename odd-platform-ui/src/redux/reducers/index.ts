@@ -16,6 +16,7 @@ import dataQualityTest from './dataQualityTest.reducer';
 import alerts from './alerts.reducer';
 import dataEntityGroupLinkedList from './dataentityLinkedList.reducer';
 import appInfo from './appInfo.reducer';
+import collectors from './collectors.reducer';
 
 export default combineReducers<RootState>({
   namespaces,
@@ -34,4 +35,5 @@ export default combineReducers<RootState>({
   alerts,
   dataEntityGroupLinkedList,
   appInfo,
+  collectors,
 });
