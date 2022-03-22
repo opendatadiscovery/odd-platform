@@ -1,7 +1,7 @@
 # Data compliance for Data Scientists
 **Key words**: Personal Identifiable Information (PII), General Data Protection Regulation (GDPR), confidential data, anonymization.
 ### Challenge
-As a Data Scientist, I have a task to develop a ML-model for customer segmentation purposes. It aims at introducing customer tiers to customize communication for each segment. \
+As a Data Scientist, I have a task to develop a ML-model for behavioral segmentation of book shop clients. It aims at introducing customer tiers to customize communication for each segment. \
 During model developing I need confidential and personal information of my customer to attribute my tiers right. I do not know if I have to anonymize the data or I can use it as-is as my model will be used internally only. 
 
 ### Solution

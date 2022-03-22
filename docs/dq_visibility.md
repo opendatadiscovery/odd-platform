@@ -7,7 +7,7 @@ As a Quality Assurance Engineer, I cannot cover all data quality monitoring acti
 The ODD Platform is compatible with Great Expectations and Pandas Profiling. Users can [import test suite results](Features.md#data-quality-test-results-import), both pre-defined Great Expectations PyLibs and custom DQ DAGs.
 ### Scenario
 1. My team’s pipeline is processing more then two billion of books orders daily and uses two OLTP systems and ten dimensional tables as its sources.
-2. I want to check the following DQ KPIs based on six DQ dimensions concept: \
+2. I want to check the following DQ KPIs based on six DQ dimensions: \
  - **Timeliness**: how much time does it take for an order to become available in my product? \
  - **Completeness**: do I have any missing values in the most crucial fields, e.g. date, book ID, amount, etc.? \
  - **Uniqueness**: do I have any duplicated book orders in my dataset? \

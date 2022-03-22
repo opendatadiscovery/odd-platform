@@ -2,7 +2,7 @@
 
 **Key words**: BI tool, data chart, performance tuning, data preparation, data load mode,  dashboard security level, underlying data.
 ### Challenge
-I am a Viz Engineer in a team that develops and maintains Tableau dashboards for book orders reporting and ad hoc monitoring of online store performance
+I am a Viz Engineer in a team that develops and maintains Tableau dashboards for book orders reporting and ad hoc monitoring of online store performance.
 I got a task from my stakeholders to introduce a dashboard that tracks digital inventory during high demand (Black Friday, Christmas or Valentines Day) and stays stable if 5+ people use the report simultaneously. Dashboard is expected to be refreshed near-real-time. 
 
 To build the dashboards I have to know the nature of the data since the majority of BI tools do not support complicated data preparation algorithms. I need to spend a lot of time on manual analysis of meta data and basic profiling.
