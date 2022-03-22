@@ -34,7 +34,6 @@ export const fetchCollectorsList = createThunk<
     pageInfo: {
       ...response.pageInfo,
       page: request.page,
-      hasNext: request.size * request.page < response.pageInfo.total,
     },
   })
 );
