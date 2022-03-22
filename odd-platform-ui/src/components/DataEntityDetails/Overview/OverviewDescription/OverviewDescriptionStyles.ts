@@ -8,9 +8,7 @@ export const CaptionContainer = styled('div')(({ theme }) => ({
   marginBottom: theme.spacing(0.5),
 }));
 
-export const Preview = styled(
-  ReactMarkdown
-)<ReactMarkdown.ReactMarkdownProps>(({ theme }) => ({
+export const Preview = styled(ReactMarkdown)(({ theme }) => ({
   fontSize: theme.typography.body1.fontSize,
   fontFamily: 'inherit',
   fontWeight: theme.typography.body1.fontWeight,
