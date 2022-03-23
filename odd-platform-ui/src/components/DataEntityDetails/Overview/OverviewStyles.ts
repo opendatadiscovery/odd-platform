@@ -1,7 +1,7 @@
-import { Paper } from '@mui/material';
+import AppPaper from 'components/shared/AppPaper/AppPaper';
 import styled from 'styled-components';
 
-export const SectionContainer = styled(Paper)(({ theme }) => ({
+export const SectionContainer = styled(AppPaper)(({ theme }) => ({
   '& > *': {
     padding: theme.spacing(2),
   },

@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.Namespace;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceList;
@@ -50,5 +51,12 @@ public class NamespaceMapperImpl implements NamespaceMapper {
         return new NamespaceList()
             .items(mapPojoList(pojos.getData()))
             .pageInfo(pageInfo(pojos));
+    }
+
+    @Override
+    public NamespacePojo createPojoByName(final String name) {
+        return StringUtils.isNotEmpty(name)
+            ? new NamespacePojo().setName(name)
+            : null;
     }
 }

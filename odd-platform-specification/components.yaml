@@ -662,6 +662,8 @@ components:
           format: int64
         namespace:
           $ref: '#/components/schemas/Namespace'
+        token:
+          $ref: '#/components/schemas/Token'
         oddrn:
           type: string
         name:
@@ -678,6 +680,7 @@ components:
           description: Pulling interval in seconds
       required:
         - id
+        - token
         - oddrn
         - name
         - active
@@ -734,6 +737,91 @@ components:
           type: integer
           format: int32
           description: Pulling interval in seconds
+        token:
+          $ref: '#/components/schemas/Token'
+
+    Token:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        value:
+          type: string
+        created_by:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_by:
+          type: string
+        updated_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - value
+        - created_at
+        - updated_at
+
+    CollectorList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Collector'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    Collector:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        token:
+          $ref: '#/components/schemas/Token'
+        name:
+          type: string
+        oddrn:
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - name
+        - oddrn
+        - token
+
+    CollectorFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        namespace_name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+
+    CollectorUpdateFormData:
+      type: object
+      properties:
+        description:
+          type: string
+        name:
+          type: string
+        namespace_name:
+          type: string
+        token:
+          $ref: '#/components/schemas/Token'
 
     PageInfo:
       type: object

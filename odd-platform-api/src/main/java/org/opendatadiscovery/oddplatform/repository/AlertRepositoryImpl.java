@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.CommonTableExpression;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -29,6 +30,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
@@ -239,6 +241,10 @@ public class AlertRepositoryImpl implements AlertRepository {
     @Override
     @Transactional
     public Collection<AlertPojo> createAlerts(final Collection<AlertPojo> alerts) {
+        if (CollectionUtils.isEmpty(alerts)) {
+            return emptyList();
+        }
+
         final Set<String> messengerOddrns = alerts.stream()
             .map(AlertPojo::getMessengerEntityOddrn)
             .filter(Objects::nonNull)

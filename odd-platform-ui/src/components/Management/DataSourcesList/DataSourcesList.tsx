@@ -25,7 +25,6 @@ interface DataSourcesListProps {
   fetchDataSourcesList: (
     params: DataSourceApiGetDataSourceListRequest
   ) => void;
-  isCreating: boolean;
   isDeleting: boolean;
   pageInfo?: CurrentPageInfo;
   isDataSourcesListFetching: boolean;
@@ -34,7 +33,6 @@ interface DataSourcesListProps {
 const DataSourcesListView: React.FC<DataSourcesListProps> = ({
   dataSourcesList,
   fetchDataSourcesList,
-  isCreating,
   isDeleting,
   pageInfo,
   isDataSourcesListFetching,
@@ -46,8 +44,10 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
   >(pageInfo?.total);
 
   React.useEffect(() => {
-    if (!searchText) fetchDataSourcesList({ page: 1, size: pageSize });
-  }, [fetchDataSourcesList, isCreating, isDeleting, searchText]);
+    if (!searchText) {
+      fetchDataSourcesList({ page: 1, size: pageSize });
+    }
+  }, [isDeleting, searchText]);
 
   React.useEffect(() => {
     if (!searchText) setTotalDataSources(pageInfo?.total);
@@ -126,33 +126,48 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
       </S.Caption>
       <Grid container>
         <Grid item xs={12}>
-          <InfiniteScroll
-            next={fetchNextPage}
-            hasMore={!!pageInfo?.hasNext}
-            loader={
-              isDataSourcesListFetching ? (
-                <SkeletonWrapper
-                  length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <DataSourceSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
-                  )}
+          {isDataSourcesListFetching ? (
+            <SkeletonWrapper
+              length={5}
+              renderContent={({ randomSkeletonPercentWidth, key }) => (
+                <DataSourceSkeletonItem
+                  width={randomSkeletonPercentWidth()}
+                  key={key}
                 />
-              ) : null
-            }
-            dataLength={dataSourcesList.length}
-          >
-            {dataSourcesList.map(dataSource => (
-              <Grid key={dataSource.id} sx={{ mb: 1 }}>
-                <DataSourceItemContainer
-                  key={dataSource.id}
-                  dataSource={dataSource}
-                />
-              </Grid>
-            ))}
-          </InfiniteScroll>
+              )}
+            />
+          ) : (
+            <InfiniteScroll
+              next={fetchNextPage}
+              hasMore={!!pageInfo?.hasNext}
+              loader={
+                isDataSourcesListFetching ? (
+                  <SkeletonWrapper
+                    length={5}
+                    renderContent={({
+                      randomSkeletonPercentWidth,
+                      key,
+                    }) => (
+                      <DataSourceSkeletonItem
+                        width={randomSkeletonPercentWidth()}
+                        key={key}
+                      />
+                    )}
+                  />
+                ) : null
+              }
+              dataLength={dataSourcesList.length}
+            >
+              {dataSourcesList.map(dataSource => (
+                <Grid key={dataSource.id} sx={{ mb: 1 }}>
+                  <DataSourceItemContainer
+                    key={dataSource.id}
+                    dataSource={dataSource}
+                  />
+                </Grid>
+              ))}
+            </InfiniteScroll>
+          )}
         </Grid>
       </Grid>
       {!isDataSourcesListFetching && !dataSourcesList.length ? (

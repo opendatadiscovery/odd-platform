@@ -17,10 +17,12 @@ import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.exception.EntityAlreadyExistsException;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataSourceRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
@@ -28,6 +30,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import static org.jooq.impl.DSL.field;
@@ -35,6 +38,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
+import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
 
 @Repository
 @RequiredArgsConstructor
@@ -45,13 +49,16 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     private final JooqQueryHelper jooqQueryHelper;
     private final JooqRecordHelper jooqRecordHelper;
     private final JooqFTSHelper jooqFTSHelper;
+    private final TokenRepository tokenRepository;
 
     @Override
     public Optional<DataSourceDto> get(final long id) {
         return dslContext.select(DATA_SOURCE.asterisk())
             .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(DATA_SOURCE)
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
             .where(DATA_SOURCE.ID.eq(id))
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchOptional(this::mapRecord);
@@ -61,8 +68,10 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     public List<DataSourceDto> list() {
         return dslContext.select(DATA_SOURCE.asterisk())
             .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(DATA_SOURCE)
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
             .where(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchStream()
             .map(this::mapRecord)
@@ -73,8 +82,10 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     public List<DataSourceDto> list(final String query) {
         return dslContext.select(DATA_SOURCE.asterisk())
             .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(DATA_SOURCE)
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
             .where(queryCondition(query))
             .fetchStream()
             .map(this::mapRecord)
@@ -96,8 +107,10 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             .as(dataSourceSelect)
             .select(dataSourceCTE.fields())
             .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(dataSourceCTE.getName())
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(dataSourceCTE.field(DATA_SOURCE.NAMESPACE_ID)))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(dataSourceCTE.field(DATA_SOURCE.TOKEN_ID)))
             .fetchStream()
             .collect(Collectors.toList());
 
@@ -115,10 +128,14 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             ? namespaceRepository.createIfNotExists(dto.namespace())
             : null;
 
+        final TokenDto token = tokenRepository.create(dto.token().tokenPojo());
+
         final DataSourcePojo dsPojo = dto.dataSource();
 
-        final Condition checkIfExistsCondition = dsPojo.getConnectionUrl() != null
-            ? DATA_SOURCE.CONNECTION_URL.eq(dsPojo.getConnectionUrl()) : DATA_SOURCE.ODDRN.eq(dsPojo.getOddrn());
+        final boolean isConnectionUrlExists = dsPojo.getConnectionUrl() != null && !dsPojo.getConnectionUrl().isEmpty();
+        final Condition checkIfExistsCondition = isConnectionUrlExists
+            ? DATA_SOURCE.CONNECTION_URL.eq(dsPojo.getConnectionUrl())
+            : DATA_SOURCE.ODDRN.eq(dsPojo.getOddrn());
 
         return dslContext.selectFrom(DATA_SOURCE)
             .where(checkIfExistsCondition)
@@ -127,10 +144,9 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
                 if (!ds.getIsDeleted()) {
                     throw new EntityAlreadyExistsException();
                 }
-
-                return persist(ds.getId(), dsPojo, namespace);
+                return persist(ds.getId(), dsPojo, namespace, token);
             })
-            .orElseGet(() -> persist(dsPojo, namespace));
+            .orElseGet(() -> persist(dsPojo, namespace, token));
     }
 
     @Override
@@ -144,7 +160,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             .where(DATA_SOURCE.ID.eq(dto.dataSource().getId()))
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchOptionalInto(DataSourcePojo.class)
-            .map(ds -> update(ds, dto, namespace))
+            .map(ds -> update(ds, dto, namespace, dto.token()))
             .orElseThrow(() -> {
                 throw new NotFoundException();
             });
@@ -152,8 +168,9 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
 
     private DataSourceDto update(final DataSourcePojo existing,
                                  final DataSourceDto delta,
-                                 final NamespacePojo namespace) {
-        final DataSourceDto updatedDs = persist(existing.getId(), delta.dataSource(), namespace);
+                                 final NamespacePojo namespace,
+                                 final TokenDto tokenDto) {
+        final DataSourceDto updatedDs = persist(existing.getId(), delta.dataSource(), namespace, tokenDto);
 
         final Field<Long> deId = field("data_entity_id", Long.class);
 
@@ -189,6 +206,9 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
 
     @Override
     public List<DataSourceDto> bulkCreate(final Collection<DataSourceDto> pojos) {
+        if (CollectionUtils.isEmpty(pojos)) {
+            return List.of();
+        }
         final List<DataSourceRecord> records = pojos.stream()
             .map(dto -> pojoToRecord(dto.dataSource()))
             .toList();
@@ -234,8 +254,10 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         return dslContext
             .select(DATA_SOURCE.asterisk())
             .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(DATA_SOURCE)
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
             .where(DATA_SOURCE.ODDRN.eq(oddrn))
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .fetchOptional()
@@ -249,8 +271,13 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         if (!includeDeleted) {
             conditions.add(DATA_SOURCE.IS_DELETED.isFalse());
         }
-        return dslContext.select()
+        return dslContext
+            .select(DATA_SOURCE.asterisk())
+            .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(DATA_SOURCE)
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
             .where(conditions)
             .fetchStream()
             .map(this::mapRecord)
@@ -262,8 +289,10 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
         return dslContext
             .select(DATA_SOURCE.asterisk())
             .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
             .from(DATA_SOURCE)
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
             .where(DATA_SOURCE.ACTIVE.isTrue())
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .and(DATA_SOURCE.CONNECTION_URL.isNotNull())
@@ -299,11 +328,28 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             .execute();
     }
 
-    private DataSourceDto persist(final DataSourcePojo dataSource, final NamespacePojo namespace) {
-        return persist(null, dataSource, namespace);
+    @Override
+    public void setTokenFromCollector(final List<String> dataSourceOddrns, final Long tokenId) {
+        dslContext.update(DATA_SOURCE)
+            .set(DATA_SOURCE.TOKEN_ID, tokenId)
+            .where(DATA_SOURCE.ODDRN.in(dataSourceOddrns))
+            .execute();
     }
 
-    private DataSourceDto persist(final Long dsId, final DataSourcePojo dataSource, final NamespacePojo namespace) {
+    private DataSourceDto persist(
+        final DataSourcePojo dataSource,
+        final NamespacePojo namespace,
+        final TokenDto tokenDto
+    ) {
+        return persist(null, dataSource, namespace, tokenDto);
+    }
+
+    private DataSourceDto persist(
+        final Long dsId,
+        final DataSourcePojo dataSource,
+        final NamespacePojo namespace,
+        final TokenDto tokenDto
+    ) {
         final DataSourceRecord record = pojoToRecord(dataSource);
 
         record.set(DATA_SOURCE.IS_DELETED, false);
@@ -318,9 +364,13 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
             record.set(DATA_SOURCE.NAMESPACE_ID, namespace.getId());
         }
 
+        if (tokenDto != null && tokenDto.tokenPojo() != null) {
+            record.set(DATA_SOURCE.TOKEN_ID, tokenDto.tokenPojo().getId());
+        }
+
         record.store();
 
-        return new DataSourceDto(recordToPojo(record), namespace);
+        return new DataSourceDto(recordToPojo(record), namespace, tokenDto);
     }
 
     private Long fetchCount(final String query) {
@@ -341,16 +391,20 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     }
 
     private DataSourceDto mapRecord(final Record record, final String dataSourceCteName) {
+        final TokenPojo tokenPojo = jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class);
         return new DataSourceDto(
             jooqRecordHelper.remapCte(record, dataSourceCteName, DATA_SOURCE).into(DataSourcePojo.class),
-            record.into(NAMESPACE).into(NamespacePojo.class)
+            record.into(NAMESPACE).into(NamespacePojo.class),
+            tokenPojo != null ? new TokenDto(tokenPojo) : null
         );
     }
 
     private DataSourceDto mapRecord(final Record record) {
+        final TokenPojo tokenPojo = jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class);
         return new DataSourceDto(
             record.into(DATA_SOURCE).into(DataSourcePojo.class),
-            record.into(NAMESPACE).into(NamespacePojo.class)
+            record.into(NAMESPACE).into(NamespacePojo.class),
+            tokenPojo != null ? new TokenDto(tokenPojo) : null
         );
     }
 

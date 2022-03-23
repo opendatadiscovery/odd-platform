@@ -15,7 +15,7 @@ public class DataSourceIngestionMapperImpl implements DataSourceIngestionMapper 
             .setName(ds.getName())
             .setActive(true)
             .setDescription(ds.getDescription());
-        return new DataSourceDto(dataSourcePojo, null);
+        return new DataSourceDto(dataSourcePojo, null, null);
     }
 
     @Override
