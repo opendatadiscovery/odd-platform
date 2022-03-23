@@ -154,9 +154,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
 
   const loadMoreButtonHandler = () => {
     if (parent?.children) {
-      fetchMoreLineage(data.id, parent?.children[0].depth).then(() =>
-        setShowLoadMore(false)
-      );
+      fetchMoreLineage(data.id, 1).then(() => setShowLoadMore(false));
     }
   };
 
