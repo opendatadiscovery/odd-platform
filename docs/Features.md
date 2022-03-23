@@ -8,7 +8,7 @@
 [ML Experiment Logging](#ml-experiment-logging) \
 [Pipeline Monitoring and Alerting](#pipeline-monitoring-and-alerting) 
 ## Federation Data Catalog
-> :heavy_exclamation_mark: Coming soon! The description below is for informational purposes only.
+> :exclamation: Coming soon! The description below is for informational purposes only.
 
 The Catalog is a tool which helps to bring distributed catalogs together in the Platform. \
 \
