@@ -22,6 +22,11 @@
       "git add"
     ]
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run tsc --noEmit && lint-staged"
+    }
+  },
   "eslintConfig": {
     "extends": "react-app"
   },
