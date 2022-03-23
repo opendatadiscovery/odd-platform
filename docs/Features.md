@@ -63,7 +63,7 @@ The Catalog is a tool which helps to bring distributed catalogs together in the 
 \
 **How it works.** You connect each catalog to the Platform &rarr; It pulls the data without postprocessing (statistics creation and data cleansing are not supported) to save in ODD servers &rarr; The data from each source automatically occurs in a Platform account. \
 \
-To collect data from decentralized sources ODD uses a pull strategy ([read more](architecture.md#push-and-pull-strategies) about the strategies). \
+To collect data from decentralized sources ODD uses a pull strategy ([read more](architecture.md) about the strategies). \
 To connect your data sources with the Platform use the [API](https://github.com/opendatadiscovery/odd-platform/tree/main/odd-platform-specification). 
 
 <!---
