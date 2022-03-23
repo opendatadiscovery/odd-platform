@@ -5,7 +5,7 @@
 ### Challenge
 As a Service provider or IT consultancy, I often mention that a scope of work refined in Pre-Sales provokes the following problems:
 * drastic changes during Discovery / Implementation / Handover phase
-* contradicts with existent architectural landscape and best practices of organization
+* conflicts between an existent architectural landscape and best practices of organization
 ### Solution
 The ODD Platform provides an [API](https://github.com/opendatadiscovery/odd-platform/tree/main/odd-platform-specification) to gather details on existing architectural  landscape and toolset available in organization, so that I have better planning and therefore better customer relations.
 ### Scenario
