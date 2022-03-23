@@ -7,7 +7,7 @@ As a Service provider or IT consultancy, I often mention that a scope of work re
 * drastic changes during Discovery / Implementation / Handover phase
 * contradicts with existent architectural landscape and best practices of organization
 ### Solution
-The ODD Platform provides an API to gather details on existing architectural  landscape and toolset available in organization, so that I have better planning and therefore better customer relations.
+The ODD Platform provides an [API](https://github.com/opendatadiscovery/odd-platform/tree/main/odd-platform-specification) to gather details on existing architectural  landscape and toolset available in organization, so that I have better planning and therefore better customer relations.
 ### Scenario
 1. As a service provider, I usually engage in Pre-sales to facilitate with a potential client, estimate the scope of work, decide on the team setup and suggest solution design.
 2. My company has encountered situations when: \
@@ -16,7 +16,7 @@ The ODD Platform provides an API to gather details on existing architectural  la
  - Enhancement/change request costs. \
  - Potential monetary, reputational and legal losses may occur.
 3. I am sure that the above mentioned situations happen due to miscommunication or a technical proficiency level of people I am engaging with during Pre-Sales and not the quality of services I am providing.
-4. To improve my Pre-sales processes I ask my clients to integrate the ODD API with their data landscapes. This helps me gather information on: \
+4. To improve my Pre-sales processes I ask my clients to integrate the ODD [API](https://github.com/opendatadiscovery/odd-platform/tree/main/odd-platform-specification) with their data landscapes. This helps me gather information on: \
  - Microservices / tools client is using, so that I set my project team right \
  - Level of maturity / landscape complexity, so that I can propose appropriate solutions given the time and budget constraints.
 

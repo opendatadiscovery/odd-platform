@@ -36,7 +36,7 @@ The picture below shows the process of metadata ingestion.
 Monitor test suite results in the Platform and at the same don't think about masking or removing sensitive data. Your datasets don't migrate to your ODD Platform installation, it gathers test results only. \
 The Platform is compatible with **Pandas** and **Great expectations**.
 
-## Pipeline monitoring and alerting 
+## Pipeline Monitoring and Alerting 
 Running your pipelines are easier with manageable parameters available in ODD. For example, you may track modifications of your dataset using a revision history option. Also the Platform represents metadata of your entities such as table structure, field type, description and versions.
 ### Alerting 
 In the Platform you may find two types of alerts: 
