@@ -8,6 +8,8 @@
 [ML Experiment Logging](#ml-experiment-logging) \
 [Pipeline Monitoring and Alerting](#pipeline-monitoring-and-alerting) 
 ## Federation Data Catalog
+> :information_source: **test**:
+
 The Catalog is a tool which helps to bring distributed catalogs together in the Platform. \
 \
 **How it works.** You connect each catalog to the Platform &rarr; It pulls the data without postprocessing (statistics creation and data cleansing are not supported) to save in ODD servers &rarr; The data from each source automatically occurs in a Platform account. \
