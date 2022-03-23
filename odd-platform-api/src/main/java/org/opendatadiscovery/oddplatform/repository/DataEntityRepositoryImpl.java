@@ -1017,9 +1017,13 @@ public class DataEntityRepositoryImpl
             .where(ListUtils.emptyIfNull(config.getSelectConditions()))
             .groupBy(selectFields);
 
-        return config.getFts() != null
-            ? groupByStep.orderBy(jooqQueryHelper.getField(deCte, config.getFts().rankFieldAlias()).desc())
-            : groupByStep;
+        final List<OrderField<?>> orderFields = new ArrayList<>();
+        if (config.getFts() != null) {
+            orderFields.add(jooqQueryHelper.getField(deCte, config.getFts().rankFieldAlias()).desc());
+        }
+        orderFields.add(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID).desc());
+
+        return groupByStep.orderBy(orderFields);
     }
 
     private Field<Boolean> hasAlerts(final Table<Record> deCte) {
@@ -1407,9 +1411,9 @@ public class DataEntityRepositoryImpl
             orderFields.add(config.getOrderBy());
         }
 
-        if (!orderFields.isEmpty()) {
-            dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect).orderBy(orderFields);
-        }
+        orderFields.add(DATA_ENTITY.ID.desc());
+
+        dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect).orderBy(orderFields);
 
         if (config.getCteLimitOffset() != null) {
             dataEntitySelect = ((SelectConditionStep<Record>) dataEntitySelect)

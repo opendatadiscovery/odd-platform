@@ -10,7 +10,7 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import * as S from './TagEditFormStyles';
+import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
 
 interface TagEditFormProps {
   editBtn: JSX.Element;
@@ -86,7 +86,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
           />
         )}
       />
-      <Box sx={{ mt: 1, ml: 1.75 }}>
+      <Box sx={{ mt: 1 }}>
         <Controller
           name="important"
           control={control}
@@ -95,8 +95,9 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
             <FormControlLabel
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
+              sx={{ ml: -0.25 }}
               checked={field.value}
-              control={<S.ImportantCheckbox sx={{ mr: 1 }} />}
+              control={<AppCheckbox sx={{ mr: 1 }} />}
               label="Important"
             />
           )}

@@ -56,7 +56,6 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
         assertThat(actualRolePojo).isNotNull();
         assertThat(actualRolePojo.getName()).isNotNull()
             .isEqualTo(savedRole.getName());
-        ;
         assertThat(actualRolePojo.getId()).isNotNull()
             .isEqualTo(savedRole.getId());
     }

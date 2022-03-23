@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactMde from 'react-mde';
-import gfm from 'remark-gfm';
 import { Grid, Typography } from '@mui/material';
 import {
   DataEntityApiUpsertDataEntityInternalDescriptionRequest,
@@ -12,6 +11,7 @@ import AddIcon from 'components/shared/Icons/AddIcon';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
 import AppButton from 'components/shared/AppButton/AppButton';
+import remarkGfm from 'remark-gfm';
 import {
   CaptionContainer,
   FormActions,
@@ -64,13 +64,9 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
 
   const getPreview = React.useCallback(
     () => (
-      <Preview
-        plugins={[gfm]}
-        className="markdown-body"
-        source={
-          editMode ? internalDescription : dataEntityInternalDescription
-        }
-      />
+      <Preview remarkPlugins={[remarkGfm]} className="markdown-body">
+        {editMode ? internalDescription : dataEntityInternalDescription}
+      </Preview>
     ),
     [dataEntityInternalDescription, internalDescription, editMode]
   );
@@ -159,11 +155,9 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
         <div>
           <Typography variant="h4">Pre-defined</Typography>
           <Typography variant="subtitle1">
-            <Preview
-              className="markdown-body"
-              plugins={[gfm]}
-              source={dataEntityExternalDescription}
-            />
+            <Preview className="markdown-body" remarkPlugins={[remarkGfm]}>
+              {dataEntityExternalDescription}
+            </Preview>
           </Typography>
         </div>
       ) : null}

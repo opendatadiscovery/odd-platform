@@ -11,6 +11,7 @@ import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import TestReportDetailsOverviewContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewContainer';
 import TestReportDetailsHistoryContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistoryContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 
 interface TestRunDetailsProps {
   dataQATestId: number;
@@ -54,15 +55,25 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
 
   return (
     <Grid container sx={{ p: 2 }}>
-      <Grid container justifyContent="space-between">
-        <Typography variant="h2">
-          {qualityTest?.internalName || qualityTest?.externalName}
-        </Typography>
-        <Link to={dataEntityDetailsPath(dataQATestId)}>
-          <AppButton size="small" color="tertiary">
-            Go to page
-          </AppButton>
-        </Link>
+      <Grid container alignItems="center" justifyContent="space-between">
+        <Grid item xs={9}>
+          <AppTooltip
+            title={() =>
+              qualityTest?.internalName || qualityTest?.externalName
+            }
+          >
+            <Typography noWrap variant="h2">
+              {qualityTest?.internalName || qualityTest?.externalName}
+            </Typography>
+          </AppTooltip>
+        </Grid>
+        <Grid item xs={2}>
+          <Link to={dataEntityDetailsPath(dataQATestId)}>
+            <AppButton size="small" color="tertiary">
+              Go to page
+            </AppButton>
+          </Link>
+        </Grid>
       </Grid>
       <Grid container wrap="wrap" justifyContent="center" sx={{ mt: 2 }}>
         {tabs.length && selectedTab >= 0 ? (

@@ -29,6 +29,7 @@ tags:
   - name: datasetField
   - name: alert
   - name: appInfo
+  - name: collector
 paths:
   /api/identity/whoami:
     get:
@@ -582,6 +583,128 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - dataSource
+  /api/datasources/{data_source_id}/token:
+    put:
+      summary: Regenerate data source token
+      description: Regenerate data source token
+      operationId: regenerateDataSourceToken
+      parameters:
+        - name: data_source_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSource'
+      tags:
+        - dataSource
+  /api/collectors:
+    get:
+      summary: List of collectors
+      description: Gets the list of available collectors
+      operationId: getCollectorsList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/CollectorList'
+      tags:
+        - collector
+    post:
+      summary: Register new collector
+      description: Registers a collector
+      operationId: registerCollector
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/CollectorFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Collector'
+      tags:
+        - collector
+  /api/collectors/{collector_id}:
+    put:
+      summary: Update collector
+      description: Updates collector
+      operationId: updateCollector
+      parameters:
+        - name: collector_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/CollectorUpdateFormData'
+      responses:
+        '201':
+          description: The resource has been successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Collector'
+      tags:
+        - collector
+    delete:
+      summary: Delete collector
+      description: Deletes collector
+      operationId: deleteCollector
+      parameters:
+        - name: collector_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - collector
+  /api/collectors/{collector_id}/token:
+    put:
+      summary: Regenerate collector token
+      description: Regenerate collector token
+      operationId: regenerateCollectorToken
+      parameters:
+        - name: collector_id
+          in: path
+          schema:
+            type: integer
+            format: int64
+          required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Collector'
+      tags:
+        - collector
   /api/search:
     post:
       summary: Search by query
@@ -1233,58 +1356,6 @@ paths:
               schema:
                 $ref: './components.yaml/#/components/schemas/MetadataFieldList'
 
-      tags:
-        - metadata
-    post:
-      summary: Create new custom metadata field
-      description: Creates new custom metadata field
-      operationId: createCustomField
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/MetadataFieldFormData'
-      responses:
-        '201':
-          description: The resource has been successfully created
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/MetadataField'
-      tags:
-        - metadata
-  /api/metadata/fields/{metadata_field_id}:
-    put:
-      summary: Update custom metadata field
-      description: Updates custom metadata field
-      operationId: updateCustomField
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DataEntityMetadataFieldIdParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/MetadataUpdateCustomFieldFormData'
-      responses:
-        '201':
-          description: The resource has been successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/MetadataField'
-      tags:
-        - metadata
-    delete:
-      summary: Delete custom metadata field
-      description: Deletes custom metadata field
-      operationId: deleteCustomField
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DataEntityMetadataFieldIdParam'
-      responses:
-        '204':
-          $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - metadata
   /api/datasetfields/{dataset_field_id}:

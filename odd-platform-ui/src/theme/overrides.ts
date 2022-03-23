@@ -1,12 +1,6 @@
 import { Components } from '@mui/material';
 
 export const components: Components = {
-  MuiButtonBase: {
-    defaultProps: {
-      disableRipple: true,
-      disableTouchRipple: true,
-    },
-  },
   MuiAutocomplete: {
     styleOverrides: {
       endAdornment: { top: 'calc(50% - 12px)' },
@@ -20,60 +14,6 @@ export const components: Components = {
         '&:hover': {
           backgroundColor: 'transparent',
           color: '#42526E',
-        },
-      },
-    },
-  },
-  MuiCheckbox: {
-    styleOverrides: {
-      root: {
-        color: '#B3BAC5',
-      },
-      colorSecondary: {
-        '&:hover': {
-          backgroundColor: 'unset',
-        },
-        '&$checked:hover': {
-          backgroundColor: 'unset !important',
-        },
-        '&$checked': {
-          color: '#0080FF',
-        },
-      },
-    },
-  },
-  MuiLink: {
-    styleOverrides: {
-      root: {
-        textUnderlineOffset: '3px',
-      },
-    },
-  },
-  MuiPaper: {
-    styleOverrides: {
-      root: {
-        border: ' 1px solid #EBECF0',
-        borderRadius: '4px',
-      },
-      elevation9: {
-        borderRadius: '8px',
-      },
-    },
-  },
-  MuiList: {
-    styleOverrides: {
-      padding: { paddingTop: 0, paddingBottom: 0 },
-      root: {
-        '& > option': {
-          cursor: 'pointer',
-          height: '24px',
-          padding: '4px 8px',
-          '&:hover': {
-            backgroundColor: '#F4F5F7',
-          },
-          '&:active': {
-            backgroundColor: '#EBECF0',
-          },
         },
       },
     },

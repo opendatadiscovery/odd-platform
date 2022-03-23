@@ -22,7 +22,10 @@ export const Container = styled(Grid)<{
       alignItems: 'center',
     };
 
-  return { alignItems: 'flex-start', flexDirection: 'column' };
+  return {
+    alignItems: 'flex-start',
+    flexDirection: 'column',
+  };
 });
 
 export const Label = styled(Typography)<{ component: ElementType }>(

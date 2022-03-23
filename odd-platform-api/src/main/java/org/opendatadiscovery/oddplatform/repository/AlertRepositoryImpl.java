@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.CommonTableExpression;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -29,6 +30,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
@@ -59,7 +61,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         final List<AlertDto> data = baseAlertSelect(selectFields)
             .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
-            .orderBy(ALERT.CREATED_AT.desc())
+            .orderBy(ALERT.CREATED_AT.desc(), ALERT.ID.desc())
             .offset((page - 1) * size)
             .limit(size)
             .fetchStream()
@@ -89,7 +91,7 @@ public class AlertRepositoryImpl implements AlertRepository {
             .where(OWNERSHIP.OWNER_ID.eq(ownerId))
             .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
-            .orderBy(ALERT.CREATED_AT.desc())
+            .orderBy(ALERT.CREATED_AT.desc(), ALERT.ID.desc())
             .offset((page - 1) * size)
             .limit(size)
             .fetchStream()
@@ -145,6 +147,9 @@ public class AlertRepositoryImpl implements AlertRepository {
             .where(DATA_ENTITY.ODDRN.notIn(ownOddrns))
             .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .groupBy(selectFields)
+            .orderBy(ALERT.CREATED_AT.desc(), ALERT.ID.desc())
+            .offset((page - 1) * size)
+            .limit(size)
             .fetch(this::mapRecord);
 
         return Page.<AlertDto>builder()
@@ -236,6 +241,10 @@ public class AlertRepositoryImpl implements AlertRepository {
     @Override
     @Transactional
     public Collection<AlertPojo> createAlerts(final Collection<AlertPojo> alerts) {
+        if (CollectionUtils.isEmpty(alerts)) {
+            return emptyList();
+        }
+
         final Set<String> messengerOddrns = alerts.stream()
             .map(AlertPojo::getMessengerEntityOddrn)
             .filter(Objects::nonNull)

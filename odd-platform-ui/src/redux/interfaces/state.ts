@@ -15,6 +15,7 @@ import {
   DataSetTestReport,
   DataSetVersion,
   DataSource,
+  Collector,
   EnumValue,
   Label,
   MetadataField,
@@ -42,6 +43,12 @@ import { LoaderState } from './loader';
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
   allIds: DataSource['id'][];
+  pageInfo?: CurrentPageInfo;
+}
+
+export interface CollectorsState {
+  byId: { [collectorId: string]: Collector };
+  allIds: Collector['id'][];
   pageInfo?: CurrentPageInfo;
 }
 
@@ -185,6 +192,7 @@ export interface AlertsState {
 export interface ProfileState {
   owner?: AssociatedOwner;
 }
+
 export interface AppInfoState {
   appInfo?: AppInfo;
 }
@@ -206,6 +214,7 @@ export type RootState = {
   dataQualityTest: DataQualityTestState;
   alerts: AlertsState;
   dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
+  collectors: CollectorsState;
 };
 
 export type Action = ActionType<typeof actions>;

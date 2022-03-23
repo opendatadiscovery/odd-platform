@@ -2,14 +2,13 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
+import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
@@ -17,22 +16,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DataSourceMapperImpl implements DataSourceMapper {
     private final NamespaceMapper namespaceMapper;
+    private final TokenMapper tokenMapper;
 
     @Override
     public DataSourceDto mapForm(final DataSourceFormData form) {
-        final DataSourcePojo dataSourcePojo = new DataSourcePojo()
-            .setName(form.getName())
-            .setOddrn(form.getOddrn())
-            .setDescription(form.getDescription())
-            .setActive(form.getActive())
-            .setConnectionUrl(form.getConnectionUrl())
-            .setPullingInterval(form.getPullingInterval());
+        return getDataSourceDto(form, null);
+    }
 
-        final NamespacePojo namespace = StringUtils.isNotEmpty(form.getNamespaceName())
-            ? new NamespacePojo().setName(form.getNamespaceName())
-            : null;
-
-        return new DataSourceDto(dataSourcePojo, namespace);
+    @Override
+    public DataSourceDto mapForm(final DataSourceFormData form, final TokenDto tokenDto) {
+        return getDataSourceDto(form, tokenDto);
     }
 
     @Override
@@ -44,11 +37,9 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .setPullingInterval(form.getPullingInterval())
             .setActive(form.getActive());
 
-        final NamespacePojo namespace = StringUtils.isNotEmpty(form.getNamespaceName())
-            ? new NamespacePojo().setName(form.getNamespaceName())
-            : null;
-
-        return new DataSourceDto(dataSourcePojo, namespace);
+        return new DataSourceDto(dataSourcePojo,
+            namespaceMapper.createPojoByName(form.getNamespaceName()),
+            pojo.token());
     }
 
     @Override
@@ -63,7 +54,8 @@ public class DataSourceMapperImpl implements DataSourceMapper {
             .connectionUrl(dsPojo.getConnectionUrl())
             .namespace(namespaceMapper.mapPojo(dto.namespace()))
             .pullingInterval(dsPojo.getPullingInterval())
-            .active(dsPojo.getActive());
+            .active(dsPojo.getActive())
+            .token(tokenMapper.mapDtoToToken(dto.token()));
     }
 
     @Override
@@ -78,5 +70,17 @@ public class DataSourceMapperImpl implements DataSourceMapper {
         return new DataSourceList()
             .items(mapPojoList(pojos.getData()))
             .pageInfo(pageInfo(pojos));
+    }
+
+    private DataSourceDto getDataSourceDto(final DataSourceFormData form, final TokenDto tokenDto) {
+        final DataSourcePojo dataSourcePojo = new DataSourcePojo()
+            .setName(form.getName())
+            .setOddrn(form.getOddrn())
+            .setDescription(form.getDescription())
+            .setActive(form.getActive())
+            .setConnectionUrl(form.getConnectionUrl())
+            .setPullingInterval(form.getPullingInterval());
+
+        return new DataSourceDto(dataSourcePojo, namespaceMapper.createPojoByName(form.getNamespaceName()), tokenDto);
     }
 }

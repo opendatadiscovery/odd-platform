@@ -71,6 +71,7 @@ dependencies {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
+    testImplementation("io.projectreactor:reactor-test")
 
     testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
     testImplementation "org.testcontainers:postgresql:$testContainersVersion"

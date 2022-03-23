@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
+import org.opendatadiscovery.oddplatform.service.DataSourceIngestionService;
 import org.opendatadiscovery.oddplatform.service.IngestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +19,7 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 public class IngestionController implements IngestionApi {
     private final IngestionService ingestionService;
+    private final DataSourceIngestionService dataSourceIngestionService;
 
     @Override
     public Mono<ResponseEntity<Void>> postDataEntityList(
@@ -28,5 +31,14 @@ public class IngestionController implements IngestionApi {
             .doOnError(t -> log.error(t.getMessage()))
             .flatMap(ingestionService::ingest)
             .map(voidMono -> ResponseEntity.ok().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> createDataSource(@Valid final Mono<DataSourceList> dataSourceList,
+                                                       final ServerWebExchange exchange) {
+        return dataSourceList
+            .publishOn(Schedulers.boundedElastic())
+            .flatMap(dataSourceIngestionService::createDataSourcesFromIngestion)
+            .map(ignored -> ResponseEntity.ok().build());
     }
 }

@@ -10,9 +10,10 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormContainer';
+import DataSourceItemTokenContainer from './DataSourceItemToken/DataSourceItemTokenContainer';
 import * as S from './DataSourceItemStyles';
 
 interface DataSourceItemProps {
@@ -100,6 +101,14 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
             labelWidth={4}
           >
             {dataSource.namespace?.name}
+          </LabeledInfoItem>
+          <LabeledInfoItem
+            variant="body2"
+            inline
+            label="Token"
+            labelWidth={4}
+          >
+            <DataSourceItemTokenContainer dataSource={dataSource} />
           </LabeledInfoItem>
         </S.DescriptionContainer>
 
