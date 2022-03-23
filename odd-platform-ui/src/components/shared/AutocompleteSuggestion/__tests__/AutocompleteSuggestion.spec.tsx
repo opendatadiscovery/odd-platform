@@ -8,9 +8,7 @@ import AutocompleteSuggestion, {
 describe('AutocompleteSuggestion', () => {
   const setupComponent = (props?: Partial<AutocompleteSuggestionProps>) =>
     render(
-      <AutocompleteSuggestion optionLabel="" optionName="" {...props}>
-        AutocompleteSuggestionChild
-      </AutocompleteSuggestion>
+      <AutocompleteSuggestion optionLabel="" optionName="" {...props} />
     );
 
   it('AutocompleteSuggestion renders correctly ', () => {
