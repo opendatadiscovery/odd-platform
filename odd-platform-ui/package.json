@@ -14,7 +14,8 @@
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "prepare": "chmod u+x .husky/prepare.sh && .husky/prepare.sh",
-    "pre-commit": "npm run tsc --noEmit && lint-staged"
+    "pre-commit": "npm run tsc --noEmit && lint-staged",
+    "preinstall": "npm install husky"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
