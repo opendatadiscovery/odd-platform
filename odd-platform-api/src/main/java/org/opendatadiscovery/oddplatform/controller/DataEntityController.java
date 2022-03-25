@@ -6,12 +6,12 @@ import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTagsFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -153,9 +153,9 @@ public class DataEntityController
     }
 
     @Override
-    public Mono<ResponseEntity<DataEntityTypeDictionary>> getDataEntityTypes(final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<DataEntityDictionary>> getDataEntityClasses(final ServerWebExchange exchange) {
         return entityService
-            .getDataEntityTypes()
+            .getDataEntityClassesAndTypes()
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
@@ -219,8 +219,8 @@ public class DataEntityController
                                                                   final Integer size,
                                                                   final ServerWebExchange exchange) {
         return Mono.just(entityService
-            .listAssociated(page, size)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .listAssociated(page, size)
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 
@@ -229,8 +229,8 @@ public class DataEntityController
                                                                                 final Integer size,
                                                                                 final ServerWebExchange exchange) {
         return Mono.just(entityService
-            .listAssociated(page, size, LineageStreamKind.DOWNSTREAM)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .listAssociated(page, size, LineageStreamKind.DOWNSTREAM)
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 
@@ -239,8 +239,8 @@ public class DataEntityController
                                                                               final Integer size,
                                                                               final ServerWebExchange exchange) {
         return Mono.just(entityService
-            .listAssociated(page, size, LineageStreamKind.UPSTREAM)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .listAssociated(page, size, LineageStreamKind.UPSTREAM)
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 
@@ -249,7 +249,7 @@ public class DataEntityController
                                                                 final Integer size,
                                                                 final ServerWebExchange exchange) {
         return Mono.just(entityService.listPopular(page, size)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 

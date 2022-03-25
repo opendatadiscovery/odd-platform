@@ -11,12 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTagsFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -27,9 +27,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUp
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
@@ -97,7 +97,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<DataEntityTypeDictionary> getDataEntityTypes() {
+    public Mono<DataEntityDictionary> getDataEntityClassesAndTypes() {
         return Mono.just(entityMapper.getTypeDict());
     }
 
@@ -110,7 +110,7 @@ public class DataEntityServiceImpl
                 : Mono.just(optional.get()))
             .map(this::incrementViewCount)
             .map(dto -> {
-                if (ArrayUtils.contains(dto.getDataEntity().getTypeIds(), DataEntityTypeDto.DATA_SET)) {
+                if (ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(), DataEntityClassDto.DATA_SET)) {
                     final Long targetCount = lineageRepository.getTargetsCount(dataEntityId).orElse(0L);
 
                     final DataSetDetailsDto oldDetails = dto.getDataSetDetailsDto();
@@ -133,10 +133,10 @@ public class DataEntityServiceImpl
     @Override
     public Mono<DataEntityList> list(final Integer page,
                                      final Integer size,
-                                     final int entityType,
-                                     final Integer entitySubType) {
+                                     final int entityClassId,
+                                     final Integer entityTypeId) {
         return Mono
-            .fromCallable(() -> entityRepository.listByType(page, size, entityType, entitySubType))
+            .fromCallable(() -> entityRepository.listByEntityClass(page, size, entityClassId, entityTypeId))
             .map(entityMapper::mapPojos);
     }
 
@@ -166,7 +166,7 @@ public class DataEntityServiceImpl
     @Override
     @Transactional
     public Mono<MetadataFieldValueList> createMetadata(final long dataEntityId,
-                                                 final List<MetadataObject> metadataList) {
+                                                       final List<MetadataObject> metadataList) {
         final Map<MetadataKey, MetadataObject> metadataObjectMap = metadataList.stream()
             .collect(Collectors.toMap(MetadataKey::new, identity(), (m1, m2) -> m2));
 
@@ -280,8 +280,8 @@ public class DataEntityServiceImpl
     @Override
     @Transactional
     public Mono<MetadataFieldValue> upsertMetadataFieldValue(final long dataEntityId,
-                                                       final long metadataFieldId,
-                                                       final MetadataFieldValueUpdateFormData formData) {
+                                                             final long metadataFieldId,
+                                                             final MetadataFieldValueUpdateFormData formData) {
         final MetadataFieldValuePojo metadataFieldValuePojo = new MetadataFieldValuePojo()
             .setDataEntityId(dataEntityId)
             .setMetadataFieldId(metadataFieldId)

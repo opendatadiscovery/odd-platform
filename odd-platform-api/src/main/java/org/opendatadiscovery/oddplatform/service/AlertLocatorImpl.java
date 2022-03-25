@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.SetUtils;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
-import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
@@ -58,11 +58,11 @@ public class AlertLocatorImpl implements AlertLocator {
     @Override
     public List<AlertPojo> locateEarlyBackIncSchema(final List<DataEntitySpecificAttributesDelta> deltas) {
         final Stream<AlertPojo> transformerAlerts = deltas.stream()
-            .filter(d -> d.types().contains(DataEntityTypeDto.DATA_TRANSFORMER))
+            .filter(d -> d.entityClasses().contains(DataEntityClassDto.DATA_TRANSFORMER))
             .flatMap(this::locateAlertsInDTDelta);
 
         final Stream<AlertPojo> consumerAlerts = deltas.stream()
-            .filter(d -> d.types().contains(DataEntityTypeDto.DATA_CONSUMER))
+            .filter(d -> d.entityClasses().contains(DataEntityClassDto.DATA_CONSUMER))
             .flatMap(this::locateAlertsInDCDelta);
 
         return Stream.concat(transformerAlerts, consumerAlerts).collect(Collectors.toList());
@@ -124,23 +124,23 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     private DataTransformerAttributes extractDTAttributes(final String json) {
-        final Map<DataEntityTypeDto, ?> specificAttributes =
-            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityTypeDto, ?>>() {
+        final Map<DataEntityClassDto, ?> specificAttributes =
+            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityClassDto, ?>>() {
             });
 
         return JSONSerDeUtils.deserializeJson(
-            specificAttributes.get(DataEntityTypeDto.DATA_TRANSFORMER),
+            specificAttributes.get(DataEntityClassDto.DATA_TRANSFORMER),
             DataTransformerAttributes.class
         );
     }
 
     private DataConsumerAttributes extractDCAttributes(final String json) {
-        final Map<DataEntityTypeDto, ?> specificAttributes =
-            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityTypeDto, ?>>() {
+        final Map<DataEntityClassDto, ?> specificAttributes =
+            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityClassDto, ?>>() {
             });
 
         return JSONSerDeUtils.deserializeJson(
-            specificAttributes.get(DataEntityTypeDto.DATA_CONSUMER),
+            specificAttributes.get(DataEntityClassDto.DATA_CONSUMER),
             DataConsumerAttributes.class
         );
     }

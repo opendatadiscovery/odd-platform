@@ -1,8 +1,8 @@
 package org.opendatadiscovery.oddplatform.dto;
 
 public enum FacetType {
+    ENTITY_CLASSES,
     TYPES,
-    SUBTYPES,
     NAMESPACES,
     DATA_SOURCES,
     OWNERS,

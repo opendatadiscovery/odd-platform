@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 
@@ -23,8 +23,8 @@ public class DataEntityIngestionDto {
     protected String externalDescription;
     protected OffsetDateTime createdAt;
     protected OffsetDateTime updatedAt;
-    protected Set<DataEntityTypeDto> types;
-    protected DataEntitySubtypeDto subType;
+    protected Set<DataEntityClassDto> entityClasses;
+    protected DataEntityTypeDto type;
     protected Map<String, Object> metadata;
     protected String specificAttributesJson;
 
@@ -36,15 +36,21 @@ public class DataEntityIngestionDto {
     protected DataEntityGroupDto dataEntityGroup;
 
     public record DataSetIngestionDto(String parentDatasetOddrn, List<DataSetField> fieldList,
-                                      String structureHash, Long rowsCount) {}
+                                      String structureHash, Long rowsCount) {
+    }
 
-    public record DataTransformerIngestionDto(List<String> sourceList, List<String> targetList) {}
+    public record DataTransformerIngestionDto(List<String> sourceList, List<String> targetList) {
+    }
 
-    public record DataConsumerIngestionDto(List<String> inputList) {}
+    public record DataConsumerIngestionDto(List<String> inputList) {
+    }
 
-    public record DataQualityTestIngestionDto(List<String> datasetList) {}
+    public record DataQualityTestIngestionDto(List<String> datasetList) {
+    }
 
-    public record DataInputIngestionDto(List<String> outputs) {}
+    public record DataInputIngestionDto(List<String> outputs) {
+    }
 
-    public record DataEntityGroupDto(List<String> entitiesOddrns, String groupOddrn) {}
+    public record DataEntityGroupDto(List<String> entitiesOddrns, String groupOddrn) {
+    }
 }
