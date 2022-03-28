@@ -13,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdge;
@@ -47,7 +47,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.Data
 @Component
 @RequiredArgsConstructor
 public class DataEntityMapperImpl implements DataEntityMapper {
-    private static DataEntityDictionary TYPE_DICTIONARY = null;
+    private static DataEntityClassAndTypeDictionary TYPE_DICTIONARY = null;
 
     private final DataSourceMapper dataSourceMapper;
     private final OwnershipMapper ownershipMapper;
@@ -314,9 +314,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
-    public DataEntityDictionary getTypeDict() {
+    public DataEntityClassAndTypeDictionary getTypeDict() {
         if (TYPE_DICTIONARY == null) {
-            TYPE_DICTIONARY = new DataEntityDictionary()
+            TYPE_DICTIONARY = new DataEntityClassAndTypeDictionary()
                 .entityClasses(Arrays.stream(DataEntityClassDto.values()).map(this::mapEntityClass).toList())
                 .types(Arrays.stream(DataEntityTypeDto.values()).map(this::mapType).toList());
         }

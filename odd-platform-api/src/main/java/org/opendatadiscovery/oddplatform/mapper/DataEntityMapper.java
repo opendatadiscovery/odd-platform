@@ -3,8 +3,8 @@ package org.opendatadiscovery.oddplatform.mapper;
 import java.util.Collection;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -31,7 +31,7 @@ public interface DataEntityMapper
 
     DataEntityClass mapEntityClass(final DataEntityClassDto entityClass);
 
-    DataEntityDictionary getTypeDict();
+    DataEntityClassAndTypeDictionary getTypeDict();
 
     DataEntityLineage mapLineageDto(final DataEntityLineageDto dataEntityLineageDto);
 

@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -97,7 +97,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<DataEntityDictionary> getDataEntityClassesAndTypes() {
+    public Mono<DataEntityClassAndTypeDictionary> getDataEntityClassesAndTypes() {
         return Mono.just(entityMapper.getTypeDict());
     }
 

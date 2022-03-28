@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -153,7 +153,8 @@ public class DataEntityController
     }
 
     @Override
-    public Mono<ResponseEntity<DataEntityDictionary>> getDataEntityClasses(final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<DataEntityClassAndTypeDictionary>> getDataEntityClasses(
+        final ServerWebExchange exchange) {
         return entityService
             .getDataEntityClassesAndTypes()
             .subscribeOn(Schedulers.boundedElastic())

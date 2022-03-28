@@ -2,8 +2,8 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -23,7 +23,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataEntityList> {
-    Mono<DataEntityDictionary> getDataEntityClassesAndTypes();
+    Mono<DataEntityClassAndTypeDictionary> getDataEntityClassesAndTypes();
 
     Mono<DataEntityDetails> getDetails(final long dataEntityId);
 
