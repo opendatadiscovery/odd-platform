@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import get from 'lodash/get';
 import { RootState, DataEntitiesState } from 'redux/interfaces';
-import { DataEntityTypeNameEnum } from 'generated-sources';
+import { DataEntityClassNameEnum } from 'generated-sources';
 import {
   createFetchingSelector,
   createErrorSelector,
@@ -61,21 +61,21 @@ export const getDataEntitiesListFetched = createSelector(
   status => status === 'fetched'
 );
 
-const dataEntityTypeName = (
+const dataEntityClassName = (
   _: RootState,
-  entityTypeName: DataEntityTypeNameEnum
-) => entityTypeName;
+  entityClassName: DataEntityClassNameEnum
+) => entityClassName;
 
-export const getDataEntityTypeId = createSelector(
+export const getDataEntityClassId = createSelector(
   dataEntitiesState,
-  dataEntityTypeName,
-  (dataEntities, entityTypeName) =>
-    get(dataEntities, `typesDict.types.${entityTypeName}.id`)
+  dataEntityClassName,
+  (dataEntities, entityClassName) =>
+    get(dataEntities, `typesDict.entityClasses.${entityClassName}.id`)
 );
 
-export const getDataEntityTypesByName = createSelector(
+export const getDataEntityClassesByName = createSelector(
   dataEntitiesState,
-  dataEntities => dataEntities.typesDict.types
+  dataEntities => dataEntities.typesDict.entityClasses
 );
 
 export const getDataEntitiesList = createSelector(
@@ -211,8 +211,8 @@ export const getDataEntityIsDataset = createSelector(
   dataEntitiesState,
   getDataEntityId,
   (dataEntities, dataEntityId) =>
-    !!dataEntities.byId[dataEntityId]?.types.find(
-      type => type.name === DataEntityTypeNameEnum.SET
+    !!dataEntities.byId[dataEntityId]?.entityClasses?.find(
+      type => type.name === DataEntityClassNameEnum.SET
     )
 );
 
@@ -220,7 +220,7 @@ export const getDataEntityIsQualityTest = createSelector(
   dataEntitiesState,
   getDataEntityId,
   (dataEntities, dataEntityId) =>
-    !!dataEntities.byId[dataEntityId]?.types.find(
-      type => type.name === DataEntityTypeNameEnum.QUALITY_TEST
+    !!dataEntities.byId[dataEntityId]?.entityClasses?.find(
+      type => type.name === DataEntityClassNameEnum.QUALITY_TEST
     )
 );

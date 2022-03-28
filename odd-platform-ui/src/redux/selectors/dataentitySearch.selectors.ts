@@ -13,7 +13,7 @@ import {
   SearchFacetStateById,
   SearchType,
 } from 'redux/interfaces';
-import { DataEntityTypeNameEnum } from 'generated-sources';
+import { DataEntityClassNameEnum } from 'generated-sources';
 import {
   createFetchingSelector,
   createErrorSelector,
@@ -111,13 +111,13 @@ export const getSearchFacetsByType = createSelector(
   (search, searchFacet) => values(search.facets[searchFacet]?.items) || []
 );
 
-export const getSearchEntityType = createSelector(searchState, search => {
+export const getSearchEntityClass = createSelector(searchState, search => {
   if (search.myObjects) return 'my' as SearchType;
-  const selectedType = findKey(
+  const selectedClass = findKey(
     omit(search.totals, ['all', 'myObjectsTotal']),
     filterItem => filterItem?.selected
   );
-  return (search.totals[selectedType as DataEntityTypeNameEnum]?.id ||
+  return (search.totals[selectedClass as DataEntityClassNameEnum]?.id ||
     'all') as SearchType;
 });
 

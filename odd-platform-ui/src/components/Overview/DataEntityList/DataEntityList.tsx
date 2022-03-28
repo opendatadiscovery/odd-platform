@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { DataEntityRef } from 'generated-sources';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import { dataEntityDetailsPath } from 'lib/paths';
@@ -38,11 +38,11 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
                 {item.internalName || item.externalName}
               </Typography>
             </S.ListLink>
-            {item.types?.map(type => (
-              <EntityTypeItem
+            {item.entityClasses?.map(entityClass => (
+              <EntityClassItem
                 sx={{ ml: 0.5 }}
-                key={type.id}
-                typeName={type.name}
+                key={entityClass.id}
+                typeName={entityClass.name}
               />
             ))}
           </Grid>

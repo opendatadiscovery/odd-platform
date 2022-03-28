@@ -1,5 +1,5 @@
 import React from 'react';
-import { DataEntityTypeNameEnum } from 'generated-sources';
+import { DataEntityClassNameEnum } from 'generated-sources';
 import { DataEntityDetailsState } from 'redux/interfaces/dataentities';
 import OverviewDataConsumerStats from 'components/DataEntityDetails/Overview/OverviewStats/OverviewDataConsumerStats/OverviewDataConsumerStats';
 import OverviewEntityGroupStats from 'components/DataEntityDetails/Overview/OverviewStats/OverviewEntityGroupStats/OverviewEntityGroupStats';
@@ -16,19 +16,19 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
   dataEntityDetails,
 }) => (
   <>
-    {dataEntityDetails.types.map(type => {
-      switch (type.name) {
-        case DataEntityTypeNameEnum.SET:
+    {dataEntityDetails.entityClasses?.map(entityClass => {
+      switch (entityClass.name) {
+        case DataEntityClassNameEnum.SET:
           return (
             <OverviewDatasetStats
-              key={type.id}
+              key={entityClass.id}
               stats={dataEntityDetails.stats}
             />
           );
-        case DataEntityTypeNameEnum.TRANSFORMER:
+        case DataEntityClassNameEnum.TRANSFORMER:
           return (
             <OverviewTransformerStats
-              key={type.id}
+              key={entityClass.id}
               dataEntityName={
                 dataEntityDetails?.externalName ||
                 dataEntityDetails?.internalName
@@ -39,10 +39,10 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
               unknownTargetsCount={dataEntityDetails.unknownTargetsCount}
             />
           );
-        case DataEntityTypeNameEnum.CONSUMER:
+        case DataEntityClassNameEnum.CONSUMER:
           return (
             <OverviewDataConsumerStats
-              key={type.id}
+              key={entityClass.id}
               dataEntityName={
                 dataEntityDetails?.externalName ||
                 dataEntityDetails?.internalName
@@ -51,20 +51,20 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
               unknownInputsCount={dataEntityDetails.unknownInputsCount}
             />
           );
-        case DataEntityTypeNameEnum.QUALITY_TEST:
+        case DataEntityClassNameEnum.QUALITY_TEST:
           return (
             <OverviewQualityTestStats
-              key={type.id}
+              key={entityClass.id}
               suiteName={dataEntityDetails.suiteName}
               suiteUrl={dataEntityDetails.suiteUrl}
               datasetsList={dataEntityDetails.datasetsList}
               qualityTest={dataEntityDetails}
             />
           );
-        case DataEntityTypeNameEnum.INPUT:
+        case DataEntityClassNameEnum.INPUT:
           return (
             <OverviewDataInputStats
-              key={type.id}
+              key={entityClass.id}
               dataEntityName={
                 dataEntityDetails?.externalName ||
                 dataEntityDetails?.internalName
@@ -73,10 +73,10 @@ const OverviewStats: React.FC<OverviewStatsProps> = ({
               unknownOutputsCount={dataEntityDetails.unknownOutputsCount}
             />
           );
-        case DataEntityTypeNameEnum.ENTITY_GROUP:
+        case DataEntityClassNameEnum.ENTITY_GROUP:
           return (
             <OverviewEntityGroupStats
-              key={type.id}
+              key={entityClass.id}
               dataEntityGroupName={
                 dataEntityDetails.internalName ||
                 dataEntityDetails.externalName

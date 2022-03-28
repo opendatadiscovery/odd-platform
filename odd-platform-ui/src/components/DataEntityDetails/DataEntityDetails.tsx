@@ -23,7 +23,7 @@ import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
@@ -173,11 +173,11 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                     ? dataEntityDetails.internalName
                     : dataEntityDetails.externalName}
                 </Typography>
-                {dataEntityDetails.types.map(type => (
-                  <EntityTypeItem
+                {dataEntityDetails.entityClasses?.map(entityClass => (
+                  <EntityClassItem
                     sx={{ ml: 0.5 }}
-                    key={type.id}
-                    typeName={type.name}
+                    key={entityClass.id}
+                    typeName={entityClass.name}
                   />
                 ))}
                 <S.InternalNameEditBtnContainer>

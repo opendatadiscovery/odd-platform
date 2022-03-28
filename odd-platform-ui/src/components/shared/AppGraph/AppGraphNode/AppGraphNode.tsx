@@ -2,7 +2,7 @@ import React from 'react';
 import { HierarchyPointNode } from 'd3-hierarchy';
 import { select } from 'd3-selection';
 import { interpolateString } from 'd3-interpolate';
-import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
+import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
@@ -350,15 +350,15 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               </>
             )}
         </g>
-        {data.types?.map((type, i) => (
+        {data.entityClasses?.map((entityClass, i) => (
           <g
-            key={type.id}
+            key={entityClass.id}
             transform={`translate(${
               titleLayout.x + i * (typeLayout.width + typeLayout.mx)
             },${nodeSize.y - typeLayout.my - typeLayout.height})`}
           >
             <TypeContainer
-              $typeName={type.name}
+              $typeName={entityClass.name}
               width={typeLayout.width}
               height={typeLayout.height}
             />
@@ -367,9 +367,9 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               y={typeLayout.height / 2 + 1}
             >
               <tspan alignmentBaseline="middle">
-                {DataEntityTypeLabelMap.get(type.name)?.short}
+                {DataEntityClassLabelMap.get(entityClass.name)?.short}
                 <title>
-                  {DataEntityTypeLabelMap.get(type.name)?.normal}
+                  {DataEntityClassLabelMap.get(entityClass.name)?.normal}
                 </title>
               </tspan>
             </TypeLabel>

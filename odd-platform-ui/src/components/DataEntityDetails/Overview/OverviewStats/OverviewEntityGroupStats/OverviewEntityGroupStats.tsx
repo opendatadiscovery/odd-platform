@@ -3,10 +3,10 @@ import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {
   DataEntityDetails,
-  DataEntityTypeNameEnum,
+  DataEntityClassNameEnum,
 } from 'generated-sources';
 import { dataEntityDetailsPath } from 'lib/paths';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TriangularUnionIcon from 'components/shared/Icons/TriangularUnionIcon';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
@@ -25,8 +25,8 @@ const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
 }) => (
   <Grid container>
     <Grid item xs={12} sx={{ mb: 1.25 }}>
-      <EntityTypeItem
-        typeName={DataEntityTypeNameEnum.ENTITY_GROUP}
+      <EntityClassItem
+        typeName={DataEntityClassNameEnum.ENTITY_GROUP}
         fullName
       />
     </Grid>

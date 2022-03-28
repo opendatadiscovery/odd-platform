@@ -4,16 +4,16 @@ import {
   Tag,
   DataEntityDetailsBaseObject,
   InternalName,
-  DataEntityTypeDictionary,
+  DataEntityClassAndTypeDictionary,
   DataEntityRef,
 } from 'generated-sources';
 import { PartialEntityUpdateParams, ErrorState } from 'redux/interfaces';
 
-export const fetchDataEntitiesTypesAction = createAsyncAction(
+export const fetchDataEntitiesClassesAndTypesAction = createAsyncAction(
   'GET_DATA_ENTITIES_TYPES__REQUEST',
   'GET_DATA_ENTITIES_TYPES__SUCCESS',
   'GET_DATA_ENTITIES_TYPES__FAILURE'
-)<undefined, DataEntityTypeDictionary, ErrorState>();
+)<undefined, DataEntityClassAndTypeDictionary, ErrorState>();
 
 export const fetchDataEntityAction = createAsyncAction(
   'GET_DATA_ENTITY__REQUEST',

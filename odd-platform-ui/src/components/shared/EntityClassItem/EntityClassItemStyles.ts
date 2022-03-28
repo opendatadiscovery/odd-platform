@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { DataEntityTypeNameEnum } from 'generated-sources';
+import { DataEntityClassNameEnum } from 'generated-sources';
 import { Box } from '@mui/material';
 
 export const Content = styled(Box)<{
-  typeName: DataEntityTypeNameEnum;
+  typeName: DataEntityClassNameEnum;
   fullName?: boolean;
 }>(({ theme, typeName, fullName }) => ({
   display: 'inline-flex',
@@ -13,5 +13,5 @@ export const Content = styled(Box)<{
   fontWeight: theme.typography.body2.fontWeight,
   lineHeight: theme.typography.body2.lineHeight,
   color: theme.palette.text.primary,
-  backgroundColor: theme.palette.entityType[typeName],
+  backgroundColor: theme.palette.entityClass[typeName],
 }));

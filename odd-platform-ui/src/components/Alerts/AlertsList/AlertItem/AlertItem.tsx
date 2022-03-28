@@ -6,7 +6,7 @@ import { Alert } from 'generated-sources';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import { dataEntityDetailsPath } from 'lib/paths';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
@@ -53,11 +53,11 @@ const AlertItem: React.FC<AlertItemProps> = ({
         </Link>
       </S.NameContainer>
       <S.TypesContainer>
-        {alert.dataEntity?.types?.map(type => (
-          <EntityTypeItem
+        {alert.dataEntity?.entityClasses?.map(entityClass => (
+          <EntityClassItem
             sx={{ ml: 0.5 }}
-            key={type.id}
-            typeName={type.name}
+            key={entityClass.id}
+            typeName={entityClass.name}
           />
         ))}
       </S.TypesContainer>

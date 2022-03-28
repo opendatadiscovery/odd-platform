@@ -66,7 +66,7 @@ const Filters: React.FC<FiltersProps> = ({
         {searchType && searchType > 0 ? (
           <MultipleFilterItemContainer
             key="st"
-            facetName="subtypes"
+            facetName="types"
             name="Type"
           />
         ) : null}

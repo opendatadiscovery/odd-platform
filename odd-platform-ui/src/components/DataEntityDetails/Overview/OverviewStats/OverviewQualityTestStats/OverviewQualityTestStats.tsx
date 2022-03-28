@@ -3,12 +3,12 @@ import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {
   DataEntityDetails,
-  DataEntityTypeNameEnum,
+  DataEntityClassNameEnum,
   DataQualityTest,
 } from 'generated-sources';
 import entries from 'lodash/entries';
 import { dataEntityDetailsPath, dataEntityHistoryPath } from 'lib/paths';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { format, formatDistanceStrict } from 'date-fns';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -29,8 +29,8 @@ const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
 }) => (
   <Grid container>
     <Grid item sx={{ mb: 1.25 }}>
-      <EntityTypeItem
-        typeName={DataEntityTypeNameEnum.QUALITY_TEST}
+      <EntityClassItem
+        typeName={DataEntityClassNameEnum.QUALITY_TEST}
         fullName
       />
     </Grid>

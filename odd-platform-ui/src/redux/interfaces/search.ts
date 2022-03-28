@@ -1,13 +1,12 @@
 import {
   FacetState,
   SearchFilterState,
-  DataEntityTypeNameEnum,
   CountableSearchFilter,
+  DataEntityClassNameEnum,
 } from 'generated-sources';
 import { CurrentPageInfo } from './common';
 
-export type OptionalFacetMap = Omit<FacetState, 'types'>;
-export type OptionalFacetNames = keyof OptionalFacetMap;
+export type OptionalFacetNames = keyof FacetState;
 export type SearchFacetNames = keyof Partial<FacetState>;
 
 export type FacetStateUpdate = {
@@ -19,7 +18,7 @@ export type FacetStateUpdate = {
 };
 
 export type SearchTotalsByName = {
-  [facetName in DataEntityTypeNameEnum]?: CountableSearchFilter;
+  [facetName in DataEntityClassNameEnum]?: CountableSearchFilter;
 } & { all?: number; myObjectsTotal?: number };
 
 export type SearchFilterStateSynced = SearchFilterState & {

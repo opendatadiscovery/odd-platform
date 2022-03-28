@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  getSearchEntityType,
+  getSearchEntityClass,
   getSearchIsUpdated,
 } from 'redux/selectors/dataentitySearch.selectors';
 import {
@@ -15,7 +15,7 @@ import * as actions from 'redux/actions';
 import Filters from './Filters';
 
 const mapStateToProps = (state: RootState) => ({
-  searchType: getSearchEntityType(state),
+  searchType: getSearchEntityClass(state),
   datasources: getDataSourcesList(state),
   namespaces: getNamespaceList(state),
   isSearchFacetsUpdating: getSearchIsUpdated(state),

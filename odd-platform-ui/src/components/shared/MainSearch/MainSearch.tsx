@@ -9,7 +9,7 @@ import {
 } from 'generated-sources';
 import { dataEntityDetailsPath, searchPath } from 'lib/paths';
 import * as S from 'components/shared/MainSearch/MainSearchStyles';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useDebouncedCallback } from 'use-debounce';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
@@ -120,11 +120,11 @@ const MainSearch: React.FC<AppSearchProps> = ({
           <Typography variant="body1" sx={{ mr: 1 }}>
             {typedOption.internalName || typedOption.externalName}
           </Typography>
-          {typedOption.types?.map(type => (
-            <EntityTypeItem
+          {typedOption.entityClasses?.map(entityClass => (
+            <EntityClassItem
               sx={{ mr: 0.5 }}
-              key={type.id}
-              typeName={type.name}
+              key={entityClass.id}
+              typeName={entityClass.name}
             />
           ))}
         </S.SuggestionItem>

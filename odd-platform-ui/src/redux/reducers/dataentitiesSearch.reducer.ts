@@ -66,7 +66,7 @@ const updateSearchState = (
     searchId: payload.searchId,
     query: payload.query,
     myObjects: !!payload.myObjects,
-    totals: payload.facetState.types?.reduce(
+    totals: payload.facetState.entityClasses?.reduce(
       (acc, facetOption) => ({
         ...acc,
         [facetOption.name]: facetOption,
