@@ -6,7 +6,8 @@ import {
 } from 'generated-sources';
 import { CurrentPageInfo } from './common';
 
-export type OptionalFacetNames = keyof FacetState;
+export type OptionalFacetMap = Omit<FacetState, 'entityClasses'>;
+export type OptionalFacetNames = keyof OptionalFacetMap;
 export type SearchFacetNames = keyof Partial<FacetState>;
 
 export type FacetStateUpdate = {

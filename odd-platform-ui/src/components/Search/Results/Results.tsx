@@ -120,7 +120,7 @@ const Results: React.FC<ResultsProps> = ({
       : null;
     dispatch(
       actions.changeDataEntitySearchFilterAction({
-        facetName: 'types',
+        facetName: 'entityClasses',
         facetOptionId: newType?.id || tabs[newTypeIndex].value,
         facetOptionName:
           newType?.name || tabs[newTypeIndex].value?.toString(),

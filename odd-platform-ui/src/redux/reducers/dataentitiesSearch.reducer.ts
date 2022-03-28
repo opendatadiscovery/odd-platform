@@ -138,7 +138,7 @@ const updateFacet = (
     ...state,
     isFacetsStateSynced: false,
     myObjects:
-      payload.facetName === 'types'
+      payload.facetName === 'entityClasses'
         ? payload.facetOptionId === 'my'
         : state.myObjects,
     facetState: {
@@ -174,7 +174,8 @@ const clearFilters = (state: SearchState): SearchState => ({
   ...state,
   isFacetsStateSynced: false,
   facetState: mapValues(state.facetState, (filter, facetName) => {
-    if (facetName === 'types') return state.facetState.types; // Not clearing types filter
+    if (facetName === 'entityClasses')
+      return state.facetState.entityClasses; // Not clearing types filter
     return reduce<SearchFacetStateById, SearchFacetStateById>(
       state.facetState[facetName as SearchFacetNames],
       (acc, facetOption) => {
