@@ -10,9 +10,9 @@ import {
 import { PartialEntityUpdateParams, ErrorState } from 'redux/interfaces';
 
 export const fetchDataEntitiesClassesAndTypesAction = createAsyncAction(
-  'GET_DATA_ENTITIES_TYPES__REQUEST',
-  'GET_DATA_ENTITIES_TYPES__SUCCESS',
-  'GET_DATA_ENTITIES_TYPES__FAILURE'
+  'GET_DATA_ENTITIES_CLASSES_AND_TYPES__REQUEST',
+  'GET_DATA_ENTITIES_CLASSES_AND_TYPES__SUCCESS',
+  'GET_DATA_ENTITIES_CLASSES_AND_TYPES__FAILURE'
 )<undefined, DataEntityClassAndTypeDictionary, ErrorState>();
 
 export const fetchDataEntityAction = createAsyncAction(

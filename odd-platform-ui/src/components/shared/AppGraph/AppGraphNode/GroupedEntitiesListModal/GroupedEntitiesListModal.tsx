@@ -21,16 +21,11 @@ interface GroupedEntitiesListModalProps {
   ) => Promise<DataEntityLineage>;
 }
 
-const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
-  dataEntityName,
-  entities,
-  openBtnEl,
-  fetchMoreLineage,
-}) => {
-  const [
-    isLoadMoreClicked,
-    setIsLoadMoreClicked,
-  ] = React.useState<boolean>(false);
+const GroupedEntitiesListModal: React.FC<
+  GroupedEntitiesListModalProps
+> = ({ dataEntityName, entities, openBtnEl, fetchMoreLineage }) => {
+  const [isLoadMoreClicked, setIsLoadMoreClicked] =
+    React.useState<boolean>(false);
 
   const listItem = (item: DataEntityLineageNode) => (
     <Link to={dataEntityDetailsPath(item.id)}>
@@ -48,7 +43,7 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
             <EntityClassItem
               sx={{ mr: 0.5 }}
               key={entityClass.id}
-              typeName={entityClass.name}
+              entityClassName={entityClass.name}
             />
           ))}
         </Grid>

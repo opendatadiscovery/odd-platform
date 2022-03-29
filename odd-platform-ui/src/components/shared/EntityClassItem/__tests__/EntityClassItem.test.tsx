@@ -9,7 +9,7 @@ describe('EntityClassItem', () => {
     render(
       provideTheme(
         <EntityClassItem
-          typeName={DataEntityClassNameEnum.SET}
+          entityClassName={DataEntityClassNameEnum.SET}
           {...props}
         />
       )
@@ -17,7 +17,7 @@ describe('EntityClassItem', () => {
 
   it('EntityClassItem should return right short text and color', () => {
     setupComponent({
-      typeName: DataEntityClassNameEnum.INPUT,
+      entityClassName: DataEntityClassNameEnum.INPUT,
     });
     expect(getByText('DI')).toBeTruthy();
     expect(getByText('DI')).toHaveStyle('backgroundColor: "#E8FCEF"');
@@ -25,7 +25,7 @@ describe('EntityClassItem', () => {
 
   it('EntityClassItem should return right normal text and color', () => {
     setupComponent({
-      typeName: DataEntityClassNameEnum.ENTITY_GROUP,
+      entityClassName: DataEntityClassNameEnum.ENTITY_GROUP,
       fullName: true,
     });
     expect(getByText('Groups')).toBeTruthy();

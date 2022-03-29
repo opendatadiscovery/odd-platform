@@ -18,15 +18,13 @@ interface OverviewEntityGroupStatsProps {
   entityGroups: DataEntityDetails['dataEntityGroups'];
 }
 
-const OverviewEntityGroupStats: React.FC<OverviewEntityGroupStatsProps> = ({
-  dataEntityGroupName,
-  entities,
-  entityGroups,
-}) => (
+const OverviewEntityGroupStats: React.FC<
+  OverviewEntityGroupStatsProps
+> = ({ dataEntityGroupName, entities, entityGroups }) => (
   <Grid container>
     <Grid item xs={12} sx={{ mb: 1.25 }}>
       <EntityClassItem
-        typeName={DataEntityClassNameEnum.ENTITY_GROUP}
+        entityClassName={DataEntityClassNameEnum.ENTITY_GROUP}
         fullName
       />
     </Grid>

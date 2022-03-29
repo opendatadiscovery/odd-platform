@@ -11,7 +11,7 @@ import {
   SearchState,
   SearchFilterStateSynced,
   SearchFacetStateById,
-  SearchType,
+  SearchClass,
 } from 'redux/interfaces';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import {
@@ -112,13 +112,13 @@ export const getSearchFacetsByType = createSelector(
 );
 
 export const getSearchEntityClass = createSelector(searchState, search => {
-  if (search.myObjects) return 'my' as SearchType;
+  if (search.myObjects) return 'my' as SearchClass;
   const selectedClass = findKey(
     omit(search.totals, ['all', 'myObjectsTotal']),
     filterItem => filterItem?.selected
   );
   return (search.totals[selectedClass as DataEntityClassNameEnum]?.id ||
-    'all') as SearchType;
+    'all') as SearchClass;
 });
 
 export const getSelectedSearchFacetOptions = createSelector(

@@ -57,7 +57,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
           <EntityClassItem
             sx={{ ml: 0.5 }}
             key={entityClass.id}
-            typeName={entityClass.name}
+            entityClassName={entityClass.name}
           />
         ))}
       </S.TypesContainer>

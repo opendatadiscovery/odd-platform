@@ -39,7 +39,7 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
             <EntityClassItem
               sx={{ ml: 0.5 }}
               key={entityClass.id}
-              typeName={entityClass.name}
+              entityClassName={entityClass.name}
             />
           ))}
         </S.ListItemTypesContainer>

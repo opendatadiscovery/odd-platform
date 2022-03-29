@@ -16,18 +16,16 @@ interface OverviewDataConsumerStatsProps {
   dataEntityName: string | undefined;
 }
 
-const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
-  inputs,
-  unknownInputsCount,
-  dataEntityName,
-}) => {
+const OverviewDataConsumerStats: React.FC<
+  OverviewDataConsumerStatsProps
+> = ({ inputs, unknownInputsCount, dataEntityName }) => {
   const displayedEntitiesNumber = 10;
 
   return (
     <Grid container>
       <Grid sx={{ ml: 0, mb: 1.25 }} item xs={12}>
         <EntityClassItem
-          typeName={DataEntityClassNameEnum.CONSUMER}
+          entityClassName={DataEntityClassNameEnum.CONSUMER}
           fullName
         />
       </Grid>

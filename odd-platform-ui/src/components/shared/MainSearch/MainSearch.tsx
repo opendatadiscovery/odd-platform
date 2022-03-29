@@ -39,13 +39,10 @@ const MainSearch: React.FC<AppSearchProps> = ({
   const [options, setOptions] = React.useState<Partial<DataEntityRef>[]>(
     []
   );
-  const [autocompleteOpen, setAutocompleteOpen] = React.useState<boolean>(
-    false
-  );
-  const [
-    loadingSuggestions,
-    setLoadingSuggestions,
-  ] = React.useState<boolean>(false);
+  const [autocompleteOpen, setAutocompleteOpen] =
+    React.useState<boolean>(false);
+  const [loadingSuggestions, setLoadingSuggestions] =
+    React.useState<boolean>(false);
 
   const history = useHistory();
 
@@ -124,7 +121,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
             <EntityClassItem
               sx={{ mr: 0.5 }}
               key={entityClass.id}
-              typeName={entityClass.name}
+              entityClassName={entityClass.name}
             />
           ))}
         </S.SuggestionItem>

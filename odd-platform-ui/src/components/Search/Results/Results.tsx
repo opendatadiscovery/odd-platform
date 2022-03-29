@@ -14,7 +14,7 @@ import {
 import {
   CurrentPageInfo,
   SearchTotalsByName,
-  SearchType,
+  SearchClass,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -28,7 +28,7 @@ import * as S from './ResultsStyles';
 interface ResultsProps {
   dataEntityClassesByName: Dictionary<DataEntityClass>;
   searchId: string;
-  searchType?: SearchType;
+  searchClass?: SearchClass;
   searchResults: DataEntity[];
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
@@ -45,7 +45,7 @@ interface ResultsProps {
 const Results: React.FC<ResultsProps> = ({
   dataEntityClassesByName,
   searchId,
-  searchType,
+  searchClass,
   searchResults,
   pageInfo,
   totals,
@@ -58,7 +58,7 @@ const Results: React.FC<ResultsProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const [tabs, setTabs] = React.useState<AppTabItem<SearchType>[]>([]);
+  const [tabs, setTabs] = React.useState<AppTabItem<SearchClass>[]>([]);
 
   React.useEffect(() => {
     setTabs([
@@ -110,11 +110,11 @@ const Results: React.FC<ResultsProps> = ({
 
   React.useEffect(() => {
     setSelectedTab(
-      searchType ? tabs.findIndex(tab => tab.value === searchType) : 0
+      searchClass ? tabs.findIndex(tab => tab.value === searchClass) : 0
     );
-  }, [tabs, searchType]);
+  }, [tabs, searchClass]);
 
-  const onSearchTypeChange = (newTypeIndex: number) => {
+  const onSearchClassChange = (newTypeIndex: number) => {
     const newType = tabs[newTypeIndex]?.value
       ? get(dataEntityClassesByName, `${tabs[newTypeIndex].value}`)
       : null;
@@ -154,7 +154,7 @@ const Results: React.FC<ResultsProps> = ({
           type="primary"
           items={tabs}
           selectedTab={selectedTab}
-          handleTabChange={onSearchTypeChange}
+          handleTabChange={onSearchClassChange}
           isHintUpdated={isSearchUpdated}
         />
       )}
@@ -166,8 +166,8 @@ const Results: React.FC<ResultsProps> = ({
         <S.ColContainer item $colType="collg">
           <Typography variant="caption">Name</Typography>
         </S.ColContainer>
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.SET]?.id ? (
+        {searchClass &&
+        searchClass === totals[DataEntityClassNameEnum.SET]?.id ? (
           <>
             <S.ColContainer item $colType="colxs">
               <Typography variant="caption">Use</Typography>
@@ -180,8 +180,8 @@ const Results: React.FC<ResultsProps> = ({
             </S.ColContainer>
           </>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.TRANSFORMER]?.id ? (
+        {searchClass &&
+        searchClass === totals[DataEntityClassNameEnum.TRANSFORMER]?.id ? (
           <>
             <S.ColContainer item $colType="collg">
               <Typography variant="caption">Sources</Typography>
@@ -191,8 +191,9 @@ const Results: React.FC<ResultsProps> = ({
             </S.ColContainer>
           </>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.QUALITY_TEST]?.id ? (
+        {searchClass &&
+        searchClass ===
+          totals[DataEntityClassNameEnum.QUALITY_TEST]?.id ? (
           <>
             <S.ColContainer item $colType="collg">
               <Typography variant="caption">Entities</Typography>
@@ -202,14 +203,15 @@ const Results: React.FC<ResultsProps> = ({
             </S.ColContainer>
           </>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.CONSUMER]?.id ? (
+        {searchClass &&
+        searchClass === totals[DataEntityClassNameEnum.CONSUMER]?.id ? (
           <S.ColContainer item $colType="collg">
             <Typography variant="caption">Source</Typography>
           </S.ColContainer>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
+        {searchClass &&
+        searchClass ===
+          totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
           <S.ColContainer item $colType="colxs">
             <Typography variant="caption">Number of entities</Typography>
           </S.ColContainer>
@@ -265,7 +267,7 @@ const Results: React.FC<ResultsProps> = ({
             {searchResults.map(searchResult => (
               <ResultItem
                 key={searchResult.id}
-                searchType={searchType}
+                searchClass={searchClass}
                 searchResult={searchResult}
                 totals={totals}
               />

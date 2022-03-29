@@ -70,12 +70,15 @@ export const getDataEntityClassId = createSelector(
   dataEntitiesState,
   dataEntityClassName,
   (dataEntities, entityClassName) =>
-    get(dataEntities, `typesDict.entityClasses.${entityClassName}.id`)
+    get(
+      dataEntities,
+      `classesAndTypesDict.entityClasses.${entityClassName}.id`
+    )
 );
 
 export const getDataEntityClassesByName = createSelector(
   dataEntitiesState,
-  dataEntities => dataEntities.typesDict.entityClasses
+  dataEntities => dataEntities.classesAndTypesDict.entityClasses
 );
 
 export const getDataEntitiesList = createSelector(
@@ -109,13 +112,11 @@ export const getPopularEntities = createSelector(
   dataEntities => dataEntities.popular
 );
 // Details
-export const getDataEntityDetailsFetchingStatus = createFetchingSelector(
-  'GET_DATA_ENTITY'
-);
+export const getDataEntityDetailsFetchingStatus =
+  createFetchingSelector('GET_DATA_ENTITY');
 
-export const getDataEntityDetailsFetchingError = createErrorSelector(
-  'GET_DATA_ENTITY'
-);
+export const getDataEntityDetailsFetchingError =
+  createErrorSelector('GET_DATA_ENTITY');
 
 export const getDataEntityDetailsFetching = createSelector(
   getDataEntityDetailsFetchingStatus,
@@ -212,7 +213,7 @@ export const getDataEntityIsDataset = createSelector(
   getDataEntityId,
   (dataEntities, dataEntityId) =>
     !!dataEntities.byId[dataEntityId]?.entityClasses?.find(
-      type => type.name === DataEntityClassNameEnum.SET
+      entityClass => entityClass.name === DataEntityClassNameEnum.SET
     )
 );
 
@@ -221,6 +222,7 @@ export const getDataEntityIsQualityTest = createSelector(
   getDataEntityId,
   (dataEntities, dataEntityId) =>
     !!dataEntities.byId[dataEntityId]?.entityClasses?.find(
-      type => type.name === DataEntityClassNameEnum.QUALITY_TEST
+      entityClass =>
+        entityClass.name === DataEntityClassNameEnum.QUALITY_TEST
     )
 );

@@ -42,7 +42,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
               <EntityClassItem
                 sx={{ ml: 0.5 }}
                 key={entityClass.id}
-                typeName={entityClass.name}
+                entityClassName={entityClass.name}
               />
             ))}
           </Grid>

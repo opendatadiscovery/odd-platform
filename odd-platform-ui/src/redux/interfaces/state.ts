@@ -156,8 +156,8 @@ export interface DataEntitiesState {
   myUpstream: DataEntityRef[];
   myDownstream: DataEntityRef[];
   popular: DataEntityRef[];
-  typesDict: {
-    types: Dictionary<DataEntityType>;
+  classesAndTypesDict: {
+    entityTypes: Dictionary<DataEntityType>;
     entityClasses: Dictionary<DataEntityClass>;
   };
 }

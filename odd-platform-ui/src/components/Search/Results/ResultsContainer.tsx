@@ -18,7 +18,7 @@ import Results from './Results';
 
 const mapStateToProps = (state: RootState) => ({
   searchId: getSearchId(state),
-  searchType: getSearchEntityClass(state),
+  searchClass: getSearchEntityClass(state),
   dataEntityClassesByName: getDataEntityClassesByName(state),
   totals: getSearchTotals(state),
   searchResults: getSearchResults(state),

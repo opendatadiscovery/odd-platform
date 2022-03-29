@@ -46,4 +46,4 @@ export type FacetOptionsByName = {
   };
 };
 
-export type SearchType = number | 'all' | 'my';
+export type SearchClass = number | 'all' | 'my';

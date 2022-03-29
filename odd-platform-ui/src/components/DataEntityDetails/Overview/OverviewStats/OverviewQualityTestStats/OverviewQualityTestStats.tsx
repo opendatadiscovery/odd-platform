@@ -21,16 +21,13 @@ interface OverviewQualityTestStatsProps {
   qualityTest: DataQualityTest;
 }
 
-const OverviewQualityTestStats: React.FC<OverviewQualityTestStatsProps> = ({
-  suiteName,
-  suiteUrl,
-  datasetsList,
-  qualityTest,
-}) => (
+const OverviewQualityTestStats: React.FC<
+  OverviewQualityTestStatsProps
+> = ({ suiteName, suiteUrl, datasetsList, qualityTest }) => (
   <Grid container>
     <Grid item sx={{ mb: 1.25 }}>
       <EntityClassItem
-        typeName={DataEntityClassNameEnum.QUALITY_TEST}
+        entityClassName={DataEntityClassNameEnum.QUALITY_TEST}
         fullName
       />
     </Grid>

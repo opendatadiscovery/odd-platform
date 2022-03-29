@@ -15,7 +15,7 @@ import * as actions from 'redux/actions';
 import Filters from './Filters';
 
 const mapStateToProps = (state: RootState) => ({
-  searchType: getSearchEntityClass(state),
+  searchClass: getSearchEntityClass(state),
   datasources: getDataSourcesList(state),
   namespaces: getNamespaceList(state),
   isSearchFacetsUpdating: getSearchIsUpdated(state),

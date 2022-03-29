@@ -175,7 +175,7 @@ const clearFilters = (state: SearchState): SearchState => ({
   isFacetsStateSynced: false,
   facetState: mapValues(state.facetState, (filter, facetName) => {
     if (facetName === 'entityClasses')
-      return state.facetState.entityClasses; // Not clearing types filter
+      return state.facetState.entityClasses; // Not clearing entityClasses filter
     return reduce<SearchFacetStateById, SearchFacetStateById>(
       state.facetState[facetName as SearchFacetNames],
       (acc, facetOption) => {

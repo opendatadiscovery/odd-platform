@@ -23,7 +23,9 @@ interface OverviewTransformerStatsProps {
   dataEntityName: string | undefined;
 }
 
-const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
+const OverviewTransformerStats: React.FC<
+  OverviewTransformerStatsProps
+> = ({
   sources,
   targets,
   unknownSourcesCount,
@@ -36,7 +38,7 @@ const OverviewTransformerStats: React.FC<OverviewTransformerStatsProps> = ({
     <Grid container>
       <Grid item xs={12} sx={{ mb: 1.25 }}>
         <EntityClassItem
-          typeName={DataEntityClassNameEnum.TRANSFORMER}
+          entityClassName={DataEntityClassNameEnum.TRANSFORMER}
           fullName
         />
       </Grid>

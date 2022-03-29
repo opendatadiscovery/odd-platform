@@ -27,7 +27,7 @@ const OverviewDataInputStats: React.FC<OverviewDataInputStatsProps> = ({
     <Grid container>
       <Grid item xs={12} sx={{ ml: 0, mb: 1.25 }}>
         <EntityClassItem
-          typeName={DataEntityClassNameEnum.INPUT}
+          entityClassName={DataEntityClassNameEnum.INPUT}
           fullName
         />
       </Grid>

@@ -45,10 +45,10 @@ export const Placeholder = styled('tspan')<{ $show: boolean }>(
   })
 );
 
-export const TypeContainer = styled('rect')<{
-  $typeName: DataEntityClassNameEnum;
-}>(({ theme, $typeName }) => ({
-  fill: theme.palette.entityClass[$typeName],
+export const EntityClassContainer = styled('rect')<{
+  $entityClassName: DataEntityClassNameEnum;
+}>(({ theme, $entityClassName }) => ({
+  fill: theme.palette.entityClass[$entityClassName],
   rx: 4,
 }));
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity, DataEntityClassNameEnum } from 'generated-sources';
-import { SearchTotalsByName, SearchType } from 'redux/interfaces/search';
+import { SearchTotalsByName, SearchClass } from 'redux/interfaces/search';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { dataEntityDetailsPath } from 'lib/paths';
 import TruncatedCell from 'components/shared/TruncatedCell/TruncatedCell';
@@ -16,14 +16,14 @@ import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { Container, ItemLink } from './ResultItemStyles';
 
 interface ResultItemProps {
-  searchType?: SearchType;
+  searchClass?: SearchClass;
   totals: SearchTotalsByName;
   searchResult: DataEntity;
 }
 
 const ResultItem: React.FC<ResultItemProps> = ({
   searchResult,
-  searchType,
+  searchClass,
   totals,
 }) => {
   const detailsLink = dataEntityDetailsPath(searchResult.id);
@@ -73,19 +73,19 @@ const ResultItem: React.FC<ResultItemProps> = ({
             wrap="nowrap"
             flexBasis={0}
           >
-            {!searchType ||
-              (typeof searchType === 'string' &&
+            {!searchClass ||
+              (typeof searchClass === 'string' &&
                 searchResult.entityClasses?.map(entityClass => (
                   <EntityClassItem
                     sx={{ ml: 0.5 }}
                     key={entityClass.id}
-                    typeName={entityClass.name}
+                    entityClassName={entityClass.name}
                   />
                 )))}
           </Grid>
         </ColContainer>
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.SET]?.id ? (
+        {searchClass &&
+        searchClass === totals[DataEntityClassNameEnum.SET]?.id ? (
           <>
             <ColContainer item $colType="colxs">
               <Typography variant="body1" noWrap>
@@ -104,8 +104,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </ColContainer>
           </>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.TRANSFORMER]?.id ? (
+        {searchClass &&
+        searchClass === totals[DataEntityClassNameEnum.TRANSFORMER]?.id ? (
           <>
             <ColContainer $colType="collg" item container wrap="wrap">
               <TruncatedCell
@@ -121,8 +121,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </ColContainer>
           </>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.CONSUMER]?.id ? (
+        {searchClass &&
+        searchClass === totals[DataEntityClassNameEnum.CONSUMER]?.id ? (
           <ColContainer item $colType="collg">
             <TruncatedCell
               dataList={searchResult.inputList}
@@ -130,8 +130,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
             />
           </ColContainer>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.QUALITY_TEST]?.id ? (
+        {searchClass &&
+        searchClass ===
+          totals[DataEntityClassNameEnum.QUALITY_TEST]?.id ? (
           <>
             <ColContainer item container wrap="wrap" $colType="collg">
               <TruncatedCell
@@ -147,8 +148,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </ColContainer>
           </>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
+        {searchClass &&
+        searchClass ===
+          totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
           <ColContainer item $colType="colxs">
             <Typography variant="body1" noWrap>
               {searchResult?.itemsCount}

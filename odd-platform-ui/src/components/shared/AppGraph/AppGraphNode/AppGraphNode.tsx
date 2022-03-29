@@ -20,7 +20,7 @@ import {
   Placeholder,
   RootNodeRect,
   Title,
-  TypeContainer,
+  EntityClassContainer,
   TypeLabel,
   UnknownEntityNameCircle,
   UnknownEntityNameCrossedLine,
@@ -83,7 +83,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     height: 20,
     my: 16,
   };
-  const typeLayout = {
+  const entityClassLayout = {
     width: 24,
     height: 16,
     my: compactView ? 11 : 16,
@@ -247,7 +247,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         </g>
         <g
           transform={`translate(${titleLayout.x},${
-            nodeSize.y - typeLayout.my
+            nodeSize.y - entityClassLayout.my
           })`}
         >
           <Attribute>
@@ -354,17 +354,20 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           <g
             key={entityClass.id}
             transform={`translate(${
-              titleLayout.x + i * (typeLayout.width + typeLayout.mx)
-            },${nodeSize.y - typeLayout.my - typeLayout.height})`}
+              titleLayout.x +
+              i * (entityClassLayout.width + entityClassLayout.mx)
+            },${
+              nodeSize.y - entityClassLayout.my - entityClassLayout.height
+            })`}
           >
-            <TypeContainer
-              $typeName={entityClass.name}
-              width={typeLayout.width}
-              height={typeLayout.height}
+            <EntityClassContainer
+              $entityClassName={entityClass.name}
+              width={entityClassLayout.width}
+              height={entityClassLayout.height}
             />
             <TypeLabel
-              x={typeLayout.width / 2}
-              y={typeLayout.height / 2 + 1}
+              x={entityClassLayout.width / 2}
+              y={entityClassLayout.height / 2 + 1}
             >
               <tspan alignmentBaseline="middle">
                 {DataEntityClassLabelMap.get(entityClass.name)?.short}
