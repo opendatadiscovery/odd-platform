@@ -19,7 +19,7 @@ public class EnrichedDataEntityIngestionDto extends DataEntityIngestionDto {
                                           final DataEntityIngestionDto ingestionDto,
                                           final boolean updated) {
         super(ingestionDto.name, ingestionDto.oddrn, ingestionDto.dataSourceId, ingestionDto.externalDescription,
-            ingestionDto.createdAt, ingestionDto.updatedAt, ingestionDto.types, ingestionDto.subType,
+            ingestionDto.createdAt, ingestionDto.updatedAt, ingestionDto.entityClasses, ingestionDto.type,
             ingestionDto.metadata, ingestionDto.specificAttributesJson, ingestionDto.dataSet,
             ingestionDto.dataTransformer, ingestionDto.dataConsumer, ingestionDto.datasetQualityTest,
             ingestionDto.dataInput, ingestionDto.dataEntityGroup);

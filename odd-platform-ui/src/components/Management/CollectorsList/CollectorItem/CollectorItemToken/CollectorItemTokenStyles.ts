@@ -16,7 +16,7 @@ export const Token = styled(Box)<{ $isHidden: boolean }>(
     borderRadius: theme.spacing(0.5),
     backgroundColor: $isHidden
       ? 'transparent'
-      : theme.palette.entityType.DATA_INPUT,
+      : theme.palette.entityClass.DATA_INPUT,
     marginRight: $isHidden ? 0 : theme.spacing(1),
   })
 );

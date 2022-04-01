@@ -44,6 +44,7 @@ import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataConsumerDetailsDto;
@@ -53,7 +54,6 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
@@ -133,20 +133,16 @@ public class DataEntityRepositoryImpl
     extends AbstractCRUDRepository<DataEntityRecord, DataEntityDimensionsDto>
     implements DataEntityRepository {
 
+    public static final TypeReference<Map<String, ?>> SPECIFIC_ATTRIBUTES_TYPE_REFERENCE = new TypeReference<>() {
+    };
     private static final int SUGGESTION_LIMIT = 5;
-
     private static final String DATA_ENTITY_CTE_NAME = "dataEntityCTE";
-
     private static final String AGG_TAGS_FIELD = "tag";
     private static final String AGG_OWNERSHIP_FIELD = "ownership";
     private static final String AGG_OWNER_FIELD = "owner";
     private static final String AGG_ROLE_FIELD = "role";
     private static final String HAS_ALERTS_FIELD = "has_alerts";
     private static final String AGG_PARENT_ENTITY_FIELD = "parent_entity";
-
-    public static final TypeReference<Map<String, ?>> SPECIFIC_ATTRIBUTES_TYPE_REFERENCE = new TypeReference<>() {
-    };
-
     private final JooqFTSHelper jooqFTSHelper;
     private final JooqRecordHelper jooqRecordHelper;
 
@@ -333,13 +329,13 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public List<DataEntityDimensionsDto> listByType(final int page,
-                                                    final int size,
-                                                    final int typeId,
-                                                    final Integer subTypeId) {
+    public List<DataEntityDimensionsDto> listByEntityClass(final int page,
+                                                           final int size,
+                                                           final int entityClassId,
+                                                           final Integer typeId) {
         final List<Condition> cteSelectConditions = Stream
-            .of(DATA_ENTITY.TYPE_IDS.contains(new Integer[] {typeId}),
-                subTypeId != null ? DATA_ENTITY.SUBTYPE_ID.eq(subTypeId) : null)
+            .of(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {entityClassId}),
+                typeId != null ? DATA_ENTITY.TYPE_ID.eq(typeId) : null)
             .filter(Objects::nonNull)
             .collect(toList());
 
@@ -1033,7 +1029,7 @@ public class DataEntityRepositoryImpl
     }
 
     private void enrichDatasetVersions(final DataEntityDetailsDto dto) {
-        if (!ArrayUtils.contains(dto.getDataEntity().getTypeIds(), DataEntityTypeDto.DATA_SET.getId())) {
+        if (!ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(), DataEntityClassDto.DATA_SET.getId())) {
             return;
         }
 
@@ -1047,7 +1043,8 @@ public class DataEntityRepositoryImpl
     }
 
     private <T extends DataEntityDimensionsDto> void enrichDEGDetails(final T dto) {
-        if (!ArrayUtils.contains(dto.getDataEntity().getTypeIds(), DataEntityTypeDto.DATA_ENTITY_GROUP.getId())) {
+        if (!ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(),
+            DataEntityClassDto.DATA_ENTITY_GROUP.getId())) {
             return;
         }
 
@@ -1077,7 +1074,7 @@ public class DataEntityRepositoryImpl
     private <T extends DataEntityDimensionsDto> void enrichDEGDetails(final List<T> dtos) {
         final Set<String> degOddrns = dtos.stream()
             .map(DataEntityDto::getDataEntity)
-            .filter(d -> ArrayUtils.contains(d.getTypeIds(), DataEntityTypeDto.DATA_ENTITY_GROUP.getId()))
+            .filter(d -> ArrayUtils.contains(d.getEntityClassIds(), DataEntityClassDto.DATA_ENTITY_GROUP.getId()))
             .map(DataEntityPojo::getOddrn)
             .collect(Collectors.toSet());
 
@@ -1355,7 +1352,7 @@ public class DataEntityRepositoryImpl
             .collect(toList());
     }
 
-    private Map<DataEntityTypeDto, DataEntityAttributes> extractSpecificAttributes(final DataEntityPojo dataEntity
+    private Map<DataEntityClassDto, DataEntityAttributes> extractSpecificAttributes(final DataEntityPojo dataEntity
     ) {
         if (dataEntity.getHollow() || dataEntity.getSpecificAttributes() == null) {
             return emptyMap();
@@ -1366,7 +1363,7 @@ public class DataEntityRepositoryImpl
             SPECIFIC_ATTRIBUTES_TYPE_REFERENCE
         );
 
-        return DataEntityTypeDto.findByIds(dataEntity.getTypeIds())
+        return DataEntityClassDto.findByIds(dataEntity.getEntityClassIds())
             .stream()
             .map(t -> Pair.of(t, JSONSerDeUtils.deserializeJson(
                 specificAttributes.get(t.toString()),

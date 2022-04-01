@@ -15,9 +15,9 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jooq.JSONB;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
-import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
@@ -223,10 +223,10 @@ public class IngestionServiceImpl implements IngestionService {
         final List<DataEntitySpecificAttributesDelta> dataTransformerAttrsDelta = dtoDict.entrySet()
             .stream()
             .filter(e -> existingPojoDict.containsKey(e.getKey()))
-            .filter(e -> !DataEntitySubtypeDto.MICROSERVICE.equals(e.getValue().getSubType()))
+            .filter(e -> DataEntityTypeDto.MICROSERVICE != e.getValue().getType())
             .map(e -> new DataEntitySpecificAttributesDelta(
                 e.getKey(),
-                e.getValue().getTypes(),
+                e.getValue().getEntityClasses(),
                 ObjectUtils.defaultIfNull(
                     existingPojoDict.get(e.getKey()).getSpecificAttributes(),
                     JSONB.jsonb("{}")
@@ -282,7 +282,7 @@ public class IngestionServiceImpl implements IngestionService {
 
     private Mono<List<DatasetStructurePojo>> ingestNewDatasetStructure(final IngestionDataStructure split) {
         final Map<Long, EnrichedDataEntityIngestionDto> datasetDict = split.getNewEntities().stream()
-            .filter(e -> e.getTypes().contains(DataEntityTypeDto.DATA_SET))
+            .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .collect(Collectors.toMap(EnrichedDataEntityIngestionDto::getId, identity()));
 
         final List<DatasetVersionPojo> versions = datasetDict.values().stream()
@@ -300,13 +300,13 @@ public class IngestionServiceImpl implements IngestionService {
 
     private Mono<List<DatasetStructurePojo>> ingestExistingDatasetStructure(final IngestionDataStructure split) {
         final Map<String, EnrichedDataEntityIngestionDto> datasetDict = split.getExistingEntities().stream()
-            .filter(e -> e.getTypes().contains(DataEntityTypeDto.DATA_SET))
+            .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .collect(Collectors.toMap(EnrichedDataEntityIngestionDto::getOddrn, identity()));
 
         final Set<Long> datasetIds = split.getExistingEntities()
             .stream()
-            .filter(e -> e.getTypes().contains(DataEntityTypeDto.DATA_SET))
+            .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .map(EnrichedDataEntityIngestionDto::getId)
             .collect(Collectors.toSet());
@@ -343,13 +343,11 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private List<LineagePojo> extractLineageRelations(final DataEntityIngestionDto dto) {
-        final Set<DataEntityTypeDto> types = dto.getTypes();
-
+        final Set<DataEntityClassDto> entityClasses = dto.getEntityClasses();
         final List<LineagePojo> result = new ArrayList<>();
-
         final String dtoOddrn = dto.getOddrn();
 
-        if (types.contains(DataEntityTypeDto.DATA_SET)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {
             if (dto.getDataSet().parentDatasetOddrn() != null) {
                 result.add(new LineagePojo()
                     .setParentOddrn(dto.getDataSet().parentDatasetOddrn())
@@ -359,7 +357,7 @@ public class IngestionServiceImpl implements IngestionService {
             }
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_TRANSFORMER)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_TRANSFORMER)) {
             dto.getDataTransformer().sourceList().stream()
                 .map(source -> new LineagePojo()
                     .setParentOddrn(source)
@@ -375,7 +373,7 @@ public class IngestionServiceImpl implements IngestionService {
                 .forEach(result::add);
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_CONSUMER)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_CONSUMER)) {
             dto.getDataConsumer().inputList().stream()
                 .map(input -> new LineagePojo()
                     .setParentOddrn(input)
@@ -388,7 +386,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private List<DataQualityTestRelationsPojo> extractDataQARelations(final EnrichedDataEntityIngestionDto dto) {
-        if (!dto.getTypes().contains(DataEntityTypeDto.DATA_QUALITY_TEST)) {
+        if (!dto.getEntityClasses().contains(DataEntityClassDto.DATA_QUALITY_TEST)) {
             return emptyList();
         }
 
@@ -399,7 +397,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private List<GroupEntityRelationsPojo> extractGroupEntityRelations(final EnrichedDataEntityIngestionDto dto) {
-        if (!dto.getTypes().contains(DataEntityTypeDto.DATA_ENTITY_GROUP)
+        if (!dto.getEntityClasses().contains(DataEntityClassDto.DATA_ENTITY_GROUP)
             || CollectionUtils.isEmpty(dto.getDataEntityGroup().entitiesOddrns())) {
             return emptyList();
         }
@@ -412,7 +410,7 @@ public class IngestionServiceImpl implements IngestionService {
     private Optional<GroupParentGroupRelationsPojo> extractGroupParentGroupRelations(
         final EnrichedDataEntityIngestionDto dto
     ) {
-        if (!dto.getTypes().contains(DataEntityTypeDto.DATA_ENTITY_GROUP)
+        if (!dto.getEntityClasses().contains(DataEntityClassDto.DATA_ENTITY_GROUP)
             || dto.getDataEntityGroup().groupOddrn() == null) {
             return Optional.empty();
         }

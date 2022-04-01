@@ -86,7 +86,7 @@ export const palette = createPalette({
     dark: colors.black80,
   },
   divider: colors.black10,
-  entityType: {
+  entityClass: {
     DATA_SET: colors.red5,
     DATA_TRANSFORMER: colors.purple5,
     DATA_CONSUMER: colors.blue5,

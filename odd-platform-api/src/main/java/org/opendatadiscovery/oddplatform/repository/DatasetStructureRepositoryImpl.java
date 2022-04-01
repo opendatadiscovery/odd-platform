@@ -55,7 +55,7 @@ public class DatasetStructureRepositoryImpl implements DatasetStructureRepositor
 
         final List<DatasetStructureRecord> records = entities.stream()
             .map(e -> dslContext.newRecord(DATASET_STRUCTURE, e))
-            .collect(Collectors.toList());
+            .toList();
 
         InsertSetStep<DatasetStructureRecord> insertStep = dslContext.insertInto(DATASET_STRUCTURE);
 

@@ -215,17 +215,17 @@ components:
         role_name:
           type: string
 
-    DataEntityTypeDictionary:
+    DataEntityClassAndTypeDictionary:
       type: object
       properties:
+        entity_classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClass'
         types:
           type: array
           items:
             $ref: '#/components/schemas/DataEntityType'
-        subtypes:
-          type: array
-          items:
-            $ref: '#/components/schemas/DataEntitySubType'
 
     DataEntityRunBaseObject:
       type: object
@@ -264,12 +264,12 @@ components:
           $ref: '#/components/schemas/OwnershipList'
         data_source:
           $ref: '#/components/schemas/DataSource'
-        types:
+        entity_classes:
           type: array
           items:
-            $ref: '#/components/schemas/DataEntityType'
-        sub_type:
-          $ref: '#/components/schemas/DataEntitySubType'
+            $ref: '#/components/schemas/DataEntityClass'
+        type:
+          $ref: '#/components/schemas/DataEntityType'
         tags:
           $ref: '#/components/schemas/TagList'
         data_entity_groups:
@@ -332,7 +332,7 @@ components:
         - $ref: '#/components/schemas/DataQualityTest'
         - $ref: '#/components/schemas/DataEntityGroup'
 
-    DataEntityType:
+    DataEntityClass:
       type: object
       properties:
         id:
@@ -353,7 +353,7 @@ components:
         - id
         - name
 
-    DataEntitySubType:
+    DataEntityType:
       type: object
       properties:
         id:
@@ -463,10 +463,10 @@ components:
         id:
           type: integer
           format: int64
-        types:
+        entity_classes:
           type: array
           items:
-            $ref: '#/components/schemas/DataEntityType'
+            $ref: '#/components/schemas/DataEntityClass'
         internal_name:
           type: string
         external_name:
@@ -835,15 +835,6 @@ components:
         - total
         - hasNext
 
-    FilterType:
-      type: string
-      enum:
-        - DATASOURCE
-        - DATA_ENTITY_SUBTYPE
-        - NAMESPACE
-        - OWNER
-        - TAG
-
     DataQualityTestRunStatus:
       type: string
       enum:
@@ -859,7 +850,7 @@ components:
       enum:
         - owners
         - tags
-        - subtypes
+        - types
 
     SearchFilter:
       type: object
@@ -889,11 +880,11 @@ components:
     FacetState:
       type: object
       properties:
-        types:
+        entity_classes:
           type: array
           items:
             $ref: '#/components/schemas/CountableSearchFilter'
-        subtypes:
+        types:
           type: array
           items:
             $ref: '#/components/schemas/SearchFilter'
@@ -914,7 +905,7 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
       required:
-        - types
+        - entity_classes
 
     SearchFacetsData:
       type: object
@@ -1272,10 +1263,10 @@ components:
           type: string
         internal_name:
           type: string
-        types:
+        entity_classes:
           type: array
           items:
-            $ref: '#/components/schemas/DataEntityType'
+            $ref: '#/components/schemas/DataEntityClass'
         data_source:
           $ref: '#/components/schemas/DataSource'
         group_id_list:
@@ -1521,7 +1512,7 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/SearchFilterState'
-            subtypes:
+            entity_classes:
               type: array
               items:
                 $ref: '#/components/schemas/SearchFilterState'

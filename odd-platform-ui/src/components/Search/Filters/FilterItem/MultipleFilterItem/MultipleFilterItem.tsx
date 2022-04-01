@@ -146,7 +146,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
     state: AutocompleteRenderOptionState
   ) => {
     const formattedOptionName =
-      facetName === 'subtypes'
+      facetName === 'types'
         ? option.name.replaceAll('_', ' ')
         : option.name;
     if (!state.inputValue) {

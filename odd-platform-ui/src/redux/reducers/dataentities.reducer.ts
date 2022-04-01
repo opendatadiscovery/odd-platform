@@ -6,9 +6,9 @@ import { DataEntityDetails } from 'generated-sources';
 import * as actions from 'redux/actions';
 
 export const initialState: DataEntitiesState = {
-  typesDict: {
-    types: {},
-    subtypes: {},
+  classesAndTypesDict: {
+    entityTypes: {},
+    entityClasses: {},
   },
   byId: {},
   allIds: [],
@@ -72,12 +72,12 @@ const reducer = (
   action: Action
 ): DataEntitiesState => {
   switch (action.type) {
-    case getType(actions.fetchDataEntitiesTypesAction.success):
+    case getType(actions.fetchDataEntitiesClassesAndTypesAction.success):
       return {
         ...state,
-        typesDict: {
-          types: keyBy(action.payload.types, 'id'),
-          subtypes: keyBy(action.payload.subtypes, 'id'),
+        classesAndTypesDict: {
+          entityTypes: keyBy(action.payload.types, 'id'),
+          entityClasses: keyBy(action.payload.entityClasses, 'id'),
         },
       };
     case getType(actions.fetchDataEntityAction.success):
