@@ -3,10 +3,10 @@ package org.opendatadiscovery.oddplatform.repository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.UserOwnerMappingPojo;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
@@ -18,7 +18,7 @@ public class UserOwnerMappingRepositoryImpl implements UserOwnerMappingRepositor
     private final OwnerRepository ownerRepository;
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public OwnerPojo createRelation(final String oidcUsername, final String ownerName) {
         final OwnerPojo owner = ownerRepository.createOrGet(new OwnerPojo().setName(ownerName));
 

@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetStep;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DatasetStructureRecord;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 
@@ -25,7 +25,7 @@ public class DatasetStructureRepositoryImpl implements DatasetStructureRepositor
     private final DatasetVersionRepository datasetVersionRepository;
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public List<DatasetStructurePojo> bulkCreate(final List<DatasetVersionPojo> versions,
                                                  final Map<String, List<DatasetFieldPojo>> datasetFields) {
         final List<DatasetFieldPojo> fields = datasetFields.values().stream()

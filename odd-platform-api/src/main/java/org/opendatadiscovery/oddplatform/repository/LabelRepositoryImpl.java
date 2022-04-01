@@ -13,6 +13,7 @@ import org.jooq.Record1;
 import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.LabelRecord;
@@ -20,7 +21,6 @@ import org.opendatadiscovery.oddplatform.model.tables.records.LabelToDatasetFiel
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.jooq.impl.DSL.max;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
@@ -69,21 +69,21 @@ public class LabelRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void delete(final long id) {
         deleteRelations(id);
         super.delete(id);
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void delete(final List<Long> ids) {
         deleteRelations(ids);
         super.delete(ids);
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void deleteRelations(final long datasetFieldId, final Collection<Long> labels) {
         if (labels.isEmpty()) {
             return;
@@ -134,7 +134,7 @@ public class LabelRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public LabelPojo update(final LabelPojo pojo) {
         final LabelPojo updatedLabel = super.update(pojo);
 

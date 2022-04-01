@@ -16,6 +16,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.exception.EntityAlreadyExistsException;
@@ -29,7 +30,6 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -122,7 +122,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public DataSourceDto create(final DataSourceDto dto) {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())
@@ -150,7 +150,7 @@ public class DataSourceRepositoryImpl implements DataSourceRepository {
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public DataSourceDto update(final DataSourceDto dto) {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())

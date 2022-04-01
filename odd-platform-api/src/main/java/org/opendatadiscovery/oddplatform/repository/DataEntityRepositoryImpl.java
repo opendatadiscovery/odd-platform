@@ -44,6 +44,7 @@ import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
@@ -85,7 +86,6 @@ import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -397,7 +397,7 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Optional<DataEntityDetailsDto> getDetails(final long id) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
@@ -436,7 +436,7 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Page<DataEntityDimensionsDto> findByState(final FacetStateDto state,
                                                      final int page,
                                                      final int size,
@@ -479,7 +479,7 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void setDescription(final long dataEntityId, final String description) {
         dslContext.update(DATA_ENTITY)
             .set(DATA_ENTITY.INTERNAL_DESCRIPTION, description)
@@ -491,7 +491,7 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void setInternalName(final long dataEntityId, final String businessName) {
         final String newBusinessName = businessName != null && businessName.isEmpty() ? null : businessName;
         dslContext.update(DATA_ENTITY)
@@ -504,7 +504,7 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void calculateSearchEntrypoints(final Collection<Long> dataEntityIds) {
         calculateDataEntityVectors(dataEntityIds);
         calculateDataSourceVectors(dataEntityIds);
@@ -699,7 +699,7 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Optional<DataEntityLineageDto> getLineage(final long dataEntityId,
                                                      final int lineageDepth,
                                                      final LineageStreamKind streamKind) {

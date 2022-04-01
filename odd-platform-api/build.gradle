@@ -32,6 +32,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
     implementation "org.springframework.session:spring-session-core"
+    implementation "org.springframework:spring-r2dbc"
     implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
     implementation "org.opendatadiscovery:ingestion-contract-server:$oddIngestionApiVersion"
@@ -47,6 +48,9 @@ dependencies {
 
     implementation "org.flywaydb:flyway-core:$flywayVersion"
     implementation "org.postgresql:postgresql:$postgresqlDriverVersion"
+    implementation "org.jooq:jooq:$jooqVersion"
+    implementation "io.r2dbc:r2dbc-postgresql"
+    implementation "io.r2dbc:r2dbc-pool:$r2dbcPoolVersion"
 
     implementation "javax.validation:validation-api:$validationApiVersion"
     implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
