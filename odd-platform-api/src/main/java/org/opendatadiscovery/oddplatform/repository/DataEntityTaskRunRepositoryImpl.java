@@ -7,11 +7,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityTaskRunRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TASK_RUN;
@@ -36,7 +36,7 @@ public class DataEntityTaskRunRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void persist(final DataEntityTaskRunPojo pojo) {
         dslContext.selectFrom(DATA_ENTITY_TASK_RUN)
             .where(DATA_ENTITY_TASK_RUN.ODDRN.eq(pojo.getOddrn()))
@@ -48,7 +48,7 @@ public class DataEntityTaskRunRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void persist(final Collection<DataEntityTaskRunPojo> pojos) {
         final Set<String> oddrns = pojos.stream()
             .map(DataEntityTaskRunPojo::getOddrn)

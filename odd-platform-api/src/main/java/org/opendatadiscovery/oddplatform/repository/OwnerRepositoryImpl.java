@@ -7,12 +7,12 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.OwnerRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
@@ -44,13 +44,13 @@ public class OwnerRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public OwnerPojo createOrGet(final OwnerPojo owner) {
         return getByName(owner.getName()).orElseGet(() -> create(owner));
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public OwnerPojo update(final OwnerPojo pojo) {
         final OwnerPojo updatedOwner = super.update(pojo);
 

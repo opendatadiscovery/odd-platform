@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
@@ -48,7 +49,6 @@ import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.TagRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -164,7 +164,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Mono<MetadataFieldValueList> createMetadata(final long dataEntityId,
                                                        final List<MetadataObject> metadataList) {
         final Map<MetadataKey, MetadataObject> metadataObjectMap = metadataList.stream()
@@ -278,7 +278,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Mono<MetadataFieldValue> upsertMetadataFieldValue(final long dataEntityId,
                                                              final long metadataFieldId,
                                                              final MetadataFieldValueUpdateFormData formData) {

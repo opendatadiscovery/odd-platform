@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 
@@ -16,7 +16,7 @@ public class GroupEntityRelationRepositoryImpl implements GroupEntityRelationRep
     private final DSLContext dslContext;
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void createOrUpdateRelations(final Collection<GroupEntityRelationsPojo> pojos) {
         final List<String> groupOddrns = pojos.stream().map(GroupEntityRelationsPojo::getGroupOddrn)
             .toList();
