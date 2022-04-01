@@ -1612,6 +1612,25 @@ components:
         projectVersion:
           type: string
 
+    Term:
+      type: object
+      properties:
+
+
+    TermFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        namespace_name:
+          type: string
+        definition:
+          type: string
+      required:
+        - name
+        - namespace_name
+        - definition
+
   parameters:
     PageParam:
       name: page
@@ -1697,6 +1716,14 @@ components:
 
     EnumValueIdParam:
       name: enum_value_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    TermIdParam:
+      name: term_id
       in: path
       required: true
       schema:

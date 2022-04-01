@@ -30,6 +30,7 @@ tags:
   - name: alert
   - name: appInfo
   - name: collector
+  - name: term
 paths:
   /api/identity/whoami:
     get:
@@ -1541,3 +1542,89 @@ paths:
                   $ref: './components.yaml/#/components/schemas/DataSource'
       tags:
         - dataSource
+
+  /api/terms:
+    get:
+      summary: Get list of terms
+      description: Gets the list of existing terms
+      operationId: getTermsList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/OwnerList'
+      tags:
+        - term
+    post:
+      summary: Create term
+      description: Create new term
+      operationId: createTerm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TermFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermDetails'
+      tags:
+        - term
+
+  /api/terms/{term_id}:
+    get:
+      summary: Get term details
+      description: Get all information about term
+      operationId: getTermDetails
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermDetails'
+      tags:
+        - term
+    put:
+      summary: Update term
+      description: Update existing term
+      operationId: updateTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TermFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermDetails'
+      tags:
+        - term
+    delete:
+      summary: Delete term
+      description: Deletes term
+      operationId: deleteTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - term
