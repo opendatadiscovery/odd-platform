@@ -1612,10 +1612,30 @@ components:
         projectVersion:
           type: string
 
-    Term:
+    TermDetails:
       type: object
       properties:
-
+        id:
+          type: integer
+          format: int64
+        oddrn:
+          type: string
+        name:
+          type: string
+        definition:
+          type: string
+        namespace:
+          $ref: '#/components/schemas/Namespace'
+        ownership:
+          $ref: '#/components/schemas/OwnershipList'
+        tags:
+          $ref: '#/components/schemas/TagList'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
 
     TermFormData:
       type: object
