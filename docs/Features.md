@@ -36,6 +36,8 @@ The picture below shows the process of metadata ingestion.
 Monitor test suite results in the Platform and at the same don't think about masking or removing sensitive data. Your datasets don't migrate to your ODD Platform installation, it gathers test results only. \
 The Platform is compatible with **Pandas** and **Great expectations**.
 
+![](.gitbook/img/dq_test.gif)
+
 ## Pipeline Monitoring and Alerting 
 Running your pipelines are easier with manageable parameters available in ODD. For example, you may track modifications of your dataset using a revision history option. Also the Platform represents metadata of your entities such as table structure, field type, description and versions.
 ### Alerting 
@@ -60,7 +62,7 @@ Manage your metadata by tagging tables, datasets and quality tests. Tags provide
 ### Tag both tables and each column
 You may apply **tags** to metadata entities or use **labels** to mark elements of these entities.
 
-![](.gitbook/img/logging.gif)
+![](.gitbook/img/tagging.gif)
 ## Federation Data Catalog
 > :exclamation: Coming soon! The description below is for informational purposes only.
 
