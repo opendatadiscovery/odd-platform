@@ -45,17 +45,22 @@ In the Platform you may find two types of alerts:
 
 **Dataset alerts** and **job alerts** detect backward-incompatible changes of schemas and source targets.
 
+![](.gitbook/img/alerting.gif)
+
 ## ML Experiment Logging 
 The Platform helps track and compare your experiments. It enables you to:
 * Explore a list of your experiment's entities (tables, datasets, jobs and models)
 * Log the most successful experiments
 
+![](.gitbook/img/logging.gif)
+
 ## Manual Object Tagging 
 Manage your metadata by tagging tables, datasets and quality tests. Tags provide easy filtering and searching.
 
 ### Tag both tables and each column
-You may apply **tags** to metadata entities or use **labels** to mark elements of these entities. 
+You may apply **tags** to metadata entities or use **labels** to mark elements of these entities.
 
+![](.gitbook/img/logging.gif)
 ## Federation Data Catalog
 > :exclamation: Coming soon! The description below is for informational purposes only.
 
