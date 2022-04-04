@@ -14,7 +14,9 @@ The Storage is a data catalog which gathers metadata from your sources. Data pro
 ### Advanced search 
 In your Platform account you may find any metadata element using the following options:
 * Full-text search 
-* Filtering by datasources, owners and tags 
+* Filtering by datasources, owners and tags
+
+![](.gitbook/img/storage.gif)
 
 ## End-to-end Data Objects Lineage
 The Platform supports a lineage diagram, so you can easily track movement and change of your data entities. \
@@ -26,9 +28,11 @@ ODD supports the following **data objects**:
 
 [Read more](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md#data-model-specification) about how these entities are used in the **ODD Data Model**.
 
+![](.gitbook/img/lineage.gif)
+
 ## End-to-end Microservices Lineage 
 This feature helps trace data provenance of your microservice-based app. ODD represents microservices as objects and shows their lineage as a typical diagram. \
-The picture below shows the process of metadata ingestion. 
+The picture below shows the process of metadata ingestion.
 
 ![](.gitbook/img/microservices_lineage.png)
 
@@ -36,7 +40,7 @@ The picture below shows the process of metadata ingestion.
 Monitor test suite results in the Platform and at the same don't think about masking or removing sensitive data. Your datasets don't migrate to your ODD Platform installation, it gathers test results only. \
 The Platform is compatible with **Pandas** and **Great expectations**.
 
-![](.gitbook/img/dq_test.gif)
+![](.gitbook/img/dqtest.gif)
 
 ## Pipeline Monitoring and Alerting 
 Running your pipelines are easier with manageable parameters available in ODD. For example, you may track modifications of your dataset using a revision history option. Also the Platform represents metadata of your entities such as table structure, field type, description and versions.
