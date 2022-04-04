@@ -102,14 +102,17 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
           >
             {dataSource.namespace?.name}
           </LabeledInfoItem>
-          <LabeledInfoItem
-            variant="body2"
-            inline
-            label="Token"
-            labelWidth={4}
-          >
-            <DataSourceItemTokenContainer dataSource={dataSource} />
-          </LabeledInfoItem>
+          {dataSource.token?.value && (
+            <LabeledInfoItem
+              variant="body2"
+              inline
+              label="Token"
+              labelWidth={4}
+              valueSx={{ ml: 0 }}
+            >
+              <DataSourceItemTokenContainer dataSource={dataSource} />
+            </LabeledInfoItem>
+          )}
         </S.DescriptionContainer>
 
         <S.DescriptionContainer item sm={6} container>
