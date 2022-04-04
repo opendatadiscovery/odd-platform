@@ -3,7 +3,12 @@ import { SvgIconProps } from '@mui/material/SvgIcon';
 import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 
 const SuccessIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
-  <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props}>
+  <AppSvgIcon
+    sx={sx}
+    viewBox="0 0 16 16"
+    {...props}
+    aria-label="SuccessIcon"
+  >
     <svg
       width="16"
       height="16"

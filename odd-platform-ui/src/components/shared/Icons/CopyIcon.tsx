@@ -3,7 +3,7 @@ import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 
 const CopyIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
-  <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props}>
+  <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props} aria-label="CopyIcon">
     <path
       fillRule="evenodd"
       clipRule="evenodd"
