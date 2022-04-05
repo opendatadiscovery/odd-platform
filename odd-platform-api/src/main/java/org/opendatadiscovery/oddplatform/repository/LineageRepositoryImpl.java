@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStep3;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.LineageRecord;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
@@ -21,7 +21,7 @@ public class LineageRepositoryImpl implements LineageRepository {
     private final DSLContext dslContext;
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void replaceLineagePaths(final List<LineagePojo> pojos) {
         final Set<String> establishers = pojos.stream()
             .map(LineagePojo::getEstablisherOddrn)

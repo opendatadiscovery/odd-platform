@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { DataEntityTypeDictionary } from 'generated-sources';
+import { DataEntityClassAndTypeDictionary } from 'generated-sources';
 import { toolbarHeight } from 'lib/constants';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
@@ -23,12 +23,12 @@ const AlertsContainer = React.lazy(
 );
 
 interface AppProps {
-  fetchDataEntitiesTypes: () => Promise<DataEntityTypeDictionary>;
+  fetchDataEntitiesClassesAndTypes: () => Promise<DataEntityClassAndTypeDictionary>;
 }
 
-const App: React.FC<AppProps> = ({ fetchDataEntitiesTypes }) => {
+const App: React.FC<AppProps> = ({ fetchDataEntitiesClassesAndTypes }) => {
   useEffect(() => {
-    fetchDataEntitiesTypes();
+    fetchDataEntitiesClassesAndTypes();
   }, []);
   return (
     <div className="App">

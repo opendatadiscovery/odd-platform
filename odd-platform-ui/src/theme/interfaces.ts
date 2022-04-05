@@ -1,7 +1,7 @@
 import { TypeBackground } from '@mui/material/styles/createPalette';
 import {
   AlertStatus,
-  DataEntityTypeNameEnum,
+  DataEntityClassNameEnum,
   DataQualityTestRunStatus,
   DataSetFieldTypeTypeEnum,
 } from 'generated-sources';
@@ -26,7 +26,7 @@ interface ItemCondition {
   disabled?: ItemColors;
 }
 
-type EntityType = Record<DataEntityTypeNameEnum, string>;
+type EntityClasses = Record<DataEntityClassNameEnum, string>;
 
 type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 
@@ -70,7 +70,7 @@ type AlertType = Record<AlertStatus, ItemColors>;
 
 declare module '@mui/material/styles' {
   interface Palette {
-    entityType: EntityType;
+    entityClass: EntityClasses;
     reportStatus: ReportStatus;
     runStatus: RunStatus;
     button: ButtonType;
@@ -81,8 +81,9 @@ declare module '@mui/material/styles' {
     texts: TextType;
     textField: ItemCondition;
   }
+
   interface PaletteOptions {
-    entityType?: EntityType;
+    entityClass?: EntityClasses;
     reportStatus?: ReportStatus;
     runStatus?: RunStatus;
     button?: ButtonType;
@@ -100,6 +101,7 @@ declare module '@mui/material/styles/createTypography' {
   interface Typography {
     errorCode: TypographyStyle;
   }
+
   interface TypographyOptions {
     errorCode?: TypographyStyleOptions;
   }

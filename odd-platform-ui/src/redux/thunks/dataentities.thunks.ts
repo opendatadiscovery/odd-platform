@@ -11,7 +11,7 @@ import {
   DataEntityApiUpsertDataEntityInternalDescriptionRequest,
   DataEntityApiUpsertDataEntityInternalNameRequest,
   InternalName,
-  DataEntityTypeDictionary,
+  DataEntityClassAndTypeDictionary,
   DataEntityApiGetMyObjectsRequest,
   DataEntityApiGetMyObjectsWithUpstreamRequest,
   DataEntityApiGetMyObjectsWithDownstreamRequest,
@@ -25,14 +25,14 @@ import { BASE_PARAMS } from 'lib/constants';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new DataEntityApi(apiClientConf);
 
-export const fetchDataEntitiesTypes = createThunk<
+export const fetchDataEntitiesClassesAndTypes = createThunk<
   void,
-  DataEntityTypeDictionary,
-  DataEntityTypeDictionary
+  DataEntityClassAndTypeDictionary,
+  DataEntityClassAndTypeDictionary
 >(
-  () => apiClient.getDataEntityTypes(),
-  actions.fetchDataEntitiesTypesAction,
-  (response: DataEntityTypeDictionary) => response
+  () => apiClient.getDataEntityClasses(),
+  actions.fetchDataEntitiesClassesAndTypesAction,
+  (response: DataEntityClassAndTypeDictionary) => response
 );
 
 export const fetchDataEntityDetails = createThunk<

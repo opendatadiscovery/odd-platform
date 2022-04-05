@@ -17,5 +17,5 @@ public interface FacetStateMapper {
 
     FacetStateDto pojoToState(final SearchFacetsPojo facetsRecord);
 
-    FacetState mapDto(final List<CountableSearchFilter> types, final FacetStateDto state);
+    FacetState mapDto(final List<CountableSearchFilter> entityClasses, final FacetStateDto state);
 }

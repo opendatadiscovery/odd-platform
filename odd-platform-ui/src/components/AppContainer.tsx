@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
-import { fetchDataEntitiesTypes } from 'redux/thunks/dataentities.thunks';
+import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks/dataentities.thunks';
 import App from './App';
 
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = {
-  fetchDataEntitiesTypes,
+  fetchDataEntitiesClassesAndTypes,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

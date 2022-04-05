@@ -14,9 +14,9 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Table;
 import org.jooq.UpdatableRecord;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.exception.EntityAlreadyExistsException;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
-import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
@@ -55,7 +55,7 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public P create(final P pojo) {
         final R jooqRecord = pojoToRecord(pojo);
 
@@ -84,7 +84,7 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public List<P> bulkCreate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
             return emptyList();

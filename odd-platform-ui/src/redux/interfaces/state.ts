@@ -7,7 +7,7 @@ import {
   AssociatedOwner,
   DataEntity,
   DataEntityRef,
-  DataEntitySubType,
+  DataEntityClass,
   DataEntityType,
   DataQualityTest,
   DataQualityTestRun,
@@ -156,9 +156,9 @@ export interface DataEntitiesState {
   myUpstream: DataEntityRef[];
   myDownstream: DataEntityRef[];
   popular: DataEntityRef[];
-  typesDict: {
-    types: Dictionary<DataEntityType>;
-    subtypes: Dictionary<DataEntitySubType>;
+  classesAndTypesDict: {
+    entityTypes: Dictionary<DataEntityType>;
+    entityClasses: Dictionary<DataEntityClass>;
   };
 }
 

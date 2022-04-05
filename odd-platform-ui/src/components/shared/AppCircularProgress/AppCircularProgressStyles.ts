@@ -13,7 +13,7 @@ export const Container = styled(Grid)<{ $background?: Background }>(
     padding: theme.spacing(0.75, 1),
     backgroundColor:
       $background === 'blue'
-        ? theme.palette.entityType.DATA_CONSUMER
+        ? theme.palette.entityClass.DATA_CONSUMER
         : 'transparent',
     borderRadius: theme.spacing(2),
     justifyContent: 'space-between',

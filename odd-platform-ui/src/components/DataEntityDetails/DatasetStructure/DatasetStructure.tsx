@@ -64,7 +64,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   const handleRevisionChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const newVersionId = (e.target.value as unknown) as number;
+    const newVersionId = e.target.value as unknown as number;
     fetchDataSetStructure({
       dataEntityId,
       versionId: newVersionId,

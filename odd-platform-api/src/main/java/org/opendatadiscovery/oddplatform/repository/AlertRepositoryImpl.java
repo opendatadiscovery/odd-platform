@@ -18,6 +18,7 @@ import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectOnConditionStep;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -28,7 +29,6 @@ import org.opendatadiscovery.oddplatform.model.tables.records.AlertRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.countDistinct;
@@ -239,7 +239,7 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Collection<AlertPojo> createAlerts(final Collection<AlertPojo> alerts) {
         if (CollectionUtils.isEmpty(alerts)) {
             return emptyList();

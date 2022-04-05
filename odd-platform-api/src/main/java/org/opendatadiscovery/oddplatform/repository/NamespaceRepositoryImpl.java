@@ -6,12 +6,12 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.NamespaceRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
@@ -36,13 +36,13 @@ public class NamespaceRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public NamespacePojo create(final NamespacePojo pojo) {
         return super.create(pojo);
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public NamespacePojo update(final NamespacePojo pojo) {
         final NamespacePojo updatedNamespace = super.update(pojo);
         updateSearchVectors(updatedNamespace.getId());

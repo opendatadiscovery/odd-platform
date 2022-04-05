@@ -67,13 +67,15 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
   const drawPath = () =>
     linkHorizontal()(crossLink ? crossLinkCoords : coords) || undefined;
 
-  const setMarkerStart = (): string => {
-    if (reverse && !crossLink) return 'url(#head)';
-    if (crossLink) return 'url(#crossHead)';
-    return '';
-  };
+  const setMarkerStart = (): string => (reverse ? 'url(#head)' : '');
+
+  const setCrossMarkerStart = (): string =>
+    reverse ? 'url(#crossHead)' : '';
 
   const setMarkerEnd = (): string => (reverse ? '' : 'url(#head)');
+
+  const setCrossMarkerEnd = (): string =>
+    reverse ? '' : 'url(#crossHead)';
 
   return (
     <>
@@ -97,8 +99,8 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
         d={drawPath()}
         data-source-id={source.id}
         data-target-id={target.id}
-        markerEnd={setMarkerEnd()}
-        markerStart={setMarkerStart()}
+        markerEnd={crossLink ? setCrossMarkerEnd() : setMarkerEnd()}
+        markerStart={crossLink ? setCrossMarkerStart() : setMarkerStart()}
         $crossLink={crossLink}
       />
     </>

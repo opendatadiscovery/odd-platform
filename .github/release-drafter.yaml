@@ -33,20 +33,24 @@ version-resolver:
       - 'patch'
   default: patch
 autolabeler:
-  - label: 'chore'
+  - label: 'kind: documentation'
     files:
       - '*.md'
     branch:
       - '/docs{0,1}\/.+/'
       - '/gh-pages\/.+/'
-  - label: 'bug'
+  - label: 'kind: bug'
     branch:
       - '/fix\/.+/'
       - 'issues\/.+/'
+      - 'issue\/.+/'
     title:
       - '/fix/i'
       - 'issues/i'
-  - label: 'enhancement'
+      - 'issue/i'
+  - label: 'kind: enhancement'
+    branch:
+      - '/new\/.+/'
+  - label: 'kind: feature'
     branch:
       - '/feature\/.+/'
-      - '/new\/.+/'

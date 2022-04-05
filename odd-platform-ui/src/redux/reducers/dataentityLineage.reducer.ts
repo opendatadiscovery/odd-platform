@@ -228,9 +228,8 @@ const filterEdges = (
         sourceIdMapByDepth.set(lineageDepth, []);
       }
 
-      const depthSourceIds: number[] = sourceIdMapByDepth.get(
-        lineageDepth
-      )!;
+      const depthSourceIds: number[] =
+        sourceIdMapByDepth.get(lineageDepth)!;
 
       depthSourceIds.push(...nonAddedIds);
 

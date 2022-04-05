@@ -32,30 +32,30 @@ const reducer = (
         ),
         allFieldIdsByVersion: {
           ...state.allFieldIdsByVersion,
-          [action.payload.value.datasetStructure.dataSetVersion
-            .id]: action.payload.value.datasetStructure.fieldList.reduce<{
-            [key: number]: number[];
-          }>(
-            (fieldsList, field) => ({
-              ...fieldsList,
-              [field.parentFieldId || 0]: [
-                ...(fieldsList[field.parentFieldId || 0] || []),
-                field.id,
-              ],
-            }),
-            {}
-          ),
+          [action.payload.value.datasetStructure.dataSetVersion.id]:
+            action.payload.value.datasetStructure.fieldList.reduce<{
+              [key: number]: number[];
+            }>(
+              (fieldsList, field) => ({
+                ...fieldsList,
+                [field.parentFieldId || 0]: [
+                  ...(fieldsList[field.parentFieldId || 0] || []),
+                  field.id,
+                ],
+              }),
+              {}
+            ),
         },
         statsByVersionId: {
           ...state.statsByVersionId,
-          [action.payload.value.datasetStructure.dataSetVersion
-            .id]: action.payload.value.datasetStructure.fieldList.reduce<DataSetStructureTypesCount>(
-            (typeStats, field) => ({
-              ...typeStats,
-              [field.type.type]: (typeStats[field.type.type] || 0) + 1,
-            }),
-            {}
-          ),
+          [action.payload.value.datasetStructure.dataSetVersion.id]:
+            action.payload.value.datasetStructure.fieldList.reduce<DataSetStructureTypesCount>(
+              (typeStats, field) => ({
+                ...typeStats,
+                [field.type.type]: (typeStats[field.type.type] || 0) + 1,
+              }),
+              {}
+            ),
         },
         latestVersionByDataset: {
           ...state.latestVersionByDataset,

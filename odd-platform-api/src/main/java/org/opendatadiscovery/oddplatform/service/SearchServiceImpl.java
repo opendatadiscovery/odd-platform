@@ -121,7 +121,7 @@ public class SearchServiceImpl implements SearchService {
     }
 
     private Mono<SearchFacetsData> getFacetsData(final UUID searchId, final FacetStateDto state) {
-        final Mono<Map<SearchFilterId, Long>> typeFacet = fetchTypeFacet(state);
+        final Mono<Map<SearchFilterId, Long>> entityClassFacet = fetchEntityClassFacet(state);
 
         final Mono<Long> allCount = Mono.fromCallable(() -> dataEntityRepository.countByState(state));
 
@@ -129,17 +129,17 @@ public class SearchServiceImpl implements SearchService {
             .map(owner -> dataEntityRepository.countByState(state, owner))
             .switchIfEmpty(Mono.just(0L));
 
-        return Mono.zip(typeFacet, allCount, myObjectsTotal)
+        return Mono.zip(entityClassFacet, allCount, myObjectsTotal)
             .map(tuple -> {
-                final List<CountableSearchFilter> types = tuple.getT1().entrySet().stream()
+                final List<CountableSearchFilter> entityClasses = tuple.getT1().entrySet().stream()
                     .map(e -> searchMapper.mapCountableSearchFilter(e.getKey(), e.getValue()))
                     .sorted(Comparator.comparing(CountableSearchFilter::getCount).reversed())
-                    .collect(Collectors.toList());
+                    .toList();
 
-                state.selectedDataEntityType().ifPresent(id -> {
-                    for (final CountableSearchFilter type : types) {
-                        if (type.getId().equals(id)) {
-                            type.setSelected(true);
+                state.selectedDataEntityClass().ifPresent(id -> {
+                    for (final CountableSearchFilter entityClass : entityClasses) {
+                        if (entityClass.getId().equals(id)) {
+                            entityClass.setSelected(true);
                         }
                     }
                 });
@@ -150,12 +150,12 @@ public class SearchServiceImpl implements SearchService {
                     .total(tuple.getT2())
                     .myObjectsTotal(tuple.getT3())
                     .myObjects(state.isMyObjects())
-                    .facetState(facetStateMapper.mapDto(types, state));
+                    .facetState(facetStateMapper.mapDto(entityClasses, state));
             });
     }
 
-    private Mono<Map<SearchFilterId, Long>> fetchTypeFacet(final FacetStateDto state) {
-        return Mono.fromCallable(() -> searchFacetRepository.getTypeFacet(state));
+    private Mono<Map<SearchFilterId, Long>> fetchEntityClassFacet(final FacetStateDto state) {
+        return Mono.fromCallable(() -> searchFacetRepository.getEntityClassFacet(state));
     }
 
     private Mono<SearchFacetsPojo> fetchFacetState(final UUID searchId) {
@@ -172,15 +172,10 @@ public class SearchServiceImpl implements SearchService {
         final Integer page,
         final Integer size
     ) {
-        switch (facetType) {
-            case TAGS:
-                return s -> searchFacetRepository.getTagFacet(query, page, size, s);
-            case OWNERS:
-                return s -> searchFacetRepository.getOwnerFacet(query, page, size, s);
-            case SUBTYPES:
-                return s -> searchFacetRepository.getSubtypeFacet(query, page, size, s);
-            default:
-                throw new IllegalStateException(String.format("%s facet type is unknown", facetType));
-        }
+        return switch (facetType) {
+            case TAGS -> s -> searchFacetRepository.getTagFacet(query, page, size, s);
+            case OWNERS -> s -> searchFacetRepository.getOwnerFacet(query, page, size, s);
+            case TYPES -> s -> searchFacetRepository.getTypeFacet(query, page, size, s);
+        };
     }
 }

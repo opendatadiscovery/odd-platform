@@ -69,17 +69,17 @@ public class JooqFTSHelper {
     );
 
     private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
-        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_IDS
+        FacetType.ENTITY_CLASSES, filters -> DATA_ENTITY.ENTITY_CLASS_IDS
             .contains(extractFilterId(filters).stream().map(Long::intValue).toArray(Integer[]::new)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters))
     );
 
     private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
-        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_IDS
+        FacetType.ENTITY_CLASSES, filters -> DATA_ENTITY.ENTITY_CLASS_IDS
             .contains(extractFilterId(filters).stream().map(Long::intValue).toArray(Integer[]::new)),
         FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
         FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
-        FacetType.SUBTYPES, filters -> DATA_ENTITY.SUBTYPE_ID.in(extractFilterId(filters)),
+        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_ID.in(extractFilterId(filters)),
         FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
         FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
     );
@@ -154,11 +154,11 @@ public class JooqFTSHelper {
 
     public List<Condition> facetStateConditions(final FacetStateDto state,
                                                 final boolean extended,
-                                                final boolean skipTypeCondition) {
+                                                final boolean skipEntityClassCondition) {
         return state.getState().entrySet().stream()
             .filter(e -> {
-                if (skipTypeCondition) {
-                    return !e.getKey().equals(FacetType.TYPES);
+                if (skipEntityClassCondition) {
+                    return !e.getKey().equals(FacetType.ENTITY_CLASSES);
                 }
                 return true;
             })
@@ -169,11 +169,11 @@ public class JooqFTSHelper {
 
     // TODO: ad-hoc
     public Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state,
-                                                                             final boolean skipTypeCondition) {
+                                                                             final boolean skipEntityClassCondition) {
         final Predicate<Map.Entry<FacetType, List<SearchFilterDto>>> entryPredicate =
             e -> e.getKey().equals(FacetType.DATA_SOURCES)
-                || e.getKey().equals(FacetType.TYPES)
-                || e.getKey().equals(FacetType.SUBTYPES);
+                || e.getKey().equals(FacetType.ENTITY_CLASSES)
+                || e.getKey().equals(FacetType.TYPES);
 
         final List<Condition> joinConditions = state.getState().entrySet().stream()
             .filter(not(entryPredicate))
@@ -184,8 +184,8 @@ public class JooqFTSHelper {
         final List<Condition> cteConditions = state.getState().entrySet().stream()
             .filter(entryPredicate)
             .filter(e -> {
-                if (skipTypeCondition) {
-                    return !e.getKey().equals(FacetType.TYPES);
+                if (skipEntityClassCondition) {
+                    return !e.getKey().equals(FacetType.ENTITY_CLASSES);
                 }
 
                 return true;
@@ -227,7 +227,7 @@ public class JooqFTSHelper {
         );
     }
 
-    private static Field<Object> concatVectorFields(final Table<? extends Record> cte,
+    private Field<Object> concatVectorFields(final Table<? extends Record> cte,
                                                     final List<Field<?>> vectorFields,
                                                     final boolean agg,
                                                     final Map<Field<?>, Field<?>> remappingConfig) {

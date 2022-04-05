@@ -24,7 +24,9 @@ interface OverviewDataQualityReportProps {
   ) => Promise<DataSetTestReport>;
 }
 
-const OverviewDataQualityReport: React.FC<OverviewDataQualityReportProps> = ({
+const OverviewDataQualityReport: React.FC<
+  OverviewDataQualityReportProps
+> = ({
   dataEntityId,
   datasetQualityTestReport,
   fetchDataSetQualityTestReport,
