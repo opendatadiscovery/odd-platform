@@ -55,6 +55,7 @@ dependencies {
     implementation "javax.validation:validation-api:$validationApiVersion"
     implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonJsr310Version"
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
 
     implementation(platform("io.opentelemetry:opentelemetry-bom:$opentelemetryVersion"))
     implementation(platform("io.opentelemetry:opentelemetry-bom-alpha:$opentelemetryVersionAlpha"))
@@ -70,6 +71,7 @@ dependencies {
 
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'
