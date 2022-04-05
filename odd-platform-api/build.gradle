@@ -4,6 +4,7 @@ plugins {
     id 'com.google.cloud.tools.jib' version '3.0.0'
     id 'checkstyle'
     id "de.undercouch.download" version "4.1.2" apply false
+    id "org.sonarqube" version "3.3"
 }
 
 ext {
@@ -17,7 +18,6 @@ if (env == 'dev') {
 group = 'org.opendatadiscovery'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
-sourceCompatibility = '17'
 
 apply from: 'jooq.generate.gradle'
 
@@ -205,4 +205,12 @@ if (env == "dev") {
     }
 
     jibDockerBuild.dependsOn tasks.downloadOtlp
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "odd-platform_backend"
+        property "sonar.organization", "opendatadiscovery"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }
