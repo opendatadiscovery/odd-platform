@@ -20,18 +20,16 @@ export const getCollectorsList = createSelector(
   collectors => collectors.allIds.map(id => collectors.byId[id])
 );
 
-const getCollectorCreationStatus = createFetchingSelector(
-  'POST_COLLECTOR'
-);
+const getCollectorCreationStatus =
+  createFetchingSelector('POST_COLLECTOR');
 
 export const getIsCollectorCreating = createSelector(
   getCollectorCreationStatus,
   status => status === 'fetching'
 );
 
-const getCollectorDeletionStatus = createFetchingSelector(
-  'DELETE_COLLECTOR'
-);
+const getCollectorDeletionStatus =
+  createFetchingSelector('DELETE_COLLECTOR');
 
 export const getIsCollectorDeleting = createSelector(
   getCollectorDeletionStatus,

@@ -20,9 +20,8 @@ export const getDataSourcesList = createSelector(
   dataSources => dataSources.allIds.map(id => dataSources.byId[id])
 );
 
-const getDataSourceCreationStatus = createFetchingSelector(
-  'POST_DATASOURCE'
-);
+const getDataSourceCreationStatus =
+  createFetchingSelector('POST_DATASOURCE');
 
 export const getIsDatasourceCreating = createSelector(
   getDataSourceCreationStatus,
