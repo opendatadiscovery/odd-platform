@@ -55,8 +55,10 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
     facetOptionsAll || []
   );
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [facetOptionsLoading, setFacetOptionsLoading] =
-    React.useState<boolean>(false);
+  const [
+    facetOptionsLoading,
+    setFacetOptionsLoading
+  ] = React.useState<boolean>(false);
   const [searchText, setSearchText] = React.useState<string>('');
   const filter = createFilterOptions<FilterOption>();
 
