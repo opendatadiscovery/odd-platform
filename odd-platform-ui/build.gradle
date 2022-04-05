@@ -39,9 +39,6 @@ sonarqube {
 
         property "sonar.exclusions", "**/__test?__/**"
 
-//        property "sonar.typescript.lcov.reportPaths", "./coverage/lcov.info"
-//        property "sonar.testExecutionReportPaths", "./test-report.xml"
-
         property "sonar.sourceEncoding", "UTF-8"
     }
 }

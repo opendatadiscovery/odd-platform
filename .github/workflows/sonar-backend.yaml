@@ -7,7 +7,6 @@ on:
     types: [ "opened", "edited", "reopened", "synchronize" ]
     paths:
       - "odd-platform-api/**"
-      - "odd-platform-api-contract/**"
       - "build.gradle"
 
 jobs:
@@ -61,4 +60,4 @@ jobs:
           JAVA_OPTS: "-Xms2048m -Xmx2048m"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew -PskipUIBundle=true -Pversion=ci-${GITHUB_SHA::6} -Penv=prod -x compileTestJava clean :odd-platform-api:sonarqube --info
+        run: ./gradlew -PskipUIBundle=true -Penv=prod -x compileTestJava clean :odd-platform-api:sonarqube --info
