@@ -15,9 +15,8 @@ const getDataEntityUpstreamLineageFetchingStatus = createFetchingSelector(
   'GET_DATA_ENTITY_UPSTREAM_LINEAGE'
 );
 
-const getDataEntityDownstreamLineageFetchingStatus = createFetchingSelector(
-  'GET_DATA_ENTITY_DOWNSTREAM_LINEAGE'
-);
+const getDataEntityDownstreamLineageFetchingStatus =
+  createFetchingSelector('GET_DATA_ENTITY_DOWNSTREAM_LINEAGE');
 
 export const getDataEntityLineageStreamFetching = createSelector(
   getDataEntityUpstreamLineageFetchingStatus,

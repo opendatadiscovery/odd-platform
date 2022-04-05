@@ -46,23 +46,22 @@ export const DatasetTypeLabelMap: Map<
   [DataSetFieldTypeTypeEnum.UNKNOWN, { short: 'Unk', plural: 'unknowns' }],
 ]);
 
-export type DataSetFormattedStatsKeys = keyof Required<DataSetFormattedStats>;
+export type DataSetFormattedStatsKeys =
+  keyof Required<DataSetFormattedStats>;
 
-export const DatasetStatsLabelMap: Map<
-  DataSetFormattedStatsKeys,
-  string
-> = new Map([
-  ['maxLength', 'Max length'],
-  ['avgLength', 'Avg length'],
-  ['nullsCount', ''],
-  ['uniqueCount', ''],
-  ['trueCount', 'True'],
-  ['falseCount', 'False'],
-  ['lowValue', 'Min'],
-  ['highValue', 'Max'],
-  ['meanValue', 'Mean'],
-  ['medianValue', 'Median'],
-]);
+export const DatasetStatsLabelMap: Map<DataSetFormattedStatsKeys, string> =
+  new Map([
+    ['maxLength', 'Max length'],
+    ['avgLength', 'Avg length'],
+    ['nullsCount', ''],
+    ['uniqueCount', ''],
+    ['trueCount', 'True'],
+    ['falseCount', 'False'],
+    ['lowValue', 'Min'],
+    ['highValue', 'Max'],
+    ['meanValue', 'Mean'],
+    ['medianValue', 'Median'],
+  ]);
 
 export interface UpdateDataSetFieldFormDataParams {
   datasetFieldId: number;

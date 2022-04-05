@@ -7,9 +7,8 @@ import { getDataEntityId } from './dataentity.selectors';
 
 const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
 
-const getAlertTotalsFetchingStatus = createFetchingSelector(
-  'GET_ALERT_TOTALS'
-);
+const getAlertTotalsFetchingStatus =
+  createFetchingSelector('GET_ALERT_TOTALS');
 
 export const getAlertTotalsFetching = createSelector(
   getAlertTotalsFetchingStatus,
