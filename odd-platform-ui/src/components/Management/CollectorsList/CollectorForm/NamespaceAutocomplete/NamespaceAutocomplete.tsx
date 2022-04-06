@@ -105,25 +105,26 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
   }, [autocompleteOpen, searchText]);
 
   const handleOptionChange = React.useCallback(
-    (onChange: (val?: string) => void) => (
-      _: React.ChangeEvent<unknown>,
-      newValue: FilterChangeOption | null
-    ) => {
-      let newField;
-      if (newValue && typeof newValue === 'object') {
-        if ('name' in newValue) {
-          newField = newValue;
+    (onChange: (val?: string) => void) =>
+      (
+        _: React.ChangeEvent<unknown>,
+        newValue: FilterChangeOption | null
+      ) => {
+        let newField;
+        if (newValue && typeof newValue === 'object') {
+          if ('name' in newValue) {
+            newField = newValue;
+          }
         }
-      }
 
-      // Create value from keyboard
-      if (typeof newValue === 'string') {
-        newField = {
-          name: newValue,
-        };
-      }
-      onChange(newField?.name || '');
-    },
+        // Create value from keyboard
+        if (typeof newValue === 'string') {
+          newField = {
+            name: newValue,
+          };
+        }
+        onChange(newField?.name || '');
+      },
     []
   );
 

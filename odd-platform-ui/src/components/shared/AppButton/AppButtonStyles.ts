@@ -39,6 +39,7 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
     },
     [`& .${buttonClasses.startIcon}`]: {
       marginRight: theme.spacing(0.5),
+      marginLeft: theme.spacing(0),
     },
     [`& .${buttonClasses.endIcon}`]: { marginLeft: theme.spacing(0.5) },
     [`&.${buttonClasses.sizeLarge}`]: {

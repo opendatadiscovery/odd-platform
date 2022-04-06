@@ -70,32 +70,33 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
   };
 
   const handleOptionChange = React.useCallback(
-    (onChange: (val?: string) => void) => (
-      _: React.ChangeEvent<unknown>,
-      newValue: FilterChangeOption | null
-    ) => {
-      let newType: MetadataFieldType | '' = '';
-      let newField;
-      if (newValue && typeof newValue === 'object') {
-        // Selected value from search
-        if ('type' in newValue && newValue.type) {
-          newType = newValue.type;
+    (onChange: (val?: string) => void) =>
+      (
+        _: React.ChangeEvent<unknown>,
+        newValue: FilterChangeOption | null
+      ) => {
+        let newType: MetadataFieldType | '' = '';
+        let newField;
+        if (newValue && typeof newValue === 'object') {
+          // Selected value from search
+          if ('type' in newValue && newValue.type) {
+            newType = newValue.type;
+          }
+          if ('name' in newValue) {
+            newField = newValue;
+          }
         }
-        if ('name' in newValue) {
-          newField = newValue;
-        }
-      }
 
-      // Create value from keyboard
-      if (typeof newValue === 'string') {
-        newField = {
-          name: newValue,
-        };
-      }
-      setSelectedType(newType);
-      setSelectedField(newField);
-      onChange(newField?.name);
-    },
+        // Create value from keyboard
+        if (typeof newValue === 'string') {
+          newField = {
+            name: newValue,
+          };
+        }
+        setSelectedType(newType);
+        setSelectedField(newField);
+        onChange(newField?.name);
+      },
     [setSelectedType, setSelectedField]
   );
 

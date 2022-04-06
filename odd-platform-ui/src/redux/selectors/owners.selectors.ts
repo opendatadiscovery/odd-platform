@@ -10,9 +10,8 @@ const ownersState = ({ owners }: RootState): OwnersState => owners;
 const getOwnersListFetchingStatus = createFetchingSelector('GET_OWNERS');
 export const getOwnersCreateStatus = createFetchingSelector('POST_OWNERS');
 export const getOwnerUpdateStatus = createFetchingSelector('PUT_OWNER');
-export const deleteOwnersUpdateStatus = createFetchingSelector(
-  'DELETE_OWNER'
-);
+export const deleteOwnersUpdateStatus =
+  createFetchingSelector('DELETE_OWNER');
 
 export const getIsOwnerCreating = createSelector(
   getOwnersCreateStatus,
