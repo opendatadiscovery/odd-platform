@@ -9,10 +9,9 @@ interface DatasetStructureFieldTypeLabelProps
   typeName: DataSetFieldTypeTypeEnum;
 }
 
-const DatasetStructureFieldTypeLabel: React.FC<DatasetStructureFieldTypeLabelProps> = ({
-  typeName,
-  sx,
-}) => (
+const DatasetStructureFieldTypeLabel: React.FC<
+  DatasetStructureFieldTypeLabelProps
+> = ({ typeName, sx }) => (
   <S.Content component="span" sx={sx} typeName={typeName}>
     {DatasetTypeLabelMap.get(typeName)?.short}
   </S.Content>

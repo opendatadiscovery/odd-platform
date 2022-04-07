@@ -1,6 +1,7 @@
 import React, { ElementType } from 'react';
 import { GridSize, TypographyProps } from '@mui/material';
 import { DataQualityTestRunStatus } from 'generated-sources';
+import { SxProps } from '@mui/system';
 import {
   Container,
   ValueContainer,
@@ -19,6 +20,7 @@ interface LabeledInfoItemProps {
   valueLineHeight?: number;
   valueWrap?: boolean;
   valueComponent?: ElementType;
+  valueSx?: SxProps;
 }
 
 const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
@@ -32,6 +34,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
   valueLineHeight,
   valueWrap = false,
   valueComponent = 'span',
+  valueSx,
 }) => {
   const getXS = () => {
     if (labelWidth === 12) return 12;
@@ -55,6 +58,7 @@ const LabeledInfoItem: React.FC<LabeledInfoItemProps> = ({
 
       <ValueContainer item xs={getXS()} sx={{ width: '100%' }}>
         <Value
+          sx={valueSx}
           $runStatus={runStatus}
           $valueColor={valueColor}
           $inline={inline}
