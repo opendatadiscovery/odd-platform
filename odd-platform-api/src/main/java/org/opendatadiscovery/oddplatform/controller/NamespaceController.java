@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.controller;
 
 import javax.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.NamespaceApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Namespace;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceFormData;
@@ -13,21 +14,16 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class NamespaceController
-    extends
-    AbstractCRUDController<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData, NamespaceService>
-    implements NamespaceApi {
-
-    public NamespaceController(final NamespaceService entityService) {
-        super(entityService);
-    }
+@RequiredArgsConstructor
+public class NamespaceController implements NamespaceApi {
+    private final NamespaceService namespaceService;
 
     @Override
     public Mono<ResponseEntity<Namespace>> createNamespace(
         @Valid final Mono<NamespaceFormData> namespaceFormData,
         final ServerWebExchange exchange
     ) {
-        return create(namespaceFormData);
+        return namespaceFormData.flatMap(namespaceService::create).map(ResponseEntity::ok);
     }
 
     @Override
@@ -35,12 +31,13 @@ public class NamespaceController
         final Long namespaceId,
         final ServerWebExchange exchange
     ) {
-        return get(namespaceId);
+        return namespaceService.get(namespaceId).map(ResponseEntity::ok);
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> deleteNamespace(final Long namespaceId, final ServerWebExchange exchange) {
-        return delete(namespaceId);
+    public Mono<ResponseEntity<Void>> deleteNamespace(final Long namespaceId,
+                                                      final ServerWebExchange exchange) {
+        return namespaceService.delete(namespaceId).map(ign -> ResponseEntity.noContent().build());
     }
 
     @Override
@@ -48,7 +45,7 @@ public class NamespaceController
                                                                 final Integer size,
                                                                 final String query,
                                                                 final ServerWebExchange exchange) {
-        return list(page, size, query);
+        return namespaceService.list(page, size, query).map(ResponseEntity::ok);
     }
 
     @Override
@@ -57,6 +54,8 @@ public class NamespaceController
         @Valid final Mono<NamespaceUpdateFormData> namespaceUpdateFormData,
         final ServerWebExchange exchange
     ) {
-        return update(namespaceId, namespaceUpdateFormData);
+        return namespaceUpdateFormData
+            .flatMap(form -> namespaceService.update(namespaceId, form))
+            .map(ResponseEntity::ok);
     }
 }

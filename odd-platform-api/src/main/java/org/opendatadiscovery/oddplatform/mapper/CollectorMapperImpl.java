@@ -20,6 +20,11 @@ public class CollectorMapperImpl implements CollectorMapper {
     private final NamespaceMapper namespaceMapper;
 
     @Override
+    public CollectorPojo mapFormToPojo(final CollectorFormData form) {
+        return mapDto(form, null).collectorPojo();
+    }
+
+    @Override
     public CollectorDto mapForm(final CollectorFormData form) {
         return mapDto(form, null);
     }
@@ -27,6 +32,14 @@ public class CollectorMapperImpl implements CollectorMapper {
     @Override
     public CollectorDto mapForm(final CollectorFormData form, final TokenDto tokenDto) {
         return mapDto(form, tokenDto);
+    }
+
+    // TODO: create new pojo
+    @Override
+    public CollectorPojo applyForm(final CollectorPojo pojo, final CollectorUpdateFormData form) {
+        return pojo
+            .setName(form.getName())
+            .setDescription(form.getDescription());
     }
 
     @Override

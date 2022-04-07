@@ -1,7 +1,9 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.ObjectUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
@@ -9,6 +11,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateForm
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
@@ -24,8 +28,38 @@ public class DataSourceMapperImpl implements DataSourceMapper {
     }
 
     @Override
-    public DataSourceDto mapForm(final DataSourceFormData form, final TokenDto tokenDto) {
-        return getDataSourceDto(form, tokenDto);
+    public DataSourcePojo mapForm(final DataSourceFormData form,
+                                  final TokenPojo token,
+                                  final NamespacePojo namespace) {
+        return new DataSourcePojo()
+            .setName(form.getName())
+            .setOddrn(form.getOddrn())
+            .setDescription(form.getDescription())
+            .setActive(form.getActive())
+            .setConnectionUrl(form.getConnectionUrl())
+            .setPullingInterval(form.getPullingInterval())
+            .setTokenId(defaultFieldIfNull(token, TokenPojo::getId))
+            .setNamespaceId(defaultFieldIfNull(namespace, NamespacePojo::getId));
+    }
+
+    @Override
+    public DataSourcePojo mapForm(final DataSourceFormData form,
+                                  final TokenPojo token) {
+        return mapForm(form, token, null);
+    }
+
+    @Override
+    public DataSourcePojo mapUpdateForm(final long id,
+                                        final DataSourceUpdateFormData form,
+                                        final NamespacePojo namespace) {
+        return new DataSourcePojo()
+            .setId(id)
+            .setName(form.getName())
+            .setDescription(form.getDescription())
+            .setActive(form.getActive())
+            .setConnectionUrl(form.getConnectionUrl())
+            .setPullingInterval(form.getPullingInterval())
+            .setNamespaceId(defaultFieldIfNull(namespace, NamespacePojo::getId));
     }
 
     @Override
@@ -70,6 +104,14 @@ public class DataSourceMapperImpl implements DataSourceMapper {
         return new DataSourceList()
             .items(mapPojoList(pojos.getData()))
             .pageInfo(pageInfo(pojos));
+    }
+
+    private <T, S> S defaultFieldIfNull(final T object, final Function<T, S> mapper) {
+        if (object == null) {
+            return null;
+        }
+
+        return mapper.apply(object);
     }
 
     private DataSourceDto getDataSourceDto(final DataSourceFormData form, final TokenDto tokenDto) {

@@ -87,6 +87,10 @@ dependencies {
     jooqGenerationContainer("org.testcontainers:postgresql:$testContainersVersion")
 }
 
+bootRun {
+    jvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=32323"]
+}
+
 springBoot {
     buildInfo()
 }
