@@ -26,4 +26,9 @@ public class ReactiveNamespaceRepositoryImpl
             .mono(DSL.selectFrom(NAMESPACE).where(NAMESPACE.NAME.eq(name)))
             .map(this::recordToPojo);
     }
+
+    @Override
+    public Mono<NamespacePojo> createByName(final String name) {
+        return super.create(new NamespacePojo().setName(name));
+    }
 }

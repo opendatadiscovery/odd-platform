@@ -27,7 +27,7 @@ public class NamespaceServiceImpl implements NamespaceService {
 
     @Override
     public Mono<NamespaceList> list(final int page, final int size, final String query) {
-        return namespaceRepository.list(page, size, query).map(namespaceMapper::mapPojos);
+        return namespaceRepository.list(page, size, query).map(namespaceMapper::mapPojoPage);
     }
 
     @Override
