@@ -8,4 +8,8 @@ public class EntityAlreadyExistsException extends RuntimeException {
     public EntityAlreadyExistsException() {
         super();
     }
+
+    public EntityAlreadyExistsException(final String errorMessage) {
+        super(errorMessage);
+    }
 }

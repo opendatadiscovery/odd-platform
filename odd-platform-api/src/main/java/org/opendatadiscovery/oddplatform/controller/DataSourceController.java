@@ -1,36 +1,25 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataSourceApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateFormData;
 import org.opendatadiscovery.oddplatform.service.DataSourceService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 @RestController
-public class DataSourceController
-    extends
-    AbstractCRUDController<DataSource, DataSourceList, DataSourceFormData,
-        DataSourceUpdateFormData, DataSourceService>
-    implements DataSourceApi {
-
-    public DataSourceController(final DataSourceService entityService) {
-        super(entityService);
-    }
-
-    @Override
-    public Mono<ResponseEntity<Void>> deleteDataSource(final Long dataSourceId, final ServerWebExchange exchange) {
-        return delete(dataSourceId);
-    }
+@RequiredArgsConstructor
+public class DataSourceController implements DataSourceApi {
+    private final DataSourceService dataSourceService;
 
     @Override
     public Mono<ResponseEntity<DataSourceList>> getDataSourceList(
@@ -39,15 +28,14 @@ public class DataSourceController
         @Valid final String query,
         final ServerWebExchange exchange
     ) {
-        return list(page, size, query);
+        return dataSourceService
+            .list(page, size, query)
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Flux<DataSource>>> getActiveDataSourceList(final ServerWebExchange exchange) {
-        final Flux<DataSource> response = entityService.listActive()
-            .subscribeOn(Schedulers.boundedElastic());
-
-        return Mono.just(ResponseEntity.ok(response));
+        return Mono.just(ResponseEntity.ok(dataSourceService.listActive()));
     }
 
     @Override
@@ -55,7 +43,9 @@ public class DataSourceController
         @Valid final Mono<DataSourceFormData> dataSourceFormData,
         final ServerWebExchange exchange
     ) {
-        return create(dataSourceFormData);
+        return dataSourceFormData
+            .flatMap(dataSourceService::create)
+            .map(ResponseEntity::ok);
     }
 
     @Override
@@ -64,7 +54,15 @@ public class DataSourceController
         @Valid final Mono<DataSourceUpdateFormData> dataSourceUpdateFormData,
         final ServerWebExchange exchange
     ) {
-        return update(dataSourceId, dataSourceUpdateFormData);
+        return dataSourceUpdateFormData
+            .flatMap(form -> dataSourceService.update(dataSourceId, form))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteDataSource(final Long dataSourceId, final ServerWebExchange exchange) {
+        return dataSourceService.delete(dataSourceId)
+            .map(__ -> ResponseEntity.noContent().build());
     }
 
     @Override
@@ -72,7 +70,8 @@ public class DataSourceController
         final Long dataSourceId,
         final ServerWebExchange exchange
     ) {
-        return entityService.regenerateDataSourceToken(dataSourceId)
-            .map(entity -> new ResponseEntity<>(entity, HttpStatus.OK));
+        return dataSourceService
+            .regenerateDataSourceToken(dataSourceId)
+            .map(ResponseEntity::ok);
     }
 }

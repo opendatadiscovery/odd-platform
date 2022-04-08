@@ -52,7 +52,6 @@ import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepositoryImpl;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
-import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetStructureRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
@@ -60,6 +59,7 @@ import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepo
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import reactor.core.publisher.Mono;
@@ -86,7 +86,7 @@ public class IngestionServiceImplTest {
     private AlertLocator alertLocator;
 
     @Mock
-    private DataSourceRepository dataSourceRepository;
+    private ReactiveDataSourceRepository dataSourceRepository;
 
     @Mock
     private DataEntityRepositoryImpl dataEntityRepository;
@@ -171,7 +171,7 @@ public class IngestionServiceImplTest {
         dataEntityList = deserializeFixture(PATH_TO_DATA_ENTITY_LIST_FIXTURE,
             new TypeReference<>() {
             });
-        when(dataSourceRepository.getByOddrn(anyString())).thenReturn(Optional.of(dataSourceDto));
+        when(dataSourceRepository.getByOddrn(anyString())).thenReturn(Mono.just(dataSourceDto));
         when(metadataIngestionService.ingestMetadata(any())).thenReturn(Mono.empty());
     }
 

@@ -7,6 +7,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DataSourceIngestionMapperImpl implements DataSourceIngestionMapper {
+    @Override
+    public DataSourcePojo mapIngestionModel(final DataSource ds,
+                                            final Long namespaceId,
+                                            final Long tokenId) {
+        return new DataSourcePojo()
+            .setOddrn(ds.getOddrn())
+            .setName(ds.getName())
+            .setActive(true)
+            .setDescription(ds.getDescription())
+            .setNamespaceId(namespaceId)
+            .setTokenId(tokenId);
+    }
 
     @Override
     public DataSourceDto mapIngestionModel(final DataSource ds) {

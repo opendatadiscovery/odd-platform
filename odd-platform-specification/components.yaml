@@ -820,8 +820,6 @@ components:
           type: string
         namespace_name:
           type: string
-        token:
-          $ref: '#/components/schemas/Token'
 
     PageInfo:
       type: object

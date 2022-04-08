@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class TokenServiceImpl implements TokenService {
+public class TokenGeneratorImpl implements TokenGenerator {
 
     private final AuthIdentityProvider authIdentityProvider;
 

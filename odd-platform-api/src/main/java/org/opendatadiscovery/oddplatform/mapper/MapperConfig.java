@@ -5,7 +5,7 @@ import org.mapstruct.ReportingPolicy;
 
 @org.mapstruct.MapperConfig(
     componentModel = "spring",
-    unmappedTargetPolicy = ReportingPolicy.ERROR,
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
     injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface MapperConfig {

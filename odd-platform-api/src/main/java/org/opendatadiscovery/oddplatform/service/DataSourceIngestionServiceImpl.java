@@ -1,76 +1,119 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.util.Collection;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
-import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.DataSourceIngestionMapper;
-import org.opendatadiscovery.oddplatform.repository.CollectorRepository;
-import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 
 @Service
 @RequiredArgsConstructor
 public class DataSourceIngestionServiceImpl implements DataSourceIngestionService {
-
-    private final DataSourceRepository dataSourceRepository;
-    private final CollectorRepository collectorRepository;
+    private final ReactiveDataSourceRepository reactiveDataSourceRepository;
+    private final ReactiveCollectorRepository reactiveCollectorRepository;
     private final DataSourceIngestionMapper dataSourceIngestionMapper;
 
     @Override
-    @BlockingTransactional
-    public Mono<List<DataSource>> createDataSourcesFromIngestion(final DataSourceList dataSourceList) {
-        final CollectorDto collector = collectorRepository.getByOddrn(dataSourceList.getProviderOddrn())
-            .orElseThrow(NotFoundException::new);
-        final List<DataSourceDto> dtos = dataSourceList.getItems().stream()
-            .map(dataSourceIngestionMapper::mapIngestionModel)
-            .toList();
-        final List<String> oddrns = exctractOddrns(dtos);
+    @ReactiveTransactional
+    public Flux<DataSource> createDataSources(final DataSourceList dataSourceList) {
+        return reactiveCollectorRepository
+            .getDtoByOddrn(dataSourceList.getProviderOddrn())
+            .switchIfEmpty(Mono.error(new NotFoundException(
+                "Couldn't find collector with oddrn %s".formatted(dataSourceList.getProviderOddrn()))))
+            // TODO: fix no token_id in data sources record
+            .flatMapMany(c -> {
+                final List<DataSourcePojo> dataSources = mapDataSources(dataSourceList, c);
 
-        final Map<Boolean, List<DataSourceDto>> deletedSplitDataSources = dataSourceRepository
-            .getByOddrns(oddrns, true)
-            .stream()
-            .collect(Collectors.partitioningBy(p -> p.dataSource().getIsDeleted()));
+                return reactiveDataSourceRepository.getByOddrns(extractOddrns(dataSources), true)
+                    .map(DataSourceDto::dataSource)
+                    .collectList()
+                    .flatMapMany(list -> {
+                        final Flux<DataSourcePojo> updatedDataSources =
+                            reactiveDataSourceRepository.bulkUpdate(prepareForUpdate(list, dataSources));
 
-        if (!deletedSplitDataSources.get(true).isEmpty()) {
-            final List<String> deletedOddrns = exctractOddrns(deletedSplitDataSources.get(true));
-            dataSourceRepository.restoreDataSources(deletedOddrns);
-        }
+                        final List<DataSourcePojo> toCreate = prepareForCreate(dataSources,
+                            list.stream().map(DataSourcePojo::getOddrn).collect(Collectors.toSet()));
 
-        final List<String> existingOddrns = deletedSplitDataSources.values().stream()
-            .flatMap(Collection::stream)
-            .map(dto -> dto.dataSource().getOddrn())
-            .toList();
-        final List<DataSourceDto> dataSourcesToCreate = dtos.stream()
-            .filter(dto -> !existingOddrns.contains(dto.dataSource().getOddrn()))
-            .toList();
-        final List<DataSourceDto> createdDtos = dataSourceRepository.bulkCreate(dataSourcesToCreate);
+                        final Flux<DataSourcePojo> createdDataSources =
+                            reactiveDataSourceRepository.bulkCreate(toCreate);
 
-        final List<DataSource> createdDataSources = Stream.of(
-                createdDtos,
-                deletedSplitDataSources.get(true),
-                deletedSplitDataSources.get(false))
-            .flatMap(Collection::stream)
-            .map(dataSourceIngestionMapper::mapDtoToIngestionModel)
-            .toList();
-
-        dataSourceRepository.setTokenFromCollector(oddrns, collector.tokenDto().tokenPojo().getId());
-
-        return Mono.just(createdDataSources);
+                        return Flux.concat(updatedDataSources, createdDataSources);
+                    })
+                    .map(ds -> new DataSourceDto(ds, c.namespace(), c.tokenDto()))
+                    .map(dataSourceIngestionMapper::mapDtoToIngestionModel);
+            });
     }
 
-    private List<String> exctractOddrns(final List<DataSourceDto> dtos) {
-        return dtos.stream()
-            .map(dto -> dto.dataSource().getOddrn())
+    private List<DataSourcePojo> prepareForUpdate(final List<DataSourcePojo> actual,
+                                                  final List<DataSourcePojo> ingested) {
+        final Map<String, DataSourcePojo> actualDict =
+            actual.stream().collect(toMap(DataSourcePojo::getOddrn, identity()));
+
+        return ingested.stream()
+            .map(i -> {
+                final DataSourcePojo a = actualDict.get(i.getOddrn());
+                if (a == null) {
+                    return null;
+                }
+
+                return new DataSourcePojo(a)
+                    .setName(i.getName())
+                    .setDescription(i.getDescription())
+                    .setUpdatedAt(LocalDateTime.now())
+                    .setIsDeleted(false);
+            })
+            .filter(Objects::nonNull)
             .toList();
+    }
+
+    private List<DataSourcePojo> prepareForCreate(final List<DataSourcePojo> ingested,
+                                                  final Set<String> excludedOddrns) {
+        return ingested.stream().filter(i -> excludedOddrns.contains(i.getOddrn())).toList();
+    }
+
+    private List<DataSourcePojo> mapDataSources(final DataSourceList dataSourceList, final CollectorDto c) {
+        return dataSourceList.getItems().stream()
+            .map(ds -> dataSourceIngestionMapper.mapIngestionModel(
+                ds,
+                defaultFieldIfNull(c.namespace(), NamespacePojo::getId),
+                defaultFieldIfNull(c.tokenDto().tokenPojo(), TokenPojo::getId)
+            ))
+            .toList();
+    }
+
+    private List<String> extractOddrns(final List<DataSourcePojo> dtos) {
+        return dtos.stream()
+            .map(DataSourcePojo::getOddrn)
+            .toList();
+    }
+
+    // TODO: duplicate
+    private <T, S> S defaultFieldIfNull(final T object, final Function<T, S> mapper) {
+        if (object == null) {
+            return null;
+        }
+
+        return mapper.apply(object);
     }
 }
