@@ -14,12 +14,12 @@ public interface SearchFacetRepository {
 
     SearchFacetsPojo updateFacetState(final SearchFacetsPojo pojo);
 
-    Map<SearchFilterId, Long> getTypeFacet(final FacetStateDto state);
+    Map<SearchFilterId, Long> getEntityClassFacet(final FacetStateDto state);
 
-    Map<SearchFilterId, Long> getSubtypeFacet(final String facetQuery,
-                                              final int page,
-                                              final int size,
-                                              final FacetStateDto state);
+    Map<SearchFilterId, Long> getTypeFacet(final String facetQuery,
+                                           final int page,
+                                           final int size,
+                                           final FacetStateDto state);
 
     Map<SearchFilterId, Long> getOwnerFacet(final String facetQuery,
                                             final int page,

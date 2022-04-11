@@ -12,6 +12,7 @@ import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.Table;
 import org.jooq.exception.DataAccessException;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.exception.EntityAlreadyExistsException;
@@ -26,7 +27,6 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformCollectorPath;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.COLLECTOR;
@@ -137,7 +137,7 @@ public class CollectorRepositoryImpl implements CollectorRepository {
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public CollectorDto create(final CollectorDto dto) {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())
@@ -156,7 +156,7 @@ public class CollectorRepositoryImpl implements CollectorRepository {
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public CollectorDto update(final CollectorDto dto) {
         final NamespacePojo namespace = dto.namespace() != null
             ? namespaceRepository.createIfNotExists(dto.namespace())

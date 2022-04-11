@@ -15,5 +15,5 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 public class DataEntityDto {
     protected DataEntityPojo dataEntity;
     protected boolean hasAlerts;
-    protected Map<DataEntityTypeDto, DataEntityAttributes> specificAttributes;
+    protected Map<DataEntityClassDto, DataEntityAttributes> specificAttributes;
 }

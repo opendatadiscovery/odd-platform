@@ -21,10 +21,10 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDimensionsDto> listDimensionsByOddrns(final Collection<String> oddrns);
 
-    List<DataEntityDimensionsDto> listByType(final int page,
+    List<DataEntityDimensionsDto> listByEntityClass(final int page,
                                              final int size,
-                                             final int typeId,
-                                             final Integer subTypeId);
+                                             final int entityClassId,
+                                             final Integer typeId);
 
     List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId);
 

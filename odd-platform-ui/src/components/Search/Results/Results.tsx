@@ -7,14 +7,14 @@ import { Dictionary } from 'lodash/index';
 import { useScrollBarWidth } from 'lib/hooks';
 import {
   DataEntity,
-  DataEntityType,
-  DataEntityTypeNameEnum,
+  DataEntityClassNameEnum,
   SearchApiGetSearchResultsRequest,
+  DataEntityClass,
 } from 'generated-sources';
 import {
   CurrentPageInfo,
   SearchTotalsByName,
-  SearchType,
+  SearchClass,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -26,9 +26,9 @@ import ResultItem from 'components/Search/Results/ResultItem/ResultItem';
 import * as S from './ResultsStyles';
 
 interface ResultsProps {
-  dataEntityTypesByName: Dictionary<DataEntityType>;
+  dataEntityClassesByName: Dictionary<DataEntityClass>;
   searchId: string;
-  searchType?: SearchType;
+  searchClass?: SearchClass;
   searchResults: DataEntity[];
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
@@ -43,9 +43,9 @@ interface ResultsProps {
 }
 
 const Results: React.FC<ResultsProps> = ({
-  dataEntityTypesByName,
+  dataEntityClassesByName,
   searchId,
-  searchType,
+  searchClass,
   searchResults,
   pageInfo,
   totals,
@@ -58,7 +58,7 @@ const Results: React.FC<ResultsProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const [tabs, setTabs] = React.useState<AppTabItem<SearchType>[]>([]);
+  const [tabs, setTabs] = React.useState<AppTabItem<SearchClass>[]>([]);
 
   React.useEffect(() => {
     setTabs([
@@ -74,33 +74,33 @@ const Results: React.FC<ResultsProps> = ({
       },
       {
         name: 'Datasets',
-        hint: totals[DataEntityTypeNameEnum.SET]?.count || 0,
-        value: totals[DataEntityTypeNameEnum.SET]?.id,
+        hint: totals[DataEntityClassNameEnum.SET]?.count || 0,
+        value: totals[DataEntityClassNameEnum.SET]?.id,
       },
       {
         name: 'Transformers',
-        hint: totals[DataEntityTypeNameEnum.TRANSFORMER]?.count || 0,
-        value: totals[DataEntityTypeNameEnum.TRANSFORMER]?.id,
+        hint: totals[DataEntityClassNameEnum.TRANSFORMER]?.count || 0,
+        value: totals[DataEntityClassNameEnum.TRANSFORMER]?.id,
       },
       {
         name: 'Data Consumers',
-        hint: totals[DataEntityTypeNameEnum.CONSUMER]?.count || 0,
-        value: totals[DataEntityTypeNameEnum.CONSUMER]?.id,
+        hint: totals[DataEntityClassNameEnum.CONSUMER]?.count || 0,
+        value: totals[DataEntityClassNameEnum.CONSUMER]?.id,
       },
       {
         name: 'Data Inputs',
-        hint: totals[DataEntityTypeNameEnum.INPUT]?.count || 0,
-        value: totals[DataEntityTypeNameEnum.INPUT]?.id,
+        hint: totals[DataEntityClassNameEnum.INPUT]?.count || 0,
+        value: totals[DataEntityClassNameEnum.INPUT]?.id,
       },
       {
         name: 'Quality Tests',
-        hint: totals[DataEntityTypeNameEnum.QUALITY_TEST]?.count || 0,
-        value: totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id,
+        hint: totals[DataEntityClassNameEnum.QUALITY_TEST]?.count || 0,
+        value: totals[DataEntityClassNameEnum.QUALITY_TEST]?.id,
       },
       {
         name: 'Groups',
-        hint: totals[DataEntityTypeNameEnum.ENTITY_GROUP]?.count || 0,
-        value: totals[DataEntityTypeNameEnum.ENTITY_GROUP]?.id,
+        hint: totals[DataEntityClassNameEnum.ENTITY_GROUP]?.count || 0,
+        value: totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id,
       },
     ]);
   }, [totals]);
@@ -110,17 +110,17 @@ const Results: React.FC<ResultsProps> = ({
 
   React.useEffect(() => {
     setSelectedTab(
-      searchType ? tabs.findIndex(tab => tab.value === searchType) : 0
+      searchClass ? tabs.findIndex(tab => tab.value === searchClass) : 0
     );
-  }, [tabs, searchType]);
+  }, [tabs, searchClass]);
 
-  const onSearchTypeChange = (newTypeIndex: number) => {
+  const onSearchClassChange = (newTypeIndex: number) => {
     const newType = tabs[newTypeIndex]?.value
-      ? get(dataEntityTypesByName, `${tabs[newTypeIndex].value}`)
+      ? get(dataEntityClassesByName, `${tabs[newTypeIndex].value}`)
       : null;
     dispatch(
       actions.changeDataEntitySearchFilterAction({
-        facetName: 'types',
+        facetName: 'entityClasses',
         facetOptionId: newType?.id || tabs[newTypeIndex].value,
         facetOptionName:
           newType?.name || tabs[newTypeIndex].value?.toString(),
@@ -154,7 +154,7 @@ const Results: React.FC<ResultsProps> = ({
           type="primary"
           items={tabs}
           selectedTab={selectedTab}
-          handleTabChange={onSearchTypeChange}
+          handleTabChange={onSearchClassChange}
           isHintUpdated={isSearchUpdated}
         />
       )}
@@ -166,8 +166,8 @@ const Results: React.FC<ResultsProps> = ({
         <S.ColContainer item $colType="collg">
           <Typography variant="caption">Name</Typography>
         </S.ColContainer>
-        {searchType &&
-        searchType === totals[DataEntityTypeNameEnum.SET]?.id ? (
+        {searchClass &&
+        searchClass === totals[DataEntityClassNameEnum.SET]?.id ? (
           <>
             <S.ColContainer item $colType="colxs">
               <Typography variant="caption">Use</Typography>
@@ -180,8 +180,8 @@ const Results: React.FC<ResultsProps> = ({
             </S.ColContainer>
           </>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityTypeNameEnum.TRANSFORMER]?.id ? (
+        {searchClass &&
+        searchClass === totals[DataEntityClassNameEnum.TRANSFORMER]?.id ? (
           <>
             <S.ColContainer item $colType="collg">
               <Typography variant="caption">Sources</Typography>
@@ -191,8 +191,9 @@ const Results: React.FC<ResultsProps> = ({
             </S.ColContainer>
           </>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityTypeNameEnum.QUALITY_TEST]?.id ? (
+        {searchClass &&
+        searchClass ===
+          totals[DataEntityClassNameEnum.QUALITY_TEST]?.id ? (
           <>
             <S.ColContainer item $colType="collg">
               <Typography variant="caption">Entities</Typography>
@@ -202,14 +203,15 @@ const Results: React.FC<ResultsProps> = ({
             </S.ColContainer>
           </>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityTypeNameEnum.CONSUMER]?.id ? (
+        {searchClass &&
+        searchClass === totals[DataEntityClassNameEnum.CONSUMER]?.id ? (
           <S.ColContainer item $colType="collg">
             <Typography variant="caption">Source</Typography>
           </S.ColContainer>
         ) : null}
-        {searchType &&
-        searchType === totals[DataEntityTypeNameEnum.ENTITY_GROUP]?.id ? (
+        {searchClass &&
+        searchClass ===
+          totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
           <S.ColContainer item $colType="colxs">
             <Typography variant="caption">Number of entities</Typography>
           </S.ColContainer>
@@ -265,7 +267,7 @@ const Results: React.FC<ResultsProps> = ({
             {searchResults.map(searchResult => (
               <ResultItem
                 key={searchResult.id}
-                searchType={searchType}
+                searchClass={searchClass}
                 searchResult={searchResult}
                 totals={totals}
               />

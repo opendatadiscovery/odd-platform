@@ -24,7 +24,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     @Builder(builderMethodName = "detailsBuilder")
     public DataEntityDetailsDto(final DataEntityPojo dataEntity,
                                 final boolean hasAlerts,
-                                final Map<DataEntityTypeDto, DataEntityAttributes> specificAttributes,
+                                final Map<DataEntityClassDto, DataEntityAttributes> specificAttributes,
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
                                 final DataSourcePojo dataSource,

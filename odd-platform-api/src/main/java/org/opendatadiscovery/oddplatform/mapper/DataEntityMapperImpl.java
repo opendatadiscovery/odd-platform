@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.MapUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
@@ -20,19 +22,17 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageNod
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageStream;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntitySubType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpectation;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -47,7 +47,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.Data
 @Component
 @RequiredArgsConstructor
 public class DataEntityMapperImpl implements DataEntityMapper {
-    private static DataEntityTypeDictionary TYPE_DICTIONARY = null;
+    private static DataEntityClassAndTypeDictionary TYPE_DICTIONARY = null;
 
     private final DataSourceMapper dataSourceMapper;
     private final OwnershipMapper ownershipMapper;
@@ -58,30 +58,30 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
     @Override
     public DataEntity mapPojo(final DataEntityDimensionsDto dto) {
-        final Set<DataEntityTypeDto> types = DataEntityTypeDto.findByIds(dto.getDataEntity().getTypeIds());
+        final Set<DataEntityClassDto> entityClasses =
+            DataEntityClassDto.findByIds(dto.getDataEntity().getEntityClassIds());
 
-        final Integer subtypeId = dto.getDataEntity().getSubtypeId();
+        final Integer typeId = dto.getDataEntity().getTypeId();
 
-        final DataEntitySubType subtype = DataEntitySubtypeDto.findById(subtypeId)
-            .map(this::mapSubType)
+        final DataEntityType type = DataEntityTypeDto.findById(typeId)
+            .map(this::mapType)
             .orElseThrow(() -> new IllegalArgumentException(
-                String.format("No subtype with id %d for entity %s was found", subtypeId,
-                    dto.getDataEntity().getOddrn())));
+                String.format("No type with id %d for entity %s was found", typeId, dto.getDataEntity().getOddrn())));
 
         final DataEntity entity = mapPojo(dto.getDataEntity())
-            .types(types.stream().map(this::mapType).toList())
-            .subType(subtype)
+            .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
+            .type(type)
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(dto.getTags() != null
                 ? dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList())
                 : null);
 
-        if (types.contains(DataEntityTypeDto.DATA_SET)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {
             entity.setStats(mapStats(dto.getDataSetDetailsDto()));
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_TRANSFORMER)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_TRANSFORMER)) {
             entity.setSourceList(dto.getDataTransformerDetailsDto().sourceList()
                 .stream()
                 .distinct()
@@ -96,7 +96,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .collect(Collectors.toList()));
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_QUALITY_TEST)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_QUALITY_TEST)) {
             entity.datasetsList(dto.getDataQualityTestDetailsDto()
                 .datasetList()
                 .stream()
@@ -105,7 +105,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .collect(Collectors.toList()));
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_CONSUMER)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_CONSUMER)) {
             entity.setInputList(dto.getDataConsumerDetailsDto()
                 .inputList()
                 .stream()
@@ -113,7 +113,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .map(this::mapReference).collect(Collectors.toList()));
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_INPUT)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_INPUT)) {
             entity.setOutputList(dto.getDataInputDetailsDto()
                 .outputList()
                 .stream()
@@ -121,7 +121,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .map(this::mapReference).collect(Collectors.toList()));
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_ENTITY_GROUP) && dto.getGroupsDto() != null) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_ENTITY_GROUP) && dto.getGroupsDto() != null) {
             final List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
                 .map(this::mapReference)
                 .toList();
@@ -161,14 +161,15 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     @Override
     public DataEntityDetails mapDtoDetails(final DataEntityDetailsDto dto) {
         final DataEntityPojo pojo = dto.getDataEntity();
-        final Integer subtypeId = dto.getDataEntity().getSubtypeId();
+        final Integer typeId = dto.getDataEntity().getTypeId();
 
-        final Set<DataEntityTypeDto> types = DataEntityTypeDto.findByIds(dto.getDataEntity().getTypeIds());
+        final Set<DataEntityClassDto> entityClasses =
+            DataEntityClassDto.findByIds(dto.getDataEntity().getEntityClassIds());
 
-        final DataEntitySubType subtype = DataEntitySubtypeDto.findById(subtypeId)
-            .map(this::mapSubType)
+        final DataEntityType type = DataEntityTypeDto.findById(typeId)
+            .map(this::mapType)
             .orElseThrow(() -> new IllegalArgumentException(
-                String.format("No subtype with id %d for entity %s was found", subtypeId,
+                String.format("No type with id %d for entity %s was found", typeId,
                     dto.getDataEntity().getOddrn())));
 
         final List<DataEntityRef> groups = Optional.ofNullable(dto.getParentGroups()).stream()
@@ -186,20 +187,20 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .createdAt(addUTC(pojo.getCreatedAt()))
             .updatedAt(addUTC(pojo.getUpdatedAt()))
             .dataEntityGroups(groups)
-            .types(types.stream().map(this::mapType).toList())
-            .subType(subtype)
+            .entityClasses(entityClasses.stream().map(this::mapEntityClass).toList())
+            .type(type)
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapPojo(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
             .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
             .viewCount(pojo.getViewCount());
 
-        if (types.contains(DataEntityTypeDto.DATA_SET)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {
             details.setVersionList(datasetVersionMapper.mapPojo(dto.getDatasetVersions()));
             details.setStats(mapStats(dto.getDataSetDetailsDto()));
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_TRANSFORMER)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_TRANSFORMER)) {
             details.setSourceList(dto.getDataTransformerDetailsDto().sourceList()
                 .stream()
                 .distinct()
@@ -214,7 +215,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .collect(Collectors.toList()));
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_QUALITY_TEST)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_QUALITY_TEST)) {
             final DataQualityTestExpectation expectation = new DataQualityTestExpectation()
                 .type(dto.getDataQualityTestDetailsDto().expectationType());
 
@@ -236,7 +237,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .suiteUrl(dto.getDataQualityTestDetailsDto().suiteUrl());
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_CONSUMER)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_CONSUMER)) {
             details.setInputList(dto.getDataConsumerDetailsDto()
                 .inputList()
                 .stream()
@@ -244,7 +245,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .map(this::mapReference).collect(Collectors.toList()));
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_ENTITY_GROUP)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_ENTITY_GROUP)) {
             final List<DataEntityRef> dataEntityRefs = dto.getGroupsDto().entities().stream()
                 .map(this::mapReference)
                 .toList();
@@ -252,7 +253,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             details.setHasChildren(dto.getGroupsDto().hasChildren());
         }
 
-        if (types.contains(DataEntityTypeDto.DATA_INPUT)) {
+        if (entityClasses.contains(DataEntityClassDto.DATA_INPUT)) {
             details.setOutputList(dto.getDataInputDetailsDto()
                 .outputList()
                 .stream()
@@ -291,6 +292,17 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
+    public DataEntityClass mapEntityClass(final DataEntityClassDto entityClass) {
+        if (entityClass == null) {
+            return null;
+        }
+
+        return new DataEntityClass()
+            .id(entityClass.getId())
+            .name(DataEntityClass.NameEnum.fromValue(entityClass.name()));
+    }
+
+    @Override
     public DataEntityType mapType(final DataEntityTypeDto type) {
         if (type == null) {
             return null;
@@ -302,21 +314,10 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
-    public DataEntitySubType mapSubType(final DataEntitySubtypeDto subtype) {
-        if (subtype == null) {
-            return null;
-        }
-
-        return new DataEntitySubType()
-            .id(subtype.getId())
-            .name(DataEntitySubType.NameEnum.fromValue(subtype.name()));
-    }
-
-    @Override
-    public DataEntityTypeDictionary getTypeDict() {
+    public DataEntityClassAndTypeDictionary getTypeDict() {
         if (TYPE_DICTIONARY == null) {
-            TYPE_DICTIONARY = new DataEntityTypeDictionary()
-                .subtypes(Arrays.stream(DataEntitySubtypeDto.values()).map(this::mapSubType).toList())
+            TYPE_DICTIONARY = new DataEntityClassAndTypeDictionary()
+                .entityClasses(Arrays.stream(DataEntityClassDto.values()).map(this::mapEntityClass).toList())
                 .types(Arrays.stream(DataEntityTypeDto.values()).map(this::mapType).toList());
         }
 
@@ -390,14 +391,15 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         final DataEntityPojo dataEntity = dto.getDataEntity();
         final DataSourcePojo dataSource = dto.getDataSource();
 
-        final List<DataEntityType> types = DataEntityTypeDto.findByIds(dto.getDataEntity().getTypeIds())
-            .stream()
-            .map(this::mapType)
-            .toList();
+        final List<DataEntityClass> entityClasses =
+            DataEntityClassDto.findByIds(dto.getDataEntity().getEntityClassIds())
+                .stream()
+                .map(this::mapEntityClass)
+                .toList();
 
         return new DataEntityLineageNode()
             .id(dataEntity.getId())
-            .types(types)
+            .entityClasses(entityClasses)
             .externalName(dataEntity.getExternalName())
             .internalName(dataEntity.getInternalName())
             .groupIdList(groupId)
@@ -411,16 +413,16 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     private DataEntityRef mapReference(final DataEntityPojo pojo) {
-        final List<DataEntityType> types = DataEntityTypeDto.findByIds(pojo.getTypeIds())
+        final List<DataEntityClass> entityClasses = DataEntityClassDto.findByIds(pojo.getEntityClassIds())
             .stream()
-            .map(this::mapType)
+            .map(this::mapEntityClass)
             .toList();
 
         return new DataEntityRef()
             .id(pojo.getId())
             .externalName(pojo.getExternalName())
             .internalName(pojo.getInternalName())
-            .types(types)
+            .entityClasses(entityClasses)
             .url("");
     }
 

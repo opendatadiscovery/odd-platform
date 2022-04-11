@@ -8,7 +8,7 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import * as S from './GroupedEntitiesListModalStyles';
 
 interface GroupedEntitiesListModalProps {
@@ -21,16 +21,11 @@ interface GroupedEntitiesListModalProps {
   ) => Promise<DataEntityLineage>;
 }
 
-const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
-  dataEntityName,
-  entities,
-  openBtnEl,
-  fetchMoreLineage,
-}) => {
-  const [
-    isLoadMoreClicked,
-    setIsLoadMoreClicked,
-  ] = React.useState<boolean>(false);
+const GroupedEntitiesListModal: React.FC<
+  GroupedEntitiesListModalProps
+> = ({ dataEntityName, entities, openBtnEl, fetchMoreLineage }) => {
+  const [isLoadMoreClicked, setIsLoadMoreClicked] =
+    React.useState<boolean>(false);
 
   const listItem = (item: DataEntityLineageNode) => (
     <Link to={dataEntityDetailsPath(item.id)}>
@@ -44,11 +39,11 @@ const GroupedEntitiesListModal: React.FC<GroupedEntitiesListModalProps> = ({
           </Typography>
         </Grid>
         <Grid flex="auto" wrap="nowrap" sx={{ ml: 1 }}>
-          {item.types?.map(type => (
-            <EntityTypeItem
+          {item.entityClasses?.map(entityClass => (
+            <EntityClassItem
               sx={{ mr: 0.5 }}
-              key={type.id}
-              typeName={type.name}
+              key={entityClass.id}
+              entityClassName={entityClass.name}
             />
           ))}
         </Grid>

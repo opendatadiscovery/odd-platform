@@ -20,19 +20,20 @@ const reducer = (
     case getType(actions.fetchDataEntityGroupLinkedListAction.success):
       return {
         ...state,
-        linkedItemsIdsByDataEntityGroupId: action.payload.value.items.reduce(
-          (
-            memo: DataEntityGroupLinkedListState['linkedItemsIdsByDataEntityGroupId'],
-            linkedItem
-          ) => ({
-            ...memo,
-            [action.payload.entityId]: [
-              ...(memo?.[action.payload.entityId] || []),
-              linkedItem.id,
-            ],
-          }),
-          { ...state, pageInfo: action.payload.pageInfo }
-        ),
+        linkedItemsIdsByDataEntityGroupId:
+          action.payload.value.items.reduce(
+            (
+              memo: DataEntityGroupLinkedListState['linkedItemsIdsByDataEntityGroupId'],
+              linkedItem
+            ) => ({
+              ...memo,
+              [action.payload.entityId]: [
+                ...(memo?.[action.payload.entityId] || []),
+                linkedItem.id,
+              ],
+            }),
+            { ...state, pageInfo: action.payload.pageInfo }
+          ),
       };
     default:
       return state;

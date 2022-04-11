@@ -55,25 +55,24 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
 
   return (
     <Grid container sx={{ p: 2 }}>
-      <Grid container alignItems="center" justifyContent="space-between">
-        <Grid item xs={9}>
-          <AppTooltip
-            title={() =>
-              qualityTest?.internalName || qualityTest?.externalName
-            }
-          >
-            <Typography noWrap variant="h2">
-              {qualityTest?.internalName || qualityTest?.externalName}
-            </Typography>
-          </AppTooltip>
-        </Grid>
-        <Grid item xs={2}>
-          <Link to={dataEntityDetailsPath(dataQATestId)}>
-            <AppButton size="small" color="tertiary">
-              Go to page
-            </AppButton>
-          </Link>
-        </Grid>
+      <Grid
+        container
+        alignItems="center"
+        justifyContent="space-between"
+        wrap="nowrap"
+      >
+        <AppTooltip
+          title={() =>
+            qualityTest?.internalName || qualityTest?.externalName
+          }
+        >
+          <Typography noWrap variant="h2">
+            {qualityTest?.internalName || qualityTest?.externalName}
+          </Typography>
+        </AppTooltip>
+        <AppButton size="small" color="tertiary" sx={{ ml: 2 }}>
+          <Link to={dataEntityDetailsPath(dataQATestId)}>Go to page</Link>
+        </AppButton>
       </Grid>
       <Grid container wrap="wrap" justifyContent="center" sx={{ mt: 2 }}>
         {tabs.length && selectedTab >= 0 ? (

@@ -6,18 +6,17 @@ import { NamespacesState } from 'redux/interfaces/state';
 const namespacesState = ({ namespaces }: RootState): NamespacesState =>
   namespaces;
 
-const getNamespaceListFetchingStatus = createFetchingSelector(
-  'GET_NAMESPACES'
-);
-export const getNamespaceCreateStatus = createFetchingSelector(
-  'POST_NAMESPACES'
-);
-export const getNamespaceUpdateStatus = createFetchingSelector(
-  'PUT_NAMESPACE'
-);
-export const deleteNamespaceUpdateStatus = createFetchingSelector(
-  'DELETE_NAMEPSPACE'
-);
+const getNamespaceListFetchingStatus =
+  createFetchingSelector('GET_NAMESPACES');
+
+export const getNamespaceCreateStatus =
+  createFetchingSelector('POST_NAMESPACES');
+
+export const getNamespaceUpdateStatus =
+  createFetchingSelector('PUT_NAMESPACE');
+
+export const deleteNamespaceUpdateStatus =
+  createFetchingSelector('DELETE_NAMESPACE');
 
 export const getIsNamespaceListFetching = createSelector(
   getNamespaceListFetchingStatus,

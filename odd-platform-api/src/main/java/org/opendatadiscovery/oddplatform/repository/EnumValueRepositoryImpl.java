@@ -11,10 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.EnumValueRecord;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Collections.emptyList;
 import static org.opendatadiscovery.oddplatform.model.Tables.ENUM_VALUE;
@@ -30,7 +30,7 @@ public class EnumValueRepositoryImpl implements EnumValueRepository {
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public List<EnumValuePojo> updateFieldEnumValues(final Long datasetFieldId, final List<EnumValuePojo> pojos) {
         if (pojos.isEmpty()) {
             dslContext.update(ENUM_VALUE)

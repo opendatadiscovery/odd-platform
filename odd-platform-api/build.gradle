@@ -4,6 +4,7 @@ plugins {
     id 'com.google.cloud.tools.jib' version '3.0.0'
     id 'checkstyle'
     id "de.undercouch.download" version "4.1.2" apply false
+    id "org.sonarqube" version "3.3"
 }
 
 ext {
@@ -17,7 +18,6 @@ if (env == 'dev') {
 group = 'org.opendatadiscovery'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
-sourceCompatibility = '17'
 
 apply from: 'jooq.generate.gradle'
 
@@ -32,6 +32,7 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
     implementation "org.springframework.session:spring-session-core"
+    implementation "org.springframework:spring-r2dbc"
     implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
     implementation "org.opendatadiscovery:ingestion-contract-server:$oddIngestionApiVersion"
@@ -47,10 +48,14 @@ dependencies {
 
     implementation "org.flywaydb:flyway-core:$flywayVersion"
     implementation "org.postgresql:postgresql:$postgresqlDriverVersion"
+    implementation "org.jooq:jooq:$jooqVersion"
+    implementation "io.r2dbc:r2dbc-postgresql"
+    implementation "io.r2dbc:r2dbc-pool:$r2dbcPoolVersion"
 
     implementation "javax.validation:validation-api:$validationApiVersion"
     implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonJsr310Version"
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
 
     implementation(platform("io.opentelemetry:opentelemetry-bom:$opentelemetryVersion"))
     implementation(platform("io.opentelemetry:opentelemetry-bom-alpha:$opentelemetryVersionAlpha"))
@@ -66,6 +71,7 @@ dependencies {
 
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'
@@ -201,4 +207,12 @@ if (env == "dev") {
     }
 
     jibDockerBuild.dependsOn tasks.downloadOtlp
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "odd-platform_backend"
+        property "sonar.organization", "opendatadiscovery"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }

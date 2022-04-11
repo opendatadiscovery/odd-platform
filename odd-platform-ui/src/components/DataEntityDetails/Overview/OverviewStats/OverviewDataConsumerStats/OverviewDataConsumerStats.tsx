@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   DataEntityDetails,
-  DataEntityTypeNameEnum,
+  DataEntityClassNameEnum,
 } from 'generated-sources';
 import { dataEntityDetailsPath } from 'lib/paths';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Grid, Typography } from '@mui/material';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
@@ -16,18 +16,16 @@ interface OverviewDataConsumerStatsProps {
   dataEntityName: string | undefined;
 }
 
-const OverviewDataConsumerStats: React.FC<OverviewDataConsumerStatsProps> = ({
-  inputs,
-  unknownInputsCount,
-  dataEntityName,
-}) => {
+const OverviewDataConsumerStats: React.FC<
+  OverviewDataConsumerStatsProps
+> = ({ inputs, unknownInputsCount, dataEntityName }) => {
   const displayedEntitiesNumber = 10;
 
   return (
     <Grid container>
       <Grid sx={{ ml: 0, mb: 1.25 }} item xs={12}>
-        <EntityTypeItem
-          typeName={DataEntityTypeNameEnum.CONSUMER}
+        <EntityClassItem
+          entityClassName={DataEntityClassNameEnum.CONSUMER}
           fullName
         />
       </Grid>

@@ -2,7 +2,7 @@ import React from 'react';
 import { HierarchyPointNode } from 'd3-hierarchy';
 import { select } from 'd3-selection';
 import { interpolateString } from 'd3-interpolate';
-import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
+import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
@@ -20,7 +20,7 @@ import {
   Placeholder,
   RootNodeRect,
   Title,
-  TypeContainer,
+  EntityClassContainer,
   TypeLabel,
   UnknownEntityNameCircle,
   UnknownEntityNameCrossedLine,
@@ -83,7 +83,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     height: 20,
     my: 16,
   };
-  const typeLayout = {
+  const entityClassLayout = {
     width: 24,
     height: 16,
     my: compactView ? 11 : 16,
@@ -247,7 +247,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         </g>
         <g
           transform={`translate(${titleLayout.x},${
-            nodeSize.y - typeLayout.my
+            nodeSize.y - entityClassLayout.my
           })`}
         >
           <Attribute>
@@ -350,26 +350,29 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               </>
             )}
         </g>
-        {data.types?.map((type, i) => (
+        {data.entityClasses?.map((entityClass, i) => (
           <g
-            key={type.id}
+            key={entityClass.id}
             transform={`translate(${
-              titleLayout.x + i * (typeLayout.width + typeLayout.mx)
-            },${nodeSize.y - typeLayout.my - typeLayout.height})`}
+              titleLayout.x +
+              i * (entityClassLayout.width + entityClassLayout.mx)
+            },${
+              nodeSize.y - entityClassLayout.my - entityClassLayout.height
+            })`}
           >
-            <TypeContainer
-              $typeName={type.name}
-              width={typeLayout.width}
-              height={typeLayout.height}
+            <EntityClassContainer
+              $entityClassName={entityClass.name}
+              width={entityClassLayout.width}
+              height={entityClassLayout.height}
             />
             <TypeLabel
-              x={typeLayout.width / 2}
-              y={typeLayout.height / 2 + 1}
+              x={entityClassLayout.width / 2}
+              y={entityClassLayout.height / 2 + 1}
             >
               <tspan alignmentBaseline="middle">
-                {DataEntityTypeLabelMap.get(type.name)?.short}
+                {DataEntityClassLabelMap.get(entityClass.name)?.short}
                 <title>
-                  {DataEntityTypeLabelMap.get(type.name)?.normal}
+                  {DataEntityClassLabelMap.get(entityClass.name)?.normal}
                 </title>
               </tspan>
             </TypeLabel>

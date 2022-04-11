@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -15,7 +16,6 @@ import org.opendatadiscovery.oddplatform.mapper.ingestion.DataSourceIngestionMap
 import org.opendatadiscovery.oddplatform.repository.CollectorRepository;
 import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -27,7 +27,7 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
     private final DataSourceIngestionMapper dataSourceIngestionMapper;
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Mono<List<DataSource>> createDataSourcesFromIngestion(final DataSourceList dataSourceList) {
         final CollectorDto collector = collectorRepository.getByOddrn(dataSourceList.getProviderOddrn())
             .orElseThrow(NotFoundException::new);

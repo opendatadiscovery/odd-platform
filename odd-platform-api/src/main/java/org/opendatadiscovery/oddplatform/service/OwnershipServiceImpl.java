@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
@@ -16,7 +17,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.repository.OwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.RoleRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -30,7 +30,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     private final OwnershipMapper ownershipMapper;
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Mono<Ownership> create(final long dataEntityId,
                                   final OwnershipFormData formData) {
         final Owner owner = ownerService.createOrGet(new OwnerFormData().name(formData.getOwnerName()));
@@ -52,7 +52,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Mono<Ownership> update(final long ownershipId,
                                   final OwnershipUpdateFormData formData) {
         if (ownershipRepository.get(ownershipId) == null) {

@@ -23,6 +23,7 @@ import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.jooq.SelectOnConditionStep;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.model.tables.DatasetField;
@@ -32,7 +33,6 @@ import org.opendatadiscovery.oddplatform.model.tables.records.DatasetFieldRecord
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Collections.emptyList;
 import static java.util.function.Predicate.not;
@@ -66,7 +66,7 @@ public class DatasetFieldRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public void setDescription(final long datasetFieldId, final String description) {
         dslContext.update(DATASET_FIELD)
             .set(DATASET_FIELD.INTERNAL_DESCRIPTION, description)
@@ -179,7 +179,7 @@ public class DatasetFieldRepositoryImpl
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public DatasetFieldDto updateDatasetField(final long datasetFieldId,
                                               final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         final DatasetFieldDto dto = getDto(datasetFieldId);
@@ -240,8 +240,8 @@ public class DatasetFieldRepositoryImpl
         labelRepository.createRelations(datasetFieldId, toRelate);
 
         return Stream.concat(
-            labelsToCreate.stream(),
-            existingLabels.stream())
+                labelsToCreate.stream(),
+                existingLabels.stream())
             .collect(Collectors.toSet());
     }
 

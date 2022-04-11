@@ -4,7 +4,7 @@ import { DataEntityRef } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import * as S from './EntitiesListModalStyles';
 
 type LabelForTypes =
@@ -35,11 +35,11 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
           {item.internalName || item.externalName}
         </Typography>
         <S.ListItemTypesContainer container>
-          {item.types?.map(type => (
-            <EntityTypeItem
+          {item.entityClasses?.map(entityClass => (
+            <EntityClassItem
               sx={{ ml: 0.5 }}
-              key={type.id}
-              typeName={type.name}
+              key={entityClass.id}
+              entityClassName={entityClass.name}
             />
           ))}
         </S.ListItemTypesContainer>

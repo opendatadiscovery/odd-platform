@@ -23,25 +23,6 @@ public class FacetStateDto {
     private String query;
     private boolean myObjects;
 
-    public List<SearchFilterDto> getFacetEntities(final FacetType facetType) {
-        return state.getOrDefault(facetType, List.of());
-    }
-
-    public Set<Long> getFacetEntitiesIds(final FacetType facetType) {
-        return getFacetEntities(facetType)
-            .stream()
-            .map(SearchFilterDto::getEntityId)
-            .collect(Collectors.toSet());
-    }
-
-    public Optional<Long> selectedDataEntityType() {
-        return getFacetEntities(FacetType.TYPES)
-            .stream()
-            .filter(SearchFilterDto::isSelected)
-            .map(SearchFilterDto::getEntityId)
-            .findFirst();
-    }
-
     public static FacetStateDto empty() {
         return new FacetStateDto(Map.of(), "", false);
     }
@@ -71,7 +52,7 @@ public class FacetStateDto {
                                                          final List<SearchFilterDto> deltaFilters) {
         final Map<Long, SearchFilterDto> currentMap = filtersMap(currentFilters);
 
-        final HashMap<Long, SearchFilterDto> result = new HashMap<>(currentMap);
+        final Map<Long, SearchFilterDto> result = new HashMap<>(currentMap);
 
         for (final Map.Entry<Long, SearchFilterDto> deltaEntry : filtersMap(deltaFilters).entrySet()) {
             result.merge(deltaEntry.getKey(), deltaEntry.getValue(), (cur, delta) -> delta.isSelected() ? cur : null);
@@ -86,5 +67,24 @@ public class FacetStateDto {
 
     private static Map<Long, SearchFilterDto> filtersMap(final List<SearchFilterDto> filters) {
         return filters.stream().collect(Collectors.toMap(SearchFilterDto::getEntityId, Function.identity()));
+    }
+
+    public List<SearchFilterDto> getFacetEntities(final FacetType facetType) {
+        return state.getOrDefault(facetType, List.of());
+    }
+
+    public Set<Long> getFacetEntitiesIds(final FacetType facetType) {
+        return getFacetEntities(facetType)
+            .stream()
+            .map(SearchFilterDto::getEntityId)
+            .collect(Collectors.toSet());
+    }
+
+    public Optional<Long> selectedDataEntityClass() {
+        return getFacetEntities(FacetType.ENTITY_CLASSES)
+            .stream()
+            .filter(SearchFilterDto::isSelected)
+            .map(SearchFilterDto::getEntityId)
+            .findFirst();
     }
 }

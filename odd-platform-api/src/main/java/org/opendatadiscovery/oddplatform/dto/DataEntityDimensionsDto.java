@@ -36,7 +36,7 @@ public class DataEntityDimensionsDto extends DataEntityDto {
     @Builder(builderMethodName = "dimensionsBuilder")
     public DataEntityDimensionsDto(final DataEntityPojo dataEntity,
                                    final boolean hasAlerts,
-                                   final Map<DataEntityTypeDto, DataEntityAttributes> specificAttributes,
+                                   final Map<DataEntityClassDto, DataEntityAttributes> specificAttributes,
                                    final NamespacePojo namespace,
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
@@ -63,15 +63,18 @@ public class DataEntityDimensionsDto extends DataEntityDto {
 
     public record DataEntityGroupDimensionsDto(Collection<DataEntityPojo> entities,
                                                int itemsCount,
-                                               boolean hasChildren) {}
+                                               boolean hasChildren) {
+    }
 
     public record DataSetDetailsDto(Long rowsCount,
                                     Long fieldsCount,
-                                    Long consumersCount) {}
+                                    Long consumersCount) {
+    }
 
     public record DataTransformerDetailsDto(Collection<? extends DataEntityDto> sourceList,
                                             Collection<? extends DataEntityDto> targetList,
-                                            String sourceCodeUrl) {}
+                                            String sourceCodeUrl) {
+    }
 
     public record DataQualityTestDetailsDto(String suiteName,
                                             String suiteUrl,
@@ -79,9 +82,12 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                             List<String> linkedUrlList,
                                             String expectationType,
                                             DataEntityTaskRunPojo latestTaskRun,
-                                            Map<String, String> expectationParameters) {}
+                                            Map<String, String> expectationParameters) {
+    }
 
-    public record DataConsumerDetailsDto(Collection<? extends DataEntityDto> inputList) {}
+    public record DataConsumerDetailsDto(Collection<? extends DataEntityDto> inputList) {
+    }
 
-    public record DataInputDetailsDto(Collection<? extends DataEntityDto> outputList) {}
+    public record DataInputDetailsDto(Collection<? extends DataEntityDto> outputList) {
+    }
 }
