@@ -18,6 +18,8 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import CopyButton from 'components/shared/CopyButton/CopyButton';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
+import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import { stringFormatted } from 'lib/helpers';
 import * as S from './MetadataItemStyles';
 
 interface MetadataItemProps {
@@ -96,13 +98,21 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   return (
     <S.Container container wrap="nowrap">
       <S.LabelContainer item sm={2}>
-        <S.Label variant="subtitle1" noWrap>
-          {isNestedField(metadataItem.field.name) ? (
-            metadataItem.field.name
-          ) : (
-            <TextFormatted value={metadataItem.field.name} />
-          )}
-        </S.Label>
+        <AppTooltip
+          title={() =>
+            isNestedField(metadataItem.field.name)
+              ? metadataItem.field.name
+              : stringFormatted(metadataItem.field.name, '_')
+          }
+        >
+          <S.Label variant="subtitle1" noWrap>
+            {isNestedField(metadataItem.field.name) ? (
+              metadataItem.field.name
+            ) : (
+              <TextFormatted value={metadataItem.field.name} />
+            )}
+          </S.Label>
+        </AppTooltip>
       </S.LabelContainer>
       <Grid item container wrap="nowrap" zeroMinWidth>
         {editMode ? (

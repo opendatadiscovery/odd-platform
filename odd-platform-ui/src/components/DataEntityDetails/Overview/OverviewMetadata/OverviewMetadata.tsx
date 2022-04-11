@@ -26,7 +26,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
   let collapsedPredefined;
   if (predefinedMetadata?.length > visibleLimit) {
     collapsedPredefined = (
-      <>
+      <Grid container flexDirection="column">
         <Collapse
           in={predefOpen}
           timeout="auto"
@@ -45,17 +45,19 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
             </Grid>
           ) : null}
         </Collapse>
-        <AppButton
-          size="small"
-          color="tertiary"
-          onClick={() => setPredefOpen(!predefOpen)}
-          sx={{ mt: 0.75 }}
-        >
-          {predefOpen
-            ? 'Hide'
-            : `View All (${predefinedMetadata.length - visibleLimit})`}
-        </AppButton>
-      </>
+        <div>
+          <AppButton
+            size="small"
+            color="tertiary"
+            onClick={() => setPredefOpen(!predefOpen)}
+            sx={{ mt: 0.75 }}
+          >
+            {predefOpen
+              ? 'Hide'
+              : `View All (${predefinedMetadata.length - visibleLimit})`}
+          </AppButton>
+        </div>
+      </Grid>
     );
   }
 
