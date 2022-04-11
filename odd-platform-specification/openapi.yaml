@@ -1013,6 +1013,41 @@ paths:
                 $ref: './components.yaml/#/components/schemas/InternalName'
       tags:
         - dataEntity
+  /api/dataentities/{data_entity_id}/term:
+    post:
+      summary: Add term to data entity
+      description: Link existing term with data entity
+      operationId: addTermToDataEntity
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityTermFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRef'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/term/{term_id}:
+    delete:
+      summary: Delete term from Data entity
+      description: Delete term from current data entity terms list
+      operationId: deleteTermFromDataEntity
+      parameters:
+          - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+          - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntity
   /api/dataentities/{data_entity_id}/ownership:
     post:
       summary: Create new ownership
@@ -1622,6 +1657,12 @@ paths:
         - $ref: './components.yaml/#/components/parameters/TermIdParam'
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: entity_class_id
+          in: query
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -1629,3 +1670,147 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
+      tags:
+        - term
+
+  /api/terms/search:
+    post:
+      summary: Terms search by query
+      description: Creates a new search of all the matching terms to given query and calculates the aggregation data for correspondent data slice
+      operationId: termSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TermSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermSearchFacetsData'
+      tags:
+        - term
+
+  /api/terms/search/{search_id}:
+    get:
+      summary: Get terms search facets by search ID
+      description: Gets term search facets by parameter which can be found in search endpoint response
+      operationId: getTermSearchFacetList
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermSearchFacetsData'
+      tags:
+        - term
+    put:
+      summary: Update term search facets by search ID
+      description: Updates term search facets of a certain search ID by provided search parameters
+      operationId: updateTermSearchFacets
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TermSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermSearchFacetsData'
+      tags:
+        - term
+
+  /api/terms/search/{search_id}/facet/{facet_type}:
+    get:
+      summary: Get countable term filters for chosen facet type
+      description: Gets countable term filters for chosen facet type
+      operationId: getTermFiltersForFacet
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: facet_type
+          in: path
+          required: true
+          schema:
+            $ref: './components.yaml/#/components/schemas/MultipleFacetType'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/CountableSearchFilter'
+      tags:
+        - term
+
+  /api/terms/search/{search_id}/results:
+    get:
+      summary: Get terms search results by search ID
+      description: Returns paginated list of terms search results for a given search ID
+      operationId: getTermSearchResults
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermList'
+      tags:
+        - term
+
+  /api/terms/search/suggestions:
+    get:
+      summary: Get terms search suggestions by query
+      description: Returns top five search suggestions for a given query
+      operationId: getTermSearchSuggestions
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRefList'
+      tags:
+        - term

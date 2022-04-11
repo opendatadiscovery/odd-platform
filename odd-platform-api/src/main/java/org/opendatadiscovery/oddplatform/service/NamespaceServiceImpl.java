@@ -1,49 +1,61 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.Namespace;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceList;
 import org.opendatadiscovery.oddplatform.api.contract.model.NamespaceUpdateFormData;
+import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.NamespaceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
-import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
-import org.opendatadiscovery.oddplatform.repository.NamespaceRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
-public class NamespaceServiceImpl
-    extends
-    AbstractCRUDService<Namespace, NamespaceList, NamespaceFormData, NamespaceUpdateFormData,
-        NamespacePojo, NamespaceMapper, NamespaceRepository>
-    implements NamespaceService {
+@RequiredArgsConstructor
+public class NamespaceServiceImpl implements NamespaceService {
+    private final ReactiveNamespaceRepository namespaceRepository;
+    private final ReactiveDataSourceRepository dataSourceRepository;
+    private final NamespaceMapper namespaceMapper;
 
-    private final DataSourceRepository dataSourceRepository;
+    @Override
+    public Mono<Namespace> get(final long id) {
+        return namespaceRepository.get(id).map(namespaceMapper::mapPojo);
+    }
+
+    @Override
+    public Mono<NamespaceList> list(final int page, final int size, final String query) {
+        return namespaceRepository.list(page, size, query).map(namespaceMapper::mapPojoPage);
+    }
+
+    @Override
+    public Mono<Namespace> create(final NamespaceFormData createEntityForm) {
+        return Mono.defer(() -> Mono.just(namespaceMapper.mapForm(createEntityForm)))
+            .flatMap(namespaceRepository::create)
+            .map(namespaceMapper::mapPojo);
+    }
 
     @Override
     public Mono<Namespace> update(final long id, final NamespaceUpdateFormData updateEntityForm) {
-        return Mono.fromCallable(() -> entityRepository.getByName(updateEntityForm.getName()))
-            .filter(Optional::isEmpty)
-            .switchIfEmpty(Mono.error(
-                new RuntimeException(String.format("Namespace with name %s already exists", updateEntityForm.getName()))
-            ))
-            .flatMap(p -> super.update(id, updateEntityForm));
-    }
-
-    public NamespaceServiceImpl(final NamespaceMapper entityMapper,
-                                final NamespaceRepository entityRepository,
-                                final DataSourceRepository dataSourceRepository) {
-        super(entityMapper, entityRepository);
-        this.dataSourceRepository = dataSourceRepository;
+        // TODO: search entrypoints
+        return namespaceRepository.get(id)
+            .map(pojo -> namespaceMapper.applyForm(pojo, updateEntityForm))
+            .flatMap(namespaceRepository::update)
+            .map(namespaceMapper::mapPojo)
+            .switchIfEmpty(Mono.error(new NotFoundException("Namespace with id %d hasn't been found".formatted(id))));
     }
 
     @Override
     public Mono<Long> delete(final long id) {
-        return Mono
-            .fromCallable(() -> dataSourceRepository.existByNamespace(id))
-            .flatMap(e -> e
-                ? Mono.error(new RuntimeException("Namespace contains dependent data sources"))
-                : super.delete(id));
+        return dataSourceRepository.existsByNamespace(id).flatMap(exists -> {
+            if (exists) {
+                return Mono.error(new IllegalStateException(
+                    "Namespace with ID %d cannot be deleted: there are still data sources attached".formatted(id)));
+            }
+
+            return namespaceRepository.delete(id).map(NamespacePojo::getId);
+        });
     }
 }

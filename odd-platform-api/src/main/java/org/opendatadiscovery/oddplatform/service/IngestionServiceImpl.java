@@ -45,12 +45,12 @@ import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
-import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetStructureRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import org.opendatadiscovery.oddrn.Generator;
@@ -69,7 +69,7 @@ import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEnt
 public class IngestionServiceImpl implements IngestionService {
     private final AlertLocator alertLocator;
 
-    private final DataSourceRepository dataSourceRepository;
+    private final ReactiveDataSourceRepository dataSourceRepository;
     private final DataEntityRepository dataEntityRepository;
     private final DatasetVersionRepository datasetVersionRepository;
     private final DatasetStructureRepository datasetStructureRepository;
@@ -120,12 +120,9 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<Long> acquireDataSourceId(final String dataSourceOddrn) {
-        return Mono.fromCallable(() -> dataSourceRepository.getByOddrn(dataSourceOddrn))
-            .flatMap(opt -> {
-                if (opt.isPresent()) {
-                    return Mono.just(opt.get().dataSource().getId());
-                }
-
+        return dataSourceRepository.getByOddrn(dataSourceOddrn)
+            .map(dataSource -> dataSource.dataSource().getId())
+            .switchIfEmpty(Mono.defer(() -> {
                 final OddrnPath oddrnPath;
                 try {
                     oddrnPath = oddrnGenerator.parse(dataSourceOddrn)
@@ -142,9 +139,10 @@ public class IngestionServiceImpl implements IngestionService {
 
                 final Long datasourceId = ((ODDPlatformDataSourcePath) oddrnPath).getDatasourceId();
 
-                dataSourceRepository.injectOddrn(datasourceId, dataSourceOddrn);
-                return Mono.just(datasourceId);
-            });
+                return dataSourceRepository
+                    .injectOddrn(datasourceId, dataSourceOddrn)
+                    .map(dataSource -> dataSource.dataSource().getId());
+            }));
     }
 
     private IngestionDataStructure buildStructure(final DataEntityList dataEntityList,
