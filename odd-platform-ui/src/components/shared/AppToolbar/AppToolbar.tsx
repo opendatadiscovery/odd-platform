@@ -67,6 +67,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Catalog', link: '/search' },
     { name: 'Management', link: '/management' },
+    { name: 'Dictionary', link: '/terms/' },
     { name: 'Alerts', link: '/alerts/' },
   ]);
 
