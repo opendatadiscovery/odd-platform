@@ -303,6 +303,10 @@ components:
         view_count:
           type: integer
           format: int64
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermRef'
       required:
         - metadata_field_values
         - external_description
