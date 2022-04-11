@@ -1637,6 +1637,11 @@ components:
           type: string
         namespace:
           $ref: '#/components/schemas/Namespace'
+      required:
+        - id
+        - name
+        - definition
+        - namespace
 
     Term:
       allOf:
@@ -1653,6 +1658,9 @@ components:
             updated_at:
               type: string
               format: date-time
+          required:
+            - created_at
+            - updated_at
 
     TermDetails:
       allOf:
