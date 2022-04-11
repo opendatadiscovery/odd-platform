@@ -1,34 +1,21 @@
 import React from 'react';
-import { useDebouncedCallback } from 'use-debounce';
-import { Autocomplete, Typography } from '@mui/material';
-import {
-  Controller,
-  ControllerRenderProps,
-  useForm,
-} from 'react-hook-form';
+import { Typography } from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
 import {
   DataEntityApiCreateOwnershipRequest,
   DataEntityApiUpdateOwnershipRequest,
-  Owner,
   OwnerApiGetOwnerListRequest,
   OwnerList,
   Ownership,
   OwnershipFormData,
-  Role,
   RoleApiGetRoleListRequest,
   RoleList,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import {
-  AutocompleteInputChangeReason,
-  createFilterOptions,
-  FilterOptionsState,
-} from '@mui/material/useAutocomplete';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import OwnershipFormOwnerAutocomplete from 'components/DataEntityDetails/Ownership/OwnershipFormOwnerAutocomplete/OwnershipFormOwnerAutocomplete';
+import OwnershipFormRoleAutocomplete from 'components/DataEntityDetails/Ownership/OwnershipFormRoleAutocomplete/OwnershipFormRoleAutocomplete';
 
 interface OwnershipFormProps {
   dataEntityId: number;
@@ -57,158 +44,6 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   searchOwners,
   searchRoles,
 }) => {
-  // Owner Autocomplete
-  type OwnerFilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
-  const [ownerOptions, setOwnerOptions] = React.useState<
-    OwnerFilterOption[]
-  >([]);
-  const [
-    ownersAutocompleteOpen,
-    setOwnersAutocompleteOpen,
-  ] = React.useState(false);
-  const [ownersLoading, setOwnersLoading] = React.useState<boolean>(false);
-  const [ownersSearchText, setOwnersSearchText] = React.useState<string>(
-    ''
-  );
-  const ownersFilter = createFilterOptions<OwnerFilterOption>();
-
-  const handleOwnersSearch = React.useCallback(
-    useDebouncedCallback(() => {
-      setOwnersLoading(true);
-      searchOwners({ page: 1, size: 30, query: ownersSearchText }).then(
-        response => {
-          setOwnersLoading(false);
-          setOwnerOptions(response.items);
-        }
-      );
-    }, 500),
-    [searchOwners, setOwnersLoading, setOwnerOptions, ownersSearchText]
-  );
-
-  const onOwnersSearchInputChange = React.useCallback(
-    (
-      _: React.ChangeEvent<unknown>,
-      query: string,
-      reason: AutocompleteInputChangeReason
-    ) => {
-      if (reason === 'input') {
-        setOwnersSearchText(query);
-      } else {
-        setOwnersSearchText(''); // Clear input on select
-      }
-    },
-    [setOwnersSearchText]
-  );
-
-  const getOwnerFilterOptions = (
-    filterOptions: OwnerFilterOption[],
-    params: FilterOptionsState<OwnerFilterOption>
-  ) => {
-    const filtered = ownersFilter(filterOptions, params);
-    if (
-      ownersSearchText !== '' &&
-      !ownersLoading &&
-      !filterOptions.some(option => option.name === ownersSearchText)
-    ) {
-      return [...filtered, { name: ownersSearchText }];
-    }
-    return filtered;
-  };
-
-  React.useEffect(() => {
-    setOwnersLoading(ownersAutocompleteOpen);
-    if (ownersAutocompleteOpen) {
-      handleOwnersSearch();
-    }
-  }, [ownersAutocompleteOpen, ownersSearchText]);
-
-  // Role Autocomplete
-  type RoleFilterOption = Omit<Role, 'id' | 'name'> & Partial<Role>;
-  const [rolesOptions, setRoleOptions] = React.useState<
-    RoleFilterOption[]
-  >([]);
-  const [rolesAutocompleteOpen, setRolesAutocompleteOpen] = React.useState(
-    false
-  );
-  const [rolesLoading, setRolesLoading] = React.useState<boolean>(false);
-  const [rolesSearchText, setRolesSearchText] = React.useState<string>('');
-  const rolesFilter = createFilterOptions<RoleFilterOption>();
-
-  const handleRolesSearch = React.useCallback(
-    useDebouncedCallback(() => {
-      setRolesLoading(true);
-      searchRoles({ page: 1, size: 30, query: rolesSearchText }).then(
-        response => {
-          setRolesLoading(false);
-          setRoleOptions(response.items);
-        }
-      );
-    }, 500),
-    [searchRoles, setRolesLoading, setRoleOptions, ownersSearchText]
-  );
-
-  const onRolesSearchInputChange = React.useCallback(
-    (
-      _: React.ChangeEvent<unknown>,
-      query: string,
-      reason: AutocompleteInputChangeReason
-    ) => {
-      if (reason === 'input') {
-        setRolesSearchText(query);
-      } else {
-        setRolesSearchText(''); // Clear input on select
-      }
-    },
-    [setRolesSearchText]
-  );
-
-  React.useEffect(() => {
-    setRolesLoading(rolesAutocompleteOpen);
-    if (rolesAutocompleteOpen) {
-      handleRolesSearch();
-    }
-  }, [rolesAutocompleteOpen, rolesSearchText]);
-
-  const getOptionLabel = React.useCallback(
-    (option: RoleFilterOption | OwnerFilterOption) => {
-      if (typeof option === 'string') {
-        return option;
-      }
-      if ('name' in option && option.name) {
-        return option.name;
-      }
-      return '';
-    },
-    []
-  );
-
-  const getRoleFilterOptions = (
-    filterOptions: RoleFilterOption[],
-    params: FilterOptionsState<RoleFilterOption>
-  ) => {
-    const filtered = rolesFilter(filterOptions, params);
-    if (
-      rolesSearchText !== '' &&
-      !rolesLoading &&
-      !filterOptions.some(option => option.name === rolesSearchText)
-    ) {
-      return [...filtered, { name: rolesSearchText }];
-    }
-    return filtered;
-  };
-
-  const onAutocompleteChange = (
-    field: ControllerRenderProps,
-    data: string | null | OwnerFilterOption | RoleFilterOption
-  ): void => {
-    if (!data || typeof data === 'string') {
-      field.onChange(data);
-    } else {
-      field.onChange(data.name);
-    }
-  };
-
-  // Form
   const methods = useForm<OwnershipFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -224,6 +59,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const resetState = React.useCallback(() => {
     setFormState(initialFormState);
+    methods.reset();
   }, [setFormState]);
 
   const ownershipUpdate = (data: OwnershipFormData) => {
@@ -263,7 +99,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       onSubmit={methods.handleSubmit(ownershipUpdate)}
     >
       {dataEntityOwnership ? (
-        <LabeledInfoItem inline label="Owner:" labelWidth="auto">
+        <LabeledInfoItem inline label="Owner:" labelWidth={2}>
           {dataEntityOwnership.owner.name}
         </LabeledInfoItem>
       ) : (
@@ -273,57 +109,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           defaultValue=""
           rules={{ required: true }}
           render={({ field }) => (
-            <Autocomplete
-              // eslint-disable-next-line react/jsx-props-no-spreading
-              {...field}
-              fullWidth
-              id="owners-name-search"
-              open={ownersAutocompleteOpen}
-              onOpen={() => setOwnersAutocompleteOpen(true)}
-              onClose={() => setOwnersAutocompleteOpen(false)}
-              onChange={(_, data) =>
-                onAutocompleteChange(field as ControllerRenderProps, data)
-              }
-              onInputChange={onOwnersSearchInputChange}
-              getOptionLabel={getOptionLabel}
-              options={ownerOptions}
-              filterOptions={getOwnerFilterOptions}
-              loading={ownersLoading}
-              isOptionEqualToValue={(option, value) =>
-                option.name === value.name
-              }
-              handleHomeEndKeys
-              selectOnFocus
-              blurOnSelect
-              freeSolo
-              clearIcon={<ClearIcon />}
-              renderInput={params => (
-                <AppTextField
-                  {...params}
-                  ref={params.InputProps.ref}
-                  label="Owner name"
-                  placeholder="Search name"
-                  customEndAdornment={{
-                    variant: 'loader',
-                    showAdornment: ownersLoading,
-                    position: { mr: 4 },
-                  }}
-                />
-              )}
-              renderOption={(props, option) => (
-                <li {...props}>
-                  <Typography variant="body2">
-                    {option.id ? (
-                      option.name
-                    ) : (
-                      <AutocompleteSuggestion
-                        optionLabel="owner"
-                        optionName={option.name}
-                      />
-                    )}
-                  </Typography>
-                </li>
-              )}
+            <OwnershipFormOwnerAutocomplete
+              field={field}
+              searchOwners={searchOwners}
             />
           )}
         />
@@ -334,58 +122,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
         defaultValue={dataEntityOwnership?.role?.name || ''}
         rules={{ required: true, validate: value => !!value?.trim() }}
         render={({ field }) => (
-          <Autocomplete
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...field}
-            fullWidth
-            id="roles-name-search"
-            open={rolesAutocompleteOpen}
-            onOpen={() => setRolesAutocompleteOpen(true)}
-            onClose={() => setRolesAutocompleteOpen(false)}
-            onChange={(_, data) =>
-              onAutocompleteChange(field as ControllerRenderProps, data)
-            }
-            onInputChange={onRolesSearchInputChange}
-            getOptionLabel={getOptionLabel}
-            options={rolesOptions}
-            filterOptions={getRoleFilterOptions}
-            loading={rolesLoading}
-            isOptionEqualToValue={(option, value) =>
-              option.name === value.name
-            }
-            handleHomeEndKeys
-            selectOnFocus
-            blurOnSelect
-            freeSolo
-            clearIcon={<ClearIcon />}
-            renderInput={params => (
-              <AppTextField
-                {...params}
-                sx={{ mt: 1.5 }}
-                ref={params.InputProps.ref}
-                label="Role"
-                placeholder="Search role"
-                customEndAdornment={{
-                  variant: 'loader',
-                  showAdornment: rolesLoading,
-                  position: { mr: 4 },
-                }}
-              />
-            )}
-            renderOption={(props, option) => (
-              <li {...props}>
-                <Typography variant="body2">
-                  {option.id ? (
-                    option.name
-                  ) : (
-                    <AutocompleteSuggestion
-                      optionLabel="role"
-                      optionName={option.name}
-                    />
-                  )}
-                </Typography>
-              </li>
-            )}
+          <OwnershipFormRoleAutocomplete
+            field={field}
+            searchRoles={searchRoles}
           />
         )}
       />
@@ -399,7 +138,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       type="submit"
       form="owner-add-form"
       fullWidth
-      disabled={!methods.formState.isValid || !methods.formState.isDirty}
+      disabled={!methods.formState.isValid}
     >
       {dataEntityOwnership ? 'Edit' : 'Add'} owner
     </AppButton>
@@ -417,6 +156,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isUpdating}
       errorText={error}
+      clearState={resetState}
     />
   );
 };
