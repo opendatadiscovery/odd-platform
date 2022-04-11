@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.5.0'
+    id 'org.springframework.boot' version '2.6.2'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.google.cloud.tools.jib' version '3.0.0'
     id 'checkstyle'
@@ -65,6 +65,7 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-sdk-metrics")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp-metrics")
 
+    implementation("org.jetbrains:annotations:$jetbrainsAnnotationVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-data-ldap")
     implementation("org.springframework.security:spring-security-ldap")
