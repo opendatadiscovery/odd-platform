@@ -189,9 +189,6 @@ components:
           $ref: '#/components/schemas/Owner'
         role:
           $ref: '#/components/schemas/Role'
-        data_entity_id:
-          type: integer
-          format: int64
       required:
         - id
         - owner
@@ -1610,30 +1607,60 @@ components:
         projectVersion:
           type: string
 
-    TermDetails:
+    TermList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Term'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    TermRefList:
+      type: array
+      items:
+        $ref: '#/components/schemas/TermRef'
+
+    TermRef:
       type: object
       properties:
         id:
           type: integer
           format: int64
-        oddrn:
-          type: string
         name:
           type: string
         definition:
           type: string
         namespace:
           $ref: '#/components/schemas/Namespace'
-        ownership:
-          $ref: '#/components/schemas/OwnershipList'
-        tags:
-          $ref: '#/components/schemas/TagList'
-        created_at:
-          type: string
-          format: date-time
-        updated_at:
-          type: string
-          format: date-time
+
+    Term:
+      allOf:
+        - $ref: '#/components/schemas/TermRef'
+        - type: object
+          properties:
+            ownership:
+              $ref: '#/components/schemas/OwnershipList'
+            entities_using_count:
+              type: integer
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+
+    TermDetails:
+      allOf:
+        - $ref: '#/components/schemas/Term'
+        - type: object
+          properties:
+            tags:
+              $ref: '#/components/schemas/TagList'
 
     TermFormData:
       type: object
@@ -1648,6 +1675,72 @@ components:
         - name
         - namespace_name
         - definition
+
+    DataEntityTermFormData:
+      type: object
+      properties:
+        term_id:
+          type: integer
+          format: int64
+      required:
+        - term_id
+
+    TermSearchFormData:
+      type: object
+      properties:
+        query:
+          type: string
+        filters:
+          type: object
+          properties:
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            namespaces:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+            owners:
+              type: array
+              items:
+                $ref: '#/components/schemas/SearchFilterState'
+      required:
+        - filters
+
+    TermSearchFacetsData:
+      type: object
+      properties:
+        search_id:
+          type: string
+          format: uuid
+        query:
+          type: string
+        facet_state:
+          $ref: '#/components/schemas/TermFacetState'
+        total:
+          type: integer
+          format: int64
+      required:
+        - search_id
+        - query
+        - facet_state
+
+    TermFacetState:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        namespaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
+        owners:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchFilter'
 
   parameters:
     PageParam:
