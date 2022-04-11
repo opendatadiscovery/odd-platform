@@ -24,6 +24,7 @@ import {
   Owner,
   Ownership,
   Tag,
+  TermDetails,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -55,6 +56,12 @@ export interface CollectorsState {
 export interface TagsState {
   byId: { [tagId: number]: Tag };
   allIds: Tag['id'][];
+  pageInfo?: CurrentPageInfo;
+}
+
+export interface TermsState {
+  byId: { [termId: string]: TermDetails };
+  allIds: TermDetails['id'][];
   pageInfo?: CurrentPageInfo;
 }
 
@@ -215,6 +222,7 @@ export type RootState = {
   alerts: AlertsState;
   dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
   collectors: CollectorsState;
+  terms: TermsState;
 };
 
 export type Action = ActionType<typeof actions>;
