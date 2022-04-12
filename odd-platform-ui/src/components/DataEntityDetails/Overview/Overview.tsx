@@ -7,7 +7,7 @@ import OverviewDescriptionContainer from './OverviewDescription/OverviewDescript
 import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
 import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
 import OverviewTags from './OverviewTags/OverviewTags';
-import OverviewTerms from './OverviewTerms/OverviewTerms';
+// import OverviewTerms from './OverviewTerms/OverviewTerms';
 import { SectionContainer } from './OverviewStyles';
 import OverviewGeneralContainer from './OverviewGeneral/OverviewGeneralContainer';
 import OverviewDataQualityReportContainer from './OverviewDataQualityReport/OverviewDataQualityReportContainer';
@@ -65,10 +65,10 @@ const Overview: React.FC<OverviewProps> = ({
             />
           </SectionContainer>
           <SectionContainer square elevation={0}>
-            <OverviewTerms
-              terms={dataEntityDetails.tags} // terms
-              dataEntityId={dataEntityId}
-            />
+            {/* <OverviewTerms */}
+            {/*  terms={dataEntityDetails.tags} // terms */}
+            {/*  dataEntityId={dataEntityId} */}
+            {/* /> */}
           </SectionContainer>
         </Grid>
       </Grid>

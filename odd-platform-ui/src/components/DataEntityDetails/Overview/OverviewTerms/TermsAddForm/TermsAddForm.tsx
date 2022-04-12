@@ -16,10 +16,10 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import TagItem from 'components/shared/TagItem/TagItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import { OptionsContainer } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import AppButton from 'components/shared/AppButton/AppButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import { TermsOptionsContainer } from './TermsAddFormStyles';
 
 interface TermsAddProps {
   dataEntityId: number;
@@ -219,7 +219,7 @@ const TermsAddForm: React.FC<TermsAddProps> = ({
         )}
         renderOption={(props, option) => (
           <li {...props}>
-            <OptionsContainer $isImportant={option.important}>
+            <TermsOptionsContainer $isImportant={option.important}>
               <div>
                 <Typography variant="body1">
                   {option.id ? (
@@ -232,7 +232,7 @@ const TermsAddForm: React.FC<TermsAddProps> = ({
                   )}
                 </Typography>
               </div>
-            </OptionsContainer>
+            </TermsOptionsContainer>
           </li>
         )}
       />

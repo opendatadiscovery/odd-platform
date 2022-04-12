@@ -24,7 +24,8 @@ import {
   Owner,
   Ownership,
   Tag,
-  TermDetails,
+  Term,
+  TermRef,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -40,6 +41,10 @@ import { DataEntityLineageById } from './dataentityLineage';
 import { CurrentPageInfo } from './common';
 import { DataEntityDetailsState } from './dataentities';
 import { LoaderState } from './loader';
+import {
+  TermsSearchFacetOptionsByName,
+  TermsSearchFacetsByName,
+} from './termsSearch';
 
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
@@ -60,8 +65,8 @@ export interface TagsState {
 }
 
 export interface TermsState {
-  byId: { [termId: string]: TermDetails };
-  allIds: TermDetails['id'][];
+  byId: { [termId: string]: Term };
+  allIds: Term['id'][];
   pageInfo?: CurrentPageInfo;
 }
 
@@ -184,6 +189,19 @@ export interface SearchState {
   facetState: SearchFacetsByName;
 }
 
+export interface TermSearchState {
+  termSearchId: string;
+  query: string;
+  facets: TermsSearchFacetOptionsByName;
+  isFacetsStateSynced: boolean;
+  results: {
+    items: Term[];
+    pageInfo: CurrentPageInfo;
+  };
+  suggestions: TermRef[];
+  facetState: TermsSearchFacetsByName;
+}
+
 export interface AlertsState {
   totals: AlertTotals;
   pageInfo: CurrentPageInfo;
@@ -223,6 +241,7 @@ export type RootState = {
   dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
   collectors: CollectorsState;
   terms: TermsState;
+  termSearch: TermSearchState;
 };
 
 export type Action = ActionType<typeof actions>;

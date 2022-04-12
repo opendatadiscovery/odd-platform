@@ -20,9 +20,8 @@ const reducer = (state = initialState, action: Action): TermsState => {
         ...state,
         byId: {
           ...state.byId,
-          [action.payload.id || 0]: {
-            // todo remove 0 after sync
-            ...state.byId[action.payload.id || 0], // todo remove 0 after sync
+          [action.payload.id]: {
+            ...state.byId[action.payload.id],
             ...action.payload,
           },
         },

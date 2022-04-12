@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useScrollBarWidth } from 'lib/hooks';
 import {
-  SearchApiGetSearchResultsRequest,
+  TermApiGetTermSearchResultsRequest,
   TermDetails,
 } from 'generated-sources';
 import { CurrentPageInfo } from 'redux/interfaces';
@@ -19,7 +19,7 @@ interface ResultsProps {
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
   getDataEntitiesSearchResults: (
-    params: SearchApiGetSearchResultsRequest
+    params: TermApiGetTermSearchResultsRequest
   ) => void;
   isSearchFetching: boolean;
   isSearchCreating: boolean;
@@ -91,7 +91,7 @@ const TermsResults: React.FC<ResultsProps> = ({
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}
-            hasMore={!!pageInfo.hasNext}
+            hasMore={pageInfo.hasNext}
             loader={
               isSearchFetching && (
                 <SkeletonWrapper

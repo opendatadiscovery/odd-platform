@@ -5,7 +5,7 @@ import TermItem from 'components/shared/TermItem/TermItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { CaptionContainer } from './OverviewTermsStyles';
+import { TermsCaptionContainer } from './OverviewTermsStyles';
 import TermsAddFormContainer from './TermsAddForm/TermsAddFormContainer';
 
 interface OverviewTermsProps {
@@ -22,7 +22,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
 
   return (
     <div>
-      <CaptionContainer>
+      <TermsCaptionContainer>
         <Typography variant="h4">Dictionary terms</Typography>
         <TermsAddFormContainer
           dataEntityId={dataEntityId}
@@ -37,7 +37,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
             </AppButton>
           }
         />
-      </CaptionContainer>
+      </TermsCaptionContainer>
       {terms?.length ? (
         <Box sx={{ mx: -0.5, my: 0 }}>
           {terms

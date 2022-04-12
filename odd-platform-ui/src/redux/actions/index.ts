@@ -15,3 +15,4 @@ export * from './dataentityLinkedList.actions';
 export * from './appInfo.actions';
 export * from './collector.actions';
 export * from './term.actions';
+export * from './termSearch.actions';

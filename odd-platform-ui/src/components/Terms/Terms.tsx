@@ -15,7 +15,6 @@ import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import { searchPath } from 'lib/paths';
 import { useHistory } from 'react-router-dom';
 import FiltersContainer from './TermsFilters/TermsFiltersContainer';
-import ResultsContainer from './TermsResults/TermsResultsContainer';
 import {
   TermsContainer,
   TermsContentContainer,
@@ -130,7 +129,7 @@ const Terms: React.FC<TermsProps> = ({
                 </AppButton>
               }
             />
-            <ResultsContainer />
+            <TermsResultsContainer />
           </TermsResultsContainer>
         </TermsContentContainer>
       </TermsContainer>

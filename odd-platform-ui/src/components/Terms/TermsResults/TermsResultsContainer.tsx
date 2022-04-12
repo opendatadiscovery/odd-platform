@@ -1,27 +1,27 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
+import { getTermsSearchResults } from 'redux/thunks/terms.thunks';
 import {
-  getSearchFiltersSynced,
-  getSearchId,
-  getSearchIsCreating,
-  getSearchIsFetching,
-  getSearchResults,
-  getSearchResultsPage,
-} from 'redux/selectors/dataentitySearch.selectors';
-import { getDataEntitiesSearchResults } from 'redux/thunks/dataentitiesSearch.thunks';
+  getTermSearchFiltersSynced,
+  getTermSearchId,
+  getTermSearchIsCreating,
+  getTermSearchIsFetching,
+  getTermSearchResults,
+  getTermSearchResultsPage,
+} from 'redux/selectors/termsSearch.selectors';
 import TermsResults from './TermsResults';
 
 const mapStateToProps = (state: RootState) => ({
-  searchId: getSearchId(state),
-  searchResults: getSearchResults(state),
-  pageInfo: getSearchResultsPage(state),
-  searchFiltersSynced: getSearchFiltersSynced(state),
-  isSearchFetching: getSearchIsFetching(state),
-  isSearchCreating: getSearchIsCreating(state),
+  searchId: getTermSearchId(state),
+  searchResults: getTermSearchResults(state),
+  pageInfo: getTermSearchResultsPage(state),
+  searchFiltersSynced: getTermSearchFiltersSynced(state),
+  isSearchFetching: getTermSearchIsFetching(state),
+  isSearchCreating: getTermSearchIsCreating(state),
 });
 
 const mapDispatchToProps = {
-  getDataEntitiesSearchResults,
+  getTermsSearchResults,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TermsResults);

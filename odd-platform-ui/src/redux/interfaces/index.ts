@@ -8,3 +8,5 @@ export * from './alert';
 export * from './common';
 export * from './dataEntityGroup';
 export * from './collectors';
+export * from './termsSearch';
+export * from './terms';
