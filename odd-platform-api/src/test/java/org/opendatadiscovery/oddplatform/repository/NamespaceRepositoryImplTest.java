@@ -128,7 +128,7 @@
 //        final List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
 //
 //        final List<NamespacePojo> expectedPojoList = namespaceRepository.bulkCreate(pojoList);
-//        final List<Long> pojoIdList = expectedPojoList.stream().map(NamespacePojo::getId).collect(Collectors.toList());
+//       final List<Long> pojoIdList = expectedPojoList.stream().map(NamespacePojo::getId).collect(Collectors.toList());
 //        namespaceRepository.delete(pojoIdList);
 //
 //        for (final NamespacePojo namespacePojo : expectedPojoList) {
@@ -153,7 +153,7 @@
 //
 //        final List<NamespacePojo> tmpPojoList = new ArrayList<>();
 //        for (final NamespacePojo namespacePojo : expectedPojoList) {
-//            final NamespacePojo tmpPojo = namespaceRepository.get(namespacePojo.getId()).orElseGet(NamespacePojo::new);
+//           final NamespacePojo tmpPojo = namespaceRepository.get(namespacePojo.getId()).orElseGet(NamespacePojo::new);
 //            tmpPojo.setName(UUID.randomUUID().toString());
 //            tmpPojoList.add(tmpPojo);
 //        }

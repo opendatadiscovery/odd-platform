@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataSourceApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
@@ -12,9 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 @RestController
 @RequiredArgsConstructor
@@ -62,7 +61,7 @@ public class DataSourceController implements DataSourceApi {
     @Override
     public Mono<ResponseEntity<Void>> deleteDataSource(final Long dataSourceId, final ServerWebExchange exchange) {
         return dataSourceService.delete(dataSourceId)
-            .map(__ -> ResponseEntity.noContent().build());
+            .map(ignored -> ResponseEntity.noContent().build());
     }
 
     @Override

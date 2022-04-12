@@ -6,6 +6,7 @@ import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.ResultQuery;
 import org.jooq.RowCountQuery;
 import org.jooq.SQLDialect;

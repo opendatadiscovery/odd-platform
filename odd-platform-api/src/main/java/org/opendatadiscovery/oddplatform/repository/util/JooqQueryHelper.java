@@ -1,5 +1,9 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -13,11 +17,6 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
@@ -26,11 +25,10 @@ import static org.jooq.impl.DSL.rowNumber;
 @Component
 @RequiredArgsConstructor
 public class JooqQueryHelper {
-    private final DSLContext dslContext;
-
     private static final String PAGE_METADATA_TOTAL_FIELD = "_total";
     private static final String PAGE_METADATA_NEXT_FIELD = "_next";
     private static final String PAGE_METADATA_ROW_NUMBER = "_row";
+    private final DSLContext dslContext;
 
     public Select<? extends Record1<Boolean>> selectExists(final Select<?> baseSelect) {
         return DSL.select(field(DSL.exists(baseSelect)));

@@ -80,7 +80,7 @@ public class CollectorServiceImpl implements CollectorService {
 
     @Override
     public Mono<Collector> regenerateToken(final Long collectorId) {
-        // TODO: speak with Damir
+//      TODO: speak with Damir
         return Mono.empty();
 //        return Mono.fromCallable(() -> entityRepository.get(collectorId))
 //            .filter(Optional::isPresent)

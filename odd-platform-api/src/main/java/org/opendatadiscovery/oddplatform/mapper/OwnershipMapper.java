@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.List;
+import org.mapstruct.Mapper;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.Role;
