@@ -264,7 +264,7 @@
                     RECORD_COMPONENT_DEF"/>
         </module>
         <!--    <module name="NoWhitespaceBeforeCaseDefaultColon"/>--> <!-- java-->
-        <module name="OverloadMethodsDeclarationOrder"/>
+<!--        <module name="OverloadMethodsDeclarationOrder"/>-->
         <module name="VariableDeclarationUsageDistance"/>
         <module name="CustomImportOrder">
             <property name="sortImportsInGroupAlphabetically" value="true"/>
@@ -356,9 +356,9 @@
         <module name="EmptyCatchBlock">
             <property name="exceptionVariableName" value="expected"/>
         </module>
-        <module name="CommentsIndentation">
-            <property name="tokens" value="SINGLE_LINE_COMMENT, BLOCK_COMMENT_BEGIN"/>
-        </module>
+<!--        <module name="CommentsIndentation">-->
+<!--            <property name="tokens" value="SINGLE_LINE_COMMENT, BLOCK_COMMENT_BEGIN"/>-->
+<!--        </module>-->
         <!-- https://checkstyle.org/config_filters.html#SuppressionXpathFilter -->
         <module name="SuppressionXpathFilter">
             <property name="file" value="${org.checkstyle.google.suppressionxpathfilter.config}"

@@ -1,5 +1,9 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -11,16 +15,11 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record, P>
     extends ReactiveAbstractCRUDRepository<R, P> {
 
-    private final static String DEFAULT_DELETED_FIELD = "is_deleted";
-    private final static String DEFAULT_DELETED_AT_FIELD = "deleted_at";
+    private static final String DEFAULT_DELETED_FIELD = "is_deleted";
+    private static final String DEFAULT_DELETED_AT_FIELD = "deleted_at";
 
     protected final Field<Boolean> deletedField;
     protected final Field<LocalDateTime> deletedAtField;
@@ -91,5 +90,9 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
         final ArrayList<Condition> conditionsList = new ArrayList<>(conditions);
         conditionsList.add(deletedField.isFalse());
         return conditionsList;
+    }
+
+    protected List<Condition> addSoftDeleteFilter(final Condition condition) {
+        return List.of(condition, deletedField.isFalse());
     }
 }

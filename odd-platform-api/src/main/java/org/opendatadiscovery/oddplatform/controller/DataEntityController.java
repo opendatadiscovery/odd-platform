@@ -12,6 +12,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTagsFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -24,6 +25,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
@@ -94,6 +96,19 @@ public class DataEntityController
             .getDetails(dataEntityId)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<TermRef>> addTermToDataEntity(final Long dataEntityId,
+                                                             final Mono<DataEntityTermFormData> dataEntityTermFormData,
+                                                             final ServerWebExchange exchange) {
+        return DataEntityApi.super.addTermToDataEntity(dataEntityId, dataEntityTermFormData, exchange);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteTermFromDataEntity(final Long dataEntityId, final Long termId,
+                                                               final ServerWebExchange exchange) {
+        return DataEntityApi.super.deleteTermFromDataEntity(dataEntityId, termId, exchange);
     }
 
     @Override

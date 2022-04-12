@@ -4,11 +4,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
-import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
@@ -190,14 +188,14 @@ public class ReactiveDataSourceRepositoryImpl implements ReactiveDataSourceRepos
         // TODO: rework with new abstractions
         return jooqReactiveOperations.mono(existsQuery)
             .filter(Record1::component1)
-            .map(__ -> jooqReactiveOperations.newRecord(DATA_SOURCE, dataSource))
+            .map(ignored -> jooqReactiveOperations.newRecord(DATA_SOURCE, dataSource))
             .map(record -> DSL.update(DATA_SOURCE).set(record).returning())
             .flatMap(jooqReactiveOperations::mono)
             .map(r -> r.into(DataSourcePojo.class));
     }
 
     @Override
-    public Flux<DataSourcePojo> bulkUpdate(Collection<DataSourcePojo> dataSource) {
+    public Flux<DataSourcePojo> bulkUpdate(final Collection<DataSourcePojo> dataSource) {
         return null;
     }
 

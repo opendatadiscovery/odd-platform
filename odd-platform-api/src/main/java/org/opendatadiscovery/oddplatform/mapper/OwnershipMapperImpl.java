@@ -34,7 +34,6 @@ public class OwnershipMapperImpl implements OwnershipMapper {
     public Ownership mapModel(final OwnershipPojo ownership, final Owner owner, final Role role) {
         return new Ownership()
             .id(ownership.getId())
-            .dataEntityId(ownership.getDataEntityId())
             .owner(owner)
             .role(role);
     }
