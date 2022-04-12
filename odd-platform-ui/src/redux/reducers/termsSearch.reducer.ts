@@ -14,19 +14,10 @@ import {
   TermsFacetNames,
 } from 'redux/interfaces';
 import mapValues from 'lodash/mapValues';
-// import get from 'lodash/get';
+import get from 'lodash/get';
 import values from 'lodash/values';
 import reduce from 'lodash/reduce';
 import assignWith from 'lodash/assignWith';
-// import {
-//   changeTermSearchFilterAction,
-//   clearTermSearchFiltersAction,
-//   getTermSearchAction,
-//   getTermSearchFacetOptionsAction,
-//   getTermSearchResultsAction,
-//   getTermSearchSuggestionsAction,
-//   updateTermSearchAction,
-// } from 'redux/actions';
 
 export const initialState: TermSearchState = {
   termSearchId: '',
@@ -61,8 +52,8 @@ const updateTermSearchState = (
         (memo, facetOption) => ({
           ...memo,
           [facetOption.id]: {
-            termId: facetOption.id,
-            termName: facetOption.name,
+            entityId: facetOption.id,
+            entityName: facetOption.name,
             selected:
               'selected' in facetOption ? !!facetOption.selected : true,
             syncedState: true,
@@ -119,39 +110,43 @@ const updateTermFacet = (
     const selectedOption = values(
       state.facetState[payload.facetName]
     ).find(filter => filter.selected);
-    // if (selectedOption) {
-    //   selectedOptionState = {
-    //     termId: get(selectedOption, 'termId', get(selectedOption, 'id')),
-    //     termName: get(
-    //       selectedOption,
-    //       'termName',
-    //       get(selectedOption, 'name')
-    //     ),
-    //     selected: false,
-    //     syncedState: false,
-    //   };
-    // } // todo remove comment when API will be ready
+    if (selectedOption) {
+      selectedOptionState = {
+        entityId: get(
+          selectedOption,
+          'entityId',
+          get(selectedOption, 'id')
+        ),
+        entityName: get(
+          selectedOption,
+          'entityName',
+          get(selectedOption, 'name')
+        ),
+        selected: false,
+        syncedState: false,
+      };
+    }
   }
   return {
     ...state,
     isFacetsStateSynced: false,
     facetState: {
       ...state.facetState,
-      // [payload.facetName]: {
-      //   ...state.facetState[payload.facetName],
-      //   ...(selectedOptionState && {
-      //     [selectedOptionState.termId]: selectedOptionState,
-      //   }),
-      //   ...(payload.facetOptionId &&
-      //     typeof payload.facetOptionId === 'number' && {
-      //       [payload.facetOptionId]: {
-      //         termId: payload.facetOptionId,
-      //         termName: payload.facetOptionName,
-      //         selected: payload.facetOptionState,
-      //         syncedState: false,
-      //       },
-      //     }),
-      // },  // todo remove comment when API will be ready
+      [payload.facetName]: {
+        ...state.facetState[payload.facetName],
+        ...(selectedOptionState && {
+          [selectedOptionState.entityId]: selectedOptionState,
+        }),
+        ...(payload.facetOptionId &&
+          typeof payload.facetOptionId === 'number' && {
+            [payload.facetOptionId]: {
+              entityId: payload.facetOptionId,
+              entityName: payload.facetOptionName,
+              selected: payload.facetOptionState,
+              syncedState: false,
+            },
+          }),
+      },
     },
     results: {
       items: [],
@@ -164,23 +159,24 @@ const updateTermFacet = (
   };
 };
 
-const clearFilters = (state: TermSearchState): TermSearchState => ({
+const clearTermFilters = (state: TermSearchState): TermSearchState => ({
   ...state,
   isFacetsStateSynced: false,
   facetState: mapValues(state.facetState, (filter, facetName) =>
     reduce<TermsSearchFacetStateById, TermsSearchFacetStateById>(
       state.facetState[facetName as TermsFacetNames],
-      (acc, facetOption) =>
-        // if (facetOption.selected) {
-        //   acc[facetOption.termId] = {
-        //     ...facetOption,
-        //     selected: false,
-        //     syncedState: false,
-        //   };
-        // } else {
-        //   acc[facetOption.termId] = facetOption;
-        // } // todo remove comment when API will be ready
-        acc,
+      (acc, facetOption) => {
+        if (facetOption.selected) {
+          acc[facetOption.entityId] = {
+            ...facetOption,
+            selected: false,
+            syncedState: false,
+          };
+        } else {
+          acc[facetOption.entityId] = facetOption;
+        }
+        return acc;
+      },
       {}
     )
   ),
@@ -214,7 +210,7 @@ const reducer = (
     case getType(actions.changeTermSearchFilterAction):
       return updateTermFacet(state, action.payload);
     case getType(actions.clearTermSearchFiltersAction):
-      return clearFilters(state);
+      return clearTermFilters(state);
     case getType(actions.getTermSearchFacetOptionsAction.success):
       return action.payload.facetName
         ? {
