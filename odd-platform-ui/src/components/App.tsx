@@ -18,7 +18,9 @@ const OverviewContainer = React.lazy(
 const SearchContainer = React.lazy(
   () => import('./Search/SearchContainer')
 );
-const TermsContainer = React.lazy(() => import('./Terms/TermsContainer'));
+const TermsContainer = React.lazy(
+  () => import('./TermSearch/TermSearchContainer')
+);
 const AlertsContainer = React.lazy(
   () => import('./Alerts/AlertsContainer')
 );
@@ -39,7 +41,11 @@ const App: React.FC<AppProps> = ({ fetchDataEntitiesClassesAndTypes }) => {
           <Switch>
             <Route exact path="/" component={OverviewContainer} />
             <Route path="/alerts/:viewType?" component={AlertsContainer} />
-            <Route path="/terms/:viewType?" component={TermsContainer} />
+            <Route
+              exact
+              path="/terms/search/:termSearchId?"
+              component={TermsContainer}
+            />
             <Route
               path="/management/:viewType?"
               component={ManagementContainer}

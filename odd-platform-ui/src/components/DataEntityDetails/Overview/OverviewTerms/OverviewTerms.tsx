@@ -1,32 +1,33 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
-import { TermDetails } from 'generated-sources';
+import { TermRef } from 'generated-sources';
 import TermItem from 'components/shared/TermItem/TermItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
-import TermsAddFormContainer from './TermsAddForm/TermsAddFormContainer';
+// import TermsAddFormContainer from './TermsAddForm/TermsAddFormContainer';
+import TermsFormContainer from '../../../TermSearch/TermForm/TermsFormContainer';
 
 interface OverviewTermsProps {
-  dataEntityId: number;
-  terms?: TermDetails[];
+  // dataEntityId: number;
+  terms?: TermRef[];
 }
 
 const OverviewTerms: React.FC<OverviewTermsProps> = ({
   terms,
-  dataEntityId,
+  // dataEntityId,
 }) => {
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
-
   return (
     <div>
       <TermsCaptionContainer>
         <Typography variant="h4">Dictionary terms</Typography>
-        <TermsAddFormContainer
-          dataEntityId={dataEntityId}
-          btnAddEl={
+        <TermsFormContainer
+          // <TermsAddFormContainer
+          // dataEntityId={dataEntityId}
+          btnCreateEl={
             <AppButton
               size="medium"
               color="primaryLight"
@@ -83,9 +84,10 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
           wrap="nowrap"
         >
           <Typography variant="subtitle2">Not created.</Typography>
-          <TermsAddFormContainer
-            dataEntityId={dataEntityId}
-            btnAddEl={
+          {/* <TermsAddFormContainer */}
+          <TermsFormContainer
+            // dataEntityId={dataEntityId}
+            btnCreateEl={
               <AppButton size="small" color="tertiary" onClick={() => {}}>
                 Add terms
               </AppButton>

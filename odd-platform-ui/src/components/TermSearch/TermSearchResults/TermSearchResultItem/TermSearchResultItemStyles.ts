@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-export const Container = styled(Grid)(({ theme }) => ({
+export const TermSearchResultsContainer = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
   padding: theme.spacing(1.25, 0),
@@ -14,7 +14,7 @@ export const Container = styled(Grid)(({ theme }) => ({
   },
 }));
 
-export const ItemLink = styled(Link)(() => ({
+export const TermSearchResultsItemLink = styled(Link)(() => ({
   color: 'initial',
   textDecoration: 'none',
   flexGrow: 1,

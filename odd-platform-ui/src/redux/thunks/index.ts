@@ -13,3 +13,5 @@ export * from './alerts.thunks';
 export * from './dataentityLinkedList.thunks';
 export * from './appInfo.thunks';
 export * from './collectors.thunks';
+export * from './terms.thunks';
+export * from './termsSearch.thunks';

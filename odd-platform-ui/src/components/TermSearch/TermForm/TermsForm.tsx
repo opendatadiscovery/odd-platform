@@ -160,7 +160,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
       fullWidth
       disabled={!isValid}
     >
-      Save
+      Add term
     </AppButton>
   );
 

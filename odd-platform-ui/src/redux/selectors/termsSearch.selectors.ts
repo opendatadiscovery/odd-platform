@@ -3,6 +3,8 @@ import {
   createErrorSelector,
   createFetchingSelector,
 } from 'redux/selectors/loader-selectors';
+import mapValues from 'lodash/mapValues';
+import pickBy from 'lodash/pickBy';
 import { RootState, TermSearchState } from '../interfaces';
 
 export const getTermSearchCreationStatus =
@@ -21,27 +23,27 @@ export const getTermSearchResultsFetchStatus = createFetchingSelector(
   'GET_TERM_SEARCH_RESULTS'
 );
 
-const termsState = ({ termSearch }: RootState): TermSearchState =>
+const termsSearchState = ({ termSearch }: RootState): TermSearchState =>
   termSearch;
 
 export const getTermSearchId = createSelector(
-  termsState,
-  terms => terms.termSearchId
+  termsSearchState,
+  termsSearch => termsSearch.termSearchId
 );
 
 export const getTermSearchFiltersSynced = createSelector(
-  termsState,
-  terms => terms.isFacetsStateSynced
+  termsSearchState,
+  termsSearch => termsSearch.isFacetsStateSynced
 );
 
 export const getTermSearchResultsPage = createSelector(
-  termsState,
-  terms => terms.results.pageInfo
+  termsSearchState,
+  termsSearch => termsSearch.results.pageInfo
 );
 
-export const getTermSearchResults = createSelector(
-  termsState,
-  terms => terms.results.items
+export const getTermSearchResultsItems = createSelector(
+  termsSearchState,
+  termsSearch => termsSearch.results.items
 );
 
 export const getTermSearchIsCreating = createSelector(
@@ -55,7 +57,7 @@ export const getTermSearchIsFetching = createSelector(
   getTermSearchUpdateStatus,
   getTermSearchFiltersSynced,
   getTermSearchResultsFetchStatus,
-  termsState,
+  termsSearchState,
   (
     statusCreate,
     statusFetch,
@@ -69,4 +71,17 @@ export const getTermSearchIsFetching = createSelector(
     ) ||
     !isSynced ||
     (!!search.results.pageInfo.total && !search.results.items.length)
+);
+
+export const getTermSearchFacetsData = createSelector(
+  termsSearchState,
+  termsSearch =>
+    mapValues(termsSearch.facetState, facetState =>
+      pickBy(facetState, facetOption => !facetOption.syncedState)
+    )
+);
+
+export const getTermSearchQuery = createSelector(
+  termsSearchState,
+  termsSearch => termsSearch.query
 );

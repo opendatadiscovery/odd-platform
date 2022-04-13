@@ -3,9 +3,14 @@ import { AlertViewType } from 'redux/interfaces';
 export const searchPath = (searchId?: string) =>
   `/search${searchId ? `/${searchId}` : ''}`;
 
+export const termSearchPath = (termSearchId?: string) =>
+  `/termsearch${termSearchId ? `/${termSearchId}` : ''}`;
+
 export const dataSourcesPath = () => '/datasources';
 
 export const tagsPath = () => '/tags';
+
+export const termDetailsPath = (termId: number) => `/terms/${termId}`;
 
 export const dataEntityDetailsPath = (entityId: number) =>
   `/dataentities/${entityId}`;

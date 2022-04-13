@@ -12,7 +12,7 @@ import { fetchDataSourcesList } from 'redux/thunks/datasources.thunks';
 import { getNamespaceList } from 'redux/selectors/namespace.selectors';
 import { fetchNamespaceList } from 'redux/thunks/namespace.thunks';
 import * as actions from 'redux/actions';
-import TermsFilters from './TermsFilters';
+import TermsSearchFilters from './TermsSearchFilters';
 
 const mapStateToProps = (state: RootState) => ({
   searchClass: getSearchEntityClass(state),
@@ -28,4 +28,7 @@ const mapDispatchToProps = {
   clearDataEntitySearchFilters: actions.clearDataEntitySearchFiltersAction,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TermsFilters);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(TermsSearchFilters);

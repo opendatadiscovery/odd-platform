@@ -10,7 +10,11 @@ import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/Mu
 import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import * as S from './TermsFiltersStyles';
+import {
+  TermSearchFiltersContainer,
+  TermSearchListContainer,
+  TermSearchFacetsLoaderContainer,
+} from './TermSearchFiltersStyles';
 
 interface FiltersProps {
   namespaces: Namespace[];
@@ -25,7 +29,7 @@ interface FiltersProps {
   isDatasourceListFetching: boolean;
 }
 
-const TermsFilters: React.FC<FiltersProps> = ({
+const TermsSearchFilters: React.FC<FiltersProps> = ({
   namespaces,
   fetchDataSourcesList,
   fetchNamespaceList,
@@ -39,7 +43,7 @@ const TermsFilters: React.FC<FiltersProps> = ({
   }, []);
 
   return (
-    <S.Container>
+    <TermSearchFiltersContainer>
       <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
         <Typography variant="h4">Filters</Typography>
         <AppButton
@@ -50,7 +54,7 @@ const TermsFilters: React.FC<FiltersProps> = ({
           Clear All
         </AppButton>
       </Grid>
-      <S.ListContainer>
+      <TermSearchListContainer>
         <MultipleFilterItemContainer
           key="tg"
           facetName="tags"
@@ -67,14 +71,14 @@ const TermsFilters: React.FC<FiltersProps> = ({
           name="Namespace"
           facetOptions={namespaces}
         />
-        <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
+        <TermSearchFacetsLoaderContainer container sx={{ mt: 2 }}>
           {(isSearchFacetsUpdating || isDatasourceListFetching) && (
             <AppCircularProgress size={16} text="Updating filters" />
           )}
-        </S.FacetsLoaderContainer>
-      </S.ListContainer>
-    </S.Container>
+        </TermSearchFacetsLoaderContainer>
+      </TermSearchListContainer>
+    </TermSearchFiltersContainer>
   );
 };
 
-export default TermsFilters;
+export default TermsSearchFilters;

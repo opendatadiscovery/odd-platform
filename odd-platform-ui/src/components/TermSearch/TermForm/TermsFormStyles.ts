@@ -1,5 +1,5 @@
 import styled from 'styled-components';
 
-export const Asterisk = styled('span')(({ theme }) => ({
+export const TermsSearchAsterisk = styled('span')(({ theme }) => ({
   color: theme.palette.warning.main,
 }));
