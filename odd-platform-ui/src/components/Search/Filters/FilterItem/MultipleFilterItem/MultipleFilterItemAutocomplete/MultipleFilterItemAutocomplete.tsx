@@ -19,7 +19,10 @@ import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { FacetStateUpdate, OptionalFacetNames } from 'redux/interfaces';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
-import { FilterCount } from './MultipleFilterItemAutocompleteStyles';
+import {
+  FilterCount,
+  HighlightedTextPart,
+} from './MultipleFilterItemAutocompleteStyles';
 
 interface MultipleFilterItemAutocompleteProps {
   searchId: string;
@@ -158,17 +161,15 @@ const MultipleFilterItemAutocomplete: React.FC<
       return (
         <span>
           {parts.map((part, i) => (
-            <span
+            <HighlightedTextPart
               // eslint-disable-next-line react/no-array-index-key
               key={i}
-              style={
+              isHighlighted={
                 part.toLowerCase() === highlight.toLowerCase()
-                  ? { backgroundColor: '#FFEECC' }
-                  : {}
               }
             >
               {part}
-            </span>
+            </HighlightedTextPart>
           ))}
         </span>
       );

@@ -141,18 +141,16 @@ const TagsEditFormAutocomplete: React.FC<
       renderOption={(props, option) => (
         <li {...props}>
           <OptionsContainer $isImportant={option.important}>
-            <div>
-              <Typography variant="body1">
-                {option.id ? (
-                  option.name
-                ) : (
-                  <AutocompleteSuggestion
-                    optionLabel="tag"
-                    optionName={option.name}
-                  />
-                )}
-              </Typography>
-            </div>
+            <Typography variant="body1">
+              {option.id ? (
+                option.name
+              ) : (
+                <AutocompleteSuggestion
+                  optionLabel="tag"
+                  optionName={option.name}
+                />
+              )}
+            </Typography>
           </OptionsContainer>
         </li>
       )}
