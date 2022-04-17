@@ -1,13 +1,19 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.lang3.StringUtils;
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.Select;
+import org.jooq.SelectOnConditionStep;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDto;
@@ -24,6 +30,7 @@ import org.opendatadiscovery.oddplatform.model.tables.records.TermRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -57,6 +64,32 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         super(jooqReactiveOperations, jooqQueryHelper, TERM, TermPojo.class, TERM.NAME, TERM.ID,
             TERM.UPDATED_AT, TERM.IS_DELETED, TERM.DELETED_AT);
         this.jooqRecordHelper = jooqRecordHelper;
+    }
+
+    @Override
+    public Mono<Page<TermRefDto>> listTermRefDtos(final int page, final int size, final String nameQuery) {
+        final Select<TermRecord> homogeneousQuery = DSL.selectFrom(TERM)
+            .where(queryCondition(nameQuery));
+
+        final Select<? extends Record> termSelect =
+            jooqQueryHelper.paginate(homogeneousQuery, (page - 1) * size, size);
+
+        final Table<? extends Record> termCTE = termSelect.asTable("term_cte");
+
+        final SelectOnConditionStep<Record> query = DSL.with(termCTE.getName())
+            .as(termSelect)
+            .select(termCTE.fields())
+            .select(NAMESPACE.asterisk())
+            .from(termCTE.getName())
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(termCTE.field(TERM.NAMESPACE_ID)));
+
+        return jooqReactiveOperations.flux(query)
+            .collectList()
+            .flatMap(records -> jooqQueryHelper.pageifyResult(
+                records,
+                r -> mapRecordToRefDto(r, termCTE.getName()),
+                fetchCount(nameQuery)
+            ));
     }
 
     @Override
@@ -138,6 +171,17 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .map(r -> r.into(DataEntityToTermPojo.class));
     }
 
+    private List<Condition> queryCondition(final String nameQuery) {
+        final var conditionsList = new ArrayList<Condition>();
+
+        conditionsList.add(TERM.IS_DELETED.isFalse());
+        if (StringUtils.isNotEmpty(nameQuery)) {
+            conditionsList.add(TERM.NAME.startsWithIgnoreCase(nameQuery));
+        }
+
+        return conditionsList;
+    }
+
     private TermRefDto mapRecordToRefDto(final Record record) {
         return TermRefDto.builder()
             .term(record.into(TERM).into(TermPojo.class))
@@ -159,6 +203,13 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         return TermDetailsDto.builder()
             .termDto(termDto)
             .tags(jooqRecordHelper.extractAggRelation(record, AGG_TAGS_FIELD, TagPojo.class))
+            .build();
+    }
+
+    private TermRefDto mapRecordToRefDto(final Record record, final String termCteName) {
+        return TermRefDto.builder()
+            .term(jooqRecordHelper.remapCte(record, termCteName, TERM).into(TermPojo.class))
+            .namespace(record.into(NAMESPACE).into(NamespacePojo.class))
             .build();
     }
 

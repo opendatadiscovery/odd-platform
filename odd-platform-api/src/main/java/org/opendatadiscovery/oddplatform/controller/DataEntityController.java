@@ -30,6 +30,7 @@ import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
+import org.opendatadiscovery.oddplatform.service.TermService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -45,13 +46,16 @@ public class DataEntityController
 
     private final OwnershipService ownershipService;
     private final AlertService alertService;
+    private final TermService termService;
 
     public DataEntityController(final DataEntityService entityService,
                                 final OwnershipService ownershipService,
-                                final AlertService alertService) {
+                                final AlertService alertService,
+                                final TermService termService) {
         super(entityService);
         this.ownershipService = ownershipService;
         this.alertService = alertService;
+        this.termService = termService;
     }
 
     @Override
@@ -102,13 +106,16 @@ public class DataEntityController
     public Mono<ResponseEntity<TermRef>> addTermToDataEntity(final Long dataEntityId,
                                                              final Mono<DataEntityTermFormData> dataEntityTermFormData,
                                                              final ServerWebExchange exchange) {
-        return DataEntityApi.super.addTermToDataEntity(dataEntityId, dataEntityTermFormData, exchange);
+        return dataEntityTermFormData
+            .flatMap(formData -> termService.linkTermWithDataEntity(formData.getTermId(), dataEntityId))
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Void>> deleteTermFromDataEntity(final Long dataEntityId, final Long termId,
                                                                final ServerWebExchange exchange) {
-        return DataEntityApi.super.deleteTermFromDataEntity(dataEntityId, termId, exchange);
+        return termService.removeTermFromDataEntity(termId, dataEntityId)
+            .map(ignored -> ResponseEntity.noContent().build());
     }
 
     @Override

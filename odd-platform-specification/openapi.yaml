@@ -1579,6 +1579,23 @@ paths:
         - dataSource
 
   /api/terms:
+    get:
+      summary: List of terms
+      description: Gets the list of existing terms
+      operationId: getTermsList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRefList'
+      tags:
+        - term
     post:
       summary: Create term
       description: Create new term

@@ -1625,9 +1625,17 @@ components:
         - page_info
 
     TermRefList:
-      type: array
-      items:
-        $ref: '#/components/schemas/TermRef'
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermRef'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
 
     TermRef:
       type: object
