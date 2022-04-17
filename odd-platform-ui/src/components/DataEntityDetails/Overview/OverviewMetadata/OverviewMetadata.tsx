@@ -26,7 +26,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
   let collapsedPredefined;
   if (predefinedMetadata?.length > visibleLimit) {
     collapsedPredefined = (
-      <>
+      <Grid container flexDirection="column">
         <Collapse
           in={predefOpen}
           timeout="auto"
@@ -49,20 +49,20 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           size="small"
           color="tertiary"
           onClick={() => setPredefOpen(!predefOpen)}
-          sx={{ mt: 0.75 }}
+          sx={{ mt: 0.75, width: 'fit-content' }}
         >
           {predefOpen
             ? 'Hide'
             : `View All (${predefinedMetadata.length - visibleLimit})`}
         </AppButton>
-      </>
+      </Grid>
     );
   }
 
   let collapsedCustom;
   if (customMetadata?.length > visibleLimit) {
     collapsedCustom = (
-      <>
+      <Grid container flexDirection="column">
         <Collapse
           in={customOpen}
           timeout="auto"
@@ -82,7 +82,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           ) : null}
         </Collapse>
         <AppButton
-          sx={{ mt: 0.75 }}
+          sx={{ mt: 0.75, width: 'fit-content' }}
           size="small"
           color="tertiary"
           onClick={() => setCustomOpen(!customOpen)}
@@ -91,7 +91,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
             ? 'Hide'
             : `View All (${customMetadata.length - visibleLimit})`}
         </AppButton>
-      </>
+      </Grid>
     );
   }
   return (
