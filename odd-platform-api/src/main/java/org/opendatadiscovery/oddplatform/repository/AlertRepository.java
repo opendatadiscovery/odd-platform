@@ -11,7 +11,7 @@ public interface AlertRepository {
 
     Page<AlertDto> listByOwner(final int page, final int size, final long ownerId);
 
-    Collection<AlertDto> getDataEntityAlerts(long dataEntityId);
+    Collection<AlertDto> getDataEntityAlerts(final long dataEntityId);
 
     Page<AlertDto> listDependentObjectsAlerts(final int page, final int size, final long ownerId);
 
@@ -19,7 +19,7 @@ public interface AlertRepository {
 
     long countByOwner(final long ownerId);
 
-    long countDependentObjectsAlerts(long ownerId);
+    long countDependentObjectsAlerts(final long ownerId);
 
     AlertPojo updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName);
 

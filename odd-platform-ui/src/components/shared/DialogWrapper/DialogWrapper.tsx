@@ -49,7 +49,12 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
     },
     [setOpen]
   );
-  const handleClose = React.useCallback(() => setOpen(false), [setOpen]);
+  const handleClose = React.useCallback(() => {
+    setOpen(false);
+    if (clearState) {
+      clearState();
+    }
+  }, [setOpen]);
 
   React.useEffect(() => {
     handleClose();
@@ -76,12 +81,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
               size="small"
               color="unfilled"
               icon={<ClearIcon />}
-              onClick={() => {
-                if (clearState) {
-                  clearState();
-                }
-                handleClose();
-              }}
+              onClick={handleClose}
             />
           </S.Title>
           <S.Content id={dialogContentId}>
