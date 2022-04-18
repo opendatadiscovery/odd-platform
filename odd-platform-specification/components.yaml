@@ -1465,7 +1465,7 @@ components:
       required:
         - internal_name
 
-    DataEntityTagsFormData:
+    TagsFormData:
       type: object
       properties:
         tag_name_list:
@@ -1821,7 +1821,7 @@ components:
         type: integer
         format: int64
 
-    DataEntityOwnershipIdParam:
+    OwnershipIdParam:
       name: ownership_id
       in: path
       required: true

@@ -17,7 +17,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLinea
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -27,6 +26,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueLi
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
+import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
@@ -229,7 +229,7 @@ public class DataEntityServiceImpl
     @Override
     // TODO: refactor
     // TODO: fix non-transactional update of search entrypoint and Tag CRUD
-    public Flux<Tag> upsertTags(final long dataEntityId, final DataEntityTagsFormData formData) {
+    public Flux<Tag> upsertTags(final long dataEntityId, final TagsFormData formData) {
         final Set<String> names = new HashSet<>(formData.getTagNameList());
 
         return Mono.just(dataEntityId)
