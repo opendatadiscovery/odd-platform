@@ -8,6 +8,7 @@ The diagram below shows principles of data exchange between ODD and your in-hous
 ![](.gitbook/img/architecture2.png)
 
 ### Adapters
+> :exclamation: Adapters will be deprecated soon! To use all features and recent updates of the Platform, we recommend you to install the Collector.
 
 Adapters are lightweight services that gather metadata in a standardized format. They are designed to be source-specific and expose only the information that could be gathered from a particular data source.
 
