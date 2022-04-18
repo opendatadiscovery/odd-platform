@@ -1,14 +1,10 @@
 # Adapter-oriented architecture
 [Adapters](#adapters) \
 [Push-client](#push-client) \
-[Push and pull strategies](#push-and-pull-strategies) \
-\
-The diagram below shows principles of data exchange between ODD and your in-house components.
-
-![](.gitbook/img/architecture2.png)
+[Push and pull strategies](#push-and-pull-strategies)
 
 ### Adapters
-> :exclamation: Adapters will be deprecated soon! To use all features and recent updates of the Platform, we recommend you to install the Collector.
+> :exclamation: Adapters will be deprecated soon! To use all features and recent updates of the Platform, we recommend you to install the [Collector](Architecture.md#collector).
 
 Adapters are lightweight services that gather metadata in a standardized format. They are designed to be source-specific and expose only the information that could be gathered from a particular data source.
 
@@ -16,6 +12,9 @@ Adapters are lightweight services that gather metadata in a standardized format.
 
 A Push-client is a provider which sends information directly to the central repository of the Platform.
 
+The diagram below shows principles of data exchange between ODD and your in-house components.
+
+![](.gitbook/img/architecture2.png)
 ## Push and pull strategies
 
 The metadata discovery process is very similar to that of gathering metrics,logs and traces. It can be done through a pull or push model (or both). Each of the models has a range of use cases it suits best. ODD uses both models to effectively cover all core use cases.

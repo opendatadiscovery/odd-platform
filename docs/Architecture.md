@@ -1,4 +1,7 @@
 # Architecture
+[Collector](#collector) \
+[Collector vs Adapters](#collector-vs-adapters)
+
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.
 
 ![](.gitbook/img/architecture_collector.png)
@@ -21,14 +24,14 @@ ODD Collector is a lightweight service which gathers metadata from all your data
 * [Sagemaker](https://github.com/opendatadiscovery/odd-collector-aws#sagemaker)
 * [SQS](https://github.com/opendatadiscovery/odd-collector-aws#sqs)
 
-#### [Collector ](https://github.com/opendatadiscovery/odd-collector)
+#### [Collector](https://github.com/opendatadiscovery/odd-collector)
 * [PostgreSQL](https://github.com/opendatadiscovery/odd-collector#postgresql)
 * [MySQL](https://github.com/opendatadiscovery/odd-collector#mysql)
 * [ClickHouse](https://github.com/opendatadiscovery/odd-collector#clickhouse)
 * [Redshift](https://github.com/opendatadiscovery/odd-collector#redshift)
 ## Collector vs Adapters
 A previous version of Platform architecture was based on adapters. This approach required to connect new adapter to each data source. Now you can install one Collector and ingest data from all your sources.
-#### Deprecated Adapters
+### Deprecated Adapters
 > :exclamation: To use all features and recent updates of the Platform, we recommend you to install the Collector.
 
 Here is a list of deprecated adapters:
