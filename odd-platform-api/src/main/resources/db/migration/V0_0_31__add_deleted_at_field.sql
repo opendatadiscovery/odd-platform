@@ -28,4 +28,7 @@ CREATE UNIQUE INDEX data_source_name_unique ON data_source (name) WHERE is_delet
 
 CREATE UNIQUE INDEX data_source_oddrn_unique ON data_source (oddrn) WHERE is_deleted = false;
 
-CREATE UNIQUE INDEX collector_oddrn_unique ON collector (name) WHERE is_deleted = false;
+CREATE UNIQUE INDEX collector_name_unique ON collector (name) WHERE is_deleted = false;
+
+ALTER TABLE collector
+    DROP CONSTRAINT collector_name_key;

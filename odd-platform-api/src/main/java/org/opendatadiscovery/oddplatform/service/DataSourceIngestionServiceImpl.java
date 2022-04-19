@@ -105,7 +105,6 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
             .toList();
     }
 
-    // TODO: duplicate
     private <T, S> S defaultFieldIfNull(final T object, final Function<T, S> mapper) {
         if (object == null) {
             return null;
