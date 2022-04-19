@@ -59,13 +59,13 @@ public class CollectorServiceImpl implements CollectorService {
                 return namespaceRepository.getByName(form.getNamespaceName())
                     .switchIfEmpty(namespaceRepository.createByName(form.getNamespaceName()))
                     .flatMap(namespace -> update(
-                        collectorMapper.applyForm(collectorDto.collectorPojo(), namespace, form),
+                        collectorMapper.applyToDto(collectorDto.collectorPojo(), form, namespace),
                         namespace,
                         collectorDto.tokenDto()
                     ));
             }
 
-            return update(collectorMapper.applyForm(collectorDto.collectorPojo(), null, form), collectorDto.tokenDto());
+            return update(collectorMapper.applyToDto(collectorDto.collectorPojo(), form), collectorDto.tokenDto());
         });
     }
 

@@ -1,3 +1,12 @@
+ALTER TABLE namespace
+    ADD COLUMN deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
+
+ALTER TABLE data_source
+    ADD COLUMN deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
+
+ALTER TABLE collector
+    ADD COLUMN deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
+
 UPDATE namespace
 SET deleted_at = NOW()
 WHERE deleted_at IS NULL
@@ -12,15 +21,6 @@ UPDATE collector
 SET deleted_at = NOW()
 WHERE deleted_at IS NULL
   AND is_deleted = true;
-
-ALTER TABLE namespace
-    ADD COLUMN deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
-
-ALTER TABLE data_source
-    ADD COLUMN deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
-
-ALTER TABLE collector
-    ADD COLUMN deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
 
 CREATE UNIQUE INDEX namespace_unique ON namespace (name) WHERE is_deleted = false;
 
