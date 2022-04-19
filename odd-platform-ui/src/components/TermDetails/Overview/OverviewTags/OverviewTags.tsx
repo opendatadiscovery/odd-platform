@@ -4,7 +4,7 @@ import { Tag } from 'generated-sources';
 import TagItem from 'components/shared/TagItem/TagItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import TagsEditContainer from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormContainer';
+import TagsEditContainer from 'components/TermDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { CaptionContainer } from './OverviewTagsStyles';
 
@@ -30,7 +30,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags, termId }) => {
       <CaptionContainer>
         <Typography variant="h3">Tags</Typography>
         <TagsEditContainer
-          dataEntityId={termId} // todo replace with termId
+          termId={termId}
           btnEditEl={
             <AppButton
               size="medium"
@@ -95,7 +95,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags, termId }) => {
         >
           <Typography variant="subtitle2">Not created.</Typography>
           <TagsEditContainer
-            dataEntityId={termId} // todo replace with termId
+            termId={termId}
             btnEditEl={
               <AppButton size="small" color="tertiary" onClick={() => {}}>
                 Add tags

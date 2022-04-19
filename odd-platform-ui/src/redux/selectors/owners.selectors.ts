@@ -4,6 +4,7 @@ import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 import { OwnersState } from 'redux/interfaces/state';
 import { Owner } from 'generated-sources';
 import { getDataEntityId } from './dataentity.selectors';
+import { getTermId } from './termDetails.selectors';
 
 const ownersState = ({ owners }: RootState): OwnersState => owners;
 
@@ -63,16 +64,16 @@ export const getDataEntityOwnership = createSelector(
   ownersState,
   getDataEntityId,
   (owners, dataEntityId) =>
-    owners.ownership[dataEntityId]?.allIds.map(
-      id => owners.ownership[dataEntityId].byId[id]
+    owners.ownershipDataEntity[dataEntityId]?.allIds.map(
+      id => owners.ownershipDataEntity[dataEntityId].byId[id]
     ) || []
 );
 
-// export const getTermDetailsOwnership = createSelector(
-//     ownersState,
-//     getTermId,
-//     (owners, termId) =>
-//         owners.ownership[termId]?.allIds.map( // todo change OwnersState
-//             id => owners.ownership[termId].byId[id]
-//         ) || []
-// );
+export const getTermDetailsOwnership = createSelector(
+  ownersState,
+  getTermId,
+  (owners, termId) =>
+    owners.ownershipTermDetails[termId]?.allIds.map(
+      id => owners.ownershipTermDetails[termId].byId[id]
+    ) || []
+);

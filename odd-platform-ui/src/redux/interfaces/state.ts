@@ -160,8 +160,14 @@ export interface OwnersState {
   byId: { [ownerId: number]: Owner };
   allIds: number[];
   pageInfo?: CurrentPageInfo;
-  ownership: {
+  ownershipDataEntity: {
     [dataEntityId: string]: {
+      byId: { [ownershipId: string]: Ownership };
+      allIds: number[];
+    };
+  };
+  ownershipTermDetails: {
+    [termId: string]: {
       byId: { [ownershipId: string]: Ownership };
       allIds: number[];
     };
