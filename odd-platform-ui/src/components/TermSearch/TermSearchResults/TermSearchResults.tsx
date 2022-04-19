@@ -4,7 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { useScrollBarWidth } from 'lib/hooks';
 import {
   TermApiGetTermSearchResultsRequest,
-  Term,
+  TermDetails,
 } from 'generated-sources';
 import { CurrentPageInfo } from 'redux/interfaces';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
@@ -19,7 +19,7 @@ import {
 
 interface ResultsProps {
   termSearchId: string;
-  termSearchResults: Term[];
+  termSearchResults: TermDetails[];
   pageInfo: CurrentPageInfo;
   termSearchFiltersSynced: boolean;
   getTermSearchResults: (

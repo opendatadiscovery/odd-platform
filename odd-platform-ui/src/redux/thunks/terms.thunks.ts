@@ -1,37 +1,40 @@
 import {
   Configuration,
-  Term,
   TermApiUpdateTermRequest,
   TermApiCreateTermRequest,
   TermApiDeleteTermRequest,
+  TermApiGetTermsListRequest,
   TermApi,
+  TermDetails,
+  TermRefList,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import { DeleteTerm } from 'redux/interfaces/terms';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { PaginatedResponse } from '../interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new TermApi(apiClientConf);
 
 export const updateTerm = createThunk<
   TermApiUpdateTermRequest,
-  Term,
-  Term
+  TermDetails,
+  TermDetails
 >(
   (params: TermApiUpdateTermRequest) => apiClient.updateTerm(params),
   actions.updateTermAction,
-  (result: Term) => result
+  (result: TermDetails) => result
 );
 
 export const createTerm = createThunk<
   TermApiCreateTermRequest,
-  Term,
-  Term
+  TermDetails,
+  TermDetails
 >(
   (params: TermApiCreateTermRequest) => apiClient.createTerm(params),
   actions.createTermAction,
-  (result: Term) => result
+  (result: TermDetails) => result
 );
 
 export const deleteTerm = createThunk<
@@ -43,5 +46,21 @@ export const deleteTerm = createThunk<
   actions.deleteTermAction,
   (_, request: TermApiDeleteTermRequest) => ({
     id: request.termId,
+  })
+);
+
+export const fetchTermsList = createThunk<
+  TermApiGetTermsListRequest,
+  TermRefList,
+  PaginatedResponse<TermRefList>
+>(
+  (params: TermApiGetTermsListRequest) => apiClient.getTermsList(params),
+  actions.fetchTermsAction,
+  (response: TermRefList, request: TermApiGetTermsListRequest) => ({
+    ...response,
+    pageInfo: {
+      ...response.pageInfo,
+      page: request.page,
+    },
   })
 );

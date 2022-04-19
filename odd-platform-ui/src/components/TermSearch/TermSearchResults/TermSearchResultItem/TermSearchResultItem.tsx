@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
-import { Term } from 'generated-sources';
+import { TermDetails } from 'generated-sources';
 import { termDetailsPath } from 'lib/paths';
 import { TermSearchResultsColContainer } from 'components/TermSearch/TermSearchResults/TermSearchResultsStyles';
 import {
@@ -10,7 +10,7 @@ import {
 } from './TermSearchResultItemStyles';
 
 interface TermsResultItemProps {
-  termSearchResult: Term;
+  termSearchResult: TermDetails;
 }
 
 const TermSearchResultItem: React.FC<TermsResultItemProps> = ({

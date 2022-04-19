@@ -18,12 +18,14 @@ export type TermsFacetStateUpdate = {
 };
 
 export type TermsSearchFilterStateSynced = SearchFilterState & {
+  // todo REPLACE WITH SearchFilterState
   syncedState: boolean;
 };
 
 export type TermsSearchFacetStateById = {
   [facetOptionId: string]: TermsSearchFilterStateSynced;
 };
+
 export type TermsSearchFacetsByName = {
   [facetName in TermsFacetNames]?: TermsSearchFacetStateById;
 };

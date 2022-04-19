@@ -210,7 +210,7 @@ export interface TermSearchState {
   facets: TermsSearchFacetOptionsByName;
   isFacetsStateSynced: boolean;
   results: {
-    items: Term[];
+    items: TermDetails[];
     pageInfo: CurrentPageInfo;
   };
   suggestions: TermRef[];

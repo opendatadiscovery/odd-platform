@@ -1,7 +1,7 @@
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
-import { Action } from 'redux/interfaces';
-import { TermsState } from 'redux/interfaces/state';
+import { Action, TermsState, PaginatedResponse } from 'redux/interfaces';
+import { TermRefList } from 'generated-sources';
 
 export const initialState: TermsState = {
   byId: {},
@@ -12,9 +12,33 @@ export const initialState: TermsState = {
     hasNext: true,
   },
 };
+const updateTermList = (
+  state: TermsState,
+  payload: PaginatedResponse<TermRefList>
+) =>
+  payload.items.reduce(
+    (memo: TermsState, term) => ({
+      ...memo,
+      byId: {
+        ...memo.byId,
+        [term.id]: {
+          ...memo.byId[term.id],
+          ...term,
+        },
+      },
+      allIds: [...memo.allIds, term.id],
+    }),
+    {
+      ...state,
+      allIds: payload.pageInfo?.page > 1 ? [...state.allIds] : [],
+      pageInfo: payload.pageInfo,
+    }
+  );
 
 const reducer = (state = initialState, action: Action): TermsState => {
   switch (action.type) {
+    case getType(actions.fetchTermsAction.success):
+      return updateTermList(state, action.payload);
     case getType(actions.createTermAction.success):
       return {
         ...state,
