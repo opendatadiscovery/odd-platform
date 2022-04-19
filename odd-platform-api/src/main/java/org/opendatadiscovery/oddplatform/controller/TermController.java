@@ -12,7 +12,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
-import org.opendatadiscovery.oddplatform.service.TermService;
+import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
