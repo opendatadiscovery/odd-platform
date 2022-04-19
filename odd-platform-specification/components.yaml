@@ -790,14 +790,11 @@ components:
           $ref: '#/components/schemas/Token'
         name:
           type: string
-        oddrn:
-          type: string
         description:
           type: string
       required:
         - id
         - name
-        - oddrn
         - token
 
     CollectorFormData:

@@ -120,7 +120,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<Long> acquireDataSourceId(final String dataSourceOddrn) {
-        return dataSourceRepository.getByOddrn(dataSourceOddrn)
+        return dataSourceRepository.getDtoByOddrn(dataSourceOddrn)
             .map(dataSource -> dataSource.dataSource().getId())
             .switchIfEmpty(Mono.defer(() -> {
                 final OddrnPath oddrnPath;

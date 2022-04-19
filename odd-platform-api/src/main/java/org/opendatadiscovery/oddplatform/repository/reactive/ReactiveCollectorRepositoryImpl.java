@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.util.List;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
@@ -18,6 +18,8 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.COLLECTOR;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -81,24 +83,31 @@ public class ReactiveCollectorRepositoryImpl
     }
 
     @Override
-    public Mono<CollectorDto> getDtoByOddrn(final String oddrn) {
-        final SelectConditionStep<Record> query = DSL.select(COLLECTOR.asterisk())
-            .select(NAMESPACE.asterisk())
-            .select(TOKEN.asterisk())
+    public Mono<CollectorPojo> getByToken(final String token) {
+        final SelectConditionStep<Record> query = DSL
+            .select(COLLECTOR.asterisk())
             .from(COLLECTOR)
-            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(COLLECTOR.NAMESPACE_ID))
-            .leftJoin(TOKEN).on(TOKEN.ID.eq(COLLECTOR.TOKEN_ID))
-            .where(COLLECTOR.ODDRN.eq(oddrn))
-            .and(COLLECTOR.IS_DELETED.isFalse());
+            .join(TOKEN).on(TOKEN.ID.eq(COLLECTOR.TOKEN_ID))
+            .where(TOKEN.VALUE.eq(token));
 
-        return jooqReactiveOperations.mono(query).map(this::mapRecordToDto);
+        return jooqReactiveOperations.mono(query).map(r -> r.into(CollectorPojo.class));
+    }
+
+    @Override
+    public Mono<Boolean> existsByNamespace(final long namespaceId) {
+        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
+            DSL.selectFrom(COLLECTOR).where(addSoftDeleteFilter(COLLECTOR.NAMESPACE_ID.eq(namespaceId)))
+        );
+
+        return jooqReactiveOperations.mono(query).map(r -> r.get(0, Boolean.class));
     }
 
     private CollectorDto mapRecordToDto(final Record record, final String collectorCteName) {
         final TokenPojo tokenPojo = jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class);
+
         return new CollectorDto(
             jooqRecordHelper.remapCte(record, collectorCteName, COLLECTOR).into(CollectorPojo.class),
-            record.into(NAMESPACE).into(NamespacePojo.class),
+            jooqRecordHelper.extractRelation(record, NAMESPACE, NamespacePojo.class),
             new TokenDto(tokenPojo)
         );
     }
@@ -106,8 +115,8 @@ public class ReactiveCollectorRepositoryImpl
     private CollectorDto mapRecordToDto(final Record record) {
         return new CollectorDto(
             record.into(COLLECTOR).into(CollectorPojo.class),
-            record.into(NAMESPACE).into(NamespacePojo.class),
-            new TokenDto(record.into(TOKEN).into(TokenPojo.class))
+            jooqRecordHelper.extractRelation(record, NAMESPACE, NamespacePojo.class),
+            new TokenDto(jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class))
         );
     }
 }

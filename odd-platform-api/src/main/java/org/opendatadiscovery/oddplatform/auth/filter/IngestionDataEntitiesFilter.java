@@ -37,7 +37,7 @@ public class IngestionDataEntitiesFilter extends AbstractIngestionFilter {
                         final DataEntityList body = readBody(dataBuffer, DataEntityList.class);
                         final String token = resolveToken(exchange.getRequest());
 
-                        return dataSourceRepository.getByOddrn(body.getDataSourceOddrn())
+                        return dataSourceRepository.getDtoByOddrn(body.getDataSourceOddrn())
                             .switchIfEmpty(Mono.error(new NotFoundException(
                                 String.format("DataSource with oddrn %s doesn't exist", body.getDataSourceOddrn()))))
                             .doOnNext(dto -> {

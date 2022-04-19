@@ -37,32 +37,33 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
     @Override
     @ReactiveTransactional
     public Flux<DataSource> createDataSources(final DataSourceList dataSourceList) {
-        return reactiveCollectorRepository
-            .getDtoByOddrn(dataSourceList.getProviderOddrn())
-            .switchIfEmpty(Mono.error(new NotFoundException(
-                "Couldn't find collector with oddrn %s".formatted(dataSourceList.getProviderOddrn()))))
-            // TODO: fix no token_id in data sources record
-            .flatMapMany(c -> {
-                final List<DataSourcePojo> dataSources = mapDataSources(dataSourceList, c);
-
-                return reactiveDataSourceRepository.getByOddrns(extractOddrns(dataSources), true)
-                    .map(DataSourceDto::dataSource)
-                    .collectList()
-                    .flatMapMany(list -> {
-                        final Flux<DataSourcePojo> updatedDataSources =
-                            reactiveDataSourceRepository.bulkUpdate(prepareForUpdate(list, dataSources));
-
-                        final List<DataSourcePojo> toCreate = prepareForCreate(dataSources,
-                            list.stream().map(DataSourcePojo::getOddrn).collect(Collectors.toSet()));
-
-                        final Flux<DataSourcePojo> createdDataSources =
-                            reactiveDataSourceRepository.bulkCreate(toCreate);
-
-                        return Flux.concat(updatedDataSources, createdDataSources);
-                    })
-                    .map(ds -> new DataSourceDto(ds, c.namespace(), c.tokenDto()))
-                    .map(dataSourceIngestionMapper::mapDtoToIngestionModel);
-            });
+        return Flux.just();
+//        return reactiveCollectorRepository
+//            .getDtoByOddrn(dataSourceList.getProviderOddrn())
+//            .switchIfEmpty(Mono.error(new NotFoundException(
+//                "Couldn't find collector with oddrn %s".formatted(dataSourceList.getProviderOddrn()))))
+//            // TODO: fix no token_id in data sources record
+//            .flatMapMany(c -> {
+//                final List<DataSourcePojo> dataSources = mapDataSources(dataSourceList, c);
+//
+//                return reactiveDataSourceRepository.getDtosByOddrns(extractOddrns(dataSources), true)
+//                    .map(DataSourceDto::dataSource)
+//                    .collectList()
+//                    .flatMapMany(list -> {
+//                        final Flux<DataSourcePojo> updatedDataSources =
+//                            reactiveDataSourceRepository.bulkUpdate(prepareForUpdate(list, dataSources));
+//
+//                        final List<DataSourcePojo> toCreate = prepareForCreate(dataSources,
+//                            list.stream().map(DataSourcePojo::getOddrn).collect(Collectors.toSet()));
+//
+//                        final Flux<DataSourcePojo> createdDataSources =
+//                            reactiveDataSourceRepository.bulkCreate(toCreate);
+//
+//                        return Flux.concat(updatedDataSources, createdDataSources);
+//                    })
+//                    .map(ds -> new DataSourceDto(ds, c.namespace(), c.tokenDto()))
+//                    .map(dataSourceIngestionMapper::mapDtoToIngestionModel);
+//            });
     }
 
     private List<DataSourcePojo> prepareForUpdate(final List<DataSourcePojo> actual,

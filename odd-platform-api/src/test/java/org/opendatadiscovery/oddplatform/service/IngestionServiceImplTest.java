@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -171,7 +170,7 @@ public class IngestionServiceImplTest {
         dataEntityList = deserializeFixture(PATH_TO_DATA_ENTITY_LIST_FIXTURE,
             new TypeReference<>() {
             });
-        when(dataSourceRepository.getByOddrn(anyString())).thenReturn(Mono.just(dataSourceDto));
+        when(dataSourceRepository.getDtoByOddrn(anyString())).thenReturn(Mono.just(dataSourceDto));
         when(metadataIngestionService.ingestMetadata(any())).thenReturn(Mono.empty());
     }
 

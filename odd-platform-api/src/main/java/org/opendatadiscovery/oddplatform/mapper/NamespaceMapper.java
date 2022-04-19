@@ -17,7 +17,7 @@ public interface NamespaceMapper {
 
     NamespacePojo mapForm(final NamespaceFormData form);
 
-    NamespacePojo applyForm(@MappingTarget final NamespacePojo pojo, final NamespaceUpdateFormData form);
+    NamespacePojo applyToPojo(@MappingTarget final NamespacePojo pojo, final NamespaceUpdateFormData form);
 
     List<Namespace> mapPojos(final List<NamespacePojo> namespace);
 

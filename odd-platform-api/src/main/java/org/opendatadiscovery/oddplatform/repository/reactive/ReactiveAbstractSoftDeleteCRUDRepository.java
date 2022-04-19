@@ -86,6 +86,10 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
         return addSoftDeleteFilter(super.listCondition(nameQuery));
     }
 
+    protected List<Condition> addSoftDeleteFilter(final Condition condition) {
+        return addSoftDeleteFilter(List.of(condition));
+    }
+
     protected List<Condition> addSoftDeleteFilter(final List<Condition> conditions) {
         final ArrayList<Condition> conditionsList = new ArrayList<>(conditions);
         conditionsList.add(deletedField.isFalse());

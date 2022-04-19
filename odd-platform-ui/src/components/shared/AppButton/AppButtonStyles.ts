@@ -54,7 +54,7 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
     [`&.${buttonClasses.sizeSmall}`]: {
       minWidth: 'auto',
       borderRadius: '4px',
-      padding: theme.spacing(0.5, 1),
+      padding: theme.spacing(0.5, 0.5),
       fontWeight: theme.typography.body2.fontWeight,
       fontSize: theme.typography.body2.fontSize,
       lineHeight: theme.typography.body2.lineHeight,
