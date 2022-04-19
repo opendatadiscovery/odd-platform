@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.service;
+package org.opendatadiscovery.oddplatform.service.term;
 
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
