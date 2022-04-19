@@ -7,8 +7,6 @@ import {
   useForm,
 } from 'react-hook-form';
 import {
-  DataEntityApiCreateOwnershipRequest,
-  DataEntityApiUpdateOwnershipRequest,
   Owner,
   OwnerApiGetOwnerListRequest,
   OwnerList,
@@ -17,6 +15,8 @@ import {
   Role,
   RoleApiGetRoleListRequest,
   RoleList,
+  TermApiCreateTermOwnershipRequest,
+  TermApiUpdateTermOwnershipRequest,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
@@ -31,15 +31,15 @@ import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 
 interface OwnershipFormProps {
-  dataEntityId: number;
-  dataEntityOwnership?: Ownership;
+  termId: number;
+  termDetailsOwnership?: Ownership;
   ownerEditBtn: JSX.Element;
   isUpdating: boolean;
-  createDataEntityOwnership: (
-    params: DataEntityApiCreateOwnershipRequest
+  createTermDetailsOwnership: (
+    params: TermApiCreateTermOwnershipRequest
   ) => Promise<Ownership>;
-  updateDataEntityOwnership: (
-    params: DataEntityApiUpdateOwnershipRequest
+  updateTermDetailsOwnership: (
+    params: TermApiUpdateTermOwnershipRequest
   ) => Promise<Ownership>;
   searchOwners: (
     params: OwnerApiGetOwnerListRequest
@@ -48,12 +48,12 @@ interface OwnershipFormProps {
 }
 
 const OwnershipForm: React.FC<OwnershipFormProps> = ({
-  dataEntityId,
-  dataEntityOwnership,
+  termId,
+  termDetailsOwnership,
   ownerEditBtn,
   isUpdating,
-  createDataEntityOwnership,
-  updateDataEntityOwnership,
+  createTermDetailsOwnership,
+  updateTermDetailsOwnership,
   searchOwners,
   searchRoles,
 }) => {
@@ -209,7 +209,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
     mode: 'onChange',
     defaultValues: {
       ownerName: '',
-      roleName: dataEntityOwnership?.role?.name || '',
+      roleName: termDetailsOwnership?.role?.name || '',
     },
   });
   const initialFormState = { error: '', isSuccessfulSubmit: false };
@@ -223,14 +223,14 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   }, [setFormState]);
 
   const ownershipUpdate = (data: OwnershipFormData) => {
-    (dataEntityOwnership
-      ? updateDataEntityOwnership({
-          dataEntityId,
-          ownershipId: dataEntityOwnership.id,
+    (termDetailsOwnership
+      ? updateTermDetailsOwnership({
+          termId,
+          ownershipId: termDetailsOwnership.id,
           ownershipUpdateFormData: { roleName: data.roleName },
         })
-      : createDataEntityOwnership({
-          dataEntityId,
+      : createTermDetailsOwnership({
+          termId,
           ownershipFormData: data,
         })
     ).then(
@@ -249,18 +249,18 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const formTitle = (
     <Typography variant="h4" component="span">
-      {dataEntityOwnership ? 'Edit' : 'Add'} owner
+      {termDetailsOwnership ? 'Edit' : 'Add'} owner
     </Typography>
   );
 
   const formContent = () => (
     <form
-      id="owner-add-form"
+      id="term-owner-add-form"
       onSubmit={methods.handleSubmit(ownershipUpdate)}
     >
-      {dataEntityOwnership ? (
+      {termDetailsOwnership ? (
         <LabeledInfoItem inline label="Owner:" labelWidth="auto">
-          {dataEntityOwnership.owner.name}
+          {termDetailsOwnership.owner.name}
         </LabeledInfoItem>
       ) : (
         <Controller
@@ -273,7 +273,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
               // eslint-disable-next-line react/jsx-props-no-spreading
               {...field}
               fullWidth
-              id="owners-name-search"
+              id="term-owners-name-search"
               open={ownersAutocompleteOpen}
               onOpen={() => setOwnersAutocompleteOpen(true)}
               onClose={() => setOwnersAutocompleteOpen(false)}
@@ -327,14 +327,14 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       <Controller
         name="roleName"
         control={methods.control}
-        defaultValue={dataEntityOwnership?.role?.name || ''}
+        defaultValue={termDetailsOwnership?.role?.name || ''}
         rules={{ required: true, validate: value => !!value?.trim() }}
         render={({ field }) => (
           <Autocomplete
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...field}
             fullWidth
-            id="roles-name-search"
+            id="term-roles-name-search"
             open={rolesAutocompleteOpen}
             onOpen={() => setRolesAutocompleteOpen(true)}
             onClose={() => setRolesAutocompleteOpen(false)}
@@ -393,11 +393,11 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       size="large"
       color="primary"
       type="submit"
-      form="owner-add-form"
+      form="term-owner-add-form"
       fullWidth
       disabled={!methods.formState.isValid || !methods.formState.isDirty}
     >
-      {dataEntityOwnership ? 'Edit' : 'Add'} owner
+      {termDetailsOwnership ? 'Edit' : 'Add'} owner
     </AppButton>
   );
 

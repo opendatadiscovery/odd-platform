@@ -2,9 +2,9 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import {
-  DataEntityApiDeleteOwnershipRequest,
   TermDetails,
   Ownership,
+  TermApiDeleteTermOwnershipRequest,
 } from 'generated-sources';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
@@ -22,7 +22,7 @@ interface OverviewGeneralProps {
   termDetails: TermDetails;
   ownership: Ownership[];
   deleteTermDetailsOwnership: (
-    params: DataEntityApiDeleteOwnershipRequest // todo replace with term details
+    params: TermApiDeleteTermOwnershipRequest
   ) => Promise<void>;
 }
 
@@ -33,7 +33,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
   deleteTermDetailsOwnership,
 }) => {
   const handleOwnershipDelete = (ownershipId: number) => () =>
-    deleteTermDetailsOwnership({ dataEntityId: termId, ownershipId }); // todo replace with termId
+    deleteTermDetailsOwnership({ termId, ownershipId });
 
   return (
     <Grid container>
@@ -57,8 +57,8 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
                 {ownershipItem.owner.name}
                 <LabelItem labelName={ownershipItem.role?.name} />
                 <OwnershipFormContainer
-                  dataEntityId={termDetails.id} // todo replace with termId
-                  dataEntityOwnership={ownershipItem}
+                  termId={termDetails.id}
+                  termDetailsOwnership={ownershipItem}
                   ownerEditBtn={
                     <OwnerActionBtns>
                       <AppIconButton
@@ -94,7 +94,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
               </OwnerItem>
             ))}
             <OwnershipFormContainer
-              dataEntityId={termDetails.id} // todo replace with termId
+              termId={termDetails.id} // todo replace with termId
               ownerEditBtn={
                 <AppButton
                   sx={{ mt: 0.25 }}

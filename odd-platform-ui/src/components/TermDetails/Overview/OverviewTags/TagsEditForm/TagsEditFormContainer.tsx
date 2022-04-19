@@ -1,11 +1,10 @@
-import { updateDataEntityTags } from 'redux/thunks/dataentities.thunks';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
   getTermDetailsTags,
   getTermDetailsTagsUpdating,
 } from 'redux/selectors/termDetails.selectors';
-import { fetchTagsList } from 'redux/thunks';
+import { fetchTagsList, updateTermDetailsTags } from 'redux/thunks';
 import TagsEditForm from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditForm';
 
 const mapStateToProps = (
@@ -17,7 +16,7 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  updateDataEntityTags, // todo replace with term details
+  updateTermDetailsTags,
   searchTags: fetchTagsList,
 };
 

@@ -4,9 +4,8 @@ import {
   TermApi,
   TermDetails,
   TermApiGetTermDetailsRequest,
-  DataEntityApiCreateDataEntityTagsRelationsRequest,
   Tag,
-  DataEntityApi,
+  TermApiCreateTermTagsRelationsRequest,
 } from '../../generated-sources';
 import * as actions from '../actions';
 import { BASE_PARAMS } from '../../lib/constants';
@@ -14,7 +13,6 @@ import { PartialTermDetailsUpdateParams } from '../interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new TermApi(apiClientConf);
-const removeApiClient = new DataEntityApi(apiClientConf); // todo remove
 
 export const fetchTermDetails = createThunk<
   TermApiGetTermDetailsRequest,
@@ -28,18 +26,15 @@ export const fetchTermDetails = createThunk<
 );
 
 export const updateTermDetailsTags = createThunk<
-  DataEntityApiCreateDataEntityTagsRelationsRequest, // todo replace with Term API
+  TermApiCreateTermTagsRelationsRequest,
   Tag[],
   PartialTermDetailsUpdateParams<Tag[]>
 >(
-  (params: DataEntityApiCreateDataEntityTagsRelationsRequest) =>
-    removeApiClient.createDataEntityTagsRelations(params), // todo replace with Term API
+  (params: TermApiCreateTermTagsRelationsRequest) =>
+    apiClient.createTermTagsRelations(params),
   actions.updateTermDetailsTagsAction,
-  (
-    response: Tag[],
-    request: DataEntityApiCreateDataEntityTagsRelationsRequest
-  ) => ({
-    termId: request.dataEntityId,
+  (response: Tag[], request: TermApiCreateTermTagsRelationsRequest) => ({
+    termId: request.termId,
     value: response,
   })
 );

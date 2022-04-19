@@ -1,10 +1,10 @@
 import React from 'react';
 import { Autocomplete, Typography, Box } from '@mui/material';
 import {
-  DataEntityApiCreateDataEntityTagsRelationsRequest,
   Tag,
   TagApiGetPopularTagListRequest,
   TagsResponse,
+  TermApiCreateTermTagsRelationsRequest,
 } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
@@ -25,8 +25,8 @@ interface TagsEditProps {
   termId: number;
   termDetailsTags?: Tag[];
   isLoading: boolean;
-  updateDataEntityTags: (
-    params: DataEntityApiCreateDataEntityTagsRelationsRequest
+  updateTermDetailsTags: (
+    params: TermApiCreateTermTagsRelationsRequest
   ) => Promise<Tag[]>;
   searchTags: (
     params: TagApiGetPopularTagListRequest
@@ -38,7 +38,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   termId,
   termDetailsTags,
   isLoading,
-  updateDataEntityTags,
+  updateTermDetailsTags,
   searchTags,
   btnEditEl,
 }) => {
@@ -147,10 +147,9 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   };
 
   const handleSubmit = (data: DataEntityTagsFormType) => {
-    updateDataEntityTags({
-      dataEntityId: termId, // todo replace with termId
-      dataEntityTagsFormData: {
-        // todo replace with termDetailsTagsFormData
+    updateTermDetailsTags({
+      termId,
+      tagsFormData: {
         tagNameList: compact([...data.tagNameList.map(tag => tag.name)]),
       },
     }).then(
@@ -190,7 +189,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
     <>
       <Autocomplete
         fullWidth
-        id="dataentity-tag-add-name-search"
+        id="term-tag-add-name-search"
         open={autocompleteOpen}
         onOpen={() => setAutocompleteOpen(true)}
         onClose={() => setAutocompleteOpen(false)}

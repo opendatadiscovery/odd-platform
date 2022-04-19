@@ -2,25 +2,25 @@ import { connect } from 'react-redux';
 import { Ownership } from 'generated-sources';
 import { RootState } from 'redux/interfaces';
 import {
-  createDataEntityOwnership,
+  createTermDetailsOwnership,
   fetchOwnersList,
   fetchRoleList,
-  updateDataEntityOwnership,
+  updateTermDetailsOwnership,
 } from 'redux/thunks/owners.thunks';
-import { getDataEntityOwnerUpdating } from 'redux/selectors/dataentity.selectors';
 import OwnershipForm from './OwnershipForm';
+import { getTermDetailsOwnerUpdating } from '../../../redux/selectors/termDetails.selectors';
 
 const mapStateToProps = (
   state: RootState,
-  { dataEntityOwnership }: { dataEntityOwnership?: Ownership }
+  { termDetailsOwnership }: { termDetailsOwnership?: Ownership }
 ) => ({
-  dataEntityOwnership,
-  isUpdating: getDataEntityOwnerUpdating(state),
+  termDetailsOwnership,
+  isUpdating: getTermDetailsOwnerUpdating(state),
 });
 
 const mapDispatchToProps = {
-  createDataEntityOwnership,
-  updateDataEntityOwnership,
+  createTermDetailsOwnership,
+  updateTermDetailsOwnership,
   searchOwners: fetchOwnersList,
   searchRoles: fetchRoleList,
 };

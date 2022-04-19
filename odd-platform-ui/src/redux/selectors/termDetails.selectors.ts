@@ -27,6 +27,8 @@ export const getTermDetailsFetching = createSelector(
   status => status === 'fetching'
 );
 
+// Tags
+
 export const getTermDetailsTags = createSelector(
   termDetailsState,
   getTermId,
@@ -39,5 +41,16 @@ const getTermDetailsTagsUpdateStatus = createFetchingSelector(
 
 export const getTermDetailsTagsUpdating = createSelector(
   getTermDetailsTagsUpdateStatus,
+  status => status === 'fetching'
+);
+
+// Ownership
+
+const getTermDetailsOwnerUpdateStatus = createFetchingSelector(
+  'PUT_TERM_DETAILS_OWNER'
+);
+
+export const getTermDetailsOwnerUpdating = createSelector(
+  getTermDetailsOwnerUpdateStatus,
   status => status === 'fetching'
 );
