@@ -14,7 +14,7 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
-import OwnershipFormContainer from 'components/TermDetails/Ownership/OwnershipFormContainer'; // todo rewrite to term details
+import OwnershipFormContainer from 'components/TermDetails/Ownership/OwnershipFormContainer';
 import { OwnerActionBtns, OwnerItem } from './OverviewGeneralStyles';
 
 interface OverviewGeneralProps {
@@ -94,7 +94,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
               </OwnerItem>
             ))}
             <OwnershipFormContainer
-              termId={termDetails.id} // todo replace with termId
+              termId={termDetails.id}
               ownerEditBtn={
                 <AppButton
                   sx={{ mt: 0.25 }}

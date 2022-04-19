@@ -157,7 +157,7 @@ export const updateTermDetailsOwnership = createThunk<
 );
 
 export const deleteTermDetailsOwnership = createThunk<
-  TermApiDeleteTermOwnershipRequest, // todo replace with term details
+  TermApiDeleteTermOwnershipRequest,
   void,
   PartialTermDetailsUpdateParams<number>
 >(
