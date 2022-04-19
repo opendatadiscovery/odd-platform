@@ -5,7 +5,7 @@ import {
   getTermDetailsTagsUpdating,
 } from 'redux/selectors/termDetails.selectors';
 import { fetchTagsList, updateTermDetailsTags } from 'redux/thunks';
-import TagsEditForm from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditForm';
+import TagsEditForm from 'components/TermDetails/Overview/OverviewTags/TagsEditForm/TagsEditForm';
 
 const mapStateToProps = (
   state: RootState,

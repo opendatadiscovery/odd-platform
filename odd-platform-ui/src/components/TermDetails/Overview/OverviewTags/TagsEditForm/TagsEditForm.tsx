@@ -115,10 +115,10 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   }, [autocompleteOpen, searchText]);
 
   // Tags list
-  type DataEntityTagsFormType = {
+  type TermDetailsTagsFormType = {
     tagNameList: { name: string; important: boolean }[];
   };
-  const methods = useForm<DataEntityTagsFormType>({
+  const methods = useForm<TermDetailsTagsFormType>({
     defaultValues: { tagNameList: [{ name: '', important: false }] },
   });
   const { fields, append, remove } = useFieldArray({
@@ -146,7 +146,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
     methods.reset();
   };
 
-  const handleSubmit = (data: DataEntityTagsFormType) => {
+  const handleSubmit = (data: TermDetailsTagsFormType) => {
     updateTermDetailsTags({
       termId,
       tagsFormData: {
