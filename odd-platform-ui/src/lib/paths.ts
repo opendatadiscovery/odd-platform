@@ -12,6 +12,12 @@ export const tagsPath = () => '/tags';
 
 export const termDetailsPath = (termId: number) => `/terms/${termId}`;
 
+export const termDetailsLinkedItemsPath = (termId: number) =>
+  `${termDetailsPath(termId)}/linked-items`;
+
+export const termDetailsOverviewPath = (termId: number) =>
+  `${termDetailsPath(termId)}/overview`;
+
 export const dataEntityDetailsPath = (entityId: number) =>
   `/dataentities/${entityId}`;
 

@@ -42,7 +42,7 @@ export const fetchOwnersList = createThunk<
     pageInfo: {
       ...response.pageInfo,
       page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
+      hasNext: request.size * request.page < response.pageInfo.total,
     },
   })
 );
@@ -108,6 +108,20 @@ export const updateDataEntityOwnership = createThunk<
 
 export const deleteDataEntityOwnership = createThunk<
   DataEntityApiDeleteOwnershipRequest,
+  void,
+  PartialEntityUpdateParams<number>
+>(
+  (params: DataEntityApiDeleteOwnershipRequest) =>
+    dataEntityApiClient.deleteOwnership(params),
+  actions.deleteDataEntityOwnershipAction,
+  (_, request: DataEntityApiDeleteOwnershipRequest) => ({
+    entityId: request.dataEntityId,
+    value: request.ownershipId,
+  })
+);
+
+export const deleteTermDetailsOwnership = createThunk<
+  DataEntityApiDeleteOwnershipRequest, // todo replace with term details
   void,
   PartialEntityUpdateParams<number>
 >(

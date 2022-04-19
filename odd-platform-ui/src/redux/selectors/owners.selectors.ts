@@ -67,3 +67,12 @@ export const getDataEntityOwnership = createSelector(
       id => owners.ownership[dataEntityId].byId[id]
     ) || []
 );
+
+// export const getTermDetailsOwnership = createSelector(
+//     ownersState,
+//     getTermId,
+//     (owners, termId) =>
+//         owners.ownership[termId]?.allIds.map( // todo change OwnersState
+//             id => owners.ownership[termId].byId[id]
+//         ) || []
+// );

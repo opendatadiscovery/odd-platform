@@ -16,3 +16,4 @@ export * from './appInfo.actions';
 export * from './collector.actions';
 export * from './term.actions';
 export * from './termSearch.actions';
+export * from './termDetails.actions';

@@ -26,6 +26,7 @@ import {
   Tag,
   Term,
   TermRef,
+  TermDetails,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -65,8 +66,16 @@ export interface TagsState {
 }
 
 export interface TermsState {
-  byId: { [termId: string]: Term };
+  byId: { [termId: number]: Term };
   allIds: Term['id'][];
+  pageInfo?: CurrentPageInfo;
+}
+
+export interface TermDetailsState {
+  byId: {
+    [termId: string]: TermDetails;
+  };
+  allIds: TermDetails['id'][];
   pageInfo?: CurrentPageInfo;
 }
 
@@ -242,6 +251,7 @@ export type RootState = {
   collectors: CollectorsState;
   terms: TermsState;
   termSearch: TermSearchState;
+  termDetails: TermDetailsState;
 };
 
 export type Action = ActionType<typeof actions>;
