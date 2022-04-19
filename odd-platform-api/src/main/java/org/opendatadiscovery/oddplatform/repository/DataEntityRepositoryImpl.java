@@ -149,6 +149,7 @@ public class DataEntityRepositoryImpl
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
     private final MetadataFieldValueRepository metadataFieldValueRepository;
     private final DatasetVersionRepository datasetVersionRepository;
+    private final TermRepository termRepository;
 
     public DataEntityRepositoryImpl(final DSLContext dslContext,
                                     final JooqQueryHelper jooqQueryHelper,
@@ -156,7 +157,8 @@ public class DataEntityRepositoryImpl
                                     final JooqRecordHelper jooqRecordHelper,
                                     final DataEntityTaskRunRepository dataEntityTaskRunRepository,
                                     final MetadataFieldValueRepository metadataFieldValueRepository,
-                                    final DatasetVersionRepository datasetVersionRepository) {
+                                    final DatasetVersionRepository datasetVersionRepository,
+                                    final TermRepository termRepository) {
         super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null,
             DATA_ENTITY.UPDATED_AT, DataEntityDimensionsDto.class);
 
@@ -165,6 +167,7 @@ public class DataEntityRepositoryImpl
         this.dataEntityTaskRunRepository = dataEntityTaskRunRepository;
         this.metadataFieldValueRepository = metadataFieldValueRepository;
         this.datasetVersionRepository = datasetVersionRepository;
+        this.termRepository = termRepository;
     }
 
     @Override
@@ -1042,6 +1045,10 @@ public class DataEntityRepositoryImpl
         dto.setMetadata(metadataFieldValueRepository.getDtosByDataEntityId(dto.getDataEntity().getId()));
     }
 
+    private void enrichDetailsWithTerms(final DataEntityDetailsDto dto) {
+        dto.setTerms(termRepository.findTermsByDataEntityId(dto.getDataEntity().getId()));
+    }
+
     private <T extends DataEntityDimensionsDto> void enrichDEGDetails(final T dto) {
         if (!ArrayUtils.contains(dto.getDataEntity().getEntityClassIds(),
             DataEntityClassDto.DATA_ENTITY_GROUP.getId())) {
@@ -1183,7 +1190,7 @@ public class DataEntityRepositoryImpl
     private DataEntityDetailsDto enrichDataEntityDetailsDto(final DataEntityDetailsDto dto) {
         enrichDetailsWithMetadata(dto);
         enrichDatasetVersions(dto);
-
+        enrichDetailsWithTerms(dto);
         return dto;
     }
 

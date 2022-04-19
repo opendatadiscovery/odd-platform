@@ -1077,7 +1077,7 @@ paths:
       operationId: updateOwnership
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-        - $ref: './components.yaml/#/components/parameters/DataEntityOwnershipIdParam'
+        - $ref: './components.yaml/#/components/parameters/OwnershipIdParam'
       requestBody:
         required: true
         content:
@@ -1099,7 +1099,7 @@ paths:
       operationId: deleteOwnership
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-        - $ref: './components.yaml/#/components/parameters/DataEntityOwnershipIdParam'
+        - $ref: './components.yaml/#/components/parameters/OwnershipIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'
@@ -1117,7 +1117,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DataEntityTagsFormData'
+              $ref: './components.yaml/#/components/schemas/TagsFormData'
       responses:
         '200':
           description: OK
@@ -1579,6 +1579,23 @@ paths:
         - dataSource
 
   /api/terms:
+    get:
+      summary: List of terms
+      description: Gets the list of existing terms
+      operationId: getTermsList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRefList'
+      tags:
+        - term
     post:
       summary: Create term
       description: Create new term
@@ -1812,5 +1829,87 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/TermRefList'
+      tags:
+        - term
+
+  /api/terms/{term_id}/ownership:
+    post:
+      summary: Create new ownership for term
+      description: Creates new ownership for term
+      operationId: createTermOwnership
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnershipFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Ownership'
+      tags:
+        - term
+
+  /api/terms/{term_id}/ownership/{ownership_id}:
+    put:
+      summary: Update existing ownership
+      description: Updates existing ownership
+      operationId: updateTermOwnership
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/OwnershipIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnershipUpdateFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Ownership'
+      tags:
+        - term
+    delete:
+      summary: Delete ownership
+      description: Deletes the ownership
+      operationId: deleteTermOwnership
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/OwnershipIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - term
+
+  /api/terms/{term_id}/tags:
+    put:
+      summary: Creates tags relations for term
+      description: Creates tags relations for term. Also creates corresponding tags in the system if they don't exist.
+      operationId: createTermTagsRelations
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TagsFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TagList'
       tags:
         - term

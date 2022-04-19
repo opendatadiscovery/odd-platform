@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -24,6 +26,12 @@ public class TermServiceImpl implements TermService {
     private final ReactiveTermRepository termRepository;
     private final ReactiveNamespaceRepository namespaceRepository;
     private final TermMapper termMapper;
+
+    @Override
+    public Mono<TermRefList> getTerms(final Integer page, final Integer size, final String query) {
+        return termRepository.listTermRefDtos(page, size, query)
+            .map(termMapper::mapToRefPage);
+    }
 
     @Override
     @ReactiveTransactional
@@ -71,6 +79,22 @@ public class TermServiceImpl implements TermService {
                 pojo.getTermId(), pojo.getDataEntityId()))
             .collectList()
             .flatMap(ignored -> termRepository.delete(id).map(TermPojo::getId));
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<TermRef> linkTermWithDataEntity(final Long termId, final Long dataEntityId) {
+        return termRepository.createRelationWithDataEntity(dataEntityId, termId)
+            .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
+            .map(termMapper::mapToRef);
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<TermRef> removeTermFromDataEntity(final Long termId, final Long dataEntityId) {
+        return termRepository.deleteRelationWithDataEntity(dataEntityId, termId)
+            .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
+            .map(termMapper::mapToRef);
     }
 
     private Mono<NamespacePojo> getOrCreateNamespace(final String namespaceName) {

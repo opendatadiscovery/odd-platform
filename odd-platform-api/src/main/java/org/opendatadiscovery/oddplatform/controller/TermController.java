@@ -9,7 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermList;
-import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
 import org.opendatadiscovery.oddplatform.service.TermService;
@@ -24,6 +24,14 @@ import reactor.core.publisher.Mono;
 public class TermController implements TermApi {
 
     private final TermService termService;
+
+    @Override
+    public Mono<ResponseEntity<TermRefList>> getTermsList(final Integer page, final Integer size,
+                                                          final String query,
+                                                          final ServerWebExchange exchange) {
+        return termService.getTerms(page, size, query)
+            .map(ResponseEntity::ok);
+    }
 
     @Override
     public Mono<ResponseEntity<TermDetails>> createTerm(final Mono<TermFormData> termFormData,
@@ -88,8 +96,8 @@ public class TermController implements TermApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<TermRef>>> getTermSearchSuggestions(final String query,
-                                                                        final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<TermRefList>> getTermSearchSuggestions(final String query,
+                                                                      final ServerWebExchange exchange) {
         return TermApi.super.getTermSearchSuggestions(query, exchange);
     }
 

@@ -55,6 +55,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final DatasetVersionMapper datasetVersionMapper;
     private final DataQualityMapper dataQualityMapper;
+    private final TermMapper termMapper;
 
     @Override
     public DataEntity mapPojo(final DataEntityDimensionsDto dto) {
@@ -193,6 +194,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(dto.getTags().stream().map(tagMapper::mapPojo).collect(Collectors.toList()))
             .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
+            .terms(dto.getTerms().stream().map(termMapper::mapToRef).toList())
             .viewCount(pojo.getViewCount());
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {

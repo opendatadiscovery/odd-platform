@@ -1465,7 +1465,7 @@ components:
       required:
         - internal_name
 
-    DataEntityTagsFormData:
+    TagsFormData:
       type: object
       properties:
         tag_name_list:
@@ -1625,9 +1625,17 @@ components:
         - page_info
 
     TermRefList:
-      type: array
-      items:
-        $ref: '#/components/schemas/TermRef'
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermRef'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
 
     TermRef:
       type: object
@@ -1813,7 +1821,7 @@ components:
         type: integer
         format: int64
 
-    DataEntityOwnershipIdParam:
+    OwnershipIdParam:
       name: ownership_id
       in: path
       required: true
