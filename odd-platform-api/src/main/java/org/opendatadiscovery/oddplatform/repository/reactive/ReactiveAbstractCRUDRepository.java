@@ -1,5 +1,8 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
@@ -11,15 +14,12 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
 
 import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.count;
@@ -173,9 +173,10 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .flux(insertStep.set(records.get(records.size() - 1)).returning(recordTable.fields()));
     }
 
+    @ReactiveTransactional
     protected Flux<R> updateMany(final List<R> records) {
-        // TODO: implement!
-        return Flux.just();
+        // TODO: update
+        return Flux.fromIterable(records).flatMap(this::updateOne);
     }
 
     protected Mono<Long> fetchCount(final String nameQuery) {

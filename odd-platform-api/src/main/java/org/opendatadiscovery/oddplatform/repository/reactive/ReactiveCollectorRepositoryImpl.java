@@ -21,8 +21,6 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 import static org.opendatadiscovery.oddplatform.model.Tables.COLLECTOR;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
