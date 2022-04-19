@@ -1,12 +1,5 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
@@ -23,6 +16,13 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceR
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -36,34 +36,30 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
 
     @Override
     @ReactiveTransactional
-    public Flux<DataSource> createDataSources(final DataSourceList dataSourceList) {
-        return Flux.just();
-//        return reactiveCollectorRepository
-//            .getDtoByOddrn(dataSourceList.getProviderOddrn())
-//            .switchIfEmpty(Mono.error(new NotFoundException(
-//                "Couldn't find collector with oddrn %s".formatted(dataSourceList.getProviderOddrn()))))
-//            // TODO: fix no token_id in data sources record
-//            .flatMapMany(c -> {
-//                final List<DataSourcePojo> dataSources = mapDataSources(dataSourceList, c);
-//
-//                return reactiveDataSourceRepository.getDtosByOddrns(extractOddrns(dataSources), true)
-//                    .map(DataSourceDto::dataSource)
-//                    .collectList()
-//                    .flatMapMany(list -> {
-//                        final Flux<DataSourcePojo> updatedDataSources =
-//                            reactiveDataSourceRepository.bulkUpdate(prepareForUpdate(list, dataSources));
-//
-//                        final List<DataSourcePojo> toCreate = prepareForCreate(dataSources,
-//                            list.stream().map(DataSourcePojo::getOddrn).collect(Collectors.toSet()));
-//
-//                        final Flux<DataSourcePojo> createdDataSources =
-//                            reactiveDataSourceRepository.bulkCreate(toCreate);
-//
-//                        return Flux.concat(updatedDataSources, createdDataSources);
-//                    })
-//                    .map(ds -> new DataSourceDto(ds, c.namespace(), c.tokenDto()))
-//                    .map(dataSourceIngestionMapper::mapDtoToIngestionModel);
-//            });
+    public Flux<DataSource> createDataSources(final long collectorId, final DataSourceList dataSourceList) {
+        return reactiveCollectorRepository.getDto(collectorId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Couldn't find collector with id %s", collectorId)))
+            .flatMapMany(c -> {
+                final List<DataSourcePojo> dataSources = mapDataSources(dataSourceList, c);
+
+                return reactiveDataSourceRepository.getDtosByOddrns(extractOddrns(dataSources), true)
+                    .map(DataSourceDto::dataSource)
+                    .collectList()
+                    .flatMapMany(list -> {
+                        final Flux<DataSourcePojo> updatedDataSources =
+                            reactiveDataSourceRepository.bulkUpdate(prepareForUpdate(list, dataSources));
+
+                        final List<DataSourcePojo> toCreate = prepareForCreate(dataSources,
+                            list.stream().map(DataSourcePojo::getOddrn).collect(Collectors.toSet()));
+
+                        final Flux<DataSourcePojo> createdDataSources =
+                            reactiveDataSourceRepository.bulkCreate(toCreate);
+
+                        return Flux.concat(updatedDataSources, createdDataSources);
+                    })
+                    .map(ds -> new DataSourceDto(ds, c.namespace(), c.tokenDto()))
+                    .map(dataSourceIngestionMapper::mapDtoToIngestionModel);
+            });
     }
 
     private List<DataSourcePojo> prepareForUpdate(final List<DataSourcePojo> actual,

@@ -5,5 +5,5 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList
 import reactor.core.publisher.Flux;
 
 public interface DataSourceIngestionService {
-    Flux<DataSource> createDataSources(final DataSourceList dataSourceList);
+    Flux<DataSource> createDataSources(final long collectorId, final DataSourceList dataSourceList);
 }
