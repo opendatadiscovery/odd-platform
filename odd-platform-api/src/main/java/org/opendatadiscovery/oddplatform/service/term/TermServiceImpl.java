@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.service;
+package org.opendatadiscovery.oddplatform.service.term;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
