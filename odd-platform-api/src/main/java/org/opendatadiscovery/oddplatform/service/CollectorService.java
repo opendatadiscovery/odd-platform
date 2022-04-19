@@ -15,5 +15,5 @@ public interface CollectorService {
 
     Mono<Long> delete(final long id);
 
-    Mono<Collector> regenerateToken(final Long collectorId);
+    Mono<Collector> regenerateToken(final long collectorId);
 }

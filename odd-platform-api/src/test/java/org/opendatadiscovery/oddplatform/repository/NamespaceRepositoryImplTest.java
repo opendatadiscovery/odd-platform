@@ -11,7 +11,6 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("Integration tests for the ReactiveNamespaceRepository")
 class NamespaceRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired

@@ -29,11 +29,6 @@ public interface CollectorMapper {
             .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
     }
 
-    // TODO: zalupen' suka
-    @Mapping(
-        target = "oddrn",
-        expression = "java( java.lang.String.format(\"//oddplatform/collectors/%s\", form.getName()) )"
-    )
     @Mapping(source = "form", target = ".")
     @Mapping(source = "form.name", target = "name")
     @Mapping(source = "namespace.id", target = "namespaceId")

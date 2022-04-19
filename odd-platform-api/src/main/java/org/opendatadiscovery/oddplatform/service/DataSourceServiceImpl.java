@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
@@ -17,12 +18,14 @@ import org.opendatadiscovery.oddplatform.repository.TokenRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DataSourceServiceImpl implements DataSourceService {
     private final DataSourceMapper dataSourceMapper;
 
@@ -32,11 +35,12 @@ public class DataSourceServiceImpl implements DataSourceService {
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final TokenRepository tokenRepository;
     private final ReactiveNamespaceRepository namespaceRepository;
+    private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
 
     @Override
     public Mono<DataSourceList> list(final Integer page, final Integer size, final String nameQuery) {
         return dataSourceRepository
-            .list(page, size, nameQuery)
+            .listDto(page, size, nameQuery)
             .map(dataSourceMapper::mapDtoPage);
     }
 
@@ -59,25 +63,44 @@ public class DataSourceServiceImpl implements DataSourceService {
             return namespaceRepository.getByName(form.getNamespaceName())
                 .switchIfEmpty(namespaceRepository.createByName(form.getNamespaceName()))
                 .zipWith(token)
-                .flatMap(t -> create(form, t.getT2(), t.getT1()));
+                .flatMap(t -> create(form, t.getT2(), t.getT1()))
+                .flatMap(dsDto -> Mono.zip(
+                    searchEntrypointRepository.updateDataSourceVector(dsDto.dataSource().getId()),
+                    searchEntrypointRepository.updateNamespaceVector(dsDto.namespace().getId())
+                ).map(t -> dsDto))
+                .map(dataSourceMapper::mapDto);
         }
 
-        return token.flatMap(t -> create(form, t, null));
+        return token
+            .flatMap(t -> create(form, t, null))
+            .flatMap(dsDto -> searchEntrypointRepository
+                .updateDataSourceVector(dsDto.dataSource().getId())
+                .map(rowCountUpdated -> dsDto))
+            .map(dataSourceMapper::mapDto);
     }
 
     @Override
     @ReactiveTransactional
     public Mono<DataSource> update(final long id, final DataSourceUpdateFormData form) {
-        return dataSourceRepository.get(id)
+        return dataSourceRepository.getDto(id)
             .flatMap(dataSource -> {
                 if (StringUtils.isNotEmpty(form.getNamespaceName())) {
                     return namespaceRepository.getByName(form.getNamespaceName())
                         .switchIfEmpty(namespaceRepository.createByName(form.getNamespaceName()))
-                        .flatMap(namespace -> update(dataSource.dataSource(), form, namespace));
+                        .flatMap(namespace -> update(dataSource.dataSource(), form, namespace))
+                        .flatMap(dsDto -> Mono.zip(
+                            searchEntrypointRepository.updateDataSourceVector(dsDto.dataSource().getId()),
+                            searchEntrypointRepository.updateNamespaceVector(dsDto.namespace().getId())
+                        ).map(t -> dsDto));
                 }
 
-                return update(dataSource.dataSource(), form, null);
-            });
+                return update(dataSource.dataSource(), form, null)
+                    .flatMap(dsDto -> Mono.zip(
+                        searchEntrypointRepository.updateDataSourceVector(dsDto.dataSource().getId()),
+                        searchEntrypointRepository.clearNamespaceVector(dsDto.dataSource().getId())
+                    ).map(t -> dsDto));
+            })
+            .map(dataSourceMapper::mapDto);
     }
 
     @Override
@@ -96,7 +119,7 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @Override
     public Mono<DataSource> regenerateDataSourceToken(final long id) {
-        return dataSourceRepository.get(id)
+        return dataSourceRepository.getDto(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Data source with id % doesn't exist", id)))
             .flatMap(dto -> tokenGenerator.regenerateToken(dto.token().tokenPojo())
                 .flatMap(tokenRepository::updateToken)
@@ -104,22 +127,20 @@ public class DataSourceServiceImpl implements DataSourceService {
             .map(dataSourceMapper::mapDto);
     }
 
-    private Mono<DataSource> update(final DataSourcePojo dataSource,
-                                    final DataSourceUpdateFormData form,
-                                    final NamespacePojo namespace) {
-        return dataSourceRepository.update(dataSourceMapper.applyForm(dataSource, form, namespace))
+    private Mono<DataSourceDto> update(final DataSourcePojo dataSource,
+                                       final DataSourceUpdateFormData form,
+                                       final NamespacePojo namespace) {
+        return dataSourceRepository.update(dataSourceMapper.applyToPojo(dataSource, form, namespace))
             .switchIfEmpty(Mono.error(new NotFoundException("Data source with id % doesn't exist", dataSource.getId())))
             .zipWith(tokenRepository.getByDataSourceId(dataSource.getId()))
-            .map(t -> new DataSourceDto(t.getT1(), t.getT2()))
-            .map(dataSourceMapper::mapDto);
+            .map(t -> new DataSourceDto(t.getT1(), namespace, t.getT2()));
     }
 
-    private Mono<DataSource> create(final DataSourceFormData form,
-                                    final TokenDto token,
-                                    final NamespacePojo namespace) {
-        return Mono.just(dataSourceMapper.mapForm(form, namespace, token.tokenPojo()))
+    private Mono<DataSourceDto> create(final DataSourceFormData form,
+                                       final TokenDto token,
+                                       final NamespacePojo namespace) {
+        return Mono.just(dataSourceMapper.mapForm(form, namespace, token))
             .flatMap(dataSourceRepository::create)
-            .map(ds -> new DataSourceDto(ds, namespace, token))
-            .map(dataSourceMapper::mapDto);
+            .map(ds -> new DataSourceDto(ds, namespace, token));
     }
 }

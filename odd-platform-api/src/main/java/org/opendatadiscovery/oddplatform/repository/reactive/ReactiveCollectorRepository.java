@@ -10,5 +10,7 @@ public interface ReactiveCollectorRepository extends ReactiveCRUDRepository<Coll
 
     Mono<Page<CollectorDto>> listDto(final int page, final int size, final String nameQuery);
 
-    Mono<CollectorDto> getDtoByOddrn(final String oddrn);
+    Mono<CollectorPojo> getByToken(final String token);
+
+    Mono<Boolean> existsByNamespace(final long namespaceId);
 }

@@ -23,7 +23,7 @@ public class ReactiveNamespaceRepositoryImpl
     @Override
     public Mono<NamespacePojo> getByName(final String name) {
         return jooqReactiveOperations
-            .mono(DSL.selectFrom(NAMESPACE).where(NAMESPACE.NAME.eq(name)))
+            .mono(DSL.selectFrom(NAMESPACE).where(addSoftDeleteFilter(NAMESPACE.NAME.eq(name))))
             .map(this::recordToPojo);
     }
 
