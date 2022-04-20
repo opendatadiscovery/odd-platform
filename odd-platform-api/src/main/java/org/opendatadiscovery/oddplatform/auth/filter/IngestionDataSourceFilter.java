@@ -32,7 +32,9 @@ public class IngestionDataSourceFilter extends AbstractIngestionFilter {
                         return collectorRepository.getByToken(token)
                             .switchIfEmpty(Mono.error(new NotFoundException("Collector with such token doesn't exist")))
                             .flatMapMany(c -> exchange.getSession()
-                                .doOnNext(ws -> ws.getAttributes().put("asd", c.getId()))
+                                .doOnNext(ws -> ws
+                                    .getAttributes()
+                                    .put(SessionConstants.COLLECTOR_ID_SESSION_KEY, c.getId()))
                                 .flatMapIterable(ign -> dataBuffer));
                     });
             }

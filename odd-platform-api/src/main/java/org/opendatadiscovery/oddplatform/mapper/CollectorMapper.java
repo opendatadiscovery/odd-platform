@@ -36,7 +36,7 @@ public interface CollectorMapper {
                                   final TokenPojo token) {
         return mapForm(form)
             .setNamespaceId(namespace != null ? namespace.getId() : null)
-            .setTokenId(token != null ? token.getId() : null)
+            .setTokenId(token != null ? token.getId() : null);
     }
 
     CollectorPojo applyToDto(@MappingTarget final CollectorPojo collector, final CollectorUpdateFormData form);

@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.controller;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.opendatadiscovery.oddplatform.auth.filter.SessionConstants;
 import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
@@ -36,8 +37,11 @@ public class IngestionController implements IngestionApi {
     @Override
     public Mono<ResponseEntity<Void>> createDataSource(@Valid final Mono<DataSourceList> dataSourceList,
                                                        final ServerWebExchange exchange) {
-        return dataSourceList
-            .flatMapMany(dataSourceList1 -> dataSourceIngestionService.createDataSources(0L, dataSourceList1))
+        return exchange.getSession()
+            .mapNotNull(ws -> ws.getAttribute(SessionConstants.COLLECTOR_ID_SESSION_KEY))
+            .cast(Long.class)
+            .zipWith(dataSourceList)
+            .flatMapMany(t -> dataSourceIngestionService.createDataSources(t.getT1(), t.getT2()))
             .collectList()
             .map(ignored -> ResponseEntity.ok().build());
     }

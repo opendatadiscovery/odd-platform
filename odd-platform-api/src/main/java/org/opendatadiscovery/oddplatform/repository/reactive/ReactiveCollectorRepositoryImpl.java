@@ -4,6 +4,8 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectOnConditionStep;
+import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
@@ -18,8 +20,6 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.COLLECTOR;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -56,30 +56,32 @@ public class ReactiveCollectorRepositoryImpl
 
     @Override
     public Mono<Page<CollectorDto>> listDto(final int page, final int size, final String nameQuery) {
-        final Select<? extends Record> collectorSelect = jooqQueryHelper.paginate(
+        final Select<? extends Record> collectorSelect = paginate(
             DSL.selectFrom(COLLECTOR).where(listCondition(nameQuery)),
+            COLLECTOR.ID,
+            SortOrder.ASC,
             (page - 1) * size,
             size
         );
 
         final Table<? extends Record> collectorCTE = collectorSelect.asTable("collector_cte");
 
-        final List<Record> records = DSL.with(collectorCTE.getName())
+        final SelectOnConditionStep<Record> query = DSL.with(collectorCTE.getName())
             .as(collectorSelect)
             .select(collectorCTE.fields())
             .select(NAMESPACE.asterisk())
             .select(TOKEN.asterisk())
             .from(collectorCTE.getName())
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(collectorCTE.field(COLLECTOR.NAMESPACE_ID)))
-            .leftJoin(TOKEN).on(TOKEN.ID.eq(collectorCTE.field(COLLECTOR.TOKEN_ID)))
-            .fetchStream()
-            .toList();
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(collectorCTE.field(COLLECTOR.TOKEN_ID)));
 
-        return jooqQueryHelper.pageifyResult(
-            records,
-            r -> mapRecordToDto(r, collectorCTE.getName()),
-            fetchCount(nameQuery)
-        );
+        return jooqReactiveOperations.flux(query)
+            .collectList()
+            .flatMap(records -> jooqQueryHelper.pageifyResult(
+                records,
+                r -> mapRecordToDto(r, collectorCTE.getName()),
+                fetchCount(nameQuery)
+            ));
     }
 
     @Override

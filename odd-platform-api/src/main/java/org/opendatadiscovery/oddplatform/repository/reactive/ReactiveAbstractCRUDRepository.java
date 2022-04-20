@@ -14,6 +14,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -172,9 +173,10 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .flux(insertStep.set(records.get(records.size() - 1)).returning(recordTable.fields()));
     }
 
+    @ReactiveTransactional
     protected Flux<R> updateMany(final List<R> records) {
-        // TODO: implement!
-        return Flux.just();
+        // TODO: update
+        return Flux.fromIterable(records).flatMap(this::updateOne);
     }
 
     protected Mono<Long> fetchCount(final String nameQuery) {
