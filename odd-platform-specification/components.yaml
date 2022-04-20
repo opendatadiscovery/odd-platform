@@ -595,6 +595,22 @@ components:
             has_children:
               type: boolean
 
+    DataEntityGroupFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        namespace_name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataEntityType'
+        entities:
+          $ref: '#/components/schemas/DataEntityRefList'
+      required:
+        - name
+        - type
+        - entities
+
     DataSetTestReport:
       type: object
       properties:
