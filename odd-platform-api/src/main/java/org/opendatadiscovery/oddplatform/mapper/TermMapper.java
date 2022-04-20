@@ -5,11 +5,14 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
+import org.opendatadiscovery.oddplatform.api.contract.model.Term;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
+import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
@@ -46,7 +49,16 @@ public interface TermMapper {
             .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
     }
 
-    @Mapping(source = "dto.termDto.termRefDto", target = ".")
+    List<Term> mapToList(final List<TermDto> dtos);
+
+    default TermList mapToPage(final Page<TermDto> page) {
+        return new TermList()
+            .items(mapToList(page.getData()))
+            .pageInfo(new PageInfo().total(page.getTotal()).hasNext(page.isHasNext()));
+    }
+
+    @Mapping(source = "dto.termDto.termRefDto.term", target = ".")
+    @Mapping(source = "dto.termDto.termRefDto.namespace", target = "namespace")
     @Mapping(source = "dto.termDto.ownerships", target = "ownership")
     @Mapping(source = "dto.termDto.entitiesUsingCount", target = "entitiesUsingCount")
     TermDetails mapToDetails(final TermDetailsDto dto);
