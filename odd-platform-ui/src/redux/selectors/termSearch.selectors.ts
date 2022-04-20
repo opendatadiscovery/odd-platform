@@ -106,16 +106,16 @@ export const getTermSearchFacetsByType = createSelector(
     values(termsSearch.facets[termsSearchFacet]?.items) || []
 );
 
-export const getSelectedTermSearchSearchFacetOptions = createSelector(
+export const getSelectedTermSearchFacetOptions = createSelector(
   termSearchState,
   getTermSearchFacetName,
-  (search, facetName) => {
-    if (!search.facetState[facetName]) return [];
+  (termsSearch, facetName) => {
+    if (!termsSearch.facetState[facetName]) return [];
     return transform<
       TermSearchFacetStateById,
       TermSearchFilterStateSynced[]
     >(
-      search.facetState[facetName] || {},
+      termsSearch.facetState[facetName] || {},
       (memo, facetOption) => {
         if (facetOption.selected) memo.push(facetOption);
         return memo;

@@ -53,7 +53,7 @@ const MultipleFilterItem: React.FC<FilterItemProps> = ({
   setFacets,
   searchFacetOptions,
 }) => {
-  type FilterOption = Omit<SearchFilter, 'id' | 'count' | 'selected'> & // todo replace with TermSearchFilter
+  type FilterOption = Omit<SearchFilter, 'id' | 'count' | 'selected'> &
     Partial<CountableSearchFilter>;
   const [facetOptions, setFacetOptions] = React.useState<FilterOption[]>(
     facetOptionsAll || []

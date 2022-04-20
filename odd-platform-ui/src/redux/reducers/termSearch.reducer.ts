@@ -111,13 +111,11 @@ const updateTermFacet = (
     if (selectedOption) {
       selectedOptionState = {
         entityId: get(
-          // todo replace all entityId in this file with termId
           selectedOption,
           'entityId',
           get(selectedOption, 'id')
         ),
         entityName: get(
-          // todo replace all entityName in this file with termName
           selectedOption,
           'entityName',
           get(selectedOption, 'name')

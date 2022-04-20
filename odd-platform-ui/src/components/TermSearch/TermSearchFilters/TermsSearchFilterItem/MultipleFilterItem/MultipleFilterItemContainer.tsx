@@ -3,7 +3,7 @@ import { RootState, TermSearchOptionalFacetNames } from 'redux/interfaces';
 import MultipleFilterItem from 'components/TermSearch/TermSearchFilters/TermsSearchFilterItem/MultipleFilterItem/MultipleFilterItem';
 import * as actions from 'redux/actions';
 import {
-  getSelectedTermSearchSearchFacetOptions,
+  getSelectedTermSearchFacetOptions,
   getTermSearchFacetsByType,
   getTermSearchId,
 } from 'redux/selectors/termSearch.selectors';
@@ -15,10 +15,7 @@ const mapStateToProps = (
 ) => ({
   searchId: getTermSearchId(state),
   facetOptionsAll: getTermSearchFacetsByType(state, facetName),
-  selectedOptions: getSelectedTermSearchSearchFacetOptions(
-    state,
-    facetName
-  ),
+  selectedOptions: getSelectedTermSearchFacetOptions(state, facetName),
 });
 
 const mapDispatchToProps = {

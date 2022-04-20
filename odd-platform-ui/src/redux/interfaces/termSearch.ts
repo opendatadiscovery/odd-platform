@@ -5,7 +5,7 @@ import {
 } from 'generated-sources';
 import { CurrentPageInfo } from './common';
 
-export type TermSearchOptionalFacetMap = Partial<TermFacetState>;
+export type TermSearchOptionalFacetMap = TermFacetState;
 export type TermSearchOptionalFacetNames =
   keyof TermSearchOptionalFacetMap;
 export type TermSearchFacetNames = keyof Partial<TermFacetState>;
@@ -19,7 +19,7 @@ export type TermSearchFacetStateUpdate = {
 };
 
 export type TermSearchFilterStateSynced = SearchFilterState & {
-  // todo REPLACE WITH SearchFilterState
+  // todo remove when it works and leave only SearchFilterStateSynced etc
   syncedState: boolean;
 };
 

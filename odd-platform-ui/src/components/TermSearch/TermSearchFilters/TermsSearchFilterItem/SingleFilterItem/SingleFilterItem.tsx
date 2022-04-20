@@ -12,7 +12,7 @@ import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 interface FilterItemProps {
   name: string;
   facetName: TermSearchOptionalFacetNames;
-  facetOptions: SearchFilter[]; // todo replace with TermsSearchFilter
+  facetOptions: SearchFilter[];
   selectedOptions: TermSearchFilterStateSynced[] | undefined;
   setFacets: (option: TermSearchFacetStateUpdate) => void;
 }
@@ -44,9 +44,9 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
           sx={{ mt: 2 }}
           label={name}
           select
-          id={`filter-${facetName}`}
+          id={`term-search-filter-${facetName}`}
           value={
-            selectedOptions?.length ? selectedOptions[0].entityId : 'All' // todo replace all entityId with termId in this file
+            selectedOptions?.length ? selectedOptions[0].entityId : 'All'
           }
         >
           <AppMenuItem

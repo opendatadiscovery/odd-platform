@@ -13,7 +13,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   fetchNamespaceList,
-  clearTermSearchFilters: actions.clearDataEntitySearchFiltersAction,
+  clearTermSearchFilters: actions.clearTermSearchFiltersAction,
 };
 
 export default connect(
