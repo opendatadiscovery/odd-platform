@@ -1,8 +1,8 @@
 import { createAsyncAction, createAction } from 'typesafe-actions';
 import {
-  TermsFacetStateUpdate,
+  TermSearchFacetStateUpdate,
   PaginatedResponse,
-  TermsSearchFacetOptions,
+  TermSearchFacetOptions,
 } from 'redux/interfaces';
 import {
   TermList,
@@ -35,10 +35,10 @@ export const getTermSearchResultsAction = createAsyncAction(
 )<undefined, PaginatedResponse<TermList>, undefined>();
 
 export const getTermSearchFacetOptionsAction = createAsyncAction(
-  'GET_SEARCH_FACET_OPTIONS__REQUEST',
-  'GET_SEARCH_FACET_OPTIONS__SUCCESS',
-  'GET_SEARCH_FACET_OPTIONS__FAILURE'
-)<undefined, TermsSearchFacetOptions, undefined>();
+  'GET_TERM_SEARCH_FACET_OPTIONS__REQUEST',
+  'GET_TERM_SEARCH_FACET_OPTIONS__SUCCESS',
+  'GET_TERM_SEARCH_FACET_OPTIONS__FAILURE'
+)<undefined, TermSearchFacetOptions, undefined>();
 
 export const getTermSearchSuggestionsAction = createAsyncAction(
   'GET_TERM_SEARCH_SUGGESTIONS__REQUEST',
@@ -48,7 +48,7 @@ export const getTermSearchSuggestionsAction = createAsyncAction(
 
 export const changeTermSearchFilterAction = createAction(
   'CHANGE_TERM_SEARCH_FILTER'
-)<TermsFacetStateUpdate>();
+)<TermSearchFacetStateUpdate>();
 
 export const clearTermSearchFiltersAction = createAction(
   'CLEAR_TERM_SEARCH_FILTER'

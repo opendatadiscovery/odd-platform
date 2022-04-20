@@ -3,9 +3,17 @@ import {
   createErrorSelector,
   createFetchingSelector,
 } from 'redux/selectors/loader-selectors';
+import {
+  RootState,
+  TermSearchState,
+  TermSearchOptionalFacetNames,
+  TermSearchFacetStateById,
+  TermSearchFilterStateSynced,
+} from 'redux/interfaces';
 import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
-import { RootState, TermSearchState } from '../interfaces';
+import values from 'lodash/values';
+import transform from 'lodash/transform';
 
 export const getTermSearchCreationStatus =
   createFetchingSelector('POST_TERM_SEARCH');
@@ -23,26 +31,26 @@ export const getTermSearchResultsFetchStatus = createFetchingSelector(
   'GET_TERM_SEARCH_RESULTS'
 );
 
-const termsSearchState = ({ termSearch }: RootState): TermSearchState =>
+const termSearchState = ({ termSearch }: RootState): TermSearchState =>
   termSearch;
 
 export const getTermSearchId = createSelector(
-  termsSearchState,
+  termSearchState,
   termsSearch => termsSearch.termSearchId
 );
 
 export const getTermSearchFiltersSynced = createSelector(
-  termsSearchState,
+  termSearchState,
   termsSearch => termsSearch.isFacetsStateSynced
 );
 
 export const getTermSearchResultsPage = createSelector(
-  termsSearchState,
+  termSearchState,
   termsSearch => termsSearch.results.pageInfo
 );
 
 export const getTermSearchResultsItems = createSelector(
-  termsSearchState,
+  termSearchState,
   termsSearch => termsSearch.results.items
 );
 
@@ -57,7 +65,7 @@ export const getTermSearchIsFetching = createSelector(
   getTermSearchUpdateStatus,
   getTermSearchFiltersSynced,
   getTermSearchResultsFetchStatus,
-  termsSearchState,
+  termSearchState,
   (
     statusCreate,
     statusFetch,
@@ -74,7 +82,7 @@ export const getTermSearchIsFetching = createSelector(
 );
 
 export const getTermSearchFacetsData = createSelector(
-  termsSearchState,
+  termSearchState,
   termsSearch =>
     mapValues(termsSearch.facetState, facetState =>
       pickBy(facetState, facetOption => !facetOption.syncedState)
@@ -82,6 +90,42 @@ export const getTermSearchFacetsData = createSelector(
 );
 
 export const getTermSearchQuery = createSelector(
-  termsSearchState,
+  termSearchState,
   termsSearch => termsSearch.query
+);
+
+const getTermSearchFacetName = (
+  _: RootState,
+  termsSearchFacet: TermSearchOptionalFacetNames
+) => termsSearchFacet;
+
+export const getTermSearchFacetsByType = createSelector(
+  termSearchState,
+  getTermSearchFacetName,
+  (termsSearch, termsSearchFacet) =>
+    values(termsSearch.facets[termsSearchFacet]?.items) || []
+);
+
+export const getSelectedTermSearchSearchFacetOptions = createSelector(
+  termSearchState,
+  getTermSearchFacetName,
+  (search, facetName) => {
+    if (!search.facetState[facetName]) return [];
+    return transform<
+      TermSearchFacetStateById,
+      TermSearchFilterStateSynced[]
+    >(
+      search.facetState[facetName] || {},
+      (memo, facetOption) => {
+        if (facetOption.selected) memo.push(facetOption);
+        return memo;
+      },
+      []
+    );
+  }
+);
+
+export const getTermSearchIsUpdated = createSelector(
+  getTermSearchUpdateStatus,
+  statusUpdate => statusUpdate === 'fetching'
 );

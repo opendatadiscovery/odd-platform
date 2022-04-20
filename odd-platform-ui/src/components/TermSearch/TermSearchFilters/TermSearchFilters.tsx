@@ -1,13 +1,11 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  DataSourceApiGetDataSourceListRequest,
-  DataSourceList,
   Namespace,
   NamespaceApiGetNamespaceListRequest,
 } from 'generated-sources';
-import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemContainer';
-import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
+import MultipleFilterItemContainer from 'components/TermSearch/TermSearchFilters/TermsSearchFilterItem/MultipleFilterItem/MultipleFilterItemContainer';
+import SingleFilterItemContainer from 'components/TermSearch/TermSearchFilters/TermsSearchFilterItem/SingleFilterItem/SingleFilterItemContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import {
@@ -18,27 +16,20 @@ import {
 
 interface FiltersProps {
   namespaces: Namespace[];
-  fetchDataSourcesList: (
-    params: DataSourceApiGetDataSourceListRequest
-  ) => Promise<DataSourceList>;
   fetchNamespaceList: (
     params: NamespaceApiGetNamespaceListRequest
   ) => void;
-  clearDataEntitySearchFilters: () => void;
-  isSearchFacetsUpdating: boolean;
-  isDatasourceListFetching: boolean;
+  clearTermSearchFilters: () => void;
+  isTermSearchFacetsUpdating: boolean;
 }
 
-const TermsSearchFilters: React.FC<FiltersProps> = ({
+const TermSearchFilters: React.FC<FiltersProps> = ({
   namespaces,
-  fetchDataSourcesList,
   fetchNamespaceList,
-  clearDataEntitySearchFilters,
-  isSearchFacetsUpdating,
-  isDatasourceListFetching,
+  clearTermSearchFilters,
+  isTermSearchFacetsUpdating,
 }) => {
   React.useEffect(() => {
-    fetchDataSourcesList({ page: 1, size: 100 });
     fetchNamespaceList({ page: 1, size: 100 });
   }, []);
 
@@ -49,7 +40,7 @@ const TermsSearchFilters: React.FC<FiltersProps> = ({
         <AppButton
           color="tertiary"
           size="medium"
-          onClick={clearDataEntitySearchFilters}
+          onClick={clearTermSearchFilters}
         >
           Clear All
         </AppButton>
@@ -72,7 +63,7 @@ const TermsSearchFilters: React.FC<FiltersProps> = ({
           facetOptions={namespaces}
         />
         <TermSearchFacetsLoaderContainer container sx={{ mt: 2 }}>
-          {(isSearchFacetsUpdating || isDatasourceListFetching) && (
+          {isTermSearchFacetsUpdating && (
             <AppCircularProgress size={16} text="Updating filters" />
           )}
         </TermSearchFacetsLoaderContainer>
@@ -81,4 +72,4 @@ const TermsSearchFilters: React.FC<FiltersProps> = ({
   );
 };
 
-export default TermsSearchFilters;
+export default TermSearchFilters;

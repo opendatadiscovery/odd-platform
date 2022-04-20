@@ -7,7 +7,7 @@ import {
   getTermSearchIsFetching,
   getTermSearchResultsItems,
   getTermSearchResultsPage,
-} from 'redux/selectors/termsSearch.selectors';
+} from 'redux/selectors/termSearch.selectors';
 import TermSearchResults from './TermSearchResults';
 import { getTermSearchResults } from '../../../redux/thunks';
 

@@ -9,7 +9,7 @@ import {
   getTermSearchId,
   getTermSearchIsCreating,
   getTermSearchQuery,
-} from 'redux/selectors/termsSearch.selectors';
+} from 'redux/selectors/termSearch.selectors';
 import {
   createTermSearch,
   getTermSearchDetails,

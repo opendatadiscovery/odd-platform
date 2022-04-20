@@ -7,11 +7,11 @@ import {
 } from 'generated-sources';
 import {
   Action,
-  TermsFacetStateUpdate,
-  TermsSearchFilterStateSynced,
+  TermSearchFacetStateUpdate,
+  TermSearchFilterStateSynced,
   TermSearchState,
-  TermsSearchFacetStateById,
-  TermsFacetNames,
+  TermSearchFacetStateById,
+  TermSearchFacetNames,
 } from 'redux/interfaces';
 import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
@@ -46,7 +46,7 @@ const updateTermSearchState = (
       facetOptions &&
       reduce<
         CountableSearchFilter | SearchFilter,
-        TermsSearchFacetStateById
+        TermSearchFacetStateById
       >(
         facetOptions,
         (memo, facetOption) => ({
@@ -70,12 +70,10 @@ const updateTermSearchState = (
       payload.searchId !== state.termSearchId
         ? newTermSearchFacetsById
         : mapValues(state.facetState, (facetState, facetName) =>
-            assignWith<
-              TermsSearchFacetStateById,
-              TermsSearchFacetStateById
-            >(
+            assignWith<TermSearchFacetStateById, TermSearchFacetStateById>(
               facetState || {},
-              newTermSearchFacetsById[facetName as TermsFacetNames] || {},
+              newTermSearchFacetsById[facetName as TermSearchFacetNames] ||
+                {},
               (currFilterState, syncedFilterState) => {
                 if (
                   currFilterState &&
@@ -101,11 +99,11 @@ const updateTermSearchState = (
 
 const updateTermFacet = (
   state: TermSearchState,
-  payload: TermsFacetStateUpdate
+  payload: TermSearchFacetStateUpdate
 ): TermSearchState => {
   if (!payload.facetName) return state;
   // Unselect previous type
-  let selectedOptionState: TermsSearchFilterStateSynced | undefined;
+  let selectedOptionState: TermSearchFilterStateSynced | undefined;
   if (payload.facetSingle) {
     const selectedOption = values(
       state.facetState[payload.facetName]
@@ -119,6 +117,7 @@ const updateTermFacet = (
           get(selectedOption, 'id')
         ),
         entityName: get(
+          // todo replace all entityName in this file with termName
           selectedOption,
           'entityName',
           get(selectedOption, 'name')
@@ -164,8 +163,8 @@ const clearTermFilters = (state: TermSearchState): TermSearchState => ({
   ...state,
   isFacetsStateSynced: false,
   facetState: mapValues(state.facetState, (filter, facetName) =>
-    reduce<TermsSearchFacetStateById, TermsSearchFacetStateById>(
-      state.facetState[facetName as TermsFacetNames],
+    reduce<TermSearchFacetStateById, TermSearchFacetStateById>(
+      state.facetState[facetName as TermSearchFacetNames],
       (acc, facetOption) => {
         if (facetOption.selected) {
           acc[facetOption.entityId] = {

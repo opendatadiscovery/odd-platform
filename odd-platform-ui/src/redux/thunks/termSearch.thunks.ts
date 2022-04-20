@@ -7,11 +7,17 @@ import {
   TermApiUpdateTermSearchFacetsRequest,
   TermList,
   TermApiGetTermSearchResultsRequest,
+  TermApiGetTermFiltersForFacetRequest,
+  CountableSearchFilter,
 } from 'generated-sources';
+import {
+  PaginatedResponse,
+  TermSearchOptionalFacetNames,
+  TermSearchFacetOptions,
+} from 'redux/interfaces';
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PaginatedResponse } from '../interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const termSearchApiClient = new TermApi(apiClientConf);
@@ -64,5 +70,25 @@ export const getTermSearchResults = createThunk<
       page: request.page,
       hasNext: request.size * request.page < response.pageInfo.total,
     },
+  })
+);
+
+export const getTermSearchFacetOptions = createThunk<
+  TermApiGetTermFiltersForFacetRequest,
+  CountableSearchFilter[],
+  TermSearchFacetOptions
+>(
+  (params: TermApiGetTermFiltersForFacetRequest) =>
+    termSearchApiClient.getTermFiltersForFacet(params),
+  actions.getTermSearchFacetOptionsAction,
+  (
+    response: CountableSearchFilter[],
+    request: TermApiGetTermFiltersForFacetRequest
+  ) => ({
+    facetName: request.query
+      ? undefined
+      : (request.facetType.toLowerCase() as TermSearchOptionalFacetNames),
+    facetOptions: response,
+    page: request.page,
   })
 );

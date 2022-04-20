@@ -8,13 +8,13 @@ import {
   TermApiUpdateTermSearchFacetsRequest,
   TermSearchFacetsData,
 } from 'generated-sources';
-import { TermsSearchFacetsByName } from 'redux/interfaces/termsSearch';
+import { TermSearchFacetsByName } from 'redux/interfaces/termSearch';
 import { ErrorState, FetchStatus } from 'redux/interfaces/loader';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import { termSearchPath } from 'lib/paths';
 import { useHistory } from 'react-router-dom';
-import FiltersContainer from './TermSearchFilters/TermSearchFiltersContainer';
+import TermSearchFiltersContainer from './TermSearchFilters/TermSearchFiltersContainer';
 import {
   TermSearchWrapper,
   TermSearchContentWrapper,
@@ -31,7 +31,7 @@ interface TermsProps {
   termSearchIdParam?: string;
   termSearchId: string;
   termSearchQuery: string;
-  termSearchFacetParams: TermsSearchFacetsByName;
+  termSearchFacetParams: TermSearchFacetsByName;
   termSearchFacetsSynced: boolean;
   termSearchFetchStatus: FetchStatus;
   termSearchError?: ErrorState;
@@ -111,7 +111,7 @@ const TermSearch: React.FC<TermsProps> = ({
       <TermSearchWrapper>
         <TermSearchContentWrapper container spacing={2}>
           <TermSearchFiltersWrapper item xs={3}>
-            <FiltersContainer />
+            <TermSearchFiltersContainer />
           </TermSearchFiltersWrapper>
           <TermSearchResultsWrapper item xs={9}>
             <TermSearchCaption>

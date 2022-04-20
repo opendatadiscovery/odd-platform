@@ -43,9 +43,9 @@ import { CurrentPageInfo } from './common';
 import { DataEntityDetailsState } from './dataentities';
 import { LoaderState } from './loader';
 import {
-  TermsSearchFacetOptionsByName,
-  TermsSearchFacetsByName,
-} from './termsSearch';
+  TermSearchFacetOptionsByName,
+  TermSearchFacetsByName,
+} from './termSearch';
 
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
@@ -207,14 +207,14 @@ export interface SearchState {
 export interface TermSearchState {
   termSearchId: string;
   query: string;
-  facets: TermsSearchFacetOptionsByName;
+  facets: TermSearchFacetOptionsByName;
   isFacetsStateSynced: boolean;
   results: {
     items: TermDetails[];
     pageInfo: CurrentPageInfo;
   };
   suggestions: TermRef[];
-  facetState: TermsSearchFacetsByName;
+  facetState: TermSearchFacetsByName;
 }
 
 export interface AlertsState {
