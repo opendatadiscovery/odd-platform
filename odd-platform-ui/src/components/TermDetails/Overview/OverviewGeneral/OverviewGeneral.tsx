@@ -45,9 +45,8 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
         </Grid>
         <Grid item sm={12}>
           <LabeledInfoItem inline label="Created" labelWidth={4}>
-            {termDetails.createdAt
-              ? format(termDetails.createdAt, 'd MMM yyyy')
-              : null}
+            {termDetails.createdAt &&
+              format(termDetails.createdAt, 'd MMM yyyy')}
           </LabeledInfoItem>
         </Grid>
         <Grid item sm={12} sx={{ mt: 2 }}>

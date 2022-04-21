@@ -9,10 +9,9 @@ import {
   TermRefList,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
-import { DeleteTerm } from 'redux/interfaces/terms';
+import { PaginatedResponse, DeleteTerm } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PaginatedResponse } from '../interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new TermApi(apiClientConf);

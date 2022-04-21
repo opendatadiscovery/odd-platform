@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -19,9 +19,16 @@ import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import {
-  TermDetailsWrapper,
-  TermDetailsCaption,
+  TermDetailsComponentWrapper,
+  TermDetailsHeadingRightWrapper,
+  TermDetailsHeadingWrapper,
 } from './TermDetailsStyles';
+import EditIcon from '../shared/Icons/EditIcon';
+import AppButton from '../shared/AppButton/AppButton';
+import AppIconButton from '../shared/AppIconButton/AppIconButton';
+import KebabIcon from '../shared/Icons/KebabIcon';
+import AppMenuItem from '../shared/AppMenuItem/AppMenuItem';
+import AppPopover from '../shared/AppPopover/AppPopover';
 
 // lazy components
 const OverviewContainer = React.lazy(
@@ -82,32 +89,16 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
   }, [tabs, viewType]);
 
   return (
-    <TermDetailsWrapper>
-      {termDetails && termFetchingStatus !== 'fetching' ? (
+    <TermDetailsComponentWrapper>
+      {termDetails && termFetchingStatus !== 'fetching' && (
         <>
-          <Grid
-            container
-            justifyContent="space-between"
-            alignItems="center"
-            wrap="nowrap"
-          >
-            <TermDetailsCaption item>
-              <Grid container item alignItems="center">
-                <Typography variant="h1" noWrap sx={{ mr: 1 }}>
-                  {termDetails.name}
-                </Typography>
-              </Grid>
-              {termDetails.name && (
-                <Grid container alignItems="center">
-                  <LabelItem labelName="Original" variant="body1" />
-                  <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
-                    {termDetails.name}
-                  </Typography>
-                </Grid>
-              )}
-            </TermDetailsCaption>
-            <Grid container item alignItems="center" width="auto">
-              {termDetails.updatedAt ? (
+          <TermDetailsHeadingWrapper>
+            <Typography variant="h1" noWrap sx={{ mr: 1 }}>
+              {termDetails.name}{' '}
+              <LabelItem labelName="DCT" variant="body1" />
+            </Typography>
+            <TermDetailsHeadingRightWrapper>
+              {termDetails.updatedAt && (
                 <>
                   <TimeGapIcon />
                   <Typography variant="body1" sx={{ ml: 1 }}>
@@ -116,29 +107,53 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
                     })}
                   </Typography>
                 </>
-              ) : null}
-            </Grid>
-          </Grid>
-          <Grid sx={{ mt: 2 }}>
-            {tabs.length && selectedTab >= 0 ? (
-              <AppTabs
-                type="primary"
-                items={tabs}
-                selectedTab={selectedTab}
-                handleTabChange={() => {}}
-              />
-            ) : null}
-          </Grid>
+              )}
+              <AppButton
+                size="medium"
+                color="primaryLight"
+                onClick={() => {}}
+                startIcon={<EditIcon />}
+                sx={{ ml: 1 }}
+              >
+                Edit
+              </AppButton>
+              <AppPopover
+                renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+                  <AppIconButton
+                    ariaDescribedBy={ariaDescribedBy}
+                    size="medium"
+                    color="primaryLight"
+                    icon={<KebabIcon />}
+                    onClick={onClick}
+                    sx={{ ml: 1 }}
+                  />
+                )}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                transformOrigin={{ vertical: -5, horizontal: 67 }}
+              >
+                <AppMenuItem onClick={() => {}}>Delete</AppMenuItem>
+              </AppPopover>
+            </TermDetailsHeadingRightWrapper>
+          </TermDetailsHeadingWrapper>
+          {tabs.length && selectedTab >= 0 && (
+            <AppTabs
+              type="primary"
+              items={tabs}
+              selectedTab={selectedTab}
+              handleTabChange={() => {}}
+              sx={{ mt: 2 }}
+            />
+          )}
         </>
-      ) : null}
-      {termFetchingStatus === 'fetching' ? (
+      )}
+      {termFetchingStatus === 'fetching' && (
         <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
             <TermDetailsSkeleton width={randomSkeletonPercentWidth()} />
           )}
         />
-      ) : null}
-      {termFetchingStatus !== 'errorFetching' ? (
+      )}
+      {termFetchingStatus !== 'errorFetching' && (
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
             <Route
@@ -154,12 +169,12 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
             <Redirect from="/terms/:termId" to="/terms/:termId/overview" />
           </Switch>
         </React.Suspense>
-      ) : null}
+      )}
       <AppErrorPage
         fetchStatus={termFetchingStatus}
         error={termFetchingError}
       />
-    </TermDetailsWrapper>
+    </TermDetailsComponentWrapper>
   );
 };
 

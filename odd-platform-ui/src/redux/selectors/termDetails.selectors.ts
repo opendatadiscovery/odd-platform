@@ -1,9 +1,9 @@
 import { createSelector } from 'reselect';
-import { TermDetailsState, RootState } from '../interfaces';
+import { TermDetailsState, RootState } from 'redux/interfaces';
 import {
   createErrorSelector,
   createFetchingSelector,
-} from './loader-selectors';
+} from 'redux/selectors/loader-selectors';
 
 const termDetailsState = ({ termDetails }: RootState): TermDetailsState =>
   termDetails;

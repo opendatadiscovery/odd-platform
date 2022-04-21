@@ -1,4 +1,3 @@
-import { createThunk } from './base.thunk';
 import {
   Configuration,
   TermApi,
@@ -6,10 +5,11 @@ import {
   TermApiGetTermDetailsRequest,
   Tag,
   TermApiCreateTermTagsRelationsRequest,
-} from '../../generated-sources';
-import * as actions from '../actions';
-import { BASE_PARAMS } from '../../lib/constants';
-import { PartialTermDetailsUpdateParams } from '../interfaces';
+} from 'generated-sources';
+import { PartialTermDetailsUpdateParams } from 'redux/interfaces';
+import { createThunk } from 'redux/thunks/base.thunk';
+import * as actions from 'redux/actions';
+import { BASE_PARAMS } from 'lib/constants';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new TermApi(apiClientConf);

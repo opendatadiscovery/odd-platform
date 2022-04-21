@@ -31,6 +31,8 @@ export const getTermSearchResultsFetchStatus = createFetchingSelector(
   'GET_TERM_SEARCH_RESULTS'
 );
 
+// Term Search
+
 const termSearchState = ({ termSearch }: RootState): TermSearchState =>
   termSearch;
 
@@ -81,17 +83,24 @@ export const getTermSearchIsFetching = createSelector(
     (!!search.results.pageInfo.total && !search.results.items.length)
 );
 
+export const getTermSearchQuery = createSelector(
+  termSearchState,
+  termsSearch => termsSearch.query
+);
+
+export const getTermSearchIsUpdated = createSelector(
+  getTermSearchUpdateStatus,
+  statusUpdate => statusUpdate === 'fetching'
+);
+
+// Facets
+
 export const getTermSearchFacetsData = createSelector(
   termSearchState,
   termsSearch =>
     mapValues(termsSearch.facetState, facetState =>
       pickBy(facetState, facetOption => !facetOption.syncedState)
     )
-);
-
-export const getTermSearchQuery = createSelector(
-  termSearchState,
-  termsSearch => termsSearch.query
 );
 
 const getTermSearchFacetName = (
@@ -123,9 +132,4 @@ export const getSelectedTermSearchFacetOptions = createSelector(
       []
     );
   }
-);
-
-export const getTermSearchIsUpdated = createSelector(
-  getTermSearchUpdateStatus,
-  statusUpdate => statusUpdate === 'fetching'
 );

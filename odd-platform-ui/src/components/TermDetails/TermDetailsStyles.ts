@@ -1,11 +1,10 @@
-import { Grid } from '@mui/material';
 import {
   maxContentWidthWithoutSidebar,
   toolbarHeight,
 } from 'lib/constants';
 import styled from 'styled-components';
 
-export const TermDetailsWrapper = styled('div')(({ theme }) => ({
+export const TermDetailsComponentWrapper = styled('div')(({ theme }) => ({
   margin: '0 auto',
   padding: theme.spacing(2),
   width: `${maxContentWidthWithoutSidebar}px`,
@@ -18,16 +17,16 @@ export const TermDetailsWrapper = styled('div')(({ theme }) => ({
   },
 }));
 
-export const TermDetailsInternalNameEditBtnWrapper = styled('div')(() => ({
-  display: 'none',
+export const TermDetailsHeadingWrapper = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  wrap: 'nowrap',
 }));
 
-export const TermDetailsCaption = styled(Grid)(() => ({
-  '&:hover': {
-    [`${TermDetailsInternalNameEditBtnWrapper}`]: { display: 'block' },
-  },
-}));
-
-export const TermDetailsUpdatedAt = styled(Grid)(() => ({
-  display: 'none',
+export const TermDetailsHeadingRightWrapper = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'end',
+  alignItems: 'center',
+  wrap: 'nowrap',
 }));
