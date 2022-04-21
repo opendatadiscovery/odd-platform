@@ -3,6 +3,7 @@ import { OwnerList, Owner, Ownership, RoleList } from 'generated-sources';
 import {
   PaginatedResponse,
   PartialEntityUpdateParams,
+  PartialTermDetailsUpdateParams,
 } from 'redux/interfaces';
 
 export const fetchOwnersAction = createAsyncAction(
@@ -46,6 +47,24 @@ export const deleteDataEntityOwnershipAction = createAsyncAction(
   'DELETE_DATA_ENTITY_OWNERSHIP__SUCCESS',
   'DELETE_DATA_ENTITY_OWNERSHIP__FAILURE'
 )<undefined, PartialEntityUpdateParams<number>, undefined>();
+
+export const createTermDetailsOwnershipAction = createAsyncAction(
+  'POST_TERM_DETAILS_OWNERSHIP__REQUEST',
+  'POST_TERM_DETAILS_OWNERSHIP__SUCCESS',
+  'POST_TERM_DETAILS_OWNERSHIP__FAILURE'
+)<undefined, PartialTermDetailsUpdateParams<Ownership>, undefined>();
+
+export const updateTermDetailsOwnershipAction = createAsyncAction(
+  'PUT_TERM_DETAILS_OWNERSHIP__REQUEST',
+  'PUT_TERM_DETAILS_OWNERSHIP__SUCCESS',
+  'PUT_TERM_DETAILS_OWNERSHIP__FAILURE'
+)<undefined, PartialTermDetailsUpdateParams<Ownership>, undefined>();
+
+export const deleteTermDetailsOwnershipAction = createAsyncAction(
+  'DELETE_TERM_DETAILS_OWNERSHIP__REQUEST',
+  'DELETE_TERM_DETAILS_OWNERSHIP__SUCCESS',
+  'DELETE_TERM_DETAILS_OWNERSHIP__FAILURE'
+)<undefined, PartialTermDetailsUpdateParams<number>, undefined>();
 
 export const fetchRolesAction = createAsyncAction(
   'GET_OWNERSHIP_ROLES__REQUEST',

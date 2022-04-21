@@ -24,6 +24,9 @@ import {
   Owner,
   Ownership,
   Tag,
+  Term,
+  TermRef,
+  TermDetails,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -39,6 +42,10 @@ import { DataEntityLineageById } from './dataentityLineage';
 import { CurrentPageInfo } from './common';
 import { DataEntityDetailsState } from './dataentities';
 import { LoaderState } from './loader';
+import {
+  TermSearchFacetOptionsByName,
+  TermSearchFacetsByName,
+} from './termSearch';
 
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
@@ -55,6 +62,20 @@ export interface CollectorsState {
 export interface TagsState {
   byId: { [tagId: number]: Tag };
   allIds: Tag['id'][];
+  pageInfo?: CurrentPageInfo;
+}
+
+export interface TermsState {
+  byId: { [termId: number]: Term };
+  allIds: Term['id'][];
+  pageInfo?: CurrentPageInfo;
+}
+
+export interface TermDetailsState {
+  byId: {
+    [termId: string]: TermDetails;
+  };
+  allIds: TermDetails['id'][];
   pageInfo?: CurrentPageInfo;
 }
 
@@ -139,8 +160,14 @@ export interface OwnersState {
   byId: { [ownerId: number]: Owner };
   allIds: number[];
   pageInfo?: CurrentPageInfo;
-  ownership: {
+  ownershipDataEntity: {
     [dataEntityId: string]: {
+      byId: { [ownershipId: string]: Ownership };
+      allIds: number[];
+    };
+  };
+  ownershipTermDetails: {
+    [termId: string]: {
       byId: { [ownershipId: string]: Ownership };
       allIds: number[];
     };
@@ -175,6 +202,19 @@ export interface SearchState {
   };
   suggestions: DataEntityRef[];
   facetState: SearchFacetsByName;
+}
+
+export interface TermSearchState {
+  termSearchId: string;
+  query: string;
+  facets: TermSearchFacetOptionsByName;
+  isFacetsStateSynced: boolean;
+  results: {
+    items: TermDetails[];
+    pageInfo: CurrentPageInfo;
+  };
+  suggestions: TermRef[];
+  facetState: TermSearchFacetsByName;
 }
 
 export interface AlertsState {
@@ -215,6 +255,9 @@ export type RootState = {
   alerts: AlertsState;
   dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
   collectors: CollectorsState;
+  terms: TermsState;
+  termSearch: TermSearchState;
+  termDetails: TermDetailsState;
 };
 
 export type Action = ActionType<typeof actions>;

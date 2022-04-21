@@ -12,7 +12,8 @@ export const initialState: OwnersState = {
     page: 0,
     hasNext: true,
   },
-  ownership: {},
+  ownershipDataEntity: {},
+  ownershipTermDetails: {},
 };
 
 const reducer = (state = initialState, action: Action): OwnersState => {
@@ -40,8 +41,8 @@ const reducer = (state = initialState, action: Action): OwnersState => {
     case getType(actions.fetchDataEntityAction.success):
       return {
         ...state,
-        ownership: {
-          ...state.ownership,
+        ownershipDataEntity: {
+          ...state.ownershipDataEntity,
           ...(action.payload.ownership && {
             [action.payload.id]: {
               byId: action.payload.ownership.reduce(
@@ -69,16 +70,16 @@ const reducer = (state = initialState, action: Action): OwnersState => {
     case getType(actions.createDataEntityOwnershipAction.success):
       return {
         ...state,
-        ownership: {
-          ...state.ownership,
+        ownershipDataEntity: {
+          ...state.ownershipDataEntity,
           [action.payload.entityId]: {
             byId: {
-              ...state.ownership[action.payload.entityId].byId,
+              ...state.ownershipDataEntity[action.payload.entityId].byId,
               [action.payload.value.id]: action.payload.value,
             },
             allIds: [
               action.payload.value.id,
-              ...state.ownership[action.payload.entityId].allIds,
+              ...state.ownershipDataEntity[action.payload.entityId].allIds,
             ],
           },
         },
@@ -86,12 +87,12 @@ const reducer = (state = initialState, action: Action): OwnersState => {
     case getType(actions.updateDataEntityOwnershipAction.success):
       return {
         ...state,
-        ownership: {
-          ...state.ownership,
+        ownershipDataEntity: {
+          ...state.ownershipDataEntity,
           [action.payload.entityId]: {
-            ...state.ownership[action.payload.entityId],
+            ...state.ownershipDataEntity[action.payload.entityId],
             byId: {
-              ...state.ownership[action.payload.entityId].byId,
+              ...state.ownershipDataEntity[action.payload.entityId].byId,
               [action.payload.value.id]: action.payload.value,
             },
           },
@@ -100,12 +101,78 @@ const reducer = (state = initialState, action: Action): OwnersState => {
     case getType(actions.deleteDataEntityOwnershipAction.success):
       return {
         ...state,
-        ownership: {
-          ...state.ownership,
+        ownershipDataEntity: {
+          ...state.ownershipDataEntity,
           [action.payload.entityId]: {
-            ...state.ownership[action.payload.entityId],
+            ...state.ownershipDataEntity[action.payload.entityId],
             allIds: filter(
-              state.ownership[action.payload.entityId].allIds,
+              state.ownershipDataEntity[action.payload.entityId].allIds,
+              item => item !== action.payload.value
+            ),
+          },
+        },
+      };
+    case getType(actions.fetchTermDetailsAction.success):
+      return {
+        ...state,
+        ownershipTermDetails: {
+          ...state.ownershipTermDetails,
+          ...(action.payload.ownership && {
+            [action.payload.id]: {
+              byId: action.payload.ownership.reduce(
+                (memo, ownership) => ({
+                  ...memo,
+                  [ownership.id]: ownership,
+                }),
+                {}
+              ),
+              allIds: action.payload.ownership.map(
+                ownership => ownership.id
+              ),
+            },
+          }),
+        },
+      };
+    case getType(actions.createTermDetailsOwnershipAction.success):
+      return {
+        ...state,
+        ownershipTermDetails: {
+          ...state.ownershipTermDetails,
+          [action.payload.termId]: {
+            byId: {
+              ...state.ownershipTermDetails[action.payload.termId].byId,
+              [action.payload.value.id]: action.payload.value,
+            },
+            allIds: [
+              action.payload.value.id,
+              ...state.ownershipTermDetails[action.payload.termId].allIds,
+            ],
+          },
+        },
+      };
+    case getType(actions.updateTermDetailsOwnershipAction.success):
+      return {
+        ...state,
+        ownershipTermDetails: {
+          ...state.ownershipTermDetails,
+          [action.payload.termId]: {
+            ...state.ownershipTermDetails[action.payload.termId],
+            byId: {
+              ...state.ownershipTermDetails[action.payload.termId].byId,
+              [action.payload.value.id]: action.payload.value,
+            },
+          },
+        },
+      };
+    case getType(actions.deleteTermDetailsOwnershipAction.success):
+      return {
+        ...state,
+        ownershipTermDetails: {
+          ...state.ownershipTermDetails,
+          [action.payload.termId]: {
+            ...state.ownershipTermDetails[action.payload.termId],
+            allIds: filter(
+              state.ownershipTermDetails[action.payload.termId].allIds,
               item => item !== action.payload.value
             ),
           },

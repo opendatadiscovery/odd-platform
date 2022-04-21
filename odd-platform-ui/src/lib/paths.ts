@@ -7,6 +7,20 @@ export const dataSourcesPath = () => '/datasources';
 
 export const tagsPath = () => '/tags';
 
+export const termsPath = () => '/terms';
+
+export const termDetailsPath = (termId: number) =>
+  `${termsPath()}/${termId}`;
+
+export const termDetailsLinkedItemsPath = (termId: number) =>
+  `${termDetailsPath(termId)}/linked-items`;
+
+export const termDetailsOverviewPath = (termId: number) =>
+  `${termDetailsPath(termId)}/overview`;
+
+export const termSearchPath = (termSearchId?: string) =>
+  `/termsearch${termSearchId ? `/${termSearchId}` : ''}`;
+
 export const dataEntityDetailsPath = (entityId: number) =>
   `/dataentities/${entityId}`;
 

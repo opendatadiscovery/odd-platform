@@ -17,6 +17,9 @@ import alerts from './alerts.reducer';
 import dataEntityGroupLinkedList from './dataentityLinkedList.reducer';
 import appInfo from './appInfo.reducer';
 import collectors from './collectors.reducer';
+import terms from './terms.reducer';
+import termSearch from './termSearch.reducer';
+import termDetails from './termDetails.reducer';
 
 export default combineReducers<RootState>({
   namespaces,
@@ -36,4 +39,7 @@ export default combineReducers<RootState>({
   dataEntityGroupLinkedList,
   appInfo,
   collectors,
+  terms,
+  termSearch,
+  termDetails,
 });
