@@ -76,7 +76,6 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
             .verifyComplete();
     }
 
-
     @Test
     @DisplayName("Test creates namespace pojo, deletes it and creates again, expecting new id in the created entity")
     void testCreateNamespacePojoAfterDeletingIt() {

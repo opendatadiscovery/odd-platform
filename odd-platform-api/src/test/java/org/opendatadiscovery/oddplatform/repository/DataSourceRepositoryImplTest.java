@@ -90,7 +90,6 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Gets a paginated list of data source dto objects querying their names")
     public void listDtoNameQueryTest() {
-
     }
 
     private Map<Long, DataSourceDto> generateDataSources(final NamespacePojo namespace1,

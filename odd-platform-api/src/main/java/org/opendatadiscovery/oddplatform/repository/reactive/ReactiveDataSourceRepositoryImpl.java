@@ -161,7 +161,6 @@ public class ReactiveDataSourceRepositoryImpl
         return jooqReactiveOperations.mono(query).map(this::mapRecordIntoDto);
     }
 
-
     private List<Condition> queryCondition(final String nameQuery) {
         final var conditionsList = new ArrayList<Condition>();
 
