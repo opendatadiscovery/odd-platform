@@ -1,5 +1,3 @@
-/*TODO add constraints*/
-
 CREATE TABLE IF NOT EXISTS term
 (
     id           bigserial PRIMARY KEY,
@@ -14,6 +12,8 @@ CREATE TABLE IF NOT EXISTS term
     CONSTRAINT term_namespace_fk FOREIGN KEY (namespace_id) REFERENCES namespace (id)
 
 );
+
+CREATE UNIQUE INDEX IF NOT EXISTS name_namespace_unique ON term (name, namespace_id) WHERE deleted_at IS NULL;
 
 CREATE TABLE IF NOT EXISTS tag_to_term
 (
@@ -49,3 +49,23 @@ CREATE TABLE IF NOT EXISTS data_entity_to_term
     CONSTRAINT data_entity_to_term_term_id_fkey FOREIGN KEY (term_id) REFERENCES term (id),
     CONSTRAINT data_entity_to_term_data_entity_id_fkey FOREIGN KEY (data_entity_id) REFERENCES data_entity (id)
 );
+
+CREATE TABLE IF NOT EXISTS term_search_entrypoint
+(
+    term_id          bigint PRIMARY KEY,
+    term_vector      tsvector,
+    tag_vector       tsvector,
+    namespace_vector tsvector,
+    owner_vector     tsvector,
+    search_vector    tsvector GENERATED ALWAYS
+                         AS (coalesce(term_vector, '')
+                                 || coalesce(tag_vector, '')
+                                 || coalesce(owner_vector, '')
+                                 || coalesce(namespace_vector, ''))
+                         STORED,
+
+    CONSTRAINT search_entrypoint_term_id_fkey FOREIGN KEY (term_id) REFERENCES term (id)
+);
+
+CREATE INDEX term_search_entrypoint_search_vector_idx
+    ON term_search_entrypoint USING gin (search_vector);
