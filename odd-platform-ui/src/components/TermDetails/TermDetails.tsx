@@ -7,6 +7,7 @@ import {
   termDetailsOverviewPath,
 } from 'lib/paths';
 import {
+  TermApiDeleteTermRequest,
   TermApiGetTermDetailsRequest,
   TermDetails,
 } from 'generated-sources';
@@ -29,6 +30,7 @@ import AppIconButton from '../shared/AppIconButton/AppIconButton';
 import KebabIcon from '../shared/Icons/KebabIcon';
 import AppMenuItem from '../shared/AppMenuItem/AppMenuItem';
 import AppPopover from '../shared/AppPopover/AppPopover';
+import ConfirmationDialog from '../shared/ConfirmationDialog/ConfirmationDialog';
 
 // lazy components
 const OverviewContainer = React.lazy(
@@ -47,6 +49,7 @@ interface TermDetailsProps {
   termFetchingStatus: FetchStatus;
   termFetchingError?: ErrorState;
   openAlertsCount: number;
+  deleteTerm: (params: TermApiDeleteTermRequest) => Promise<void>;
 }
 
 const TermDetailsView: React.FC<TermDetailsProps> = ({
@@ -57,6 +60,7 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
   termFetchingStatus,
   termFetchingError,
   openAlertsCount,
+  deleteTerm,
 }) => {
   React.useEffect(() => {
     fetchTermDetails({ termId });
@@ -87,6 +91,9 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
       viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
     );
   }, [tabs, viewType]);
+
+  const handleTermDelete = (id: number) => () =>
+    deleteTerm({ termId: id });
 
   return (
     <TermDetailsComponentWrapper>
@@ -131,7 +138,20 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                 transformOrigin={{ vertical: -5, horizontal: 67 }}
               >
-                <AppMenuItem onClick={() => {}}>Delete</AppMenuItem>
+                <ConfirmationDialog
+                  actionTitle="Are you sure you want to delete this term?"
+                  actionName="Delete term"
+                  actionText={
+                    <>
+                      &quot;{termDetails.name}&quot; will be deleted
+                      permanently.
+                    </>
+                  }
+                  onConfirm={handleTermDelete(termDetails.id)}
+                  actionBtn={
+                    <AppMenuItem onClick={() => {}}>Delete</AppMenuItem>
+                  }
+                />
               </AppPopover>
             </TermDetailsHeadingRightWrapper>
           </TermDetailsHeadingWrapper>

@@ -6,7 +6,7 @@ import {
   getTermDetailsFetchingError,
   getTermDetailsFetchingStatus,
 } from 'redux/selectors/termDetails.selectors';
-import { fetchTermDetails } from 'redux/thunks/termDetails.thunks';
+import { deleteTerm, fetchTermDetails } from 'redux/thunks';
 import TermDetailsView from './TermDetails';
 
 interface RouteProps {
@@ -34,6 +34,7 @@ const mapStateToProps = (
 
 const mapDispatchToProps = {
   fetchTermDetails,
+  deleteTerm,
 };
 
 export default connect(
