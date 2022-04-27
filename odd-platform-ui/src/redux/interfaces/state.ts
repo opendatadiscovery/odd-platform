@@ -66,9 +66,15 @@ export interface TagsState {
 }
 
 export interface TermsState {
-  byId: { [termId: number]: Term };
+  byId: { [termId: number]: TermRef };
   allIds: Term['id'][];
   pageInfo?: CurrentPageInfo;
+  termsDataEntity: {
+    [dataEntityId: string]: {
+      byId: { [termId: string]: TermRef };
+      allIds: number[];
+    };
+  };
 }
 
 export interface TermDetailsState {

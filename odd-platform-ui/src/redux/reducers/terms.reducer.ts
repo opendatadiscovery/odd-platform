@@ -11,6 +11,7 @@ export const initialState: TermsState = {
     page: 0,
     hasNext: true,
   },
+  termsDataEntity: {},
 };
 const updateTermList = (
   state: TermsState,
@@ -58,6 +59,25 @@ const reducer = (state = initialState, action: Action): TermsState => {
         allIds: state.allIds.filter(
           termId => termId !== action.payload.id
         ),
+      };
+    case getType(actions.fetchDataEntityAction.success):
+      return {
+        ...state,
+        termsDataEntity: {
+          ...state.termsDataEntity,
+          ...(action.payload.terms && {
+            [action.payload.id]: {
+              byId: action.payload.terms.reduce(
+                (memo, term) => ({
+                  ...memo,
+                  [term.id]: term,
+                }),
+                {}
+              ),
+              allIds: action.payload.terms.map(term => term.id),
+            },
+          }),
+        },
       };
     default:
       return state;
