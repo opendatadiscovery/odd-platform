@@ -13,6 +13,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
+import org.opendatadiscovery.oddplatform.utils.MappingUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,7 +43,7 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
             .flatMapMany(c -> {
                 final List<DataSourcePojo> dataSources = mapDataSources(dataSourceList, c);
 
-                return reactiveDataSourceRepository.getDtosByOddrns(extractOddrns(dataSources), true)
+                return reactiveDataSourceRepository.getDtosByOddrns(extractOddrns(dataSources))
                     .map(DataSourceDto::dataSource)
                     .collectList()
                     .flatMapMany(list -> {
@@ -93,8 +94,8 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
         return dataSourceList.getItems().stream()
             .map(ds -> dataSourceIngestionMapper.mapIngestionModel(
                 ds,
-                defaultFieldIfNull(c.namespace(), NamespacePojo::getId),
-                defaultFieldIfNull(c.tokenDto().tokenPojo(), TokenPojo::getId)
+                MappingUtils.extractFieldFromNullableObject(c.namespace(), NamespacePojo::getId),
+                MappingUtils.extractFieldFromNullableObject(c.tokenDto().tokenPojo(), TokenPojo::getId)
             ))
             .toList();
     }
@@ -103,13 +104,5 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
         return dtos.stream()
             .map(DataSourcePojo::getOddrn)
             .toList();
-    }
-
-    private <T, S> S defaultFieldIfNull(final T object, final Function<T, S> mapper) {
-        if (object == null) {
-            return null;
-        }
-
-        return mapper.apply(object);
     }
 }

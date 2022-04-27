@@ -31,11 +31,10 @@ public class IngestionDataSourceFilter extends AbstractIngestionFilter {
 
                         return collectorRepository.getByToken(token)
                             .switchIfEmpty(Mono.error(new NotFoundException("Collector with such token doesn't exist")))
-                            .flatMapMany(c -> exchange.getSession()
-                                .doOnNext(ws -> ws
-                                    .getAttributes()
-                                    .put(SessionConstants.COLLECTOR_ID_SESSION_KEY, c.getId()))
-                                .flatMapIterable(ign -> dataBuffer));
+                            .zipWith(exchange.getSession())
+                            .doOnNext(t -> t.getT2().getAttributes()
+                                .put(SessionConstants.COLLECTOR_ID_SESSION_KEY, t.getT1().getId()))
+                            .thenMany(Flux.fromIterable(dataBuffer));
                     });
             }
         };

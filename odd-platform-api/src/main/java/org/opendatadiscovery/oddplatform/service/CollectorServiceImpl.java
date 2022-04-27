@@ -23,11 +23,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class CollectorServiceImpl implements CollectorService {
     private final TokenGenerator tokenGenerator;
-
     private final CollectorMapper collectorMapper;
-
     private final ReactiveCollectorRepository collectorRepository;
-    private final ReactiveNamespaceRepository namespaceRepository;
+    private final NamespaceService namespaceService;
     private final TokenRepository tokenRepository;
 
     @Override
@@ -41,10 +39,7 @@ public class CollectorServiceImpl implements CollectorService {
         final Mono<TokenDto> token = tokenGenerator.generateToken().flatMap(tokenRepository::create);
 
         if (StringUtils.isNotEmpty(form.getNamespaceName())) {
-            final Mono<NamespacePojo> namespace = namespaceRepository
-                .getByName(form.getNamespaceName())
-                .switchIfEmpty(namespaceRepository.create(new NamespacePojo().setName(form.getNamespaceName())));
-
+            final Mono<NamespacePojo> namespace = namespaceService.getOrCreate(form.getNamespaceName());
             return Mono.zip(namespace, token).flatMap(t -> create(form, t.getT1(), t.getT2()));
         }
 
@@ -54,19 +49,20 @@ public class CollectorServiceImpl implements CollectorService {
     @Override
     @ReactiveTransactional
     public Mono<Collector> update(final long id, final CollectorUpdateFormData form) {
-        return collectorRepository.getDto(id).flatMap(collectorDto -> {
-            if (StringUtils.isNotEmpty(form.getNamespaceName())) {
-                return namespaceRepository.getByName(form.getNamespaceName())
-                    .switchIfEmpty(namespaceRepository.createByName(form.getNamespaceName()))
-                    .flatMap(namespace -> update(
-                        collectorMapper.applyToDto(collectorDto.collectorPojo(), form, namespace),
-                        namespace,
-                        collectorDto.tokenDto()
-                    ));
-            }
+        return collectorRepository.getDto(id)
+            .switchIfEmpty(Mono.error(new NotFoundException("Collector with ID %d doesn't exist", id)))
+            .flatMap(collectorDto -> {
+                if (StringUtils.isNotEmpty(form.getNamespaceName())) {
+                    return namespaceService.getOrCreate(form.getNamespaceName())
+                        .flatMap(namespace -> update(
+                            collectorMapper.applyToDto(collectorDto.collectorPojo(), form, namespace),
+                            namespace,
+                            collectorDto.tokenDto()
+                        ));
+                }
 
-            return update(collectorMapper.applyToDto(collectorDto.collectorPojo(), form), collectorDto.tokenDto());
-        });
+                return update(collectorMapper.applyToDto(collectorDto.collectorPojo(), form), collectorDto.tokenDto());
+            });
     }
 
     @Override
@@ -77,11 +73,11 @@ public class CollectorServiceImpl implements CollectorService {
     @Override
     public Mono<Collector> regenerateToken(final long collectorId) {
         return collectorRepository.getDto(collectorId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Collector with ID %d doesn't exist", collectorId)))
             .flatMap(dto -> tokenGenerator
                 .regenerateToken(dto.tokenDto().tokenPojo())
                 .flatMap(tokenRepository::updateToken)
-                .map(t -> collectorMapper.mapDto(new CollectorDto(dto.collectorPojo(), dto.namespace(), t))))
-            .switchIfEmpty(Mono.error(new NotFoundException("Collector with ID %d doesn't exist", collectorId)));
+                .map(t -> collectorMapper.mapDto(new CollectorDto(dto.collectorPojo(), dto.namespace(), t))));
     }
 
     private Mono<Collector> create(final CollectorFormData form, final NamespacePojo namespace, final TokenDto token) {

@@ -15,7 +15,7 @@ public interface ReactiveDataSourceRepository extends ReactiveCRUDRepository<Dat
 
     Mono<DataSourceDto> getDtoByOddrn(final String oddrn);
 
-    Flux<DataSourceDto> getDtosByOddrns(final List<String> oddrns, final boolean includeDeleted);
+    Flux<DataSourceDto> getDtosByOddrns(final List<String> oddrns);
 
     Flux<DataSourceDto> listActive();
 

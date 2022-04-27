@@ -27,8 +27,16 @@ public class NamespaceServiceImpl implements NamespaceService {
     private final NamespaceMapper namespaceMapper;
 
     @Override
+    public Mono<NamespacePojo> getOrCreate(final String name) {
+        return namespaceRepository.getByName(name)
+            .switchIfEmpty(namespaceRepository.createByName(name));
+    }
+
+    @Override
     public Mono<Namespace> get(final long id) {
-        return namespaceRepository.get(id).map(namespaceMapper::mapPojo);
+        return namespaceRepository.get(id)
+            .switchIfEmpty(Mono.error(new NotFoundException("Namespace with id %d hasn't been found".formatted(id))))
+            .map(namespaceMapper::mapPojo);
     }
 
     @Override
@@ -38,7 +46,8 @@ public class NamespaceServiceImpl implements NamespaceService {
 
     @Override
     public Mono<Namespace> create(final NamespaceFormData createEntityForm) {
-        return Mono.defer(() -> Mono.just(namespaceMapper.mapForm(createEntityForm)))
+        return Mono.just(createEntityForm)
+            .map(namespaceMapper::mapForm)
             .flatMap(namespaceRepository::create)
             .map(namespaceMapper::mapPojo);
     }
@@ -47,11 +56,11 @@ public class NamespaceServiceImpl implements NamespaceService {
     @ReactiveTransactional
     public Mono<Namespace> update(final long id, final NamespaceUpdateFormData updateEntityForm) {
         return namespaceRepository.get(id)
+            .switchIfEmpty(Mono.error(new NotFoundException("Namespace with id %d hasn't been found".formatted(id))))
             .map(pojo -> namespaceMapper.applyToPojo(pojo, updateEntityForm))
             .flatMap(namespaceRepository::update)
-            .flatMap(ns -> searchEntrypointRepository.updateNamespaceVector(ns.getId()).map(rowCountUpdated -> ns))
-            .map(namespaceMapper::mapPojo)
-            .switchIfEmpty(Mono.error(new NotFoundException("Namespace with id %d hasn't been found".formatted(id))));
+            .flatMap(ns -> searchEntrypointRepository.updateNamespaceVector(ns.getId()).thenReturn(ns))
+            .map(namespaceMapper::mapPojo);
     }
 
     @Override

@@ -1,11 +1,11 @@
 ALTER TABLE namespace
-    ADD COLUMN deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
+    ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
 
 ALTER TABLE data_source
-    ADD COLUMN deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
+    ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
 
 ALTER TABLE collector
-    ADD COLUMN deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
+    ADD COLUMN IF NOT EXISTS deleted_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL;
 
 UPDATE namespace
 SET deleted_at = NOW()
@@ -22,13 +22,13 @@ SET deleted_at = NOW()
 WHERE deleted_at IS NULL
   AND is_deleted = true;
 
-CREATE UNIQUE INDEX namespace_unique ON namespace (name) WHERE is_deleted = false;
+CREATE UNIQUE INDEX IF NOT EXISTS namespace_unique ON namespace (name) WHERE is_deleted = false;
 
-CREATE UNIQUE INDEX data_source_name_unique ON data_source (name) WHERE is_deleted = false;
+CREATE UNIQUE INDEX IF NOT EXISTS data_source_name_unique ON data_source (name) WHERE is_deleted = false;
 
-CREATE UNIQUE INDEX data_source_oddrn_unique ON data_source (oddrn) WHERE is_deleted = false;
+CREATE UNIQUE INDEX IF NOT EXISTS data_source_oddrn_unique ON data_source (oddrn) WHERE is_deleted = false;
 
-CREATE UNIQUE INDEX collector_name_unique ON collector (name) WHERE is_deleted = false;
+CREATE UNIQUE INDEX IF NOT EXISTS collector_name_unique ON collector (name) WHERE is_deleted = false;
 
 ALTER TABLE collector
-    DROP CONSTRAINT collector_name_key;
+    DROP CONSTRAINT IF EXISTS collector_name_key;

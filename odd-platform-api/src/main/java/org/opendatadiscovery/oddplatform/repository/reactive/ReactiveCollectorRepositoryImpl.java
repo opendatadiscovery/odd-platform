@@ -115,10 +115,12 @@ public class ReactiveCollectorRepositoryImpl
     }
 
     private CollectorDto mapRecordToDto(final Record record) {
+        final TokenPojo tokenPojo = jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class);
+
         return new CollectorDto(
             record.into(COLLECTOR).into(CollectorPojo.class),
             jooqRecordHelper.extractRelation(record, NAMESPACE, NamespacePojo.class),
-            new TokenDto(jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class))
+            new TokenDto(tokenPojo)
         );
     }
 }

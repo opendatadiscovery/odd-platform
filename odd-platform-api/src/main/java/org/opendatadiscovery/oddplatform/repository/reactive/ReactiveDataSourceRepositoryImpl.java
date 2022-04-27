@@ -9,6 +9,7 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.Table;
 import org.jooq.UpdateResultStep;
@@ -47,12 +48,7 @@ public class ReactiveDataSourceRepositoryImpl
 
     @Override
     public Mono<DataSourceDto> getDto(final long id) {
-        final SelectConditionStep<Record> query = DSL.select(DATA_SOURCE.asterisk())
-            .select(NAMESPACE.asterisk())
-            .select(TOKEN.asterisk())
-            .from(DATA_SOURCE)
-            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
+        final SelectConditionStep<Record> query = baseSelect()
             .where(DATA_SOURCE.ID.eq(id))
             .and(DATA_SOURCE.IS_DELETED.isFalse());
 
@@ -88,13 +84,7 @@ public class ReactiveDataSourceRepositoryImpl
 
     @Override
     public Mono<DataSourceDto> getDtoByOddrn(final String oddrn) {
-        final SelectConditionStep<Record> query = DSL
-            .select(DATA_SOURCE.asterisk())
-            .select(NAMESPACE.asterisk())
-            .select(TOKEN.asterisk())
-            .from(DATA_SOURCE)
-            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
+        final SelectConditionStep<Record> query = baseSelect()
             .where(DATA_SOURCE.ODDRN.eq(oddrn))
             .and(DATA_SOURCE.IS_DELETED.isFalse());
 
@@ -102,35 +92,17 @@ public class ReactiveDataSourceRepositoryImpl
     }
 
     @Override
-    public Flux<DataSourceDto> getDtosByOddrns(final List<String> oddrns, final boolean includeDeleted) {
-        final List<Condition> conditions = new ArrayList<>();
-        conditions.add(DATA_SOURCE.ODDRN.in(oddrns));
-
-        if (!includeDeleted) {
-            conditions.add(DATA_SOURCE.IS_DELETED.isFalse());
-        }
-
-        final SelectConditionStep<Record> query = DSL
-            .select(DATA_SOURCE.asterisk())
-            .select(NAMESPACE.asterisk())
-            .select(TOKEN.asterisk())
-            .from(DATA_SOURCE)
-            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
-            .where(conditions);
+    public Flux<DataSourceDto> getDtosByOddrns(final List<String> oddrns) {
+        final SelectConditionStep<Record> query = baseSelect()
+            .where(DATA_SOURCE.ODDRN.in(oddrns))
+            .and(DATA_SOURCE.IS_DELETED.isFalse());
 
         return jooqReactiveOperations.flux(query).map(this::mapRecordIntoDto);
     }
 
     @Override
     public Flux<DataSourceDto> listActive() {
-        final SelectConditionStep<Record> query = DSL
-            .select(DATA_SOURCE.asterisk())
-            .select(NAMESPACE.asterisk())
-            .select(TOKEN.asterisk())
-            .from(DATA_SOURCE)
-            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
-            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID))
+        final SelectConditionStep<Record> query = baseSelect()
             .where(DATA_SOURCE.ACTIVE.isTrue())
             .and(DATA_SOURCE.IS_DELETED.isFalse())
             .and(DATA_SOURCE.CONNECTION_URL.isNotNull())
@@ -161,6 +133,15 @@ public class ReactiveDataSourceRepositoryImpl
         return jooqReactiveOperations.mono(query).map(this::mapRecordIntoDto);
     }
 
+    private SelectJoinStep<Record> baseSelect() {
+        return DSL
+            .select(DATA_SOURCE.asterisk())
+            .select(NAMESPACE.asterisk())
+            .select(TOKEN.asterisk())
+            .from(DATA_SOURCE)
+            .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+            .leftJoin(TOKEN).on(TOKEN.ID.eq(DATA_SOURCE.TOKEN_ID));
+    }
 
     private List<Condition> queryCondition(final String nameQuery) {
         final var conditionsList = new ArrayList<Condition>();
@@ -177,7 +158,7 @@ public class ReactiveDataSourceRepositoryImpl
         final TokenPojo tokenPojo = jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class);
         return new DataSourceDto(
             jooqRecordHelper.remapCte(record, dataSourceCteName, DATA_SOURCE).into(DataSourcePojo.class),
-            record.into(NAMESPACE).into(NamespacePojo.class),
+            jooqRecordHelper.extractRelation(record, NAMESPACE, NamespacePojo.class),
             tokenPojo != null ? new TokenDto(tokenPojo) : null
         );
     }

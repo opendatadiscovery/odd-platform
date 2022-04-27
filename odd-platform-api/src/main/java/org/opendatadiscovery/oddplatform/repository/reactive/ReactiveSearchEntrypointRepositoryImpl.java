@@ -49,7 +49,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             dataEntityId,
             vectorFields,
             SEARCH_ENTRYPOINT.NAMESPACE_VECTOR,
-            true
+            false
         );
 
         return jooqReactiveOperations.mono(insertQuery);
@@ -92,7 +92,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .and(DATA_SOURCE.IS_DELETED.isFalse());
 
         final Insert<SearchEntrypointRecord> dataSourceQuery = jooqFTSHelper
-            .buildSearchEntrypointUpsert(dsSelect, deId, dsVectorFields, SEARCH_ENTRYPOINT.DATA_SOURCE_VECTOR, true);
+            .buildSearchEntrypointUpsert(dsSelect, deId, dsVectorFields, SEARCH_ENTRYPOINT.DATA_SOURCE_VECTOR, false);
 
         return jooqReactiveOperations.mono(dataSourceQuery);
     }

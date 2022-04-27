@@ -1,9 +1,9 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValueMappingStrategy;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceList;
@@ -15,12 +15,9 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 
-import java.util.List;
-
 @Mapper(
     config = MapperConfig.class,
-    uses = {NamespaceMapper.class, TokenMapper.class},
-    nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT
+    uses = {NamespaceMapper.class, TokenMapper.class}
 )
 public interface DataSourceMapper {
     DataSource mapPojo(final DataSourcePojo dataSource);

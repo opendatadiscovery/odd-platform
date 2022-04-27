@@ -13,21 +13,15 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
 @RestController
 @RequiredArgsConstructor
 public class DataSourceController implements DataSourceApi {
     private final DataSourceService dataSourceService;
 
     @Override
-    public Mono<ResponseEntity<DataSourceList>> getDataSourceList(
-        @NotNull @Valid final Integer page,
-        @NotNull @Valid final Integer size,
-        @Valid final String query,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<DataSourceList>> getDataSourceList(final Integer page, final Integer size,
+                                                                  final String query,
+                                                                  final ServerWebExchange exchange) {
         return dataSourceService
             .list(page, size, query)
             .map(ResponseEntity::ok);
@@ -39,21 +33,17 @@ public class DataSourceController implements DataSourceApi {
     }
 
     @Override
-    public Mono<ResponseEntity<DataSource>> registerDataSource(
-        @Valid final Mono<DataSourceFormData> dataSourceFormData,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<DataSource>> registerDataSource(final Mono<DataSourceFormData> dataSourceFormData,
+                                                               final ServerWebExchange exchange) {
         return dataSourceFormData
             .flatMap(dataSourceService::create)
             .map(ResponseEntity::ok);
     }
 
     @Override
-    public Mono<ResponseEntity<DataSource>> updateDataSource(
-        final Long dataSourceId,
-        @Valid final Mono<DataSourceUpdateFormData> dataSourceUpdateFormData,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<DataSource>> updateDataSource(final Long dataSourceId,
+                                                             final Mono<DataSourceUpdateFormData> dataSourceUpdateFormData,
+                                                             final ServerWebExchange exchange) {
         return dataSourceUpdateFormData
             .flatMap(form -> dataSourceService.update(dataSourceId, form))
             .map(ResponseEntity::ok);
@@ -62,14 +52,12 @@ public class DataSourceController implements DataSourceApi {
     @Override
     public Mono<ResponseEntity<Void>> deleteDataSource(final Long dataSourceId, final ServerWebExchange exchange) {
         return dataSourceService.delete(dataSourceId)
-            .map(__ -> ResponseEntity.noContent().build());
+            .then(Mono.just(ResponseEntity.noContent().build()));
     }
 
     @Override
-    public Mono<ResponseEntity<DataSource>> regenerateDataSourceToken(
-        final Long dataSourceId,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<DataSource>> regenerateDataSourceToken(final Long dataSourceId,
+                                                                      final ServerWebExchange exchange) {
         return dataSourceService
             .regenerateDataSourceToken(dataSourceId)
             .map(ResponseEntity::ok);

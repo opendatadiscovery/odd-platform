@@ -55,7 +55,7 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
         final UpdateResultStep<R> query = DSL.update(recordTable)
             .set(deletedField, true)
             .set(deletedAtField, LocalDateTime.now())
-            .where(getCondition(id))
+            .where(idCondition(id))
             .returning();
 
         return jooqReactiveOperations.mono(query).map(this::recordToPojo);
@@ -66,20 +66,20 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
         final UpdateResultStep<R> query = DSL.update(recordTable)
             .set(deletedField, true)
             .set(deletedAtField, LocalDateTime.now())
-            .where(getCondition(ids))
+            .where(idCondition(ids))
             .returning();
 
         return jooqReactiveOperations.flux(query).map(this::recordToPojo);
     }
 
     @Override
-    protected List<Condition> getCondition(final long id) {
-        return addSoftDeleteFilter(super.getCondition(id));
+    protected List<Condition> idCondition(final long id) {
+        return addSoftDeleteFilter(super.idCondition(id));
     }
 
     @Override
-    protected List<Condition> getCondition(final Collection<Long> ids) {
-        return addSoftDeleteFilter(super.getCondition(ids));
+    protected List<Condition> idCondition(final Collection<Long> ids) {
+        return addSoftDeleteFilter(super.idCondition(ids));
     }
 
     @Override
@@ -92,7 +92,7 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
     }
 
     protected List<Condition> addSoftDeleteFilter(final List<Condition> conditions) {
-        final ArrayList<Condition> conditionsList = new ArrayList<>(conditions);
+        final List<Condition> conditionsList = new ArrayList<>(conditions);
         conditionsList.add(deletedField.isFalse());
         return conditionsList;
     }

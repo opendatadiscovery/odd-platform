@@ -42,7 +42,6 @@ public class IngestionController implements IngestionApi {
             .cast(Long.class)
             .zipWith(dataSourceList)
             .flatMapMany(t -> dataSourceIngestionService.createDataSources(t.getT1(), t.getT2()))
-            .collectList()
-            .map(ignored -> ResponseEntity.ok().build());
+            .then(Mono.just(ResponseEntity.ok().build()));
     }
 }
