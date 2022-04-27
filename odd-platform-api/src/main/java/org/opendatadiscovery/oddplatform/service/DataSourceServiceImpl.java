@@ -59,13 +59,13 @@ public class DataSourceServiceImpl implements DataSourceService {
         if (StringUtils.isNotEmpty(form.getNamespaceName())) {
             return namespaceService.getOrCreate(form.getNamespaceName())
                 .zipWith(token)
-                .flatMap(t -> create(form, t.getT2(), t.getT1()))
+                .flatMap(t -> createDataSource(form, t.getT2(), t.getT1()))
                 .flatMap(this::updateSearchVectors)
                 .map(dataSourceMapper::mapDto);
         }
 
         return token
-            .flatMap(t -> create(form, t, null))
+            .flatMap(t -> createDataSource(form, t, null))
             .flatMap(dsDto -> searchEntrypointRepository
                 .updateDataSourceVector(dsDto.dataSource().getId())
                 .thenReturn(dsDto))
@@ -80,10 +80,10 @@ public class DataSourceServiceImpl implements DataSourceService {
             .flatMap(dataSource -> {
                 if (StringUtils.isNotEmpty(form.getNamespaceName())) {
                     return namespaceService.getOrCreate(form.getNamespaceName())
-                        .flatMap(namespace -> update(dataSource, form, namespace))
-                        .flatMap(this::updateSearchVectors);
+                        .flatMap(namespace -> updateDataSource(dataSource, form, namespace))
+                        .flatMap(dto -> updateSearchVectors(dto));
                 }
-                return update(dataSource, form, null)
+                return updateDataSource(dataSource, form, null)
                     .flatMap(dto -> updateSearchVectors(dto));
             })
             .map(dataSourceMapper::mapDto);
@@ -112,7 +112,7 @@ public class DataSourceServiceImpl implements DataSourceService {
             .map(dataSourceMapper::mapDto);
     }
 
-    private Mono<DataSourceDto> update(final DataSourceDto dataSourceDto,
+    private Mono<DataSourceDto> updateDataSource(final DataSourceDto dataSourceDto,
                                        final DataSourceUpdateFormData form,
                                        final NamespacePojo namespace) {
         return Mono.just(dataSourceMapper.applyToPojo(dataSourceDto.dataSource(), form, namespace))
@@ -121,7 +121,7 @@ public class DataSourceServiceImpl implements DataSourceService {
             .map(t -> new DataSourceDto(t.getT1(), namespace, t.getT2()));
     }
 
-    private Mono<DataSourceDto> create(final DataSourceFormData form,
+    private Mono<DataSourceDto> createDataSource(final DataSourceFormData form,
                                        final TokenDto token,
                                        final NamespacePojo namespace) {
         return Mono.just(dataSourceMapper.mapForm(form, namespace, token))
@@ -133,6 +133,6 @@ public class DataSourceServiceImpl implements DataSourceService {
         return Mono.zip(
                 searchEntrypointRepository.updateDataSourceVector(dto.dataSource().getId()),
                 searchEntrypointRepository.updateNamespaceVector(dto.namespace().getId()))
-            .map(a -> dto);
+            .thenReturn(dto);
     }
 }

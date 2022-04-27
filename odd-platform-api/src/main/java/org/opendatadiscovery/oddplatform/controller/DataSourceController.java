@@ -42,9 +42,9 @@ public class DataSourceController implements DataSourceApi {
 
     @Override
     public Mono<ResponseEntity<DataSource>> updateDataSource(final Long dataSourceId,
-                                                             final Mono<DataSourceUpdateFormData> dataSourceUpdateFormData,
+                                                             final Mono<DataSourceUpdateFormData> formData,
                                                              final ServerWebExchange exchange) {
-        return dataSourceUpdateFormData
+        return formData
             .flatMap(form -> dataSourceService.update(dataSourceId, form))
             .map(ResponseEntity::ok);
     }

@@ -15,7 +15,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.CollectorPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.TokenRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -40,10 +39,10 @@ public class CollectorServiceImpl implements CollectorService {
 
         if (StringUtils.isNotEmpty(form.getNamespaceName())) {
             final Mono<NamespacePojo> namespace = namespaceService.getOrCreate(form.getNamespaceName());
-            return Mono.zip(namespace, token).flatMap(t -> create(form, t.getT1(), t.getT2()));
+            return Mono.zip(namespace, token).flatMap(t -> createCollector(form, t.getT1(), t.getT2()));
         }
 
-        return token.flatMap(t -> create(form, null, t));
+        return token.flatMap(t -> createCollector(form, null, t));
     }
 
     @Override
@@ -54,14 +53,16 @@ public class CollectorServiceImpl implements CollectorService {
             .flatMap(collectorDto -> {
                 if (StringUtils.isNotEmpty(form.getNamespaceName())) {
                     return namespaceService.getOrCreate(form.getNamespaceName())
-                        .flatMap(namespace -> update(
+                        .flatMap(namespace -> updateCollector(
                             collectorMapper.applyToDto(collectorDto.collectorPojo(), form, namespace),
                             namespace,
                             collectorDto.tokenDto()
                         ));
                 }
 
-                return update(collectorMapper.applyToDto(collectorDto.collectorPojo(), form), collectorDto.tokenDto());
+                return updateCollector(
+                    collectorMapper.applyToDto(collectorDto.collectorPojo(), form), collectorDto.tokenDto()
+                );
             });
     }
 
@@ -80,18 +81,20 @@ public class CollectorServiceImpl implements CollectorService {
                 .map(t -> collectorMapper.mapDto(new CollectorDto(dto.collectorPojo(), dto.namespace(), t))));
     }
 
-    private Mono<Collector> create(final CollectorFormData form, final NamespacePojo namespace, final TokenDto token) {
+    private Mono<Collector> createCollector(final CollectorFormData form, final NamespacePojo namespace,
+                                            final TokenDto token) {
         return collectorRepository
             .create(collectorMapper.mapForm(form, namespace, token.tokenPojo()))
             .map(c -> new CollectorDto(c, namespace, token))
             .map(collectorMapper::mapDto);
     }
 
-    private Mono<Collector> update(final CollectorPojo pojo, final TokenDto token) {
-        return update(pojo, null, token);
+    private Mono<Collector> updateCollector(final CollectorPojo pojo, final TokenDto token) {
+        return updateCollector(pojo, null, token);
     }
 
-    private Mono<Collector> update(final CollectorPojo pojo, final NamespacePojo namespace, final TokenDto token) {
+    private Mono<Collector> updateCollector(final CollectorPojo pojo, final NamespacePojo namespace,
+                                            final TokenDto token) {
         return collectorRepository.update(pojo)
             .map(updatedCollector -> new CollectorDto(updatedCollector, namespace, token))
             .map(collectorMapper::mapDto);

@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,9 +20,6 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRe
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -93,7 +92,7 @@ class NamespaceServiceImplTest {
 
         when(namespaceRepository.get(eq(namespaceId))).thenReturn(Mono.empty());
 
-        StepVerifier.create(namespaceService.get(namespaceId)).verifyComplete();
+        StepVerifier.create(namespaceService.get(namespaceId)).verifyError(NotFoundException.class);
 
         verify(namespaceRepository, only()).get(eq(namespaceId));
         verify(namespaceMapper, never()).mapPojo(any());

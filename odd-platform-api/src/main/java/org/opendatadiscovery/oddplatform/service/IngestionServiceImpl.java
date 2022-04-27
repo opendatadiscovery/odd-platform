@@ -120,7 +120,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<Long> acquireDataSourceId(final String dataSourceOddrn) {
-        return Mono.just(dataSourceOddrn)
+        final Mono<Long> createDataSourceByOddrn = Mono.just(dataSourceOddrn)
             .map(this::parseOddrn)
             .filter(Optional::isPresent)
             .map(Optional::get)
@@ -132,6 +132,9 @@ public class IngestionServiceImpl implements IngestionService {
             .map(path -> ((ODDPlatformDataSourcePath) path).getDatasourceId())
             .flatMap(id -> dataSourceRepository.injectOddrn(id, dataSourceOddrn))
             .map(dataSourceDto -> dataSourceDto.dataSource().getId());
+        return dataSourceRepository.getDtoByOddrn(dataSourceOddrn)
+            .map(dataSource -> dataSource.dataSource().getId())
+            .switchIfEmpty(createDataSourceByOddrn);
     }
 
     private IngestionDataStructure buildStructure(final DataEntityList dataEntityList,

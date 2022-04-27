@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Field;
 import org.jooq.Insert;
@@ -14,10 +15,8 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.ReactiveJooqFTSHelper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
-import java.util.List;
 
 import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.update;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.tables.DataSource.DATA_SOURCE;

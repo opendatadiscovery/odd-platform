@@ -1,5 +1,11 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
@@ -14,18 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static java.util.function.Function.identity;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
-
     @Autowired
     private ReactiveDataSourceRepository dataSourceRepository;
 
@@ -90,7 +88,6 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Gets a paginated list of data source dto objects querying their names")
     public void listDtoNameQueryTest() {
-
     }
 
     private Map<Long, DataSourceDto> generateDataSources(final NamespacePojo namespace1,

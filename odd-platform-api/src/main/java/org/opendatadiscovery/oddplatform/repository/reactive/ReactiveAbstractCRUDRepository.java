@@ -186,9 +186,8 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     protected List<Condition> listCondition(final String nameQuery) {
-        return StringUtils.isNotEmpty(nameQuery) ?
-            List.of(nameField.containsIgnoreCase(nameQuery))
-            : emptyList();
+        return StringUtils.isNotEmpty(nameQuery)
+            ? List.of(nameField.containsIgnoreCase(nameQuery)) : emptyList();
     }
 
     protected List<Condition> idCondition(final long id) {
