@@ -14,7 +14,7 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 import { CssBaseline } from '@mui/material';
-import configureStore from './redux/store';
+import { store } from 'redux/store';
 import * as serviceWorker from './serviceWorker';
 import theme from './theme/mui.theme';
 
@@ -24,8 +24,6 @@ declare module 'styled-components' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
-
-const store = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>

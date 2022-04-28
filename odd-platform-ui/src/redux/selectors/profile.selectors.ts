@@ -1,7 +1,6 @@
-import { createSelector } from 'reselect';
-import { RootState } from 'redux/interfaces';
+import { createSelector } from '@reduxjs/toolkit';
+import { RootState, ProfileState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
-import { ProfileState } from '../interfaces/state';
 
 const profileState = ({ profile }: RootState): ProfileState => profile;
 

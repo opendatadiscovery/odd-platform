@@ -1,5 +1,5 @@
-import { combineReducers } from 'redux';
 import { RootState } from 'redux/interfaces';
+import { combineReducers } from '@reduxjs/toolkit';
 import loader from './loader-reducer';
 import namespaces from './namespace.reducer';
 import dataSources from './datasources.reducer';

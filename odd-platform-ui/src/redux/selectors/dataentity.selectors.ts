@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import get from 'lodash/get';
 import { RootState, DataEntitiesState } from 'redux/interfaces';
 import { DataEntityClassNameEnum } from 'generated-sources';

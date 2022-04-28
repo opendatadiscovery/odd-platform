@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState, MetaDataState } from 'redux/interfaces';
 import { MetadataFieldValue } from 'generated-sources';
 import { createFetchingSelector } from './loader-selectors';

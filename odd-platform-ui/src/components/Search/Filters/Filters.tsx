@@ -51,7 +51,7 @@ const Filters: React.FC<FiltersProps> = ({
         <AppButton
           color="tertiary"
           size="medium"
-          onClick={clearDataEntitySearchFilters}
+          onClick={() => clearDataEntitySearchFilters()}
         >
           Clear All
         </AppButton>

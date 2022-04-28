@@ -1,5 +1,5 @@
-import { createSelector } from 'reselect';
 import { AppInfoState, RootState } from 'redux/interfaces';
+import { createSelector } from '@reduxjs/toolkit';
 
 const appInfoState = ({ appInfo }: RootState): AppInfoState => appInfo;
 

@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import findKey from 'lodash/findKey';
 import omit from 'lodash/omit';
 import values from 'lodash/values';
