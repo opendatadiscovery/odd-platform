@@ -29,6 +29,30 @@ const reducer = (
           },
         },
       };
+    case getType(actions.updateTermAction.success):
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.payload.id]: action.payload,
+        },
+      };
+    case getType(actions.createTermAction.success):
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.payload.id]: action.payload,
+        },
+        allIds: [action.payload.id, ...state.allIds],
+      };
+    case getType(actions.deleteTermAction.success):
+      return {
+        ...state,
+        allIds: state.allIds.filter(
+          termId => termId !== action.payload.id
+        ),
+      };
     case getType(actions.updateTermDetailsTagsAction.success):
       return {
         ...state,

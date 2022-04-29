@@ -89,15 +89,17 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
   const termFormTitle = (
     <Typography variant="h4" component="span">
       {term ? 'Edit ' : 'Add '}
-      Term
+      term
     </Typography>
   );
 
   const termFormContent = () => (
     <form id="term-create-form" onSubmit={handleSubmit(onSubmit)}>
-      <Typography variant="subtitle2" fontSize="0.73rem">
-        Select a term from the dictionary or create a new term.
-      </Typography>
+      {!term && (
+        <Typography variant="subtitle2" fontSize="0.73rem">
+          Select a term from the dictionary or create a new term.
+        </Typography>
+      )}
       <Controller
         name="name"
         control={control}
@@ -160,7 +162,8 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
       fullWidth
       disabled={!isValid}
     >
-      Add term
+      {term ? 'Save ' : 'Add '}
+      term
     </AppButton>
   );
 

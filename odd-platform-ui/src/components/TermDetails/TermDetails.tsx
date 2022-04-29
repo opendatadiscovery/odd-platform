@@ -19,18 +19,19 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
+import EditIcon from 'components/shared/Icons/EditIcon';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import KebabIcon from 'components/shared/Icons/KebabIcon';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import AppPopover from 'components/shared/AppPopover/AppPopover';
+import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
+import TermsFormContainer from 'components/TermSearch/TermForm/TermsFormContainer';
 import {
   TermDetailsComponentWrapper,
   TermDetailsHeadingRightWrapper,
   TermDetailsHeadingWrapper,
 } from './TermDetailsStyles';
-import EditIcon from '../shared/Icons/EditIcon';
-import AppButton from '../shared/AppButton/AppButton';
-import AppIconButton from '../shared/AppIconButton/AppIconButton';
-import KebabIcon from '../shared/Icons/KebabIcon';
-import AppMenuItem from '../shared/AppMenuItem/AppMenuItem';
-import AppPopover from '../shared/AppPopover/AppPopover';
-import ConfirmationDialog from '../shared/ConfirmationDialog/ConfirmationDialog';
 
 // lazy components
 const OverviewContainer = React.lazy(
@@ -114,15 +115,19 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
                   </Typography>
                 </>
               )}
-              <AppButton
-                size="medium"
-                color="primaryLight"
-                onClick={() => {}}
-                startIcon={<EditIcon />}
-                sx={{ ml: 1 }}
-              >
-                Edit
-              </AppButton>
+              <TermsFormContainer
+                term={termDetails}
+                btnCreateEl={
+                  <AppButton
+                    size="medium"
+                    color="primaryLight"
+                    startIcon={<EditIcon />}
+                    sx={{ ml: 1 }}
+                  >
+                    Edit
+                  </AppButton>
+                }
+              />
               <AppPopover
                 renderOpenBtn={({ onClick, ariaDescribedBy }) => (
                   <AppIconButton
