@@ -1,6 +1,8 @@
 package org.opendatadiscovery.oddplatform.auth.filter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpMethod;
@@ -12,6 +14,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
+@Slf4j
 public class IngestionDataSourceFilter extends AbstractIngestionFilter {
     private final ReactiveCollectorRepository collectorRepository;
 
@@ -27,6 +30,7 @@ public class IngestionDataSourceFilter extends AbstractIngestionFilter {
             public Flux<DataBuffer> getBody() {
                 return super.getBody().collectList()
                     .flatMapMany(dataBuffer -> {
+                        final DataSourceList body = readBody(dataBuffer, DataSourceList.class);
                         final String token = resolveToken(exchange.getRequest());
 
                         return collectorRepository.getByToken(token)
@@ -34,7 +38,7 @@ public class IngestionDataSourceFilter extends AbstractIngestionFilter {
                             .zipWith(exchange.getSession())
                             .doOnNext(t -> t.getT2().getAttributes()
                                 .put(SessionConstants.COLLECTOR_ID_SESSION_KEY, t.getT1().getId()))
-                            .thenMany(Flux.fromIterable(dataBuffer));
+                            .flatMapIterable(i -> dataBuffer);
                     });
             }
         };

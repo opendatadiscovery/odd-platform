@@ -22,13 +22,13 @@ SET deleted_at = NOW()
 WHERE deleted_at IS NULL
   AND is_deleted = true;
 
-CREATE UNIQUE INDEX IF NOT EXISTS namespace_unique ON namespace (name) WHERE is_deleted = false;
+CREATE UNIQUE INDEX IF NOT EXISTS namespace_unique ON namespace (name) WHERE deleted_at IS NULL;
 
-CREATE UNIQUE INDEX IF NOT EXISTS data_source_name_unique ON data_source (name) WHERE is_deleted = false;
+CREATE UNIQUE INDEX IF NOT EXISTS data_source_name_unique ON data_source (name) WHERE deleted_at IS NULL;
 
-CREATE UNIQUE INDEX IF NOT EXISTS data_source_oddrn_unique ON data_source (oddrn) WHERE is_deleted = false;
+CREATE UNIQUE INDEX IF NOT EXISTS data_source_oddrn_unique ON data_source (oddrn) WHERE deleted_at IS NULL;
 
-CREATE UNIQUE INDEX IF NOT EXISTS collector_name_unique ON collector (name) WHERE is_deleted = false;
+CREATE UNIQUE INDEX IF NOT EXISTS collector_name_unique ON collector (name) WHERE deleted_at IS NULL;
 
 ALTER TABLE collector
     DROP CONSTRAINT IF EXISTS collector_name_key;

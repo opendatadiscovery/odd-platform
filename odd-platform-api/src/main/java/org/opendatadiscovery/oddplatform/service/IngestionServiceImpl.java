@@ -35,6 +35,7 @@ import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -131,7 +132,7 @@ public class IngestionServiceImpl implements IngestionService {
                 Mono.error(() -> new NotFoundException("Data source with oddrn %s hasn't been found", dataSourceOddrn)))
             .map(path -> ((ODDPlatformDataSourcePath) path).getDatasourceId())
             .flatMap(id -> dataSourceRepository.injectOddrn(id, dataSourceOddrn))
-            .map(dataSourceDto -> dataSourceDto.dataSource().getId());
+            .map(DataSourcePojo::getId);
         return dataSourceRepository.getDtoByOddrn(dataSourceOddrn)
             .map(dataSource -> dataSource.dataSource().getId())
             .switchIfEmpty(createDataSourceByOddrn);

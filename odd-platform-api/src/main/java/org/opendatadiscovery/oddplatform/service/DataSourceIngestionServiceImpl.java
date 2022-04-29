@@ -57,8 +57,7 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
 
                         return Flux.concat(updatedDataSources, createdDataSources);
                     })
-                    .map(ds -> new DataSourceDto(ds, c.namespace(), c.tokenDto()))
-                    .map(dataSourceIngestionMapper::mapDtoToIngestionModel);
+                    .map(dataSourceIngestionMapper::mapPojoToIngestionModel);
             });
     }
 
@@ -77,8 +76,7 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
                 return new DataSourcePojo(a)
                     .setName(i.getName())
                     .setDescription(i.getDescription())
-                    .setUpdatedAt(LocalDateTime.now())
-                    .setIsDeleted(false);
+                    .setNamespaceId(i.getNamespaceId());
             })
             .filter(Objects::nonNull)
             .toList();
@@ -91,10 +89,9 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
 
     private List<DataSourcePojo> mapDataSources(final DataSourceList dataSourceList, final CollectorDto c) {
         return dataSourceList.getItems().stream()
-            .map(ds -> dataSourceIngestionMapper.mapIngestionModel(
-                ds,
+            .map(ds -> dataSourceIngestionMapper.mapIngestionModel(ds,
                 MappingUtils.extractFieldFromNullableObject(c.namespace(), NamespacePojo::getId),
-                MappingUtils.extractFieldFromNullableObject(c.tokenDto().tokenPojo(), TokenPojo::getId)
+                c.collectorPojo().getId()
             ))
             .toList();
     }

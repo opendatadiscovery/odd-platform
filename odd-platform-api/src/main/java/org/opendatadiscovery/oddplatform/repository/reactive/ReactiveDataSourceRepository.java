@@ -20,5 +20,5 @@ public interface ReactiveDataSourceRepository extends ReactiveCRUDRepository<Dat
 
     Mono<Boolean> existsByNamespace(final long namespaceId);
 
-    Mono<DataSourceDto> injectOddrn(final long id, final String oddrn);
+    Mono<DataSourcePojo> injectOddrn(final long id, final String oddrn);
 }

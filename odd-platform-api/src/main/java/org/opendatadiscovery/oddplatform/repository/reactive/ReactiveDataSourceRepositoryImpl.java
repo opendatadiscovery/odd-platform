@@ -123,14 +123,14 @@ public class ReactiveDataSourceRepositoryImpl
     }
 
     @Override
-    public Mono<DataSourceDto> injectOddrn(final long id, final String oddrn) {
+    public Mono<DataSourcePojo> injectOddrn(final long id, final String oddrn) {
         final UpdateResultStep<DataSourceRecord> query = DSL.update(DATA_SOURCE)
             .set(DATA_SOURCE.ODDRN, oddrn)
             .set(DATA_SOURCE.UPDATED_AT, LocalDateTime.now())
             .where(DATA_SOURCE.ID.eq(id))
             .returning();
 
-        return jooqReactiveOperations.mono(query).map(this::mapRecordIntoDto);
+        return jooqReactiveOperations.mono(query).map(r -> r.into(DataSourcePojo.class));
     }
 
     private SelectJoinStep<Record> baseSelect() {

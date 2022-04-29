@@ -38,7 +38,13 @@ public class IngestionController implements IngestionApi {
     public Mono<ResponseEntity<Void>> createDataSource(@Valid final Mono<DataSourceList> dataSourceList,
                                                        final ServerWebExchange exchange) {
         return exchange.getSession()
-            .mapNotNull(ws -> ws.getAttribute(SessionConstants.COLLECTOR_ID_SESSION_KEY))
+            .map(ws -> {
+                final Object collectorId = ws.getAttribute(SessionConstants.COLLECTOR_ID_SESSION_KEY);
+                if (collectorId == null) {
+                    throw new IllegalStateException("Collector id is null");
+                }
+                return collectorId;
+            })
             .cast(Long.class)
             .zipWith(dataSourceList)
             .flatMapMany(t -> dataSourceIngestionService.createDataSources(t.getT1(), t.getT2()))

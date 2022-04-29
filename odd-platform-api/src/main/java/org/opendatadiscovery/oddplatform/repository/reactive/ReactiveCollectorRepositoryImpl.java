@@ -90,7 +90,7 @@ public class ReactiveCollectorRepositoryImpl
             .select(COLLECTOR.asterisk())
             .from(COLLECTOR)
             .join(TOKEN).on(TOKEN.ID.eq(COLLECTOR.TOKEN_ID))
-            .where(TOKEN.VALUE.eq(token));
+            .where(addSoftDeleteFilter(TOKEN.VALUE.eq(token)));
 
         return jooqReactiveOperations.mono(query).map(r -> r.into(CollectorPojo.class));
     }
