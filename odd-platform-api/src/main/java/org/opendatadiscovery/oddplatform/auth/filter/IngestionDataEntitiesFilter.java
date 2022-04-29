@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.auth.filter;
 
-import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
@@ -18,7 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
-@Slf4j
+@ConditionalOnProperty(value = "auth.ingestion.filter.enabled", havingValue = "true")
 public class IngestionDataEntitiesFilter extends AbstractIngestionFilter {
 
     private final ReactiveDataSourceRepository dataSourceRepository;

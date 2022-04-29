@@ -1,12 +1,12 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
@@ -16,7 +16,6 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList
 import org.opendatadiscovery.oddplatform.mapper.ingestion.DataSourceIngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.utils.MappingUtils;
@@ -28,6 +27,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class DataSourceIngestionServiceImpl implements DataSourceIngestionService {
     private final ReactiveDataSourceRepository reactiveDataSourceRepository;
@@ -46,11 +46,16 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
                     .map(DataSourceDto::dataSource)
                     .collectList()
                     .flatMapMany(list -> {
+                        final List<DataSourcePojo> toUpdate = prepareForUpdate(list, dataSources);
+                        log.info("Going to update datasources with oddrns {}",
+                            toUpdate.stream().map(DataSourcePojo::getOddrn).collect(Collectors.joining(",")));
                         final Flux<DataSourcePojo> updatedDataSources =
-                            reactiveDataSourceRepository.bulkUpdate(prepareForUpdate(list, dataSources));
+                            reactiveDataSourceRepository.bulkUpdate(toUpdate);
 
                         final List<DataSourcePojo> toCreate = prepareForCreate(dataSources,
                             list.stream().map(DataSourcePojo::getOddrn).collect(Collectors.toSet()));
+                        log.info("Going to create datasources with oddrns {}",
+                            toCreate.stream().map(DataSourcePojo::getOddrn).collect(Collectors.joining(",")));
 
                         final Flux<DataSourcePojo> createdDataSources =
                             reactiveDataSourceRepository.bulkCreate(toCreate);
@@ -83,8 +88,8 @@ public class DataSourceIngestionServiceImpl implements DataSourceIngestionServic
     }
 
     private List<DataSourcePojo> prepareForCreate(final List<DataSourcePojo> ingested,
-                                                  final Set<String> excludedOddrns) {
-        return ingested.stream().filter(i -> excludedOddrns.contains(i.getOddrn())).toList();
+                                                  final Set<String> existingOddrns) {
+        return ingested.stream().filter(i -> !existingOddrns.contains(i.getOddrn())).toList();
     }
 
     private List<DataSourcePojo> mapDataSources(final DataSourceList dataSourceList, final CollectorDto c) {

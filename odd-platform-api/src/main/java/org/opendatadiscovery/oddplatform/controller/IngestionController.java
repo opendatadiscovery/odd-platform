@@ -37,7 +37,7 @@ public class IngestionController implements IngestionApi {
     @Override
     public Mono<ResponseEntity<Void>> createDataSource(@Valid final Mono<DataSourceList> dataSourceList,
                                                        final ServerWebExchange exchange) {
-        return exchange.getSession()
+        final Mono<Long> collectorIdMono = exchange.getSession()
             .map(ws -> {
                 final Object collectorId = ws.getAttribute(SessionConstants.COLLECTOR_ID_SESSION_KEY);
                 if (collectorId == null) {
@@ -45,9 +45,10 @@ public class IngestionController implements IngestionApi {
                 }
                 return collectorId;
             })
-            .cast(Long.class)
-            .zipWith(dataSourceList)
-            .flatMapMany(t -> dataSourceIngestionService.createDataSources(t.getT1(), t.getT2()))
+            .cast(Long.class);
+        return dataSourceList
+            .zipWhen(l -> collectorIdMono)
+            .flatMapMany(t -> dataSourceIngestionService.createDataSources(t.getT2(), t.getT1()))
             .then(Mono.just(ResponseEntity.ok().build()));
     }
 }

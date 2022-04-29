@@ -1,8 +1,6 @@
 package org.opendatadiscovery.oddplatform.auth.filter;
 
-import lombok.extern.slf4j.Slf4j;
-import org.opendatadiscovery.oddplatform.exception.NotFoundException;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
+import java.nio.file.AccessDeniedException;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpMethod;
@@ -14,7 +12,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
-@Slf4j
 public class IngestionDataSourceFilter extends AbstractIngestionFilter {
     private final ReactiveCollectorRepository collectorRepository;
 
@@ -30,11 +27,11 @@ public class IngestionDataSourceFilter extends AbstractIngestionFilter {
             public Flux<DataBuffer> getBody() {
                 return super.getBody().collectList()
                     .flatMapMany(dataBuffer -> {
-                        final DataSourceList body = readBody(dataBuffer, DataSourceList.class);
                         final String token = resolveToken(exchange.getRequest());
 
                         return collectorRepository.getByToken(token)
-                            .switchIfEmpty(Mono.error(new NotFoundException("Collector with such token doesn't exist")))
+                            .switchIfEmpty(
+                                Mono.error(new AccessDeniedException("Collector with such token doesn't exist")))
                             .zipWith(exchange.getSession())
                             .doOnNext(t -> t.getT2().getAttributes()
                                 .put(SessionConstants.COLLECTOR_ID_SESSION_KEY, t.getT1().getId()))
