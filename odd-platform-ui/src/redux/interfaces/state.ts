@@ -104,6 +104,13 @@ export interface DataEntityGroupLinkedListState {
   pageInfo?: CurrentPageInfo;
 }
 
+export interface TermGroupLinkedListState {
+  linkedItemsIdsByTermGroupId: {
+    [termGroupId: string]: number[];
+  };
+  pageInfo?: CurrentPageInfo;
+}
+
 export interface MetaDataState {
   dataEntityMetadata: {
     [dataEntityId: string]: {
@@ -260,6 +267,7 @@ export type RootState = {
   dataQualityTest: DataQualityTestState;
   alerts: AlertsState;
   dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
+  termGroupLinkedList: TermGroupLinkedListState;
   collectors: CollectorsState;
   terms: TermsState;
   termSearch: TermSearchState;

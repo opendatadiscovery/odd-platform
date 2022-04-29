@@ -7,8 +7,8 @@ import {
   RootState,
   TermSearchState,
   TermSearchOptionalFacetNames,
-  TermSearchFacetStateById,
-  TermSearchFilterStateSynced,
+  SearchFacetStateById,
+  SearchFilterStateSynced,
 } from 'redux/interfaces';
 import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
@@ -120,10 +120,7 @@ export const getSelectedTermSearchFacetOptions = createSelector(
   getTermSearchFacetName,
   (termsSearch, facetName) => {
     if (!termsSearch.facetState[facetName]) return [];
-    return transform<
-      TermSearchFacetStateById,
-      TermSearchFilterStateSynced[]
-    >(
+    return transform<SearchFacetStateById, SearchFilterStateSynced[]>(
       termsSearch.facetState[facetName] || {},
       (memo, facetOption) => {
         if (facetOption.selected) memo.push(facetOption);

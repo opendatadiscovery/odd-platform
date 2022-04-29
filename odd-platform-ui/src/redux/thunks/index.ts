@@ -11,6 +11,7 @@ export * from './namespace.thunks';
 export * from './profile.thunks';
 export * from './alerts.thunks';
 export * from './dataentityLinkedList.thunks';
+export * from './termLinkedList.thunks';
 export * from './appInfo.thunks';
 export * from './collectors.thunks';
 export * from './terms.thunks';

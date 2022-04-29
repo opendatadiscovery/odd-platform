@@ -37,8 +37,7 @@ const OverviewContainer = React.lazy(
   () => import('./Overview/OverviewContainer')
 );
 const LinkedItemsContainer = React.lazy(
-  () => import('./Overview/OverviewContainer')
-  // () => import('./LinkedItems/LinkedItemsContainer')
+  () => import('./TermLinkedItemsList/LinkedItemsListContainer')
 );
 
 interface TermDetailsProps {
@@ -78,7 +77,7 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
       {
         name: 'Linked items',
         link: termDetailsLinkedItemsPath(termId),
-        hidden: !termDetails?.entitiesUsingCount,
+        // hidden: !termDetails?.entitiesUsingCount,
         value: 'linked-items',
       },
     ]);

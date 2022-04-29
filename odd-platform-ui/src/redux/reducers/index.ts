@@ -15,6 +15,7 @@ import profile from './profile.reducer';
 import dataQualityTest from './dataQualityTest.reducer';
 import alerts from './alerts.reducer';
 import dataEntityGroupLinkedList from './dataentityLinkedList.reducer';
+import termGroupLinkedList from './termLinkedList.reducer';
 import appInfo from './appInfo.reducer';
 import collectors from './collectors.reducer';
 import terms from './terms.reducer';
@@ -37,6 +38,7 @@ export default combineReducers<RootState>({
   dataQualityTest,
   alerts,
   dataEntityGroupLinkedList,
+  termGroupLinkedList,
   appInfo,
   collectors,
   terms,

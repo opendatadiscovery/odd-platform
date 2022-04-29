@@ -4,8 +4,8 @@ import { SearchFilter } from 'generated-sources';
 import {
   TermSearchFacetStateUpdate,
   TermSearchOptionalFacetNames,
-  TermSearchFilterStateSynced,
-} from 'redux/interfaces/termSearch';
+  SearchFilterStateSynced,
+} from 'redux/interfaces';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 
@@ -13,7 +13,7 @@ interface FilterItemProps {
   name: string;
   facetName: TermSearchOptionalFacetNames;
   facetOptions: SearchFilter[];
-  selectedOptions: TermSearchFilterStateSynced[] | undefined;
+  selectedOptions: SearchFilterStateSynced[] | undefined;
   setFacets: (option: TermSearchFacetStateUpdate) => void;
 }
 

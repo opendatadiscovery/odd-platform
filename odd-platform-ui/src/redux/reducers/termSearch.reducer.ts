@@ -8,9 +8,9 @@ import {
 import {
   Action,
   TermSearchFacetStateUpdate,
-  TermSearchFilterStateSynced,
+  SearchFilterStateSynced,
   TermSearchState,
-  TermSearchFacetStateById,
+  SearchFacetStateById,
   TermSearchFacetNames,
 } from 'redux/interfaces';
 import mapValues from 'lodash/mapValues';
@@ -44,10 +44,7 @@ const updateTermSearchState = (
     payload.facetState,
     facetOptions =>
       facetOptions &&
-      reduce<
-        CountableSearchFilter | SearchFilter,
-        TermSearchFacetStateById
-      >(
+      reduce<CountableSearchFilter | SearchFilter, SearchFacetStateById>(
         facetOptions,
         (memo, facetOption) => ({
           ...memo,
@@ -70,7 +67,7 @@ const updateTermSearchState = (
       payload.searchId !== state.termSearchId
         ? newTermSearchFacetsById
         : mapValues(state.facetState, (facetState, facetName) =>
-            assignWith<TermSearchFacetStateById, TermSearchFacetStateById>(
+            assignWith<SearchFacetStateById, SearchFacetStateById>(
               facetState || {},
               newTermSearchFacetsById[facetName as TermSearchFacetNames] ||
                 {},
@@ -103,7 +100,7 @@ const updateTermFacet = (
 ): TermSearchState => {
   if (!payload.facetName) return state;
   // Unselect previous type
-  let selectedOptionState: TermSearchFilterStateSynced | undefined;
+  let selectedOptionState: SearchFilterStateSynced | undefined;
   if (payload.facetSingle) {
     const selectedOption = values(
       state.facetState[payload.facetName]
@@ -161,7 +158,7 @@ const clearTermFilters = (state: TermSearchState): TermSearchState => ({
   ...state,
   isFacetsStateSynced: false,
   facetState: mapValues(state.facetState, (filter, facetName) =>
-    reduce<TermSearchFacetStateById, TermSearchFacetStateById>(
+    reduce<SearchFacetStateById, SearchFacetStateById>(
       state.facetState[facetName as TermSearchFacetNames],
       (acc, facetOption) => {
         if (facetOption.selected) {

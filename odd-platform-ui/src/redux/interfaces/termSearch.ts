@@ -1,9 +1,6 @@
-import {
-  CountableSearchFilter,
-  TermFacetState,
-  SearchFilterState,
-} from 'generated-sources';
+import { CountableSearchFilter, TermFacetState } from 'generated-sources';
 import { CurrentPageInfo } from './common';
+import { SearchFacetStateById } from './search';
 
 export type TermSearchOptionalFacetMap = TermFacetState;
 export type TermSearchOptionalFacetNames =
@@ -18,17 +15,8 @@ export type TermSearchFacetStateUpdate = {
   facetSingle?: boolean;
 };
 
-export type TermSearchFilterStateSynced = SearchFilterState & {
-  // todo remove when it works and leave only SearchFilterStateSynced etc
-  syncedState: boolean;
-};
-
-export type TermSearchFacetStateById = {
-  [facetOptionId: string]: TermSearchFilterStateSynced;
-};
-
 export type TermSearchFacetsByName = {
-  [facetName in TermSearchFacetNames]?: TermSearchFacetStateById;
+  [facetName in TermSearchFacetNames]?: SearchFacetStateById;
 };
 
 export interface TermSearchFacetOptions {

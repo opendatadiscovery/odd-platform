@@ -7,6 +7,7 @@ export * from './dataQualityTest';
 export * from './alert';
 export * from './common';
 export * from './dataEntityGroup';
+export * from './termGroup';
 export * from './collectors';
 export * from './termSearch';
 export * from './terms';

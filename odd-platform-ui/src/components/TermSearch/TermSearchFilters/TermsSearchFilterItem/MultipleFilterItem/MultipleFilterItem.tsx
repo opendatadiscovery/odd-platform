@@ -20,7 +20,7 @@ import {
 import {
   TermSearchFacetStateUpdate,
   TermSearchOptionalFacetNames,
-  TermSearchFilterStateSynced,
+  SearchFilterStateSynced,
 } from 'redux/interfaces';
 import SelectedFilterOption from 'components/Search/Filters/FilterItem/SelectedFilterOption/SelectedFilterOption';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
@@ -37,7 +37,7 @@ interface FilterItemProps {
   name: string;
   facetName: TermSearchOptionalFacetNames;
   facetOptionsAll: CountableSearchFilter[];
-  selectedOptions?: TermSearchFilterStateSynced[];
+  selectedOptions?: SearchFilterStateSynced[];
   setFacets: (option: TermSearchFacetStateUpdate) => void;
   searchFacetOptions: (
     params: TermApiGetTermFiltersForFacetRequest
