@@ -6,8 +6,14 @@ import org.opendatadiscovery.oddplatform.api.contract.model.CollectorList;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorUpdateFormData;
 import reactor.core.publisher.Mono;
 
-public interface CollectorService
-    extends CRUDService<Collector, CollectorList, CollectorFormData, CollectorUpdateFormData> {
+public interface CollectorService {
+    Mono<CollectorList> list(final int page, final int size, final String query);
 
-    Mono<Collector> regenerateDataSourceToken(final Long collectorId);
+    Mono<Collector> create(final CollectorFormData createEntityForm);
+
+    Mono<Collector> update(final long id, final CollectorUpdateFormData updateEntityForm);
+
+    Mono<Long> delete(final long id);
+
+    Mono<Collector> regenerateToken(final long collectorId);
 }

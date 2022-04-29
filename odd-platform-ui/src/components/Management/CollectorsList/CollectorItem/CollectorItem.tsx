@@ -9,7 +9,6 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import CollectorFormDialogContainer from 'components/Management/CollectorsList/CollectorForm/CollectorFormContainer';
 import CollectorItemTokenContainer from './CollectorItemToken/CollectorItemTokenContainer';
 import {
@@ -77,17 +76,6 @@ const CollectorItem: React.FC<CollectorItemProps> = ({
           />
         </CollectorActionsContainer>
         <CollectorDescriptionContainer item sm={6} container>
-          <LabeledInfoItem
-            variant="body2"
-            inline
-            label="ODDRN"
-            labelWidth={4}
-            valueComponent="div"
-          >
-            <AppTooltip title={() => collector.oddrn}>
-              {collector.oddrn}
-            </AppTooltip>
-          </LabeledInfoItem>
           <LabeledInfoItem
             variant="body2"
             inline
