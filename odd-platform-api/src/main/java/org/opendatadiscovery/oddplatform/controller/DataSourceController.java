@@ -1,7 +1,5 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataSourceApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
@@ -21,12 +19,9 @@ public class DataSourceController implements DataSourceApi {
     private final DataSourceService dataSourceService;
 
     @Override
-    public Mono<ResponseEntity<DataSourceList>> getDataSourceList(
-        @NotNull @Valid final Integer page,
-        @NotNull @Valid final Integer size,
-        @Valid final String query,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<DataSourceList>> getDataSourceList(final Integer page, final Integer size,
+                                                                  final String query,
+                                                                  final ServerWebExchange exchange) {
         return dataSourceService
             .list(page, size, query)
             .map(ResponseEntity::ok);
@@ -38,22 +33,18 @@ public class DataSourceController implements DataSourceApi {
     }
 
     @Override
-    public Mono<ResponseEntity<DataSource>> registerDataSource(
-        @Valid final Mono<DataSourceFormData> dataSourceFormData,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<DataSource>> registerDataSource(final Mono<DataSourceFormData> dataSourceFormData,
+                                                               final ServerWebExchange exchange) {
         return dataSourceFormData
             .flatMap(dataSourceService::create)
             .map(ResponseEntity::ok);
     }
 
     @Override
-    public Mono<ResponseEntity<DataSource>> updateDataSource(
-        final Long dataSourceId,
-        @Valid final Mono<DataSourceUpdateFormData> dataSourceUpdateFormData,
-        final ServerWebExchange exchange
-    ) {
-        return dataSourceUpdateFormData
+    public Mono<ResponseEntity<DataSource>> updateDataSource(final Long dataSourceId,
+                                                             final Mono<DataSourceUpdateFormData> formData,
+                                                             final ServerWebExchange exchange) {
+        return formData
             .flatMap(form -> dataSourceService.update(dataSourceId, form))
             .map(ResponseEntity::ok);
     }
@@ -61,14 +52,12 @@ public class DataSourceController implements DataSourceApi {
     @Override
     public Mono<ResponseEntity<Void>> deleteDataSource(final Long dataSourceId, final ServerWebExchange exchange) {
         return dataSourceService.delete(dataSourceId)
-            .map(ignored -> ResponseEntity.noContent().build());
+            .then(Mono.just(ResponseEntity.noContent().build()));
     }
 
     @Override
-    public Mono<ResponseEntity<DataSource>> regenerateDataSourceToken(
-        final Long dataSourceId,
-        final ServerWebExchange exchange
-    ) {
+    public Mono<ResponseEntity<DataSource>> regenerateDataSourceToken(final Long dataSourceId,
+                                                                      final ServerWebExchange exchange) {
         return dataSourceService
             .regenerateDataSourceToken(dataSourceId)
             .map(ResponseEntity::ok);

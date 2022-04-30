@@ -6,7 +6,6 @@ import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
-import org.jooq.Result;
 import org.jooq.ResultQuery;
 import org.jooq.RowCountQuery;
 import org.jooq.SQLDialect;
@@ -22,7 +21,7 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class JooqReactiveOperations {
-    private final DSLContext fakeDSLContext = DSL.using(SQLDialect.POSTGRES);
+    private final DSLContext mappingDSLContext = DSL.using(SQLDialect.POSTGRES);
 
     private final ConnectionFactory connectionFactory;
 
@@ -55,7 +54,7 @@ public class JooqReactiveOperations {
 
     public <R extends Record> R newRecord(final Table<R> table,
                                           final Object source) {
-        return fakeDSLContext.newRecord(table, source);
+        return mappingDSLContext.newRecord(table, source);
     }
 
     private <T> Mono<T> wrapMono(final Function<Connection, Mono<T>> function) {

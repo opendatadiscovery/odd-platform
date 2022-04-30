@@ -35,6 +35,7 @@ import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -120,29 +121,21 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<Long> acquireDataSourceId(final String dataSourceOddrn) {
+        final Mono<Long> createDataSourceByOddrn = Mono.just(dataSourceOddrn)
+            .map(this::parseOddrn)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .switchIfEmpty(
+                Mono.error(() -> new IllegalArgumentException("Oddrn parser returned empty object")))
+            .filter(path -> path instanceof ODDPlatformDataSourcePath)
+            .switchIfEmpty(
+                Mono.error(() -> new NotFoundException("Data source with oddrn %s hasn't been found", dataSourceOddrn)))
+            .map(path -> ((ODDPlatformDataSourcePath) path).getDatasourceId())
+            .flatMap(id -> dataSourceRepository.injectOddrn(id, dataSourceOddrn))
+            .map(DataSourcePojo::getId);
         return dataSourceRepository.getDtoByOddrn(dataSourceOddrn)
             .map(dataSource -> dataSource.dataSource().getId())
-            .switchIfEmpty(Mono.defer(() -> {
-                final OddrnPath oddrnPath;
-                try {
-                    oddrnPath = oddrnGenerator.parse(dataSourceOddrn)
-                        .orElseThrow(() -> new IllegalArgumentException("Oddrn parser returned empty object"));
-                } catch (final Exception e) {
-                    return Mono.error(
-                        new RuntimeException(String.format("Couldn't parse %s into OddrnPath", dataSourceOddrn), e));
-                }
-
-                if (!(oddrnPath instanceof ODDPlatformDataSourcePath)) {
-                    return Mono.error(
-                        new NotFoundException("Data source with oddrn %s hasn't been found", dataSourceOddrn));
-                }
-
-                final Long datasourceId = ((ODDPlatformDataSourcePath) oddrnPath).getDatasourceId();
-
-                return dataSourceRepository
-                    .injectOddrn(datasourceId, dataSourceOddrn)
-                    .map(dataSource -> dataSource.dataSource().getId());
-            }));
+            .switchIfEmpty(createDataSourceByOddrn);
     }
 
     private IngestionDataStructure buildStructure(final DataEntityList dataEntityList,
@@ -480,5 +473,13 @@ public class IngestionServiceImpl implements IngestionService {
             .setDatasetOddrn(entity.getOddrn())
             .setVersion(version)
             .setVersionHash(entity.getDataSet().structureHash());
+    }
+
+    private Optional<OddrnPath> parseOddrn(final String oddrn) {
+        try {
+            return oddrnGenerator.parse(oddrn);
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Couldn't parse %s into OddrnPath", oddrn), e);
+        }
     }
 }

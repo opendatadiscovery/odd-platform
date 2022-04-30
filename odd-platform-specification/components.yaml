@@ -738,8 +738,6 @@ components:
           type: integer
           format: int32
           description: Pulling interval in seconds
-        token:
-          $ref: '#/components/schemas/Token'
 
     Token:
       type: object

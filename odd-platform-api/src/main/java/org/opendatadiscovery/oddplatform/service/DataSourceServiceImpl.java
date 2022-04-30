@@ -17,7 +17,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.TokenRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -28,13 +27,11 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class DataSourceServiceImpl implements DataSourceService {
     private final DataSourceMapper dataSourceMapper;
-
     private final TokenGenerator tokenGenerator;
-
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final TokenRepository tokenRepository;
-    private final ReactiveNamespaceRepository namespaceRepository;
+    private final NamespaceService namespaceService;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
 
     @Override
@@ -52,7 +49,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     @Override
     @ReactiveTransactional
     public Mono<DataSource> create(final DataSourceFormData form) {
-        if (StringUtils.isAllEmpty(form.getConnectionUrl(), form.getOddrn())) {
+        if (StringUtils.isNotEmpty(form.getConnectionUrl()) && StringUtils.isNotEmpty(form.getOddrn())) {
             return Mono.error(
                 new IllegalArgumentException("Can't create data source with both URL and ODDRN defined"));
         }
@@ -60,22 +57,18 @@ public class DataSourceServiceImpl implements DataSourceService {
         final Mono<TokenDto> token = tokenGenerator.generateToken().flatMap(tokenRepository::create);
 
         if (StringUtils.isNotEmpty(form.getNamespaceName())) {
-            return namespaceRepository.getByName(form.getNamespaceName())
-                .switchIfEmpty(namespaceRepository.createByName(form.getNamespaceName()))
+            return namespaceService.getOrCreate(form.getNamespaceName())
                 .zipWith(token)
-                .flatMap(t -> create(form, t.getT2(), t.getT1()))
-                .flatMap(dsDto -> Mono.zip(
-                    searchEntrypointRepository.updateDataSourceVector(dsDto.dataSource().getId()),
-                    searchEntrypointRepository.updateNamespaceVector(dsDto.namespace().getId())
-                ).map(t -> dsDto))
+                .flatMap(t -> createDataSource(form, t.getT2(), t.getT1()))
+                .flatMap(this::updateSearchVectors)
                 .map(dataSourceMapper::mapDto);
         }
 
         return token
-            .flatMap(t -> create(form, t, null))
+            .flatMap(t -> createDataSource(form, t, null))
             .flatMap(dsDto -> searchEntrypointRepository
                 .updateDataSourceVector(dsDto.dataSource().getId())
-                .map(rowCountUpdated -> dsDto))
+                .thenReturn(dsDto))
             .map(dataSourceMapper::mapDto);
     }
 
@@ -83,22 +76,15 @@ public class DataSourceServiceImpl implements DataSourceService {
     @ReactiveTransactional
     public Mono<DataSource> update(final long id, final DataSourceUpdateFormData form) {
         return dataSourceRepository.getDto(id)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data source with id % doesn't exist", id)))
             .flatMap(dataSource -> {
                 if (StringUtils.isNotEmpty(form.getNamespaceName())) {
-                    return namespaceRepository.getByName(form.getNamespaceName())
-                        .switchIfEmpty(namespaceRepository.createByName(form.getNamespaceName()))
-                        .flatMap(namespace -> update(dataSource.dataSource(), form, namespace))
-                        .flatMap(dsDto -> Mono.zip(
-                            searchEntrypointRepository.updateDataSourceVector(dsDto.dataSource().getId()),
-                            searchEntrypointRepository.updateNamespaceVector(dsDto.namespace().getId())
-                        ).map(t -> dsDto));
+                    return namespaceService.getOrCreate(form.getNamespaceName())
+                        .flatMap(namespace -> updateDataSource(dataSource, form, namespace))
+                        .flatMap(dto -> updateSearchVectors(dto));
                 }
-
-                return update(dataSource.dataSource(), form, null)
-                    .flatMap(dsDto -> Mono.zip(
-                        searchEntrypointRepository.updateDataSourceVector(dsDto.dataSource().getId()),
-                        searchEntrypointRepository.clearNamespaceVector(dsDto.dataSource().getId())
-                    ).map(t -> dsDto));
+                return updateDataSource(dataSource, form, null)
+                    .flatMap(dto -> updateSearchVectors(dto));
             })
             .map(dataSourceMapper::mapDto);
     }
@@ -111,7 +97,6 @@ public class DataSourceServiceImpl implements DataSourceService {
                 if (!exists) {
                     return dataSourceRepository.delete(id).map(DataSourcePojo::getId);
                 }
-
                 return Mono.error(new IllegalStateException(
                     "Data source with ID %d cannot be deleted: there are still data sources attached".formatted(id)));
             });
@@ -127,20 +112,27 @@ public class DataSourceServiceImpl implements DataSourceService {
             .map(dataSourceMapper::mapDto);
     }
 
-    private Mono<DataSourceDto> update(final DataSourcePojo dataSource,
+    private Mono<DataSourceDto> updateDataSource(final DataSourceDto dataSourceDto,
                                        final DataSourceUpdateFormData form,
                                        final NamespacePojo namespace) {
-        return dataSourceRepository.update(dataSourceMapper.applyToPojo(dataSource, form, namespace))
-            .switchIfEmpty(Mono.error(new NotFoundException("Data source with id % doesn't exist", dataSource.getId())))
-            .zipWith(tokenRepository.getByDataSourceId(dataSource.getId()))
+        return Mono.just(dataSourceMapper.applyToPojo(dataSourceDto.dataSource(), form, namespace))
+            .flatMap(dataSourceRepository::update)
+            .zipWith(Mono.just(dataSourceDto.token()))
             .map(t -> new DataSourceDto(t.getT1(), namespace, t.getT2()));
     }
 
-    private Mono<DataSourceDto> create(final DataSourceFormData form,
+    private Mono<DataSourceDto> createDataSource(final DataSourceFormData form,
                                        final TokenDto token,
                                        final NamespacePojo namespace) {
         return Mono.just(dataSourceMapper.mapForm(form, namespace, token))
             .flatMap(dataSourceRepository::create)
             .map(ds -> new DataSourceDto(ds, namespace, token));
+    }
+
+    private Mono<DataSourceDto> updateSearchVectors(final DataSourceDto dto) {
+        return Mono.zip(
+                searchEntrypointRepository.updateDataSourceVector(dto.dataSource().getId()),
+                searchEntrypointRepository.updateNamespaceVector(dto.namespace().getId()))
+            .thenReturn(dto);
     }
 }

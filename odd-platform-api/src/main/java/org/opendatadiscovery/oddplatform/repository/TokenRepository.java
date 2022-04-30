@@ -8,8 +8,4 @@ public interface TokenRepository {
     Mono<TokenDto> create(final TokenPojo tokenPojo);
 
     Mono<TokenDto> updateToken(final TokenPojo tokenPojo);
-
-    Mono<TokenDto> getByDataSourceId(final long dataSourceId);
-
-    Mono<TokenDto> delete(final long id);
 }

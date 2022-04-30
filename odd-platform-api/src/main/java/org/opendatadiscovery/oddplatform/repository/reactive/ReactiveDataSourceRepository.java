@@ -1,12 +1,11 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.List;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.List;
 
 public interface ReactiveDataSourceRepository extends ReactiveCRUDRepository<DataSourcePojo> {
     Mono<DataSourceDto> getDto(final long id);
@@ -15,11 +14,11 @@ public interface ReactiveDataSourceRepository extends ReactiveCRUDRepository<Dat
 
     Mono<DataSourceDto> getDtoByOddrn(final String oddrn);
 
-    Flux<DataSourceDto> getDtosByOddrns(final List<String> oddrns, final boolean includeDeleted);
+    Flux<DataSourceDto> getDtosByOddrns(final List<String> oddrns);
 
     Flux<DataSourceDto> listActive();
 
     Mono<Boolean> existsByNamespace(final long namespaceId);
 
-    Mono<DataSourceDto> injectOddrn(final long id, final String oddrn);
+    Mono<DataSourcePojo> injectOddrn(final long id, final String oddrn);
 }

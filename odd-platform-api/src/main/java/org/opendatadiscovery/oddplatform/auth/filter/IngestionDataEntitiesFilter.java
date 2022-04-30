@@ -1,8 +1,9 @@
 package org.opendatadiscovery.oddplatform.auth.filter;
 
-import lombok.extern.slf4j.Slf4j;
+import org.opendatadiscovery.oddplatform.dto.CollectorDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -17,14 +18,16 @@ import reactor.core.publisher.Mono;
 
 @Component
 @ConditionalOnProperty(value = "auth.ingestion.filter.enabled", havingValue = "true")
-@Slf4j
 public class IngestionDataEntitiesFilter extends AbstractIngestionFilter {
 
     private final ReactiveDataSourceRepository dataSourceRepository;
+    private final ReactiveCollectorRepository collectorRepository;
 
-    public IngestionDataEntitiesFilter(final ReactiveDataSourceRepository dataSourceRepository) {
+    public IngestionDataEntitiesFilter(final ReactiveDataSourceRepository dataSourceRepository,
+                                       final ReactiveCollectorRepository collectorRepository) {
         super(new PathPatternParserServerWebExchangeMatcher("/ingestion/entities", HttpMethod.POST));
         this.dataSourceRepository = dataSourceRepository;
+        this.collectorRepository = collectorRepository;
     }
 
     @Override
@@ -39,9 +42,20 @@ public class IngestionDataEntitiesFilter extends AbstractIngestionFilter {
 
                         return dataSourceRepository.getDtoByOddrn(body.getDataSourceOddrn())
                             .switchIfEmpty(Mono.error(new NotFoundException(
-                                String.format("DataSource with oddrn %s doesn't exist", body.getDataSourceOddrn()))))
+                                "DataSource with oddrn %s doesn't exist".formatted(body.getDataSourceOddrn()))))
+                            .flatMap(dto -> {
+                                if (dto.token() != null) {
+                                    return Mono.just(dto.token());
+                                } else {
+                                    return collectorRepository.getDto(dto.dataSource().getCollectorId())
+                                        .switchIfEmpty(Mono.error(new NotFoundException(
+                                            "Collector with id %s doesn't exist".formatted(dto.dataSource()
+                                                .getCollectorId()))))
+                                        .map(CollectorDto::tokenDto);
+                                }
+                            })
                             .doOnNext(dto -> {
-                                if (!dto.token().tokenPojo().getValue().equals(token)) {
+                                if (!dto.tokenPojo().getValue().equals(token)) {
                                     throw new AccessDeniedException("Token is not correct");
                                 }
                             })

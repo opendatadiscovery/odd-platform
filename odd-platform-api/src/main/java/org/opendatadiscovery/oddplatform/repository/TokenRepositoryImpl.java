@@ -40,21 +40,4 @@ public class TokenRepositoryImpl implements TokenRepository {
 
         return jooqReactiveOperations.mono(query).map(r -> new TokenDto(r.into(TokenPojo.class), true));
     }
-
-    @Override
-    public Mono<TokenDto> getByDataSourceId(final long dataSourceId) {
-        final SelectConditionStep<Record> query = DSL.select(TOKEN.asterisk())
-            .from(TOKEN)
-            .join(DATA_SOURCE).on(DATA_SOURCE.TOKEN_ID.eq(TOKEN.ID))
-            .where(DATA_SOURCE.ID.eq(dataSourceId));
-
-        return jooqReactiveOperations.mono(query).map(r -> new TokenDto(r.into(TokenPojo.class)));
-    }
-
-    @Override
-    public Mono<TokenDto> delete(final long id) {
-        return jooqReactiveOperations
-            .mono(DSL.delete(TOKEN).where(TOKEN.ID.eq(id)).returning())
-            .map(r -> new TokenDto(r.into(TokenPojo.class)));
-    }
 }

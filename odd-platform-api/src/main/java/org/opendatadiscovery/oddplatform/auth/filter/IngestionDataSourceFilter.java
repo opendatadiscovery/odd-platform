@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.auth.filter;
 
-import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import java.nio.file.AccessDeniedException;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpMethod;
@@ -30,12 +30,12 @@ public class IngestionDataSourceFilter extends AbstractIngestionFilter {
                         final String token = resolveToken(exchange.getRequest());
 
                         return collectorRepository.getByToken(token)
-                            .switchIfEmpty(Mono.error(new NotFoundException("Collector with such token doesn't exist")))
-                            .flatMapMany(c -> exchange.getSession()
-                                .doOnNext(ws -> ws
-                                    .getAttributes()
-                                    .put(SessionConstants.COLLECTOR_ID_SESSION_KEY, c.getId()))
-                                .flatMapIterable(ign -> dataBuffer));
+                            .switchIfEmpty(
+                                Mono.error(new AccessDeniedException("Collector with such token doesn't exist")))
+                            .zipWith(exchange.getSession())
+                            .doOnNext(t -> t.getT2().getAttributes()
+                                .put(SessionConstants.COLLECTOR_ID_SESSION_KEY, t.getT1().getId()))
+                            .flatMapIterable(i -> dataBuffer);
                     });
             }
         };

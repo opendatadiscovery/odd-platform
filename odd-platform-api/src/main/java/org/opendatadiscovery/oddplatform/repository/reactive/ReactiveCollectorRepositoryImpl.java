@@ -90,7 +90,7 @@ public class ReactiveCollectorRepositoryImpl
             .select(COLLECTOR.asterisk())
             .from(COLLECTOR)
             .join(TOKEN).on(TOKEN.ID.eq(COLLECTOR.TOKEN_ID))
-            .where(TOKEN.VALUE.eq(token));
+            .where(addSoftDeleteFilter(TOKEN.VALUE.eq(token)));
 
         return jooqReactiveOperations.mono(query).map(r -> r.into(CollectorPojo.class));
     }
@@ -115,10 +115,12 @@ public class ReactiveCollectorRepositoryImpl
     }
 
     private CollectorDto mapRecordToDto(final Record record) {
+        final TokenPojo tokenPojo = jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class);
+
         return new CollectorDto(
             record.into(COLLECTOR).into(CollectorPojo.class),
             jooqRecordHelper.extractRelation(record, NAMESPACE, NamespacePojo.class),
-            new TokenDto(jooqRecordHelper.extractRelation(record, TOKEN, TokenPojo.class))
+            new TokenDto(tokenPojo)
         );
     }
 }

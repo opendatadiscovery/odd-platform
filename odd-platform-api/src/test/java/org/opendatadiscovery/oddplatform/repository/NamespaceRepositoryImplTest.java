@@ -22,10 +22,12 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
         final NamespacePojo namespacePojo = new NamespacePojo()
             .setName(UUID.randomUUID().toString());
 
-        namespaceRepository.create(namespacePojo)
-            .zipWhen(n -> namespaceRepository.get(n.getId()))
+        final NamespacePojo createdNamespace = namespaceRepository.create(namespacePojo)
+            .blockOptional()
+            .orElseThrow();
+        namespaceRepository.get(createdNamespace.getId())
             .as(StepVerifier::create)
-            .assertNext(t -> assertThat(t.getT1()).isEqualTo(t.getT2()))
+            .assertNext(pojo -> assertThat(pojo).isEqualTo(createdNamespace))
             .verifyComplete();
     }
 
@@ -34,10 +36,12 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
     void testCreateByName() {
         final String name = UUID.randomUUID().toString();
 
-        namespaceRepository.createByName(name)
-            .zipWhen(n -> namespaceRepository.get(n.getId()))
+        final NamespacePojo createdNamespace = namespaceRepository.createByName(name)
+            .blockOptional()
+            .orElseThrow();
+        namespaceRepository.get(createdNamespace.getId())
             .as(StepVerifier::create)
-            .assertNext(t -> assertThat(t.getT1()).isEqualTo(t.getT2()))
+            .assertNext(pojo -> assertThat(pojo).isEqualTo(createdNamespace))
             .verifyComplete();
     }
 
@@ -64,14 +68,16 @@ class NamespaceRepositoryImplTest extends BaseIntegrationTest {
 
         final String newName = UUID.randomUUID().toString();
 
-        namespaceRepository.create(pojo)
-            .zipWhen(createdPojo -> namespaceRepository.update(new NamespacePojo(createdPojo).setName(newName)))
+        final NamespacePojo createdNamespace = namespaceRepository.create(pojo).blockOptional()
+            .orElseThrow();
+
+        namespaceRepository.update(new NamespacePojo(createdNamespace).setName(newName))
             .as(StepVerifier::create)
-            .assertNext(t -> {
-                assertThat(t.getT2().getId()).isEqualTo(t.getT1().getId());
-                assertThat(t.getT2().getName()).isEqualTo(newName);
-                assertThat(t.getT2().getName()).isNotEqualTo(t.getT1().getName());
-                assertThat(t.getT2().getUpdatedAt()).isNotEqualTo(t.getT1().getUpdatedAt());
+            .assertNext(updatedPojo -> {
+                assertThat(updatedPojo.getId()).isEqualTo(createdNamespace.getId());
+                assertThat(updatedPojo.getName()).isEqualTo(newName);
+                assertThat(updatedPojo.getName()).isNotEqualTo(createdNamespace.getName());
+                assertThat(updatedPojo.getUpdatedAt()).isNotEqualTo(createdNamespace.getUpdatedAt());
             })
             .verifyComplete();
     }

@@ -10,31 +10,21 @@ public class DataSourceIngestionMapperImpl implements DataSourceIngestionMapper 
     @Override
     public DataSourcePojo mapIngestionModel(final DataSource ds,
                                             final Long namespaceId,
-                                            final Long tokenId) {
+                                            final Long collectorId) {
         return new DataSourcePojo()
             .setOddrn(ds.getOddrn())
             .setName(ds.getName())
             .setActive(true)
             .setDescription(ds.getDescription())
             .setNamespaceId(namespaceId)
-            .setTokenId(tokenId);
+            .setCollectorId(collectorId);
     }
 
     @Override
-    public DataSourceDto mapIngestionModel(final DataSource ds) {
-        final DataSourcePojo dataSourcePojo = new DataSourcePojo()
-            .setOddrn(ds.getOddrn())
-            .setName(ds.getName())
-            .setActive(true)
-            .setDescription(ds.getDescription());
-        return new DataSourceDto(dataSourcePojo, null, null);
-    }
-
-    @Override
-    public DataSource mapDtoToIngestionModel(final DataSourceDto dto) {
+    public DataSource mapPojoToIngestionModel(final DataSourcePojo pojo) {
         return new DataSource()
-            .oddrn(dto.dataSource().getOddrn())
-            .name(dto.dataSource().getName())
-            .description(dto.dataSource().getDescription());
+            .oddrn(pojo.getOddrn())
+            .name(pojo.getName())
+            .description(pojo.getDescription());
     }
 }

@@ -63,7 +63,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     @Override
     public Mono<P> get(final long id) {
         return jooqReactiveOperations
-            .mono(DSL.selectFrom(recordTable).where(getCondition(id)))
+            .mono(DSL.selectFrom(recordTable).where(idCondition(id)))
             .map(this::recordToPojo);
     }
 
@@ -138,14 +138,14 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     @Override
     public Mono<P> delete(final long id) {
         return jooqReactiveOperations
-            .mono(DSL.deleteFrom(recordTable).where(getCondition(id)).returning())
+            .mono(DSL.deleteFrom(recordTable).where(idCondition(id)).returning())
             .map(this::recordToPojo);
     }
 
     @Override
     public Flux<P> delete(final Collection<Long> ids) {
         return jooqReactiveOperations
-            .flux(DSL.deleteFrom(recordTable).where(getCondition(ids)).returning())
+            .flux(DSL.deleteFrom(recordTable).where(idCondition(ids)).returning())
             .map(this::recordToPojo);
     }
 
@@ -180,22 +180,21 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     protected Mono<Long> fetchCount(final String nameQuery) {
-        return Mono.defer(() -> jooqReactiveOperations
+        return jooqReactiveOperations
             .mono(DSL.selectCount().from(recordTable).where(listCondition(nameQuery)))
-            .map(r -> r.component1().longValue()));
+            .map(r -> r.component1().longValue());
     }
 
     protected List<Condition> listCondition(final String nameQuery) {
         return StringUtils.isNotEmpty(nameQuery)
-            ? List.of(nameField.containsIgnoreCase(nameQuery))
-            : emptyList();
+            ? List.of(nameField.containsIgnoreCase(nameQuery)) : emptyList();
     }
 
-    protected List<Condition> getCondition(final long id) {
+    protected List<Condition> idCondition(final long id) {
         return List.of(idField.eq(id));
     }
 
-    protected List<Condition> getCondition(final Collection<Long> ids) {
+    protected List<Condition> idCondition(final Collection<Long> ids) {
         return List.of(idField.in(ids));
     }
 

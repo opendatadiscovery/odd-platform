@@ -1,2 +1,2 @@
 ALTER TABLE collector
-    DROP COLUMN oddrn;
+    DROP COLUMN IF EXISTS oddrn;
