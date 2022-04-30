@@ -36,15 +36,26 @@ services:
     depends_on:
       - odd-platform
 
+  sample-postgresql:
+    image: postgres:13.2-alpine
+    restart: always
+    volumes:
+      - ./config/dump.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      - POSTGRES_USER=${SAMPLE_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${SAMPLE_POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${SAMPLE_POSTGRES_DATABASE}
+
   odd-collector:
     image: ghcr.io/opendatadiscovery/odd-collector:latest
     restart: always
-
-  odd-collector-aws:
-    image: ghcr.io/opendatadiscovery/odd-collector-aws:latest
-    restart: always
+    volumes:
+      - ./config/collector_config.yaml:/app/collector_config.yaml
     environment:
-      - AWS_REGION=${AWS_REGION}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
       - PLATFORM_HOST_URL=${PLATFORM_HOST_URL}
+      - SAMPLE_POSTGRES_HOST=sample-postgresql
+      - SAMPLE_POSTGRES_USER=${SAMPLE_POSTGRES_USER}
+      - SAMPLE_POSTGRES_DATABASE=${SAMPLE_POSTGRES_DATABASE}
+      - SAMPLE_POSTGRES_PASSWORD=${SAMPLE_POSTGRES_PASSWORD}
+    depends_on:
+      - sample-postgresql
