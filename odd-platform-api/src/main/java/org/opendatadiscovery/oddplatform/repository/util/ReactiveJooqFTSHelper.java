@@ -3,14 +3,9 @@ package org.opendatadiscovery.oddplatform.repository.util;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
-import org.jooq.Condition;
-import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Insert;
 import org.jooq.Record;
@@ -20,18 +15,13 @@ import org.jooq.SelectJoinStep;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
-import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRecord;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
 import static java.util.Collections.emptyMap;
-import static java.util.Objects.requireNonNull;
-import static java.util.function.Predicate.not;
 import static org.jooq.impl.DSL.coalesce;
-import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
@@ -46,9 +36,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
-public class JooqFTSHelper {
+public class ReactiveJooqFTSHelper {
     private static final Map<Field<?>, String> FTS_WEIGHTS = Map.ofEntries(
         Map.entry(DATA_ENTITY.INTERNAL_NAME, "A"),
         Map.entry(DATA_ENTITY.EXTERNAL_NAME, "A"),
@@ -68,24 +57,6 @@ public class JooqFTSHelper {
         Map.entry(ROLE.NAME, "D"),
         Map.entry(OWNER.NAME, "C")
     );
-
-    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> CONDITIONS = Map.of(
-        FacetType.ENTITY_CLASSES, filters -> DATA_ENTITY.ENTITY_CLASS_IDS
-            .contains(extractFilterId(filters).stream().map(Long::intValue).toArray(Integer[]::new)),
-        FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters))
-    );
-
-    private static final Map<FacetType, Function<List<SearchFilterDto>, Condition>> EXTENDED_CONDITIONS = Map.of(
-        FacetType.ENTITY_CLASSES, filters -> DATA_ENTITY.ENTITY_CLASS_IDS
-            .contains(extractFilterId(filters).stream().map(Long::intValue).toArray(Integer[]::new)),
-        FacetType.DATA_SOURCES, filters -> DATA_ENTITY.DATA_SOURCE_ID.in(extractFilterId(filters)),
-        FacetType.NAMESPACES, filters -> DATA_SOURCE.NAMESPACE_ID.in(extractFilterId(filters)),
-        FacetType.TYPES, filters -> DATA_ENTITY.TYPE_ID.in(extractFilterId(filters)),
-        FacetType.OWNERS, filters -> OWNER.ID.in(extractFilterId(filters)),
-        FacetType.TAGS, filters -> TAG.ID.in(extractFilterId(filters))
-    );
-
-    private final DSLContext dslContext;
 
     public Insert<SearchEntrypointRecord> buildSearchEntrypointUpsert(
         final Select<? extends Record> vectorSelect,
@@ -108,7 +79,8 @@ public class JooqFTSHelper {
             vectorFields, seTargetField, agg, emptyMap());
     }
 
-    // TODO: remove this method after full migration the reactive paradigm
+    // A headless variant of the method, which construct query leveraging jOOQ's static DSL class
+    // Used in the application's reactive part
     public Insert<SearchEntrypointRecord> buildSearchEntrypointUpsert(
         final Select<? extends Record> vectorSelect,
         final Field<Long> dataEntityIdField,
@@ -127,42 +99,7 @@ public class JooqFTSHelper {
 
         final Field<Long> cteDataEntityId = deCte.field(dataEntityIdField);
 
-        Select<Record2<Long, Object>> insertQuery = dslContext
-            .select(cteDataEntityId, vector)
-            .from(deCte.getUnqualifiedName());
-
-        if (agg) {
-            insertQuery = ((SelectJoinStep<Record2<Long, Object>>) insertQuery).groupBy(cteDataEntityId);
-        }
-
-        return dslContext.with(deCte.getName())
-            .as(vectorSelect)
-            .insertInto(SEARCH_ENTRYPOINT, SEARCH_ENTRYPOINT.DATA_ENTITY_ID, seTargetField)
-            .select(insertQuery)
-            .onConflict().doUpdate().set(JooqFTSHelper.onConflictSetMap(seTargetField));
-    }
-
-    // A headless variant of the method, which construct query leveraging jOOQ's static DSL class
-    // Used in the application's reactive part
-    public Insert<SearchEntrypointRecord> headlessBuildSearchEntrypointUpsert(
-        final Select<? extends Record> vectorSelect,
-        final Field<Long> dataEntityIdField,
-        final List<Field<?>> vectorFields,
-        final TableField<SearchEntrypointRecord, Object> seTargetField,
-        final boolean agg,
-        final Map<Field<?>, Field<?>> remappingConfig
-    ) {
-        if (vectorFields.isEmpty()) {
-            throw new IllegalArgumentException("Vector fields collection must not be empty");
-        }
-
-        final Table<? extends Record> deCte = vectorSelect.asTable("t");
-
-        final Field<Object> vector = concatVectorFields(deCte, vectorFields, agg, remappingConfig).as(seTargetField);
-
-        final Field<Long> cteDataEntityId = deCte.field(dataEntityIdField);
-
-        Select<Record2<Long, Object>> insertQuery = dslContext
+        Select<Record2<Long, Object>> insertQuery = DSL
             .select(cteDataEntityId, vector)
             .from(deCte.getUnqualifiedName());
 
@@ -174,94 +111,7 @@ public class JooqFTSHelper {
             .as(vectorSelect)
             .insertInto(SEARCH_ENTRYPOINT, SEARCH_ENTRYPOINT.DATA_ENTITY_ID, seTargetField)
             .select(insertQuery)
-            .onConflict().doUpdate().set(JooqFTSHelper.onConflictSetMap(seTargetField));
-    }
-
-    public Condition ftsCondition(final String plainQuery) {
-        final String query = String.join("&", plainQuery.split(" "));
-
-        final Field<Object> conditionField = field(
-            "? @@ to_tsquery(?)",
-            SEARCH_ENTRYPOINT.SEARCH_VECTOR,
-            String.format("%s:*", query)
-        );
-
-        return condition(conditionField.toString());
-    }
-
-    public List<Condition> facetStateConditions(final FacetStateDto state,
-                                                final boolean extended,
-                                                final boolean skipEntityClassCondition) {
-        return state.getState().entrySet().stream()
-            .filter(e -> {
-                if (skipEntityClassCondition) {
-                    return !e.getKey().equals(FacetType.ENTITY_CLASSES);
-                }
-                return true;
-            })
-            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), extended))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-    }
-
-    // TODO: ad-hoc
-    public Pair<List<Condition>, List<Condition>> resultFacetStateConditions(final FacetStateDto state,
-                                                                             final boolean skipEntityClassCondition) {
-        final Predicate<Map.Entry<FacetType, List<SearchFilterDto>>> entryPredicate =
-            e -> e.getKey().equals(FacetType.DATA_SOURCES)
-                || e.getKey().equals(FacetType.ENTITY_CLASSES)
-                || e.getKey().equals(FacetType.TYPES);
-
-        final List<Condition> joinConditions = state.getState().entrySet().stream()
-            .filter(not(entryPredicate))
-            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-
-        final List<Condition> cteConditions = state.getState().entrySet().stream()
-            .filter(entryPredicate)
-            .filter(e -> {
-                if (skipEntityClassCondition) {
-                    return !e.getKey().equals(FacetType.ENTITY_CLASSES);
-                }
-
-                return true;
-            })
-            .map(e -> compileFacetCondition(e.getKey(), e.getValue(), true))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
-
-        cteConditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
-
-        return Pair.of(cteConditions, joinConditions);
-    }
-
-    public Condition compileFacetCondition(final FacetType facetType,
-                                           final List<SearchFilterDto> filters,
-                                           final boolean extended) {
-        final Map<FacetType, Function<List<SearchFilterDto>, Condition>> conditionsDict = extended
-            ? EXTENDED_CONDITIONS
-            : CONDITIONS;
-
-        final Function<List<SearchFilterDto>, Condition> function = conditionsDict.get(facetType);
-
-        if (function == null || filters == null || filters.isEmpty()) {
-            return null;
-        }
-
-        return function.apply(filters);
-    }
-
-    public Field<?> ftsRankField(final Field<?> vectorField, final String plainQuery) {
-        requireNonNull(vectorField);
-
-        final String query = String.join("&", plainQuery.split(" "));
-
-        return field(
-            "ts_rank(?, to_tsquery(?))",
-            vectorField,
-            String.format("%s:*", query)
-        );
+            .onConflict().doUpdate().set(onConflictSetMap(seTargetField));
     }
 
     private Field<Object> concatVectorFields(final Table<? extends Record> cte,
