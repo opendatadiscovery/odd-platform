@@ -1,9 +1,24 @@
 import glob
 import json
 import os
-from typing import Union, Dict, Any, Tuple
+import time
+from typing import Union, Dict, Any, Tuple, List
 
 import requests
+
+REACH_TRIES_NUMBER = 10
+APP_PATH = os.getenv("APP_PATH") or "."
+
+
+def read_sample_json(json_filename: str) -> Tuple[str, Dict[str, Any]]:
+    with open(json_filename, "r") as f:
+        ingest_sample = json.loads(f.read())
+        return ingest_sample['data_source_oddrn'], ingest_sample
+
+
+def read_datasources_json() -> List[Dict[str, Any]]:
+    with open(f"{APP_PATH}/datasources/datasources.json", "r") as f:
+        return json.loads(f.read())
 
 
 def create_data_source_and_retrieve_token(ds: Dict[str, Union[str, bool]]) -> str:
@@ -30,113 +45,35 @@ def inject_data(data: Dict[str, Any], token: str):
         raise Exception(f"Couldn't inject data for {data['data_source_oddrn']}")
 
 
-def read_sample(json_filename: str) -> Tuple[str, Dict[str, Any]]:
-    with open(json_filename, "r") as f:
-        ingest_sample = json.loads(f.read())
-        return ingest_sample['data_source_oddrn'], ingest_sample
-
-
 platform_host_url = os.environ["PLATFORM_HOST_URL"]
 
-data_sources = [
-    {
-        "name": "BookShop Transactional",
-        "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop",
-        "description": "Transactional BookShop PostgreSQL database",
-        "namespace_name": "Transactional",
-        "connection_url": "",
-        "active": True
-    },
-    {
-        "name": "BookShop Data Lake",
-        "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm",
-        "description": "BookShop Data Lake cited in the Redshift",
-        "namespace_name": "Data Lake",
-        "active": True,
-        "pulling_interval": "60",
-        "connection_url": ""
-    },
-    {
-        "name": "Snowflake Sample Data",
-        "oddrn": "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH",
-        "description": "Snowflake sample data from the free trial",
-        "namespace_name": "Samples",
-        "active": True,
-        "pulling_interval": "60",
-        "connection_url": ""
-    },
-    {
-        "name": "Great Expectation",
-        "oddrn": "//ge",
-        "description": "Data quality processes over Snowflake data",
-        "namespace_name": "Data Quality",
-        "active": True,
-        "pulling_interval": "60",
-        "connection_url": ""
-    },
-    {
-        "name": "Airflow ETL",
-        "oddrn": "//airflow/host/aws.airflow.aws.com/",
-        "description": "ETL for Sample Data Lake",
-        "namespace_name": "ETL",
-        "active": True,
-        "pulling_interval": 60,
-        "connection_url": ""
-    },
-    {
-        "name": "BookShop ETL",
-        "oddrn": "//airflow/host/2.1.3.4",
-        "description": "Airflow ETL DAGs",
-        "namespace_name": "ETL",
-        "active": True,
-        "pulling_interval": "60",
-        "connection_url": ""
-    },
-    {
-        "name": "User Transactions",
-        "oddrn": "//kafka/host/aws.kafka.connect.io/",
-        "description": "Kafka topics for user transactions data sample",
-        "namespace_name": "Messaging",
-        "active": True,
-        "pulling_interval": "60",
-        "connection_url": ""
-    },
-    {
-        "name": "Data Lake S3",
-        "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2",
-        "description": "S3 Data Lake for samples",
-        "namespace_name": "Data Lake",
-        "active": True,
-        "pulling_interval": "60",
-        "connection_url": ""
-    },
-    {
-        "name": "Kinesis Data Stream consumer",
-        "oddrn": "//microservice/named",
-        "description": "KDS Consumer that pushes data from KDS to the S3 Data Lake",
-        "namespace_name": "ETL",
-        "active": True,
-        "pulling_interval": "60",
-        "connection_url": ""
-    },
-    {
-        "name": "KDS Clickstream",
-        "oddrn": "//kinesis/cloud/aws/account/111111111111/region/us-west-2/",
-        "namespace_name": "Messaging",
-        "active": True,
-        "pulling_interval": "60",
-        "connection_url": ""
-    },
-]
-
-data_sources_grouped = {ds["oddrn"]: ds for ds in data_sources}
+data_sources_grouped = {ds["oddrn"]: ds for ds in read_datasources_json()}
 
 ingestion_samples_grouped = {
     sample[0]: sample[1]
     for sample in [
-        read_sample(json_filename) for json_filename in glob.glob("./samples/*.json")
+        read_sample_json(json_filename) for json_filename in glob.glob("./samples/*.json")
     ]
 }
+
+healthy = False
+for i in range(0, REACH_TRIES_NUMBER):
+    print(f"Waiting for the platform to be able to receive requests: {REACH_TRIES_NUMBER - i}")
+
+    try:
+        hc_response = requests.get(f"{platform_host_url}/actuator/health")
+    except requests.exceptions.ConnectionError:
+        time.sleep(2)
+        continue
+
+    if hc_response.json().get('status') != 'UP':
+        time.sleep(2)
+        continue
+
+    healthy = True
+
+if not healthy:
+    raise Exception(f"Couldn't reach the platform in {REACH_TRIES_NUMBER} tries")
 
 for oddrn, ds in ingestion_samples_grouped.items():
     ds_form = data_sources_grouped.get(oddrn)

@@ -22,6 +22,20 @@ services:
     ports:
       - 8080:8080
 
+  odd-platform-enricher:
+    image: python:3.9.12-alpine3.15
+    volumes:
+      - ./injector:/injector
+    command:
+      - sh
+      - ./injector/start.sh
+    environment:
+      - PLATFORM_HOST_URL=${PLATFORM_HOST_URL}
+      - APP_PATH=./injector
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - odd-platform
+
   odd-collector:
     image: ghcr.io/opendatadiscovery/odd-collector:latest
     restart: always
