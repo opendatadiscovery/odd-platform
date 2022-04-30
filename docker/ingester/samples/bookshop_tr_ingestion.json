@@ -1,0 +1,1545 @@
+{
+  "data_source_oddrn": "//postgresql/host/1.2.3.4/databases/bookshop",
+  "items": [
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_cards",
+      "name": "dim_cards",
+      "version": null,
+      "description": "Customers' payment cards data",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 150000,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_cards/fields/customer_id",
+            "name": "customer_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_cards/fields/card_uuid",
+            "name": "card_uuid",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_cards/fields/card_issuer_nm",
+            "name": "card_issuer_nm",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_cards/fields/currency_iso3_cd",
+            "name": "currency_iso3_cd",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_cards/fields/card_type",
+            "name": "card_type",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_cards/fields/value_from",
+            "name": "value_from",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_cards/fields/value_to",
+            "name": "value_to",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_cards/fields/is_active_flg",
+            "name": "is_active_flg",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "bool",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/customer_tier_sbx",
+      "name": "customer_tier_sbx",
+      "version": null,
+      "description": "Customer tier SBX",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 25000,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/customer_tier_sbx/fields/customer_id",
+            "name": "customer_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/customer_tier_sbx/fields/tier_id",
+            "name": "tier_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/customer_tier_sbx/fields/tier_nm",
+            "name": "tier_nm",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/customer_tier_sbx/fields/experiment_id",
+            "name": "experiment_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/customer_tier_sbx/fields/rundate_tmst",
+            "name": "rundate_tmst",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_countries",
+      "name": "dim_countries",
+      "version": null,
+      "description": "Available countries",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 100,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_countries/fields/country_full_name",
+            "name": "country_full_name",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_countries/fields/country_iso2_cd",
+            "name": "country_iso2_cd",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_countries/fields/country_iso3_cd",
+            "name": "country_iso3_cd",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer",
+      "name": "dim_customer",
+      "version": null,
+      "description": "Customers' table",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 100000,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/customer_id",
+            "name": "customer_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/agegroup_desc",
+            "name": "agegroup_desc",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/date_of_birth",
+            "name": "date_of_birth",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/last_login_tmst",
+            "name": "last_login_tmst",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/delivery_address_postcode",
+            "name": "delivery_address_postcode",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/delivery_address_country_nm",
+            "name": "delivery_address_country_nm",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/delivery_address_line_1",
+            "name": "delivery_address_line_1",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/delivery_address_line_2",
+            "name": "delivery_address_line_2",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/telephone_nbr",
+            "name": "telephone_nbr",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/valid_from",
+            "name": "valid_from",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/valid_to",
+            "name": "valid_to",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_customer/fields/is_active_flg",
+            "name": "is_active_flg",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "bool",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_payment",
+      "name": "dim_payment",
+      "version": null,
+      "description": "Payment methods",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 20,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_payment/fields/payment_method_id",
+            "name": "payment_method_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_payment/fields/payment_method_desc",
+            "name": "payment_method_desc",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_inventory",
+      "name": "fct_inventory",
+      "version": null,
+      "description": "Book inventory table",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 124435,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_inventory/fields/book_id",
+            "name": "book_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_inventory/fields/inventory_effective_dt",
+            "name": "inventory_effective_dt",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_inventory/fields/inventory_qty",
+            "name": "inventory_qty",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales",
+      "name": "fct_sales",
+      "version": null,
+      "description": "Sales data",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 34123000,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/transaction_id",
+            "name": "transaction_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/transaction_tmst",
+            "name": "transaction_tmst",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/customer_id",
+            "name": "customer_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/card_uuid",
+            "name": "card_uuid",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/transaction_currency_id",
+            "name": "transaction_currency_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/book_id",
+            "name": "book_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/promo_ind",
+            "name": "promo_ind",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_BOOLEAN",
+              "logical_type": "bool",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/promo_id",
+            "name": "promo_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/transaction_amt_lc",
+            "name": "transaction_amt_lc",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/transaction_qty",
+            "name": "transaction_qty",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/payment_method_id",
+            "name": "payment_method_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/vat_amt_lc",
+            "name": "vat_amt_lc",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/insert_tmst",
+            "name": "insert_tmst",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/update_tmst",
+            "name": "update_tmst",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/fct_sales/fields/meta_load_date",
+            "name": "meta_load_date",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_currency",
+      "name": "dim_currency",
+      "version": null,
+      "description": "Available currencies",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 34123000,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_currency/fields/currency_id",
+            "name": "currency_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_currency/fields/currency_iso2_cd",
+            "name": "currency_iso2_cd",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_currency/fields/currency_iso3_cd",
+            "name": "currency_iso3_cd",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_promo",
+      "name": "dim_promo",
+      "version": null,
+      "description": "Promo data",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 34123000,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_promo/fields/promo_id",
+            "name": "promo_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_promo/fields/promo_nm",
+            "name": "promo_nm",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_promo/fields/markdown_percentage",
+            "name": "markdown_percentage",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_promo/fields/markdown_amt_lc",
+            "name": "markdown_amt_lc",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_NUMBER",
+              "logical_type": "float",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_promo/fields/markdown_currency_id",
+            "name": "markdown_currency_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_promo/fields/valid_from",
+            "name": "valid_from",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_promo/fields/valid_to",
+            "name": "valid_to",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_books",
+      "name": "dim_books",
+      "version": null,
+      "description": "Promo data",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 34123000,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_books/fields/book_id",
+            "name": "book_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_books/fields/isbn_cd",
+            "name": "isbn_cd",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_books/fields/book_nm",
+            "name": "book_nm",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_books/fields/author_nm",
+            "name": "author_nm",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_books/fields/publisher_id",
+            "name": "publisher_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_books/fields/publication_dt",
+            "name": "publication_dt",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_DATETIME",
+              "logical_type": "date",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    },
+    {
+      "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_publishers",
+      "name": "dim_publishers",
+      "version": null,
+      "description": "Publishers' data",
+      "owner": null,
+      "metadata": [
+        {
+          "schema_url": "http://none",
+          "metadata": {
+            "IS_INSERTABLE_INTO": "yes",
+            "IS_TYPED": "no"
+          }
+        }
+      ],
+      "updated_at": null,
+      "created_at": null,
+      "type": "TABLE",
+      "dataset": {
+        "parent_oddrn": null,
+        "rows_number": 34123000,
+        "field_list": [
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_publishers/fields/publisher_id",
+            "name": "publisher_id",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          },
+          {
+            "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop/tables/dim_publishers/fields/publisher_num",
+            "name": "publisher_num",
+            "version": null,
+            "description": null,
+            "owner": null,
+            "metadata": null,
+            "parent_field_oddrn": null,
+            "type": {
+              "type": "TYPE_STRING",
+              "logical_type": "varchar",
+              "is_nullable": false
+            },
+            "is_key": null,
+            "is_value": null,
+            "default_value": null,
+            "stats": null
+          }
+        ]
+      },
+      "data_transformer": null,
+      "data_transformer_run": null,
+      "data_quality_test": null,
+      "data_quality_test_run": null,
+      "data_input": null,
+      "data_consumer": null,
+      "data_entity_group": null
+    }
+  ]
+}
