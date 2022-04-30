@@ -52,7 +52,7 @@ data_sources_grouped = {ds["oddrn"]: ds for ds in read_datasources_json()}
 ingestion_samples_grouped = {
     sample[0]: sample[1]
     for sample in [
-        read_sample_json(json_filename) for json_filename in glob.glob("./samples/*.json")
+        read_sample_json(json_filename) for json_filename in glob.glob(f"{APP_PATH}/samples/*.json")
     ]
 }
 
@@ -71,10 +71,12 @@ for i in range(0, REACH_TRIES_NUMBER):
         continue
 
     healthy = True
+    break
 
 if not healthy:
     raise Exception(f"Couldn't reach the platform in {REACH_TRIES_NUMBER} tries")
 
+print("Starting to inject samples")
 for oddrn, ds in ingestion_samples_grouped.items():
     ds_form = data_sources_grouped.get(oddrn)
     if not ds_form:
