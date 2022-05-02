@@ -222,14 +222,14 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
         return r.into(recordTable).into(pojoClass);
     }
 
-    protected Select<? extends Record> paginate(final Select<R> baseSelect,
+    protected Select<? extends Record> paginate(final Select<?> baseSelect,
                                                 final Field<?> orderField,
                                                 final SortOrder sortOrder,
                                                 final int page,
                                                 final int size) {
         jooqQueryHelper.homogeneityCheck(baseSelect.getSelect());
 
-        final Table<R> u = baseSelect.asTable("u");
+        final Table<?> u = baseSelect.asTable("u");
 
         final Field<Integer> totalRows = count().over().as(PAGE_METADATA_TOTAL_FIELD);
         final Field<Integer> rowNumber = rowNumber().over()

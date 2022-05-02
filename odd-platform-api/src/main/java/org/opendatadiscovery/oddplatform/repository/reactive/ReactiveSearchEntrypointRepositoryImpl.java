@@ -11,6 +11,7 @@ import org.jooq.Table;
 import org.jooq.UpdateConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRecord;
+import org.opendatadiscovery.oddplatform.repository.util.FTSEntity;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.ReactiveJooqFTSHelper;
 import org.springframework.stereotype.Repository;
@@ -21,6 +22,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.tables.DataSource.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.tables.SearchEntrypoint.SEARCH_ENTRYPOINT;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConfig.FTS_CONFIG_DETAILS_MAP;
 
 @Repository
 @RequiredArgsConstructor
@@ -43,11 +45,12 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .where(NAMESPACE.ID.eq(namespaceId))
             .and(NAMESPACE.IS_DELETED.isFalse());
 
-        final Insert<SearchEntrypointRecord> insertQuery = jooqFTSHelper.buildSearchEntrypointUpsert(
+        final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
             dataEntityId,
             vectorFields,
             SEARCH_ENTRYPOINT.NAMESPACE_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
             false
         );
 
@@ -90,8 +93,14 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             .where(DATA_SOURCE.ID.eq(dataSourceId))
             .and(DATA_SOURCE.IS_DELETED.isFalse());
 
-        final Insert<SearchEntrypointRecord> dataSourceQuery = jooqFTSHelper
-            .buildSearchEntrypointUpsert(dsSelect, deId, dsVectorFields, SEARCH_ENTRYPOINT.DATA_SOURCE_VECTOR, false);
+        final Insert<? extends Record> dataSourceQuery = jooqFTSHelper.buildVectorUpsert(
+            dsSelect,
+            deId,
+            dsVectorFields,
+            SEARCH_ENTRYPOINT.DATA_SOURCE_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            false
+        );
 
         return jooqReactiveOperations.mono(dataSourceQuery);
     }

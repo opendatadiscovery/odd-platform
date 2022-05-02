@@ -34,10 +34,6 @@ public class JooqQueryHelper {
         return DSL.select(field(DSL.exists(baseSelect)));
     }
 
-    public Select<? extends Record1<Boolean>> selectExists(final Select<?> baseSelect) {
-        return DSL.select(field(DSL.exists(baseSelect)));
-    }
-
     public Select<? extends Record> paginate(final Select<?> baseSelect,
                                              final int page,
                                              final int size) {

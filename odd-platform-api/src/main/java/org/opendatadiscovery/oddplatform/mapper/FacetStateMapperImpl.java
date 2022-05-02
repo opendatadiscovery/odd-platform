@@ -15,6 +15,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFilterState;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormDataFilters;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermFacetState;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormDataFilters;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
@@ -27,7 +30,6 @@ import static java.util.stream.Collectors.groupingBy;
 @Component
 @RequiredArgsConstructor
 public class FacetStateMapperImpl implements FacetStateMapper {
-    private final SearchMapper searchMapper;
 
     private static final Map<Function<SearchFormDataFilters, List<SearchFilterState>>, FacetType> FORM_MAPPINGS =
         Map.of(
@@ -38,6 +40,16 @@ public class FacetStateMapperImpl implements FacetStateMapper {
             SearchFormDataFilters::getOwners, FacetType.OWNERS,
             SearchFormDataFilters::getTags, FacetType.TAGS
         );
+
+    private static final Map<Function<TermSearchFormDataFilters, List<SearchFilterState>>, FacetType>
+        TERM_FORM_MAPPINGS =
+        Map.of(
+            TermSearchFormDataFilters::getNamespaces, FacetType.NAMESPACES,
+            TermSearchFormDataFilters::getOwners, FacetType.OWNERS,
+            TermSearchFormDataFilters::getTags, FacetType.TAGS
+        );
+
+    private final SearchMapper searchMapper;
 
     @Override
     public SearchFacetsPojo mapStateToPojo(final FacetStateDto state) {
@@ -83,9 +95,47 @@ public class FacetStateMapperImpl implements FacetStateMapper {
     }
 
     @Override
+    public FacetStateDto mapForm(final TermSearchFormData formData) {
+        final TermSearchFormDataFilters filters = formData.getFilters();
+        if (filters == null) {
+            return FacetStateDto.empty();
+        }
+
+        final Map<FacetType, List<SearchFilterDto>> state = TERM_FORM_MAPPINGS.entrySet().stream()
+            .map(e -> {
+                final List<SearchFilterState> filterList = e.getKey().apply(filters);
+                if (filterList == null) {
+                    return null;
+                }
+
+                return filterList
+                    .stream()
+                    .map(f -> mapFilter(f, e.getValue()))
+                    .collect(Collectors.toList());
+            })
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .collect(groupingBy(SearchFilterDto::getType));
+
+        return new FacetStateDto(
+            state,
+            formData.getQuery(),
+            false
+        );
+    }
+
+    @Override
     public FacetStateDto pojoToState(final SearchFacetsPojo facetsRecord) {
-        return JSONSerDeUtils.deserializeJson(facetsRecord.getFilters().data(), new TypeReference<FacetStateDto>() {
+        return JSONSerDeUtils.deserializeJson(facetsRecord.getFilters().data(), new TypeReference<>() {
         });
+    }
+
+    @Override
+    public TermFacetState mapDto(final FacetStateDto state) {
+        return new TermFacetState()
+            .owners(getSearchFiltersForFacetType(state, FacetType.OWNERS))
+            .namespaces(getSearchFiltersForFacetType(state, FacetType.NAMESPACES))
+            .tags(getSearchFiltersForFacetType(state, FacetType.TAGS));
     }
 
     @Override

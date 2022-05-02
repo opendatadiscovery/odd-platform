@@ -12,6 +12,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
+import org.opendatadiscovery.oddplatform.service.term.TermSearchService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +25,7 @@ import reactor.core.publisher.Mono;
 public class TermController implements TermApi {
 
     private final TermService termService;
+    private final TermSearchService termSearchService;
 
     @Override
     public Mono<ResponseEntity<TermRefList>> getTermsList(final Integer page, final Integer size,
@@ -64,16 +66,6 @@ public class TermController implements TermApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<CountableSearchFilter>>> getTermFiltersForFacet(final UUID searchId,
-                                                                                    final MultipleFacetType facetType,
-                                                                                    final Integer page,
-                                                                                    final Integer size,
-                                                                                    final String query,
-                                                                                    final ServerWebExchange exchange) {
-        return TermApi.super.getTermFiltersForFacet(searchId, facetType, page, size, query, exchange);
-    }
-
-    @Override
     public Mono<ResponseEntity<DataEntityList>> getTermLinkedItems(final Long termId, final Integer page,
                                                                    final Integer size,
                                                                    final String query,
@@ -83,28 +75,46 @@ public class TermController implements TermApi {
     }
 
     @Override
+    public Mono<ResponseEntity<Flux<CountableSearchFilter>>> getTermFiltersForFacet(final UUID searchId,
+                                                                                    final MultipleFacetType facetType,
+                                                                                    final Integer page,
+                                                                                    final Integer size,
+                                                                                    final String query,
+                                                                                    final ServerWebExchange exchange) {
+        return Mono.just(
+            ResponseEntity.ok(termSearchService.getFilterOptions(searchId, facetType, page, size, query))
+        );
+    }
+
+    @Override
     public Mono<ResponseEntity<TermSearchFacetsData>> getTermSearchFacetList(final UUID searchId,
                                                                              final ServerWebExchange exchange) {
-        return TermApi.super.getTermSearchFacetList(searchId, exchange);
+        return termSearchService.getFacets(searchId)
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<TermList>> getTermSearchResults(final UUID searchId, final Integer page,
                                                                final Integer size,
                                                                final ServerWebExchange exchange) {
-        return TermApi.super.getTermSearchResults(searchId, page, size, exchange);
+        return termSearchService
+            .getSearchResults(searchId, page, size)
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<TermRefList>> getTermSearchSuggestions(final String query,
                                                                       final ServerWebExchange exchange) {
-        return TermApi.super.getTermSearchSuggestions(query, exchange);
+        return termSearchService.getQuerySuggestions(query)
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<TermSearchFacetsData>> termSearch(final Mono<TermSearchFormData> termSearchFormData,
                                                                  final ServerWebExchange exchange) {
-        return TermApi.super.termSearch(termSearchFormData, exchange);
+        return termSearchFormData
+            .flatMap(termSearchService::search)
+            .map(ResponseEntity::ok);
     }
 
     @Override
@@ -112,6 +122,8 @@ public class TermController implements TermApi {
         final UUID searchId,
         final Mono<TermSearchFormData> termSearchFormData,
         final ServerWebExchange exchange) {
-        return TermApi.super.updateTermSearchFacets(searchId, termSearchFormData, exchange);
+        return termSearchFormData
+            .flatMap(fd -> termSearchService.updateFacets(searchId, fd))
+            .map(ResponseEntity::ok);
     }
 }

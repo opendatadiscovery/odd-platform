@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS tag_to_term
 (
     tag_id  bigint NOT NULL,
     term_id bigint NOT NULL,
+    deleted_at TIMESTAMP WITHOUT TIME ZONE,
 
     CONSTRAINT tag_to_term_pk PRIMARY KEY (tag_id, term_id),
 
@@ -31,6 +32,7 @@ CREATE TABLE IF NOT EXISTS term_ownership
     term_id  bigint,
     owner_id bigint,
     role_id  bigint,
+    deleted_at TIMESTAMP WITHOUT TIME ZONE,
 
     CONSTRAINT term_ownership_pk PRIMARY KEY (term_id, owner_id),
 
@@ -43,6 +45,7 @@ CREATE TABLE IF NOT EXISTS data_entity_to_term
 (
     data_entity_id bigint,
     term_id        bigint,
+    deleted_at TIMESTAMP WITHOUT TIME ZONE,
 
     CONSTRAINT data_entity_to_term_pk PRIMARY KEY (data_entity_id, term_id),
 

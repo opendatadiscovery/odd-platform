@@ -13,8 +13,9 @@ import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.TermMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.service.NamespaceService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -24,7 +25,8 @@ import reactor.core.publisher.Mono;
 public class TermServiceImpl implements TermService {
 
     private final ReactiveTermRepository termRepository;
-    private final ReactiveNamespaceRepository namespaceRepository;
+    private final NamespaceService namespaceService;
+    private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
     private final TermMapper termMapper;
 
     @Override
@@ -36,20 +38,20 @@ public class TermServiceImpl implements TermService {
     @Override
     @ReactiveTransactional
     public Mono<TermDetails> createTerm(final TermFormData formData) {
-        final Mono<TermDetails> createTermMono = getOrCreateNamespace(formData.getNamespaceName())
+        final Mono<TermDetails> createTermMono = namespaceService.getOrCreate(formData.getNamespaceName())
             .flatMap(namespace -> create(formData, namespace));
 
-        return termRepository.getTermRefDtoByNameAndNamespace(formData.getName(), formData.getNamespaceName())
-            .hasElement()
+        return termRepository.existsByNameAndNamespace(formData.getName(), formData.getNamespaceName())
             .flatMap(exists -> {
                 if (exists) {
                     return Mono.error(
-                        () -> new RuntimeException("Term with name %s and namespace %s already exists"
+                        () -> new IllegalArgumentException("Term with name %s and namespace %s already exists"
                             .formatted(formData.getName(), formData.getNamespaceName()))
                     );
                 }
                 return createTermMono;
-            });
+            })
+            .flatMap(this::updateSearchVectors);
     }
 
     @Override
@@ -57,12 +59,13 @@ public class TermServiceImpl implements TermService {
     public Mono<TermDetails> updateTerm(final Long id, final TermFormData formData) {
         return termRepository.getTermRefDto(id)
             .switchIfEmpty(Mono.error(() -> new NotFoundException("Term with id %s is not found".formatted(id))))
-            .flatMap(termRefDto -> getOrCreateNamespace(formData.getNamespaceName())
+            .flatMap(termRefDto -> namespaceService.getOrCreate(formData.getNamespaceName())
                 .flatMap(namespace -> {
                     final TermPojo termPojo = termMapper.applyToPojo(formData, namespace, termRefDto.getTerm());
                     return update(termPojo, namespace);
                 })
-            );
+            )
+            .flatMap(this::updateSearchVectors);
     }
 
     @Override
@@ -77,8 +80,7 @@ public class TermServiceImpl implements TermService {
         return termRepository.deleteRelationsWithDataEntities(id)
             .doOnNext(pojo -> log.info("Deleted relation between term {} and data entity {}",
                 pojo.getTermId(), pojo.getDataEntityId()))
-            .collectList()
-            .flatMap(ignored -> termRepository.delete(id).map(TermPojo::getId));
+            .then(termRepository.delete(id).map(TermPojo::getId));
     }
 
     @Override
@@ -97,12 +99,6 @@ public class TermServiceImpl implements TermService {
             .map(termMapper::mapToRef);
     }
 
-    private Mono<NamespacePojo> getOrCreateNamespace(final String namespaceName) {
-        return namespaceRepository
-            .getByName(namespaceName)
-            .switchIfEmpty(namespaceRepository.createByName(namespaceName));
-    }
-
     private Mono<TermDetails> update(final TermPojo pojo,
                                      final NamespacePojo namespace) {
         return termRepository.update(pojo)
@@ -117,5 +113,12 @@ public class TermServiceImpl implements TermService {
             .create(pojo)
             .map(term -> TermRefDto.builder().term(term).namespace(namespace).build())
             .map(termRefDto -> termMapper.mapToDetails(new TermDetailsDto(termRefDto)));
+    }
+
+    private Mono<TermDetails> updateSearchVectors(final TermDetails details) {
+        return Mono.zip(
+            termSearchEntrypointRepository.updateTermVectors(details.getId()),
+            termSearchEntrypointRepository.updateNamespaceVectors(details.getId())
+        ).thenReturn(details);
     }
 }

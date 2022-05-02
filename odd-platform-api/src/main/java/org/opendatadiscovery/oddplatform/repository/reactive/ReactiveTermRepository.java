@@ -1,6 +1,8 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
+import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
@@ -12,7 +14,7 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
 
     Mono<Page<TermRefDto>> listTermRefDtos(final int page, final int size, final String query);
 
-    Mono<TermRefDto> getTermRefDtoByNameAndNamespace(final String name, final String namespaceName);
+    Mono<Boolean> existsByNameAndNamespace(final String name, final String namespaceName);
 
     Mono<TermRefDto> getTermRefDto(final Long id);
 
@@ -23,4 +25,10 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
     Mono<DataEntityToTermPojo> createRelationWithDataEntity(final Long dataEntityId, final Long termId);
 
     Mono<DataEntityToTermPojo> deleteRelationWithDataEntity(final Long dataEntityId, final Long termId);
+
+    Mono<Page<TermRefDto>> getQuerySuggestions(final String query);
+
+    Mono<Page<TermDto>> findByState(final FacetStateDto state, final int page, final int size);
+
+    Mono<Long> countByState(final FacetStateDto state);
 }

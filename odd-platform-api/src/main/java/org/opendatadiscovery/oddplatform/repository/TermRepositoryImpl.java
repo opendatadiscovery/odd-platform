@@ -27,7 +27,7 @@ public class TermRepositoryImpl implements TermRepository {
             .from(TERM)
             .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
             .join(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID)
-                .and(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId)))
+                .and(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId)).and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull()))
             .fetchStream()
             .map(this::mapRecordToRefDto)
             .toList();
