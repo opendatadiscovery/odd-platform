@@ -28,7 +28,7 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colmd">
           <Typography variant="body1" noWrap>
-            {termSearchResult.namespace}
+            {termSearchResult.namespace.name}
           </Typography>
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colmd">
@@ -61,9 +61,8 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
             }
             noWrap
           >
-            {termSearchResult.createdAt
-              ? format(termSearchResult.createdAt, 'd MMM yyyy')
-              : null}
+            {termSearchResult.createdAt &&
+              format(termSearchResult.createdAt, 'd MMM yyyy')}
           </Typography>
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colmd">
@@ -78,11 +77,10 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
             }
             noWrap
           >
-            {termSearchResult.updatedAt
-              ? formatDistanceToNowStrict(termSearchResult.updatedAt, {
-                  addSuffix: true,
-                })
-              : null}
+            {termSearchResult.updatedAt &&
+              formatDistanceToNowStrict(termSearchResult.updatedAt, {
+                addSuffix: true,
+              })}
           </Typography>
         </TermSearchResultsColContainer>
       </TermSearchResultsContainer>
