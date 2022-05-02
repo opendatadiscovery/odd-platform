@@ -1,48 +1,43 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.jooq.DSLContext;
-import org.jooq.exception.DataAccessException;
+import org.jooq.Record;
+import org.jooq.SelectConditionStep;
+import org.jooq.UpdateResultStep;
+import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.TokenRecord;
+import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
 
 @Repository
 @RequiredArgsConstructor
-@Slf4j
 public class TokenRepositoryImpl implements TokenRepository {
-    private final DSLContext dslContext;
+    private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override
-    public TokenDto create(final TokenPojo tokenPojo) {
-        final TokenRecord tokenRecord = pojoToRecord(tokenPojo);
-        final TokenPojo pojo = dslContext.insertInto(TOKEN)
-            .set(tokenRecord)
-            .returning()
-            .fetchOptional()
-            .orElseThrow(() -> new DataAccessException("Error inserting token record"))
-            .into(TokenPojo.class);
-        return new TokenDto(pojo, true);
+    public Mono<TokenDto> create(final TokenPojo tokenPojo) {
+        final TokenRecord tokenRecord = jooqReactiveOperations.newRecord(TOKEN, tokenPojo);
+
+        return jooqReactiveOperations
+            .mono(DSL.insertInto(TOKEN).set(tokenRecord).returning())
+            .map(r -> new TokenDto(r.into(TokenPojo.class), true));
     }
 
     @Override
-    public TokenDto updateToken(final TokenPojo tokenPojo) {
-        final TokenRecord tokenRecord = pojoToRecord(tokenPojo);
-        final TokenPojo pojo = dslContext.update(TOKEN)
+    public Mono<TokenDto> updateToken(final TokenPojo tokenPojo) {
+        final TokenRecord tokenRecord = jooqReactiveOperations.newRecord(TOKEN, tokenPojo);
+
+        final UpdateResultStep<TokenRecord> query = DSL.update(TOKEN)
             .set(tokenRecord)
             .where(TOKEN.ID.eq(tokenPojo.getId()))
-            .returning()
-            .fetchOptional()
-            .orElseThrow(() -> new DataAccessException("Error updating token record"))
-            .into(TokenPojo.class);
-        return new TokenDto(pojo, true);
-    }
+            .returning();
 
-    private TokenRecord pojoToRecord(final TokenPojo pojo) {
-        return dslContext.newRecord(TOKEN, pojo);
+        return jooqReactiveOperations.mono(query).map(r -> new TokenDto(r.into(TokenPojo.class), true));
     }
 }

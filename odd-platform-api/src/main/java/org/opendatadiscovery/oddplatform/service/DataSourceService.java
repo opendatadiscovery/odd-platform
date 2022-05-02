@@ -7,10 +7,16 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSourceUpdateForm
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface DataSourceService
-    extends CRUDService<DataSource, DataSourceList, DataSourceFormData, DataSourceUpdateFormData> {
+public interface DataSourceService {
+    Mono<DataSourceList> list(final Integer page, final Integer size, final String nameQuery);
 
     Flux<DataSource> listActive();
 
-    Mono<DataSource> regenerateDataSourceToken(final Long dataSourceId);
+    Mono<DataSource> create(final DataSourceFormData form);
+
+    Mono<DataSource> update(final long id, final DataSourceUpdateFormData form);
+
+    Mono<Long> delete(final long id);
+
+    Mono<DataSource> regenerateDataSourceToken(final long id);
 }

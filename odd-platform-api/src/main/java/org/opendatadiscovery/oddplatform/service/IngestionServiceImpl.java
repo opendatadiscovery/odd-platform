@@ -35,6 +35,7 @@ import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -45,12 +46,12 @@ import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
-import org.opendatadiscovery.oddplatform.repository.DataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetStructureRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import org.opendatadiscovery.oddrn.Generator;
@@ -69,7 +70,7 @@ import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEnt
 public class IngestionServiceImpl implements IngestionService {
     private final AlertLocator alertLocator;
 
-    private final DataSourceRepository dataSourceRepository;
+    private final ReactiveDataSourceRepository dataSourceRepository;
     private final DataEntityRepository dataEntityRepository;
     private final DatasetVersionRepository datasetVersionRepository;
     private final DatasetStructureRepository datasetStructureRepository;
@@ -120,31 +121,21 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<Long> acquireDataSourceId(final String dataSourceOddrn) {
-        return Mono.fromCallable(() -> dataSourceRepository.getByOddrn(dataSourceOddrn))
-            .flatMap(opt -> {
-                if (opt.isPresent()) {
-                    return Mono.just(opt.get().dataSource().getId());
-                }
-
-                final OddrnPath oddrnPath;
-                try {
-                    oddrnPath = oddrnGenerator.parse(dataSourceOddrn)
-                        .orElseThrow(() -> new IllegalArgumentException("Oddrn parser returned empty object"));
-                } catch (final Exception e) {
-                    return Mono.error(
-                        new RuntimeException(String.format("Couldn't parse %s into OddrnPath", dataSourceOddrn), e));
-                }
-
-                if (!(oddrnPath instanceof ODDPlatformDataSourcePath)) {
-                    return Mono.error(
-                        new NotFoundException("Data source with oddrn %s hasn't been found", dataSourceOddrn));
-                }
-
-                final Long datasourceId = ((ODDPlatformDataSourcePath) oddrnPath).getDatasourceId();
-
-                dataSourceRepository.injectOddrn(datasourceId, dataSourceOddrn);
-                return Mono.just(datasourceId);
-            });
+        final Mono<Long> createDataSourceByOddrn = Mono.just(dataSourceOddrn)
+            .map(this::parseOddrn)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .switchIfEmpty(
+                Mono.error(() -> new IllegalArgumentException("Oddrn parser returned empty object")))
+            .filter(path -> path instanceof ODDPlatformDataSourcePath)
+            .switchIfEmpty(
+                Mono.error(() -> new NotFoundException("Data source with oddrn %s hasn't been found", dataSourceOddrn)))
+            .map(path -> ((ODDPlatformDataSourcePath) path).getDatasourceId())
+            .flatMap(id -> dataSourceRepository.injectOddrn(id, dataSourceOddrn))
+            .map(DataSourcePojo::getId);
+        return dataSourceRepository.getDtoByOddrn(dataSourceOddrn)
+            .map(dataSource -> dataSource.dataSource().getId())
+            .switchIfEmpty(createDataSourceByOddrn);
     }
 
     private IngestionDataStructure buildStructure(final DataEntityList dataEntityList,
@@ -482,5 +473,13 @@ public class IngestionServiceImpl implements IngestionService {
             .setDatasetOddrn(entity.getOddrn())
             .setVersion(version)
             .setVersionHash(entity.getDataSet().structureHash());
+    }
+
+    private Optional<OddrnPath> parseOddrn(final String oddrn) {
+        try {
+            return oddrnGenerator.parse(oddrn);
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Couldn't parse %s into OddrnPath", oddrn), e);
+        }
     }
 }

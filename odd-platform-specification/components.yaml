@@ -753,8 +753,6 @@ components:
           type: integer
           format: int32
           description: Pulling interval in seconds
-        token:
-          $ref: '#/components/schemas/Token'
 
     Token:
       type: object
@@ -805,14 +803,11 @@ components:
           $ref: '#/components/schemas/Token'
         name:
           type: string
-        oddrn:
-          type: string
         description:
           type: string
       required:
         - id
         - name
-        - oddrn
         - token
 
     CollectorFormData:
@@ -836,8 +831,6 @@ components:
           type: string
         namespace_name:
           type: string
-        token:
-          $ref: '#/components/schemas/Token'
 
     PageInfo:
       type: object

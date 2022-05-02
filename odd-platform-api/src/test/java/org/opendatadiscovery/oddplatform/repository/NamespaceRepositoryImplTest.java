@@ -1,203 +1,103 @@
 package org.opendatadiscovery.oddplatform.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("Integration tests for NamespaceRepository")
 class NamespaceRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired
-    private NamespaceRepository namespaceRepository;
+    private ReactiveNamespaceRepository namespaceRepository;
 
     @Test
-    @DisplayName("Test creates namespace pojo, expecting namespace pojo in db")
-    void testCreateNamespacePojoInDB() {
+    @DisplayName("Test creates namespace pojo, expecting namespace pojo in the database")
+    void testCreate() {
         final NamespacePojo namespacePojo = new NamespacePojo()
             .setName(UUID.randomUUID().toString());
 
-        final NamespacePojo expectedNamespacePojo = namespaceRepository.create(namespacePojo);
-        final Optional<NamespacePojo> actualNamespacePojo = namespaceRepository.get(expectedNamespacePojo.getId());
-
-        assertTrue(actualNamespacePojo.isPresent());
-        assertEquals(expectedNamespacePojo.getName(), actualNamespacePojo.get().getName());
+        final NamespacePojo createdNamespace = namespaceRepository.create(namespacePojo)
+            .blockOptional()
+            .orElseThrow();
+        namespaceRepository.get(createdNamespace.getId())
+            .as(StepVerifier::create)
+            .assertNext(pojo -> assertThat(pojo).isEqualTo(createdNamespace))
+            .verifyComplete();
     }
 
     @Test
-    @DisplayName("Test creates namespace pojo if not exist in db, expecting one namespace pojo in db")
-    void testCreateIfNotExistsSameName() {
+    @DisplayName("Test creates namespace pojo by its name, expecting namespace pojo in the database")
+    void testCreateByName() {
         final String name = UUID.randomUUID().toString();
-        final NamespacePojo pojo = new NamespacePojo()
-            .setName(name);
-        final NamespacePojo secondPojo = new NamespacePojo()
-            .setName(name);
 
-        final NamespacePojo expectedNamespacePojo = namespaceRepository.create(pojo);
-        final NamespacePojo actualNamespacePojo = namespaceRepository.createIfNotExists(secondPojo);
-
-        assertEquals(expectedNamespacePojo.getId(), actualNamespacePojo.getId());
-        assertEquals(expectedNamespacePojo.getName(), actualNamespacePojo.getName());
+        final NamespacePojo createdNamespace = namespaceRepository.createByName(name)
+            .blockOptional()
+            .orElseThrow();
+        namespaceRepository.get(createdNamespace.getId())
+            .as(StepVerifier::create)
+            .assertNext(pojo -> assertThat(pojo).isEqualTo(createdNamespace))
+            .verifyComplete();
     }
 
     @Test
-    @DisplayName("Test creates namespace pojo if not exist in db, expecting two namespace pojo in db")
-    void testCreateIfNotExistsDifferentName() {
+    @DisplayName("Test softly deletes namespace pojo from db, expecting no record in the database")
+    void testDelete() {
         final NamespacePojo pojo = new NamespacePojo()
             .setName(UUID.randomUUID().toString());
-        final NamespacePojo secondPojo = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
 
-        final NamespacePojo expectedNamespacePojo = namespaceRepository.create(pojo);
-        final NamespacePojo actualNamespacePojo = namespaceRepository.createIfNotExists(secondPojo);
-
-        assertNotEquals(expectedNamespacePojo.getId(), actualNamespacePojo.getId());
-        assertNotEquals(expectedNamespacePojo.getName(), actualNamespacePojo.getName());
+        namespaceRepository.create(pojo)
+            .map(NamespacePojo::getId)
+            .flatMap(namespaceRepository::delete)
+            .map(NamespacePojo::getId)
+            .flatMap(namespaceRepository::get)
+            .as(StepVerifier::create)
+            .verifyComplete();
     }
 
     @Test
-    @DisplayName("Test softly deletes namespace pojo from db, expecting empty db")
-    void testDeleteNamespaceFromDB() {
+    @DisplayName("Test updates namespace pojo, expecting updated namespace pojo in the database")
+    void testUpdate() {
         final NamespacePojo pojo = new NamespacePojo()
             .setName(UUID.randomUUID().toString());
 
-        final NamespacePojo namespacePojo = namespaceRepository.create(pojo);
-        namespaceRepository.delete(namespacePojo.getId());
-        final Optional<NamespacePojo> actualNamespacePojo = namespaceRepository.get(namespacePojo.getId());
+        final String newName = UUID.randomUUID().toString();
 
-        assertTrue(actualNamespacePojo.isEmpty());
+        final NamespacePojo createdNamespace = namespaceRepository.create(pojo).blockOptional()
+            .orElseThrow();
+
+        namespaceRepository.update(new NamespacePojo(createdNamespace).setName(newName))
+            .as(StepVerifier::create)
+            .assertNext(updatedPojo -> {
+                assertThat(updatedPojo.getId()).isEqualTo(createdNamespace.getId());
+                assertThat(updatedPojo.getName()).isEqualTo(newName);
+                assertThat(updatedPojo.getName()).isNotEqualTo(createdNamespace.getName());
+                assertThat(updatedPojo.getUpdatedAt()).isNotEqualTo(createdNamespace.getUpdatedAt());
+            })
+            .verifyComplete();
     }
 
     @Test
-    @DisplayName("Test updates namespace pojo, expecting updated namespace pojo in db")
-    void testUpdateNamespacePojo() {
-        final NamespacePojo pojo = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
+    @DisplayName("Test creates namespace pojo, deletes it and creates again, expecting new id in the created entity")
+    void testCreateNamespacePojoAfterDeletingIt() {
+        final NamespacePojo pojo = new NamespacePojo().setName(UUID.randomUUID().toString());
 
-        final NamespacePojo expectedNamespacePojo = namespaceRepository.create(pojo);
-        final Optional<NamespacePojo> tmp = namespaceRepository.get(expectedNamespacePojo.getId());
-        final NamespacePojo tmpNamespacePojo = tmp.orElseGet(NamespacePojo::new);
-        tmpNamespacePojo.setName(UUID.randomUUID().toString());
-        final NamespacePojo actualNamespacePojo = namespaceRepository.update(tmpNamespacePojo);
-
-        assertEquals(expectedNamespacePojo.getId(), actualNamespacePojo.getId());
-        assertNotEquals(expectedNamespacePojo.getName(), actualNamespacePojo.getName());
-        assertNotEquals(expectedNamespacePojo.getUpdatedAt(), actualNamespacePojo.getUpdatedAt());
-    }
-
-    @Test
-    @DisplayName("Test bulk create namespace pojo, expecting namespace pojos are created successfully")
-    void testBulkCreateNamespacePojo() {
-        final NamespacePojo pojo = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final NamespacePojo pojo1 = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final NamespacePojo pojo2 = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
-
-        final List<NamespacePojo> expectedPojoList = namespaceRepository.bulkCreate(pojoList);
-
-        for (final NamespacePojo namespacePojo : expectedPojoList) {
-            assertTrue(namespaceRepository.get(namespacePojo.getId()).isPresent());
-        }
-    }
-
-    @Test
-    @DisplayName("Test delete all namespace pojos, expecting namespace pojos are not present in db")
-    void testDeleteAllNamespacePojo() {
-        final NamespacePojo pojo = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final NamespacePojo pojo1 = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final NamespacePojo pojo2 = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
-
-        final List<NamespacePojo> expectedPojoList = namespaceRepository.bulkCreate(pojoList);
-        final List<Long> pojoIdList = expectedPojoList.stream().map(NamespacePojo::getId).collect(Collectors.toList());
-        namespaceRepository.delete(pojoIdList);
-
-        for (final NamespacePojo namespacePojo : expectedPojoList) {
-            assertFalse(namespaceRepository.get(namespacePojo.getId()).isPresent());
-        }
-    }
-
-    @Test
-    @DisplayName("Test bulk create namespace pojo, expecting namespace pojos are created successfully")
-    void testBulkUpdateNamespacePojo() {
-        final NamespacePojo pojo = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final NamespacePojo pojo1 = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final NamespacePojo pojo2 = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final List<NamespacePojo> pojoList = List.of(pojo, pojo1, pojo2);
-
-        final List<NamespacePojo> expectedPojoList = namespaceRepository.bulkCreate(pojoList);
-        final List<String> expectedPojoListName =
-            expectedPojoList.stream().map(NamespacePojo::getName).collect(Collectors.toList());
-
-        final List<NamespacePojo> tmpPojoList = new ArrayList<>();
-        for (final NamespacePojo namespacePojo : expectedPojoList) {
-            final NamespacePojo tmpPojo = namespaceRepository.get(namespacePojo.getId()).orElseGet(NamespacePojo::new);
-            tmpPojo.setName(UUID.randomUUID().toString());
-            tmpPojoList.add(tmpPojo);
-        }
-
-        final List<NamespacePojo> actualNamespacePojos = namespaceRepository.bulkUpdate(tmpPojoList);
-        final List<String> actualNamespacePojosNames =
-            actualNamespacePojos.stream().map(NamespacePojo::getName).collect(Collectors.toList());
-
-        final boolean anyMatch = expectedPojoListName.stream()
-            .anyMatch(actualNamespacePojosNames::contains);
-
-        assertFalse(anyMatch);
-    }
-
-    /**
-     * Test case: Test create namespace pojo then delete it and then create again.
-     * Expected result: Namespace pojo will not be created again, as it was not actually deleted
-     */
-    @Test
-    @DisplayName("Test create namespace pojo then delete it and then create again")
-    void testAfterDeletionCreateNamespacePojo() {
-        final NamespacePojo pojo = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-
-        final NamespacePojo expectedNamespacePojo = namespaceRepository.create(pojo);
-        namespaceRepository.delete(expectedNamespacePojo.getId());
-        final NamespacePojo actualNamespacePojo = namespaceRepository.create(pojo);
-
-        assertEquals(expectedNamespacePojo.getId(), actualNamespacePojo.getId());
-        assertEquals(expectedNamespacePojo.getName(), actualNamespacePojo.getName());
-    }
-
-    @Test
-    void testGetByName() {
-        final NamespacePojo pojo = new NamespacePojo()
-            .setName(UUID.randomUUID().toString());
-        final NamespacePojo createdPojo = namespaceRepository.create(pojo);
-        final Optional<NamespacePojo> namespaceOpt = namespaceRepository.getByName(createdPojo.getName());
-        assertThat(namespaceOpt.isPresent()).isTrue();
-        final Optional<NamespacePojo> nonExistingOpt = namespaceRepository.getByName(UUID.randomUUID().toString());
-        assertThat(nonExistingOpt.isPresent()).isFalse();
-        namespaceRepository.delete(createdPojo.getId());
-        final Optional<NamespacePojo> deletedOpt = namespaceRepository.getByName(createdPojo.getName());
-        assertThat(deletedOpt.isPresent()).isFalse();
+        namespaceRepository.create(pojo)
+            .map(NamespacePojo::getId)
+            .flatMap(namespaceRepository::delete)
+            .zipWhen(deletedNamespaceId -> namespaceRepository.create(pojo))
+            .as(StepVerifier::create)
+            .assertNext(t -> {
+                assertThat(t.getT1().getIsDeleted()).isTrue();
+                assertThat(t.getT1().getDeletedAt()).isNotNull();
+                assertThat(t.getT1().getId()).isNotEqualTo(t.getT2().getId());
+            })
+            .verifyComplete();
     }
 }
 
