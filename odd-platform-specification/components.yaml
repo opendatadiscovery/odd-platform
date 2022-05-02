@@ -349,6 +349,10 @@ components:
             - DATA_QUALITY_TEST
             - DATA_QUALITY_TEST_RUN
             - DATA_ENTITY_GROUP
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityType'
       required:
         - id
         - name
