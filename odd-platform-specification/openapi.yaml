@@ -1343,7 +1343,7 @@ paths:
             content:
               application/json:
                 schema:
-                  $ref: './components.yaml/#/components/schemas/DataEntityGroupDetails'
+                  $ref: './components.yaml/#/components/schemas/DataEntityDetails'
       tags:
         - dataEntity
 
@@ -1366,7 +1366,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataEntityGroupDetails'
+                $ref: './components.yaml/#/components/schemas/DataEntityDetails'
       tags:
         - dataEntity
     delete:
