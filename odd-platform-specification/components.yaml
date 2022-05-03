@@ -598,6 +598,8 @@ components:
           properties:
             has_children:
               type: boolean
+            manually_created:
+              type: boolean
 
     DataEntityGroupFormData:
       type: object
