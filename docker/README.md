@@ -1,101 +1,84 @@
-# OpenDataDiscovery Platform local demo environment
+# Open Data Discovery Platform local demo environment
+* * *
 
-## Overview
+The following is a set of instructions to run ODD Platform locally using docker and docker-compose. 
+This configuration is basic and best suited as a demo sandbox.
 
-This docker-compose contains:
+This environment consists of:
+* ODD Platform – an application that ingests, structurizes, indexes and provides a collected metadata via REST API and UI
+* ODD Platform Enricher – a tool to inject a metadata sample into the Platform
+* PostgreSQL sample database
+* ODD Collector – a lightweight service which gathers metadata from all your data sources
 
-* ODD Platform
-* ODD Platform Puller
-* Several adapters:
-    * MySQL
-    * PostgreSQL
-    * Glue
-    * Redshift
+## Prerequisites
 
-## Configuration
+* Docker Engine 19.03.0+
+* Preferably the latest docker-compose
 
-All configuration variables are defined in `.env` file. Please adjust them to your data sources' credentials.
+## Step 1: Configuring and running ODD Platform with a metadata sample in it
 
-ODD Platform requires defining three mandatory env vars:
+### Assumptions
 
-* SPRING_DATASOURCE_URL: jdbc:postgresql://{DATABASE_HOSTNAME}:{DATABASE_PORT}/{DATABASE_NAME}
-* SPRING_DATASOURCE_USERNAME: {DATABASE_USERNAME}
-* SPRING_DATASOURCE_PASSWORD: {DATABASE_PASSWORD}
+* Ports 5432 and 8080 are free. Commands to check that might be:
+    * Linux/Mac: `lsof -i -P -n | grep LISTEN | grep <PORT_NUMBER>`
+    * Windows Powershell: `Get-NetTCPConnection | where Localport -eq <PORT_NUMBER> | select Localport,OwningProcess`
+      Replace `<PORT_NUMBER>` with 5432 and 8080. Empty output mean that the port is free and ready to go.
 
-## Execution
+### Execution
 
-To run the **whole** environment execute:
+Run **from the root folder** `docker-compose -f docker/demo.yaml odd-platform-enricher`.
 
-`docker-compose -f demo.yaml up -d`.
+### Result
 
-If you'd like to run specific adapters, list them after the command using docker-compose services' names as
-identificators:
+1. Open http://localhost:8080 in your browser
+2. Select the Catalog in the Platform UI
 
-`docker-compose -f demo.yaml up -d mysql-adapter glue-adapter redshift-adapter`
+You should be able to see metadata sample injected in the Platform
 
-ODD Platform will be available at `http://localhost:8080/`
+## Step 2: Configuring and running Collector to gather metadata from the sample data source
 
-## Initial setup
+### Create Collector entity
 
-Adapters expose 808x port:
+1. Go to the http://localhost:8080/management/collectors and select `Add collector`
+2. Complete the following fields:
+    * **Name**
+    * **Namespace** (optional)
+    * **Description** (optional)
+3. Click **Save**. Your collector should appear in the list
+4. Copy the token by clicking **Copy** right to the token value
 
-* MySQL adapter: **8084**
-* PostgreSQL adapter: **8085**
-* Glue adapter: **8086**
-* Redshift adapter: **8087**
+### Configure and run the Collector
 
-To start ingesting metadata from adapters to the platform:
+1. Paste the token obtained in the previous step into the `docker/config/collector_config.yaml` file under the `token` entry
+2. If you'd like, you may change the name of the `postgresql` plugin under the `name` entry.
+3. Save the changed file and run **from the root folder** `docker-compose -f docker/demo.yaml up -d odd-collector`.
 
-* Go to the `http://localhost:8080/management/datasources` and click on `Add datasource` button
-* Enter Data Source information:
-    * Name
-    * Choose URL option and use `http://{adapter_service_name}:8080` as the URL e.g. `http://mysql-adapter:8080`
-    * Select `Receive data from current datasource` and choose an interval
-    * Description (optional)
-    * Hit `Save` and you're good to go! (Please note that it will take some time (usually under a minute) to ingest
-      the metadata from your data source to the platform).
+### Result
 
-## Authentication
+New data source and data entities should be injected in seconds.
 
-Enabling authentication will bring additional functionality such as:
+## Step 3 (Optional): Configuring and running Collector to gather metadata from your own data sources
 
-1. `User mapping` (Auth identity -> ODD Platform Owner)
-2. `My Objects` in start and search pages
-3. `Upstream/Downstream dependencies` in start page
-4. ...
+### Assumptions
 
-ODD Platform has several supported authentication mechanisms:
+* You've done Step 1 and Step 2
+* You already have locally accessible data sources and want to ingest metadata from these data sources into the Platform
+* These data sources are supported by Collectors:
+    *  [supported data sources by odd-collector](https://github.com/opendatadiscovery/odd-collector/blob/main/README.md)
+    *  [supported data sources by odd-collector-aws](https://github.com/opendatadiscovery/odd-collector-aws/blob/main/README.md)
 
-* Form Login
-* OAuth2 + OIDC
-* LDAP
+### Configure the existing Collector
 
-By default, the authentication is **disabled**
+1. Add new entries under plugin list in the `docker/config/collector_config.yaml`
+   See a documentation [here](https://github.com/opendatadiscovery/odd-collector/blob/main/README.md)
+2. Restart the Collector by running **from the root folder** `docker-compose -f docker/demo.yaml restart odd-collector`
 
-### Form Login
+### Result
 
-To enable Form Login auth mechanism:
+You should be able to see new data sources and data entities that correspond with them
 
-1. Set  `AUTH_TYPE=LOGIN_FORM` environment variable in **ODD Platform** docker-compose service
-2. Configure Login Form auth section in ODD Platform Puller service using
-   this [reference](https://github.com/opendatadiscovery/odd-platform-puller#readme)
+### Troubleshooting
 
-### OAuth2
+**My entities from the sample data aren't shown in the platform.**
 
-ODD Platform can be configured to be both OAuth2 client for API calls and OAuth2 Resource server for ingesting entities
-from adapters. To enable OAuth2 auth mechanism:
-
-1. Set  `AUTH_TYPE=OAUTH2` environment variable in **ODD Platform** docker-compose service
-3. Configure OAuth2 + OIDC
-   using [this reference page](https://docs.spring.io/spring-security/site/docs/5.2.x/reference/html/oauth2.html#oauth2)
-   via environment variables in ODD Platform docker-compose service
-4. Configure OAuth2 Authorization Server's issuer URL by setting `SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URL`
-   property via environment variables in ODD Platform docker-compose service
-5. Configure OAuth2 section in ODD Platform Puller service using
-   this [reference](https://github.com/opendatadiscovery/odd-platform-puller#readme)
-
-### LDAP
-
-Forward to
-the [LDAP example](https://github.com/opendatadiscovery/odd-platform/blob/main/docker/docker/examples/ldap.yml) to see
-how to configure the Platform to use LDAP auth mechanism
+Check the logs by running **from the root folder** `docker-compose -f docker/demo.yaml logs -f`
