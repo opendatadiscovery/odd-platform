@@ -10,7 +10,7 @@ import {
 } from 'generated-sources';
 import { TermSearchFacetsByName } from 'redux/interfaces/termSearch';
 import { ErrorState, FetchStatus } from 'redux/interfaces/loader';
-import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
+import TermMainSearchContainer from 'components/TermSearch/TermMainSearch/TermMainSearchContainer';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import { termSearchPath } from 'lib/paths';
 import { useHistory } from 'react-router-dom';
@@ -26,6 +26,7 @@ import AppButton from '../shared/AppButton/AppButton';
 import AddIcon from '../shared/Icons/AddIcon';
 import TermsFormContainer from './TermForm/TermsFormContainer';
 import TermsResultsContainer from './TermSearchResults/TermSearchResultsContainer';
+import MainSearchContainer from '../shared/MainSearch/MainSearchContainer';
 
 interface TermsProps {
   termSearchIdParam?: string;
@@ -115,6 +116,7 @@ const TermSearch: React.FC<TermsProps> = ({
           </TermSearchFiltersWrapper>
           <TermSearchResultsWrapper item xs={9}>
             <TermSearchCaption>
+              <TermMainSearchContainer />
               <MainSearchContainer placeholder="Search" />
               <TermsFormContainer
                 btnCreateEl={

@@ -130,3 +130,8 @@ export const getSelectedTermSearchFacetOptions = createSelector(
     );
   }
 );
+
+export const getTermSearchSuggestions = createSelector(
+  termSearchState,
+  termsSearch => termsSearch.suggestions
+);

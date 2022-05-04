@@ -9,6 +9,8 @@ import {
   TermApiGetTermSearchResultsRequest,
   TermApiGetTermFiltersForFacetRequest,
   CountableSearchFilter,
+  TermApiGetTermSearchSuggestionsRequest,
+  TermRefList,
 } from 'generated-sources';
 import {
   PaginatedResponse,
@@ -91,4 +93,15 @@ export const getTermSearchFacetOptions = createThunk<
     facetOptions: response,
     page: request.page,
   })
+);
+
+export const fetchTermSearchSuggestions = createThunk<
+  TermApiGetTermSearchSuggestionsRequest,
+  TermRefList,
+  TermRefList
+>(
+  (params: TermApiGetTermSearchSuggestionsRequest) =>
+    termSearchApiClient.getTermSearchSuggestions(params),
+  actions.getTermSearchSuggestionsAction,
+  (response: TermRefList) => response
 );

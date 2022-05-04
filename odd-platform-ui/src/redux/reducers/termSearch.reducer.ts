@@ -30,7 +30,13 @@ export const initialState: TermSearchState = {
       hasNext: true,
     },
   },
-  suggestions: [],
+  suggestions: {
+    items: [],
+    pageInfo: {
+      total: 0,
+      hasNext: true,
+    },
+  },
   facets: {},
   facetState: {},
   isFacetsStateSynced: true,

@@ -27,6 +27,7 @@ import {
   Term,
   TermRef,
   TermDetails,
+  TermRefList,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -226,7 +227,7 @@ export interface TermSearchState {
     items: TermDetails[];
     pageInfo: CurrentPageInfo;
   };
-  suggestions: TermRef[];
+  suggestions: TermRefList;
   facetState: TermSearchFacetsByName;
 }
 

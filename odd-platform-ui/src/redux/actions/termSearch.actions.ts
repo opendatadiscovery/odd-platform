@@ -7,7 +7,7 @@ import {
 import {
   TermList,
   TermSearchFacetsData,
-  TermRef,
+  TermRefList,
 } from 'generated-sources';
 
 export const getTermSearchAction = createAsyncAction(
@@ -44,7 +44,7 @@ export const getTermSearchSuggestionsAction = createAsyncAction(
   'GET_TERM_SEARCH_SUGGESTIONS__REQUEST',
   'GET_TERM_SEARCH_SUGGESTIONS__SUCCESS',
   'GET_TERM_SEARCH_SUGGESTIONS__FAILURE'
-)<undefined, TermRef[], undefined>();
+)<undefined, TermRefList, undefined>();
 
 export const changeTermSearchFilterAction = createAction(
   'CHANGE_TERM_SEARCH_FILTER'
