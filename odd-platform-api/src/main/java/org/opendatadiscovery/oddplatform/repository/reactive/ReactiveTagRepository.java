@@ -21,13 +21,17 @@ public interface ReactiveTagRepository extends ReactiveCRUDRepository<TagPojo> {
 
     Mono<Page<TagDto>> listMostPopular(final String query, final int page, final int size);
 
+    Flux<TagToDataEntityPojo> createDataEntityRelations(final long dataEntityId, final Collection<Long> tagIds);
+
     Flux<TagToDataEntityPojo> deleteDataEntityRelations(final long dataEntityId, final Collection<Long> tagIds);
 
-    Flux<TagToDataEntityPojo> createDataEntityRelations(final long dataEntityId, final Collection<Long> tagIds);
+    Flux<TagToDataEntityPojo> deleteDataEntityRelations(final long tagId);
+
+    Flux<TagToTermPojo> createTermRelations(final long termId, final Collection<Long> tagIds);
 
     Flux<TagToTermPojo> deleteTermRelations(final long termId, final Collection<Long> tagIds);
 
-    Flux<TagToTermPojo> createTermRelations(final long termId, final Collection<Long> tagIds);
+    Flux<TagToTermPojo> deleteTermRelations(final long tagId);
 
     Flux<TagToTermPojo> restoreTermRelations(final long termId, final Collection<Long> tagIds);
 }

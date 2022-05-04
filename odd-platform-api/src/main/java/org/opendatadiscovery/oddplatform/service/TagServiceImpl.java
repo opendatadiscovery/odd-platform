@@ -48,10 +48,14 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    // TODO what to do on tag deletion
+    @ReactiveTransactional
     public Mono<Tag> delete(final long tagId) {
-        return reactiveTagRepository.delete(tagId)
-            .map(tagMapper::mapToTag);
+        return Flux.zip(reactiveTagRepository.deleteTermRelations(tagId),
+                reactiveTagRepository.deleteDataEntityRelations(tagId))
+            .then(reactiveTagRepository.delete(tagId))
+            .map(tagMapper::mapToTag)
+            .flatMap(tag -> reactiveTermSearchEntrypointRepository.updateChangedTagVectors(tagId)
+                .thenReturn(tag));
     }
 
     @Override

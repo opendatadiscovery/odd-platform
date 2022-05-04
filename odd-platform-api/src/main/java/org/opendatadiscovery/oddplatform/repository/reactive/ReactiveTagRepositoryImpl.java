@@ -108,6 +108,15 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
+    public Flux<TagToDataEntityPojo> deleteDataEntityRelations(final long tagId) {
+        final var query = DSL.delete(TAG_TO_DATA_ENTITY)
+            .where(TAG_TO_DATA_ENTITY.TAG_ID.eq(tagId))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(TagToDataEntityPojo.class));
+    }
+
+    @Override
     public Flux<TagToDataEntityPojo> createDataEntityRelations(final long dataEntityId, final Collection<Long> tagIds) {
         if (tagIds.isEmpty()) {
             return Flux.just();
@@ -140,6 +149,16 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         final var query = DSL.update(TAG_TO_TERM)
             .set(TAG_TO_TERM.DELETED_AT, LocalDateTime.now())
             .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG_TO_TERM.TAG_ID.in(tagIds)))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(TagToTermPojo.class));
+    }
+
+    @Override
+    public Flux<TagToTermPojo> deleteTermRelations(final long tagId) {
+        final var query = DSL.update(TAG_TO_TERM)
+            .set(TAG_TO_TERM.DELETED_AT, LocalDateTime.now())
+            .where(TAG_TO_TERM.TAG_ID.eq(tagId))
             .returning();
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(TagToTermPojo.class));

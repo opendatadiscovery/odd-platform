@@ -112,6 +112,9 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         return jooqReactiveOperations.mono(dataSourceQuery);
     }
 
+    /**
+     * Calculates tag vector for particular data entity
+     */
     @Override
     public Mono<Integer> updateTagVectorsForDataEntity(final Long dataEntityId) {
         final Field<Long> deId = field("data_entity_id", Long.class);
@@ -139,6 +142,9 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         return jooqReactiveOperations.mono(tagQuery);
     }
 
+    /**
+     * Recalculates tag vector for data entities with particular tag (in case of tag was renamed)
+     */
     @Override
     public Mono<Integer> updateChangedTagVectors(final long tagId) {
         final Field<Long> dataEntityId = field("data_entity_id", Long.class);

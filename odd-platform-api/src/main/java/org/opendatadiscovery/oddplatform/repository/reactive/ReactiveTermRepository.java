@@ -14,6 +14,8 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
 
     Mono<Page<TermRefDto>> listTermRefDtos(final int page, final int size, final String query);
 
+    Mono<Boolean> existsByNamespace(final Long namespaceId);
+
     Mono<Boolean> existsByNameAndNamespace(final String name, final String namespaceName);
 
     Mono<TermRefDto> getTermRefDto(final Long id);

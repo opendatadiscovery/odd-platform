@@ -7,6 +7,7 @@ import org.jooq.Field;
 import org.jooq.Insert;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.repository.util.FTSEntity;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -88,12 +89,14 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
 
         final List<Field<?>> vectorFields = List.of(TAG.NAME);
 
-        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
-            .select(TAG_TO_TERM.TERM_ID.as(termIdField))
-            .from(TAG_TO_TERM)
-            .join(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID).and(TAG.IS_DELETED.isFalse()))
-            .where(TAG_TO_TERM.TERM_ID.eq(termId))
-            .and(TAG_TO_TERM.DELETED_AT.isNull());
+        final SelectConditionStep<Record> vectorSelect = DSL
+            .select(TERM.ID.as(termIdField))
+            .select(vectorFields)
+            .from(TERM)
+            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
+            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_TERM.TAG_ID))
+            .where(TERM.ID.eq(termId));
+
         final Insert<? extends Record> insert = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
             termIdField,
@@ -111,12 +114,21 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
 
         final List<Field<?>> vectorFields = List.of(TAG.NAME);
 
-        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
-            .select(TAG_TO_TERM.TERM_ID.as(termIdField))
+        final var cteSelect = DSL.select(TAG_TO_TERM.TERM_ID)
             .from(TAG_TO_TERM)
-            .join(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID).and(TAG.IS_DELETED.isFalse()))
-            .where(TAG_TO_TERM.TAG_ID.eq(tagId))
-            .and(TAG_TO_TERM.DELETED_AT.isNull());
+            .where(TAG_TO_TERM.TAG_ID.eq(tagId));
+
+        final Table<? extends Record> cte = cteSelect.asTable("cte");
+
+        final var vectorSelect = DSL.with(cte.getName())
+            .as(cteSelect)
+            .select(TERM.ID.as(termIdField))
+            .select(vectorFields)
+            .from(TERM)
+            .join(cte).on(cte.field(termIdField).eq(TERM.ID))
+            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
+            .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_TERM.TAG_ID));
+
         final Insert<? extends Record> insert = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
             termIdField,
