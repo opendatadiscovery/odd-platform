@@ -6,6 +6,11 @@ import org.opendatadiscovery.oddplatform.api.contract.api.TermApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.CountableSearchFilter;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
+import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
+import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
+import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermList;
@@ -72,6 +77,37 @@ public class TermController implements TermApi {
                                                                    final Long entityClassId,
                                                                    final ServerWebExchange exchange) {
         return TermApi.super.getTermLinkedItems(termId, page, size, query, entityClassId, exchange);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<Tag>>> createTermTagsRelations(final Long termId,
+                                                                   final Mono<TagsFormData> tagsFormData,
+                                                                   final ServerWebExchange exchange) {
+        return Mono.just(
+            ResponseEntity.ok(tagsFormData.flatMapMany(fd -> termService.upsertTags(termId, fd)))
+        );
+    }
+
+    @Override
+    public Mono<ResponseEntity<Ownership>> createTermOwnership(final Long termId,
+                                                               final Mono<OwnershipFormData> ownershipFormData,
+                                                               final ServerWebExchange exchange) {
+        return TermApi.super.createTermOwnership(termId, ownershipFormData, exchange);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteTermOwnership(final Long termId,
+                                                          final Long ownershipId,
+                                                          final ServerWebExchange exchange) {
+        return TermApi.super.deleteTermOwnership(termId, ownershipId, exchange);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Ownership>> updateTermOwnership(final Long termId,
+                                                               final Long ownershipId,
+                                                               final Mono<OwnershipUpdateFormData> formData,
+                                                               final ServerWebExchange exchange) {
+        return TermApi.super.updateTermOwnership(termId, ownershipId, formData, exchange);
     }
 
     @Override

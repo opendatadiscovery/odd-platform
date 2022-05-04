@@ -59,7 +59,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
     }
 
     @Override
-    public Mono<Integer> updateNamespaceVectors(final long termId) {
+    public Mono<Integer> updateNamespaceVectorsForTerm(final long termId) {
         final Field<Long> termIdField = field("term_id", Long.class);
 
         final List<Field<?>> vectorFields = List.of(NAMESPACE.NAME);
@@ -83,7 +83,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
     }
 
     @Override
-    public Mono<Integer> updateTagVectors(final long termId) {
+    public Mono<Integer> updateTagVectorsForTerm(final long termId) {
         final Field<Long> termIdField = field("term_id", Long.class);
 
         final List<Field<?>> vectorFields = List.of(TAG.NAME);
@@ -91,8 +91,31 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
         final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
             .select(TAG_TO_TERM.TERM_ID.as(termIdField))
             .from(TAG_TO_TERM)
-            .join(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
+            .join(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID).and(TAG.IS_DELETED.isFalse()))
             .where(TAG_TO_TERM.TERM_ID.eq(termId))
+            .and(TAG_TO_TERM.DELETED_AT.isNull());
+        final Insert<? extends Record> insert = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            termIdField,
+            vectorFields,
+            TERM_SEARCH_ENTRYPOINT.TAG_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.TERM),
+            true);
+
+        return jooqReactiveOperations.mono(insert);
+    }
+
+    @Override
+    public Mono<Integer> updateChangedTagVectors(final long tagId) {
+        final Field<Long> termIdField = field("term_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(TAG.NAME);
+
+        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
+            .select(TAG_TO_TERM.TERM_ID.as(termIdField))
+            .from(TAG_TO_TERM)
+            .join(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID).and(TAG.IS_DELETED.isFalse()))
+            .where(TAG_TO_TERM.TAG_ID.eq(tagId))
             .and(TAG_TO_TERM.DELETED_AT.isNull());
         final Insert<? extends Record> insert = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,

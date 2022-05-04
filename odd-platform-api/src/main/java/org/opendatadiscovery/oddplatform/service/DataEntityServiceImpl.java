@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
@@ -43,17 +43,17 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
-import org.opendatadiscovery.oddplatform.repository.TagRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
-import static java.util.function.Predicate.not;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
 
 @Service
@@ -64,35 +64,36 @@ public class DataEntityServiceImpl
     implements DataEntityService {
 
     private final AuthIdentityProvider authIdentityProvider;
-
     private final MetadataFieldValueRepository metadataFieldValueRepository;
     private final MetadataFieldRepository metadataFieldRepository;
-    private final TagRepository tagRepository;
+    private final TagService tagService;
     private final LineageRepository lineageRepository;
-
     private final MetadataFieldMapper metadataFieldMapper;
     private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final TagMapper tagMapper;
+    private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
 
     public DataEntityServiceImpl(final DataEntityMapper entityMapper,
                                  final DataEntityRepository entityRepository,
                                  final AuthIdentityProvider authIdentityProvider,
                                  final MetadataFieldValueRepository metadataFieldValueRepository,
                                  final MetadataFieldRepository metadataFieldRepository,
-                                 final TagRepository tagRepository,
+                                 final TagService tagService,
                                  final LineageRepository lineageRepository,
                                  final MetadataFieldMapper metadataFieldMapper,
                                  final MetadataFieldValueMapper metadataFieldValueMapper,
+                                 final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository,
                                  final TagMapper tagMapper) {
         super(entityMapper, entityRepository);
 
         this.authIdentityProvider = authIdentityProvider;
         this.metadataFieldValueRepository = metadataFieldValueRepository;
         this.metadataFieldRepository = metadataFieldRepository;
-        this.tagRepository = tagRepository;
+        this.tagService = tagService;
         this.lineageRepository = lineageRepository;
         this.metadataFieldMapper = metadataFieldMapper;
         this.metadataFieldValueMapper = metadataFieldValueMapper;
+        this.reactiveSearchEntrypointRepository = reactiveSearchEntrypointRepository;
         this.tagMapper = tagMapper;
     }
 
@@ -227,54 +228,17 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    // TODO: refactor
-    // TODO: fix non-transactional update of search entrypoint and Tag CRUD
+    @ReactiveTransactional
     public Flux<Tag> upsertTags(final long dataEntityId, final TagsFormData formData) {
         final Set<String> names = new HashSet<>(formData.getTagNameList());
 
-        return Mono.just(dataEntityId)
-            .map(tagRepository::listByDataEntityId)
-            .flatMapIterable(labels -> {
-                final List<TagPojo> existingTags = tagRepository.listByNames(names);
-                final List<String> existingTagsNames = existingTags.stream()
-                    .map(TagPojo::getName)
-                    .toList();
-                final Set<String> labelNames = labels.stream().map(TagPojo::getName).collect(Collectors.toSet());
-
-                final List<Long> idsToDelete = labels
-                    .stream()
-                    .filter(l -> !names.contains(l.getName()))
-                    .map(TagPojo::getId)
-                    .collect(Collectors.toList());
-
-                tagRepository.deleteRelations(dataEntityId, idsToDelete);
-
-                final List<TagPojo> tagToCreate = formData.getTagNameList()
-                    .stream()
-                    .filter(n -> !labelNames.contains(n) && !existingTagsNames.contains(n))
-                    .map(n -> new TagPojo().setName(n).setImportant(false))
-                    .collect(Collectors.toList());
-
-                final List<Long> createdIds = tagRepository
-                    .bulkCreate(tagToCreate)
-                    .stream()
-                    .map(TagPojo::getId)
-                    .toList();
-
-                final Set<Long> toRelate = Stream.concat(
-                    createdIds.stream(),
-                    existingTags.stream().map(TagPojo::getId).filter(not(idsToDelete::contains))
-                ).collect(Collectors.toSet());
-
-                tagRepository.createRelations(dataEntityId, toRelate);
-
-                entityRepository.calculateTagVectors(List.of(dataEntityId));
-
-                return Stream
-                    .concat(tagToCreate.stream(), existingTags.stream())
-                    .map(tagMapper::mapPojo)
-                    .collect(Collectors.toList());
-            });
+        return tagService.deleteRelationsWithDataEntity(dataEntityId, names)
+            .then(tagService.getOrCreateTagsByName(names))
+            .flatMap(tagsToLink -> tagService.createRelationsWithDataEntity(dataEntityId, tagsToLink)
+                .ignoreElements().thenReturn(tagsToLink))
+            .flatMap(tags -> reactiveSearchEntrypointRepository.updateTagVectorsForDataEntity(dataEntityId)
+                .thenReturn(tags))
+            .flatMapIterable(tags -> tags.stream().map(tagMapper::mapToTag).toList());
     }
 
     @Override

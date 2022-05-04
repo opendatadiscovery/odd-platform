@@ -70,8 +70,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     void calculateDataEntityVectors(final Collection<Long> ids);
 
-    void calculateTagVectors(final Collection<Long> ids);
-
     void calculateNamespaceVectors(final Collection<Long> ids);
 
     void calculateDataSourceVectors(final Collection<Long> ids);

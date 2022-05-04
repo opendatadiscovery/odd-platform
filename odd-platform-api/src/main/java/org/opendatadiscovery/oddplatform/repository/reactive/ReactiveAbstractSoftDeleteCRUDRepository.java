@@ -3,7 +3,9 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -51,9 +53,9 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
 
     @Override
     public Mono<P> delete(final long id) {
+        final Map<Field<?>, Object> updatedFieldsMap = getDeleteChangedFields();
         final UpdateResultStep<R> query = DSL.update(recordTable)
-            .set(deletedField, true)
-            .set(deletedAtField, LocalDateTime.now())
+            .set(updatedFieldsMap)
             .where(idCondition(id))
             .returning();
 
@@ -62,9 +64,9 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
 
     @Override
     public Flux<P> delete(final Collection<Long> ids) {
+        final Map<Field<?>, Object> updatedFieldsMap = getDeleteChangedFields();
         final UpdateResultStep<R> query = DSL.update(recordTable)
-            .set(deletedField, true)
-            .set(deletedAtField, LocalDateTime.now())
+            .set(updatedFieldsMap)
             .where(idCondition(ids))
             .returning();
 
@@ -94,5 +96,14 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
         final List<Condition> conditionsList = new ArrayList<>(conditions);
         conditionsList.add(deletedField.isFalse());
         return conditionsList;
+    }
+
+    private Map<Field<?>, Object> getDeleteChangedFields() {
+        final Map<Field<?>, Object> updatedFieldsMap = new HashMap<>();
+        updatedFieldsMap.put(deletedField, true);
+        if (deletedAtField != null) {
+            updatedFieldsMap.put(deletedAtField, LocalDateTime.now());
+        }
+        return updatedFieldsMap;
     }
 }

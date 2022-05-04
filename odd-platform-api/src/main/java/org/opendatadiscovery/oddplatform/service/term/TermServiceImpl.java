@@ -1,8 +1,12 @@
 package org.opendatadiscovery.oddplatform.service.term;
 
+import java.util.HashSet;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
+import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
+import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
@@ -10,13 +14,16 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
+import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.mapper.TermMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.service.NamespaceService;
+import org.opendatadiscovery.oddplatform.service.TagService;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -26,8 +33,10 @@ public class TermServiceImpl implements TermService {
 
     private final ReactiveTermRepository termRepository;
     private final NamespaceService namespaceService;
+    private final TagService tagService;
     private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
     private final TermMapper termMapper;
+    private final TagMapper tagMapper;
 
     @Override
     public Mono<TermRefList> getTerms(final Integer page, final Integer size, final String query) {
@@ -99,6 +108,19 @@ public class TermServiceImpl implements TermService {
             .map(termMapper::mapToRef);
     }
 
+    @Override
+    @ReactiveTransactional
+    public Flux<Tag> upsertTags(final Long termId, final TagsFormData tagsFormData) {
+        final Set<String> names = new HashSet<>(tagsFormData.getTagNameList());
+        return tagService.deleteRelationsWithTerm(termId, names)
+            .then(tagService.getOrCreateTagsByName(names))
+            .flatMap(tagsToLink -> tagService.createRelationsWithTerm(termId, tagsToLink)
+                .ignoreElements().thenReturn(tagsToLink))
+            .flatMap(tags -> termSearchEntrypointRepository.updateTagVectorsForTerm(termId)
+                .thenReturn(tags))
+            .flatMapIterable(tags -> tags.stream().map(tagMapper::mapToTag).toList());
+    }
+
     private Mono<TermDetails> update(final TermPojo pojo,
                                      final NamespacePojo namespace) {
         return termRepository.update(pojo)
@@ -118,7 +140,7 @@ public class TermServiceImpl implements TermService {
     private Mono<TermDetails> updateSearchVectors(final TermDetails details) {
         return Mono.zip(
             termSearchEntrypointRepository.updateTermVectors(details.getId()),
-            termSearchEntrypointRepository.updateNamespaceVectors(details.getId())
+            termSearchEntrypointRepository.updateNamespaceVectorsForTerm(details.getId())
         ).thenReturn(details);
     }
 }
