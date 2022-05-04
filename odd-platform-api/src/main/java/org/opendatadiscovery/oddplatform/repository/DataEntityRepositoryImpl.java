@@ -544,26 +544,6 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public void calculateTagVectors(final Collection<Long> dataEntityIds) {
-        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
-
-        final List<Field<?>> vectorFields = List.of(TAG.NAME);
-
-        final SelectConditionStep<Record> vectorSelect = dslContext.select(vectorFields)
-            .select(DATA_ENTITY.ID.as(dataEntityId))
-            .from(TAG)
-            .join(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
-            .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(TAG.IS_DELETED.isFalse());
-
-        jooqFTSHelper
-            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.TAG_VECTOR, true)
-            .execute();
-    }
-
-    @Override
     public void calculateNamespaceVectors(final Collection<Long> dataEntityIds) {
         final Field<Long> dataEntityId = field("data_entity_id", Long.class);
 

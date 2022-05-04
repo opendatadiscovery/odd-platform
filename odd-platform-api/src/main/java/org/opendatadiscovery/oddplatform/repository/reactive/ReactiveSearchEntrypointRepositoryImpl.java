@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Field;
@@ -20,6 +21,8 @@ import reactor.core.publisher.Mono;
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
+import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.tables.DataSource.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.tables.SearchEntrypoint.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConfig.FTS_CONFIG_DETAILS_MAP;
@@ -103,5 +106,58 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         );
 
         return jooqReactiveOperations.mono(dataSourceQuery);
+    }
+
+    @Override
+    public Mono<Integer> updateTagVectorsForDataEntity(final Long dataEntityId) {
+        final Field<Long> deId = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(TAG.NAME);
+
+        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
+            .select(DATA_ENTITY.ID.as(deId))
+            .from(TAG)
+            .join(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .and(TAG.IS_DELETED.isFalse());
+
+        final Insert<? extends Record> tagQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            deId,
+            vectorFields,
+            SEARCH_ENTRYPOINT.TAG_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            true
+        );
+
+        return jooqReactiveOperations.mono(tagQuery);
+    }
+
+    @Override
+    public Mono<Integer> updateChangedTagVectors(final long tagId) {
+        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(TAG.NAME);
+
+        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
+            .select(DATA_ENTITY.ID.as(dataEntityId))
+            .from(TAG)
+            .join(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(TAG.ID.eq(tagId));
+
+        final Insert<? extends Record> tagQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            dataEntityId,
+            vectorFields,
+            SEARCH_ENTRYPOINT.TAG_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            true
+        );
+
+        return jooqReactiveOperations.mono(tagQuery);
     }
 }

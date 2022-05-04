@@ -83,7 +83,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     @Override
     public Mono<Page<TermRefDto>> listTermRefDtos(final int page, final int size, final String nameQuery) {
         final Select<TermRecord> homogeneousQuery = DSL.selectFrom(TERM)
-            .where(queryCondition(nameQuery));
+            .where(listCondition(nameQuery));
 
         final Select<? extends Record> termSelect =
             paginate(homogeneousQuery, TERM.ID, SortOrder.ASC, (page - 1) * size, size);
@@ -230,7 +230,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID))
             .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
             .where(jooqFTSHelper.facetStateConditions(state, TERM_CONDITIONS))
-            .and(TERM.IS_DELETED.isFalse());
+            .and(TERM.IS_DELETED.isFalse())
+            .groupBy(TERM.fields());
 
         final Select<? extends Record> termSelect =
             paginate(baseQuery, TERM.ID, SortOrder.ASC, (page - 1) * size, size);
@@ -284,17 +285,6 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(Long.class));
-    }
-
-    private List<Condition> queryCondition(final String nameQuery) {
-        final var conditionsList = new ArrayList<Condition>();
-
-        conditionsList.add(TERM.IS_DELETED.isFalse());
-        if (StringUtils.isNotEmpty(nameQuery)) {
-            conditionsList.add(TERM.NAME.startsWithIgnoreCase(nameQuery));
-        }
-
-        return conditionsList;
     }
 
     private TermRefDto mapRecordToRefDto(final Record record) {
