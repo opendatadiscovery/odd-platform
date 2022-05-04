@@ -26,7 +26,6 @@ import AppButton from '../shared/AppButton/AppButton';
 import AddIcon from '../shared/Icons/AddIcon';
 import TermsFormContainer from './TermForm/TermsFormContainer';
 import TermsResultsContainer from './TermSearchResults/TermSearchResultsContainer';
-import MainSearchContainer from '../shared/MainSearch/MainSearchContainer';
 
 interface TermsProps {
   termSearchIdParam?: string;
@@ -117,7 +116,6 @@ const TermSearch: React.FC<TermsProps> = ({
           <TermSearchResultsWrapper item xs={9}>
             <TermSearchCaption>
               <TermMainSearchContainer />
-              <MainSearchContainer placeholder="Search" />
               <TermsFormContainer
                 btnCreateEl={
                   <AppButton
