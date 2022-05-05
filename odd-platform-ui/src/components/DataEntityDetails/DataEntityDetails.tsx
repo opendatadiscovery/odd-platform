@@ -14,7 +14,6 @@ import {
 import {
   AlertList,
   DataEntityApiGetDataEntityAlertsRequest,
-  DataEntityApiGetDataEntityDetailsRequest,
   DataEntityDetails,
 } from 'generated-sources';
 import { ErrorState, FetchStatus } from 'redux/interfaces';
@@ -31,6 +30,8 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
+import { useAppDispatch } from 'lib/hooks';
+import { fetchDataEntityDetails } from 'redux/thunks';
 import * as S from './DataEntityDetailsStyles';
 
 // lazy components
@@ -62,14 +63,10 @@ interface DataEntityDetailsProps {
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
   isQualityTest: boolean;
-  fetchDataEntityDetails: (
-    params: DataEntityApiGetDataEntityDetailsRequest
-  ) => void;
   fetchDataEntityAlerts: (
     params: DataEntityApiGetDataEntityAlertsRequest
   ) => Promise<AlertList>;
   dataEntityFetchingStatus: FetchStatus;
-  dataEntityFetchingError?: ErrorState;
   openAlertsCount: number;
 }
 
@@ -79,14 +76,14 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityDetails,
   isDataset,
   isQualityTest,
-  fetchDataEntityDetails,
   fetchDataEntityAlerts,
   dataEntityFetchingStatus,
-  dataEntityFetchingError,
   openAlertsCount,
 }) => {
+  const dispatch = useAppDispatch();
+
   React.useEffect(() => {
-    fetchDataEntityDetails({ dataEntityId });
+    dispatch(fetchDataEntityDetails({ dataEntityId }));
   }, [fetchDataEntityDetails, dataEntityId]);
 
   React.useEffect(() => {
@@ -302,10 +299,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
           </Switch>
         </React.Suspense>
       ) : null}
-      <AppErrorPage
-        fetchStatus={dataEntityFetchingStatus}
-        error={dataEntityFetchingError}
-      />
+      <AppErrorPage fetchStatus={dataEntityFetchingStatus} />
     </S.Container>
   );
 };

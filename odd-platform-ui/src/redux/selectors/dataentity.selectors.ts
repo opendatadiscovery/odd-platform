@@ -1,7 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import get from 'lodash/get';
 import { RootState, DataEntitiesState } from 'redux/interfaces';
-import { DataEntityClassNameEnum } from 'generated-sources';
+import {
+  DataEntityClassNameEnum,
+  DataEntityType,
+} from 'generated-sources';
+import * as actions from 'redux/actions';
 import {
   createFetchingSelector,
   createErrorSelector,
@@ -11,24 +15,20 @@ const dataEntitiesState = ({
   dataEntities,
 }: RootState): DataEntitiesState => dataEntities;
 
-const getDataEntitiesListFetchingStatus = createFetchingSelector(
-  'GET_DATA_ENTITIES'
-);
-
 const getMyDataEntitiesFetchingStatus = createFetchingSelector(
-  'GET_MY_DATA_ENTITIES'
+  actions.fetchMyDataEntitiesAction
 );
 
 const getMyUpstreamDataEntitiesFetchingStatus = createFetchingSelector(
-  'GET_MY_UPSTREAM_DATA_ENTITIES'
+  actions.fetchMyUpstreamDataEntitiesAction
 );
 
 const getMyDownstreamFetchingStatus = createFetchingSelector(
-  'GET_MY_DOWNSTREAM_DATA_ENTITIES'
+  actions.fetchMyDownstreamDataEntitiesAction
 );
 
 const getPopularDataEntitiesFetchingStatus = createFetchingSelector(
-  'GET_POPULAR_DATA_ENTITIES'
+  actions.fetchPopularDataEntitiesAction
 );
 
 export const getMyDataEntitiesFetching = createSelector(
@@ -51,45 +51,24 @@ export const getPopularDataEntitiesFetching = createSelector(
   status => status === 'fetching'
 );
 
-export const getDataEntitiesListFetching = createSelector(
-  getDataEntitiesListFetchingStatus,
-  status => status === 'fetching'
-);
-
-export const getDataEntitiesListFetched = createSelector(
-  getDataEntitiesListFetchingStatus,
-  status => status === 'fetched'
-);
-
 const dataEntityClassName = (
   _: RootState,
   entityClassName: DataEntityClassNameEnum
 ) => entityClassName;
 
-export const getDataEntityClassId = createSelector(
+export const getDataEntityTypesByClassName = createSelector(
   dataEntitiesState,
   dataEntityClassName,
-  (dataEntities, entityClassName) =>
+  (dataEntities, entityClassName): Array<DataEntityType> =>
     get(
       dataEntities,
-      `classesAndTypesDict.entityClasses.${entityClassName}.id`
+      `classesAndTypesDict.entityClasses.${entityClassName}.types`
     )
 );
 
-export const getDataEntityClassesByName = createSelector(
+export const getDataEntityClassesDict = createSelector(
   dataEntitiesState,
   dataEntities => dataEntities.classesAndTypesDict.entityClasses
-);
-
-export const getDataEntitiesList = createSelector(
-  getDataEntitiesListFetched,
-  dataEntitiesState,
-  (isFetched, dataEntities) => {
-    if (!isFetched) {
-      return [];
-    }
-    return dataEntities.allIds.map(id => dataEntities.byId[id]);
-  }
 );
 
 export const getMyEntities = createSelector(
@@ -112,11 +91,9 @@ export const getPopularEntities = createSelector(
   dataEntities => dataEntities.popular
 );
 // Details
-export const getDataEntityDetailsFetchingStatus =
-  createFetchingSelector('GET_DATA_ENTITY');
-
-export const getDataEntityDetailsFetchingError =
-  createErrorSelector('GET_DATA_ENTITY');
+export const getDataEntityDetailsFetchingStatus = createFetchingSelector(
+  actions.fetchDataEntityDetailsAction
+);
 
 export const getDataEntityDetailsFetching = createSelector(
   getDataEntityDetailsFetchingStatus,
@@ -134,7 +111,7 @@ export const getDataEntityDetailsErrorFetching = createSelector(
 );
 
 const getDataEntityTagsUpdateStatus = createFetchingSelector(
-  'PUT_DATA_ENTITY_TAGS'
+  actions.updateDataEntityTagsAction
 );
 
 export const getDataEntityTagsUpdating = createSelector(
@@ -143,7 +120,7 @@ export const getDataEntityTagsUpdating = createSelector(
 );
 
 const getDataEntityOwnerUpdateStatus = createFetchingSelector(
-  'PUT_DATA_ENTITY_OWNER'
+  actions.updateDataEntityOwnershipAction
 );
 
 export const getDataEntityOwnerUpdating = createSelector(
@@ -152,7 +129,7 @@ export const getDataEntityOwnerUpdating = createSelector(
 );
 
 const getDataEntityInternalNameUpdateStatus = createFetchingSelector(
-  'PUT_DATA_ENTITY_INTERNAL_NAME'
+  actions.updateDataEntityInternalNameAction
 );
 
 export const getDataEntityInternalNameUpdating = createSelector(

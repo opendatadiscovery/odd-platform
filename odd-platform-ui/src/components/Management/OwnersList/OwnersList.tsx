@@ -1,10 +1,6 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  Owner,
-  OwnerApiDeleteOwnerRequest,
-  OwnerApiGetOwnerListRequest,
-} from 'generated-sources';
+import { Owner } from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
 import { CurrentPageInfo } from 'redux/interfaces/common';
@@ -17,6 +13,8 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch } from 'lib/hooks';
+import { fetchOwnersList } from 'redux/thunks';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerFormContainer from './OwnerForm/OwnerFormContainer';
 import * as S from './OwnersListStyles';
@@ -26,8 +24,6 @@ interface OwnersListProps {
   isFetching: boolean;
   isDeleting: boolean;
   isCreating: boolean;
-  fetchOwnersList: (params: OwnerApiGetOwnerListRequest) => void;
-  deleteOwner: (params: OwnerApiDeleteOwnerRequest) => Promise<void>;
   pageInfo?: CurrentPageInfo;
 }
 
@@ -36,10 +32,10 @@ const OwnersListView: React.FC<OwnersListProps> = ({
   isFetching,
   isDeleting,
   isCreating,
-  fetchOwnersList,
-  deleteOwner,
   pageInfo,
 }) => {
+  const dispatch = useAppDispatch();
+
   const pageSize = 100;
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalOwners, setTotalOwners] = React.useState<number | undefined>(
@@ -47,7 +43,8 @@ const OwnersListView: React.FC<OwnersListProps> = ({
   );
 
   React.useEffect(() => {
-    if (!searchText) fetchOwnersList({ page: 1, size: pageSize });
+    if (!searchText)
+      dispatch(fetchOwnersList({ page: 1, size: pageSize }));
   }, [fetchOwnersList, isCreating, isDeleting, searchText]);
 
   React.useEffect(() => {
@@ -56,16 +53,20 @@ const OwnersListView: React.FC<OwnersListProps> = ({
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
-    fetchOwnersList({
-      page: pageInfo.page + 1,
-      size: pageSize,
-      query: searchText,
-    });
+    dispatch(
+      fetchOwnersList({
+        page: pageInfo.page + 1,
+        size: pageSize,
+        query: searchText,
+      })
+    );
   };
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      fetchOwnersList({ page: 1, size: pageSize, query: searchText });
+      dispatch(
+        fetchOwnersList({ page: 1, size: pageSize, query: searchText })
+      );
     }, 500),
     [searchText]
   );
@@ -154,11 +155,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
             }
           >
             {ownersList?.map(owner => (
-              <EditableOwnerItem
-                key={owner.id}
-                owner={owner}
-                deleteOwner={deleteOwner}
-              />
+              <EditableOwnerItem key={owner.id} owner={owner} />
             ))}
           </InfiniteScroll>
         </Grid>

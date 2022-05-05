@@ -2,12 +2,7 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { Autocomplete, Typography } from '@mui/material';
 import { ControllerRenderProps } from 'react-hook-form';
-import {
-  Owner,
-  OwnerApiGetOwnerListRequest,
-  OwnerList,
-  OwnershipFormData,
-} from 'generated-sources';
+import { Owner, OwnershipFormData } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -16,17 +11,19 @@ import {
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch } from 'lib/hooks';
+import { fetchOwnersList } from 'redux/thunks';
 
 interface OwnershipFormOwnerAutocompleteProps {
   field: ControllerRenderProps<OwnershipFormData, 'ownerName'>;
-  searchOwners: (
-    params: OwnerApiGetOwnerListRequest
-  ) => Promise<OwnerList>;
 }
 
 const OwnershipFormOwnerAutocomplete: React.FC<
   OwnershipFormOwnerAutocompleteProps
-> = ({ field, searchOwners }) => {
+> = ({ field }) => {
+  const dispatch = useAppDispatch();
+  const searchOwners = fetchOwnersList;
+
   type OwnerFilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
   const [ownerOptions, setOwnerOptions] = React.useState<
     OwnerFilterOption[]
@@ -41,12 +38,14 @@ const OwnershipFormOwnerAutocomplete: React.FC<
   const handleOwnersSearch = React.useCallback(
     useDebouncedCallback(() => {
       setOwnersLoading(true);
-      searchOwners({ page: 1, size: 30, query: ownersSearchText }).then(
-        response => {
+      dispatch(
+        searchOwners({ page: 1, size: 30, query: ownersSearchText })
+      )
+        .unwrap()
+        .then(({ ownersList }) => {
           setOwnersLoading(false);
-          setOwnerOptions(response.items);
-        }
-      );
+          setOwnerOptions(ownersList);
+        });
     }, 500),
     [searchOwners, setOwnersLoading, setOwnerOptions, ownersSearchText]
   );

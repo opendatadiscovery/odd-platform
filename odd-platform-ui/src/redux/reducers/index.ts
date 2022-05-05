@@ -1,24 +1,23 @@
-import { RootState } from 'redux/interfaces';
 import { combineReducers } from '@reduxjs/toolkit';
 import loader from './loader-reducer';
 import namespaces from './namespace.reducer';
 import dataSources from './datasources.reducer';
-import dataEntities from './dataentities.reducer';
+import dataEntities from './dataentities.slice';
 import tags from './tags.reducer';
 import labels from './labels.reducer';
 import search from './dataentitiesSearch.reducer';
-import metaData from './metadata.reducer';
-import owners from './owners.reducer';
+import metaData from './metadata.slice';
+import owners from './owners.slice';
 import datasetStructure from './datasetStructure.reducer';
 import dataEntityLineage from './dataentityLineage.reducer';
 import profile from './profile.reducer';
 import dataQualityTest from './dataQualityTest.reducer';
 import alerts from './alerts.reducer';
-import dataEntityGroupLinkedList from './dataentityLinkedList.reducer';
+import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';
 import appInfo from './appInfo.reducer';
 import collectors from './collectors.reducer';
 
-export default combineReducers<RootState>({
+export default combineReducers({
   namespaces,
   dataSources,
   dataEntities,

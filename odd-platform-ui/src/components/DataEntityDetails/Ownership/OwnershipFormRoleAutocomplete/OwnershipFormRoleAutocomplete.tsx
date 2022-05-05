@@ -2,12 +2,7 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { Autocomplete, Typography } from '@mui/material';
 import { ControllerRenderProps } from 'react-hook-form';
-import {
-  OwnershipFormData,
-  Role,
-  RoleApiGetRoleListRequest,
-  RoleList,
-} from 'generated-sources';
+import { OwnershipFormData, Role } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -16,15 +11,19 @@ import {
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch } from 'lib/hooks';
+import { fetchRoleList } from 'redux/thunks';
 
 interface OwnershipFormRoleAutocompleteProps {
   field: ControllerRenderProps<OwnershipFormData, 'roleName'>;
-  searchRoles: (params: RoleApiGetRoleListRequest) => Promise<RoleList>;
 }
 
 const OwnershipFormRoleAutocomplete: React.FC<
   OwnershipFormRoleAutocompleteProps
-> = ({ field, searchRoles }) => {
+> = ({ field }) => {
+  const dispatch = useAppDispatch();
+  const searchRoles = fetchRoleList;
+
   type RoleFilterOption = Omit<Role, 'id' | 'name'> & Partial<Role>;
   const [rolesOptions, setRoleOptions] = React.useState<
     RoleFilterOption[]
@@ -38,12 +37,12 @@ const OwnershipFormRoleAutocomplete: React.FC<
   const handleRolesSearch = React.useCallback(
     useDebouncedCallback(() => {
       setRolesLoading(true);
-      searchRoles({ page: 1, size: 30, query: rolesSearchText }).then(
-        response => {
+      dispatch(searchRoles({ page: 1, size: 30, query: rolesSearchText }))
+        .unwrap()
+        .then(({ roleList }) => {
           setRolesLoading(false);
-          setRoleOptions(response.items);
-        }
-      );
+          setRoleOptions(roleList);
+        });
     }, 500),
     [searchRoles, setRolesLoading, setRoleOptions]
   );

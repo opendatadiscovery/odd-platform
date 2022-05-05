@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
-import { Switch, Route } from 'react-router-dom';
-import { DataEntityClassAndTypeDictionary } from 'generated-sources';
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
+import { useAppDispatch } from 'lib/hooks';
+import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
 import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
 
 // lazy components
@@ -22,14 +23,13 @@ const AlertsContainer = React.lazy(
   () => import('./Alerts/AlertsContainer')
 );
 
-interface AppProps {
-  fetchDataEntitiesClassesAndTypes: () => Promise<DataEntityClassAndTypeDictionary>;
-}
+const App: React.FC = () => {
+  const dispatch = useAppDispatch();
 
-const App: React.FC<AppProps> = ({ fetchDataEntitiesClassesAndTypes }) => {
-  useEffect(() => {
-    fetchDataEntitiesClassesAndTypes();
+  React.useEffect(() => {
+    dispatch(fetchDataEntitiesClassesAndTypes());
   }, []);
+
   return (
     <div className="App">
       <AppToolbarContainer />

@@ -3,15 +3,23 @@ import { RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 import { OwnersState } from 'redux/interfaces/state';
 import { Owner } from 'generated-sources';
+import * as actions from 'redux/actions';
 import { getDataEntityId } from './dataentity.selectors';
 
 const ownersState = ({ owners }: RootState): OwnersState => owners;
 
-const getOwnersListFetchingStatus = createFetchingSelector('GET_OWNERS');
-export const getOwnersCreateStatus = createFetchingSelector('POST_OWNERS');
-export const getOwnerUpdateStatus = createFetchingSelector('PUT_OWNER');
-export const deleteOwnersUpdateStatus =
-  createFetchingSelector('DELETE_OWNER');
+const getOwnersListFetchingStatus = createFetchingSelector(
+  actions.fetchOwnersAction
+);
+export const getOwnersCreateStatus = createFetchingSelector(
+  actions.createOwnerAction
+);
+export const getOwnerUpdateStatus = createFetchingSelector(
+  actions.updateOwnerAction
+);
+export const deleteOwnersUpdateStatus = createFetchingSelector(
+  actions.deleteOwnerAction
+);
 
 export const getIsOwnerCreating = createSelector(
   getOwnersCreateStatus,

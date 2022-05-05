@@ -3,8 +3,6 @@ import { Grid } from '@mui/material';
 import { format } from 'date-fns';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
-  DataEntityApiDeleteDataEntityMetadataFieldValueRequest,
-  DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
   MetadataFieldType,
   MetadataFieldValue,
   MetadataFieldValueUpdateFormData,
@@ -20,35 +18,34 @@ import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { stringFormatted } from 'lib/helpers';
+import { useAppDispatch } from 'lib/hooks';
 import {
-  Label,
-  ValueLeftContainer,
+  deleteDataEntityCustomMetadata,
+  updateDataEntityCustomMetadata,
+} from 'redux/thunks';
+import {
+  Actions,
   Container,
-  ValueContainer,
-  Value,
-  LabelContainer,
   EditForm,
   FormActionBtns,
-  Actions,
+  Label,
+  LabelContainer,
+  Value,
+  ValueContainer,
+  ValueLeftContainer,
 } from './MetadataItemStyles';
 
 interface MetadataItemProps {
   dataEntityId: number;
   metadataItem: MetadataFieldValue;
-  deleteDataEntityCustomMetadata: (
-    params: DataEntityApiDeleteDataEntityMetadataFieldValueRequest
-  ) => Promise<void>;
-  updateDataEntityCustomMetadata: (
-    params: DataEntityApiUpsertDataEntityMetadataFieldValueRequest
-  ) => Promise<MetadataFieldValue>;
 }
 
 const MetadataItem: React.FC<MetadataItemProps> = ({
   dataEntityId,
   metadataItem,
-  deleteDataEntityCustomMetadata,
-  updateDataEntityCustomMetadata,
 }) => {
+  const dispatch = useAppDispatch();
+
   const [editMode, setEditMode] = React.useState<boolean>(false);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
 
@@ -57,19 +54,23 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   });
 
   const handleUpdate = (data: MetadataFieldValueUpdateFormData) =>
-    updateDataEntityCustomMetadata({
-      dataEntityId,
-      metadataFieldId: metadataItem.field.id,
-      metadataFieldValueUpdateFormData: data,
-    }).then(() => {
+    dispatch(
+      updateDataEntityCustomMetadata({
+        dataEntityId,
+        metadataFieldId: metadataItem.field.id,
+        metadataFieldValueUpdateFormData: data,
+      })
+    ).then(() => {
       setEditMode(false);
     });
 
   const handleDelete = () =>
-    deleteDataEntityCustomMetadata({
-      dataEntityId,
-      metadataFieldId: metadataItem.field.id,
-    });
+    dispatch(
+      deleteDataEntityCustomMetadata({
+        dataEntityId,
+        metadataFieldId: metadataItem.field.id,
+      })
+    );
 
   let metadataVal;
 

@@ -6,9 +6,8 @@ import {
   getIsOwnersListFetching,
   getOwnersList,
   getOwnersListPage,
-} from 'redux/selectors/owners.selectors';
-import { deleteOwner, fetchOwnersList } from 'redux/thunks/owners.thunks';
-import OwnersListView from './OwnersList';
+} from 'redux/selectors';
+import OwnersList from './OwnersList';
 
 const mapStateToProps = (state: RootState) => ({
   ownersList: getOwnersList(state),
@@ -18,12 +17,6 @@ const mapStateToProps = (state: RootState) => ({
   pageInfo: getOwnersListPage(state),
 });
 
-const mapDispatchToProps = {
-  fetchOwnersList,
-  deleteOwner,
-};
+const mapDispatchToProps = {};
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(OwnersListView);
+export default connect(mapStateToProps, mapDispatchToProps)(OwnersList);

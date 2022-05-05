@@ -1,54 +1,43 @@
-import { createAsyncAction } from 'typesafe-actions';
-import { OwnerList, Owner, Ownership, RoleList } from 'generated-sources';
-import {
-  PaginatedResponse,
-  PartialEntityUpdateParams,
-} from 'redux/interfaces';
+import { createAction } from 'lib/helpers';
 
-export const fetchOwnersAction = createAsyncAction(
-  'GET_OWNERS__REQUEST',
-  'GET_OWNERS__SUCCESS',
-  'GET_OWNERS__FAILURE'
-)<undefined, PaginatedResponse<OwnerList>, undefined>();
+export const ownersActionPrefix = 'owners';
 
-export const createOwnerAction = createAsyncAction(
-  'POST_OWNERS__REQUEST',
-  'POST_OWNERS__SUCCESS',
-  'POST_OWNERS__FAILURE'
-)<undefined, Owner, undefined>();
+export const fetchOwnersAction = createAction(
+  ownersActionPrefix,
+  'fetchOwners'
+);
 
-export const updateOwnerAction = createAsyncAction(
-  'PUT_OWNER__REQUEST',
-  'PUT_OWNER__SUCCESS',
-  'PUT_OWNER__FAILURE'
-)<undefined, Owner, undefined>();
+export const fetchRolesAction = createAction(
+  ownersActionPrefix,
+  'fetchOwnershipRoles'
+);
 
-export const deleteOwnerAction = createAsyncAction(
-  'DELETE_OWNER__REQUEST',
-  'DELETE_OWNER__SUCCESS',
-  'DELETE_OWNER__FAILURE'
-)<undefined, number, undefined>();
+export const createOwnerAction = createAction(
+  ownersActionPrefix,
+  'createOwner'
+);
 
-export const createDataEntityOwnershipAction = createAsyncAction(
-  'POST_DATA_ENTITY_OWNERSHIP__REQUEST',
-  'POST_DATA_ENTITY_OWNERSHIP__SUCCESS',
-  'POST_DATA_ENTITY_OWNERSHIP__FAILURE'
-)<undefined, PartialEntityUpdateParams<Ownership>, undefined>();
+export const updateOwnerAction = createAction(
+  ownersActionPrefix,
+  'updateOwner'
+);
 
-export const updateDataEntityOwnershipAction = createAsyncAction(
-  'PUT_DATA_ENTITY_OWNERSHIP__REQUEST',
-  'PUT_DATA_ENTITY_OWNERSHIP__SUCCESS',
-  'PUT_DATA_ENTITY_OWNERSHIP__FAILURE'
-)<undefined, PartialEntityUpdateParams<Ownership>, undefined>();
+export const deleteOwnerAction = createAction(
+  ownersActionPrefix,
+  'deleteOwner'
+);
 
-export const deleteDataEntityOwnershipAction = createAsyncAction(
-  'DELETE_DATA_ENTITY_OWNERSHIP__REQUEST',
-  'DELETE_DATA_ENTITY_OWNERSHIP__SUCCESS',
-  'DELETE_DATA_ENTITY_OWNERSHIP__FAILURE'
-)<undefined, PartialEntityUpdateParams<number>, undefined>();
+export const createDataEntityOwnershipAction = createAction(
+  ownersActionPrefix,
+  'createDataEntityOwnership'
+);
 
-export const fetchRolesAction = createAsyncAction(
-  'GET_OWNERSHIP_ROLES__REQUEST',
-  'GET_OWNERSHIP_ROLES__SUCCESS',
-  'GET_OWNERSHIP_ROLES__FAILURE'
-)<undefined, RoleList, undefined>();
+export const updateDataEntityOwnershipAction = createAction(
+  ownersActionPrefix,
+  'updateDataEntityOwnership'
+);
+
+export const deleteDataEntityOwnershipAction = createAction(
+  ownersActionPrefix,
+  'deleteDataEntityOwnership'
+);

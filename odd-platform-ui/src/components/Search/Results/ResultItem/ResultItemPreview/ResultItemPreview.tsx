@@ -4,7 +4,6 @@ import * as S from 'components/Search/Results/ResultItem/ResultItemPreview/Resul
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import {
-  DataEntityApiGetDataEntityDetailsRequest,
   DataEntityDetails,
   MetadataFieldType,
   MetadataFieldValue,
@@ -14,6 +13,8 @@ import { format } from 'date-fns';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
+import { useAppDispatch } from 'lib/hooks';
+import { fetchDataEntityDetails } from 'redux/thunks';
 
 interface ResultItemPreviewProps {
   dataEntityId: number;
@@ -21,9 +22,6 @@ interface ResultItemPreviewProps {
   isDataEntityLoading: boolean;
   predefinedMetadata: MetadataFieldValue[];
   customMetadata: MetadataFieldValue[];
-  fetchDataEntityDetails: (
-    params: DataEntityApiGetDataEntityDetailsRequest
-  ) => void;
   fetchData?: boolean;
 }
 
@@ -33,14 +31,14 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   isDataEntityLoading,
   predefinedMetadata,
   customMetadata,
-  fetchDataEntityDetails,
   fetchData,
 }) => {
+  const dispatch = useAppDispatch();
   const metadataNum = 5;
 
   React.useEffect(() => {
     if (fetchData && !dataEntityDetails)
-      fetchDataEntityDetails({ dataEntityId });
+      dispatch(fetchDataEntityDetails({ dataEntityId }));
   }, [fetchData, dataEntityDetails, dataEntityId, fetchDataEntityDetails]);
 
   const getMetadataValue = (metadataItem: MetadataFieldValue) => {

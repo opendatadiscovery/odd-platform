@@ -41,6 +41,10 @@ export const getSearchResultsFetchStatus = createFetchingSelector(
   'GET_DATA_ENTITIES_SEARCH_RESULTS'
 );
 
+export const getSearchSuggestionsFetchStatus = createFetchingSelector(
+  'GET_DATA_ENTITIES_SEARCH_SUGGESTIONS'
+);
+
 export const getSearchFiltersSynced = createSelector(
   searchState,
   search => search.isFacetsStateSynced
@@ -78,6 +82,11 @@ export const getSearchIsCreatingAndFetching = createSelector(
 export const getSearchIsCreating = createSelector(
   getSearchCreationStatus,
   statusCreate => statusCreate === 'fetching'
+);
+
+export const getSearchSuggestionsIsFetching = createSelector(
+  getSearchSuggestionsFetchStatus,
+  statusFetch => statusFetch === 'fetching'
 );
 
 export const getSearchIsUpdated = createSelector(

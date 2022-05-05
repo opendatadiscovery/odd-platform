@@ -14,7 +14,6 @@ import {
   DataSetField,
   DataSetTestReport,
   DataSetVersion,
-  DataSource,
   Collector,
   EnumValue,
   Label,
@@ -24,11 +23,13 @@ import {
   Owner,
   Ownership,
   Tag,
+  DataSource,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
 // eslint-disable-next-line lodash/import-scope
 import { Dictionary } from 'lodash';
+import { store } from 'redux/store';
 import { DataSetStructureTypesCount } from './datasetStructure';
 import {
   FacetOptionsByName,
@@ -38,7 +39,6 @@ import {
 import { DataEntityLineageById } from './dataentityLineage';
 import { CurrentPageInfo } from './common';
 import { DataEntityDetailsState } from './dataentities';
-import { LoaderState } from './loader';
 
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
@@ -197,25 +197,8 @@ export interface AppInfoState {
   appInfo?: AppInfo;
 }
 
-export type RootState = {
-  appInfo: AppInfoState;
-  dataSources: DataSourcesState;
-  search: SearchState;
-  loader: LoaderState;
-  dataEntities: DataEntitiesState;
-  tags: TagsState;
-  metaData: MetaDataState;
-  owners: OwnersState;
-  datasetStructure: DatasetStructureState;
-  labels: LabelsState;
-  namespaces: NamespacesState;
-  dataEntityLineage: DataEntityLineageState;
-  profile: ProfileState;
-  dataQualityTest: DataQualityTestState;
-  alerts: AlertsState;
-  dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
-  collectors: CollectorsState;
-};
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;
 

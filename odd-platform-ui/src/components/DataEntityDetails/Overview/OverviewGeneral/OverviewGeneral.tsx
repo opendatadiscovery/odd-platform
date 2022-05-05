@@ -1,11 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { format } from 'date-fns';
-import {
-  DataEntityApiDeleteOwnershipRequest,
-  DataEntityDetails,
-  Ownership,
-} from 'generated-sources';
+import { DataEntityDetails, Ownership } from 'generated-sources';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
@@ -15,6 +11,8 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import CopyButton from 'components/shared/CopyButton/CopyButton';
+import { useAppDispatch } from 'lib/hooks';
+import { deleteDataEntityOwnership } from 'redux/thunks';
 import * as S from './OverviewGeneralStyles';
 import OwnershipFormContainer from '../../Ownership/OwnershipFormContainer';
 
@@ -22,19 +20,17 @@ interface OverviewGeneralProps {
   dataEntityId: number;
   dataEntityDetails: DataEntityDetails;
   ownership: Ownership[];
-  deleteDataEntityOwnership: (
-    params: DataEntityApiDeleteOwnershipRequest
-  ) => Promise<void>;
 }
 
 const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
   dataEntityId,
   dataEntityDetails,
   ownership,
-  deleteDataEntityOwnership,
 }) => {
+  const dispatch = useAppDispatch();
+
   const handleOwnershipDelete = (ownershipId: number) => () =>
-    deleteDataEntityOwnership({ dataEntityId, ownershipId });
+    dispatch(deleteDataEntityOwnership({ dataEntityId, ownershipId }));
 
   return (
     <Grid container>

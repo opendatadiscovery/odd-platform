@@ -1,24 +1,26 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Owner, OwnerApiDeleteOwnerRequest } from 'generated-sources';
+import { Owner } from 'generated-sources';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import OwnerFormContainer from 'components/Management/OwnersList/OwnerForm/OwnerFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { useAppDispatch } from 'lib/hooks';
+import { deleteOwner } from 'redux/thunks';
 import * as S from './EditableOwnerItemStyles';
 
 interface EditableOwnerItemProps {
   owner: Owner;
-  deleteOwner: (params: OwnerApiDeleteOwnerRequest) => Promise<void>;
 }
 
 const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
   owner,
-  deleteOwner,
 }) => {
+  const dispatch = useAppDispatch();
+
   const handleDelete = React.useCallback(
-    () => deleteOwner({ ownerId: owner.id }),
+    () => dispatch(deleteOwner({ ownerId: owner.id })),
     [owner, deleteOwner]
   );
 

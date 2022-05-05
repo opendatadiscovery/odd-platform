@@ -1,143 +1,169 @@
 import {
-  DataEntityApi,
   Configuration,
-  DataEntityRef,
-  DataEntityDetails,
-  DataEntityDetailsBaseObject,
-  Tag,
-  InternalDescription,
-  DataEntityApiGetDataEntityDetailsRequest,
+  DataEntityApi,
+  DataEntityApiCreateDataEntityGroupRequest,
   DataEntityApiCreateDataEntityTagsRelationsRequest,
+  DataEntityApiDeleteDataEntityGroupRequest,
+  DataEntityApiGetDataEntityDetailsRequest,
+  DataEntityApiGetMyObjectsRequest,
+  DataEntityApiGetMyObjectsWithDownstreamRequest,
+  DataEntityApiGetMyObjectsWithUpstreamRequest,
+  DataEntityApiGetPopularRequest,
+  DataEntityApiUpdateDataEntityGroupRequest,
   DataEntityApiUpsertDataEntityInternalDescriptionRequest,
   DataEntityApiUpsertDataEntityInternalNameRequest,
-  InternalName,
   DataEntityClassAndTypeDictionary,
-  DataEntityApiGetMyObjectsRequest,
-  DataEntityApiGetMyObjectsWithUpstreamRequest,
-  DataEntityApiGetMyObjectsWithDownstreamRequest,
-  DataEntityApiGetPopularRequest,
+  DataEntityDetails,
+  DataEntityRef,
+  InternalDescription,
+  InternalName,
+  Tag,
 } from 'generated-sources';
-import { PartialEntityUpdateParams } from 'redux/interfaces';
-import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new DataEntityApi(apiClientConf);
+const dataEntityApi = new DataEntityApi(apiClientConf);
 
-export const fetchDataEntitiesClassesAndTypes = createThunk<
-  void,
+export const fetchDataEntitiesClassesAndTypes = createAsyncThunk<
   DataEntityClassAndTypeDictionary,
-  DataEntityClassAndTypeDictionary
->(
-  () => apiClient.getDataEntityClasses(),
-  actions.fetchDataEntitiesClassesAndTypesAction,
-  (response: DataEntityClassAndTypeDictionary) => response
+  void
+>(actions.fetchDataEntitiesClassesAndTypesAction, async () =>
+  dataEntityApi.getDataEntityClasses()
 );
 
-export const fetchDataEntityDetails = createThunk<
-  DataEntityApiGetDataEntityDetailsRequest,
+export const fetchDataEntityDetails = createAsyncThunk<
   DataEntityDetails,
-  DataEntityDetails
->(
-  (params: DataEntityApiGetDataEntityDetailsRequest) =>
-    apiClient.getDataEntityDetails(params),
-  actions.fetchDataEntityAction,
-  (response: DataEntityDetails) => response
+  DataEntityApiGetDataEntityDetailsRequest
+>(actions.fetchDataEntityDetailsAction, async ({ dataEntityId }) =>
+  dataEntityApi.getDataEntityDetails({
+    dataEntityId,
+  })
 );
 
-export const updateDataEntityTags = createThunk<
-  DataEntityApiCreateDataEntityTagsRelationsRequest,
-  Tag[],
-  PartialEntityUpdateParams<Tag[]>
+export const updateDataEntityTags = createAsyncThunk<
+  { dataEntityId: number; tags: Array<Tag> },
+  DataEntityApiCreateDataEntityTagsRelationsRequest
 >(
-  (params: DataEntityApiCreateDataEntityTagsRelationsRequest) =>
-    apiClient.createDataEntityTagsRelations(params),
   actions.updateDataEntityTagsAction,
-  (
-    response: Tag[],
-    request: DataEntityApiCreateDataEntityTagsRelationsRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: response,
+  async ({ dataEntityId, dataEntityTagsFormData }) => {
+    const tags = await dataEntityApi.createDataEntityTagsRelations({
+      dataEntityId,
+      dataEntityTagsFormData,
+    });
+    return { dataEntityId, tags };
+  }
+);
+
+export const updateDataEntityInternalDescription = createAsyncThunk<
+  {
+    dataEntityId: number;
+    internalDescription: InternalDescription;
+  },
+  DataEntityApiUpsertDataEntityInternalDescriptionRequest
+>(
+  actions.updateDataEntityInternalDescriptionAction,
+  async ({ dataEntityId, internalDescriptionFormData }) => {
+    const internalDescription =
+      await dataEntityApi.upsertDataEntityInternalDescription({
+        dataEntityId,
+        internalDescriptionFormData,
+      });
+    return { dataEntityId, internalDescription };
+  }
+);
+
+export const updateDataEntityInternalName = createAsyncThunk<
+  {
+    dataEntityId: number;
+    internalName: InternalName;
+  },
+  DataEntityApiUpsertDataEntityInternalNameRequest
+>(
+  actions.updateDataEntityInternalNameAction,
+  async ({ dataEntityId, internalNameFormData }) => {
+    const internalName = await dataEntityApi.upsertDataEntityInternalName({
+      dataEntityId,
+      internalNameFormData,
+    });
+    return { dataEntityId, internalName };
+  }
+);
+
+export const fetchMyDataEntitiesList = createAsyncThunk<
+  DataEntityRef[],
+  DataEntityApiGetMyObjectsRequest
+>(actions.fetchMyDataEntitiesAction, async ({ page, size }) =>
+  dataEntityApi.getMyObjects({
+    page,
+    size,
   })
 );
 
-export const updateDataEntityInternalDescription = createThunk<
-  DataEntityApiUpsertDataEntityInternalDescriptionRequest,
-  InternalDescription,
-  PartialEntityUpdateParams<
-    DataEntityDetailsBaseObject['internalDescription']
-  >
->(
-  (params: DataEntityApiUpsertDataEntityInternalDescriptionRequest) =>
-    apiClient.upsertDataEntityInternalDescription(params),
-  actions.updateDataEntityDescriptionAction,
-  (
-    response: InternalDescription,
-    request: DataEntityApiUpsertDataEntityInternalDescriptionRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: response.internalDescription,
+export const fetchMyUpstreamDataEntitiesList = createAsyncThunk<
+  DataEntityRef[],
+  DataEntityApiGetMyObjectsWithUpstreamRequest
+>(actions.fetchMyUpstreamDataEntitiesAction, async ({ page, size }) =>
+  dataEntityApi.getMyObjectsWithUpstream({
+    page,
+    size,
   })
 );
 
-export const updateDataEntityInternalName = createThunk<
-  DataEntityApiUpsertDataEntityInternalNameRequest,
-  InternalName,
-  PartialEntityUpdateParams<InternalName>
->(
-  (params: DataEntityApiUpsertDataEntityInternalNameRequest) =>
-    apiClient.upsertDataEntityInternalName(params),
-  actions.updateDataEntityInternalName,
-  (
-    response: InternalName,
-    request: DataEntityApiUpsertDataEntityInternalNameRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: response,
+export const fetchMyDownstreamDataEntitiesList = createAsyncThunk<
+  DataEntityRef[],
+  DataEntityApiGetMyObjectsWithDownstreamRequest
+>(actions.fetchMyDownstreamDataEntitiesAction, async ({ page, size }) =>
+  dataEntityApi.getMyObjectsWithDownstream({
+    page,
+    size,
   })
 );
 
-export const fetchMyDataEntitiesList = createThunk<
-  DataEntityApiGetMyObjectsRequest,
+export const fetchPopularDataEntitiesList = createAsyncThunk<
   DataEntityRef[],
-  DataEntityRef[]
->(
-  (params: DataEntityApiGetMyObjectsRequest) =>
-    apiClient.getMyObjects(params),
-  actions.fetchMyDataEntitiesAction,
-  (response: DataEntityRef[]) => response
+  DataEntityApiGetPopularRequest
+>(actions.fetchPopularDataEntitiesAction, async ({ page, size }) =>
+  dataEntityApi.getPopular({
+    page,
+    size,
+  })
 );
 
-export const fetchMyUpstreamDataEntitiesList = createThunk<
-  DataEntityApiGetMyObjectsWithUpstreamRequest,
-  DataEntityRef[],
-  DataEntityRef[]
+// data entity groups
+export const createDataEntityGroup = createAsyncThunk<
+  DataEntityDetails,
+  DataEntityApiCreateDataEntityGroupRequest
 >(
-  (params: DataEntityApiGetMyObjectsWithUpstreamRequest) =>
-    apiClient.getMyObjectsWithUpstream(params),
-  actions.fetchMyUpstreamDataEntitiesAction,
-  (response: DataEntityRef[]) => response
+  actions.createDataEntityGroupAction,
+  async ({ dataEntityGroupFormData }) => {
+    const dataEntityGroup = await dataEntityApi.createDataEntityGroup({
+      dataEntityGroupFormData,
+    });
+    return dataEntityGroup;
+  }
 );
 
-export const fetchMyDownstreamDataEntitiesList = createThunk<
-  DataEntityApiGetMyObjectsWithDownstreamRequest,
-  DataEntityRef[],
-  DataEntityRef[]
+export const updateDataEntityGroup = createAsyncThunk<
+  DataEntityDetails,
+  DataEntityApiUpdateDataEntityGroupRequest
 >(
-  (params: DataEntityApiGetMyObjectsWithDownstreamRequest) =>
-    apiClient.getMyObjectsWithDownstream(params),
-  actions.fetchMyDownstreamDataEntitiesAction,
-  (response: DataEntityRef[]) => response
+  actions.updateDataEntityGroupAction,
+  async ({ dataEntityGroupFormData }) => {
+    const dataEntityGroup = await dataEntityApi.createDataEntityGroup({
+      dataEntityGroupFormData,
+    });
+    return dataEntityGroup;
+  }
 );
 
-export const fetchPopularDataEntitiesList = createThunk<
-  DataEntityApiGetPopularRequest,
-  DataEntityRef[],
-  DataEntityRef[]
->(
-  (params: DataEntityApiGetPopularRequest) => apiClient.getPopular(params),
-  actions.fetchPopularDataEntitiesAction,
-  (response: DataEntityRef[]) => response
-);
+export const deleteDataEntityGroup = createAsyncThunk<
+  { dataEntityGroupId: number },
+  DataEntityApiDeleteDataEntityGroupRequest
+>(actions.deleteDataEntityGroupAction, async ({ dataEntityGroupId }) => {
+  await dataEntityApi.deleteDataEntityGroup({
+    dataEntityGroupId,
+  });
+  return { dataEntityGroupId };
+});

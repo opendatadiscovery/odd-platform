@@ -1,131 +1,123 @@
 import {
   Configuration,
-  OwnerApi,
   DataEntityApi,
-  RoleApi,
-  OwnerList,
-  Owner,
-  OwnerApiGetOwnerListRequest,
-  OwnerApiCreateOwnerRequest,
-  OwnerApiUpdateOwnerRequest,
-  OwnerApiDeleteOwnerRequest,
-  Ownership,
   DataEntityApiCreateOwnershipRequest,
-  DataEntityApiUpdateOwnershipRequest,
   DataEntityApiDeleteOwnershipRequest,
+  DataEntityApiUpdateOwnershipRequest,
+  Owner,
+  OwnerApi,
+  OwnerApiCreateOwnerRequest,
+  OwnerApiDeleteOwnerRequest,
+  OwnerApiGetOwnerListRequest,
+  OwnerApiUpdateOwnerRequest,
+  Ownership,
+  RoleApi,
   RoleApiGetRoleListRequest,
   RoleList,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import {
-  PaginatedResponse,
-  PartialEntityUpdateParams,
-} from 'redux/interfaces/common';
+import { CurrentPageInfo } from 'redux/interfaces/common';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new OwnerApi(apiClientConf);
-const dataEntityApiClient = new DataEntityApi(apiClientConf);
-const roleApiClient = new RoleApi(apiClientConf);
+const ownerApi = new OwnerApi(apiClientConf);
+const dataEntityApi = new DataEntityApi(apiClientConf);
+const roleApi = new RoleApi(apiClientConf);
 
-export const fetchOwnersList = createThunk<
-  OwnerApiGetOwnerListRequest,
-  OwnerList,
-  PaginatedResponse<OwnerList>
->(
-  (params: OwnerApiGetOwnerListRequest = { page: 1, size: 50 }) =>
-    apiClient.getOwnerList(params),
-  actions.fetchOwnersAction,
-  (response: OwnerList, request: OwnerApiGetOwnerListRequest) => ({
-    ...response,
-    pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
-    },
-  })
-);
+export const fetchRoleList = createAsyncThunk<
+  { roleList: RoleList['items'] },
+  RoleApiGetRoleListRequest
+>(actions.fetchRolesAction, async ({ page, size, query }) => {
+  const { items } = await roleApi.getRoleList({
+    page,
+    size,
+    query,
+  });
 
-export const createOwner = createThunk<
-  OwnerApiCreateOwnerRequest,
+  return { roleList: items };
+});
+
+export const fetchOwnersList = createAsyncThunk<
+  { ownersList: Array<Owner>; pageInfo: CurrentPageInfo },
+  OwnerApiGetOwnerListRequest
+>(actions.fetchOwnersAction, async ({ page, size, query }) => {
+  const { items, pageInfo } = await ownerApi.getOwnerList({
+    page,
+    size,
+    query,
+  });
+
+  return { ownersList: items, pageInfo: { ...pageInfo, page } };
+});
+
+export const createOwner = createAsyncThunk<
   Owner,
-  Owner
->(
-  (params: OwnerApiCreateOwnerRequest) => apiClient.createOwner(params),
-  actions.createOwnerAction,
-  (response: Owner) => response
-);
+  OwnerApiCreateOwnerRequest
+>(actions.createOwnerAction, async ({ ownerFormData }) => {
+  const owner = await ownerApi.createOwner({ ownerFormData });
 
-export const updateOwner = createThunk<
-  OwnerApiUpdateOwnerRequest,
-  Owner,
-  Owner
->(
-  (params: OwnerApiUpdateOwnerRequest) => apiClient.updateOwner(params),
-  actions.updateOwnerAction,
-  (response: Owner) => response
-);
+  return owner;
+});
 
-export const deleteOwner = createThunk<
-  OwnerApiDeleteOwnerRequest,
-  void,
-  number
->(
-  (params: OwnerApiDeleteOwnerRequest) => apiClient.deleteOwner(params),
-  actions.deleteOwnerAction,
-  (_: void, request: OwnerApiDeleteOwnerRequest) => request.ownerId
-);
+export const deleteOwner = createAsyncThunk<
+  { ownerId: number },
+  OwnerApiDeleteOwnerRequest
+>(actions.deleteOwnerAction, async ({ ownerId }) => {
+  await ownerApi.deleteOwner({ ownerId });
+
+  return { ownerId };
+});
+
+export const updateOwner = createAsyncThunk<
+  { ownerId: number; owner: Owner },
+  OwnerApiUpdateOwnerRequest
+>(actions.updateOwnerAction, async ({ ownerId, ownerFormData }) => {
+  const owner = await ownerApi.updateOwner({ ownerId, ownerFormData });
+
+  return { ownerId, owner };
+});
 
 // Data entity ownership
-export const createDataEntityOwnership = createThunk<
-  DataEntityApiCreateOwnershipRequest,
-  Ownership,
-  PartialEntityUpdateParams<Ownership>
+export const createDataEntityOwnership = createAsyncThunk<
+  { dataEntityId: number; ownership: Ownership },
+  DataEntityApiCreateOwnershipRequest
 >(
-  (params: DataEntityApiCreateOwnershipRequest) =>
-    dataEntityApiClient.createOwnership(params),
   actions.createDataEntityOwnershipAction,
-  (response: Ownership, request: DataEntityApiCreateOwnershipRequest) => ({
-    entityId: request.dataEntityId,
-    value: response,
-  })
+  async ({ dataEntityId, ownershipFormData }) => {
+    const ownership = await dataEntityApi.createOwnership({
+      dataEntityId,
+      ownershipFormData,
+    });
+
+    return { dataEntityId, ownership };
+  }
 );
 
-export const updateDataEntityOwnership = createThunk<
-  DataEntityApiUpdateOwnershipRequest,
-  Ownership,
-  PartialEntityUpdateParams<Ownership>
+export const updateDataEntityOwnership = createAsyncThunk<
+  { dataEntityId: number; ownership: Ownership },
+  DataEntityApiUpdateOwnershipRequest
 >(
-  (params: DataEntityApiUpdateOwnershipRequest) =>
-    dataEntityApiClient.updateOwnership(params),
   actions.updateDataEntityOwnershipAction,
-  (response: Ownership, request: DataEntityApiUpdateOwnershipRequest) => ({
-    entityId: request.dataEntityId,
-    value: response,
-  })
+  async ({ dataEntityId, ownershipId, ownershipUpdateFormData }) => {
+    const ownership = await dataEntityApi.updateOwnership({
+      dataEntityId,
+      ownershipId,
+      ownershipUpdateFormData,
+    });
+
+    return { dataEntityId, ownership };
+  }
 );
 
-export const deleteDataEntityOwnership = createThunk<
-  DataEntityApiDeleteOwnershipRequest,
-  void,
-  PartialEntityUpdateParams<number>
+export const deleteDataEntityOwnership = createAsyncThunk<
+  { dataEntityId: number; ownershipId: number },
+  DataEntityApiDeleteOwnershipRequest
 >(
-  (params: DataEntityApiDeleteOwnershipRequest) =>
-    dataEntityApiClient.deleteOwnership(params),
   actions.deleteDataEntityOwnershipAction,
-  (_, request: DataEntityApiDeleteOwnershipRequest) => ({
-    entityId: request.dataEntityId,
-    value: request.ownershipId,
-  })
-);
+  async ({ dataEntityId, ownershipId }) => {
+    await dataEntityApi.deleteOwnership({ dataEntityId, ownershipId });
 
-export const fetchRoleList = createThunk<
-  RoleApiGetRoleListRequest,
-  RoleList,
-  RoleList
->(
-  (params: RoleApiGetRoleListRequest) => roleApiClient.getRoleList(params),
-  actions.fetchRolesAction,
-  (response: RoleList) => response
+    return { dataEntityId, ownershipId };
+  }
 );

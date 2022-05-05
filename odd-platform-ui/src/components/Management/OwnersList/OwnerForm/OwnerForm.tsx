@@ -1,44 +1,35 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
-import {
-  OwnerFormData,
-  Owner,
-  OwnerApiCreateOwnerRequest,
-  OwnerApiUpdateOwnerRequest,
-} from 'generated-sources';
+import { Controller, useForm } from 'react-hook-form';
+import { Owner, OwnerFormData } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch } from 'lib/hooks';
+import { createOwner, updateOwner } from 'redux/thunks';
 
 interface OwnerFormProps {
   btnCreateEl: JSX.Element;
   owner?: Owner;
   isLoading: boolean;
-  createOwner: (params: OwnerApiCreateOwnerRequest) => Promise<Owner>;
-  updateOwner: (params: OwnerApiUpdateOwnerRequest) => Promise<Owner>;
 }
 
 const OwnerForm: React.FC<OwnerFormProps> = ({
   btnCreateEl,
   owner,
   isLoading,
-  createOwner,
-  updateOwner,
 }) => {
-  const {
-    handleSubmit,
-    control,
-    reset,
-    formState,
-  } = useForm<OwnerFormData>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-    defaultValues: {
-      name: owner?.name || '',
-    },
-  });
+  const dispatch = useAppDispatch();
+
+  const { handleSubmit, control, reset, formState } =
+    useForm<OwnerFormData>({
+      mode: 'onChange',
+      reValidateMode: 'onChange',
+      defaultValues: {
+        name: owner?.name || '',
+      },
+    });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
@@ -51,10 +42,10 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
     reset({ name: owner?.name || '' });
   }, [owner]);
 
-  const handleSudmit = async (data: OwnerFormData) => {
+  const handleOwnerFormSubmit = async (data: OwnerFormData) => {
     (owner
-      ? updateOwner({ ownerId: owner.id, ownerFormData: data })
-      : createOwner({ ownerFormData: data })
+      ? dispatch(updateOwner({ ownerId: owner.id, ownerFormData: data }))
+      : dispatch(createOwner({ ownerFormData: data }))
     ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
@@ -79,7 +70,10 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
   );
 
   const formContent = () => (
-    <form id="owner-create-form" onSubmit={handleSubmit(handleSudmit)}>
+    <form
+      id="owner-create-form"
+      onSubmit={handleSubmit(handleOwnerFormSubmit)}
+    >
       <Controller
         name="name"
         control={control}

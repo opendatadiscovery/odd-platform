@@ -3,12 +3,10 @@ import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
 import {
   getDataEntityDetails,
-  getDataEntityDetailsFetchingError,
   getDataEntityDetailsFetchingStatus,
   getDataEntityIsDataset,
   getDataEntityIsQualityTest,
 } from 'redux/selectors/dataentity.selectors';
-import { fetchDataEntityDetails } from 'redux/thunks/dataentities.thunks';
 import { getDataEntityOpenAlertListCount } from 'redux/selectors/alert.selectors';
 import { fetchDataEntityAlerts } from 'redux/thunks';
 import DataEntityDetailsView from './DataEntityDetails';
@@ -35,12 +33,10 @@ const mapStateToProps = (
   isDataset: getDataEntityIsDataset(state, dataEntityId),
   isQualityTest: getDataEntityIsQualityTest(state, dataEntityId),
   dataEntityFetchingStatus: getDataEntityDetailsFetchingStatus(state),
-  dataEntityFetchingError: getDataEntityDetailsFetchingError(state),
   openAlertsCount: getDataEntityOpenAlertListCount(state, dataEntityId),
 });
 
 const mapDispatchToProps = {
-  fetchDataEntityDetails,
   fetchDataEntityAlerts,
 };
 

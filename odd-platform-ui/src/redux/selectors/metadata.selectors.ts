@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState, MetaDataState } from 'redux/interfaces';
 import { MetadataFieldValue } from 'generated-sources';
+import * as actions from 'redux/actions';
 import { createFetchingSelector } from './loader-selectors';
 import { getDataEntityId } from './dataentity.selectors';
 
@@ -8,14 +9,14 @@ const metaDataState = ({ metaData }: RootState): MetaDataState => metaData;
 
 // Details
 const getDataEntityMetadataCreateFetchingStatus = createFetchingSelector(
-  'POST_DATA_ENTITY_METADATA'
+  actions.createDataEntityMetadataAction
 );
 const getDataEntityMetadataUpdateFetchingStatus = createFetchingSelector(
-  'PUT_DATA_ENTITY_METADATA'
+  actions.updateDataEntityMetadataAction
 );
 
 const getDataEntityMetadataDeleteFetchingStatus = createFetchingSelector(
-  'DELETE_DATA_ENTITY_METADATA'
+  actions.deleteDataEntityMetadataAction
 );
 
 export const getDataEntityMetadataCreateFetching = createSelector(

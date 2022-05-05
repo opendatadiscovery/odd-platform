@@ -1,37 +1,23 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  DataEntityApiCreateOwnershipRequest,
-  DataEntityApiUpdateOwnershipRequest,
-  OwnerApiGetOwnerListRequest,
-  OwnerList,
-  Ownership,
-  OwnershipFormData,
-  RoleApiGetRoleListRequest,
-  RoleList,
-} from 'generated-sources';
+import { Ownership, OwnershipFormData } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import OwnershipFormOwnerAutocomplete from 'components/DataEntityDetails/Ownership/OwnershipFormOwnerAutocomplete/OwnershipFormOwnerAutocomplete';
 import OwnershipFormRoleAutocomplete from 'components/DataEntityDetails/Ownership/OwnershipFormRoleAutocomplete/OwnershipFormRoleAutocomplete';
+import { useAppDispatch } from 'lib/hooks';
+import {
+  createDataEntityOwnership,
+  updateDataEntityOwnership,
+} from 'redux/thunks';
 
 interface OwnershipFormProps {
   dataEntityId: number;
   dataEntityOwnership?: Ownership;
   ownerEditBtn: JSX.Element;
   isUpdating: boolean;
-  createDataEntityOwnership: (
-    params: DataEntityApiCreateOwnershipRequest
-  ) => Promise<Ownership>;
-  updateDataEntityOwnership: (
-    params: DataEntityApiUpdateOwnershipRequest
-  ) => Promise<Ownership>;
-  searchOwners: (
-    params: OwnerApiGetOwnerListRequest
-  ) => Promise<OwnerList>;
-  searchRoles: (params: RoleApiGetRoleListRequest) => Promise<RoleList>;
 }
 
 const OwnershipForm: React.FC<OwnershipFormProps> = ({
@@ -39,11 +25,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   dataEntityOwnership,
   ownerEditBtn,
   isUpdating,
-  createDataEntityOwnership,
-  updateDataEntityOwnership,
-  searchOwners,
-  searchRoles,
 }) => {
+  const dispatch = useAppDispatch();
+
   const methods = useForm<OwnershipFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -64,15 +48,19 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const ownershipUpdate = (data: OwnershipFormData) => {
     (dataEntityOwnership
-      ? updateDataEntityOwnership({
-          dataEntityId,
-          ownershipId: dataEntityOwnership.id,
-          ownershipUpdateFormData: { roleName: data.roleName },
-        })
-      : createDataEntityOwnership({
-          dataEntityId,
-          ownershipFormData: data,
-        })
+      ? dispatch(
+          updateDataEntityOwnership({
+            dataEntityId,
+            ownershipId: dataEntityOwnership.id,
+            ownershipUpdateFormData: { roleName: data.roleName },
+          })
+        )
+      : dispatch(
+          createDataEntityOwnership({
+            dataEntityId,
+            ownershipFormData: data,
+          })
+        )
     ).then(
       () => {
         setFormState({ ...initialFormState, isSuccessfulSubmit: true });
@@ -109,10 +97,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
           defaultValue=""
           rules={{ required: true }}
           render={({ field }) => (
-            <OwnershipFormOwnerAutocomplete
-              field={field}
-              searchOwners={searchOwners}
-            />
+            <OwnershipFormOwnerAutocomplete field={field} />
           )}
         />
       )}
@@ -122,10 +107,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
         defaultValue={dataEntityOwnership?.role?.name || ''}
         rules={{ required: true, validate: value => !!value?.trim() }}
         render={({ field }) => (
-          <OwnershipFormRoleAutocomplete
-            field={field}
-            searchRoles={searchRoles}
-          />
+          <OwnershipFormRoleAutocomplete field={field} />
         )}
       />
     </form>

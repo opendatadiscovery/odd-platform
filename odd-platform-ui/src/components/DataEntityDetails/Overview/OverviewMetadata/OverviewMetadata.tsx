@@ -4,7 +4,7 @@ import { MetadataFieldValue } from 'generated-sources';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import MetadataCreateFormContainer from 'components/DataEntityDetails/Metadata/MetadataCreateForm/MetadataCreateFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import MetadataItemContainer from './MetadataItem/MetadataItemContainer';
+import MetadataItem from './MetadataItem/MetadataItem';
 import { SubtitleContainer } from './OverviewMetadataStyles';
 
 interface OverviewMetadataProps {
@@ -36,7 +36,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           {predefOpen ? (
             <Grid container>
               {predefinedMetadata?.slice(visibleLimit).map(item => (
-                <MetadataItemContainer
+                <MetadataItem
                   dataEntityId={dataEntityId}
                   metadataItem={item}
                   key={item.field.id}
@@ -72,7 +72,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           {customOpen ? (
             <Grid container>
               {customMetadata?.slice(visibleLimit + 1).map(item => (
-                <MetadataItemContainer
+                <MetadataItem
                   dataEntityId={dataEntityId}
                   metadataItem={item}
                   key={item.field.id}
@@ -119,7 +119,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
             customMetadata
               ?.slice(0, visibleLimit)
               .map(item => (
-                <MetadataItemContainer
+                <MetadataItem
                   dataEntityId={dataEntityId}
                   metadataItem={item}
                   key={item.field.id}
@@ -160,7 +160,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
             </SubtitleContainer>
           </Grid>
           {predefinedMetadata?.slice(0, visibleLimit).map(item => (
-            <MetadataItemContainer
+            <MetadataItem
               dataEntityId={dataEntityId}
               metadataItem={item}
               key={item.field.id}

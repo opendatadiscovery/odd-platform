@@ -7,14 +7,14 @@ import { Dictionary } from 'lodash/index';
 import { useScrollBarWidth } from 'lib/hooks';
 import {
   DataEntity,
+  DataEntityClass,
   DataEntityClassNameEnum,
   SearchApiGetSearchResultsRequest,
-  DataEntityClass,
 } from 'generated-sources';
 import {
   CurrentPageInfo,
-  SearchTotalsByName,
   SearchClass,
+  SearchTotalsByName,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -26,7 +26,7 @@ import ResultItem from 'components/Search/Results/ResultItem/ResultItem';
 import * as S from './ResultsStyles';
 
 interface ResultsProps {
-  dataEntityClassesByName: Dictionary<DataEntityClass>;
+  dataEntityClassesDict: Dictionary<DataEntityClass>;
   searchId: string;
   searchClass?: SearchClass;
   searchResults: DataEntity[];
@@ -43,7 +43,7 @@ interface ResultsProps {
 }
 
 const Results: React.FC<ResultsProps> = ({
-  dataEntityClassesByName,
+  dataEntityClassesDict,
   searchId,
   searchClass,
   searchResults,
@@ -116,7 +116,7 @@ const Results: React.FC<ResultsProps> = ({
 
   const onSearchClassChange = (newTypeIndex: number) => {
     const newType = tabs[newTypeIndex]?.value
-      ? get(dataEntityClassesByName, `${tabs[newTypeIndex].value}`)
+      ? get(dataEntityClassesDict, `${tabs[newTypeIndex].value}`)
       : null;
     dispatch(
       actions.changeDataEntitySearchFilterAction({
@@ -157,6 +157,21 @@ const Results: React.FC<ResultsProps> = ({
           handleTabChange={onSearchClassChange}
           isHintUpdated={isSearchUpdated}
         />
+      )}
+      {tabs[selectedTab]?.name === 'Groups' && (
+        <div>lul</div>
+        // <DataEntityGroupForm
+        //   btnCreateEl={
+        //     <AppButton
+        //       sx={{ mt: 2 }}
+        //       size="medium"
+        //       color="primaryLight"
+        //       startIcon={<AddIcon />}
+        //     >
+        //       Add group
+        //     </AppButton>
+        //   }
+        // />
       )}
       <S.ResultsTableHeader
         container
@@ -247,7 +262,7 @@ const Results: React.FC<ResultsProps> = ({
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}
-            hasMore={!!pageInfo.hasNext}
+            hasMore={pageInfo.hasNext}
             loader={
               isSearchFetching && (
                 <SkeletonWrapper

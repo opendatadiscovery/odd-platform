@@ -5,30 +5,25 @@ import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { Controller, useFormContext } from 'react-hook-form';
-import {
-  MetadataApiGetMetadataFieldListRequest,
-  MetadataField,
-  MetadataFieldList,
-  MetadataFieldType,
-} from 'generated-sources';
+import { MetadataField, MetadataFieldType } from 'generated-sources';
 import MetadataValueEditField from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import { useAppDispatch } from 'lib/hooks';
+import { searchMetadata } from 'redux/thunks/metadata.thunks';
 
 interface MetadataCreateFormItemProps {
   itemIndex: number;
-  searchMetadata: (
-    params: MetadataApiGetMetadataFieldListRequest
-  ) => Promise<MetadataFieldList>;
 }
 
 const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
   itemIndex,
-  searchMetadata,
 }) => {
+  const dispatch = useAppDispatch();
+
   const { register, control } = useFormContext();
   // Autocomplete
   type FilterOption = Omit<MetadataField, 'id' | 'type'> &
@@ -47,10 +42,12 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      searchMetadata({ query: searchText }).then(response => {
-        setOptions(response.items);
-        setLoading(false);
-      });
+      dispatch(searchMetadata({ query: searchText }))
+        .unwrap()
+        .then(({ metadataFields }) => {
+          setOptions(metadataFields);
+          setLoading(false);
+        });
     }, 500),
     [setLoading, searchMetadata, setOptions, searchText]
   );

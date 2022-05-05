@@ -1,70 +1,62 @@
-import { createAsyncAction } from 'typesafe-actions';
-import {
-  DataEntityDetails,
-  Tag,
-  DataEntityDetailsBaseObject,
-  InternalName,
-  DataEntityClassAndTypeDictionary,
-  DataEntityRef,
-} from 'generated-sources';
-import { PartialEntityUpdateParams, ErrorState } from 'redux/interfaces';
+import { createAction } from 'lib/helpers';
 
-export const fetchDataEntitiesClassesAndTypesAction = createAsyncAction(
-  'GET_DATA_ENTITIES_CLASSES_AND_TYPES__REQUEST',
-  'GET_DATA_ENTITIES_CLASSES_AND_TYPES__SUCCESS',
-  'GET_DATA_ENTITIES_CLASSES_AND_TYPES__FAILURE'
-)<undefined, DataEntityClassAndTypeDictionary, ErrorState>();
+export const dataEntitiesActionPrefix = 'dataEntities';
 
-export const fetchDataEntityAction = createAsyncAction(
-  'GET_DATA_ENTITY__REQUEST',
-  'GET_DATA_ENTITY__SUCCESS',
-  'GET_DATA_ENTITY__FAILURE'
-)<undefined, DataEntityDetails, ErrorState>();
+export const fetchDataEntitiesClassesAndTypesAction = createAction(
+  dataEntitiesActionPrefix,
+  'fetchDataEntityClassesAndTypes'
+);
 
-export const updateDataEntityTagsAction = createAsyncAction(
-  'PUT_DATA_ENTITY_TAGS__REQUEST',
-  'PUT_DATA_ENTITY_TAGS__SUCCESS',
-  'PUT_DATA_ENTITY_TAGS__FAILURE'
-)<undefined, PartialEntityUpdateParams<Tag[]>, ErrorState>();
+export const fetchDataEntityDetailsAction = createAction(
+  dataEntitiesActionPrefix,
+  'fetchDataEntityDetails'
+);
 
-export const updateDataEntityDescriptionAction = createAsyncAction(
-  'PUT_DATA_ENTITY_INTERNAL_DESCRIPTION__REQUEST',
-  'PUT_DATA_ENTITY_INTERNAL_DESCRIPTION__SUCCESS',
-  'PUT_DATA_ENTITY_INTERNAL_DESCRIPTION__FAILURE'
-)<
-  undefined,
-  PartialEntityUpdateParams<
-    DataEntityDetailsBaseObject['internalDescription']
-  >,
-  ErrorState
->();
+export const updateDataEntityTagsAction = createAction(
+  dataEntitiesActionPrefix,
+  'updateDataEntityTags'
+);
 
-export const updateDataEntityInternalName = createAsyncAction(
-  'PUT_DATA_ENTITY_INTERNAL_NAME__REQUEST',
-  'PUT_DATA_ENTITY_INTERNAL_NAME__SUCCESS',
-  'PUT_DATA_ENTITY_INTERNAL_NAME__FAILURE'
-)<undefined, PartialEntityUpdateParams<InternalName>, ErrorState>();
+export const updateDataEntityInternalDescriptionAction = createAction(
+  dataEntitiesActionPrefix,
+  'updateDataEntityInternalDescription'
+);
 
-export const fetchMyDataEntitiesAction = createAsyncAction(
-  'GET_MY_DATA_ENTITIES__REQUEST',
-  'GET_MY_DATA_ENTITIES__SUCCESS',
-  'GET_MY_DATA_ENTITIES__FAILURE'
-)<undefined, DataEntityRef[], ErrorState>();
+export const updateDataEntityInternalNameAction = createAction(
+  dataEntitiesActionPrefix,
+  'updateDataEntityInternalName'
+);
 
-export const fetchMyUpstreamDataEntitiesAction = createAsyncAction(
-  'GET_MY_UPSTREAM_DATA_ENTITIES__REQUEST',
-  'GET_MY_UPSTREAM_DATA_ENTITIES__SUCCESS',
-  'GET_MY_UPSTREAM_DATA_ENTITIES__FAILURE'
-)<undefined, DataEntityRef[], ErrorState>();
+export const fetchMyDataEntitiesAction = createAction(
+  dataEntitiesActionPrefix,
+  'fetchMyDataEntities'
+);
 
-export const fetchMyDownstreamDataEntitiesAction = createAsyncAction(
-  'GET_MY_DOWNSTREAM_DATA_ENTITIES__REQUEST',
-  'GET_MY_DOWNSTREAM_DATA_ENTITIES__SUCCESS',
-  'GET_MY_DOWNSTREAM_DATA_ENTITIES__FAILURE'
-)<undefined, DataEntityRef[], ErrorState>();
+export const fetchMyUpstreamDataEntitiesAction = createAction(
+  dataEntitiesActionPrefix,
+  'fetchMyUpstreamDataEntities'
+);
 
-export const fetchPopularDataEntitiesAction = createAsyncAction(
-  'GET_POPULAR_DATA_ENTITIES__REQUEST',
-  'GET_POPULAR_DATA_ENTITIES__SUCCESS',
-  'GET_POPULAR_DATA_ENTITIES__FAILURE'
-)<undefined, DataEntityRef[], ErrorState>();
+export const fetchMyDownstreamDataEntitiesAction = createAction(
+  dataEntitiesActionPrefix,
+  'fetchMyDownstreamDataEntities'
+);
+
+export const fetchPopularDataEntitiesAction = createAction(
+  dataEntitiesActionPrefix,
+  'fetchMyPopularDataEntities'
+);
+
+// data entity groups
+export const createDataEntityGroupAction = createAction(
+  dataEntitiesActionPrefix,
+  'createDataEntityGroup'
+);
+export const updateDataEntityGroupAction = createAction(
+  dataEntitiesActionPrefix,
+  'updateDataEntityGroup'
+);
+export const deleteDataEntityGroupAction = createAction(
+  dataEntitiesActionPrefix,
+  'deleteDataEntityGroup'
+);
