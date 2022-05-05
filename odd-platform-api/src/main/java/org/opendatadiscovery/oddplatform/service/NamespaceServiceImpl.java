@@ -78,7 +78,7 @@ public class NamespaceServiceImpl implements NamespaceService {
             .filter(exists -> !exists)
             .switchIfEmpty(Mono.error(new IllegalStateException(
                 "Namespace with ID %d cannot be deleted: there are still resources attached".formatted(id))))
-            .then(namespaceRepository.delete(id))
+            .flatMap(ign -> namespaceRepository.delete(id))
             .map(NamespacePojo::getId);
     }
 }

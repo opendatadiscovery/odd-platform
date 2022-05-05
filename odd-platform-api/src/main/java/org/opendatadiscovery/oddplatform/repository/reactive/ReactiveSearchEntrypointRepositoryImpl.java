@@ -113,7 +113,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     }
 
     /**
-     * Calculates tag vector for particular data entity
+     * Calculates tag vector for particular data entity.
      */
     @Override
     public Mono<Integer> updateTagVectorsForDataEntity(final Long dataEntityId) {
@@ -143,7 +143,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     }
 
     /**
-     * Recalculates tag vector for data entities with particular tag (in case of tag was renamed)
+     * Recalculates tag vector for data entities with particular tag (in case of tag was renamed).
      */
     @Override
     public Mono<Integer> updateChangedTagVectors(final long tagId) {
