@@ -1,10 +1,11 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import {
   termDetailsLinkedItemsPath,
   termDetailsOverviewPath,
+  termSearchPath,
 } from 'lib/paths';
 import {
   TermApiDeleteTermRequest,
@@ -40,6 +41,9 @@ const OverviewContainer = React.lazy(
 const LinkedItemsContainer = React.lazy(
   () => import('./TermLinkedItemsList/LinkedItemsListContainer')
 );
+const TermSearchContainer = React.lazy(
+  () => import('components/TermSearch/TermSearchContainer')
+);
 
 interface TermDetailsProps {
   viewType: string;
@@ -62,6 +66,8 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
   openAlertsCount,
   deleteTerm,
 }) => {
+  const history = useHistory();
+
   React.useEffect(() => {
     fetchTermDetails({ termId });
   }, [fetchTermDetails, termId]);
@@ -93,7 +99,7 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
   }, [tabs, viewType]);
 
   const handleTermDelete = (id: number) => () =>
-    deleteTerm({ termId: id });
+    deleteTerm({ termId: id }).then(() => history.push(termSearchPath()));
 
   return (
     <TermDetailsComponentWrapper>
@@ -179,19 +185,33 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
       )}
       {termFetchingStatus !== 'errorFetching' && (
         <React.Suspense fallback={<AppLoadingPage />}>
-          <Switch>
-            <Route
-              exact
-              path="/terms/:termId/overview"
-              component={OverviewContainer}
-            />
-            <Route
-              exact
-              path="/terms/:termId/linked-items"
-              component={LinkedItemsContainer}
-            />
-            <Redirect from="/terms/:termId" to="/terms/:termId/overview" />
-          </Switch>
+          {termDetails ? (
+            <Switch>
+              <Route
+                exact
+                path="/terms/:termId/overview"
+                component={OverviewContainer}
+              />
+              <Route
+                exact
+                path="/terms/:termId/linked-items"
+                component={LinkedItemsContainer}
+              />
+              <Redirect
+                from="/terms/:termId"
+                to="/terms/:termId/overview"
+              />
+            </Switch>
+          ) : (
+            <Switch>
+              <Route
+                exact
+                path="/termsearch/:termSearchId?"
+                component={TermSearchContainer}
+              />
+              <Redirect to="/termsearch/:termSearchId?" />
+            </Switch>
+          )}
         </React.Suspense>
       )}
       <AppErrorPage

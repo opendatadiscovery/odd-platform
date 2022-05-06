@@ -224,7 +224,7 @@ export interface TermSearchState {
   facets: TermSearchFacetOptionsByName;
   isFacetsStateSynced: boolean;
   results: {
-    items: TermDetails[];
+    items: Term[];
     pageInfo: CurrentPageInfo;
   };
   suggestions: TermRefList;

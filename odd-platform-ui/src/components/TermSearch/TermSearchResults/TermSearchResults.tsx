@@ -3,8 +3,9 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useScrollBarWidth } from 'lib/hooks';
 import {
+  TermApiDeleteTermRequest,
   TermApiGetTermSearchResultsRequest,
-  TermDetails,
+  Term,
 } from 'generated-sources';
 import { CurrentPageInfo } from 'redux/interfaces';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
@@ -19,7 +20,7 @@ import {
 
 interface ResultsProps {
   termSearchId: string;
-  termSearchResults: TermDetails[];
+  termSearchResults: Term[];
   pageInfo: CurrentPageInfo;
   termSearchFiltersSynced: boolean;
   getTermSearchResults: (
@@ -27,6 +28,7 @@ interface ResultsProps {
   ) => void;
   isTermSearchFetching: boolean;
   isTermSearchCreating: boolean;
+  deleteTerm: (params: TermApiDeleteTermRequest) => Promise<void>;
 }
 
 const TermSearchResults: React.FC<ResultsProps> = ({
@@ -37,6 +39,7 @@ const TermSearchResults: React.FC<ResultsProps> = ({
   getTermSearchResults,
   isTermSearchFetching,
   isTermSearchCreating,
+  deleteTerm,
 }) => {
   const scrollbarWidth = useScrollBarWidth();
   const fetchNextPage = () => {
@@ -52,7 +55,12 @@ const TermSearchResults: React.FC<ResultsProps> = ({
     if (termSearchFiltersSynced && termSearchId && !isTermSearchCreating) {
       fetchNextPage();
     }
-  }, [termSearchFiltersSynced, termSearchId, isTermSearchCreating]);
+  }, [
+    termSearchFiltersSynced,
+    termSearchId,
+    isTermSearchCreating,
+    deleteTerm,
+  ]);
 
   return (
     <Grid sx={{ mt: 2 }}>
@@ -61,13 +69,13 @@ const TermSearchResults: React.FC<ResultsProps> = ({
         sx={{ mt: 2, pr: scrollbarWidth }}
         wrap="nowrap"
       >
-        <TermSearchResultsColContainer item $colType="colmd">
+        <TermSearchResultsColContainer item $colType="collg">
           <Typography variant="caption">Term name</Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colmd">
+        <TermSearchResultsColContainer item $colType="collg">
           <Typography variant="caption">Namespace</Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colmd">
+        <TermSearchResultsColContainer item $colType="collg">
           <Typography variant="caption">Owner</Typography>
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colxs">
@@ -76,9 +84,10 @@ const TermSearchResults: React.FC<ResultsProps> = ({
         <TermSearchResultsColContainer item $colType="colsm">
           <Typography variant="caption">Created</Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colmd">
+        <TermSearchResultsColContainer item $colType="colsm">
           <Typography variant="caption">Last update</Typography>
         </TermSearchResultsColContainer>
+        <TermSearchResultsColContainer item $colType="colxs" />
       </TermSearchResultsTableHeader>
       {isTermSearchCreating ? (
         <SkeletonWrapper
@@ -116,12 +125,13 @@ const TermSearchResults: React.FC<ResultsProps> = ({
               <TermSearchResultItem
                 key={termSearchResult.id}
                 termSearchResult={termSearchResult}
+                deleteTerm={deleteTerm}
               />
             ))}
           </InfiniteScroll>
-          {!isTermSearchFetching && !pageInfo.total ? (
+          {!isTermSearchFetching && !pageInfo.total && (
             <EmptyContentPlaceholder text="No matches found" />
-          ) : null}
+          )}
         </TermSearchListContainer>
       )}
     </Grid>

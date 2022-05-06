@@ -6,8 +6,10 @@ import {
   TermApiCreateTermRequest,
   TermApiUpdateTermRequest,
 } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
+import { useHistory } from 'react-router-dom';
+import { termDetailsPath } from 'lib/paths';
 import { Typography } from '@mui/material';
+import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
@@ -28,6 +30,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
   createTerm,
   updateTerm,
 }) => {
+  const history = useHistory();
   const getDefaultValues = React.useCallback(
     (): TermFormData => ({
       name: term?.name || '',
@@ -73,9 +76,10 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
         })
       : createTerm({ termFormData: parsedData })
     ).then(
-      () => {
+      (response: TermDetails) => {
         setState({ ...initialState, isSuccessfulSubmit: true });
         clearState();
+        history.push(termDetailsPath(response.id));
       },
       (response: Response) => {
         setState({

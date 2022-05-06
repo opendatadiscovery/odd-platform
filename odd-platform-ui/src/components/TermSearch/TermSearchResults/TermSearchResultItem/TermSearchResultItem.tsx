@@ -1,37 +1,54 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
-import { TermDetails } from 'generated-sources';
+import { TermApiDeleteTermRequest, Term } from 'generated-sources';
 import { termDetailsPath } from 'lib/paths';
-import { TermSearchResultsColContainer } from 'components/TermSearch/TermSearchResults/TermSearchResultsStyles';
+import AppButton from 'components/shared/AppButton/AppButton';
+import DeleteIcon from 'components/shared/Icons/DeleteIcon';
+import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
+import {
+  TermSearchNameContainer,
+  TermSearchResultsColContainer,
+} from 'components/TermSearch/TermSearchResults/TermSearchResultsStyles';
 import {
   TermSearchResultsContainer,
   TermSearchResultsItemLink,
 } from './TermSearchResultItemStyles';
 
 interface TermsResultItemProps {
-  termSearchResult: TermDetails;
+  termSearchResult: Term;
+  deleteTerm: (params: TermApiDeleteTermRequest) => Promise<void>;
 }
 
 const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
   termSearchResult,
+  deleteTerm,
 }) => {
   const detailsLink = termDetailsPath(termSearchResult.id);
-
+  const handleDelete = React.useCallback(
+    () => deleteTerm({ termId: termSearchResult.id }),
+    [termSearchResult, deleteTerm]
+  );
   return (
     <TermSearchResultsItemLink to={detailsLink}>
       <TermSearchResultsContainer container>
-        <TermSearchResultsColContainer item $colType="colmd">
-          <Typography variant="body1" noWrap>
-            {termSearchResult.name}
-          </Typography>
+        <TermSearchResultsColContainer item $colType="collg">
+          <TermSearchNameContainer container item>
+            <Typography variant="body1" noWrap>
+              {termSearchResult.name}
+            </Typography>
+          </TermSearchNameContainer>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colmd">
-          <Typography variant="body1" noWrap>
+        <TermSearchResultsColContainer item $colType="collg">
+          <Typography
+            variant="body1"
+            title={termSearchResult.namespace.name}
+            noWrap
+          >
             {termSearchResult.namespace.name}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colmd">
+        <TermSearchResultsColContainer item $colType="collg">
           <Grid container direction="column" alignItems="flex-start">
             {termSearchResult.ownership?.map(ownership => (
               <Grid item key={ownership.id}>
@@ -65,7 +82,7 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
               format(termSearchResult.createdAt, 'd MMM yyyy')}
           </Typography>
         </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colmd">
+        <TermSearchResultsColContainer item $colType="colsm">
           <Typography
             variant="body1"
             title={
@@ -82,6 +99,28 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
                 addSuffix: true,
               })}
           </Typography>
+        </TermSearchResultsColContainer>
+        <TermSearchResultsColContainer item $colType="colxs">
+          <ConfirmationDialog
+            actionTitle="Are you sure you want to delete this term?"
+            actionName="Delete Term"
+            actionText={
+              <>
+                &quot;{termSearchResult.name}&quot; will be deleted
+                permanently.
+              </>
+            }
+            onConfirm={handleDelete}
+            actionBtn={
+              <AppButton
+                size="medium"
+                color="primaryLight"
+                startIcon={<DeleteIcon />}
+              >
+                Delete
+              </AppButton>
+            }
+          />
         </TermSearchResultsColContainer>
       </TermSearchResultsContainer>
     </TermSearchResultsItemLink>

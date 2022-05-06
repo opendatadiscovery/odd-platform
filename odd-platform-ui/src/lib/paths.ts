@@ -7,10 +7,7 @@ export const dataSourcesPath = () => '/datasources';
 
 export const tagsPath = () => '/tags';
 
-export const termsPath = () => '/terms';
-
-export const termDetailsPath = (termId: number) =>
-  `${termsPath()}/${termId}`;
+export const termDetailsPath = (termId: number) => `/terms/${termId}`;
 
 export const termDetailsLinkedItemsPath = (termId: number) =>
   `${termDetailsPath(termId)}/linked-items`;

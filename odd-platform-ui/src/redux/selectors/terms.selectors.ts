@@ -1,13 +1,20 @@
 import { createSelector } from 'reselect';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
-import { getDataEntityId } from './dataentity.selectors';
-import { TermsState, RootState } from '../interfaces';
+import { getDataEntityId } from 'redux/selectors/dataentity.selectors';
+import { TermsState, RootState } from 'redux/interfaces';
 
 const getTermCreationStatus = createFetchingSelector('POST_TERM');
+const getTermUpdateStatus = createFetchingSelector('PUT_TERM');
+
 const termsState = ({ terms }: RootState): TermsState => terms;
 
 export const getIsTermCreating = createSelector(
   getTermCreationStatus,
+  status => status === 'fetching'
+);
+
+export const getIsTermUpdating = createSelector(
+  getTermUpdateStatus,
   status => status === 'fetching'
 );
 

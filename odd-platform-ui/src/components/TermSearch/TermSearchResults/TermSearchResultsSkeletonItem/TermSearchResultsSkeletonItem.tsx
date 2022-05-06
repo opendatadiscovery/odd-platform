@@ -15,28 +15,22 @@ const TermSearchResultsSkeletonItem: React.FC<SkeletonProps> = ({
     <TermSearchResultsColContainer item $colType="collg">
       <Skeleton width={width} height={mainSkeletonHeight} />
     </TermSearchResultsColContainer>
-    <TermSearchResultsColContainer item $colType="colxs">
+    <TermSearchResultsColContainer item $colType="collg">
+      <Skeleton width={width} height={mainSkeletonHeight} />
+    </TermSearchResultsColContainer>
+    <TermSearchResultsColContainer item $colType="collg">
       <Skeleton width={width} height={mainSkeletonHeight} />
     </TermSearchResultsColContainer>
     <TermSearchResultsColContainer item $colType="colxs">
-      <Skeleton width={width} height={mainSkeletonHeight} />
-    </TermSearchResultsColContainer>
-    <TermSearchResultsColContainer item $colType="colxs">
-      <Skeleton width={width} height={mainSkeletonHeight} />
-    </TermSearchResultsColContainer>
-    <TermSearchResultsColContainer item $colType="colmd">
-      <Skeleton width={width} height={mainSkeletonHeight} />
-    </TermSearchResultsColContainer>
-    <TermSearchResultsColContainer item $colType="colmd">
-      <Skeleton width={width} height={mainSkeletonHeight} />
-    </TermSearchResultsColContainer>
-    <TermSearchResultsColContainer item $colType="colmd">
       <Skeleton width={width} height={mainSkeletonHeight} />
     </TermSearchResultsColContainer>
     <TermSearchResultsColContainer item $colType="colsm">
       <Skeleton width={width} height={mainSkeletonHeight} />
     </TermSearchResultsColContainer>
     <TermSearchResultsColContainer item $colType="colsm">
+      <Skeleton width={width} height={mainSkeletonHeight} />
+    </TermSearchResultsColContainer>
+    <TermSearchResultsColContainer item $colType="colxs">
       <Skeleton width={width} height={mainSkeletonHeight} />
     </TermSearchResultsColContainer>
   </Grid>

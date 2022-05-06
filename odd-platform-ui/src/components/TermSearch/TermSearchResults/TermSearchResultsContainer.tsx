@@ -8,7 +8,7 @@ import {
   getTermSearchResultsItems,
   getTermSearchResultsPage,
 } from 'redux/selectors/termSearch.selectors';
-import { getTermSearchResults } from 'redux/thunks';
+import { deleteTerm, getTermSearchResults } from 'redux/thunks';
 import TermSearchResults from './TermSearchResults';
 
 const mapStateToProps = (state: RootState) => ({
@@ -22,6 +22,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   getTermSearchResults,
+  deleteTerm,
 };
 
 export default connect(
