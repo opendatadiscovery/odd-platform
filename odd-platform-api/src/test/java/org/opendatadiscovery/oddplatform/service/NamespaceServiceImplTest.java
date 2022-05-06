@@ -18,6 +18,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRe
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -42,6 +43,9 @@ class NamespaceServiceImplTest {
     private ReactiveDataSourceRepository dataSourceRepository;
 
     @Mock
+    private ReactiveTermRepository termRepository;
+
+    @Mock
     private ReactiveCollectorRepository collectorRepository;
 
     @Mock
@@ -52,7 +56,7 @@ class NamespaceServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        this.namespaceService = new NamespaceServiceImpl(namespaceRepository, dataSourceRepository,
+        this.namespaceService = new NamespaceServiceImpl(namespaceRepository, termRepository, dataSourceRepository,
             collectorRepository, searchEntrypointRepository, namespaceMapper);
     }
 
@@ -194,7 +198,7 @@ class NamespaceServiceImplTest {
     }
 
     @Test
-    @DisplayName("Deletes a namespace which isn't tied with any data sources or collector from the database")
+    @DisplayName("Deletes a namespace which isn't tied with any data sources, collector or term from the database")
     public void testDelete() {
         final long namespaceId = 1L;
 
@@ -205,6 +209,7 @@ class NamespaceServiceImplTest {
 
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(namespaceRepository.delete(eq(namespaceId))).thenReturn(Mono.just(namespace));
 
         namespaceService.delete(namespaceId)
@@ -215,6 +220,7 @@ class NamespaceServiceImplTest {
         verify(namespaceRepository, only()).delete(eq(namespaceId));
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(termRepository, only()).existsByNamespace(eq(namespaceId));
     }
 
     @Test
@@ -224,6 +230,7 @@ class NamespaceServiceImplTest {
 
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(true));
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
@@ -232,6 +239,7 @@ class NamespaceServiceImplTest {
         verify(namespaceRepository, never()).delete(eq(namespaceId));
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(termRepository, only()).existsByNamespace(eq(namespaceId));
     }
 
     @Test
@@ -241,6 +249,7 @@ class NamespaceServiceImplTest {
 
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(true));
+        when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
@@ -248,6 +257,26 @@ class NamespaceServiceImplTest {
 
         verify(namespaceRepository, never()).delete(eq(namespaceId));
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(termRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
+    }
+
+    @Test
+    @DisplayName("Tries to delete a namespace which is tied with existing term and fails with an error")
+    public void testDeleteTiedNamespaceWithTerm() {
+        final long namespaceId = 1L;
+
+        when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(true));
+
+        namespaceService.delete(namespaceId)
+            .as(StepVerifier::create)
+            .verifyError(IllegalStateException.class);
+
+        verify(namespaceRepository, never()).delete(eq(namespaceId));
+        verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(termRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
     }
 }

@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.jooq.Field;
 import org.jooq.Insert;
@@ -72,10 +73,13 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
 
         final Table<Record1<Long>> deCte = deIdSelect.asTable("t");
 
+        final Map<Field<?>, Object> params =
+            Map.of(SEARCH_ENTRYPOINT.NAMESPACE_VECTOR, DSL.castNull(SEARCH_ENTRYPOINT.NAMESPACE_VECTOR));
+
         final UpdateConditionStep<SearchEntrypointRecord> updateQuery = DSL.with(deCte.getName())
             .as(deIdSelect)
             .update(SEARCH_ENTRYPOINT)
-            .set(SEARCH_ENTRYPOINT.NAMESPACE_VECTOR, "")
+            .set(params)
             .from("t")
             .where(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(deCte.field(DATA_ENTITY.ID)));
 
@@ -108,6 +112,9 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         return jooqReactiveOperations.mono(dataSourceQuery);
     }
 
+    /**
+     * Calculates tag vector for particular data entity.
+     */
     @Override
     public Mono<Integer> updateTagVectorsForDataEntity(final Long dataEntityId) {
         final Field<Long> deId = field("data_entity_id", Long.class);
@@ -135,6 +142,9 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         return jooqReactiveOperations.mono(tagQuery);
     }
 
+    /**
+     * Recalculates tag vector for data entities with particular tag (in case of tag was renamed).
+     */
     @Override
     public Mono<Integer> updateChangedTagVectors(final long tagId) {
         final Field<Long> dataEntityId = field("data_entity_id", Long.class);

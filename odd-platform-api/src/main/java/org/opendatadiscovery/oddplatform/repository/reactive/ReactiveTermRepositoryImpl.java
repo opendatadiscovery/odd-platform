@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -23,7 +21,6 @@ import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermOwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
-import org.opendatadiscovery.oddplatform.model.Tables;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
@@ -107,6 +104,18 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     }
 
     @Override
+    public Mono<Boolean> existsByNamespace(final Long namespaceId) {
+        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
+            DSL.select()
+                .from(TERM)
+                .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
+                .where(TERM.IS_DELETED.isFalse())
+                .and(NAMESPACE.ID.eq(namespaceId))
+        );
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
+    }
+
+    @Override
     public Mono<Boolean> existsByNameAndNamespace(final String name, final String namespaceName) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.select()
@@ -145,12 +154,13 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .select(DSL.countDistinct(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID).as(ENTITIES_COUNT))
             .from(TERM)
             .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
-            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID))
             .leftJoin(ROLE).on(ROLE.ID.eq(TERM_OWNERSHIP.ROLE_ID))
-            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID))
+            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
             .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
-            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID))
+            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID)
+                .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull()))
             .where(TERM.ID.eq(id).and(TERM.IS_DELETED.isFalse()))
             .groupBy(groupByFields);
         return jooqReactiveOperations.mono(query)
