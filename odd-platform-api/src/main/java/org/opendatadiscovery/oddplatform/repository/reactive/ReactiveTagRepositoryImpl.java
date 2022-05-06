@@ -183,22 +183,10 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
 
         return jooqReactiveOperations.flux(
             insertStep.set(records.get(records.size() - 1))
-                .onDuplicateKeyIgnore()
+                .onDuplicateKeyUpdate()
+                .setNull(TAG_TO_TERM.DELETED_AT)
                 .returning(TAG_TO_TERM.fields())
         ).map(r -> r.into(TagToTermPojo.class));
-    }
-
-    @Override
-    public Flux<TagToTermPojo> restoreTermRelations(final long termId, final Collection<Long> tagIds) {
-        if (tagIds.isEmpty()) {
-            return Flux.just();
-        }
-        final var query = DSL.update(TAG_TO_TERM)
-            .setNull(TAG_TO_TERM.DELETED_AT)
-            .where(TAG_TO_TERM.TERM_ID.eq(termId).and(TAG_TO_TERM.TAG_ID.in(tagIds)))
-            .returning();
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(TagToTermPojo.class));
     }
 
     private TagDto mapTag(final Record jooqRecord) {

@@ -32,6 +32,4 @@ public interface ReactiveTagRepository extends ReactiveCRUDRepository<TagPojo> {
     Flux<TagToTermPojo> deleteTermRelations(final long termId, final Collection<Long> tagIds);
 
     Flux<TagToTermPojo> deleteTermRelations(final long tagId);
-
-    Flux<TagToTermPojo> restoreTermRelations(final long termId, final Collection<Long> tagIds);
 }
