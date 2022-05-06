@@ -82,22 +82,6 @@ components:
       required:
         - items
 
-    RoleFormData:
-      type: object
-      properties:
-        name:
-          type: string
-      required:
-        - name
-
-    RoleUpdateFormData:
-      type: object
-      properties:
-        name:
-          type: string
-      required:
-        - name
-
     Tag:
       type: object
       properties:

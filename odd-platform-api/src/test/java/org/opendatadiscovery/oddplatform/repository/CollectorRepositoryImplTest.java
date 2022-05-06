@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import reactor.test.StepVerifier;
@@ -30,7 +31,7 @@ public class CollectorRepositoryImplTest extends BaseIntegrationTest {
     private ReactiveNamespaceRepository namespaceRepository;
 
     @Autowired
-    private TokenRepository tokenRepository;
+    private ReactiveTokenRepository tokenRepository;
 
     @Test
     public void getDtoTest() {

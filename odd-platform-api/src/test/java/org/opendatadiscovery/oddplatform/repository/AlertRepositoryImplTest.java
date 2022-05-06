@@ -16,6 +16,8 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
@@ -31,10 +33,10 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
     private DataEntityRepository dataEntityRepository;
 
     @Autowired
-    private OwnershipRepository ownershipRepository;
+    private ReactiveOwnershipRepository ownershipRepository;
 
     @Autowired
-    private OwnerRepository ownerRepository;
+    private ReactiveOwnerRepository ownerRepository;
 
     @Autowired
     private LineageRepository lineageRepository;
@@ -105,9 +107,11 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
     public void listByOwnerTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojo.getId());
-        ownershipRepository.create(ownershipPojo);
+        ownershipRepository.create(ownershipPojo).block();
 
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
@@ -160,9 +164,11 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
             ));
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();;
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId());
-        ownershipRepository.create(ownershipPojo);
+        ownershipRepository.create(ownershipPojo).block();
 
         final LineagePojo firstLineagePojo =
             createLineagePojo(dataEntityPojos.get(0).getOddrn(), dataEntityPojos.get(1).getOddrn());
@@ -202,10 +208,12 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
             ));
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
-        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId()));
-        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(5).getId()));
-        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(6).getId()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();;
+        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId())).block();
+        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(5).getId())).block();
+        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(6).getId())).block();
 
         lineageRepository.replaceLineagePaths(List.of(
             createLineagePojo(dataEntityPojos.get(0).getOddrn(), dataEntityPojos.get(2).getOddrn()),
@@ -261,9 +269,11 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
     public void countByOwnerTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();;
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojo.getId());
-        ownershipRepository.create(ownershipPojo);
+        ownershipRepository.create(ownershipPojo).block();
 
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
@@ -283,9 +293,11 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
             ));
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();;
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId());
-        ownershipRepository.create(ownershipPojo);
+        ownershipRepository.create(ownershipPojo).block();
 
         final LineagePojo firstLineagePojo =
             createLineagePojo(dataEntityPojos.get(0).getOddrn(), dataEntityPojos.get(1).getOddrn());

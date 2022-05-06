@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
+import org.opendatadiscovery.oddplatform.service.term.TermOwnershipService;
 import org.opendatadiscovery.oddplatform.service.term.TermSearchService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class TermController implements TermApi {
 
     private final TermService termService;
     private final TermSearchService termSearchService;
+    private final TermOwnershipService termOwnershipService;
 
     @Override
     public Mono<ResponseEntity<TermRefList>> getTermsList(final Integer page, final Integer size,
@@ -92,14 +94,17 @@ public class TermController implements TermApi {
     public Mono<ResponseEntity<Ownership>> createTermOwnership(final Long termId,
                                                                final Mono<OwnershipFormData> ownershipFormData,
                                                                final ServerWebExchange exchange) {
-        return TermApi.super.createTermOwnership(termId, ownershipFormData, exchange);
+        return ownershipFormData
+            .flatMap(form -> termOwnershipService.create(termId, form))
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Void>> deleteTermOwnership(final Long termId,
                                                           final Long ownershipId,
                                                           final ServerWebExchange exchange) {
-        return TermApi.super.deleteTermOwnership(termId, ownershipId, exchange);
+        return termOwnershipService.delete(ownershipId)
+            .thenReturn(ResponseEntity.noContent().build());
     }
 
     @Override
@@ -107,7 +112,9 @@ public class TermController implements TermApi {
                                                                final Long ownershipId,
                                                                final Mono<OwnershipUpdateFormData> formData,
                                                                final ServerWebExchange exchange) {
-        return TermApi.super.updateTermOwnership(termId, ownershipId, formData, exchange);
+        return formData
+            .flatMap(form -> termOwnershipService.update(ownershipId, form))
+            .map(ResponseEntity::ok);
     }
 
     @Override

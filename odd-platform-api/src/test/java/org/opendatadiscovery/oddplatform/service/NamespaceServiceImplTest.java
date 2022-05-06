@@ -19,6 +19,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceR
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -52,12 +53,15 @@ class NamespaceServiceImplTest {
     private ReactiveSearchEntrypointRepository searchEntrypointRepository;
 
     @Mock
+    private ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
+
+    @Mock
     private NamespaceMapper namespaceMapper;
 
     @BeforeEach
     void setUp() {
         this.namespaceService = new NamespaceServiceImpl(namespaceRepository, termRepository, dataSourceRepository,
-            collectorRepository, searchEntrypointRepository, namespaceMapper);
+            collectorRepository, searchEntrypointRepository, termSearchEntrypointRepository, namespaceMapper);
     }
 
     @Test
@@ -164,7 +168,8 @@ class NamespaceServiceImplTest {
 
         when(namespaceRepository.get(eq(namespaceId))).thenReturn(Mono.just(namespace));
         when(namespaceRepository.update(eq(appliedFormPojo))).thenReturn(Mono.just(updatedPojo));
-        when(searchEntrypointRepository.updateNamespaceVector(eq(namespaceId))).thenReturn(Mono.just(0));
+        when(searchEntrypointRepository.updateChangedNamespaceVector(eq(namespaceId))).thenReturn(Mono.just(0));
+        when(termSearchEntrypointRepository.updateChangedNamespaceVector(eq(namespaceId))).thenReturn(Mono.just(0));
         when(namespaceMapper.applyToPojo(eq(namespace), eq(form))).thenReturn(appliedFormPojo);
         when(namespaceMapper.mapPojo(eq(updatedPojo))).thenReturn(expected);
 
@@ -174,7 +179,8 @@ class NamespaceServiceImplTest {
 
         verify(namespaceRepository, times(1)).get(eq(namespaceId));
         verify(namespaceRepository, times(1)).update(eq(appliedFormPojo));
-        verify(searchEntrypointRepository, only()).updateNamespaceVector(eq(namespaceId));
+        verify(searchEntrypointRepository, only()).updateChangedNamespaceVector(eq(namespaceId));
+        verify(termSearchEntrypointRepository, only()).updateChangedNamespaceVector(eq(namespaceId));
         verify(namespaceMapper, times(1)).applyToPojo(eq(namespace), eq(form));
         verify(namespaceMapper, times(1)).mapPojo(eq(updatedPojo));
     }
@@ -192,7 +198,8 @@ class NamespaceServiceImplTest {
 
         verify(namespaceRepository, times(1)).get(eq(nonExistentNamespaceId));
         verify(namespaceRepository, never()).update(any());
-        verify(searchEntrypointRepository, never()).updateNamespaceVector(anyLong());
+        verify(searchEntrypointRepository, never()).updateChangedNamespaceVector(anyLong());
+        verify(termSearchEntrypointRepository, never()).updateChangedNamespaceVector(anyLong());
         verify(namespaceMapper, never()).applyToPojo(any(), any());
         verify(namespaceMapper, never()).mapPojo(any());
     }

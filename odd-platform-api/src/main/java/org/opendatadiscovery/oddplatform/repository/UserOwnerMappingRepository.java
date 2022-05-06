@@ -1,10 +1,13 @@
 package org.opendatadiscovery.oddplatform.repository;
 
-import java.util.Optional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.UserOwnerMappingPojo;
+import reactor.core.publisher.Mono;
 
 public interface UserOwnerMappingRepository {
-    OwnerPojo createRelation(final String oidcUsername, final String ownerName);
+    Mono<UserOwnerMappingPojo> createRelation(final String oidcUsername, final Long ownerId);
 
-    Optional<OwnerPojo> getAssociatedOwner(final String oidcUsername);
+    Mono<UserOwnerMappingPojo> deleteRelation(final String oidcUsername);
+
+    Mono<OwnerPojo> getAssociatedOwner(final String oidcUsername);
 }

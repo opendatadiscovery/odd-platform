@@ -121,15 +121,7 @@ public class TagServiceImpl implements TagService {
     public Flux<TagToTermPojo> createRelationsWithTerm(final long termId,
                                                        final List<TagPojo> tags) {
         final List<Long> ids = tags.stream().map(TagPojo::getId).toList();
-        return reactiveTagRepository.restoreTermRelations(termId, ids)
-            .collectList()
-            .flatMapMany(restored -> {
-                final List<Long> restoredIds = restored.stream().map(TagToTermPojo::getTagId).toList();
-                final List<Long> idsToCreate = ids.stream()
-                    .filter(id -> !restoredIds.contains(id))
-                    .toList();
-                return reactiveTagRepository.createTermRelations(termId, idsToCreate);
-            });
+        return reactiveTagRepository.createTermRelations(termId, ids);
     }
 
     private Mono<TagPojo> updateSearchVectors(final TagPojo updatedPojo) {

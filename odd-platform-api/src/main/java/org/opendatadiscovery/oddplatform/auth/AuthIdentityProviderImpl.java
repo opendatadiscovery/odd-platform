@@ -27,7 +27,6 @@ public class AuthIdentityProviderImpl implements AuthIdentityProvider {
     @Override
     public Mono<OwnerPojo> fetchAssociatedOwner() {
         return getUsername()
-            .map(userOwnerMappingRepository::getAssociatedOwner)
-            .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty));
+            .flatMap(userOwnerMappingRepository::getAssociatedOwner);
     }
 }

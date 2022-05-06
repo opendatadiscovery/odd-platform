@@ -60,6 +60,30 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
     }
 
     @Override
+    public Mono<Integer> updateChangedNamespaceVector(final long namespaceId) {
+        final Field<Long> termIdField = field("term_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(NAMESPACE.NAME);
+
+        final SelectConditionStep<Record> vectorSelect = DSL
+            .select(TERM.ID.as(termIdField))
+            .select(vectorFields)
+            .from(NAMESPACE)
+            .join(TERM).on(TERM.NAMESPACE_ID.eq(NAMESPACE.ID)).and(TERM.DELETED_AT.isNull())
+            .where(NAMESPACE.ID.eq(namespaceId));
+
+        final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            termIdField,
+            vectorFields,
+            TERM_SEARCH_ENTRYPOINT.NAMESPACE_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.TERM)
+        );
+
+        return jooqReactiveOperations.mono(insertQuery);
+    }
+
+    @Override
     public Mono<Integer> updateNamespaceVectorsForTerm(final long termId) {
         final Field<Long> termIdField = field("term_id", Long.class);
 
@@ -116,6 +140,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
 
         final var cteSelect = DSL.select(TAG_TO_TERM.TERM_ID)
             .from(TAG_TO_TERM)
+            .join(TERM).on(TERM.ID.eq(TAG_TO_TERM.TERM_ID).and(TERM.DELETED_AT.isNull()))
             .where(TAG_TO_TERM.TAG_ID.eq(tagId));
 
         final Table<? extends Record> cte = cteSelect.asTable("cte");
@@ -141,7 +166,7 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
     }
 
     @Override
-    public Mono<Integer> updateOwnerVectors(final long termId, final long ownerId) {
+    public Mono<Integer> updateChangedOwnershipVectors(final long ownershipId) {
         final Field<Long> termIdField = field("term_id", Long.class);
 
         final Field<String> ownerNameAlias = field("owner_name", String.class);
@@ -152,22 +177,75 @@ public class ReactiveTermSearchEntrypointRepositoryImpl implements ReactiveTermS
             ROLE.NAME.as(roleNameAlias)
         );
 
-        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
-            .select(TERM_OWNERSHIP.TERM_ID.as(termIdField))
+        final var cteSelect = DSL.select(TERM_OWNERSHIP.TERM_ID)
             .from(TERM_OWNERSHIP)
-            .join(OWNER).on(TERM_OWNERSHIP.OWNER_ID.eq(OWNER.ID))
-            .join(ROLE).on(TERM_OWNERSHIP.ROLE_ID.eq(ROLE.ID))
-            .where(TERM_OWNERSHIP.TERM_ID.eq(termId).and(TERM_OWNERSHIP.OWNER_ID.eq(ownerId))
-                .and(TERM_OWNERSHIP.DELETED_AT.isNull()));
-        final Insert<? extends Record> insert = jooqFTSHelper.buildVectorUpsert(
+            .join(TERM).on(TERM.ID.eq(TERM_OWNERSHIP.TERM_ID).and(TERM.DELETED_AT.isNull()))
+            .where(TERM_OWNERSHIP.ID.eq(ownershipId));
+
+        final Table<? extends Record> cte = cteSelect.asTable("cte");
+
+        final var vectorSelect = DSL.with(cte.getName())
+            .as(cteSelect)
+            .select(TERM.ID.as(termIdField))
+            .select(vectorFields)
+            .from(TERM)
+            .join(cte).on(cte.field(termIdField).eq(TERM.ID))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+            .leftJoin(ROLE).on(ROLE.ID.eq(TERM_OWNERSHIP.ROLE_ID))
+            .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID));
+
+        final Insert<? extends Record> ownershipQuery = jooqFTSHelper.buildVectorUpsert(
             vectorSelect,
             termIdField,
             vectorFields,
             TERM_SEARCH_ENTRYPOINT.OWNER_VECTOR,
             FTS_CONFIG_DETAILS_MAP.get(FTSEntity.TERM),
             true,
-            Map.of(ownerNameAlias, OWNER.NAME, roleNameAlias, ROLE.NAME));
+            Map.of(ownerNameAlias, OWNER.NAME, roleNameAlias, ROLE.NAME)
+        );
 
-        return jooqReactiveOperations.mono(insert);
+        return jooqReactiveOperations.mono(ownershipQuery);
+    }
+
+    @Override
+    public Mono<Integer> updateChangedOwnerVectors(final long ownerId) {
+        final Field<Long> termIdField = field("term_id", Long.class);
+
+        final Field<String> ownerNameAlias = field("owner_name", String.class);
+        final Field<String> roleNameAlias = field("role_name", String.class);
+
+        final List<Field<?>> vectorFields = List.of(
+            OWNER.NAME.as(ownerNameAlias),
+            ROLE.NAME.as(roleNameAlias)
+        );
+
+        final var cteSelect = DSL.select(TERM_OWNERSHIP.TERM_ID)
+            .from(TERM_OWNERSHIP)
+            .join(TERM).on(TERM.ID.eq(TERM_OWNERSHIP.TERM_ID).and(TERM.DELETED_AT.isNull()))
+            .where(TERM_OWNERSHIP.OWNER_ID.eq(ownerId));
+
+        final Table<? extends Record> cte = cteSelect.asTable("cte");
+
+        final var vectorSelect = DSL.with(cte.getName())
+            .as(cteSelect)
+            .select(TERM.ID.as(termIdField))
+            .select(vectorFields)
+            .from(TERM)
+            .join(cte).on(cte.field(termIdField).eq(TERM.ID))
+            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+            .leftJoin(ROLE).on(ROLE.ID.eq(TERM_OWNERSHIP.ROLE_ID))
+            .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID));
+
+        final Insert<? extends Record> ownershipQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            termIdField,
+            vectorFields,
+            TERM_SEARCH_ENTRYPOINT.OWNER_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.TERM),
+            true,
+            Map.of(ownerNameAlias, OWNER.NAME, roleNameAlias, ROLE.NAME)
+        );
+
+        return jooqReactiveOperations.mono(ownershipQuery);
     }
 }

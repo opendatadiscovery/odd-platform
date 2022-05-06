@@ -56,6 +56,7 @@ dependencies {
     implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonJsr310Version"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    implementation "io.projectreactor.addons:reactor-extra:$reactorExtraVersion"
 
     implementation(platform("io.opentelemetry:opentelemetry-bom:$opentelemetryVersion"))
     implementation(platform("io.opentelemetry:opentelemetry-bom-alpha:$opentelemetryVersionAlpha"))

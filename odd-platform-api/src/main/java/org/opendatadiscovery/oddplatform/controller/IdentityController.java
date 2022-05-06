@@ -29,7 +29,6 @@ public class IdentityController implements IdentityApi {
     public Mono<ResponseEntity<AssociatedOwner>> associateOwner(final Mono<OwnerFormData> ownerFormData,
                                                                 final ServerWebExchange exchange) {
         return ownerFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(identityService::associateOwner)
             .map(ResponseEntity::ok);
     }

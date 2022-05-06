@@ -264,17 +264,17 @@
                     RECORD_COMPONENT_DEF"/>
         </module>
         <!--    <module name="NoWhitespaceBeforeCaseDefaultColon"/>--> <!-- java-->
-<!--        <module name="OverloadMethodsDeclarationOrder"/>-->
+        <module name="OverloadMethodsDeclarationOrder"/>
         <module name="VariableDeclarationUsageDistance"/>
-<!--        <module name="CustomImportOrder">-->
-<!--            <property name="sortImportsInGroupAlphabetically" value="true"/>-->
-<!--            &lt;!&ndash;      <property name="separateLineBetweenGroups" value="false"/> &lt;!&ndash; MODIFIED &ndash;&gt;&ndash;&gt;-->
-<!--            &lt;!&ndash;      <property name="customImportOrderRules" value="STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STATIC"/> &lt;!&ndash; MODIFIED &ndash;&gt;&ndash;&gt;-->
-<!--            &lt;!&ndash;      <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF"/>&ndash;&gt;-->
-<!--            <property name="separateLineBetweenGroups" value="true"/>-->
-<!--            <property name="customImportOrderRules" value="THIRD_PARTY_PACKAGE###STATIC"/>-->
-<!--            <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF"/>-->
-<!--        </module>-->
+        <module name="CustomImportOrder">
+            <property name="sortImportsInGroupAlphabetically" value="true"/>
+            <!--      <property name="separateLineBetweenGroups" value="false"/> &lt;!&ndash; MODIFIED &ndash;&gt;-->
+            <!--      <property name="customImportOrderRules" value="STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###THIRD_PARTY_PACKAGE###STATIC"/> &lt;!&ndash; MODIFIED &ndash;&gt;-->
+            <!--      <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF"/>-->
+            <property name="separateLineBetweenGroups" value="true"/>
+            <property name="customImportOrderRules" value="THIRD_PARTY_PACKAGE###STATIC"/>
+            <property name="tokens" value="IMPORT, STATIC_IMPORT, PACKAGE_DEF"/>
+        </module>
         <module name="MethodParamPad">
             <property name="tokens"
                       value="CTOR_DEF, LITERAL_NEW, METHOD_CALL, METHOD_DEF,
