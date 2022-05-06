@@ -13,8 +13,8 @@ import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.CollectorMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.CollectorPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTokenRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTokenRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 

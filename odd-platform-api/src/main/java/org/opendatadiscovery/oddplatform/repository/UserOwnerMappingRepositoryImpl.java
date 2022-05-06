@@ -18,15 +18,6 @@ public class UserOwnerMappingRepositoryImpl implements UserOwnerMappingRepositor
 
     @Override
     public Mono<UserOwnerMappingPojo> createRelation(final String oidcUsername, final Long ownerId) {
-//        final OwnerPojo owner = ownerRepository.createOrGet(new OwnerPojo().setName(ownerName));
-//
-//        dslContext.selectFrom(USER_OWNER_MAPPING)
-//            .where(USER_OWNER_MAPPING.OIDC_USERNAME.eq(oidcUsername))
-//            .fetchOptionalInto(UserOwnerMappingPojo.class)
-//            .ifPresent(p -> dslContext.deleteFrom(USER_OWNER_MAPPING)
-//                .where(USER_OWNER_MAPPING.OIDC_USERNAME.eq(oidcUsername))
-//                .execute());
-
         final var query = DSL.insertInto(USER_OWNER_MAPPING)
             .values(ownerId, oidcUsername)
             .onConflict(USER_OWNER_MAPPING.OWNER_ID).doUpdate()

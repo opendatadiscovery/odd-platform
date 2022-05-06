@@ -17,12 +17,12 @@ public interface OwnershipMapper {
     @Mapping(source = "ownership.id", target = "id")
     Ownership mapDto(final OwnershipDto ownership);
 
+    @Mapping(source = "pojo.id", target = "id")
+    Ownership mapDto(final TermOwnershipDto ownership);
+
     default List<Ownership> mapDtos(final List<OwnershipDto> ownership) {
         return CollectionUtils.isNotEmpty(ownership) ? ownership.stream().map(this::mapDto).toList() : null;
     }
-
-    @Mapping(source = "pojo.id", target = "id")
-    Ownership mapDto(final TermOwnershipDto ownership);
 
     default List<Ownership> mapTermDtos(final Set<TermOwnershipDto> ownership) {
         return CollectionUtils.isNotEmpty(ownership) ? ownership.stream().map(this::mapDto).toList() : null;

@@ -306,6 +306,13 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .build();
     }
 
+    private TermRefDto mapRecordToRefDto(final Record record, final String termCteName) {
+        return TermRefDto.builder()
+            .term(jooqRecordHelper.remapCte(record, termCteName, TERM).into(TermPojo.class))
+            .namespace(record.into(NAMESPACE).into(NamespacePojo.class))
+            .build();
+    }
+
     private TermDto mapRecordToDto(final Record record) {
         final TermRefDto refDto = mapRecordToRefDto(record);
         return TermDto.builder()
@@ -329,13 +336,6 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         return TermDetailsDto.builder()
             .termDto(termDto)
             .tags(jooqRecordHelper.extractAggRelation(record, AGG_TAGS_FIELD, TagPojo.class))
-            .build();
-    }
-
-    private TermRefDto mapRecordToRefDto(final Record record, final String termCteName) {
-        return TermRefDto.builder()
-            .term(jooqRecordHelper.remapCte(record, termCteName, TERM).into(TermPojo.class))
-            .namespace(record.into(NAMESPACE).into(NamespacePojo.class))
             .build();
     }
 
