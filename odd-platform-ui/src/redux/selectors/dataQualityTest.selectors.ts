@@ -4,7 +4,7 @@ import {
   DataQualityTestState,
   DataEntitiesState,
 } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 import isEmpty from 'lodash/isEmpty';
 import { getDataEntityId } from './dataentity.selectors';
 
@@ -21,7 +21,7 @@ const getDataEntitiesState = ({
   dataEntities,
 }: RootState): DataEntitiesState => dataEntities;
 
-const getDatasetTestReportFetchingStatus = createFetchingSelector(
+const getDatasetTestReportFetchingStatus = createLegacyFetchingSelector(
   'GET_DATA_SET_QUALITY_TEST_REPORT'
 );
 
@@ -30,7 +30,7 @@ export const getDatasetTestReportFetching = createSelector(
   status => status === 'fetching'
 );
 
-const getDatasetTestRunsFetchingStatus = createFetchingSelector(
+const getDatasetTestRunsFetchingStatus = createLegacyFetchingSelector(
   'GET_DATA_SET_QUALITY_TEST_RUNS_REPORT'
 );
 
@@ -39,7 +39,7 @@ export const getDatasetTestRunsFetching = createSelector(
   status => status === 'fetching'
 );
 
-const getDatasetTestListFetchingStatus = createFetchingSelector(
+const getDatasetTestListFetchingStatus = createLegacyFetchingSelector(
   'GET_DATA_SET_QUALITY_TEST_LIST_REPORT'
 );
 

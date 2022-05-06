@@ -1,10 +1,4 @@
 import React from 'react';
-import {
-  TypedUseSelectorHook,
-  useDispatch,
-  useSelector,
-} from 'react-redux';
-import { AppDispatch, RootState } from 'redux/interfaces';
 import { useParams } from 'react-router-dom';
 
 /**
@@ -31,10 +25,6 @@ export const useScrollBarWidth: (width?: number) => string = (
   }, []);
   return scrollbarWidth;
 };
-
-// redux-toolkit
-export const useAppDispatch = () => useDispatch<AppDispatch>();
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 // useAppParams react-router
 interface RouteParams {

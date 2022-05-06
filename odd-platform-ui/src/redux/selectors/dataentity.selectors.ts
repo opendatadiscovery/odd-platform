@@ -1,33 +1,32 @@
 import { createSelector } from '@reduxjs/toolkit';
 import get from 'lodash/get';
-import { RootState, DataEntitiesState } from 'redux/interfaces';
+import { DataEntitiesState, RootState } from 'redux/interfaces';
 import {
   DataEntityClassNameEnum,
   DataEntityType,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import {
-  createFetchingSelector,
-  createErrorSelector,
+  createLegacyFetchingSelector,
+  createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
 
 const dataEntitiesState = ({
   dataEntities,
 }: RootState): DataEntitiesState => dataEntities;
 
-const getMyDataEntitiesFetchingStatus = createFetchingSelector(
+const getMyDataEntitiesFetchingStatus = createLegacyFetchingSelector(
   actions.fetchMyDataEntitiesAction
 );
 
-const getMyUpstreamDataEntitiesFetchingStatus = createFetchingSelector(
-  actions.fetchMyUpstreamDataEntitiesAction
-);
+const getMyUpstreamDataEntitiesFetchingStatus =
+  createLegacyFetchingSelector(actions.fetchMyUpstreamDataEntitiesAction);
 
-const getMyDownstreamFetchingStatus = createFetchingSelector(
+const getMyDownstreamFetchingStatus = createLegacyFetchingSelector(
   actions.fetchMyDownstreamDataEntitiesAction
 );
 
-const getPopularDataEntitiesFetchingStatus = createFetchingSelector(
+const getPopularDataEntitiesFetchingStatus = createLegacyFetchingSelector(
   actions.fetchPopularDataEntitiesAction
 );
 
@@ -90,10 +89,10 @@ export const getPopularEntities = createSelector(
   dataEntitiesState,
   dataEntities => dataEntities.popular
 );
+
 // Details
-export const getDataEntityDetailsFetchingStatus = createFetchingSelector(
-  actions.fetchDataEntityDetailsAction
-);
+export const getDataEntityDetailsFetchingStatus =
+  createLegacyFetchingSelector(actions.fetchDataEntityDetailsAction);
 
 export const getDataEntityDetailsFetching = createSelector(
   getDataEntityDetailsFetchingStatus,
@@ -110,7 +109,7 @@ export const getDataEntityDetailsErrorFetching = createSelector(
   status => status === 'errorFetching'
 );
 
-const getDataEntityTagsUpdateStatus = createFetchingSelector(
+const getDataEntityTagsUpdateStatus = createLegacyFetchingSelector(
   actions.updateDataEntityTagsAction
 );
 
@@ -119,7 +118,7 @@ export const getDataEntityTagsUpdating = createSelector(
   status => status === 'fetching'
 );
 
-const getDataEntityOwnerUpdateStatus = createFetchingSelector(
+const getDataEntityOwnerUpdateStatus = createLegacyFetchingSelector(
   actions.updateDataEntityOwnershipAction
 );
 
@@ -128,7 +127,7 @@ export const getDataEntityOwnerUpdating = createSelector(
   status => status === 'fetching'
 );
 
-const getDataEntityInternalNameUpdateStatus = createFetchingSelector(
+const getDataEntityInternalNameUpdateStatus = createLegacyFetchingSelector(
   actions.updateDataEntityInternalNameAction
 );
 
@@ -202,4 +201,17 @@ export const getDataEntityIsQualityTest = createSelector(
       entityClass =>
         entityClass.name === DataEntityClassNameEnum.QUALITY_TEST
     )
+);
+
+// data entity groups
+export const getDataEntityGroupCreatingStatuses = createStatusesSelector(
+  actions.createDataEntityGroupAction
+);
+
+export const getDataEntityGroupUpdatingStatuses = createStatusesSelector(
+  actions.updateDataEntityGroupAction
+);
+
+export const getDataEntityGroupDeletingStatuses = createStatusesSelector(
+  actions.deleteDataEntityGroupAction
 );

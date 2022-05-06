@@ -6,7 +6,7 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
 
 interface OwnerFormProps {

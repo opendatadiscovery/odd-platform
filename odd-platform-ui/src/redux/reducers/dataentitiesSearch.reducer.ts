@@ -17,7 +17,7 @@ import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
 import values from 'lodash/values';
 import reduce from 'lodash/reduce';
-import { assignWith } from 'lib/helpers';
+import { assignWith } from 'redux/lib/helpers';
 
 export const initialState: SearchState = {
   searchId: '',

@@ -1,4 +1,4 @@
-import { createAction } from 'lib/helpers';
+import { createAction } from 'redux/lib/helpers';
 
 export const dataEntitiesActionPrefix = 'dataEntities';
 

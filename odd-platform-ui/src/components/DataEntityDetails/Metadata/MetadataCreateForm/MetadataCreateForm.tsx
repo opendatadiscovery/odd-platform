@@ -4,7 +4,7 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import { MetadataField, MetadataObject } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { createDataEntityCustomMetadata } from 'redux/thunks/metadata.thunks';
 import MetadataCreateFormItem from './MetadataCreateFormItem/MetadataCreateFormItem';
 

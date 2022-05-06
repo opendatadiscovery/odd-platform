@@ -30,7 +30,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
-import { useAppDispatch } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
 import * as S from './DataEntityDetailsStyles';
 

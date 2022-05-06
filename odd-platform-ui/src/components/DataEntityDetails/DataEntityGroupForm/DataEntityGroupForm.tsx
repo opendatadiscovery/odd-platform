@@ -2,22 +2,21 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import {
-  DataEntityApiCreateDataEntityGroupRequest,
-  DataEntityApiUpdateDataEntityGroupRequest,
   DataEntityClassNameEnum,
-  DataEntityGroupDetails,
   DataEntityGroupFormData,
-  DataEntityType,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppDispatch, useAppParams, useAppSelector } from 'lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppParams } from 'lib/hooks';
 import {
-  getDataEntityTypesByClassName,
   getDataEntityDetails,
+  getDataEntityGroupCreatingStatuses,
+  getDataEntityGroupUpdatingStatuses,
+  getDataEntityTypesByClassName,
 } from 'redux/selectors/dataentity.selectors';
 import {
   createDataEntityGroup,
@@ -28,12 +27,10 @@ import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAut
 
 interface DataEntityGroupFormProps {
   btnCreateEl: JSX.Element;
-  isLoading: boolean;
 }
 
 const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
   btnCreateEl,
-  isLoading,
 }) => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
@@ -47,6 +44,13 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       state,
       DataEntityClassNameEnum.ENTITY_GROUP
     )
+  );
+
+  const { isLoading: isDataEntityGroupCreating } = useAppSelector(
+    getDataEntityGroupCreatingStatuses
+  );
+  const { isLoading: isDataEntityGroupUpdating } = useAppSelector(
+    getDataEntityGroupUpdatingStatuses
   );
 
   const { handleSubmit, control, reset, formState } =
@@ -150,7 +154,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         rules={{ required: true }}
         render={({ field }) => (
           <AppTextField {...field} label="Type" select>
-            {types.map(type => (
+            {types?.map(type => (
               <AppMenuItem key={type.id} value={type.name}>
                 {type.name}
               </AppMenuItem>
@@ -205,12 +209,15 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={
+        dataEntityGroupDetails
+          ? isDataEntityGroupUpdating
+          : isDataEntityGroupCreating
+      }
       errorText={error}
       clearState={clearState}
     />
   );
-  return null;
 };
 
 export default DataEntityGroupForm;

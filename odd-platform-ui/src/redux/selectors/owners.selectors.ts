@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 import { OwnersState } from 'redux/interfaces/state';
 import { Owner } from 'generated-sources';
 import * as actions from 'redux/actions';
@@ -8,16 +8,16 @@ import { getDataEntityId } from './dataentity.selectors';
 
 const ownersState = ({ owners }: RootState): OwnersState => owners;
 
-const getOwnersListFetchingStatus = createFetchingSelector(
+const getOwnersListFetchingStatus = createLegacyFetchingSelector(
   actions.fetchOwnersAction
 );
-export const getOwnersCreateStatus = createFetchingSelector(
+export const getOwnersCreateStatus = createLegacyFetchingSelector(
   actions.createOwnerAction
 );
-export const getOwnerUpdateStatus = createFetchingSelector(
+export const getOwnerUpdateStatus = createLegacyFetchingSelector(
   actions.updateOwnerAction
 );
-export const deleteOwnersUpdateStatus = createFetchingSelector(
+export const deleteOwnersUpdateStatus = createLegacyFetchingSelector(
   actions.deleteOwnerAction
 );
 

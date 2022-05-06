@@ -6,7 +6,7 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import OwnerFormContainer from 'components/Management/OwnersList/OwnerForm/OwnerFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteOwner } from 'redux/thunks';
 import * as S from './EditableOwnerItemStyles';
 

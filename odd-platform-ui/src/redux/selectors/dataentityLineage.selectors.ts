@@ -4,19 +4,18 @@ import {
   DataEntityLineageState,
   FetchStatus,
 } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 import { getDataEntityId } from './dataentity.selectors';
 
 const dataEntitiesState = ({
   dataEntityLineage,
 }: RootState): DataEntityLineageState => dataEntityLineage;
 
-const getDataEntityUpstreamLineageFetchingStatus = createFetchingSelector(
-  'GET_DATA_ENTITY_UPSTREAM_LINEAGE'
-);
+const getDataEntityUpstreamLineageFetchingStatus =
+  createLegacyFetchingSelector('GET_DATA_ENTITY_UPSTREAM_LINEAGE');
 
 const getDataEntityDownstreamLineageFetchingStatus =
-  createFetchingSelector('GET_DATA_ENTITY_DOWNSTREAM_LINEAGE');
+  createLegacyFetchingSelector('GET_DATA_ENTITY_DOWNSTREAM_LINEAGE');
 
 export const getDataEntityLineageStreamFetching = createSelector(
   getDataEntityUpstreamLineageFetchingStatus,

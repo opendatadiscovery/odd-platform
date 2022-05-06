@@ -8,7 +8,7 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
 import AppButton from 'components/shared/AppButton/AppButton';
 import remarkGfm from 'remark-gfm';
-import { useAppDispatch } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
 import {
   CaptionContainer,
@@ -40,6 +40,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
     () => setEditMode(true),
     [setEditMode]
   );
+
   const handleDescriptionUpdate = React.useCallback(() => {
     dispatch(
       updateDataEntityInternalDescription({

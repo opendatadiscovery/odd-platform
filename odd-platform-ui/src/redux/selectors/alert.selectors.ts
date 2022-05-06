@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState, AlertsState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 import { Alert, AlertStatus } from 'generated-sources';
 import map from 'lodash/map';
 import { getDataEntityId } from './dataentity.selectors';
@@ -8,21 +8,22 @@ import { getDataEntityId } from './dataentity.selectors';
 const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
 
 const getAlertTotalsFetchingStatus =
-  createFetchingSelector('GET_ALERT_TOTALS');
+  createLegacyFetchingSelector('GET_ALERT_TOTALS');
 
 export const getAlertTotalsFetching = createSelector(
   getAlertTotalsFetchingStatus,
   status => status === 'fetching'
 );
 
-const getAlertListFetchingStatus = createFetchingSelector('GET_ALERTS');
+const getAlertListFetchingStatus =
+  createLegacyFetchingSelector('GET_ALERTS');
 
 export const getAlertListFetching = createSelector(
   getAlertListFetchingStatus,
   status => status === 'fetching'
 );
 
-const getDataEntityAlertListFetchingStatus = createFetchingSelector(
+const getDataEntityAlertListFetchingStatus = createLegacyFetchingSelector(
   'GET_DATA_ENTITY_ALERTS'
 );
 

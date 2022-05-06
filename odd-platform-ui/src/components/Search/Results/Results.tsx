@@ -23,6 +23,9 @@ import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSk
 import SearchTabsSkeleton from 'components/Search/Results/SearchTabsSkeleton/SearchTabsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import ResultItem from 'components/Search/Results/ResultItem/ResultItem';
+import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AddIcon from 'components/shared/Icons/AddIcon';
 import * as S from './ResultsStyles';
 
 interface ResultsProps {
@@ -159,19 +162,18 @@ const Results: React.FC<ResultsProps> = ({
         />
       )}
       {tabs[selectedTab]?.name === 'Groups' && (
-        <div>lul</div>
-        // <DataEntityGroupForm
-        //   btnCreateEl={
-        //     <AppButton
-        //       sx={{ mt: 2 }}
-        //       size="medium"
-        //       color="primaryLight"
-        //       startIcon={<AddIcon />}
-        //     >
-        //       Add group
-        //     </AppButton>
-        //   }
-        // />
+        <DataEntityGroupForm
+          btnCreateEl={
+            <AppButton
+              sx={{ mt: 2 }}
+              size="medium"
+              color="primaryLight"
+              startIcon={<AddIcon />}
+            >
+              Add group
+            </AppButton>
+          }
+        />
       )}
       <S.ResultsTableHeader
         container

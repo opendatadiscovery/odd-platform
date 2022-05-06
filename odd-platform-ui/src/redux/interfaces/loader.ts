@@ -17,3 +17,14 @@ export type FetchStatus =
   | 'fetching'
   | 'fetched'
   | 'errorFetching';
+
+export type AsyncRequestStatus =
+  | 'initial'
+  | 'pending'
+  | 'fulfilled'
+  | 'rejected';
+
+export interface LoaderSliceState {
+  statuses: { [key: string]: AsyncRequestStatus };
+  errors: { [key: string]: ErrorState | undefined };
+}

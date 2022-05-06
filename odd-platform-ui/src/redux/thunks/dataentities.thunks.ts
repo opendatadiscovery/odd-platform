@@ -59,13 +59,13 @@ export const updateDataEntityTags = createAsyncThunk<
 export const updateDataEntityInternalDescription = createAsyncThunk<
   {
     dataEntityId: number;
-    internalDescription: InternalDescription;
+    internalDescription: InternalDescription['internalDescription'];
   },
   DataEntityApiUpsertDataEntityInternalDescriptionRequest
 >(
   actions.updateDataEntityInternalDescriptionAction,
   async ({ dataEntityId, internalDescriptionFormData }) => {
-    const internalDescription =
+    const { internalDescription } =
       await dataEntityApi.upsertDataEntityInternalDescription({
         dataEntityId,
         internalDescriptionFormData,

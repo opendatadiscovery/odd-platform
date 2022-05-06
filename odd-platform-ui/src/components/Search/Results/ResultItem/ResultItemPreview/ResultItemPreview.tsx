@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
-import { useAppDispatch } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
 
 interface ResultItemPreviewProps {

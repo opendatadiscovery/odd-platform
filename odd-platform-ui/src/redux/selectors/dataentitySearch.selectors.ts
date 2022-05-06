@@ -15,35 +15,34 @@ import {
 } from 'redux/interfaces';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import {
-  createFetchingSelector,
-  createErrorSelector,
+  createLegacyFetchingSelector,
+  createLegacyErrorSelector,
 } from 'redux/selectors/loader-selectors';
 
 const searchState = ({ search }: RootState): SearchState => search;
 
-export const getSearchCreationStatus = createFetchingSelector(
+export const getSearchCreationStatus = createLegacyFetchingSelector(
   'POST_DATA_ENTITIES_SEARCH'
 );
 
-export const getSearchFetchStatus = createFetchingSelector(
+export const getSearchFetchStatus = createLegacyFetchingSelector(
   'GET_DATA_ENTITIES_SEARCH'
 );
 
-export const getSearchFetchError = createErrorSelector(
+export const getSearchFetchError = createLegacyErrorSelector(
   'GET_DATA_ENTITIES_SEARCH'
 );
 
-export const getSearchUpdateStatus = createFetchingSelector(
+export const getSearchUpdateStatus = createLegacyFetchingSelector(
   'PUT_DATA_ENTITIES_SEARCH'
 );
 
-export const getSearchResultsFetchStatus = createFetchingSelector(
+export const getSearchResultsFetchStatus = createLegacyFetchingSelector(
   'GET_DATA_ENTITIES_SEARCH_RESULTS'
 );
 
-export const getSearchSuggestionsFetchStatus = createFetchingSelector(
-  'GET_DATA_ENTITIES_SEARCH_SUGGESTIONS'
-);
+export const getSearchSuggestionsFetchStatus =
+  createLegacyFetchingSelector('GET_DATA_ENTITIES_SEARCH_SUGGESTIONS');
 
 export const getSearchFiltersSynced = createSelector(
   searchState,

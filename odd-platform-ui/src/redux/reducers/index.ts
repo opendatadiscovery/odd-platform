@@ -1,5 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import loader from './loader-reducer';
+import legacyLoader from './loader-reducer';
+import loader from './loader.slice';
 import namespaces from './namespace.reducer';
 import dataSources from './datasources.reducer';
 import dataEntities from './dataentities.slice';
@@ -23,6 +24,7 @@ export default combineReducers({
   dataEntities,
   search,
   loader,
+  legacyLoader,
   tags,
   metaData,
   owners,

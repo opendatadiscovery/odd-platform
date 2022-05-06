@@ -10,7 +10,7 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import TagItem from 'components/shared/TagItem/TagItem';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'lib/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { updateDataEntityTags } from 'redux/thunks';
 import TagsEditFormAutocomplete from './TagsEditFormAutocomplete/TagsEditFormAutocomplete';
 
