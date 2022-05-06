@@ -1,13 +1,12 @@
 import { connect } from 'react-redux';
-import { RootState, TermSearchOptionalFacetNames } from 'redux/interfaces';
-import MultipleFilterItem from 'components/TermSearch/TermSearchFilters/TermsSearchFilterItem/MultipleFilterItem/MultipleFilterItem';
+import { getTermSearchFacetOptions } from 'redux/thunks';
 import * as actions from 'redux/actions';
 import {
-  getSelectedTermSearchFacetOptions,
   getTermSearchFacetsByType,
   getTermSearchId,
 } from 'redux/selectors/termSearch.selectors';
-import { getTermSearchFacetOptions } from 'redux/thunks';
+import { RootState, TermSearchOptionalFacetNames } from 'redux/interfaces';
+import MultipleFilterItemAutocomplete from './MultipleFilterItemAutocomplete';
 
 const mapStateToProps = (
   state: RootState,
@@ -15,7 +14,6 @@ const mapStateToProps = (
 ) => ({
   searchId: getTermSearchId(state),
   facetOptionsAll: getTermSearchFacetsByType(state, facetName),
-  selectedOptions: getSelectedTermSearchFacetOptions(state, facetName),
 });
 
 const mapDispatchToProps = {
@@ -26,4 +24,4 @@ const mapDispatchToProps = {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(MultipleFilterItem);
+)(MultipleFilterItemAutocomplete);

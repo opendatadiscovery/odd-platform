@@ -1,13 +1,13 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
+import { SearchFilterStateSynced } from 'redux/interfaces/search';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import {
   TermSearchFacetStateUpdate,
   TermSearchOptionalFacetNames,
-  SearchFilterStateSynced,
 } from 'redux/interfaces';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 
 interface FilterItemProps {
   name: string;

@@ -4,8 +4,8 @@ import {
   Namespace,
   NamespaceApiGetNamespaceListRequest,
 } from 'generated-sources';
-import MultipleFilterItemContainer from 'components/TermSearch/TermSearchFilters/TermsSearchFilterItem/MultipleFilterItem/MultipleFilterItemContainer';
-import SingleFilterItemContainer from 'components/TermSearch/TermSearchFilters/TermsSearchFilterItem/SingleFilterItem/SingleFilterItemContainer';
+import MultipleFilterItemContainer from 'components/TermSearch/TermSearchFilters/TermSearchFilterItem/MultipleFilterItem/MultipleFilterItemContainer';
+import SingleFilterItemContainer from 'components/TermSearch/TermSearchFilters/TermSearchFilterItem/SingleFilterItem/SingleFilterItemContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import {
