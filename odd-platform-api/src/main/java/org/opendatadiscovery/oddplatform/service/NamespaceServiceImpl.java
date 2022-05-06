@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceR
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -26,6 +27,7 @@ public class NamespaceServiceImpl implements NamespaceService {
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final ReactiveCollectorRepository collectorRepository;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
+    private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
     private final NamespaceMapper namespaceMapper;
 
     @Override
@@ -61,7 +63,7 @@ public class NamespaceServiceImpl implements NamespaceService {
             .switchIfEmpty(Mono.error(new NotFoundException("Namespace with id %d hasn't been found".formatted(id))))
             .map(pojo -> namespaceMapper.applyToPojo(pojo, updateEntityForm))
             .flatMap(namespaceRepository::update)
-            .flatMap(ns -> searchEntrypointRepository.updateNamespaceVector(ns.getId()).thenReturn(ns))
+            .flatMap(this::updateSearchVectors)
             .map(namespaceMapper::mapPojo);
     }
 
@@ -80,5 +82,12 @@ public class NamespaceServiceImpl implements NamespaceService {
                 "Namespace with ID %d cannot be deleted: there are still resources attached".formatted(id))))
             .flatMap(ign -> namespaceRepository.delete(id))
             .map(NamespacePojo::getId);
+    }
+
+    private Mono<NamespacePojo> updateSearchVectors(final NamespacePojo pojo) {
+        return Mono.zip(
+            searchEntrypointRepository.updateChangedNamespaceVector(pojo.getId()),
+            termSearchEntrypointRepository.updateChangedNamespaceVector(pojo.getId())
+        ).thenReturn(pojo);
     }
 }

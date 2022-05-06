@@ -1,8 +1,6 @@
-package org.opendatadiscovery.oddplatform.repository;
+package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import lombok.RequiredArgsConstructor;
-import org.jooq.Record;
-import org.jooq.SelectConditionStep;
 import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.TokenDto;
@@ -12,12 +10,11 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TOKEN;
 
 @Repository
 @RequiredArgsConstructor
-public class TokenRepositoryImpl implements TokenRepository {
+public class ReactiveTokenRepositoryImpl implements ReactiveTokenRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override

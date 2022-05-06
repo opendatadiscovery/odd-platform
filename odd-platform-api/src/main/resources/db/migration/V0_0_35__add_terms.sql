@@ -17,8 +17,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS name_namespace_unique ON term (name, namespace
 
 CREATE TABLE IF NOT EXISTS tag_to_term
 (
-    tag_id  bigint NOT NULL,
-    term_id bigint NOT NULL,
+    tag_id     bigint NOT NULL,
+    term_id    bigint NOT NULL,
     deleted_at TIMESTAMP WITHOUT TIME ZONE,
 
     CONSTRAINT tag_to_term_pk PRIMARY KEY (tag_id, term_id),
@@ -29,23 +29,25 @@ CREATE TABLE IF NOT EXISTS tag_to_term
 
 CREATE TABLE IF NOT EXISTS term_ownership
 (
-    term_id  bigint,
-    owner_id bigint,
-    role_id  bigint,
+    id         bigserial PRIMARY KEY,
+    term_id    bigint,
+    owner_id   bigint,
+    role_id    bigint,
     deleted_at TIMESTAMP WITHOUT TIME ZONE,
-
-    CONSTRAINT term_ownership_pk PRIMARY KEY (term_id, owner_id),
 
     CONSTRAINT term_ownership_fk_term FOREIGN KEY (term_id) REFERENCES term (id),
     CONSTRAINT term_ownership_fk_owner FOREIGN KEY (owner_id) REFERENCES owner (id),
     CONSTRAINT term_ownership_fk_role FOREIGN KEY (role_id) REFERENCES role (id)
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS term_id_owner_id_unique ON term_ownership (term_id, owner_id)
+    WHERE deleted_at IS NULL;
+
 CREATE TABLE IF NOT EXISTS data_entity_to_term
 (
     data_entity_id bigint,
     term_id        bigint,
-    deleted_at TIMESTAMP WITHOUT TIME ZONE,
+    deleted_at     TIMESTAMP WITHOUT TIME ZONE,
 
     CONSTRAINT data_entity_to_term_pk PRIMARY KEY (data_entity_id, term_id),
 
@@ -70,5 +72,5 @@ CREATE TABLE IF NOT EXISTS term_search_entrypoint
     CONSTRAINT search_entrypoint_term_id_fkey FOREIGN KEY (term_id) REFERENCES term (id)
 );
 
-CREATE INDEX term_search_entrypoint_search_vector_idx
+CREATE INDEX IF NOT EXISTS term_search_entrypoint_search_vector_idx
     ON term_search_entrypoint USING gin (search_vector);

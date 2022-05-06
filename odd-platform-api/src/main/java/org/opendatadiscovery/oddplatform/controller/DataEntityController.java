@@ -123,7 +123,6 @@ public class DataEntityController
                                                            final Mono<OwnershipFormData> ownershipFormData,
                                                            final ServerWebExchange exchange) {
         return ownershipFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(form -> ownershipService.create(dataEntityId, form))
             .map(ResponseEntity::ok);
     }
@@ -133,7 +132,6 @@ public class DataEntityController
                                                       final Long ownershipId,
                                                       final ServerWebExchange exchange) {
         return ownershipService.delete(ownershipId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(m -> ResponseEntity.noContent().build());
     }
 
@@ -143,7 +141,6 @@ public class DataEntityController
                                                            final Mono<OwnershipUpdateFormData> ownershipUpdateFormData,
                                                            final ServerWebExchange exchange) {
         return ownershipUpdateFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(form -> ownershipService.update(ownershipId, form))
             .map(ResponseEntity::ok);
     }

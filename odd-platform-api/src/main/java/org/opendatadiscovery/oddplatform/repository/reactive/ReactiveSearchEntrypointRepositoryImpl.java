@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,7 @@ import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.UpdateConditionStep;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.model.Tables;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRecord;
 import org.opendatadiscovery.oddplatform.repository.util.FTSEntity;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -22,6 +22,9 @@ import reactor.core.publisher.Mono;
 import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
+import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
+import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
+import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.tables.DataSource.DATA_SOURCE;
@@ -35,7 +38,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     private final ReactiveJooqFTSHelper jooqFTSHelper;
 
     @Override
-    public Mono<Integer> updateNamespaceVector(final long namespaceId) {
+    public Mono<Integer> updateChangedNamespaceVector(final long namespaceId) {
         final Field<Long> dataEntityId = field("data_entity_id", Long.class);
 
         final List<Field<?>> vectorFields = List.of(NAMESPACE.NAME);
@@ -169,5 +172,73 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         );
 
         return jooqReactiveOperations.mono(tagQuery);
+    }
+
+    @Override
+    public Mono<Integer> updateChangedOwnerVectors(final long ownerId) {
+        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
+
+        final Field<String> ownerNameAlias = field("owner_name", String.class);
+        final Field<String> roleNameAlias = field("role_name", String.class);
+
+        final List<Field<?>> vectorFields = List.of(
+            OWNER.NAME.as(ownerNameAlias),
+            ROLE.NAME.as(roleNameAlias)
+        );
+
+        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
+            .select(DATA_ENTITY.ID.as(dataEntityId))
+            .from(OWNER)
+            .join(OWNERSHIP).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
+            .join(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(OWNER.ID.eq(ownerId));
+
+        final Insert<? extends Record> ownerQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            dataEntityId,
+            vectorFields,
+            SEARCH_ENTRYPOINT.OWNER_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            true,
+            Map.of(ownerNameAlias, OWNER.NAME, roleNameAlias, ROLE.NAME)
+        );
+
+        return jooqReactiveOperations.mono(ownerQuery);
+    }
+
+    @Override
+    public Mono<Integer> updateChangedOwnershipVectors(final long ownershipId) {
+        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
+
+        final Field<String> ownerNameAlias = field("owner_name", String.class);
+        final Field<String> roleNameAlias = field("role_name", String.class);
+
+        final List<Field<?>> vectorFields = List.of(
+            OWNER.NAME.as(ownerNameAlias),
+            ROLE.NAME.as(roleNameAlias)
+        );
+
+        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
+            .select(DATA_ENTITY.ID.as(dataEntityId))
+            .from(OWNER)
+            .join(OWNERSHIP).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
+            .join(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .where(OWNERSHIP.ID.eq(ownershipId));
+
+        final Insert<? extends Record> ownershipQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            dataEntityId,
+            vectorFields,
+            Tables.SEARCH_ENTRYPOINT.OWNER_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            true,
+            Map.of(ownerNameAlias, OWNER.NAME, roleNameAlias, ROLE.NAME)
+        );
+
+        return jooqReactiveOperations.mono(ownershipQuery);
     }
 }

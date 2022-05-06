@@ -21,7 +21,8 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 @Mapper(config = MapperConfig.class,
     uses = {
         NamespaceMapper.class,
-        OffsetDateTimeMapper.class
+        OffsetDateTimeMapper.class,
+        OwnershipMapper.class
     })
 public interface TermMapper {
 
