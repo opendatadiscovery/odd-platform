@@ -19,6 +19,7 @@ import org.jooq.Select;
 import org.jooq.SelectJoinStep;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
@@ -107,6 +108,7 @@ public class JooqFTSHelper {
             vectorFields, seTargetField, agg, emptyMap());
     }
 
+    // TODO: remove this method after full migration the reactive paradigm
     public Insert<SearchEntrypointRecord> buildSearchEntrypointUpsert(
         final Select<? extends Record> vectorSelect,
         final Field<Long> dataEntityIdField,
@@ -134,6 +136,41 @@ public class JooqFTSHelper {
         }
 
         return dslContext.with(deCte.getName())
+            .as(vectorSelect)
+            .insertInto(SEARCH_ENTRYPOINT, SEARCH_ENTRYPOINT.DATA_ENTITY_ID, seTargetField)
+            .select(insertQuery)
+            .onConflict().doUpdate().set(JooqFTSHelper.onConflictSetMap(seTargetField));
+    }
+
+    // A headless variant of the method, which construct query leveraging jOOQ's static DSL class
+    // Used in the application's reactive part
+    public Insert<SearchEntrypointRecord> headlessBuildSearchEntrypointUpsert(
+        final Select<? extends Record> vectorSelect,
+        final Field<Long> dataEntityIdField,
+        final List<Field<?>> vectorFields,
+        final TableField<SearchEntrypointRecord, Object> seTargetField,
+        final boolean agg,
+        final Map<Field<?>, Field<?>> remappingConfig
+    ) {
+        if (vectorFields.isEmpty()) {
+            throw new IllegalArgumentException("Vector fields collection must not be empty");
+        }
+
+        final Table<? extends Record> deCte = vectorSelect.asTable("t");
+
+        final Field<Object> vector = concatVectorFields(deCte, vectorFields, agg, remappingConfig).as(seTargetField);
+
+        final Field<Long> cteDataEntityId = deCte.field(dataEntityIdField);
+
+        Select<Record2<Long, Object>> insertQuery = dslContext
+            .select(cteDataEntityId, vector)
+            .from(deCte.getUnqualifiedName());
+
+        if (agg) {
+            insertQuery = ((SelectJoinStep<Record2<Long, Object>>) insertQuery).groupBy(cteDataEntityId);
+        }
+
+        return DSL.with(deCte.getName())
             .as(vectorSelect)
             .insertInto(SEARCH_ENTRYPOINT, SEARCH_ENTRYPOINT.DATA_ENTITY_ID, seTargetField)
             .select(insertQuery)
@@ -228,9 +265,9 @@ public class JooqFTSHelper {
     }
 
     private Field<Object> concatVectorFields(final Table<? extends Record> cte,
-                                                    final List<Field<?>> vectorFields,
-                                                    final boolean agg,
-                                                    final Map<Field<?>, Field<?>> remappingConfig) {
+                                             final List<Field<?>> vectorFields,
+                                             final boolean agg,
+                                             final Map<Field<?>, Field<?>> remappingConfig) {
         final String expr = vectorFields.stream()
             .map(f -> getWeightRelation(f, cte, remappingConfig))
             .filter(Objects::nonNull)

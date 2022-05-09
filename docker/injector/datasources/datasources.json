@@ -1,0 +1,90 @@
+[
+  {
+    "name": "BookShop Transactional",
+    "oddrn": "//postgresql/host/1.2.3.4/databases/bookshop",
+    "description": "Transactional BookShop PostgreSQL database",
+    "namespace_name": "Transactional",
+    "connection_url": "",
+    "active": true
+  },
+  {
+    "name": "BookShop Data Lake",
+    "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm",
+    "description": "BookShop Data Lake cited in the Redshift",
+    "namespace_name": "Data Lake",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "Snowflake Sample Data",
+    "oddrn": "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH",
+    "description": "Snowflake sample data from the free trial",
+    "namespace_name": "Samples",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "Great Expectation",
+    "oddrn": "//ge",
+    "description": "Data quality processes over Snowflake data",
+    "namespace_name": "Data Quality",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "Airflow ETL",
+    "oddrn": "//airflow/host/aws.airflow.aws.com/",
+    "description": "ETL for Sample Data Lake",
+    "namespace_name": "ETL",
+    "active": true,
+    "pulling_interval": 60,
+    "connection_url": ""
+  },
+  {
+    "name": "BookShop ETL",
+    "oddrn": "//airflow/host/2.1.3.4",
+    "description": "Airflow ETL DAGs",
+    "namespace_name": "ETL",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "User Transactions",
+    "oddrn": "//kafka/host/aws.kafka.connect.io/",
+    "description": "Kafka topics for user transactions data sample",
+    "namespace_name": "Messaging",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "Data Lake S3",
+    "oddrn": "//s3/cloud/aws/account/111111111111/region/us-west-2",
+    "description": "S3 Data Lake for samples",
+    "namespace_name": "Data Lake",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "Kinesis Data Stream consumer",
+    "oddrn": "//microservice/named",
+    "description": "KDS Consumer that pushes data from KDS to the S3 Data Lake",
+    "namespace_name": "ETL",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  },
+  {
+    "name": "KDS Clickstream",
+    "oddrn": "//kinesis/cloud/aws/account/111111111111/region/us-west-2/",
+    "namespace_name": "Messaging",
+    "active": true,
+    "pulling_interval": "60",
+    "connection_url": ""
+  }
+]

@@ -251,6 +251,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
                 label="ODDRN"
                 placeholder="e.g. //kafka/"
                 required
+                disabled={!!dataSource?.oddrn}
                 customEndAdornment={{
                   variant: 'clear',
                   showAdornment: !!field.value,

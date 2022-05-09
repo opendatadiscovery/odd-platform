@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.CollectorApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Collector;
 import org.opendatadiscovery.oddplatform.api.contract.model.CollectorFormData;
@@ -12,42 +13,41 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @RestController
-public class CollectorController extends AbstractCRUDController<Collector, CollectorList, CollectorFormData,
-    CollectorUpdateFormData, CollectorService> implements CollectorApi {
-
-    public CollectorController(final CollectorService collectorService) {
-        super(collectorService);
-    }
+@RequiredArgsConstructor
+public class CollectorController implements CollectorApi {
+    private final CollectorService collectorService;
 
     @Override
-    public Mono<ResponseEntity<CollectorList>> getCollectorsList(final Integer page, final Integer size,
+    public Mono<ResponseEntity<CollectorList>> getCollectorsList(final Integer page,
+                                                                 final Integer size,
                                                                  final String query,
                                                                  final ServerWebExchange exchange) {
-        return list(page, size, query);
+        return collectorService.list(page, size, query).map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Collector>> registerCollector(final Mono<CollectorFormData> collectorFormData,
                                                              final ServerWebExchange exchange) {
-        return create(collectorFormData);
+        return collectorFormData.flatMap(collectorService::create).map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Collector>> updateCollector(final Long collectorId,
                                                            final Mono<CollectorUpdateFormData> collectorUpdateFormData,
                                                            final ServerWebExchange exchange) {
-        return update(collectorId, collectorUpdateFormData);
+        return collectorUpdateFormData
+            .flatMap(form -> collectorService.update(collectorId, form))
+            .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<Void>> deleteCollector(final Long collectorId, final ServerWebExchange exchange) {
-        return delete(collectorId);
+        return collectorService.delete(collectorId).map(ign -> ResponseEntity.noContent().build());
     }
 
     @Override
     public Mono<ResponseEntity<Collector>> regenerateCollectorToken(final Long collectorId,
                                                                     final ServerWebExchange exchange) {
-        return entityService.regenerateDataSourceToken(collectorId)
-            .map(ResponseEntity::ok);
+        return collectorService.regenerateToken(collectorId).map(ResponseEntity::ok);
     }
 }

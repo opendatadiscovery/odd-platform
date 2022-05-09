@@ -1,0 +1,13 @@
+*                                   @opendatadiscovery/maintainers
+
+# BACKEND
+/*.gradle                           @opendatadiscovery/backend
+
+/odd-platform-api-contract/         @opendatadiscovery/backend
+/odd-platform-api/                  @opendatadiscovery/backend
+/odd-platform-specification/        @opendatadiscovery/backend
+
+/dev/                               @opendatadiscovery/backend
+
+# FRONTEND
+/odd-platform-ui/                   @opendatadiscovery/frontend

@@ -11,7 +11,7 @@ The open-source Data Discovery Platform improves productivity, collaboration, an
 * Flexible data quality integration options 
 * Auto-generated ML experiment lineage and metadata 
 
-To use Platform solutions more effectively apply [**ODD Specification**](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md). It contains  best practices for managing your metadata. Its theoretical topics and examples helps to build an effective data discovery process. Also the Spec covers data engagement and data federation problems.
+To use Platform solutions more effectively apply [**ODD Specification**](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md). It contains  best practices for managing your metadata. Its theoretical topics and examples help to build an effective data discovery process. Also the Spec covers data engagement and data federation problems.
 
 ### The platform for your business
 ![](.gitbook/img/audience.png) ODD's **target audience** is any data team regardless of its' size. It can be enterprises or large-scale 
