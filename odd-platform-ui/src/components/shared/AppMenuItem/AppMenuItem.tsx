@@ -9,7 +9,7 @@ import {
 interface AppMenuItemProps
   extends Pick<
     MenuItemProps,
-    'children' | 'onClick' | 'divider' | 'value'
+    'children' | 'onClick' | 'divider' | 'value' | 'defaultValue'
   > {
   minWidth?: number;
   maxWidth?: number;
@@ -26,6 +26,7 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
   minWidth,
   removeTextStyles = false,
   fontVariant = 'body1',
+  defaultValue,
 }) => (
   <StyledAppMenuItem
     disableRipple
@@ -34,6 +35,7 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
     divider={divider}
     $maxWidth={maxWidth}
     $minWidth={minWidth}
+    defaultValue={defaultValue}
   >
     <StyledAppListItemText
       $removeTextStyles={removeTextStyles}

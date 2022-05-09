@@ -159,11 +159,11 @@ export const updateDataEntityGroup = createAsyncThunk<
 );
 
 export const deleteDataEntityGroup = createAsyncThunk<
-  { dataEntityGroupId: number },
+  number,
   DataEntityApiDeleteDataEntityGroupRequest
 >(actions.deleteDataEntityGroupAction, async ({ dataEntityGroupId }) => {
   await dataEntityApi.deleteDataEntityGroup({
     dataEntityGroupId,
   });
-  return { dataEntityGroupId };
+  return dataEntityGroupId;
 });

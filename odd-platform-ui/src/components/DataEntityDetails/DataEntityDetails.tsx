@@ -16,7 +16,7 @@ import {
   DataEntityApiGetDataEntityAlertsRequest,
   DataEntityDetails,
 } from 'generated-sources';
-import { ErrorState, FetchStatus } from 'redux/interfaces';
+import { FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
@@ -31,7 +31,16 @@ import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
 import { useAppDispatch } from 'redux/lib/hooks';
-import { fetchDataEntityDetails } from 'redux/thunks';
+import {
+  deleteDataEntityGroup,
+  fetchDataEntityDetails,
+} from 'redux/thunks';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import KebabIcon from 'components/shared/Icons/KebabIcon';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import AppPopover from 'components/shared/AppPopover/AppPopover';
+import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
+import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import * as S from './DataEntityDetailsStyles';
 
 // lazy components
@@ -153,6 +162,12 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     );
   }, [tabs, viewType]);
 
+  const handleEntityGroupDelete = React.useCallback(
+    () =>
+      dispatch(deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })),
+    [deleteDataEntityGroup, dataEntityId]
+  );
+
   return (
     <S.Container>
       {dataEntityDetails && dataEntityFetchingStatus !== 'fetching' ? (
@@ -226,6 +241,48 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                   </Typography>
                 </>
               ) : null}
+              <Grid>
+                {dataEntityDetails.manuallyCreated && (
+                  <AppPopover
+                    renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+                      <AppIconButton
+                        sx={{ ml: 2 }}
+                        ariaDescribedBy={ariaDescribedBy}
+                        size="medium"
+                        color="primaryLight"
+                        icon={<KebabIcon />}
+                        onClick={onClick}
+                      />
+                    )}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 65,
+                    }}
+                  >
+                    <DataEntityGroupForm
+                      btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
+                    />
+                    <ConfirmationDialog
+                      actionTitle="Are you sure you want to delete this data entity group?"
+                      actionName="Delete Data Entity Group"
+                      actionText={
+                        <>
+                          &quot;
+                          {dataEntityDetails.internalName ||
+                            dataEntityDetails.externalName}
+                          &quot; will be deleted permanently.
+                        </>
+                      }
+                      onConfirm={handleEntityGroupDelete}
+                      actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+                    />
+                  </AppPopover>
+                )}
+              </Grid>
             </Grid>
           </Grid>
           <Grid sx={{ mt: 2 }}>

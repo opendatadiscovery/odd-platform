@@ -179,6 +179,7 @@ export const dataEntitiesSlice = createSlice({
       })
     );
 
+    // Data Entity Groups
     builder.addCase(
       thunks.fetchDataEntityGroupLinkedList.fulfilled,
       (state, { payload }) => {
@@ -194,6 +195,30 @@ export const dataEntitiesSlice = createSlice({
             }),
             state.byId
           ),
+        };
+      }
+    );
+
+    builder.addCase(
+      thunks.createDataEntityGroup.fulfilled,
+      (state, { payload }) => updateDataEntity(state, payload)
+    );
+
+    builder.addCase(
+      thunks.updateDataEntityGroup.fulfilled,
+      (state, { payload }) => updateDataEntity(state, payload)
+    );
+
+    builder.addCase(
+      thunks.deleteDataEntityGroup.fulfilled,
+      (state, { payload }) => {
+        const dataEntityGroupId = payload;
+
+        return {
+          ...state,
+          byId: {
+            ...omit(state.byId, dataEntityGroupId),
+          },
         };
       }
     );

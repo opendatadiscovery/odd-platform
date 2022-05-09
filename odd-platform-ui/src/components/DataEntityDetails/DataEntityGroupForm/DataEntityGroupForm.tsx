@@ -25,9 +25,11 @@ import {
   updateDataEntityGroup,
 } from 'redux/thunks';
 import EntityItem from 'components/DataEntityDetails/DataEntityGroupForm/EntityItem/EntityItem';
+import { useHistory } from 'react-router-dom';
+import { dataEntityDetailsPath } from 'lib/paths';
+import * as S from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupFormStyles';
 import EntitiesSuggestionsAutocompleteContainer from './EntitiesSuggestionsAutoocomplete/EntitiesSuggestionsAutocompleteContainer';
 import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
-import * as S from './DataEntityGroupFormStyles';
 
 interface DataEntityGroupFormProps {
   btnCreateEl: JSX.Element;
@@ -43,6 +45,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
+  const history = useHistory();
 
   const dataEntityGroupDetails: DataEntityDetails = useAppSelector(state =>
     getDataEntityDetails(state, dataEntityId)
@@ -114,21 +117,24 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
               data as GeneratedDataEntityGroupFormData,
           })
         )
-    ).then(
-      () => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error:
-            response.statusText || dataEntityGroupDetails
-              ? 'Unable to update Data Entity Group'
-              : 'Data Entity Group already exists',
-        });
-      }
-    );
+    )
+      .unwrap()
+      .then(
+        response => {
+          setState({ ...initialState, isSuccessfulSubmit: true });
+          clearState();
+          history.push(dataEntityDetailsPath(response.id));
+        },
+        (response: Response) => {
+          setState({
+            ...initialState,
+            error:
+              response.statusText || dataEntityGroupDetails
+                ? 'Unable to update Data Entity Group'
+                : 'Data Entity Group already exists',
+          });
+        }
+      );
   };
 
   const handleRemove = React.useCallback(
@@ -183,6 +189,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       <Controller
         name="type"
         control={control}
+        defaultValue={dataEntityGroupDetails.type}
         rules={{ required: true }}
         render={({ field }) => (
           <AppTextField label="Type" select sx={{ mt: 1.5 }}>
