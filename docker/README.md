@@ -26,7 +26,7 @@ This environment consists of:
 
 ### Execution
 
-Run **from the root folder** `docker-compose -f docker/demo.yaml odd-platform-enricher`.
+Run **from the root folder** `docker-compose -f docker/demo.yaml up -d odd-platform-enricher`.
 
 ### Result
 
