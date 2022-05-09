@@ -777,34 +777,6 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefList'
       tags:
         - search
-  /api/dataentities:
-    get:
-      summary: Get dataEntities
-      description: Returns paginated list of dataEntities of a given class/type sorted by priority
-      operationId: getDataEntityList
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/PageParam'
-        - $ref: './components.yaml/#/components/parameters/SizeParam'
-        - name: entity_class_id
-          in: query
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: type_id
-          in: query
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/DataEntityRefList'
-      tags:
-        - dataEntity
   /api/dataentities/my:
     get:
       summary: Get my objects
@@ -1613,7 +1585,6 @@ paths:
           in: query
           schema:
             type: integer
-            format: int64
       responses:
         '200':
           description: OK

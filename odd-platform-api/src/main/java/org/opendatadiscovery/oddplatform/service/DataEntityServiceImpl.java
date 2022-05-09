@@ -165,6 +165,14 @@ public class DataEntityServiceImpl
     }
 
     @Override
+    public Mono<DataEntityList> listByTerm(final long termId, final String query, final Integer entityClassId,
+                                           final int page, final int size) {
+        return Mono
+            .fromCallable(() -> entityRepository.listByTerm(termId, query, entityClassId, page, size))
+            .map(entityMapper::mapPojos);
+    }
+
+    @Override
     @BlockingTransactional
     public Mono<MetadataFieldValueList> createMetadata(final long dataEntityId,
                                                        final List<MetadataObject> metadataList) {
@@ -232,7 +240,7 @@ public class DataEntityServiceImpl
     public Flux<Tag> upsertTags(final long dataEntityId, final TagsFormData formData) {
         final Set<String> names = new HashSet<>(formData.getTagNameList());
 
-        return tagService.deleteRelationsWithDataEntity(dataEntityId, names)
+        return tagService.deleteRelationsWithDataEntityExcept(dataEntityId, names)
             .then(tagService.getOrCreateTagsByName(names))
             .flatMap(tagsToLink -> tagService.createRelationsWithDataEntity(dataEntityId, tagsToLink)
                 .ignoreElements().thenReturn(tagsToLink))

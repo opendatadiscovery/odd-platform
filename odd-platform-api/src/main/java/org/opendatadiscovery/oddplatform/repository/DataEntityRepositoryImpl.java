@@ -112,6 +112,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
@@ -127,6 +128,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
 
 @Repository
@@ -352,6 +354,32 @@ public class DataEntityRepositoryImpl
             .build();
 
         return listByConfig(config);
+    }
+
+    @Override
+    public List<DataEntityDimensionsDto> listByTerm(final long termId, final String query, final Integer entityClassId,
+                                                    final int page, final int size) {
+        final List<Condition> cteConditions = new ArrayList<>();
+        if (entityClassId != null) {
+            cteConditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {entityClassId}));
+        }
+        DataEntitySelectConfig.DataEntitySelectConfigBuilder builder = DataEntitySelectConfig
+            .builder()
+            .cteSelectConditions(cteConditions)
+            .selectConditions(List.of(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId)));
+
+        if (StringUtils.isNotEmpty(query)) {
+            builder = builder.fts(
+                new DataEntitySelectConfig.Fts(query));
+        }
+        final List<DataEntityDimensionsDto> entities = dataEntitySelect(builder.build())
+            .limit(size)
+            .offset((page - 1) * size)
+            .fetchStream()
+            .map(this::mapDimensionRecord)
+            .toList();
+
+        return enrichDataEntityDimensionsDto(entities);
     }
 
     @Override
@@ -992,7 +1020,10 @@ public class DataEntityRepositoryImpl
                 .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
                 .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
                 .leftJoin(OWNER).on(OWNER.ID.eq(OWNERSHIP.OWNER_ID))
-                .leftJoin(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID));
+                .leftJoin(ROLE).on(ROLE.ID.eq(OWNERSHIP.ROLE_ID))
+                .leftJoin(DATA_ENTITY_TO_TERM)
+                .on(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
+                .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull());
         }
 
         final SelectHavingStep<Record> groupByStep = fromStep
@@ -1366,7 +1397,7 @@ public class DataEntityRepositoryImpl
     private Select<Record> cteDataEntitySelect(final DataEntitySelectConfig config) {
         Select<Record> dataEntitySelect;
 
-        final ArrayList<OrderField<?>> orderFields = new ArrayList<>();
+        final List<OrderField<?>> orderFields = new ArrayList<>();
 
         if (config.getFts() != null) {
             final Field<?> rankField = jooqFTSHelper.ftsRankField(

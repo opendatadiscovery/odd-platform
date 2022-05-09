@@ -87,7 +87,7 @@ public class TermServiceImpl implements TermService {
     @ReactiveTransactional
     public Mono<Long> delete(final long id) {
         return termRepository.deleteRelationsWithDataEntities(id)
-            .doOnNext(pojo -> log.info("Deleted relation between term {} and data entity {}",
+            .doOnNext(pojo -> log.debug("Deleted relation between term {} and data entity {}",
                 pojo.getTermId(), pojo.getDataEntityId()))
             .then(termRepository.delete(id).map(TermPojo::getId));
     }

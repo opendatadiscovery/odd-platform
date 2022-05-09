@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermSearchFormData;
+import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.term.TermOwnershipService;
 import org.opendatadiscovery.oddplatform.service.term.TermSearchService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
@@ -25,12 +26,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
 public class TermController implements TermApi {
 
     private final TermService termService;
+    private final DataEntityService dataEntityService;
     private final TermSearchService termSearchService;
     private final TermOwnershipService termOwnershipService;
 
@@ -76,9 +79,12 @@ public class TermController implements TermApi {
     public Mono<ResponseEntity<DataEntityList>> getTermLinkedItems(final Long termId, final Integer page,
                                                                    final Integer size,
                                                                    final String query,
-                                                                   final Long entityClassId,
+                                                                   final Integer entityClassId,
                                                                    final ServerWebExchange exchange) {
-        return TermApi.super.getTermLinkedItems(termId, page, size, query, entityClassId, exchange);
+        return dataEntityService
+            .listByTerm(termId, query, entityClassId, page, size)
+            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
     }
 
     @Override

@@ -26,7 +26,7 @@ public interface TagService {
     Flux<TagToDataEntityPojo> createRelationsWithDataEntity(final long dataEntityId,
                                                             final List<TagPojo> tags);
 
-    Flux<TagToDataEntityPojo> deleteRelationsWithDataEntity(final long dataEntityId,
+    Flux<TagToDataEntityPojo> deleteRelationsWithDataEntityExcept(final long dataEntityId,
                                                             final Set<String> tagsToKeep);
 
     Flux<TagToTermPojo> deleteRelationsWithTerm(final long termId,

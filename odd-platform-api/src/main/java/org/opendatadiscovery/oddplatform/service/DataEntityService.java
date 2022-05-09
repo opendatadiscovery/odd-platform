@@ -38,6 +38,9 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
 
     Flux<DataEntityRef> listPopular(final int page, final int size);
 
+    Mono<DataEntityList> listByTerm(final long termId, final String query, final Integer entityClassId,
+                                    final int page, final int size);
+
     Mono<MetadataFieldValueList> createMetadata(final long dataEntityId, final List<MetadataObject> metadata);
 
     Mono<Void> deleteMetadata(final long dataEntityId, final long metadataFieldId);

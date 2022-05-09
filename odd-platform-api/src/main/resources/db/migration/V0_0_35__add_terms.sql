@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS term
 
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS name_namespace_unique ON term (name, namespace_id) WHERE deleted_at IS NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS term_name_namespace_unique ON term (name, namespace_id) WHERE deleted_at IS NULL;
 
 CREATE TABLE IF NOT EXISTS tag_to_term
 (
