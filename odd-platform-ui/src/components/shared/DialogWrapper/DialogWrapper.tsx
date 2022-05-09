@@ -58,7 +58,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
 
   React.useEffect(() => {
     handleClose();
-  }, [handleCloseSubmittedForm]);
+  }, [handleCloseSubmittedForm, handleClose]);
 
   return (
     <>

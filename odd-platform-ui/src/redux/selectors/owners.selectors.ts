@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { OwnersState } from 'redux/interfaces/state';
 import { Owner } from 'generated-sources';
 import * as actions from 'redux/actions';
@@ -8,37 +8,20 @@ import { getDataEntityId } from './dataentity.selectors';
 
 const ownersState = ({ owners }: RootState): OwnersState => owners;
 
-const getOwnersListFetchingStatus = createLegacyFetchingSelector(
-  actions.fetchOwnersAction
-);
-export const getOwnersCreateStatus = createLegacyFetchingSelector(
+export const getOwnerCreatingStatuses = createStatusesSelector(
   actions.createOwnerAction
 );
-export const getOwnerUpdateStatus = createLegacyFetchingSelector(
+
+export const getOwnerUpdatingStatuses = createStatusesSelector(
   actions.updateOwnerAction
 );
-export const deleteOwnersUpdateStatus = createLegacyFetchingSelector(
+
+export const getOwnerDeletingStatuses = createStatusesSelector(
   actions.deleteOwnerAction
 );
 
-export const getIsOwnerCreating = createSelector(
-  getOwnersCreateStatus,
-  status => status === 'fetching'
-);
-
-export const getIsOwnerUpdating = createSelector(
-  getOwnerUpdateStatus,
-  status => status === 'fetching'
-);
-
-export const getIsOwnerDeleting = createSelector(
-  deleteOwnersUpdateStatus,
-  status => status === 'fetching'
-);
-
-export const getIsOwnersListFetching = createSelector(
-  getOwnersListFetchingStatus,
-  status => status === 'fetching'
+export const getOwnerListFetchingStatuses = createStatusesSelector(
+  actions.fetchOwnersAction
 );
 
 export const getOwnersList = createSelector(ownersState, owners =>
@@ -58,9 +41,8 @@ const getOwnerToExclude = (
 
 export const getOwnerSuggestionsList = createSelector(
   ownersState,
-  getOwnersListFetchingStatus,
   getOwnerToExclude,
-  (owners, fetchingStatus, ownerIdToExclude) =>
+  (owners, ownerIdToExclude) =>
     owners.allIds.reduce((acc: Owner[], ownerId) => {
       if (ownerId !== ownerIdToExclude) acc.push(owners.byId[ownerId]);
       return [...acc];

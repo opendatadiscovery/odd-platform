@@ -1,9 +1,11 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { Typography } from '@mui/material';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
   DataEntityClassNameEnum,
-  DataEntityGroupFormData,
+  DataEntityDetails,
+  DataEntityGroupFormData as GeneratedDataEntityGroupFormData,
+  DataEntityType,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -22,11 +24,18 @@ import {
   createDataEntityGroup,
   updateDataEntityGroup,
 } from 'redux/thunks';
+import EntityItem from 'components/DataEntityDetails/DataEntityGroupForm/EntityItem/EntityItem';
 import EntitiesSuggestionsAutocompleteContainer from './EntitiesSuggestionsAutoocomplete/EntitiesSuggestionsAutocompleteContainer';
 import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
+import * as S from './DataEntityGroupFormStyles';
 
 interface DataEntityGroupFormProps {
   btnCreateEl: JSX.Element;
+}
+
+interface DataEntityGroupFormData
+  extends Omit<GeneratedDataEntityGroupFormData, 'type'> {
+  type?: DataEntityType;
 }
 
 const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
@@ -35,7 +44,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
 
-  const dataEntityGroupDetails = useAppSelector(state =>
+  const dataEntityGroupDetails: DataEntityDetails = useAppSelector(state =>
     getDataEntityDetails(state, dataEntityId)
   );
 
@@ -53,21 +62,31 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
     getDataEntityGroupUpdatingStatuses
   );
 
-  const { handleSubmit, control, reset, formState } =
+  const getDefaultValues = React.useCallback(
+    (): DataEntityGroupFormData => ({
+      name:
+        dataEntityGroupDetails?.internalName ||
+        dataEntityGroupDetails?.externalName ||
+        '',
+      namespaceName:
+        dataEntityGroupDetails?.dataSource?.namespace?.name || '',
+      type: dataEntityGroupDetails?.type,
+      entities: dataEntityGroupDetails?.entities || [],
+    }),
+    [dataEntityGroupDetails]
+  );
+
+  const { handleSubmit, control, reset, formState, setValue } =
     useForm<DataEntityGroupFormData>({
       mode: 'onChange',
       reValidateMode: 'onChange',
-      defaultValues: {
-        name:
-          dataEntityGroupDetails?.internalName ||
-          dataEntityGroupDetails?.externalName ||
-          '',
-        namespaceName:
-          `${dataEntityGroupDetails?.dataSource?.namespace}` || '',
-        type: dataEntityGroupDetails?.type,
-        entities: dataEntityGroupDetails?.entities,
-      },
+      defaultValues: getDefaultValues(),
     });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'entities',
+  });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
@@ -80,15 +99,21 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
     reset();
   }, []);
 
-  const handleSubmitForm = async (data: DataEntityGroupFormData) => {
+  const handleSubmitForm = (data: DataEntityGroupFormData) => {
     (dataEntityGroupDetails
       ? dispatch(
           updateDataEntityGroup({
             dataEntityGroupId: dataEntityGroupDetails.id,
-            dataEntityGroupFormData: data,
+            dataEntityGroupFormData:
+              data as GeneratedDataEntityGroupFormData,
           })
         )
-      : dispatch(createDataEntityGroup({ dataEntityGroupFormData: data }))
+      : dispatch(
+          createDataEntityGroup({
+            dataEntityGroupFormData:
+              data as GeneratedDataEntityGroupFormData,
+          })
+        )
     ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
@@ -106,6 +131,11 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
     );
   };
 
+  const handleRemove = React.useCallback(
+    (index: number) => () => remove(index),
+    []
+  );
+
   const formTitle = (
     <Typography variant="h4" component="span">
       {dataEntityGroupDetails ? 'Edit' : 'Add'} Group
@@ -114,7 +144,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
 
   const formContent = () => (
     <form
-      id="dataEntityGroupDetails-create-form"
+      id="dataEntityGroup-create-form"
       onSubmit={handleSubmit(handleSubmitForm)}
     >
       <Controller
@@ -130,6 +160,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
           <AppTextField
             {...field}
             placeholder="Data Entity Group Name"
+            label="Name"
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,
@@ -142,7 +173,9 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       <Controller
         control={control}
         name="namespaceName"
-        defaultValue={dataEntityGroupDetails?.dataSource?.namespace?.name}
+        defaultValue={
+          dataEntityGroupDetails?.dataSource?.namespace?.name || ''
+        }
         render={({ field }) => (
           <NamespaceAutocompleteContainer controllerProps={field} />
         )}
@@ -150,34 +183,42 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       <Controller
         name="type"
         control={control}
-        defaultValue={dataEntityGroupDetails?.type}
         rules={{ required: true }}
         render={({ field }) => (
-          <AppTextField {...field} label="Type" select>
+          <AppTextField label="Type" select sx={{ mt: 1.5 }}>
             {types?.map(type => (
-              <AppMenuItem key={type.id} value={type.name}>
+              <AppMenuItem
+                {...field}
+                key={type.id}
+                value={type.name}
+                onClick={() => setValue('type', type)}
+              >
                 {type.name}
               </AppMenuItem>
             ))}
           </AppTextField>
         )}
       />
-      <Grid container>
-        <Controller
-          name="entities"
-          control={control}
-          defaultValue={dataEntityGroupDetails?.entities}
-          // rules={{ required: true }}
-          render={({ field }) => (
-            <EntitiesSuggestionsAutocompleteContainer
-              controllerProps={field}
-            />
-          )}
-        />
-        <AppButton sx={{ mt: 2 }} size="medium" color="primaryLight">
-          Add
-        </AppButton>
-      </Grid>
+      <Controller
+        control={control}
+        name="entities"
+        rules={{ required: true }}
+        render={({ field }) => (
+          <EntitiesSuggestionsAutocompleteContainer
+            controllerProps={field}
+            append={append}
+          />
+        )}
+      />
+      <S.EntityItemsContainer sx={{ mt: 1.25 }}>
+        {fields?.map((entity, index) => (
+          <EntityItem
+            key={entity.id}
+            entity={entity}
+            onRemoveClick={handleRemove(index)}
+          />
+        ))}
+      </S.EntityItemsContainer>
     </form>
   );
 
@@ -185,7 +226,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
     <AppButton
       size="large"
       type="submit"
-      form="owner-create-form"
+      form="dataEntityGroup-create-form"
       color="primary"
       fullWidth
       disabled={!formState.isValid}

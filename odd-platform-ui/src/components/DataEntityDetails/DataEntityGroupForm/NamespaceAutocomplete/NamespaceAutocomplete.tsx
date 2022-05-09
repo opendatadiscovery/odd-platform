@@ -6,7 +6,8 @@ import {
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  DataEntityGroupFormData,
+  DataEntityGroupFormData as GeneratedDataEntityGroupFormData,
+  DataEntityType,
   Namespace,
   NamespaceApiGetNamespaceListRequest,
   NamespaceList,
@@ -18,6 +19,11 @@ import { ControllerRenderProps } from 'react-hook-form';
 
 type FilterOption = Omit<Namespace, 'id' | 'namespace'> &
   Partial<Namespace>;
+
+interface DataEntityGroupFormData
+  extends Omit<GeneratedDataEntityGroupFormData, 'type'> {
+  type?: DataEntityType;
+}
 
 interface NamespaceAutocompleteProps {
   searchNamespace: (
@@ -130,7 +136,6 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
 
   return (
     <Autocomplete
-      // eslint-disable-next-line react/jsx-props-no-spreading
       {...controllerProps}
       fullWidth
       id="namespace-name-search"
@@ -151,7 +156,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
       handleHomeEndKeys
       selectOnFocus
       clearIcon={<ClearIcon />}
-      sx={{ mt: 1.25 }}
+      sx={{ mt: 1.5 }}
       renderInput={params => (
         <AppTextField
           {...params}

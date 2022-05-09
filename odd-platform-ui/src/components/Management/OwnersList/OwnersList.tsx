@@ -13,28 +13,37 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnersList } from 'redux/thunks';
+import {
+  getOwnerCreatingStatuses,
+  getOwnerDeletingStatuses,
+  getOwnerListFetchingStatuses,
+} from 'redux/selectors';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
-import OwnerFormContainer from './OwnerForm/OwnerFormContainer';
+import OwnerForm from './OwnerForm/OwnerForm';
 import * as S from './OwnersListStyles';
 
 interface OwnersListProps {
   ownersList: Owner[];
-  isFetching: boolean;
-  isDeleting: boolean;
-  isCreating: boolean;
   pageInfo?: CurrentPageInfo;
 }
 
 const OwnersListView: React.FC<OwnersListProps> = ({
   ownersList,
-  isFetching,
-  isDeleting,
-  isCreating,
   pageInfo,
 }) => {
   const dispatch = useAppDispatch();
+
+  const { isLoading: isOwnerListFetching } = useAppSelector(
+    getOwnerListFetchingStatuses
+  );
+  const { isLoading: isOwnerCreating } = useAppSelector(
+    getOwnerCreatingStatuses
+  );
+  const { isLoading: isOwnerDeleting } = useAppSelector(
+    getOwnerDeletingStatuses
+  );
 
   const pageSize = 100;
   const [searchText, setSearchText] = React.useState<string>('');
@@ -45,7 +54,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
   React.useEffect(() => {
     if (!searchText)
       dispatch(fetchOwnersList({ page: 1, size: pageSize }));
-  }, [fetchOwnersList, isCreating, isDeleting, searchText]);
+  }, [fetchOwnersList, isOwnerCreating, isOwnerDeleting, searchText]);
 
   React.useEffect(() => {
     if (!searchText) setTotalOwners(pageInfo?.total);
@@ -114,7 +123,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <OwnerFormContainer
+        <OwnerForm
           btnCreateEl={
             <AppButton
               color="primaryLight"
@@ -141,7 +150,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
             dataLength={ownersList.length}
             scrollThreshold="200px"
             loader={
-              isFetching && (
+              isOwnerListFetching && (
                 <SkeletonWrapper
                   length={5}
                   renderContent={({ randomSkeletonPercentWidth, key }) => (
@@ -160,7 +169,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isFetching && !ownersList.length ? (
+      {!isOwnerListFetching && !ownersList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Grid>

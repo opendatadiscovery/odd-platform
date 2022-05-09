@@ -6,21 +6,20 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
+import { getOwnerCreatingStatuses } from 'redux/selectors';
 
 interface OwnerFormProps {
   btnCreateEl: JSX.Element;
   owner?: Owner;
-  isLoading: boolean;
 }
 
-const OwnerForm: React.FC<OwnerFormProps> = ({
-  btnCreateEl,
-  owner,
-  isLoading,
-}) => {
+const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
   const dispatch = useAppDispatch();
+  const { isLoading: isOwnerCreating } = useAppSelector(
+    getOwnerCreatingStatuses
+  );
 
   const { handleSubmit, control, reset, formState } =
     useForm<OwnerFormData>({
@@ -123,7 +122,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isOwnerCreating}
       errorText={error}
       clearState={clearState}
     />
