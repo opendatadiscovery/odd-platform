@@ -189,7 +189,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       <Controller
         name="type"
         control={control}
-        defaultValue={dataEntityGroupDetails.type}
+        defaultValue={dataEntityGroupDetails?.type}
         rules={{ required: true }}
         render={({ field }) => (
           <AppTextField label="Type" select sx={{ mt: 1.5 }}>
