@@ -13,6 +13,7 @@ import {
 import {
   TermSearchResultsContainer,
   TermSearchResultsItemLink,
+  ActionsContainer,
 } from './TermSearchResultItemStyles';
 
 interface TermsResultItemProps {
@@ -27,6 +28,7 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
   const termDetailsOverviewLink = termDetailsOverviewPath(
     termSearchResult.id
   );
+
   const handleDelete = React.useCallback(
     () => deleteTerm({ termId: termSearchResult.id }),
     [termSearchResult, deleteTerm]
@@ -86,26 +88,28 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
           </Typography>
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colxs">
-          <ConfirmationDialog
-            actionTitle="Are you sure you want to delete this term?"
-            actionName="Delete Term"
-            actionText={
-              <>
-                &quot;{termSearchResult.name}&quot; will be deleted
-                permanently.
-              </>
-            }
-            onConfirm={handleDelete}
-            actionBtn={
-              <AppButton
-                size="medium"
-                color="primaryLight"
-                startIcon={<DeleteIcon />}
-              >
-                Delete
-              </AppButton>
-            }
-          />
+          <ActionsContainer>
+            <ConfirmationDialog
+              actionTitle="Are you sure you want to delete this term?"
+              actionName="Delete Term"
+              actionText={
+                <>
+                  &quot;{termSearchResult.name}&quot; will be deleted
+                  permanently.
+                </>
+              }
+              onConfirm={handleDelete}
+              actionBtn={
+                <AppButton
+                  size="medium"
+                  color="primaryLight"
+                  startIcon={<DeleteIcon />}
+                >
+                  Delete
+                </AppButton>
+              }
+            />
+          </ActionsContainer>
         </TermSearchResultsColContainer>
       </TermSearchResultsContainer>
     </TermSearchResultsItemLink>
