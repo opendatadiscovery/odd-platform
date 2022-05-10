@@ -1,5 +1,5 @@
 default_pulling_interval: 1
-token: C7F6SrCYROw6XsHSSSjYKaJgheRza8lgWWOQuhPQ
+token: "C7F6SrCYROw6XsHSSSjYKaJgheRza8lgWWOQuhPQ"
 plugins:
   - type: postgresql
     name: AEG-test
