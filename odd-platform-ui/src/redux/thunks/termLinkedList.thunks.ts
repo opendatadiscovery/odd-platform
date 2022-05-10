@@ -19,7 +19,7 @@ export const fetchTermGroupLinkedList = createThunk<
 >(
   (params: TermApiGetTermLinkedItemsRequest) =>
     apiClient.getTermLinkedItems(params),
-  actions.fetchTermGroupLinkedListAction,
+  actions.fetchTermLinkedListAction,
   (
     response: DataEntityList,
     request: TermApiGetTermLinkedItemsRequest

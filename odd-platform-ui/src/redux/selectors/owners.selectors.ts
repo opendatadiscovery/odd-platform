@@ -2,9 +2,9 @@ import { createSelector } from 'reselect';
 import { RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 import { getDataEntityId } from 'redux/selectors/dataentity.selectors';
-import { getTermId } from 'redux/selectors/termDetails.selectors';
 import { OwnersState } from 'redux/interfaces/state';
 import { Owner } from 'generated-sources';
+import { getTermId } from 'redux/selectors/terms.selectors';
 
 const ownersState = ({ owners }: RootState): OwnersState => owners;
 

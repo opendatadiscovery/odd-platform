@@ -74,12 +74,13 @@ const reducer = (state = initialState, action: Action): OwnersState => {
           ...state.ownershipDataEntity,
           [action.payload.entityId]: {
             byId: {
-              ...state.ownershipDataEntity[action.payload.entityId].byId,
+              ...state.ownershipDataEntity[action.payload.entityId]?.byId,
               [action.payload.value.id]: action.payload.value,
             },
             allIds: [
               action.payload.value.id,
-              ...state.ownershipDataEntity[action.payload.entityId].allIds,
+              ...(state.ownershipDataEntity[action.payload.entityId]
+                ?.allIds || []),
             ],
           },
         },
@@ -140,12 +141,13 @@ const reducer = (state = initialState, action: Action): OwnersState => {
           ...state.ownershipTermDetails,
           [action.payload.termId]: {
             byId: {
-              ...state.ownershipTermDetails[action.payload.termId].byId,
+              ...state.ownershipTermDetails[action.payload.termId]?.byId,
               [action.payload.value.id]: action.payload.value,
             },
             allIds: [
               action.payload.value.id,
-              ...state.ownershipTermDetails[action.payload.termId].allIds,
+              ...(state.ownershipTermDetails[action.payload.termId]
+                ?.allIds || []),
             ],
           },
         },

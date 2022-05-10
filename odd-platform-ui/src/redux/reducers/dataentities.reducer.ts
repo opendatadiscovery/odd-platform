@@ -4,6 +4,7 @@ import keyBy from 'lodash/keyBy';
 import omit from 'lodash/omit';
 import { DataEntityDetails } from 'generated-sources';
 import * as actions from 'redux/actions';
+import filter from 'lodash/filter';
 
 export const initialState: DataEntitiesState = {
   classesAndTypesDict: {
@@ -93,6 +94,34 @@ const reducer = (
           },
         },
       };
+    case getType(actions.createDataEntityTermAction.success):
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.payload.entityId]: {
+            ...state.byId[action.payload.entityId],
+            terms: [
+              ...(state.byId[action.payload.entityId].terms || []),
+              action.payload.value,
+            ],
+          },
+        },
+      };
+    case getType(actions.deleteDataEntityTermAction.success):
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.payload.entityId]: {
+            ...state.byId[action.payload.entityId],
+            terms: filter(
+              state.byId[action.payload.entityId].terms,
+              term => term.id !== action.payload.value
+            ),
+          },
+        },
+      };
     case getType(actions.updateDataEntityDescriptionAction.success):
       return {
         ...state,
@@ -136,6 +165,19 @@ const reducer = (
         popular: action.payload,
       };
     case getType(actions.fetchDataEntityGroupLinkedListAction.success):
+      return {
+        ...state,
+        byId: action.payload.value.items.reduce(
+          (memo: DataEntitiesState['byId'], linkedItem) => ({
+            ...memo,
+            [linkedItem.id]: {
+              ...linkedItem,
+            },
+          }),
+          state.byId
+        ),
+      };
+    case getType(actions.fetchTermLinkedListAction.success):
       return {
         ...state,
         byId: action.payload.value.items.reduce(

@@ -66,26 +66,6 @@ export interface TagsState {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface TermsState {
-  byId: { [termId: number]: TermRef };
-  allIds: Term['id'][];
-  pageInfo?: CurrentPageInfo;
-  termsDataEntity: {
-    [dataEntityId: string]: {
-      byId: { [termId: string]: TermRef };
-      allIds: number[];
-    };
-  };
-}
-
-export interface TermDetailsState {
-  byId: {
-    [termId: string]: TermDetails;
-  };
-  allIds: TermDetails['id'][];
-  pageInfo?: CurrentPageInfo;
-}
-
 export interface LabelsState {
   byId: { [labelId: number]: Label };
   allIds: Label['id'][];
@@ -101,13 +81,6 @@ export interface NamespacesState {
 export interface DataEntityGroupLinkedListState {
   linkedItemsIdsByDataEntityGroupId: {
     [dataEntityGroupId: string]: number[];
-  };
-  pageInfo?: CurrentPageInfo;
-}
-
-export interface TermGroupLinkedListState {
-  linkedItemsIdsByTermGroupId: {
-    [termGroupId: string]: number[];
   };
   pageInfo?: CurrentPageInfo;
 }
@@ -218,19 +191,6 @@ export interface SearchState {
   facetState: SearchFacetsByName;
 }
 
-export interface TermSearchState {
-  termSearchId: string;
-  query: string;
-  facets: TermSearchFacetOptionsByName;
-  isFacetsStateSynced: boolean;
-  results: {
-    items: Term[];
-    pageInfo: CurrentPageInfo;
-  };
-  suggestions: TermRefList;
-  facetState: TermSearchFacetsByName;
-}
-
 export interface AlertsState {
   totals: AlertTotals;
   pageInfo: CurrentPageInfo;
@@ -251,6 +211,32 @@ export interface AppInfoState {
   appInfo?: AppInfo;
 }
 
+export interface TermsState {
+  byId: { [termId: string]: TermDetails };
+  allIds: Term['id'][];
+  pageInfo?: CurrentPageInfo;
+}
+
+export interface TermSearchState {
+  termSearchId: string;
+  query: string;
+  facets: TermSearchFacetOptionsByName;
+  isFacetsStateSynced: boolean;
+  results: {
+    items: Term[];
+    pageInfo: CurrentPageInfo;
+  };
+  suggestions: TermRefList;
+  facetState: TermSearchFacetsByName;
+}
+
+export interface TermGroupLinkedListState {
+  linkedItemsIdsByTermId: {
+    [termId: string]: number[];
+  };
+  pageInfo?: CurrentPageInfo;
+}
+
 export type RootState = {
   appInfo: AppInfoState;
   dataSources: DataSourcesState;
@@ -268,11 +254,10 @@ export type RootState = {
   dataQualityTest: DataQualityTestState;
   alerts: AlertsState;
   dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
-  termGroupLinkedList: TermGroupLinkedListState;
+  termLinkedList: TermGroupLinkedListState;
   collectors: CollectorsState;
   terms: TermsState;
   termSearch: TermSearchState;
-  termDetails: TermDetailsState;
 };
 
 export type Action = ActionType<typeof actions>;

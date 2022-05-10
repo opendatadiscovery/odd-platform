@@ -1,42 +1,56 @@
 import React from 'react';
-import { Theme } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import CloseIcon from 'components/shared/Icons/CloseIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { SxProps } from '@mui/system';
-import { TermItemContainer } from './TermItemStyles';
+import {
+  DataEntityApiDeleteTermFromDataEntityRequest,
+  TermRef,
+} from 'generated-sources';
+import { termDetailsOverviewPath } from 'lib/paths';
+import { ActionsContainer, TermItemContainer } from './TermItemStyles';
 
 interface TermItemProps {
-  label?: string;
-  onRemoveClick?: () => void;
-  onClick?: () => void;
-  sx?: SxProps<Theme>;
+  dataEntityId: number;
+  term: TermRef;
+  deleteDataEntityTerm: (
+    params: DataEntityApiDeleteTermFromDataEntityRequest
+  ) => Promise<void>;
 }
 
 const TermItem: React.FC<TermItemProps> = ({
-  label,
-  onRemoveClick = () => {},
-  onClick,
-  sx,
+  dataEntityId,
+  term,
+  deleteDataEntityTerm,
 }) => {
-  const [isHover, setIsHover] = React.useState<boolean>(false);
+  const termDetailsLink = termDetailsOverviewPath(term.id);
+
   return (
-    <TermItemContainer
-      variant="body1"
-      onClick={onClick}
-      sx={sx}
-      onMouseEnter={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
-    >
-      {label}
-      {isHover && (
-        <AppIconButton
-          size="small"
-          color="unfilled"
-          icon={<CloseIcon />}
-          onClick={onRemoveClick}
-          sx={{ ml: 0.25 }}
-        />
-      )}
+    <TermItemContainer to={termDetailsLink}>
+      <Grid
+        sx={{ my: 0.5 }}
+        container
+        flexWrap="nowrap"
+        justifyContent="space-between"
+      >
+        <Typography variant="body1" color="texts.action">
+          {term.name}
+        </Typography>
+        <ActionsContainer>
+          <AppIconButton
+            size="small"
+            color="unfilled"
+            icon={<CloseIcon />}
+            onClick={e => {
+              e.preventDefault();
+              return deleteDataEntityTerm({
+                dataEntityId,
+                termId: term.id,
+              });
+            }}
+            sx={{ ml: 0.25 }}
+          />
+        </ActionsContainer>
+      </Grid>
     </TermItemContainer>
   );
 };

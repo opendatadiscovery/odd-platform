@@ -1,10 +1,11 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { TermRef, TermDetails, TermRefList } from 'generated-sources';
+import { TermRef, TermDetails, TermRefList, Tag } from 'generated-sources';
 import { DeleteTerm } from 'redux/interfaces/terms';
 import {
   ErrorState,
   PaginatedResponse,
   PartialEntityUpdateParams,
+  PartialTermDetailsUpdateParams,
 } from '../interfaces';
 
 export const updateTermAction = createAsyncAction(
@@ -30,6 +31,18 @@ export const fetchTermsAction = createAsyncAction(
   'GET_TERM_LIST__SUCCESS',
   'GET_TERM_LIST__FAILURE'
 )<undefined, PaginatedResponse<TermRefList>, undefined>();
+
+export const fetchTermDetailsAction = createAsyncAction(
+  'GET_TERM_DETAILS__REQUEST',
+  'GET_TERM_DETAILS__SUCCESS',
+  'GET_TERM_DETAILS__FAILURE'
+)<undefined, TermDetails, ErrorState>();
+
+export const updateTermDetailsTagsAction = createAsyncAction(
+  'PUT_TERM_DETAILS_TAGS__REQUEST',
+  'PUT_TERM_DETAILS_TAGS__SUCCESS',
+  'PUT_TERM_DETAILS_TAGS__FAILURE'
+)<undefined, PartialTermDetailsUpdateParams<Tag[]>, ErrorState>();
 
 export const createDataEntityTermAction = createAsyncAction(
   'POST_DATA_ENTITY_TERM__REQUEST',

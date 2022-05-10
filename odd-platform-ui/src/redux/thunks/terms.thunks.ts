@@ -11,12 +11,16 @@ import {
   DataEntityApiDeleteTermFromDataEntityRequest,
   DataEntityApi,
   DataEntityApiAddTermToDataEntityRequest,
+  TermApiGetTermDetailsRequest,
+  TermApiCreateTermTagsRelationsRequest,
+  Tag,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import {
   PaginatedResponse,
   DeleteTerm,
   PartialEntityUpdateParams,
+  PartialTermDetailsUpdateParams,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
@@ -70,6 +74,31 @@ export const fetchTermsList = createThunk<
       ...response.pageInfo,
       page: request.page,
     },
+  })
+);
+
+export const fetchTermDetails = createThunk<
+  TermApiGetTermDetailsRequest,
+  TermDetails,
+  TermDetails
+>(
+  (params: TermApiGetTermDetailsRequest) =>
+    apiClient.getTermDetails(params),
+  actions.fetchTermDetailsAction,
+  (response: TermDetails) => response
+);
+
+export const updateTermDetailsTags = createThunk<
+  TermApiCreateTermTagsRelationsRequest,
+  Tag[],
+  PartialTermDetailsUpdateParams<Tag[]>
+>(
+  (params: TermApiCreateTermTagsRelationsRequest) =>
+    apiClient.createTermTagsRelations(params),
+  actions.updateTermDetailsTagsAction,
+  (response: Tag[], request: TermApiCreateTermTagsRelationsRequest) => ({
+    termId: request.termId,
+    value: response,
   })
 );
 

@@ -1,16 +1,18 @@
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
-export const TermItemContainer = styled(Typography)(({ theme }) => ({
+export const ActionsContainer = styled(Grid)(() => ({
+  opacity: 0,
+}));
+
+export const TermItemContainer = styled(Link)(({ theme }) => ({
   display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  alignItems: 'center',
   borderRadius: '4px',
   padding: theme.spacing(0.25, 1),
-  color: theme.palette.texts.action,
   '&:hover, &:active': {
     cursor: 'pointer',
     background: theme.palette.backgrounds.primary,
+    [`${ActionsContainer}`]: { opacity: 1 },
   },
 }));

@@ -4,7 +4,7 @@ import { Action } from 'redux/interfaces';
 import { TermGroupLinkedListState } from 'redux/interfaces/state';
 
 export const initialState: TermGroupLinkedListState = {
-  linkedItemsIdsByTermGroupId: {},
+  linkedItemsIdsByTermId: {},
   pageInfo: {
     total: 0,
     page: 0,
@@ -17,17 +17,17 @@ const reducer = (
   action: Action
 ): TermGroupLinkedListState => {
   switch (action.type) {
-    case getType(actions.fetchDataEntityGroupLinkedListAction.success):
+    case getType(actions.fetchTermLinkedListAction.success):
       return {
         ...state,
-        linkedItemsIdsByTermGroupId: action.payload.value.items.reduce(
+        linkedItemsIdsByTermId: action.payload.value.items.reduce(
           (
-            memo: TermGroupLinkedListState['linkedItemsIdsByTermGroupId'],
+            memo: TermGroupLinkedListState['linkedItemsIdsByTermId'],
             linkedItem
           ) => ({
             ...memo,
-            [action.payload.entityId]: [
-              ...(memo?.[action.payload.entityId] || []),
+            [action.payload.termId]: [
+              ...(memo?.[action.payload.termId] || []),
               linkedItem.id,
             ],
           }),

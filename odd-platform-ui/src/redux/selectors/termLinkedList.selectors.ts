@@ -7,15 +7,15 @@ import {
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 
 const termGroupLinkedListState = ({
-  termGroupLinkedList,
-}: RootState): TermGroupLinkedListState => termGroupLinkedList;
+  termLinkedList,
+}: RootState): TermGroupLinkedListState => termLinkedList;
 
 const dataEntitiesState = ({
   dataEntities,
 }: RootState): DataEntitiesState => dataEntities;
 
 const getTGLinkedListFetchingStatus = createFetchingSelector(
-  'GET_TERM_GROUP_LINKED_LIST'
+  'GET_TERM_LINKED_LIST'
 );
 
 export const getIsTGLinkedListFetching = createSelector(
@@ -23,20 +23,19 @@ export const getIsTGLinkedListFetching = createSelector(
   status => status === 'fetching'
 );
 
-export const getTermGroupId = (_: RootState, termId: number | string) =>
-  termId;
+export const getTermId = (_: RootState, termId: number | string) => termId;
 
 export const getTermGroupLinkedList = createSelector(
   termGroupLinkedListState,
   dataEntitiesState,
-  getTermGroupId,
-  (linkedLists, dataEntities, termGroupId) =>
-    linkedLists.linkedItemsIdsByTermGroupId?.[termGroupId]?.map(
+  getTermId,
+  (linkedLists, dataEntities, termId) =>
+    linkedLists.linkedItemsIdsByTermId?.[termId]?.map(
       id => dataEntities.byId[id]
-    )
+    ) || []
 );
 
-export const getTermGroupLinkedListPage = createSelector(
+export const getTermLinkedListPageInfo = createSelector(
   termGroupLinkedListState,
   linkedList => linkedList.pageInfo
 );

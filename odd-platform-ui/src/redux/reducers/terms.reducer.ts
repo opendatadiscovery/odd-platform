@@ -1,7 +1,7 @@
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
-import { Action, TermsState, PaginatedResponse } from 'redux/interfaces';
-import { TermRefList } from 'generated-sources';
+import { Action, TermsState } from 'redux/interfaces';
+import omit from 'lodash/omit';
 
 export const initialState: TermsState = {
   byId: {},
@@ -11,35 +11,10 @@ export const initialState: TermsState = {
     page: 0,
     hasNext: true,
   },
-  termsDataEntity: {},
 };
-const updateTermList = (
-  state: TermsState,
-  payload: PaginatedResponse<TermRefList>
-) =>
-  payload.items.reduce(
-    (memo: TermsState, term) => ({
-      ...memo,
-      byId: {
-        ...memo.byId,
-        [term.id]: {
-          ...memo.byId[term.id],
-          ...term,
-        },
-      },
-      allIds: [...memo.allIds, term.id],
-    }),
-    {
-      ...state,
-      allIds: payload.pageInfo?.page > 1 ? [...state.allIds] : [],
-      pageInfo: payload.pageInfo,
-    }
-  );
 
 const reducer = (state = initialState, action: Action): TermsState => {
   switch (action.type) {
-    case getType(actions.fetchTermsAction.success):
-      return updateTermList(state, action.payload);
     case getType(actions.createTermAction.success):
       return {
         ...state,
@@ -52,7 +27,6 @@ const reducer = (state = initialState, action: Action): TermsState => {
         },
         allIds: [action.payload.id, ...state.allIds],
       };
-    case getType(actions.updateTermAction.success):
     case getType(actions.deleteTermAction.success):
       return {
         ...state,
@@ -60,23 +34,34 @@ const reducer = (state = initialState, action: Action): TermsState => {
           termId => termId !== action.payload.id
         ),
       };
-    case getType(actions.fetchDataEntityAction.success):
+    case getType(actions.fetchTermDetailsAction.success):
       return {
         ...state,
-        termsDataEntity: {
-          ...state.termsDataEntity,
-          ...(action.payload.terms && {
-            [action.payload.id]: {
-              byId: action.payload.terms.reduce(
-                (memo, term) => ({
-                  ...memo,
-                  [term.id]: term,
-                }),
-                {}
-              ),
-              allIds: action.payload.terms.map(term => term.id),
-            },
-          }),
+        byId: {
+          ...state.byId,
+          [action.payload.id]: {
+            ...state.byId[action.payload.id],
+            ...omit(action.payload, ['ownership']), // Ownership is being stored in OwnersState
+          },
+        },
+      };
+    case getType(actions.updateTermAction.success):
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.payload.id]: action.payload,
+        },
+      };
+    case getType(actions.updateTermDetailsTagsAction.success):
+      return {
+        ...state,
+        byId: {
+          ...state.byId,
+          [action.payload.termId]: {
+            ...state.byId[action.payload.termId],
+            tags: action.payload.value,
+          },
         },
       };
     default:

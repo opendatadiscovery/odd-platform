@@ -13,7 +13,7 @@ const DataEntityDetailsContainer = React.lazy(
   () => import('./DataEntityDetails/DataEntityDetailsContainer')
 );
 const TermDetailsContainer = React.lazy(
-  () => import('./TermDetails/TermDetailsContainer')
+  () => import('./Terms/TermDetails/TermDetailsContainer')
 );
 const OverviewContainer = React.lazy(
   () => import('./Overview/OverviewContainer')
@@ -22,7 +22,7 @@ const SearchContainer = React.lazy(
   () => import('./Search/SearchContainer')
 );
 const TermSearchContainer = React.lazy(
-  () => import('./TermSearch/TermSearchContainer')
+  () => import('./Terms/TermSearch/TermSearchContainer')
 );
 const AlertsContainer = React.lazy(
   () => import('./Alerts/AlertsContainer')

@@ -1,22 +1,27 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
-import { TermRef } from 'generated-sources';
+import {
+  DataEntityApiDeleteTermFromDataEntityRequest,
+  TermRef,
+} from 'generated-sources';
 import TermItem from 'components/shared/TermItem/TermItem';
-import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
+import AddTermsFormContainer from './AddTermsForm/AddTermsFormContainer';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
-// import TermsAddFormContainer from './TermsAddForm/TermsAddFormContainer';
-import TermsFormContainer from '../../../TermSearch/TermForm/TermsFormContainer';
 
 interface OverviewTermsProps {
-  // dataEntityId: number;
+  dataEntityId: number;
   terms?: TermRef[];
+  deleteDataEntityTerm: (
+    params: DataEntityApiDeleteTermFromDataEntityRequest
+  ) => Promise<void>;
 }
 
 const OverviewTerms: React.FC<OverviewTermsProps> = ({
   terms,
-  // dataEntityId,
+  dataEntityId,
+  deleteDataEntityTerm,
 }) => {
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
@@ -24,17 +29,16 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
     <div>
       <TermsCaptionContainer>
         <Typography variant="h4">Dictionary terms</Typography>
-        <TermsFormContainer
-          // <TermsAddFormContainer
-          // dataEntityId={dataEntityId}
+        <AddTermsFormContainer
+          dataEntityId={dataEntityId}
           btnCreateEl={
             <AppButton
               size="medium"
               color="primaryLight"
               onClick={() => {}}
-              startIcon={terms?.length ? <EditIcon /> : <AddIcon />}
+              startIcon={<AddIcon />}
             >
-              {terms?.length ? 'Edit' : 'Add'} terms
+              Add terms
             </AppButton>
           }
         />
@@ -45,7 +49,12 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
             .slice(0, visibleLimit)
             .sort()
             .map(term => (
-              <TermItem key={term.id} label={term.name} sx={{ m: 0.5 }} />
+              <TermItem
+                key={term.id}
+                term={term}
+                dataEntityId={dataEntityId}
+                deleteDataEntityTerm={deleteDataEntityTerm}
+              />
             ))}
           {terms?.length > visibleLimit ? (
             <>
@@ -57,8 +66,9 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
                       .map(term => (
                         <TermItem
                           key={term.id}
-                          label={term.name}
-                          sx={{ m: 0.5 }}
+                          term={term}
+                          dataEntityId={dataEntityId}
+                          deleteDataEntityTerm={deleteDataEntityTerm}
                         />
                       ))
                   : null}
@@ -84,9 +94,8 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
           wrap="nowrap"
         >
           <Typography variant="subtitle2">Not created.</Typography>
-          {/* <TermsAddFormContainer */}
-          <TermsFormContainer
-            // dataEntityId={dataEntityId}
+          <AddTermsFormContainer
+            dataEntityId={dataEntityId}
             btnCreateEl={
               <AppButton size="small" color="tertiary" onClick={() => {}}>
                 Add terms
