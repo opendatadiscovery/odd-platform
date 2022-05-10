@@ -1,27 +1,36 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCRUDRepository;
 import org.opendatadiscovery.oddplatform.utils.Page;
+import reactor.core.publisher.Mono;
 
-public interface AlertRepository {
-    Page<AlertDto> listAll(final int page, final int size);
+// TODO: 10.05.2022 matmalik javadoc
+public interface AlertRepository extends ReactiveCRUDRepository<AlertPojo> {
+    Mono<Page<AlertDto>> listAllWithStatusOpen(final int page, final int size);
 
-    Page<AlertDto> listByOwner(final int page, final int size, final long ownerId);
+    Mono<Page<AlertDto>> listByOwner(final int page, final int size, final long ownerId);
 
-    Collection<AlertDto> getDataEntityAlerts(final long dataEntityId);
+    Mono<List<AlertDto>> getAlertsByDataEntityId(final long dataEntityId);
 
-    Page<AlertDto> listDependentObjectsAlerts(final int page, final int size, final long ownerId);
+    Mono<Page<AlertDto>> listDependentObjectsAlerts(final int page, final int size, final List<String> ownOddrns);
 
-    long count();
+    Mono<List<String>> getObjectsOddrnsByOwner(final long ownerId);
 
-    long countByOwner(final long ownerId);
+    Mono<Long> countAlertsWithStatusOpen();
 
-    long countDependentObjectsAlerts(final long ownerId);
+    Mono<Long> countAlertsWithStatusOpenByOwner(final long ownerId);
 
-    AlertPojo updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName);
+    Mono<Long> countDependentObjectsAlerts(final List<String> ownOddrns);
 
-    Collection<AlertPojo> createAlerts(final Collection<AlertPojo> alerts);
+    Mono<AlertPojo> updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName);
+
+    Mono<List<AlertPojo>> createAlerts(final Collection<AlertPojo> alerts);
+
+    Mono<Set<String>> getExistingMessengers(final Collection<AlertPojo> alerts);
 }

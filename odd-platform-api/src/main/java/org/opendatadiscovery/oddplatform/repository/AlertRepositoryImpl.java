@@ -8,30 +8,35 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.CommonTableExpression;
-import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Select;
+import org.jooq.SelectConditionStep;
+import org.jooq.SelectHavingStep;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.SortOrder;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
-import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.AlertRecord;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAbstractCRUDRepository;
+import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
+import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.utils.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
-import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
@@ -43,214 +48,233 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
-@RequiredArgsConstructor
-public class AlertRepositoryImpl implements AlertRepository {
-    private final DSLContext dslContext;
+public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRecord, AlertPojo>
+    implements AlertRepository {
+
     private final JooqRecordHelper jooqRecordHelper;
 
-    @Override
-    public Page<AlertDto> listAll(final int page, final int size) {
-        final List<Field<?>> selectFields = Stream
-            .of(
-                ALERT.fields(),
-                DATA_ENTITY.fields(),
-                OWNER.fields()
-            )
-            .flatMap(Arrays::stream)
-            .collect(Collectors.toList());
-
-        final List<AlertDto> data = baseAlertSelect(selectFields)
-            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
-            .groupBy(selectFields)
-            .orderBy(ALERT.CREATED_AT.desc(), ALERT.ID.desc())
-            .offset((page - 1) * size)
-            .limit(size)
-            .fetchStream()
-            .map(this::mapRecord)
-            .collect(Collectors.toList());
-
-        return Page.<AlertDto>builder()
-            .data(data)
-            .hasNext(true)
-            .total(0L)
-            .build();
+    public AlertRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
+                               final JooqQueryHelper jooqQueryHelper,
+                               final JooqRecordHelper jooqRecordHelper) {
+        super(jooqReactiveOperations, jooqQueryHelper, ALERT, AlertPojo.class);
+        this.jooqRecordHelper = jooqRecordHelper;
     }
 
     @Override
-    public Page<AlertDto> listByOwner(final int page, final int size, final long ownerId) {
-        final List<Field<?>> selectFields = Stream
-            .of(
-                ALERT.fields(),
-                DATA_ENTITY.fields(),
-                OWNER.fields()
-            )
-            .flatMap(Arrays::stream)
-            .collect(Collectors.toList());
+    public Mono<Page<AlertDto>> listAllWithStatusOpen(final int page, final int size) {
+        final Select<? extends Record> alertSelect = getDefaultAlertPaginateQuery(page, size);
+        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
 
-        final List<AlertDto> data = baseAlertSelect(selectFields)
+        final SelectOnConditionStep<Record> query = DSL.with(alertCte.getName()).as(alertSelect)
+            .select(alertCte.fields())
+            .select(DATA_ENTITY.fields())
+            .select(OWNER.fields())
+            .from(alertCte.getName())
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
+            .leftJoin(USER_OWNER_MAPPING)
+            .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
+
+        return jooqReactiveOperations
+            .flux(query)
+            .collectList()
+            .flatMap(records -> jooqQueryHelper.pageifyResult(
+                records,
+                r -> mapRecordToDto(r, alertCte.getName()),
+                countAlertsWithStatusOpen())
+            );
+    }
+
+    @Override
+    public Mono<Page<AlertDto>> listByOwner(final int page, final int size, final long ownerId) {
+        final Select<? extends Record> alertSelect = getDefaultAlertPaginateQuery(page, size);
+        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
+
+        final SelectConditionStep<Record> query = DSL.with(alertCte.getName()).as(alertSelect)
+            .select(alertCte.fields())
+            .select(DATA_ENTITY.fields())
+            .select(OWNER.fields())
+            .from(alertCte.getName())
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .where(OWNERSHIP.OWNER_ID.eq(ownerId))
-            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
-            .groupBy(selectFields)
-            .orderBy(ALERT.CREATED_AT.desc(), ALERT.ID.desc())
-            .offset((page - 1) * size)
-            .limit(size)
-            .fetchStream()
-            .map(this::mapRecord)
-            .collect(Collectors.toList());
+            .leftJoin(USER_OWNER_MAPPING)
+            .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
+            .where(OWNERSHIP.OWNER_ID.eq(ownerId));
 
-        return Page.<AlertDto>builder()
-            .data(data)
-            .hasNext(true)
-            .total(0L)
-            .build();
+        return jooqReactiveOperations
+            .flux(query)
+            .collectList()
+            .flatMap(records -> jooqQueryHelper.pageifyResult(
+                records,
+                r -> mapRecordToDto(r, alertCte.getName()),
+                countAlertsWithStatusOpen())
+            );
     }
 
     @Override
-    public Collection<AlertDto> getDataEntityAlerts(final long dataEntityId) {
-        final List<Field<?>> selectFields = Stream
-            .of(
-                ALERT.fields(),
-                DATA_ENTITY.fields(),
-                OWNER.fields()
-            )
-            .flatMap(Arrays::stream)
-            .collect(Collectors.toList());
-
-        return baseAlertSelect(selectFields)
-            .where(DATA_ENTITY.ID.eq(dataEntityId))
-            .groupBy(selectFields)
-            .fetchStream()
-            .map(this::mapRecord)
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public Page<AlertDto> listDependentObjectsAlerts(final int page, final int size, final long ownerId) {
-        final List<String> ownOddrns = getObjectsOddrnsByOwner(ownerId);
-
-        final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
-
+    public Mono<List<AlertDto>> getAlertsByDataEntityId(final long dataEntityId) {
         final List<Field<?>> selectFields = Stream
             .of(ALERT.fields(), DATA_ENTITY.fields(), OWNER.fields())
             .flatMap(Arrays::stream)
             .collect(Collectors.toList());
 
-        final List<AlertDto> data = dslContext.with(cte)
+        final SelectHavingStep<Record> query = DSL
             .select(selectFields)
+            .from(ALERT)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+            .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
+            .where(DATA_ENTITY.ID.eq(dataEntityId));
+
+        return jooqReactiveOperations
+            .flux(query)
+            .map(r -> mapRecordToDto(r, ""))
+            .collectList();
+    }
+
+    @Override
+    public Mono<Page<AlertDto>> listDependentObjectsAlerts(
+        final int page, final int size, final List<String> ownOddrns) {
+        final Select<? extends Record> alertSelect = getDefaultAlertPaginateQuery(page, size);
+        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
+
+        final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
+        final SelectConditionStep<Record> query = DSL.with(cte).with(alertCte.getName()).as(alertSelect)
+            .select(alertCte.fields())
+            .select(DATA_ENTITY.fields())
+            .select(OWNER.fields())
             .from(DATA_ENTITY)
             .join(cte.getName())
             .on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)
                 .eq(DATA_ENTITY.ODDRN))
-            .join(ALERT).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
-            .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .join(alertCte.getName()).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
+            .leftJoin(USER_OWNER_MAPPING)
+            .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
-            .where(DATA_ENTITY.ODDRN.notIn(ownOddrns))
-            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
-            .groupBy(selectFields)
-            .orderBy(ALERT.CREATED_AT.desc(), ALERT.ID.desc())
-            .offset((page - 1) * size)
-            .limit(size)
-            .fetch(this::mapRecord);
+            .where(DATA_ENTITY.ODDRN.notIn(ownOddrns));
 
-        return Page.<AlertDto>builder()
-            .data(data)
-            .hasNext(true)
-            .total(0L)
-            .build();
+        return jooqReactiveOperations
+            .flux(query)
+            .collectList()
+            .flatMap(records -> jooqQueryHelper.pageifyResult(
+                records,
+                r -> mapRecordToDto(r, alertCte.getName()),
+                countAlertsWithStatusOpen())
+            );
     }
 
-    private List<String> getObjectsOddrnsByOwner(final long ownerId) {
-        return dslContext.select(DATA_ENTITY.ODDRN)
+    @Override
+    public Mono<List<String>> getObjectsOddrnsByOwner(final long ownerId) {
+        final SelectConditionStep<Record1<String>> query = DSL.select(DATA_ENTITY.ODDRN)
             .from(DATA_ENTITY)
             .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
-            .where(OWNERSHIP.OWNER_ID.eq(ownerId))
-            .fetchStreamInto(String.class)
-            .toList();
+            .where(OWNERSHIP.OWNER_ID.eq(ownerId));
+        return jooqReactiveOperations
+            .flux(query)
+            .map(r -> r.into(String.class))
+            .collectList();
     }
 
+    // TODO: 10.05.2022 matmalik javadoc
     private CommonTableExpression<Record1<String>> getChildOddrnsLinageByOwnOddrnsCte(final List<String> ownOddrns) {
         final Name cteName = name("t");
-
         final Field<String[]> parentOddrnArrayField = DSL.array(LINEAGE.PARENT_ODDRN).as("parent_oddrn_array");
 
-        final CommonTableExpression<Record> cte = cteName.as(dslContext
+        final SelectOnConditionStep<Record> conditionStep = DSL
+            .select(LINEAGE.asterisk())
+            .select(field("%s || %s".formatted(parentOddrnArrayField, LINEAGE.PARENT_ODDRN)))
+            .from(LINEAGE)
+            .join(cteName)
+            .on(LINEAGE.CHILD_ODDRN.eq(
+                field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))
+            .and(LINEAGE.PARENT_ODDRN.notEqual(DSL.all(parentOddrnArrayField)));
+
+        final CommonTableExpression<Record> cte = cteName.as(DSL
             .select(LINEAGE.asterisk())
             .select(parentOddrnArrayField)
             .from(LINEAGE)
             .where(LINEAGE.CHILD_ODDRN.in(ownOddrns))
-            .unionAll(dslContext
-                .select(LINEAGE.asterisk())
-                .select(DSL.field("%s || %s".formatted(parentOddrnArrayField, LINEAGE.PARENT_ODDRN)))
-                .from(LINEAGE)
-                .join(cteName)
-                .on(LINEAGE.CHILD_ODDRN.eq(
-                    field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))
-                .and(LINEAGE.PARENT_ODDRN.notEqual(DSL.all(parentOddrnArrayField)))
-            ));
+            .unionAll(conditionStep));
 
         return name("t2")
-            .as(dslContext.withRecursive(cte)
+            .as(DSL.withRecursive(cte)
                 .selectDistinct(field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class))
                 .from(cte.getName()));
     }
 
     @Override
-    public long count() {
-        return dslContext.selectCount()
-            .from(ALERT)
-            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
-            .fetchOptionalInto(Long.class)
-            .orElse(0L);
+    public Mono<Long> countAlertsWithStatusOpen() {
+        return jooqReactiveOperations
+            .mono(DSL.selectCount()
+                .from(ALERT)
+                .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))
+            .map(r -> r.component1().longValue())
+            .defaultIfEmpty(0L);
     }
 
     @Override
-    public long countByOwner(final long ownerId) {
-        return dslContext.selectCount()
-            .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
-            .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .where(OWNERSHIP.OWNER_ID.eq(ownerId))
-            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
-            .fetchOptionalInto(Long.class)
-            .orElse(0L);
+    public Mono<Long> countAlertsWithStatusOpenByOwner(final long ownerId) {
+        return jooqReactiveOperations
+            .mono(DSL.selectCount()
+                .from(ALERT)
+                .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
+                .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
+                .where(OWNERSHIP.OWNER_ID.eq(ownerId))
+                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))
+            .map(r -> r.component1().longValue())
+            .defaultIfEmpty(0L);
     }
 
     @Override
-    public long countDependentObjectsAlerts(final long ownerId) {
-        final List<String> ownOddrns = getObjectsOddrnsByOwner(ownerId);
-
+    public Mono<Long> countDependentObjectsAlerts(final List<String> ownOddrns) {
         final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
-
-        return dslContext.with(cte)
-            .select(countDistinct(ALERT.ID))
-            .from(ALERT)
-            .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()))
-                .eq(ALERT.DATA_ENTITY_ODDRN))
-            .where(ALERT.DATA_ENTITY_ODDRN.notIn(ownOddrns))
-            .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
-            .fetchOptionalInto(Long.class)
-            .orElse(0L);
+        return jooqReactiveOperations
+            .mono(DSL.with(cte)
+                .select(countDistinct(ALERT.ID))
+                .from(ALERT)
+                .join(cte.getName()).on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()))
+                    .eq(ALERT.DATA_ENTITY_ODDRN))
+                .where(ALERT.DATA_ENTITY_ODDRN.notIn(ownOddrns))
+                .and(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())))
+            .map(r -> r.component1().longValue())
+            .defaultIfEmpty(0L);
     }
 
     @Override
-    public AlertPojo updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName) {
-        return dslContext.update(ALERT)
-            .set(ALERT.STATUS, status.toString())
-            .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
-            .set(ALERT.STATUS_UPDATED_BY, userName)
-            .where(ALERT.ID.eq(alertId))
-            .returning(ALERT.fields())
-            .fetchOptional()
+    public Mono<AlertPojo> updateAlertStatus(final long alertId, final AlertStatusEnum status, final String userName) {
+        return jooqReactiveOperations
+            .mono(DSL.update(ALERT)
+                .set(ALERT.STATUS, status.toString())
+                .set(ALERT.STATUS_UPDATED_AT, LocalDateTime.now())
+                .set(ALERT.STATUS_UPDATED_BY, userName)
+                .where(ALERT.ID.eq(alertId))
+                .returning(ALERT.fields())
+            ).map(r -> r.into(AlertPojo.class));
+    }
+
+    @Override
+    public Mono<List<AlertPojo>> createAlerts(final Collection<AlertPojo> alertPojos) {
+        final List<AlertRecord> alertRecords =
+            alertPojos.stream().map(a -> jooqReactiveOperations.newRecord(ALERT, a)).toList();
+
+        final InsertSetStep<AlertRecord> insertStep = DSL.insertInto(ALERT);
+
+        for (int i = 0; i < alertRecords.size() - 1; i++) {
+            insertStep.set(alertRecords.get(i)).newRecord();
+        }
+
+        return jooqReactiveOperations.flux(insertStep.set(alertRecords.get(alertRecords.size() - 1))
+            .onDuplicateKeyIgnore()
+            .returning(ALERT.fields()))
             .map(r -> r.into(AlertPojo.class))
-            .orElseThrow(NotFoundException::new);
+            .collectList();
     }
 
     @Override
-    @BlockingTransactional
-    public Collection<AlertPojo> createAlerts(final Collection<AlertPojo> alerts) {
+    public Mono<Set<String>> getExistingMessengers(final Collection<AlertPojo> alerts) {
         if (CollectionUtils.isEmpty(alerts)) {
-            return emptyList();
+            return Mono.empty();
         }
 
         final Set<String> messengerOddrns = alerts.stream()
@@ -258,46 +282,29 @@ public class AlertRepositoryImpl implements AlertRepository {
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
-        final Set<String> existingMessengers = dslContext.select(ALERT.MESSENGER_ENTITY_ODDRN)
+        final SelectConditionStep<Record1<String>> query = DSL.select(ALERT.MESSENGER_ENTITY_ODDRN)
             .from(ALERT)
-            .where(ALERT.MESSENGER_ENTITY_ODDRN.in(messengerOddrns))
-            .fetchStreamInto(String.class)
+            .where(ALERT.MESSENGER_ENTITY_ODDRN.in(messengerOddrns));
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(String.class))
             .collect(Collectors.toSet());
-
-        final List<AlertRecord> alertRecords = alerts.stream()
-            .filter(
-                a -> a.getMessengerEntityOddrn() == null || !existingMessengers.contains(a.getMessengerEntityOddrn()))
-            .map(a -> dslContext.newRecord(ALERT, a))
-            .toList();
-
-        final InsertSetStep<AlertRecord> insertStep = dslContext.insertInto(ALERT);
-        for (int i = 0; i < alertRecords.size() - 1; i++) {
-            insertStep.set(alertRecords.get(i)).newRecord();
-        }
-
-        return insertStep.set(alertRecords.get(alertRecords.size() - 1))
-            .onDuplicateKeyIgnore()
-            .returning(ALERT.fields())
-            .fetch()
-            .stream()
-            .map(r -> r.into(AlertPojo.class))
-            .toList();
     }
 
-    private SelectOnConditionStep<Record> baseAlertSelect(final List<Field<?>> selectFields) {
-        return dslContext
-            .select(selectFields)
-            .from(ALERT)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
-            .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
-            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
-    }
-
-    private AlertDto mapRecord(final Record r) {
+    private AlertDto mapRecordToDto(final Record r, final String alertCteName) {
         return new AlertDto(
-            jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class),
+            alertCteName.isEmpty() ? jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class) :
+                jooqRecordHelper.remapCte(r, alertCteName, ALERT).into(AlertPojo.class),
             jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class),
             jooqRecordHelper.extractRelation(r, OWNER, OwnerPojo.class)
         );
+    }
+
+    private Select<? extends Record> getDefaultAlertPaginateQuery(final int page, final int size) {
+        final List<OrderByField> orderByFields = List.of(
+            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
+        final SelectConditionStep<AlertRecord> baseQuery = DSL
+            .selectFrom(ALERT)
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()));
+        return paginate(baseQuery, orderByFields, (page - 1) * size, size);
     }
 }

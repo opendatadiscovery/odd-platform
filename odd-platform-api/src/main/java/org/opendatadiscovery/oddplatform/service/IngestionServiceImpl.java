@@ -77,7 +77,7 @@ public class IngestionServiceImpl implements IngestionService {
     private final LineageRepository lineageRepository;
     private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
-    private final AlertRepository alertRepository;
+    private final AlertService alertService;
     private final GroupEntityRelationRepository groupEntityRelationRepository;
     private final GroupParentGroupRelationRepository groupParentGroupRelationRepository;
 
@@ -113,7 +113,7 @@ public class IngestionServiceImpl implements IngestionService {
                     dataStructure.getEarlyAlerts()
                 ).flatMap(List::stream).collect(Collectors.toList());
 
-                alertRepository.createAlerts(alerts);
+                alertService.createAlerts(alerts);
                 return dataStructure;
             })
             .flatMap(metricService::exportMetrics)

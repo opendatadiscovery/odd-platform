@@ -4,9 +4,11 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
@@ -34,30 +36,29 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public Mono<AlertList> listAll(final int page, final int size) {
-        return Mono.fromCallable(() -> alertRepository.listAll(page, size))
+        return alertRepository.listAllWithStatusOpen(page, size)
             .map(alertMapper::mapAlerts);
     }
 
     @Override
     public Mono<AlertList> listByOwner(final int page, final int size) {
         return authIdentityProvider.fetchAssociatedOwner()
-            .map(o -> alertRepository.listByOwner(page, size, o.getId()))
+            .flatMap(o -> alertRepository.listByOwner(page, size, o.getId()))
             .map(alertMapper::mapAlerts);
     }
 
     @Override
     public Mono<AlertTotals> getTotals() {
-        final Mono<Long> allCount = Mono.fromCallable(alertRepository::count);
+        final Mono<Long> allCount = alertRepository.countAlertsWithStatusOpen();
 
         final Mono<OwnerPojo> owner = authIdentityProvider.fetchAssociatedOwner();
 
         final Mono<Long> countByOwner = owner
-            .map(o -> alertRepository.countByOwner(o.getId()))
-            .switchIfEmpty(Mono.just(0L));
+            .flatMap(o -> alertRepository.countAlertsWithStatusOpenByOwner(o.getId()));
 
         final Mono<Long> countDependent = owner
-            .map(o -> alertRepository.countDependentObjectsAlerts(o.getId()))
-            .switchIfEmpty(Mono.just(0L));
+            .flatMap(o -> alertRepository.getObjectsOddrnsByOwner(o.getId()))
+            .flatMap(alertRepository::countDependentObjectsAlerts);
 
         return Mono.zipDelayError(allCount, countByOwner, countDependent)
             .map(t -> new AlertTotals()
@@ -84,12 +85,13 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public Mono<AlertList> getDataEntityAlerts(final long dataEntityId) {
-        return Mono.fromCallable(() -> alertRepository.getDataEntityAlerts(dataEntityId))
+        return alertRepository.getAlertsByDataEntityId(dataEntityId)
             .map(alertMapper::mapAlerts);
     }
 
     @Override
     // TODO: handle other alert types
+    @ReactiveTransactional
     public Mono<Void> handleExternalAlerts(final List<ExternalAlert> externalAlerts) {
         final List<AlertPojo> alerts = externalAlerts.stream().map(a -> {
             final String alertTime =
@@ -112,13 +114,26 @@ public class AlertServiceImpl implements AlertService {
                 .setStatus(AlertStatusEnum.OPEN.name());
         }).collect(Collectors.toList());
 
-        return Mono.fromRunnable(() -> alertRepository.createAlerts(alerts)).then();
+        return createAlerts(alerts).then();
+    }
+
+    @Override
+    public Mono<Collection<AlertPojo>> createAlerts(final List<AlertPojo> alerts) {
+        return alertRepository.getExistingMessengers(alerts)
+            .flatMap(em -> {
+                final List<AlertPojo> alertPojos = alerts.stream()
+                    .filter(
+                        a -> a.getMessengerEntityOddrn() == null || !em.contains(a.getMessengerEntityOddrn()))
+                    .toList();
+                return alertRepository.createAlerts(alertPojos);
+            });
     }
 
     @Override
     public Mono<AlertList> listDependentObjectsAlerts(final int page, final int size) {
         return authIdentityProvider.fetchAssociatedOwner()
-            .map(o -> alertRepository.listDependentObjectsAlerts(page, size, o.getId()))
+            .flatMap(owner -> alertRepository.getObjectsOddrnsByOwner(owner.getId()))
+            .flatMap(objByOwner -> alertRepository.listDependentObjectsAlerts(page, size, objByOwner))
             .map(alertMapper::mapAlerts);
     }
 }
