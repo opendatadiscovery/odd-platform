@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -17,6 +19,7 @@ import org.jooq.SortOrder;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
+import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermOwnershipDto;
@@ -29,10 +32,12 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermOwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.TermRecord;
+import org.opendatadiscovery.oddplatform.repository.util.FTSConstants;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -51,6 +56,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM_SEARCH_ENTRYPOINT;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.TERM_CONDITIONS;
 
 @Repository
@@ -83,7 +89,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
             .where(listCondition(nameQuery));
 
         final Select<? extends Record> termSelect =
-            paginate(homogeneousQuery, TERM.ID, SortOrder.ASC, (page - 1) * size, size);
+            paginate(homogeneousQuery, List.of(new OrderByField(TERM.ID, SortOrder.ASC)), (page - 1) * size, size);
 
         final Table<? extends Record> termCTE = termSelect.asTable("term_cte");
 
@@ -232,20 +238,50 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
     @Override
     public Mono<Page<TermDto>> findByState(final FacetStateDto state, final int page, final int size) {
-        final var baseQuery = DSL
-            .select(TERM.fields())
-            .from(TERM)
-            .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
-            .leftJoin(TERM_OWNERSHIP).on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
-            .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID))
-            .leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
-            .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID))
-            .where(jooqFTSHelper.facetStateConditions(state, TERM_CONDITIONS))
-            .and(TERM.IS_DELETED.isFalse())
-            .groupBy(TERM.fields());
+        final List<Field<?>> selectFields = new ArrayList<>(
+            Arrays.stream(TERM.fields()).toList()
+        );
+
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.addAll(jooqFTSHelper.facetStateConditions(state, TERM_CONDITIONS));
+        conditions.add(TERM.IS_DELETED.isFalse());
+
+        final List<OrderByField> orderFields = new ArrayList<>();
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            final Field<?> rankField = jooqFTSHelper.ftsRankField(
+                TERM_SEARCH_ENTRYPOINT.SEARCH_VECTOR,
+                state.getQuery()
+            );
+
+            selectFields.add(rankField.as(RANK_FIELD_ALIAS));
+            conditions.add(jooqFTSHelper.ftsCondition(TERM_SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
+            orderFields.add(new OrderByField(RANK_FIELD_ALIAS, SortOrder.DESC));
+        }
+        orderFields.add(new OrderByField(TERM.ID, SortOrder.ASC));
+
+        final var baseQuery = DSL.select(selectFields)
+            .from(TERM);
+        if (StringUtils.isNotEmpty(state.getQuery())) {
+            baseQuery.join(TERM_SEARCH_ENTRYPOINT).on(TERM_SEARCH_ENTRYPOINT.TERM_ID.eq(TERM.ID));
+        }
+        if (state.getState().get(FacetType.NAMESPACES) != null) {
+            baseQuery.join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID));
+        }
+        if (state.getState().get(FacetType.TAGS) != null) {
+            baseQuery.leftJoin(TAG_TO_TERM).on(TAG_TO_TERM.TERM_ID.eq(TERM.ID).and(TAG_TO_TERM.DELETED_AT.isNull()))
+                .leftJoin(TAG).on(TAG_TO_TERM.TAG_ID.eq(TAG.ID));
+        }
+        if (state.getState().get(FacetType.OWNERS) != null) {
+            baseQuery.leftJoin(TERM_OWNERSHIP)
+                .on(TERM_OWNERSHIP.TERM_ID.eq(TERM.ID).and(TERM_OWNERSHIP.DELETED_AT.isNull()))
+                .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID));
+        }
+        baseQuery
+            .where(conditions)
+            .groupBy(selectFields);
 
         final Select<? extends Record> termSelect =
-            paginate(baseQuery, TERM.ID, SortOrder.ASC, (page - 1) * size, size);
+            paginate(baseQuery, orderFields, (page - 1) * size, size);
 
         final Table<? extends Record> termCTE = termSelect.asTable("term_cte");
 
@@ -267,7 +303,8 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                 .and(TERM_OWNERSHIP.DELETED_AT.isNull()))
             .leftJoin(OWNER).on(OWNER.ID.eq(TERM_OWNERSHIP.OWNER_ID))
             .leftJoin(ROLE).on(ROLE.ID.eq(TERM_OWNERSHIP.ROLE_ID))
-            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID)))
+            .leftJoin(DATA_ENTITY_TO_TERM).on(DATA_ENTITY_TO_TERM.TERM_ID.eq(termCTE.field(TERM.ID))
+                .and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull()))
             .groupBy(groupByFields);
 
         return jooqReactiveOperations.flux(query)

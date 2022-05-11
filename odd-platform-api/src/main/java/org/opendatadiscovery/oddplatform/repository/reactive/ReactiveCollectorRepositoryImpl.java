@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.List;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
@@ -17,6 +18,7 @@ import org.opendatadiscovery.oddplatform.model.tables.records.CollectorRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
@@ -58,8 +60,7 @@ public class ReactiveCollectorRepositoryImpl
     public Mono<Page<CollectorDto>> listDto(final int page, final int size, final String nameQuery) {
         final Select<? extends Record> collectorSelect = paginate(
             DSL.selectFrom(COLLECTOR).where(listCondition(nameQuery)),
-            COLLECTOR.ID,
-            SortOrder.ASC,
+            List.of(new OrderByField(COLLECTOR.ID, SortOrder.ASC)),
             (page - 1) * size,
             size
         );

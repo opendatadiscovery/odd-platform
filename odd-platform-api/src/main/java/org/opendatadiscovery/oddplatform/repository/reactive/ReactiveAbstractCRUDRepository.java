@@ -3,11 +3,13 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
+import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
@@ -17,6 +19,7 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -83,8 +86,8 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
     @Override
     public Mono<Page<P>> list(final int page, final int size, final String nameQuery) {
-        final Select<? extends Record> query =
-            paginate(baseSelectManyQuery(nameQuery), idField, SortOrder.ASC, page - 1, size);
+        final Select<? extends Record> query = paginate(baseSelectManyQuery(nameQuery),
+            List.of(new OrderByField(idField, SortOrder.ASC)), page - 1, size);
 
         return jooqReactiveOperations.flux(query)
             .collectList()
@@ -223,8 +226,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     protected Select<? extends Record> paginate(final Select<?> baseSelect,
-                                                final Field<?> orderField,
-                                                final SortOrder sortOrder,
+                                                final List<OrderByField> orderByFields,
                                                 final int page,
                                                 final int size) {
         jooqQueryHelper.homogeneityCheck(baseSelect.getSelect());
@@ -233,13 +235,13 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
         final Field<Integer> totalRows = count().over().as(PAGE_METADATA_TOTAL_FIELD);
         final Field<Integer> rowNumber = rowNumber().over()
-            .orderBy(u.field(orderField).sort(sortOrder)).as(PAGE_METADATA_ROW_NUMBER);
+            .orderBy(getOrderFields(orderByFields, u)).as(PAGE_METADATA_ROW_NUMBER);
 
         final Table<Record> t = DSL
             .select(u.fields())
             .select(totalRows, rowNumber)
             .from(u)
-            .orderBy(u.field(orderField).sort(sortOrder))
+            .orderBy(getOrderFields(orderByFields, u))
             .limit(size)
             .offset(page)
             .asTable("t");
@@ -248,6 +250,13 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .select(t.fields())
             .select(field(t.field(rowNumber).ne(t.field(totalRows))).as(PAGE_METADATA_NEXT_FIELD))
             .from(t)
-            .orderBy(t.field(orderField).sort(sortOrder));
+            .orderBy(getOrderFields(orderByFields, t));
+    }
+
+    private List<OrderField<?>> getOrderFields(final List<OrderByField> orderByFields,
+                                               final Table<?> table) {
+        return orderByFields.stream()
+            .map(f -> table.field(f.orderField()).sort(f.sortOrder()))
+            .collect(Collectors.toList());
     }
 }

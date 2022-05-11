@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.model.tables.records.TagToDataEntityRec
 import org.opendatadiscovery.oddplatform.model.tables.records.TagToTermRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
+import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -72,7 +73,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .where(listCondition(query));
 
         final Select<? extends Record> select =
-            paginate(homogeneousQuery, TAG.ID, SortOrder.ASC, (page - 1) * size, size);
+            paginate(homogeneousQuery, List.of(new OrderByField(TAG.ID, SortOrder.ASC)), (page - 1) * size, size);
 
         final Table<? extends Record> tagCte = select.asTable("tag_cte");
 

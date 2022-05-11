@@ -9,6 +9,7 @@ import org.jooq.Field;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
 
+import static org.jooq.impl.DSL.field;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
@@ -22,6 +23,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 
 public class FTSConstants {
+    public static final Field<Object> RANK_FIELD_ALIAS = field("rank", Object.class);
 
     public static final Map<Field<?>, String> DATA_ENTITY_FTS_WEIGHTS = Map.ofEntries(
         Map.entry(DATA_ENTITY.INTERNAL_NAME, "A"),
