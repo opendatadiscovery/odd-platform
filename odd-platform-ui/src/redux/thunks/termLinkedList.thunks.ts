@@ -29,7 +29,7 @@ export const fetchTermGroupLinkedList = createThunk<
     pageInfo: {
       ...response.pageInfo,
       page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
+      hasNext: request.size * request.page < response.pageInfo.total,
     },
   })
 );

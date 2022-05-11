@@ -44,7 +44,6 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
   };
 
   const onSubmit = (data: DataEntityTermFormData) => {
-    console.log('data', data);
     createDataEntityTerm({
       dataEntityId,
       dataEntityTermFormData: { termId: data.termId },

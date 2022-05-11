@@ -230,7 +230,7 @@ export interface TermSearchState {
   facetState: TermSearchFacetsByName;
 }
 
-export interface TermGroupLinkedListState {
+export interface TermLinkedListState {
   linkedItemsIdsByTermId: {
     [termId: string]: number[];
   };
@@ -254,7 +254,7 @@ export type RootState = {
   dataQualityTest: DataQualityTestState;
   alerts: AlertsState;
   dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
-  termLinkedList: TermGroupLinkedListState;
+  termLinkedList: TermLinkedListState;
   collectors: CollectorsState;
   terms: TermsState;
   termSearch: TermSearchState;

@@ -13,7 +13,7 @@ interface AdornmentProps {
   variant: AdornmentVariant;
   showAdornment: boolean;
   icon?: React.ReactNode;
-  onCLick?: () => void;
+  onCLick?: (e: React.MouseEvent) => void;
   position?: SxProps<Theme>;
 }
 

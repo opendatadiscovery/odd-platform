@@ -2,13 +2,13 @@ import { createSelector } from 'reselect';
 import {
   DataEntitiesState,
   RootState,
-  TermGroupLinkedListState,
+  TermLinkedListState,
 } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/selectors/loader-selectors';
 
 const termGroupLinkedListState = ({
   termLinkedList,
-}: RootState): TermGroupLinkedListState => termLinkedList;
+}: RootState): TermLinkedListState => termLinkedList;
 
 const dataEntitiesState = ({
   dataEntities,
@@ -18,7 +18,7 @@ const getTGLinkedListFetchingStatus = createFetchingSelector(
   'GET_TERM_LINKED_LIST'
 );
 
-export const getIsTGLinkedListFetching = createSelector(
+export const getIsTermLinkedListFetching = createSelector(
   getTGLinkedListFetchingStatus,
   status => status === 'fetching'
 );

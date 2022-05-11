@@ -3,17 +3,19 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   DataEntity,
+  DataEntityClass,
   TermApiGetTermLinkedItemsRequest,
 } from 'generated-sources';
-import {
-  CurrentPageInfo,
-  SearchClass,
-  SearchTotalsByName,
-} from 'redux/interfaces';
+import { CurrentPageInfo } from 'redux/interfaces';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
 import LinkedItem from 'components/Terms/TermDetails/TermLinkedItemsList/LinkedItem/LinkedItem';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
+import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
+import { useDebouncedCallback } from 'use-debounce';
 import {
   TermLinkedItemsColContainer,
   TermLinkedItemsListContainer,
@@ -28,6 +30,7 @@ interface LinkedItemsListProps {
     params: TermApiGetTermLinkedItemsRequest
   ) => void;
   isLinkedListFetching: boolean;
+  entityClasses: Array<DataEntityClass>;
 }
 
 const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
@@ -36,13 +39,24 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
   pageInfo,
   fetchTermGroupLinkedList,
   isLinkedListFetching,
+  entityClasses,
 }) => {
+  const [searchText, setSearchText] = React.useState<string>('');
+  const [selectedClassId, setSelectedClassId] = React.useState<
+    number | undefined
+  >(undefined);
+
+  const pageSize = 50;
+
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
+
     fetchTermGroupLinkedList({
       termId: termGroupId,
       page: pageInfo.page + 1,
-      size: 30,
+      size: pageSize,
+      query: searchText || '',
+      entityClassId: selectedClassId,
     });
   };
 
@@ -50,8 +64,80 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
     fetchNextPage();
   }, [termGroupId]);
 
+  const createSearch = useDebouncedCallback(() => {
+    fetchTermGroupLinkedList({
+      termId: termGroupId,
+      page: pageInfo?.page || 1,
+      size: pageSize,
+      query: searchText || '',
+      entityClassId: selectedClassId,
+    });
+  }, 500);
+
+  const handleKeyDownSearch = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      createSearch();
+    }
+  };
+
+  const handleOnClickSearch = () => createSearch();
+
   return (
     <Grid>
+      <Grid
+        container
+        flexWrap="nowrap"
+        justifyContent="flex-start"
+        sx={{ mt: 2 }}
+      >
+        <Grid item xs={3} sx={{ mr: 1 }}>
+          <AppTextField
+            size="medium"
+            placeholder="Search"
+            onKeyDown={handleKeyDownSearch}
+            onChange={e => setSearchText(e.target.value)}
+            value={searchText}
+            customStartAdornment={{
+              variant: 'search',
+              showAdornment: true,
+              onCLick: handleOnClickSearch,
+              icon: <SearchIcon />,
+            }}
+            customEndAdornment={{
+              variant: 'clear',
+              showAdornment: !!searchText,
+              onCLick: () => {
+                setSearchText('');
+                handleOnClickSearch();
+              },
+              icon: <ClearIcon />,
+            }}
+          />
+        </Grid>
+        <Grid item xs={2}>
+          <AppTextField
+            select
+            defaultValue="All entities"
+            onChange={handleOnClickSearch}
+          >
+            <AppMenuItem
+              value="All entities"
+              onClick={() => setSelectedClassId(undefined)}
+            >
+              All entities
+            </AppMenuItem>
+            {entityClasses?.map(entityClass => (
+              <AppMenuItem
+                key={entityClass.id}
+                value={entityClass.id}
+                onClick={() => setSelectedClassId(entityClass.id)}
+              >
+                {entityClass.name}
+              </AppMenuItem>
+            ))}
+          </AppTextField>
+        </Grid>
+      </Grid>
       <TermLinkedItemsResultsTableHeader
         container
         sx={{ mt: 2 }}
