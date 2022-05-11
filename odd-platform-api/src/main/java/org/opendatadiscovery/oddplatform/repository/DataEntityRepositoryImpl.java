@@ -128,8 +128,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.TERM;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 
 @Repository
 @Slf4j
@@ -648,16 +648,15 @@ public class DataEntityRepositoryImpl
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
 
         final Field<?> rankField = jooqFTSHelper.ftsRankField(SEARCH_ENTRYPOINT.SEARCH_VECTOR, query);
-        final Field<Object> rankFieldAlias = field("rank", Object.class);
 
         final Select<Record> dataEntitySelect = dslContext
             .select(DATA_ENTITY.fields())
-            .select(rankField.as(rankFieldAlias))
+            .select(rankField.as(RANK_FIELD_ALIAS))
             .from(SEARCH_ENTRYPOINT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
             .where(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, query))
             .and(DATA_ENTITY.HOLLOW.isFalse())
-            .orderBy(rankFieldAlias.desc())
+            .orderBy(RANK_FIELD_ALIAS.desc())
             .limit(SUGGESTION_LIMIT);
 
         final Table<Record> deCte = dataEntitySelect.asTable(deCteName);
@@ -668,7 +667,7 @@ public class DataEntityRepositoryImpl
             .select(hasAlerts(deCte))
             .from(deCteName)
             .groupBy(deCte.fields())
-            .orderBy(jooqQueryHelper.getField(deCte, rankFieldAlias).desc())
+            .orderBy(jooqQueryHelper.getField(deCte, RANK_FIELD_ALIAS).desc())
             .fetchStream()
             .map(this::mapDtoRecord)
             .collect(toList());
@@ -1461,7 +1460,7 @@ public class DataEntityRepositoryImpl
 
         private record Fts(Field<?> rankFieldAlias, String query) {
             Fts(final String query) {
-                this(field("rank", Object.class), query);
+                this(RANK_FIELD_ALIAS, query);
             }
         }
     }
