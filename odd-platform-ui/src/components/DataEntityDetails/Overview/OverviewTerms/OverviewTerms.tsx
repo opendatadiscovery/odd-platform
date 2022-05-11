@@ -56,22 +56,21 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
                 deleteDataEntityTerm={deleteDataEntityTerm}
               />
             ))}
-          {terms?.length > visibleLimit ? (
+          {terms?.length > visibleLimit && (
             <>
               <Collapse in={viewAll} timeout="auto" unmountOnExit>
-                {viewAll
-                  ? terms
-                      ?.slice(visibleLimit)
-                      .sort()
-                      .map(term => (
-                        <TermItem
-                          key={term.id}
-                          term={term}
-                          dataEntityId={dataEntityId}
-                          deleteDataEntityTerm={deleteDataEntityTerm}
-                        />
-                      ))
-                  : null}
+                {viewAll &&
+                  terms
+                    ?.slice(visibleLimit)
+                    .sort()
+                    .map(term => (
+                      <TermItem
+                        key={term.id}
+                        term={term}
+                        dataEntityId={dataEntityId}
+                        deleteDataEntityTerm={deleteDataEntityTerm}
+                      />
+                    ))}
               </Collapse>
               <AppButton
                 size="small"
@@ -82,7 +81,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
                 {viewAll ? 'Hide' : `View All (${terms?.length})`}
               </AppButton>
             </>
-          ) : null}
+          )}
         </Box>
       ) : (
         <Grid
