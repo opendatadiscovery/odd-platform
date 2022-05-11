@@ -2,63 +2,40 @@ package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import reactor.test.StepVerifier;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DisplayName("Integration tests for OwnerRepository")
 class OwnerRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired
-    private OwnerRepository ownerRepository;
+    private ReactiveOwnerRepository ownerRepository;
 
     @Test
     @DisplayName("Creates new owner, expecting owner in db")
     void testCreateOwner() {
         final OwnerPojo ownerPojo = new OwnerPojo().setName(UUID.randomUUID().toString());
 
-        final OwnerPojo actualOwner = ownerRepository.create(ownerPojo);
-
-        assertThat(actualOwner).isNotNull();
-        assertThat(actualOwner.getId()).isNotNull();
-        assertThat(actualOwner.getName()).isNotNull()
-            .isEqualTo(ownerPojo.getName());
-    }
-
-    @Test
-    @DisplayName("Creates owner if owner doesn't exist in db, expecting created owner in db")
-    void testCreateOrGetOwner_newOwner() {
-        final OwnerPojo ownerPojo = new OwnerPojo().setName(UUID.randomUUID().toString());
-
-        final OwnerPojo actualOwner = ownerRepository.createOrGet(ownerPojo);
-
-        assertThat(actualOwner).isNotNull();
-        assertThat(actualOwner.getId()).isNotNull();
-        assertThat(actualOwner.getName()).isNotNull()
-            .isEqualTo(ownerPojo.getName());
-    }
-
-    @Test
-    @DisplayName("Gets owner if owner exists, expecting owner is already created")
-    void testCreateOrGetOwner_ExistedOwner() {
-        final OwnerPojo ownerPojo = new OwnerPojo().setName(UUID.randomUUID().toString());
-
-        final OwnerPojo savedOwner = ownerRepository.create(ownerPojo);
-        final OwnerPojo actualOwner = ownerRepository.createOrGet(ownerPojo);
-
-        assertThat(actualOwner).isNotNull();
-        assertThat(actualOwner.getId()).isNotNull()
-            .isEqualTo(savedOwner.getId());
-        assertThat(actualOwner.getName()).isNotNull()
-            .isEqualTo(savedOwner.getName());
+        ownerRepository.create(ownerPojo)
+            .as(StepVerifier::create)
+            .assertNext(actualOwner -> {
+                AssertionsForClassTypes.assertThat(actualOwner).isNotNull();
+                AssertionsForClassTypes.assertThat(actualOwner.getId()).isNotNull();
+                AssertionsForClassTypes.assertThat(actualOwner.getName()).isNotNull()
+                    .isEqualTo(ownerPojo.getName());
+            }).verifyComplete();
     }
 
     @Test
@@ -67,7 +44,7 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
         final String initialOwnerName = UUID.randomUUID().toString();
         final OwnerPojo ownerPojo = new OwnerPojo().setName(initialOwnerName);
 
-        final OwnerPojo savedOwner = ownerRepository.create(ownerPojo);
+        final OwnerPojo savedOwner = ownerRepository.create(ownerPojo).block();
         Assertions.assertThat(savedOwner).isNotNull();
         Assertions.assertThat(savedOwner.getId()).isNotNull();
         Assertions.assertThat(savedOwner.getName()).isNotNull()
@@ -76,12 +53,14 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
         final String newOwnerName = UUID.randomUUID().toString();
         savedOwner.setName(newOwnerName);
 
-        final OwnerPojo updatedOwner = ownerRepository.update(savedOwner);
-
-        Assertions.assertThat(updatedOwner).isNotNull();
-        Assertions.assertThat(updatedOwner.getId()).isNotNull();
-        Assertions.assertThat(updatedOwner.getName()).isNotNull()
-            .isEqualTo(newOwnerName);
+        ownerRepository.update(savedOwner)
+            .as(StepVerifier::create)
+            .assertNext(updatedOwner -> {
+                Assertions.assertThat(updatedOwner).isNotNull();
+                Assertions.assertThat(updatedOwner.getId()).isNotNull();
+                Assertions.assertThat(updatedOwner.getName()).isNotNull()
+                    .isEqualTo(newOwnerName);
+            }).verifyComplete();
     }
 
     @Test
@@ -89,16 +68,17 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
     void testDeletesOwner() {
         final OwnerPojo owner = new OwnerPojo().setName(UUID.randomUUID().toString());
 
-        final OwnerPojo actualOwner = ownerRepository.create(owner);
+        final OwnerPojo actualOwner = ownerRepository.create(owner).block();
         Assertions.assertThat(actualOwner).isNotNull();
         final Long actualOwnerId = actualOwner.getId();
         Assertions.assertThat(actualOwnerId).isNotNull();
         Assertions.assertThat(actualOwner.getName()).isNotNull();
 
-        ownerRepository.delete(actualOwnerId);
+        ownerRepository.delete(actualOwnerId).block();
 
-        final Optional<OwnerPojo> deletedOwner = ownerRepository.get(actualOwnerId);
-        Assertions.assertThat(deletedOwner).isEmpty();
+        ownerRepository.get(actualOwnerId)
+            .as(StepVerifier::create)
+            .verifyComplete();
     }
 
     @Test
@@ -106,15 +86,14 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
     void testGetByNameOwner() {
         final String testOwnerName = UUID.randomUUID().toString();
         final OwnerPojo owner = new OwnerPojo().setName(testOwnerName);
-        ownerRepository.create(owner);
+        ownerRepository.create(owner).block();
 
-        final Optional<OwnerPojo> actualOwnerOptional = ownerRepository.getByName(testOwnerName);
-
-        Assertions.assertThat(actualOwnerOptional).isNotEmpty();
-        final OwnerPojo actualOwner = actualOwnerOptional.get();
-        Assertions.assertThat(actualOwner.getId()).isNotNull();
-        Assertions.assertThat(actualOwner.getName()).isNotNull()
-            .isEqualTo(testOwnerName);
+        ownerRepository.getByName(testOwnerName)
+            .as(StepVerifier::create)
+            .assertNext(actualOwner -> {
+                Assertions.assertThat(actualOwner.getId()).isNotNull();
+                Assertions.assertThat(actualOwner.getName()).isEqualTo(owner.getName());
+            }).verifyComplete();
     }
 
     @Test
@@ -123,10 +102,11 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
         final String testOwnerName = UUID.randomUUID().toString();
         final OwnerPojo owner = new OwnerPojo().setName(testOwnerName);
 
-        ownerRepository.create(owner);
+        ownerRepository.create(owner).block();
 
-        final Optional<OwnerPojo> actualOwnerOptional = ownerRepository.getByName(UUID.randomUUID().toString());
-        Assertions.assertThat(actualOwnerOptional).isEmpty();
+        ownerRepository.getByName(UUID.randomUUID().toString())
+            .as(StepVerifier::create)
+            .verifyComplete();
     }
 
     /**
@@ -142,13 +122,17 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
         final List<OwnerPojo> testOwnerList = createTestOwnerList(numberOfTestOwners);
         final List<String> testOwnerListNames = getListNames(testOwnerList);
 
-        final List<OwnerPojo> actualOwnerList = ownerRepository.bulkCreate(testOwnerList);
-
-        Assertions.assertThat(actualOwnerList)
-            .isNotEmpty()
-            .extracting(OwnerPojo::getId).doesNotContainNull();
-        Assertions.assertThat(actualOwnerList)
-            .extracting(OwnerPojo::getName).containsAll(testOwnerListNames);
+        ownerRepository.bulkCreate(testOwnerList)
+            .collectList()
+            .as(StepVerifier::create)
+            .assertNext(actualOwnerList -> {
+                assertThat(actualOwnerList)
+                    .isNotEmpty()
+                    .extracting(OwnerPojo::getId).doesNotContainNull();
+                assertThat(actualOwnerList)
+                    .extracting(OwnerPojo::getName)
+                    .containsExactlyInAnyOrder(testOwnerListNames.toArray(String[]::new));
+            }).verifyComplete();
     }
 
     /**
@@ -165,10 +149,12 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
         final List<String> testOwnerListNames = getListNames(testOwnerList);
 
         //create owners
-        final List<OwnerPojo> savedOwnerList = ownerRepository.bulkCreate(testOwnerList);
-        Assertions.assertThat(savedOwnerList).isNotEmpty()
+        final List<OwnerPojo> savedOwnerList = ownerRepository.bulkCreate(testOwnerList)
+            .collectList()
+            .block();
+        assertThat(savedOwnerList).isNotEmpty()
             .extracting(OwnerPojo::getId).doesNotContainNull();
-        Assertions.assertThat(savedOwnerList)
+        assertThat(savedOwnerList)
             .extracting(OwnerPojo::getName).containsAll(testOwnerListNames);
 
         //update owners
@@ -176,12 +162,16 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
             owner.setName(UUID.randomUUID().toString());
         }
         final List<String> newOwnerListNames = getListNames(savedOwnerList);
-        final List<OwnerPojo> updatedOwnerList = ownerRepository.bulkUpdate(savedOwnerList);
-
-        Assertions.assertThat(updatedOwnerList).isNotEmpty()
-            .flatExtracting(OwnerPojo::getId, OwnerPojo::getName).doesNotContainNull();
-        Assertions.assertThat(updatedOwnerList)
-            .extracting(OwnerPojo::getName).isEqualTo(newOwnerListNames);
+        ownerRepository.bulkUpdate(savedOwnerList)
+            .collectList()
+            .as(StepVerifier::create)
+            .assertNext(updatedOwnerList -> {
+                assertThat(updatedOwnerList).isNotEmpty()
+                    .flatExtracting(OwnerPojo::getId, OwnerPojo::getName).doesNotContainNull();
+                assertThat(updatedOwnerList)
+                    .extracting(OwnerPojo::getName)
+                    .containsExactlyInAnyOrder(newOwnerListNames.toArray(String[]::new));
+            }).verifyComplete();
     }
 
     /**

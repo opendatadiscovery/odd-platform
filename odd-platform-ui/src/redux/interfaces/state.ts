@@ -24,6 +24,10 @@ import {
   Owner,
   Ownership,
   Tag,
+  Term,
+  TermRef,
+  TermDetails,
+  TermRefList,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -39,6 +43,10 @@ import { DataEntityLineageById } from './dataentityLineage';
 import { CurrentPageInfo } from './common';
 import { DataEntityDetailsState } from './dataentities';
 import { LoaderState } from './loader';
+import {
+  TermSearchFacetOptionsByName,
+  TermSearchFacetsByName,
+} from './termSearch';
 
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
@@ -139,8 +147,14 @@ export interface OwnersState {
   byId: { [ownerId: number]: Owner };
   allIds: number[];
   pageInfo?: CurrentPageInfo;
-  ownership: {
+  ownershipDataEntity: {
     [dataEntityId: string]: {
+      byId: { [ownershipId: string]: Ownership };
+      allIds: number[];
+    };
+  };
+  ownershipTermDetails: {
+    [termId: string]: {
       byId: { [ownershipId: string]: Ownership };
       allIds: number[];
     };
@@ -197,6 +211,32 @@ export interface AppInfoState {
   appInfo?: AppInfo;
 }
 
+export interface TermsState {
+  byId: { [termId: string]: TermDetails };
+  allIds: Term['id'][];
+  pageInfo?: CurrentPageInfo;
+}
+
+export interface TermSearchState {
+  termSearchId: string;
+  query: string;
+  facets: TermSearchFacetOptionsByName;
+  isFacetsStateSynced: boolean;
+  results: {
+    items: Term[];
+    pageInfo: CurrentPageInfo;
+  };
+  suggestions: TermRefList;
+  facetState: TermSearchFacetsByName;
+}
+
+export interface TermLinkedListState {
+  linkedItemsIdsByTermId: {
+    [termId: string]: number[];
+  };
+  pageInfo?: CurrentPageInfo;
+}
+
 export type RootState = {
   appInfo: AppInfoState;
   dataSources: DataSourcesState;
@@ -214,7 +254,10 @@ export type RootState = {
   dataQualityTest: DataQualityTestState;
   alerts: AlertsState;
   dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
+  termLinkedList: TermLinkedListState;
   collectors: CollectorsState;
+  terms: TermsState;
+  termSearch: TermSearchState;
 };
 
 export type Action = ActionType<typeof actions>;

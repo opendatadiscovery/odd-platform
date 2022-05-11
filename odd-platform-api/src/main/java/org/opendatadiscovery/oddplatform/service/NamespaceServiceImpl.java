@@ -14,6 +14,8 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRe
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -21,9 +23,11 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class NamespaceServiceImpl implements NamespaceService {
     private final ReactiveNamespaceRepository namespaceRepository;
+    private final ReactiveTermRepository termRepository;
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final ReactiveCollectorRepository collectorRepository;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
+    private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
     private final NamespaceMapper namespaceMapper;
 
     @Override
@@ -59,17 +63,31 @@ public class NamespaceServiceImpl implements NamespaceService {
             .switchIfEmpty(Mono.error(new NotFoundException("Namespace with id %d hasn't been found".formatted(id))))
             .map(pojo -> namespaceMapper.applyToPojo(pojo, updateEntityForm))
             .flatMap(namespaceRepository::update)
-            .flatMap(ns -> searchEntrypointRepository.updateNamespaceVector(ns.getId()).thenReturn(ns))
+            .flatMap(this::updateSearchVectors)
             .map(namespaceMapper::mapPojo);
     }
 
     @Override
     public Mono<Long> delete(final long id) {
-        return Mono.zip(dataSourceRepository.existsByNamespace(id), collectorRepository.existsByNamespace(id))
-            .map(t -> BooleanUtils.toBoolean(t.getT1()) || BooleanUtils.toBoolean(t.getT2()))
+        return Mono.zip(
+                dataSourceRepository.existsByNamespace(id),
+                collectorRepository.existsByNamespace(id),
+                termRepository.existsByNamespace(id)
+            )
+            .map(t -> BooleanUtils.toBoolean(t.getT1())
+                || BooleanUtils.toBoolean(t.getT2())
+                || BooleanUtils.toBoolean(t.getT3()))
             .filter(exists -> !exists)
             .switchIfEmpty(Mono.error(new IllegalStateException(
-                "Namespace with ID %d cannot be deleted: there are still data sources attached".formatted(id))))
-            .flatMap(ign -> namespaceRepository.delete(id).map(NamespacePojo::getId));
+                "Namespace with ID %d cannot be deleted: there are still resources attached".formatted(id))))
+            .flatMap(ign -> namespaceRepository.delete(id))
+            .map(NamespacePojo::getId);
+    }
+
+    private Mono<NamespacePojo> updateSearchVectors(final NamespacePojo pojo) {
+        return Mono.zip(
+            searchEntrypointRepository.updateChangedNamespaceVector(pojo.getId()),
+            termSearchEntrypointRepository.updateChangedNamespaceVector(pojo.getId())
+        ).thenReturn(pojo);
     }
 }
