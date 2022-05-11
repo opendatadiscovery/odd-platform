@@ -5,7 +5,6 @@ import {
   DataEntityTermFormData,
   TermRef,
 } from 'generated-sources';
-import { useHistory } from 'react-router-dom';
 import { Grid, Typography } from '@mui/material';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -26,7 +25,7 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
   createDataEntityTerm,
   dataEntityId,
 }) => {
-  const { handleSubmit, control, reset, setValue, formState, watch } =
+  const { handleSubmit, control, reset, formState } =
     useForm<DataEntityTermFormData>({
       mode: 'onChange',
       reValidateMode: 'onChange',
@@ -38,8 +37,13 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
     isSuccessfulSubmit: boolean;
   }>(initialState);
 
+  const [selectedTerm, setSelectedTerm] = React.useState<TermRef | null>(
+    null
+  );
+
   const clearState = () => {
     setState(initialState);
+    setSelectedTerm(null);
     reset();
   };
 
@@ -60,10 +64,6 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
       }
     );
   };
-
-  const [selectedTerm, setSelectedTerm] = React.useState<TermRef | null>(
-    null
-  );
 
   const handleSetSelectedTerm = React.useCallback(
     (term: TermRef) => setSelectedTerm(term),
@@ -96,12 +96,7 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
       />
       {selectedTerm && (
         <>
-          <Grid
-            container
-            flexDirection="column"
-            sx={{ mt: 2 }}
-            display={selectedTerm.namespace?.name ? '' : 'none'}
-          >
+          <Grid container flexDirection="column" sx={{ mt: 2 }}>
             <Typography
               variant="body2"
               color="texts.secondary"
@@ -109,14 +104,9 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
             >
               Namespace:
             </Typography>
-            {selectedTerm.namespace?.name}
+            {selectedTerm.namespace.name}
           </Grid>
-          <Grid
-            container
-            flexDirection="column"
-            sx={{ mt: 2 }}
-            display={selectedTerm.definition ? '' : 'none'}
-          >
+          <Grid container flexDirection="column" sx={{ mt: 2 }}>
             <Typography
               variant="body2"
               color="texts.secondary"
