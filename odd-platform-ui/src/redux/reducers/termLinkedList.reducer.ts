@@ -1,9 +1,9 @@
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
 import { Action } from 'redux/interfaces';
-import { TermGroupLinkedListState } from 'redux/interfaces/state';
+import { TermLinkedListState } from 'redux/interfaces/state';
 
-export const initialState: TermGroupLinkedListState = {
+export const initialState: TermLinkedListState = {
   linkedItemsIdsByTermId: {},
   pageInfo: {
     total: 0,
@@ -15,14 +15,14 @@ export const initialState: TermGroupLinkedListState = {
 const reducer = (
   state = initialState,
   action: Action
-): TermGroupLinkedListState => {
+): TermLinkedListState => {
   switch (action.type) {
     case getType(actions.fetchTermLinkedListAction.success):
       return {
         ...state,
         linkedItemsIdsByTermId: action.payload.value.items.reduce(
           (
-            memo: TermGroupLinkedListState['linkedItemsIdsByTermId'],
+            memo: TermLinkedListState['linkedItemsIdsByTermId'],
             linkedItem
           ) => ({
             ...memo,
@@ -31,8 +31,9 @@ const reducer = (
               linkedItem.id,
             ],
           }),
-          { ...state, pageInfo: action.payload.pageInfo }
+          {}
         ),
+        pageInfo: action.payload.pageInfo,
       };
     default:
       return state;
