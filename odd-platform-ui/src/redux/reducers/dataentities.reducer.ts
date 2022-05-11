@@ -5,6 +5,8 @@ import omit from 'lodash/omit';
 import { DataEntityDetails } from 'generated-sources';
 import * as actions from 'redux/actions';
 import filter from 'lodash/filter';
+import uniq from 'lodash/uniq';
+import uniqBy from 'lodash/uniqBy';
 
 export const initialState: DataEntitiesState = {
   classesAndTypesDict: {
@@ -101,10 +103,13 @@ const reducer = (
           ...state.byId,
           [action.payload.entityId]: {
             ...state.byId[action.payload.entityId],
-            terms: [
-              ...(state.byId[action.payload.entityId].terms || []),
-              action.payload.value,
-            ],
+            terms: uniqBy(
+              [
+                ...(state.byId[action.payload.entityId].terms || []),
+                action.payload.value,
+              ],
+              'id'
+            ),
           },
         },
       };
