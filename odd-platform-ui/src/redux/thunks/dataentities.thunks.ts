@@ -1,7 +1,7 @@
 import {
   Configuration,
   DataEntityApi,
-  DataEntityApiAddTermToDataEntityRequest,
+  DataEntityApiAddDataEntityTermRequest,
   DataEntityApiCreateDataEntityGroupRequest,
   DataEntityApiCreateDataEntityTagsRelationsRequest,
   DataEntityApiDeleteDataEntityGroupRequest,
@@ -61,11 +61,11 @@ export const updateDataEntityTags = createAsyncThunk<
 
 export const addDataEntityTerm = createAsyncThunk<
   { dataEntityId: number; term: TermRef },
-  DataEntityApiAddTermToDataEntityRequest
+  DataEntityApiAddDataEntityTermRequest
 >(
   actions.addDataEntityTermAction,
   async ({ dataEntityId, dataEntityTermFormData }) => {
-    const term = await dataEntityApi.addTermToDataEntity({
+    const term = await dataEntityApi.addDataEntityTerm({
       dataEntityId,
       dataEntityTermFormData,
     });
