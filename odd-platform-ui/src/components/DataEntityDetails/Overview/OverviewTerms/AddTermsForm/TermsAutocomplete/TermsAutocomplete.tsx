@@ -1,11 +1,6 @@
 import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
-import {
-  DataEntityTermFormData,
-  TermApiGetTermsListRequest,
-  TermRef,
-  TermRefList,
-} from 'generated-sources';
+import { DataEntityTermFormData, TermRef } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -14,20 +9,21 @@ import { useDebouncedCallback } from 'use-debounce';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { ControllerRenderProps } from 'react-hook-form';
+import { useAppDispatch } from 'redux/lib/hooks';
+import { fetchTermsList } from 'redux/thunks';
 
 interface TermsAutocompleteProps {
-  searchTerms: (
-    params: TermApiGetTermsListRequest
-  ) => Promise<TermRefList>;
   setSelectedTerm: (term: TermRef) => void;
   field: ControllerRenderProps<DataEntityTermFormData, 'termId'>;
 }
 
 const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
-  searchTerms,
   setSelectedTerm,
   field,
 }) => {
+  const dispatch = useAppDispatch();
+  const searchTerms = fetchTermsList;
+
   type FilterOption = Omit<TermRef, 'id' | 'definition' | 'namespace'> &
     Partial<TermRef>;
   const [options, setOptions] = React.useState<FilterOption[]>([]);
@@ -39,12 +35,12 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      searchTerms({ page: 1, size: 30, query: searchText }).then(
-        response => {
+      dispatch(searchTerms({ page: 1, size: 30, query: searchText }))
+        .unwrap()
+        .then(({ termList }) => {
           setLoading(false);
-          setOptions(response.items);
-        }
-      );
+          setOptions(termList);
+        });
     }, 500),
     [searchTerms, setLoading, setOptions, searchText]
   );

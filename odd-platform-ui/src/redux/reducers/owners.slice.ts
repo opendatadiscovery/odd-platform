@@ -221,28 +221,31 @@ export const ownersSlice = createSlice({
       }
     );
 
-    // todo fetch ownership term details entity
-    // case getType(actions.fetchTermDetailsAction.success):
-    //   return {
-    //     ...state,
-    //     ownershipTermDetails: {
-    //       ...state.ownershipTermDetails,
-    //       ...(action.payload.ownership && {
-    //         [action.payload.id]: {
-    //           byId: action.payload.ownership.reduce(
-    //             (memo, ownership) => ({
-    //               ...memo,
-    //               [ownership.id]: ownership,
-    //             }),
-    //             {}
-    //           ),
-    //           allIds: action.payload.ownership.map(
-    //             ownership => ownership.id
-    //           ),
-    //         },
-    //       }),
-    //     },
-    //   };
+    builder.addCase(
+      thunks.fetchTermDetails.fulfilled,
+      (state, { payload }): OwnersState => {
+        const term = payload;
+
+        return {
+          ...state,
+          ownershipTermDetails: {
+            ...state.ownershipTermDetails,
+            ...(term.ownership && {
+              [term.id]: {
+                byId: term.ownership.reduce(
+                  (memo, ownership) => ({
+                    ...memo,
+                    [ownership.id]: ownership,
+                  }),
+                  {}
+                ),
+                allIds: term.ownership.map(ownership => ownership.id),
+              },
+            }),
+          },
+        };
+      }
+    );
   },
 });
 

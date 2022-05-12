@@ -7,8 +7,8 @@ import {
   getTermSearchIsFetching,
   getTermSearchResultsItems,
   getTermSearchResultsPage,
-} from 'redux/selectors/termSearch.selectors';
-import { deleteTerm, getTermSearchResults } from 'redux/thunks';
+} from 'redux/selectors';
+import { getTermSearchResults } from 'redux/thunks';
 import TermSearchResults from './TermSearchResults';
 
 const mapStateToProps = (state: RootState) => ({
@@ -22,7 +22,6 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   getTermSearchResults,
-  deleteTerm,
 };
 
 export default connect(

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
-import { Term, TermApiDeleteTermRequest } from 'generated-sources';
+import { Term } from 'generated-sources';
 import { termDetailsOverviewPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
@@ -10,27 +10,29 @@ import {
   TermSearchNameContainer,
   TermSearchResultsColContainer,
 } from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
+import { useAppDispatch } from 'redux/lib/hooks';
+import { deleteTerm } from 'redux/thunks';
 import {
+  ActionsContainer,
   TermSearchResultsContainer,
   TermSearchResultsItemLink,
-  ActionsContainer,
 } from './TermSearchResultItemStyles';
 
 interface TermsResultItemProps {
   termSearchResult: Term;
-  deleteTerm: (params: TermApiDeleteTermRequest) => Promise<void>;
 }
 
 const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
   termSearchResult,
-  deleteTerm,
 }) => {
+  const dispatch = useAppDispatch();
+
   const termDetailsOverviewLink = termDetailsOverviewPath(
     termSearchResult.id
   );
 
   const handleDelete = React.useCallback(
-    () => deleteTerm({ termId: termSearchResult.id }),
+    () => dispatch(deleteTerm({ termId: termSearchResult.id })),
     [termSearchResult, deleteTerm]
   );
 

@@ -41,7 +41,7 @@ const Overview: React.FC = () => {
               <OverviewGeneral />
             </SectionContainer>
             <SectionContainer square elevation={0}>
-              <OverviewTags tags={termDetails.tags} termId={termId} />
+              <OverviewTags tags={termDetails.tags} />
             </SectionContainer>
           </Grid>
         </Grid>

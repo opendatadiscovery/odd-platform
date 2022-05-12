@@ -225,16 +225,6 @@ const reducer = (
             },
           }
         : state;
-    case getType(actions.deleteTermAction.success):
-      return {
-        ...state,
-        results: {
-          ...state.results,
-          items: state.results.items.filter(
-            term => term.id !== action.payload.id
-          ),
-        },
-      };
     default:
       return state;
   }

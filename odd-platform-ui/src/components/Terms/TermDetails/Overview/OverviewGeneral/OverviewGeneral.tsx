@@ -9,7 +9,7 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
-import OwnershipFormContainer from 'components/Terms/TermDetails/Ownership/OwnershipFormContainer';
+import OwnershipForm from 'components/Terms/TermDetails/Ownership/OwnershipForm';
 import { deleteTermOwnership } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
@@ -52,8 +52,7 @@ const OverviewGeneral: React.FC = () => {
               <OwnerItem key={ownershipItem.id}>
                 {ownershipItem.owner.name}
                 <LabelItem labelName={ownershipItem.role?.name} />
-                <OwnershipFormContainer
-                  // termId={termDetails.id}
+                <OwnershipForm
                   termDetailsOwnership={ownershipItem}
                   ownerEditBtn={
                     <OwnerActionBtns>
@@ -89,8 +88,7 @@ const OverviewGeneral: React.FC = () => {
                 />
               </OwnerItem>
             ))}
-            <OwnershipFormContainer
-              // termId={termDetails.id}
+            <OwnershipForm
               ownerEditBtn={
                 <AppButton
                   sx={{ mt: 0.25 }}

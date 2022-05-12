@@ -39,10 +39,6 @@ export const fetchRoleList = createAsyncThunk<
     size,
     query,
   });
-  const apiClient = new OwnerApi(apiClientConf);
-  const dataEntityApiClient = new DataEntityApi(apiClientConf);
-  const roleApiClient = new RoleApi(apiClientConf);
-  const termApiClient = new TermApi(apiClientConf);
 
   return { roleList: items };
 });

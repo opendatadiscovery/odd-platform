@@ -20,7 +20,7 @@ import KebabIcon from 'components/shared/Icons/KebabIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import TermsFormContainer from 'components/Terms/TermSearch/TermForm/TermsFormContainer';
+import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
@@ -118,7 +118,7 @@ const TermDetailsView: React.FC = () => {
                   </Typography>
                 </>
               )}
-              <TermsFormContainer
+              <TermsForm
                 term={termDetails}
                 btnCreateEl={
                   <AppButton
@@ -180,7 +180,7 @@ const TermDetailsView: React.FC = () => {
           )}
         />
       )}
-      {isTermDetailsNotFetched && (
+      {!isTermDetailsNotFetched && (
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
             <Route
@@ -196,10 +196,6 @@ const TermDetailsView: React.FC = () => {
           </Switch>
         </React.Suspense>
       )}
-      {/* <AppErrorPage */}
-      {/*   fetchStatus={termFetchingStatus} */}
-      {/*   // error={termFetchingError} */}
-      {/* /> */}
     </TermDetailsComponentWrapper>
   );
 };

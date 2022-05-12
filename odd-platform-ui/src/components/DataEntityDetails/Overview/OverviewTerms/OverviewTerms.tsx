@@ -4,8 +4,8 @@ import { TermRef } from 'generated-sources';
 import TermItem from 'components/shared/TermItem/TermItem';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AddTermsFormContainer from './AddTermsForm/AddTermsFormContainer';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
+import AddTermsForm from './AddTermsForm/AddTermsForm';
 
 interface OverviewTermsProps {
   dataEntityId: number;
@@ -22,7 +22,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
     <div>
       <TermsCaptionContainer>
         <Typography variant="h4">Dictionary terms</Typography>
-        <AddTermsFormContainer
+        <AddTermsForm
           dataEntityId={dataEntityId}
           btnCreateEl={
             <AppButton
@@ -86,7 +86,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
           wrap="nowrap"
         >
           <Typography variant="subtitle2">Not created.</Typography>
-          <AddTermsFormContainer
+          <AddTermsForm
             dataEntityId={dataEntityId}
             btnCreateEl={
               <AppButton size="small" color="tertiary" onClick={() => {}}>

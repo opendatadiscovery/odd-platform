@@ -24,7 +24,7 @@ import {
   TermSearchResultsWrapper,
   TermSearchCaption,
 } from './TermSearchStyles';
-import TermsFormContainer from './TermForm/TermsFormContainer';
+import TermsForm from './TermForm/TermsForm';
 import TermsResultsContainer from './TermSearchResults/TermSearchResultsContainer';
 
 interface TermsProps {
@@ -116,7 +116,7 @@ const TermSearch: React.FC<TermsProps> = ({
           <TermSearchResultsWrapper item xs={9}>
             <TermSearchCaption>
               <TermMainSearchContainer />
-              <TermsFormContainer
+              <TermsForm
                 btnCreateEl={
                   <AppButton
                     size="large"

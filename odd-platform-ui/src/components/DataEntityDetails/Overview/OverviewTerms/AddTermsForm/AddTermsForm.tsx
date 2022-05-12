@@ -6,17 +6,15 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { useAppDispatch } from 'redux/lib/hooks';
 import { addDataEntityTerm } from 'redux/thunks';
-import TermsAutocompleteContainer from './TermsAutocomplete/TermsAutocompleteContainer';
+import TermsAutocomplete from './TermsAutocomplete/TermsAutocomplete';
 
 interface AddTermsFormProps {
   btnCreateEl: JSX.Element;
   dataEntityId: number;
-  isLoading: boolean;
 }
 
 const AddTermsForm: React.FC<AddTermsFormProps> = ({
   btnCreateEl,
-  isLoading,
   dataEntityId,
 }) => {
   const dispatch = useAppDispatch();
@@ -86,7 +84,7 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
           required: true,
         }}
         render={({ field }) => (
-          <TermsAutocompleteContainer
+          <TermsAutocomplete
             field={field}
             setSelectedTerm={handleSetSelectedTerm}
           />
@@ -142,7 +140,6 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
       renderContent={termFormContent}
       renderActions={termFormActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
       errorText={error}
       clearState={clearState}
     />

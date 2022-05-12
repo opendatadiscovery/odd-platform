@@ -18,7 +18,6 @@ import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';
 import termLinkedList from './termLinkedList.slice';
 import appInfo from './appInfo.reducer';
 import collectors from './collectors.reducer';
-import termsLegacy from './terms.reducer';
 import terms from './terms.slice';
 import termSearch from './termSearch.reducer';
 
@@ -42,7 +41,6 @@ export default combineReducers({
   termLinkedList,
   appInfo,
   collectors,
-  termsLegacy,
   terms,
   termSearch,
 });

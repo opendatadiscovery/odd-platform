@@ -16,3 +16,6 @@ export * from './metadata.selectors';
 export * from './namespace.selectors';
 export * from './owners.selectors';
 export * from './tags.selectors';
+export * from './terms.selectors';
+export * from './termLinkedList.selectors';
+export * from './termSearch.selectors';

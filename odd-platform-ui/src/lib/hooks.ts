@@ -46,7 +46,7 @@ export const useAppParams = (): AppRouteParams => {
 
   return {
     dataEntityId: parseInt(dataEntityId, 10),
-    termId: parseInt(dataEntityId, 10),
+    termId: parseInt(termId, 10),
     viewType,
   };
 };

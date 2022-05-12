@@ -4,7 +4,7 @@ import {
   RootState,
   TermLinkedListState,
 } from 'redux/interfaces';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import { createStatusesSelector, getTermId } from 'redux/selectors';
 import * as actions from 'redux/actions';
 
 const termLinkedListState = ({
@@ -18,8 +18,6 @@ const dataEntitiesState = ({
 export const getTermLinkedListFetchingStatuses = createStatusesSelector(
   actions.fetchTermLinkedListAction
 );
-
-export const getTermId = (_: RootState, termId: number | string) => termId;
 
 export const getTermLinkedList = createSelector(
   termLinkedListState,

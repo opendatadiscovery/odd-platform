@@ -54,5 +54,5 @@ export const updateTermOwnershipAction = createAction(
 
 export const deleteTermOwnershipAction = createAction(
   ownersActionPrefix,
-  'updateTermOwnership'
+  'deleteTermOwnership'
 );

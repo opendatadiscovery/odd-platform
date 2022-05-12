@@ -7,8 +7,6 @@ import {
   useForm,
 } from 'react-hook-form';
 import {
-  DataEntity,
-  DataEntityClass,
   Owner,
   Ownership,
   OwnershipFormData,
@@ -28,32 +26,30 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
-  getTermLinkedList,
-  getTermLinkedListFetchingStatuses,
-} from 'redux/selectors/termLinkedList.selectors';
-import { getDataEntityClassesList } from 'redux/selectors';
-import {
   createTermOwnership,
   fetchOwnersList,
   fetchRoleList,
   updateTermOwnership,
 } from 'redux/thunks';
+import { getTermDetailsOwnerUpdatingStatuses } from 'redux/selectors';
 
 interface OwnershipFormProps {
   termDetailsOwnership?: Ownership;
   ownerEditBtn: JSX.Element;
-  isUpdating: boolean;
 }
 
 const OwnershipForm: React.FC<OwnershipFormProps> = ({
   termDetailsOwnership,
   ownerEditBtn,
-  isUpdating,
 }) => {
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
   const searchOwners = fetchOwnersList;
   const searchRoles = fetchRoleList;
+
+  const { isLoading: isOwnerUpdating } = useAppSelector(
+    getTermDetailsOwnerUpdatingStatuses
+  );
 
   // Owner Autocomplete
   type OwnerFilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
@@ -415,7 +411,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       renderContent={formContent}
       renderActions={ownerEditDialogActions}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isUpdating}
+      isLoading={isOwnerUpdating}
       errorText={error}
       clearState={resetState}
     />
