@@ -194,7 +194,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
             .tags(dto.getTags().stream().map(tagMapper::mapToTag).collect(Collectors.toList()))
             .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
-            .termsLegacy(dto.getTerms().stream().map(termMapper::mapToRef).toList())
+            .terms(dto.getTerms().stream().map(termMapper::mapToRef).toList())
             .viewCount(pojo.getViewCount());
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {

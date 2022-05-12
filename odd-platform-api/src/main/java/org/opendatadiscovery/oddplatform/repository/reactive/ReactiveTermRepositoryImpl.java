@@ -229,9 +229,9 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
         return jooqReactiveOperations.flux(select)
             .map(this::mapRecordToRefDto)
             .collectList()
-            .map(termsLegacy -> Page.<TermRefDto>builder()
-                .data(termsLegacy)
-                .total(termsLegacy.size())
+            .map(terms -> Page.<TermRefDto>builder()
+                .data(terms)
+                .total(terms.size())
                 .hasNext(false)
                 .build());
     }

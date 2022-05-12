@@ -81,7 +81,7 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Gets a paginated list of data source dto objects with different attachments in termsLegacy of namespaces")
+    @DisplayName("Gets a paginated list of data source dto objects with different attachments in terms of namespaces")
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void listDtoTest() {
         final var namespace1 = namespaceRepository.createByName(UUID.randomUUID().toString())

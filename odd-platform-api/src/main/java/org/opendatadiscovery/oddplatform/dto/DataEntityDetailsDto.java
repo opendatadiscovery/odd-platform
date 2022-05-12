@@ -21,7 +21,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     private Collection<MetadataDto> metadata;
     private Collection<DatasetVersionPojo> datasetVersions;
-    private Collection<TermRefDto> termsLegacy;
+    private Collection<TermRefDto> terms;
 
     @Builder(builderMethodName = "detailsBuilder")
     public DataEntityDetailsDto(final DataEntityPojo dataEntity,
@@ -39,13 +39,13 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final DataConsumerDetailsDto dataConsumerDetailsDto,
                                 final DataQualityTestDetailsDto dataQualityTestDetailsDto,
                                 final DataInputDetailsDto dataInputDetailsDto,
-                                final Collection<TermRefDto> termsLegacy) {
+                                final Collection<TermRefDto> terms) {
         super(dataEntity, hasAlerts, specificAttributes, namespace, ownership,
             dataSource, tags, dataEntityGroupDimensionsDto, dataSetDetailsDto, dataTransformerDetailsDto,
             dataConsumerDetailsDto, dataQualityTestDetailsDto, dataInputDetailsDto);
 
         this.metadata = metadata;
         this.datasetVersions = datasetVersions;
-        this.termsLegacy = termsLegacy;
+        this.terms = terms;
     }
 }

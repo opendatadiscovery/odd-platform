@@ -944,7 +944,7 @@ paths:
   /api/dataentities/{data_entity_id}/term/{term_id}:
     delete:
       summary: Delete term from Data entity
-      description: Delete term from current data entity termsLegacy list
+      description: Delete term from current data entity terms list
       operationId: deleteTermFromDataEntity
       parameters:
           - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
@@ -1542,8 +1542,8 @@ paths:
 
   /api/terms:
     get:
-      summary: List of termsLegacy
-      description: Gets the list of existing termsLegacy
+      summary: List of terms
+      description: Gets the list of existing terms
       operationId: getTermsList
       parameters:
         - $ref: './components.yaml/#/components/parameters/PageParam'
@@ -1654,7 +1654,7 @@ paths:
   /api/terms/search:
     post:
       summary: Terms search by query
-      description: Creates a new search of all the matching termsLegacy to given query and calculates the aggregation data for correspondent data slice
+      description: Creates a new search of all the matching terms to given query and calculates the aggregation data for correspondent data slice
       operationId: termSearch
       requestBody:
         required: true
@@ -1674,7 +1674,7 @@ paths:
 
   /api/terms/search/{search_id}:
     get:
-      summary: Get termsLegacy search facets by search ID
+      summary: Get terms search facets by search ID
       description: Gets term search facets by parameter which can be found in search endpoint response
       operationId: getTermSearchFacetList
       parameters:
@@ -1754,8 +1754,8 @@ paths:
 
   /api/terms/search/{search_id}/results:
     get:
-      summary: Get termsLegacy search results by search ID
-      description: Returns paginated list of termsLegacy search results for a given search ID
+      summary: Get terms search results by search ID
+      description: Returns paginated list of terms search results for a given search ID
       operationId: getTermSearchResults
       parameters:
         - name: search_id
@@ -1778,7 +1778,7 @@ paths:
 
   /api/terms/search/suggestions:
     get:
-      summary: Get termsLegacy search suggestions by query
+      summary: Get terms search suggestions by query
       description: Returns top five search suggestions for a given query
       operationId: getTermSearchSuggestions
       parameters:
