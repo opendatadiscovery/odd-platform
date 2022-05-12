@@ -11,6 +11,7 @@ import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import { useDebouncedCallback } from 'use-debounce';
+import { stringFormatted } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import { getDataEntityClassesList } from 'redux/selectors';
@@ -137,7 +138,7 @@ const LinkedItemsList: React.FC = () => {
                 value={entityClass.id}
                 onClick={() => setSelectedClassId(entityClass.id)}
               >
-                {entityClass.name}
+                {stringFormatted(entityClass.name, '_', false, true)}
               </AppMenuItem>
             ))}
           </AppTextField>
