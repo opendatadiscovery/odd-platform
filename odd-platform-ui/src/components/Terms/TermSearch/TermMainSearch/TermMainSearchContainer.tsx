@@ -7,12 +7,14 @@ import {
 import {
   getTermSearchQuery,
   getTermSearchSuggestions,
+  getTermSuggestionsIsFetching,
 } from 'redux/selectors/termSearch.selectors';
 import TermMainSearch from './TermMainSearch';
 
 const mapStateToProps = (state: RootState) => ({
   query: getTermSearchQuery(state),
   suggestions: getTermSearchSuggestions(state),
+  isSuggestionsFetching: getTermSuggestionsIsFetching(state),
 });
 
 const mapDispatchToProps = {
