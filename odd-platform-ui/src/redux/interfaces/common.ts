@@ -10,3 +10,8 @@ export interface PartialEntityUpdateParams<T> {
   entityId: number;
   value: T;
 }
+
+export interface PartialTermDetailsUpdateParams<T> {
+  termId: number;
+  value: T;
+}

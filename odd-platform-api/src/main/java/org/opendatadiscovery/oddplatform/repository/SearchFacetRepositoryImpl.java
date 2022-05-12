@@ -89,7 +89,7 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
         if (StringUtils.isNotEmpty(state.getQuery())) {
             select = select.join(SEARCH_ENTRYPOINT)
                 .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-                .and(jooqFTSHelper.ftsCondition(state.getQuery()));
+                .and(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
         }
 
         final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
@@ -165,7 +165,7 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
         if (StringUtils.isNotEmpty(state.getQuery())) {
             select = select.join(SEARCH_ENTRYPOINT)
                 .on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-                .and(jooqFTSHelper.ftsCondition(state.getQuery()));
+                .and(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
         }
 
         final Set<Long> dataSourceIds = state.getFacetEntitiesIds(FacetType.DATA_SOURCES);
@@ -242,7 +242,7 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
             .leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(OWNERSHIP.DATA_ENTITY_ID));
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
-            select = select.and(jooqFTSHelper.ftsCondition(state.getQuery()));
+            select = select.and(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
         }
 
         select = select
@@ -284,7 +284,7 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
             .leftJoin(SEARCH_ENTRYPOINT).on(SEARCH_ENTRYPOINT.DATA_ENTITY_ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID));
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
-            select = select.and(jooqFTSHelper.ftsCondition(state.getQuery()));
+            select = select.and(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, state.getQuery()));
         }
 
         select = select

@@ -68,7 +68,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
     dispatch(
       updateDataEntityTags({
         dataEntityId,
-        dataEntityTagsFormData: {
+        tagsFormData: {
           tagNameList: compact([...data.tagNameList.map(tag => tag.name)]),
         },
       })

@@ -1,4 +1,5 @@
 import { createAction } from 'redux/lib/helpers';
+import { termsActionPrefix } from 'redux/actions/terms.actions';
 
 export const dataEntitiesActionPrefix = 'dataEntities';
 
@@ -59,4 +60,15 @@ export const updateDataEntityGroupAction = createAction(
 export const deleteDataEntityGroupAction = createAction(
   dataEntitiesActionPrefix,
   'deleteDataEntityGroup'
+);
+
+// terms
+export const addDataEntityTermAction = createAction(
+  termsActionPrefix,
+  'addDataEntityTerm'
+);
+
+export const deleteDataEntityTermAction = createAction(
+  termsActionPrefix,
+  'deleteDataEntityTerm'
 );

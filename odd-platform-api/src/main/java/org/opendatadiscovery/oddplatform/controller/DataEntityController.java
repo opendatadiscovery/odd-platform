@@ -11,7 +11,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLinea
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTagsFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -24,10 +24,13 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
+import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
+import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -43,13 +46,16 @@ public class DataEntityController
 
     private final OwnershipService ownershipService;
     private final AlertService alertService;
+    private final TermService termService;
 
     public DataEntityController(final DataEntityService entityService,
                                 final OwnershipService ownershipService,
-                                final AlertService alertService) {
+                                final AlertService alertService,
+                                final TermService termService) {
         super(entityService);
         this.ownershipService = ownershipService;
         this.alertService = alertService;
+        this.termService = termService;
     }
 
     @Override
@@ -97,11 +103,26 @@ public class DataEntityController
     }
 
     @Override
+    public Mono<ResponseEntity<TermRef>> addDataEntityTerm(final Long dataEntityId,
+                                                             final Mono<DataEntityTermFormData> dataEntityTermFormData,
+                                                             final ServerWebExchange exchange) {
+        return dataEntityTermFormData
+            .flatMap(formData -> termService.linkTermWithDataEntity(formData.getTermId(), dataEntityId))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteTermFromDataEntity(final Long dataEntityId, final Long termId,
+                                                               final ServerWebExchange exchange) {
+        return termService.removeTermFromDataEntity(termId, dataEntityId)
+            .map(ignored -> ResponseEntity.noContent().build());
+    }
+
+    @Override
     public Mono<ResponseEntity<Ownership>> createOwnership(final Long dataEntityId,
                                                            final Mono<OwnershipFormData> ownershipFormData,
                                                            final ServerWebExchange exchange) {
         return ownershipFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(form -> ownershipService.create(dataEntityId, form))
             .map(ResponseEntity::ok);
     }
@@ -111,7 +132,6 @@ public class DataEntityController
                                                       final Long ownershipId,
                                                       final ServerWebExchange exchange) {
         return ownershipService.delete(ownershipId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(m -> ResponseEntity.noContent().build());
     }
 
@@ -121,7 +141,6 @@ public class DataEntityController
                                                            final Mono<OwnershipUpdateFormData> ownershipUpdateFormData,
                                                            final ServerWebExchange exchange) {
         return ownershipUpdateFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(form -> ownershipService.update(ownershipId, form))
             .map(ResponseEntity::ok);
     }
@@ -176,10 +195,10 @@ public class DataEntityController
     @Override
     public Mono<ResponseEntity<Flux<Tag>>> createDataEntityTagsRelations(
         final Long dataEntityId,
-        final Mono<DataEntityTagsFormData> dataEntityTagsFormData,
+        final Mono<TagsFormData> tagsFormData,
         final ServerWebExchange exchange
     ) {
-        final Flux<Tag> labels = dataEntityTagsFormData
+        final Flux<Tag> labels = tagsFormData
             .publishOn(Schedulers.boundedElastic())
             .flatMapMany(form -> entityService.upsertTags(dataEntityId, form));
 

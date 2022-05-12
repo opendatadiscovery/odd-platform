@@ -5,6 +5,8 @@ import keyBy from 'lodash/keyBy';
 import { DataEntityDetails } from 'generated-sources';
 import omit from 'lodash/omit';
 import { dataEntitiesActionPrefix } from 'redux/actions';
+import uniqBy from 'lodash/uniqBy';
+import filter from 'lodash/filter';
 
 export const initialState: DataEntitiesState = {
   classesAndTypesDict: {
@@ -107,6 +109,68 @@ export const dataEntitiesSlice = createSlice({
               tags,
             },
           },
+        };
+      }
+    );
+
+    builder.addCase(
+      thunks.addDataEntityTerm.fulfilled,
+      (state, { payload }) => {
+        const { dataEntityId, term } = payload;
+
+        return {
+          ...state,
+          byId: {
+            ...state.byId,
+            [dataEntityId]: {
+              ...state.byId[dataEntityId],
+              terms: uniqBy(
+                [...(state.byId[dataEntityId].terms || []), term],
+                'id'
+              ),
+            },
+          },
+        };
+      }
+    );
+
+    builder.addCase(
+      thunks.deleteDataEntityTerm.fulfilled,
+      (state, { payload }) => {
+        const { dataEntityId, termId } = payload;
+
+        return {
+          ...state,
+          byId: {
+            ...state.byId,
+            [dataEntityId]: {
+              ...state.byId[dataEntityId],
+              terms: filter(
+                state.byId[dataEntityId].terms,
+                term => term.id !== termId
+              ),
+            },
+          },
+        };
+      }
+    );
+
+    builder.addCase(
+      thunks.fetchTermLinkedList.fulfilled,
+      (state, { payload }): DataEntitiesState => {
+        const { linkedItemsList } = payload;
+
+        return {
+          ...state,
+          byId: linkedItemsList.reduce(
+            (memo, linkedItem) => ({
+              ...memo,
+              [linkedItem.id]: {
+                ...linkedItem,
+              },
+            }),
+            state.byId
+          ),
         };
       }
     );

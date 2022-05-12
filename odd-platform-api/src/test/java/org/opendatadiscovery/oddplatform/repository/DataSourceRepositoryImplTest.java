@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTokenRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import reactor.test.StepVerifier;
@@ -30,7 +31,7 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
     private ReactiveNamespaceRepository namespaceRepository;
 
     @Autowired
-    private TokenRepository tokenRepository;
+    private ReactiveTokenRepository tokenRepository;
 
     @Test
     @DisplayName("Gets a data source dto object with namespace from the database, assuming it has a token attached")
@@ -80,7 +81,7 @@ public class DataSourceRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Gets a paginated list of data source dto objects with different attachments in terms of namespaces")
+    @DisplayName("Gets a paginated list of data source dto objects with different attachments in termsLegacy of namespaces")
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     public void listDtoTest() {
         final var namespace1 = namespaceRepository.createByName(UUID.randomUUID().toString())

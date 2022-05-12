@@ -13,11 +13,17 @@ const ManagementContainer = React.lazy(
 const DataEntityDetailsContainer = React.lazy(
   () => import('./DataEntityDetails/DataEntityDetailsContainer')
 );
+const TermDetails = React.lazy(
+  () => import('./Terms/TermDetails/TermDetails')
+);
 const OverviewContainer = React.lazy(
   () => import('./Overview/OverviewContainer')
 );
 const SearchContainer = React.lazy(
   () => import('./Search/SearchContainer')
+);
+const TermSearchContainer = React.lazy(
+  () => import('./Terms/TermSearch/TermSearchContainer')
 );
 const AlertsContainer = React.lazy(
   () => import('./Alerts/AlertsContainer')
@@ -44,8 +50,17 @@ const App: React.FC = () => {
             />
             <Route
               exact
+              path="/termsearch/:termSearchId?"
+              component={TermSearchContainer}
+            />
+            <Route
+              exact
               path="/search/:searchId?"
               component={SearchContainer}
+            />
+            <Route
+              path="/terms/:termId/:viewType?"
+              component={TermDetails}
             />
             <Route
               path="/dataentities/:dataEntityId/:viewType?"

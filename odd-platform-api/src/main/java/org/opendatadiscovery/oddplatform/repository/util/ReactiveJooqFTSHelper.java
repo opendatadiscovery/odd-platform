@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import org.jooq.Field;
 import org.jooq.Insert;
 import org.jooq.Record;
@@ -15,101 +14,71 @@ import org.jooq.SelectJoinStep;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
-import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRecord;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
 import static java.util.Collections.emptyMap;
 import static org.jooq.impl.DSL.coalesce;
 import static org.jooq.impl.DSL.field;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
-import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
-import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
-import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
-import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
-import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
-import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 
 @Component
 @Slf4j
 public class ReactiveJooqFTSHelper {
-    private static final Map<Field<?>, String> FTS_WEIGHTS = Map.ofEntries(
-        Map.entry(DATA_ENTITY.INTERNAL_NAME, "A"),
-        Map.entry(DATA_ENTITY.EXTERNAL_NAME, "A"),
-        Map.entry(DATA_ENTITY.INTERNAL_DESCRIPTION, "B"),
-        Map.entry(DATA_ENTITY.EXTERNAL_DESCRIPTION, "B"),
-        Map.entry(DATA_SOURCE.NAME, "B"),
-        Map.entry(DATA_SOURCE.ODDRN, "D"),
-        Map.entry(DATA_SOURCE.CONNECTION_URL, "D"),
-        Map.entry(NAMESPACE.NAME, "B"),
-        Map.entry(TAG.NAME, "B"),
-        Map.entry(METADATA_FIELD.NAME, "C"),
-        Map.entry(METADATA_FIELD_VALUE.VALUE, "D"),
-        Map.entry(DATASET_FIELD.NAME, "C"),
-        Map.entry(DATASET_FIELD.INTERNAL_DESCRIPTION, "C"),
-        Map.entry(DATASET_FIELD.EXTERNAL_DESCRIPTION, "C"),
-        Map.entry(LABEL.NAME, "C"),
-        Map.entry(ROLE.NAME, "D"),
-        Map.entry(OWNER.NAME, "C")
-    );
-
-    public Insert<SearchEntrypointRecord> buildSearchEntrypointUpsert(
+    public Insert<? extends Record> buildVectorUpsert(
         final Select<? extends Record> vectorSelect,
         final Field<Long> dataEntityIdField,
         final List<Field<?>> vectorFields,
-        final TableField<SearchEntrypointRecord, Object> seTargetField
+        final TableField<? extends Record, Object> seTargetField,
+        final FTSConfig.FTSConfigDetails ftsConfigDetails
     ) {
-        return buildSearchEntrypointUpsert(vectorSelect, dataEntityIdField,
-            vectorFields, seTargetField, false, emptyMap());
+        return buildVectorUpsert(vectorSelect, dataEntityIdField,
+            vectorFields, seTargetField, ftsConfigDetails, false, emptyMap());
     }
 
-    public Insert<SearchEntrypointRecord> buildSearchEntrypointUpsert(
+    public Insert<? extends Record> buildVectorUpsert(
         final Select<? extends Record> vectorSelect,
         final Field<Long> dataEntityIdField,
         final List<Field<?>> vectorFields,
-        final TableField<SearchEntrypointRecord, Object> seTargetField,
+        final TableField<? extends Record, Object> seTargetField,
+        final FTSConfig.FTSConfigDetails ftsConfigDetails,
         final boolean agg
     ) {
-        return buildSearchEntrypointUpsert(vectorSelect, dataEntityIdField,
-            vectorFields, seTargetField, agg, emptyMap());
+        return buildVectorUpsert(vectorSelect, dataEntityIdField,
+            vectorFields, seTargetField, ftsConfigDetails, agg, emptyMap());
     }
 
     // A headless variant of the method, which construct query leveraging jOOQ's static DSL class
     // Used in the application's reactive part
-    public Insert<SearchEntrypointRecord> buildSearchEntrypointUpsert(
+    public Insert<? extends Record> buildVectorUpsert(
         final Select<? extends Record> vectorSelect,
-        final Field<Long> dataEntityIdField,
+        final Field<Long> idField,
         final List<Field<?>> vectorFields,
-        final TableField<SearchEntrypointRecord, Object> seTargetField,
+        final TableField<? extends Record, Object> seTargetField,
+        final FTSConfig.FTSConfigDetails ftsConfigDetails,
         final boolean agg,
-        final Map<Field<?>, Field<?>> remappingConfig
-    ) {
+        final Map<Field<?>, Field<?>> remappingConfig) {
         if (vectorFields.isEmpty()) {
             throw new IllegalArgumentException("Vector fields collection must not be empty");
         }
 
-        final Table<? extends Record> deCte = vectorSelect.asTable("t");
+        final Table<? extends Record> cte = vectorSelect.asTable("t");
 
-        final Field<Object> vector = concatVectorFields(deCte, vectorFields, agg, remappingConfig).as(seTargetField);
+        final Field<Object> vector = concatVectorFields(cte, vectorFields, agg, ftsConfigDetails.ftsWeights(),
+            remappingConfig).as(seTargetField);
 
-        final Field<Long> cteDataEntityId = deCte.field(dataEntityIdField);
+        final Field<Long> cteId = cte.field(idField);
 
         Select<Record2<Long, Object>> insertQuery = DSL
-            .select(cteDataEntityId, vector)
-            .from(deCte.getUnqualifiedName());
+            .select(cteId, vector)
+            .from(cte.getUnqualifiedName());
 
         if (agg) {
-            insertQuery = ((SelectJoinStep<Record2<Long, Object>>) insertQuery).groupBy(cteDataEntityId);
+            insertQuery = ((SelectJoinStep<Record2<Long, Object>>) insertQuery).groupBy(cteId);
         }
 
-        return DSL.with(deCte.getName())
+        return DSL.with(cte.getName())
             .as(vectorSelect)
-            .insertInto(SEARCH_ENTRYPOINT, SEARCH_ENTRYPOINT.DATA_ENTITY_ID, seTargetField)
+            .insertInto(ftsConfigDetails.vectorTable(), ftsConfigDetails.vectorTableIdField(), seTargetField)
             .select(insertQuery)
             .onConflict().doUpdate().set(onConflictSetMap(seTargetField));
     }
@@ -117,9 +86,10 @@ public class ReactiveJooqFTSHelper {
     private Field<Object> concatVectorFields(final Table<? extends Record> cte,
                                              final List<Field<?>> vectorFields,
                                              final boolean agg,
+                                             final Map<Field<?>, String> weightsMap,
                                              final Map<Field<?>, Field<?>> remappingConfig) {
         final String expr = vectorFields.stream()
-            .map(f -> getWeightRelation(f, cte, remappingConfig))
+            .map(f -> getWeightRelation(f, weightsMap, cte, remappingConfig))
             .filter(Objects::nonNull)
             .map(p -> String.format("setweight(to_tsvector(%s), '%s')", p.getLeft(), p.getRight()))
             .collect(Collectors.joining(" || "));
@@ -128,11 +98,11 @@ public class ReactiveJooqFTSHelper {
         return agg ? field(String.format("tsvector_agg(%s)", expr)) : field(expr);
     }
 
-    @Nullable
     private static Pair<Field<?>, String> getWeightRelation(final Field<?> field,
+                                                            final Map<Field<?>, String> weightsMap,
                                                             final Table<? extends Record> cte,
                                                             final Map<Field<?>, Field<?>> remappingConfig) {
-        final String weight = FTS_WEIGHTS.get(field);
+        final String weight = weightsMap.get(field);
         final Field<?> coalesce = coalesce(cte.field(field), "");
 
         if (weight == null) {
@@ -142,7 +112,7 @@ public class ReactiveJooqFTSHelper {
                 return null;
             }
 
-            final String remappedFieldWeight = FTS_WEIGHTS.get(remappedField);
+            final String remappedFieldWeight = weightsMap.get(remappedField);
 
             if (remappedFieldWeight == null) {
                 log.warn("Couldn't find weight neither for the remapped field {} nor the original {}",
@@ -156,11 +126,5 @@ public class ReactiveJooqFTSHelper {
 
     private static Map<Field<?>, Field<?>> onConflictSetMap(final Field<?> targetField) {
         return Map.of(targetField, field(String.format("excluded.%s", targetField.getName())));
-    }
-
-    private static List<Long> extractFilterId(final List<SearchFilterDto> filters) {
-        return filters.stream()
-            .map(SearchFilterDto::getEntityId)
-            .collect(Collectors.toList());
     }
 }

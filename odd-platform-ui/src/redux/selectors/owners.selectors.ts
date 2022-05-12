@@ -4,6 +4,7 @@ import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { OwnersState } from 'redux/interfaces/state';
 import { Owner } from 'generated-sources';
 import * as actions from 'redux/actions';
+import { getTermId } from 'redux/selectors/terms.selectors';
 import { getDataEntityId } from './dataentity.selectors';
 
 const ownersState = ({ owners }: RootState): OwnersState => owners;
@@ -33,7 +34,6 @@ export const getOwnersListPage = createSelector(
   ownersList => ownersList.pageInfo
 );
 
-// Data Entity Metadata
 const getOwnerToExclude = (
   _: RootState,
   ownerIdToExclude: number | undefined
@@ -53,7 +53,17 @@ export const getDataEntityOwnership = createSelector(
   ownersState,
   getDataEntityId,
   (owners, dataEntityId) =>
-    owners.ownership[dataEntityId]?.allIds.map(
-      id => owners.ownership[dataEntityId].byId[id]
+    owners.ownershipDataEntity[dataEntityId]?.allIds.map(
+      id => owners.ownershipDataEntity[dataEntityId].byId[id]
+    ) || []
+);
+
+// Terms
+export const getTermOwnership = createSelector(
+  ownersState,
+  getTermId,
+  (owners, termId) =>
+    owners.ownershipTermDetails[termId]?.allIds.map(
+      id => owners.ownershipTermDetails[termId].byId[id]
     ) || []
 );

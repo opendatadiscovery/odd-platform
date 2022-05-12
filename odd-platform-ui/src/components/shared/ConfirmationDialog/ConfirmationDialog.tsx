@@ -20,12 +20,16 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   onConfirm,
 }) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
-  const onClose = (action?: () => Promise<unknown>) => () => {
-    if (action) {
-      setIsLoading(true);
-      action().then(() => setIsLoading(false));
-    }
-  };
+  const onClose =
+    (handleClose: () => void, action?: () => Promise<unknown>) => () => {
+      if (action) {
+        setIsLoading(true);
+        action().then(() => {
+          setIsLoading(false);
+          handleClose();
+        });
+      }
+    };
 
   const formTitle = (
     <Typography variant="h4" component="span">
@@ -37,9 +41,20 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
     <Typography variant="subtitle1">{actionText}</Typography>
   );
 
-  const formActionButtons = () => (
+  const formActionButtons = ({
+    handleClose,
+  }: {
+    handleClose: () => void;
+  }) => (
     <S.Actions>
-      <AppButton size="large" color="primary" onClick={onClose(onConfirm)}>
+      <AppButton
+        size="large"
+        color="primary"
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation();
+          onClose(handleClose, onConfirm)();
+        }}
+      >
         {actionName}
       </AppButton>
     </S.Actions>

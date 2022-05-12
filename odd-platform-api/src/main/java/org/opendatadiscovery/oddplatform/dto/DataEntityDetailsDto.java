@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
+import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -20,6 +21,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 public class DataEntityDetailsDto extends DataEntityDimensionsDto {
     private Collection<MetadataDto> metadata;
     private Collection<DatasetVersionPojo> datasetVersions;
+    private Collection<TermRefDto> termsLegacy;
 
     @Builder(builderMethodName = "detailsBuilder")
     public DataEntityDetailsDto(final DataEntityPojo dataEntity,
@@ -36,12 +38,14 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final DataTransformerDetailsDto dataTransformerDetailsDto,
                                 final DataConsumerDetailsDto dataConsumerDetailsDto,
                                 final DataQualityTestDetailsDto dataQualityTestDetailsDto,
-                                final DataInputDetailsDto dataInputDetailsDto) {
+                                final DataInputDetailsDto dataInputDetailsDto,
+                                final Collection<TermRefDto> termsLegacy) {
         super(dataEntity, hasAlerts, specificAttributes, namespace, ownership,
             dataSource, tags, dataEntityGroupDimensionsDto, dataSetDetailsDto, dataTransformerDetailsDto,
             dataConsumerDetailsDto, dataQualityTestDetailsDto, dataInputDetailsDto);
 
         this.metadata = metadata;
         this.datasetVersions = datasetVersions;
+        this.termsLegacy = termsLegacy;
     }
 }

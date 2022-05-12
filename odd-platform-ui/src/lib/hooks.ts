@@ -26,19 +26,27 @@ export const useScrollBarWidth: (width?: number) => string = (
   return scrollbarWidth;
 };
 
+type ViewType = 'overview' | 'linked-items';
+
 // useAppParams react-router
 interface RouteParams {
   dataEntityId: string;
+  termId: string;
+  viewType: ViewType;
 }
 
 interface AppRouteParams {
   dataEntityId: number;
+  termId: number;
+  viewType: ViewType;
 }
 
 export const useAppParams = (): AppRouteParams => {
-  const { dataEntityId } = useParams<RouteParams>();
+  const { dataEntityId, termId, viewType } = useParams<RouteParams>();
 
   return {
     dataEntityId: parseInt(dataEntityId, 10),
+    termId: parseInt(dataEntityId, 10),
+    viewType,
   };
 };

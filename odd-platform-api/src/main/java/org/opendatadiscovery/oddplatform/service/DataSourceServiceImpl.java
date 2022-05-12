@@ -14,10 +14,10 @@ import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataSourceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
-import org.opendatadiscovery.oddplatform.repository.TokenRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTokenRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,7 +30,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     private final TokenGenerator tokenGenerator;
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final ReactiveDataEntityRepository dataEntityRepository;
-    private final TokenRepository tokenRepository;
+    private final ReactiveTokenRepository tokenRepository;
     private final NamespaceService namespaceService;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
 
@@ -60,15 +60,11 @@ public class DataSourceServiceImpl implements DataSourceService {
             return namespaceService.getOrCreate(form.getNamespaceName())
                 .zipWith(token)
                 .flatMap(t -> createDataSource(form, t.getT2(), t.getT1()))
-                .flatMap(this::updateSearchVectors)
                 .map(dataSourceMapper::mapDto);
         }
 
         return token
             .flatMap(t -> createDataSource(form, t, null))
-            .flatMap(dsDto -> searchEntrypointRepository
-                .updateDataSourceVector(dsDto.dataSource().getId())
-                .thenReturn(dsDto))
             .map(dataSourceMapper::mapDto);
     }
 
@@ -113,26 +109,29 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     private Mono<DataSourceDto> updateDataSource(final DataSourceDto dataSourceDto,
-                                       final DataSourceUpdateFormData form,
-                                       final NamespacePojo namespace) {
+                                                 final DataSourceUpdateFormData form,
+                                                 final NamespacePojo namespace) {
         return Mono.just(dataSourceMapper.applyToPojo(dataSourceDto.dataSource(), form, namespace))
             .flatMap(dataSourceRepository::update)
-            .zipWith(Mono.just(dataSourceDto.token()))
-            .map(t -> new DataSourceDto(t.getT1(), namespace, t.getT2()));
+            .map(pojo -> new DataSourceDto(pojo, namespace, dataSourceDto.token()));
     }
 
     private Mono<DataSourceDto> createDataSource(final DataSourceFormData form,
-                                       final TokenDto token,
-                                       final NamespacePojo namespace) {
+                                                 final TokenDto token,
+                                                 final NamespacePojo namespace) {
         return Mono.just(dataSourceMapper.mapForm(form, namespace, token))
             .flatMap(dataSourceRepository::create)
             .map(ds -> new DataSourceDto(ds, namespace, token));
     }
 
     private Mono<DataSourceDto> updateSearchVectors(final DataSourceDto dto) {
+        final Mono<Integer> namespaceVector = Mono.just(dto)
+            .filter(d -> d.namespace() != null)
+            .flatMap(d -> searchEntrypointRepository.updateChangedNamespaceVector(d.namespace().getId()))
+            .switchIfEmpty(searchEntrypointRepository.clearNamespaceVector(dto.dataSource().getId()));
         return Mono.zip(
-                searchEntrypointRepository.updateDataSourceVector(dto.dataSource().getId()),
-                searchEntrypointRepository.updateNamespaceVector(dto.namespace().getId()))
-            .thenReturn(dto);
+            searchEntrypointRepository.updateDataSourceVector(dto.dataSource().getId()),
+            namespaceVector
+        ).thenReturn(dto);
     }
 }

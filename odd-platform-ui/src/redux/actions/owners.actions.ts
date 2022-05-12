@@ -41,3 +41,18 @@ export const deleteDataEntityOwnershipAction = createAction(
   ownersActionPrefix,
   'deleteDataEntityOwnership'
 );
+
+export const createTermOwnershipAction = createAction(
+  ownersActionPrefix,
+  'createTermOwnership'
+);
+
+export const updateTermOwnershipAction = createAction(
+  ownersActionPrefix,
+  'updateTermOwnership'
+);
+
+export const deleteTermOwnershipAction = createAction(
+  ownersActionPrefix,
+  'updateTermOwnership'
+);

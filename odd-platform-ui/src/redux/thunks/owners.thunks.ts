@@ -14,6 +14,10 @@ import {
   RoleApi,
   RoleApiGetRoleListRequest,
   RoleList,
+  TermApi,
+  TermApiCreateTermOwnershipRequest,
+  TermApiDeleteTermOwnershipRequest,
+  TermApiUpdateTermOwnershipRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
@@ -24,6 +28,7 @@ const apiClientConf = new Configuration(BASE_PARAMS);
 const ownerApi = new OwnerApi(apiClientConf);
 const dataEntityApi = new DataEntityApi(apiClientConf);
 const roleApi = new RoleApi(apiClientConf);
+const termApi = new TermApi(apiClientConf);
 
 export const fetchRoleList = createAsyncThunk<
   { roleList: RoleList['items'] },
@@ -34,6 +39,10 @@ export const fetchRoleList = createAsyncThunk<
     size,
     query,
   });
+  const apiClient = new OwnerApi(apiClientConf);
+  const dataEntityApiClient = new DataEntityApi(apiClientConf);
+  const roleApiClient = new RoleApi(apiClientConf);
+  const termApiClient = new TermApi(apiClientConf);
 
   return { roleList: items };
 });
@@ -121,3 +130,45 @@ export const deleteDataEntityOwnership = createAsyncThunk<
     return { dataEntityId, ownershipId };
   }
 );
+
+// Term ownership
+
+export const createTermOwnership = createAsyncThunk<
+  { termId: number; ownership: Ownership },
+  TermApiCreateTermOwnershipRequest
+>(
+  actions.createTermOwnershipAction,
+  async ({ termId, ownershipFormData }) => {
+    const ownership = await termApi.createTermOwnership({
+      termId,
+      ownershipFormData,
+    });
+
+    return { termId, ownership };
+  }
+);
+
+export const updateTermOwnership = createAsyncThunk<
+  { termId: number; ownershipId: number; ownership: Ownership },
+  TermApiUpdateTermOwnershipRequest
+>(
+  actions.updateTermOwnershipAction,
+  async ({ termId, ownershipId, ownershipUpdateFormData }) => {
+    const ownership = await termApi.updateTermOwnership({
+      termId,
+      ownershipId,
+      ownershipUpdateFormData,
+    });
+
+    return { termId, ownershipId, ownership };
+  }
+);
+
+export const deleteTermOwnership = createAsyncThunk<
+  { termId: number; ownershipId: number },
+  TermApiDeleteTermOwnershipRequest
+>(actions.deleteTermOwnershipAction, async ({ termId, ownershipId }) => {
+  await termApi.deleteTermOwnership({ termId, ownershipId });
+
+  return { termId, ownershipId };
+});

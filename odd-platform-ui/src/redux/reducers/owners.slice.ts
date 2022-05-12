@@ -12,7 +12,8 @@ export const initialState: OwnersState = {
     page: 0,
     hasNext: true,
   },
-  ownership: {},
+  ownershipDataEntity: {},
+  ownershipTermDetails: {},
 };
 
 export const ownersSlice = createSlice({
@@ -22,7 +23,7 @@ export const ownersSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(
       thunks.fetchOwnersList.fulfilled,
-      (state, { payload }) => {
+      (state, { payload }): OwnersState => {
         const { ownersList, pageInfo } = payload;
         return ownersList.reduce(
           (memo: OwnersState, owner) => ({
@@ -45,29 +46,32 @@ export const ownersSlice = createSlice({
       }
     );
 
-    builder.addCase(thunks.updateOwner.fulfilled, (state, { payload }) => {
-      const { ownerId, owner } = payload;
+    builder.addCase(
+      thunks.updateOwner.fulfilled,
+      (state, { payload }): OwnersState => {
+        const { ownerId, owner } = payload;
 
-      return {
-        ...state,
-        byId: {
-          ...state.byId,
-          [ownerId]: owner,
-        },
-      };
-    });
+        return {
+          ...state,
+          byId: {
+            ...state.byId,
+            [ownerId]: owner,
+          },
+        };
+      }
+    );
 
     // get ownership from data entity details
     builder.addCase(
       thunks.fetchDataEntityDetails.fulfilled,
-      (state, { payload }) => {
+      (state, { payload }): OwnersState => {
         const { id: dataEntityId, ownership: dataEntityOwnership } =
           payload;
 
         return {
           ...state,
-          ownership: {
-            ...state.ownership,
+          ownershipDataEntity: {
+            ...state.ownershipDataEntity,
             ...(dataEntityOwnership && {
               [dataEntityId]: {
                 byId: dataEntityOwnership.reduce(
@@ -87,21 +91,21 @@ export const ownersSlice = createSlice({
 
     builder.addCase(
       thunks.createDataEntityOwnership.fulfilled,
-      (state, { payload }) => {
+      (state, { payload }): OwnersState => {
         const { dataEntityId, ownership } = payload;
 
         return {
           ...state,
-          ownership: {
-            ...state.ownership,
+          ownershipDataEntity: {
+            ...state.ownershipDataEntity,
             [dataEntityId]: {
               byId: {
-                ...state.ownership[dataEntityId].byId,
+                ...state.ownershipDataEntity[dataEntityId].byId,
                 [ownership.id]: ownership,
               },
               allIds: [
                 ownership.id,
-                ...state.ownership[dataEntityId].allIds,
+                ...state.ownershipDataEntity[dataEntityId].allIds,
               ],
             },
           },
@@ -111,17 +115,17 @@ export const ownersSlice = createSlice({
 
     builder.addCase(
       thunks.updateDataEntityOwnership.fulfilled,
-      (state, { payload }) => {
+      (state, { payload }): OwnersState => {
         const { dataEntityId, ownership } = payload;
 
         return {
           ...state,
-          ownership: {
-            ...state.ownership,
+          ownershipDataEntity: {
+            ...state.ownershipDataEntity,
             [dataEntityId]: {
-              ...state.ownership[dataEntityId],
+              ...state.ownershipDataEntity[dataEntityId],
               byId: {
-                ...state.ownership[dataEntityId].byId,
+                ...state.ownershipDataEntity[dataEntityId].byId,
                 [ownership.id]: ownership,
               },
             },
@@ -132,17 +136,17 @@ export const ownersSlice = createSlice({
 
     builder.addCase(
       thunks.deleteDataEntityOwnership.fulfilled,
-      (state, { payload }) => {
+      (state, { payload }): OwnersState => {
         const { dataEntityId, ownershipId } = payload;
 
         return {
           ...state,
-          ownership: {
-            ...state.ownership,
+          ownershipDataEntity: {
+            ...state.ownershipDataEntity,
             [dataEntityId]: {
-              ...state.ownership[dataEntityId],
+              ...state.ownershipDataEntity[dataEntityId],
               allIds: filter(
-                state.ownership[dataEntityId].allIds,
+                state.ownershipDataEntity[dataEntityId].allIds,
                 id => id !== ownershipId
               ),
             },
@@ -150,6 +154,95 @@ export const ownersSlice = createSlice({
         };
       }
     );
+
+    builder.addCase(
+      thunks.createTermOwnership.fulfilled,
+      (state, { payload }): OwnersState => {
+        const { termId, ownership } = payload;
+
+        return {
+          ...state,
+          ownershipTermDetails: {
+            ...state.ownershipTermDetails,
+            [termId]: {
+              byId: {
+                ...state.ownershipTermDetails[termId]?.byId,
+                [ownership.id]: ownership,
+              },
+              allIds: [
+                ownership.id,
+                ...(state.ownershipTermDetails[termId]?.allIds || []),
+              ],
+            },
+          },
+        };
+      }
+    );
+
+    builder.addCase(
+      thunks.updateTermOwnership.fulfilled,
+      (state, { payload }): OwnersState => {
+        const { termId, ownershipId, ownership } = payload;
+
+        return {
+          ...state,
+          ownershipTermDetails: {
+            ...state.ownershipTermDetails,
+            [termId]: {
+              ...state.ownershipTermDetails[termId],
+              byId: {
+                ...state.ownershipTermDetails[termId].byId,
+                [ownershipId]: ownership,
+              },
+            },
+          },
+        };
+      }
+    );
+
+    builder.addCase(
+      thunks.deleteTermOwnership.fulfilled,
+      (state, { payload }): OwnersState => {
+        const { termId, ownershipId } = payload;
+
+        return {
+          ...state,
+          ownershipTermDetails: {
+            ...state.ownershipTermDetails,
+            [termId]: {
+              ...state.ownershipTermDetails[termId],
+              allIds: filter(
+                state.ownershipTermDetails[termId].allIds,
+                id => id !== ownershipId
+              ),
+            },
+          },
+        };
+      }
+    );
+
+    // todo fetch ownership term details entity
+    // case getType(actions.fetchTermDetailsAction.success):
+    //   return {
+    //     ...state,
+    //     ownershipTermDetails: {
+    //       ...state.ownershipTermDetails,
+    //       ...(action.payload.ownership && {
+    //         [action.payload.id]: {
+    //           byId: action.payload.ownership.reduce(
+    //             (memo, ownership) => ({
+    //               ...memo,
+    //               [ownership.id]: ownership,
+    //             }),
+    //             {}
+    //           ),
+    //           allIds: action.payload.ownership.map(
+    //             ownership => ownership.id
+    //           ),
+    //         },
+    //       }),
+    //     },
+    //   };
   },
 });
 

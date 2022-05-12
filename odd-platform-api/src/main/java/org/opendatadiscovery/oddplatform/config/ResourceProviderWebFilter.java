@@ -21,6 +21,7 @@ public class ResourceProviderWebFilter implements WebFilter {
         }
 
         if (requestPath.startsWith("/static")
+            || requestPath.startsWith("/img")
             || requestPath.equals("/manifest.json")
             || requestPath.startsWith("/favicon.ico")) {
             final ServerHttpRequest exchangeRequest = exchange.getRequest().mutate()

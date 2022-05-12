@@ -15,8 +15,12 @@ import profile from './profile.reducer';
 import dataQualityTest from './dataQualityTest.reducer';
 import alerts from './alerts.reducer';
 import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';
+import termLinkedList from './termLinkedList.slice';
 import appInfo from './appInfo.reducer';
 import collectors from './collectors.reducer';
+import termsLegacy from './terms.reducer';
+import terms from './terms.slice';
+import termSearch from './termSearch.reducer';
 
 export default combineReducers({
   namespaces,
@@ -35,6 +39,10 @@ export default combineReducers({
   dataQualityTest,
   alerts,
   dataEntityGroupLinkedList,
+  termLinkedList,
   appInfo,
   collectors,
+  termsLegacy,
+  terms,
+  termSearch,
 });

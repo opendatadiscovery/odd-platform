@@ -65,6 +65,12 @@ export const getDataEntityTypesByClassName = createSelector(
     )
 );
 
+export const getDataEntityClassesList = createSelector(
+  dataEntitiesState,
+  dataEntities =>
+    Object.values(dataEntities.classesAndTypesDict.entityClasses)
+);
+
 export const getDataEntityClassesDict = createSelector(
   dataEntitiesState,
   dataEntities => dataEntities.classesAndTypesDict.entityClasses

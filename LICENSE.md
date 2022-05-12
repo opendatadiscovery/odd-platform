@@ -6,7 +6,7 @@
 
    1. Definitions.
 
-      "License" shall mean the terms and conditions for use, reproduction,
+      "License" shall mean the termsLegacy and conditions for use, reproduction,
       and distribution as defined by Sections 1 through 9 of this document.
 
       "Licensor" shall mean the copyright owner or entity authorized by
@@ -63,14 +63,14 @@
       on behalf of whom a Contribution has been received by Licensor and
       subsequently incorporated within the Work.
 
-   2. Grant of Copyright License. Subject to the terms and conditions of
+   2. Grant of Copyright License. Subject to the termsLegacy and conditions of
       this License, each Contributor hereby grants to You a perpetual,
       worldwide, non-exclusive, no-charge, royalty-free, irrevocable
       copyright license to reproduce, prepare Derivative Works of,
       publicly display, publicly perform, sublicense, and distribute the
       Work and such Derivative Works in Source or Object form.
 
-   3. Grant of Patent License. Subject to the terms and conditions of
+   3. Grant of Patent License. Subject to the termsLegacy and conditions of
       this License, each Contributor hereby grants to You a perpetual,
       worldwide, non-exclusive, no-charge, royalty-free, irrevocable
       (except as stated in this section) patent license to make, have made,
@@ -121,7 +121,7 @@
           as modifying the License.
 
       You may add Your own copyright statement to Your modifications and
-      may provide additional or different license terms and conditions
+      may provide additional or different license termsLegacy and conditions
       for use, reproduction, or distribution of Your modifications, or
       for any such Derivative Works as a whole, provided Your use,
       reproduction, and distribution of the Work otherwise complies with
@@ -129,10 +129,10 @@
 
    5. Submission of Contributions. Unless You explicitly state otherwise,
       any Contribution intentionally submitted for inclusion in the Work
-      by You to the Licensor shall be under the terms and conditions of
-      this License, without any additional terms or conditions.
+      by You to the Licensor shall be under the termsLegacy and conditions of
+      this License, without any additional termsLegacy or conditions.
       Notwithstanding the above, nothing herein shall supersede or modify
-      the terms of any separate license agreement you may have executed
+      the termsLegacy of any separate license agreement you may have executed
       with Licensor regarding such Contributions.
 
    6. Trademarks. This License does not grant permission to use the trade

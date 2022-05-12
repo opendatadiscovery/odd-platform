@@ -1,9 +1,11 @@
 import {
   Configuration,
   DataEntityApi,
+  DataEntityApiAddTermToDataEntityRequest,
   DataEntityApiCreateDataEntityGroupRequest,
   DataEntityApiCreateDataEntityTagsRelationsRequest,
   DataEntityApiDeleteDataEntityGroupRequest,
+  DataEntityApiDeleteTermFromDataEntityRequest,
   DataEntityApiGetDataEntityDetailsRequest,
   DataEntityApiGetMyObjectsRequest,
   DataEntityApiGetMyObjectsWithDownstreamRequest,
@@ -18,6 +20,7 @@ import {
   InternalDescription,
   InternalName,
   Tag,
+  TermRef,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
@@ -47,14 +50,39 @@ export const updateDataEntityTags = createAsyncThunk<
   DataEntityApiCreateDataEntityTagsRelationsRequest
 >(
   actions.updateDataEntityTagsAction,
-  async ({ dataEntityId, dataEntityTagsFormData }) => {
+  async ({ dataEntityId, tagsFormData }) => {
     const tags = await dataEntityApi.createDataEntityTagsRelations({
       dataEntityId,
-      dataEntityTagsFormData,
+      tagsFormData,
     });
     return { dataEntityId, tags };
   }
 );
+
+export const addDataEntityTerm = createAsyncThunk<
+  { dataEntityId: number; term: TermRef },
+  DataEntityApiAddTermToDataEntityRequest
+>(
+  actions.addDataEntityTermAction,
+  async ({ dataEntityId, dataEntityTermFormData }) => {
+    const term = await dataEntityApi.addTermToDataEntity({
+      dataEntityId,
+      dataEntityTermFormData,
+    });
+    return { dataEntityId, term };
+  }
+);
+
+export const deleteDataEntityTerm = createAsyncThunk<
+  { dataEntityId: number; termId: number },
+  DataEntityApiDeleteTermFromDataEntityRequest
+>(actions.deleteDataEntityTermAction, async ({ dataEntityId, termId }) => {
+  const term = await dataEntityApi.deleteTermFromDataEntity({
+    dataEntityId,
+    termId,
+  });
+  return { dataEntityId, termId };
+});
 
 export const updateDataEntityInternalDescription = createAsyncThunk<
   {
