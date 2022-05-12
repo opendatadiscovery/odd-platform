@@ -31,6 +31,10 @@ export const getTermSearchResultsFetchStatus = createFetchingSelector(
   'GET_TERM_SEARCH_RESULTS'
 );
 
+export const getTermSearchSuggestionsFetchStatus = createFetchingSelector(
+  'GET_TERM_SEARCH_SUGGESTIONS'
+);
+
 // Term Search
 
 const termSearchState = ({ termSearch }: RootState): TermSearchState =>
@@ -91,6 +95,11 @@ export const getTermSearchQuery = createSelector(
 export const getTermSearchIsUpdated = createSelector(
   getTermSearchUpdateStatus,
   statusUpdate => statusUpdate === 'fetching'
+);
+
+export const getTermSuggestionsIsFetching = createSelector(
+  getTermSearchSuggestionsFetchStatus,
+  statusFetch => statusFetch === 'fetching'
 );
 
 // Facets

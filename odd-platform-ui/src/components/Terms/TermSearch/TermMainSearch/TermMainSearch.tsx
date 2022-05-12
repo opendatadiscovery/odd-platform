@@ -29,6 +29,7 @@ interface TermMainSearchProps {
   createTermSearch: (
     params: TermApiTermSearchRequest
   ) => Promise<TermSearchFacetsData>;
+  isSuggestionsFetching: boolean;
 }
 
 const TermMainSearch: React.FC<TermMainSearchProps> = ({
@@ -36,12 +37,11 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
   suggestions,
   fetchTermSearchSuggestions,
   createTermSearch,
+  isSuggestionsFetching,
 }) => {
   const [searchText, setSearchText] = React.useState<string>('');
   const [options, setOptions] = React.useState<Partial<TermRef>[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] =
-    React.useState<boolean>(false);
-  const [loadingSuggestions, setLoadingSuggestions] =
     React.useState<boolean>(false);
 
   const history = useHistory();
@@ -76,16 +76,9 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
 
   const getSuggestions = React.useCallback(
     useDebouncedCallback(() => {
-      fetchTermSearchSuggestions({ query: searchText }).then(() => {
-        setLoadingSuggestions(false);
-      });
+      fetchTermSearchSuggestions({ query: searchText });
     }, 500),
-    [
-      searchText,
-      setOptions,
-      setLoadingSuggestions,
-      fetchTermSearchSuggestions,
-    ]
+    [searchText, setOptions, fetchTermSearchSuggestions]
   );
 
   React.useEffect(() => {
@@ -98,7 +91,6 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
 
   React.useEffect(() => {
     if (!searchText) return;
-    setLoadingSuggestions(autocompleteOpen);
     if (autocompleteOpen) {
       getSuggestions();
     }
@@ -146,7 +138,7 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
           onInputChange={handleInputChange}
           getOptionLabel={getOptionLabel}
           options={options}
-          loading={loadingSuggestions}
+          loading={isSuggestionsFetching}
           freeSolo
           filterOptions={option => option}
           clearIcon={<ClearIcon />}
@@ -165,7 +157,7 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
               }}
               customEndAdornment={{
                 variant: 'loader',
-                showAdornment: loadingSuggestions,
+                showAdornment: isSuggestionsFetching,
                 position: { mr: 4 },
               }}
             />
