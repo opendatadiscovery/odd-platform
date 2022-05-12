@@ -71,7 +71,7 @@ public class TermServiceImpl implements TermService {
             .flatMap(termRefDto -> namespaceService.getOrCreate(formData.getNamespaceName())
                 .flatMap(namespace -> {
                     final TermPojo termPojo = termMapper.applyToPojo(formData, namespace, termRefDto.getTerm());
-                    return update(termPojo, namespace);
+                    return update(termPojo);
                 })
             )
             .flatMap(this::updateSearchVectors);
@@ -121,11 +121,10 @@ public class TermServiceImpl implements TermService {
             .flatMapIterable(tags -> tags.stream().map(tagMapper::mapToTag).toList());
     }
 
-    private Mono<TermDetails> update(final TermPojo pojo,
-                                     final NamespacePojo namespace) {
+    private Mono<TermDetails> update(final TermPojo pojo) {
         return termRepository.update(pojo)
-            .map(term -> TermRefDto.builder().term(term).namespace(namespace).build())
-            .map(termRefDto -> termMapper.mapToDetails(new TermDetailsDto(termRefDto)));
+            .flatMap(term -> termRepository.getTermDetailsDto(term.getId()))
+            .map(termMapper::mapToDetails);
     }
 
     private Mono<TermDetails> create(final TermFormData formData,
