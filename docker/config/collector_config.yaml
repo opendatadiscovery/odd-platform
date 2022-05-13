@@ -3,8 +3,8 @@ token: "<INSERT YOUR TOKEN HERE>"
 plugins:
   - type: postgresql
     name: Sample demo data source
-    host: !ENV {SAMPLE_POSTGRES_HOST}
+    host: !ENV ${SAMPLE_POSTGRES_HOST}
     port: 5432
-    database: !ENV {SAMPLE_POSTGRES_DATABASE}
-    user: !ENV {SAMPLE_POSTGRES_USER}
-    password: !ENV {SAMPLE_POSTGRES_PASSWORD}
+    database: !ENV ${SAMPLE_POSTGRES_DATABASE}
+    user: !ENV ${SAMPLE_POSTGRES_USER}
+    password: !ENV ${SAMPLE_POSTGRES_PASSWORD}
