@@ -7,11 +7,14 @@ import org.jooq.Field;
 import org.jooq.Insert;
 import org.jooq.Record;
 import org.jooq.Record1;
+import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
+import org.jooq.SelectHavingStep;
 import org.jooq.Table;
 import org.jooq.UpdateConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.Tables;
+import org.opendatadiscovery.oddplatform.model.tables.SearchEntrypoint;
 import org.opendatadiscovery.oddplatform.model.tables.records.SearchEntrypointRecord;
 import org.opendatadiscovery.oddplatform.repository.util.FTSEntity;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -20,7 +23,13 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.max;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
+import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
+import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
@@ -28,7 +37,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.tables.DataSource.DATA_SOURCE;
-import static org.opendatadiscovery.oddplatform.model.tables.SearchEntrypoint.SEARCH_ENTRYPOINT;
+import static org.opendatadiscovery.oddplatform.model.tables.SearchEntrypoint.*;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConfig.FTS_CONFIG_DETAILS_MAP;
 
 @Repository
@@ -77,7 +86,8 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
         final Table<Record1<Long>> deCte = deIdSelect.asTable("t");
 
         final Map<Field<?>, Object> params =
-            Map.of(SEARCH_ENTRYPOINT.NAMESPACE_VECTOR, DSL.castNull(SEARCH_ENTRYPOINT.NAMESPACE_VECTOR));
+            Map.of(SEARCH_ENTRYPOINT.NAMESPACE_VECTOR,
+                DSL.castNull(SEARCH_ENTRYPOINT.NAMESPACE_VECTOR));
 
         final UpdateConditionStep<SearchEntrypointRecord> updateQuery = DSL.with(deCte.getName())
             .as(deIdSelect)
@@ -233,12 +243,73 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             vectorSelect,
             dataEntityId,
             vectorFields,
-            Tables.SEARCH_ENTRYPOINT.OWNER_VECTOR,
+            SEARCH_ENTRYPOINT.OWNER_VECTOR,
             FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
             true,
             Map.of(ownerNameAlias, OWNER.NAME, roleNameAlias, ROLE.NAME)
         );
 
         return jooqReactiveOperations.mono(ownershipQuery);
+    }
+
+    @Override
+    public Mono<Integer> updateChangedLabelVector(final long labelId) {
+        final SelectConditionStep<Record1<String>> deOddrnsQuery = DSL.select(DATA_ENTITY.ODDRN)
+            .from(DATA_ENTITY)
+            .join(DATASET_VERSION).on(DATASET_VERSION.DATASET_ODDRN.eq(DATA_ENTITY.ODDRN))
+            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .join(LABEL_TO_DATASET_FIELD)
+            .on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+            .where(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(labelId));
+
+        final String dsOddrnAlias = "dsv_dataset_oddrn";
+
+        final Field<String> datasetOddrnField = DATASET_VERSION.DATASET_ODDRN.as(dsOddrnAlias);
+        final Field<Long> dsvMaxField = max(DATASET_VERSION.VERSION).as("dsv_max");
+
+        final SelectHavingStep<Record3<Long, String, Long>> subquery = DSL
+            .select(DATA_ENTITY.ID, datasetOddrnField, dsvMaxField)
+            .from(DATASET_VERSION)
+            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
+            .and(DATA_ENTITY.ODDRN.in(deOddrnsQuery))
+            .groupBy(DATA_ENTITY.ID, datasetOddrnField);
+
+        final Field<Long> deId = subquery.field(DATA_ENTITY.ID);
+
+        final Field<String> labelName = LABEL.NAME.as("label_name");
+
+        final List<Field<?>> vectorFields = List.of(
+            DATASET_FIELD.NAME,
+            DATASET_FIELD.INTERNAL_DESCRIPTION,
+            DATASET_FIELD.EXTERNAL_DESCRIPTION,
+            labelName
+        );
+
+        final SelectConditionStep<Record> vectorSelect = DSL
+            .select(vectorFields)
+            .select(deId)
+            .from(subquery)
+            .join(DATASET_VERSION)
+            .on(DATASET_VERSION.DATASET_ODDRN.eq(subquery.field(dsOddrnAlias, String.class)))
+            .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
+            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
+            .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
+            .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
+            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
+            .where(LABEL.IS_DELETED.isFalse());
+
+        final Insert<? extends Record> datasetFieldQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            deId,
+            vectorFields,
+            SEARCH_ENTRYPOINT.STRUCTURE_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            true,
+            Map.of(labelName, LABEL.NAME)
+        );
+
+        return jooqReactiveOperations.mono(datasetFieldQuery);
     }
 }
