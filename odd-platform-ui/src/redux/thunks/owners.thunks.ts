@@ -3,6 +3,7 @@ import {
   OwnerApi,
   DataEntityApi,
   RoleApi,
+  TermApi,
   OwnerList,
   Owner,
   OwnerApiGetOwnerListRequest,
@@ -15,6 +16,9 @@ import {
   DataEntityApiDeleteOwnershipRequest,
   RoleApiGetRoleListRequest,
   RoleList,
+  TermApiCreateTermOwnershipRequest,
+  TermApiDeleteTermOwnershipRequest,
+  TermApiUpdateTermOwnershipRequest,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
@@ -22,12 +26,14 @@ import { BASE_PARAMS } from 'lib/constants';
 import {
   PaginatedResponse,
   PartialEntityUpdateParams,
+  PartialTermDetailsUpdateParams,
 } from 'redux/interfaces/common';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new OwnerApi(apiClientConf);
 const dataEntityApiClient = new DataEntityApi(apiClientConf);
 const roleApiClient = new RoleApi(apiClientConf);
+const termApiClient = new TermApi(apiClientConf);
 
 export const fetchOwnersList = createThunk<
   OwnerApiGetOwnerListRequest,
@@ -42,7 +48,7 @@ export const fetchOwnersList = createThunk<
     pageInfo: {
       ...response.pageInfo,
       page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
+      hasNext: request.size * request.page < response.pageInfo.total,
     },
   })
 );
@@ -119,6 +125,52 @@ export const deleteDataEntityOwnership = createThunk<
     value: request.ownershipId,
   })
 );
+
+// Term ownership
+
+export const createTermDetailsOwnership = createThunk<
+  TermApiCreateTermOwnershipRequest,
+  Ownership,
+  PartialTermDetailsUpdateParams<Ownership>
+>(
+  (params: TermApiCreateTermOwnershipRequest) =>
+    termApiClient.createTermOwnership(params),
+  actions.createTermDetailsOwnershipAction,
+  (response: Ownership, request: TermApiCreateTermOwnershipRequest) => ({
+    termId: request.termId,
+    value: response,
+  })
+);
+
+export const updateTermDetailsOwnership = createThunk<
+  TermApiUpdateTermOwnershipRequest,
+  Ownership,
+  PartialTermDetailsUpdateParams<Ownership>
+>(
+  (params: TermApiUpdateTermOwnershipRequest) =>
+    termApiClient.updateTermOwnership(params),
+  actions.updateTermDetailsOwnershipAction,
+  (response: Ownership, request: TermApiUpdateTermOwnershipRequest) => ({
+    termId: request.termId,
+    value: response,
+  })
+);
+
+export const deleteTermDetailsOwnership = createThunk<
+  TermApiDeleteTermOwnershipRequest,
+  void,
+  PartialTermDetailsUpdateParams<number>
+>(
+  (params: TermApiDeleteTermOwnershipRequest) =>
+    termApiClient.deleteTermOwnership(params),
+  actions.deleteTermDetailsOwnershipAction,
+  (_, request: TermApiDeleteTermOwnershipRequest) => ({
+    termId: request.termId,
+    value: request.ownershipId,
+  })
+);
+
+// Roles
 
 export const fetchRoleList = createThunk<
   RoleApiGetRoleListRequest,

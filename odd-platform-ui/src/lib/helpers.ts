@@ -1,8 +1,5 @@
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import capitalize from 'lodash/capitalize';
-import join from 'lodash/join';
-import slice from 'lodash/slice';
-import split from 'lodash/split';
 
 export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
   [
@@ -14,8 +11,15 @@ export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
 export const stringFormatted = (
   value: string,
   splitter: '_' | '.',
-  removePrefix?: boolean
-) =>
-  capitalize(
-    join(slice(split(value, splitter), removePrefix ? 1 : 0), ' ')
-  );
+  removePrefix?: boolean,
+  capitalizeEveryWord?: boolean
+): string => {
+  const formattedString = value
+    .split(splitter)
+    .slice(removePrefix ? 1 : 0)
+    .map(word => capitalize(word))
+    .join(' ');
+  return capitalizeEveryWord
+    ? formattedString
+    : capitalize(formattedString);
+};

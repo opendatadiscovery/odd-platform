@@ -26,6 +26,9 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
                                              final int entityClassId,
                                              final Integer typeId);
 
+    List<DataEntityDimensionsDto> listByTerm(final long termId, final String query, final Integer entityClassId,
+                                             final int page, final int size);
+
     List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId);
 
     List<? extends DataEntityDto> listByOwner(final int page,
@@ -69,8 +72,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     void calculateSearchEntrypoints(final Collection<Long> dataEntityIds);
 
     void calculateDataEntityVectors(final Collection<Long> ids);
-
-    void calculateTagVectors(final Collection<Long> ids);
 
     void calculateNamespaceVectors(final Collection<Long> ids);
 

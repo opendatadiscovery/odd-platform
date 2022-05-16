@@ -5,6 +5,7 @@ import {
   DataEntityDetails,
   DataEntityDetailsBaseObject,
   Tag,
+  TermRef,
   InternalDescription,
   DataEntityApiGetDataEntityDetailsRequest,
   DataEntityApiCreateDataEntityTagsRelationsRequest,
@@ -16,6 +17,7 @@ import {
   DataEntityApiGetMyObjectsWithUpstreamRequest,
   DataEntityApiGetMyObjectsWithDownstreamRequest,
   DataEntityApiGetPopularRequest,
+  DataEntityApiAddTermToDataEntityRequest,
 } from 'generated-sources';
 import { PartialEntityUpdateParams } from 'redux/interfaces';
 import { createThunk } from 'redux/thunks/base.thunk';
@@ -57,6 +59,23 @@ export const updateDataEntityTags = createThunk<
   (
     response: Tag[],
     request: DataEntityApiCreateDataEntityTagsRelationsRequest
+  ) => ({
+    entityId: request.dataEntityId,
+    value: response,
+  })
+);
+
+export const updateDataEntityTerms = createThunk<
+  DataEntityApiAddTermToDataEntityRequest,
+  TermRef,
+  PartialEntityUpdateParams<TermRef>
+>(
+  (params: DataEntityApiAddTermToDataEntityRequest) =>
+    apiClient.addTermToDataEntity(params),
+  actions.updateDataEntityTermAction, // todo maybe change to 'create'
+  (
+    response: TermRef,
+    request: DataEntityApiAddTermToDataEntityRequest
   ) => ({
     entityId: request.dataEntityId,
     value: response,

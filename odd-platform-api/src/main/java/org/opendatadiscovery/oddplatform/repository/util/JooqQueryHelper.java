@@ -21,15 +21,15 @@ import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.rowNumber;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 
 @Component
 @RequiredArgsConstructor
 public class JooqQueryHelper {
-    private final DSLContext dslContext;
-
     private static final String PAGE_METADATA_TOTAL_FIELD = "_total";
     private static final String PAGE_METADATA_NEXT_FIELD = "_next";
     private static final String PAGE_METADATA_ROW_NUMBER = "_row";
+    private final DSLContext dslContext;
 
     public Select<? extends Record1<Boolean>> selectExists(final Select<?> baseSelect) {
         return DSL.select(field(DSL.exists(baseSelect)));
@@ -128,6 +128,9 @@ public class JooqQueryHelper {
         String tableName = null;
 
         for (final Field<?> field : fields) {
+            if (field.equals(RANK_FIELD_ALIAS)) {
+                continue;
+            }
             final String fieldTableName = field.getQualifiedName().first();
             if (null == tableName) {
                 tableName = fieldTableName;

@@ -19,7 +19,7 @@ import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
-import org.opendatadiscovery.oddplatform.utils.OrderByField;
+import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -86,9 +86,8 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
     @Override
     public Mono<Page<P>> list(final int page, final int size, final String nameQuery) {
-        final List<OrderByField> orderByFields = List.of(new OrderByField(idField, SortOrder.ASC));
-        final Select<? extends Record> query =
-            paginate(baseSelectManyQuery(nameQuery), orderByFields, page - 1, size);
+        final Select<? extends Record> query = paginate(baseSelectManyQuery(nameQuery),
+            List.of(new OrderByField(idField, SortOrder.ASC)), page - 1, size);
 
         return jooqReactiveOperations.flux(query)
             .collectList()
@@ -254,10 +253,10 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .orderBy(getOrderFields(orderByFields, t));
     }
 
-    public List<OrderField<?>> getOrderFields(final List<OrderByField> orderByFields,
-                                              final Table<?> table) {
+    private List<OrderField<?>> getOrderFields(final List<OrderByField> orderByFields,
+                                               final Table<?> table) {
         return orderByFields.stream()
-            .map(f -> table.field(f.getOrderField()).sort(f.getSortOrder()))
+            .map(f -> table.field(f.orderField()).sort(f.sortOrder()))
             .collect(Collectors.toList());
     }
 }

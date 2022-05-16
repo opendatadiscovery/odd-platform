@@ -13,8 +13,8 @@ import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.CollectorMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.CollectorPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
-import org.opendatadiscovery.oddplatform.repository.TokenRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTokenRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -25,7 +25,7 @@ public class CollectorServiceImpl implements CollectorService {
     private final CollectorMapper collectorMapper;
     private final ReactiveCollectorRepository collectorRepository;
     private final NamespaceService namespaceService;
-    private final TokenRepository tokenRepository;
+    private final ReactiveTokenRepository tokenRepository;
 
     @Override
     public Mono<CollectorList> list(final int page, final int size, final String nameQuery) {

@@ -10,6 +10,7 @@ import OverviewTags from './OverviewTags/OverviewTags';
 import { SectionContainer } from './OverviewStyles';
 import OverviewGeneralContainer from './OverviewGeneral/OverviewGeneralContainer';
 import OverviewDataQualityReportContainer from './OverviewDataQualityReport/OverviewDataQualityReportContainer';
+import OverviewTermsContainer from './OverviewTerms/OverviewTermsContainer';
 
 interface OverviewProps {
   dataEntityId: number;
@@ -60,6 +61,12 @@ const Overview: React.FC<OverviewProps> = ({
           <SectionContainer square elevation={0}>
             <OverviewTags
               tags={dataEntityDetails.tags}
+              dataEntityId={dataEntityId}
+            />
+          </SectionContainer>
+          <SectionContainer square elevation={0}>
+            <OverviewTermsContainer
+              terms={dataEntityDetails.terms}
               dataEntityId={dataEntityId}
             />
           </SectionContainer>

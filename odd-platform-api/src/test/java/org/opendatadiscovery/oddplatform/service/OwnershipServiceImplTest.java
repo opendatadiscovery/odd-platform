@@ -9,25 +9,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
-import org.opendatadiscovery.oddplatform.api.contract.model.OwnerFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Ownership;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Role;
-import org.opendatadiscovery.oddplatform.api.contract.model.RoleFormData;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.OwnershipMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
-import org.opendatadiscovery.oddplatform.repository.OwnershipRepository;
-import org.opendatadiscovery.oddplatform.repository.RoleRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
@@ -52,16 +52,16 @@ class OwnershipServiceImplTest {
     @Mock
     private OwnerService ownerService;
     @Mock
-    private OwnershipRepository ownershipRepository;
+    private ReactiveOwnershipRepository ownershipRepository;
     @Mock
-    private RoleRepository roleRepository;
+    private ReactiveSearchEntrypointRepository searchEntrypointRepository;
     @Mock
     private OwnershipMapper ownershipMapper;
 
     @BeforeEach
     void setUp() {
-        ownershipService =
-            new OwnershipServiceImpl(roleService, ownerService, ownershipRepository, roleRepository, ownershipMapper);
+        ownershipService = new OwnershipServiceImpl(roleService, ownerService, ownershipRepository,
+            searchEntrypointRepository, ownershipMapper);
     }
 
     @Test
@@ -73,18 +73,19 @@ class OwnershipServiceImplTest {
         final long testRoleId = 3L;
         final long testOwnershipId = 15L;
 
-        final OwnershipFormData testOwnershipFromData = new OwnershipFormData();
-        final Owner owner = createTestOwner(testOwnerId, testOwnerName);
-        final Role role = createTestRole(testRoleId, testRoleName);
+        final OwnershipFormData testOwnershipFromData = new OwnershipFormData()
+            .ownerName(testOwnerName)
+            .roleName(testRoleName);
+        final OwnerPojo owner = createTestOwner(testOwnerId, testOwnerName);
+        final RolePojo role = createTestRole(testRoleId, testRoleName);
         final OwnershipPojo ownershipPojo = createTestOwnershipPojo(testOwnershipId, owner, role);
         final Ownership ownership = createTestOwnership(testOwnershipId, owner, role);
 
-        when(ownerService.createOrGet(any(OwnerFormData.class))).thenReturn(owner);
-        when(roleService.createOrGet(any(RoleFormData.class))).thenReturn(role);
-        when(ownershipRepository.create(any(OwnershipPojo.class))).thenReturn(ownershipPojo);
-        doNothing().when(ownershipRepository).updateSearchVectors(anyLong());
-        when(ownershipMapper.mapModel(any(OwnershipPojo.class), any(Owner.class), any(Role.class)))
-            .thenReturn(ownership);
+        when(ownerService.getOrCreate(anyString())).thenReturn(Mono.just(owner));
+        when(roleService.getOrCreate(anyString())).thenReturn(Mono.just(role));
+        when(ownershipRepository.create(any(OwnershipPojo.class))).thenReturn(Mono.just(ownershipPojo));
+        when(searchEntrypointRepository.updateChangedOwnershipVectors(anyLong())).thenReturn(Mono.just(1));
+        when(ownershipMapper.mapDto(any(OwnershipDto.class))).thenReturn(ownership);
 
         final Mono<Ownership> actualOwnershipMono = ownershipService.create(1L, testOwnershipFromData);
 
@@ -98,11 +99,12 @@ class OwnershipServiceImplTest {
                 assertThat(o.getRole().getName()).isEqualTo(testRoleName);
             })
             .verifyComplete();
-        verify(ownerService, only()).createOrGet(any(OwnerFormData.class));
-        verify(roleService, only()).createOrGet(any(RoleFormData.class));
+        verify(ownerService, only()).getOrCreate(any(String.class));
+        verify(roleService, only()).getOrCreate(any(String.class));
         verify(ownershipRepository, times(1)).create(any(OwnershipPojo.class));
-        verify(ownershipRepository, times(1)).updateSearchVectors(testOwnershipId);
-        verify(ownershipMapper, only()).mapModel(any(OwnershipPojo.class), any(Owner.class), any(Role.class));
+        verify(searchEntrypointRepository, times(1))
+            .updateChangedOwnershipVectors(testOwnershipId);
+        verify(ownershipMapper, only()).mapDto(any(OwnershipDto.class));
     }
 
     @Test
@@ -118,15 +120,16 @@ class OwnershipServiceImplTest {
         ownershipUpdateFormData.setRoleName(testRoleName);
         final OwnershipPojo testOwnershipPojo = new OwnershipPojo();
         testOwnershipPojo.setId(testOwnershipId);
-        final Owner owner = createTestOwner(testOwnerId, testOwnerName);
-        final Role role = createTestRole(testRoleId, testRoleName);
+        final OwnerPojo owner = createTestOwner(testOwnerId, testOwnerName);
+        final RolePojo role = createTestRole(testRoleId, testRoleName);
         final Ownership ownership = createTestOwnership(testOwnershipId, owner, role);
         final RolePojo rolePojo = new RolePojo();
         rolePojo.setId(testRoleId);
 
-        when(ownershipRepository.get(testOwnershipId)).thenReturn(new OwnershipDto());
-        when(roleRepository.createOrGet(any(RolePojo.class))).thenReturn(rolePojo);
-        when(ownershipRepository.updateRole(testOwnershipId, testRoleId)).thenReturn(testOwnershipPojo);
+        when(ownershipRepository.get(testOwnershipId)).thenReturn(Mono.just(new OwnershipDto()));
+        when(roleService.getOrCreate(any(String.class))).thenReturn(Mono.just(rolePojo));
+        when(ownershipRepository.updateRole(testOwnershipId, testRoleId)).thenReturn(Mono.just(testOwnershipPojo));
+        when(searchEntrypointRepository.updateChangedOwnershipVectors(anyLong())).thenReturn(Mono.just(1));
         when(ownershipMapper.mapDto(any(OwnershipDto.class))).thenReturn(ownership);
 
         final Mono<Ownership> actualOwnershipMono = ownershipService.update(testOwnershipId, ownershipUpdateFormData);
@@ -143,28 +146,10 @@ class OwnershipServiceImplTest {
             .verifyComplete();
         verify(ownershipRepository, times(1)).updateRole(testOwnershipId, testRoleId);
         verify(ownershipRepository, times(2)).get(testOwnershipId);
-        verify(ownershipRepository, times(1)).updateSearchVectors(testOwnershipId);
+        verify(searchEntrypointRepository, times(1))
+            .updateChangedOwnershipVectors(testOwnershipId);
         verify(ownershipMapper, only()).mapDto(any(OwnershipDto.class));
-        verify(roleRepository, only()).createOrGet(any(RolePojo.class));
-    }
-
-    @Test
-    @DisplayName("Updates ownership, expecting error")
-    void testUpdateOwnership_OwnershipNotFound() {
-        final long testOwnershipId = 15L;
-        final OwnershipUpdateFormData ownershipUpdateFormData = new OwnershipUpdateFormData();
-
-        when(ownershipRepository.get(testOwnershipId)).thenReturn(null);
-
-        final Mono<Ownership> actualOwnershipMono = ownershipService.update(testOwnershipId, ownershipUpdateFormData);
-
-        StepVerifier
-            .create(actualOwnershipMono)
-            .expectErrorMatches(throwable -> throwable instanceof NotFoundException
-                && throwable.getMessage().equals("Ownership with id = [15] was not found"))
-            .verify();
-
-        verify(ownershipRepository, times(1)).get(testOwnershipId);
+        verify(roleService, only()).getOrCreate(any(String.class));
     }
 
     /**
@@ -176,11 +161,11 @@ class OwnershipServiceImplTest {
      * @return {@link Ownership}
      */
     @NotNull
-    private Ownership createTestOwnership(final long ownershipId, final Owner owner, final Role role) {
+    private Ownership createTestOwnership(final long ownershipId, final OwnerPojo owner, final RolePojo role) {
         final Ownership ownership = new Ownership();
         ownership.setId(ownershipId);
-        ownership.setOwner(owner);
-        ownership.setRole(role);
+        ownership.setOwner(new Owner().id(owner.getId()).name(owner.getName()));
+        ownership.setRole(new Role().id(role.getId()).name(role.getName()));
         return ownership;
     }
 
@@ -193,7 +178,7 @@ class OwnershipServiceImplTest {
      * @return {@link OwnershipPojo}
      */
     @NotNull
-    private OwnershipPojo createTestOwnershipPojo(final long ownershipId, final Owner owner, final Role role) {
+    private OwnershipPojo createTestOwnershipPojo(final long ownershipId, final OwnerPojo owner, final RolePojo role) {
         final OwnershipPojo ownershipPojo = new OwnershipPojo();
         ownershipPojo.setId(ownershipId);
         ownershipPojo.setOwnerId(owner.getId());
@@ -209,8 +194,8 @@ class OwnershipServiceImplTest {
      * @return {@link Owner}
      */
     @NotNull
-    private Owner createTestOwner(final long ownerId, final String ownerName) {
-        final Owner owner = new Owner();
+    private OwnerPojo createTestOwner(final long ownerId, final String ownerName) {
+        final OwnerPojo owner = new OwnerPojo();
         owner.setId(ownerId);
         owner.setName(ownerName);
         return owner;
@@ -224,8 +209,8 @@ class OwnershipServiceImplTest {
      * @return {@link Role}
      */
     @NotNull
-    private Role createTestRole(final long roleId, final String roleName) {
-        final Role role = new Role();
+    private RolePojo createTestRole(final long roleId, final String roleName) {
+        final RolePojo role = new RolePojo();
         role.setId(roleId);
         role.setName(roleName);
         return role;

@@ -30,7 +30,7 @@ public class AlertMapperImpl implements AlertMapper {
         final AssociatedOwner associatedOwner = new AssociatedOwner()
             .identity(new Identity().username(alert.getAlert().getStatusUpdatedBy()));
         if (alert.getUpdatedByOwner() != null) {
-            associatedOwner.setOwner(ownerMapper.mapPojo(alert.getUpdatedByOwner()));
+            associatedOwner.setOwner(ownerMapper.mapToOwner(alert.getUpdatedByOwner()));
         }
         return new Alert()
             .id(alert.getAlert().getId())

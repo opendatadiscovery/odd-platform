@@ -81,6 +81,12 @@ export const getDataEntityClassesByName = createSelector(
   dataEntities => dataEntities.classesAndTypesDict.entityClasses
 );
 
+export const getDataEntityClassesList = createSelector(
+  dataEntitiesState,
+  dataEntities =>
+    Object.values(dataEntities.classesAndTypesDict.entityClasses)
+);
+
 export const getDataEntitiesList = createSelector(
   getDataEntitiesListFetched,
   dataEntitiesState,
@@ -160,6 +166,15 @@ export const getDataEntityInternalNameUpdating = createSelector(
   status => status === 'fetching'
 );
 
+const getDataEntityTermUpdateStatus = createFetchingSelector(
+  'PUT_DATA_ENTITY_TERM'
+);
+
+export const getDataEntityTermUpdating = createSelector(
+  getDataEntityTermUpdateStatus,
+  status => status === 'fetching'
+);
+
 export const getDataEntityId = (
   _: RootState,
   dataEntityId: number | string
@@ -176,6 +191,13 @@ export const getDataEntityTags = createSelector(
   getDataEntityId,
   (dataEntities, dataEntityId) =>
     dataEntities.byId[dataEntityId]?.tags || []
+);
+
+export const getDataEntityTerms = createSelector(
+  dataEntitiesState,
+  getDataEntityId,
+  (dataEntities, dataEntityId) =>
+    dataEntities.byId[dataEntityId]?.terms || []
 );
 
 export const getDataEntityInternalDescription = createSelector(

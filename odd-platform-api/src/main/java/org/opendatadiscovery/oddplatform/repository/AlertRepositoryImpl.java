@@ -32,7 +32,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAbstractCRU
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
-import org.opendatadiscovery.oddplatform.utils.OrderByField;
+import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
