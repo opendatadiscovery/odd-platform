@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
+import java.util.List;
 import org.jooq.DeleteResultStep;
 import org.jooq.InsertResultStep;
 import org.jooq.InsertSetStep;
@@ -14,10 +16,8 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
-import java.util.Collection;
-import java.util.List;
 
-import static java.util.Collections.*;
+import static java.util.Collections.singletonList;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 
@@ -25,7 +25,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FI
 public class ReactiveLabelRepositoryImpl
     extends ReactiveAbstractSoftDeleteCRUDRepository<LabelRecord, LabelPojo>
     implements ReactiveLabelRepository {
-
 
     public ReactiveLabelRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                        final JooqQueryHelper jooqQueryHelper) {

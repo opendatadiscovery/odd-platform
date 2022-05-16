@@ -37,7 +37,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.tables.DataSource.DATA_SOURCE;
-import static org.opendatadiscovery.oddplatform.model.tables.SearchEntrypoint.*;
+import static org.opendatadiscovery.oddplatform.model.tables.SearchEntrypoint.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConfig.FTS_CONFIG_DETAILS_MAP;
 
 @Repository

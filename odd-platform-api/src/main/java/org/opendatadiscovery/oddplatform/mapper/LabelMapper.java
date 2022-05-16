@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
@@ -8,7 +9,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.LabelsResponse;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
-import java.util.stream.Collectors;
 
 @Mapper(config = MapperConfig.class)
 public interface LabelMapper {

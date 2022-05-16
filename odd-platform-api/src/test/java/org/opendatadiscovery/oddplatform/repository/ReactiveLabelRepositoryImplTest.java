@@ -1,5 +1,8 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Stream;
 import org.jooq.impl.DSL;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,10 +13,6 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
-
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;

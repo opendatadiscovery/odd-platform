@@ -1,9 +1,9 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import reactor.core.publisher.Flux;
-import java.util.Collection;
 
 public interface ReactiveLabelRepository extends ReactiveCRUDRepository<LabelPojo> {
     Flux<LabelPojo> listByDatasetFieldId(final long datasetFieldId);

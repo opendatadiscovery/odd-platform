@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
@@ -12,7 +13,6 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntry
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
