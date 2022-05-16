@@ -59,10 +59,9 @@ export const getDataEntityTypesByClassName = createSelector(
   dataEntitiesState,
   dataEntityClassName,
   (dataEntities, entityClassName): Array<DataEntityType> =>
-    get(
-      dataEntities,
-      `classesAndTypesDict.entityClasses.${entityClassName}.types`
-    )
+    Object.values(dataEntities.classesAndTypesDict.entityClasses).find(
+      entityClass => entityClass.name === entityClassName
+    )?.types || []
 );
 
 export const getDataEntityClassesList = createSelector(
