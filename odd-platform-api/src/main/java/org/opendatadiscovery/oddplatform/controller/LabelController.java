@@ -19,6 +19,14 @@ public class LabelController implements LabelApi {
     private final ReactiveLabelService labelService;
 
     @Override
+    public Mono<ResponseEntity<LabelsResponse>> getLabelList(final Integer page,
+                                                             final Integer size,
+                                                             final String query,
+                                                             final ServerWebExchange exchange) {
+        return labelService.list(page, size, query).map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<Flux<Label>>> createLabel(final Flux<LabelFormData> labelFormData,
                                                          final ServerWebExchange exchange) {
         return labelFormData.collectList()
@@ -28,25 +36,17 @@ public class LabelController implements LabelApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> deleteLabel(final Long labelId,
-                                                  final ServerWebExchange exchange) {
-        return labelService.delete(labelId).map(ignored -> ResponseEntity.noContent().build());
-    }
-
-    @Override
-    public Mono<ResponseEntity<LabelsResponse>> getLabelList(final Integer page,
-                                                             final Integer size,
-                                                             final String query,
-                                                             final ServerWebExchange exchange) {
-        return labelService.list(page, size, query).map(ResponseEntity::ok);
-    }
-
-    @Override
     public Mono<ResponseEntity<Label>> updateLabel(final Long labelId,
                                                    final Mono<LabelFormData> labelFormData,
                                                    final ServerWebExchange exchange) {
         return labelFormData
             .flatMap(form -> labelService.update(labelId, form))
             .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteLabel(final Long labelId,
+                                                  final ServerWebExchange exchange) {
+        return labelService.delete(labelId).map(ignored -> ResponseEntity.noContent().build());
     }
 }
