@@ -1,4 +1,4 @@
-name: PR checkstyle
+name: PR build
 on:
   workflow_dispatch:
   pull_request:
@@ -27,9 +27,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Run codestyle check
+      - name: Run build
         env:
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms512m -Xmx512m"
-        run: ./gradlew clean buildlessCheckstyleMain buildlessCheckstyleTest ${{ github.event.inputs.buildOptions }}
+        run: ./gradlew clean build ${{ github.event.inputs.buildOptions }}
