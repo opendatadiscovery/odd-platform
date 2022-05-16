@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,6 +16,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdge;
@@ -160,6 +162,22 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
+    public DataEntityPojo mapToPojo(final DataEntityGroupFormData formData,
+                                    final DataEntityClassDto classDto,
+                                    final Long namespaceId) {
+        final LocalDateTime now = LocalDateTime.now();
+        return new DataEntityPojo()
+            .setNamespaceId(namespaceId)
+            .setEntityClassIds(new Integer[] {classDto.getId()})
+            .setTypeId(formData.getType().getId())
+            .setCreatedAt(now)
+            .setUpdatedAt(now)
+            //.setManuallyCreated(true)
+            .setHollow(false)
+            .setExcludeFromSearch(false);
+    }
+
+    @Override
     public DataEntityDetails mapDtoDetails(final DataEntityDetailsDto dto) {
         final DataEntityPojo pojo = dto.getDataEntity();
         final Integer typeId = dto.getDataEntity().getTypeId();
@@ -253,6 +271,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .toList();
             details.setEntities(dataEntityRefs);
             details.setHasChildren(dto.getGroupsDto().hasChildren());
+            //details.setManuallyCreated(dto.getDataEntity().getManuallyCreated());
         }
 
         if (entityClasses.contains(DataEntityClassDto.DATA_INPUT)) {
@@ -301,7 +320,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
         return new DataEntityClass()
             .id(entityClass.getId())
-            .name(DataEntityClass.NameEnum.fromValue(entityClass.name()));
+            .name(DataEntityClass.NameEnum.fromValue(entityClass.name()))
+            .types(entityClass.getTypes().stream().map(this::mapType).toList());
     }
 
     @Override
@@ -422,6 +442,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
         return new DataEntityRef()
             .id(pojo.getId())
+            .oddrn(pojo.getOddrn())
             .externalName(pojo.getExternalName())
             .internalName(pojo.getInternalName())
             .entityClasses(entityClasses)

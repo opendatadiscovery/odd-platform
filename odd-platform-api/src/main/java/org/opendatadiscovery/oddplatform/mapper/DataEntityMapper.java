@@ -5,6 +5,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -21,6 +22,9 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 
 public interface DataEntityMapper
     extends ReadOnlyCRUDMapperWithList<DataEntity, DataEntityList, DataEntityDimensionsDto> {
+    DataEntityPojo mapToPojo(final DataEntityGroupFormData formData, final DataEntityClassDto classDto,
+                             final Long namespaceId);
+
     DataEntityDetails mapDtoDetails(final DataEntityDetailsDto dataEntityDetailsDto);
 
     DataEntity mapDataQualityTest(final DataEntityDetailsDto dto);
