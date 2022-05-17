@@ -42,20 +42,6 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
     private LineageRepository lineageRepository;
 
     @Test
-    public void createAlertsTest() {
-        final DataEntityPojo dataEntityPojo = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
-        final AlertPojo firstAlert = createAlertPojo(dataEntityPojo.getOddrn());
-        final AlertPojo secondAlert = createAlertPojo(dataEntityPojo.getOddrn());
-        final Collection<AlertPojo> alerts = alertRepository.createAlerts(List.of(firstAlert, secondAlert));
-
-        assertThat(alerts)
-            .allMatch(p -> p.getId() != null)
-            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "createdAt")
-            .hasSameElementsAs(List.of(firstAlert, secondAlert));
-    }
-
-    @Test
     public void updateAlertStatusTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);

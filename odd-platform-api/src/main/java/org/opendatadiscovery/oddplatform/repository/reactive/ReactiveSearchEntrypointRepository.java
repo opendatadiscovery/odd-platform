@@ -20,4 +20,6 @@ public interface ReactiveSearchEntrypointRepository {
     Mono<Integer> updateChangedOwnerVectors(final long ownerId);
 
     Mono<Integer> updateChangedOwnershipVectors(final long ownershipId);
+
+    Mono<Integer> updateChangedLabelVector(final long labelId);
 }

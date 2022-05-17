@@ -4,9 +4,9 @@ import CloseIcon from 'components/shared/Icons/CloseIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { TermRef } from 'generated-sources';
 import { termDetailsOverviewPath } from 'lib/paths';
-import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataEntityTerm } from 'redux/thunks';
-import { ActionsContainer, TermItemContainer } from './TermItemStyles';
+import { useAppDispatch } from 'redux/lib/hooks';
+import * as S from './TermItemStyles';
 
 interface TermItemProps {
   dataEntityId: number;
@@ -18,17 +18,22 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
   const termDetailsLink = termDetailsOverviewPath(term.id);
 
   return (
-    <TermItemContainer to={termDetailsLink}>
+    <S.TermItemContainer to={termDetailsLink}>
       <Grid
         sx={{ my: 0.5 }}
         container
         flexWrap="nowrap"
         justifyContent="space-between"
       >
-        <Typography variant="body1" color="texts.action">
-          {term.name}
-        </Typography>
-        <ActionsContainer>
+        <Grid container flexDirection="column">
+          <Typography variant="body1" color="texts.action">
+            {term.name}
+          </Typography>
+          <S.TermDefinition variant="subtitle2">
+            {term.definition}
+          </S.TermDefinition>
+        </Grid>
+        <S.ActionsContainer>
           <AppIconButton
             size="small"
             color="unfilled"
@@ -44,9 +49,9 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
             }}
             sx={{ ml: 0.25 }}
           />
-        </ActionsContainer>
+        </S.ActionsContainer>
       </Grid>
-    </TermItemContainer>
+    </S.TermItemContainer>
   );
 };
 

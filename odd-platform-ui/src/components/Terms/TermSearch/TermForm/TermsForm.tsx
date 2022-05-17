@@ -154,7 +154,8 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
             label="Definition"
             placeholder="Term definition"
             multiline
-            maxRows={4}
+            minRows={4}
+            maxRows={6}
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,

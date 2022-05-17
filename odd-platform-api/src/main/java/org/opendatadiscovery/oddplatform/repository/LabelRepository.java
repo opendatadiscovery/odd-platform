@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.repository;
 import java.util.Collection;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
-import org.springframework.transaction.annotation.Transactional;
 
 public interface LabelRepository extends CRUDRepository<LabelPojo> {
     List<LabelPojo> listByDatasetFieldId(final long datasetFieldId);
