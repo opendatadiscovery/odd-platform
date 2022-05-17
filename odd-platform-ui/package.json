@@ -63,7 +63,7 @@
     "react-json-tree": "^0.16.1",
     "react-markdown": "^8.0.1",
     "react-mde": "^11.5.0",
-    "react-redux": "^7.2.6",
+    "react-redux": "^8.0.1",
     "react-router-dom": "^5.2.0",
     "react-truncate-markup": "^5.1.0",
     "react-virtualized": "^9.22.3",
