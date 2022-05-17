@@ -26,6 +26,8 @@ import ResultItem from 'components/Search/Results/ResultItem/ResultItem';
 import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
+import { useAppSelector } from 'redux/lib/hooks';
+import { getDataEntityGroupDeletingStatuses } from 'redux/selectors';
 import * as S from './ResultsStyles';
 
 interface ResultsProps {
@@ -133,12 +135,14 @@ const Results: React.FC<ResultsProps> = ({
     );
   };
 
+  const pageSize = 30;
+
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
     getDataEntitiesSearchResults({
       searchId,
       page: pageInfo.page + 1,
-      size: 30,
+      size: pageSize,
     });
   };
 
@@ -147,6 +151,25 @@ const Results: React.FC<ResultsProps> = ({
       fetchNextPage();
     }
   }, [searchFiltersSynced, searchId, isSearchCreating]);
+
+  const { isLoaded: isDataEntityGroupDeleted } = useAppSelector(
+    getDataEntityGroupDeletingStatuses
+  );
+
+  const fetchPageAfterDeleting = () => {
+    if (pageInfo.page && isDataEntityGroupDeleted) {
+      getDataEntitiesSearchResults({
+        searchId,
+        page: pageInfo.page,
+        size: pageSize,
+      });
+    }
+  };
+
+  React.useEffect(
+    () => fetchPageAfterDeleting(),
+    [isDataEntityGroupDeleted]
+  );
 
   return (
     <Grid sx={{ mt: 2 }}>
