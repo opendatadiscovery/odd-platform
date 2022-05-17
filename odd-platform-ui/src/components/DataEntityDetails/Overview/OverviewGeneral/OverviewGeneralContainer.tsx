@@ -1,7 +1,9 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { getDataEntityDetails } from 'redux/selectors/dataentity.selectors';
-import { getDataEntityOwnership } from 'redux/selectors/owners.selectors';
+import {
+  getDataEntityDetails,
+  getDataEntityOwnership,
+} from 'redux/selectors';
 import OverviewGeneral from './OverviewGeneral';
 
 const mapStateToProps = (

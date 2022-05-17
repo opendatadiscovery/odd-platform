@@ -117,7 +117,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       {
         name: 'Lineage',
         link: dataEntityLineagePath(dataEntityId),
-        hidden: isQualityTest,
+        hidden: isQualityTest || dataEntityDetails?.manuallyCreated,
         value: 'lineage',
       },
       {
@@ -138,6 +138,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         value: 'alerts',
         hint: openAlertsCount,
         hintType: 'alert',
+        hidden: dataEntityDetails?.manuallyCreated,
       },
       {
         name: 'Linked items',
@@ -218,14 +219,15 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                   />
                 </S.InternalNameEditBtnContainer>
               </Grid>
-              {dataEntityDetails.internalName && (
-                <Grid container alignItems="center">
-                  <LabelItem labelName="Original" variant="body1" />
-                  <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
-                    {dataEntityDetails.externalName}
-                  </Typography>
-                </Grid>
-              )}
+              {dataEntityDetails.internalName &&
+                dataEntityDetails.externalName && (
+                  <Grid container alignItems="center">
+                    <LabelItem labelName="Original" variant="body1" />
+                    <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
+                      {dataEntityDetails.externalName}
+                    </Typography>
+                  </Grid>
+                )}
             </S.Caption>
             <Grid container item alignItems="center" width="auto">
               {dataEntityDetails.updatedAt ? (

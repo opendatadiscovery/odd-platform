@@ -14,12 +14,12 @@ import { useDebouncedCallback } from 'use-debounce';
 import { stringFormatted } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
-import { getDataEntityClassesList } from 'redux/selectors';
 import {
+  getDataEntityClassesList,
   getTermLinkedList,
   getTermLinkedListFetchingStatuses,
   getTermLinkedListPageInfo,
-} from 'redux/selectors/termLinkedList.selectors';
+} from 'redux/selectors';
 import { fetchTermLinkedList } from 'redux/thunks';
 import {
   TermLinkedItemsColContainer,

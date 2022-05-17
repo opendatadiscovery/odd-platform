@@ -6,6 +6,7 @@ import {
   DataEntityDetails,
   DataEntityGroupFormData as GeneratedDataEntityGroupFormData,
   DataEntityType,
+  DataEntityTypeNameEnum,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -27,7 +28,7 @@ import {
 import EntityItem from 'components/DataEntityDetails/DataEntityGroupForm/EntityItem/EntityItem';
 import { useHistory } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
-import * as S from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupFormStyles';
+import { EntityItemsContainer } from './DataEntityGroupFormStyles';
 import EntitiesSuggestionsAutocompleteContainer from './EntitiesSuggestionsAutoocomplete/EntitiesSuggestionsAutocompleteContainer';
 import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
 
@@ -150,17 +151,12 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
 
   const formContent = () => (
     <form
-      id="dataEntityGroup-create-form"
+      id="dataentitygroup-create-form"
       onSubmit={handleSubmit(handleSubmitForm)}
     >
       <Controller
         name="name"
         control={control}
-        defaultValue={
-          dataEntityGroupDetails?.externalName ||
-          dataEntityGroupDetails?.internalName ||
-          ''
-        }
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
           <AppTextField
@@ -179,9 +175,6 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       <Controller
         control={control}
         name="namespaceName"
-        defaultValue={
-          dataEntityGroupDetails?.dataSource?.namespace?.name || ''
-        }
         render={({ field }) => (
           <NamespaceAutocompleteContainer controllerProps={field} />
         )}
@@ -189,20 +182,29 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       <Controller
         name="type"
         control={control}
-        defaultValue={dataEntityGroupDetails?.type}
         rules={{ required: true }}
         render={({ field }) => (
-          <AppTextField label="Type" select sx={{ mt: 1.5 }}>
-            {types?.map(type => (
-              <AppMenuItem
-                {...field}
-                key={type.id}
-                value={type.name}
-                onClick={() => setValue('type', type)}
-              >
-                {type.name}
-              </AppMenuItem>
-            ))}
+          <AppTextField
+            label="Type"
+            select
+            sx={{ mt: 1.5 }}
+            defaultValue={field.value?.name}
+          >
+            {types
+              ?.filter(
+                // filtration needs to avoid user create ml_experiment from ui
+                type => type.name !== DataEntityTypeNameEnum.ML_EXPERIMENT
+              )
+              .map(type => (
+                <AppMenuItem
+                  {...field}
+                  key={type.id}
+                  value={type.name}
+                  onClick={() => setValue('type', type)}
+                >
+                  {type.name}
+                </AppMenuItem>
+              ))}
           </AppTextField>
         )}
       />
@@ -217,7 +219,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
           />
         )}
       />
-      <S.EntityItemsContainer sx={{ mt: 1.25 }}>
+      <EntityItemsContainer sx={{ mt: 1.25 }}>
         {fields?.map((entity, index) => (
           <EntityItem
             key={entity.id}
@@ -225,7 +227,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
             onRemoveClick={handleRemove(index)}
           />
         ))}
-      </S.EntityItemsContainer>
+      </EntityItemsContainer>
     </form>
   );
 
@@ -233,7 +235,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
     <AppButton
       size="large"
       type="submit"
-      form="dataEntityGroup-create-form"
+      form="dataentitygroup-create-form"
       color="primary"
       fullWidth
       disabled={!formState.isValid}

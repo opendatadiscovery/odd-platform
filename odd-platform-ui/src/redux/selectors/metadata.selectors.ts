@@ -44,11 +44,11 @@ export const getDataEntityPredefinedMetadataList = createSelector(
       return [];
     }
     return metadataState.allIds?.reduce<MetadataFieldValue[]>(
-      (matadataList, id) => {
+      (metadataList, id) => {
         if (metadataState.byId[id].field.origin === 'EXTERNAL') {
-          matadataList.push(metadataState.byId[id]);
+          metadataList.push(metadataState.byId[id]);
         }
-        return matadataList;
+        return metadataList;
       },
       []
     );

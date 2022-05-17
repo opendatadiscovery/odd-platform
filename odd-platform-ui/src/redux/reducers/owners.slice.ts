@@ -100,12 +100,12 @@ export const ownersSlice = createSlice({
             ...state.ownershipDataEntity,
             [dataEntityId]: {
               byId: {
-                ...state.ownershipDataEntity[dataEntityId].byId,
+                ...state.ownershipDataEntity[dataEntityId]?.byId,
                 [ownership.id]: ownership,
               },
               allIds: [
                 ownership.id,
-                ...state.ownershipDataEntity[dataEntityId].allIds,
+                ...(state.ownershipDataEntity[dataEntityId]?.allIds || []),
               ],
             },
           },

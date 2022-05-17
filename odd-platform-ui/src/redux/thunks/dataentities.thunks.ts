@@ -105,16 +105,17 @@ export const updateDataEntityInternalDescription = createAsyncThunk<
 export const updateDataEntityInternalName = createAsyncThunk<
   {
     dataEntityId: number;
-    internalName: InternalName;
+    internalName: InternalName['internalName'];
   },
   DataEntityApiUpsertDataEntityInternalNameRequest
 >(
   actions.updateDataEntityInternalNameAction,
   async ({ dataEntityId, internalNameFormData }) => {
-    const internalName = await dataEntityApi.upsertDataEntityInternalName({
-      dataEntityId,
-      internalNameFormData,
-    });
+    const { internalName } =
+      await dataEntityApi.upsertDataEntityInternalName({
+        dataEntityId,
+        internalNameFormData,
+      });
     return { dataEntityId, internalName };
   }
 );
@@ -178,8 +179,9 @@ export const updateDataEntityGroup = createAsyncThunk<
   DataEntityApiUpdateDataEntityGroupRequest
 >(
   actions.updateDataEntityGroupAction,
-  async ({ dataEntityGroupFormData }) => {
-    const dataEntityGroupRef = await dataEntityApi.createDataEntityGroup({
+  async ({ dataEntityGroupId, dataEntityGroupFormData }) => {
+    const dataEntityGroupRef = await dataEntityApi.updateDataEntityGroup({
+      dataEntityGroupId,
       dataEntityGroupFormData,
     });
     return dataEntityGroupRef;

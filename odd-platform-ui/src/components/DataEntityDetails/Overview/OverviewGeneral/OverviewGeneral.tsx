@@ -40,11 +40,13 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
             {dataEntityDetails.dataSource.namespace?.name}
           </LabeledInfoItem>
         </Grid>
-        <Grid item sm={12}>
-          <LabeledInfoItem inline label="Datasource" labelWidth={4}>
-            {dataEntityDetails.dataSource?.name}
-          </LabeledInfoItem>
-        </Grid>
+        {!dataEntityDetails?.manuallyCreated && (
+          <Grid item sm={12}>
+            <LabeledInfoItem inline label="Datasource" labelWidth={4}>
+              {dataEntityDetails.dataSource?.name}
+            </LabeledInfoItem>
+          </Grid>
+        )}
         <Grid item sm={12}>
           <LabeledInfoItem inline label="Created" labelWidth={4}>
             {dataEntityDetails.createdAt

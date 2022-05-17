@@ -124,7 +124,7 @@ const EntitiesSuggestionsAutocomplete: React.FC<
       {...controllerProps}
       fullWidth
       value={{ externalName: searchText }}
-      id="data-entity-search"
+      id="entities-for-dataentitygroup-search"
       open={autocompleteOpen}
       onOpen={() => {
         if (searchText) setAutocompleteOpen(true);

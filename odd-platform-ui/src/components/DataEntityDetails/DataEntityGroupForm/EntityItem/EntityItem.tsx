@@ -4,7 +4,7 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { DataEntityRef } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import * as S from './EntityItemStyles';
+import { Container } from './EntityItemStyles';
 
 interface TagItemProps {
   onRemoveClick?: () => void;
@@ -15,7 +15,7 @@ const EntityItem: React.FC<TagItemProps> = ({
   onRemoveClick = () => {},
   entity,
 }) => (
-  <S.Container container>
+  <Container container>
     <Grid container>
       <Typography variant="body1" sx={{ mr: 1 }}>
         {entity.internalName || entity.externalName}
@@ -35,7 +35,7 @@ const EntityItem: React.FC<TagItemProps> = ({
       sx={{ ml: 0.5 }}
       onClick={onRemoveClick}
     />
-  </S.Container>
+  </Container>
 );
 
 export default EntityItem;

@@ -46,7 +46,6 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
                 key={term.id}
                 term={term}
                 dataEntityId={dataEntityId}
-                // deleteDataEntityTerm={deleteDataEntityTerm}
               />
             ))}
           {terms?.length > visibleLimit && (
@@ -61,7 +60,6 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
                         key={term.id}
                         term={term}
                         dataEntityId={dataEntityId}
-                        // deleteDataEntityTerm={deleteDataEntityTerm}
                       />
                     ))}
               </Collapse>

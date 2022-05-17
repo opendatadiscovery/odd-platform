@@ -139,16 +139,26 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
           }}
         />
       )}
-      renderOption={(props, option) => (
-        <li {...props}>
-          <Grid container flexWrap="wrap" flexDirection="column">
-            <Typography variant="body1">{option.name}</Typography>
-            <Typography variant="subtitle2">
-              {option.namespace?.name}
-            </Typography>
-          </Grid>
-        </li>
-      )}
+      renderOption={(props, option) =>
+        option.id ? (
+          <li {...props}>
+            <Grid container flexWrap="wrap" flexDirection="column">
+              <Typography variant="body1">{option.name}</Typography>
+              <Typography variant="subtitle2">
+                {option.namespace?.name}
+              </Typography>
+            </Grid>
+          </li>
+        ) : (
+          <Typography
+            sx={{ py: 0.5, px: 1 }}
+            variant="subtitle2"
+            component="span"
+          >
+            There are no terms
+          </Typography>
+        )
+      }
     />
   );
 };
