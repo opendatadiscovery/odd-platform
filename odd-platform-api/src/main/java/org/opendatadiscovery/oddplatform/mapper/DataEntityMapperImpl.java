@@ -39,6 +39,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
@@ -164,17 +165,32 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     @Override
     public DataEntityPojo mapToPojo(final DataEntityGroupFormData formData,
                                     final DataEntityClassDto classDto,
-                                    final Long namespaceId) {
+                                    final NamespacePojo namespacePojo) {
         final LocalDateTime now = LocalDateTime.now();
         return new DataEntityPojo()
-            .setNamespaceId(namespaceId)
+            .setInternalName(formData.getName())
+            .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
             .setEntityClassIds(new Integer[] {classDto.getId()})
             .setTypeId(formData.getType().getId())
             .setCreatedAt(now)
             .setUpdatedAt(now)
-            //.setManuallyCreated(true)
+            .setManuallyCreated(true)
             .setHollow(false)
             .setExcludeFromSearch(false);
+    }
+
+    @Override
+    public DataEntityPojo applyToPojo(final DataEntityGroupFormData formData,
+                                      final NamespacePojo namespacePojo,
+                                      final DataEntityPojo pojo) {
+        if (pojo == null) {
+            return null;
+        }
+        return pojo
+            .setInternalName(formData.getName())
+            .setNamespaceId(namespacePojo != null ? namespacePojo.getId() : null)
+            .setTypeId(formData.getType().getId())
+            .setUpdatedAt(LocalDateTime.now());
     }
 
     @Override
@@ -210,9 +226,9 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .type(type)
             .ownership(ownershipMapper.mapDtos(dto.getOwnership()))
             .dataSource(dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null)))
-            .tags(dto.getTags().stream().map(tagMapper::mapToTag).collect(Collectors.toList()))
+            .tags(tagMapper.mapToTagList(dto.getTags()))
             .metadataFieldValues(metadataFieldValueMapper.mapDtos(dto.getMetadata()))
-            .terms(dto.getTerms().stream().map(termMapper::mapToRef).toList())
+            .terms(termMapper.mapToRefList(dto.getTerms()))
             .viewCount(pojo.getViewCount());
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {
@@ -271,7 +287,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                 .toList();
             details.setEntities(dataEntityRefs);
             details.setHasChildren(dto.getGroupsDto().hasChildren());
-            //details.setManuallyCreated(dto.getDataEntity().getManuallyCreated());
+            details.setManuallyCreated(dto.getDataEntity().getManuallyCreated());
         }
 
         if (entityClasses.contains(DataEntityClassDto.DATA_INPUT)) {

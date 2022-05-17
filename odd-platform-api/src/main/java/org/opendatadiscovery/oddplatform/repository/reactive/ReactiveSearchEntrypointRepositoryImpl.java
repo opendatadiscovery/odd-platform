@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,60 @@ import static org.opendatadiscovery.oddplatform.repository.util.FTSConfig.FTS_CO
 public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEntrypointRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
     private final ReactiveJooqFTSHelper jooqFTSHelper;
+
+    @Override
+    public Mono<Integer> updateDataEntityVectors(final long dataEntityId) {
+        final Field<Long> dataEntityIdField = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(
+            DATA_ENTITY.EXTERNAL_NAME,
+            DATA_ENTITY.INTERNAL_NAME,
+            DATA_ENTITY.EXTERNAL_DESCRIPTION,
+            DATA_ENTITY.INTERNAL_DESCRIPTION
+        );
+
+        final SelectConditionStep<Record> vectorSelect = DSL.select(vectorFields)
+            .select(DATA_ENTITY.ID.as(dataEntityIdField))
+            .from(DATA_ENTITY)
+            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+
+        final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            dataEntityIdField,
+            vectorFields,
+            SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            false
+        );
+
+        return jooqReactiveOperations.mono(insertQuery);
+    }
+
+    public Mono<Integer> updateNamespaceVectorForDataEntity(final long dataEntityId) {
+        final Field<Long> dataEntityIdField = field("data_entity_id", Long.class);
+
+        final List<Field<?>> vectorFields = List.of(NAMESPACE.NAME);
+
+        final var vectorSelect = DSL
+            .select(DATA_ENTITY.ID.as(dataEntityIdField))
+            .select(vectorFields)
+            .from(DATA_ENTITY)
+            .join(NAMESPACE).on(DATA_ENTITY.NAMESPACE_ID.eq(NAMESPACE.ID))
+            .where(DATA_ENTITY.ID.eq(dataEntityId));
+
+        final Insert<? extends Record> insertQuery = jooqFTSHelper.buildVectorUpsert(
+            vectorSelect,
+            dataEntityIdField,
+            vectorFields,
+            SEARCH_ENTRYPOINT.NAMESPACE_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            false
+        );
+
+        return jooqReactiveOperations.mono(insertQuery);
+    }
 
     @Override
     public Mono<Integer> updateChangedNamespaceVector(final long namespaceId) {
@@ -90,7 +145,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     }
 
     @Override
-    public Mono<Integer> updateDataSourceVector(final long dataSourceId) {
+    public Mono<Integer> updateChangedDataSourceVector(final long dataSourceId) {
         final Field<Long> deId = field("data_entity_id", Long.class);
 
         final List<Field<?>> dsVectorFields = List.of(DATA_SOURCE.NAME, DATA_SOURCE.CONNECTION_URL, DATA_SOURCE.ODDRN);

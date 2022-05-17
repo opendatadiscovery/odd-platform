@@ -27,8 +27,9 @@ import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -63,12 +64,19 @@ public class DataEntityServiceTest {
     private TagMapper tagMapper;
     @Mock
     private ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
+    @Mock
+    private NamespaceService namespaceService;
+    @Mock
+    private ReactiveDataEntityRepository reactiveDataEntityRepository;
+    @Mock
+    private ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
 
     @BeforeEach
     public void beforeAll() {
         dataEntityService = new DataEntityServiceImpl(dataEntityMapper, dataEntityRepository, authIdentityProvider,
             metadataFieldValueRepository, metadataFieldRepository, tagService, lineageRepository,
-            metadataFieldMapper, metadataFieldValueMapper, reactiveSearchEntrypointRepository, tagMapper);
+            metadataFieldMapper, metadataFieldValueMapper, reactiveSearchEntrypointRepository, tagMapper,
+            namespaceService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository);
     }
 
     @Test

@@ -7,6 +7,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -59,6 +60,30 @@ public class DataEntityController
     }
 
     @Override
+    public Mono<ResponseEntity<DataEntityRef>> createDataEntityGroup(final Mono<DataEntityGroupFormData> formData,
+                                                                         final ServerWebExchange exchange) {
+        return formData
+            .flatMap(entityService::createDataEntityGroup)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteDataEntityGroup(final Long dataEntityGroupId,
+                                                            final ServerWebExchange exchange) {
+        return entityService.deleteDataEntityGroup(dataEntityGroupId)
+            .thenReturn(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityRef>> updateDataEntityGroup(final Long dataEntityGroupId,
+                                                                         final Mono<DataEntityGroupFormData> formData,
+                                                                         final ServerWebExchange exchange) {
+        return formData
+            .flatMap(fd -> entityService.updateDataEntityGroup(dataEntityGroupId, fd))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<DataEntityList>> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                                             final Integer page, final Integer size,
                                                                             final ServerWebExchange exchange) {
@@ -104,8 +129,8 @@ public class DataEntityController
 
     @Override
     public Mono<ResponseEntity<TermRef>> addDataEntityTerm(final Long dataEntityId,
-                                                             final Mono<DataEntityTermFormData> dataEntityTermFormData,
-                                                             final ServerWebExchange exchange) {
+                                                           final Mono<DataEntityTermFormData> dataEntityTermFormData,
+                                                           final ServerWebExchange exchange) {
         return dataEntityTermFormData
             .flatMap(formData -> termService.linkTermWithDataEntity(formData.getTermId(), dataEntityId))
             .map(ResponseEntity::ok);

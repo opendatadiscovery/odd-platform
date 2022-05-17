@@ -1013,7 +1013,8 @@ public class DataEntityRepositoryImpl
             fromStep = fromStep
                 .leftJoin(DATA_SOURCE)
                 .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
-                .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+                .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
+                .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
                 .leftJoin(TAG_TO_DATA_ENTITY)
                 .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
                 .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.dto.MetadataDto;
 import org.springframework.stereotype.Component;
@@ -22,6 +23,9 @@ public class MetadataFieldValueMapperImpl implements MetadataFieldValueMapper {
 
     @Override
     public List<MetadataFieldValue> mapDtos(final Collection<MetadataDto> dto) {
+        if (CollectionUtils.isEmpty(dto)) {
+            return List.of();
+        }
         return dto.stream().map(this::mapDto).collect(Collectors.toList());
     }
 }

@@ -8,11 +8,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -42,18 +44,22 @@ import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddrn.Generator;
+import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityGroupPath;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
 
 @Service
@@ -62,16 +68,21 @@ public class DataEntityServiceImpl
     extends AbstractReadOnlyCRUDService<DataEntity, DataEntityList,
     DataEntityDimensionsDto, DataEntityMapper, DataEntityRepository>
     implements DataEntityService {
+    private final Generator oddrnGenerator = new Generator();
 
     private final AuthIdentityProvider authIdentityProvider;
     private final MetadataFieldValueRepository metadataFieldValueRepository;
+    private final ReactiveDataEntityRepository reactiveDataEntityRepository;
     private final MetadataFieldRepository metadataFieldRepository;
     private final TagService tagService;
     private final LineageRepository lineageRepository;
+    private final NamespaceService namespaceService;
+
     private final MetadataFieldMapper metadataFieldMapper;
     private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final TagMapper tagMapper;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
+    private final ReactiveGroupEntityRelationRepository groupEntityRelationRepository;
 
     public DataEntityServiceImpl(final DataEntityMapper entityMapper,
                                  final DataEntityRepository entityRepository,
@@ -83,7 +94,10 @@ public class DataEntityServiceImpl
                                  final MetadataFieldMapper metadataFieldMapper,
                                  final MetadataFieldValueMapper metadataFieldValueMapper,
                                  final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository,
-                                 final TagMapper tagMapper) {
+                                 final TagMapper tagMapper,
+                                 final NamespaceService namespaceService,
+                                 final ReactiveDataEntityRepository reactiveDataEntityRepository,
+                                 final ReactiveGroupEntityRelationRepository groupEntityRelationRepository) {
         super(entityMapper, entityRepository);
 
         this.authIdentityProvider = authIdentityProvider;
@@ -95,6 +109,47 @@ public class DataEntityServiceImpl
         this.metadataFieldValueMapper = metadataFieldValueMapper;
         this.reactiveSearchEntrypointRepository = reactiveSearchEntrypointRepository;
         this.tagMapper = tagMapper;
+        this.namespaceService = namespaceService;
+        this.reactiveDataEntityRepository = reactiveDataEntityRepository;
+        this.groupEntityRelationRepository = groupEntityRelationRepository;
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<DataEntityRef> createDataEntityGroup(final DataEntityGroupFormData formData) {
+        if (StringUtils.isNotEmpty(formData.getNamespaceName())) {
+            return namespaceService.getOrCreate(formData.getNamespaceName())
+                .flatMap(namespacePojo -> createDEG(formData, namespacePojo));
+        } else {
+            return createDEG(formData, null);
+        }
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Mono<DataEntityRef> updateDataEntityGroup(final Long id, final DataEntityGroupFormData formData) {
+        return reactiveDataEntityRepository.get(id)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
+            .filter(DataEntityPojo::getManuallyCreated)
+            .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't update ingested data entity")))
+            .flatMap(pojo -> {
+                if (StringUtils.isNotEmpty(formData.getNamespaceName())) {
+                    return namespaceService.getOrCreate(formData.getNamespaceName())
+                        .flatMap(namespacePojo -> updateDEG(pojo, formData, namespacePojo));
+                } else {
+                    return updateDEG(pojo, formData, null);
+                }
+            });
+    }
+
+    //todo delete relations
+    @Override
+    public Mono<DataEntityPojo> deleteDataEntityGroup(final Long id) {
+        return reactiveDataEntityRepository.get(id)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
+            .filter(DataEntityPojo::getManuallyCreated)
+            .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't delete ingested data entity")))
+            .flatMap(pojo -> reactiveDataEntityRepository.delete(id));
     }
 
     @Override
@@ -296,5 +351,61 @@ public class DataEntityServiceImpl
                 ? Mono.error(new NotFoundException())
                 : Mono.just(optional.get()))
             .map(entityMapper::mapGroupLineageDto);
+    }
+
+    private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,
+                                              final NamespacePojo namespace) {
+        return Mono.just(formData)
+            .map(fd -> entityMapper.mapToPojo(fd, DATA_ENTITY_GROUP, namespace))
+            .flatMap(reactiveDataEntityRepository::create)
+            .map(pojo -> {
+                final String oddrn = generateOddrn(pojo, formData.getType().getName().name());
+                pojo.setOddrn(oddrn);
+                return pojo;
+            })
+            .flatMap(reactiveDataEntityRepository::update)
+            .flatMap(pojo -> {
+                final List<String> entityOddrns =
+                    formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
+                return groupEntityRelationRepository.createRelations(pojo.getOddrn(), entityOddrns)
+                    .ignoreElements().thenReturn(pojo);
+            })
+            .flatMap(this::updateSearchVectors)
+            .map(entityMapper::mapRef);
+    }
+
+    private Mono<DataEntityRef> updateDEG(final DataEntityPojo pojo,
+                                           final DataEntityGroupFormData formData,
+                                           final NamespacePojo namespace) {
+        final List<String> entityOddrns =
+            formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
+        return Mono.just(formData)
+            .map(fd -> entityMapper.applyToPojo(fd, namespace, pojo))
+            .flatMap(reactiveDataEntityRepository::update)
+            .flatMap(degPojo -> groupEntityRelationRepository.deleteRelationsExcept(degPojo.getOddrn(), entityOddrns)
+                .ignoreElements().thenReturn(degPojo))
+            .flatMap(degPojo -> groupEntityRelationRepository.createRelations(degPojo.getOddrn(), entityOddrns)
+                .ignoreElements().thenReturn(degPojo))
+            .flatMap(this::updateSearchVectors)
+            .map(entityMapper::mapRef);
+    }
+
+    private String generateOddrn(final DataEntityPojo pojo, final String dataEntityType) {
+        try {
+            return oddrnGenerator.generate(ODDPlatformDataEntityGroupPath.builder()
+                    .id(pojo.getId())
+                    .build(),
+                "id");
+        } catch (Exception e) {
+            log.error("Error while generating oddrn for data entity {}", pojo.getId(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Mono<DataEntityPojo> updateSearchVectors(final DataEntityPojo pojo) {
+        return Mono.zip(
+            reactiveSearchEntrypointRepository.updateDataEntityVectors(pojo.getId()),
+            reactiveSearchEntrypointRepository.updateNamespaceVectorForDataEntity(pojo.getId())
+        ).thenReturn(pojo);
     }
 }

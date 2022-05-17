@@ -51,7 +51,7 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
 
         assertThat(alerts)
             .allMatch(p -> p.getId() != null)
-            .usingElementComparatorIgnoringFields("id", "createdAt")
+            .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "createdAt")
             .hasSameElementsAs(List.of(firstAlert, secondAlert));
     }
 
