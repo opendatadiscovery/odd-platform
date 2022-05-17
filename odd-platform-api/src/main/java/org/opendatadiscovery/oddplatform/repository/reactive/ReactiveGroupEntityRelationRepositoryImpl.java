@@ -17,6 +17,15 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override
+    public Flux<GroupEntityRelationsPojo> deleteRelationsForDEG(final String groupOddrn) {
+        final var query = DSL.deleteFrom(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(GroupEntityRelationsPojo.class));
+    }
+
+    @Override
     public Flux<GroupEntityRelationsPojo> deleteRelationsExcept(final String groupOddrn,
                                                                 final List<String> oddrnsToKeep) {
         final var query = DSL.deleteFrom(GROUP_ENTITY_RELATIONS)

@@ -84,6 +84,11 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public Flux<TagToDataEntityPojo> deleteRelationsForDataEntity(final long dataEntityId) {
+        return reactiveTagRepository.deleteRelationsForDataEntity(dataEntityId);
+    }
+
+    @Override
     public Flux<TagToDataEntityPojo> createRelationsWithDataEntity(final long dataEntityId,
                                                                    final List<TagPojo> tags) {
         final List<Long> ids = tags.stream().map(TagPojo::getId).toList();

@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveOwnershipRepository {
@@ -14,4 +15,6 @@ public interface ReactiveOwnershipRepository {
     Mono<OwnershipPojo> updateRole(final long ownershipId, final long roleId);
 
     Mono<Boolean> existsByOwner(final long ownerId);
+
+    Flux<OwnershipPojo> deleteByDataEntityId(final long dataEntityId);
 }

@@ -51,7 +51,9 @@ import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityGroupPath;
 import org.springframework.stereotype.Service;
@@ -83,6 +85,8 @@ public class DataEntityServiceImpl
     private final TagMapper tagMapper;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     private final ReactiveGroupEntityRelationRepository groupEntityRelationRepository;
+    private final ReactiveTermRepository reactiveTermRepository;
+    private final ReactiveOwnershipRepository ownershipRepository;
 
     public DataEntityServiceImpl(final DataEntityMapper entityMapper,
                                  final DataEntityRepository entityRepository,
@@ -97,7 +101,9 @@ public class DataEntityServiceImpl
                                  final TagMapper tagMapper,
                                  final NamespaceService namespaceService,
                                  final ReactiveDataEntityRepository reactiveDataEntityRepository,
-                                 final ReactiveGroupEntityRelationRepository groupEntityRelationRepository) {
+                                 final ReactiveGroupEntityRelationRepository groupEntityRelationRepository,
+                                 final ReactiveTermRepository reactiveTermRepository,
+                                 final ReactiveOwnershipRepository ownershipRepository) {
         super(entityMapper, entityRepository);
 
         this.authIdentityProvider = authIdentityProvider;
@@ -112,6 +118,8 @@ public class DataEntityServiceImpl
         this.namespaceService = namespaceService;
         this.reactiveDataEntityRepository = reactiveDataEntityRepository;
         this.groupEntityRelationRepository = groupEntityRelationRepository;
+        this.reactiveTermRepository = reactiveTermRepository;
+        this.ownershipRepository = ownershipRepository;
     }
 
     @Override
@@ -129,6 +137,7 @@ public class DataEntityServiceImpl
     @ReactiveTransactional
     public Mono<DataEntityRef> updateDataEntityGroup(final Long id, final DataEntityGroupFormData formData) {
         return reactiveDataEntityRepository.get(id)
+            .doOnNext(pojo -> log.info("I'm here"))
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
             .filter(DataEntityPojo::getManuallyCreated)
             .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't update ingested data entity")))
@@ -142,14 +151,13 @@ public class DataEntityServiceImpl
             });
     }
 
-    //todo delete relations
     @Override
     public Mono<DataEntityPojo> deleteDataEntityGroup(final Long id) {
         return reactiveDataEntityRepository.get(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
             .filter(DataEntityPojo::getManuallyCreated)
             .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't delete ingested data entity")))
-            .flatMap(pojo -> reactiveDataEntityRepository.delete(id));
+            .flatMap(this::deleteDEG);
     }
 
     @Override
@@ -354,12 +362,12 @@ public class DataEntityServiceImpl
     }
 
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,
-                                              final NamespacePojo namespace) {
+                                          final NamespacePojo namespace) {
         return Mono.just(formData)
             .map(fd -> entityMapper.mapToPojo(fd, DATA_ENTITY_GROUP, namespace))
             .flatMap(reactiveDataEntityRepository::create)
             .map(pojo -> {
-                final String oddrn = generateOddrn(pojo, formData.getType().getName().name());
+                final String oddrn = generateOddrn(pojo);
                 pojo.setOddrn(oddrn);
                 return pojo;
             })
@@ -375,8 +383,8 @@ public class DataEntityServiceImpl
     }
 
     private Mono<DataEntityRef> updateDEG(final DataEntityPojo pojo,
-                                           final DataEntityGroupFormData formData,
-                                           final NamespacePojo namespace) {
+                                          final DataEntityGroupFormData formData,
+                                          final NamespacePojo namespace) {
         final List<String> entityOddrns =
             formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
         return Mono.just(formData)
@@ -390,7 +398,16 @@ public class DataEntityServiceImpl
             .map(entityMapper::mapRef);
     }
 
-    private String generateOddrn(final DataEntityPojo pojo, final String dataEntityType) {
+    private Mono<DataEntityPojo> deleteDEG(final DataEntityPojo pojo) {
+        return Flux.zip(
+            reactiveTermRepository.deleteRelationsWithTerms(pojo.getId()),
+            groupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
+            tagService.deleteRelationsForDataEntity(pojo.getId()),
+            ownershipRepository.deleteByDataEntityId(pojo.getId())
+        ).then(reactiveDataEntityRepository.delete(pojo.getId()));
+    }
+
+    private String generateOddrn(final DataEntityPojo pojo) {
         try {
             return oddrnGenerator.generate(ODDPlatformDataEntityGroupPath.builder()
                     .id(pojo.getId())

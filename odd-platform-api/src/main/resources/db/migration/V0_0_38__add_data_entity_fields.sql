@@ -12,3 +12,6 @@ ALTER TABLE data_entity
 
 UPDATE data_entity
 SET manually_created = false;
+
+UPDATE data_entity
+SET is_deleted = false;

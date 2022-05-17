@@ -1413,11 +1413,13 @@ public class DataEntityRepositoryImpl
                 .from(SEARCH_ENTRYPOINT)
                 .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
                 .where(ListUtils.emptyIfNull(config.getCteSelectConditions()))
-                .and(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, config.getFts().query()));
+                .and(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, config.getFts().query()))
+                .and(DATA_ENTITY.DELETED_AT.isNull());
         } else {
             dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
                 .from(DATA_ENTITY)
-                .where(ListUtils.emptyIfNull(config.getCteSelectConditions()));
+                .where(ListUtils.emptyIfNull(config.getCteSelectConditions()))
+                .and(DATA_ENTITY.DELETED_AT.isNull());
         }
 
         if (!config.isIncludeHollow()) {
