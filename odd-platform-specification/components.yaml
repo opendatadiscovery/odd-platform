@@ -470,7 +470,6 @@ components:
           type: boolean
       required:
         - id
-        - external_name
 
     DataEntityRefList:
       type: array
