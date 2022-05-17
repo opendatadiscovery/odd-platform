@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,7 +29,6 @@ public class LabelController implements LabelApi {
     public Mono<ResponseEntity<Flux<Label>>> createLabel(final Flux<LabelFormData> labelFormData,
                                                          final ServerWebExchange exchange) {
         return labelFormData.collectList()
-            .publishOn(Schedulers.boundedElastic())
             .map(labelService::bulkUpsert)
             .map(ResponseEntity::ok);
     }
@@ -47,6 +45,6 @@ public class LabelController implements LabelApi {
     @Override
     public Mono<ResponseEntity<Void>> deleteLabel(final Long labelId,
                                                   final ServerWebExchange exchange) {
-        return labelService.delete(labelId).map(ignored -> ResponseEntity.noContent().build());
+        return labelService.delete(labelId).thenReturn(ResponseEntity.noContent().build());
     }
 }
