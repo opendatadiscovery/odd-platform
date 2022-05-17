@@ -7,7 +7,7 @@ import {
   TermRef,
 } from 'generated-sources';
 import { termDetailsOverviewPath } from 'lib/paths';
-import { ActionsContainer, TermItemContainer } from './TermItemStyles';
+import * as S from './TermItemStyles';
 
 interface TermItemProps {
   dataEntityId: number;
@@ -25,17 +25,22 @@ const TermItem: React.FC<TermItemProps> = ({
   const termDetailsLink = termDetailsOverviewPath(term.id);
 
   return (
-    <TermItemContainer to={termDetailsLink}>
+    <S.TermItemContainer to={termDetailsLink}>
       <Grid
         sx={{ my: 0.5 }}
         container
         flexWrap="nowrap"
         justifyContent="space-between"
       >
-        <Typography variant="body1" color="texts.action">
-          {term.name}
-        </Typography>
-        <ActionsContainer>
+        <Grid container flexDirection="column">
+          <Typography variant="body1" color="texts.action">
+            {term.name}
+          </Typography>
+          <S.TermDefinition variant="subtitle2">
+            {term.definition}
+          </S.TermDefinition>
+        </Grid>
+        <S.ActionsContainer>
           <AppIconButton
             size="small"
             color="unfilled"
@@ -49,9 +54,9 @@ const TermItem: React.FC<TermItemProps> = ({
             }}
             sx={{ ml: 0.25 }}
           />
-        </ActionsContainer>
+        </S.ActionsContainer>
       </Grid>
-    </TermItemContainer>
+    </S.TermItemContainer>
   );
 };
 
