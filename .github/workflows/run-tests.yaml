@@ -4,17 +4,19 @@ on:
   pull_request:
     types: [ 'opened', 'edited', 'reopened', 'synchronize' ]
 
+permissions:
+  checks: write
+  pull-requests: write
+
 jobs:
-  build:
+  run_tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
           submodules: true
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
       - name: Cache local node_modules
         uses: actions/cache@v2
         with:
@@ -27,9 +29,16 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Run build
+      - name: Run tests
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-          JAVA_OPTS: "-Xms512m -Xmx512m"
-        run: ./gradlew clean build ${{ github.event.inputs.buildOptions }}
+          JAVA_OPTS: "-Xms1G -Xmx1G"
+        run: ./gradlew clean test ${{ github.event.inputs.buildOptions }}
+      - name: Publish test reports
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: "odd-platform-api/build/test-results/**/*.xml"
+          check_name: Test Results
+          comment_mode: create new

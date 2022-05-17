@@ -39,7 +39,7 @@ class ReactiveLabelRepositoryImplTest extends BaseIntegrationTest {
 
         labelRepository.list(1, 10, queryString)
             .as(StepVerifier::create)
-            .assertNext(page -> assertThat(page).isEqualTo(new Page<>(expected, prefixedCount, false)))
+            .assertNext(page -> assertThat(page).isEqualTo(new Page<>(expected, prefixedCount, true)))
             .verifyComplete();
     }
 
