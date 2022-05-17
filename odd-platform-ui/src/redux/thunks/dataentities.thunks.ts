@@ -161,28 +161,28 @@ export const fetchPopularDataEntitiesList = createAsyncThunk<
 
 // data entity groups
 export const createDataEntityGroup = createAsyncThunk<
-  DataEntityDetails,
+  DataEntityRef,
   DataEntityApiCreateDataEntityGroupRequest
 >(
   actions.createDataEntityGroupAction,
   async ({ dataEntityGroupFormData }) => {
-    const dataEntityGroup = await dataEntityApi.createDataEntityGroup({
+    const dataEntityGroupRef = await dataEntityApi.createDataEntityGroup({
       dataEntityGroupFormData,
     });
-    return dataEntityGroup;
+    return dataEntityGroupRef;
   }
 );
 
 export const updateDataEntityGroup = createAsyncThunk<
-  DataEntityDetails,
+  DataEntityRef,
   DataEntityApiUpdateDataEntityGroupRequest
 >(
   actions.updateDataEntityGroupAction,
   async ({ dataEntityGroupFormData }) => {
-    const dataEntityGroup = await dataEntityApi.createDataEntityGroup({
+    const dataEntityGroupRef = await dataEntityApi.createDataEntityGroup({
       dataEntityGroupFormData,
     });
-    return dataEntityGroup;
+    return dataEntityGroupRef;
   }
 );
 

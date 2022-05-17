@@ -264,16 +264,6 @@ export const dataEntitiesSlice = createSlice({
     );
 
     builder.addCase(
-      thunks.createDataEntityGroup.fulfilled,
-      (state, { payload }) => updateDataEntity(state, payload)
-    );
-
-    builder.addCase(
-      thunks.updateDataEntityGroup.fulfilled,
-      (state, { payload }) => updateDataEntity(state, payload)
-    );
-
-    builder.addCase(
       thunks.deleteDataEntityGroup.fulfilled,
       (state, { payload }) => {
         const dataEntityGroupId = payload;
