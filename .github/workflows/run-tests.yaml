@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   run_tests:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -33,8 +33,8 @@ jobs:
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-          JAVA_OPTS: "-Xms1G -Xmx1G"
-        run: ./gradlew clean test ${{ github.event.inputs.buildOptions }}
+          JAVA_OPTS: "-Xms2048m -Xmx2048m"
+        run: ./gradlew clean test ${{ github.event.inputs.buildOptions }} --no-daemon
       - name: Publish test reports
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()

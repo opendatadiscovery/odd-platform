@@ -20,13 +20,11 @@ jobs:
     outputs:
       version: ${{steps.get-version.outputs.version}}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
           submodules: true
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
       - name: Check version
         id: get-version
         run: |
@@ -54,12 +52,18 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build with Gradle
+      - name: Run tests
         env:
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms2048m -Xmx2048m"
-        run: ./gradlew clean jibDockerBuild ${{ github.event.inputs.buildOptions }} --no-daemon --image odd-platform -Pversion=${{ steps.get-version.outputs.version }}
+        run: ./gradlew clean tests ${{ github.event.inputs.buildOptions }} --no-daemon
+      - name: Build the JIB image
+        env:
+          GENERATE_SOURCEMAP: false
+          CI: false
+          JAVA_OPTS: "-Xms2048m -Xmx2048m"
+        run: ./gradlew jibDockerBuild ${{ github.event.inputs.buildOptions }} --no-daemon --image odd-platform -Pversion=${{ steps.get-version.outputs.version }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:
