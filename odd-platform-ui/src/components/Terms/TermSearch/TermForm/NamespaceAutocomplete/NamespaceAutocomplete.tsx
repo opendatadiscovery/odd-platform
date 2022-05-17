@@ -50,17 +50,20 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
     [searchNamespace, setLoading, setOptions, searchText]
   );
 
-  const getOptionLabel = React.useCallback((option: FilterOption) => {
-    // Value selected with enter, right from the input
-    if (typeof option === 'string') {
-      return option;
-    }
-    // Regular option
-    if ('name' in option && option.name) {
-      return option.name;
-    }
-    return '';
-  }, []);
+  const getOptionLabel = React.useCallback(
+    (option: FilterOption | string) => {
+      // Value selected with enter, right from the input
+      if (typeof option === 'string') {
+        return option;
+      }
+      // Regular option
+      if ('name' in option && option.name) {
+        return option.name;
+      }
+      return '';
+    },
+    []
+  );
 
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
@@ -162,7 +165,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
           }}
         />
       )}
-      renderOption={(props, option) => (
+      renderOption={(props, option: FilterOption) => (
         <li {...props}>
           <Typography variant="body2">
             {option.id ? (

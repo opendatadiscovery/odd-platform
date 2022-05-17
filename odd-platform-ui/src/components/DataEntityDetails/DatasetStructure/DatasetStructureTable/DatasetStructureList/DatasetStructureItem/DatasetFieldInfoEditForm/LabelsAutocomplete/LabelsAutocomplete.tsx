@@ -47,15 +47,18 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
     [searchLabels, setLoading, setOptions, searchText]
   );
 
-  const getOptionLabel = React.useCallback((option: FilterOption) => {
-    if (typeof option === 'string') {
-      return option;
-    }
-    if ('name' in option && option.name) {
-      return option.name;
-    }
-    return '';
-  }, []);
+  const getOptionLabel = React.useCallback(
+    (option: FilterOption | string) => {
+      if (typeof option === 'string') {
+        return option;
+      }
+      if ('name' in option && option.name) {
+        return option.name;
+      }
+      return '';
+    },
+    []
+  );
 
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
