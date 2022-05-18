@@ -61,7 +61,7 @@ public class DataEntityController
 
     @Override
     public Mono<ResponseEntity<DataEntityRef>> createDataEntityGroup(final Mono<DataEntityGroupFormData> formData,
-                                                                         final ServerWebExchange exchange) {
+                                                                     final ServerWebExchange exchange) {
         return formData
             .flatMap(entityService::createDataEntityGroup)
             .map(ResponseEntity::ok);
@@ -76,8 +76,8 @@ public class DataEntityController
 
     @Override
     public Mono<ResponseEntity<DataEntityRef>> updateDataEntityGroup(final Long dataEntityGroupId,
-                                                                         final Mono<DataEntityGroupFormData> formData,
-                                                                         final ServerWebExchange exchange) {
+                                                                     final Mono<DataEntityGroupFormData> formData,
+                                                                     final ServerWebExchange exchange) {
         return formData
             .flatMap(fd -> entityService.updateDataEntityGroup(dataEntityGroupId, fd))
             .map(ResponseEntity::ok);

@@ -130,7 +130,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       {
         name: 'Lineage',
         link: dataEntityLineagePath(dataEntityId),
-        hidden: isQualityTest || dataEntityDetails?.manuallyCreated,
+        hidden: isQualityTest,
         value: 'lineage',
       },
       {
@@ -151,7 +151,6 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         value: 'alerts',
         hint: openAlertsCount,
         hintType: 'alert',
-        hidden: dataEntityDetails?.manuallyCreated,
       },
       {
         name: 'Linked items',

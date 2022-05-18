@@ -269,6 +269,7 @@ public class DataEntityRepositoryImpl
             .where(jooqFTSHelper.facetStateConditions(state, DATA_ENTITY_CONDITIONS,
                 List.of(FacetType.ENTITY_CLASSES)))
             .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.DELETED_AT.isNull())
             .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
@@ -656,6 +657,7 @@ public class DataEntityRepositoryImpl
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
             .where(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, query))
             .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.DELETED_AT.isNull())
             .orderBy(RANK_FIELD_ALIAS.desc())
             .limit(SUGGESTION_LIMIT);
 
