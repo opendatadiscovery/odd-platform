@@ -14,76 +14,16 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
-      - uses: unfor19/install-aws-cli-action@v1
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v1.3.3
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Gradle cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-shared-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Node cache
-        uses: actions/cache@v2
-        with:
-          path: odd-platform-ui/.npm
-          key: ${{ runner.os }}-shared-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - name: Build with Gradle
         env:
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms2048m -Xmx2048m"
-        run: ./gradlew jibDockerBuild --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6} -Penv=prod
+        run: ./gradlew clean test --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6} -Penv=prod
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
-  update_tag:
-    needs: ["images"]
-    runs-on: self-hosted
-    steps:
-      - name: Masking token
-        run: |
-          INP_GIT_TOKEN=$(echo ${ODD_GIT_TOKEN} | base64 -d)
-          echo ::add-mask::$INP_GIT_TOKEN
-          echo MASKED_ODD_GIT_TOKEN="$INP_GIT_TOKEN" >> $GITHUB_ENV
-      - uses: actions/checkout@v2
-        with:
-          repository: provectus/environment-state
-          token: ${{ env.MASKED_ODD_GIT_TOKEN }}
-      - run: |
-          sed -i "s/tag:.*/tag: ci-${GITHUB_SHA::6}/" odd-platform.yaml
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit --allow-empty -m "update tag"
-          git push
-  argocd_sync:
-    needs: ["update_tag"]
-    runs-on: self-hosted
-    steps:
-      - name: Install ArgoCD CLI
-        run: |
-          curl -sSL -o ./argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-          chmod +x ./argocd
-      - name: Login into ArgoCD
-        run: ./argocd login ${{ secrets.ARGOCD_SERVER }} --username ${{ secrets.ARGOCD_LOGIN }} --password '${{ secrets.ARGOCD_PASSWORD }}' --grpc-web
-      - name: Sync ODD Platform application
-        run: ./argocd app sync environments --force --resource argoproj.io:Application:odd-platform
