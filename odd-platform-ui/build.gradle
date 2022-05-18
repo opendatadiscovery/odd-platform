@@ -21,7 +21,7 @@ tasks.register("buildUI", NpmTask) {
     environment = [
         'BUILD_PATH': "${project.buildDir}/ui"
     ]
-    args = ['ci']
+    args = ['run', 'build']
 }
 
 jar {
