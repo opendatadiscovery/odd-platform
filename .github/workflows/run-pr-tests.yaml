@@ -41,6 +41,7 @@ jobs:
       - name: Build and run tests
         env:
           GENERATE_SOURCEMAP: false
+          CI: false
         run: ./gradlew build ${{ github.event.inputs.buildOptions }} --no-daemon --scan --parallel
       - name: Publish test reports
         uses: EnricoMi/publish-unit-test-result-action@v1

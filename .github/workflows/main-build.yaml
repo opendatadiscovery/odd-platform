@@ -44,10 +44,9 @@ jobs:
       - name: Build and run tests
         env:
           GENERATE_SOURCEMAP: false
+          CI: false
         run: ./gradlew build ${{ github.event.inputs.buildOptions }} --no-daemon --scan --parallel
       - name: Build the image
-        env:
-          GENERATE_SOURCEMAP: false
         run: ./gradlew jibDockerBuild --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6} -Penv=prod
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}

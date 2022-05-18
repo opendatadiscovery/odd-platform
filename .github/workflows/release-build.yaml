@@ -48,6 +48,7 @@ jobs:
       - name: Build and run tests
         env:
           GENERATE_SOURCEMAP: false
+          CI: false
         run: ./gradlew build ${{ github.event.inputs.buildOptions }} --no-daemon --parallel --scan
       - name: Build the image
         run: ./gradlew jibDockerBuild ${{ github.event.inputs.buildOptions }} --no-daemon --image odd-platform -Pversion=${{ steps.get-version.outputs.version }}
