@@ -31,7 +31,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   deleteDataEntityGroup,
   fetchDataEntityDetails,
@@ -46,6 +46,7 @@ import {
   getDataEntityGroupUpdatingStatuses,
   getSearchId,
 } from 'redux/selectors';
+import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import * as S from './DataEntityDetailsStyles';
 
 // lazy components
@@ -207,6 +208,12 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                     entityClassName={entityClass.name}
                   />
                 ))}
+                {dataEntityDetails.type && (
+                  <EntityTypeItem
+                    sx={{ ml: 1 }}
+                    entityTypeName={dataEntityDetails.type.name}
+                  />
+                )}
                 <S.InternalNameEditBtnContainer>
                   <InternalNameFormDialogContainer
                     dataEntityId={dataEntityId}

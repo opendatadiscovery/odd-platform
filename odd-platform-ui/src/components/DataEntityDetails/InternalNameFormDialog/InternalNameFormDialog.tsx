@@ -6,7 +6,7 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { updateDataEntityInternalName } from 'redux/thunks';
 
 interface InternalNameFormDialogProps {

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import { TermsState } from 'redux/interfaces';
 import omit from 'lodash/omit';
-import { termsActionPrefix } from 'redux/actions';
+import { termsActionTypePrefix } from 'redux/actions';
 
 export const initialState: TermsState = {
   byId: {},
@@ -15,7 +15,7 @@ export const initialState: TermsState = {
 };
 
 export const termsSlice = createSlice({
-  name: termsActionPrefix,
+  name: termsActionTypePrefix,
   initialState,
   reducers: {},
   extraReducers: builder => {

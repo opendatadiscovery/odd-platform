@@ -17,7 +17,7 @@ import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
 import values from 'lodash/values';
 import reduce from 'lodash/reduce';
-import { assignWith } from 'redux/lib/helpers';
+import { assignWith } from 'lib/redux/helpers';
 
 export const initialState: TermSearchState = {
   termSearchId: '',

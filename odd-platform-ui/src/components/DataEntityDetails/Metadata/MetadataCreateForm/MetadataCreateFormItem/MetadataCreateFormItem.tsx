@@ -12,7 +12,7 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { searchMetadata } from 'redux/thunks/metadata.thunks';
 
 interface MetadataCreateFormItemProps {

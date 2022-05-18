@@ -7,7 +7,7 @@ import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import OwnershipFormOwnerAutocomplete from 'components/DataEntityDetails/Ownership/OwnershipFormOwnerAutocomplete/OwnershipFormOwnerAutocomplete';
 import OwnershipFormRoleAutocomplete from 'components/DataEntityDetails/Ownership/OwnershipFormRoleAutocomplete/OwnershipFormRoleAutocomplete';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import {
   createDataEntityOwnership,
   updateDataEntityOwnership,

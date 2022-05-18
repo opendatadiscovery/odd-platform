@@ -1,33 +1,33 @@
-import { createAction } from 'redux/lib/helpers';
+import { createActionType } from 'lib/redux/helpers';
 
-export const termsActionPrefix = 'terms';
+export const termsActionTypePrefix = 'terms';
 
-export const fetchTermDetailsAction = createAction(
-  termsActionPrefix,
+export const fetchTermDetailsAction = createActionType(
+  termsActionTypePrefix,
   'fetchTermDetails'
 );
 
-export const createTermAction = createAction(
-  termsActionPrefix,
+export const createTermAction = createActionType(
+  termsActionTypePrefix,
   'createTerm'
 );
 
-export const updateTermAction = createAction(
-  termsActionPrefix,
+export const updateTermAction = createActionType(
+  termsActionTypePrefix,
   'updateTerm'
 );
 
-export const deleteTermAction = createAction(
-  termsActionPrefix,
+export const deleteTermAction = createActionType(
+  termsActionTypePrefix,
   'deleteTerm'
 );
 
-export const fetchTermsListAction = createAction(
-  termsActionPrefix,
+export const fetchTermsListAction = createActionType(
+  termsActionTypePrefix,
   'fetchTermsList'
 );
 
-export const updateTermDetailsTagsAction = createAction(
-  termsActionPrefix,
+export const updateTermDetailsTagsAction = createActionType(
+  termsActionTypePrefix,
   'updateTermDetailsTags'
 );

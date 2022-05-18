@@ -8,7 +8,7 @@ import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
 import AppButton from 'components/shared/AppButton/AppButton';
 import remarkGfm from 'remark-gfm';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
 import {
   CaptionContainer,

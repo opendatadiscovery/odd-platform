@@ -11,7 +11,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import CopyButton from 'components/shared/CopyButton/CopyButton';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteDataEntityOwnership } from 'redux/thunks';
 import * as S from './OverviewGeneralStyles';
 import OwnershipFormContainer from '../../Ownership/OwnershipFormContainer';

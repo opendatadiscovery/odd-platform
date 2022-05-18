@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import { OwnersState } from 'redux/interfaces';
 import filter from 'lodash/filter';
-import { ownersActionPrefix } from 'redux/actions';
+import { ownersActionTypePrefix } from 'redux/actions';
 
 export const initialState: OwnersState = {
   byId: {},
@@ -17,7 +17,7 @@ export const initialState: OwnersState = {
 };
 
 export const ownersSlice = createSlice({
-  name: ownersActionPrefix,
+  name: ownersActionTypePrefix,
   initialState,
   reducers: {},
   extraReducers: builder => {

@@ -1,23 +1,23 @@
-import { createAction } from 'redux/lib/helpers';
+import { createActionType } from 'lib/redux/helpers';
 
-export const metadataActionPrefix = 'metadata';
+export const metadataActionTypePrefix = 'metadata';
 
-export const createDataEntityMetadataAction = createAction(
-  metadataActionPrefix,
+export const createDataEntityMetadataAction = createActionType(
+  metadataActionTypePrefix,
   'createDataEntityMetadata'
 );
 
-export const updateDataEntityMetadataAction = createAction(
-  metadataActionPrefix,
+export const updateDataEntityMetadataAction = createActionType(
+  metadataActionTypePrefix,
   'updateDataEntityMetadata'
 );
 
-export const deleteDataEntityMetadataAction = createAction(
-  metadataActionPrefix,
+export const deleteDataEntityMetadataAction = createActionType(
+  metadataActionTypePrefix,
   'deleteDataEntityMetadata'
 );
 
-export const searchMetadataAction = createAction(
-  metadataActionPrefix,
+export const searchMetadataAction = createActionType(
+  metadataActionTypePrefix,
   'searchMetadata'
 );

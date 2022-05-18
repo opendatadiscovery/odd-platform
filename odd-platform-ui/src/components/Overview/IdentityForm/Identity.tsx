@@ -22,7 +22,7 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 import * as S from './IdentityStyles';
 

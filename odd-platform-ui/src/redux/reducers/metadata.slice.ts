@@ -3,7 +3,7 @@ import { MetaDataState } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
 import uniq from 'lodash/uniq';
 import filter from 'lodash/filter';
-import { metadataActionPrefix } from 'redux/actions';
+import { metadataActionTypePrefix } from 'redux/actions';
 
 export const initialState: MetaDataState = {
   dataEntityMetadata: {},
@@ -11,7 +11,7 @@ export const initialState: MetaDataState = {
 };
 
 export const metadataSlice = createSlice({
-  name: metadataActionPrefix,
+  name: metadataActionTypePrefix,
   initialState,
   reducers: {},
   extraReducers: builder => {

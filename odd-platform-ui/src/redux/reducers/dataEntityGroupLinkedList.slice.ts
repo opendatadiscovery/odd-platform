@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
 import { DataEntityGroupLinkedListState } from 'redux/interfaces';
-import { dataEntityGroupLinkedListActionPrefix } from 'redux/actions/dataentityLinkedList.actions';
+import { dataEntityGroupLinkedListActionTypePrefix } from 'redux/actions/dataentityLinkedList.actions';
 
 export const initialState: DataEntityGroupLinkedListState = {
   linkedItemsIdsByDataEntityGroupId: {},
@@ -13,7 +13,7 @@ export const initialState: DataEntityGroupLinkedListState = {
 };
 
 export const dataEntityGroupLinkedListSlice = createSlice({
-  name: dataEntityGroupLinkedListActionPrefix,
+  name: dataEntityGroupLinkedListActionTypePrefix,
   initialState,
   reducers: {},
   extraReducers: builder => {

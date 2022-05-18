@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchTermLinkedList } from 'redux/thunks';
 import { TermLinkedListState } from 'redux/interfaces';
-import { termLinkedListActionPrefix } from 'redux/actions';
+import { termLinkedListActionTypePrefix } from 'redux/actions';
 
 export const initialState: TermLinkedListState = {
   linkedItemsIdsByTermId: {},
@@ -13,7 +13,7 @@ export const initialState: TermLinkedListState = {
 };
 
 export const termLinkedListSlice = createSlice({
-  name: termLinkedListActionPrefix,
+  name: termLinkedListActionTypePrefix,
   initialState,
   reducers: {},
   extraReducers: builder => {

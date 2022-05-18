@@ -4,7 +4,7 @@ import { DataEntitiesState } from 'redux/interfaces';
 import keyBy from 'lodash/keyBy';
 import { DataEntityDetails } from 'generated-sources';
 import omit from 'lodash/omit';
-import { dataEntitiesActionPrefix } from 'redux/actions';
+import { dataEntitiesActionTypePrefix } from 'redux/actions';
 import uniqBy from 'lodash/uniqBy';
 import filter from 'lodash/filter';
 
@@ -71,7 +71,7 @@ const updateDataEntity = (
 };
 
 export const dataEntitiesSlice = createSlice({
-  name: dataEntitiesActionPrefix,
+  name: dataEntitiesActionTypePrefix,
   initialState,
   reducers: {},
   extraReducers: builder => {

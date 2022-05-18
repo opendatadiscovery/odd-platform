@@ -26,7 +26,7 @@ import ResultItem from 'components/Search/Results/ResultItem/ResultItem';
 import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import { useAppSelector } from 'redux/lib/hooks';
+import { useAppSelector } from 'lib/redux/hooks';
 import { getDataEntityGroupDeletingStatuses } from 'redux/selectors';
 import * as S from './ResultsStyles';
 

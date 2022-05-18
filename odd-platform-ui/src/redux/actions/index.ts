@@ -15,5 +15,5 @@ export * from './dataentityLinkedList.actions';
 export * from './termLinkedList.actions';
 export * from './appInfo.actions';
 export * from './collector.actions';
-export * from 'redux/actions/terms.actions';
+export * from './terms.actions';
 export * from './termSearch.actions';

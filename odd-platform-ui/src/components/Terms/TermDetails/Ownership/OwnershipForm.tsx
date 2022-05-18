@@ -23,7 +23,7 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
   createTermOwnership,

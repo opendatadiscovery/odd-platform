@@ -10,7 +10,7 @@ import {
   TermSearchNameContainer,
   TermSearchResultsColContainer,
 } from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteTerm } from 'redux/thunks';
 import {
   ActionsContainer,

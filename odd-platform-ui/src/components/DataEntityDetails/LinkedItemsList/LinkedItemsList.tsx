@@ -7,7 +7,7 @@ import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/E
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import LinkedItem from 'components/DataEntityDetails/LinkedItemsList/LinkedItem/LinkedItem';
 import LinkedItemSkeleton from 'components/DataEntityDetails/LinkedItemsList/LinkedItemSkeleton/LinkedItemSkeleton';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
 import * as S from './LinkedItemsListStyles';
 

@@ -13,7 +13,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityDetails,
@@ -104,20 +104,17 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
   }, []);
 
   const handleSubmitForm = (data: DataEntityGroupFormData) => {
-    (dataEntityGroupDetails
-      ? dispatch(
-          updateDataEntityGroup({
+    dispatch(
+      dataEntityGroupDetails
+        ? updateDataEntityGroup({
             dataEntityGroupId: dataEntityGroupDetails.id,
             dataEntityGroupFormData:
               data as GeneratedDataEntityGroupFormData,
           })
-        )
-      : dispatch(
-          createDataEntityGroup({
+        : createDataEntityGroup({
             dataEntityGroupFormData:
               data as GeneratedDataEntityGroupFormData,
           })
-        )
     )
       .unwrap()
       .then(

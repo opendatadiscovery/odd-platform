@@ -12,5 +12,5 @@ export const assignWith = <TargetType, SourceType>(
   return Object.fromEntries(result);
 };
 
-export const createAction = (actionPrefix: string, action: string) =>
+export const createActionType = (actionPrefix: string, action: string) =>
   `${actionPrefix}/${action}`;

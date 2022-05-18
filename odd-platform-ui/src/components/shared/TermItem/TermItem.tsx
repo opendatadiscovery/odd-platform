@@ -5,7 +5,7 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { TermRef } from 'generated-sources';
 import { termDetailsOverviewPath } from 'lib/paths';
 import { deleteDataEntityTerm } from 'redux/thunks';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import * as S from './TermItemStyles';
 
 interface TermItemProps {

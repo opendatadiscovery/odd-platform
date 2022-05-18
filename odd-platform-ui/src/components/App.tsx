@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
 import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
 

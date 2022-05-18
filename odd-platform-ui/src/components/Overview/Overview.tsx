@@ -15,7 +15,7 @@ import StarIcon from 'components/shared/Icons/StarIcon';
 import CatalogIcon from 'components/shared/Icons/CatalogIcon';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import {
   fetchMyDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,

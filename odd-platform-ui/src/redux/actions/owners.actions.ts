@@ -1,58 +1,58 @@
-import { createAction } from 'redux/lib/helpers';
+import { createActionType } from 'lib/redux/helpers';
 
-export const ownersActionPrefix = 'owners';
+export const ownersActionTypePrefix = 'owners';
 
-export const fetchOwnersAction = createAction(
-  ownersActionPrefix,
+export const fetchOwnersAction = createActionType(
+  ownersActionTypePrefix,
   'fetchOwners'
 );
 
-export const fetchRolesAction = createAction(
-  ownersActionPrefix,
+export const fetchRolesAction = createActionType(
+  ownersActionTypePrefix,
   'fetchOwnershipRoles'
 );
 
-export const createOwnerAction = createAction(
-  ownersActionPrefix,
+export const createOwnerAction = createActionType(
+  ownersActionTypePrefix,
   'createOwner'
 );
 
-export const updateOwnerAction = createAction(
-  ownersActionPrefix,
+export const updateOwnerAction = createActionType(
+  ownersActionTypePrefix,
   'updateOwner'
 );
 
-export const deleteOwnerAction = createAction(
-  ownersActionPrefix,
+export const deleteOwnerAction = createActionType(
+  ownersActionTypePrefix,
   'deleteOwner'
 );
 
-export const createDataEntityOwnershipAction = createAction(
-  ownersActionPrefix,
+export const createDataEntityOwnershipAction = createActionType(
+  ownersActionTypePrefix,
   'createDataEntityOwnership'
 );
 
-export const updateDataEntityOwnershipAction = createAction(
-  ownersActionPrefix,
+export const updateDataEntityOwnershipAction = createActionType(
+  ownersActionTypePrefix,
   'updateDataEntityOwnership'
 );
 
-export const deleteDataEntityOwnershipAction = createAction(
-  ownersActionPrefix,
+export const deleteDataEntityOwnershipAction = createActionType(
+  ownersActionTypePrefix,
   'deleteDataEntityOwnership'
 );
 
-export const createTermOwnershipAction = createAction(
-  ownersActionPrefix,
+export const createTermOwnershipAction = createActionType(
+  ownersActionTypePrefix,
   'createTermOwnership'
 );
 
-export const updateTermOwnershipAction = createAction(
-  ownersActionPrefix,
+export const updateTermOwnershipAction = createActionType(
+  ownersActionTypePrefix,
   'updateTermOwnership'
 );
 
-export const deleteTermOwnershipAction = createAction(
-  ownersActionPrefix,
+export const deleteTermOwnershipAction = createActionType(
+  ownersActionTypePrefix,
   'deleteTermOwnership'
 );

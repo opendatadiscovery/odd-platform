@@ -1,8 +1,8 @@
-import { createAction } from 'redux/lib/helpers';
+import { createActionType } from 'lib/redux/helpers';
 
-export const termLinkedListActionPrefix = 'termLinkedList';
+export const termLinkedListActionTypePrefix = 'termLinkedList';
 
-export const fetchTermLinkedListAction = createAction(
-  termLinkedListActionPrefix,
+export const fetchTermLinkedListAction = createActionType(
+  termLinkedListActionTypePrefix,
   'fetchTermLinkedList'
 );

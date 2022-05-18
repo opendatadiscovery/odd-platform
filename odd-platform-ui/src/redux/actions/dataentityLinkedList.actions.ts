@@ -1,9 +1,9 @@
-import { createAction } from 'redux/lib/helpers';
+import { createActionType } from 'lib/redux/helpers';
 
-export const dataEntityGroupLinkedListActionPrefix =
+export const dataEntityGroupLinkedListActionTypePrefix =
   'dataEntityGroupLinkedList';
 
-export const fetchDataEntityGroupLinkedListAction = createAction(
-  dataEntityGroupLinkedListActionPrefix,
+export const fetchDataEntityGroupLinkedListAction = createActionType(
+  dataEntityGroupLinkedListActionTypePrefix,
   'fetchDataEntityGroupLinkedList'
 );

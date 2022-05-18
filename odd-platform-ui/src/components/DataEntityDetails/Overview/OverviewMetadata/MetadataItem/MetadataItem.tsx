@@ -18,7 +18,7 @@ import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { stringFormatted } from 'lib/helpers';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import {
   deleteDataEntityCustomMetadata,
   updateDataEntityCustomMetadata,
@@ -113,7 +113,11 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
           title={() =>
             isNestedField(metadataItem.field.name)
               ? metadataItem.field.name
-              : stringFormatted(metadataItem.field.name, '_')
+              : stringFormatted(
+                  metadataItem.field.name,
+                  '_',
+                  'firstLetterOfString'
+                )
           }
         >
           <Label variant="subtitle1" noWrap>

@@ -9,7 +9,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { ControllerRenderProps } from 'react-hook-form';
-import { useAppDispatch } from 'redux/lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchTermsList } from 'redux/thunks';
 
 interface TermsAutocompleteProps {

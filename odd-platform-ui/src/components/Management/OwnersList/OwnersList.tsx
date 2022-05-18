@@ -13,7 +13,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 import {
   getOwnerCreatingStatuses,
