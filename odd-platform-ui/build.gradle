@@ -7,6 +7,7 @@ plugins {
 node {
     download = true
     version = "16.14.0"
+    npmInstallCommand = "ci"
 }
 
 tasks.register("buildUI", NpmTask) {
