@@ -19,7 +19,9 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,8 @@ import static java.util.function.Function.identity;
 @Component
 @RequiredArgsConstructor
 public class AlertLocatorImpl implements AlertLocator {
+    private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
+
     private static final Set<IngestionTaskRun.IngestionTaskRunStatus> TASK_RUN_BAD_STATUSES = Set.of(
         IngestionTaskRun.IngestionTaskRunStatus.BROKEN,
         IngestionTaskRun.IngestionTaskRunStatus.FAILED
@@ -43,16 +47,28 @@ public class AlertLocatorImpl implements AlertLocator {
 
     @Override
     public List<AlertPojo> locateDataQualityTestRunFailed(final List<IngestionTaskRun> taskRuns) {
-        return taskRuns.stream()
+        final List<IngestionTaskRun> failedTaskRuns = taskRuns.stream()
             .filter(tr -> tr.getType().equals(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN))
             .filter(tr -> TASK_RUN_BAD_STATUSES.contains(tr.getStatus()))
-            .map(tr -> buildAlert(
-                tr.getDataEntityOddrn(),
-                AlertTypeEnum.FAILED_DQ_TEST,
-                tr.getOddrn(),
-                String.format("Test %s failed with status %s", tr.getTaskName(), tr.getStatus())
-            ))
-            .collect(Collectors.toList());
+            .toList();
+        if (failedTaskRuns.isEmpty()) {
+            return List.of();
+        }
+        final Map<String, List<DataQualityTestRelationsPojo>> relationsMap = dataQualityTestRelationRepository
+            .getRelations(failedTaskRuns.stream().map(IngestionTaskRun::getDataEntityOddrn).toList())
+            .stream()
+            .collect(Collectors.groupingBy(DataQualityTestRelationsPojo::getDataQualityTestOddrn));
+        return taskRuns.stream()
+            .flatMap(tr -> {
+                final List<DataQualityTestRelationsPojo> relatedPojos =
+                    relationsMap.getOrDefault(tr.getDataEntityOddrn(), List.of());
+                return relatedPojos.stream().map(p -> buildAlert(
+                    p.getDatasetOddrn(),
+                    AlertTypeEnum.FAILED_DQ_TEST,
+                    tr.getOddrn(),
+                    String.format("Test %s failed with status %s", tr.getTaskName(), tr.getStatus())
+                ));
+            }).toList();
     }
 
     @Override
