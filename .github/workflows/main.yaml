@@ -24,6 +24,6 @@ jobs:
           GENERATE_SOURCEMAP: false
           CI: false
           JAVA_OPTS: "-Xms2048m -Xmx2048m"
-        run: ./gradlew clean test --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6} -Penv=prod
+        run: ./gradlew clean test --no-daemon 
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
