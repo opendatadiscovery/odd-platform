@@ -60,7 +60,8 @@ public class AlertLocatorImpl implements AlertLocator {
             .collect(Collectors.groupingBy(DataQualityTestRelationsPojo::getDataQualityTestOddrn));
         return taskRuns.stream()
             .flatMap(tr -> {
-                final List<DataQualityTestRelationsPojo> relatedPojos = relationsMap.get(tr.getDataEntityOddrn());
+                final List<DataQualityTestRelationsPojo> relatedPojos =
+                    relationsMap.getOrDefault(tr.getDataEntityOddrn(), List.of());
                 return relatedPojos.stream().map(p -> buildAlert(
                     p.getDatasetOddrn(),
                     AlertTypeEnum.FAILED_DQ_TEST,
