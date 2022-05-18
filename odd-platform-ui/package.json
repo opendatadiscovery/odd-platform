@@ -81,7 +81,7 @@
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
-    "@types/d3": "^6.3.0",
+    "@types/d3": "^7.1.0",
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.180",
     "@types/node": "^12.19.9",
