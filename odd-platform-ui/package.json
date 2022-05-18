@@ -75,7 +75,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@date-io/date-fns": "^2.13.1",
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
     "@testing-library/jest-dom": "^5.16.4",
