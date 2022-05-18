@@ -97,8 +97,6 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
     React.useState<boolean>(false);
 
   const handleTabClick = (idx: number) => {
-    // todo refactor after it will work DRY
-
     if (tabs[idx].name === 'Dictionary') {
       if (termSearchLoading) return;
       setTermSearchLoading(true);

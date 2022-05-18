@@ -11,6 +11,7 @@ import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.NamespaceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
@@ -28,6 +29,7 @@ public class NamespaceServiceImpl implements NamespaceService {
     private final ReactiveCollectorRepository collectorRepository;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
     private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
+    private final ReactiveDataEntityRepository dataEntityRepository;
     private final NamespaceMapper namespaceMapper;
 
     @Override
@@ -72,11 +74,13 @@ public class NamespaceServiceImpl implements NamespaceService {
         return Mono.zip(
                 dataSourceRepository.existsByNamespace(id),
                 collectorRepository.existsByNamespace(id),
-                termRepository.existsByNamespace(id)
+                termRepository.existsByNamespace(id),
+                dataEntityRepository.existsByNamespaceId(id)
             )
             .map(t -> BooleanUtils.toBoolean(t.getT1())
                 || BooleanUtils.toBoolean(t.getT2())
-                || BooleanUtils.toBoolean(t.getT3()))
+                || BooleanUtils.toBoolean(t.getT3())
+                || BooleanUtils.toBoolean(t.getT4()))
             .filter(exists -> !exists)
             .switchIfEmpty(Mono.error(new IllegalStateException(
                 "Namespace with ID %d cannot be deleted: there are still resources attached".formatted(id))))

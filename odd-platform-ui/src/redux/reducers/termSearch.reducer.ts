@@ -17,7 +17,7 @@ import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
 import values from 'lodash/values';
 import reduce from 'lodash/reduce';
-import assignWith from 'lodash/assignWith';
+import { assignWith } from 'lib/redux/helpers';
 
 export const initialState: TermSearchState = {
   termSearchId: '',
@@ -225,16 +225,6 @@ const reducer = (
             },
           }
         : state;
-    case getType(actions.deleteTermAction.success):
-      return {
-        ...state,
-        results: {
-          ...state.results,
-          items: state.results.items.filter(
-            term => term.id !== action.payload.id
-          ),
-        },
-      };
     default:
       return state;
   }

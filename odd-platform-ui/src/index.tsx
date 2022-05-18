@@ -14,18 +14,16 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 import { CssBaseline } from '@mui/material';
-import configureStore from './redux/store';
+import { store } from 'redux/store';
 import * as serviceWorker from './serviceWorker';
 import theme from './theme/mui.theme';
 
-import AppContainer from './components/AppContainer';
+import App from './components/App';
 
 declare module 'styled-components' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
-
-const store = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>
@@ -36,7 +34,7 @@ ReactDOM.render(
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <BrowserRouter>
               <StyleSheetManager disableVendorPrefixes>
-                <AppContainer />
+                <App />
               </StyleSheetManager>
             </BrowserRouter>
           </LocalizationProvider>

@@ -1,22 +1,22 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 import { NamespacesState } from 'redux/interfaces/state';
 
 const namespacesState = ({ namespaces }: RootState): NamespacesState =>
   namespaces;
 
 const getNamespaceListFetchingStatus =
-  createFetchingSelector('GET_NAMESPACES');
+  createLegacyFetchingSelector('GET_NAMESPACES');
 
 export const getNamespaceCreateStatus =
-  createFetchingSelector('POST_NAMESPACES');
+  createLegacyFetchingSelector('POST_NAMESPACES');
 
 export const getNamespaceUpdateStatus =
-  createFetchingSelector('PUT_NAMESPACE');
+  createLegacyFetchingSelector('PUT_NAMESPACE');
 
 export const deleteNamespaceUpdateStatus =
-  createFetchingSelector('DELETE_NAMESPACE');
+  createLegacyFetchingSelector('DELETE_NAMESPACE');
 
 export const getIsNamespaceListFetching = createSelector(
   getNamespaceListFetchingStatus,

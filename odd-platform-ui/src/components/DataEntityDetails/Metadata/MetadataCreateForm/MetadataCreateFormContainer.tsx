@@ -4,10 +4,6 @@ import {
   getDataEntityMetadataCreateFetching,
   getMetadataFieldList,
 } from 'redux/selectors/metadata.selectors';
-import {
-  createDataEntityCustomMetadata,
-  searchMetadata,
-} from 'redux/thunks/metadata.thunks';
 import MetadataCreateForm from './MetadataCreateForm';
 
 const mapStateToProps = (state: RootState) => ({
@@ -15,10 +11,7 @@ const mapStateToProps = (state: RootState) => ({
   isLoading: getDataEntityMetadataCreateFetching(state),
 });
 
-const mapDispatchToProps = {
-  searchMetadata,
-  createDataEntityCustomMetadata,
-};
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,

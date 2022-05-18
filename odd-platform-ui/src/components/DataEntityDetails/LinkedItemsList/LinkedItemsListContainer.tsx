@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
-import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
 import {
   getDataEntityGroupLinkedList,
   getDataEntityGroupLinkedListPage,
@@ -32,9 +31,7 @@ const mapStateToProps = (
   isLinkedListFetching: getIsDEGLinkedListFetching(state),
 });
 
-const mapDispatchToProps = {
-  fetchDataEntityGroupLinkedList,
-};
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,

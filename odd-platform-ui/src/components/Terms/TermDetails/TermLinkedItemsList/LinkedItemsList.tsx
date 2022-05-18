@@ -1,12 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {
-  DataEntity,
-  DataEntityClass,
-  TermApiGetTermLinkedItemsRequest,
-} from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces';
+import { DataEntity, DataEntityClass } from 'generated-sources';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
@@ -17,31 +12,37 @@ import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import { useDebouncedCallback } from 'use-debounce';
 import { stringFormatted } from 'lib/helpers';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppParams } from 'lib/hooks';
+import {
+  getDataEntityClassesList,
+  getTermLinkedList,
+  getTermLinkedListFetchingStatuses,
+  getTermLinkedListPageInfo,
+} from 'redux/selectors';
+import { fetchTermLinkedList } from 'redux/thunks';
 import {
   TermLinkedItemsColContainer,
   TermLinkedItemsListContainer,
   TermLinkedItemsResultsTableHeader,
 } from './LinkedItemsListStyles';
 
-interface LinkedItemsListProps {
-  termGroupId: number;
-  termGroupLinkedList: DataEntity[];
-  pageInfo?: CurrentPageInfo;
-  fetchTermGroupLinkedList: (
-    params: TermApiGetTermLinkedItemsRequest
-  ) => void;
-  isLinkedListFetching: boolean;
-  entityClasses: Array<DataEntityClass>;
-}
+const LinkedItemsList: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { termId } = useAppParams();
 
-const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
-  termGroupId,
-  termGroupLinkedList,
-  pageInfo,
-  fetchTermGroupLinkedList,
-  isLinkedListFetching,
-  entityClasses,
-}) => {
+  const termLinkedList: Array<DataEntity> = useAppSelector(state =>
+    getTermLinkedList(state, termId)
+  );
+
+  const entityClasses: Array<DataEntityClass> = useAppSelector(
+    getDataEntityClassesList
+  );
+  const { isLoading: isLinkedListFetching } = useAppSelector(
+    getTermLinkedListFetchingStatuses
+  );
+  const pageInfo = useAppSelector(getTermLinkedListPageInfo);
+
   const [searchText, setSearchText] = React.useState<string>('');
   const [selectedClassId, setSelectedClassId] = React.useState<
     number | undefined
@@ -52,27 +53,31 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
 
-    fetchTermGroupLinkedList({
-      termId: termGroupId,
-      page: pageInfo.page + 1,
-      size: pageSize,
-      query: searchText || '',
-      entityClassId: selectedClassId,
-    });
+    dispatch(
+      fetchTermLinkedList({
+        termId,
+        page: pageInfo.page + 1,
+        size: pageSize,
+        query: searchText || '',
+        entityClassId: selectedClassId,
+      })
+    );
   };
 
   React.useEffect(() => {
     fetchNextPage();
-  }, [termGroupId]);
+  }, [termId]);
 
   const createSearch = useDebouncedCallback(() => {
-    fetchTermGroupLinkedList({
-      termId: termGroupId,
-      page: pageInfo?.page || 1,
-      size: pageSize,
-      query: searchText || '',
-      entityClassId: selectedClassId,
-    });
+    dispatch(
+      fetchTermLinkedList({
+        termId,
+        page: pageInfo?.page || 1,
+        size: pageSize,
+        query: searchText || '',
+        entityClassId: selectedClassId,
+      })
+    );
   }, 500);
 
   const handleKeyDownSearch = (event: React.KeyboardEvent) => {
@@ -133,7 +138,11 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
                 value={entityClass.id}
                 onClick={() => setSelectedClassId(entityClass.id)}
               >
-                {stringFormatted(entityClass.name, '_', false, true)}
+                {stringFormatted(
+                  entityClass.name,
+                  '_',
+                  'firstLetterOfEveryWord'
+                )}
               </AppMenuItem>
             ))}
           </AppTextField>
@@ -175,9 +184,9 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
         />
       ) : (
         <TermLinkedItemsListContainer id="term-linked-items-list">
-          {termGroupLinkedList && (
+          {termLinkedList && (
             <InfiniteScroll
-              dataLength={termGroupLinkedList?.length}
+              dataLength={termLinkedList?.length}
               next={fetchNextPage}
               hasMore={!!pageInfo?.hasNext}
               loader={
@@ -199,7 +208,7 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
               scrollThreshold="200px"
               scrollableTarget="term-linked-items-list"
             >
-              {termGroupLinkedList?.map(linkedItem => (
+              {termLinkedList?.map(linkedItem => (
                 <LinkedItem key={linkedItem.id} linkedItem={linkedItem} />
               ))}
             </InfiniteScroll>

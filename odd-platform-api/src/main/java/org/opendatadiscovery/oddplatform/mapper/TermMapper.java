@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.util.Collection;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -42,7 +43,7 @@ public interface TermMapper {
             .setNamespaceId(namespacePojo.getId());
     }
 
-    List<TermRef> mapToRefList(final List<TermRefDto> dtos);
+    List<TermRef> mapToRefList(final Collection<TermRefDto> dtos);
 
     default TermRefList mapToRefPage(final Page<TermRefDto> page) {
         return new TermRefList()

@@ -1,11 +1,6 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  TermApiCreateTermRequest,
-  TermApiUpdateTermRequest,
-  TermDetails,
-  TermFormData,
-} from 'generated-sources';
+import { TermDetails, TermFormData } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import { termDetailsOverviewPath } from 'lib/paths';
 import { Typography } from '@mui/material';
@@ -13,24 +8,34 @@ import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { createTerm, updateTerm } from 'redux/thunks';
+import {
+  getTermCreatingStatuses,
+  getTermUpdatingStatuses,
+} from 'redux/selectors';
 import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
-  isLoading: boolean;
   term?: TermDetails;
-  createTerm: (params: TermApiCreateTermRequest) => Promise<TermDetails>;
-  updateTerm: (params: TermApiUpdateTermRequest) => Promise<TermDetails>;
 }
 
 const TermsForm: React.FC<TermsFormDialogProps> = ({
   term,
   btnCreateEl,
-  isLoading,
-  createTerm,
-  updateTerm,
 }) => {
+  const dispatch = useAppDispatch();
   const history = useHistory();
+
+  const { isLoading: isTermCreating } = useAppSelector(
+    getTermCreatingStatuses
+  );
+
+  const { isLoading: isTermUpdating } = useAppSelector(
+    getTermUpdatingStatuses
+  );
+
   const getDefaultValues = React.useCallback(
     (): TermFormData => ({
       name: term?.name || '',
@@ -40,7 +45,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
     [term]
   );
 
-  const { handleSubmit, control, reset, setValue, formState, watch } =
+  const { handleSubmit, control, reset, formState } =
     useForm<TermFormData>({
       mode: 'onChange',
       reValidateMode: 'onChange',
@@ -65,24 +70,28 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
   const onSubmit = (data: TermFormData) => {
     const parsedData = { ...data };
     (term && term.id
-      ? updateTerm({
-          termId: term.id,
-          termFormData: parsedData,
-        })
-      : createTerm({ termFormData: parsedData })
-    ).then(
-      (response: TermDetails) => {
-        setState({ ...initialState, isSuccessfulSubmit: true });
-        clearState();
-        history.push(termDetailsOverviewPath(response.id));
-      },
-      (response: Response) => {
-        setState({
-          ...initialState,
-          error: response.statusText || 'Unable to register term',
-        });
-      }
-    );
+      ? dispatch(
+          updateTerm({
+            termId: term.id,
+            termFormData: parsedData,
+          })
+        )
+      : dispatch(createTerm({ termFormData: parsedData }))
+    )
+      .unwrap()
+      .then(
+        (response: TermDetails) => {
+          setState({ ...initialState, isSuccessfulSubmit: true });
+          clearState();
+          history.push(termDetailsOverviewPath(response.id));
+        },
+        (response: Response) => {
+          setState({
+            ...initialState,
+            error: response.statusText || 'Unable to register term',
+          });
+        }
+      );
   };
 
   const termFormTitle = (
@@ -182,7 +191,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
       renderContent={termFormContent}
       renderActions={termFormActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={term ? isTermUpdating : isTermCreating}
       errorText={error}
       clearState={clearState}
     />

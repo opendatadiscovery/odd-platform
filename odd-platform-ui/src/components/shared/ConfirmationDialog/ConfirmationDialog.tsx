@@ -19,7 +19,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   actionName,
   onConfirm,
 }) => {
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const onClose =
     (handleClose: () => void, action?: () => Promise<unknown>) => () => {
       if (action) {

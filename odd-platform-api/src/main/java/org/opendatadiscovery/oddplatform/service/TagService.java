@@ -23,6 +23,8 @@ public interface TagService {
 
     Mono<List<TagPojo>> getOrCreateTagsByName(final Set<String> tagNames);
 
+    Flux<TagToDataEntityPojo> deleteRelationsForDataEntity(final long dataEntityId);
+
     Flux<TagToDataEntityPojo> createRelationsWithDataEntity(final long dataEntityId,
                                                             final List<TagPojo> tags);
 

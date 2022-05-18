@@ -1,4 +1,6 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
+
 /**
  * Find out dynamically size of scrollbar width of client's browser.
  * For Chrome default is 15px
@@ -22,4 +24,29 @@ export const useScrollBarWidth: (width?: number) => string = (
     setScrollbarWidth(calculatedScrollbarWidth);
   }, []);
   return scrollbarWidth;
+};
+
+type ViewType = 'overview' | 'linked-items';
+
+// useAppParams react-router
+interface RouteParams {
+  dataEntityId: string;
+  termId: string;
+  viewType: ViewType;
+}
+
+interface AppRouteParams {
+  dataEntityId: number;
+  termId: number;
+  viewType: ViewType;
+}
+
+export const useAppParams = (): AppRouteParams => {
+  const { dataEntityId, termId, viewType } = useParams<RouteParams>();
+
+  return {
+    dataEntityId: parseInt(dataEntityId, 10),
+    termId: parseInt(termId, 10),
+    viewType,
+  };
 };

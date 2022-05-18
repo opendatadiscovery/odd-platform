@@ -22,6 +22,8 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
 
     Mono<TermDetailsDto> getTermDetailsDto(final Long id);
 
+    Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final Long dataEntityId);
+
     Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final Long termId);
 
     Mono<DataEntityToTermPojo> createRelationWithDataEntity(final Long dataEntityId, final Long termId);

@@ -5,9 +5,10 @@ import {
   AlertTotals,
   AppInfo,
   AssociatedOwner,
+  Collector,
   DataEntity,
-  DataEntityRef,
   DataEntityClass,
+  DataEntityRef,
   DataEntityType,
   DataQualityTest,
   DataQualityTestRun,
@@ -15,7 +16,6 @@ import {
   DataSetTestReport,
   DataSetVersion,
   DataSource,
-  Collector,
   EnumValue,
   Label,
   MetadataField,
@@ -25,7 +25,6 @@ import {
   Ownership,
   Tag,
   Term,
-  TermRef,
   TermDetails,
   TermRefList,
 } from 'generated-sources';
@@ -33,6 +32,7 @@ import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
 // eslint-disable-next-line lodash/import-scope
 import { Dictionary } from 'lodash';
+import { store } from 'redux/store';
 import { DataSetStructureTypesCount } from './datasetStructure';
 import {
   FacetOptionsByName,
@@ -42,7 +42,6 @@ import {
 import { DataEntityLineageById } from './dataentityLineage';
 import { CurrentPageInfo } from './common';
 import { DataEntityDetailsState } from './dataentities';
-import { LoaderState } from './loader';
 import {
   TermSearchFacetOptionsByName,
   TermSearchFacetsByName,
@@ -237,28 +236,8 @@ export interface TermLinkedListState {
   pageInfo?: CurrentPageInfo;
 }
 
-export type RootState = {
-  appInfo: AppInfoState;
-  dataSources: DataSourcesState;
-  search: SearchState;
-  loader: LoaderState;
-  dataEntities: DataEntitiesState;
-  tags: TagsState;
-  metaData: MetaDataState;
-  owners: OwnersState;
-  datasetStructure: DatasetStructureState;
-  labels: LabelsState;
-  namespaces: NamespacesState;
-  dataEntityLineage: DataEntityLineageState;
-  profile: ProfileState;
-  dataQualityTest: DataQualityTestState;
-  alerts: AlertsState;
-  dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
-  termLinkedList: TermLinkedListState;
-  collectors: CollectorsState;
-  terms: TermsState;
-  termSearch: TermSearchState;
-};
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;
 

@@ -1,10 +1,11 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import {
   DataEntitiesState,
   DataEntityGroupLinkedListState,
   RootState,
 } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import * as actions from 'redux/actions';
+import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 
 const dataEntityGroupLinkedListState = ({
   dataEntityGroupLinkedList,
@@ -14,8 +15,8 @@ const dataEntitiesState = ({
   dataEntities,
 }: RootState): DataEntitiesState => dataEntities;
 
-const getDEGLinkedListFetchingStatus = createFetchingSelector(
-  'GET_DATA_ENTITY_GROUP_LINKED_LIST'
+const getDEGLinkedListFetchingStatus = createLegacyFetchingSelector(
+  actions.fetchDataEntityGroupLinkedListAction
 );
 
 export const getIsDEGLinkedListFetching = createSelector(

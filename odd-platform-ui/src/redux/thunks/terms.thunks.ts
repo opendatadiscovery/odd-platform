@@ -1,136 +1,91 @@
 import {
   Configuration,
-  TermApiUpdateTermRequest,
-  TermApiCreateTermRequest,
-  TermApiDeleteTermRequest,
-  TermApiGetTermsListRequest,
-  TermApi,
-  TermDetails,
-  TermRefList,
-  TermRef,
-  DataEntityApiDeleteTermFromDataEntityRequest,
-  DataEntityApi,
-  DataEntityApiAddTermToDataEntityRequest,
-  TermApiGetTermDetailsRequest,
-  TermApiCreateTermTagsRelationsRequest,
   Tag,
+  TermApi,
+  TermApiCreateTermRequest,
+  TermApiCreateTermTagsRelationsRequest,
+  TermApiDeleteTermRequest,
+  TermApiGetTermDetailsRequest,
+  TermApiGetTermsListRequest,
+  TermApiUpdateTermRequest,
+  TermDetails,
+  TermRef,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
-import {
-  PaginatedResponse,
-  DeleteTerm,
-  PartialEntityUpdateParams,
-  PartialTermDetailsUpdateParams,
-} from 'redux/interfaces';
+import { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new TermApi(apiClientConf);
-const dataEntityApiClient = new DataEntityApi(apiClientConf);
+const termApi = new TermApi(apiClientConf);
 
-export const updateTerm = createThunk<
-  TermApiUpdateTermRequest,
+export const createTerm = createAsyncThunk<
   TermDetails,
-  TermDetails
->(
-  (params: TermApiUpdateTermRequest) => apiClient.updateTerm(params),
-  actions.updateTermAction,
-  (result: TermDetails) => result
-);
+  TermApiCreateTermRequest
+>(actions.createTermAction, async ({ termFormData }) => {
+  const term = await termApi.createTerm({ termFormData });
 
-export const createTerm = createThunk<
-  TermApiCreateTermRequest,
+  return term;
+});
+
+export const updateTerm = createAsyncThunk<
   TermDetails,
-  TermDetails
->(
-  (params: TermApiCreateTermRequest) => apiClient.createTerm(params),
-  actions.createTermAction,
-  (result: TermDetails) => result
-);
+  TermApiUpdateTermRequest
+>(actions.updateTermAction, async ({ termId, termFormData }) => {
+  const term = await termApi.updateTerm({ termId, termFormData });
 
-export const deleteTerm = createThunk<
-  TermApiDeleteTermRequest,
-  void,
-  DeleteTerm
->(
-  (params: TermApiDeleteTermRequest) => apiClient.deleteTerm(params),
-  actions.deleteTermAction,
-  (_, request: TermApiDeleteTermRequest) => ({
-    id: request.termId,
-  })
-);
+  return term;
+});
 
-export const fetchTermsList = createThunk<
-  TermApiGetTermsListRequest,
-  TermRefList,
-  PaginatedResponse<TermRefList>
->(
-  (params: TermApiGetTermsListRequest) => apiClient.getTermsList(params),
-  actions.fetchTermsAction,
-  (response: TermRefList, request: TermApiGetTermsListRequest) => ({
-    ...response,
+export const deleteTerm = createAsyncThunk<
+  { termId: number },
+  TermApiDeleteTermRequest
+>(actions.deleteTermAction, async ({ termId }) => {
+  await termApi.deleteTerm({ termId });
+
+  return { termId };
+});
+
+export const fetchTermsList = createAsyncThunk<
+  { termList: Array<TermRef>; pageInfo: CurrentPageInfo },
+  TermApiGetTermsListRequest
+>(actions.fetchTermsListAction, async ({ page, size, query }) => {
+  const { items: termList, pageInfo } = await termApi.getTermsList({
+    page,
+    size,
+    query,
+  });
+
+  return {
+    termList,
     pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
+      ...pageInfo,
+      page,
+      hasNext: size * page < pageInfo.total,
     },
-  })
-);
+  };
+});
 
-export const fetchTermDetails = createThunk<
-  TermApiGetTermDetailsRequest,
+export const fetchTermDetails = createAsyncThunk<
   TermDetails,
-  TermDetails
->(
-  (params: TermApiGetTermDetailsRequest) =>
-    apiClient.getTermDetails(params),
-  actions.fetchTermDetailsAction,
-  (response: TermDetails) => response
-);
+  TermApiGetTermDetailsRequest
+>(actions.fetchTermDetailsAction, async ({ termId }) => {
+  const term = await termApi.getTermDetails({ termId });
 
-export const updateTermDetailsTags = createThunk<
-  TermApiCreateTermTagsRelationsRequest,
-  Tag[],
-  PartialTermDetailsUpdateParams<Tag[]>
+  return term;
+});
+
+export const updateTermDetailsTags = createAsyncThunk<
+  { termId: number; tags: Array<Tag> },
+  TermApiCreateTermTagsRelationsRequest
 >(
-  (params: TermApiCreateTermTagsRelationsRequest) =>
-    apiClient.createTermTagsRelations(params),
   actions.updateTermDetailsTagsAction,
-  (response: Tag[], request: TermApiCreateTermTagsRelationsRequest) => ({
-    termId: request.termId,
-    value: response,
-  })
-);
+  async ({ termId, tagsFormData }) => {
+    const tags = await termApi.createTermTagsRelations({
+      termId,
+      tagsFormData,
+    });
 
-// Data entity terms
-
-export const createDataEntityTerm = createThunk<
-  DataEntityApiAddTermToDataEntityRequest,
-  TermRef,
-  PartialEntityUpdateParams<TermRef>
->(
-  (params: DataEntityApiAddTermToDataEntityRequest) =>
-    dataEntityApiClient.addTermToDataEntity(params),
-  actions.createDataEntityTermAction,
-  (
-    response: TermRef,
-    request: DataEntityApiAddTermToDataEntityRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: response,
-  })
-);
-
-export const deleteDataEntityTerm = createThunk<
-  DataEntityApiDeleteTermFromDataEntityRequest,
-  void,
-  PartialEntityUpdateParams<number>
->(
-  (params: DataEntityApiDeleteTermFromDataEntityRequest) =>
-    dataEntityApiClient.deleteTermFromDataEntity(params),
-  actions.deleteDataEntityTermAction,
-  (_, request: DataEntityApiDeleteTermFromDataEntityRequest) => ({
-    entityId: request.dataEntityId,
-    value: request.termId,
-  })
+    return { termId, tags };
+  }
 );

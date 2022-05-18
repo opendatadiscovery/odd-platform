@@ -1,9 +1,7 @@
-import devConfigureStore from './dev';
-import prodConfigureStore from './prod';
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer from 'redux/reducers';
 
-const configureStore =
-  process.env.NODE_ENV === 'production'
-    ? prodConfigureStore
-    : devConfigureStore;
-
-export default configureStore;
+export const store = configureStore({
+  reducer: rootReducer,
+  middleware: getDefaultMiddleware => getDefaultMiddleware(),
+});

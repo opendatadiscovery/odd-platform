@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import compact from 'lodash/compact';
 import {
   getMyDataEntitiesFetching,

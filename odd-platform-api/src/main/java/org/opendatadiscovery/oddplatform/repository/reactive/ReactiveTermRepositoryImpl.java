@@ -174,6 +174,16 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
     }
 
     @Override
+    public Flux<DataEntityToTermPojo> deleteRelationsWithTerms(final Long dataEntityId) {
+        final var query = DSL.update(DATA_ENTITY_TO_TERM)
+            .set(DATA_ENTITY_TO_TERM.DELETED_AT, LocalDateTime.now())
+            .where(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(DataEntityToTermPojo.class));
+    }
+
+    @Override
     public Flux<DataEntityToTermPojo> deleteRelationsWithDataEntities(final Long termId) {
         final var query = DSL.update(DATA_ENTITY_TO_TERM)
             .set(DATA_ENTITY_TO_TERM.DELETED_AT, LocalDateTime.now())

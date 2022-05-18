@@ -1,11 +1,6 @@
 import React from 'react';
-import { Autocomplete, Typography, Box } from '@mui/material';
-import {
-  Tag,
-  TagApiGetPopularTagListRequest,
-  TagsResponse,
-  TermApiCreateTermTagsRelationsRequest,
-} from 'generated-sources';
+import { Autocomplete, Box, Typography } from '@mui/material';
+import { Tag } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -20,28 +15,32 @@ import { OptionsContainer } from 'components/Terms/TermDetails/Overview/Overview
 import AppButton from 'components/shared/AppButton/AppButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { fetchTagsList, updateTermDetailsTags } from 'redux/thunks';
+import {
+  getTermDetailsTags,
+  getTermDetailsTagsUpdatingStatuses,
+} from 'redux/selectors';
+import { useAppParams } from 'lib/hooks';
 
 interface TagsEditProps {
-  termId: number;
-  termDetailsTags?: Tag[];
-  isLoading: boolean;
-  updateTermDetailsTags: (
-    params: TermApiCreateTermTagsRelationsRequest
-  ) => Promise<Tag[]>;
-  searchTags: (
-    params: TagApiGetPopularTagListRequest
-  ) => Promise<TagsResponse>;
   btnEditEl: JSX.Element;
 }
 
-const TagsEditForm: React.FC<TagsEditProps> = ({
-  termId,
-  termDetailsTags,
-  isLoading,
-  updateTermDetailsTags,
-  searchTags,
-  btnEditEl,
-}) => {
+const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
+  const dispatch = useAppDispatch();
+  const { termId } = useAppParams();
+
+  const searchTags = fetchTagsList;
+
+  const termDetailsTags = useAppSelector(state =>
+    getTermDetailsTags(state, termId)
+  );
+
+  const { isLoading: isTermTagsUpdating } = useAppSelector(
+    getTermDetailsTagsUpdatingStatuses
+  );
+
   // Autocomplete
   type FilterOption = Omit<Tag, 'id'> & Partial<Tag>;
   const [options, setOptions] = React.useState<FilterOption[]>([]);
@@ -53,7 +52,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      searchTags({ page: 1, size: 30, query: searchText }).then(
+      dispatch(searchTags({ page: 1, size: 30, query: searchText })).then(
         response => {
           setLoading(false);
           setOptions(response.items);
@@ -150,12 +149,14 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   };
 
   const handleSubmit = (data: TermDetailsTagsFormType) => {
-    updateTermDetailsTags({
-      termId,
-      tagsFormData: {
-        tagNameList: compact([...data.tagNameList.map(tag => tag.name)]),
-      },
-    }).then(
+    dispatch(
+      updateTermDetailsTags({
+        termId,
+        tagsFormData: {
+          tagNameList: compact([...data.tagNameList.map(tag => tag.name)]),
+        },
+      })
+    ).then(
       () => {
         setFormState({ ...initialFormState, isSuccessfulSubmit: true });
         clearFormState();
@@ -280,7 +281,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isTermTagsUpdating}
       errorText={error}
     />
   );

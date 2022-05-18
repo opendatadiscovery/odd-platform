@@ -16,3 +16,4 @@ export * from './appInfo.thunks';
 export * from './collectors.thunks';
 export * from './terms.thunks';
 export * from './termSearch.thunks';
+export * from './metadata.thunks';

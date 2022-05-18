@@ -4,16 +4,15 @@ import { Tag } from 'generated-sources';
 import TagItem from 'components/shared/TagItem/TagItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import TagsEditContainer from 'components/Terms/TermDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormContainer';
+import TagsEditForm from 'components/Terms/TermDetails/Overview/OverviewTags/TagsEditForm/TagsEditForm';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { CaptionContainer } from './OverviewTagsStyles';
 
 interface OverviewTagsProps {
-  termId: number;
   tags?: Tag[];
 }
 
-const OverviewTags: React.FC<OverviewTagsProps> = ({ tags, termId }) => {
+const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
 
@@ -29,8 +28,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags, termId }) => {
     <div>
       <CaptionContainer>
         <Typography variant="h3">Tags</Typography>
-        <TagsEditContainer
-          termId={termId}
+        <TagsEditForm
           btnEditEl={
             <AppButton
               size="medium"
@@ -94,8 +92,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags, termId }) => {
           wrap="nowrap"
         >
           <Typography variant="subtitle2">Not created.</Typography>
-          <TagsEditContainer
-            termId={termId}
+          <TagsEditForm
             btnEditEl={
               <AppButton size="small" color="tertiary" onClick={() => {}}>
                 Add tags

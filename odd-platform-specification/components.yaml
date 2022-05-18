@@ -334,9 +334,14 @@ components:
             - DATA_QUALITY_TEST
             - DATA_QUALITY_TEST_RUN
             - DATA_ENTITY_GROUP
+        types:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityType'
       required:
         - id
         - name
+        - types
 
     DataEntityType:
       type: object
@@ -366,6 +371,7 @@ components:
             - DATABASE_SERVICE
             - API_SERVICE
             - KAFKA_SERVICE
+            - DOMAIN
       required:
         - id
         - name
@@ -448,6 +454,8 @@ components:
         id:
           type: integer
           format: int64
+        oddrn:
+          type: string
         entity_classes:
           type: array
           items:
@@ -462,7 +470,6 @@ components:
           type: boolean
       required:
         - id
-        - external_name
 
     DataEntityRefList:
       type: array
@@ -579,6 +586,24 @@ components:
           properties:
             has_children:
               type: boolean
+            manually_created:
+              type: boolean
+
+    DataEntityGroupFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        namespace_name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataEntityType'
+        entities:
+          $ref: '#/components/schemas/DataEntityRefList'
+      required:
+        - name
+        - type
+        - entities
 
     DataSetTestReport:
       type: object

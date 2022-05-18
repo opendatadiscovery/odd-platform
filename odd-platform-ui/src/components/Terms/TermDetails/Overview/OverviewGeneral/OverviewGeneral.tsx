@@ -1,11 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { format } from 'date-fns';
-import {
-  TermDetails,
-  Ownership,
-  TermApiDeleteTermOwnershipRequest,
-} from 'generated-sources';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
@@ -14,26 +9,28 @@ import ConfirmationDialog from 'components/shared/ConfirmationDialog/Confirmatio
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
-import OwnershipFormContainer from 'components/Terms/TermDetails/Ownership/OwnershipFormContainer';
+import OwnershipForm from 'components/Terms/TermDetails/Ownership/OwnershipForm';
+import { deleteTermOwnership } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppParams } from 'lib/hooks';
+import { getTermDetails } from 'redux/selectors/terms.selectors';
+import { getTermOwnership } from 'redux/selectors';
 import { OwnerActionBtns, OwnerItem } from './OverviewGeneralStyles';
 
-interface OverviewGeneralProps {
-  termId: number;
-  termDetails: TermDetails;
-  ownership: Ownership[];
-  deleteTermDetailsOwnership: (
-    params: TermApiDeleteTermOwnershipRequest
-  ) => Promise<void>;
-}
+const OverviewGeneral: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { termId } = useAppParams();
 
-const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
-  termId,
-  termDetails,
-  ownership,
-  deleteTermDetailsOwnership,
-}) => {
+  const termDetails = useAppSelector(state =>
+    getTermDetails(state, termId)
+  );
+
+  const ownership = useAppSelector(state =>
+    getTermOwnership(state, termId)
+  );
+
   const handleOwnershipDelete = (ownershipId: number) => () =>
-    deleteTermDetailsOwnership({ termId, ownershipId });
+    dispatch(deleteTermOwnership({ termId, ownershipId }));
 
   return (
     <Grid container>
@@ -55,8 +52,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
               <OwnerItem key={ownershipItem.id}>
                 {ownershipItem.owner.name}
                 <LabelItem labelName={ownershipItem.role?.name} />
-                <OwnershipFormContainer
-                  termId={termDetails.id}
+                <OwnershipForm
                   termDetailsOwnership={ownershipItem}
                   ownerEditBtn={
                     <OwnerActionBtns>
@@ -92,8 +88,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
                 />
               </OwnerItem>
             ))}
-            <OwnershipFormContainer
-              termId={termDetails.id}
+            <OwnershipForm
               ownerEditBtn={
                 <AppButton
                   sx={{ mt: 0.25 }}

@@ -14,6 +14,7 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.API_SERVIC
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DAG;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DASHBOARD;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DATABASE_SERVICE;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.DOMAIN;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.FEATURE_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.FILE;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto.GRAPH_NODE;
@@ -38,17 +39,12 @@ public enum DataEntityClassDto {
     DATA_QUALITY_TEST_RUN(5, JOB_RUN),
     DATA_CONSUMER(6, Set.of(ML_MODEL_ARTIFACT, DASHBOARD)),
     DATA_INPUT(7, API_CALL),
-    DATA_ENTITY_GROUP(8, Set.of(ML_EXPERIMENT, DAG, DATABASE_SERVICE, API_SERVICE, KAFKA_SERVICE));
+    DATA_ENTITY_GROUP(8, Set.of(ML_EXPERIMENT, DAG, DATABASE_SERVICE, API_SERVICE, KAFKA_SERVICE, DOMAIN));
 
-    private static final Map<Integer, DataEntityClassDto> MAP = Arrays
-        .stream(DataEntityClassDto.values())
+    private static final Map<Integer, DataEntityClassDto> MAP = Arrays.stream(DataEntityClassDto.values())
         .collect(Collectors.toMap(DataEntityClassDto::getId, identity()));
     private final int id;
     private final Set<DataEntityTypeDto> types;
-
-    DataEntityClassDto(final int id) {
-        this(id, emptySet());
-    }
 
     DataEntityClassDto(final int id, final DataEntityTypeDto types) {
         this(id, Set.of(types));
