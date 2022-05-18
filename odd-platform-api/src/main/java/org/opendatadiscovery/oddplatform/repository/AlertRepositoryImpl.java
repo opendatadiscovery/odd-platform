@@ -164,7 +164,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         return dslContext.select(DATA_ENTITY.ODDRN)
             .from(DATA_ENTITY)
             .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
-            .where(OWNERSHIP.OWNER_ID.eq(ownerId))
+            .where(OWNERSHIP.OWNER_ID.eq(ownerId).and(DATA_ENTITY.DELETED_AT.isNull()))
             .fetchStreamInto(String.class)
             .toList();
     }

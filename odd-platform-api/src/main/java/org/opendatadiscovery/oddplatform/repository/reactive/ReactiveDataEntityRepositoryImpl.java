@@ -26,7 +26,7 @@ public class ReactiveDataEntityRepositoryImpl
     @Override
     public Mono<Boolean> existsByDataSourceId(final long dataSourceId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
-            DSL.selectFrom(DATA_ENTITY).where(DATA_ENTITY.DATA_SOURCE_ID.eq(dataSourceId)));
+            DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.DATA_SOURCE_ID.eq(dataSourceId))));
 
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
@@ -34,7 +34,7 @@ public class ReactiveDataEntityRepositoryImpl
     @Override
     public Mono<Boolean> existsByNamespaceId(final long namespaceId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
-            DSL.selectFrom(DATA_ENTITY).where(DATA_ENTITY.NAMESPACE_ID.eq(namespaceId)));
+            DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.NAMESPACE_ID.eq(namespaceId))));
 
         return jooqReactiveOperations.mono(query).map(Record1::component1);
     }
