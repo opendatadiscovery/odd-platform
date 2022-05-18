@@ -73,7 +73,7 @@ jobs:
       - name: Retag image in GHCR
         if: ${{ github.event.action == 'published' }}
         run: |
-          docker tag odd-platform:${{ steps.get-version.outputs.version }} ghcr.io/opendatadiscovery/odd-platform:${{ steps.get-version.outputs.version }}
-          docker push ghcr.io/opendatadiscovery/odd-platform:${{ steps.get-version.outputs.version }}
-          docker tag odd-platform:${{ steps.get-version.outputs.version }} ghcr.io/opendatadiscovery/odd-platform:latest
-          docker push ghcr.io/opendatadiscovery/odd-platform:latest
+          docker tag odd-platform:${{ steps.get-version.outputs.version }} ghcr.io/DementevNikita/odd-platform:${{ steps.get-version.outputs.version }}
+          docker push ghcr.io/DementevNikita/odd-platform:${{ steps.get-version.outputs.version }}
+          docker tag odd-platform:${{ steps.get-version.outputs.version }} ghcr.io/DementevNikita/odd-platform:latest
+          docker push ghcr.io/DementevNikita/odd-platform:latest
