@@ -129,30 +129,37 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
 
         return jooqReactiveOperations
             .flux(query)
-            .map(r -> mapRecordToDto(r, ""))
+            .map(this::mapRecordToDto)
             .collectList();
     }
 
     @Override
     public Mono<Page<AlertDto>> listDependentObjectsAlerts(
         final int page, final int size, final List<String> ownOddrns) {
-        final Select<? extends Record> alertSelect = getDefaultAlertPaginateQuery(page, size);
-        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-
         final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
-        final SelectConditionStep<Record> query = DSL.with(cte).with(alertCte.getName()).as(alertSelect)
-            .select(alertCte.fields())
-            .select(DATA_ENTITY.fields())
-            .select(OWNER.fields())
-            .from(DATA_ENTITY)
+        final List<OrderByField> orderByFields = List.of(
+            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
+        final SelectConditionStep<Record> baseQuery = DSL.with(cte)
+            .select(ALERT.fields())
+            .from(ALERT)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(cte.getName())
             .on(field(name(cte.getName()).append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)
                 .eq(DATA_ENTITY.ODDRN))
-            .join(alertCte.getName()).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
+            .and(DATA_ENTITY.ODDRN.notIn(ownOddrns));
+        final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
+        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
+
+        final SelectOnConditionStep<Record> query = DSL.with(alertCte.getName()).as(alertSelect)
+            .select(alertCte.fields())
+            .select(DATA_ENTITY.fields())
+            .select(OWNER.fields())
+            .from(alertCte.getName())
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
             .leftJoin(USER_OWNER_MAPPING)
             .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
-            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
-            .where(DATA_ENTITY.ODDRN.notIn(ownOddrns));
+            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
 
         return jooqReactiveOperations
             .flux(query)
@@ -160,7 +167,7 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
                 r -> mapRecordToDto(r, alertCte.getName()),
-                countAlertsWithStatusOpen())
+                countDependentObjectsAlerts(ownOddrns))
             );
     }
 
@@ -181,7 +188,7 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
         final Name cteName = name("t");
         final Field<String[]> parentOddrnArrayField = DSL.array(LINEAGE.PARENT_ODDRN).as("parent_oddrn_array");
 
-        final SelectOnConditionStep<Record> conditionStep = DSL
+        final SelectOnConditionStep<Record> selectLinage = DSL
             .select(LINEAGE.asterisk())
             .select(field("%s || %s".formatted(parentOddrnArrayField, LINEAGE.PARENT_ODDRN)))
             .from(LINEAGE)
@@ -195,7 +202,7 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
             .select(parentOddrnArrayField)
             .from(LINEAGE)
             .where(LINEAGE.CHILD_ODDRN.in(ownOddrns))
-            .unionAll(conditionStep));
+            .unionAll(selectLinage));
 
         return name("t2")
             .as(DSL.withRecursive(cte)
@@ -292,8 +299,15 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
 
     private AlertDto mapRecordToDto(final Record r, final String alertCteName) {
         return new AlertDto(
-            alertCteName.isEmpty() ? jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class) :
-                jooqRecordHelper.remapCte(r, alertCteName, ALERT).into(AlertPojo.class),
+            jooqRecordHelper.remapCte(r, alertCteName, ALERT).into(AlertPojo.class),
+            jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class),
+            jooqRecordHelper.extractRelation(r, OWNER, OwnerPojo.class)
+        );
+    }
+
+    private AlertDto mapRecordToDto(final Record r) {
+        return new AlertDto(
+            jooqRecordHelper.extractRelation(r, ALERT, AlertPojo.class),
             jooqRecordHelper.extractRelation(r, DATA_ENTITY, DataEntityPojo.class),
             jooqRecordHelper.extractRelation(r, OWNER, OwnerPojo.class)
         );

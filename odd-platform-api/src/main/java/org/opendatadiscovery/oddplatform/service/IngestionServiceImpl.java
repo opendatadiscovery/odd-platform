@@ -97,7 +97,7 @@ public class IngestionServiceImpl implements IngestionService {
             .map(this::ingestDependencies)
             .flatMap(this::ingestCompanions)
             .flatMap(this::calculateSearchEntrypoints)
-            .map(dataStructure -> {
+            .flatMap(dataStructure -> {
                 final List<Long> changedSchemaIds = dataStructure.getExistingEntities()
                     .stream()
                     .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
@@ -113,8 +113,7 @@ public class IngestionServiceImpl implements IngestionService {
                     dataStructure.getEarlyAlerts()
                 ).flatMap(List::stream).collect(Collectors.toList());
 
-                alertService.createAlerts(alerts);
-                return dataStructure;
+                return alertService.createAlerts(alerts).thenReturn(dataStructure);
             })
             .flatMap(metricService::exportMetrics)
             .then();

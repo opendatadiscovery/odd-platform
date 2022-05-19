@@ -4,8 +4,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
@@ -118,22 +118,25 @@ public class AlertServiceImpl implements AlertService {
     }
 
     @Override
-    public Mono<Collection<AlertPojo>> createAlerts(final List<AlertPojo> alerts) {
+    public Mono<List<AlertPojo>> createAlerts(final List<AlertPojo> alerts) {
         return alertRepository.getExistingMessengers(alerts)
-            .flatMap(em -> {
-                final List<AlertPojo> alertPojos = alerts.stream()
-                    .filter(
-                        a -> a.getMessengerEntityOddrn() == null || !em.contains(a.getMessengerEntityOddrn()))
-                    .toList();
-                return alertRepository.createAlerts(alertPojos);
-            });
+            .flatMap(em -> createAlerts(alerts, em))
+            .switchIfEmpty(createAlerts(alerts, Set.of()));
+    }
+
+    private Mono<List<AlertPojo>> createAlerts(final List<AlertPojo> alerts, final Set<String> em) {
+        final List<AlertPojo> alertPojos = alerts.stream()
+            .filter(
+                a -> a.getMessengerEntityOddrn() == null || !em.contains(a.getMessengerEntityOddrn()))
+            .toList();
+        return alertRepository.createAlerts(alertPojos);
     }
 
     @Override
     public Mono<AlertList> listDependentObjectsAlerts(final int page, final int size) {
         return authIdentityProvider.fetchAssociatedOwner()
             .flatMap(owner -> alertRepository.getObjectsOddrnsByOwner(owner.getId()))
-            .flatMap(objByOwner -> alertRepository.listDependentObjectsAlerts(page, size, objByOwner))
+            .flatMap(oddrns -> alertRepository.listDependentObjectsAlerts(page, size, oddrns))
             .map(alertMapper::mapAlerts);
     }
 }

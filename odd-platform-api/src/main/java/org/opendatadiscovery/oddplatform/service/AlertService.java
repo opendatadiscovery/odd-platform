@@ -24,5 +24,5 @@ public interface AlertService {
 
     Mono<AlertList> listDependentObjectsAlerts(int page, int size);
 
-    Mono<Collection<AlertPojo>> createAlerts(final List<AlertPojo> alerts);
+    Mono<List<AlertPojo>> createAlerts(final List<AlertPojo> alerts);
 }
