@@ -156,6 +156,8 @@ jib {
     allowInsecureRegistries = false
 }
 
+jibDockerBuild.dependsOn(test)
+
 checkstyle {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')
     configProperties = ["suppressionFile": project(':').file('config/checkstyle/suppressions.xml')]

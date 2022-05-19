@@ -41,13 +41,11 @@ jobs:
           key: ${{ runner.os }}-shared-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Build and run tests
+      - name: Run tests and build the image
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-        run: ./gradlew build ${{ github.event.inputs.buildOptions }} --no-daemon --scan --parallel
-      - name: Build the image
-        run: ./gradlew jibDockerBuild --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6} -Penv=prod
+        run: ./gradlew jibDockerBuild --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} --scan --parallel -Pversion=ci-${GITHUB_SHA::6} -Penv=prod
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
   update_tag:
