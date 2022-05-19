@@ -269,6 +269,7 @@ public class DataEntityRepositoryImpl
             .where(jooqFTSHelper.facetStateConditions(state, DATA_ENTITY_CONDITIONS,
                 List.of(FacetType.ENTITY_CLASSES)))
             .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.DELETED_AT.isNull())
             .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
@@ -656,6 +657,7 @@ public class DataEntityRepositoryImpl
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
             .where(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, query))
             .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.DELETED_AT.isNull())
             .orderBy(RANK_FIELD_ALIAS.desc())
             .limit(SUGGESTION_LIMIT);
 
@@ -1013,7 +1015,8 @@ public class DataEntityRepositoryImpl
             fromStep = fromStep
                 .leftJoin(DATA_SOURCE)
                 .on(DATA_SOURCE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.DATA_SOURCE_ID)))
-                .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
+                .leftJoin(NAMESPACE).on(NAMESPACE.ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.NAMESPACE_ID)))
+                .or(NAMESPACE.ID.eq(DATA_SOURCE.NAMESPACE_ID))
                 .leftJoin(TAG_TO_DATA_ENTITY)
                 .on(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(jooqQueryHelper.getField(deCte, DATA_ENTITY.ID)))
                 .leftJoin(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
@@ -1412,11 +1415,13 @@ public class DataEntityRepositoryImpl
                 .from(SEARCH_ENTRYPOINT)
                 .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
                 .where(ListUtils.emptyIfNull(config.getCteSelectConditions()))
-                .and(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, config.getFts().query()));
+                .and(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, config.getFts().query()))
+                .and(DATA_ENTITY.DELETED_AT.isNull());
         } else {
             dataEntitySelect = dslContext.select(DATA_ENTITY.fields())
                 .from(DATA_ENTITY)
-                .where(ListUtils.emptyIfNull(config.getCteSelectConditions()));
+                .where(ListUtils.emptyIfNull(config.getCteSelectConditions()))
+                .and(DATA_ENTITY.DELETED_AT.isNull());
         }
 
         if (!config.isIncludeHollow()) {

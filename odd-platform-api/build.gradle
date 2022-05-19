@@ -7,10 +7,6 @@ plugins {
     id "org.sonarqube" version "3.3"
 }
 
-ext {
-    env = findProperty('env') ?: 'prod'
-}
-
 if (env == 'dev') {
     apply plugin: "de.undercouch.download"
 }
@@ -159,6 +155,8 @@ jib {
     }
     allowInsecureRegistries = false
 }
+
+jibDockerBuild.dependsOn(test)
 
 checkstyle {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')

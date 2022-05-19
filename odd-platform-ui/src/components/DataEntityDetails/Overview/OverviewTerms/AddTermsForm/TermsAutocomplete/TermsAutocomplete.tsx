@@ -1,11 +1,6 @@
 import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
-import {
-  DataEntityTermFormData,
-  TermApiGetTermsListRequest,
-  TermRef,
-  TermRefList,
-} from 'generated-sources';
+import { DataEntityTermFormData, TermRef } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
@@ -14,20 +9,21 @@ import { useDebouncedCallback } from 'use-debounce';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import { ControllerRenderProps } from 'react-hook-form';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { fetchTermsList } from 'redux/thunks';
 
 interface TermsAutocompleteProps {
-  searchTerms: (
-    params: TermApiGetTermsListRequest
-  ) => Promise<TermRefList>;
   setSelectedTerm: (term: TermRef) => void;
   field: ControllerRenderProps<DataEntityTermFormData, 'termId'>;
 }
 
 const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
-  searchTerms,
   setSelectedTerm,
   field,
 }) => {
+  const dispatch = useAppDispatch();
+  const searchTerms = fetchTermsList;
+
   type FilterOption = Omit<TermRef, 'id' | 'definition' | 'namespace'> &
     Partial<TermRef>;
   const [options, setOptions] = React.useState<FilterOption[]>([]);
@@ -39,25 +35,28 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      searchTerms({ page: 1, size: 30, query: searchText }).then(
-        response => {
+      dispatch(searchTerms({ page: 1, size: 30, query: searchText }))
+        .unwrap()
+        .then(({ termList }) => {
           setLoading(false);
-          setOptions(response.items);
-        }
-      );
+          setOptions(termList);
+        });
     }, 500),
     [searchTerms, setLoading, setOptions, searchText]
   );
 
-  const getOptionLabel = React.useCallback((option: FilterOption) => {
-    if (typeof option === 'string') {
-      return option;
-    }
-    if ('name' in option && option.name) {
-      return option.name;
-    }
-    return '';
-  }, []);
+  const getOptionLabel = React.useCallback(
+    (option: FilterOption | string) => {
+      if (typeof option === 'string') {
+        return option;
+      }
+      if ('name' in option && option.name) {
+        return option.name;
+      }
+      return '';
+    },
+    []
+  );
 
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
@@ -143,16 +142,26 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
           }}
         />
       )}
-      renderOption={(props, option) => (
-        <li {...props}>
-          <Grid container flexWrap="wrap" flexDirection="column">
-            <Typography variant="body1">{option.name}</Typography>
-            <Typography variant="subtitle2">
-              {option.namespace?.name}
-            </Typography>
-          </Grid>
-        </li>
-      )}
+      renderOption={(props, option) =>
+        option.id ? (
+          <li {...props}>
+            <Grid container flexWrap="wrap" flexDirection="column">
+              <Typography variant="body1">{option.name}</Typography>
+              <Typography variant="subtitle2">
+                {option.namespace?.name}
+              </Typography>
+            </Grid>
+          </li>
+        ) : (
+          <Typography
+            sx={{ py: 0.5, px: 1 }}
+            variant="subtitle2"
+            component="span"
+          >
+            There are no terms
+          </Typography>
+        )
+      }
     />
   );
 };

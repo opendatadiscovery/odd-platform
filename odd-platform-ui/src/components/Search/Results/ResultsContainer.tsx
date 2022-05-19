@@ -12,14 +12,14 @@ import {
   getSearchResultsPage,
   getSearchTotals,
 } from 'redux/selectors/dataentitySearch.selectors';
-import { getDataEntityClassesByName } from 'redux/selectors/dataentity.selectors';
+import { getDataEntityClassesDict } from 'redux/selectors/dataentity.selectors';
 import { getDataEntitiesSearchResults } from 'redux/thunks/dataentitiesSearch.thunks';
 import Results from './Results';
 
 const mapStateToProps = (state: RootState) => ({
   searchId: getSearchId(state),
   searchClass: getSearchEntityClass(state),
-  dataEntityClassesByName: getDataEntityClassesByName(state),
+  dataEntityClassesDict: getDataEntityClassesDict(state),
   totals: getSearchTotals(state),
   searchResults: getSearchResults(state),
   pageInfo: getSearchResultsPage(state),

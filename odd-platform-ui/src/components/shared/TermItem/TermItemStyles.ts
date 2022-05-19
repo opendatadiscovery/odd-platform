@@ -10,9 +10,19 @@ export const TermItemContainer = styled(Link)(({ theme }) => ({
   display: 'flex',
   borderRadius: '4px',
   padding: theme.spacing(0.25, 1),
-  '&:hover, &:active': {
-    cursor: 'pointer',
+  cursor: 'pointer',
+  '&:hover': {
     background: theme.palette.backgrounds.primary,
     [`${ActionsContainer}`]: { opacity: 1 },
   },
+  '&:active': {
+    background: theme.palette.backgrounds.secondary,
+  },
+}));
+
+export const TermDefinition = styled(Typography)(() => ({
+  overflow: 'hidden',
+  display: '-webkit-box',
+  '-webkit-line-clamp': '2',
+  '-webkit-box-orient': 'vertical',
 }));

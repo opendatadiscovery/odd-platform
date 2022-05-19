@@ -2,56 +2,56 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import CloseIcon from 'components/shared/Icons/CloseIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import {
-  DataEntityApiDeleteTermFromDataEntityRequest,
-  TermRef,
-} from 'generated-sources';
+import { TermRef } from 'generated-sources';
 import { termDetailsOverviewPath } from 'lib/paths';
-import { ActionsContainer, TermItemContainer } from './TermItemStyles';
+import { deleteDataEntityTerm } from 'redux/thunks';
+import { useAppDispatch } from 'lib/redux/hooks';
+import * as S from './TermItemStyles';
 
 interface TermItemProps {
   dataEntityId: number;
   term: TermRef;
-  deleteDataEntityTerm: (
-    params: DataEntityApiDeleteTermFromDataEntityRequest
-  ) => Promise<void>;
 }
 
-const TermItem: React.FC<TermItemProps> = ({
-  dataEntityId,
-  term,
-  deleteDataEntityTerm,
-}) => {
+const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
+  const dispatch = useAppDispatch();
   const termDetailsLink = termDetailsOverviewPath(term.id);
 
   return (
-    <TermItemContainer to={termDetailsLink}>
+    <S.TermItemContainer to={termDetailsLink}>
       <Grid
         sx={{ my: 0.5 }}
         container
         flexWrap="nowrap"
         justifyContent="space-between"
       >
-        <Typography variant="body1" color="texts.action">
-          {term.name}
-        </Typography>
-        <ActionsContainer>
+        <Grid container flexDirection="column">
+          <Typography variant="body1" color="texts.action">
+            {term.name}
+          </Typography>
+          <S.TermDefinition variant="subtitle2">
+            {term.definition}
+          </S.TermDefinition>
+        </Grid>
+        <S.ActionsContainer>
           <AppIconButton
             size="small"
             color="unfilled"
             icon={<CloseIcon />}
             onClick={e => {
               e.preventDefault();
-              return deleteDataEntityTerm({
-                dataEntityId,
-                termId: term.id,
-              });
+              return dispatch(
+                deleteDataEntityTerm({
+                  dataEntityId,
+                  termId: term.id,
+                })
+              );
             }}
             sx={{ ml: 0.25 }}
           />
-        </ActionsContainer>
+        </S.ActionsContainer>
       </Grid>
-    </TermItemContainer>
+    </S.TermItemContainer>
   );
 };
 

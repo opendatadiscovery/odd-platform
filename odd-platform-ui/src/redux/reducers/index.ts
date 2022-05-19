@@ -1,32 +1,33 @@
-import { combineReducers } from 'redux';
-import { RootState } from 'redux/interfaces';
-import loader from './loader-reducer';
+import { combineReducers } from '@reduxjs/toolkit';
+import legacyLoader from './loader-reducer';
+import loader from './loader.slice';
 import namespaces from './namespace.reducer';
 import dataSources from './datasources.reducer';
-import dataEntities from './dataentities.reducer';
+import dataEntities from './dataentities.slice';
 import tags from './tags.reducer';
 import labels from './labels.reducer';
 import search from './dataentitiesSearch.reducer';
-import metaData from './metadata.reducer';
-import owners from './owners.reducer';
+import metaData from './metadata.slice';
+import owners from './owners.slice';
 import datasetStructure from './datasetStructure.reducer';
 import dataEntityLineage from './dataentityLineage.reducer';
 import profile from './profile.reducer';
 import dataQualityTest from './dataQualityTest.reducer';
 import alerts from './alerts.reducer';
-import dataEntityGroupLinkedList from './dataentityLinkedList.reducer';
-import termLinkedList from './termLinkedList.reducer';
+import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';
+import termLinkedList from './termLinkedList.slice';
 import appInfo from './appInfo.reducer';
 import collectors from './collectors.reducer';
-import terms from './terms.reducer';
+import terms from './terms.slice';
 import termSearch from './termSearch.reducer';
 
-export default combineReducers<RootState>({
+export default combineReducers({
   namespaces,
   dataSources,
   dataEntities,
   search,
   loader,
+  legacyLoader,
   tags,
   metaData,
   owners,

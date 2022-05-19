@@ -1,24 +1,20 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {
-  DataEntity,
-  DataEntityApiGetDataEntityGroupsChildrenRequest,
-} from 'generated-sources';
+import { DataEntity } from 'generated-sources';
 import { CurrentPageInfo } from 'redux/interfaces';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import LinkedItem from 'components/DataEntityDetails/LinkedItemsList/LinkedItem/LinkedItem';
 import LinkedItemSkeleton from 'components/DataEntityDetails/LinkedItemsList/LinkedItemSkeleton/LinkedItemSkeleton';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
 import * as S from './LinkedItemsListStyles';
 
 interface LinkedItemsListProps {
   dataEntityGroupId: number;
   dataEntityGroupLinkedList: DataEntity[];
   pageInfo?: CurrentPageInfo;
-  fetchDataEntityGroupLinkedList: (
-    params: DataEntityApiGetDataEntityGroupsChildrenRequest
-  ) => void;
   isLinkedListFetching: boolean;
 }
 
@@ -26,16 +22,19 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
   dataEntityGroupId,
   dataEntityGroupLinkedList,
   pageInfo,
-  fetchDataEntityGroupLinkedList,
   isLinkedListFetching,
 }) => {
+  const dispatch = useAppDispatch();
+
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
-    fetchDataEntityGroupLinkedList({
-      dataEntityGroupId,
-      page: pageInfo.page + 1,
-      size: 30,
-    });
+    dispatch(
+      fetchDataEntityGroupLinkedList({
+        dataEntityGroupId,
+        page: pageInfo.page + 1,
+        size: 30,
+      })
+    );
   };
 
   React.useEffect(() => {

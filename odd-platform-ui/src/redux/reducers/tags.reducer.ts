@@ -3,6 +3,7 @@ import filter from 'lodash/filter';
 import * as actions from 'redux/actions';
 import { Action } from 'redux/interfaces';
 import { TagsState } from 'redux/interfaces/state';
+import { Tag } from 'generated-sources';
 
 export const initialState: TagsState = {
   byId: {},
@@ -18,7 +19,7 @@ const reducer = (state = initialState, action: Action): TagsState => {
   switch (action.type) {
     case getType(actions.fetchTagsAction.success):
       return action.payload.items.reduce(
-        (memo: TagsState, tag) => ({
+        (memo: TagsState, tag: Tag) => ({
           ...memo,
           byId: {
             ...memo.byId,
@@ -38,7 +39,7 @@ const reducer = (state = initialState, action: Action): TagsState => {
       );
     case getType(actions.createTagsAction.success):
       return action.payload.reduce(
-        (memo: TagsState, tag) => ({
+        (memo: TagsState, tag: Tag) => ({
           ...memo,
           byId: {
             ...memo.byId,

@@ -3,19 +3,20 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useScrollBarWidth } from 'lib/hooks';
 import {
-  TermApiDeleteTermRequest,
-  TermApiGetTermSearchResultsRequest,
   Term,
+  TermApiGetTermSearchResultsRequest,
 } from 'generated-sources';
 import { CurrentPageInfo } from 'redux/interfaces';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import TermSearchResultsSkeletonItem from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsSkeletonItem/TermSearchResultsSkeletonItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import TermSearchResultItem from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultItem/TermSearchResultItem';
+import { useAppSelector } from 'lib/redux/hooks';
+import { getTermDeletingStatuses } from 'redux/selectors/terms.selectors';
 import {
+  TermSearchListContainer,
   TermSearchResultsColContainer,
   TermSearchResultsTableHeader,
-  TermSearchListContainer,
 } from './TermSearchResultsStyles';
 
 interface ResultsProps {
@@ -28,7 +29,6 @@ interface ResultsProps {
   ) => void;
   isTermSearchFetching: boolean;
   isTermSearchCreating: boolean;
-  deleteTerm: (params: TermApiDeleteTermRequest) => Promise<void>;
 }
 
 const TermSearchResults: React.FC<ResultsProps> = ({
@@ -39,8 +39,11 @@ const TermSearchResults: React.FC<ResultsProps> = ({
   getTermSearchResults,
   isTermSearchFetching,
   isTermSearchCreating,
-  deleteTerm,
 }) => {
+  const { isLoaded: isTermDeleted } = useAppSelector(
+    getTermDeletingStatuses
+  );
+
   const scrollbarWidth = useScrollBarWidth();
   const pageSize = 30;
   const fetchNextPage = () => {
@@ -52,6 +55,18 @@ const TermSearchResults: React.FC<ResultsProps> = ({
       size: pageSize,
     });
   };
+
+  const fetchPageAfterDeleting = () => {
+    if (pageInfo.page && isTermDeleted) {
+      getTermSearchResults({
+        searchId: termSearchId,
+        page: pageInfo.page,
+        size: pageSize,
+      });
+    }
+  };
+
+  React.useEffect(() => fetchPageAfterDeleting(), [isTermDeleted]);
 
   React.useEffect(() => {
     if (termSearchFiltersSynced && termSearchId && !isTermSearchCreating) {
@@ -122,7 +137,6 @@ const TermSearchResults: React.FC<ResultsProps> = ({
               <TermSearchResultItem
                 key={termSearchResult.id}
                 termSearchResult={termSearchResult}
-                deleteTerm={deleteTerm}
               />
             ))}
           </InfiniteScroll>

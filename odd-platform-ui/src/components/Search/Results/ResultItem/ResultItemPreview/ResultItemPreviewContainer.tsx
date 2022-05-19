@@ -4,7 +4,6 @@ import {
   getDataEntityDetails,
   getDataEntityDetailsFetching,
 } from 'redux/selectors/dataentity.selectors';
-import { fetchDataEntityDetails } from 'redux/thunks';
 import {
   getDataEntityCustomMetadataList,
   getDataEntityPredefinedMetadataList,
@@ -24,9 +23,7 @@ const mapStateToProps = (
   customMetadata: getDataEntityCustomMetadataList(state, dataEntityId),
 });
 
-const mapDispatchToProps = {
-  fetchDataEntityDetails,
-};
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,

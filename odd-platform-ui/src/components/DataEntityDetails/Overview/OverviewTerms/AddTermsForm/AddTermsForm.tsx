@@ -1,30 +1,24 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  DataEntityApiAddTermToDataEntityRequest,
-  DataEntityTermFormData,
-  TermRef,
-} from 'generated-sources';
+import { DataEntityTermFormData, TermRef } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import TermsAutocompleteContainer from './TermsAutocomplete/TermsAutocompleteContainer';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { addDataEntityTerm } from 'redux/thunks';
+import TermsAutocomplete from './TermsAutocomplete/TermsAutocomplete';
 
 interface AddTermsFormProps {
   btnCreateEl: JSX.Element;
   dataEntityId: number;
-  isLoading: boolean;
-  createDataEntityTerm: (
-    params: DataEntityApiAddTermToDataEntityRequest
-  ) => Promise<TermRef>;
 }
 
 const AddTermsForm: React.FC<AddTermsFormProps> = ({
   btnCreateEl,
-  isLoading,
-  createDataEntityTerm,
   dataEntityId,
 }) => {
+  const dispatch = useAppDispatch();
+
   const { handleSubmit, control, reset, formState } =
     useForm<DataEntityTermFormData>({
       mode: 'onChange',
@@ -48,10 +42,12 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
   };
 
   const onSubmit = (data: DataEntityTermFormData) => {
-    createDataEntityTerm({
-      dataEntityId,
-      dataEntityTermFormData: { termId: data.termId },
-    }).then(
+    dispatch(
+      addDataEntityTerm({
+        dataEntityId,
+        dataEntityTermFormData: { termId: data.termId },
+      })
+    ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
         clearState();
@@ -88,7 +84,7 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
           required: true,
         }}
         render={({ field }) => (
-          <TermsAutocompleteContainer
+          <TermsAutocomplete
             field={field}
             setSelectedTerm={handleSetSelectedTerm}
           />
@@ -144,7 +140,6 @@ const AddTermsForm: React.FC<AddTermsFormProps> = ({
       renderContent={termFormContent}
       renderActions={termFormActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
       errorText={error}
       clearState={clearState}
     />

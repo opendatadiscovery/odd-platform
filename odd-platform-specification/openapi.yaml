@@ -923,7 +923,7 @@ paths:
     post:
       summary: Add term to data entity
       description: Link existing term with data entity
-      operationId: addTermToDataEntity
+      operationId: addDataEntityTerm
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
       requestBody:
@@ -1267,6 +1267,62 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - dataEntity
+
+  /api/dataentitygroups:
+    post:
+      summary: Create New DataEntityGroup
+      description: Create New DataEntityGroup
+      operationId: createDataEntityGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityGroupFormData'
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: './components.yaml/#/components/schemas/DataEntityRef'
+      tags:
+        - dataEntity
+
+  /api/dataentitygroups/{data_entity_group_id}:
+    put:
+      summary: Update DataEntityGroup
+      description: Updates DataEntityGroup
+      operationId: updateDataEntityGroup
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityGroupIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityGroupFormData'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRef'
+      tags:
+        - dataEntity
+    delete:
+      summary: Delete DataEntityGroup
+      description: Deletes DataEntityGroup
+      operationId: deleteDataEntityGroup
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityGroupIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntity
+
   /api/dataentitygroups/{data_entity_group_id}/lineage:
     get:
       summary: Get DataEntityGroup lineage

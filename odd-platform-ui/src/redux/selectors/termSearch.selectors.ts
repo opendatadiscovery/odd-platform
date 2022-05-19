@@ -1,14 +1,14 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import {
-  createErrorSelector,
-  createFetchingSelector,
+  createLegacyErrorSelector,
+  createLegacyFetchingSelector,
 } from 'redux/selectors/loader-selectors';
 import {
   RootState,
-  TermSearchState,
-  TermSearchOptionalFacetNames,
   SearchFacetStateById,
   SearchFilterStateSynced,
+  TermSearchOptionalFacetNames,
+  TermSearchState,
 } from 'redux/interfaces';
 import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
@@ -16,24 +16,22 @@ import values from 'lodash/values';
 import transform from 'lodash/transform';
 
 export const getTermSearchCreationStatus =
-  createFetchingSelector('POST_TERM_SEARCH');
+  createLegacyFetchingSelector('POST_TERM_SEARCH');
 
 export const getTermSearchFetchStatus =
-  createFetchingSelector('GET_TERM_SEARCH');
+  createLegacyFetchingSelector('GET_TERM_SEARCH');
 
 export const getTermSearchFetchError =
-  createErrorSelector('GET_TERM_SEARCH');
+  createLegacyErrorSelector('GET_TERM_SEARCH');
 
 export const getTermSearchUpdateStatus =
-  createFetchingSelector('PUT_TERM_SEARCH');
+  createLegacyFetchingSelector('PUT_TERM_SEARCH');
 
-export const getTermSearchResultsFetchStatus = createFetchingSelector(
-  'GET_TERM_SEARCH_RESULTS'
-);
+export const getTermSearchResultsFetchStatus =
+  createLegacyFetchingSelector('GET_TERM_SEARCH_RESULTS');
 
-export const getTermSearchSuggestionsFetchStatus = createFetchingSelector(
-  'GET_TERM_SEARCH_SUGGESTIONS'
-);
+export const getTermSearchSuggestionsFetchStatus =
+  createLegacyFetchingSelector('GET_TERM_SEARCH_SUGGESTIONS');
 
 // Term Search
 

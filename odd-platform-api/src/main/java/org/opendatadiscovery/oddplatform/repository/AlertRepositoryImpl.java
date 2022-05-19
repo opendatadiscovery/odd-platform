@@ -176,7 +176,7 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
         final SelectConditionStep<Record1<String>> query = DSL.select(DATA_ENTITY.ODDRN)
             .from(DATA_ENTITY)
             .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
-            .where(OWNERSHIP.OWNER_ID.eq(ownerId));
+            .where(OWNERSHIP.OWNER_ID.eq(ownerId).and(DATA_ENTITY.DELETED_AT.isNull()));
         return jooqReactiveOperations
             .flux(query)
             .map(r -> r.into(String.class))

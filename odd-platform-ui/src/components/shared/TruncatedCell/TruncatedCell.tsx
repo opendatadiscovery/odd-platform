@@ -34,7 +34,7 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({
           <AppButton
             color="primaryLight"
             size="small"
-            fullWidth={linkContent.length > 30}
+            fullWidth={linkContent ? linkContent.length > 30 : false}
           >
             <S.LinkContent noWrap>{linkContent}</S.LinkContent>
           </AppButton>

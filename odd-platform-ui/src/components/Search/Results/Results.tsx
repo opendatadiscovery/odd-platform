@@ -7,14 +7,14 @@ import { Dictionary } from 'lodash/index';
 import { useScrollBarWidth } from 'lib/hooks';
 import {
   DataEntity,
+  DataEntityClass,
   DataEntityClassNameEnum,
   SearchApiGetSearchResultsRequest,
-  DataEntityClass,
 } from 'generated-sources';
 import {
   CurrentPageInfo,
-  SearchTotalsByName,
   SearchClass,
+  SearchTotalsByName,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -23,10 +23,15 @@ import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSk
 import SearchTabsSkeleton from 'components/Search/Results/SearchTabsSkeleton/SearchTabsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import ResultItem from 'components/Search/Results/ResultItem/ResultItem';
+import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
+import AppButton from 'components/shared/AppButton/AppButton';
+import AddIcon from 'components/shared/Icons/AddIcon';
+import { useAppSelector } from 'lib/redux/hooks';
+import { getDataEntityGroupDeletingStatuses } from 'redux/selectors';
 import * as S from './ResultsStyles';
 
 interface ResultsProps {
-  dataEntityClassesByName: Dictionary<DataEntityClass>;
+  dataEntityClassesDict: Dictionary<DataEntityClass>;
   searchId: string;
   searchClass?: SearchClass;
   searchResults: DataEntity[];
@@ -43,7 +48,7 @@ interface ResultsProps {
 }
 
 const Results: React.FC<ResultsProps> = ({
-  dataEntityClassesByName,
+  dataEntityClassesDict,
   searchId,
   searchClass,
   searchResults,
@@ -116,7 +121,7 @@ const Results: React.FC<ResultsProps> = ({
 
   const onSearchClassChange = (newTypeIndex: number) => {
     const newType = tabs[newTypeIndex]?.value
-      ? get(dataEntityClassesByName, `${tabs[newTypeIndex].value}`)
+      ? get(dataEntityClassesDict, `${tabs[newTypeIndex].value}`)
       : null;
     dispatch(
       actions.changeDataEntitySearchFilterAction({
@@ -130,12 +135,14 @@ const Results: React.FC<ResultsProps> = ({
     );
   };
 
+  const pageSize = 30;
+
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
     getDataEntitiesSearchResults({
       searchId,
       page: pageInfo.page + 1,
-      size: 30,
+      size: pageSize,
     });
   };
 
@@ -144,6 +151,25 @@ const Results: React.FC<ResultsProps> = ({
       fetchNextPage();
     }
   }, [searchFiltersSynced, searchId, isSearchCreating]);
+
+  const { isLoaded: isDataEntityGroupDeleted } = useAppSelector(
+    getDataEntityGroupDeletingStatuses
+  );
+
+  const fetchPageAfterDeleting = () => {
+    if (pageInfo.page && isDataEntityGroupDeleted) {
+      getDataEntitiesSearchResults({
+        searchId,
+        page: pageInfo.page,
+        size: pageSize,
+      });
+    }
+  };
+
+  React.useEffect(
+    () => fetchPageAfterDeleting(),
+    [isDataEntityGroupDeleted]
+  );
 
   return (
     <Grid sx={{ mt: 2 }}>
@@ -156,6 +182,20 @@ const Results: React.FC<ResultsProps> = ({
           selectedTab={selectedTab}
           handleTabChange={onSearchClassChange}
           isHintUpdated={isSearchUpdated}
+        />
+      )}
+      {tabs[selectedTab]?.name === 'Groups' && (
+        <DataEntityGroupForm
+          btnCreateEl={
+            <AppButton
+              sx={{ mt: 2 }}
+              size="medium"
+              color="primaryLight"
+              startIcon={<AddIcon />}
+            >
+              Add group
+            </AppButton>
+          }
         />
       )}
       <S.ResultsTableHeader
@@ -247,7 +287,7 @@ const Results: React.FC<ResultsProps> = ({
           <InfiniteScroll
             dataLength={searchResults.length}
             next={fetchNextPage}
-            hasMore={!!pageInfo.hasNext}
+            hasMore={pageInfo.hasNext}
             loader={
               isSearchFetching && (
                 <SkeletonWrapper

@@ -57,7 +57,6 @@ jobs:
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-          JAVA_OPTS: "-Xms2048m -Xmx2048m"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed to get PR information
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew -PskipUIBundle=true -Penv=prod -x compileTestJava clean :odd-platform-api:sonarqube --info

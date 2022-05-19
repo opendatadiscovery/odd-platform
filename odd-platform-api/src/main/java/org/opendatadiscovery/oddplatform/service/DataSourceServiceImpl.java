@@ -130,7 +130,7 @@ public class DataSourceServiceImpl implements DataSourceService {
             .flatMap(d -> searchEntrypointRepository.updateChangedNamespaceVector(d.namespace().getId()))
             .switchIfEmpty(searchEntrypointRepository.clearNamespaceVector(dto.dataSource().getId()));
         return Mono.zip(
-            searchEntrypointRepository.updateDataSourceVector(dto.dataSource().getId()),
+            searchEntrypointRepository.updateChangedDataSourceVector(dto.dataSource().getId()),
             namespaceVector
         ).thenReturn(dto);
     }

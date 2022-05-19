@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.NamespaceMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
@@ -58,10 +59,14 @@ class NamespaceServiceImplTest {
     @Mock
     private NamespaceMapper namespaceMapper;
 
+    @Mock
+    private ReactiveDataEntityRepository dataEntityRepository;
+
     @BeforeEach
     void setUp() {
         this.namespaceService = new NamespaceServiceImpl(namespaceRepository, termRepository, dataSourceRepository,
-            collectorRepository, searchEntrypointRepository, termSearchEntrypointRepository, namespaceMapper);
+            collectorRepository, searchEntrypointRepository, termSearchEntrypointRepository, dataEntityRepository,
+            namespaceMapper);
     }
 
     @Test
@@ -217,6 +222,7 @@ class NamespaceServiceImplTest {
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
         when(namespaceRepository.delete(eq(namespaceId))).thenReturn(Mono.just(namespace));
 
         namespaceService.delete(namespaceId)
@@ -228,6 +234,7 @@ class NamespaceServiceImplTest {
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
         verify(termRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
     }
 
     @Test
@@ -238,6 +245,7 @@ class NamespaceServiceImplTest {
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(true));
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
@@ -247,6 +255,7 @@ class NamespaceServiceImplTest {
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
         verify(termRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
     }
 
     @Test
@@ -257,6 +266,7 @@ class NamespaceServiceImplTest {
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(true));
         when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
 
         namespaceService.delete(namespaceId)
             .as(StepVerifier::create)
@@ -265,6 +275,7 @@ class NamespaceServiceImplTest {
         verify(namespaceRepository, never()).delete(eq(namespaceId));
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(termRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
     }
 
@@ -275,6 +286,7 @@ class NamespaceServiceImplTest {
 
         when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
         when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(false));
         when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(true));
 
         namespaceService.delete(namespaceId)
@@ -285,5 +297,27 @@ class NamespaceServiceImplTest {
         verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
         verify(termRepository, only()).existsByNamespace(eq(namespaceId));
         verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
+    }
+
+    @Test
+    @DisplayName("Tries to delete a namespace which is tied with existing data entity and fails with an error")
+    public void testDeleteTiedNamespaceWithDataEntity() {
+        final long namespaceId = 1L;
+
+        when(collectorRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataSourceRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(termRepository.existsByNamespace(eq(namespaceId))).thenReturn(Mono.just(false));
+        when(dataEntityRepository.existsByNamespaceId(eq(namespaceId))).thenReturn(Mono.just(true));
+
+        namespaceService.delete(namespaceId)
+            .as(StepVerifier::create)
+            .verifyError(IllegalStateException.class);
+
+        verify(namespaceRepository, never()).delete(eq(namespaceId));
+        verify(dataSourceRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(termRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(collectorRepository, only()).existsByNamespace(eq(namespaceId));
+        verify(dataEntityRepository, only()).existsByNamespaceId(eq(namespaceId));
     }
 }

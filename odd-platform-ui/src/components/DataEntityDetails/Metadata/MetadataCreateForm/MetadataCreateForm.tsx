@@ -1,37 +1,27 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import {
-  DataEntityApiCreateDataEntityMetadataFieldValueRequest,
-  MetadataApiGetMetadataFieldListRequest,
-  MetadataField,
-  MetadataFieldList,
-  MetadataFieldValueList,
-  MetadataObject,
-} from 'generated-sources';
+import { MetadataField, MetadataObject } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import MetadataCreateFormItemContainer from './MetadataCreateFormItem/MetadataCreateFormItemContainer';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { createDataEntityCustomMetadata } from 'redux/thunks/metadata.thunks';
+import MetadataCreateFormItem from './MetadataCreateFormItem/MetadataCreateFormItem';
 
 interface MetadataCreateFormProps {
   dataEntityId: number;
   metadataOptions: MetadataField[];
   isLoading: boolean;
-  searchMetadata: (
-    params: MetadataApiGetMetadataFieldListRequest
-  ) => Promise<MetadataFieldList>;
-  createDataEntityCustomMetadata: (
-    params: DataEntityApiCreateDataEntityMetadataFieldValueRequest
-  ) => Promise<MetadataFieldValueList>;
   btnCreateEl: JSX.Element;
 }
 
 const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   dataEntityId,
   isLoading,
-  createDataEntityCustomMetadata,
   btnCreateEl,
 }) => {
+  const dispatch = useAppDispatch();
+
   const methods = useForm<{ metadata: MetadataObject[] }>({
     mode: 'onChange',
     defaultValues: {
@@ -56,10 +46,12 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   };
 
   const createMetadata = (data: { metadata: MetadataObject[] }) => {
-    createDataEntityCustomMetadata({
-      dataEntityId,
-      metadataObject: data.metadata,
-    }).then(
+    dispatch(
+      createDataEntityCustomMetadata({
+        dataEntityId,
+        metadataObject: data.metadata,
+      })
+    ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
         clearState();
@@ -86,10 +78,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
         onSubmit={methods.handleSubmit(createMetadata)}
       >
         {fields.map((item, index) => (
-          <MetadataCreateFormItemContainer
-            key={item.id}
-            itemIndex={index}
-          />
+          <MetadataCreateFormItem key={item.id} itemIndex={index} />
         ))}
       </form>
     </FormProvider>

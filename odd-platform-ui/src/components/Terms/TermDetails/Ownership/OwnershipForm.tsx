@@ -8,15 +8,9 @@ import {
 } from 'react-hook-form';
 import {
   Owner,
-  OwnerApiGetOwnerListRequest,
-  OwnerList,
   Ownership,
   OwnershipFormData,
   Role,
-  RoleApiGetRoleListRequest,
-  RoleList,
-  TermApiCreateTermOwnershipRequest,
-  TermApiUpdateTermOwnershipRequest,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
@@ -29,34 +23,34 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppParams } from 'lib/hooks';
+import {
+  createTermOwnership,
+  fetchOwnersList,
+  fetchRoleList,
+  updateTermOwnership,
+} from 'redux/thunks';
+import { getTermDetailsOwnerUpdatingStatuses } from 'redux/selectors';
 
 interface OwnershipFormProps {
-  termId: number;
   termDetailsOwnership?: Ownership;
   ownerEditBtn: JSX.Element;
-  isUpdating: boolean;
-  createTermDetailsOwnership: (
-    params: TermApiCreateTermOwnershipRequest
-  ) => Promise<Ownership>;
-  updateTermDetailsOwnership: (
-    params: TermApiUpdateTermOwnershipRequest
-  ) => Promise<Ownership>;
-  searchOwners: (
-    params: OwnerApiGetOwnerListRequest
-  ) => Promise<OwnerList>;
-  searchRoles: (params: RoleApiGetRoleListRequest) => Promise<RoleList>;
 }
 
 const OwnershipForm: React.FC<OwnershipFormProps> = ({
-  termId,
   termDetailsOwnership,
   ownerEditBtn,
-  isUpdating,
-  createTermDetailsOwnership,
-  updateTermDetailsOwnership,
-  searchOwners,
-  searchRoles,
 }) => {
+  const dispatch = useAppDispatch();
+  const { termId } = useAppParams();
+  const searchOwners = fetchOwnersList;
+  const searchRoles = fetchRoleList;
+
+  const { isLoading: isOwnerUpdating } = useAppSelector(
+    getTermDetailsOwnerUpdatingStatuses
+  );
+
   // Owner Autocomplete
   type OwnerFilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
   const [ownerOptions, setOwnerOptions] = React.useState<
@@ -72,12 +66,14 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   const handleOwnersSearch = React.useCallback(
     useDebouncedCallback(() => {
       setOwnersLoading(true);
-      searchOwners({ page: 1, size: 30, query: ownersSearchText }).then(
-        response => {
+      dispatch(
+        searchOwners({ page: 1, size: 30, query: ownersSearchText })
+      )
+        .unwrap()
+        .then(({ ownersList }) => {
           setOwnersLoading(false);
-          setOwnerOptions(response.items);
-        }
-      );
+          setOwnerOptions(ownersList);
+        });
     }, 500),
     [searchOwners, setOwnersLoading, setOwnerOptions, ownersSearchText]
   );
@@ -133,12 +129,12 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
   const handleRolesSearch = React.useCallback(
     useDebouncedCallback(() => {
       setRolesLoading(true);
-      searchRoles({ page: 1, size: 30, query: rolesSearchText }).then(
-        response => {
+      dispatch(searchRoles({ page: 1, size: 30, query: rolesSearchText }))
+        .unwrap()
+        .then(({ roleList }) => {
           setRolesLoading(false);
-          setRoleOptions(response.items);
-        }
-      );
+          setRoleOptions(roleList);
+        });
     }, 500),
     [searchRoles, setRolesLoading, setRoleOptions, ownersSearchText]
   );
@@ -225,15 +221,19 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
 
   const ownershipUpdate = (data: OwnershipFormData) => {
     (termDetailsOwnership
-      ? updateTermDetailsOwnership({
-          termId,
-          ownershipId: termDetailsOwnership.id,
-          ownershipUpdateFormData: { roleName: data.roleName },
-        })
-      : createTermDetailsOwnership({
-          termId,
-          ownershipFormData: data,
-        })
+      ? dispatch(
+          updateTermOwnership({
+            termId,
+            ownershipId: termDetailsOwnership.id,
+            ownershipUpdateFormData: { roleName: data.roleName },
+          })
+        )
+      : dispatch(
+          createTermOwnership({
+            termId,
+            ownershipFormData: data,
+          })
+        )
     ).then(
       () => {
         setFormState({ ...initialFormState, isSuccessfulSubmit: true });
@@ -411,7 +411,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       renderContent={formContent}
       renderActions={ownerEditDialogActions}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isUpdating}
+      isLoading={isOwnerUpdating}
       errorText={error}
       clearState={resetState}
     />

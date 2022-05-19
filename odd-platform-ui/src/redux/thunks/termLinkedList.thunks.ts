@@ -1,35 +1,37 @@
 import {
   Configuration,
+  DataEntity,
   TermApi,
-  DataEntityList,
   TermApiGetTermLinkedItemsRequest,
 } from 'generated-sources';
-import { TermGroupLinkedList } from 'redux/interfaces';
-import { createThunk } from 'redux/thunks/base.thunk';
+import { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new TermApi(apiClientConf);
+const termApi = new TermApi(apiClientConf);
 
-export const fetchTermGroupLinkedList = createThunk<
-  TermApiGetTermLinkedItemsRequest,
-  DataEntityList,
-  TermGroupLinkedList<DataEntityList>
+export const fetchTermLinkedList = createAsyncThunk<
+  {
+    termId: number;
+    linkedItemsList: Array<DataEntity>;
+    pageInfo: CurrentPageInfo;
+  },
+  TermApiGetTermLinkedItemsRequest
 >(
-  (params: TermApiGetTermLinkedItemsRequest) =>
-    apiClient.getTermLinkedItems(params),
   actions.fetchTermLinkedListAction,
-  (
-    response: DataEntityList,
-    request: TermApiGetTermLinkedItemsRequest
-  ) => ({
-    termId: request.termId,
-    value: response,
-    pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-      hasNext: request.size * request.page < response.pageInfo.total,
-    },
-  })
+  async (params: TermApiGetTermLinkedItemsRequest) => {
+    const { items, pageInfo } = await termApi.getTermLinkedItems(params);
+
+    return {
+      termId: params.termId,
+      linkedItemsList: items,
+      pageInfo: {
+        ...pageInfo,
+        page: params.page,
+        hasNext: params.size * params.page < pageInfo.total,
+      },
+    };
+  }
 );

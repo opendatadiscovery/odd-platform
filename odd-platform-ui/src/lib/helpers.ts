@@ -11,15 +11,25 @@ export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
 export const stringFormatted = (
   value: string,
   splitter: '_' | '.',
-  removePrefix?: boolean,
-  capitalizeEveryWord?: boolean
-): string => {
-  const formattedString = value
+  capitalizing:
+    | 'all'
+    | 'firstLetterOfString'
+    | 'firstLetterOfEveryWord'
+    | 'disabled',
+  removePrefix?: boolean
+) => {
+  const capitalizeBy = (str: string, idx: number) => {
+    if (capitalizing === 'all') return str.toUpperCase();
+    if (capitalizing === 'firstLetterOfEveryWord') return capitalize(str);
+    if (capitalizing === 'firstLetterOfString' && idx === 0)
+      return capitalize(str);
+
+    return str;
+  };
+
+  return value
     .split(splitter)
     .slice(removePrefix ? 1 : 0)
-    .map(word => capitalize(word))
+    .map(capitalizeBy)
     .join(' ');
-  return capitalizeEveryWord
-    ? formattedString
-    : capitalize(formattedString);
 };

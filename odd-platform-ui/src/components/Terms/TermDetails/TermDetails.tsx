@@ -1,23 +1,16 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import { Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import {
   termDetailsLinkedItemsPath,
   termDetailsOverviewPath,
   termSearchPath,
 } from 'lib/paths';
-import {
-  TermApiDeleteTermRequest,
-  TermApiGetTermDetailsRequest,
-  TermDetails,
-} from 'generated-sources';
-import { ErrorState, FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import TermDetailsSkeleton from 'components/Terms/TermDetails/TermDetailsSkeleton/TermDetailsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
@@ -27,7 +20,15 @@ import KebabIcon from 'components/shared/Icons/KebabIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import TermsFormContainer from 'components/Terms/TermSearch/TermForm/TermsFormContainer';
+import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppParams } from 'lib/hooks';
+import {
+  getTermDetails,
+  getTermDetailsFetchingStatuses,
+} from 'redux/selectors/terms.selectors';
+import { getTermSearchId } from 'redux/selectors/termSearch.selectors';
+import { deleteTerm, fetchTermDetails } from 'redux/thunks';
 import {
   TermDetailsComponentWrapper,
   TermDetailsHeadingRightWrapper,
@@ -35,41 +36,34 @@ import {
 } from './TermDetailsStyles';
 
 // lazy components
-const OverviewContainer = React.lazy(
-  () => import('components/Terms/TermDetails/Overview/OverviewContainer')
+const Overview = React.lazy(
+  () => import('components/Terms/TermDetails/Overview/Overview')
 );
-const LinkedItemsContainer = React.lazy(
+const LinkedItemsList = React.lazy(
   () =>
     import(
-      'components/Terms/TermDetails/TermLinkedItemsList/LinkedItemsListContainer'
+      'components/Terms/TermDetails/TermLinkedItemsList/LinkedItemsList'
     )
 );
 
-interface TermDetailsProps {
-  viewType: string;
-  termId: number;
-  termSearchId: string;
-  termDetails: TermDetails;
-  fetchTermDetails: (params: TermApiGetTermDetailsRequest) => void;
-  termFetchingStatus: FetchStatus;
-  termFetchingError?: ErrorState;
-  deleteTerm: (params: TermApiDeleteTermRequest) => Promise<void>;
-}
-
-const TermDetailsView: React.FC<TermDetailsProps> = ({
-  viewType,
-  termId,
-  termSearchId,
-  termDetails,
-  fetchTermDetails,
-  termFetchingStatus,
-  termFetchingError,
-  deleteTerm,
-}) => {
+const TermDetailsView: React.FC = () => {
   const history = useHistory();
+  const dispatch = useAppDispatch();
+  const { termId, viewType } = useAppParams();
+
+  const {
+    isLoading: isTermDetailsFetching,
+    isNotLoaded: isTermDetailsNotFetched,
+  } = useAppSelector(getTermDetailsFetchingStatuses);
+
+  const termSearchId = useAppSelector(getTermSearchId);
+
+  const termDetails = useAppSelector(state =>
+    getTermDetails(state, termId)
+  );
 
   React.useEffect(() => {
-    fetchTermDetails({ termId });
+    dispatch(fetchTermDetails({ termId }));
   }, [fetchTermDetails, termId]);
 
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
@@ -100,13 +94,13 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
   }, [tabs, viewType]);
 
   const handleTermDelete = (id: number) => () =>
-    deleteTerm({ termId: id }).then(() =>
+    dispatch(deleteTerm({ termId: id })).then(() =>
       history.push(termSearchPath(termSearchId))
     );
 
   return (
     <TermDetailsComponentWrapper>
-      {termDetails && termFetchingStatus !== 'fetching' && (
+      {termDetails && !isTermDetailsFetching && (
         <>
           <TermDetailsHeadingWrapper>
             <Typography variant="h1" noWrap sx={{ mr: 1 }}>
@@ -124,7 +118,7 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
                   </Typography>
                 </>
               )}
-              <TermsFormContainer
+              <TermsForm
                 term={termDetails}
                 btnCreateEl={
                   <AppButton
@@ -179,33 +173,29 @@ const TermDetailsView: React.FC<TermDetailsProps> = ({
           )}
         </>
       )}
-      {termFetchingStatus === 'fetching' && (
+      {isTermDetailsFetching && (
         <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
             <TermDetailsSkeleton width={randomSkeletonPercentWidth()} />
           )}
         />
       )}
-      {termFetchingStatus !== 'errorFetching' && (
+      {!isTermDetailsNotFetched && (
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
             <Route
               exact
               path="/terms/:termId/overview"
-              component={OverviewContainer}
+              component={Overview}
             />
             <Route
               exact
               path="/terms/:termId/linked-items"
-              component={LinkedItemsContainer}
+              component={LinkedItemsList}
             />
           </Switch>
         </React.Suspense>
       )}
-      <AppErrorPage
-        fetchStatus={termFetchingStatus}
-        error={termFetchingError}
-      />
     </TermDetailsComponentWrapper>
   );
 };

@@ -10,6 +10,7 @@ import org.opendatadiscovery.oddplatform.model.tables.records.OwnershipRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
@@ -76,5 +77,14 @@ public class ReactiveOwnershipRepositoryImpl implements ReactiveOwnershipReposit
         );
 
         return jooqReactiveOperations.mono(query).map(r -> r.get(0, Boolean.class));
+    }
+
+    @Override
+    public Flux<OwnershipPojo> deleteByDataEntityId(final long dataEntityId) {
+        final var query = DSL.deleteFrom(OWNERSHIP)
+            .where(OWNERSHIP.DATA_ENTITY_ID.eq(dataEntityId))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(OwnershipPojo.class));
     }
 }

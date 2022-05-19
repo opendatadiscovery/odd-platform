@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.util.Collection;
+import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -22,6 +24,8 @@ public interface TagMapper {
     Tag mapToTag(final TagDto dto);
 
     Tag mapToTag(final TagPojo pojo);
+
+    List<Tag> mapToTagList(final Collection<TagPojo> pojos);
 
     default TagsResponse mapToTagsResponse(final Page<TagDto> page) {
         return new TagsResponse()
