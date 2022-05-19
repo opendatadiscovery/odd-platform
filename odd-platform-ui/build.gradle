@@ -7,6 +7,9 @@ plugins {
 node {
     download = true
     version = "16.14.0"
+    if (env == 'prod') {
+        npmInstallCommand = "ci"
+    }
 }
 
 tasks.register("buildUI", NpmTask) {

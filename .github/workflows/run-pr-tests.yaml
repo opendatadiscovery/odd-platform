@@ -10,31 +10,39 @@ permissions:
 
 jobs:
   run_tests:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          submodules: true
-      - name: Cache local node_modules
+      - name: Cache local Gradle dependencies
         uses: actions/cache@v2
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-platform-${{ hashFiles('**/build.gradle') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
-            ${{ runner.os }}-platform-
+            ${{ runner.os }}-gradle-
+      - name: Cache local npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Run tests
+          cache: 'gradle'
+      - name: Build and run tests
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-          JAVA_OPTS: "-Xms2048m -Xmx2048m"
-        run: ./gradlew clean test ${{ github.event.inputs.buildOptions }} --no-daemon
+        run: ./gradlew build ${{ github.event.inputs.buildOptions }} --no-daemon --scan --parallel
       - name: Publish test reports
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()

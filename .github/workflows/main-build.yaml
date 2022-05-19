@@ -31,7 +31,8 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Gradle cache
+          cache: 'gradle'
+      - name: Cache local Gradle dependencies
         uses: actions/cache@v2
         with:
           path: |
@@ -40,18 +41,12 @@ jobs:
           key: ${{ runner.os }}-shared-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Node cache
-        uses: actions/cache@v2
-        with:
-          path: odd-platform-ui/.npm
-          key: ${{ runner.os }}-shared-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - name: Build with Gradle
+      - name: Build and run tests
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-          JAVA_OPTS: "-Xms2048m -Xmx2048m"
+        run: ./gradlew build ${{ github.event.inputs.buildOptions }} --no-daemon --scan --parallel
+      - name: Build the image
         run: ./gradlew jibDockerBuild --no-daemon --image ${{ env.REGISTRY }}/${{ github.event.repository.name }} -Pversion=ci-${GITHUB_SHA::6} -Penv=prod
       - name: Push Docker image to Amazon ECR
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
