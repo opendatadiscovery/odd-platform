@@ -3,27 +3,45 @@ import { Box, BoxProps } from '@mui/material';
 
 export interface NumberFormattedProps
   extends Pick<BoxProps, 'sx' | 'component'> {
-  value: string | number | undefined;
+  value: string | number | undefined | null;
   precision?: number;
 }
 
 const NumberFormatted: React.FC<NumberFormattedProps> = ({
   value,
-  precision = 0,
+  precision = 1,
   sx,
   component = 'span',
 }) => {
-  const numVal = typeof value === 'string' ? parseInt(value, 10) : value;
+  let formattedNumber: number | string = 0;
+  if (value === undefined) formattedNumber = '';
+  if (value === null) formattedNumber = 'null';
+
+  const numVal =
+    typeof value === 'string' ? parseInt(value, 10) : (value as number);
+
   const formatNumber = React.useCallback(() => {
-    if (numVal === 0) return 0;
-    if (!numVal) return '';
-    const pow = Math.floor(Math.log2(numVal) / 10);
-    const multiplier = 10 ** precision;
-    return (
-      Math.round((numVal * multiplier) / 1000 ** pow) / multiplier +
-      ['', 'K', 'M', 'B', 'T'][pow]
-    );
+    const lookups = [
+      { value: 1, symbol: '' },
+      { value: 1e3, symbol: 'K' },
+      { value: 1e6, symbol: 'M' },
+      { value: 1e9, symbol: 'B' },
+      { value: 1e12, symbol: 't' },
+      { value: 1e15, symbol: 'q' },
+      { value: 1e18, symbol: 'Q' },
+    ];
+    const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+    const item = lookups
+      .slice()
+      .reverse()
+      .find(lookup => numVal >= lookup.value);
+    return item
+      ? (numVal / item.value).toFixed(precision).replace(rx, '$1') +
+          item.symbol
+      : '0';
   }, [value, precision]);
+
+  if (numVal) formattedNumber = formatNumber();
 
   return (
     <Box
@@ -32,7 +50,7 @@ const NumberFormatted: React.FC<NumberFormattedProps> = ({
       title={numVal && numVal > 1000 ? numVal.toLocaleString() : ''}
       data-testid="number-formatted-component"
     >
-      {formatNumber()}
+      {formattedNumber}
     </Box>
   );
 };
