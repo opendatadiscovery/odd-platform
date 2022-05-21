@@ -1,13 +1,11 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.CommonTableExpression;
 import org.jooq.Field;
@@ -17,7 +15,6 @@ import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
-import org.jooq.SelectHavingStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
@@ -62,18 +59,15 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
 
     @Override
     public Mono<Page<AlertDto>> listAllWithStatusOpen(final int page, final int size) {
-        final Select<? extends Record> alertSelect = getDefaultAlertPaginateQuery(page, size);
-        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
+        final SelectConditionStep<AlertRecord> baseQuery = DSL
+            .selectFrom(ALERT)
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()));
 
-        final SelectOnConditionStep<Record> query = DSL.with(alertCte.getName()).as(alertSelect)
-            .select(alertCte.fields())
-            .select(DATA_ENTITY.fields())
-            .select(OWNER.fields())
-            .from(alertCte.getName())
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
-            .leftJoin(USER_OWNER_MAPPING)
-            .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
-            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
+        final List<OrderByField> orderByFields = List.of(
+            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
+        final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
+        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
+        final SelectOnConditionStep<Record> query = createAlertOuterSelect(alertSelect, alertCte);
 
         return jooqReactiveOperations
             .flux(query)
@@ -87,20 +81,21 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
 
     @Override
     public Mono<Page<AlertDto>> listByOwner(final int page, final int size, final long ownerId) {
-        final Select<? extends Record> alertSelect = getDefaultAlertPaginateQuery(page, size);
-        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-
-        final SelectConditionStep<Record> query = DSL.with(alertCte.getName()).as(alertSelect)
-            .select(alertCte.fields())
-            .select(DATA_ENTITY.fields())
-            .select(OWNER.fields())
-            .from(alertCte.getName())
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
+        final SelectConditionStep<Record> baseQuery = DSL
+            .select(ALERT.fields())
+            .from(ALERT)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
             .leftJoin(USER_OWNER_MAPPING)
-            .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
             .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
-            .where(OWNERSHIP.OWNER_ID.eq(ownerId));
+            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())).and(OWNERSHIP.OWNER_ID.eq(ownerId));
+
+        final List<OrderByField> orderByFields = List.of(
+            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
+        final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
+        final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
+        final SelectOnConditionStep<Record> query = createAlertOuterSelect(alertSelect, alertCte);
 
         return jooqReactiveOperations
             .flux(query)
@@ -114,13 +109,10 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
 
     @Override
     public Mono<List<AlertDto>> getAlertsByDataEntityId(final long dataEntityId) {
-        final List<Field<?>> selectFields = Stream
-            .of(ALERT.fields(), DATA_ENTITY.fields(), OWNER.fields())
-            .flatMap(Arrays::stream)
-            .collect(Collectors.toList());
-
-        final SelectHavingStep<Record> query = DSL
-            .select(selectFields)
+        final SelectConditionStep<Record> query = DSL
+            .select(ALERT.fields())
+            .select(DATA_ENTITY.fields())
+            .select(OWNER.fields())
             .from(ALERT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .leftJoin(USER_OWNER_MAPPING).on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
@@ -137,8 +129,7 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
     public Mono<Page<AlertDto>> listDependentObjectsAlerts(
         final int page, final int size, final List<String> ownOddrns) {
         final CommonTableExpression<Record1<String>> cte = getChildOddrnsLinageByOwnOddrnsCte(ownOddrns);
-        final List<OrderByField> orderByFields = List.of(
-            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
+
         final SelectConditionStep<Record> baseQuery = DSL.with(cte)
             .select(ALERT.fields())
             .from(ALERT)
@@ -148,18 +139,12 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
                 .eq(DATA_ENTITY.ODDRN))
             .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()))
             .and(DATA_ENTITY.ODDRN.notIn(ownOddrns));
+
+        final List<OrderByField> orderByFields = List.of(
+            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
         final Select<? extends Record> alertSelect = paginate(baseQuery, orderByFields, (page - 1) * size, size);
         final Table<? extends Record> alertCte = alertSelect.asTable("alert_cte");
-
-        final SelectOnConditionStep<Record> query = DSL.with(alertCte.getName()).as(alertSelect)
-            .select(alertCte.fields())
-            .select(DATA_ENTITY.fields())
-            .select(OWNER.fields())
-            .from(alertCte.getName())
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
-            .leftJoin(USER_OWNER_MAPPING)
-            .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
-            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
+        final SelectOnConditionStep<Record> query = createAlertOuterSelect(alertSelect, alertCte);
 
         return jooqReactiveOperations
             .flux(query)
@@ -173,7 +158,8 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
 
     @Override
     public Mono<List<String>> getObjectsOddrnsByOwner(final long ownerId) {
-        final SelectConditionStep<Record1<String>> query = DSL.select(DATA_ENTITY.ODDRN)
+        final SelectConditionStep<Record1<String>> query = DSL
+            .select(DATA_ENTITY.ODDRN)
             .from(DATA_ENTITY)
             .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
             .where(OWNERSHIP.OWNER_ID.eq(ownerId).and(DATA_ENTITY.DELETED_AT.isNull()));
@@ -313,12 +299,16 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
         );
     }
 
-    private Select<? extends Record> getDefaultAlertPaginateQuery(final int page, final int size) {
-        final List<OrderByField> orderByFields = List.of(
-            new OrderByField(ALERT.CREATED_AT, SortOrder.DESC), new OrderByField(ALERT.ID, SortOrder.DESC));
-        final SelectConditionStep<AlertRecord> baseQuery = DSL
-            .selectFrom(ALERT)
-            .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString()));
-        return paginate(baseQuery, orderByFields, (page - 1) * size, size);
+    private SelectOnConditionStep<Record> createAlertOuterSelect(final Select<? extends Record> alertSelect,
+                                                                 final Table<? extends Record> alertCte) {
+        return DSL.with(alertCte.getName()).as(alertSelect)
+            .select(alertCte.fields())
+            .select(DATA_ENTITY.fields())
+            .select(OWNER.fields())
+            .from(alertCte.getName())
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(alertCte.field(ALERT.DATA_ENTITY_ODDRN)))
+            .leftJoin(USER_OWNER_MAPPING)
+            .on(alertCte.field(ALERT.STATUS_UPDATED_BY).eq(USER_OWNER_MAPPING.OIDC_USERNAME))
+            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID));
     }
 }
