@@ -15,22 +15,19 @@ import {
   AssociatedOwner,
   IdentityApiAssociateOwnerRequest,
   Owner,
-  OwnerApiGetOwnerListRequest,
   OwnerFormData,
-  OwnerList,
 } from 'generated-sources';
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { fetchOwnersList } from 'redux/thunks';
 import * as S from './IdentityStyles';
 
 interface IdentityProps {
   identity?: AssociatedOwner;
-  searchOwners: (
-    params: OwnerApiGetOwnerListRequest
-  ) => Promise<OwnerList>;
   updateIdentityOwner: (
     params: IdentityApiAssociateOwnerRequest
   ) => Promise<void | AssociatedOwner>;
@@ -38,9 +35,11 @@ interface IdentityProps {
 
 const Identity: React.FC<IdentityProps> = ({
   identity,
-  searchOwners,
   updateIdentityOwner,
 }) => {
+  const dispatch = useAppDispatch();
+  const searchOwners = fetchOwnersList;
+
   const methods = useForm<OwnerFormData>({
     mode: 'onChange',
     defaultValues: {
@@ -53,23 +52,23 @@ const Identity: React.FC<IdentityProps> = ({
   type FilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
-  const [optionsLoading, setOptionsLoading] = React.useState<boolean>(
-    false
-  );
-  const [optionsSearchText, setOptionsSearchText] = React.useState<string>(
-    ''
-  );
+  const [optionsLoading, setOptionsLoading] =
+    React.useState<boolean>(false);
+  const [optionsSearchText, setOptionsSearchText] =
+    React.useState<string>('');
   const ownersFilter = createFilterOptions<FilterOption>();
 
   const handleOwnersSearch = React.useCallback(
     useDebouncedCallback(() => {
       setOptionsLoading(true);
-      searchOwners({ page: 1, size: 30, query: optionsSearchText }).then(
-        response => {
+      dispatch(
+        searchOwners({ page: 1, size: 30, query: optionsSearchText })
+      )
+        .unwrap()
+        .then(({ ownersList }) => {
           setOptionsLoading(false);
-          setOptions(response.items);
-        }
-      );
+          setOptions(ownersList);
+        });
     }, 500),
     [searchOwners, setOptionsLoading, setOptions, optionsSearchText]
   );
@@ -136,13 +135,17 @@ const Identity: React.FC<IdentityProps> = ({
 
   React.useEffect(() => {
     if (!identity?.identity.username) return;
-    searchOwners({
-      page: 1,
-      size: 30,
-      query: identity?.identity.username,
-    }).then(response => {
-      setPossibleOwners(response.items);
-    });
+    dispatch(
+      searchOwners({
+        page: 1,
+        size: 30,
+        query: identity?.identity.username,
+      })
+    )
+      .unwrap()
+      .then(({ ownersList }) => {
+        setPossibleOwners(ownersList);
+      });
   }, [identity]);
 
   return (

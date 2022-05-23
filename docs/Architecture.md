@@ -1,32 +1,45 @@
 # Architecture
-[Adapters](#adapters) \
-[Push-client](#push-client) \
-[Push and pull strategies](#push-and-pull-strategies) \
-\
+[Collector](#collector) \
+[Collector vs Adapters](#collector-vs-adapters)
+
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.
 
-![](.gitbook/img/architecture2.png)
+![](.gitbook/img/architecture_collector.png)
 
-### Adapters
+A **Push-client** is a provider which sends information directly to the central repository of the Platform. Also [read](Adapters.md#push-and-pull-strategies) about a push-strategy.
+## Collector
+> :exclamation: The Collector is an upgraded version of a metadata gathering service. [Adapters](Adapters.md#adapters) will be deprecated soon!  
 
-Adapters are lightweight services that gather metadata in a standardized format. They are designed to be source-specific and expose only the information that could be gathered from a particular data source.
+ODD Collector is a lightweight service which gathers metadata from all your data sources: 
+* It manages your metadata according to the [Specification](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md).
+* It connects to all your data sources simultaneously and provides configurable scheduling.
 
-### Push-client
+### Collector types 
+#### [AWS Collector](https://github.com/opendatadiscovery/odd-collector-aws)
+* [Athena](https://github.com/opendatadiscovery/odd-collector-aws#athena)
+* [DynamoDB](https://github.com/opendatadiscovery/odd-collector-aws#dynamodb)
+* [Glue](https://github.com/opendatadiscovery/odd-collector-aws#glue)
+* [Quicksight](https://github.com/opendatadiscovery/odd-collector-aws#quicksight)
+* [S3](https://github.com/opendatadiscovery/odd-collector-aws#s3)
+* [Sagemaker](https://github.com/opendatadiscovery/odd-collector-aws#sagemaker)
+* [SQS](https://github.com/opendatadiscovery/odd-collector-aws#sqs)
 
-Push-clients are providers that send information directly to the central repository of the Platform.
+#### [Collector](https://github.com/opendatadiscovery/odd-collector)
+* [PostgreSQL](https://github.com/opendatadiscovery/odd-collector#postgresql)
+* [MySQL](https://github.com/opendatadiscovery/odd-collector#mysql)
+* [ClickHouse](https://github.com/opendatadiscovery/odd-collector#clickhouse)
+* [Redshift](https://github.com/opendatadiscovery/odd-collector#redshift)
+## Collector vs Adapters
+A previous version of Platform architecture was based on adapters. This approach required to connect new adapter to each data source. Now you can install one Collector and ingest data from all your sources.
+### Deprecated Adapters
+> :exclamation: To use all features and recent updates of the Platform, we recommend you to install the Collector.
 
-## Push and pull strategies
-
-The metadata discovery process is very similar to that of gathering metrics,logs and traces. It can be done through a pull or push model (or both). Each of the models has a range of use cases it suits best. ODD uses both models to effectively cover all core use cases.
-
-### Pull strategy
-
-Pulling metadata directly from the source is the most straightforward way of gathering it. However, an attempt to develop and maintain a centralized fleet of domain-specific crawlers can easily become a problem.\
-Pulling data from multiple sources without having a standard compels to use multiple source-specific crawlers for each adapter, which is a complex and ineffective solution. ODD solves this issue by providing a universal adapter.\
-Pull model is preferred when:
-* There is no need to get immediate data updates.
-* You have already applied one of ODD adapters to your data sources.
-
-### Push strategy
-
-Push strategy supports a process where individual metadata providers push the information to the central ODD repository. This strategy solves a problem of immediate data receiving from ETL / ELT engines that have no public APIs or if it's not possible to import the required data using an existing API. The Push is more preferred for use cases like Airflow job runs and quality check runs.
+Here is a list of deprecated adapters:
+* Glue
+* DynamoDB
+* S3
+* PostgreSQL
+* MySQL
+* Redshift
+* ClickHouse
+* Quicksight

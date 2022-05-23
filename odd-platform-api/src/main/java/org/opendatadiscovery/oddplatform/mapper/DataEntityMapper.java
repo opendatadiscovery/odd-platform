@@ -2,25 +2,35 @@ package org.opendatadiscovery.oddplatform.mapper;
 
 import java.util.Collection;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntitySubType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTypeDictionary;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntitySubtypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 
 public interface DataEntityMapper
     extends ReadOnlyCRUDMapperWithList<DataEntity, DataEntityList, DataEntityDimensionsDto> {
+    DataEntityPojo mapToPojo(final DataEntityGroupFormData formData,
+                             final DataEntityClassDto classDto,
+                             final NamespacePojo namespacePojo);
+
+    DataEntityPojo applyToPojo(final DataEntityGroupFormData formData,
+                               final NamespacePojo namespacePojo,
+                               final DataEntityPojo pojo);
+
     DataEntityDetails mapDtoDetails(final DataEntityDetailsDto dataEntityDetailsDto);
 
     DataEntity mapDataQualityTest(final DataEntityDetailsDto dto);
@@ -29,9 +39,9 @@ public interface DataEntityMapper
 
     DataEntityType mapType(final DataEntityTypeDto type);
 
-    DataEntitySubType mapSubType(final DataEntitySubtypeDto subtype);
+    DataEntityClass mapEntityClass(final DataEntityClassDto entityClass);
 
-    DataEntityTypeDictionary getTypeDict();
+    DataEntityClassAndTypeDictionary getTypeDict();
 
     DataEntityLineage mapLineageDto(final DataEntityLineageDto dataEntityLineageDto);
 

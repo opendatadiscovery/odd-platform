@@ -4,7 +4,7 @@ import { MetadataFieldValue } from 'generated-sources';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import MetadataCreateFormContainer from 'components/DataEntityDetails/Metadata/MetadataCreateForm/MetadataCreateFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import MetadataItemContainer from './MetadataItem/MetadataItemContainer';
+import MetadataItem from './MetadataItem/MetadataItem';
 import { SubtitleContainer } from './OverviewMetadataStyles';
 
 interface OverviewMetadataProps {
@@ -26,7 +26,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
   let collapsedPredefined;
   if (predefinedMetadata?.length > visibleLimit) {
     collapsedPredefined = (
-      <>
+      <Grid container flexDirection="column">
         <Collapse
           in={predefOpen}
           timeout="auto"
@@ -36,7 +36,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           {predefOpen ? (
             <Grid container>
               {predefinedMetadata?.slice(visibleLimit).map(item => (
-                <MetadataItemContainer
+                <MetadataItem
                   dataEntityId={dataEntityId}
                   metadataItem={item}
                   key={item.field.id}
@@ -49,20 +49,20 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           size="small"
           color="tertiary"
           onClick={() => setPredefOpen(!predefOpen)}
-          sx={{ mt: 0.75 }}
+          sx={{ mt: 0.75, width: 'fit-content' }}
         >
           {predefOpen
             ? 'Hide'
             : `View All (${predefinedMetadata.length - visibleLimit})`}
         </AppButton>
-      </>
+      </Grid>
     );
   }
 
   let collapsedCustom;
   if (customMetadata?.length > visibleLimit) {
     collapsedCustom = (
-      <>
+      <Grid container flexDirection="column">
         <Collapse
           in={customOpen}
           timeout="auto"
@@ -72,7 +72,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           {customOpen ? (
             <Grid container>
               {customMetadata?.slice(visibleLimit + 1).map(item => (
-                <MetadataItemContainer
+                <MetadataItem
                   dataEntityId={dataEntityId}
                   metadataItem={item}
                   key={item.field.id}
@@ -82,7 +82,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           ) : null}
         </Collapse>
         <AppButton
-          sx={{ mt: 0.75 }}
+          sx={{ mt: 0.75, width: 'fit-content' }}
           size="small"
           color="tertiary"
           onClick={() => setCustomOpen(!customOpen)}
@@ -91,7 +91,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
             ? 'Hide'
             : `View All (${customMetadata.length - visibleLimit})`}
         </AppButton>
-      </>
+      </Grid>
     );
   }
   return (
@@ -119,7 +119,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
             customMetadata
               ?.slice(0, visibleLimit)
               .map(item => (
-                <MetadataItemContainer
+                <MetadataItem
                   dataEntityId={dataEntityId}
                   metadataItem={item}
                   key={item.field.id}
@@ -160,7 +160,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
             </SubtitleContainer>
           </Grid>
           {predefinedMetadata?.slice(0, visibleLimit).map(item => (
-            <MetadataItemContainer
+            <MetadataItem
               dataEntityId={dataEntityId}
               metadataItem={item}
               key={item.field.id}

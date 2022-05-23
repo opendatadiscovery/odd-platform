@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.MetadataBinding;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
@@ -17,7 +18,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePo
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
@@ -32,7 +32,7 @@ public class MetadataIngestionServiceImpl implements MetadataIngestionService {
     private final MetadataFieldValueRepository metadataFieldValueRepository;
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Mono<IngestionDataStructure> ingestMetadata(final IngestionDataStructure dataStructure) {
         final List<MetadataInfo> metadataInfos = retrieveMetadataInfoFromDataStructure(dataStructure);
 

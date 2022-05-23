@@ -2,14 +2,14 @@ import React from 'react';
 import { MenuItemProps } from '@mui/material';
 import { Variant } from '@mui/material/styles/createTypography';
 import {
-  StyledAppMenuItem,
   StyledAppListItemText,
+  StyledAppMenuItem,
 } from './AppMenuItemStyles';
 
 export interface AppMenuItemProps
   extends Pick<
     MenuItemProps,
-    'children' | 'onClick' | 'divider' | 'value'
+    'children' | 'onClick' | 'divider' | 'value' | 'defaultValue'
   > {
   minWidth?: number;
   maxWidth?: number;
@@ -26,20 +26,22 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
   minWidth,
   removeTextStyles = false,
   fontVariant = 'body1',
+  defaultValue,
 }) => (
   <StyledAppMenuItem
+    aria-label="AppMenuItem"
     disableRipple
     value={value}
     onClick={onClick}
     divider={divider}
     $maxWidth={maxWidth}
     $minWidth={minWidth}
-    aria-label="AppMenuItem"
+    defaultValue={defaultValue}
   >
     <StyledAppListItemText
+      aria-label="AppMenuItemText"
       $removeTextStyles={removeTextStyles}
       $fontVariant={fontVariant}
-      aria-label="AppMenuItemText"
     >
       {children}
     </StyledAppListItemText>

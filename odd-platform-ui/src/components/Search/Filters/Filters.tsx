@@ -7,7 +7,7 @@ import {
   Namespace,
   NamespaceApiGetNamespaceListRequest,
 } from 'generated-sources';
-import { SearchType } from 'redux/interfaces/search';
+import { SearchClass } from 'redux/interfaces/search';
 import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemContainer';
 import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -15,7 +15,7 @@ import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircul
 import * as S from './FiltersStyles';
 
 interface FiltersProps {
-  searchType?: SearchType;
+  searchClass?: SearchClass;
   datasources: DataSource[];
   namespaces: Namespace[];
   fetchDataSourcesList: (
@@ -30,7 +30,7 @@ interface FiltersProps {
 }
 
 const Filters: React.FC<FiltersProps> = ({
-  searchType,
+  searchClass,
   datasources,
   namespaces,
   fetchDataSourcesList,
@@ -51,7 +51,7 @@ const Filters: React.FC<FiltersProps> = ({
         <AppButton
           color="tertiary"
           size="medium"
-          onClick={clearDataEntitySearchFilters}
+          onClick={() => clearDataEntitySearchFilters()}
         >
           Clear All
         </AppButton>
@@ -63,10 +63,10 @@ const Filters: React.FC<FiltersProps> = ({
           name="Datasource"
           facetOptions={datasources}
         />
-        {searchType && searchType > 0 ? (
+        {searchClass && searchClass > 0 ? (
           <MultipleFilterItemContainer
             key="st"
-            facetName="subtypes"
+            facetName="types"
             name="Type"
           />
         ) : null}

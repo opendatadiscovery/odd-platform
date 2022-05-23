@@ -3,10 +3,6 @@ import React from 'react';
 import {
   AlertTotals,
   AssociatedOwner,
-  DataEntityApiGetMyObjectsRequest,
-  DataEntityApiGetMyObjectsWithDownstreamRequest,
-  DataEntityApiGetMyObjectsWithUpstreamRequest,
-  DataEntityApiGetPopularRequest,
   DataEntityRef,
   TagApiGetPopularTagListRequest,
 } from 'generated-sources';
@@ -19,6 +15,13 @@ import StarIcon from 'components/shared/Icons/StarIcon';
 import CatalogIcon from 'components/shared/Icons/CatalogIcon';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { useAppDispatch } from 'lib/redux/hooks';
+import {
+  fetchMyDataEntitiesList,
+  fetchMyDownstreamDataEntitiesList,
+  fetchMyUpstreamDataEntitiesList,
+  fetchPopularDataEntitiesList,
+} from 'redux/thunks';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
@@ -39,18 +42,6 @@ export interface OverviewProps {
   popularDataEntitiesFetching: boolean;
   isMainOverviewContentFetching: boolean;
   fetchAlertsTotals: () => Promise<AlertTotals>;
-  fetchMyDataEntitiesList: (
-    params: DataEntityApiGetMyObjectsRequest
-  ) => Promise<DataEntityRef[]>;
-  fetchMyUpstreamDataEntitiesList: (
-    params: DataEntityApiGetMyObjectsWithUpstreamRequest
-  ) => Promise<DataEntityRef[]>;
-  fetchMyDownstreamDataEntitiesList: (
-    params: DataEntityApiGetMyObjectsWithDownstreamRequest
-  ) => Promise<DataEntityRef[]>;
-  fetchPopularDataEntitiesList: (
-    params: DataEntityApiGetPopularRequest
-  ) => Promise<DataEntityRef[]>;
   fetchTagsList: (params: TagApiGetPopularTagListRequest) => void;
 }
 
@@ -68,22 +59,20 @@ const Overview: React.FC<OverviewProps> = ({
   popularDataEntitiesFetching,
   isMainOverviewContentFetching,
   fetchAlertsTotals,
-  fetchMyDataEntitiesList,
-  fetchMyUpstreamDataEntitiesList,
-  fetchMyDownstreamDataEntitiesList,
-  fetchPopularDataEntitiesList,
   fetchTagsList,
 }) => {
+  const dispatch = useAppDispatch();
+
   React.useEffect(() => {
     if (!identity) return;
     const params = {
       page: 1,
       size: 5,
     };
-    fetchMyDataEntitiesList(params);
-    fetchMyUpstreamDataEntitiesList(params);
-    fetchMyDownstreamDataEntitiesList(params);
-    fetchPopularDataEntitiesList(params);
+    dispatch(fetchMyDataEntitiesList(params));
+    dispatch(fetchMyUpstreamDataEntitiesList(params));
+    dispatch(fetchMyDownstreamDataEntitiesList(params));
+    dispatch(fetchPopularDataEntitiesList(params));
   }, [identity]);
 
   React.useEffect(() => {

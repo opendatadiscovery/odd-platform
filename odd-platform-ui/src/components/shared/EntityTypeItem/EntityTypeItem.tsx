@@ -1,27 +1,25 @@
 import React from 'react';
 import { DataEntityTypeNameEnum } from 'generated-sources';
-import { DataEntityTypeLabelMap } from 'redux/interfaces/dataentities';
-import { BoxProps } from '@mui/material';
+import { SxProps } from '@mui/system';
+import { Theme } from '@mui/material';
+import { stringFormatted } from 'lib/helpers';
 import * as S from './EntityTypeItemStyles';
 
-export interface EntityTypeItemProps extends Pick<BoxProps, 'sx'> {
-  typeName: DataEntityTypeNameEnum;
-  fullName?: boolean;
+export interface EntityTypeItemProps {
+  entityTypeName: DataEntityTypeNameEnum;
+  sx?: SxProps<Theme>;
 }
 
 const EntityTypeItem: React.FC<EntityTypeItemProps> = ({
-  typeName,
-  fullName,
+  entityTypeName,
   sx,
 }) => (
   <S.Content
-    typeName={typeName}
-    fullName={fullName}
     sx={sx}
-    component="span"
-    title={DataEntityTypeLabelMap.get(typeName)?.normal}
+    variant="body2"
+    title={stringFormatted(entityTypeName, '_', 'all')}
   >
-    {DataEntityTypeLabelMap.get(typeName)?.[fullName ? 'normal' : 'short']}
+    {stringFormatted(entityTypeName, '_', 'all')}
   </S.Content>
 );
 

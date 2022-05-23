@@ -1,4 +1,4 @@
-import { DataEntityTypeNameEnum } from 'generated-sources';
+import { DataEntityClassNameEnum } from 'generated-sources';
 import styled from 'styled-components';
 
 export const Container = styled('g')(({ theme }) => ({
@@ -45,10 +45,10 @@ export const Placeholder = styled('tspan')<{ $show: boolean }>(
   })
 );
 
-export const TypeContainer = styled('rect')<{
-  $typeName: DataEntityTypeNameEnum;
-}>(({ theme, $typeName }) => ({
-  fill: theme.palette.entityType[$typeName],
+export const EntityClassContainer = styled('rect')<{
+  $entityClassName: DataEntityClassNameEnum;
+}>(({ theme, $entityClassName }) => ({
+  fill: theme.palette.entityClass[$entityClassName],
   rx: 4,
 }));
 

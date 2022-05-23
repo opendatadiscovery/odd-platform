@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import {
   dataEntityAlertsPath,
@@ -10,20 +10,20 @@ import {
   dataEntityOverviewPath,
   dataEntityTestReportPath,
   datasetStructurePath,
+  searchPath,
 } from 'lib/paths';
 import {
   AlertList,
   DataEntityApiGetDataEntityAlertsRequest,
-  DataEntityApiGetDataEntityDetailsRequest,
   DataEntityDetails,
 } from 'generated-sources';
-import { ErrorState, FetchStatus } from 'redux/interfaces';
+import { FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EditIcon from 'components/shared/Icons/EditIcon';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
@@ -31,6 +31,22 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import {
+  deleteDataEntityGroup,
+  fetchDataEntityDetails,
+} from 'redux/thunks';
+import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import KebabIcon from 'components/shared/Icons/KebabIcon';
+import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import AppPopover from 'components/shared/AppPopover/AppPopover';
+import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
+import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
+import {
+  getDataEntityGroupUpdatingStatuses,
+  getSearchId,
+} from 'redux/selectors';
+import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import * as S from './DataEntityDetailsStyles';
 
 // lazy components
@@ -62,14 +78,10 @@ interface DataEntityDetailsProps {
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
   isQualityTest: boolean;
-  fetchDataEntityDetails: (
-    params: DataEntityApiGetDataEntityDetailsRequest
-  ) => void;
   fetchDataEntityAlerts: (
     params: DataEntityApiGetDataEntityAlertsRequest
   ) => Promise<AlertList>;
   dataEntityFetchingStatus: FetchStatus;
-  dataEntityFetchingError?: ErrorState;
   openAlertsCount: number;
 }
 
@@ -79,15 +91,22 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityDetails,
   isDataset,
   isQualityTest,
-  fetchDataEntityDetails,
   fetchDataEntityAlerts,
   dataEntityFetchingStatus,
-  dataEntityFetchingError,
   openAlertsCount,
 }) => {
+  const dispatch = useAppDispatch();
+  const history = useHistory();
+
+  const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
+    getDataEntityGroupUpdatingStatuses
+  );
+
+  const searchId = useAppSelector(getSearchId);
+
   React.useEffect(() => {
-    fetchDataEntityDetails({ dataEntityId });
-  }, [fetchDataEntityDetails, dataEntityId]);
+    dispatch(fetchDataEntityDetails({ dataEntityId }));
+  }, [fetchDataEntityDetails, dataEntityId, isDataEntityGroupUpdated]);
 
   React.useEffect(() => {
     fetchDataEntityAlerts({ dataEntityId });
@@ -156,6 +175,14 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     );
   }, [tabs, viewType]);
 
+  const handleEntityGroupDelete = React.useCallback(
+    () =>
+      dispatch(
+        deleteDataEntityGroup({ dataEntityGroupId: dataEntityId })
+      ).then(() => history.push(searchPath(searchId))),
+    [deleteDataEntityGroup, dataEntityId]
+  );
+
   return (
     <S.Container>
       {dataEntityDetails && dataEntityFetchingStatus !== 'fetching' ? (
@@ -173,13 +200,19 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                     ? dataEntityDetails.internalName
                     : dataEntityDetails.externalName}
                 </Typography>
-                {dataEntityDetails.types.map(type => (
-                  <EntityTypeItem
+                {dataEntityDetails.entityClasses?.map(entityClass => (
+                  <EntityClassItem
                     sx={{ ml: 0.5 }}
-                    key={type.id}
-                    typeName={type.name}
+                    key={entityClass.id}
+                    entityClassName={entityClass.name}
                   />
                 ))}
+                {dataEntityDetails.type && (
+                  <EntityTypeItem
+                    sx={{ ml: 1 }}
+                    entityTypeName={dataEntityDetails.type.name}
+                  />
+                )}
                 <S.InternalNameEditBtnContainer>
                   <InternalNameFormDialogContainer
                     dataEntityId={dataEntityId}
@@ -206,14 +239,15 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                   />
                 </S.InternalNameEditBtnContainer>
               </Grid>
-              {dataEntityDetails.internalName && (
-                <Grid container alignItems="center">
-                  <LabelItem labelName="Original" variant="body1" />
-                  <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
-                    {dataEntityDetails.externalName}
-                  </Typography>
-                </Grid>
-              )}
+              {dataEntityDetails.internalName &&
+                dataEntityDetails.externalName && (
+                  <Grid container alignItems="center">
+                    <LabelItem labelName="Original" variant="body1" />
+                    <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
+                      {dataEntityDetails.externalName}
+                    </Typography>
+                  </Grid>
+                )}
             </S.Caption>
             <Grid container item alignItems="center" width="auto">
               {dataEntityDetails.updatedAt ? (
@@ -229,6 +263,48 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                   </Typography>
                 </>
               ) : null}
+              <Grid>
+                {dataEntityDetails.manuallyCreated && (
+                  <AppPopover
+                    renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+                      <AppIconButton
+                        sx={{ ml: 2 }}
+                        ariaDescribedBy={ariaDescribedBy}
+                        size="medium"
+                        color="primaryLight"
+                        icon={<KebabIcon />}
+                        onClick={onClick}
+                      />
+                    )}
+                    anchorOrigin={{
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    }}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 65,
+                    }}
+                  >
+                    <DataEntityGroupForm
+                      btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
+                    />
+                    <ConfirmationDialog
+                      actionTitle="Are you sure you want to delete this data entity group?"
+                      actionName="Delete Data Entity Group"
+                      actionText={
+                        <>
+                          &quot;
+                          {dataEntityDetails.internalName ||
+                            dataEntityDetails.externalName}
+                          &quot; will be deleted permanently.
+                        </>
+                      }
+                      onConfirm={handleEntityGroupDelete}
+                      actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+                    />
+                  </AppPopover>
+                )}
+              </Grid>
             </Grid>
           </Grid>
           <Grid sx={{ mt: 2 }}>
@@ -302,10 +378,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
           </Switch>
         </React.Suspense>
       ) : null}
-      <AppErrorPage
-        fetchStatus={dataEntityFetchingStatus}
-        error={dataEntityFetchingError}
-      />
+      <AppErrorPage fetchStatus={dataEntityFetchingStatus} />
     </S.Container>
   );
 };

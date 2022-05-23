@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import findKey from 'lodash/findKey';
 import omit from 'lodash/omit';
 import values from 'lodash/values';
@@ -11,35 +11,38 @@ import {
   SearchState,
   SearchFilterStateSynced,
   SearchFacetStateById,
-  SearchType,
+  SearchClass,
 } from 'redux/interfaces';
-import { DataEntityTypeNameEnum } from 'generated-sources';
+import { DataEntityClassNameEnum } from 'generated-sources';
 import {
-  createFetchingSelector,
-  createErrorSelector,
+  createLegacyFetchingSelector,
+  createLegacyErrorSelector,
 } from 'redux/selectors/loader-selectors';
 
 const searchState = ({ search }: RootState): SearchState => search;
 
-export const getSearchCreationStatus = createFetchingSelector(
+export const getSearchCreationStatus = createLegacyFetchingSelector(
   'POST_DATA_ENTITIES_SEARCH'
 );
 
-export const getSearchFetchStatus = createFetchingSelector(
+export const getSearchFetchStatus = createLegacyFetchingSelector(
   'GET_DATA_ENTITIES_SEARCH'
 );
 
-export const getSearchFetchError = createErrorSelector(
+export const getSearchFetchError = createLegacyErrorSelector(
   'GET_DATA_ENTITIES_SEARCH'
 );
 
-export const getSearchUpdateStatus = createFetchingSelector(
+export const getSearchUpdateStatus = createLegacyFetchingSelector(
   'PUT_DATA_ENTITIES_SEARCH'
 );
 
-export const getSearchResultsFetchStatus = createFetchingSelector(
+export const getSearchResultsFetchStatus = createLegacyFetchingSelector(
   'GET_DATA_ENTITIES_SEARCH_RESULTS'
 );
+
+export const getSearchSuggestionsFetchStatus =
+  createLegacyFetchingSelector('GET_DATA_ENTITIES_SEARCH_SUGGESTIONS');
 
 export const getSearchFiltersSynced = createSelector(
   searchState,
@@ -80,6 +83,11 @@ export const getSearchIsCreating = createSelector(
   statusCreate => statusCreate === 'fetching'
 );
 
+export const getSearchSuggestionsIsFetching = createSelector(
+  getSearchSuggestionsFetchStatus,
+  statusFetch => statusFetch === 'fetching'
+);
+
 export const getSearchIsUpdated = createSelector(
   getSearchUpdateStatus,
   statusUpdate => statusUpdate === 'fetching'
@@ -111,14 +119,14 @@ export const getSearchFacetsByType = createSelector(
   (search, searchFacet) => values(search.facets[searchFacet]?.items) || []
 );
 
-export const getSearchEntityType = createSelector(searchState, search => {
-  if (search.myObjects) return 'my' as SearchType;
-  const selectedType = findKey(
+export const getSearchEntityClass = createSelector(searchState, search => {
+  if (search.myObjects) return 'my' as SearchClass;
+  const selectedClass = findKey(
     omit(search.totals, ['all', 'myObjectsTotal']),
     filterItem => filterItem?.selected
   );
-  return (search.totals[selectedType as DataEntityTypeNameEnum]?.id ||
-    'all') as SearchType;
+  return (search.totals[selectedClass as DataEntityClassNameEnum]?.id ||
+    'all') as SearchClass;
 });
 
 export const getSelectedSearchFacetOptions = createSelector(

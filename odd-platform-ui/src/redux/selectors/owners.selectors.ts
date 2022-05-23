@@ -1,37 +1,28 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { OwnersState } from 'redux/interfaces/state';
 import { Owner } from 'generated-sources';
+import * as actions from 'redux/actions';
+import { getTermId } from 'redux/selectors/terms.selectors';
 import { getDataEntityId } from './dataentity.selectors';
 
 const ownersState = ({ owners }: RootState): OwnersState => owners;
 
-const getOwnersListFetchingStatus = createFetchingSelector('GET_OWNERS');
-export const getOwnersCreateStatus = createFetchingSelector('POST_OWNERS');
-export const getOwnerUpdateStatus = createFetchingSelector('PUT_OWNER');
-export const deleteOwnersUpdateStatus = createFetchingSelector(
-  'DELETE_OWNER'
+export const getOwnerCreatingStatuses = createStatusesSelector(
+  actions.createOwnerAction
 );
 
-export const getIsOwnerCreating = createSelector(
-  getOwnersCreateStatus,
-  status => status === 'fetching'
+export const getOwnerUpdatingStatuses = createStatusesSelector(
+  actions.updateOwnerAction
 );
 
-export const getIsOwnerUpdating = createSelector(
-  getOwnerUpdateStatus,
-  status => status === 'fetching'
+export const getOwnerDeletingStatuses = createStatusesSelector(
+  actions.deleteOwnerAction
 );
 
-export const getIsOwnerDeleting = createSelector(
-  deleteOwnersUpdateStatus,
-  status => status === 'fetching'
-);
-
-export const getIsOwnersListFetching = createSelector(
-  getOwnersListFetchingStatus,
-  status => status === 'fetching'
+export const getOwnerListFetchingStatuses = createStatusesSelector(
+  actions.fetchOwnersAction
 );
 
 export const getOwnersList = createSelector(ownersState, owners =>
@@ -43,7 +34,6 @@ export const getOwnersListPage = createSelector(
   ownersList => ownersList.pageInfo
 );
 
-// Data Entity Metadata
 const getOwnerToExclude = (
   _: RootState,
   ownerIdToExclude: number | undefined
@@ -51,9 +41,8 @@ const getOwnerToExclude = (
 
 export const getOwnerSuggestionsList = createSelector(
   ownersState,
-  getOwnersListFetchingStatus,
   getOwnerToExclude,
-  (owners, fetchingStatus, ownerIdToExclude) =>
+  (owners, ownerIdToExclude) =>
     owners.allIds.reduce((acc: Owner[], ownerId) => {
       if (ownerId !== ownerIdToExclude) acc.push(owners.byId[ownerId]);
       return [...acc];
@@ -64,7 +53,17 @@ export const getDataEntityOwnership = createSelector(
   ownersState,
   getDataEntityId,
   (owners, dataEntityId) =>
-    owners.ownership[dataEntityId]?.allIds.map(
-      id => owners.ownership[dataEntityId].byId[id]
+    owners.ownershipDataEntity[dataEntityId]?.allIds.map(
+      id => owners.ownershipDataEntity[dataEntityId].byId[id]
+    ) || []
+);
+
+// Terms
+export const getTermOwnership = createSelector(
+  ownersState,
+  getTermId,
+  (owners, termId) =>
+    owners.ownershipTermDetails[termId]?.allIds.map(
+      id => owners.ownershipTermDetails[termId].byId[id]
     ) || []
 );

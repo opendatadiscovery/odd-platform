@@ -1,4 +1,3 @@
-import { updateDataEntityInternalName } from 'redux/thunks';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces/state';
 import {
@@ -15,9 +14,7 @@ const mapStateToProps = (
   dataEntityInternalName: getDataEntityInternalName(state, dataEntityId),
 });
 
-const mapDispatchToProps = {
-  updateDataEntityInternalName,
-};
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,

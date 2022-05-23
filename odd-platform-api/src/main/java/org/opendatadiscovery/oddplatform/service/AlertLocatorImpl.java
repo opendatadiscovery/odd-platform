@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.SetUtils;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
-import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
@@ -19,7 +19,9 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,8 @@ import static java.util.function.Function.identity;
 @Component
 @RequiredArgsConstructor
 public class AlertLocatorImpl implements AlertLocator {
+    private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
+
     private static final Set<IngestionTaskRun.IngestionTaskRunStatus> TASK_RUN_BAD_STATUSES = Set.of(
         IngestionTaskRun.IngestionTaskRunStatus.BROKEN,
         IngestionTaskRun.IngestionTaskRunStatus.FAILED
@@ -43,26 +47,38 @@ public class AlertLocatorImpl implements AlertLocator {
 
     @Override
     public List<AlertPojo> locateDataQualityTestRunFailed(final List<IngestionTaskRun> taskRuns) {
-        return taskRuns.stream()
+        final List<IngestionTaskRun> failedTaskRuns = taskRuns.stream()
             .filter(tr -> tr.getType().equals(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN))
             .filter(tr -> TASK_RUN_BAD_STATUSES.contains(tr.getStatus()))
-            .map(tr -> buildAlert(
-                tr.getDataEntityOddrn(),
-                AlertTypeEnum.FAILED_DQ_TEST,
-                tr.getOddrn(),
-                String.format("Test %s failed with status %s", tr.getTaskName(), tr.getStatus())
-            ))
-            .collect(Collectors.toList());
+            .toList();
+        if (failedTaskRuns.isEmpty()) {
+            return List.of();
+        }
+        final Map<String, List<DataQualityTestRelationsPojo>> relationsMap = dataQualityTestRelationRepository
+            .getRelations(failedTaskRuns.stream().map(IngestionTaskRun::getDataEntityOddrn).toList())
+            .stream()
+            .collect(Collectors.groupingBy(DataQualityTestRelationsPojo::getDataQualityTestOddrn));
+        return taskRuns.stream()
+            .flatMap(tr -> {
+                final List<DataQualityTestRelationsPojo> relatedPojos =
+                    relationsMap.getOrDefault(tr.getDataEntityOddrn(), List.of());
+                return relatedPojos.stream().map(p -> buildAlert(
+                    p.getDatasetOddrn(),
+                    AlertTypeEnum.FAILED_DQ_TEST,
+                    tr.getOddrn(),
+                    String.format("Test %s failed with status %s", tr.getTaskName(), tr.getStatus())
+                ));
+            }).toList();
     }
 
     @Override
     public List<AlertPojo> locateEarlyBackIncSchema(final List<DataEntitySpecificAttributesDelta> deltas) {
         final Stream<AlertPojo> transformerAlerts = deltas.stream()
-            .filter(d -> d.types().contains(DataEntityTypeDto.DATA_TRANSFORMER))
+            .filter(d -> d.entityClasses().contains(DataEntityClassDto.DATA_TRANSFORMER))
             .flatMap(this::locateAlertsInDTDelta);
 
         final Stream<AlertPojo> consumerAlerts = deltas.stream()
-            .filter(d -> d.types().contains(DataEntityTypeDto.DATA_CONSUMER))
+            .filter(d -> d.entityClasses().contains(DataEntityClassDto.DATA_CONSUMER))
             .flatMap(this::locateAlertsInDCDelta);
 
         return Stream.concat(transformerAlerts, consumerAlerts).collect(Collectors.toList());
@@ -124,23 +140,23 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     private DataTransformerAttributes extractDTAttributes(final String json) {
-        final Map<DataEntityTypeDto, ?> specificAttributes =
-            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityTypeDto, ?>>() {
+        final Map<DataEntityClassDto, ?> specificAttributes =
+            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityClassDto, ?>>() {
             });
 
         return JSONSerDeUtils.deserializeJson(
-            specificAttributes.get(DataEntityTypeDto.DATA_TRANSFORMER),
+            specificAttributes.get(DataEntityClassDto.DATA_TRANSFORMER),
             DataTransformerAttributes.class
         );
     }
 
     private DataConsumerAttributes extractDCAttributes(final String json) {
-        final Map<DataEntityTypeDto, ?> specificAttributes =
-            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityTypeDto, ?>>() {
+        final Map<DataEntityClassDto, ?> specificAttributes =
+            JSONSerDeUtils.deserializeJson(json, new TypeReference<Map<DataEntityClassDto, ?>>() {
             });
 
         return JSONSerDeUtils.deserializeJson(
-            specificAttributes.get(DataEntityTypeDto.DATA_CONSUMER),
+            specificAttributes.get(DataEntityClassDto.DATA_CONSUMER),
             DataConsumerAttributes.class
         );
     }

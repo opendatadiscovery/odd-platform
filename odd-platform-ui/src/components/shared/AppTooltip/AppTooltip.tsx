@@ -12,6 +12,7 @@ export interface AppTooltipProps
   checkForOverflow?: boolean;
   isOverflowed?: boolean;
   children?: React.ReactNode | React.ReactElement | string;
+  cursorPointer?: boolean;
 }
 
 const AppTooltip: React.FC<AppTooltipProps> = ({
@@ -24,6 +25,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   checkForOverflow = true,
   isOverflowed = true,
   sx,
+  cursorPointer = false,
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
 
@@ -56,7 +58,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
           if (hoverStatus) setOpen(true);
         }}
         onMouseLeave={() => setOpen(false)}
-        $isCursorPointer={hoverStatus}
+        $isCursorPointer={hoverStatus || cursorPointer}
         $isOverflowed={isOverflowed}
         ref={childrenRef}
         aria-label="AppTooltipChildrenContainer"

@@ -30,6 +30,7 @@ tags:
   - name: alert
   - name: appInfo
   - name: collector
+  - name: term
 paths:
   /api/identity/whoami:
     get:
@@ -275,72 +276,6 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/RoleList'
-      tags:
-        - role
-    post:
-      summary: Create a role
-      operationId: createRole
-      description: Creates a role
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/RoleFormData'
-      responses:
-        '201':
-          description: The resource has been successfully created
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/Role'
-      tags:
-        - role
-  /api/roles/{role_id}:
-    get:
-      summary: Get role details
-      description: Get role details
-      operationId: getRoleDetails
-      parameters:
-        - name: role_id
-          in: path
-          schema:
-            type: integer
-            format: int64
-          required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/Role'
-      tags:
-        - role
-    put:
-      summary: Update role
-      description: Updates role
-      operationId: updateRole
-      parameters:
-        - name: role_id
-          in: path
-          schema:
-            type: integer
-            format: int64
-          required: true
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: './components.yaml/#/components/schemas/RoleUpdateFormData'
-      responses:
-        '201':
-          description: The resource has been successfully updated
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/Role'
       tags:
         - role
   /api/tags:
@@ -842,34 +777,6 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefList'
       tags:
         - search
-  /api/dataentities:
-    get:
-      summary: Get dataEntities
-      description: Returns paginated list of dataEntities of a given type/subType sorted by priority
-      operationId: getDataEntityList
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/PageParam'
-        - $ref: './components.yaml/#/components/parameters/SizeParam'
-        - name: type_id
-          in: query
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: subtype_id
-          in: query
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/DataEntityRefList'
-      tags:
-        - dataEntity
   /api/dataentities/my:
     get:
       summary: Get my objects
@@ -938,18 +845,18 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefList'
       tags:
         - dataEntity
-  /api/dataentities/types:
+  /api/dataentities/classes:
     get:
-      summary: Get Data Entity types
-      description: Get Data Entity types
-      operationId: getDataEntityTypes
+      summary: Get Data Entity dictionary
+      description: Get Data Entity classes and types
+      operationId: getDataEntityClasses
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/DataEntityTypeDictionary'
+                $ref: './components.yaml/#/components/schemas/DataEntityClassAndTypeDictionary'
       tags:
         - dataEntity
   /api/dataentities/{data_entity_id}:
@@ -1012,6 +919,41 @@ paths:
                 $ref: './components.yaml/#/components/schemas/InternalName'
       tags:
         - dataEntity
+  /api/dataentities/{data_entity_id}/term:
+    post:
+      summary: Add term to data entity
+      description: Link existing term with data entity
+      operationId: addDataEntityTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityTermFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRef'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/term/{term_id}:
+    delete:
+      summary: Delete term from Data entity
+      description: Delete term from current data entity terms list
+      operationId: deleteTermFromDataEntity
+      parameters:
+          - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+          - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntity
   /api/dataentities/{data_entity_id}/ownership:
     post:
       summary: Create new ownership
@@ -1041,7 +983,7 @@ paths:
       operationId: updateOwnership
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-        - $ref: './components.yaml/#/components/parameters/DataEntityOwnershipIdParam'
+        - $ref: './components.yaml/#/components/parameters/OwnershipIdParam'
       requestBody:
         required: true
         content:
@@ -1063,7 +1005,7 @@ paths:
       operationId: deleteOwnership
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-        - $ref: './components.yaml/#/components/parameters/DataEntityOwnershipIdParam'
+        - $ref: './components.yaml/#/components/parameters/OwnershipIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'
@@ -1081,7 +1023,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DataEntityTagsFormData'
+              $ref: './components.yaml/#/components/schemas/TagsFormData'
       responses:
         '200':
           description: OK
@@ -1325,6 +1267,62 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - dataEntity
+
+  /api/dataentitygroups:
+    post:
+      summary: Create New DataEntityGroup
+      description: Create New DataEntityGroup
+      operationId: createDataEntityGroup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityGroupFormData'
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: './components.yaml/#/components/schemas/DataEntityRef'
+      tags:
+        - dataEntity
+
+  /api/dataentitygroups/{data_entity_group_id}:
+    put:
+      summary: Update DataEntityGroup
+      description: Updates DataEntityGroup
+      operationId: updateDataEntityGroup
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityGroupIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityGroupFormData'
+      responses:
+        '201':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRef'
+      tags:
+        - dataEntity
+    delete:
+      summary: Delete DataEntityGroup
+      description: Deletes DataEntityGroup
+      operationId: deleteDataEntityGroup
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityGroupIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntity
+
   /api/dataentitygroups/{data_entity_group_id}/lineage:
     get:
       summary: Get DataEntityGroup lineage
@@ -1541,3 +1539,338 @@ paths:
                   $ref: './components.yaml/#/components/schemas/DataSource'
       tags:
         - dataSource
+
+  /api/terms:
+    get:
+      summary: List of terms
+      description: Gets the list of existing terms
+      operationId: getTermsList
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRefList'
+      tags:
+        - term
+    post:
+      summary: Create term
+      description: Create new term
+      operationId: createTerm
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TermFormData'
+      responses:
+        '201':
+          description: The resource has been successfully created
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermDetails'
+      tags:
+        - term
+
+  /api/terms/{term_id}:
+    get:
+      summary: Get term details
+      description: Get all information about term
+      operationId: getTermDetails
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermDetails'
+      tags:
+        - term
+    put:
+      summary: Update term
+      description: Update existing term
+      operationId: updateTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TermFormData'
+      responses:
+        '201':
+          description: The resource has been successfully modified
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermDetails'
+      tags:
+        - term
+    delete:
+      summary: Delete term
+      description: Deletes term
+      operationId: deleteTerm
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - term
+
+  /api/terms/{term_id}/linked_items:
+    get:
+      summary: Get term linked items
+      description: Get data entities, which are using this term
+      operationId: getTermLinkedItems
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: entity_class_id
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityList'
+      tags:
+        - term
+
+  /api/terms/search:
+    post:
+      summary: Terms search by query
+      description: Creates a new search of all the matching terms to given query and calculates the aggregation data for correspondent data slice
+      operationId: termSearch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TermSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermSearchFacetsData'
+      tags:
+        - term
+
+  /api/terms/search/{search_id}:
+    get:
+      summary: Get terms search facets by search ID
+      description: Gets term search facets by parameter which can be found in search endpoint response
+      operationId: getTermSearchFacetList
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermSearchFacetsData'
+      tags:
+        - term
+    put:
+      summary: Update term search facets by search ID
+      description: Updates term search facets of a certain search ID by provided search parameters
+      operationId: updateTermSearchFacets
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TermSearchFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermSearchFacetsData'
+      tags:
+        - term
+
+  /api/terms/search/{search_id}/facet/{facet_type}:
+    get:
+      summary: Get countable term filters for chosen facet type
+      description: Gets countable term filters for chosen facet type
+      operationId: getTermFiltersForFacet
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: facet_type
+          in: path
+          required: true
+          schema:
+            $ref: './components.yaml/#/components/schemas/MultipleFacetType'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/CountableSearchFilter'
+      tags:
+        - term
+
+  /api/terms/search/{search_id}/results:
+    get:
+      summary: Get terms search results by search ID
+      description: Returns paginated list of terms search results for a given search ID
+      operationId: getTermSearchResults
+      parameters:
+        - name: search_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermList'
+      tags:
+        - term
+
+  /api/terms/search/suggestions:
+    get:
+      summary: Get terms search suggestions by query
+      description: Returns top five search suggestions for a given query
+      operationId: getTermSearchSuggestions
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/SearchParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TermRefList'
+      tags:
+        - term
+
+  /api/terms/{term_id}/ownership:
+    post:
+      summary: Create new ownership for term
+      description: Creates new ownership for term
+      operationId: createTermOwnership
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnershipFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Ownership'
+      tags:
+        - term
+
+  /api/terms/{term_id}/ownership/{ownership_id}:
+    put:
+      summary: Update existing ownership
+      description: Updates existing ownership
+      operationId: updateTermOwnership
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/OwnershipIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/OwnershipUpdateFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/Ownership'
+      tags:
+        - term
+    delete:
+      summary: Delete ownership
+      description: Deletes the ownership
+      operationId: deleteTermOwnership
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/OwnershipIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - term
+
+  /api/terms/{term_id}/tags:
+    put:
+      summary: Creates tags relations for term
+      description: Creates tags relations for term. Also creates corresponding tags in the system if they don't exist.
+      operationId: createTermTagsRelations
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/TagsFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/TagList'
+      tags:
+        - term

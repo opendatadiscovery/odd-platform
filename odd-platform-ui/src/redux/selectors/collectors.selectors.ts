@@ -1,12 +1,12 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 import { CollectorsState } from 'redux/interfaces/state';
 
 const collectorsState = ({ collectors }: RootState): CollectorsState =>
   collectors;
 
-const getCollectorsListFetchingStatus = createFetchingSelector(
+const getCollectorsListFetchingStatus = createLegacyFetchingSelector(
   'GET_COLLECTOR_LIST'
 );
 
@@ -20,18 +20,16 @@ export const getCollectorsList = createSelector(
   collectors => collectors.allIds.map(id => collectors.byId[id])
 );
 
-const getCollectorCreationStatus = createFetchingSelector(
-  'POST_COLLECTOR'
-);
+const getCollectorCreationStatus =
+  createLegacyFetchingSelector('POST_COLLECTOR');
 
 export const getIsCollectorCreating = createSelector(
   getCollectorCreationStatus,
   status => status === 'fetching'
 );
 
-const getCollectorDeletionStatus = createFetchingSelector(
-  'DELETE_COLLECTOR'
-);
+const getCollectorDeletionStatus =
+  createLegacyFetchingSelector('DELETE_COLLECTOR');
 
 export const getIsCollectorDeleting = createSelector(
   getCollectorDeletionStatus,

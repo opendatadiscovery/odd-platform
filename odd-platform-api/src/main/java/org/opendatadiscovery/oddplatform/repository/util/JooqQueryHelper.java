@@ -7,27 +7,33 @@ import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.OrderField;
 import org.jooq.Record;
+import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.SortOrder;
 import org.jooq.Table;
+import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.rowNumber;
+import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 
 @Component
 @RequiredArgsConstructor
 public class JooqQueryHelper {
-    private final DSLContext dslContext;
-
     private static final String PAGE_METADATA_TOTAL_FIELD = "_total";
     private static final String PAGE_METADATA_NEXT_FIELD = "_next";
     private static final String PAGE_METADATA_ROW_NUMBER = "_row";
+    private final DSLContext dslContext;
+
+    public Select<? extends Record1<Boolean>> selectExists(final Select<?> baseSelect) {
+        return DSL.select(field(DSL.exists(baseSelect)));
+    }
 
     public Select<? extends Record> paginate(final Select<?> baseSelect,
                                              final int page,
@@ -98,6 +104,16 @@ public class JooqQueryHelper {
             .build();
     }
 
+    public <T, R extends Record> Mono<Page<T>> pageifyResult(final List<R> records,
+                                                             final Function<R, T> recordMapper,
+                                                             final Mono<Long> emptyRecordTotalCounter) {
+        if (records.isEmpty()) {
+            return emptyRecordTotalCounter.map(count -> pageifyResult(records, recordMapper, () -> count));
+        }
+
+        return Mono.just(pageifyResult(records, recordMapper, () -> null));
+    }
+
     public <T> Field<T> getField(final Table<?> table, final Field<T> refField) {
         final Field<T> f = table.field(refField);
         if (f == null) {
@@ -108,10 +124,13 @@ public class JooqQueryHelper {
         return f;
     }
 
-    private static void homogeneityCheck(final List<Field<?>> fields) {
+    public void homogeneityCheck(final List<Field<?>> fields) {
         String tableName = null;
 
         for (final Field<?> field : fields) {
+            if (field.equals(RANK_FIELD_ALIAS)) {
+                continue;
+            }
             final String fieldTableName = field.getQualifiedName().first();
             if (null == tableName) {
                 tableName = fieldTableName;

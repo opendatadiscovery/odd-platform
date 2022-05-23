@@ -1,24 +1,19 @@
 import { Typography } from '@mui/material';
 import React from 'react';
-import {
-  DataEntityApiUpsertDataEntityInternalNameRequest,
-  InternalName,
-  InternalNameFormData,
-} from 'generated-sources';
+import { InternalNameFormData } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { updateDataEntityInternalName } from 'redux/thunks';
 
 interface InternalNameFormDialogProps {
   btnCreateEl: JSX.Element;
   isLoading: boolean;
   dataEntityId: number;
   dataEntityInternalName?: string;
-  updateDataEntityInternalName: (
-    params: DataEntityApiUpsertDataEntityInternalNameRequest
-  ) => Promise<InternalName>;
 }
 
 const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
@@ -26,8 +21,9 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   isLoading,
   dataEntityId,
   dataEntityInternalName,
-  updateDataEntityInternalName,
 }) => {
+  const dispatch = useAppDispatch();
+
   const { handleSubmit, control, reset } = useForm<InternalNameFormData>({
     mode: 'all',
     reValidateMode: 'onChange',
@@ -44,10 +40,12 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   };
 
   const onSubmit = (data: InternalNameFormData) => {
-    updateDataEntityInternalName({
-      dataEntityId,
-      internalNameFormData: data,
-    }).then(
+    dispatch(
+      updateDataEntityInternalName({
+        dataEntityId,
+        internalNameFormData: data,
+      })
+    ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
         clearState();

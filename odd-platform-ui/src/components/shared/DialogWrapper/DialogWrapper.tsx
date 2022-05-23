@@ -49,11 +49,20 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
     },
     [setOpen]
   );
-  const handleClose = React.useCallback(() => setOpen(false), [setOpen]);
+  const handleClose = React.useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      setOpen(false);
+      if (clearState) {
+        clearState();
+      }
+    },
+    [setOpen]
+  );
 
   React.useEffect(() => {
     handleClose();
-  }, [handleCloseSubmittedForm]);
+  }, [handleCloseSubmittedForm, handleClose]);
 
   return (
     <>
@@ -62,7 +71,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
         <S.MainDialog
           $isLoading={isLoading}
           open={open}
-          onClose={handleClose}
+          onClose={(e: React.MouseEvent) => handleClose(e)}
           fullWidth
           maxWidth={maxWidth}
           scroll={scroll}
@@ -76,12 +85,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
               size="small"
               color="unfilled"
               icon={<ClearIcon />}
-              onClick={() => {
-                if (clearState) {
-                  clearState();
-                }
-                handleClose();
-              }}
+              onClick={handleClose}
             />
           </S.Title>
           <S.Content id={dialogContentId}>

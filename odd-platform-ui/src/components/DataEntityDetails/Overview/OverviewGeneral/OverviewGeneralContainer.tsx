@@ -1,9 +1,10 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { getDataEntityDetails } from 'redux/selectors/dataentity.selectors';
-import { getDataEntityOwnership } from 'redux/selectors/owners.selectors';
-import { deleteDataEntityOwnership } from 'redux/thunks/owners.thunks';
-import OverviewGeneralProps from './OverviewGeneral';
+import {
+  getDataEntityDetails,
+  getDataEntityOwnership,
+} from 'redux/selectors';
+import OverviewGeneral from './OverviewGeneral';
 
 const mapStateToProps = (
   state: RootState,
@@ -14,11 +15,9 @@ const mapStateToProps = (
   ownership: getDataEntityOwnership(state, dataEntityId),
 });
 
-const mapDispatchToProps = {
-  deleteDataEntityOwnership,
-};
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(OverviewGeneralProps);
+)(OverviewGeneral);

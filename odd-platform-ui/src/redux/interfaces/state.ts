@@ -5,9 +5,10 @@ import {
   AlertTotals,
   AppInfo,
   AssociatedOwner,
+  Collector,
   DataEntity,
+  DataEntityClass,
   DataEntityRef,
-  DataEntitySubType,
   DataEntityType,
   DataQualityTest,
   DataQualityTestRun,
@@ -15,7 +16,6 @@ import {
   DataSetTestReport,
   DataSetVersion,
   DataSource,
-  Collector,
   EnumValue,
   Label,
   MetadataField,
@@ -24,11 +24,15 @@ import {
   Owner,
   Ownership,
   Tag,
+  Term,
+  TermDetails,
+  TermRefList,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
 // eslint-disable-next-line lodash/import-scope
 import { Dictionary } from 'lodash';
+import { store } from 'redux/store';
 import { DataSetStructureTypesCount } from './datasetStructure';
 import {
   FacetOptionsByName,
@@ -38,7 +42,10 @@ import {
 import { DataEntityLineageById } from './dataentityLineage';
 import { CurrentPageInfo } from './common';
 import { DataEntityDetailsState } from './dataentities';
-import { LoaderState } from './loader';
+import {
+  TermSearchFacetOptionsByName,
+  TermSearchFacetsByName,
+} from './termSearch';
 
 export interface DataSourcesState {
   byId: { [dataSourceId: string]: DataSource };
@@ -139,8 +146,14 @@ export interface OwnersState {
   byId: { [ownerId: number]: Owner };
   allIds: number[];
   pageInfo?: CurrentPageInfo;
-  ownership: {
+  ownershipDataEntity: {
     [dataEntityId: string]: {
+      byId: { [ownershipId: string]: Ownership };
+      allIds: number[];
+    };
+  };
+  ownershipTermDetails: {
+    [termId: string]: {
       byId: { [ownershipId: string]: Ownership };
       allIds: number[];
     };
@@ -156,9 +169,9 @@ export interface DataEntitiesState {
   myUpstream: DataEntityRef[];
   myDownstream: DataEntityRef[];
   popular: DataEntityRef[];
-  typesDict: {
-    types: Dictionary<DataEntityType>;
-    subtypes: Dictionary<DataEntitySubType>;
+  classesAndTypesDict: {
+    entityTypes: Dictionary<DataEntityType>;
+    entityClasses: Dictionary<DataEntityClass>;
   };
 }
 
@@ -197,25 +210,34 @@ export interface AppInfoState {
   appInfo?: AppInfo;
 }
 
-export type RootState = {
-  appInfo: AppInfoState;
-  dataSources: DataSourcesState;
-  search: SearchState;
-  loader: LoaderState;
-  dataEntities: DataEntitiesState;
-  tags: TagsState;
-  metaData: MetaDataState;
-  owners: OwnersState;
-  datasetStructure: DatasetStructureState;
-  labels: LabelsState;
-  namespaces: NamespacesState;
-  dataEntityLineage: DataEntityLineageState;
-  profile: ProfileState;
-  dataQualityTest: DataQualityTestState;
-  alerts: AlertsState;
-  dataEntityGroupLinkedList: DataEntityGroupLinkedListState;
-  collectors: CollectorsState;
-};
+export interface TermsState {
+  byId: { [termId: string]: TermDetails };
+  allIds: Term['id'][];
+  pageInfo?: CurrentPageInfo;
+}
+
+export interface TermSearchState {
+  termSearchId: string;
+  query: string;
+  facets: TermSearchFacetOptionsByName;
+  isFacetsStateSynced: boolean;
+  results: {
+    items: Term[];
+    pageInfo: CurrentPageInfo;
+  };
+  suggestions: TermRefList;
+  facetState: TermSearchFacetsByName;
+}
+
+export interface TermLinkedListState {
+  linkedItemsIdsByTermId: {
+    [termId: string]: number[];
+  };
+  pageInfo?: CurrentPageInfo;
+}
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;
 

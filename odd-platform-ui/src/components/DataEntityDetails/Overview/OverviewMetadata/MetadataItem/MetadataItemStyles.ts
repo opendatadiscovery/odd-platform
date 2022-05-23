@@ -10,7 +10,6 @@ export const LabelContainer = styled(Grid)(({ theme }) => ({
 export const Label = styled(Typography)(({ theme }) => ({
   wordBreak: 'break-word',
   maxHeight: '5rem',
-  overflow: 'auto',
   paddingRight: theme.spacing(1),
 }));
 

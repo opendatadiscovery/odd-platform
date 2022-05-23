@@ -34,7 +34,7 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
           {tag.important ? 'important' : ''}
         </Typography>
       </S.Col>
-      <S.ActionsContainer item>
+      <S.ActionsContainer container item>
         <TagEditFormContainer
           tag={tag}
           editBtn={

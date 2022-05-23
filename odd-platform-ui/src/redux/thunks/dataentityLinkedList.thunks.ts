@@ -1,35 +1,38 @@
 import {
   Configuration,
+  DataEntity,
   DataEntityApi,
   DataEntityApiGetDataEntityGroupsChildrenRequest,
-  DataEntityList,
 } from 'generated-sources';
-import { DataEntityGroupLinkedList } from 'redux/interfaces';
-import { createThunk } from 'redux/thunks/base.thunk';
+import { CurrentPageInfo } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new DataEntityApi(apiClientConf);
+const dataEntityApi = new DataEntityApi(apiClientConf);
 
-export const fetchDataEntityGroupLinkedList = createThunk<
-  DataEntityApiGetDataEntityGroupsChildrenRequest,
-  DataEntityList,
-  DataEntityGroupLinkedList<DataEntityList>
+export const fetchDataEntityGroupLinkedList = createAsyncThunk<
+  {
+    dataEntityGroupId: number;
+    linkedItemsList: Array<DataEntity>;
+    pageInfo: CurrentPageInfo;
+  },
+  DataEntityApiGetDataEntityGroupsChildrenRequest
 >(
-  (params: DataEntityApiGetDataEntityGroupsChildrenRequest) =>
-    apiClient.getDataEntityGroupsChildren(params),
   actions.fetchDataEntityGroupLinkedListAction,
-  (
-    response: DataEntityList,
-    request: DataEntityApiGetDataEntityGroupsChildrenRequest
-  ) => ({
-    entityId: request.dataEntityGroupId,
-    value: response,
-    pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
-    },
-  })
+  async ({ dataEntityGroupId, page, size }) => {
+    const { items, pageInfo } =
+      await dataEntityApi.getDataEntityGroupsChildren({
+        dataEntityGroupId,
+        page,
+        size,
+      });
+
+    return {
+      dataEntityGroupId,
+      linkedItemsList: items,
+      pageInfo: { ...pageInfo, page },
+    };
+  }
 );

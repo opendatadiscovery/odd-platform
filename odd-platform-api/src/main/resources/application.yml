@@ -74,3 +74,6 @@ logging:
   level:
     org.springframework.transaction.interceptor: info
     org.jooq.tools.LoggerListener: info
+    io.r2dbc.postgresql.QUERY: info
+    io.r2dbc.postgresql.PARAM: info
+

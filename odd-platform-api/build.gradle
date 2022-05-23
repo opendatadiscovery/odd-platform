@@ -1,13 +1,10 @@
 plugins {
-    id 'org.springframework.boot' version '2.5.0'
+    id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.google.cloud.tools.jib' version '3.0.0'
     id 'checkstyle'
     id "de.undercouch.download" version "4.1.2" apply false
-}
-
-ext {
-    env = findProperty('env') ?: 'prod'
+    id "org.sonarqube" version "3.3"
 }
 
 if (env == 'dev') {
@@ -17,7 +14,6 @@ if (env == 'dev') {
 group = 'org.opendatadiscovery'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
-sourceCompatibility = '17'
 
 apply from: 'jooq.generate.gradle'
 
@@ -29,9 +25,13 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-jooq"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
     implementation "org.springframework.session:spring-session-core"
+    implementation('org.springframework:spring-r2dbc') {
+        exclude group: 'io.r2dbc', module: 'r2dbc-spi'
+    }
     implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
     implementation "org.opendatadiscovery:ingestion-contract-server:$oddIngestionApiVersion"
@@ -47,10 +47,16 @@ dependencies {
 
     implementation "org.flywaydb:flyway-core:$flywayVersion"
     implementation "org.postgresql:postgresql:$postgresqlDriverVersion"
+    implementation "org.jooq:jooq:$jooqVersion"
+    implementation "io.r2dbc:r2dbc-spi:$r2dbcSpiVersion"
+    implementation "io.r2dbc:r2dbc-postgresql"
+    implementation "io.r2dbc:r2dbc-pool:$r2dbcPoolVersion"
 
     implementation "javax.validation:validation-api:$validationApiVersion"
     implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonJsr310Version"
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    implementation "io.projectreactor.addons:reactor-extra:$reactorExtraVersion"
 
     implementation(platform("io.opentelemetry:opentelemetry-bom:$opentelemetryVersion"))
     implementation(platform("io.opentelemetry:opentelemetry-bom-alpha:$opentelemetryVersionAlpha"))
@@ -60,12 +66,14 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-sdk-metrics")
     implementation("io.opentelemetry:opentelemetry-exporter-otlp-metrics")
 
+    implementation("org.jetbrains:annotations:$jetbrainsAnnotationVersion")
 
     implementation("org.springframework.boot:spring-boot-starter-data-ldap")
     implementation("org.springframework.security:spring-security-ldap")
 
     compileOnly "org.projectlombok:lombok:$lombokVersion"
     annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
 
     testImplementation("org.springframework.boot:spring-boot-starter-test") {
         exclude group: 'junit', module: 'junit'
@@ -81,6 +89,10 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
 
     jooqGenerationContainer("org.testcontainers:postgresql:$testContainersVersion")
+}
+
+bootRun {
+    jvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
 }
 
 springBoot {
@@ -147,6 +159,8 @@ jib {
     allowInsecureRegistries = false
 }
 
+jibDockerBuild.dependsOn(test)
+
 checkstyle {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')
     configProperties = ["suppressionFile": project(':').file('config/checkstyle/suppressions.xml')]
@@ -201,4 +215,12 @@ if (env == "dev") {
     }
 
     jibDockerBuild.dependsOn tasks.downloadOtlp
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "odd-platform_backend"
+        property "sonar.organization", "opendatadiscovery"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
 }

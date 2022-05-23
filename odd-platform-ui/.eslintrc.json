@@ -14,9 +14,10 @@
     },
     "ecmaVersion": 2020,
     "sourceType": "module",
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.json",
+    "warnOnUnsupportedTypeScriptVersion": false
   },
-  "plugins": ["@typescript-eslint", "prettier", "mui-unused-classes", "lodash"],
+  "plugins": ["@typescript-eslint", "prettier", "lodash"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -46,7 +47,17 @@
     }],
     "default-param-last": "off",
     "@typescript-eslint/default-param-last": "off",
-    "react/jsx-no-useless-fragment": ["error", { "allowExpressions":  true }]
+    "react/jsx-no-useless-fragment": ["error", { "allowExpressions":  true }],
+    "@typescript-eslint/no-unused-vars": "warn",
+    "no-param-reassign": [
+      "warn",
+      {
+        "props": true,
+        "ignorePropertyModificationsFor": [
+          "state"
+        ]
+      }
+    ]
   },
   "overrides": [
     {

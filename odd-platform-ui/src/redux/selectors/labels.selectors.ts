@@ -1,16 +1,18 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 import { LabelsState } from 'redux/interfaces/state';
 
 const labelsState = ({ labels }: RootState): LabelsState => labels;
 
-const getLabelsListFetchingStatus = createFetchingSelector('GET_LABELS');
-export const getLabelsCreateStatus = createFetchingSelector('POST_LABELS');
-export const getLabelUpdateStatus = createFetchingSelector('PUT_LABEL');
-export const deleteLabelsUpdateStatus = createFetchingSelector(
-  'DELETE_LABEL'
-);
+const getLabelsListFetchingStatus =
+  createLegacyFetchingSelector('GET_LABELS');
+export const getLabelsCreateStatus =
+  createLegacyFetchingSelector('POST_LABELS');
+export const getLabelUpdateStatus =
+  createLegacyFetchingSelector('PUT_LABEL');
+export const deleteLabelsUpdateStatus =
+  createLegacyFetchingSelector('DELETE_LABEL');
 
 export const getIsLabelsListFetching = createSelector(
   getLabelsListFetchingStatus,

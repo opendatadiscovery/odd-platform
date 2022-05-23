@@ -17,7 +17,7 @@ import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
 import values from 'lodash/values';
 import reduce from 'lodash/reduce';
-import assignWith from 'lodash/assignWith';
+import { assignWith } from 'lib/redux/helpers';
 
 export const initialState: SearchState = {
   searchId: '',
@@ -66,7 +66,7 @@ const updateSearchState = (
     searchId: payload.searchId,
     query: payload.query,
     myObjects: !!payload.myObjects,
-    totals: payload.facetState.types?.reduce(
+    totals: payload.facetState.entityClasses?.reduce(
       (acc, facetOption) => ({
         ...acc,
         [facetOption.name]: facetOption,
@@ -138,7 +138,7 @@ const updateFacet = (
     ...state,
     isFacetsStateSynced: false,
     myObjects:
-      payload.facetName === 'types'
+      payload.facetName === 'entityClasses'
         ? payload.facetOptionId === 'my'
         : state.myObjects,
     facetState: {
@@ -174,7 +174,8 @@ const clearFilters = (state: SearchState): SearchState => ({
   ...state,
   isFacetsStateSynced: false,
   facetState: mapValues(state.facetState, (filter, facetName) => {
-    if (facetName === 'types') return state.facetState.types; // Not clearing types filter
+    if (facetName === 'entityClasses')
+      return state.facetState.entityClasses; // Not clearing entityClasses filter
     return reduce<SearchFacetStateById, SearchFacetStateById>(
       state.facetState[facetName as SearchFacetNames],
       (acc, facetOption) => {

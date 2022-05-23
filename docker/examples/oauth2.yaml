@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  database:
+    image: postgres:13.2-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    ports:
+      - 5432:5432
+
+  odd-platform:
+    image: opendatadiscovery/odd-platform:latest
+    restart: always
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/${POSTGRES_DATABASE}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_ODDIAM_ISSUER_URI=
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ODDIAM_CLIENT_ID=
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ODDIAM_CLIENT_SECRET=
+      - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_ODDIAM_REDIRECT_URI=
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=
+    depends_on:
+      - database
+    ports:
+      - 8080:8080

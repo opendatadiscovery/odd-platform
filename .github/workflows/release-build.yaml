@@ -16,17 +16,15 @@ on:
 
 jobs:
   release:
+    concurrency: release
     runs-on: self-hosted
     outputs:
       version: ${{steps.get-version.outputs.version}}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          submodules: true
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
       - name: Check version
         id: get-version
         run: |
@@ -42,24 +40,19 @@ jobs:
               VERSION="${{ github.event.inputs.buildOptions }}"
           fi
           echo ::set-output name=version::${VERSION}
-      - name: Cache local node_modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-platform-${{ hashFiles('**/build.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-platform-
       - name: Set up JDK 17
         uses: actions/setup-java@v2
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Build with Gradle
+          cache: 'gradle'
+      - name: Build and run tests
         env:
           GENERATE_SOURCEMAP: false
           CI: false
-          JAVA_OPTS: "-Xms2048m -Xmx2048m"
-        run: ./gradlew clean jibDockerBuild ${{ github.event.inputs.buildOptions }} --no-daemon --image odd-platform -Pversion=${{ steps.get-version.outputs.version }}
+        run: ./gradlew build ${{ github.event.inputs.buildOptions }} --no-daemon --parallel --scan
+      - name: Build the image
+        run: ./gradlew jibDockerBuild ${{ github.event.inputs.buildOptions }} --no-daemon --image odd-platform -Pversion=${{ steps.get-version.outputs.version }}
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v1
         with:

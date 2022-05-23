@@ -53,17 +53,20 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
     [searchNamespace, setLoading, setOptions, searchText]
   );
 
-  const getOptionLabel = React.useCallback((option: FilterOption) => {
-    // Value selected with enter, right from the input
-    if (typeof option === 'string') {
-      return option;
-    }
-    // Regular option
-    if ('name' in option && option.name) {
-      return option.name;
-    }
-    return '';
-  }, []);
+  const getOptionLabel = React.useCallback(
+    (option: FilterOption | string) => {
+      // Value selected with enter, right from the input
+      if (typeof option === 'string') {
+        return option;
+      }
+      // Regular option
+      if ('name' in option && option.name) {
+        return option.name;
+      }
+      return '';
+    },
+    []
+  );
 
   const getFilterOptions = React.useCallback(
     (filterOptions, params) => {
@@ -105,25 +108,26 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
   }, [autocompleteOpen, searchText]);
 
   const handleOptionChange = React.useCallback(
-    (onChange: (val?: string) => void) => (
-      _: React.ChangeEvent<unknown>,
-      newValue: FilterChangeOption | null
-    ) => {
-      let newField;
-      if (newValue && typeof newValue === 'object') {
-        if ('name' in newValue) {
-          newField = newValue;
+    (onChange: (val?: string) => void) =>
+      (
+        _: React.ChangeEvent<unknown>,
+        newValue: FilterChangeOption | null
+      ) => {
+        let newField;
+        if (newValue && typeof newValue === 'object') {
+          if ('name' in newValue) {
+            newField = newValue;
+          }
         }
-      }
 
-      // Create value from keyboard
-      if (typeof newValue === 'string') {
-        newField = {
-          name: newValue,
-        };
-      }
-      onChange(newField?.name || '');
-    },
+        // Create value from keyboard
+        if (typeof newValue === 'string') {
+          newField = {
+            name: newValue,
+          };
+        }
+        onChange(newField?.name || '');
+      },
     []
   );
 
@@ -164,7 +168,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
           }}
         />
       )}
-      renderOption={(props, option) => (
+      renderOption={(props, option: FilterOption) => (
         <li {...props}>
           <Typography variant="body2">
             {option.id ? (

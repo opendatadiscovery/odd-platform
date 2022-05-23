@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  getSearchEntityType,
+  getSearchEntityClass,
   getSearchFiltersSynced,
   getSearchId,
   getSearchIsCreating,
@@ -12,14 +12,14 @@ import {
   getSearchResultsPage,
   getSearchTotals,
 } from 'redux/selectors/dataentitySearch.selectors';
-import { getDataEntityTypesByName } from 'redux/selectors/dataentity.selectors';
+import { getDataEntityClassesDict } from 'redux/selectors/dataentity.selectors';
 import { getDataEntitiesSearchResults } from 'redux/thunks/dataentitiesSearch.thunks';
 import Results from './Results';
 
 const mapStateToProps = (state: RootState) => ({
   searchId: getSearchId(state),
-  searchType: getSearchEntityType(state),
-  dataEntityTypesByName: getDataEntityTypesByName(state),
+  searchClass: getSearchEntityClass(state),
+  dataEntityClassesDict: getDataEntityClassesDict(state),
   totals: getSearchTotals(state),
   searchResults: getSearchResults(state),
   pageInfo: getSearchResultsPage(state),

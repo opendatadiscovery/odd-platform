@@ -18,6 +18,8 @@ import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.SelectOnConditionStep;
+import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
@@ -28,7 +30,6 @@ import org.opendatadiscovery.oddplatform.model.tables.records.AlertRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.countDistinct;
@@ -163,7 +164,7 @@ public class AlertRepositoryImpl implements AlertRepository {
         return dslContext.select(DATA_ENTITY.ODDRN)
             .from(DATA_ENTITY)
             .leftJoin(OWNERSHIP).on(DATA_ENTITY.ID.eq(OWNERSHIP.DATA_ENTITY_ID))
-            .where(OWNERSHIP.OWNER_ID.eq(ownerId))
+            .where(OWNERSHIP.OWNER_ID.eq(ownerId).and(DATA_ENTITY.DELETED_AT.isNull()))
             .fetchStreamInto(String.class)
             .toList();
     }
@@ -171,15 +172,22 @@ public class AlertRepositoryImpl implements AlertRepository {
     private CommonTableExpression<Record1<String>> getChildOddrnsLinageByOwnOddrnsCte(final List<String> ownOddrns) {
         final Name cteName = name("t");
 
+        final Field<String[]> parentOddrnArrayField = DSL.array(LINEAGE.PARENT_ODDRN).as("parent_oddrn_array");
+
         final CommonTableExpression<Record> cte = cteName.as(dslContext
             .select(LINEAGE.asterisk())
+            .select(parentOddrnArrayField)
             .from(LINEAGE)
             .where(LINEAGE.CHILD_ODDRN.in(ownOddrns))
             .unionAll(dslContext
                 .select(LINEAGE.asterisk())
+                .select(DSL.field("%s || %s".formatted(parentOddrnArrayField, LINEAGE.PARENT_ODDRN)))
                 .from(LINEAGE)
-                .join(cteName).on(LINEAGE.CHILD_ODDRN.eq(
-                    field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))));
+                .join(cteName)
+                .on(LINEAGE.CHILD_ODDRN.eq(
+                    field(cteName.append(LINEAGE.PARENT_ODDRN.getUnqualifiedName()), String.class)))
+                .and(LINEAGE.PARENT_ODDRN.notEqual(DSL.all(parentOddrnArrayField)))
+            ));
 
         return name("t2")
             .as(dslContext.withRecursive(cte)
@@ -239,7 +247,7 @@ public class AlertRepositoryImpl implements AlertRepository {
     }
 
     @Override
-    @Transactional
+    @BlockingTransactional
     public Collection<AlertPojo> createAlerts(final Collection<AlertPojo> alerts) {
         if (CollectionUtils.isEmpty(alerts)) {
             return emptyList();

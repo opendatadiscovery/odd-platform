@@ -9,7 +9,7 @@ updates:
   open-pull-requests-limit: 10
   versioning-strategy: increase-if-necessary
   labels:
-    - "scope: frontend"
+  - "scope: frontend"
   ignore:
   - dependency-name: react-scripts
     versions:
@@ -21,3 +21,11 @@ updates:
   - dependency-name: react-json-tree
     versions:
     - 0.15.0
+  - dependency-name: d3-selection
+    versions:
+    - 2.0.0
+  - dependency-name: husky
+    versions:
+    - 4.3.8
+  - dependency-name: "*"
+    update-types: [ "version-update:semver-minor" ]
