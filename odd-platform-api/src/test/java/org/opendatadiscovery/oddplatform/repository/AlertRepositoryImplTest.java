@@ -58,8 +58,9 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
             .assertNext(alertPojos -> assertThat(alertPojos)
                 .hasSize(2)
                 .allMatch(p -> p.getId() != null)
-                .usingElementComparatorIgnoringFields("id", "createdAt")
-                .hasSameElementsAs(List.of(firstAlert, secondAlert)))
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "createdAt")
+                .hasSameElementsAs(List.of(firstAlert, secondAlert))
+            )
             .verifyComplete();
     }
 
