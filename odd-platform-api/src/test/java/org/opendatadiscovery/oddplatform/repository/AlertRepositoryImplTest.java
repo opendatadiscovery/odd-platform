@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
+import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
@@ -54,11 +55,15 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
 
         final Mono<List<AlertPojo>> createdAlerts = alertRepository.createAlerts(List.of(firstAlert, secondAlert));
 
+        final RecursiveComparisonConfiguration configuration = RecursiveComparisonConfiguration.builder()
+            .withIgnoredFields("id", "createdAt")
+            .build();
+
         createdAlerts.as(StepVerifier::create)
             .assertNext(alertPojos -> assertThat(alertPojos)
                 .hasSize(2)
                 .allMatch(p -> p.getId() != null)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "createdAt")
+                .usingRecursiveFieldByFieldElementComparator(configuration)
                 .hasSameElementsAs(List.of(firstAlert, secondAlert))
             )
             .verifyComplete();
