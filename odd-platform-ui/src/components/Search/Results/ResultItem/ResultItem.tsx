@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity, DataEntityClassNameEnum } from 'generated-sources';
-import { SearchTotalsByName, SearchClass } from 'redux/interfaces/search';
+import { SearchClass, SearchTotalsByName } from 'redux/interfaces/search';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { dataEntityDetailsPath } from 'lib/paths';
 import TruncatedCell from 'components/shared/TruncatedCell/TruncatedCell';
@@ -13,6 +13,7 @@ import {
 } from 'components/Search/Results/ResultsStyles';
 import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import { Container, ItemLink } from './ResultItemStyles';
 
 interface ResultItemProps {
@@ -94,7 +95,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
             </ColContainer>
             <ColContainer item $colType="colxs">
               <Typography variant="body1" noWrap>
-                {searchResult.stats?.rowsCount}
+                <NumberFormatted value={searchResult.stats?.rowsCount} />
               </Typography>
             </ColContainer>
             <ColContainer item $colType="colxs">

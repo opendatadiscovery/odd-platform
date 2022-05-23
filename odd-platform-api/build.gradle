@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.2'
+    id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.google.cloud.tools.jib' version '3.0.0'
     id 'checkstyle'
@@ -29,7 +29,9 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
     implementation "org.springframework.session:spring-session-core"
-    implementation "org.springframework:spring-r2dbc"
+    implementation('org.springframework:spring-r2dbc') {
+        exclude group: 'io.r2dbc', module: 'r2dbc-spi'
+    }
     implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
     implementation "org.opendatadiscovery:ingestion-contract-server:$oddIngestionApiVersion"
@@ -46,6 +48,7 @@ dependencies {
     implementation "org.flywaydb:flyway-core:$flywayVersion"
     implementation "org.postgresql:postgresql:$postgresqlDriverVersion"
     implementation "org.jooq:jooq:$jooqVersion"
+    implementation "io.r2dbc:r2dbc-spi:$r2dbcSpiVersion"
     implementation "io.r2dbc:r2dbc-postgresql"
     implementation "io.r2dbc:r2dbc-pool:$r2dbcPoolVersion"
 

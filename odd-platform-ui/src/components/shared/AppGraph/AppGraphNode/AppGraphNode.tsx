@@ -6,13 +6,17 @@ import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
-import { DataEntityLineage } from 'generated-sources';
+import {
+  DataEntityClassNameEnum,
+  DataEntityLineage,
+} from 'generated-sources';
 import GroupedEntitiesListModal from 'components/shared/AppGraph/AppGraphNode/GroupedEntitiesListModal/GroupedEntitiesListModal';
 import NodeListButton from 'components/shared/AppGraph/AppGraphNode/NodeListButton/NodeListButton';
 import {
   Attribute,
   AttributeLabel,
   Container,
+  EntityClassContainer,
   LoadMoreButton,
   LoadMoreButtonName,
   LoadMoreSpinner,
@@ -20,7 +24,6 @@ import {
   Placeholder,
   RootNodeRect,
   Title,
-  EntityClassContainer,
   TypeLabel,
   UnknownEntityNameCircle,
   UnknownEntityNameCrossedLine,
@@ -197,6 +200,11 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     commitTransform();
     loadMoreSpinnerTransform();
   }, [commitTransform, loadMoreSpinnerTransform]);
+
+  const isDEG = !!data.entityClasses?.find(
+    entityClass =>
+      entityClass.name === DataEntityClassNameEnum.ENTITY_GROUP
+  );
 
   return (
     <g
@@ -380,7 +388,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         ))}
       </Container>
 
-      {!hasChildren && showLoadMore && (
+      {!hasChildren && showLoadMore && !isDEG && (
         <LoadMoreButton
           ref={n => {
             if (n) {

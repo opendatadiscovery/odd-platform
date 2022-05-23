@@ -16,6 +16,7 @@ on:
 
 jobs:
   release:
+    concurrency: release
     runs-on: self-hosted
     outputs:
       version: ${{steps.get-version.outputs.version}}
