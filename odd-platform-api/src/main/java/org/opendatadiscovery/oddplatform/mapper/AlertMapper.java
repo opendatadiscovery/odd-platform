@@ -10,6 +10,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.Identity;
+import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,9 +46,12 @@ public abstract class AlertMapper {
     abstract Alert mapAlert(final AlertDto alertDto);
 
     public AlertList mapAlerts(final Page<AlertDto> alerts) {
+        final PageInfo pageInfo = new PageInfo();
+        pageInfo.setTotal(alerts.getTotal());
+        pageInfo.setHasNext(alerts.isHasNext());
         return new AlertList()
             .items(alerts.getData().stream().map(this::mapAlert).collect(Collectors.toList()))
-            .pageInfo(null);
+            .pageInfo(pageInfo);
     }
 
     public AlertList mapAlerts(final List<AlertDto> alerts) {

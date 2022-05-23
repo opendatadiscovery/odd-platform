@@ -108,7 +108,8 @@ class AlertMapperTest {
         when(ownerMapper.mapToOwner(any(OwnerPojo.class))).thenReturn(owner);
 
         final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, updatedByOwner));
-        final Page<AlertDto> alertDtoPage = new Page<>(alertDtos, 2L, false);
+        final long pageTotal = 2L;
+        final Page<AlertDto> alertDtoPage = new Page<>(alertDtos, pageTotal, false);
 
         //when
         final AlertList alertList = alertMapper.mapAlerts(alertDtoPage);
@@ -118,6 +119,9 @@ class AlertMapperTest {
         final Alert actual = alertList.getItems().get(0);
         assertActualAlertList(actual, alertPojo);
         assertThat(actual.getStatusUpdatedBy().getOwner().getName()).isEqualTo(owner.getName());
+        assertThat(alertList.getPageInfo()).isNotNull();
+        assertThat(alertList.getPageInfo().getHasNext()).isFalse();
+        assertThat(alertList.getPageInfo().getTotal()).isEqualTo(pageTotal);
     }
 
     private void assertActualAlertList(final Alert alert, final AlertPojo alertPojo) {
