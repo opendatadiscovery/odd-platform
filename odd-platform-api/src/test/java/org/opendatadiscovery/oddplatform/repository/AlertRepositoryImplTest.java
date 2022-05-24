@@ -49,16 +49,15 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final AlertPojo firstAlert = createAlertPojo(dataEntityPojo.getOddrn());
-        final AlertPojo secondAlert = createAlertPojo(dataEntityPojo.getOddrn());
 
-        final Mono<List<AlertPojo>> createdAlerts = alertRepository.createAlerts(List.of(firstAlert, secondAlert));
+        final Mono<List<AlertPojo>> createdAlerts = alertRepository.createAlerts(List.of(firstAlert));
 
         createdAlerts.as(StepVerifier::create)
             .assertNext(alertPojos -> assertThat(alertPojos)
-                .hasSize(2)
+                .hasSize(1)
                 .allMatch(p -> p.getId() != null)
                 .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "createdAt")
-                .containsExactlyElementsOf(List.of(firstAlert, secondAlert))
+                .containsExactlyElementsOf(List.of(firstAlert))
             )
             .verifyComplete();
     }
