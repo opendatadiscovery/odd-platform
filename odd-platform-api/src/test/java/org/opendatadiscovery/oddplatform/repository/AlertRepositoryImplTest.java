@@ -59,7 +59,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
                     assertThat(alertPojo.getId()).isNotNull();
                     assertThat(alertPojo.getDescription()).isEqualTo(firstAlert.getDescription());
                     assertThat(alertPojo.getType()).isEqualTo(firstAlert.getType());
-                    assertThat(alertPojo.getStatusUpdatedAt()).isEqualTo(firstAlert.getStatusUpdatedAt());
+                    assertThat(alertPojo.getStatusUpdatedAt()).isNotNull();
                     assertThat(alertPojo.getCreatedAt()).isNotNull();
                     assertThat(alertPojo.getDataEntityOddrn()).isEqualTo(firstAlert.getDataEntityOddrn());
                     assertThat(alertPojo.getMessengerEntityOddrn()).isEqualTo(firstAlert.getMessengerEntityOddrn());
