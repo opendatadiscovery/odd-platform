@@ -169,7 +169,13 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
             .collectList();
     }
 
-    // TODO: 10.05.2022 matmalik javadoc
+    /**
+     * Gets all child oddrns for the list of oddrns. As the query works recursively
+     * it excludes parents oddrns from the query. So in the final query we have only child oddrns
+     *
+     * @param ownOddrns - parent oddrns
+     * @return - Query for execution
+     */
     private CommonTableExpression<Record1<String>> getChildOddrnsLinageByOwnOddrnsCte(final List<String> ownOddrns) {
         final Name cteName = name("t");
         final Field<String[]> parentOddrnArrayField = DSL.array(LINEAGE.PARENT_ODDRN).as("parent_oddrn_array");
