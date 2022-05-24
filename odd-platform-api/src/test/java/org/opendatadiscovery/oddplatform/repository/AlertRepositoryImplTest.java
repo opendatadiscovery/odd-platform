@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
-import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
@@ -20,7 +19,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
-import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import reactor.core.publisher.Mono;
@@ -55,16 +53,12 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
 
         final Mono<List<AlertPojo>> createdAlerts = alertRepository.createAlerts(List.of(firstAlert, secondAlert));
 
-        final RecursiveComparisonConfiguration configuration = RecursiveComparisonConfiguration.builder()
-            .withIgnoredFields("id", "createdAt")
-            .build();
-
         createdAlerts.as(StepVerifier::create)
             .assertNext(alertPojos -> assertThat(alertPojos)
                 .hasSize(2)
                 .allMatch(p -> p.getId() != null)
-                .usingRecursiveFieldByFieldElementComparator(configuration)
-                .hasSameElementsAs(List.of(firstAlert, secondAlert))
+                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "createdAt")
+                .containsExactlyElementsOf(List.of(firstAlert, secondAlert))
             )
             .verifyComplete();
     }
@@ -200,7 +194,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
             ));
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
             .blockOptional()
-            .orElseThrow();;
+            .orElseThrow();
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId());
         ownershipRepository.create(ownershipPojo).block();
 
@@ -248,7 +242,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
             ));
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
             .blockOptional()
-            .orElseThrow();;
+            .orElseThrow();
         ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId())).block();
         ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(5).getId())).block();
         ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(6).getId())).block();
@@ -321,7 +315,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
             .blockOptional()
-            .orElseThrow();;
+            .orElseThrow();
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojo.getId());
         ownershipRepository.create(ownershipPojo).block();
 
@@ -352,7 +346,7 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
             ));
         final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
             .blockOptional()
-            .orElseThrow();;
+            .orElseThrow();
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId());
         ownershipRepository.create(ownershipPojo).block();
 
