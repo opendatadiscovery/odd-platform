@@ -55,9 +55,10 @@ class AlertRepositoryImplTest extends BaseIntegrationTest {
         createdAlerts.as(StepVerifier::create)
             .assertNext(alertPojos -> assertThat(alertPojos)
                 .hasSize(1)
-                .allMatch(p -> p.getId() != null)
-                .usingRecursiveFieldByFieldElementComparatorIgnoringFields("id", "createdAt")
-                .containsExactlyElementsOf(List.of(firstAlert))
+                .allSatisfy(alertPojo -> {
+                    assertThat(alertPojo.getId()).isNotNull();
+                    assertThat(alertPojo.getDescription()).isEqualTo(firstAlert.getDescription());
+                })
             )
             .verifyComplete();
     }
