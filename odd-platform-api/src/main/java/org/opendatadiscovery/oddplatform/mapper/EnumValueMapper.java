@@ -13,7 +13,8 @@ public interface EnumValueMapper {
 
     @Mapping(source = "datasetFieldId", target = "datasetFieldId")
     @Mapping(target = "name", source = "form.name", qualifiedByName = "mapToTrimmedStringNamed")
-    @Mapping(target = "description", source = "form.description", qualifiedByName = "mapToTrimmedStringNamed", nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
+    @Mapping(target = "description", source = "form.description", qualifiedByName = "mapToTrimmedStringNamed",
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     EnumValuePojo mapToPojo(final EnumValueFormData form, final Long datasetFieldId);
 
     EnumValue mapToEnum(final EnumValuePojo pojo);
