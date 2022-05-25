@@ -227,8 +227,8 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
     protected Select<? extends Record> paginate(final Select<?> baseSelect,
                                                 final List<OrderByField> orderByFields,
-                                                final int page,
-                                                final int size) {
+                                                final int offset,
+                                                final int limit) {
         jooqQueryHelper.homogeneityCheck(baseSelect.getSelect());
 
         final Table<?> u = baseSelect.asTable("u");
@@ -242,8 +242,8 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .select(totalRows, rowNumber)
             .from(u)
             .orderBy(getOrderFields(orderByFields, u))
-            .limit(size)
-            .offset(page)
+            .limit(limit)
+            .offset(offset)
             .asTable("t");
 
         return DSL
