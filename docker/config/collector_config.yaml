@@ -1,10 +1,10 @@
 default_pulling_interval: 1
-token: "C7F6SrCYROw6XsHSSSjYKaJgheRza8lgWWOQuhPQ"
+token: "elBYMN9McmlgRpzn6PKqgEMsMCxtalvHxR78t29t"
 plugins:
   - type: postgresql
     name: AEG-test
-    host: !ENV {SAMPLE_POSTGRES_HOST}
+    host: !ENV ${SAMPLE_POSTGRES_HOST}
     port: 5432
-    database: !ENV {SAMPLE_POSTGRES_DATABASE}
-    user: !ENV {SAMPLE_POSTGRES_USER}
-    password: !ENV {SAMPLE_POSTGRES_PASSWORD}
+    database: !ENV ${SAMPLE_POSTGRES_DATABASE}
+    user: !ENV ${SAMPLE_POSTGRES_USER}
+    password: !ENV ${SAMPLE_POSTGRES_PASSWORD}

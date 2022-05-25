@@ -1,8 +1,4 @@
 # Overview
-[About ODD](#about-odd) \
-[Pain points](#pain-points) \
-[Features](#features) \
-[Use cases](#use-cases)
 ## About ODD
 The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams: 
 * Free open-source and community-driven 
@@ -21,6 +17,11 @@ DS teams
 aiming at better data governance. \
  \
 ![](.gitbook/img/alltogether.png) **An ecosystem for all data team members**. Platform functionality covers requirements of Data Scientists and Engineers, Product and Project Managers as well as Data Analysts, Architects, QA and BI Engineers.
+
+### Solution matrix
+ODD can benefit a team almost at every SDLC stage and for every team function:
+
+![](.gitbook/img/sdlc.png)
 ## Pain points
 ### Onboarding to data
 Every time a newcomer joins a data team, one faces a challenge of data management processes learning. Unfortunately, it may provoke overcommunication, reading irrelevant documentation and spending much time to pick out meaningful information.  \
