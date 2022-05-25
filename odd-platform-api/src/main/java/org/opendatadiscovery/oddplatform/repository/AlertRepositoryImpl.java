@@ -34,6 +34,7 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
@@ -251,6 +252,10 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
 
     @Override
     public Mono<List<AlertPojo>> createAlerts(final Collection<AlertPojo> alertPojos) {
+        if (alertPojos.isEmpty()) {
+            return Mono.just(emptyList());
+        }
+
         final List<AlertRecord> alertRecords =
             alertPojos.stream().map(a -> jooqReactiveOperations.newRecord(ALERT, a)).toList();
 
