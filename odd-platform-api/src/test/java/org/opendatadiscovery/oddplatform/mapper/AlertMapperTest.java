@@ -59,6 +59,9 @@ class AlertMapperTest {
         final Alert actual = alertList.getItems().get(0);
         assertActualAlertList(actual, alertPojo);
         assertThat(actual.getStatusUpdatedBy().getOwner()).isNull();
+        assertThat(alertList.getPageInfo()).isNotNull();
+        assertThat(alertList.getPageInfo().getTotal()).isEqualTo(alertDtos.size());
+        assertThat(alertList.getPageInfo().getHasNext()).isFalse();
     }
 
     @Test
@@ -88,6 +91,9 @@ class AlertMapperTest {
         final Alert actual = alertList.getItems().get(0);
         assertActualAlertList(actual, alertPojo);
         assertThat(actual.getStatusUpdatedBy().getOwner().getName()).isEqualTo(owner.getName());
+        assertThat(alertList.getPageInfo()).isNotNull();
+        assertThat(alertList.getPageInfo().getTotal()).isEqualTo(alertDtos.size());
+        assertThat(alertList.getPageInfo().getHasNext()).isFalse();
     }
 
     @Test

@@ -55,6 +55,10 @@ public abstract class AlertMapper {
     }
 
     public AlertList mapAlerts(final List<AlertDto> alerts) {
-        return new AlertList().items(alerts.stream().map(this::mapAlert).collect(Collectors.toList()));
+        final PageInfo pageInfo = new PageInfo();
+        pageInfo.setTotal((long) alerts.size());
+        pageInfo.setHasNext(false);
+        return new AlertList().items(alerts.stream().map(this::mapAlert).collect(Collectors.toList()))
+            .pageInfo(pageInfo);
     }
 }

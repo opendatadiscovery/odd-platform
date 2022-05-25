@@ -86,9 +86,6 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
             .from(ALERT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(ALERT.DATA_ENTITY_ODDRN))
             .join(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
-            .leftJoin(USER_OWNER_MAPPING)
-            .on(ALERT.STATUS_UPDATED_BY.eq(USER_OWNER_MAPPING.OIDC_USERNAME))
-            .leftJoin(OWNER).on(USER_OWNER_MAPPING.OWNER_ID.eq(OWNER.ID))
             .where(ALERT.STATUS.eq(AlertStatusEnum.OPEN.toString())).and(OWNERSHIP.OWNER_ID.eq(ownerId));
 
         final List<OrderByField> orderByFields = List.of(

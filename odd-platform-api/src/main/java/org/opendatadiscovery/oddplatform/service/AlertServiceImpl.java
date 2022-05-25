@@ -54,11 +54,13 @@ public class AlertServiceImpl implements AlertService {
         final Mono<OwnerPojo> owner = authIdentityProvider.fetchAssociatedOwner();
 
         final Mono<Long> countByOwner = owner
-            .flatMap(o -> alertRepository.countAlertsWithStatusOpenByOwner(o.getId()));
+            .flatMap(o -> alertRepository.countAlertsWithStatusOpenByOwner(o.getId()))
+            .defaultIfEmpty(0L);
 
         final Mono<Long> countDependent = owner
             .flatMap(o -> alertRepository.getObjectsOddrnsByOwner(o.getId()))
-            .flatMap(alertRepository::countDependentObjectsAlerts);
+            .flatMap(alertRepository::countDependentObjectsAlerts)
+            .defaultIfEmpty(0L);
 
         return Mono.zipDelayError(allCount, countByOwner, countDependent)
             .map(t -> new AlertTotals()
