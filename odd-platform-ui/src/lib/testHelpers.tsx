@@ -1,16 +1,15 @@
 import {
   act,
   fireEvent,
-  screen,
   render,
   RenderOptions,
+  screen,
 } from '@testing-library/react';
 import React, { ReactElement } from 'react';
 import { StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { AnyAction, Store } from 'redux';
 import { RootState } from 'redux/interfaces';
-import { configureStore } from '@reduxjs/toolkit';
+import { AnyAction, configureStore, Store } from '@reduxjs/toolkit';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/mui.theme';
 import rootReducer from 'redux/reducers';

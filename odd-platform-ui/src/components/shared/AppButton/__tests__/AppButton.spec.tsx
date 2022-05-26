@@ -26,16 +26,16 @@ describe('AppButton', () => {
     });
   });
 
-  it('AppButton should return right styles for size small', () => {
-    setupComponent({ size: 'small' });
-    const appButton = screen.getByLabelText('AppButton');
-    expect(appButton).toHaveStyle({ height: '20px' });
-  });
-
   it('AppButton should return right styles for size large', () => {
     setupComponent({ size: 'large' });
     const appButton = screen.getByLabelText('AppButton');
     expect(appButton).toHaveStyle({ height: '32px' });
+  });
+
+  it('AppButton should return right styles for size small', () => {
+    setupComponent({ size: 'small' });
+    const appButton = screen.getByLabelText('AppButton');
+    expect(appButton).toHaveStyle({ height: '20px' });
   });
 
   it('AppButton should be disabled ', () => {

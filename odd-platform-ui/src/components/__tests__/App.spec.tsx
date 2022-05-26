@@ -17,7 +17,7 @@ describe('App', () => {
       expect(toolbar).toBeInTheDocument();
       expect(within(toolbar).getByText('Platform')).toBeInTheDocument();
       expect(within(toolbar).getAllByLabelText('AppTab').length).toEqual(
-        3
+        4
       );
       expect(within(toolbar).getByRole('button')).toBeInTheDocument();
     });
