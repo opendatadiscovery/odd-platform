@@ -1,12 +1,9 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,11 +14,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdge;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageNode;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageStream;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
@@ -32,19 +24,13 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
-import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
-import static java.util.Collections.emptyList;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataQualityTestDetailsDto;
 
 @Component
@@ -364,24 +350,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
-    public DataEntityLineage mapLineageDto(final DataEntityLineageDto dto) {
-        return new DataEntityLineage()
-            .root(mapNode(dto.getDataEntityDto()))
-            .upstream(mapStream(dto.getUpstream()))
-            .downstream(mapStream(dto.getDownstream()));
-    }
-
-    @Override
-    public DataEntityGroupLineageList mapGroupLineageDto(final DataEntityGroupLineageDto dataEntityGroupLineageDto) {
-        final List<DataEntityLineageStream> lineageStreams = dataEntityGroupLineageDto.lineageItems()
-            .stream()
-            .map(this::mapStream)
-            .toList();
-
-        return new DataEntityGroupLineageList().items(lineageStreams);
-    }
-
-    @Override
     public DataEntityRef mapRef(final DataEntityDto dto) {
         return mapReference(dto);
     }
@@ -389,62 +357,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     @Override
     public DataEntityRef mapRef(final DataEntityPojo pojo) {
         return mapReference(pojo);
-    }
-
-    private DataEntityLineageStream mapStream(final DataEntityLineageStreamDto stream) {
-        final Map<Long, List<Long>> groupsRelations = stream.getGroupsRelations();
-
-        final Set<Long> streamGroups = new HashSet<>();
-        final List<DataEntityLineageNode> nodes = new ArrayList<>();
-
-        for (final DataEntityDimensionsDto node : stream.getNodes()) {
-            final List<Long> groupIds = groupsRelations.get(node.getDataEntity().getId());
-            if (groupIds != null) {
-                streamGroups.addAll(groupIds);
-            }
-
-            nodes.add(mapNode(node, groupIds));
-        }
-
-        return new DataEntityLineageStream()
-            .nodes(nodes)
-            .edges(stream.getEdges().stream().map(this::mapEdge).collect(Collectors.toList()))
-            .groups(stream.getGroups()
-                .stream()
-                .filter(g -> streamGroups.contains(g.getDataEntity().getId()))
-                .map(this::mapNode)
-                .collect(Collectors.toList()));
-    }
-
-    private DataEntityLineageEdge mapEdge(final Pair<Long, Long> edge) {
-        return new DataEntityLineageEdge()
-            .sourceId(edge.getLeft())
-            .targetId(edge.getRight());
-    }
-
-    private DataEntityLineageNode mapNode(final DataEntityDimensionsDto dto) {
-        return mapNode(dto, emptyList());
-    }
-
-    private DataEntityLineageNode mapNode(final DataEntityDimensionsDto dto, final List<Long> groupId) {
-        final DataEntityPojo dataEntity = dto.getDataEntity();
-        final DataSourcePojo dataSource = dto.getDataSource();
-
-        final List<DataEntityClass> entityClasses =
-            DataEntityClassDto.findByIds(dto.getDataEntity().getEntityClassIds())
-                .stream()
-                .map(this::mapEntityClass)
-                .toList();
-
-        return new DataEntityLineageNode()
-            .id(dataEntity.getId())
-            .entityClasses(entityClasses)
-            .externalName(dataEntity.getExternalName())
-            .internalName(dataEntity.getInternalName())
-            .groupIdList(groupId)
-            .dataSource(dataSource != null
-                ? dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null))
-                : null);
     }
 
     private DataEntityRef mapReference(final DataEntityDto dto) {

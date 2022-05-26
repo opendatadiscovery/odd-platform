@@ -5,7 +5,7 @@ import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertTotals;
-import org.opendatadiscovery.oddplatform.dto.ExternalAlert;
+import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import reactor.core.publisher.Mono;
 
