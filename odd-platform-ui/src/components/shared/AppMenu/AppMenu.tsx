@@ -21,34 +21,19 @@ export interface AppMenuProps
 }
 
 const AppMenu: React.FC<AppMenuProps> = ({
-  children,
-  anchorEl,
-  anchorOrigin,
-  id,
-  keepMounted,
-  transformOrigin,
-  open,
-  onClose,
-  MenuListProps,
   minWidth,
   maxWidth,
   maxHeight,
+  ...props
 }) => (
   <StyledAppMenu
-    anchorEl={anchorEl}
-    anchorOrigin={anchorOrigin}
-    id={id}
-    keepMounted={keepMounted}
-    transformOrigin={transformOrigin}
-    open={open}
-    onClose={onClose}
-    MenuListProps={MenuListProps}
+    {...props}
+    aria-label="AppMenu"
     $maxHeight={maxHeight}
     $maxWidth={maxWidth}
     $minWidth={minWidth}
-    aria-label="AppMenu"
   >
-    {children}
+    {props.children}
   </StyledAppMenu>
 );
 

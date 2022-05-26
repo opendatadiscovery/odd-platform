@@ -13,6 +13,8 @@ import { AnyAction, configureStore, Store } from '@reduxjs/toolkit';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/mui.theme';
 import rootReducer from 'redux/reducers';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 export const provideTheme = (component: ReactElement): ReactElement => (
   <ThemeProvider theme={theme}>{component}</ThemeProvider>
@@ -68,6 +70,8 @@ export const queryByText = (text: string) => screen.queryByText(text);
 export const getByTestID = (testID: string) => screen.getByTestId(testID);
 export const getAllByTestID = (testID: string) =>
   screen.getAllByTestId(testID);
+export const getByLabelText = (text: string) =>
+  screen.getByLabelText(text);
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
@@ -91,7 +95,9 @@ const customRender = (
   const AllTheProviders: React.FC = ({ children }) => (
     <ThemeProvider theme={theme}>
       <Provider store={store}>
-        <StaticRouter location={{ pathname }}>{children}</StaticRouter>
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <StaticRouter location={{ pathname }}>{children}</StaticRouter>
+        </LocalizationProvider>
       </Provider>
     </ThemeProvider>
   );
