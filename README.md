@@ -184,7 +184,6 @@ If you have any questions or ideas, please don't hesitate to drop a line to any 
 | Pavel Makarichev          | [LinkedIn](https://www.linkedin.com/in/pavel-makarichev-8a8730a4/)           | [vixtir](https://github.com/vixtir)                 |
 | Anna Evdokimova-Glinskaia | [LinkedIn](https://www.linkedin.com/in/anna-evdokimova-glinskaya-6566b5188/) | [Anna-EG](https://github.com/Anna-EG)               |
 | Roman Zabaluev            | [LinkedIn](https://www.linkedin.com/in/haarolean/)                           | [Haarolean](https://github.com/haarolean)           |
-| Sofia Shnaidman           | [LinkedIn](https://www.linkedin.com/in/sofia-shnaidman-293161a3/)            | [soffest](https://github.com/soffest)               |
 
 
 ## License
