@@ -24,8 +24,14 @@ updates:
   - dependency-name: d3-selection
     versions:
     - 2.0.0
+  - dependency-name: d3-zoom
+    versions:
+    - 2.0.0
+  - dependency-name: d3-hierarchy
+    versions:
+    - 3.1.1
   - dependency-name: husky
     versions:
     - 4.3.8
   - dependency-name: "*"
-    update-types: [ "version-update:semver-minor" ]
+    update-types: [ "version-update:semver-minor", "version-update:semver-patch" ]
