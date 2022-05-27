@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start": "react-scripts start",
-    "build-only": "react-scripts build",
+    "start": "vite",
+    "build-only": "vite build",
     "clean": "rm -rf ./src/generated-sources",
-    "build": "npm run generate && react-scripts build",
+    "build": "npm run generate && vite build",
     "test": "react-scripts test",
     "test:CI": "CI=true npm test  -- --coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "eject": "react-scripts eject",
@@ -95,6 +95,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.25.0",
+    "@vitejs/plugin-react": "^1.3.2",
     "eslint": "^8.12.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
@@ -106,7 +107,10 @@
     "lint-staged": "^12.4.1",
     "prettier": "^2.6.2",
     "react-scripts": "^5.0.1",
-    "typescript": "^4.6.3"
+    "typescript": "^4.6.3",
+    "vite": "^2.9.9",
+    "vite-plugin-eslint": "^1.6.1",
+    "vite-tsconfig-paths": "^3.4.1"
   },
   "resolutions": {
     "minimist": "1.2.6"

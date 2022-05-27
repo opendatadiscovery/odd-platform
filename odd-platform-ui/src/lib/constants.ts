@@ -1,7 +1,7 @@
 import { ConfigurationParameters } from 'generated-sources';
 
 export const BASE_PARAMS: ConfigurationParameters = {
-  basePath: process.env.REACT_APP_API_URL || '',
+  basePath: import.meta.env.VITE_API_URL || '',
   credentials: 'same-origin',
   headers: { 'Content-Type': 'application/json' },
 };
