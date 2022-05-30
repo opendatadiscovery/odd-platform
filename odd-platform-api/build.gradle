@@ -105,14 +105,15 @@ jooqGenerate {
     basePackageName = "org.opendatadiscovery.oddplatform.model"
     includeMatches = ".*"
     excludes = "FLYWAY_SCHEMA_HISTORY"
-    imageName = "postgres:13.7-alpine"
     inputSchema = "public"
     migrationSrcDir = "src/main/resources/db/migration"
-    generate.daos = false
-    generate.pojos = true
-    generate.fluentSetters = true
-    generate.validationAnnotations = true
-    generate.pojosEqualsAndHashCode = true
+    generate {
+        daos = false
+        pojos = true
+        fluentSetters = true
+        validationAnnotations = true
+        pojosEqualsAndHashCode = true
+    }
 }
 
 sourceSets {
