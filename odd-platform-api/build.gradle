@@ -5,6 +5,7 @@ plugins {
     id 'checkstyle'
     id "de.undercouch.download" version "4.1.2" apply false
     id "org.sonarqube" version "3.3"
+    id "org.opendatadiscovery.plugin.jooq-generate"
 }
 
 if (env == 'dev') {
@@ -14,11 +15,10 @@ if (env == 'dev') {
 group = 'org.opendatadiscovery'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
-
-apply from: 'jooq.generate.gradle'
+//apply from: 'jooq.generate.gradle'
 
 final boolean skipUIBundle = project.hasProperty("skipUIBundle") &&
-        Boolean.parseBoolean(project.property("skipUIBundle").toString())
+    Boolean.parseBoolean(project.property("skipUIBundle").toString())
 
 dependencies {
     implementation "org.springframework.boot:spring-boot-starter-webflux"
@@ -101,19 +101,18 @@ springBoot {
     buildInfo()
 }
 
-jooq {
+jooqGenerate {
     basePackageName = "org.opendatadiscovery.oddplatform.model"
     includeMatches = ".*"
     excludes = "FLYWAY_SCHEMA_HISTORY"
-    imageName = "postgres:13.2-alpine"
+    imageName = "postgres:13.7-alpine"
     inputSchema = "public"
-    generate {
-        daos = false
-        pojos = true
-        fluentSetters = true
-        validationAnnotations = true
-        pojosEqualsAndHashCode = true
-    }
+    migrationSrcDir = "src/main/resources/db/migration"
+    generate.daos = false
+    generate.pojos = true
+    generate.fluentSetters = true
+    generate.validationAnnotations = true
+    generate.pojosEqualsAndHashCode = true
 }
 
 sourceSets {

@@ -1,0 +1,29 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.testcontainers:testcontainers:1.15.3'
+    // TODO: why cockroachdb is here?
+    implementation 'org.testcontainers:cockroachdb:1.15.3'
+    implementation 'org.postgresql:postgresql:42.2.20'
+    implementation 'org.flywaydb:flyway-core:7.8.2'
+    implementation 'org.slf4j:slf4j-api:1.7.30'
+    implementation 'org.slf4j:jul-to-slf4j:1.7.30'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+    implementation 'ch.qos.logback:logback-core:1.2.3'
+    implementation 'org.jooq:jooq-codegen:3.14.9'
+}
+
+gradlePlugin {
+    plugins {
+        GreetingPlugin {
+            id = "org.opendatadiscovery.plugin.jooq-generate"
+            implementationClass = "org.opendatadiscovery.plugin.JooqGeneratePlugin"
+        }
+    }
+}
