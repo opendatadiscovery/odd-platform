@@ -1,11 +1,12 @@
 plugins {
     id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'com.google.cloud.tools.jib' version '3.0.0'
+    id 'com.google.cloud.tools.jib' version '3.2.1'
     id 'checkstyle'
     id "de.undercouch.download" version "4.1.2" apply false
     id "org.sonarqube" version "3.3"
-    id "org.opendatadiscovery.plugin.jooq-generate"
+    id "org.opendatadiscovery.internal.plugin.jooq-generate"
+    id "com.dorongold.task-tree" version "2.1.0"
 }
 
 if (env == 'dev') {
@@ -15,82 +16,40 @@ if (env == 'dev') {
 group = 'org.opendatadiscovery'
 version = "${version != 'unspecified' ? version : '0.0.1-SNAPSHOT'}"
 
-//apply from: 'jooq.generate.gradle'
-
-final boolean skipUIBundle = project.hasProperty("skipUIBundle") &&
-    Boolean.parseBoolean(project.property("skipUIBundle").toString())
-
 dependencies {
-    implementation "org.springframework.boot:spring-boot-starter-webflux"
-    implementation "org.springframework.boot:spring-boot-starter-jooq"
-    implementation "org.springframework.boot:spring-boot-starter-actuator"
-    implementation "org.springframework.boot:spring-boot-starter-security"
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
-    implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
-    implementation "org.springframework.session:spring-session-core"
-    implementation('org.springframework:spring-r2dbc') {
-        exclude group: 'io.r2dbc', module: 'r2dbc-spi'
-    }
-    implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
-
-    implementation "org.opendatadiscovery:ingestion-contract-server:$oddIngestionApiVersion"
-    implementation "org.opendatadiscovery:oddrn-generator-java:$oddrnGeneratorVersion"
     implementation project(':odd-platform-api-contract')
+    implementation project(':odd-platform-ui')
 
-    if (!skipUIBundle) {
-        implementation project(':odd-platform-ui')
-    }
+    implementation libs.bundles.spring
+    implementation libs.bundles.internal
+    implementation libs.bundles.apache.commons
+    implementation libs.bundles.r2dbc
+    implementation libs.bundles.opentelemetry
+    implementation libs.bundles.flyway
+    implementation libs.micrometer.registry.prometheus
+    implementation libs.jooq
+    implementation libs.javax.validation
+    implementation libs.jackson.datatype.jsr310
+    implementation libs.jackson.databind.nullable
+    implementation libs.jetbrains.annotations
+    implementation libs.mapstruct
+    compileOnly libs.lombok
 
-    implementation "org.apache.commons:commons-collections4:$apacheCommonsCollectionsVersion"
-    implementation "org.apache.commons:commons-lang3:$apacheCommonsLangVersion"
+    annotationProcessor libs.lombok
+    annotationProcessor libs.mapstruct.processor
 
-    implementation "org.flywaydb:flyway-core:$flywayVersion"
-    implementation "org.postgresql:postgresql:$postgresqlDriverVersion"
-    implementation "org.jooq:jooq:$jooqVersion"
-    implementation "io.r2dbc:r2dbc-spi:$r2dbcSpiVersion"
-    implementation "io.r2dbc:r2dbc-postgresql"
-    implementation "io.r2dbc:r2dbc-pool:$r2dbcPoolVersion"
+    testCompileOnly libs.lombok
+    testAnnotationProcessor libs.lombok
 
-    implementation "javax.validation:validation-api:$validationApiVersion"
-    implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
-    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonJsr310Version"
-    implementation "org.mapstruct:mapstruct:$mapstructVersion"
-    implementation "io.projectreactor.addons:reactor-extra:$reactorExtraVersion"
-
-    implementation(platform("io.opentelemetry:opentelemetry-bom:$opentelemetryVersion"))
-    implementation(platform("io.opentelemetry:opentelemetry-bom-alpha:$opentelemetryVersionAlpha"))
-
-    implementation("io.opentelemetry:opentelemetry-api")
-    implementation("io.opentelemetry:opentelemetry-api-metrics")
-    implementation("io.opentelemetry:opentelemetry-sdk-metrics")
-    implementation("io.opentelemetry:opentelemetry-exporter-otlp-metrics")
-
-    implementation("org.jetbrains:annotations:$jetbrainsAnnotationVersion")
-
-    implementation("org.springframework.boot:spring-boot-starter-data-ldap")
-    implementation("org.springframework.security:spring-security-ldap")
-
-    compileOnly "org.projectlombok:lombok:$lombokVersion"
-    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
-    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+    testImplementation libs.bundles.testcontainers
+    testImplementation (libs.spring.boot.test) {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    testImplementation("io.projectreactor:reactor-test")
+    testImplementation libs.reactor.test
+    testImplementation libs.easy.random.core
 
-    testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
-    testImplementation "org.testcontainers:postgresql:$testContainersVersion"
-    testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
-    testImplementation "org.jeasy:easy-random-core:$easyRandomVersion"
-
-
-    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
-    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
-
-    jooqGenerationContainer("org.testcontainers:postgresql:$testContainersVersion")
+    jooqGenerationContainer libs.testcontainers.postgresql
 }
 
 bootRun {
@@ -115,6 +74,8 @@ jooqGenerate {
         pojosEqualsAndHashCode = true
     }
 }
+
+jibDockerBuild.dependsOn test
 
 sourceSets {
     main {
@@ -145,7 +106,7 @@ jib {
         container {
             creationTime = 'USE_CURRENT_TIMESTAMP'
             appRoot = '/app'
-            jvmFlags = ['-Xms1G', '-Xmx1G', '-javaagent:/app/otlp/opentelemetry-javaagent.jar']
+            jvmFlags = ['-javaagent:/app/otlp/opentelemetry-javaagent.jar']
             ports = ['8080']
             workingDirectory = '/app'
         }
@@ -153,7 +114,6 @@ jib {
         container {
             creationTime = 'USE_CURRENT_TIMESTAMP'
             appRoot = '/app'
-            jvmFlags = ['-Xms1G', '-Xmx1G']
             ports = ['8080']
             workingDirectory = '/app'
         }
@@ -161,7 +121,6 @@ jib {
     allowInsecureRegistries = false
 }
 
-jibDockerBuild.dependsOn(test)
 
 checkstyle {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')
@@ -170,28 +129,10 @@ checkstyle {
     maxWarnings = 0
 }
 
-task buildlessCheckstyleMain(type: Checkstyle) {
-    configFile = project(':').file('config/checkstyle/checkstyle.xml')
-    source 'src/main/java'
-    classpath = files()
-    configProperties = ["suppressionFile": project(':').file('config/checkstyle/suppressions.xml')]
-    ignoreFailures = false
-    maxWarnings = 0
-}
-
-task buildlessCheckstyleTest(type: Checkstyle) {
-    configFile = project(':').file('config/checkstyle/checkstyle.xml')
-    source 'src/test/java'
-    classpath = files()
-    configProperties = ["suppressionFile": project(':').file('config/checkstyle/suppressions.xml')]
-    ignoreFailures = false
-    maxWarnings = 0
-}
-
 tasks.withType(Checkstyle) {
     reports {
-        xml.enabled false
-        html.enabled false
+        xml.setRequired(false)
+        html.setRequired(false)
     }
 }
 
@@ -202,7 +143,7 @@ if (hasProperty('buildScan')) {
     }
 }
 
-compileJava.dependsOn tasks.jooqDockerGenerate
+compileJava.dependsOn jooqDockerGenerate
 
 test {
     useJUnitPlatform()

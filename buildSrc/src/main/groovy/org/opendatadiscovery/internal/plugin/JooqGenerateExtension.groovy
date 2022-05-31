@@ -1,4 +1,4 @@
-package org.opendatadiscovery.plugin
+package org.opendatadiscovery.internal.plugin
 
 import org.jooq.meta.jaxb.Generate
 

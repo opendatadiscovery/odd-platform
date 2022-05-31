@@ -1,4 +1,4 @@
-package org.opendatadiscovery.plugin
+package org.opendatadiscovery.internal.plugin
 
 class Constants {
     static final String EXTENSION_NAME = "jooqGenerate"

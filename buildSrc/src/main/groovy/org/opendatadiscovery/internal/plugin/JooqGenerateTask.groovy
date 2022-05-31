@@ -1,4 +1,4 @@
-package org.opendatadiscovery.plugin
+package org.opendatadiscovery.internal.plugin
 
 import org.flywaydb.core.Flyway
 import org.gradle.api.DefaultTask
@@ -81,7 +81,7 @@ class JooqGenerateTask extends DefaultTask {
     private Generator prepareGeneratorConfig(final JooqGenerateExtension extension) {
         return new Generator()
             .withName(JavaGenerator.class.name)
-            .withStrategy(new Strategy().withName(JooqGenerationStrategy.class.name))
+            .withStrategy(new Strategy().withName(JooqGeneratorStrategy.class.name))
             .withDatabase(new Database()
                 .withName(extension.databaseGeneratorName)
                 .withIncludes(extension.includeMatches)
