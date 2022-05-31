@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
@@ -12,7 +12,6 @@ import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import TermDetailsSkeleton from 'components/Terms/TermDetails/TermDetailsSkeleton/TermDetailsSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
@@ -29,11 +28,8 @@ import {
 } from 'redux/selectors/terms.selectors';
 import { getTermSearchId } from 'redux/selectors/termSearch.selectors';
 import { deleteTerm, fetchTermDetails } from 'redux/thunks';
-import {
-  TermDetailsComponentWrapper,
-  TermDetailsHeadingRightWrapper,
-  TermDetailsHeadingWrapper,
-} from './TermDetailsStyles';
+import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import { TermDetailsComponentWrapper } from './TermDetailsStyles';
 
 // lazy components
 const Overview = React.lazy(
@@ -102,12 +98,14 @@ const TermDetailsView: React.FC = () => {
     <TermDetailsComponentWrapper>
       {termDetails && !isTermDetailsFetching && (
         <>
-          <TermDetailsHeadingWrapper>
-            <Typography variant="h1" noWrap sx={{ mr: 1 }}>
-              {termDetails.name}{' '}
-              <LabelItem labelName="DCT" variant="body1" />
-            </Typography>
-            <TermDetailsHeadingRightWrapper>
+          <Grid container alignItems="center" flexWrap="nowrap">
+            <Grid container alignItems="center">
+              <Typography variant="h1" noWrap sx={{ mr: 1 }}>
+                {termDetails.name}
+              </Typography>
+              <EntityTypeItem entityTypeName="DCT" />
+            </Grid>
+            <Grid container justifyContent="flex-end">
               {termDetails.updatedAt && (
                 <>
                   <TimeGapIcon />
@@ -160,8 +158,8 @@ const TermDetailsView: React.FC = () => {
                   }
                 />
               </AppPopover>
-            </TermDetailsHeadingRightWrapper>
-          </TermDetailsHeadingWrapper>
+            </Grid>
+          </Grid>
           {tabs.length && selectedTab >= 0 && (
             <AppTabs
               type="primary"

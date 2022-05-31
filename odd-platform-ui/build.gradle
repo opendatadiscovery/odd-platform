@@ -13,17 +13,7 @@ node {
 }
 
 tasks.register("buildUI", NpmTask) {
-    mkdir "${project.buildDir}/ui"
-    inputs.files(fileTree("${project.projectDir}/node_modules"))
-    inputs.files(fileTree("${project.projectDir}/src"))
-    inputs.file("${project.projectDir}/package.json")
-
-    outputs.dir("${project.buildDir}/ui")
-
     dependsOn npmInstall
-    environment = [
-        'BUILD_PATH': "${project.buildDir}/ui"
-    ]
     args = ['run', 'build']
 }
 
