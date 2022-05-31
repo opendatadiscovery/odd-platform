@@ -1,2 +1,3 @@
-/src/serviceWorker.ts
 /src/generated-sources/**
+node_modules
+build

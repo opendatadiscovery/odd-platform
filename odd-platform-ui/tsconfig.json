@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",
     "target": "es6",
     "lib": [
       "dom",
@@ -21,10 +22,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx",
-    "baseUrl": "src"
+    "jsx": "react-jsx"
   },
   "include": [
-    "src"
+    "src",
+    "vite.config.ts",
+    "jest.config.js",
+    "babel.config.js"
   ]
 }
