@@ -29,8 +29,9 @@ describe('EntityClassItem', () => {
       fullName: true,
     });
     expect(getByText('Groups')).toBeTruthy();
-    expect(getByText('Groups')).toHaveStyle(
-      '{backgroundColor: "#F4FFE5", paddingRight: "4px",}'
-    );
+    expect(getByText('Groups')).toHaveStyle({
+      backgroundColor: '#F4FFE5',
+      paddingRight: '4px',
+    });
   });
 });
