@@ -88,10 +88,14 @@ class RolesRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .as(StepVerifier::create)
             .assertNext(updatedRoleList -> {
-                assertThat(updatedRoleList).isNotEmpty()
-                    .flatExtracting(RolePojo::getId, RolePojo::getName).doesNotContainNull();
                 assertThat(updatedRoleList)
-                    .extracting(RolePojo::getName).isEqualTo(newRoleListNames);
+                    .isNotEmpty()
+                    .flatExtracting(RolePojo::getId, RolePojo::getName)
+                    .doesNotContainNull();
+
+                assertThat(updatedRoleList)
+                    .extracting(RolePojo::getName)
+                    .containsExactlyInAnyOrder(newRoleListNames.toArray(String[]::new));
             }).verifyComplete();
     }
 

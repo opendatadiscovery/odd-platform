@@ -30,8 +30,11 @@ Run **from the project root folder** `docker-compose -f docker/demo.yaml up -d o
 
 ### Result
 
-1. Open http://localhost:8080 in your browser
-2. Select the Catalog in the Platform UI
+1. Open http://localhost:8080/management/datasources in your browser
+
+You should be able to see 10 predefined data sources in the list
+
+2. Go to the **Catalog** section
 
 You should be able to see metadata sample injected in the Platform
 
@@ -55,7 +58,14 @@ You should be able to see metadata sample injected in the Platform
 
 ### Result
 
-New data source and data entities should be injected in seconds.
+1. Open http://localhost:8080/management/datasources in your browser
+
+You should be able to see a new data source with the name you've passed into the collector_config.yaml file 
+(Default is `Sample demo data source`). Overall you should see 11 data sources in the list
+
+2. Go to the **Catalog** section. Select the created data source in the `Datasources` filter
+
+You should be able to see 11 new entities of different types injected into the Platform
 
 ## Step 3 (Optional): Configuring and running Collector to gather metadata from your own data sources
 
