@@ -6,7 +6,7 @@
     "start": "vite",
     "build-only": "vite build",
     "clean": "rm -rf ./src/generated-sources",
-    "build": "npm run generate && vite build",
+    "build": "npm run generate && tsc --noEmit && vite build",
     "test": "jest",
     "test:CI": "CI=true npm test  -- --coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "tsc": "tsc",
