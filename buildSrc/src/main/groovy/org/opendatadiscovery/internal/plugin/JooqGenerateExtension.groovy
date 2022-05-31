@@ -3,7 +3,6 @@ package org.opendatadiscovery.internal.plugin
 import org.jooq.meta.jaxb.Generate
 
 class JooqGenerateExtension {
-    String migrationSrcDir
     String basePackageName
     String includeMatches = ".*"
     String inputSchema = "public"

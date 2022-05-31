@@ -42,7 +42,7 @@ dependencies {
     testAnnotationProcessor libs.lombok
 
     testImplementation libs.bundles.testcontainers
-    testImplementation (libs.spring.boot.test) {
+    testImplementation(libs.spring.boot.test) {
         exclude group: 'junit', module: 'junit'
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
@@ -65,7 +65,6 @@ jooqGenerate {
     includeMatches = ".*"
     excludes = "FLYWAY_SCHEMA_HISTORY"
     inputSchema = "public"
-    migrationSrcDir = "src/main/resources/db/migration"
     generate {
         daos = false
         pojos = true
@@ -120,7 +119,6 @@ jib {
     }
     allowInsecureRegistries = false
 }
-
 
 checkstyle {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')

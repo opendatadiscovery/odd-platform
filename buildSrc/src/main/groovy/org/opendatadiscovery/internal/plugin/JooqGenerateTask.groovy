@@ -3,7 +3,9 @@ package org.opendatadiscovery.internal.plugin
 import org.flywaydb.core.Flyway
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.jooq.codegen.GenerationTool
 import org.jooq.codegen.JavaGenerator
@@ -15,13 +17,22 @@ import static java.util.stream.Collectors.toList
 import static org.testcontainers.images.PullPolicy.alwaysPull
 
 class JooqGenerateTask extends DefaultTask {
-    private static final String LINE_BREAK_REGEX = "((\\r?\\n)|(\\r))";
-    private static final String LINE_BREAK_AT_END_REGEX = LINE_BREAK_REGEX + '$';
-    private static final String FILESYSTEM_PREFIX = "filesystem:";
+    private static final String LINE_BREAK_REGEX = "((\\r?\\n)|(\\r))"
+    private static final String LINE_BREAK_AT_END_REGEX = LINE_BREAK_REGEX + '$'
+    private static final String FILESYSTEM_PREFIX = "filesystem:"
+
+    @Internal
+    final JooqGenerateExtension extension = project.extensions.getByType(JooqGenerateExtension.class)
+
+    @OutputDirectory
+    final def outputDirectory = project.objects.directoryProperty()
+        .convention(project.layout.buildDirectory.dir("generated-jooq/src/main/java"))
+
+    @InputFiles
+    def inputDirectory = project.objects.fileCollection().from("src/main/resources/db/migration")
 
     @TaskAction
     def execute() {
-        final def extension = project.extensions.getByType(JooqGenerateExtension.class)
         final def configuration = project.configurations.getByName(Constants.CONFIGURATION_NAME)
 
         final def testContainerClass = Class.forName(
@@ -38,21 +49,16 @@ class JooqGenerateTask extends DefaultTask {
             .withImagePullPolicy(alwaysPull())
             .start()
 
-        def migrationSources = project.objects.fileCollection()
-            .from(extension.migrationSrcDir)
-
         try {
-            migrate(migrationSources, testContainerInstance)
+            migrate(testContainerInstance)
             generateJooqClasses(testContainerInstance, extension)
         } finally {
-            // TODO: use auto-closeable if possible
             testContainerInstance.stop()
         }
     }
 
-    private void migrate(final ConfigurableFileCollection migrationSrc,
-                         final JdbcDatabaseContainer container) {
-        final String[] locations = migrationSrc.asList()
+    private void migrate(final JdbcDatabaseContainer container) {
+        final String[] locations = inputDirectory.asList()
             .stream()
             .map({ FILESYSTEM_PREFIX + it.absolutePath })
             .collect(toList())
@@ -89,7 +95,7 @@ class JooqGenerateTask extends DefaultTask {
                 .withExcludes(extension.excludes))
             .withTarget(new Target()
                 .withPackageName(extension.basePackageName)
-                .withDirectory(outputDir())
+                .withDirectory(this.outputDirectory.asFile.get().toString())
                 .withClean(true))
             .withGenerate(extension.generate)
     }
@@ -106,16 +112,8 @@ class JooqGenerateTask extends DefaultTask {
         return new URLClassLoader(resolvedArtifactUrls, getClass().getClassLoader())
     }
 
-    private String outputDir() {
-        return project.objects
-            .directoryProperty()
-            .convention(project.layout.buildDirectory.dir("generated-jooq/src/main/java"))
-            .asFile
-            .get()
-            .toString()
-    }
-
     // cannot be private
+    @SuppressWarnings('GrMethodMayBeStatic')
     void log(final OutputFrame outputFrame) {
         final String utf8String = outputFrame.getUtf8String().replaceAll(LINE_BREAK_AT_END_REGEX, "")
 
