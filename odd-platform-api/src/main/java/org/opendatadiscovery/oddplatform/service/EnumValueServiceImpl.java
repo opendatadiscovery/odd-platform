@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
@@ -22,6 +23,7 @@ public class EnumValueServiceImpl implements EnumValueService {
     private final EnumValueMapper mapper;
 
     @Override
+    @ReactiveTransactional
     public Mono<EnumValueList> createEnumValues(final Long datasetFieldId, final List<EnumValueFormData> formData) {
         final List<EnumValuePojo> pojos = formData.stream()
             .map(fd -> mapper.mapToPojo(fd, datasetFieldId))
