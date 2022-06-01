@@ -33,6 +33,7 @@ public class ReactiveEnumValueRepositoryImpl
     public Flux<EnumValuePojo> getEnumValuesByFieldId(final Long datasetFieldId) {
         final var conditionWithSoftDeleteFilter = addSoftDeleteFilter(
             ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId));
+
         final var query = DSL.selectFrom(ENUM_VALUE)
             .where(conditionWithSoftDeleteFilter);
 
@@ -42,7 +43,14 @@ public class ReactiveEnumValueRepositoryImpl
 
     public Flux<EnumValuePojo> softDeleteOutdatedEnumValues(final long datasetFieldId,
                                                             final List<Long> idsToKeep) {
-        return deleteConditionally(ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId).and(ENUM_VALUE.ID.notIn(idsToKeep)));
+        if (idsToKeep.isEmpty()) {
+            return Flux.just();
+        }
+
+        return deleteConditionally(
+            ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId)
+            .and(ENUM_VALUE.ID.notIn(idsToKeep))
+        );
     }
 
     public Flux<EnumValuePojo> deleteConditionally(final Condition condition) {
