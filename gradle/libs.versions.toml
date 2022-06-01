@@ -14,6 +14,7 @@ flyway-core = '8.5.10'
 psql-driver = '42.3.4'
 javax-validation = '2.0.1.Final'
 javax-annotation = '1.3.2'
+jackson-annotations = '2.13.2'
 jackson-datatype-jsr310 = '2.13.3'
 jackson-databind-nullable = '0.2.2'
 jetbrains-annotations = '23.0.0'
@@ -58,6 +59,7 @@ javax-validation = { module = 'javax.validation:validation-api', version.ref = '
 javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
 jackson-datatype-jsr310 = { module = 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310', version.ref = 'jackson-datatype-jsr310' }
 jackson-databind-nullable = { module = 'org.openapitools:jackson-databind-nullable', version.ref = 'jackson-databind-nullable' }
+jackson-annotations = { module = 'com.fasterxml.jackson.core:jackson-annotations', version.ref = 'jackson-annotations' }
 jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'jetbrains-annotations' }
 swagger-annotations = { module = 'io.swagger:swagger-annotations', version.ref = 'swagger-annotations' }
 springfox-core = { module = 'io.springfox:springfox-core', version.ref = 'springfox-core' }
@@ -128,7 +130,8 @@ openapi = [
     'javax-annotation',
     'jackson-databind-nullable',
     'swagger-annotations',
-    'springfox-core'
+    'springfox-core',
+    "jackson-annotations",
 ]
 jooq-codegen = [
     'flyway-core',
@@ -139,5 +142,6 @@ jooq-codegen = [
     'slf4j-api',
     'jul-to-slf4j',
     'logback-classic',
-    'logback-core'
+    'logback-core',
+    "jackson-annotations"
 ]
