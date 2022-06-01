@@ -19,7 +19,7 @@ aiming at better data governance. \
 ![](.gitbook/img/alltogether.png) **An ecosystem for all data team members**. Platform functionality covers requirements of Data Scientists and Engineers, Product and Project Managers as well as Data Analysts, Architects, QA and BI Engineers.
 
 ### Solution matrix
-ODD can benefit a team almost at every SDLC stage and for every team function:
+ODD can benefit a team at the following SDLC stages and team functions:
 
 ![](.gitbook/img/sdlc.png)
 ## Pain points
