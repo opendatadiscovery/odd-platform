@@ -1,10 +1,6 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
-  fetchDataEntityDownstreamLineage,
-  fetchDataEntityUpstreamLineage,
-} from 'redux/thunks/dataentityLineage.thunks';
-import {
   getDataEntityLineage,
   getDataEntityLineageStreamFetching,
 } from 'redux/selectors/dataentityLineage.selectors';
@@ -19,8 +15,8 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  fetchDataEntityDownstreamLineage,
-  fetchDataEntityUpstreamLineage,
+  // fetchDataEntityDownstreamLineage,
+  // fetchDataEntityUpstreamLineage,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AppGraph);

@@ -6,12 +6,12 @@ import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
+import { DataEntityClassNameEnum } from 'generated-sources';
 import {
-  DataEntityClassNameEnum,
-  DataEntityLineage,
-} from 'generated-sources';
-import GroupedEntitiesListModal from 'components/shared/AppGraph/AppGraphNode/GroupedEntitiesListModal/GroupedEntitiesListModal';
-import NodeListButton from 'components/shared/AppGraph/AppGraphNode/NodeListButton/NodeListButton';
+  fetchDataEntityDownstreamLineage,
+  fetchDataEntityUpstreamLineage,
+} from 'redux/thunks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import {
   Attribute,
   AttributeLabel,
@@ -30,6 +30,8 @@ import {
 } from './AppGraphNodeStyles';
 
 interface AppGraphNodeProps {
+  appGraphNodeType: 'downstream' | 'upstream';
+  rootNodeId: number;
   data: TreeNodeDatum;
   position: Point;
   parent: HierarchyPointNode<TreeNodeDatum> | null;
@@ -42,16 +44,18 @@ interface AppGraphNodeProps {
   compactView: boolean;
   enableLegacyTransitions: boolean;
   transitionDuration: number;
-  fetchMoreLineage: (
-    entityId: number,
-    lineageDepth: number
-  ) => Promise<DataEntityLineage>;
+  // fetchMoreLineage: (
+  //   entityId: number,
+  //   lineageDepth: number
+  // ) => Promise<DataEntityLineage>;
   reverse?: boolean;
   isStreamFetching: boolean;
   hasChildren: boolean;
 }
 
 const AppGraphNode: React.FC<AppGraphNodeProps> = ({
+  appGraphNodeType,
+  rootNodeId,
   data,
   transitionDuration,
   position,
@@ -59,11 +63,13 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   nodeSize,
   compactView,
   enableLegacyTransitions,
-  fetchMoreLineage,
+  // fetchMoreLineage,
   reverse,
   isStreamFetching,
   hasChildren,
 }) => {
+  const dispatch = useAppDispatch();
+
   const detailsLink =
     parent && data.externalName
       ? dataEntityDetailsPath(
@@ -156,8 +162,31 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   const handleLoadMoreMouseLeave = () => setShowLoadMore(false);
 
   const loadMoreButtonHandler = () => {
+    // if (parent?.children) {
+    //   fetchMoreLineage(data.id, 1).then(() => setShowLoadMore(false));
+    // }
     if (parent?.children) {
-      fetchMoreLineage(data.id, 1).then(() => setShowLoadMore(false));
+      const params = {
+        dataEntityId: data.id,
+        lineageDepth: 1,
+        rootNodeId,
+      };
+      // fetchDataEntityDownstreamLineage(params)
+      //   .then(() => fetchDataEntityUpstreamLineage(params))
+      //   .then(() => setIsLineageFetching(false));
+      // dispatch(fetchDataEntityDownstreamLineage(params));
+      // dispatch(fetchDataEntityUpstreamLineage(params));
+      if (appGraphNodeType === 'downstream') {
+        dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
+          setShowLoadMore(false)
+        );
+      }
+
+      if (appGraphNodeType === 'upstream') {
+        dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
+          setShowLoadMore(false)
+        );
+      }
     }
   };
 
@@ -342,19 +371,19 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
                     Items
                   </AttributeLabel>
                 </Attribute>
-                <GroupedEntitiesListModal
-                  entities={data.nodesRelatedWithDEG}
-                  dataEntityName={data.internalName || data.externalName}
-                  fetchMoreLineage={fetchMoreLineage}
-                  openBtnEl={
-                    <NodeListButton
-                      text={`${
-                        data.nodesRelatedWithDEG &&
-                        data.nodesRelatedWithDEG.length
-                      } entities`}
-                    />
-                  }
-                />
+                {/* <GroupedEntitiesListModal */}
+                {/*  entities={data.nodesRelatedWithDEG} */}
+                {/*  dataEntityName={data.internalName || data.externalName} */}
+                {/*  fetchMoreLineage={fetchMoreLineage} */}
+                {/*  openBtnEl={ */}
+                {/*    <NodeListButton */}
+                {/*      text={`${ */}
+                {/*        data.nodesRelatedWithDEG && */}
+                {/*        data.nodesRelatedWithDEG.length */}
+                {/*      } entities`} */}
+                {/*    /> */}
+                {/*  } */}
+                {/* /> */}
               </>
             )}
         </g>
