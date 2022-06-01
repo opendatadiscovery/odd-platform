@@ -1,10 +1,11 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.BooleanUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
@@ -22,36 +23,31 @@ public class EnumValueServiceImpl implements EnumValueService {
 
     @Override
     public Mono<EnumValueList> createEnumValues(final Long datasetFieldId, final List<EnumValueFormData> formData) {
-        final var source =  Flux.fromStream(formData.stream())
-            .map(fd -> mapper.mapToPojo(fd, datasetFieldId)).cache();
+        final List<EnumValuePojo> pojos = formData.stream()
+            .map(fd -> mapper.mapToPojo(fd, datasetFieldId))
+            .collect(Collectors.toList());
 
-        final var hasDuplicates = source
+        final List<String> enumNames = pojos.stream()
             .map(EnumValuePojo::getName)
-            .collectList()
-            .map(this::hasDuplicates)
-            .filter(BooleanUtils::isFalse)
-            .switchIfEmpty(Mono.error(new RuntimeException("There are duplicates in enum values")));
+            .collect(Collectors.toList());
 
-        final var deletedEnumValues = source
-            .mapNotNull(EnumValuePojo::getId)
+        if (hasDuplicates(enumNames)) {
+            return Mono.error(new RuntimeException("There are duplicates in enum values"));
+        }
+
+        final List<Long> idsToKeep = pojos.stream()
+            .map(EnumValuePojo::getId)
             .filter(Objects::nonNull)
-            .collectList()
-            .map(list -> reactiveEnumValueRepository.softDeleteOutdatedEnumValues(datasetFieldId, list));
+            .collect(Collectors.toList());
 
-        final var updatedEnumValues = source
-            .filter(pojo -> pojo.getId() != null)
-            .collectList()
-            .map(reactiveEnumValueRepository::bulkUpdate);
+        final Map<Boolean, List<EnumValuePojo>> partitions = pojos.stream()
+            .collect(Collectors.partitioningBy(p -> p.getId() != null));
 
-        final var createdEnumValues = source
-            .filter(pojo -> pojo.getId() == null)
-            .collectList()
-            .map(reactiveEnumValueRepository::bulkCreate);
-
-        return hasDuplicates
+        return reactiveEnumValueRepository.softDeleteOutdatedEnumValues(datasetFieldId, idsToKeep)
             .then(
-                Flux.concat(deletedEnumValues, updatedEnumValues, createdEnumValues)
-                .flatMap(t -> t.filter(f -> !f.getIsDeleted()).map(mapper::mapToEnum))
+                Flux.concat(reactiveEnumValueRepository.bulkUpdate(partitions.get(true)),
+                        reactiveEnumValueRepository.bulkCreate(partitions.get(false)))
+                .map(mapper::mapToEnum)
                 .collectList()
                 .map(list -> new EnumValueList().items(list)));
     }
@@ -64,7 +60,7 @@ public class EnumValueServiceImpl implements EnumValueService {
             .map(enumValues -> new EnumValueList().items(enumValues));
     }
 
-    private <T> boolean hasDuplicates(final List<T> sourceList) {
+    private boolean hasDuplicates(final List<String> sourceList) {
         if (CollectionUtils.isEmpty(sourceList)) {
             return false;
         }

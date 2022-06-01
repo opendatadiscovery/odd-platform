@@ -1,6 +1,10 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.List;
+import java.util.Map;
+import org.jooq.Condition;
+import org.jooq.Field;
+import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.EnumValueRecord;
@@ -27,16 +31,27 @@ public class ReactiveEnumValueRepositoryImpl
 
     @Override
     public Flux<EnumValuePojo> getEnumValuesByFieldId(final Long datasetFieldId) {
-        final var query = DSL.select()
-            .from(ENUM_VALUE)
-            .where(ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId).and(ENUM_VALUE.IS_DELETED.isFalse()));
+        final var conditionWithSoftDeleteFilter = addSoftDeleteFilter(
+            ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId));
+        final var query = DSL.selectFrom(ENUM_VALUE)
+            .where(conditionWithSoftDeleteFilter);
 
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(EnumValuePojo.class));
     }
 
-    public Flux<EnumValuePojo> softDeleteOutdatedEnumValues(final Long datasetFieldId,
-                                                                  final List<Long> idsToKeep) {
+    public Flux<EnumValuePojo> softDeleteOutdatedEnumValues(final long datasetFieldId,
+                                                            final List<Long> idsToKeep) {
         return deleteConditionally(ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId).and(ENUM_VALUE.ID.notIn(idsToKeep)));
+    }
+
+    public Flux<EnumValuePojo> deleteConditionally(final Condition condition) {
+        final Map<Field<?>, Object> updatedFieldsMap = getDeleteChangedFields();
+        final UpdateResultStep<EnumValueRecord> query = DSL.update(recordTable)
+            .set(updatedFieldsMap)
+            .where(condition)
+            .returning();
+
+        return jooqReactiveOperations.flux(query).map(this::recordToPojo);
     }
 }

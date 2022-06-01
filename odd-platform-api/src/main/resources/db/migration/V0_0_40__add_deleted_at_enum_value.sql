@@ -7,6 +7,6 @@ WHERE deleted_at IS NULL
   AND is_deleted = true;
 
 ALTER TABLE enum_value
-DROP CONSTRAINT enum_value_name_dataset_field_id_key;
+DROP CONSTRAINT IF EXISTS enum_value_name_dataset_field_id_key;
 
 CREATE UNIQUE INDEX IF NOT EXISTS enum_value_unique ON enum_value (name, dataset_field_id) WHERE deleted_at IS NULL;

@@ -73,16 +73,6 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
         return jooqReactiveOperations.flux(query).map(this::recordToPojo);
     }
 
-    public Flux<P> deleteConditionally(final Condition condition) {
-        final Map<Field<?>, Object> updatedFieldsMap = getDeleteChangedFields();
-        final UpdateResultStep<R> query = DSL.update(recordTable)
-            .set(updatedFieldsMap)
-            .where(condition)
-            .returning();
-
-        return jooqReactiveOperations.flux(query).map(this::recordToPojo);
-    }
-
     @Override
     protected List<Condition> idCondition(final long id) {
         return addSoftDeleteFilter(super.idCondition(id));
@@ -108,7 +98,7 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
         return conditionsList;
     }
 
-    private Map<Field<?>, Object> getDeleteChangedFields() {
+    protected Map<Field<?>, Object> getDeleteChangedFields() {
         final Map<Field<?>, Object> updatedFieldsMap = new HashMap<>();
         updatedFieldsMap.put(deletedField, true);
         if (deletedAtField != null) {

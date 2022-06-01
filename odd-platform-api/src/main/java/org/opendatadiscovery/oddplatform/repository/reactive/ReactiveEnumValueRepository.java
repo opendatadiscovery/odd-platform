@@ -7,5 +7,5 @@ import reactor.core.publisher.Flux;
 public interface ReactiveEnumValueRepository extends ReactiveCRUDRepository<EnumValuePojo> {
     Flux<EnumValuePojo> getEnumValuesByFieldId(final Long datasetFieldId);
 
-    Flux<EnumValuePojo> softDeleteOutdatedEnumValues(final Long datasetFieldId, final List<Long> idsToKeep);
+    Flux<EnumValuePojo> softDeleteOutdatedEnumValues(final long datasetFieldId, final List<Long> idsToKeep);
 }

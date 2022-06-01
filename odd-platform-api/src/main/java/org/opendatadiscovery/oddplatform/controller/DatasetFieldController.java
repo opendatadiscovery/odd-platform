@@ -40,7 +40,6 @@ public class DatasetFieldController implements DatasetFieldApi {
                                                                final ServerWebExchange exchange) {
         return bulkEnumValueFormData
             .flatMap(formData -> enumValueService.createEnumValues(datasetFieldId, formData.getItems()))
-            .subscribeOn(Schedulers.boundedElastic())
             .map(e -> new ResponseEntity<>(e, HttpStatus.CREATED));
     }
 
@@ -48,7 +47,6 @@ public class DatasetFieldController implements DatasetFieldApi {
     public Mono<ResponseEntity<EnumValueList>> getEnumValues(final Long datasetFieldId,
                                                              final ServerWebExchange exchange) {
         return enumValueService.getEnumValues(datasetFieldId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 }
