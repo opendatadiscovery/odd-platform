@@ -9,6 +9,7 @@ apache-lang = '3.12.0'
 r2dbc-spi = '1.0.0.RELEASE'
 r2dbc-pool = '0.8.8.RELEASE'
 jooq = '3.16.6'
+jooq-codegen = '3.14.9'
 flyway-core = '8.5.10'
 psql-driver = '42.3.4'
 javax-validation = '2.0.1.Final'
@@ -23,6 +24,8 @@ opentelemetry = '1.6.0'
 opentelemetry-alpha= '1.6.0-alpha'
 lombok = '1.18.24'
 testcontainers = '1.17.1'
+slf4j-api = '1.7.30'
+logback = '1.2.11'
 easy-random-core = '5.0.0'
 
 [libraries]
@@ -48,6 +51,7 @@ r2dbc-spi = { module = 'io.r2dbc:r2dbc-spi', version.ref = 'r2dbc-spi' }
 r2dbc-postgresql = { module = 'io.r2dbc:r2dbc-postgresql' }
 r2dbc-pool = { module = 'io.r2dbc:r2dbc-pool', version.ref = 'r2dbc-pool' }
 jooq = { module = 'org.jooq:jooq', version.ref = 'jooq' }
+jooq-codegen = { module = 'org.jooq:jooq-codegen', version.ref = 'jooq-codegen' }
 flyway-core = { module = 'org.flywaydb:flyway-core', version.ref = 'flyway-core' }
 psql-driver = { module = 'org.postgresql:postgresql', version.ref = 'psql-driver' }
 javax-validation = { module = 'javax.validation:validation-api', version.ref = 'javax-validation' }
@@ -64,6 +68,10 @@ opentelemetry-api-metrics = { module = 'io.opentelemetry:opentelemetry-api-metri
 opentelemetry-sdk-metrics = { module = 'io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha' }
 opentelemetry-exporter-otlp-metrics = { module = 'io.opentelemetry:opentelemetry-exporter-otlp-metrics', version.ref = 'opentelemetry-alpha' }
 lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
+slf4j-api = {module = 'org.slf4j:slf4j-api', version.ref = 'slf4j-api' }
+jul-to-slf4j = { module = 'org.slf4j:jul-to-slf4j', version.ref = 'slf4j-api' }
+logback-classic = { module = 'ch.qos.logback:logback-classic', version.ref = 'logback' }
+logback-core = { module = 'ch.qos.logback:logback-core', version.ref = 'logback' }
 spring-boot-test = { module = 'org.springframework.boot:spring-boot-starter-test' }
 reactor-test = { module = 'io.projectreactor:reactor-test' }
 testcontainers = { module = 'org.testcontainers:testcontainers', version.ref = 'testcontainers' }
@@ -121,4 +129,15 @@ openapi = [
     'jackson-databind-nullable',
     'swagger-annotations',
     'springfox-core'
+]
+jooq-codegen = [
+    'flyway-core',
+    'psql-driver',
+    'testcontainers',
+    'testcontainers-postgresql',
+    'jooq-codegen',
+    'slf4j-api',
+    'jul-to-slf4j',
+    'logback-classic',
+    'logback-core'
 ]
