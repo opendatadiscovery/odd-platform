@@ -134,18 +134,12 @@ tasks.withType(Checkstyle) {
     }
 }
 
-if (hasProperty('buildScan')) {
-    buildScan {
-        termsOfServiceUrl = 'https://gradle.com/terms-of-service'
-        termsOfServiceAgree = 'yes'
-    }
-}
-
 compileJava.dependsOn jooqDockerGenerate
 
 test {
     useJUnitPlatform()
     testLogging.showStandardStreams = true
+    maxParallelForks 4
 }
 
 if (env == "dev") {
@@ -155,7 +149,7 @@ if (env == "dev") {
         overwrite true
     }
 
-    jibDockerBuild.dependsOn tasks.downloadOtlp
+    jibDockerBuild.dependsOn downloadOtlp
 }
 
 sonarqube {
