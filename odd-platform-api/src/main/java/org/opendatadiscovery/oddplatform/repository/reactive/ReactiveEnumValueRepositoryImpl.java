@@ -30,7 +30,7 @@ public class ReactiveEnumValueRepositoryImpl
     }
 
     @Override
-    public Flux<EnumValuePojo> getEnumValuesByFieldId(final Long datasetFieldId) {
+    public Flux<EnumValuePojo> getEnumValuesByFieldId(final long datasetFieldId) {
         final var conditionWithSoftDeleteFilter = addSoftDeleteFilter(
             ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId));
 
