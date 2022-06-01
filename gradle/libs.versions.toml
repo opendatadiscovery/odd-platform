@@ -21,7 +21,7 @@ swagger-annotations = '1.5.23'
 springfox-core = '3.0.0'
 mapstruct = '1.4.2.Final'
 opentelemetry = '1.6.0'
-opentelemetry-alpha= '1.6.0-alpha'
+opentelemetry-alpha = '1.6.0-alpha'
 lombok = '1.18.24'
 testcontainers = '1.17.1'
 slf4j-api = '1.7.30'
@@ -55,7 +55,7 @@ jooq-codegen = { module = 'org.jooq:jooq-codegen', version.ref = 'jooq-codegen' 
 flyway-core = { module = 'org.flywaydb:flyway-core', version.ref = 'flyway-core' }
 psql-driver = { module = 'org.postgresql:postgresql', version.ref = 'psql-driver' }
 javax-validation = { module = 'javax.validation:validation-api', version.ref = 'javax-validation' }
-javax-annotation = {module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation'}
+javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
 jackson-datatype-jsr310 = { module = 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310', version.ref = 'jackson-datatype-jsr310' }
 jackson-databind-nullable = { module = 'org.openapitools:jackson-databind-nullable', version.ref = 'jackson-databind-nullable' }
 jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'jetbrains-annotations' }
@@ -63,12 +63,12 @@ swagger-annotations = { module = 'io.swagger:swagger-annotations', version.ref =
 springfox-core = { module = 'io.springfox:springfox-core', version.ref = 'springfox-core' }
 mapstruct = { module = 'org.mapstruct:mapstruct', version.ref = 'mapstruct' }
 mapstruct-processor = { module = 'org.mapstruct:mapstruct-processor', version.ref = 'mapstruct' }
-opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api' , version.ref = 'opentelemetry'}
+opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref = 'opentelemetry' }
 opentelemetry-api-metrics = { module = 'io.opentelemetry:opentelemetry-api-metrics', version.ref = 'opentelemetry-alpha' }
 opentelemetry-sdk-metrics = { module = 'io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha' }
 opentelemetry-exporter-otlp-metrics = { module = 'io.opentelemetry:opentelemetry-exporter-otlp-metrics', version.ref = 'opentelemetry-alpha' }
 lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
-slf4j-api = {module = 'org.slf4j:slf4j-api', version.ref = 'slf4j-api' }
+slf4j-api = { module = 'org.slf4j:slf4j-api', version.ref = 'slf4j-api' }
 jul-to-slf4j = { module = 'org.slf4j:jul-to-slf4j', version.ref = 'slf4j-api' }
 logback-classic = { module = 'ch.qos.logback:logback-classic', version.ref = 'logback' }
 logback-core = { module = 'ch.qos.logback:logback-core', version.ref = 'logback' }
