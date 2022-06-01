@@ -11,7 +11,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 @Mapper(config = MapperConfig.class)
 public interface EnumValueMapper {
 
-    @Mapping(source = "datasetFieldId", target = "datasetFieldId")
     @Mapping(target = "name", source = "form.name", qualifiedByName = "mapToTrimmedStringNamed")
     @Mapping(target = "description", source = "form.description", qualifiedByName = "mapToTrimmedStringNamed",
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
