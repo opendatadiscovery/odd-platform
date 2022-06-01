@@ -6,7 +6,7 @@ import { stringFormatted } from 'lib/helpers';
 import * as S from './EntityTypeItemStyles';
 
 export interface EntityTypeItemProps {
-  entityTypeName: DataEntityTypeNameEnum;
+  entityTypeName: DataEntityTypeNameEnum | 'DCT';
   sx?: SxProps<Theme>;
 }
 
