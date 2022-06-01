@@ -1,9 +1,8 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { updateDataEntityInternalDescription } from 'redux/thunks/dataentities.thunks';
 import {
-  getDataEntityInternalDescription,
   getDataEntityExternalDescription,
+  getDataEntityInternalDescription,
 } from 'redux/selectors/dataentity.selectors';
 import OverviewDescription from './OverviewDescription';
 
@@ -21,9 +20,7 @@ const mapStateToProps = (
   ),
 });
 
-const mapDispatchToProps = {
-  updateDataEntityInternalDescription,
-};
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,

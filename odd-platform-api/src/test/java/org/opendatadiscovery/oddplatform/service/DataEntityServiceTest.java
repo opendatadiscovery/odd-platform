@@ -27,7 +27,11 @@ import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
-import org.opendatadiscovery.oddplatform.repository.TagRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -49,7 +53,7 @@ public class DataEntityServiceTest {
     @Mock
     private MetadataFieldRepository metadataFieldRepository;
     @Mock
-    private TagRepository tagRepository;
+    private TagService tagService;
     @Mock
     private LineageRepository lineageRepository;
     @Mock
@@ -60,12 +64,26 @@ public class DataEntityServiceTest {
     private MetadataFieldValueMapper metadataFieldValueMapper;
     @Mock
     private TagMapper tagMapper;
+    @Mock
+    private ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
+    @Mock
+    private NamespaceService namespaceService;
+    @Mock
+    private ReactiveDataEntityRepository reactiveDataEntityRepository;
+    @Mock
+    private ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
+    @Mock
+    private ReactiveTermRepository termRepository;
+    @Mock
+    private ReactiveOwnershipRepository ownershipRepository;
 
     @BeforeEach
     public void beforeAll() {
         dataEntityService = new DataEntityServiceImpl(dataEntityMapper, dataEntityRepository, authIdentityProvider,
-            metadataFieldValueRepository, metadataFieldRepository, tagRepository, lineageRepository,
-            metadataFieldMapper, metadataFieldValueMapper, tagMapper);
+            metadataFieldValueRepository, metadataFieldRepository, tagService, lineageRepository,
+            metadataFieldMapper, metadataFieldValueMapper, reactiveSearchEntrypointRepository, tagMapper,
+            namespaceService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository,
+            termRepository, ownershipRepository);
     }
 
     @Test

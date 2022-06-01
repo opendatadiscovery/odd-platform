@@ -1,17 +1,15 @@
 import React from 'react';
 import ReactMde from 'react-mde';
 import { Grid, Typography } from '@mui/material';
-import {
-  DataEntityApiUpsertDataEntityInternalDescriptionRequest,
-  DataEntityDetailsBaseObject,
-  InternalDescription,
-} from 'generated-sources';
+import { DataEntityDetailsBaseObject } from 'generated-sources';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
 import AppButton from 'components/shared/AppButton/AppButton';
 import remarkGfm from 'remark-gfm';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { updateDataEntityInternalDescription } from 'redux/thunks';
 import {
   CaptionContainer,
   FormActions,
@@ -22,36 +20,36 @@ interface OverviewDescriptionProps {
   dataEntityId: number;
   dataEntityInternalDescription: DataEntityDetailsBaseObject['internalDescription'];
   dataEntityExternalDescription: DataEntityDetailsBaseObject['externalDescription'];
-  updateDataEntityInternalDescription: (
-    params: DataEntityApiUpsertDataEntityInternalDescriptionRequest
-  ) => Promise<InternalDescription>;
 }
 
 const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
   dataEntityId,
   dataEntityInternalDescription,
   dataEntityExternalDescription,
-  updateDataEntityInternalDescription,
 }) => {
+  const dispatch = useAppDispatch();
+
   const [editMode, setEditMode] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>('');
   const [selectedTab, setSelectedTab] = React.useState<
     'write' | 'preview'
   >('write');
-  const [
-    internalDescription,
-    setInternalDescription,
-  ] = React.useState<string>(dataEntityInternalDescription || '');
-  const onEditClick = React.useCallback(() => setEditMode(true), [
-    setEditMode,
-  ]);
+  const [internalDescription, setInternalDescription] =
+    React.useState<string>(dataEntityInternalDescription || '');
+  const onEditClick = React.useCallback(
+    () => setEditMode(true),
+    [setEditMode]
+  );
+
   const handleDescriptionUpdate = React.useCallback(() => {
-    updateDataEntityInternalDescription({
-      dataEntityId,
-      internalDescriptionFormData: {
-        internalDescription,
-      },
-    }).then(
+    dispatch(
+      updateDataEntityInternalDescription({
+        dataEntityId,
+        internalDescriptionFormData: {
+          internalDescription,
+        },
+      })
+    ).then(
       () => {
         setError('');
         setEditMode(false);

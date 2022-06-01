@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "jest": true
   },
   "globals": {
     "Atomics": "readonly",
@@ -16,22 +17,29 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint", "prettier", "lodash"],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "lodash"
+  ],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "airbnb",
     "airbnb-typescript",
-    "prettier",
-    "prettier/react",
-    "prettier/@typescript-eslint"
+    "prettier"
   ],
   "rules": {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": "off",
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
+      }
+    ],
     "semi": "error",
     "no-multi-spaces": "error",
     "space-in-parens": "error",
@@ -39,19 +47,41 @@
     "prefer-const": "error",
     "prettier/prettier": "warn",
     "react/jsx-props-no-spreading": "off",
-    "lodash/import-scope": [2, "method"],
+    "lodash/import-scope": [
+      2,
+      "method"
+    ],
     "react/require-default-props": "off",
-    "react/function-component-definition": [2, {
-      "namedComponents": "arrow-function"
-    }],
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function"
+      }
+    ],
     "default-param-last": "off",
     "@typescript-eslint/default-param-last": "off",
-    "react/jsx-no-useless-fragment": ["error", { "allowExpressions":  true }],
-    "@typescript-eslint/no-unused-vars": "warn"
+    "react/jsx-no-useless-fragment": [
+      "error",
+      {
+        "allowExpressions": true
+      }
+    ],
+    "@typescript-eslint/no-unused-vars": "warn",
+    "no-param-reassign": [
+      "warn",
+      {
+        "props": true,
+        "ignorePropertyModificationsFor": [
+          "state"
+        ]
+      }
+    ]
   },
   "overrides": [
     {
-      "files": ["**/*.tsx"],
+      "files": [
+        "**/*.tsx"
+      ],
       "rules": {
         "react/prop-types": "off"
       }

@@ -1,4 +1,3 @@
-import { updateDataEntityTags } from 'redux/thunks/dataentities.thunks';
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import {
@@ -17,7 +16,6 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  updateDataEntityTags,
   searchTags: fetchTagsList,
 };
 

@@ -14,18 +14,15 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 import { CssBaseline } from '@mui/material';
-import configureStore from './redux/store';
-import * as serviceWorker from './serviceWorker';
+import { store } from 'redux/store';
 import theme from './theme/mui.theme';
 
-import AppContainer from './components/AppContainer';
+import App from './components/App';
 
 declare module 'styled-components' {
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DefaultTheme extends Theme {}
 }
-
-const store = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>
@@ -36,7 +33,7 @@ ReactDOM.render(
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <BrowserRouter>
               <StyleSheetManager disableVendorPrefixes>
-                <AppContainer />
+                <App />
               </StyleSheetManager>
             </BrowserRouter>
           </LocalizationProvider>
@@ -46,8 +43,3 @@ ReactDOM.render(
   </Provider>,
   document.getElementById('root')
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();

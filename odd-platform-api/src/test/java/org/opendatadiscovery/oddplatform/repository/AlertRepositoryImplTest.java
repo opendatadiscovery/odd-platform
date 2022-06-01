@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.IntStream;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
@@ -16,13 +17,16 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
-import org.opendatadiscovery.oddplatform.utils.Page;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class AlertRepositoryImplTest extends BaseIntegrationTest {
+class AlertRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired
     private AlertRepository alertRepository;
@@ -31,138 +35,174 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
     private DataEntityRepository dataEntityRepository;
 
     @Autowired
-    private OwnershipRepository ownershipRepository;
+    private ReactiveOwnershipRepository ownershipRepository;
 
     @Autowired
-    private OwnerRepository ownerRepository;
+    private ReactiveOwnerRepository ownerRepository;
 
     @Autowired
     private LineageRepository lineageRepository;
 
     @Test
-    public void createAlertsTest() {
+    @DisplayName("Test creates alerts, expecting alerts in the database")
+    void createAlertsTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final AlertPojo firstAlert = createAlertPojo(dataEntityPojo.getOddrn());
-        final AlertPojo secondAlert = createAlertPojo(dataEntityPojo.getOddrn());
-        final Collection<AlertPojo> alerts = alertRepository.createAlerts(List.of(firstAlert, secondAlert));
 
-        assertThat(alerts)
-            .allMatch(p -> p.getId() != null)
-            .usingElementComparatorIgnoringFields("id", "createdAt")
-            .hasSameElementsAs(List.of(firstAlert, secondAlert));
+        final Mono<List<AlertPojo>> createdAlerts = alertRepository.createAlerts(List.of(firstAlert));
+
+        createdAlerts.as(StepVerifier::create)
+            .assertNext(alertPojos -> assertThat(alertPojos)
+                .hasSize(1)
+                .allSatisfy(alertPojo -> {
+                    assertThat(alertPojo.getId()).isNotNull();
+                    assertThat(alertPojo.getDescription()).isEqualTo(firstAlert.getDescription());
+                    assertThat(alertPojo.getType()).isEqualTo(firstAlert.getType());
+                    assertThat(alertPojo.getStatusUpdatedAt()).isNotNull();
+                    assertThat(alertPojo.getCreatedAt()).isNotNull();
+                    assertThat(alertPojo.getDataEntityOddrn()).isEqualTo(firstAlert.getDataEntityOddrn());
+                    assertThat(alertPojo.getMessengerEntityOddrn()).isEqualTo(firstAlert.getMessengerEntityOddrn());
+                    assertThat(alertPojo.getStatusUpdatedBy()).isEqualTo(firstAlert.getStatusUpdatedBy());
+                })
+            )
+            .verifyComplete();
     }
 
     @Test
-    public void updateAlertStatusTest() {
+    @DisplayName("Test updates alert, expecting alert is updated successfully")
+    void updateAlertStatusTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final AlertPojo firstAlert = createAlertPojo(dataEntityPojo.getOddrn());
-        final AlertPojo alertPojo = alertRepository.createAlerts(List.of(firstAlert)).stream()
-            .findFirst().orElseThrow();
+        final AlertPojo alertPojo = alertRepository.createAlerts(List.of(firstAlert)).block().get(0);
         final String updatingUser = "user";
-        final AlertPojo updatedAlert = alertRepository
-            .updateAlertStatus(alertPojo.getId(), AlertStatusEnum.RESOLVED, updatingUser);
 
-        assertThat(updatedAlert.getStatusUpdatedBy()).isEqualTo(updatingUser);
-        assertThat(updatedAlert.getStatusUpdatedAt()).isAfter(alertPojo.getStatusUpdatedAt());
-        assertThat(updatedAlert.getStatus()).isEqualTo(AlertStatusEnum.RESOLVED.name());
-        assertThat(updatedAlert)
-            .usingRecursiveComparison()
-            .ignoringFields("statusUpdatedAt", "statusUpdatedBy", "status")
-            .isEqualTo(alertPojo);
+        alertRepository.updateAlertStatus(alertPojo.getId(), AlertStatusEnum.RESOLVED, updatingUser)
+            .as(StepVerifier::create)
+            .assertNext(r -> {
+                assertThat(r.getStatusUpdatedBy()).isEqualTo(updatingUser);
+                assertThat(r.getStatusUpdatedAt()).isAfter(alertPojo.getStatusUpdatedAt());
+                assertThat(r.getStatus()).isEqualTo(AlertStatusEnum.RESOLVED.name());
+                assertThat(r)
+                    .usingRecursiveComparison()
+                    .ignoringFields("statusUpdatedAt", "statusUpdatedBy", "status")
+                    .isEqualTo(alertPojo);
+            })
+            .verifyComplete();
     }
 
     @Test
+    @DisplayName("Test get alerts, expecting all alerts with status open")
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-    public void listAllTest() {
+    void listAllWithStatusOpenTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 7);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
-        alertRepository.createAlerts(openPojos);
-        alertRepository.createAlerts(resolvedPojos);
 
-        final Page<AlertDto> firstPage = alertRepository.listAll(1, 4);
+        alertRepository.createAlerts(openPojos).as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).hasSize(7))
+            .verifyComplete();
+        alertRepository.createAlerts(resolvedPojos).as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).hasSize(3))
+            .verifyComplete();
         final Comparator<AlertDto> comparator = getAlertsComparator();
 
-        assertThat(firstPage.getData())
-            .hasSize(4)
-            .isSortedAccordingTo(comparator)
-            .extracting(dto -> dto.getAlert().getStatus())
-            .containsOnly(AlertStatusEnum.OPEN.name());
-
-        final Page<AlertDto> secondPage = alertRepository.listAll(2, 4);
-        assertThat(secondPage.getData())
-            .hasSize(3)
-            .isSortedAccordingTo(comparator)
-            .extracting(dto -> dto.getAlert().getStatus())
-            .containsOnly(AlertStatusEnum.OPEN.name());
+        alertRepository.listAllWithStatusOpen(1, 4)
+            .as(StepVerifier::create)
+            .assertNext(firstPage -> assertThat(firstPage.getData())
+                .hasSize(4)
+                .isSortedAccordingTo(comparator)
+                .extracting(dto -> dto.getAlert().getStatus())
+                .containsOnly(AlertStatusEnum.OPEN.name()))
+            .verifyComplete();
+        alertRepository.listAllWithStatusOpen(2, 4).as(StepVerifier::create)
+            .assertNext(secondPage -> assertThat(secondPage.getData())
+                .hasSize(3)
+                .isSortedAccordingTo(comparator)
+                .extracting(dto -> dto.getAlert().getStatus())
+                .containsOnly(AlertStatusEnum.OPEN.name()))
+            .verifyComplete();
     }
 
     @Test
-    public void listByOwnerTest() {
+    @DisplayName("Test get alerts, expecting all alerts with status open for certain owner")
+    void listByOwnerTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojo.getId());
-        ownershipRepository.create(ownershipPojo);
+        ownershipRepository.create(ownershipPojo).block();
 
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
-        alertRepository.createAlerts(openPojos);
-        alertRepository.createAlerts(resolvedPojos);
-
+        alertRepository.createAlerts(openPojos).as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).hasSize(4))
+            .verifyComplete();
+        alertRepository.createAlerts(resolvedPojos).as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).hasSize(3))
+            .verifyComplete();
         final Comparator<AlertDto> comparator = getAlertsComparator();
-        final Page<AlertDto> firstPage = alertRepository.listByOwner(1, 3, ownerPojo.getId());
-        assertThat(firstPage.getData())
-            .hasSize(3)
-            .isSortedAccordingTo(comparator)
-            .extracting(dto -> dto.getAlert().getStatus())
-            .containsOnly(AlertStatusEnum.OPEN.name());
 
-        final Page<AlertDto> secondPage = alertRepository.listByOwner(2, 3, ownerPojo.getId());
-        assertThat(secondPage.getData())
-            .hasSize(1)
-            .isSortedAccordingTo(comparator)
-            .extracting(dto -> dto.getAlert().getStatus())
-            .containsOnly(AlertStatusEnum.OPEN.name());
+        alertRepository.listByOwner(1, 3, ownerPojo.getId()).as(StepVerifier::create)
+            .assertNext(firstPage -> assertThat(firstPage.getData())
+                .hasSize(3)
+                .isSortedAccordingTo(comparator)
+                .extracting(dto -> dto.getAlert().getStatus())
+                .containsOnly(AlertStatusEnum.OPEN.name()))
+            .verifyComplete();
+        alertRepository.listByOwner(2, 3, ownerPojo.getId()).as(StepVerifier::create)
+            .assertNext(secondPage -> assertThat(secondPage.getData())
+                .hasSize(1)
+                .isSortedAccordingTo(comparator)
+                .extracting(dto -> dto.getAlert().getStatus())
+                .containsOnly(AlertStatusEnum.OPEN.name()))
+            .verifyComplete();
     }
 
     @Test
-    public void getDataEntityAlertsTest() {
+    @DisplayName("Test get alerts, expecting all alerts for certain data entity id")
+    void getDataEntityAlertsTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
-        final Collection<AlertPojo> openAlerts = alertRepository.createAlerts(openPojos);
-        final Collection<AlertPojo> resolvedAlerts = alertRepository.createAlerts(resolvedPojos);
+        final List<AlertPojo> resolvedAlerts = alertRepository.createAlerts(resolvedPojos).block();
+        final List<AlertPojo> openAlerts = alertRepository.createAlerts(openPojos).block();
 
-        final Collection<AlertDto> dataEntityAlerts = alertRepository.getDataEntityAlerts(dataEntityPojo.getId());
-        assertThat(dataEntityAlerts)
-            .hasSize(7)
-            .extracting(AlertDto::getAlert)
-            .containsAll(openAlerts)
-            .containsAll(resolvedAlerts);
-        assertThat(dataEntityAlerts)
-            .extracting(AlertDto::getDataEntity)
-            .containsOnly(dataEntityPojo);
+        alertRepository.getAlertsByDataEntityId(dataEntityPojo.getId()).as(StepVerifier::create).assertNext(a -> {
+            assertThat(a)
+                .hasSize(7)
+                .extracting(AlertDto::getAlert)
+                .containsAll(openAlerts)
+                .containsAll(resolvedAlerts);
+            assertThat(a)
+                .extracting(AlertDto::getDataEntity)
+                .containsOnly(dataEntityPojo);
+        })
+            .verifyComplete();
     }
 
     @Test
-    public void listDependentObjectsAlertsTest() {
+    @DisplayName("Test get alerts, expecting all alerts which are dependent")
+    void listDependentObjectsAlertsTest() {
         final List<DataEntityPojo> dataEntityPojos = dataEntityRepository.bulkCreate(
             List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
             ));
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId());
-        ownershipRepository.create(ownershipPojo);
+        ownershipRepository.create(ownershipPojo).block();
 
         final LineagePojo firstLineagePojo =
             createLineagePojo(dataEntityPojos.get(0).getOddrn(), dataEntityPojos.get(1).getOddrn());
@@ -171,27 +211,31 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
         final LineagePojo thirdLineagePojo =
             createLineagePojo(dataEntityPojos.get(2).getOddrn(), dataEntityPojos.get(3).getOddrn());
         lineageRepository.replaceLineagePaths(List.of(firstLineagePojo, secondLineagePojo, thirdLineagePojo));
-        final Collection<AlertPojo> alerts = alertRepository.createAlerts(List.of(
+        final List<AlertPojo> alerts = alertRepository.createAlerts(List.of(
             createAlertPojo(dataEntityPojos.get(0).getOddrn()), createAlertPojo(dataEntityPojos.get(1).getOddrn()),
             createAlertPojo(dataEntityPojos.get(2).getOddrn()), createAlertPojo(dataEntityPojos.get(3).getOddrn())
-        ));
+        )).block();
+        final List<String> objByOwnerList = alertRepository.getObjectsOddrnsByOwner(ownerPojo.getId()).block();
 
-        final Page<AlertDto> alertDtoPage = alertRepository.listDependentObjectsAlerts(1, 10, ownerPojo.getId());
-        assertThat(alertDtoPage.getData())
-            .hasSize(2)
-            .extracting(AlertDto::getDataEntity)
-            .containsOnly(dataEntityPojos.get(0), dataEntityPojos.get(1));
-        assertThat(alertDtoPage.getData())
-            .hasSize(2)
-            .extracting(AlertDto::getAlert)
-            .containsOnly(
-                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(0).getOddrn()),
-                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(1).getOddrn())
-            );
+        alertRepository.listDependentObjectsAlerts(1, 10, objByOwnerList).as(StepVerifier::create)
+            .assertNext(a -> {
+                assertThat(a.getData())
+                    .hasSize(2)
+                    .extracting(AlertDto::getDataEntity)
+                    .containsOnly(dataEntityPojos.get(0), dataEntityPojos.get(1));
+                assertThat(a.getData())
+                    .hasSize(2)
+                    .extracting(AlertDto::getAlert)
+                    .containsOnly(
+                        findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(0).getOddrn()),
+                        findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(1).getOddrn())
+                    );
+            }).verifyComplete();
     }
 
     @Test
-    public void listDependentObjectsAlertsMultipleEntitiesTest() {
+    @DisplayName("Test get alerts, expecting all alerts which are dependent")
+    void listDependentObjectsAlertsMultipleEntitiesTest() {
         final List<DataEntityPojo> dataEntityPojos = dataEntityRepository.bulkCreate(
             List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
@@ -202,10 +246,12 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
             ));
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
-        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId()));
-        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(5).getId()));
-        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(6).getId()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();
+        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId())).block();
+        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(5).getId())).block();
+        ownershipRepository.create(createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(6).getId())).block();
 
         lineageRepository.replaceLineagePaths(List.of(
             createLineagePojo(dataEntityPojos.get(0).getOddrn(), dataEntityPojos.get(2).getOddrn()),
@@ -224,68 +270,91 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
             createAlertPojo(dataEntityPojos.get(6).getOddrn()), createAlertPojo(dataEntityPojos.get(7).getOddrn()),
             createAlertPojo(dataEntityPojos.get(0).getOddrn(), AlertStatusEnum.RESOLVED),
             createAlertPojo(dataEntityPojos.get(4).getOddrn(), AlertStatusEnum.RESOLVED)
-        ));
+        )).block();
+        final List<String> objByOwnerList = alertRepository.getObjectsOddrnsByOwner(ownerPojo.getId()).block();
 
-        final Page<AlertDto> alertDtoPage = alertRepository.listDependentObjectsAlerts(1, 10, ownerPojo.getId());
-        assertThat(alertDtoPage.getData())
-            .hasSize(4)
-            .extracting(AlertDto::getDataEntity)
-            .containsOnly(dataEntityPojos.get(0), dataEntityPojos.get(1),
-                dataEntityPojos.get(3), dataEntityPojos.get(4));
-        assertThat(alertDtoPage.getData())
-            .hasSize(4)
-            .extracting(AlertDto::getAlert)
-            .containsOnly(
-                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(0).getOddrn()),
-                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(1).getOddrn()),
-                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(3).getOddrn()),
-                findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(4).getOddrn())
-            );
+        alertRepository.listDependentObjectsAlerts(1, 10, objByOwnerList).as(StepVerifier::create)
+            .assertNext(a -> {
+                assertThat(a.getData())
+                    .hasSize(4)
+                    .extracting(AlertDto::getDataEntity)
+                    .containsOnly(dataEntityPojos.get(0), dataEntityPojos.get(1),
+                        dataEntityPojos.get(3), dataEntityPojos.get(4));
+                assertThat(a.getData())
+                    .hasSize(4)
+                    .extracting(AlertDto::getAlert)
+                    .containsOnly(
+                        findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(0).getOddrn()),
+                        findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(1).getOddrn()),
+                        findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(3).getOddrn()),
+                        findOpenAlertByEntityOddrn(alerts, dataEntityPojos.get(4).getOddrn())
+                    );
+            }).verifyComplete();
     }
 
     @Test
+    @DisplayName("Test count alerts, expecting certain amount of alerts with status open")
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-    public void countTest() {
+    void countAlertsWithStatusOpenTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 7);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
-        alertRepository.createAlerts(openPojos);
-        alertRepository.createAlerts(resolvedPojos);
-        final long count = alertRepository.count();
-        assertThat(count).isEqualTo(7);
+        alertRepository.createAlerts(openPojos).as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).hasSize(7))
+            .verifyComplete();
+        alertRepository.createAlerts(resolvedPojos).as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).hasSize(3))
+            .verifyComplete();
+
+        alertRepository.countAlertsWithStatusOpen()
+            .as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).isEqualTo(7L))
+            .verifyComplete();
     }
 
     @Test
-    public void countByOwnerTest() {
+    @DisplayName("Test count alerts, expecting certain amount of alerts with status open for certain owner")
+    void countAlertsWithStatusOpenByOwnerTest() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojo.getId());
-        ownershipRepository.create(ownershipPojo);
+        ownershipRepository.create(ownershipPojo).block();
 
         final List<AlertPojo> openPojos = createAlertPojos(dataEntityPojo.getOddrn(), AlertStatusEnum.OPEN, 4);
         final List<AlertPojo> resolvedPojos = createAlertPojos(dataEntityPojo.getOddrn(),
             AlertStatusEnum.RESOLVED, 3);
-        alertRepository.createAlerts(openPojos);
-        alertRepository.createAlerts(resolvedPojos);
+        alertRepository.createAlerts(openPojos).as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).hasSize(4))
+            .verifyComplete();
+        alertRepository.createAlerts(resolvedPojos).as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).hasSize(3))
+            .verifyComplete();
 
-        final long countByOwner = alertRepository.countByOwner(ownerPojo.getId());
-        assertThat(countByOwner).isEqualTo(4);
+        alertRepository.countAlertsWithStatusOpenByOwner(ownerPojo.getId())
+            .as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).isEqualTo(4L))
+            .verifyComplete();
     }
 
     @Test
-    public void countDependentObjectsAlertsTest() {
+    @DisplayName("Test count alerts, expecting certain amount of alerts of dependent objects")
+    void countDependentObjectsAlertsTest() {
         final List<DataEntityPojo> dataEntityPojos = dataEntityRepository.bulkCreate(
             List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString()),
                 new DataEntityPojo().setOddrn(UUID.randomUUID().toString())
             ));
-        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()));
+        final OwnerPojo ownerPojo = ownerRepository.create(new OwnerPojo().setName(UUID.randomUUID().toString()))
+            .blockOptional()
+            .orElseThrow();
         final OwnershipPojo ownershipPojo = createOwnershipPojo(ownerPojo.getId(), dataEntityPojos.get(2).getId());
-        ownershipRepository.create(ownershipPojo);
+        ownershipRepository.create(ownershipPojo).block();
 
         final LineagePojo firstLineagePojo =
             createLineagePojo(dataEntityPojos.get(0).getOddrn(), dataEntityPojos.get(1).getOddrn());
@@ -297,10 +366,13 @@ public class AlertRepositoryImplTest extends BaseIntegrationTest {
         alertRepository.createAlerts(List.of(
             createAlertPojo(dataEntityPojos.get(0).getOddrn()), createAlertPojo(dataEntityPojos.get(1).getOddrn()),
             createAlertPojo(dataEntityPojos.get(2).getOddrn()), createAlertPojo(dataEntityPojos.get(3).getOddrn())
-        ));
+        )).block();
+        final List<String> objByOwnerList = alertRepository.getObjectsOddrnsByOwner(ownerPojo.getId()).block();
 
-        final long countDependentObjectsAlerts = alertRepository.countDependentObjectsAlerts(ownerPojo.getId());
-        assertThat(countDependentObjectsAlerts).isEqualTo(2);
+        alertRepository.countDependentObjectsAlerts(objByOwnerList)
+            .as(StepVerifier::create)
+            .assertNext(a -> assertThat(a).isEqualTo(2L))
+            .verifyComplete();
     }
 
     private List<AlertPojo> createAlertPojos(final String dataEntityOddrn,

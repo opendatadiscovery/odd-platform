@@ -1,83 +1,77 @@
 import {
-  DataEntityApi,
-  MetadataApi,
   Configuration,
-  MetadataFieldValue,
-  MetadataFieldValueList,
-  MetadataFieldList,
-  MetadataField,
+  DataEntityApi,
   DataEntityApiCreateDataEntityMetadataFieldValueRequest,
-  DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
   DataEntityApiDeleteDataEntityMetadataFieldValueRequest,
+  DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
+  MetadataApi,
   MetadataApiGetMetadataFieldListRequest,
+  MetadataField,
+  MetadataFieldValue,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PartialEntityUpdateParams } from 'redux/interfaces';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new DataEntityApi(apiClientConf);
-const metadataClient = new MetadataApi(apiClientConf);
+const dataEntityApi = new DataEntityApi(apiClientConf);
+const metadataApi = new MetadataApi(apiClientConf);
 
-export const createDataEntityCustomMetadata = createThunk<
-  DataEntityApiCreateDataEntityMetadataFieldValueRequest,
-  MetadataFieldValueList,
-  PartialEntityUpdateParams<MetadataFieldValue[]>
+export const createDataEntityCustomMetadata = createAsyncThunk<
+  { dataEntityId: number; metadataList: Array<MetadataFieldValue> },
+  DataEntityApiCreateDataEntityMetadataFieldValueRequest
 >(
-  (params: DataEntityApiCreateDataEntityMetadataFieldValueRequest) =>
-    apiClient.createDataEntityMetadataFieldValue(params),
   actions.createDataEntityMetadataAction,
-  (
-    result: MetadataFieldValueList,
-    request: DataEntityApiCreateDataEntityMetadataFieldValueRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: result.items,
-  })
+  async ({ dataEntityId, metadataObject }) => {
+    const { items } =
+      await dataEntityApi.createDataEntityMetadataFieldValue({
+        dataEntityId,
+        metadataObject,
+      });
+    return { dataEntityId, metadataList: items };
+  }
 );
 
-export const updateDataEntityCustomMetadata = createThunk<
-  DataEntityApiUpsertDataEntityMetadataFieldValueRequest,
-  MetadataFieldValue,
-  PartialEntityUpdateParams<MetadataFieldValue>
+export const updateDataEntityCustomMetadata = createAsyncThunk<
+  {
+    dataEntityId: number;
+    metadataFieldId: number;
+    metadata: MetadataFieldValue;
+  },
+  DataEntityApiUpsertDataEntityMetadataFieldValueRequest
 >(
-  (params: DataEntityApiUpsertDataEntityMetadataFieldValueRequest) =>
-    apiClient.upsertDataEntityMetadataFieldValue(params),
   actions.updateDataEntityMetadataAction,
-  (
-    result: MetadataFieldValue,
-    request: DataEntityApiUpsertDataEntityMetadataFieldValueRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: result,
-  })
+  async (
+    params: DataEntityApiUpsertDataEntityMetadataFieldValueRequest
+  ) => {
+    const metadata =
+      await dataEntityApi.upsertDataEntityMetadataFieldValue(params);
+    return {
+      dataEntityId: params.dataEntityId,
+      metadataFieldId: params.metadataFieldId,
+      metadata,
+    };
+  }
 );
 
-export const deleteDataEntityCustomMetadata = createThunk<
-  DataEntityApiDeleteDataEntityMetadataFieldValueRequest,
-  void,
-  PartialEntityUpdateParams<number>
+export const deleteDataEntityCustomMetadata = createAsyncThunk<
+  { dataEntityId: number; metadataFieldId: number },
+  DataEntityApiDeleteDataEntityMetadataFieldValueRequest
 >(
-  (params: DataEntityApiDeleteDataEntityMetadataFieldValueRequest) =>
-    apiClient.deleteDataEntityMetadataFieldValue(params),
   actions.deleteDataEntityMetadataAction,
-  (
-    _,
-    request: DataEntityApiDeleteDataEntityMetadataFieldValueRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: request.metadataFieldId,
-  })
+  async ({ dataEntityId, metadataFieldId }) => {
+    await dataEntityApi.deleteDataEntityMetadataFieldValue({
+      dataEntityId,
+      metadataFieldId,
+    });
+    return { dataEntityId, metadataFieldId };
+  }
 );
 
-export const searchMetadata = createThunk<
-  MetadataApiGetMetadataFieldListRequest,
-  MetadataFieldList,
-  MetadataField[]
->(
-  (params: MetadataApiGetMetadataFieldListRequest) =>
-    metadataClient.getMetadataFieldList(params),
-  actions.searchMetadataAction,
-  (result: MetadataFieldList) => result.items
-);
+export const searchMetadata = createAsyncThunk<
+  { metadataFields: Array<MetadataField> },
+  MetadataApiGetMetadataFieldListRequest
+>(actions.searchMetadataAction, async ({ query }) => {
+  const { items } = await metadataApi.getMetadataFieldList({ query });
+  return { metadataFields: items };
+});

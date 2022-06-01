@@ -1,6 +1,6 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { DatasetStructureState, RootState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 import isNumber from 'lodash/isNumber';
 import { EnumValue } from 'generated-sources';
 
@@ -33,7 +33,7 @@ export const datasetParentFieldId = (
   { parentField }: { parentField?: number }
 ) => parentField;
 
-const getDataSetStructureFetchingStatus = createFetchingSelector(
+const getDataSetStructureFetchingStatus = createLegacyFetchingSelector(
   'GET_DATA_SET_STRUCTURE'
 );
 
@@ -67,7 +67,7 @@ export const getDatasetStructureTypeStats = createSelector(
 
 export const datasetFieldId = (_: RootState, fieldId: number) => fieldId;
 
-const getDatasetFieldFormDataUpdatingStatus = createFetchingSelector(
+const getDatasetFieldFormDataUpdatingStatus = createLegacyFetchingSelector(
   'PUT_DATA_SET_FIELD_FORM_DATA'
 );
 
@@ -99,11 +99,11 @@ export const getDatasetFieldEnums = createSelector(
   }
 );
 
-const getDatasetFieldEnumsFetchingStatus = createFetchingSelector(
+const getDatasetFieldEnumsFetchingStatus = createLegacyFetchingSelector(
   'GET_DATA_SET_FIELD_ENUM'
 );
 
-const getDatasetFieldEnumsCreatingStatus = createFetchingSelector(
+const getDatasetFieldEnumsCreatingStatus = createLegacyFetchingSelector(
   'POST_DATA_SET_FIELD_ENUM'
 );
 

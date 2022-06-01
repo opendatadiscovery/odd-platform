@@ -3,6 +3,7 @@ import {
   createDataEntitiesSearch,
   fetchIdentity,
   fetchAppInfo,
+  createTermSearch,
 } from 'redux/thunks';
 import { getIdentity } from 'redux/selectors/profile.selectors';
 import { getVersion } from 'redux/selectors/appInfo.selectors';
@@ -16,6 +17,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   createDataEntitiesSearch,
+  createTermSearch,
   fetchIdentity,
   fetchAppInfo,
 };

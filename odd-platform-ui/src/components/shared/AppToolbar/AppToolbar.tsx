@@ -5,9 +5,11 @@ import {
   AssociatedOwner,
   SearchApiSearchRequest,
   SearchFacetsData,
+  TermSearchFacetsData,
+  TermApiTermSearchRequest,
 } from 'generated-sources';
 import { useHistory, useLocation } from 'react-router-dom';
-import { searchPath } from 'lib/paths';
+import { searchPath, termSearchPath } from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
@@ -22,6 +24,9 @@ interface AppToolbarProps {
   createDataEntitiesSearch: (
     params: SearchApiSearchRequest
   ) => Promise<SearchFacetsData>;
+  createTermSearch: (
+    params: TermApiTermSearchRequest
+  ) => Promise<TermSearchFacetsData>;
   fetchAppInfo: () => Promise<AppInfo | void>;
 }
 
@@ -29,6 +34,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   identity,
   version,
   createDataEntitiesSearch,
+  createTermSearch,
   fetchIdentity,
   fetchAppInfo,
 }) => {
@@ -67,6 +73,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Catalog', link: '/search' },
     { name: 'Management', link: '/management' },
+    { name: 'Dictionary', link: '/termsearch' },
     { name: 'Alerts', link: '/alerts/' },
   ]);
 
@@ -86,9 +93,26 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   }, [setSelectedTab, location.pathname]);
 
   const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
+  const [termSearchLoading, setTermSearchLoading] =
+    React.useState<boolean>(false);
 
   const handleTabClick = (idx: number) => {
-    if (tabs[idx].name === 'Catalog') {
+    if (tabs[idx].name === 'Dictionary') {
+      if (termSearchLoading) return;
+      setTermSearchLoading(true);
+      const termSearchQuery = {
+        query: '',
+        pageSize: 30,
+        filters: {},
+      };
+      createTermSearch({ termSearchFormData: termSearchQuery }).then(
+        termSearch => {
+          const termSearchLink = termSearchPath(termSearch.searchId);
+          history.replace(termSearchLink);
+          setTermSearchLoading(false);
+        }
+      );
+    } else if (tabs[idx].name === 'Catalog') {
       if (searchLoading) return;
       setSearchLoading(true);
       const searchQuery = {
