@@ -51,8 +51,8 @@ public class ReactiveEnumValueRepositoryImpl
     }
 
     private Flux<EnumValuePojo> deleteConditionally(final Condition condition) {
-        final Map<Field<?>, Object> updatedFieldsMap = getDeleteChangedFields();
-        final UpdateResultStep<EnumValueRecord> query = DSL.update(recordTable)
+        final var updatedFieldsMap = getDeleteChangedFields();
+        final var query = DSL.update(recordTable)
             .set(updatedFieldsMap)
             .where(condition)
             .returning();
