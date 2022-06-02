@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
@@ -35,35 +34,34 @@ public class EnumValueServiceTest {
     @Mock
     private ReactiveEnumValueRepository enumValueRepository;
 
-    @Spy
-    private EnumValueMapper enumValueMapper = new EnumValueMapperImpl();
+    private final EnumValueMapper enumValueMapper = new EnumValueMapperImpl();
 
-    final long datasetFieldId = 1L;
+    private final long datasetFieldId = 1L;
 
-    final long existingEnumId = 2L;
+    private final long existingEnumId = 2L;
 
-    final String existingEnumName = "existingEnum";
+    private final String existingEnumName = "existingEnum";
 
-    final String existingEnumDescription = "Existing enum";
+    private final String existingEnumDescription = "Existing enum";
 
-    final long newEnumId = 3L;
+    private final long newEnumId = 3L;
 
-    final String newEnumName = "newEnum";
+    private final String newEnumName = "newEnum";
 
-    final String newEnumDescription = "New enum";
+    private final String newEnumDescription = "New enum";
 
-    final EnumValueFormData existingEnum = new EnumValueFormData()
+    private final EnumValueFormData existingEnum = new EnumValueFormData()
         .id(existingEnumId)
         .name(existingEnumName)
         .description(existingEnumDescription);
 
-    final EnumValueFormData newEnum = new EnumValueFormData()
+    private final EnumValueFormData newEnum = new EnumValueFormData()
         .name(newEnumName)
         .description(newEnumDescription);
 
-    final EnumValuePojo existingEnumPojo = enumValueMapper.mapToPojo(existingEnum, datasetFieldId);
+    private final EnumValuePojo existingEnumPojo = enumValueMapper.mapToPojo(existingEnum, datasetFieldId);
 
-    final EnumValuePojo newEnumPojo = enumValueMapper.mapToPojo(newEnum, datasetFieldId).setId(newEnumId);
+    private final EnumValuePojo newEnumPojo = enumValueMapper.mapToPojo(newEnum, datasetFieldId).setId(newEnumId);
 
     @BeforeEach
     void setUp() {
