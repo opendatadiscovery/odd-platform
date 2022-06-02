@@ -84,7 +84,7 @@ public class EnumValueServiceTest {
         when(enumValueRepository.bulkUpdate(anyList()))
             .thenReturn(Flux.just(existingEnumPojo));
 
-        when(enumValueRepository.softDeleteOutdatedEnumValues(anyLong(), anyList())).thenReturn(Flux.just());
+        when(enumValueRepository.softDeleteOutdatedEnumValuesExcept(anyLong(), anyList())).thenReturn(Flux.empty());
 
         enumValueService
             .createEnumValues(datasetFieldId, List.of(existingEnum, newEnum))
@@ -93,7 +93,7 @@ public class EnumValueServiceTest {
             .verifyComplete();
 
         verify(enumValueRepository, Mockito.times(1))
-            .softDeleteOutdatedEnumValues(datasetFieldId, List.of(existingEnumId));
+            .softDeleteOutdatedEnumValuesExcept(datasetFieldId, List.of(existingEnumId));
         verify(enumValueRepository, Mockito.times(1))
             .bulkCreate(List.of(enumValueMapper.mapToPojo(newEnum, datasetFieldId)));
         verify(enumValueRepository, Mockito.times(1))
@@ -101,7 +101,7 @@ public class EnumValueServiceTest {
     }
 
     @Test
-    @DisplayName("Throws exception if enums have same name")
+    @DisplayName("Throws exception if enums have the same name")
     public void testCreateEnumValues_duplicates() {
         final EnumValueFormData duplicatedEnum = new EnumValueFormData()
             .name(existingEnumName);
@@ -121,7 +121,7 @@ public class EnumValueServiceTest {
             enumValueMapper.mapToEnum(existingEnumPojo)
         );
 
-        when(enumValueRepository.getEnumValuesByFieldId(datasetFieldId)).thenReturn(Flux.just(existingEnumPojo));
+        when(enumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId)).thenReturn(Flux.just(existingEnumPojo));
 
         final Mono<EnumValueList> result = enumValueService.getEnumValues(datasetFieldId);
 
@@ -134,7 +134,7 @@ public class EnumValueServiceTest {
     @Test
     @DisplayName("Returns no enums if they don't exist for a given dataset field id")
     public void testGetEnumValues_empty() {
-        when(enumValueRepository.getEnumValuesByFieldId(datasetFieldId)).thenReturn(Flux.just());
+        when(enumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId)).thenReturn(Flux.empty());
 
         final Mono<EnumValueList> result = enumValueService.getEnumValues(datasetFieldId);
 

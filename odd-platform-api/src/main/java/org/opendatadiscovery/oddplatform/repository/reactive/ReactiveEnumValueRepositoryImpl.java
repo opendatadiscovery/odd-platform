@@ -30,7 +30,7 @@ public class ReactiveEnumValueRepositoryImpl
     }
 
     @Override
-    public Flux<EnumValuePojo> getEnumValuesByFieldId(final long datasetFieldId) {
+    public Flux<EnumValuePojo> getEnumValuesByDatasetFieldId(final long datasetFieldId) {
         final var conditionWithSoftDeleteFilter = addSoftDeleteFilter(
             ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId));
 
@@ -41,12 +41,9 @@ public class ReactiveEnumValueRepositoryImpl
             .map(r -> r.into(EnumValuePojo.class));
     }
 
-    public Flux<EnumValuePojo> softDeleteOutdatedEnumValues(final long datasetFieldId,
-                                                            final List<Long> idsToKeep) {
-        if (idsToKeep.isEmpty()) {
-            return Flux.just();
-        }
-
+    @Override
+    public Flux<EnumValuePojo> softDeleteOutdatedEnumValuesExcept(final long datasetFieldId,
+                                                                  final List<Long> idsToKeep) {
         return deleteConditionally(
             ENUM_VALUE.DATASET_FIELD_ID.eq(datasetFieldId)
             .and(ENUM_VALUE.ID.notIn(idsToKeep))

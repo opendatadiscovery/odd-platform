@@ -60,7 +60,7 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
 
         enumValueRepository.bulkCreate(List.of(softDeletedPojo, otherDatasetPojo, returnablePojo)).blockLast();
 
-        enumValueRepository.getEnumValuesByFieldId(mainDatasetFieldId)
+        enumValueRepository.getEnumValuesByDatasetFieldId(mainDatasetFieldId)
             .as(StepVerifier::create)
             .assertNext(r ->
                 assertThat(r)
@@ -91,7 +91,7 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
 
         enumValueRepository.bulkCreate(List.of(pojoToSoftDelete, pojoToKeep)).blockLast();
 
-        enumValueRepository.softDeleteOutdatedEnumValues(datasetFieldId, List.of(pojoToKeep.getId()))
+        enumValueRepository.softDeleteOutdatedEnumValuesExcept(datasetFieldId, List.of(pojoToKeep.getId()))
             .as(StepVerifier::create)
             .assertNext(r -> {
                 assertThat(r.getId()).isEqualTo(pojoToSoftDelete.getId());
@@ -101,7 +101,7 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
             })
             .verifyComplete();
 
-        enumValueRepository.getEnumValuesByFieldId(datasetFieldId)
+        enumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId)
             .as(StepVerifier::create)
             .assertNext(r ->
                 assertThat(r)

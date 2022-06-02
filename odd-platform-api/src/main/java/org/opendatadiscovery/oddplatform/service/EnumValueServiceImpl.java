@@ -45,7 +45,7 @@ public class EnumValueServiceImpl implements EnumValueService {
         final Map<Boolean, List<EnumValuePojo>> partitions = pojos.stream()
             .collect(Collectors.partitioningBy(p -> p.getId() != null));
 
-        return reactiveEnumValueRepository.softDeleteOutdatedEnumValues(datasetFieldId, idsToKeep)
+        return reactiveEnumValueRepository.softDeleteOutdatedEnumValuesExcept(datasetFieldId, idsToKeep)
             .then(
                 Flux.concat(reactiveEnumValueRepository.bulkUpdate(partitions.get(true)),
                         reactiveEnumValueRepository.bulkCreate(partitions.get(false)))
@@ -56,7 +56,7 @@ public class EnumValueServiceImpl implements EnumValueService {
 
     @Override
     public Mono<EnumValueList> getEnumValues(final Long datasetFieldId) {
-        return reactiveEnumValueRepository.getEnumValuesByFieldId(datasetFieldId)
+        return reactiveEnumValueRepository.getEnumValuesByDatasetFieldId(datasetFieldId)
             .map(mapper::mapToEnum)
             .collectList()
             .map(enumValues -> new EnumValueList().items(enumValues));
