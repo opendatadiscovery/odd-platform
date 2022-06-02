@@ -16,17 +16,3 @@ export const TermDetailsComponentWrapper = styled('div')(({ theme }) => ({
     maxWidth: `${maxContentWidthWithoutSidebar}px`,
   },
 }));
-
-export const TermDetailsHeadingWrapper = styled('div')(() => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  wrap: 'nowrap',
-}));
-
-export const TermDetailsHeadingRightWrapper = styled('div')(() => ({
-  display: 'flex',
-  justifyContent: 'end',
-  alignItems: 'center',
-  wrap: 'nowrap',
-}));

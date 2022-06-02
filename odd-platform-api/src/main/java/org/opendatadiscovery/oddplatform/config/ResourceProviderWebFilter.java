@@ -20,7 +20,7 @@ public class ResourceProviderWebFilter implements WebFilter {
             return chain.filter(exchange);
         }
 
-        if (requestPath.startsWith("/static")
+        if (requestPath.startsWith("/assets")
             || requestPath.startsWith("/img")
             || requestPath.equals("/manifest.json")
             || requestPath.startsWith("/favicon.ico")) {
