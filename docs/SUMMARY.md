@@ -1,7 +1,12 @@
 # Table of contents
 
 * [Overview](README.md)
-* [Quickstart](Quickstart.md)
+* [Configuration](configuration.md)
+  * [Platform](platform.md)
+  * [Collector](collector.md)
+* [Deployment](deployment.md)
+  * [Docker](docker.md)
+  * [Kubernetes](kubernetes.md)
 * [Architecture](Architecture.md)
   * [Adapter-oriented architecture](Adapters.md) 
 * [Features](Features.md)
