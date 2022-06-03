@@ -3,10 +3,14 @@ token: "elBYMN9McmlgRpzn6PKqgEMsMCxtalvHxR78t29t"
 plugins:
   - type: postgresql
 <<<<<<< HEAD
+<<<<<<< HEAD
     name: AEG-test
 =======
     name: Sample demo data source
 >>>>>>> 5f1523f9d7c0d4e35c333f032a0386c98884c696
+=======
+    name: AEG-test
+>>>>>>> f2105e3e558d45e3235f6083fadd775e552d203a
     host: !ENV ${SAMPLE_POSTGRES_HOST}
     port: 5432
     database: !ENV ${SAMPLE_POSTGRES_DATABASE}
