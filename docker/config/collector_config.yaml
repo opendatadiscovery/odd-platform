@@ -1,8 +1,8 @@
 default_pulling_interval: 1
-token: "<INSERT YOUR TOKEN HERE>"
+token: "elBYMN9McmlgRpzn6PKqgEMsMCxtalvHxR78t29t"
 plugins:
   - type: postgresql
-    name: Sample demo data source
+    name: AEG-test
     host: !ENV ${SAMPLE_POSTGRES_HOST}
     port: 5432
     database: !ENV ${SAMPLE_POSTGRES_DATABASE}
