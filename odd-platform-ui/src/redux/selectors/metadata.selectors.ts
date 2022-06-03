@@ -1,22 +1,20 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState, MetaDataState } from 'redux/interfaces';
 import { MetadataFieldValue } from 'generated-sources';
-import { createFetchingSelector } from './loader-selectors';
+import * as actions from 'redux/actions';
+import { createLegacyFetchingSelector } from './loader-selectors';
 import { getDataEntityId } from './dataentity.selectors';
 
 const metaDataState = ({ metaData }: RootState): MetaDataState => metaData;
 
 // Details
-const getDataEntityMetadataCreateFetchingStatus = createFetchingSelector(
-  'POST_DATA_ENTITY_METADATA'
-);
-const getDataEntityMetadataUpdateFetchingStatus = createFetchingSelector(
-  'PUT_DATA_ENTITY_METADATA'
-);
+const getDataEntityMetadataCreateFetchingStatus =
+  createLegacyFetchingSelector(actions.createDataEntityMetadataAction);
+const getDataEntityMetadataUpdateFetchingStatus =
+  createLegacyFetchingSelector(actions.updateDataEntityMetadataAction);
 
-const getDataEntityMetadataDeleteFetchingStatus = createFetchingSelector(
-  'DELETE_DATA_ENTITY_METADATA'
-);
+const getDataEntityMetadataDeleteFetchingStatus =
+  createLegacyFetchingSelector(actions.deleteDataEntityMetadataAction);
 
 export const getDataEntityMetadataCreateFetching = createSelector(
   getDataEntityMetadataCreateFetchingStatus,
@@ -46,11 +44,11 @@ export const getDataEntityPredefinedMetadataList = createSelector(
       return [];
     }
     return metadataState.allIds?.reduce<MetadataFieldValue[]>(
-      (matadataList, id) => {
+      (metadataList, id) => {
         if (metadataState.byId[id].field.origin === 'EXTERNAL') {
-          matadataList.push(metadataState.byId[id]);
+          metadataList.push(metadataState.byId[id]);
         }
-        return matadataList;
+        return metadataList;
       },
       []
     );

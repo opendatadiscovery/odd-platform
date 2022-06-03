@@ -5,3 +5,7 @@ configure([project(':odd-platform-api-contract'), project(':odd-platform-api')])
         mavenCentral()
     }
 }
+
+ext {
+    env = findProperty('env') ?: 'prod'
+}

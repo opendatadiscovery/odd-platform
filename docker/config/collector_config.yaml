@@ -2,7 +2,11 @@ default_pulling_interval: 1
 token: "elBYMN9McmlgRpzn6PKqgEMsMCxtalvHxR78t29t"
 plugins:
   - type: postgresql
+<<<<<<< HEAD
     name: AEG-test
+=======
+    name: Sample demo data source
+>>>>>>> 5f1523f9d7c0d4e35c333f032a0386c98884c696
     host: !ENV ${SAMPLE_POSTGRES_HOST}
     port: 5432
     database: !ENV ${SAMPLE_POSTGRES_DATABASE}

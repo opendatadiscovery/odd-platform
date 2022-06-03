@@ -2,7 +2,7 @@ import React from 'react';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 
-const AddIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
+const CalendarIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
   <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props}>
     <svg viewBox="0 0 24 24" fill="currentColor">
       <path
@@ -13,4 +13,4 @@ const AddIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
   </AppSvgIcon>
 );
 
-export default AddIcon;
+export default CalendarIcon;

@@ -20,12 +20,9 @@ interface TestRunStatusReasonModalProps {
   dataQATestRun: DataQualityTestRun;
 }
 
-const TestRunStatusReasonModal: React.FC<TestRunStatusReasonModalProps> = ({
-  btnCreateEl,
-  dataQATestId,
-  dataQATestName,
-  dataQATestRun,
-}) => {
+const TestRunStatusReasonModal: React.FC<
+  TestRunStatusReasonModalProps
+> = ({ btnCreateEl, dataQATestId, dataQATestName, dataQATestRun }) => {
   const modalTitle = (
     <Grid container justifyContent="space-between" alignItems="center">
       <Typography variant="h3" component="span">

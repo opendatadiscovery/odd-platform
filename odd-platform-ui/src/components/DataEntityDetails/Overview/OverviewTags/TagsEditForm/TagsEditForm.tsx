@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import {
-  DataEntityApiCreateDataEntityTagsRelationsRequest,
   Tag,
   TagApiGetPopularTagListRequest,
   TagsResponse,
@@ -11,15 +10,14 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import TagItem from 'components/shared/TagItem/TagItem';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { updateDataEntityTags } from 'redux/thunks';
 import TagsEditFormAutocomplete from './TagsEditFormAutocomplete/TagsEditFormAutocomplete';
 
 interface TagsEditProps {
   dataEntityId: number;
   dataEntityTags?: Tag[];
   isLoading: boolean;
-  updateDataEntityTags: (
-    params: DataEntityApiCreateDataEntityTagsRelationsRequest
-  ) => Promise<Tag[]>;
   searchTags: (
     params: TagApiGetPopularTagListRequest
   ) => Promise<TagsResponse>;
@@ -30,10 +28,11 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   dataEntityId,
   dataEntityTags,
   isLoading,
-  updateDataEntityTags,
   searchTags,
   btnEditEl,
 }) => {
+  const dispatch = useAppDispatch();
+
   type DataEntityTagsFormType = {
     tagNameList: { name: string; important: boolean }[];
   };
@@ -66,12 +65,14 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   };
 
   const handleSubmit = (data: DataEntityTagsFormType) => {
-    updateDataEntityTags({
-      dataEntityId,
-      dataEntityTagsFormData: {
-        tagNameList: compact([...data.tagNameList.map(tag => tag.name)]),
-      },
-    }).then(
+    dispatch(
+      updateDataEntityTags({
+        dataEntityId,
+        tagsFormData: {
+          tagNameList: compact([...data.tagNameList.map(tag => tag.name)]),
+        },
+      })
+    ).then(
       () => {
         setFormState({ ...initialFormState, isSuccessfulSubmit: true });
         clearFormState();

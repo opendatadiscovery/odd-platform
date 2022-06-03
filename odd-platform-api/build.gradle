@@ -1,14 +1,10 @@
 plugins {
-    id 'org.springframework.boot' version '2.6.2'
+    id 'org.springframework.boot' version '2.6.7'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'com.google.cloud.tools.jib' version '3.0.0'
     id 'checkstyle'
     id "de.undercouch.download" version "4.1.2" apply false
     id "org.sonarqube" version "3.3"
-}
-
-ext {
-    env = findProperty('env') ?: 'prod'
 }
 
 if (env == 'dev') {
@@ -29,10 +25,13 @@ dependencies {
     implementation "org.springframework.boot:spring-boot-starter-jooq"
     implementation "org.springframework.boot:spring-boot-starter-actuator"
     implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
     implementation "org.springframework.session:spring-session-core"
-    implementation "org.springframework:spring-r2dbc"
+    implementation('org.springframework:spring-r2dbc') {
+        exclude group: 'io.r2dbc', module: 'r2dbc-spi'
+    }
     implementation "io.micrometer:micrometer-registry-prometheus:$micrometerRegistryPrometheus"
 
     implementation "org.opendatadiscovery:ingestion-contract-server:$oddIngestionApiVersion"
@@ -49,6 +48,7 @@ dependencies {
     implementation "org.flywaydb:flyway-core:$flywayVersion"
     implementation "org.postgresql:postgresql:$postgresqlDriverVersion"
     implementation "org.jooq:jooq:$jooqVersion"
+    implementation "io.r2dbc:r2dbc-spi:$r2dbcSpiVersion"
     implementation "io.r2dbc:r2dbc-postgresql"
     implementation "io.r2dbc:r2dbc-pool:$r2dbcPoolVersion"
 
@@ -56,6 +56,7 @@ dependencies {
     implementation "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonJsr310Version"
     implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    implementation "io.projectreactor.addons:reactor-extra:$reactorExtraVersion"
 
     implementation(platform("io.opentelemetry:opentelemetry-bom:$opentelemetryVersion"))
     implementation(platform("io.opentelemetry:opentelemetry-bom-alpha:$opentelemetryVersionAlpha"))
@@ -83,6 +84,8 @@ dependencies {
     testImplementation "org.testcontainers:testcontainers:$testContainersVersion"
     testImplementation "org.testcontainers:postgresql:$testContainersVersion"
     testImplementation "org.testcontainers:junit-jupiter:$testContainersVersion"
+    testImplementation "org.jeasy:easy-random-core:$easyRandomVersion"
+
 
     testCompileOnly "org.projectlombok:lombok:$lombokVersion"
     testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
@@ -157,6 +160,8 @@ jib {
     }
     allowInsecureRegistries = false
 }
+
+jibDockerBuild.dependsOn(test)
 
 checkstyle {
     configFile = project(':').file('config/checkstyle/checkstyle.xml')

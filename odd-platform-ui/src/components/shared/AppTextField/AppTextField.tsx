@@ -13,7 +13,7 @@ interface AdornmentProps {
   variant: AdornmentVariant;
   showAdornment: boolean;
   icon?: React.ReactNode;
-  onCLick?: () => void;
+  onCLick?: (e: React.MouseEvent) => void;
   position?: SxProps<Theme>;
 }
 
@@ -44,6 +44,7 @@ interface AppTextFieldProps
     | 'SelectProps'
     | 'onSelect'
     | 'id'
+    | 'minRows'
   > {
   size?: TextFieldSizes;
 
@@ -83,6 +84,7 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
       onSelect,
       id,
       selectNative,
+      minRows,
     },
     ref
   ) => {
@@ -138,6 +140,7 @@ const AppTextField: React.FC<AppTextFieldProps> = React.forwardRef(
         required={required}
         type={type}
         maxRows={maxRows}
+        minRows={minRows}
         multiline={multiline}
         name={name}
         select={select || selectNative}

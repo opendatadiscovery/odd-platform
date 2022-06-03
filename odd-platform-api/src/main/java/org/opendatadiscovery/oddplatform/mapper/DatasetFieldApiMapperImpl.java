@@ -30,6 +30,6 @@ public class DatasetFieldApiMapperImpl implements DatasetFieldApiMapper {
             .isValue(pojo.getIsValue())
             .externalDescription(pojo.getExternalDescription())
             .internalDescription(pojo.getInternalDescription())
-            .labels(dto.getLabelPojos().stream().map(labelMapper::mapPojo).collect(Collectors.toList()));
+            .labels(dto.getLabelPojos().stream().map(labelMapper::mapToLabel).collect(Collectors.toList()));
     }
 }

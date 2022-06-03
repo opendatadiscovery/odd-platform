@@ -26,12 +26,15 @@ This environment consists of:
 
 ### Execution
 
-Run **from the root folder** `docker-compose -f docker/demo.yaml up -d odd-platform-enricher`.
+Run **from the project root folder** `docker-compose -f docker/demo.yaml up -d odd-platform-enricher`.
 
 ### Result
 
-1. Open http://localhost:8080 in your browser
-2. Select the Catalog in the Platform UI
+1. Open http://localhost:8080/management/datasources in your browser
+
+You should be able to see 10 predefined data sources in the list
+
+2. Go to the **Catalog** section
 
 You should be able to see metadata sample injected in the Platform
 
@@ -51,11 +54,18 @@ You should be able to see metadata sample injected in the Platform
 
 1. Paste the token obtained in the previous step into the `docker/config/collector_config.yaml` file under the `token` entry
 2. If you'd like, you may change the name of the `postgresql` plugin under the `name` entry.
-3. Save the changed file and run **from the root folder** `docker-compose -f docker/demo.yaml up -d odd-collector`.
+3. Save the changed file and run **from the project root folder** `docker-compose -f docker/demo.yaml up -d odd-collector`.
 
 ### Result
 
-New data source and data entities should be injected in seconds.
+1. Open http://localhost:8080/management/datasources in your browser
+
+You should be able to see a new data source with the name you've passed into the collector_config.yaml file 
+(Default is `Sample demo data source`). Overall you should see 11 data sources in the list
+
+2. Go to the **Catalog** section. Select the created data source in the `Datasources` filter
+
+You should be able to see 11 new entities of different types injected into the Platform
 
 ## Step 3 (Optional): Configuring and running Collector to gather metadata from your own data sources
 
@@ -71,7 +81,7 @@ New data source and data entities should be injected in seconds.
 
 1. Add new entries under plugin list in the `docker/config/collector_config.yaml`
    See a documentation [here](https://github.com/opendatadiscovery/odd-collector/blob/main/README.md)
-2. Restart the Collector by running **from the root folder** `docker-compose -f docker/demo.yaml restart odd-collector`
+2. Restart the Collector by running **from the project root folder** `docker-compose -f docker/demo.yaml restart odd-collector`
 
 ### Result
 
@@ -81,4 +91,4 @@ You should be able to see new data sources and data entities that correspond wit
 
 **My entities from the sample data aren't shown in the platform.**
 
-Check the logs by running **from the root folder** `docker-compose -f docker/demo.yaml logs -f`
+Check the logs by running **from the project root folder** `docker-compose -f docker/demo.yaml logs -f`

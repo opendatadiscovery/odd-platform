@@ -4,11 +4,11 @@ import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -18,11 +18,19 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueLi
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
+import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataEntityList> {
+    Mono<DataEntityRef> createDataEntityGroup(final DataEntityGroupFormData formData);
+
+    Mono<DataEntityRef> updateDataEntityGroup(final Long id, final DataEntityGroupFormData formData);
+
+    Mono<DataEntityPojo> deleteDataEntityGroup(final Long id);
+
     Mono<DataEntityClassAndTypeDictionary> getDataEntityClassesAndTypes();
 
     Mono<DataEntityDetails> getDetails(final long dataEntityId);
@@ -38,6 +46,9 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
 
     Flux<DataEntityRef> listPopular(final int page, final int size);
 
+    Mono<DataEntityList> listByTerm(final long termId, final String query, final Integer entityClassId,
+                                    final int page, final int size);
+
     Mono<MetadataFieldValueList> createMetadata(final long dataEntityId, final List<MetadataObject> metadata);
 
     Mono<Void> deleteMetadata(final long dataEntityId, final long metadataFieldId);
@@ -46,7 +57,7 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
 
     Mono<InternalName> upsertBusinessName(final long dataEntityId, final InternalNameFormData formData);
 
-    Flux<Tag> upsertTags(final long dataEntityId, final DataEntityTagsFormData tagsFormData);
+    Flux<Tag> upsertTags(final long dataEntityId, final TagsFormData tagsFormData);
 
     Mono<MetadataFieldValue> upsertMetadataFieldValue(final long dataEntityId,
                                                       final long metadataFieldId,

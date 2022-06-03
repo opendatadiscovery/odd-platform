@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.Collection;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.InsertValuesStep2;
@@ -28,5 +29,13 @@ public class DataQualityTestRelationRepositoryImpl implements DataQualityTestRel
         }
 
         step.onDuplicateKeyIgnore().execute();
+    }
+
+    @Override
+    public List<DataQualityTestRelationsPojo> getRelations(final Collection<String> dataQATestOddrns) {
+        return dslContext.selectFrom(DATA_QUALITY_TEST_RELATIONS)
+            .where(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN.in(dataQATestOddrns))
+            .fetchStreamInto(DataQualityTestRelationsPojo.class)
+            .toList();
     }
 }
