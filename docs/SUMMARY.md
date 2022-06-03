@@ -1,14 +1,14 @@
 # Table of contents
 
 * [Overview](README.md)
+* [Architecture](Architecture.md)
+  * [Adapter-oriented architecture](Adapters.md) 
 * [Configuration](configuration.md)
   * [Platform](platform.md)
   * [Collector](collector.md)
 * [Deployment](deployment.md)
   * [Docker](docker.md)
   * [Kubernetes](kubernetes.md)
-* [Architecture](Architecture.md)
-  * [Adapter-oriented architecture](Adapters.md) 
 * [Features](Features.md)
 * [Use cases](Use_cases.md)
   * [Data compliance for Data Scientists](dc_data_compliance.md)
