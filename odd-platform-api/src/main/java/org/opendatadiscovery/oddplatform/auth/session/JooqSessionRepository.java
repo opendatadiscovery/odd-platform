@@ -1,11 +1,13 @@
 package org.opendatadiscovery.oddplatform.auth.session;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.SerializationUtils;
 import org.jooq.DeleteConditionStep;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.SpringSessionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.SpringSessionAttributesRecord;
 import org.opendatadiscovery.oddplatform.model.tables.records.SpringSessionRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
@@ -15,7 +17,11 @@ import org.springframework.session.ReactiveSessionRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.SPRING_SESSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.SPRING_SESSION_ATTRIBUTES;
@@ -78,8 +84,10 @@ public class JooqSessionRepository implements ReactiveSessionRepository<MapSessi
         // @formatter:on
 
         return jooqReactiveOperations
-            .mono(query)
-            .map(this::mapJooqRecordToMapSession)
+            .flux(query)
+            .collectList()
+            .switchIfEmpty(Mono.empty())
+            .flatMap(this::mapJooqRecordToMapSession)
             .filter(MapSession::isExpired)
             .switchIfEmpty(deleteById(id).then(Mono.empty()));
     }
@@ -99,7 +107,35 @@ public class JooqSessionRepository implements ReactiveSessionRepository<MapSessi
             .then();
     }
 
-    private MapSession mapJooqRecordToMapSession(final Record record) {
-        return new MapSession();
+    private Mono<MapSession> mapJooqRecordToMapSession(final List<Record> records) {
+        if (records.isEmpty()) {
+            return Mono.empty();
+        }
+
+        final Map<SpringSessionPojo, List<Record>> groupedSessions = records.stream()
+            .collect(Collectors.groupingBy(r -> r.into(SPRING_SESSION).into(SpringSessionPojo.class)));
+
+        if (groupedSessions.size() > 1) {
+            return Mono.error(
+                new IllegalStateException("Multiple sessions found for id: " + groupedSessions.keySet()));
+        }
+
+        final Map.Entry<SpringSessionPojo, List<Record>> entry = IterableUtils.first(groupedSessions.entrySet());
+
+        final MapSession session = new MapSession();
+
+        session.setId(entry.getKey().getSessionId());
+        session.setCreationTime(Instant.ofEpochSecond(entry.getKey().getCreationTime()));
+        session.setLastAccessedTime(Instant.ofEpochSecond(entry.getKey().getLastAccessTime()));
+        session.setMaxInactiveInterval(Duration.ofSeconds(entry.getKey().getMaxInactiveInterval()));
+
+        for (final Record record : entry.getValue()) {
+            session.setAttribute(
+                record.get(SPRING_SESSION_ATTRIBUTES.ATTRIBUTE_NAME),
+                SerializationUtils.deserialize(record.get(SPRING_SESSION_ATTRIBUTES.ATTRIBUTE_BYTES))
+            );
+        }
+
+        return Mono.just(session);
     }
 }
