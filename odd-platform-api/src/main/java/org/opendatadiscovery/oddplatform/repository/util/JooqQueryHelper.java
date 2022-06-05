@@ -7,6 +7,8 @@ import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
+import org.jooq.InsertResultStep;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
@@ -138,5 +140,19 @@ public class JooqQueryHelper {
                 throw new IllegalArgumentException("The list of passed query's fields is heterogeneous");
             }
         }
+    }
+
+    public <R extends Record> InsertResultStep<R> insertManyQuery(final Table<R> table, final List<R> records) {
+        if (records.isEmpty()) {
+            throw new IllegalArgumentException("Cannot generate insertMany query: records list is empty");
+        }
+
+        InsertSetStep<R> insertStep = DSL.insertInto(table);
+
+        for (int i = 0; i < records.size() - 1; i++) {
+            insertStep = insertStep.set(records.get(i)).newRecord();
+        }
+
+        return insertStep.set(records.get(records.size() - 1)).returning(table.fields());
     }
 }
