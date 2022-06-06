@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
@@ -42,6 +44,7 @@ import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
@@ -63,6 +66,7 @@ import reactor.core.publisher.Mono;
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @Slf4j
@@ -361,6 +365,42 @@ public class DataEntityServiceImpl
             .map(entityMapper::mapGroupLineageDto);
     }
 
+    @Override
+    public Mono<DataEntityRef> addDataEntityToDEG(final Long dataEntityId,
+                                                  final DataEntityDataEntityGroupFormData formData) {
+        final Mono<DataEntityPojo> dataEntityMono = reactiveDataEntityRepository.get(dataEntityId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity with id %s doesn't exist", dataEntityId)));
+        final Mono<DataEntityPojo> groupPojoMono = reactiveDataEntityRepository.get(formData.getDataEntityGroupId())
+            .filter(this::isManuallyCreatedDEG)
+            .switchIfEmpty(Mono.error(
+                new IllegalArgumentException(
+                    "Entity with id %s is not manually created DEG".formatted(formData.getDataEntityGroupId()))));
+        return dataEntityMono.zipWith(groupPojoMono)
+            .flatMap(function(
+                (pojo, groupPojo) -> groupEntityRelationRepository
+                    .createRelations(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
+                    .ignoreElements()
+                    .thenReturn(groupPojo)
+            )).map(entityMapper::mapRef);
+    }
+
+    @Override
+    public Flux<GroupEntityRelationsPojo> deleteDataEntityFromDEG(final Long dataEntityId,
+                                                                  final Long dataEntityGroupId) {
+        final Mono<DataEntityPojo> dataEntityMono = reactiveDataEntityRepository.get(dataEntityId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity with id %s doesn't exist", dataEntityId)));
+        final Mono<DataEntityPojo> groupPojoMono = reactiveDataEntityRepository.get(dataEntityGroupId)
+            .filter(this::isManuallyCreatedDEG)
+            .switchIfEmpty(Mono.error(
+                new IllegalArgumentException(
+                    "Entity with id %s is not manually created DEG".formatted(dataEntityGroupId))));
+        return dataEntityMono.zipWith(groupPojoMono)
+            .flatMapMany(function(
+                (pojo, groupPojo) -> groupEntityRelationRepository
+                    .deleteRelations(groupPojo.getOddrn(), pojo.getOddrn())
+            ));
+    }
+
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,
                                           final NamespacePojo namespace) {
         return Mono.just(formData)
@@ -410,8 +450,8 @@ public class DataEntityServiceImpl
     private String generateOddrn(final DataEntityPojo pojo) {
         try {
             return oddrnGenerator.generate(ODDPlatformDataEntityGroupPath.builder()
-                    .id(pojo.getId())
-                    .build(), "id");
+                .id(pojo.getId())
+                .build(), "id");
         } catch (Exception e) {
             log.error("Error while generating oddrn for data entity {}", pojo.getId(), e);
             throw new RuntimeException(e);
@@ -423,5 +463,10 @@ public class DataEntityServiceImpl
             reactiveSearchEntrypointRepository.updateDataEntityVectors(pojo.getId()),
             reactiveSearchEntrypointRepository.updateNamespaceVectorForDataEntity(pojo.getId())
         ).thenReturn(pojo);
+    }
+
+    private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {
+        return pojo.getManuallyCreated()
+            && Arrays.stream(pojo.getEntityClassIds()).anyMatch(classId -> classId.equals(DATA_ENTITY_GROUP.getId()));
     }
 }

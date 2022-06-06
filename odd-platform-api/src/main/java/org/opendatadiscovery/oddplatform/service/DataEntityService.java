@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
@@ -21,6 +22,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -72,4 +74,8 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
                                                      final Integer size);
 
     Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId);
+
+    Mono<DataEntityRef> addDataEntityToDEG(final Long dataEntityId, final DataEntityDataEntityGroupFormData formData);
+
+    Flux<GroupEntityRelationsPojo> deleteDataEntityFromDEG(final Long dataEntityId, final Long dataEntityGroupId);
 }

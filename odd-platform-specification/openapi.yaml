@@ -768,6 +768,16 @@ paths:
       operationId: getSearchSuggestions
       parameters:
         - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: entity_class_id
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: manually_created
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: OK
@@ -949,6 +959,41 @@ paths:
       parameters:
           - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
           - $ref: './components.yaml/#/components/parameters/TermIdParam'
+      responses:
+        '204':
+          $ref: './components.yaml/#/components/responses/Deleted'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/data_entity_group:
+    post:
+      summary: Add data entity to group
+      description: Adds data entity to manually created data entity group
+      operationId: addDataEntityDataEntityGroup
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataEntityDataEntityGroupFormData'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRef'
+      tags:
+        - dataEntity
+  /api/dataentities/{data_entity_id}/data_entity_group/{data_entity_group_id}:
+    delete:
+      summary: Delete data entity from DEG
+      description: Delete data entity from data entity group
+      operationId: deleteDataEntityFromDataEntityGroup
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataEntityGroupIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'

@@ -34,8 +34,8 @@ public class SearchController implements SearchApi {
         final ServerWebExchange exchange
     ) {
         return Mono.just(searchService
-            .getFilterOptions(searchId, facetType, page, size, query)
-            .subscribeOn(Schedulers.boundedElastic()))
+                .getFilterOptions(searchId, facetType, page, size, query)
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 
@@ -79,9 +79,11 @@ public class SearchController implements SearchApi {
 
     @Override
     public Mono<ResponseEntity<Flux<DataEntityRef>>> getSearchSuggestions(final String query,
+                                                                          final Integer entityClassId,
+                                                                          final Boolean manuallyCreated,
                                                                           final ServerWebExchange exchange) {
-        return Mono.just(searchService.getQuerySuggestions(query)
-            .subscribeOn(Schedulers.boundedElastic()))
+        return Mono.just(searchService.getQuerySuggestions(query, entityClassId, manuallyCreated)
+                .subscribeOn(Schedulers.boundedElastic()))
             .map(ResponseEntity::ok);
     }
 }

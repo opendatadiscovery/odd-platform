@@ -79,7 +79,8 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     void calculateMetadataVectors(final Collection<Long> ids);
 
-    List<DataEntityDto> getQuerySuggestions(final String query);
+    List<DataEntityDto> getQuerySuggestions(final String query, final Integer entityClassId,
+                                            final Boolean manuallyCreated);
 
     List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                               final Integer page,

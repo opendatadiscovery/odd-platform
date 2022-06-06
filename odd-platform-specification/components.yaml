@@ -605,6 +605,13 @@ components:
         - type
         - entities
 
+    DataEntityDataEntityGroupFormData:
+      type: object
+      properties:
+        data_entity_group_id:
+          type: integer
+          format: int64
+
     DataSetTestReport:
       type: object
       properties:
