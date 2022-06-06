@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.config;
 
+import java.util.concurrent.ConcurrentHashMap;
 import org.opendatadiscovery.oddplatform.auth.session.JooqSessionRepository;
-import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -10,15 +10,11 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.AnnotatedTypeMetadata;
-import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
-import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.session.MapSession;
 import org.springframework.session.ReactiveMapSessionRepository;
 import org.springframework.session.ReactiveSessionRepository;
 import org.springframework.session.config.annotation.web.server.EnableSpringWebSession;
 import org.springframework.session.data.redis.config.annotation.web.server.EnableRedisWebSession;
-
-import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 public class SessionConfiguration {
@@ -29,10 +25,9 @@ public class SessionConfiguration {
         @Bean
         @ConditionalOnProperty(prefix = "session", name = "provider", havingValue = "INTERNAL_POSTGRESQL")
         public ReactiveSessionRepository<MapSession> psqlReactiveSessionRepository(
-            final JooqReactiveOperations jooqReactiveOperations,
-            final JooqQueryHelper jooqQueryHelper
+            final JooqReactiveOperations jooqReactiveOperations
         ) {
-            return new JooqSessionRepository(jooqReactiveOperations, jooqQueryHelper);
+            return new JooqSessionRepository(jooqReactiveOperations);
         }
 
         @Bean
