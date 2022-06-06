@@ -80,7 +80,7 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 ### Example configurations
 
-There are various example configurations (via docker-compose) within **[docker/examples directory](https://github.com/opendatadiscovery/odd-platform/tree/main/docker/docker/examples)**.
+There are various example configurations (via docker-compose) within **[docker/examples directory](https://github.com/opendatadiscovery/odd-platform#example-configurations)**.
 
 <br>
 
