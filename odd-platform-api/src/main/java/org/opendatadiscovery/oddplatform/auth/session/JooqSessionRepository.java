@@ -4,9 +4,9 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.IterableUtils;
 import org.jooq.DeleteConditionStep;
 import org.jooq.Field;
@@ -15,22 +15,24 @@ import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SpringSessionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.SpringSessionAttributesRecord;
 import org.opendatadiscovery.oddplatform.model.tables.records.SpringSessionRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.session.MapSession;
 import org.springframework.session.ReactiveSessionRepository;
+import org.springframework.transaction.ReactiveTransactionManager;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.util.SerializationUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static java.util.function.Predicate.not;
 import static org.opendatadiscovery.oddplatform.model.Tables.SPRING_SESSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.SPRING_SESSION_ATTRIBUTES;
 
 @RequiredArgsConstructor
-@Slf4j
 public class JooqSessionRepository implements ReactiveSessionRepository<MapSession> {
     private final JooqReactiveOperations jooqReactiveOperations;
 
@@ -40,6 +42,7 @@ public class JooqSessionRepository implements ReactiveSessionRepository<MapSessi
     }
 
     @Override
+    @ReactiveTransactional
     public Mono<Void> save(final MapSession session) {
         final SpringSessionRecord sessionRecord = recordFromSession(session);
 
@@ -86,12 +89,22 @@ public class JooqSessionRepository implements ReactiveSessionRepository<MapSessi
 
         return jooqReactiveOperations.flux(query)
             .collectList()
-            .flatMap(this::mapJooqRecordToMapSession)
-            .filter(not(MapSession::isExpired))
-            .switchIfEmpty(deleteById(id).then(Mono.empty()));
+            .map(this::mapJooqRecordToMapSession)
+            .flatMap(session -> {
+                if (session.isEmpty()) {
+                    return Mono.empty();
+                }
+
+                if (session.get().isExpired()) {
+                    return deleteById(id).then(Mono.empty());
+                }
+
+                return Mono.just(session.get());
+            });
     }
 
     @Override
+    @ReactiveTransactional
     public Mono<Void> deleteById(final String id) {
         final DeleteConditionStep<SpringSessionAttributesRecord> deleteAttributesQuery = DSL
             .deleteFrom(SPRING_SESSION_ATTRIBUTES)
@@ -150,17 +163,16 @@ public class JooqSessionRepository implements ReactiveSessionRepository<MapSessi
             .setAttributeBytes(SerializationUtils.serialize(session.getAttribute(attrName)));
     }
 
-    private Mono<MapSession> mapJooqRecordToMapSession(final List<Record> records) {
+    private Optional<MapSession> mapJooqRecordToMapSession(final List<Record> records) {
         if (records.isEmpty()) {
-            return Mono.empty();
+            return Optional.empty();
         }
 
         final Map<SpringSessionPojo, List<Record>> groupedSessions = records.stream()
             .collect(Collectors.groupingBy(r -> r.into(SPRING_SESSION).into(SpringSessionPojo.class)));
 
         if (groupedSessions.size() > 1) {
-            return Mono.error(
-                new IllegalStateException("Multiple sessions found for id: " + groupedSessions.keySet()));
+            throw new IllegalStateException("Multiple sessions found for id: " + groupedSessions.keySet());
         }
 
         final Map.Entry<SpringSessionPojo, List<Record>> entry = IterableUtils.first(groupedSessions.entrySet());
@@ -184,6 +196,6 @@ public class JooqSessionRepository implements ReactiveSessionRepository<MapSessi
             );
         }
 
-        return Mono.just(session);
+        return Optional.of(session);
     }
 }

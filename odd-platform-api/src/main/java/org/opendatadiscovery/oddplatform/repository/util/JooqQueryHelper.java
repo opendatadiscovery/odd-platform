@@ -7,8 +7,6 @@ import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.InsertResultStep;
-import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
