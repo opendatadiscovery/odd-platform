@@ -1,5 +1,7 @@
 package org.opendatadiscovery.oddplatform.auth.session;
 
+import java.time.Instant;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DeleteConditionStep;
 import org.jooq.Record1;
@@ -11,8 +13,6 @@ import org.opendatadiscovery.oddplatform.model.tables.records.SpringSessionRecor
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
-import java.time.Instant;
-import java.util.List;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.SPRING_SESSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.SPRING_SESSION_ATTRIBUTES;

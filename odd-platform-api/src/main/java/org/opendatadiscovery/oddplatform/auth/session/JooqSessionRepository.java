@@ -55,10 +55,12 @@ public class JooqSessionRepository implements ReactiveSessionRepository<MapSessi
             .set(SPRING_SESSION.EXPIRY_TIME, sessionRecord.getExpiryTime())
             .set(SPRING_SESSION.PRINCIPAL_NAME, sessionRecord.getPrincipalName());
 
-        return Mono.defer(() -> {
+        return Mono
+            .defer(() -> {
                 if (!session.getId().equals(session.getOriginalId())) {
                     return deleteById(session.getOriginalId());
                 }
+
                 return Mono.empty();
             })
             .then(jooqReactiveOperations.mono(springSessionQuery))

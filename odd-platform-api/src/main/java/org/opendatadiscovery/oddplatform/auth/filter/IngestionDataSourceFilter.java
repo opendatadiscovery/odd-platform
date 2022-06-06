@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.auth.filter;
 
 import java.nio.file.AccessDeniedException;
-
 import org.opendatadiscovery.oddplatform.auth.session.SessionConstants;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCollectorRepository;
 import org.springframework.core.io.buffer.DataBuffer;
