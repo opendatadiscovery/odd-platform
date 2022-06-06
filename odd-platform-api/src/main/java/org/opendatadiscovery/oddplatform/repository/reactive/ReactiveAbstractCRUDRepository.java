@@ -166,7 +166,14 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     protected Flux<R> insertMany(final List<R> records) {
-        return jooqReactiveOperations.flux(jooqQueryHelper.insertManyQuery(recordTable, records));
+        InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
+
+        for (int i = 0; i < records.size() - 1; i++) {
+            insertStep = insertStep.set(records.get(i)).newRecord();
+        }
+
+        return jooqReactiveOperations
+            .flux(insertStep.set(records.get(records.size() - 1)).returning(recordTable.fields()));
     }
 
     @ReactiveTransactional

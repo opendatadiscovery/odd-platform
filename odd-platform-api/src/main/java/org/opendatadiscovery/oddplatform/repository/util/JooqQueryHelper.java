@@ -141,18 +141,4 @@ public class JooqQueryHelper {
             }
         }
     }
-
-    public <R extends Record> InsertResultStep<R> insertManyQuery(final Table<R> table, final List<R> records) {
-        if (records.isEmpty()) {
-            throw new IllegalArgumentException("Cannot generate insertMany query: records list is empty");
-        }
-
-        InsertSetStep<R> insertStep = DSL.insertInto(table);
-
-        for (int i = 0; i < records.size() - 1; i++) {
-            insertStep = insertStep.set(records.get(i)).newRecord();
-        }
-
-        return insertStep.set(records.get(records.size() - 1)).returning(table.fields());
-    }
 }
