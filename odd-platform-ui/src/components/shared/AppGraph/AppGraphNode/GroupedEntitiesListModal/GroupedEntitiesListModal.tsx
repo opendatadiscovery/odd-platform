@@ -1,31 +1,54 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  DataEntityLineage,
-  DataEntityLineageNode,
-} from 'generated-sources';
+import { DataEntityLineageNode } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
+import {
+  fetchDataEntityDownstreamLineage,
+  fetchDataEntityUpstreamLineage,
+} from 'redux/thunks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import * as S from './GroupedEntitiesListModalStyles';
 
 interface GroupedEntitiesListModalProps {
   dataEntityName: string | undefined;
   entities: DataEntityLineageNode[];
   openBtnEl: JSX.Element;
-  fetchMoreLineage: (
-    entityId: number,
-    lineageDepth: number
-  ) => Promise<DataEntityLineage>;
+  appGraphNodeType: 'downstream' | 'upstream';
+  rootNodeId: number;
 }
 
 const GroupedEntitiesListModal: React.FC<
   GroupedEntitiesListModalProps
-> = ({ dataEntityName, entities, openBtnEl, fetchMoreLineage }) => {
+> = ({
+  dataEntityName,
+  entities,
+  openBtnEl,
+  appGraphNodeType,
+  rootNodeId,
+}) => {
+  const dispatch = useAppDispatch();
+
   const [isLoadMoreClicked, setIsLoadMoreClicked] =
     React.useState<boolean>(false);
+
+  const loadMoreButtonHandler = (dataEntityId: number) => {
+    const params = {
+      dataEntityId,
+      lineageDepth: 1,
+      rootNodeId,
+    };
+    if (appGraphNodeType === 'downstream') {
+      dispatch(fetchDataEntityDownstreamLineage(params));
+    }
+
+    if (appGraphNodeType === 'upstream') {
+      dispatch(fetchDataEntityUpstreamLineage(params));
+    }
+  };
 
   const listItem = (item: DataEntityLineageNode) => (
     <Link to={dataEntityDetailsPath(item.id)}>
@@ -52,7 +75,7 @@ const GroupedEntitiesListModal: React.FC<
           size="medium"
           onClick={e => {
             e.preventDefault();
-            fetchMoreLineage(item.id, 1);
+            loadMoreButtonHandler(item.id);
             setIsLoadMoreClicked(true);
           }}
         >

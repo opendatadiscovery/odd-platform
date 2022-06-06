@@ -12,6 +12,8 @@ import {
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
 import { useAppDispatch } from 'lib/redux/hooks';
+import NodeListButton from './NodeListButton/NodeListButton';
+import GroupedEntitiesListModal from './GroupedEntitiesListModal/GroupedEntitiesListModal';
 import {
   Attribute,
   AttributeLabel,
@@ -44,10 +46,6 @@ interface AppGraphNodeProps {
   compactView: boolean;
   enableLegacyTransitions: boolean;
   transitionDuration: number;
-  // fetchMoreLineage: (
-  //   entityId: number,
-  //   lineageDepth: number
-  // ) => Promise<DataEntityLineage>;
   reverse?: boolean;
   isStreamFetching: boolean;
   hasChildren: boolean;
@@ -162,20 +160,12 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   const handleLoadMoreMouseLeave = () => setShowLoadMore(false);
 
   const loadMoreButtonHandler = () => {
-    // if (parent?.children) {
-    //   fetchMoreLineage(data.id, 1).then(() => setShowLoadMore(false));
-    // }
     if (parent?.children) {
       const params = {
         dataEntityId: data.id,
         lineageDepth: 1,
         rootNodeId,
       };
-      // fetchDataEntityDownstreamLineage(params)
-      //   .then(() => fetchDataEntityUpstreamLineage(params))
-      //   .then(() => setIsLineageFetching(false));
-      // dispatch(fetchDataEntityDownstreamLineage(params));
-      // dispatch(fetchDataEntityUpstreamLineage(params));
       if (appGraphNodeType === 'downstream') {
         dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
           setShowLoadMore(false)
@@ -371,19 +361,20 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
                     Items
                   </AttributeLabel>
                 </Attribute>
-                {/* <GroupedEntitiesListModal */}
-                {/*  entities={data.nodesRelatedWithDEG} */}
-                {/*  dataEntityName={data.internalName || data.externalName} */}
-                {/*  fetchMoreLineage={fetchMoreLineage} */}
-                {/*  openBtnEl={ */}
-                {/*    <NodeListButton */}
-                {/*      text={`${ */}
-                {/*        data.nodesRelatedWithDEG && */}
-                {/*        data.nodesRelatedWithDEG.length */}
-                {/*      } entities`} */}
-                {/*    /> */}
-                {/*  } */}
-                {/* /> */}
+                <GroupedEntitiesListModal
+                  entities={data.nodesRelatedWithDEG}
+                  dataEntityName={data.internalName || data.externalName}
+                  appGraphNodeType={appGraphNodeType}
+                  rootNodeId={rootNodeId}
+                  openBtnEl={
+                    <NodeListButton
+                      text={`${
+                        data.nodesRelatedWithDEG &&
+                        data.nodesRelatedWithDEG.length
+                      } entities`}
+                    />
+                  }
+                />
               </>
             )}
         </g>

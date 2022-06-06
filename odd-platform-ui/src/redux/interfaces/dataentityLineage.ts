@@ -1,5 +1,4 @@
 import {
-  DataEntityLineage,
   DataEntityLineageEdge,
   DataEntityLineageNode,
 } from 'generated-sources';
@@ -24,15 +23,10 @@ export interface DataEntityLineageStreamById<
     // Id of parent entity in the tree. It is source_id of DataEntityLineageEdge for downstream, and target_id for upstream
     [entityId: number]: EdgeT[];
   };
-  // crossEdges: EdgeT[];
+  crossEdges: EdgeT[];
 }
 
 export interface DataEntityLineageRootNodeId {
-  rootNodeId: number;
-}
-
-export interface LineageStreamParams {
-  dataEntityLineage: DataEntityLineage;
   rootNodeId: number;
 }
 
@@ -51,15 +45,30 @@ export interface LocalState {
   excludedIds: Set<number>;
 }
 
-export interface GroupingNodes {
+export interface GroupingUpstreamNodes {
   groupId: number;
   depthGroupId: number;
   depth: number;
   sourceIds: number[];
 }
 
-export interface FilterEdges {
+export interface GroupingDownstreamNodes {
+  groupId: number;
+  depthGroupId: number;
+  depth: number;
+  targetIds: number[];
+}
+
+export interface FilterDownstreamEdges {
   filteredEdges: DataEntityLineageEdge[];
-  sourceIdMapByDepth: Map<number, number[]>;
+  targetIdsMapByDepth: Map<number, number[]>;
   crossEdges: DataEntityLineageEdge[];
 }
+
+export interface FilterUpstreamEdges {
+  filteredEdges: DataEntityLineageEdge[];
+  sourceIdsMapByDepth: Map<number, number[]>;
+  crossEdges: DataEntityLineageEdge[];
+}
+
+export type StreamType = 'downstream' | 'upstream';

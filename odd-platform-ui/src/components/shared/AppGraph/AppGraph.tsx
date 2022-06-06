@@ -37,22 +37,12 @@ import * as S from './AppGraphStyles';
 export interface AppGraphProps {
   dataEntityId: number;
   data: DataEntityLineageById;
-  // fetchDataEntityDownstreamLineage: (
-  //   params: DataEntityApiGetDataEntityDownstreamLineageRequest &
-  //     DataEntityLineageRootNodeId
-  // ) => Promise<DataEntityLineage>;
-  // fetchDataEntityUpstreamLineage: (
-  //   params: DataEntityApiGetDataEntityUpstreamLineageRequest &
-  //     DataEntityLineageRootNodeId
-  // ) => Promise<DataEntityLineage>;
   isStreamFetching: boolean;
 }
 
 const AppGraph: React.FC<AppGraphProps> = ({
   dataEntityId,
   data,
-  // fetchDataEntityDownstreamLineage,
-  // fetchDataEntityUpstreamLineage,
   isStreamFetching,
 }) => {
   const dispatch = useAppDispatch();
@@ -71,7 +61,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
     React.useState<number>(defaultDepth);
 
   const [isLineageFetching, setIsLineageFetching] =
-    React.useState<boolean>(false);
+    React.useState<boolean>(true);
 
   const [parsedData, setParsedData] = React.useState<{
     root: TreeNodeDatum;
@@ -82,7 +72,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
       edgesById: {
         [entityId: number]: DataEntityLineageEdge[];
       };
-      // crossEdges: DataEntityLineageEdge[];
+      crossEdges: DataEntityLineageEdge[];
     };
     downstream: {
       nodesById: {
@@ -91,7 +81,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
       edgesById: {
         [entityId: number]: DataEntityLineageEdge[];
       };
-      // crossEdges: DataEntityLineageEdge[];
+      crossEdges: DataEntityLineageEdge[];
     };
   }>();
 
@@ -108,20 +98,20 @@ const AppGraph: React.FC<AppGraphProps> = ({
     {
       nodesUp,
       linksUp,
-      // crossLinksUp,
+      crossLinksUp,
       nodesDown,
       linksDown,
-      // crossLinksDown,
+      crossLinksDown,
       depth,
     },
     setTreeState,
   ] = React.useState<{
     nodesUp: HierarchyPointNode<TreeNodeDatum>[];
     linksUp: HierarchyPointLink<TreeNodeDatum>[];
-    // crossLinksUp: HierarchyPointLink<TreeNodeDatum>[];
+    crossLinksUp: HierarchyPointLink<TreeNodeDatum>[];
     nodesDown: HierarchyPointNode<TreeNodeDatum>[];
     linksDown: HierarchyPointLink<TreeNodeDatum>[];
-    // crossLinksDown: HierarchyPointLink<TreeNodeDatum>[];
+    crossLinksDown: HierarchyPointLink<TreeNodeDatum>[];
     depth: {
       upstream: number;
       downstream: number;
@@ -147,31 +137,13 @@ const AppGraph: React.FC<AppGraphProps> = ({
       lineageDepth: selectedDepth,
       rootNodeId: dataEntityId,
     };
-    // fetchDataEntityDownstreamLineage(params)
-    //   .then(() => fetchDataEntityUpstreamLineage(params))
-    //   .then(() => setIsLineageFetching(false));
-    dispatch(fetchDataEntityDownstreamLineage(params));
-    dispatch(fetchDataEntityUpstreamLineage(params));
-  }, [selectedDepth, dataEntityId]);
-
-  const fetchUpstreamLineage = (entityId: number, lineageDepth: number) =>
-    dispatch(
-      fetchDataEntityUpstreamLineage({
-        dataEntityId: entityId,
-        lineageDepth,
-        rootNodeId: dataEntityId,
-      })
+    dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
+      setIsLineageFetching(false)
     );
-
-  const fetchDownstreamLineage = (
-    entityId: number,
-    lineageDepth: number
-  ) =>
-    fetchDataEntityDownstreamLineage({
-      dataEntityId: entityId,
-      lineageDepth,
-      rootNodeId: dataEntityId,
-    });
+    dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
+      setIsLineageFetching(false)
+    );
+  }, [selectedDepth, dataEntityId]);
 
   const assignInternalProps = (
     nodeData: DataEntityLineageNode
@@ -219,17 +191,22 @@ const AppGraph: React.FC<AppGraphProps> = ({
     const nUp = rootNodeUp.descendants();
     const lUp = rootNodeUp.links();
 
-    // const crossLUp = parsedData?.upstream?.crossEdges?.map(edge =>
-    //   edge.sourceId === parsedData.root.id
-    //     ? {
-    //         source: nUp.find(node => node.data.id === edge.targetId)!,
-    //         target: nUp.find(node => node.data.id === edge.sourceId)!,
-    //       }
-    //     : {
-    //         target: nUp.find(node => node.data.id === edge.targetId)!,
-    //         source: nUp.find(node => node.data.id === edge.sourceId)!,
-    //       }
-    // );
+    const crossLUp = parsedData?.upstream?.crossEdges
+      ?.map(edge =>
+        edge.targetId ===
+        nUp.find(node => node.data.id === edge.sourceId)?.parent?.data.id
+          ? {
+              source: nUp.find(node => node.data.id === edge.sourceId)!,
+              target: nUp.find(node => node.data.id === edge.targetId)!,
+            }
+          : {
+              target: nUp.find(node => node.data.id === edge.sourceId)!,
+              source: nUp.find(node => node.data.id === edge.targetId)!,
+            }
+      )
+      .filter(
+        link => link.target !== undefined && link.source !== undefined
+      );
 
     const treeDown = d3tree<TreeNodeDatum>()
       .nodeSize([nodeSize.y + nodeSize.my, nodeSize.x + nodeSize.mx])
@@ -252,25 +229,30 @@ const AppGraph: React.FC<AppGraphProps> = ({
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
 
-    // const crossLDown = parsedData?.downstream?.crossEdges?.map(edge =>
-    //   edge.targetId !== parsedData.root.id
-    //     ? {
-    //         source: nDown.find(node => node.data.id === edge.targetId)!,
-    //         target: nDown.find(node => node.data.id === edge.sourceId)!,
-    //       }
-    //     : {
-    //         target: nDown.find(node => node.data.id === edge.targetId)!,
-    //         source: nDown.find(node => node.data.id === edge.sourceId)!,
-    //       }
-    // );
+    const crossLDown = parsedData?.downstream?.crossEdges
+      ?.map(edge =>
+        edge.sourceId ===
+        nDown.find(node => node.data.id === edge.targetId)?.parent?.data.id
+          ? {
+              target: nDown.find(node => node.data.id === edge.sourceId)!,
+              source: nDown.find(node => node.data.id === edge.targetId)!,
+            }
+          : {
+              source: nDown.find(node => node.data.id === edge.sourceId)!,
+              target: nDown.find(node => node.data.id === edge.targetId)!,
+            }
+      )
+      .filter(
+        link => link.target !== undefined && link.source !== undefined
+      );
 
     return {
       nodesUp: nUp,
       linksUp: lUp,
-      // crossLinksUp: crossLUp,
+      crossLinksUp: crossLUp,
       nodesDown: nDown,
       linksDown: lDown,
-      // crossLinksDown: crossLDown,
+      crossLinksDown: crossLDown,
       depth: {
         upstream: maxBy(nUp, node => node.depth)?.depth || 0,
         downstream: maxBy(nDown, node => node.depth)?.depth || 0,
@@ -380,12 +362,12 @@ const AppGraph: React.FC<AppGraphProps> = ({
       upstream: {
         ...data.upstream,
         nodesById: parseData(data.upstream?.nodesById),
-        // crossEdges: data?.upstream?.crossEdges,
+        crossEdges: data?.upstream?.crossEdges,
       },
       downstream: {
         ...data.downstream,
         nodesById: parseData(data.downstream?.nodesById),
-        // crossEdges: data?.downstream?.crossEdges,
+        crossEdges: data?.downstream?.crossEdges,
       },
     });
   }, [data]);
@@ -447,27 +429,27 @@ const AppGraph: React.FC<AppGraphProps> = ({
       </S.ActionsContainer>
       <S.Layer className={svgInstanceRef}>
         <g className={gInstanceRef}>
-          {/* {crossLinksDown?.map(linkData => ( */}
-          {/*  <AppGraphLink */}
-          {/*    crossLink */}
-          {/*    key={`link-${linkData.source.data.id}-${linkData.target.data.id}`} */}
-          {/*    linkData={linkData} */}
-          {/*    nodeSize={nodeSize} */}
-          {/*    enableLegacyTransitions={enableLegacyTransitions} */}
-          {/*    transitionDuration={transitionDuration} */}
-          {/*  /> */}
-          {/* ))} */}
-          {/* {crossLinksUp?.map(linkData => ( */}
-          {/*  <AppGraphLink */}
-          {/*    crossLink */}
-          {/*    key={`link-${linkData.source.data.id}-${linkData.target.data.id}`} */}
-          {/*    reverse */}
-          {/*    linkData={linkData} */}
-          {/*    nodeSize={nodeSize} */}
-          {/*    enableLegacyTransitions={enableLegacyTransitions} */}
-          {/*    transitionDuration={transitionDuration} */}
-          {/*  /> */}
-          {/* ))} */}
+          {crossLinksDown?.map(linkData => (
+            <AppGraphLink
+              crossLink
+              key={`link-${linkData.source?.data.id}-${linkData.target?.data.id}`}
+              linkData={linkData}
+              nodeSize={nodeSize}
+              enableLegacyTransitions={enableLegacyTransitions}
+              transitionDuration={transitionDuration}
+            />
+          ))}
+          {crossLinksUp?.map(linkData => (
+            <AppGraphLink
+              crossLink
+              key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
+              reverse
+              linkData={linkData}
+              nodeSize={nodeSize}
+              enableLegacyTransitions={enableLegacyTransitions}
+              transitionDuration={transitionDuration}
+            />
+          ))}
           {nodesUp?.map(node => (
             <AppGraphNode
               appGraphNodeType="upstream"
@@ -481,7 +463,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
               compactView={compactView}
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
-              // fetchMoreLineage={fetchUpstreamLineage}
               isStreamFetching={isStreamFetching}
               hasChildren={!!node.children?.length}
             />
@@ -498,15 +479,14 @@ const AppGraph: React.FC<AppGraphProps> = ({
               compactView={compactView}
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
-              // fetchMoreLineage={fetchDownstreamLineage}
               isStreamFetching={isStreamFetching}
               hasChildren={!!node.children?.length}
             />
           ))}
-
-          {linksUp?.map(linkData => (
+          {linksUp?.map((linkData, idx) => (
             <AppGraphLink
-              key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
               reverse
               linkData={linkData}
               nodeSize={nodeSize}
@@ -514,9 +494,10 @@ const AppGraph: React.FC<AppGraphProps> = ({
               transitionDuration={transitionDuration}
             />
           ))}
-          {linksDown?.map(linkData => (
+          {linksDown?.map((linkData, idx) => (
             <AppGraphLink
-              key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
               linkData={linkData}
               nodeSize={nodeSize}
               enableLegacyTransitions={enableLegacyTransitions}
