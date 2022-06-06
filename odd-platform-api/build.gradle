@@ -19,8 +19,6 @@ dependencies {
     implementation project(':odd-platform-api-contract')
     implementation project(':odd-platform-ui')
 
-    implementation group: 'org.springframework.session', name: 'spring-session-jdbc', version: '2.7.0'
-
     implementation libs.bundles.spring
     implementation libs.bundles.spring.redis.session
     implementation libs.bundles.internal
