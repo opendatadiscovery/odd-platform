@@ -2,6 +2,8 @@ package org.opendatadiscovery.oddplatform.config;
 
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendatadiscovery.oddplatform.auth.session.JooqSessionRepository;
+import org.opendatadiscovery.oddplatform.auth.session.PostgreSQLSessionHousekeepingJob;
+import org.opendatadiscovery.oddplatform.auth.session.PostgreSQLSessionHousekeepingJobHandler;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +12,8 @@ import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.AnnotatedTypeMetadata;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.session.MapSession;
 import org.springframework.session.ReactiveMapSessionRepository;
 import org.springframework.session.ReactiveSessionRepository;
@@ -21,6 +25,7 @@ public class SessionConfiguration {
     @Configuration
     @Conditional(SpringWebSessionConfiguration.SpringWebSessionCondition.class)
     @EnableSpringWebSession
+    @EnableScheduling
     static class SpringWebSessionConfiguration {
         @Bean
         @ConditionalOnProperty(prefix = "session", name = "provider", havingValue = "INTERNAL_POSTGRESQL")
@@ -28,6 +33,14 @@ public class SessionConfiguration {
             final JooqReactiveOperations jooqReactiveOperations
         ) {
             return new JooqSessionRepository(jooqReactiveOperations);
+        }
+
+        @ConditionalOnProperty(prefix = "session", name = "provider", havingValue = "INTERNAL_POSTGRESQL")
+        @Bean
+        public PostgreSQLSessionHousekeepingJobHandler scheduleHousekeepingTask(
+            final PostgreSQLSessionHousekeepingJob job
+        ) {
+            return new PostgreSQLSessionHousekeepingJobHandler(job);
         }
 
         @Bean

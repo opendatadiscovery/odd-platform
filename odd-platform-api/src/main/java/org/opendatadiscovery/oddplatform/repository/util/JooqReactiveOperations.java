@@ -25,10 +25,6 @@ public class JooqReactiveOperations {
 
     private final ConnectionFactory connectionFactory;
 
-    public Mono<DSLContext> dslContext() {
-        return ConnectionFactoryUtils.getConnection(connectionFactory).map(DSL::using);
-    }
-
     public Mono<Integer> mono(final RowCountQuery query) {
         return wrapMono(c -> {
             DSL.using(c).attach(query);
