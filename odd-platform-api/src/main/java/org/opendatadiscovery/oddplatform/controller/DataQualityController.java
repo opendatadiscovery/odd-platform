@@ -34,9 +34,6 @@ public class DataQualityController implements DataQualityApi {
                                                                         final ServerWebExchange exchange) {
         return dataQualityService
             .getDatasetTestReport(dataEntityId)
-            // TODO: remove subscribeOn after
-            //  https://github.com/opendatadiscovery/odd-platform/issues/623 is implemented
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
