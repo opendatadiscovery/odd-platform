@@ -861,7 +861,7 @@ public class DataEntityRepositoryImpl
 
         final Map<String, Long> countRepository = dslContext
             .select(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN)
-            .select(count(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN).as(childrenCountField))
+            .select(count(GROUP_PARENT_GROUP_RELATIONS.GROUP_ODDRN).cast(Long.class).as(childrenCountField))
             .from(GROUP_PARENT_GROUP_RELATIONS)
             .where(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN.in(degOddrns))
             .groupBy(GROUP_PARENT_GROUP_RELATIONS.PARENT_GROUP_ODDRN)

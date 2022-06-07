@@ -3,14 +3,7 @@ plugins {
 }
 
 dependencies {
-    compileOnly "org.springframework:spring-webflux:$springWebfluxVersion"
-
-    compileOnly "javax.validation:validation-api:$validationApiVersion"
-    compileOnly "javax.annotation:javax.annotation-api:$annotationApiVersion"
-    compileOnly "io.swagger:swagger-annotations:$swaggerAnnotationsVersion"
-
-    compileOnly "io.springfox:springfox-core:$springfoxVersion"
-    compileOnly "org.openapitools:jackson-databind-nullable:$jacksonDatabindVersion"
+    compileOnly libs.bundles.openapi
 }
 
 openApiGenerate {
