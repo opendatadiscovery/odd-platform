@@ -101,7 +101,9 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
                 .on(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
             .join(DATA_ENTITY)
                 .on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
-            .where(DATA_ENTITY.ID.eq(datasetId)).and(DATA_ENTITY_TASK_RUN.END_TIME.eq(maxEndTimeSubquery))
+            .where(DATA_ENTITY.ID.eq(datasetId))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY_TASK_RUN.END_TIME.eq(maxEndTimeSubquery))
             .groupBy(DATA_ENTITY_TASK_RUN.STATUS);
         // @formatter:on
 
