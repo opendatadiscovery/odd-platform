@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldUpdateFormData;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
@@ -20,7 +21,6 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelReposi
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 
 import static java.util.function.Predicate.not;
 
@@ -33,38 +33,39 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
 
     @Override
+    @ReactiveTransactional
     public Mono<DataSetField> updateDatasetField(final long datasetFieldId,
                                                  final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         return reactiveDatasetFieldRepository.getDto(datasetFieldId)
+            .switchIfEmpty(Mono.error(
+                new IllegalArgumentException(String.format("DatasetField not found by id = %s", datasetFieldId))))
             .flatMap(dto -> updateDescription(datasetFieldId, datasetFieldUpdateFormData, dto))
-            .zipWith(updateDatasetFields(datasetFieldId, datasetFieldUpdateFormData))
-            .flatMap(tuple -> {
+            .zipWith(updateDatasetFieldLabels(datasetFieldId, datasetFieldUpdateFormData))
+            .map(tuple -> {
                 final DatasetFieldDto dto = tuple.getT1();
                 final Set<LabelPojo> labels = tuple.getT2();
                 dto.setLabelPojos(labels);
-                return Mono.just(dto);
+                return dto;
             })
-            .flatMap(dto -> reactiveSearchEntrypointRepository.updateDataFieldSearchVectors(datasetFieldId)
+            .flatMap(dto -> reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId)
                 .ignoreElement().thenReturn(dto))
             .map(datasetFieldApiMapper::mapDto);
     }
 
-    private Mono<Set<LabelPojo>> updateDatasetFields(final long datasetFieldId,
-                                                     final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
+    private Mono<Set<LabelPojo>> updateDatasetFieldLabels(final long datasetFieldId,
+                                                          final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         final Set<String> names = new HashSet<>(datasetFieldUpdateFormData.getLabelNames());
 
         return reactiveLabelRepository.listByDatasetFieldId(datasetFieldId)
             .collect(Collectors.toSet())
             .zipWith(reactiveLabelRepository.listByNames(names).collect(Collectors.toSet()))
-            .flatMap(tuple -> updateDatasetFieldsLabels(datasetFieldId, names, tuple));
+            .flatMap(tuple -> updateDatasetFieldLabels(datasetFieldId, names, tuple.getT1(), tuple.getT2()));
     }
 
     @NotNull
-    private Mono<Set<LabelPojo>> updateDatasetFieldsLabels(final long datasetFieldId, final Set<String> names,
-                                                           final Tuple2<Set<LabelPojo>, Set<LabelPojo>> tuple) {
-        final Set<LabelPojo> currentLabels = tuple.getT1();
-        final Set<LabelPojo> existingLabels = tuple.getT2();
-
+    private Mono<Set<LabelPojo>> updateDatasetFieldLabels(final long datasetFieldId, final Set<String> names,
+                                                          final Set<LabelPojo> currentLabels,
+                                                          final Set<LabelPojo> existingLabels) {
         final Set<String> currentLabelsNames =
             currentLabels.stream().map(LabelPojo::getName).collect(Collectors.toSet());
 
@@ -82,7 +83,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .collect(Collectors.toList());
 
         final List<LabelPojo> labelsToCreate = names.stream()
-            .filter(n -> !currentLabelsNames.contains(n) && !existingLabelsNames.contains(n))
+            .filter(n -> !existingLabelsNames.contains(n))
             .map(n -> new LabelPojo().setName(n))
             .collect(Collectors.toList());
 
@@ -93,18 +94,18 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         final Set<LabelPojo> pojos =
             Stream.concat(labelsToCreate.stream(), existingLabels.stream()).collect(Collectors.toSet());
 
-        return reactiveLabelRepository.deleteRelations(datasetFieldId, idsToDelete).ignoreElements()
-            .then(reactiveLabelRepository.bulkCreate(labelsToCreate)
-                .map(LabelPojo::getId)
-                .collectList()
-                .flatMap(labelPojosIds -> {
-                    final Set<Long> toRelate =
-                        Stream.concat(labelPojosIds.stream(), existingLabelIds.stream())
-                            .collect(Collectors.toSet());
-                    return reactiveLabelRepository.createRelations(datasetFieldId, toRelate)
-                        .ignoreElements().thenReturn(labelPojosIds);
-                }).ignoreElement()
-                .thenReturn(pojos));
+        return reactiveLabelRepository.deleteRelations(datasetFieldId, idsToDelete)
+            .thenMany(reactiveLabelRepository.bulkCreate(labelsToCreate))
+            .map(LabelPojo::getId)
+            .collectList()
+            .flatMap(labelPojosIds -> {
+                final Set<Long> toRelate =
+                    Stream.concat(labelPojosIds.stream(), existingLabelIds.stream())
+                        .collect(Collectors.toSet());
+                return reactiveLabelRepository.createRelations(datasetFieldId, toRelate)
+                    .ignoreElements()
+                    .thenReturn(pojos);
+            });
     }
 
     @NotNull
@@ -116,7 +117,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         if (!StringUtils.equals(currentPojo.getInternalDescription(), newDescription)) {
             currentPojo.setInternalDescription(newDescription);
             return reactiveDatasetFieldRepository.updateDescription(datasetFieldId, newDescription)
-                .ignoreElement().thenReturn(dto);
+                .thenReturn(dto);
         }
         return Mono.just(dto);
     }

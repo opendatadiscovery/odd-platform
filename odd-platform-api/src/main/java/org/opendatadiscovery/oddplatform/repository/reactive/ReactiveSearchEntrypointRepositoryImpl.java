@@ -367,7 +367,7 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
     }
 
     @Override
-    public Mono<Integer> updateDataFieldSearchVectors(final long datasetFieldId) {
+    public Mono<Integer> updateDatasetFieldSearchVectors(final long datasetFieldId) {
         final SelectConditionStep<Record1<String>> deOddrnsQuery = DSL
             .select(DATA_ENTITY.ODDRN)
             .from(DATA_ENTITY)

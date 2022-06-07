@@ -23,5 +23,5 @@ public interface ReactiveSearchEntrypointRepository {
 
     Mono<Integer> updateChangedLabelVector(final long labelId);
 
-    Mono<Integer> updateDataFieldSearchVectors(final long datasetFieldId);
+    Mono<Integer> updateDatasetFieldSearchVectors(final long datasetFieldId);
 }
