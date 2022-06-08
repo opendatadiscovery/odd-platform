@@ -147,11 +147,16 @@ Coming soon:
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dvc-logo.jpg" />            </td><td style="width: 200px;">DVC                </td><td>Transformers, Transformer Runs</td></tr>
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-spark-logo.jpg" />            </td><td style="width: 200px;">Spark               </td><td>Transformers, Transformer Runs</td></tr>
 		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/great-expectations-logo.jpg" />            </td><td style="width: 200px;">Great Expectations               </td><td>Transformers, Transformer Runs</td></tr>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/great-expectations-logo.jpg" />            </td><td style="width: 200px;">Great Expectations               </td><td>Transformers, Transformer Runs</td></tr>
 	</tbody>
 </table>
 
 <br>
 
+|Integrations | |
+|------|:---------|
+| ![](images/amazon-athena-logo.png)    | [Athena](https://github.com/opendatadiscovery/odd-collector-aws#athena)      	          | 
+| <img src="Assets/icon.png" width="200">          | test      	          | 
 ## ODD Data Model
 
 ODD operates the following high-level types of entities:
@@ -182,10 +187,8 @@ If you have any questions or ideas, please don't hesitate to drop a line to any 
 | Damir Abdullin            | [LinkedIn](https://www.linkedin.com/in/dabdullin/)                           | [damirabdul](https://github.com/damirabdul)         |
 | Alexey Kozyurov           | [LinkedIn](https://www.linkedin.com/in/alexey-kozyurov-1823b1219/)           | [Leshe4ka](https://github.com/Leshe4ka)             |
 | Pavel Makarichev          | [LinkedIn](https://www.linkedin.com/in/pavel-makarichev-8a8730a4/)           | [vixtir](https://github.com/vixtir)                 |
-| [](https://www.snowflake.com/wp-content/themes/snowflake/img/snowflake-logo-blue@2x.png) | [LinkedIn](https://www.linkedin.com/in/anna-evdokimova-glinskaya-6566b5188/) | [Anna-EG](https://github.com/Anna-EG)               |
+| Anna Evdokimova-Glinskaia | [LinkedIn](https://www.linkedin.com/in/anna-evdokimova-glinskaya-6566b5188/) | [Anna-EG](https://github.com/Anna-EG)               |
 | Roman Zabaluev            | [LinkedIn](https://www.linkedin.com/in/haarolean/)                           | [Haarolean](https://github.com/haarolean)           |
-
-
 ## License
 
 ODD Platform uses the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.txt).
