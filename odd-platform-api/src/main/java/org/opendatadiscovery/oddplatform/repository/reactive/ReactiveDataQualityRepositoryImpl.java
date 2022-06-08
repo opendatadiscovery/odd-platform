@@ -72,7 +72,7 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
 
         final Select<? extends Record> query = jooqQueryHelper.paginate(
             baseQuery,
-            DATA_ENTITY_TASK_RUN.START_TIME,
+            DATA_ENTITY_TASK_RUN.END_TIME,
             SortOrder.DESC,
             (page - 1) * size,
             size
@@ -92,7 +92,8 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
         final SelectConditionStep<Record1<LocalDateTime>> maxEndTimeSubquery = DSL
             .select(DSL.max(DATA_ENTITY_TASK_RUN.END_TIME))
             .from(DATA_ENTITY_TASK_RUN)
-            .where(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN));
+            .where(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
+            .and(DATA_ENTITY_TASK_RUN.END_TIME.isNotNull());
 
         // @formatter:off
         final SelectHavingStep<Record2<String, Long>> query = DSL
@@ -103,7 +104,6 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
             .join(DATA_ENTITY)
                 .on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
             .where(DATA_ENTITY.ID.eq(datasetId))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
             .and(DATA_ENTITY_TASK_RUN.END_TIME.eq(maxEndTimeSubquery))
             .groupBy(DATA_ENTITY_TASK_RUN.STATUS);
         // @formatter:on
