@@ -23,6 +23,7 @@ export const Title = styled('text')(({ theme }) => ({
   fontSize: theme.typography.h4.fontSize,
   fontWeight: theme.typography.h4.fontWeight,
   lineHeight: theme.typography.h4.lineHeight,
+  cursor: 'pointer',
 }));
 
 export const Attribute = styled('text')(({ theme }) => ({

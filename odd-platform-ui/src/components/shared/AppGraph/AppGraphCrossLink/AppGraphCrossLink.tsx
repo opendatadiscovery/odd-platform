@@ -3,7 +3,7 @@ import { linkHorizontal } from 'd3-shape';
 import { DefaultLinkObject } from 'd3';
 import { TreeLinkDatum } from 'redux/interfaces/graph';
 import { applyOpacity } from 'components/shared/AppGraph/helpers/lineageHelpers';
-import * as S from './AppGraphLinkStyles';
+import * as S from './AppGraphCrossLinkStyles';
 
 interface AppGraphLinkProps {
   linkData: TreeLinkDatum;
@@ -16,37 +16,54 @@ interface AppGraphLinkProps {
   reverse?: boolean;
   enableLegacyTransitions: boolean;
   transitionDuration: number;
+  replacedCrossLinks: TreeLinkDatum[];
 }
 
-const AppGraphLink: React.FC<AppGraphLinkProps> = ({
+const AppGraphCrossLink: React.FC<AppGraphLinkProps> = ({
   linkData,
   nodeSize,
   reverse,
   enableLegacyTransitions,
   transitionDuration,
+  replacedCrossLinks,
 }) => {
   let linkRef: SVGPathElement;
   const { source, target } = linkData;
-  const coords: DefaultLinkObject = {
+
+  const [isReplacedLink, setIsReplacedLink] =
+    React.useState<boolean>(false);
+
+  const replacedCrossLink = replacedCrossLinks.find(
+    ({ source: replacedSource, target: replacedTarget }) =>
+      replacedSource === source && replacedTarget === target
+  );
+
+  React.useEffect(() => {
+    if (replacedCrossLink) {
+      setIsReplacedLink(true);
+    }
+  }, [replacedCrossLink, setIsReplacedLink]);
+
+  const crossLinkCoords: DefaultLinkObject = {
     source: reverse
-      ? [source.y, source.x + nodeSize.y / 2]
-      : [source.y + nodeSize.x, source.x + nodeSize.y / 2],
+      ? [source.y + nodeSize.x, source.x + nodeSize.y / 1.5]
+      : [source.y, source.x + nodeSize.y / 1.5],
     target: reverse
-      ? [target.y + nodeSize.x, target.x + nodeSize.y / 2]
-      : [target.y, target.x + nodeSize.y / 2],
+      ? [target.y, target.x + nodeSize.y / 1.5]
+      : [target.y + nodeSize.x, target.x + nodeSize.y / 1.5],
   };
 
   React.useEffect(() => {
     applyOpacity(linkRef, enableLegacyTransitions, transitionDuration, 1);
   }, []);
 
-  const drawPath = () => linkHorizontal()(coords) || undefined;
+  const drawPath = () => linkHorizontal()(crossLinkCoords) || undefined;
 
   return (
     <>
       <defs>
         <marker
-          id="head"
+          id="crossHead"
           orient="auto-start-reverse"
           markerWidth="13"
           markerHeight="14"
@@ -64,11 +81,11 @@ const AppGraphLink: React.FC<AppGraphLinkProps> = ({
         d={drawPath()}
         data-source-id={source.id}
         data-target-id={target.id}
-        markerStart={reverse ? 'url(#head)' : ''}
-        markerEnd={reverse ? '' : 'url(#head)'}
+        markerStart={reverse && !isReplacedLink ? 'url(#crossHead)' : ''}
+        markerEnd={reverse && !isReplacedLink ? '' : 'url(#crossHead)'}
       />
     </>
   );
 };
 
-export default AppGraphLink;
+export default AppGraphCrossLink;

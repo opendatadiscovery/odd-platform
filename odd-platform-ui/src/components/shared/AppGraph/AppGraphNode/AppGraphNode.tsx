@@ -3,8 +3,8 @@ import { HierarchyPointNode } from 'd3-hierarchy';
 import { select } from 'd3-selection';
 import { interpolateString } from 'd3-interpolate';
 import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
-import { Link } from 'react-router-dom';
-import { dataEntityDetailsPath } from 'lib/paths';
+import { useHistory } from 'react-router-dom';
+import { dataEntityLineagePath } from 'lib/paths';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import {
@@ -49,6 +49,8 @@ interface AppGraphNodeProps {
   reverse?: boolean;
   isStreamFetching: boolean;
   hasChildren: boolean;
+  nodeDepth: number;
+  setInitialDepth: (depth: number) => void;
 }
 
 const AppGraphNode: React.FC<AppGraphNodeProps> = ({
@@ -61,19 +63,26 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   nodeSize,
   compactView,
   enableLegacyTransitions,
-  // fetchMoreLineage,
   reverse,
   isStreamFetching,
   hasChildren,
+  nodeDepth,
+  setInitialDepth,
 }) => {
   const dispatch = useAppDispatch();
+  const history = useHistory();
 
   const detailsLink =
     parent && data.externalName
-      ? dataEntityDetailsPath(
+      ? dataEntityLineagePath(
           data.originalGroupId ? data.originalGroupId : data.id
         )
       : '#';
+
+  const handleNodeClick = () => {
+    setInitialDepth(nodeDepth);
+    history.push(detailsLink);
+  };
 
   let nodeRef: SVGGElement;
   const titleLayout = {
@@ -225,6 +234,11 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
       entityClass.name === DataEntityClassNameEnum.ENTITY_GROUP
   );
 
+  const hasMoreLineage =
+    appGraphNodeType === 'downstream'
+      ? Boolean(data.childrenCount)
+      : Boolean(data.parentsCount);
+
   return (
     <g
       id={data.d3attrs.id}
@@ -255,16 +269,15 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         />
         <g transform={`translate(${titleLayout.x},${titleLayout.y})`}>
           {data.externalName ? (
-            <Link to={detailsLink}>
-              <Title
-                className="wrap-text"
-                width={nodeSize.x - titleLayout.x * 2}
-              >
-                <title>{data.internalName || data.externalName}</title>
-                <tspan x={0} y={0} className="visible-text" />
-                <tspan className="ellip">...</tspan>
-              </Title>
-            </Link>
+            <Title
+              className="wrap-text"
+              width={nodeSize.x - titleLayout.x * 2}
+              onClick={handleNodeClick}
+            >
+              <title>{data.internalName || data.externalName}</title>
+              <tspan x={0} y={0} className="visible-text" />
+              <tspan className="ellip">...</tspan>
+            </Title>
           ) : (
             <>
               <UnknownEntityNameCircle />
@@ -408,7 +421,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         ))}
       </Container>
 
-      {!hasChildren && showLoadMore && !isDEG && (
+      {!hasChildren && showLoadMore && hasMoreLineage && !isDEG && (
         <LoadMoreButton
           ref={n => {
             if (n) {
@@ -443,7 +456,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               x={loadMoreLayout.width / 2}
               y={loadMoreLayout.height / 2 + loadMoreLayout.my}
             >
-              Load more
+              {`Load ${data.childrenCount} more`}
             </LoadMoreButtonName>
           )}
         </LoadMoreButton>

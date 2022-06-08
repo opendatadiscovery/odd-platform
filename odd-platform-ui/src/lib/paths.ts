@@ -3,10 +3,6 @@ import { AlertViewType } from 'redux/interfaces';
 export const searchPath = (searchId?: string) =>
   `/search${searchId ? `/${searchId}` : ''}`;
 
-export const dataSourcesPath = () => '/datasources';
-
-export const tagsPath = () => '/tags';
-
 export const termDetailsPath = (termId: number) => `/terms/${termId}`;
 
 export const termDetailsLinkedItemsPath = (termId: number) =>
@@ -21,52 +17,49 @@ export const termSearchPath = (termSearchId?: string) =>
 export const dataEntityDetailsPath = (entityId: number) =>
   `/dataentities/${entityId}`;
 
-export const dataEntityMetadataPath = (entityId: number) =>
-  `${dataEntityDetailsPath(entityId)}/metadata`;
+export const dataEntityOverviewPath = (entityId: number) =>
+  `${dataEntityDetailsPath(entityId)}/overview`;
 
-export const dataEntityOverviewPath = (datasetId: number) =>
-  `${dataEntityDetailsPath(datasetId)}/overview`;
+export const dataEntityLineagePath = (entityId: number) =>
+  `${dataEntityDetailsPath(entityId)}/lineage`;
 
-export const dataEntityLineagePath = (datasetId: number) =>
-  `${dataEntityDetailsPath(datasetId)}/lineage`;
+export const dataEntityTestReportPath = (entityId: number) =>
+  `${dataEntityDetailsPath(entityId)}/test-reports`;
 
-export const dataEntityTestReportPath = (datasetId: number) =>
-  `${dataEntityDetailsPath(datasetId)}/test-reports`;
+export const dataEntityTestPath = (entityId: number, testId: number) =>
+  `${dataEntityTestReportPath(entityId)}/${testId}`;
 
-export const dataEntityTestPath = (datasetId: number, testId: number) =>
-  `${dataEntityTestReportPath(datasetId)}/${testId}`;
+export const dataEntityAlertsPath = (entityId: number) =>
+  `${dataEntityDetailsPath(entityId)}/alerts`;
 
-export const dataEntityAlertsPath = (datasetId: number) =>
-  `${dataEntityDetailsPath(datasetId)}/alerts`;
+export const dataEntityHistoryPath = (entityId: number) =>
+  `${dataEntityDetailsPath(entityId)}/history`;
 
-export const dataEntityHistoryPath = (datasetId: number) =>
-  `${dataEntityDetailsPath(datasetId)}/history`;
-
-export const dataEntityLinkedItemsPath = (datasetId: number) =>
-  `${dataEntityDetailsPath(datasetId)}/linked-items`;
+export const dataEntityLinkedItemsPath = (entityId: number) =>
+  `${dataEntityDetailsPath(entityId)}/linked-items`;
 
 // Test reports details
 export const testReportDetailsOverviewPath = (
-  datasetId: number,
+  entityId: number,
   testId: number
-) => `${dataEntityTestPath(datasetId, testId)}/overview`;
+) => `${dataEntityTestPath(entityId, testId)}/overview`;
 
 export const testReportDetailsHistoryPath = (
-  datasetId: number,
+  entityId: number,
   testId: number
-) => `${dataEntityTestPath(datasetId, testId)}/history`;
+) => `${dataEntityTestPath(entityId, testId)}/history`;
 
 export const testReportDetailsRetriesPath = (
-  datasetId: number,
+  entityId: number,
   testId: number
-) => `${dataEntityTestPath(datasetId, testId)}/retries`;
+) => `${dataEntityTestPath(entityId, testId)}/retries`;
 
 // Entity type specific paths
 export const datasetStructurePath = (
-  datasetId: number,
+  entityId: number,
   versionId?: number
 ) =>
-  `${dataEntityDetailsPath(datasetId)}/structure${
+  `${dataEntityDetailsPath(entityId)}/structure${
     versionId ? `/${versionId}` : ''
   }`;
 
