@@ -15,7 +15,7 @@
 
 # Open Data Discovery Platform: Next-Gen Data Discovery and Observability 
 
-<br>
+
 
 ## Introduction
 
@@ -32,9 +32,6 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 
 * :point_right: ODD Platform is a reference implementation of **[Open Data Discovery Spec](https://github.com/opendatadiscovery/opendatadiscovery-specification)**.
-
-
-<br>
 
 ## Features
 
@@ -70,7 +67,7 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 ### Running Locally with Docker Compose
 
-**```docker-compose -f docker/demo.yaml up -d```** 
+**```docker-compose -f docker/demo.yaml up -d odd-platform-enricher```** 
 
 * :point_right: **[QUICKSTART](./docker/README.md)** 
 
@@ -81,8 +78,6 @@ ODD is an open-source data discovery and observability tool for data teams that 
 ### Example configurations
 
 There are various example configurations (via docker-compose) within **[docker/examples directory](https://github.com/opendatadiscovery/odd-platform/tree/main/docker/examples)**.
-
-<br>
 
 ## Contributing
 
@@ -99,8 +94,6 @@ Please before contributing check out our [Contributing Guide](./CONTRIBUTING.md)
 <br>
 
 ## Integrations
-
-
 ODD Platform works with many of the tools you're already using: 
 
 <table>
@@ -156,8 +149,6 @@ ODD operates the following high-level types of entities:
 </ol>
 
 For more information, please check **[specification.md](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md)**.
-
-<br>
 
 ## Contacts
 
