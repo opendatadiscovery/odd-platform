@@ -153,10 +153,18 @@ Coming soon:
 
 <br>
 
-|Integrations | |
-|------|:---------|
-| ![](images/amazon-athena-logo.png)    | [Athena](https://github.com/opendatadiscovery/odd-collector-aws#athena)      	          | 
-| <img src="Assets/icon.png" width="200">          | test      	          | 
+<table>
+	<thead>
+		<tr>
+			<th colspan="2">Existing integrations</th>
+		</tr>
+	</thead>
+	<tbody>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/images/amazon-athena-logo.png" />                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Athena</a>        </td>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/images/cassandra-logo.jpeg" />                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Cassandra</a>        </td>
+		</tbody>
+</table>
+
 ## ODD Data Model
 
 ODD operates the following high-level types of entities:
