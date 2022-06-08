@@ -163,7 +163,9 @@ Coming soon:
 	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/amazon-athena-logo.png" />                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Athena</a>        </td>
 	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/cassandra-logo.jpeg" />                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#cassandra">Cassandra</a>        </td>
 	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/clickhouse-logo.jpg" />                   </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#clickhouse">Clickhouse</a></td>
-	<tr><td style="text-align: center; height=20px;"><img src="./images/dbt-logo.jpg"/>                       </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#dbt">DBT</a>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/dbt-logo.jpg" height="40"/>                       </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#dbt">DBT</a>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dynamodb-logo.jpg" /></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#dynamodb">DynamoDB </a></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/elasticsearch.png" height="20"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#elasticsearch">Elasticsearch </a></td>
 		</tbody>
 </table>
 
