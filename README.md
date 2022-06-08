@@ -160,8 +160,11 @@ Coming soon:
 		</tr>
 	</thead>
 	<tbody>
-	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/amazon-athena-logo.png" />                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Athena</a>        </td>
-	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/images/cassandra-logo.jpeg" />                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Cassandra</a>        </td>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/images/amazon-athena-logo.png" />                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Athena</a>        </td>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/tree/main/images/cassandra-logo.jpeg" />                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Cassandra</a>        </td>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/clickhouse-logo.jpg" />                   </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-clickhouse-adapter">Clickhouse</a></td>
+	<tr><td style="text-align: center; height=40px;"></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-dbt-adapter">DBT</a><img height="40" src="./images/dbt-logo.jpg"/></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/dbt-logo.jpg"/>                       </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-dbt-adapter">DBT</a>
 		</tbody>
 </table>
 
