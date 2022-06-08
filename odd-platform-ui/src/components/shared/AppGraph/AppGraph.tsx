@@ -11,10 +11,7 @@ import entries from 'lodash/entries';
 import maxBy from 'lodash/maxBy';
 import { v4 as uuidv4 } from 'uuid';
 import { Typography } from '@mui/material';
-import {
-  DataEntityLineageById,
-  DataEntityLineageStreamById,
-} from 'redux/interfaces/dataentityLineage';
+import { DataEntityLineageStreamById } from 'redux/interfaces/dataentityLineage';
 import {
   Point,
   TreeLinkDatum,
@@ -29,28 +26,25 @@ import TargetIcon from 'components/shared/Icons/TargetIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
 import AppGraphCrossLink from 'components/shared/AppGraph/AppGraphCrossLink/AppGraphCrossLink';
+import { getDataEntityLineage } from 'redux/selectors';
+import { useAppParams } from 'lib/hooks';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
 import * as S from './AppGraphStyles';
 
-export interface AppGraphProps {
-  dataEntityId: number;
-  data: DataEntityLineageById;
-  isStreamFetching: boolean;
-}
-
-const AppGraph: React.FC<AppGraphProps> = ({
-  dataEntityId,
-  data,
-  isStreamFetching,
-}) => {
+const AppGraph: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
+
+  const data = useAppSelector(state =>
+    getDataEntityLineage(state, dataEntityId)
+  );
 
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
   const gInstanceRef = `rd3t-g-${uuidv4()}`;
@@ -509,7 +503,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
               compactView={compactView}
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
-              isStreamFetching={isStreamFetching}
               hasChildren={!!node.children?.length}
               nodeDepth={node.depth}
               setInitialDepth={setInitialDepth}
@@ -527,7 +520,6 @@ const AppGraph: React.FC<AppGraphProps> = ({
               compactView={compactView}
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
-              isStreamFetching={isStreamFetching}
               hasChildren={!!node.children?.length}
               nodeDepth={node.depth}
               setInitialDepth={setInitialDepth}
