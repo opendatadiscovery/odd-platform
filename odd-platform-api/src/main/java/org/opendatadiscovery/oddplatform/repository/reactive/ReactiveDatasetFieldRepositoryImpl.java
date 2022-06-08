@@ -58,7 +58,7 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
-    public Mono<DatasetFieldDto> getDto(final long id) {
+    public Mono<DatasetFieldDto> getDto(final long datasetFieldId) {
         final DatasetField df = DATASET_FIELD.as("df");
         final DatasetField df2 = DATASET_FIELD.as("df2");
 
@@ -66,7 +66,7 @@ public class ReactiveDatasetFieldRepositoryImpl
             .from(df)
             .leftJoin(df2)
             .on(df.PARENT_FIELD_ODDRN.eq(df2.ODDRN))
-            .where(df.ID.eq(id));
+            .where(df.ID.eq(datasetFieldId));
 
         return jooqReactiveOperations.mono(selectConditionStep)
             .map(this::mapRecordToDatasetFieldDto);
