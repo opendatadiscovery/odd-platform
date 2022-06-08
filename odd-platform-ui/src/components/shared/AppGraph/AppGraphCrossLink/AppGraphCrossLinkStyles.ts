@@ -9,3 +9,9 @@ export const Path = styled('path')(({ theme }) => ({
 export const Arrow = styled('path')(({ theme }) => ({
   fill: theme.palette.button.primaryLight.active.background,
 }));
+
+export const Container = styled('g')(() => ({
+  '&:hover': {
+    [`${Path}`]: { strokeWidth: 2 },
+  },
+}));
