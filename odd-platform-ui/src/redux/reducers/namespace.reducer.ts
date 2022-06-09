@@ -1,72 +1,57 @@
-import { getType } from 'typesafe-actions';
-import filter from 'lodash/filter';
-import * as actions from 'redux/actions';
-import { Action } from 'redux/interfaces';
+import { namespaceActionTypePrefix } from 'redux/actions';
 import { NamespacesState } from 'redux/interfaces/state';
+import { Namespace } from 'generated-sources';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
+import * as thunks from 'redux/thunks';
+
+export const namespaceAdapter = createEntityAdapter<Namespace>({
+  selectId: namespace => namespace.id,
+});
 
 export const initialState: NamespacesState = {
-  byId: {},
-  allIds: [],
   pageInfo: {
     total: 0,
     page: 0,
     hasNext: true,
   },
+  ...namespaceAdapter.getInitialState(),
 };
 
-const reducer = (
-  state = initialState,
-  action: Action
-): NamespacesState => {
-  switch (action.type) {
-    case getType(actions.fetchNamespacesAction.success):
-      return action.payload.items.reduce(
-        (memo: NamespacesState, namespace) => ({
-          ...memo,
-          byId: {
-            ...memo.byId,
-            [namespace.id]: {
-              ...memo.byId[namespace.id],
-              ...namespace,
-            },
-          },
-          allIds: [...memo.allIds, namespace.id],
-        }),
-        {
-          ...state,
-          allIds:
-            action.payload.pageInfo?.page > 1 ? [...state.allIds] : [],
-          pageInfo: action.payload.pageInfo,
-        }
-      );
-    case getType(actions.createNamespacesAction.success):
-      return {
-        ...state,
-        byId: {
-          ...state.byId,
-          [action.payload.id]: action.payload,
-        },
-        allIds: [action.payload.id, ...state.allIds],
-      };
-    case getType(actions.updateNamespaceAction.success):
-      return {
-        ...state,
-        byId: {
-          ...state.byId,
-          [action.payload.id]: action.payload,
-        },
-      };
-    case getType(actions.deleteNamespaceAction.success):
-      return {
-        ...state,
-        allIds: filter(
-          state.allIds,
-          namespaceId => namespaceId !== action.payload
-        ),
-      };
-    default:
-      return state;
-  }
-};
+export const namespaceSlice = createSlice({
+  name: namespaceActionTypePrefix,
+  initialState,
+  reducers: {},
+  extraReducers: builder => {
+    builder.addCase(
+      thunks.fetchNamespaceList.fulfilled,
+      (state, { payload }) => {
+        const { namespaceList, pageInfo } = payload;
+        namespaceAdapter.setAll(state, namespaceList);
+        state.pageInfo = pageInfo;
+      }
+    );
 
-export default reducer;
+    builder.addCase(
+      thunks.createNamespace.fulfilled,
+      (state, { payload }) => {
+        namespaceAdapter.addOne(state, payload);
+      }
+    );
+
+    builder.addCase(
+      thunks.updateNamespace.fulfilled,
+      (state, { payload }) => {
+        namespaceAdapter.upsertOne(state, payload);
+      }
+    );
+
+    builder.addCase(
+      thunks.deleteNamespace.fulfilled,
+      (state, { payload }) => {
+        namespaceAdapter.removeOne(state, payload);
+      }
+    );
+  },
+});
+
+export default namespaceSlice.reducer;

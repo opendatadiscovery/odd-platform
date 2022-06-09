@@ -1,30 +1,27 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  Namespace,
-  NamespaceApiDeleteNamespaceRequest,
-} from 'generated-sources';
+import { Namespace } from 'generated-sources';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import AppButton from 'components/shared/AppButton/AppButton';
-import NamespaceFormContainer from '../NamespaceForm/NamespaceFormContainer';
+import { deleteNamespace } from 'redux/thunks';
+import { useAppDispatch } from 'lib/redux/hooks';
+import NamespaceForm from '../NamespaceForm/NamespaceForm';
 import * as S from './EditableNamespaceItemStyles';
 
 interface EditableNamespaceItemProps {
   namespace: Namespace;
-  deleteNamespace: (
-    params: NamespaceApiDeleteNamespaceRequest
-  ) => Promise<void>;
 }
 
 const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
   namespace,
-  deleteNamespace,
 }) => {
+  const dispatch = useAppDispatch();
+
   const handleDelete = React.useCallback(
-    () => deleteNamespace({ namespaceId: namespace.id }),
-    [namespace, deleteNamespace]
+    () => dispatch(deleteNamespace({ namespaceId: namespace.id })),
+    [namespace.id, deleteNamespace]
   );
 
   return (
@@ -35,7 +32,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
         </Typography>
       </Grid>
       <S.ActionsContainer item>
-        <NamespaceFormContainer
+        <NamespaceForm
           namespace={namespace}
           btnEl={
             <AppButton
