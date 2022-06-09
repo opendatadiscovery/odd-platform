@@ -9,7 +9,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
-import org.opendatadiscovery.oddplatform.dto.MetadataDto;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 

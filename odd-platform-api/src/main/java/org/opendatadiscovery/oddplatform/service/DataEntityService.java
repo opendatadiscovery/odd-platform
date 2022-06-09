@@ -19,7 +19,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUp
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -63,13 +63,7 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
                                                       final long metadataFieldId,
                                                       final MetadataFieldValueUpdateFormData formData);
 
-    Mono<DataEntityLineage> getLineage(final long dataEntityId,
-                                       final int lineageDepth,
-                                       final LineageStreamKind streamKind);
-
     Mono<DataEntityList> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                      final Integer page,
                                                      final Integer size);
-
-    Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId);
 }

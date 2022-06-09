@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.lineage;
 
 import java.util.List;
 

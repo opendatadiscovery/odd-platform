@@ -105,7 +105,12 @@ const EntitiesSuggestionsAutocomplete: React.FC<
     const typedOption = option as DataEntityRef;
     return (
       <li {...props}>
-        <Typography variant="body1" sx={{ mr: 1 }}>
+        <Typography
+          variant="body1"
+          sx={{ mr: 1 }}
+          noWrap
+          title={typedOption.internalName || typedOption.externalName}
+        >
           {typedOption.internalName || typedOption.externalName}
         </Typography>
         {typedOption.entityClasses?.map(entityClass => (

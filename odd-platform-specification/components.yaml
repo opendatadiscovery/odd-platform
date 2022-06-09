@@ -1277,6 +1277,10 @@ components:
           items:
             type: integer
             format: int64
+        parents_count:
+          type: integer
+        children_count:
+          type: integer
       required:
         - id
         - name

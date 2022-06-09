@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.alert;
 
 import java.net.URI;
 import java.time.LocalDateTime;

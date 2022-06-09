@@ -19,11 +19,9 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.collections4.SetUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jooq.CommonTableExpression;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -43,7 +41,6 @@ import org.jooq.SelectSelectStep;
 import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.Table;
-import org.jooq.TableField;
 import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
@@ -52,13 +49,8 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataConsume
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataQualityTestDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataTransformerDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
-import org.opendatadiscovery.oddplatform.dto.LineageDepth;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
@@ -67,6 +59,11 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
+import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityGroupLineageDto;
+import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageStreamDto;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
@@ -79,7 +76,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
-import org.opendatadiscovery.oddplatform.model.tables.records.LineageRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
@@ -93,8 +89,6 @@ import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
@@ -103,10 +97,7 @@ import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.name;
-import static org.jooq.impl.DSL.val;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataInputDetailsDto;
-import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.DOWNSTREAM;
-import static org.opendatadiscovery.oddplatform.dto.LineageStreamKind.UPSTREAM;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
@@ -154,6 +145,7 @@ public class DataEntityRepositoryImpl
     private final MetadataFieldValueRepository metadataFieldValueRepository;
     private final DatasetVersionRepository datasetVersionRepository;
     private final TermRepository termRepository;
+    private final LineageRepository lineageRepository;
 
     public DataEntityRepositoryImpl(final DSLContext dslContext,
                                     final JooqQueryHelper jooqQueryHelper,
@@ -162,7 +154,8 @@ public class DataEntityRepositoryImpl
                                     final DataEntityTaskRunRepository dataEntityTaskRunRepository,
                                     final MetadataFieldValueRepository metadataFieldValueRepository,
                                     final DatasetVersionRepository datasetVersionRepository,
-                                    final TermRepository termRepository) {
+                                    final TermRepository termRepository,
+                                    final LineageRepository lineageRepository) {
         super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null,
             DATA_ENTITY.UPDATED_AT, DataEntityDimensionsDto.class);
 
@@ -172,6 +165,7 @@ public class DataEntityRepositoryImpl
         this.metadataFieldValueRepository = metadataFieldValueRepository;
         this.datasetVersionRepository = datasetVersionRepository;
         this.termRepository = termRepository;
+        this.lineageRepository = lineageRepository;
     }
 
     @Override
@@ -411,7 +405,8 @@ public class DataEntityRepositoryImpl
             .map(r -> jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY).get(DATA_ENTITY.ODDRN))
             .collect(Collectors.toSet());
 
-        final List<String> oddrns = collectLineage(lineageCte(associatedOddrns, LineageDepth.empty(), streamKind))
+        final List<String> oddrns = lineageRepository
+            .getLineageRelations(associatedOddrns, LineageDepth.empty(), streamKind)
             .stream()
             .flatMap(lp -> Stream.of(lp.getParentOddrn(), lp.getChildOddrn()))
             .distinct()
@@ -675,169 +670,6 @@ public class DataEntityRepositoryImpl
             .collect(toList());
     }
 
-    @Override
-    public Optional<DataEntityGroupLineageDto> getDataEntityGroupLineage(final Long dataEntityGroupId) {
-        final List<String> entitiesOddrns = getDEGEntitiesOddrns(dataEntityGroupId);
-        if (CollectionUtils.isEmpty(entitiesOddrns)) {
-            return Optional.empty();
-        }
-
-        final Map<String, DataEntityDimensionsDto> dtoDict = listDimensionsByOddrns(entitiesOddrns)
-            .stream()
-            .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
-
-        final List<LineagePojo> lineageRelations = getLineageRelations(entitiesOddrns);
-        final List<Set<String>> oddrnRelations = lineageRelations.stream()
-            .map(lineagePojo -> Set.of(lineagePojo.getChildOddrn(), lineagePojo.getParentOddrn()))
-            .collect(toList());
-        final List<Set<String>> combinedOddrnsList = combineOddrnsInDEGLineage(oddrnRelations);
-
-        final List<DataEntityLineageStreamDto> items = combinedOddrnsList.stream()
-            .map(combinedOddrns -> {
-                final DataEntityLineageStreamDto dto = new DataEntityLineageStreamDto();
-                final List<DataEntityDimensionsDto> nodes = combinedOddrns.stream()
-                    .map(dtoDict::get)
-                    .toList();
-                dto.setNodes(nodes);
-                final List<Pair<Long, Long>> edges = combinedOddrns.stream()
-                    .flatMap(oddrn -> lineageRelations.stream()
-                        .filter(relations -> relations.getChildOddrn().equals(oddrn))
-                        .map(r -> Pair.of(
-                            dtoDict.get(r.getParentOddrn()).getDataEntity().getId(),
-                            dtoDict.get(r.getChildOddrn()).getDataEntity().getId()
-                        ))).toList();
-                dto.setEdges(edges);
-                return dto;
-            }).toList();
-
-        return Optional.of(new DataEntityGroupLineageDto(items));
-    }
-
-    @Override
-    @BlockingTransactional
-    public Optional<DataEntityLineageDto> getLineage(final long dataEntityId,
-                                                     final int lineageDepth,
-                                                     final LineageStreamKind streamKind) {
-        return get(dataEntityId).map(dto -> getLineage(lineageDepth, dto, streamKind));
-    }
-
-    private DataEntityLineageDto getLineage(final int lineageDepth,
-                                            final DataEntityDimensionsDto dto,
-                                            final LineageStreamKind streamKind) {
-        final List<LineagePojo> downstreamRelations =
-            streamKind.equals(DOWNSTREAM) || streamKind.equals(LineageStreamKind.FULL_GRAPH)
-                ? collectLineage(lineageCte(dto.getDataEntity().getOddrn(), LineageDepth.of(lineageDepth), DOWNSTREAM))
-                : emptyList();
-
-        final List<LineagePojo> upstreamRelations =
-            streamKind.equals(UPSTREAM) || streamKind.equals(LineageStreamKind.FULL_GRAPH)
-                ? collectLineage(lineageCte(dto.getDataEntity().getOddrn(), LineageDepth.of(lineageDepth), UPSTREAM))
-                : emptyList();
-
-        final Set<String> oddrnsToFetch = Stream.concat(
-            downstreamRelations.stream().flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn())),
-            upstreamRelations.stream().flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
-        ).collect(Collectors.toSet());
-
-        final Map<String, List<String>> groupRelations = fetchGroupRepository(oddrnsToFetch);
-
-        final Map<String, DataEntityDimensionsDto> dtoRepository =
-            listDimensionsByOddrns(SetUtils.union(oddrnsToFetch, groupRelations.keySet()))
-                .stream()
-                .collect(Collectors.toMap(d -> d.getDataEntity().getOddrn(), identity()));
-
-        final Map<DataEntityDimensionsDto, List<String>> groupRepository = groupRelations.entrySet()
-            .stream()
-            .map(e -> {
-                final DataEntityDimensionsDto groupDto = dtoRepository.get(e.getKey());
-                if (groupDto == null) {
-                    return null;
-                }
-
-                return Pair.of(groupDto, e.getValue());
-            })
-            .filter(Objects::nonNull)
-            .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-
-        return DataEntityLineageDto.builder()
-            .dataEntityDto(dto)
-            .upstream(getLineageStream(dtoRepository, groupRepository, upstreamRelations))
-            .downstream(getLineageStream(dtoRepository, groupRepository, downstreamRelations))
-            .build();
-    }
-
-    private Map<String, List<String>> fetchGroupRepository(final Collection<String> childOddrns) {
-        if (CollectionUtils.isEmpty(childOddrns)) {
-            return Map.of();
-        }
-
-        return dslContext
-            .select(
-                GROUP_ENTITY_RELATIONS.GROUP_ODDRN,
-                GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN
-            )
-            .from(GROUP_ENTITY_RELATIONS)
-            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.in(childOddrns))
-            .fetchGroups(GROUP_ENTITY_RELATIONS.GROUP_ODDRN, GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN);
-    }
-
-    private List<Set<String>> combineOddrnsInDEGLineage(final List<Set<String>> oddrnRelations) {
-        final List<Set<String>> result = new ArrayList<>();
-        oddrnRelations.forEach(relations -> {
-            final Set<String> combinedRelations = result.stream()
-                .filter(rel -> rel.stream().anyMatch(relations::contains))
-                .findFirst()
-                .orElseGet(() -> {
-                    final Set<String> newRelationSet = new HashSet<>();
-                    result.add(newRelationSet);
-                    return newRelationSet;
-                });
-            combinedRelations.addAll(relations);
-        });
-
-        if (result.size() == oddrnRelations.size()) {
-            return result;
-        } else {
-            return combineOddrnsInDEGLineage(result);
-        }
-    }
-
-    private List<String> getDEGEntitiesOddrns(final long dataEntityGroupId) {
-        final Name cteName = name("t");
-        final Field<String> tDataEntityOddrn = field("t.data_entity_oddrn", String.class);
-
-        final String groupOddrn = dslContext.select(DATA_ENTITY.ODDRN)
-            .from(DATA_ENTITY)
-            .where(DATA_ENTITY.ID.eq(dataEntityGroupId))
-            .fetchOptionalInto(String.class)
-            .orElseThrow(NotFoundException::new);
-
-        final var cte = cteName.as(dslContext
-            .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
-            .from(GROUP_ENTITY_RELATIONS)
-            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn))
-            .unionAll(
-                dslContext
-                    .select(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN)
-                    .from(GROUP_ENTITY_RELATIONS)
-                    .join(cteName).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(tDataEntityOddrn))
-            ));
-
-        return dslContext.withRecursive(cte)
-            .selectDistinct(cte.field(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN))
-            .from(cte.getName())
-            .fetchStreamInto(String.class)
-            .collect(toList());
-    }
-
-    private List<LineagePojo> getLineageRelations(final List<String> oddrns) {
-        return dslContext.selectDistinct(LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN)
-            .from(LINEAGE)
-            .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.CHILD_ODDRN.in(oddrns)))
-            .fetchStreamInto(LineagePojo.class)
-            .collect(toList());
-    }
-
     private void calculateStructureVectors(final Collection<Long> dataEntityIds) {
         final String dsOddrnAlias = "dsv_dataset_oddrn";
 
@@ -882,94 +714,6 @@ public class DataEntityRepositoryImpl
             true,
             Map.of(labelName, LABEL.NAME)
         ).execute();
-    }
-
-    private DataEntityLineageStreamDto getLineageStream(
-        final Map<String, DataEntityDimensionsDto> dtoRepository,
-        final Map<DataEntityDimensionsDto, List<String>> groupRepository,
-        final List<LineagePojo> relations
-    ) {
-        final List<Pair<Long, Long>> edges = relations.stream()
-            .map(r -> Pair.of(
-                dtoRepository.get(r.getParentOddrn()).getDataEntity().getId(),
-                dtoRepository.get(r.getChildOddrn()).getDataEntity().getId()
-            ))
-            .collect(toList());
-
-        final List<DataEntityDimensionsDto> nodes = relations.stream()
-            .flatMap(r -> Stream.of(r.getParentOddrn(), r.getChildOddrn()))
-            .distinct()
-            .map(deOddrn -> Optional.ofNullable(dtoRepository.get(deOddrn))
-                .orElseThrow(() -> new IllegalArgumentException(
-                    String.format("Entity with oddrn %s wasn't fetched", deOddrn)))
-            )
-            .collect(toList());
-
-        final Map<Long, List<Long>> groupRelations = groupRepository.entrySet()
-            .stream()
-            .flatMap(e -> e.getValue()
-                .stream()
-                .map(deOddrn -> {
-                    final long groupId = e.getKey().getDataEntity().getId();
-
-                    final long entityId = Optional.ofNullable(dtoRepository.get(deOddrn))
-                        .map(d -> d.getDataEntity().getId())
-                        .orElseThrow(() -> new IllegalArgumentException(
-                            String.format("Entity with oddrn %s wasn't fetched", deOddrn)));
-
-                    return Pair.of(entityId, groupId);
-                }))
-            .collect(groupingBy(Pair::getLeft, mapping(Pair::getRight, toList())));
-
-        return DataEntityLineageStreamDto.builder()
-            .edges(edges)
-            .nodes(nodes)
-            .groups(groupRepository.keySet())
-            .groupsRelations(groupRelations)
-            .build();
-    }
-
-    private CommonTableExpression<Record> lineageCte(final Collection<String> oddrns,
-                                                     final LineageDepth lineageDepth,
-                                                     final LineageStreamKind streamKind) {
-        final Name cteName = name("t");
-        final Field<Integer> startDepth = val(1).as(field("depth", Integer.class));
-        final Field<Integer> tDepth = field("t.depth", Integer.class);
-        final Field<String> tChildOddrn = field("t.child_oddrn", String.class);
-        final Field<String> tParentOddrn = field("t.parent_oddrn", String.class);
-
-        final Pair<TableField<LineageRecord, String>, Field<String>> conditions =
-            streamKind.equals(LineageStreamKind.DOWNSTREAM)
-                ? Pair.of(LINEAGE.PARENT_ODDRN, tChildOddrn)
-                : Pair.of(LINEAGE.CHILD_ODDRN, tParentOddrn);
-
-        return cteName.as(dslContext
-            .select(LINEAGE.asterisk())
-            .select(startDepth)
-            .from(LINEAGE)
-            .where(conditions.getLeft().in(oddrns))
-            .unionAll(
-                dslContext
-                    .select(LINEAGE.asterisk())
-                    .select(tDepth.add(1))
-                    .from(LINEAGE)
-                    .join(cteName).on(conditions.getLeft().eq(conditions.getRight()))
-                    .where(tDepth.lessThan(lineageDepth.getDepth()))
-            ));
-    }
-
-    private CommonTableExpression<Record> lineageCte(final String oddrn,
-                                                     final LineageDepth lineageDepth,
-                                                     final LineageStreamKind streamKind) {
-        return lineageCte(List.of(oddrn), lineageDepth, streamKind);
-    }
-
-    private List<LineagePojo> collectLineage(final CommonTableExpression<Record> cte) {
-        return dslContext.withRecursive(cte)
-            .selectDistinct(cte.field(LINEAGE.PARENT_ODDRN), cte.field(LINEAGE.CHILD_ODDRN))
-            .from(cte.getName())
-            .fetchStreamInto(LineagePojo.class)
-            .collect(toList());
     }
 
     private List<DataEntityDimensionsDto> listByConfig(final DataEntitySelectConfig config) {

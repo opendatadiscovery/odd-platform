@@ -1,60 +1,54 @@
 import {
-  DataEntityApi,
   Configuration,
-  DataEntityLineage,
+  DataEntityApi,
   DataEntityApiGetDataEntityDownstreamLineageRequest,
   DataEntityApiGetDataEntityUpstreamLineageRequest,
+  DataEntityLineage,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PartialEntityUpdateParams } from 'redux/interfaces';
-import {
-  DataEntityLineageRootNodeId,
-  LineageStreamParams,
-} from 'redux/interfaces/dataentityLineage';
+import { DataEntityLineageRootNodeId } from 'redux/interfaces/dataentityLineage';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new DataEntityApi(apiClientConf);
+const dataEntityApi = new DataEntityApi(apiClientConf);
 
-export const fetchDataEntityDownstreamLineage = createThunk<
+export const fetchDataEntityDownstreamLineage = createAsyncThunk<
+  {
+    rootNodeId: number;
+    dataEntityId: number;
+    dataEntityLineage: DataEntityLineage;
+  },
   DataEntityApiGetDataEntityDownstreamLineageRequest &
-    DataEntityLineageRootNodeId,
-  DataEntityLineage,
-  PartialEntityUpdateParams<LineageStreamParams>
+    DataEntityLineageRootNodeId
 >(
-  (
-    params: DataEntityApiGetDataEntityDownstreamLineageRequest &
-      DataEntityLineageRootNodeId
-  ) => apiClient.getDataEntityDownstreamLineage(params),
-  actions.fetchDataEntityDownstreamLineageAction,
-  (
-    response: DataEntityLineage,
-    request: DataEntityApiGetDataEntityDownstreamLineageRequest &
-      DataEntityLineageRootNodeId
-  ) => ({
-    entityId: request.dataEntityId,
-    value: { dataEntityLineage: response, rootNodeId: request.rootNodeId },
-  })
+  actions.fetchDataEntityDownstreamLineageActionType,
+  async ({ dataEntityId, lineageDepth, rootNodeId }) => {
+    const dataEntityLineage =
+      await dataEntityApi.getDataEntityDownstreamLineage({
+        dataEntityId,
+        lineageDepth,
+      });
+    return { rootNodeId, dataEntityId, dataEntityLineage };
+  }
 );
 
-export const fetchDataEntityUpstreamLineage = createThunk<
-  DataEntityApiGetDataEntityDownstreamLineageRequest &
-    DataEntityLineageRootNodeId,
-  DataEntityLineage,
-  PartialEntityUpdateParams<LineageStreamParams>
+export const fetchDataEntityUpstreamLineage = createAsyncThunk<
+  {
+    rootNodeId: number;
+    dataEntityId: number;
+    dataEntityLineage: DataEntityLineage;
+  },
+  DataEntityApiGetDataEntityUpstreamLineageRequest &
+    DataEntityLineageRootNodeId
 >(
-  (
-    params: DataEntityApiGetDataEntityUpstreamLineageRequest &
-      DataEntityLineageRootNodeId
-  ) => apiClient.getDataEntityUpstreamLineage(params),
-  actions.fetchDataEntityUpstreamLineageAction,
-  (
-    response: DataEntityLineage,
-    request: DataEntityApiGetDataEntityUpstreamLineageRequest &
-      DataEntityLineageRootNodeId
-  ) => ({
-    entityId: request.dataEntityId,
-    value: { dataEntityLineage: response, rootNodeId: request.rootNodeId },
-  })
+  actions.fetchDataEntityUpstreamLineageActionType,
+  async ({ dataEntityId, lineageDepth, rootNodeId }) => {
+    const dataEntityLineage =
+      await dataEntityApi.getDataEntityUpstreamLineage({
+        dataEntityId,
+        lineageDepth,
+      });
+    return { rootNodeId, dataEntityId, dataEntityLineage };
+  }
 );

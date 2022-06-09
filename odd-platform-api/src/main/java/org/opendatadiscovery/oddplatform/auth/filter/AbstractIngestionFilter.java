@@ -51,8 +51,8 @@ public abstract class AbstractIngestionFilter implements WebFilter {
     }
 
     protected <T> T readBody(final List<DataBuffer> dataBuffer, final Class<T> clazz) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-            final WritableByteChannel channel = Channels.newChannel(baos);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             WritableByteChannel channel = Channels.newChannel(baos)) {
             for (final DataBuffer buffer : dataBuffer) {
                 channel.write(buffer.asByteBuffer().asReadOnlyBuffer());
             }

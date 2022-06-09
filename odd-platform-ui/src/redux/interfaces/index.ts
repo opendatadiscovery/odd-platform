@@ -11,3 +11,4 @@ export * from './termGroup';
 export * from './collectors';
 export * from './termSearch';
 export * from './terms';
+export * from './dataentityLineage';
