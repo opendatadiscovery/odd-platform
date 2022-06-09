@@ -1,12 +1,12 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.jeasy.random.EasyRandom;
+import org.jeasy.random.EasyRandomParameters;
+import org.jooq.JSONB;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.jeasy.random.FieldPredicates.ofType;
 import static org.jooq.JSONB.jsonb;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -24,14 +25,19 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired
     private ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
-    final EasyRandom easyRandom = new EasyRandom();
-    private final List<DatasetFieldDto> datasetFieldDtos = createTestDatasetFieldDtos(5);
+    private static final EasyRandom EASY_RANDOM;
+
+    static {
+        final EasyRandomParameters easyRandomParameters = new EasyRandomParameters();
+        easyRandomParameters.excludeField(ofType(JSONB.class));
+        EASY_RANDOM = new EasyRandom(easyRandomParameters);
+    }
 
     @Test
     @DisplayName("Test get dto from database")
     void testGetDto() {
-        final DatasetFieldDto testDatasetFieldDto = datasetFieldDtos.get(0);
-        final List<DatasetFieldPojo> datasetFieldPojos = List.of(testDatasetFieldDto.getDatasetFieldPojo());
+        final DatasetFieldDto datasetFieldDto = EASY_RANDOM.nextObject(DatasetFieldDto.class);
+        final List<DatasetFieldPojo> datasetFieldPojos = List.of(datasetFieldDto.getDatasetFieldPojo());
         reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos).collectList().block();
         final DatasetFieldPojo expectedDatasetFieldPojo = datasetFieldPojos.get(0);
 
@@ -51,13 +57,13 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Test get existing fields by oddrn and type from database")
     void testGetExistingFieldsByOddrnAndType() {
-        final List<DatasetFieldDto> testDatasetFieldDtos =
-            List.of(datasetFieldDtos.get(1), datasetFieldDtos.get(2), datasetFieldDtos.get(3));
+        final List<DatasetFieldDto> datasetFieldDtos = EASY_RANDOM.objects(DatasetFieldDto.class, 5).toList();
         final List<DatasetFieldPojo> datasetFieldPojos =
-            testDatasetFieldDtos.stream().map(DatasetFieldDto::getDatasetFieldPojo).toList();
-
+            datasetFieldDtos.stream()
+                .map(DatasetFieldDto::getDatasetFieldPojo)
+                .peek(p -> p.setType(jsonb(JSONTestUtils.createJson(EASY_RANDOM.nextObject(DataSetFieldType.class)))))
+                .toList();
         final DatasetFieldPojo expectedDatasetFiledPojo = datasetFieldPojos.get(0);
-
         reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos).collectList().block();
 
         reactiveDatasetFieldRepository.getExistingFieldsByOddrnAndType(List.of(expectedDatasetFiledPojo))
@@ -74,9 +80,8 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
     @Test
     @DisplayName("Test update description")
     void testUpdateDescription() {
-        final DatasetFieldDto testDatasetFieldDto = datasetFieldDtos.get(4);
-        final List<DatasetFieldPojo> datasetFieldPojos = List.of(testDatasetFieldDto.getDatasetFieldPojo());
-
+        final DatasetFieldDto datasetFieldDto = EASY_RANDOM.nextObject(DatasetFieldDto.class);
+        final List<DatasetFieldPojo> datasetFieldPojos = List.of(datasetFieldDto.getDatasetFieldPojo());
         reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos).collectList().block();
         final DatasetFieldPojo expectedDatasetFieldPojo = datasetFieldPojos.get(0);
 
@@ -90,20 +95,6 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
                     datasetFieldPojo.getExternalDescription());
             })
             .verifyComplete();
-    }
-
-    private List<DatasetFieldDto> createTestDatasetFieldDtos(final int numberOfDtos) {
-        final List<DatasetFieldDto> dtos = new ArrayList<>();
-        for (int i = 0; i < numberOfDtos; i++) {
-            final DatasetFieldDto datasetFieldDto = easyRandom.nextObject(DatasetFieldDto.class);
-            final DataSetFieldStat dataSetFieldStat = easyRandom.nextObject(DataSetFieldStat.class);
-            final DataSetFieldType dataSetFieldType = easyRandom.nextObject(DataSetFieldType.class);
-            final DatasetFieldPojo datasetFieldPojo = datasetFieldDto.getDatasetFieldPojo();
-            datasetFieldPojo.setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
-            datasetFieldPojo.setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
-            dtos.add(datasetFieldDto);
-        }
-        return dtos;
     }
 
     private void assertDataField(final DatasetFieldPojo expectedDatasetFieldPojo,
