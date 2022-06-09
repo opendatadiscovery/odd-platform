@@ -39,6 +39,13 @@ export const AttributeLabel = styled('tspan')(({ theme }) => ({
   fill: theme.palette.text.secondary,
 }));
 
+export const Count = styled('text')(({ theme }) => ({
+  fill: theme.palette.texts.hint,
+  fontSize: theme.typography.body2.fontSize,
+  fontWeight: theme.typography.body2.fontWeight,
+  lineHeight: theme.typography.body2.lineHeight,
+}));
+
 export const Placeholder = styled('tspan')<{ $show: boolean }>(
   ({ theme, $show }) => ({
     fill: theme.palette.texts.hint,

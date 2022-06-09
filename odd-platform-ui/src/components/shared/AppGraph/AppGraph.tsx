@@ -204,8 +204,8 @@ const AppGraph: React.FC = () => {
     const crossLUp = parsedData.upstream.crossEdges?.reduce<
       TreeLinkDatum[]
     >((memo, edge) => {
-      const sourceNode = nUp.find(node => node.data.id === edge.targetId);
-      const targetNode = nUp.find(node => node.data.id === edge.sourceId);
+      const sourceNode = nUp.find(node => node.data.id === edge.sourceId);
+      const targetNode = nUp.find(node => node.data.id === edge.targetId);
 
       if (sourceNode && targetNode) {
         const crossLink = {

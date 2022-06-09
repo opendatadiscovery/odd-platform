@@ -24,6 +24,7 @@ interface LoadMoreButtonProps {
     mx: number;
   };
   loadMoreCount?: number;
+  hideLoadMore: () => void;
 }
 
 const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
@@ -33,6 +34,7 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
   reverse,
   loadMoreLayout,
   loadMoreCount,
+  hideLoadMore,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -47,11 +49,15 @@ const LoadMoreButton: React.FC<LoadMoreButtonProps> = ({
       rootNodeId,
     };
     if (appGraphNodeType === 'downstream') {
-      dispatch(fetchDataEntityDownstreamLineage(params));
+      dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
+        hideLoadMore()
+      );
     }
 
     if (appGraphNodeType === 'upstream') {
-      dispatch(fetchDataEntityUpstreamLineage(params));
+      dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
+        hideLoadMore()
+      );
     }
   };
 

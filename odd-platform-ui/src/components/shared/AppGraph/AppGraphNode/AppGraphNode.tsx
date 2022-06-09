@@ -133,6 +133,40 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     }
   };
 
+  const upstreamArrow = (
+    <svg
+      width="6"
+      height="6"
+      viewBox="0 0 6 6"
+      x={0}
+      y={-attributeLayout.y + attributeLayout.my + titleLayout.my}
+    >
+      <path
+        d="M5.2 1L1 1M1 1L1 5.2M1 1L7 7"
+        stroke="#A8B0BD"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+
+  const downstreamArrow = (
+    <svg
+      width="6"
+      height="6"
+      viewBox="0 0 8 8"
+      x={0}
+      y={-attributeLayout.y + attributeLayout.my + titleLayout.my}
+    >
+      <path
+        d="M2.8 7L7 7M7 7L7 2.8M7 7L1 0.999999"
+        stroke="#A8B0BD"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+
   const commitTransform = () => {
     const newTransform = setTransform(position, parent);
     applyTransform(newTransform, transitionDuration);
@@ -143,6 +177,11 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   }, [commitTransform]);
 
   const [showLoadMore, setShowLoadMore] = React.useState<boolean>(false);
+  const [hideLoadMore, setHideLoadMore] = React.useState<boolean>(false);
+  const hideLoadMoreHandler = React.useCallback(
+    () => setHideLoadMore(true),
+    [setHideLoadMore]
+  );
 
   const handleLoadMoreMouseEnter = () => setShowLoadMore(true);
   const handleLoadMoreMouseLeave = () => setShowLoadMore(false);
@@ -156,6 +195,10 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     appGraphNodeType === 'downstream'
       ? Boolean(data.childrenCount)
       : Boolean(data.parentsCount);
+
+  const showParentChildrenCount = reverse
+    ? Boolean(data.childrenCount)
+    : Boolean(data.parentsCount);
 
   return (
     <g
@@ -224,6 +267,16 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
           transform={`translate(${attributeLayout.x},${attributeLayout.y})`}
           style={{ display: compactView ? 'none' : 'initial' }}
         >
+          {showParentChildrenCount && data.externalName ? (
+            <>
+              {reverse ? downstreamArrow : upstreamArrow}
+              <S.Count x={10} y={-attributeLayout.height}>
+                {reverse
+                  ? `${data.childrenCount}`
+                  : `${data.parentsCount}`}
+              </S.Count>
+            </>
+          ) : null}
           <S.Attribute>
             <S.AttributeLabel key={`nsl-${data.id}`} x={0} y={0}>
               Space
@@ -339,20 +392,25 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         ))}
       </S.NodeContainer>
 
-      {!hasChildren && showLoadMore && hasMoreLineage && !isDEG && (
-        <LoadMoreButton
-          rootNodeId={rootNodeId}
-          dataEntityId={data.id}
-          loadMoreLayout={loadMoreLayout}
-          appGraphNodeType={appGraphNodeType}
-          reverse={reverse}
-          loadMoreCount={
-            appGraphNodeType === 'downstream'
-              ? data.childrenCount
-              : data.parentsCount
-          }
-        />
-      )}
+      {!hasChildren &&
+        !hideLoadMore &&
+        showLoadMore &&
+        hasMoreLineage &&
+        !isDEG && (
+          <LoadMoreButton
+            hideLoadMore={hideLoadMoreHandler}
+            rootNodeId={rootNodeId}
+            dataEntityId={data.id}
+            loadMoreLayout={loadMoreLayout}
+            appGraphNodeType={appGraphNodeType}
+            reverse={reverse}
+            loadMoreCount={
+              appGraphNodeType === 'downstream'
+                ? data.childrenCount
+                : data.parentsCount
+            }
+          />
+        )}
     </g>
   );
 };

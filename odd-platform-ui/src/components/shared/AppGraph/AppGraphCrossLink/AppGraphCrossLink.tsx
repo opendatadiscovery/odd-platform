@@ -81,8 +81,8 @@ const AppGraphCrossLink: React.FC<AppGraphLinkProps> = ({
         d={drawPath()}
         data-source-id={source.id}
         data-target-id={target.id}
-        markerStart={reverse && !isReplacedLink ? 'url(#crossHead)' : ''}
-        markerEnd={reverse && !isReplacedLink ? '' : 'url(#crossHead)'}
+        markerStart={reverse || isReplacedLink ? 'url(#crossHead)' : ''}
+        markerEnd={reverse || isReplacedLink ? '' : 'url(#crossHead)'}
       />
     </S.Container>
   );
