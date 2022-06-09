@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.utils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +19,15 @@ public class JSONTestUtils {
         try {
             return OBJECT_MAPPER.readValue(file, tr);
         } catch (final IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String createJson(final Object o) {
+        try {
+            return OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(o);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
