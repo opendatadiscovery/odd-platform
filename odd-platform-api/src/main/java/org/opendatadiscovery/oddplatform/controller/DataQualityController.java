@@ -3,8 +3,6 @@ package org.opendatadiscovery.oddplatform.controller;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
 import org.springframework.http.ResponseEntity;
@@ -34,17 +32,6 @@ public class DataQualityController implements DataQualityApi {
                                                                         final ServerWebExchange exchange) {
         return dataQualityService
             .getDatasetTestReport(dataEntityId)
-            .map(ResponseEntity::ok);
-    }
-
-    @Override
-    public Mono<ResponseEntity<DataQualityTestRunList>> getRuns(final Long dataEntityId,
-                                                                final Integer page,
-                                                                final Integer size,
-                                                                final DataQualityTestRunStatus status,
-                                                                final ServerWebExchange exchange) {
-        return dataQualityService
-            .getDataQualityTestRuns(dataEntityId, status, page, size)
             .map(ResponseEntity::ok);
     }
 }

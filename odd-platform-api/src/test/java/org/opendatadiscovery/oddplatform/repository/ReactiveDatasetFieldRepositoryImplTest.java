@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.repository.reactive;
+package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.List;
 import org.jeasy.random.EasyRandom;
@@ -10,6 +10,7 @@ import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;

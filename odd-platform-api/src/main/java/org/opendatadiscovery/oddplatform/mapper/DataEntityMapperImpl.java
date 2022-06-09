@@ -16,9 +16,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRun;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpectation;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
@@ -43,7 +43,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private final TagMapper tagMapper;
     private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final DatasetVersionMapper datasetVersionMapper;
-    private final DataQualityMapper dataQualityMapper;
+    private final DataEntityRunMapper dataEntityRunMapper;
     private final TermMapper termMapper;
 
     @Override
@@ -252,7 +252,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                     .map(this::mapReference)
                     .collect(Collectors.toList()))
                 .linkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList())
-                .latestRun(dataQualityMapper.mapDataQualityTestRun(
+                .latestRun(dataEntityRunMapper.mapDataEntityRun(
                     dto.getDataEntity().getId(),
                     dto.getDataQualityTestDetailsDto().latestTaskRun())
                 )
@@ -292,8 +292,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto) {
         final DataQualityTestDetailsDto dqDto = dto.getDataQualityTestDetailsDto();
 
-        final DataQualityTestRun latestRun = dqDto.latestTaskRun() != null
-            ? dataQualityMapper.mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.latestTaskRun())
+        final DataEntityRun latestRun = dqDto.latestTaskRun() != null
+            ? dataEntityRunMapper.mapDataEntityRun(dto.getDataEntity().getId(), dqDto.latestTaskRun())
             : null;
 
         return mapPojo(dto)

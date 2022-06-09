@@ -10,14 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.jeasy.random.randomizers.misc.EnumRandomizer;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunStatus;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun.IngestionTaskRunStatus;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityRepository;
+import org.opendatadiscovery.oddplatform.utils.DataEntityTaskRunPojoEndTimeComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
@@ -99,66 +98,6 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void testGetDataQualityRuns() {
-        final DataEntityPojo dqTest = dataEntityRepository
-            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
-            .get(0);
-
-        final List<DataEntityTaskRunPojo> taskRuns = List.of(
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.SUCCESS),
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.SUCCESS),
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.SUCCESS),
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.SUCCESS),
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.SUCCESS),
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.BROKEN),
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.ABORTED),
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.UNKNOWN),
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.UNKNOWN),
-            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.RUNNING)
-        );
-
-        dataEntityTaskRunRepository.persist(taskRuns);
-
-        dataQualityRepository.getDataQualityTestRuns(dqTest.getId(), null, 1, 5)
-            .as(StepVerifier::create)
-            .assertNext(page -> {
-                assertThat(page.getData())
-                    .hasSize(5)
-                    .isSortedAccordingTo(endTimeComparator);
-
-                assertThat(page.getTotal()).isEqualTo(10);
-                assertThat(page.isHasNext()).isTrue();
-            })
-            .verifyComplete();
-
-        dataQualityRepository.getDataQualityTestRuns(dqTest.getId(), null, 2, 5)
-            .as(StepVerifier::create)
-            .assertNext(page -> {
-                assertThat(page.getData())
-                    .hasSize(5)
-                    .isSortedAccordingTo(endTimeComparator);
-
-                assertThat(page.getTotal()).isEqualTo(10);
-                assertThat(page.isHasNext()).isFalse();
-            })
-            .verifyComplete();
-
-        dataQualityRepository.getDataQualityTestRuns(dqTest.getId(), DataQualityTestRunStatus.SUCCESS, 1, 30)
-            .as(StepVerifier::create)
-            .assertNext(page -> {
-                assertThat(page.getData())
-                    .hasSize(5)
-                    .isSortedAccordingTo(endTimeComparator)
-                    .extracting(DataEntityTaskRunPojo::getStatus)
-                    .containsOnly(IngestionTaskRun.IngestionTaskRunStatus.SUCCESS.toString());
-
-                assertThat(page.getTotal()).isEqualTo(5);
-                assertThat(page.isHasNext()).isFalse();
-            })
-            .verifyComplete();
-    }
-
-    @Test
     public void testGetDatasetTestReportWithoutTests() {
         final DataEntityPojo dataEntity = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
@@ -188,7 +127,8 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
             .get(0);
 
-        dataEntityTaskRunRepository.persist(createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.RUNNING));
+        dataEntityTaskRunRepository.persist(
+            createTaskRun(dqTest.getOddrn(), IngestionTaskRunStatus.RUNNING));
 
         dataQualityTestRelationRepository.createRelations(List.of(
             new DataQualityTestRelationsPojo()
@@ -276,24 +216,5 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
             .unknownTotal(report.getOrDefault(UNKNOWN.getValue(), 0L))
             .total(report.values().stream().reduce(0L, Long::sum))
             .build();
-    }
-
-    static class DataEntityTaskRunPojoEndTimeComparator implements Comparator<DataEntityTaskRunPojo> {
-        @Override
-        public int compare(final DataEntityTaskRunPojo d1, final DataEntityTaskRunPojo d2) {
-            if (d1 == d2) {
-                return 0;
-            }
-
-            if (d1.getEndTime() == null) {
-                return 1;
-            }
-
-            if (d2.getEndTime() == null) {
-                return -1;
-            }
-
-            return d1.getEndTime().compareTo(d2.getEndTime());
-        }
     }
 }
