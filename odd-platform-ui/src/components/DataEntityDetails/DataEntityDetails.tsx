@@ -56,9 +56,7 @@ const OverviewContainer = React.lazy(
 const DatasetStructureContainer = React.lazy(
   () => import('./DatasetStructure/DatasetStructureContainer')
 );
-const LineageContainer = React.lazy(
-  () => import('./Lineage/LineageContainer')
-);
+const Lineage = React.lazy(() => import('./Lineage/Lineage'));
 const TestReportContainer = React.lazy(
   () => import('./TestReport/TestReportContainer')
 );
@@ -344,7 +342,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             <Route
               exact
               path="/dataentities/:dataEntityId/lineage"
-              component={LineageContainer}
+              component={Lineage}
             />
             <Route
               exact

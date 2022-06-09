@@ -6,10 +6,8 @@ import java.util.Optional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -22,9 +20,9 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     List<DataEntityDimensionsDto> listDimensionsByOddrns(final Collection<String> oddrns);
 
     List<DataEntityDimensionsDto> listByEntityClass(final int page,
-                                             final int size,
-                                             final int entityClassId,
-                                             final Integer typeId);
+                                                    final int size,
+                                                    final int entityClassId,
+                                                    final Integer typeId);
 
     List<DataEntityDimensionsDto> listByTerm(final long termId, final String query, final Integer entityClassId,
                                              final int page, final int size);
@@ -39,12 +37,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     List<? extends DataEntityDto> listPopular(final int page, final int size);
 
     Optional<DataEntityDetailsDto> getDetails(final long id);
-
-    Optional<DataEntityLineageDto> getLineage(final long dataEntityId,
-                                              final int lineageDepth,
-                                              final LineageStreamKind streamKind);
-
-    Optional<DataEntityGroupLineageDto> getDataEntityGroupLineage(final Long dataEntityGroupId);
 
     Page<DataEntityDimensionsDto> findByState(final FacetStateDto state, final int page, final int size);
 

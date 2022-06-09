@@ -16,7 +16,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueLi
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
-import org.opendatadiscovery.oddplatform.dto.MetadataDto;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
@@ -82,8 +82,8 @@ public class DataEntityServiceTest {
         dataEntityService = new DataEntityServiceImpl(dataEntityMapper, dataEntityRepository, authIdentityProvider,
             metadataFieldValueRepository, metadataFieldRepository, tagService, lineageRepository,
             metadataFieldMapper, metadataFieldValueMapper, reactiveSearchEntrypointRepository, tagMapper,
-            namespaceService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository,
-            termRepository, ownershipRepository);
+            namespaceService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository, termRepository,
+            ownershipRepository);
     }
 
     @Test

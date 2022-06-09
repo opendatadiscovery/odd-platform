@@ -18,7 +18,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntity
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
@@ -35,8 +34,8 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
-import org.opendatadiscovery.oddplatform.dto.MetadataDto;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
@@ -88,7 +87,7 @@ public class DataEntityServiceImpl
     private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final TagMapper tagMapper;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
-    private final ReactiveGroupEntityRelationRepository groupEntityRelationRepository;
+    private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
     private final ReactiveTermRepository reactiveTermRepository;
     private final ReactiveOwnershipRepository ownershipRepository;
 
@@ -105,7 +104,7 @@ public class DataEntityServiceImpl
                                  final TagMapper tagMapper,
                                  final NamespaceService namespaceService,
                                  final ReactiveDataEntityRepository reactiveDataEntityRepository,
-                                 final ReactiveGroupEntityRelationRepository groupEntityRelationRepository,
+                                 final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository,
                                  final ReactiveTermRepository reactiveTermRepository,
                                  final ReactiveOwnershipRepository ownershipRepository) {
         super(entityMapper, entityRepository);
@@ -121,9 +120,9 @@ public class DataEntityServiceImpl
         this.tagMapper = tagMapper;
         this.namespaceService = namespaceService;
         this.reactiveDataEntityRepository = reactiveDataEntityRepository;
-        this.groupEntityRelationRepository = groupEntityRelationRepository;
         this.reactiveTermRepository = reactiveTermRepository;
         this.ownershipRepository = ownershipRepository;
+        this.reactiveGroupEntityRelationRepository = reactiveGroupEntityRelationRepository;
     }
 
     @Override
@@ -336,33 +335,12 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<DataEntityLineage> getLineage(final long dataEntityId,
-                                              final int lineageDepth,
-                                              final LineageStreamKind lineageStreamKind) {
-        return Mono
-            .fromCallable(() -> entityRepository.getLineage(dataEntityId, lineageDepth, lineageStreamKind))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException())
-                : Mono.just(optional.get()))
-            .map(entityMapper::mapLineageDto);
-    }
-
-    @Override
     public Mono<DataEntityList> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                             final Integer page,
                                                             final Integer size) {
         return Mono.fromCallable(() -> entityRepository
                 .getDataEntityGroupsChildren(dataEntityGroupId, page, size))
             .map(entityMapper::mapPojos);
-    }
-
-    @Override
-    public Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId) {
-        return Mono.fromCallable(() -> entityRepository.getDataEntityGroupLineage(dataEntityGroupId))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException())
-                : Mono.just(optional.get()))
-            .map(entityMapper::mapGroupLineageDto);
     }
 
     @Override
@@ -377,7 +355,7 @@ public class DataEntityServiceImpl
                     "Entity with id %s is not manually created DEG".formatted(formData.getDataEntityGroupId()))));
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMap(function(
-                (pojo, groupPojo) -> groupEntityRelationRepository
+                (pojo, groupPojo) -> reactiveGroupEntityRelationRepository
                     .createRelations(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
                     .ignoreElements()
                     .thenReturn(groupPojo)
@@ -396,7 +374,7 @@ public class DataEntityServiceImpl
                     "Entity with id %s is not manually created DEG".formatted(dataEntityGroupId))));
         return dataEntityMono.zipWith(groupPojoMono)
             .flatMapMany(function(
-                (pojo, groupPojo) -> groupEntityRelationRepository
+                (pojo, groupPojo) -> reactiveGroupEntityRelationRepository
                     .deleteRelations(groupPojo.getOddrn(), pojo.getOddrn())
             ));
     }
@@ -415,7 +393,7 @@ public class DataEntityServiceImpl
             .flatMap(pojo -> {
                 final List<String> entityOddrns =
                     formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
-                return groupEntityRelationRepository.createRelations(pojo.getOddrn(), entityOddrns)
+                return reactiveGroupEntityRelationRepository.createRelations(pojo.getOddrn(), entityOddrns)
                     .ignoreElements().thenReturn(pojo);
             })
             .flatMap(this::updateSearchVectors)
@@ -430,9 +408,9 @@ public class DataEntityServiceImpl
         return Mono.just(formData)
             .map(fd -> entityMapper.applyToPojo(fd, namespace, pojo))
             .flatMap(reactiveDataEntityRepository::update)
-            .flatMap(degPojo -> groupEntityRelationRepository.deleteRelationsExcept(degPojo.getOddrn(), entityOddrns)
-                .ignoreElements().thenReturn(degPojo))
-            .flatMap(degPojo -> groupEntityRelationRepository.createRelations(degPojo.getOddrn(), entityOddrns)
+            .flatMap(degPojo -> reactiveGroupEntityRelationRepository
+                .deleteRelationsExcept(degPojo.getOddrn(), entityOddrns).ignoreElements().thenReturn(degPojo))
+            .flatMap(degPojo -> reactiveGroupEntityRelationRepository.createRelations(degPojo.getOddrn(), entityOddrns)
                 .ignoreElements().thenReturn(degPojo))
             .flatMap(this::updateSearchVectors)
             .map(entityMapper::mapRef);
@@ -441,7 +419,7 @@ public class DataEntityServiceImpl
     private Mono<DataEntityPojo> deleteDEG(final DataEntityPojo pojo) {
         return Flux.zip(
             reactiveTermRepository.deleteRelationsWithTerms(pojo.getId()),
-            groupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
+            reactiveGroupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
             tagService.deleteRelationsForDataEntity(pojo.getId()),
             ownershipRepository.deleteByDataEntityId(pojo.getId())
         ).then(reactiveDataEntityRepository.delete(pojo.getId()));

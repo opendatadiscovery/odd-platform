@@ -1,14 +1,10 @@
 import React from 'react';
-import AppGraphContainer from 'components/shared/AppGraph/AppGraphContainer';
+import AppGraph from 'components/shared/AppGraph/AppGraph';
 import { Container } from './LineageStyles';
 
-interface LineageProps {
-  dataEntityId: number;
-}
-
-const Lineage: React.FC<LineageProps> = ({ dataEntityId }) => (
+const Lineage: React.FC = () => (
   <Container>
-    <AppGraphContainer dataEntityId={dataEntityId} />
+    <AppGraph />
   </Container>
 );
 

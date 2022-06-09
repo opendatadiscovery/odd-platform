@@ -24,6 +24,14 @@ public class ReactiveDataEntityRepositoryImpl
     }
 
     @Override
+    public Mono<Boolean> exists(final long dataEntityId) {
+        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
+            DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.ID.eq(dataEntityId))));
+
+        return jooqReactiveOperations.mono(query).map(Record1::component1);
+    }
+
+    @Override
     public Mono<Boolean> existsByDataSourceId(final long dataSourceId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.DATA_SOURCE_ID.eq(dataSourceId))));

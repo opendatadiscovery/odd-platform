@@ -1,8 +1,4 @@
 # Overview
-[About ODD](#about-odd) \
-[Pain points](#pain-points) \
-[Features](#features) \
-[Use cases](#use-cases)
 ## About ODD
 The open-source Data Discovery Platform improves productivity, collaboration, and governance of modern data products and teams: 
 * Free open-source and community-driven 
@@ -11,7 +7,7 @@ The open-source Data Discovery Platform improves productivity, collaboration, an
 * Flexible data quality integration options 
 * Auto-generated ML experiment lineage and metadata 
 
-To use Platform solutions more effectively apply [**ODD Specification**](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md). It contains  best practices for managing your metadata. Its theoretical topics and examples helps to build an effective data discovery process. Also the Spec covers data engagement and data federation problems.
+To use Platform solutions more effectively apply [**ODD Specification**](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md). It contains  best practices for managing your metadata. Its theoretical topics and examples help to build an effective data discovery process. Also the Spec covers data engagement and data federation problems.
 
 ### The platform for your business
 ![](.gitbook/img/audience.png) ODD's **target audience** is any data team regardless of its' size. It can be enterprises or large-scale 
@@ -21,6 +17,11 @@ DS teams
 aiming at better data governance. \
  \
 ![](.gitbook/img/alltogether.png) **An ecosystem for all data team members**. Platform functionality covers requirements of Data Scientists and Engineers, Product and Project Managers as well as Data Analysts, Architects, QA and BI Engineers.
+
+### Solution matrix
+ODD can benefit a team at the following SDLC stages and team functions:
+
+![](.gitbook/img/sdlc.png)
 ## Pain points
 ### Onboarding to data
 Every time a newcomer joins a data team, one faces a challenge of data management processes learning. Unfortunately, it may provoke overcommunication, reading irrelevant documentation and spending much time to pick out meaningful information.  \

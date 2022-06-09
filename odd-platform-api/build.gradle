@@ -20,6 +20,7 @@ dependencies {
     implementation project(':odd-platform-ui')
 
     implementation libs.bundles.spring
+    implementation libs.bundles.spring.redis.session
     implementation libs.bundles.internal
     implementation libs.bundles.apache.commons
     implementation libs.bundles.r2dbc

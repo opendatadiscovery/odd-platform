@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
-import org.opendatadiscovery.oddplatform.dto.MetadataDto;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataTypeEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;

@@ -6,8 +6,6 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTy
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
@@ -20,7 +18,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValueUp
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataObject;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import reactor.core.publisher.Flux;
@@ -65,15 +63,9 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
                                                       final long metadataFieldId,
                                                       final MetadataFieldValueUpdateFormData formData);
 
-    Mono<DataEntityLineage> getLineage(final long dataEntityId,
-                                       final int lineageDepth,
-                                       final LineageStreamKind streamKind);
-
     Mono<DataEntityList> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                      final Integer page,
                                                      final Integer size);
-
-    Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId);
 
     Mono<DataEntityRef> addDataEntityToDEG(final Long dataEntityId, final DataEntityDataEntityGroupFormData formData);
 

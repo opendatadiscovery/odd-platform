@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
-import org.opendatadiscovery.oddplatform.dto.MetadataDto;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.springframework.stereotype.Component;
 
 @Component

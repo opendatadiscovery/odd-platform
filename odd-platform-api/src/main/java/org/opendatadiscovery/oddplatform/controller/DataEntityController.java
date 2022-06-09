@@ -28,9 +28,10 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormD
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
+import org.opendatadiscovery.oddplatform.service.LineageService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.ResponseEntity;
@@ -49,15 +50,18 @@ public class DataEntityController
     private final OwnershipService ownershipService;
     private final AlertService alertService;
     private final TermService termService;
+    private final LineageService lineageService;
 
     public DataEntityController(final DataEntityService entityService,
                                 final OwnershipService ownershipService,
                                 final AlertService alertService,
-                                final TermService termService) {
+                                final TermService termService,
+                                final LineageService lineageService) {
         super(entityService);
         this.ownershipService = ownershipService;
         this.alertService = alertService;
         this.termService = termService;
+        this.lineageService = lineageService;
     }
 
     @Override
@@ -235,7 +239,7 @@ public class DataEntityController
     public Mono<ResponseEntity<DataEntityLineage>> getDataEntityDownstreamLineage(final Long dataEntityId,
                                                                                   final Integer lineageDepth,
                                                                                   final ServerWebExchange exchange) {
-        return entityService
+        return lineageService
             .getLineage(dataEntityId, lineageDepth, LineageStreamKind.DOWNSTREAM)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
@@ -245,7 +249,7 @@ public class DataEntityController
     public Mono<ResponseEntity<DataEntityLineage>> getDataEntityUpstreamLineage(final Long dataEntityId,
                                                                                 final Integer lineageDepth,
                                                                                 final ServerWebExchange exchange) {
-        return entityService
+        return lineageService
             .getLineage(dataEntityId, lineageDepth, LineageStreamKind.UPSTREAM)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
@@ -254,7 +258,7 @@ public class DataEntityController
     @Override
     public Mono<ResponseEntity<DataEntityGroupLineageList>> getDataEntityGroupsLineage(final Long dataEntityGroupId,
                                                                                        final ServerWebExchange exch) {
-        return entityService
+        return lineageService
             .getDataEntityGroupLineage(dataEntityGroupId)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);

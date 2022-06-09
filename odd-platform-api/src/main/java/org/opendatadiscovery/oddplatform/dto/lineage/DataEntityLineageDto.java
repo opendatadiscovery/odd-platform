@@ -1,9 +1,10 @@
-package org.opendatadiscovery.oddplatform.dto;
+package org.opendatadiscovery.oddplatform.dto.lineage;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 
 @NoArgsConstructor
 @AllArgsConstructor

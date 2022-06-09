@@ -22,7 +22,9 @@ public class DataQualityController implements DataQualityApi {
     public Mono<ResponseEntity<DataEntityList>> getDataEntityDataQATests(final Long dataEntityId,
                                                                          final ServerWebExchange exchange) {
         return dataQualityService
-            .getDataEntityDataQATests(dataEntityId)
+            .getDatasetTests(dataEntityId)
+            // TODO: remove subscribeOn after
+            //  https://github.com/opendatadiscovery/odd-platform/issues/623 is implemented
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
@@ -32,7 +34,6 @@ public class DataQualityController implements DataQualityApi {
                                                                         final ServerWebExchange exchange) {
         return dataQualityService
             .getDatasetTestReport(dataEntityId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 
@@ -44,7 +45,6 @@ public class DataQualityController implements DataQualityApi {
                                                                 final ServerWebExchange exchange) {
         return dataQualityService
             .getDataQualityTestRuns(dataEntityId, status, page, size)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 }
