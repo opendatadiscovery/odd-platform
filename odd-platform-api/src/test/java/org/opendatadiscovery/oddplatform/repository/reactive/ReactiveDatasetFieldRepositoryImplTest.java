@@ -12,7 +12,6 @@ import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,14 +25,13 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
     @Autowired
     private ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
     final EasyRandom easyRandom = new EasyRandom();
+    private final List<DatasetFieldDto> datasetFieldDtos = createTestDatasetFieldDtos(5);
 
     @Test
     @DisplayName("Test get dto from database")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void testGetDto() {
-        final List<DatasetFieldDto> testDatasetFieldDtos = createTestDatasetFieldDtos(1);
-        final List<DatasetFieldPojo> datasetFieldPojos =
-            testDatasetFieldDtos.stream().map(DatasetFieldDto::getDatasetFieldPojo).toList();
+        final DatasetFieldDto testDatasetFieldDto = datasetFieldDtos.get(0);
+        final List<DatasetFieldPojo> datasetFieldPojos = List.of(testDatasetFieldDto.getDatasetFieldPojo());
         reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos).collectList().block();
         final DatasetFieldPojo expectedDatasetFieldPojo = datasetFieldPojos.get(0);
 
@@ -52,9 +50,9 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("Test get existing fields by oddrn and type from database")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void testGetExistingFieldsByOddrnAndType() {
-        final List<DatasetFieldDto> testDatasetFieldDtos = createTestDatasetFieldDtos(3);
+        final List<DatasetFieldDto> testDatasetFieldDtos =
+            List.of(datasetFieldDtos.get(1), datasetFieldDtos.get(2), datasetFieldDtos.get(3));
         final List<DatasetFieldPojo> datasetFieldPojos =
             testDatasetFieldDtos.stream().map(DatasetFieldDto::getDatasetFieldPojo).toList();
 
@@ -75,11 +73,9 @@ class ReactiveDatasetFieldRepositoryImplTest extends BaseIntegrationTest {
 
     @Test
     @DisplayName("Test update description")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
     void testUpdateDescription() {
-        final List<DatasetFieldDto> testDatasetFieldDtos = createTestDatasetFieldDtos(1);
-        final List<DatasetFieldPojo> datasetFieldPojos =
-            testDatasetFieldDtos.stream().map(DatasetFieldDto::getDatasetFieldPojo).toList();
+        final DatasetFieldDto testDatasetFieldDto = datasetFieldDtos.get(4);
+        final List<DatasetFieldPojo> datasetFieldPojos = List.of(testDatasetFieldDto.getDatasetFieldPojo());
 
         reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos).collectList().block();
         final DatasetFieldPojo expectedDatasetFieldPojo = datasetFieldPojos.get(0);
