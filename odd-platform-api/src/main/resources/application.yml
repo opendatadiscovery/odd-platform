@@ -11,6 +11,12 @@ spring:
     urls: ""
     dn:
       pattern: ""
+#  redis:
+#    host: localhost
+#    port: 6379
+#    username:
+#    password:
+#    database: 0
 #  security:
 #    oauth2:
 #      resourceserver:
@@ -32,6 +38,10 @@ spring:
 cognito:
   enabled: false
   logoutUrl:
+
+session:
+  # INTERNAL_POSTGRESQL, REDIS, IN_MEMORY
+  provider: IN_MEMORY
 
 auth:
   # DISABLED, LOGIN_FORM, OAUTH2

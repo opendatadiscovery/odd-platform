@@ -7,12 +7,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import reactor.core.publisher.Mono;
 
 public interface DataQualityService {
-    Mono<DataEntityList> getDataEntityDataQATests(final long dataEntityId);
+    Mono<DataEntityList> getDatasetTests(final long dataEntityId);
 
     Mono<DataSetTestReport> getDatasetTestReport(final long datasetId);
 
     Mono<DataQualityTestRunList> getDataQualityTestRuns(final long dataQualityTestId,
                                                         final DataQualityTestRunStatus status,
-                                                        final Integer page,
-                                                        final Integer size);
+                                                        final int page,
+                                                        final int size);
 }

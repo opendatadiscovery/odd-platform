@@ -3,7 +3,7 @@ package org.opendatadiscovery.oddplatform.controller;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.opendatadiscovery.oddplatform.auth.filter.SessionConstants;
+import org.opendatadiscovery.oddplatform.auth.session.SessionConstants;
 import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;

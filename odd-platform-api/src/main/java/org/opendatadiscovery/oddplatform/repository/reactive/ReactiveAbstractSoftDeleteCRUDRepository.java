@@ -98,7 +98,7 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
         return conditionsList;
     }
 
-    private Map<Field<?>, Object> getDeleteChangedFields() {
+    protected Map<Field<?>, Object> getDeleteChangedFields() {
         final Map<Field<?>, Object> updatedFieldsMap = new HashMap<>();
         updatedFieldsMap.put(deletedField, true);
         if (deletedAtField != null) {

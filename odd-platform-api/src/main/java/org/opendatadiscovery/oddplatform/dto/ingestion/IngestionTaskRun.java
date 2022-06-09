@@ -31,6 +31,7 @@ public class IngestionTaskRun {
         SKIPPED,
         BROKEN,
         ABORTED,
+        RUNNING,
         UNKNOWN
     }
 }
