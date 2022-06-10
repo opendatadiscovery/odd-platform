@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
-import get from 'lodash/get';
 import { DataEntitiesState, RootState } from 'redux/interfaces';
 import {
   DataEntityClassNameEnum,
   DataEntityType,
+  DataEntityTypeNameEnum,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import {
@@ -206,6 +206,22 @@ export const getDataEntityIsQualityTest = createSelector(
       entityClass =>
         entityClass.name === DataEntityClassNameEnum.QUALITY_TEST
     )
+);
+
+export const getDataEntityIsTransformerJob = createSelector(
+  dataEntitiesState,
+  getDataEntityId,
+  (dataEntities, dataEntityId) => {
+    const dataEntity = dataEntities.byId[dataEntityId];
+    const isDataEntityClassTransformer = dataEntity?.entityClasses?.some(
+      entityCLass =>
+        entityCLass.name === DataEntityClassNameEnum.TRANSFORMER
+    );
+    const isDataEntityTypeJob =
+      dataEntity?.type?.name === DataEntityTypeNameEnum.JOB;
+
+    return Boolean(isDataEntityClassTransformer && isDataEntityTypeJob);
+  }
 );
 
 // data entity groups

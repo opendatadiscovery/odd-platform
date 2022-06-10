@@ -1,12 +1,12 @@
 import React from 'react';
-import { DataQualityTestRunStatus } from 'generated-sources';
+import { DataEntityRunStatus } from 'generated-sources';
 import { SxProps } from '@mui/system';
 import { Theme } from '@mui/material';
 import * as S from './TestRunStatusItemStyles';
 
 interface TestRunStatusItemProps {
   count?: number;
-  typeName: DataQualityTestRunStatus;
+  typeName: DataEntityRunStatus;
   size?: 'large' | 'small';
   sx?: SxProps<Theme>;
 }

@@ -8,8 +8,8 @@ import * as actions from 'redux/actions';
 import {
   DataEntity,
   DataEntityList,
-  DataQualityTestRunList,
-  DataQualityTestRunStatus,
+  DataEntityRunList,
+  DataEntityRunStatus,
 } from 'generated-sources';
 import uniq from 'lodash/uniq';
 
@@ -30,7 +30,7 @@ export const initialState: DataQualityTestState = {
 const latestRunStatusesCounter = (
   arr: DataEntity[],
   suiteName: string,
-  statusType: DataQualityTestRunStatus
+  statusType: DataEntityRunStatus
 ): number =>
   arr.filter(
     item =>
@@ -77,32 +77,32 @@ const createDataSetQualityTestList = (
                 success: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatus.SUCCESS
+                  DataEntityRunStatus.SUCCESS
                 ),
                 failed: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatus.FAILED
+                  DataEntityRunStatus.FAILED
                 ),
                 broken: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatus.BROKEN
+                  DataEntityRunStatus.BROKEN
                 ),
                 aborted: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatus.ABORTED
+                  DataEntityRunStatus.ABORTED
                 ),
                 skipped: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatus.SKIPPED
+                  DataEntityRunStatus.SKIPPED
                 ),
                 unknown: latestRunStatusesCounter(
                   payload.items,
                   dataSetQualityTest.suiteName,
-                  DataQualityTestRunStatus.UNKNOWN
+                  DataEntityRunStatus.UNKNOWN
                 ),
               },
             }
@@ -116,24 +116,24 @@ const createDataSetQualityTestList = (
 
 const createDataSetQualityRunsList = (
   state: DataQualityTestState,
-  payload: PaginatedResponse<DataQualityTestRunList>,
+  payload: PaginatedResponse<DataEntityRunList>,
   dataQATestId: number | string
 ) =>
   payload.items.reduce(
-    (memo: DataQualityTestState, dataQualityTestRun) => ({
+    (memo: DataQualityTestState, DataEntityRun) => ({
       ...memo,
       qualityTestRunsById: {
         ...memo.qualityTestRunsById,
-        [dataQualityTestRun.id]: {
-          ...memo.qualityTestRunsById[dataQualityTestRun.id],
-          ...dataQualityTestRun,
+        [DataEntityRun.id]: {
+          ...memo.qualityTestRunsById[DataEntityRun.id],
+          ...DataEntityRun,
         },
       },
       allTestRunIdsByTestId: {
         ...memo.allTestRunIdsByTestId,
         [dataQATestId]: uniq([
           ...(memo.allTestRunIdsByTestId?.[dataQATestId] || []),
-          dataQualityTestRun.id,
+          DataEntityRun.id,
         ]),
       },
     }),
