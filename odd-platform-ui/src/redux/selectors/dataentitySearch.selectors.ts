@@ -6,18 +6,20 @@ import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
 import transform from 'lodash/transform';
 import {
-  RootState,
   OptionalFacetNames,
-  SearchState,
-  SearchFilterStateSynced,
-  SearchFacetStateById,
+  RootState,
   SearchClass,
+  SearchFacetStateById,
+  SearchFilterStateSynced,
+  SearchState,
 } from 'redux/interfaces';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import {
-  createLegacyFetchingSelector,
   createLegacyErrorSelector,
+  createLegacyFetchingSelector,
+  createStatusesSelector,
 } from 'redux/selectors/loader-selectors';
+import * as actions from 'redux/actions';
 
 const searchState = ({ search }: RootState): SearchState => search;
 
@@ -40,9 +42,6 @@ export const getSearchUpdateStatus = createLegacyFetchingSelector(
 export const getSearchResultsFetchStatus = createLegacyFetchingSelector(
   'GET_DATA_ENTITIES_SEARCH_RESULTS'
 );
-
-export const getSearchSuggestionsFetchStatus =
-  createLegacyFetchingSelector('GET_DATA_ENTITIES_SEARCH_SUGGESTIONS');
 
 export const getSearchFiltersSynced = createSelector(
   searchState,
@@ -81,11 +80,6 @@ export const getSearchIsCreatingAndFetching = createSelector(
 export const getSearchIsCreating = createSelector(
   getSearchCreationStatus,
   statusCreate => statusCreate === 'fetching'
-);
-
-export const getSearchSuggestionsIsFetching = createSelector(
-  getSearchSuggestionsFetchStatus,
-  statusFetch => statusFetch === 'fetching'
 );
 
 export const getSearchIsUpdated = createSelector(
@@ -161,12 +155,19 @@ export const getSearchResults = createSelector(
   search => search.results.items
 );
 
-export const getSearchSuggestions = createSelector(
-  searchState,
-  search => search.suggestions || []
-);
-
 export const getSearchResultsPage = createSelector(
   searchState,
   search => search.results.pageInfo
+);
+
+const sliceSearchState = ({ searchSlice }: RootState): SearchState =>
+  searchSlice;
+
+export const getSearchSuggestions = createSelector(
+  sliceSearchState,
+  search => search.suggestions || []
+);
+
+export const getSearchSuggestionsFetchingStatuses = createStatusesSelector(
+  actions.fetchDataEntitySearchSuggestionsActionType
 );

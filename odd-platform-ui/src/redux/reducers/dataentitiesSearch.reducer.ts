@@ -1,17 +1,17 @@
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
 import {
+  CountableSearchFilter,
   SearchFacetsData,
   SearchFilter,
-  CountableSearchFilter,
 } from 'generated-sources';
 import {
-  SearchState,
   Action,
   FacetStateUpdate,
-  SearchFacetStateById,
   SearchFacetNames,
+  SearchFacetStateById,
   SearchFilterStateSynced,
+  SearchState,
 } from 'redux/interfaces';
 import mapValues from 'lodash/mapValues';
 import get from 'lodash/get';
@@ -211,11 +211,6 @@ const reducer = (state = initialState, action: Action): SearchState => {
               : action.payload.items,
           pageInfo: action.payload.pageInfo,
         },
-      };
-    case getType(actions.getDataEntitySearchSuggestionsAction.success):
-      return {
-        ...state,
-        suggestions: action.payload,
       };
     case getType(actions.changeDataEntitySearchFilterAction):
       return updateFacet(state, action.payload);

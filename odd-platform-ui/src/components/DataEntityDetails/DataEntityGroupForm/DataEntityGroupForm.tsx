@@ -29,8 +29,8 @@ import EntityItem from 'components/DataEntityDetails/DataEntityGroupForm/EntityI
 import { useHistory } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
+import SearchSuggestionsAutocomplete from 'components/shared/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
-import EntitiesSuggestionsAutocompleteContainer from './EntitiesSuggestionsAutoocomplete/EntitiesSuggestionsAutocompleteContainer';
 
 interface DataEntityGroupFormProps {
   btnCreateEl: JSX.Element;
@@ -210,9 +210,12 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         name="entities"
         rules={{ required: true }}
         render={({ field }) => (
-          <EntitiesSuggestionsAutocompleteContainer
+          <SearchSuggestionsAutocomplete
+            placeholder="Search entities"
+            label="Entities"
             controllerProps={field}
             append={append}
+            addEntities
           />
         )}
       />

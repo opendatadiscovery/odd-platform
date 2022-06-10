@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { NamespacesState } from 'redux/interfaces/state';
-import { namespaceAdapter } from 'redux/reducers/namespace.reducer';
+import { namespaceAdapter } from 'redux/reducers/namespace.slice';
 import * as actions from 'redux/actions';
 
 const namespacesState = ({ namespaces }: RootState): NamespacesState =>
