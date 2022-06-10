@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
-import java.util.stream.Collectors;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRun;
