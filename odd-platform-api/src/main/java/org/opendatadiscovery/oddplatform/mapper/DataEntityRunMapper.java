@@ -22,6 +22,6 @@ public interface DataEntityRunMapper {
                 .hasNext(page.isHasNext()))
             .items(page.getData().stream()
                 .map(r -> mapDataEntityRun(dataQualityTestId, r))
-                .collect(Collectors.toList()));
+                .toList());
     }
 }
