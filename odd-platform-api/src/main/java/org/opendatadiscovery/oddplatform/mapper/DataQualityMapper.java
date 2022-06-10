@@ -7,6 +7,9 @@ import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
 
 @Mapper(config = MapperConfig.class, uses = OffsetDateTimeMapper.class)
 public interface DataQualityMapper {
-    @Mapping(target = "score", expression = "java( (int)(100 * report.getSuccessTotal() / report.getTotal()) )")
+    @Mapping(
+        target = "score",
+        expression = "java( report.getTotal() != 0 ? (int)(100 * report.getSuccessTotal() / report.getTotal()) : 0 )"
+    )
     DataSetTestReport mapDatasetTestReport(final DatasetTestReportDto report);
 }
