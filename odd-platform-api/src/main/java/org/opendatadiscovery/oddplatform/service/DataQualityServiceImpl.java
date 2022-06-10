@@ -1,10 +1,7 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunStatus;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
@@ -40,15 +37,5 @@ public class DataQualityServiceImpl implements DataQualityService {
             .switchIfEmpty(Mono.error(new NotFoundException("Dataset with id %d not found".formatted(datasetId))))
             .flatMap(ign -> dataQualityRepository.getDatasetTestReport(datasetId))
             .map(dataQualityMapper::mapDatasetTestReport);
-    }
-
-    @Override
-    public Mono<DataQualityTestRunList> getDataQualityTestRuns(final long dataQualityTestId,
-                                                               final DataQualityTestRunStatus status,
-                                                               final int page,
-                                                               final int size) {
-        return dataQualityRepository
-            .getDataQualityTestRuns(dataQualityTestId, status, page, size)
-            .map(pageInfo -> dataQualityMapper.mapDataQualityTestRuns(dataQualityTestId, pageInfo));
     }
 }

@@ -2,7 +2,7 @@ import { TypeBackground } from '@mui/material/styles/createPalette';
 import {
   AlertStatus,
   DataEntityClassNameEnum,
-  DataQualityTestRunStatus,
+  DataEntityRunStatus,
   DataSetFieldTypeTypeEnum,
 } from 'generated-sources';
 import { TypographyStyle } from '@mui/material';
@@ -30,9 +30,9 @@ type EntityClasses = Record<DataEntityClassNameEnum, string>;
 
 type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 
-type ReportStatus = Record<DataQualityTestRunStatus, ItemColors>;
+type ReportStatus = Record<DataEntityRunStatus, ItemColors>;
 
-type RunStatus = Record<DataQualityTestRunStatus, string>;
+type RunStatus = Record<DataEntityRunStatus, string>;
 
 interface TextType {
   primary: string;

@@ -21,7 +21,7 @@ tags:
   - name: search
   - name: dataSet
   - name: dataEntity
-  - name: dataTransformer
+  - name: dataEntityRun
   - name: dataInput
   - name: dataConsumer
   - name: dataQuality
@@ -1135,6 +1135,7 @@ paths:
           $ref: './components.yaml/#/components/responses/Deleted'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/lineage/upstream:
     get:
       summary: Get DataEntity's upstream lineage graph
@@ -1158,6 +1159,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityLineage'
       tags:
         - dataEntity
+
   /api/dataentities/{data_entity_id}/lineage/downstream:
     get:
       summary: Get DataEntity's downstream lineage graph
@@ -1199,6 +1201,30 @@ paths:
       tags:
         - dataEntity
 
+  /api/dataentities/{data_entity_id}/runs:
+    get:
+      summary: Get runs for DataTransformer or DataQualityTest
+      description: Gets runs for DataTransformer or DataQualityTest
+      operationId: getRuns
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/PageParam'
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: './components.yaml/#/components/schemas/DataEntityRunStatus'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRunList'
+      tags:
+        - dataEntityRun
+
   /api/datasets/{data_entity_id}/structure:
     get:
       summary: Get latest version's DataSet structure information
@@ -1238,6 +1264,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataSetStructure'
       tags:
         - dataSet
+
   /api/datasets/{data_entity_id}/test_report:
     get:
       summary: Get Dataset's test report
@@ -1271,29 +1298,7 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
       tags:
         - dataQuality
-  /api/dataqatests/{dataqatest_id}/runs:
-    get:
-      summary: Get DataQualityTest's runs
-      description: Gets DataQualityTest's runs
-      operationId: getRuns
-      parameters:
-        - $ref: './components.yaml/#/components/parameters/DataQATestIdParam'
-        - $ref: './components.yaml/#/components/parameters/PageParam'
-        - $ref: './components.yaml/#/components/parameters/SizeParam'
-        - name: status
-          in: query
-          required: false
-          schema:
-            $ref: './components.yaml/#/components/schemas/DataQualityTestRunStatus'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: './components.yaml/#/components/schemas/DataQualityTestRunList'
-      tags:
-        - dataQuality
+
   /api/dataentitygroups/{data_entity_group_id}/children:
     get:
       summary: Get DataEntityGroup children

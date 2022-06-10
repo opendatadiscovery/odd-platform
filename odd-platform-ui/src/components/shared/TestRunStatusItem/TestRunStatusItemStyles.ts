@@ -1,4 +1,4 @@
-import { DataQualityTestRunStatus } from 'generated-sources';
+import { DataEntityRunStatus } from 'generated-sources';
 import styled from 'styled-components';
 import { Box } from '@mui/material';
 
@@ -14,7 +14,7 @@ export const Count = styled('span')(({ theme }) => ({
 }));
 
 export const FilledContainer = styled('span')<{
-  $typeName: DataQualityTestRunStatus;
+  $typeName: DataEntityRunStatus;
 }>(({ theme, $typeName }) => ({
   fontSize: theme.typography.body2.fontSize,
   lineHeight: theme.typography.body2.lineHeight,
