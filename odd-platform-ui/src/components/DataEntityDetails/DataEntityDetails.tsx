@@ -76,6 +76,7 @@ interface DataEntityDetailsProps {
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
   isQualityTest: boolean;
+  isTransformerJob: boolean;
   fetchDataEntityAlerts: (
     params: DataEntityApiGetDataEntityAlertsRequest
   ) => Promise<AlertList>;
@@ -89,6 +90,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityDetails,
   isDataset,
   isQualityTest,
+  isTransformerJob,
   fetchDataEntityAlerts,
   dataEntityFetchingStatus,
   openAlertsCount,
@@ -140,7 +142,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       {
         name: 'History',
         link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest,
+        hidden: !isQualityTest && !isTransformerJob,
         value: 'history',
       },
       {

@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { DataQualityTestRun } from 'generated-sources';
+import { DataEntityRun } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { dataEntityDetailsPath } from 'lib/paths';
@@ -17,7 +17,7 @@ interface TestRunStatusReasonModalProps {
   btnCreateEl: JSX.Element;
   dataQATestId: number;
   dataQATestName?: string;
-  dataQATestRun: DataQualityTestRun;
+  dataQATestRun: DataEntityRun;
 }
 
 const TestRunStatusReasonModal: React.FC<

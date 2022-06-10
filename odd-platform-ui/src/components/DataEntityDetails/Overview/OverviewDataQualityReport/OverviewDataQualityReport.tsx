@@ -2,8 +2,8 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {
+  DataEntityRunStatus,
   DataQualityApiGetDatasetTestReportRequest,
-  DataQualityTestRunStatus,
   DataSetTestReport,
 } from 'generated-sources';
 import { dataEntityTestReportPath } from 'lib/paths';
@@ -11,8 +11,8 @@ import OverviewDataQualityReportSkeleton from 'components/DataEntityDetails/Over
 import AppButton from 'components/shared/AppButton/AppButton';
 import {
   Bar,
-  CountLabel,
   Container,
+  CountLabel,
 } from './OverviewDataQualityReportStyles';
 
 interface OverviewDataQualityReportProps {
@@ -81,7 +81,7 @@ const OverviewDataQualityReport: React.FC<
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatus.SUCCESS}
+              $testRunStatus={DataEntityRunStatus.SUCCESS}
             >
               passed
             </CountLabel>
@@ -89,28 +89,28 @@ const OverviewDataQualityReport: React.FC<
           <Grid item container sx={{ mt: 0.5, mb: 0.5 }}>
             <Bar
               $testReport={datasetQualityTestReport}
-              $testRunStatus={DataQualityTestRunStatus.SUCCESS}
+              $testRunStatus={DataEntityRunStatus.SUCCESS}
             />
             <Grid item container wrap="nowrap">
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatus.FAILED}
+                $testRunStatus={DataEntityRunStatus.FAILED}
               />
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatus.BROKEN}
+                $testRunStatus={DataEntityRunStatus.BROKEN}
               />
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatus.SKIPPED}
+                $testRunStatus={DataEntityRunStatus.SKIPPED}
               />
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatus.ABORTED}
+                $testRunStatus={DataEntityRunStatus.ABORTED}
               />
               <Bar
                 $testReport={datasetQualityTestReport}
-                $testRunStatus={DataQualityTestRunStatus.UNKNOWN}
+                $testRunStatus={DataEntityRunStatus.UNKNOWN}
               />
             </Grid>
           </Grid>
@@ -120,7 +120,7 @@ const OverviewDataQualityReport: React.FC<
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatus.FAILED}
+              $testRunStatus={DataEntityRunStatus.FAILED}
             >
               failed
             </CountLabel>
@@ -131,7 +131,7 @@ const OverviewDataQualityReport: React.FC<
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatus.BROKEN}
+              $testRunStatus={DataEntityRunStatus.BROKEN}
             >
               broken
             </CountLabel>
@@ -142,7 +142,7 @@ const OverviewDataQualityReport: React.FC<
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatus.ABORTED}
+              $testRunStatus={DataEntityRunStatus.ABORTED}
             >
               aborted
             </CountLabel>
@@ -153,7 +153,7 @@ const OverviewDataQualityReport: React.FC<
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatus.SKIPPED}
+              $testRunStatus={DataEntityRunStatus.SKIPPED}
             >
               skipped
             </CountLabel>
@@ -164,7 +164,7 @@ const OverviewDataQualityReport: React.FC<
             </Typography>
             <CountLabel
               variant="body1"
-              $testRunStatus={DataQualityTestRunStatus.UNKNOWN}
+              $testRunStatus={DataEntityRunStatus.UNKNOWN}
             >
               unknown
             </CountLabel>

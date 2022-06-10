@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { DataQualityTestRunStatus } from 'generated-sources';
+import { DataEntityRunStatus } from 'generated-sources';
 import * as S from './TestRunStatusIconStyles';
 
 export interface TestRunStatusIconProps {
-  typeName: DataQualityTestRunStatus;
+  typeName: DataEntityRunStatus;
 }
 
 const TestRunStatusIcon: React.FC<TestRunStatusIconProps> = ({
