@@ -1,8 +1,8 @@
 import React from 'react';
 import {
-  DataQualityApiGetRunsRequest,
-  DataQualityTestRun,
-  DataQualityTestRunStatus,
+  DataEntityRun,
+  DataEntityRunApiGetRunsRequest,
+  DataEntityRunStatus,
 } from 'generated-sources';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import capitalize from 'lodash/capitalize';
@@ -19,10 +19,10 @@ import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
 interface QualityTestHistoryProps {
   dataQATestId: number;
   dataQATestName?: string;
-  dataQATestRunsList: DataQualityTestRun[];
+  dataQATestRunsList: DataEntityRun[];
   isTestRunsListFetching: boolean;
   fetchDataSetQualityTestRuns: (
-    params: DataQualityApiGetRunsRequest
+    params: DataEntityRunApiGetRunsRequest
   ) => void;
   pageInfo: CurrentPageInfo;
 }
@@ -38,12 +38,12 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
   const pageSize = 100;
 
   const [alertStatus, setAlertStatus] = React.useState<
-    DataQualityTestRunStatus | 'All'
+    DataEntityRunStatus | 'All'
   >('All');
 
   const fetchPage = (page?: number) => {
     fetchDataSetQualityTestRuns({
-      dataqatestId: dataQATestId,
+      dataEntityId: dataQATestId,
       page: page || pageInfo.page + 1,
       size: pageSize,
       status: alertStatus === 'All' ? undefined : alertStatus,
@@ -65,13 +65,11 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
         <AppMenuItem value="All" onClick={() => setAlertStatus('All')}>
           Show all statuses
         </AppMenuItem>
-        {Object.keys(DataQualityTestRunStatus)?.map(option => (
+        {Object.keys(DataEntityRunStatus)?.map(option => (
           <AppMenuItem
             key={option}
             value={option}
-            onClick={() =>
-              setAlertStatus(option as DataQualityTestRunStatus)
-            }
+            onClick={() => setAlertStatus(option as DataEntityRunStatus)}
           >
             {capitalize(option)}
           </AppMenuItem>

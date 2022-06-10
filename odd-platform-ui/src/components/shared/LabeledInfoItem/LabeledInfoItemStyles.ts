@@ -1,10 +1,10 @@
 import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
-import { DataQualityTestRunStatus } from 'generated-sources';
+import { DataEntityRunStatus } from 'generated-sources';
 import { ElementType } from 'react';
 
 interface ValueProps {
-  $runStatus?: DataQualityTestRunStatus;
+  $runStatus?: DataEntityRunStatus;
   $valueColor?: string;
   $inline?: boolean;
   component: ElementType;

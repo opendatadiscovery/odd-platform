@@ -9,9 +9,9 @@ import {
   DataEntity,
   DataEntityClass,
   DataEntityRef,
+  DataEntityRun,
   DataEntityType,
   DataQualityTest,
-  DataQualityTestRun,
   DataSetField,
   DataSetTestReport,
   DataSetVersion,
@@ -124,10 +124,10 @@ export interface DataQualityTestState {
     };
   };
   qualityTestRunsById: {
-    [qualityTestRunId: string]: DataQualityTestRun;
+    [qualityTestRunId: string]: DataEntityRun;
   };
   allTestRunIdsByTestId: {
-    [qualityTestId: string]: DataQualityTestRun['id'][];
+    [qualityTestId: string]: DataEntityRun['id'][];
   };
   qualityTestRunsPageInfo: CurrentPageInfo;
   datasetTestReportByEntityId: {

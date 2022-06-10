@@ -1,13 +1,13 @@
 import React, { ElementType } from 'react';
 import { GridSize, TypographyProps } from '@mui/material';
-import { DataQualityTestRunStatus } from 'generated-sources';
+import { DataEntityRunStatus } from 'generated-sources';
 import { SxProps } from '@mui/system';
 import {
   Container,
-  ValueContainer,
-  LabelContainer,
   Label,
+  LabelContainer,
   Value,
+  ValueContainer,
 } from './LabeledInfoItemStyles';
 
 interface LabeledInfoItemProps {
@@ -15,7 +15,7 @@ interface LabeledInfoItemProps {
   label: string | React.ReactNode;
   variant?: TypographyProps['variant'];
   labelWidth?: GridSize;
-  runStatus?: DataQualityTestRunStatus;
+  runStatus?: DataEntityRunStatus;
   valueColor?: string;
   valueLineHeight?: number;
   valueWrap?: boolean;

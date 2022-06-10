@@ -1,12 +1,13 @@
 import {
   Configuration,
-  DataQualityApiGetDatasetTestReportRequest,
-  DataQualityApi,
-  DataSetTestReport,
-  DataQualityApiGetDataEntityDataQATestsRequest,
   DataEntityList,
-  DataQualityApiGetRunsRequest,
-  DataQualityTestRunList,
+  DataEntityRunApi,
+  DataEntityRunApiGetRunsRequest,
+  DataEntityRunList,
+  DataQualityApi,
+  DataQualityApiGetDataEntityDataQATestsRequest,
+  DataQualityApiGetDatasetTestReportRequest,
+  DataSetTestReport,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import {
@@ -18,6 +19,7 @@ import { BASE_PARAMS } from 'lib/constants';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const datasetQualityTestApiClient = new DataQualityApi(apiClientConf);
+const dataEntityRunApi = new DataEntityRunApi(apiClientConf);
 
 export const fetchDataSetQualityTestReport = createThunk<
   DataQualityApiGetDatasetTestReportRequest,
@@ -54,18 +56,18 @@ export const fetchDataSetQualityTestList = createThunk<
 );
 
 export const fetchDataSetQualityTestRuns = createThunk<
-  DataQualityApiGetRunsRequest,
-  DataQualityTestRunList,
-  PartialEntityUpdateParams<PaginatedResponse<DataQualityTestRunList>>
+  DataEntityRunApiGetRunsRequest,
+  DataEntityRunList,
+  PartialEntityUpdateParams<PaginatedResponse<DataEntityRunList>>
 >(
-  (params: DataQualityApiGetRunsRequest) =>
-    datasetQualityTestApiClient.getRuns(params),
+  (params: DataEntityRunApiGetRunsRequest) =>
+    dataEntityRunApi.getRuns(params),
   actions.fetchDataSetQualityTestRunsAction,
   (
-    response: DataQualityTestRunList,
-    request: DataQualityApiGetRunsRequest
+    response: DataEntityRunList,
+    request: DataEntityRunApiGetRunsRequest
   ) => ({
-    entityId: request.dataqatestId,
+    entityId: request.dataEntityId,
     value: {
       items: response.items,
       pageInfo: {

@@ -6,6 +6,7 @@ import {
   getDataEntityDetailsFetchingStatus,
   getDataEntityIsDataset,
   getDataEntityIsQualityTest,
+  getDataEntityIsTransformerJob,
 } from 'redux/selectors/dataentity.selectors';
 import { getDataEntityOpenAlertListCount } from 'redux/selectors/alert.selectors';
 import { fetchDataEntityAlerts } from 'redux/thunks';
@@ -32,6 +33,7 @@ const mapStateToProps = (
   dataEntityDetails: getDataEntityDetails(state, dataEntityId),
   isDataset: getDataEntityIsDataset(state, dataEntityId),
   isQualityTest: getDataEntityIsQualityTest(state, dataEntityId),
+  isTransformerJob: getDataEntityIsTransformerJob(state, dataEntityId),
   dataEntityFetchingStatus: getDataEntityDetailsFetchingStatus(state),
   openAlertsCount: getDataEntityOpenAlertListCount(state, dataEntityId),
 });

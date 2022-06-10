@@ -442,7 +442,7 @@ components:
           properties:
             items:
               type: array
-              $ref: '#/components/schemas/DataQualityTestRun'
+              $ref: '#/components/schemas/DataEntityRun'
             page_info:
               $ref:
         totals:
@@ -506,12 +506,12 @@ components:
         - $ref: '#/components/schemas/DataInput'
         - $ref: '#/components/schemas/DataEntityDetailsBaseObject'
 
-    DataQualityTestRun:
+    DataEntityRun:
       allOf:
         - $ref: '#/components/schemas/DataEntityRunBaseObject'
         - type: object
           properties:
-            data_quality_test_id:
+            data_entity_id:
               type: integer
               format: int64
             start_time:
@@ -523,7 +523,7 @@ components:
             status_reason:
               type: string
             status:
-              $ref: '#/components/schemas/DataQualityTestRunStatus'
+              $ref: '#/components/schemas/DataEntityRunStatus'
           required:
             - status
 
@@ -553,15 +553,15 @@ components:
               items:
                 type: string
             latest_run:
-              $ref: '#/components/schemas/DataQualityTestRun'
+              $ref: '#/components/schemas/DataEntityRun'
 
-    DataQualityTestRunList:
+    DataEntityRunList:
       type: object
       properties:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/DataQualityTestRun'
+            $ref: '#/components/schemas/DataEntityRun'
         page_info:
           $ref: '#/components/schemas/PageInfo'
       required:
@@ -838,7 +838,7 @@ components:
         - total
         - hasNext
 
-    DataQualityTestRunStatus:
+    DataEntityRunStatus:
       type: string
       enum:
         - SUCCESS
@@ -1831,14 +1831,6 @@ components:
 
     OwnershipIdParam:
       name: ownership_id
-      in: path
-      required: true
-      schema:
-        type: integer
-        format: int64
-
-    DataQATestIdParam:
-      name: dataqatest_id
       in: path
       required: true
       schema:

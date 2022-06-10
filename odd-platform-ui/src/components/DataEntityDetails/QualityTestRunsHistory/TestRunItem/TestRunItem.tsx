@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { DataQualityTestRun } from 'generated-sources';
+import { DataEntityRun } from 'generated-sources';
 import { format, formatDistanceStrict } from 'date-fns';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -14,7 +14,7 @@ import { ColContainer } from '../TestRunsHistoryStyles';
 interface QualityTestRunItemProps {
   dataQATestId: number;
   dataQATestName?: string;
-  dataQATestRun: DataQualityTestRun;
+  dataQATestRun: DataEntityRun;
 }
 
 const TestRunItem: React.FC<QualityTestRunItemProps> = ({
