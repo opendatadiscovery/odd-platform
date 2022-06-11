@@ -5,6 +5,7 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { DataEntityRef } from 'generated-sources';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { useAppDispatch } from 'lib/redux/hooks';
+import { deleteDataEntityFromGroup } from 'redux/thunks';
 import * as S from './GroupItemStyles';
 
 interface GroupItemProps {
@@ -34,16 +35,15 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
             size="small"
             color="unfilled"
             icon={<CloseIcon />}
-            // TODO add delete method
-            // onClick={e => {
-            //   e.preventDefault();
-            //   return dispatch(
-            //     deleteDataEntityTerm({
-            //       dataEntityId,
-            //       termId: term.id,
-            //     })
-            //   );
-            // }}
+            onClick={e => {
+              e.preventDefault();
+              return dispatch(
+                deleteDataEntityFromGroup({
+                  dataEntityId,
+                  dataEntityGroupId: group.id,
+                })
+              );
+            }}
             sx={{ ml: 0.25 }}
           />
         </S.ActionsContainer>

@@ -43,6 +43,8 @@ import AppPopover from 'components/shared/AppPopover/AppPopover';
 import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import {
+  getDataEntityAddToGroupStatuses,
+  getDataEntityDeleteFromGroupStatuses,
   getDataEntityGroupUpdatingStatuses,
   getSearchId,
 } from 'redux/selectors';
@@ -102,11 +104,25 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     getDataEntityGroupUpdatingStatuses
   );
 
+  const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
+    getDataEntityAddToGroupStatuses
+  );
+
+  const { isLoaded: isDataEntityDeletedFromGroup } = useAppSelector(
+    getDataEntityDeleteFromGroupStatuses
+  );
+
   const searchId = useAppSelector(getSearchId);
 
   React.useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
-  }, [fetchDataEntityDetails, dataEntityId, isDataEntityGroupUpdated]);
+  }, [
+    fetchDataEntityDetails,
+    dataEntityId,
+    isDataEntityGroupUpdated,
+    isDataEntityAddedToGroup,
+    isDataEntityDeletedFromGroup,
+  ]);
 
   React.useEffect(() => {
     fetchDataEntityAlerts({ dataEntityId });

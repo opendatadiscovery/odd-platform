@@ -236,3 +236,11 @@ export const getDataEntityGroupUpdatingStatuses = createStatusesSelector(
 export const getDataEntityGroupDeletingStatuses = createStatusesSelector(
   actions.deleteDataEntityGroupAction
 );
+
+export const getDataEntityAddToGroupStatuses = createStatusesSelector(
+  actions.addDataEntityToGroupActionType
+);
+
+export const getDataEntityDeleteFromGroupStatuses = createStatusesSelector(
+  actions.deleteDataEntityFromGroupActionType
+);

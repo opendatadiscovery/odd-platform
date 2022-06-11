@@ -16,7 +16,7 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
   dataEntityGroups,
   dataEntityId,
 }) => {
-  const visibleLimit = 20;
+  const visibleLimit = 10;
   const [viewAll, setViewAll] = React.useState(false);
 
   return (
@@ -24,6 +24,7 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
       <GroupsCaptionContainer>
         <Typography variant="h4">Data entity groups</Typography>
         <AddDataEntityToGroupForm
+          dataEntityId={dataEntityId}
           btnCreateEl={
             <AppButton
               size="medium"
@@ -86,6 +87,7 @@ const OverviewGroups: React.FC<OverviewTermsProps> = ({
         >
           <Typography variant="subtitle2">Not created.</Typography>
           <AddDataEntityToGroupForm
+            dataEntityId={dataEntityId}
             btnCreateEl={
               <AppButton size="small" color="tertiary">
                 Add to group

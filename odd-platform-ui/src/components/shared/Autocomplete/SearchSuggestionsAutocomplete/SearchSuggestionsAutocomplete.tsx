@@ -1,6 +1,9 @@
 import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
-import { DataEntityRef } from 'generated-sources';
+import {
+  DataEntityRef,
+  SearchApiGetSearchSuggestionsRequest,
+} from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useDebouncedCallback } from 'use-debounce';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
@@ -22,6 +25,7 @@ interface SearchSuggestionsAutocompleteProps {
   label?: string;
   addEntities?: boolean;
   append?: UseFieldArrayAppend<DataEntityGroupFormData['entities']>;
+  searchParams?: SearchApiGetSearchSuggestionsRequest;
   controllerProps:
     | ControllerRenderProps<DataEntityGroupFormData, 'entities'>
     | ControllerRenderProps<AddDataEntityToGroupFormData, 'group'>;
@@ -29,7 +33,14 @@ interface SearchSuggestionsAutocompleteProps {
 
 const SearchSuggestionsAutocomplete: React.FC<
   SearchSuggestionsAutocompleteProps
-> = ({ placeholder, label, addEntities, append, controllerProps }) => {
+> = ({
+  placeholder,
+  label,
+  addEntities,
+  append,
+  controllerProps,
+  searchParams,
+}) => {
   const dispatch = useAppDispatch();
 
   const searchSuggestions = useAppSelector(getSearchSuggestions);
@@ -52,6 +63,9 @@ const SearchSuggestionsAutocomplete: React.FC<
     reason: string
   ) => {
     setSearchText(inputVal);
+    if (inputVal) {
+      setAutocompleteOpen(true);
+    }
     if (reason === 'clear') {
       setSelectedOption(null);
     }
@@ -59,9 +73,11 @@ const SearchSuggestionsAutocomplete: React.FC<
 
   const getSuggestions = React.useCallback(
     useDebouncedCallback(() => {
-      dispatch(fetchSearchSuggestions({ query: searchText }));
+      dispatch(
+        fetchSearchSuggestions({ query: searchText, ...searchParams })
+      );
     }, 500),
-    [searchText, fetchSearchSuggestions]
+    [searchText, fetchSearchSuggestions, searchParams]
   );
 
   React.useEffect(() => {
@@ -73,7 +89,7 @@ const SearchSuggestionsAutocomplete: React.FC<
     if (autocompleteOpen) {
       getSuggestions();
     }
-  }, [autocompleteOpen, searchText]);
+  }, [autocompleteOpen, searchText, getSuggestions]);
 
   const getOptionLabel = (option: unknown) => {
     const typedOption = option as DataEntityRef;

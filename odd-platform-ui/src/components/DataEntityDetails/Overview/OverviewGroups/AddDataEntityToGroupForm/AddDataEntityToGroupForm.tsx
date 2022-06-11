@@ -5,11 +5,16 @@ import { DataEntityRef } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { getOwnerCreatingStatuses } from 'redux/selectors';
+import {
+  getDataEntityAddToGroupStatuses,
+  getDataEntityClassesList,
+} from 'redux/selectors';
 import SearchSuggestionsAutocomplete from 'components/shared/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
+import { addDataEntityToGroup } from 'redux/thunks';
 
 interface AddDataEntityToGroupFormProps {
   btnCreateEl: JSX.Element;
+  dataEntityId: number;
 }
 
 export interface AddDataEntityToGroupFormData {
@@ -18,12 +23,16 @@ export interface AddDataEntityToGroupFormData {
 
 const AddDataEntityToGroupForm: React.FC<
   AddDataEntityToGroupFormProps
-> = ({ btnCreateEl }) => {
+> = ({ btnCreateEl, dataEntityId }) => {
   const dispatch = useAppDispatch();
 
-  const { isLoading: isOwnerCreating } = useAppSelector(
-    getOwnerCreatingStatuses // TODO change selector
+  const { isLoading: isDataEntityAddingToGroup } = useAppSelector(
+    getDataEntityAddToGroupStatuses
   );
+
+  const dataEntityGroupClassId = useAppSelector(
+    getDataEntityClassesList
+  ).filter(entityClass => entityClass.name === 'DATA_ENTITY_GROUP')[0].id;
 
   const { handleSubmit, control, reset, formState } =
     useForm<AddDataEntityToGroupFormData>({
@@ -44,21 +53,27 @@ const AddDataEntityToGroupForm: React.FC<
   }, [setState, initialState, reset]);
 
   const handleFormSubmit = async (data: AddDataEntityToGroupFormData) => {
-    console.log('data', data);
-    // dispatch(createOwner({ ownerFormData: data })).then(
-    //   () => {
-    //     setState({ ...initialState, isSuccessfulSubmit: true });
-    //     clearState();
-    //   },
-    //   (response: Response) => {
-    //     setState({
-    //       ...initialState,
-    //       error: response.statusText
-    //         ? "Unable to add data entity"
-    //         : "Data entity already added"
-    //     });
-    //   }
-    // );
+    dispatch(
+      addDataEntityToGroup({
+        dataEntityId,
+        dataEntityDataEntityGroupFormData: {
+          dataEntityGroupId: data.group.id,
+        },
+      })
+    ).then(
+      () => {
+        setState({ ...initialState, isSuccessfulSubmit: true });
+        clearState();
+      },
+      (response: Response) => {
+        setState({
+          ...initialState,
+          error: response.statusText
+            ? 'Unable to add data entity'
+            : 'Data entity already added',
+        });
+      }
+    );
   };
 
   const formTitle = (
@@ -81,6 +96,10 @@ const AddDataEntityToGroupForm: React.FC<
             placeholder="Search groups"
             label="Group name"
             controllerProps={field}
+            searchParams={{
+              entityClassId: dataEntityGroupClassId,
+              manuallyCreated: true,
+            }}
           />
         )}
       />
@@ -115,7 +134,7 @@ const AddDataEntityToGroupForm: React.FC<
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isOwnerCreating}
+      isLoading={isDataEntityAddingToGroup}
       errorText={error}
       clearState={clearState}
     />

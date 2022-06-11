@@ -208,7 +208,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       <Controller
         control={control}
         name="entities"
-        rules={{ required: true }}
+        rules={{ required: true, validate: () => fields.length > 0 }}
         render={({ field }) => (
           <SearchSuggestionsAutocomplete
             placeholder="Search entities"
