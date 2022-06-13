@@ -42,7 +42,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
-import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
@@ -240,10 +239,17 @@ public class IngestionServiceImpl implements IngestionService {
     private IngestionDataStructure ingestDependencies(final IngestionDataStructure dataStructure) {
         final List<LineagePojo> lineageRelations = dataStructure.getLineageRelations();
 
-        final Set<String> hollowOddrns = lineageRelations.stream()
+        final Stream<String> lineageHollow = lineageRelations.stream()
             .map(p -> List.of(p.getChildOddrn(), p.getParentOddrn()))
-            .flatMap(List::stream)
-            .collect(Collectors.toSet());
+            .flatMap(List::stream);
+
+        final Stream<String> dqDatasetHollow = dataStructure.getDataQARelations()
+            .stream()
+            .map(DataQualityTestRelationsPojo::getDatasetOddrn);
+
+        final List<String> hollowOddrns = Stream
+            .concat(lineageHollow, dqDatasetHollow)
+            .toList();
 
         lineageRepository.replaceLineagePaths(lineageRelations);
         dataEntityRepository.createHollow(hollowOddrns);
