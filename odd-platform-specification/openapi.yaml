@@ -31,6 +31,7 @@ tags:
   - name: appInfo
   - name: collector
   - name: term
+  - name: activity
 paths:
   /api/identity/whoami:
     get:
@@ -1874,3 +1875,96 @@ paths:
                 $ref: './components.yaml/#/components/schemas/TagList'
       tags:
         - term
+
+  /api/activity:
+    get:
+      summary: Get activity
+      description: Returns activity for dedicated period
+      operationId: getActivity
+      parameters:
+        - name: begin_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: datasource_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: namespace_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: tag_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: owner_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: user_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: type
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/ActivityType'
+        - name: data_entity_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: event_type
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/ActivityEventType'
+        - name: last_event_date_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ActivityList'
+      tags:
+        - activity
+
+  /api/activity/event_types:
+    get:
+      summary: Get activity event types
+      description: Returns list of activity event types
+      operationId: getActivityEventTypes
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ActivityEventTypeList'
+      tags:
+        - activity

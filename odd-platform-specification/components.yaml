@@ -1770,6 +1770,102 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
 
+    ActivityList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Activity'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+        total_count:
+          type: integer
+          format: int64
+        my_objects_count:
+          type: integer
+          format: int64
+        downstream_count:
+          type: integer
+          format: int64
+        upstream_count:
+          type: integer
+          format: int64
+      required:
+        - items
+        - page_info
+        - total_count
+        - my_objects_count
+        - downstream_count
+        - upstream_count
+
+    Activity:
+      type: object
+      properties:
+        event_type:
+          $ref: '#/components/schemas/ActivityEventType'
+        created_at:
+          type: string
+          format: date-time
+        created_by:
+          $ref: '#/components/schemas/AssociatedOwner'
+        data_entity:
+          $ref: '#/components/schemas/DataEntityRef'
+        old_state:
+          type: string
+        new_state:
+          type: string
+
+    ActivityType:
+      type: string
+      enum:
+        - ALL
+        - MY_OBJECTS
+        - DOWNSTREAM
+        - UPSTREAM
+
+    ActivityEventType:
+      type: string
+      enum:
+        - OWNER_CREATED
+        - OWNER_UPDATED
+        - OWNER_DELETED
+        - TAG_CREATED
+        - TAG_UPDATED
+        - TAG_DELETED
+        - DATA_ENTITY_CREATED
+        - DATA_ENTITY_INFO_UPDATED
+        - METADATA_UPDATED
+        - METADATA_DELETED
+        - SCHEMA_UPDATED
+        - RELATION_UPDATED
+        - TERM_CREATED
+        - TERM_UPDATED
+        - TERM_DELETED
+        - DESCRIPTION_CREATED
+        - DESCRIPTION_UPDATED
+        - DESCRIPTION_DELETED
+        - CUSTOM_METADATA_CREATED
+        - CUSTOM_METADATA_UPDATED
+        - CUSTOM_METADATA_DELETED
+        - ENUM_ASSOCIATION_CREATED
+        - ENUM_ASSOCIATION_UPDATED
+        - ENUM_ASSOCIATION_DELETED
+        - DATASET_FIELD_DESCRIPTION_CREATED
+        - DATASET_FIELD_DESCRIPTION_UPDATED
+        - DATASET_FIELD_DESCRIPTION_DELETED
+        - DATASET_FIELD_LABEL_CREATED
+        - DATASET_FIELD_LABEL_UPDATED
+        - DATASET_FIELD_LABEL_DELETED
+        - CUSTOM_GROUP_CREATED
+        - CUSTOM_GROUP_UPDATED
+        - CUSTOM_GROUP_DELETED
+
+    ActivityEventTypeList:
+      type: array
+      items:
+        $ref: '#/components/schemas/ActivityEventType'
+
   parameters:
     PageParam:
       name: page
