@@ -15,7 +15,7 @@
 
 # Open Data Discovery Platform: Next-Gen Data Discovery and Observability 
 
-<br>
+
 
 ## Introduction
 
@@ -32,9 +32,6 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 
 * :point_right: ODD Platform is a reference implementation of **[Open Data Discovery Spec](https://github.com/opendatadiscovery/opendatadiscovery-specification)**.
-
-
-<br>
 
 ## Features
 
@@ -70,7 +67,7 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 ### Running Locally with Docker Compose
 
-**```docker-compose -f docker/demo.yaml up -d```** 
+**```docker-compose -f docker/demo.yaml up -d odd-platform-enricher```** 
 
 * :point_right: **[QUICKSTART](./docker/README.md)** 
 
@@ -80,9 +77,7 @@ ODD is an open-source data discovery and observability tool for data teams that 
 
 ### Example configurations
 
-There are various example configurations (via docker-compose) within **[docker/examples directory](https://github.com/opendatadiscovery/odd-platform/tree/main/docker/docker/examples)**.
-
-<br>
+There are various example configurations (via docker-compose) within **[docker/examples directory](https://github.com/opendatadiscovery/odd-platform/tree/main/docker/examples)**.
 
 ## Contributing
 
@@ -99,58 +94,45 @@ Please before contributing check out our [Contributing Guide](./CONTRIBUTING.md)
 <br>
 
 ## Integrations
-
-
-ODD Platform works with many of the tools you're already using and is actively developing new integrations. 
-
-Exisiting integrations: 
-<table>
-	<thead>
-		<tr>
-			<th colspan="2">Integration</th>
-			<th>Entities ODD Gathers Metadata From</th>
-		</tr>
-	</thead>
-	<tbody>
-				<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-airflow-logo.jpg" />            </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-airflow-adapter">Airflow</a></td><td>Transformers, Transformer Runs</td></tr>
-				<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dbt-logo.jpg" /></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-dbt-adapter">DBT</a></td><td>Datasets, Transformers, Transformer Runs</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/amazon-glue-logo.jpg" />                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-glue-adapter">AWS Glue</a></td><td>Datasets, Transformers, Transformer Runs</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://www.snowflake.com/wp-content/themes/snowflake/img/snowflake-logo-blue@2x.png" /> </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-snowflake-adapter">Snowflake</a></td><td>Datasets, Transformers</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/amazon-redshift-logo.jpg" /></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-redshift-adapter">Redshift</a></td><td>Datasets, Transformers</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/clickhouse-logo.jpg" />                   </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-clickhouse-adapter">Clickhouse</a></td><td>Datasets, Transformers</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/postgresql-logo.jpg" />                    </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-postgresql-adapter">PostgreSQL</a></td><td>Datasets, Transformers</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/mysql-logo.jpg" />          </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-mysql-adapter">MySQL</a></td><td>Datasets, Transformers</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/mssql-server-logo.jpg" />             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-mssql-adapter">MSSQL</a></td><td>Datasets, Transformers coming soon</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/microsoft-odbc-logo.jpg" /></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-odbc-adapter">Microsoft ODBC</a></td><td>Datasets, Transformers</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dynamodb-logo.jpg" /></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-dynamodb-adapter">DynamoDB </a></td><td>Datasets</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-kafka-logo.jpg" />                 </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-kafka-adapter">Kafka</a></td><td>Datasets</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/tableau-logo.jpg" />                       </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-tableau-adapter">Tableau </a></td><td>Datasets, Consumers</td></tr>
-
-
-</table>
-
-<br>
-Coming soon: 
+ODD Platform works with many of the tools you're already using: 
 
 <table>
 	<thead>
 		<tr>
-			<th colspan="2">Integration</th>
-			<th>Entities ODD Gathers Metadata From</th>
+			<th colspan="2">Existing integrations</th>
 		</tr>
 	</thead>
 	<tbody>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-hive-logo.jpg" />                                             </td><td style="width: 200px;">Apache Hive        </td><td>Datasets</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/kubeflow-logo.jpg" />            </td><td style="width: 200px;">Kubeflow                   </td><td>Transformers, Transformer Runs</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/amazon-sagemaker-logo.jpg" />            </td><td style="width: 200px;">SageMaker                   </td><td>Datasets</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/oracle-logo.jpg" />            </td><td style="width: 200px;">Oracle                   </td><td>Datasets, Transformers</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/dvc-logo.jpg" />            </td><td style="width: 200px;">DVC                </td><td>Transformers, Transformer Runs</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-spark-logo.jpg" />            </td><td style="width: 200px;">Spark               </td><td>Transformers, Transformer Runs</td></tr>
-		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/great-expectations-logo.jpg" />            </td><td style="width: 200px;">Great Expectations               </td><td>Transformers, Transformer Runs</td></tr>
-	</tbody>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-airflow-logo.jpg" />            </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-airflow-adapter">Airflow</a></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/amazon-athena-logo.png" height="60"/>                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#athena">Athena</a>        </td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/cassandra.png" height="40"/>                                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#cassandra">Cassandra</a>        </td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/clickhouse-logo.png" height="40"/>                   </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#clickhouse">Clickhouse</a></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/dbt-logo.jpg" height="40"/>                       </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#dbt">DBT</a>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/dynamodb-logo.png" height="60"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#dynamodb">DynamoDB </a></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/elasticsearch.png" height="40"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#elasticsearch">Elasticsearch </a></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/feast.png" height="40"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#feast">Feast </a></td>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/amazon-glue-logo.jpg" />                             </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#glue">Glue</a></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/hive.png" height="40"/>                                            </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#hive">Hive        </td>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/apache-kafka-logo.jpg" />                 </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-kafka-adapter">Kafka</a></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/kinesis.png" height="40"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#kinesis">Kinesis </a></td>
+	<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/kubeflow-logo.jpg" />            </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#kubeflow">Kubeflow </a>                   </td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/odbc.png" height="70"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-odbc-adapter">Microsoft ODBC</a></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/mongodb.png" height="40"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#mongodb">MongoDB </a></td>
+	<tr><td style="text-align: center; height=40px;"><img src="./images/mssql.png" height="40"/>            </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-mssql-adapter">MSSQL</a></td>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/mysql-logo.jpg" />          </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#mysql">MySQL</a></td>
+		<tr><td style="text-align: center; height=40px;"><img src="./images/neo4j.png" height="40"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#neo4j">Neo4j </a></td>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/postgresql-logo.jpg" />                    </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#postgresql">PostgreSQL</a></td>
+		<tr><td style="text-align: center; height=40px;"><img src="./images/quicksight.png" height="40"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#quicksight">Quicksight </a></td>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/amazon-redshift-logo.jpg" /></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#redshift">Redshift</a></td>
+		<tr><td style="text-align: center; height=40px;"><img src="./images/s3.png" height="60"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#s3">S3 </a></td>
+		<tr><td style="text-align: center; height=40px;"><img src="./images/sagemaker.png" height="40"/>            </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#sagemaker">SageMaker</a>                   </td>
+		<tr><td style="text-align: center; height=40px;"><img src="./images/sagemaker-featurestore.png" height="40"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#sagemaker-featurestore">SageMaker Featurestore </a></td>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://www.snowflake.com/wp-content/themes/snowflake/img/snowflake-logo-blue@2x.png" /> </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#snowflake">Snowflake</a></td>
+		<tr><td style="text-align: center; height=40px;"><img src="./images/sqs.png" height="60"/></td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector-aws#sqs">SQS </a></td>
+		<tr><td style="text-align: center; height=40px;"><img height="40" src="https://github.com/opendatadiscovery/odd-platform/blob/main/images/tableau-logo.jpg" />                       </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#tableau">Tableau </a></td>
+		<tr><td style="text-align: center; height=40px;"><img height="40" img src="./images/tarantool.png" />            </td><td style="width: 200px;"><a href="https://github.com/opendatadiscovery/odd-collector#tarantool">Tarantool</a>                   </td>
+		</tbody>
 </table>
-
-<br>
 
 ## ODD Data Model
 
@@ -168,8 +150,6 @@ ODD operates the following high-level types of entities:
 
 For more information, please check **[specification.md](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md)**.
 
-<br>
-
 ## Contacts
 
 If you have any questions or ideas, please don't hesitate to drop a line to any of us. 
@@ -184,8 +164,6 @@ If you have any questions or ideas, please don't hesitate to drop a line to any 
 | Pavel Makarichev          | [LinkedIn](https://www.linkedin.com/in/pavel-makarichev-8a8730a4/)           | [vixtir](https://github.com/vixtir)                 |
 | Anna Evdokimova-Glinskaia | [LinkedIn](https://www.linkedin.com/in/anna-evdokimova-glinskaya-6566b5188/) | [Anna-EG](https://github.com/Anna-EG)               |
 | Roman Zabaluev            | [LinkedIn](https://www.linkedin.com/in/haarolean/)                           | [Haarolean](https://github.com/haarolean)           |
-
-
 ## License
 
 ODD Platform uses the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0.txt).
