@@ -10,11 +10,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import remarkGfm from 'remark-gfm';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
-import {
-  CaptionContainer,
-  FormActions,
-  Preview,
-} from './OverviewDescriptionStyles';
+import * as S from './OverviewDescriptionStyles';
 
 interface OverviewDescriptionProps {
   dataEntityId: number;
@@ -62,17 +58,23 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
 
   const getPreview = React.useCallback(
     () => (
-      <Preview remarkPlugins={[remarkGfm]} className="markdown-body">
+      <S.Preview remarkPlugins={[remarkGfm]} className="markdown-body">
         {editMode ? internalDescription : dataEntityInternalDescription}
-      </Preview>
+      </S.Preview>
     ),
     [dataEntityInternalDescription, internalDescription, editMode]
   );
 
+  const saveMarkDownOnEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      handleDescriptionUpdate();
+    }
+  };
+
   return (
     <>
       <div>
-        <CaptionContainer>
+        <S.CaptionContainer>
           <Typography variant="h4">Custom</Typography>
           {editMode ? null : (
             <AppButton
@@ -86,9 +88,10 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               {dataEntityInternalDescription ? 'Edit' : 'Add'} description
             </AppButton>
           )}
-        </CaptionContainer>
+        </S.CaptionContainer>
         {editMode ? (
-          <div>
+          // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+          <div onKeyUp={saveMarkDownOnEnter}>
             <ReactMde
               minEditorHeight={300}
               value={internalDescription}
@@ -102,7 +105,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
                 },
               }}
             />
-            <FormActions>
+            <S.FormActions>
               <AppButton
                 onClick={handleDescriptionUpdate}
                 size="medium"
@@ -121,7 +124,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               <Typography variant="subtitle2" color="error">
                 {error}
               </Typography>
-            </FormActions>
+            </S.FormActions>
           </div>
         ) : (
           <div>
@@ -153,9 +156,12 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
         <div>
           <Typography variant="h4">Pre-defined</Typography>
           <Typography variant="subtitle1">
-            <Preview className="markdown-body" remarkPlugins={[remarkGfm]}>
+            <S.Preview
+              className="markdown-body"
+              remarkPlugins={[remarkGfm]}
+            >
               {dataEntityExternalDescription}
-            </Preview>
+            </S.Preview>
           </Typography>
         </div>
       ) : null}

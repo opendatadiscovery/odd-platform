@@ -25,12 +25,15 @@ interface DataSetFieldInfoEditFormProps {
   ) => Promise<DataSetField>;
   btnCreateEl: JSX.Element;
 }
+
 type DatasetFieldInfoFormType = {
   labels: { name: string }[];
   internalDescription: string;
 };
 
-const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
+const DatasetFieldInfoEditForm: React.FC<
+  DataSetFieldInfoEditFormProps
+> = ({
   datasetFieldId,
   datasetFieldFormData,
   isLoading,
@@ -164,6 +167,7 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
+      formSubmitHandler={methods.handleSubmit(handleFormSubmit)}
     />
   );
 };

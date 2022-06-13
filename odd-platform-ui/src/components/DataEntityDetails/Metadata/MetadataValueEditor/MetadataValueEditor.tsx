@@ -46,6 +46,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           format(new Date(metadataValue), metadataDatePickerInputFormat)
         }
         rules={{
+          required: true,
           validate: {
             isValid: d => isValid(d) || 'Date is invalid',
             greaterThan: v =>
