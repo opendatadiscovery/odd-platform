@@ -247,9 +247,9 @@ public class IngestionServiceImpl implements IngestionService {
             .stream()
             .map(DataQualityTestRelationsPojo::getDatasetOddrn);
 
-        final List<String> hollowOddrns = Stream
+        final Set<String> hollowOddrns = Stream
             .concat(lineageHollow, dqDatasetHollow)
-            .toList();
+            .collect(Collectors.toSet());
 
         lineageRepository.replaceLineagePaths(lineageRelations);
         dataEntityRepository.createHollow(hollowOddrns);
