@@ -16,6 +16,8 @@ import {
   AlertList,
   DataEntityApiGetDataEntityAlertsRequest,
   DataEntityDetails,
+  DataQualityApiGetDatasetTestReportRequest,
+  DataSetTestReport,
 } from 'generated-sources';
 import { FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -82,6 +84,10 @@ interface DataEntityDetailsProps {
   fetchDataEntityAlerts: (
     params: DataEntityApiGetDataEntityAlertsRequest
   ) => Promise<AlertList>;
+  fetchDataSetQualityTestReport: (
+    params: DataQualityApiGetDatasetTestReportRequest
+  ) => Promise<DataSetTestReport>;
+  datasetQualityTestReport?: DataSetTestReport;
   dataEntityFetchingStatus: FetchStatus;
   openAlertsCount: number;
 }
@@ -94,6 +100,8 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   isQualityTest,
   isTransformerJob,
   fetchDataEntityAlerts,
+  fetchDataSetQualityTestReport,
+  datasetQualityTestReport,
   dataEntityFetchingStatus,
   openAlertsCount,
 }) => {
@@ -128,6 +136,12 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     fetchDataEntityAlerts({ dataEntityId });
   }, []);
 
+  React.useEffect(() => {
+    fetchDataSetQualityTestReport({
+      dataEntityId,
+    });
+  }, [dataEntityId, fetchDataSetQualityTestReport]);
+
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
   React.useEffect(() => {
@@ -152,7 +166,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       {
         name: 'Test reports',
         link: dataEntityTestReportPath(dataEntityId),
-        hidden: !isDataset,
+        hidden: !isDataset || !datasetQualityTestReport,
         value: 'test-reports',
       },
       {

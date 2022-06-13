@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { DataEntityDetails } from 'generated-sources';
+import { DataEntityDetails, DataSetTestReport } from 'generated-sources';
 import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import OverviewGroups from 'components/DataEntityDetails/Overview/OverviewGroups/OverviewGroups';
@@ -18,6 +18,7 @@ interface OverviewProps {
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
   isDataEntityDetailsFetching: boolean;
+  datasetQualityTestReport?: DataSetTestReport;
 }
 
 const Overview: React.FC<OverviewProps> = ({
@@ -25,6 +26,7 @@ const Overview: React.FC<OverviewProps> = ({
   dataEntityDetails,
   isDataset,
   isDataEntityDetailsFetching,
+  datasetQualityTestReport,
 }) => (
   <>
     {dataEntityDetails && !isDataEntityDetailsFetching ? (
@@ -52,7 +54,7 @@ const Overview: React.FC<OverviewProps> = ({
               dataEntityId={dataEntityDetails.id}
             />
           </SectionContainer>
-          {isDataset ? (
+          {isDataset && datasetQualityTestReport ? (
             <SectionContainer square elevation={0}>
               <OverviewDataQualityReportContainer
                 dataEntityId={dataEntityId}
@@ -89,5 +91,4 @@ const Overview: React.FC<OverviewProps> = ({
     ) : null}
   </>
 );
-
 export default Overview;
