@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Path = styled('path')(({ theme }) => ({
   fill: 'none',
   stroke: theme.palette.button.primaryLight.active.background,
-  strokeWidth: 1,
+  strokeWidth: 2,
 }));
 
 export const Arrow = styled('path')(({ theme }) => ({
@@ -12,6 +12,6 @@ export const Arrow = styled('path')(({ theme }) => ({
 
 export const Container = styled('g')(() => ({
   '&:hover': {
-    [`${Path}`]: { strokeWidth: 2 },
+    [`${Path}`]: { strokeWidth: 3 },
   },
 }));

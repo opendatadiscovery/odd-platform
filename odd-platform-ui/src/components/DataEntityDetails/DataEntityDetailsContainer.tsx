@@ -9,7 +9,11 @@ import {
   getDataEntityIsTransformerJob,
 } from 'redux/selectors/dataentity.selectors';
 import { getDataEntityOpenAlertListCount } from 'redux/selectors/alert.selectors';
-import { fetchDataEntityAlerts } from 'redux/thunks';
+import {
+  fetchDataEntityAlerts,
+  fetchDataSetQualityTestReport,
+} from 'redux/thunks';
+import { getDatasetTestReport } from 'redux/selectors';
 import DataEntityDetailsView from './DataEntityDetails';
 
 interface RouteProps {
@@ -36,10 +40,12 @@ const mapStateToProps = (
   isTransformerJob: getDataEntityIsTransformerJob(state, dataEntityId),
   dataEntityFetchingStatus: getDataEntityDetailsFetchingStatus(state),
   openAlertsCount: getDataEntityOpenAlertListCount(state, dataEntityId),
+  datasetQualityTestReport: getDatasetTestReport(state, dataEntityId),
 });
 
 const mapDispatchToProps = {
   fetchDataEntityAlerts,
+  fetchDataSetQualityTestReport,
 };
 
 export default connect(
