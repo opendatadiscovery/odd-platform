@@ -445,6 +445,6 @@ public class DataEntityServiceImpl
 
     private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {
         return pojo.getManuallyCreated()
-            && Arrays.stream(pojo.getEntityClassIds()).anyMatch(classId -> classId.equals(DATA_ENTITY_GROUP.getId()));
+            && ArrayUtils.contains(pojo.getEntityClassIds(), DATA_ENTITY_GROUP.getId());
     }
 }
