@@ -1,16 +1,15 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Link } from 'react-router-dom';
 import {
-  DataEntityDetails,
   DataEntityClassNameEnum,
+  DataEntityDetails,
 } from 'generated-sources';
 import { dataEntityDetailsPath } from 'lib/paths';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TriangularUnionIcon from 'components/shared/Icons/TriangularUnionIcon';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
-import { StatIconContainer } from './OverviewEntityGroupStatsStyles';
+import * as S from './OverviewEntityGroupStatsStyles';
 
 interface OverviewEntityGroupStatsProps {
   dataEntityGroupName: string;
@@ -52,16 +51,22 @@ const OverviewEntityGroupStats: React.FC<
         sx={{ mt: 1 }}
       >
         {entities?.slice(0, 5).map(entity => (
-          <AppButton
-            key={entity.id}
-            size="medium"
-            color="tertiary"
-            sx={{ my: 0.25 }}
-          >
-            <Link to={dataEntityDetailsPath(entity.id)}>
-              {entity.internalName || entity.externalName}
-            </Link>
-          </AppButton>
+          <S.EntityLink to={dataEntityDetailsPath(entity.id)}>
+            <AppButton
+              key={entity.id}
+              size="medium"
+              color="tertiary"
+              sx={{
+                my: 0.25,
+                width: 'inherit',
+                justifyContent: 'flex-start',
+              }}
+            >
+              <S.TruncatedText>
+                {entity.internalName || entity.externalName}
+              </S.TruncatedText>
+            </AppButton>
+          </S.EntityLink>
         ))}
         {entities && entities?.length > 5 ? (
           <EntitiesListModal
@@ -85,9 +90,9 @@ const OverviewEntityGroupStats: React.FC<
       alignContent="flex-start"
     >
       <Grid item container xs={12} alignItems="baseline">
-        <StatIconContainer sx={{ mr: 1 }}>
+        <S.StatIconContainer sx={{ mr: 1 }}>
           <TriangularUnionIcon />
-        </StatIconContainer>
+        </S.StatIconContainer>
         <Typography variant="h2" sx={{ mr: 0.5 }}>
           {entityGroups?.length || 0}
         </Typography>
@@ -104,16 +109,22 @@ const OverviewEntityGroupStats: React.FC<
         sx={{ mt: 1 }}
       >
         {entityGroups?.slice(0, 5).map(entityGroup => (
-          <AppButton
-            key={entityGroup.id}
-            sx={{ my: 0.25 }}
-            size="medium"
-            color="tertiary"
-          >
-            <Link to={dataEntityDetailsPath(entityGroup.id)}>
-              {entityGroup.internalName || entityGroup.externalName}
-            </Link>
-          </AppButton>
+          <S.EntityLink to={dataEntityDetailsPath(entityGroup.id)}>
+            <AppButton
+              key={entityGroup.id}
+              size="medium"
+              color="tertiary"
+              sx={{
+                my: 0.25,
+                width: 'inherit',
+                justifyContent: 'flex-start',
+              }}
+            >
+              <S.TruncatedText>
+                {entityGroup.internalName || entityGroup.externalName}
+              </S.TruncatedText>
+            </AppButton>
+          </S.EntityLink>
         ))}
         {entityGroups && entityGroups?.length > 5 ? (
           <EntitiesListModal

@@ -31,21 +31,23 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
           </Typography>
         </Grid>
         <S.ActionsContainer>
-          <AppIconButton
-            size="small"
-            color="unfilled"
-            icon={<CloseIcon />}
-            onClick={e => {
-              e.preventDefault();
-              return dispatch(
-                deleteDataEntityFromGroup({
-                  dataEntityId,
-                  dataEntityGroupId: group.id,
-                })
-              );
-            }}
-            sx={{ ml: 0.25 }}
-          />
+          {group.manuallyCreated && (
+            <AppIconButton
+              size="small"
+              color="unfilled"
+              icon={<CloseIcon />}
+              onClick={e => {
+                e.preventDefault();
+                return dispatch(
+                  deleteDataEntityFromGroup({
+                    dataEntityId,
+                    dataEntityGroupId: group.id,
+                  })
+                );
+              }}
+              sx={{ ml: 0.25 }}
+            />
+          )}
         </S.ActionsContainer>
       </Grid>
     </S.GroupItemContainer>

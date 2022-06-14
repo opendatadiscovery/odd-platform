@@ -166,7 +166,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       {
         name: 'Test reports',
         link: dataEntityTestReportPath(dataEntityId),
-        hidden: !isDataset || !datasetQualityTestReport,
+        hidden: !isDataset || !datasetQualityTestReport?.total,
         value: 'test-reports',
       },
       {

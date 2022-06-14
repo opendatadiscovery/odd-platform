@@ -54,7 +54,7 @@ const Overview: React.FC<OverviewProps> = ({
               dataEntityId={dataEntityDetails.id}
             />
           </SectionContainer>
-          {isDataset && datasetQualityTestReport ? (
+          {isDataset && datasetQualityTestReport?.total ? (
             <SectionContainer square elevation={0}>
               <OverviewDataQualityReportContainer
                 dataEntityId={dataEntityId}
