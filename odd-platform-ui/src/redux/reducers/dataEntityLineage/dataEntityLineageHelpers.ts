@@ -206,13 +206,13 @@ export const filterUpstreamEdges = (
         const nonAddedIds = sourceIds.filter(id => !allAddedIds.has(id));
 
         filteredEdges.push(
-          ...nonAddedIds.map(id => ({ sourceId: id, targetId })) // TODO wrong trgetId
+          ...nonAddedIds.map(id => ({ sourceId: id, targetId }))
         );
 
         const addedIds = sourceIds.filter(id => allAddedIds.has(id));
 
         crossEdges.push(
-          ...addedIds.map(id => ({ sourceId: id, targetId })) //  TODo wrong targetId
+          ...addedIds.map(id => ({ sourceId: id, targetId }))
         );
 
         nonAddedIds.forEach(id => allAddedIds.add(id));

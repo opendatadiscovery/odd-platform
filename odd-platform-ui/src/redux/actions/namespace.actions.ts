@@ -1,27 +1,23 @@
-import { createAsyncAction } from 'typesafe-actions';
-import { NamespaceList, Namespace } from 'generated-sources';
-import { PaginatedResponse } from 'redux/interfaces/common';
+import { createActionType } from 'lib/redux/helpers';
 
-export const fetchNamespacesAction = createAsyncAction(
-  'GET_NAMESPACES__REQUEST',
-  'GET_NAMESPACES__SUCCESS',
-  'GET_NAMESPACES__FAILURE'
-)<undefined, PaginatedResponse<NamespaceList>, undefined>();
+export const namespaceActionTypePrefix = 'namespaces';
 
-export const createNamespacesAction = createAsyncAction(
-  'POST_NAMESPACES__REQUEST',
-  'POST_NAMESPACES__SUCCESS',
-  'POST_NAMESPACES__FAILURE'
-)<undefined, Namespace, undefined>();
+export const fetchNamespacesActionType = createActionType(
+  namespaceActionTypePrefix,
+  'fetchNamespaces'
+);
 
-export const updateNamespaceAction = createAsyncAction(
-  'PUT_NAMESPACE__REQUEST',
-  'PUT_NAMESPACE__SUCCESS',
-  'PUT_NAMESPACE__FAILURE'
-)<undefined, Namespace, undefined>();
+export const createNamespaceActionType = createActionType(
+  namespaceActionTypePrefix,
+  'createNamespace'
+);
 
-export const deleteNamespaceAction = createAsyncAction(
-  'DELETE_NAMESPACE__REQUEST',
-  'DELETE_NAMESPACE__SUCCESS',
-  'DELETE_NAMESPACE__FAILURE'
-)<undefined, number, undefined>();
+export const updateNamespaceActionType = createActionType(
+  namespaceActionTypePrefix,
+  'updateNamespace'
+);
+
+export const deleteNamespaceActionType = createActionType(
+  namespaceActionTypePrefix,
+  'deleteNamespace'
+);

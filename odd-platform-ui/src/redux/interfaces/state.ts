@@ -1,4 +1,4 @@
-import { ThunkAction } from '@reduxjs/toolkit';
+import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
   Alert,
@@ -9,9 +9,9 @@ import {
   DataEntity,
   DataEntityClass,
   DataEntityRef,
+  DataEntityRun,
   DataEntityType,
   DataQualityTest,
-  DataQualityTestRun,
   DataSetField,
   DataSetTestReport,
   DataSetVersion,
@@ -71,9 +71,7 @@ export interface LabelsState {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface NamespacesState {
-  byId: { [namespaceId: string]: Namespace };
-  allIds: Namespace['id'][];
+export interface NamespacesState extends EntityState<Namespace> {
   pageInfo?: CurrentPageInfo;
 }
 
@@ -124,10 +122,10 @@ export interface DataQualityTestState {
     };
   };
   qualityTestRunsById: {
-    [qualityTestRunId: string]: DataQualityTestRun;
+    [qualityTestRunId: string]: DataEntityRun;
   };
   allTestRunIdsByTestId: {
-    [qualityTestId: string]: DataQualityTestRun['id'][];
+    [qualityTestId: string]: DataEntityRun['id'][];
   };
   qualityTestRunsPageInfo: CurrentPageInfo;
   datasetTestReportByEntityId: {

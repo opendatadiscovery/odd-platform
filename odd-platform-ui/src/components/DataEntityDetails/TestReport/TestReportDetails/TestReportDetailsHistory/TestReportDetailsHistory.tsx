@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  DataQualityApiGetRunsRequest,
-  DataQualityTestRun,
+  DataEntityRun,
+  DataEntityRunApiGetRunsRequest,
 } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceStrict } from 'date-fns';
@@ -15,16 +15,18 @@ import {
 } from './TestReportDetailsHistoryStyles';
 
 interface TestReportDetailsHistoryProps {
-  dataQATestRunsList: DataQualityTestRun[];
+  dataQATestRunsList: DataEntityRun[];
   dataQATestId: number;
   dataQATestName: string;
   testRunsFetching: boolean;
   fetchDataSetQualityTestRuns: (
-    params: DataQualityApiGetRunsRequest
+    params: DataEntityRunApiGetRunsRequest
   ) => void;
 }
 
-const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
+const TestReportDetailsHistory: React.FC<
+  TestReportDetailsHistoryProps
+> = ({
   dataQATestRunsList,
   dataQATestId,
   dataQATestName,
@@ -33,7 +35,7 @@ const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
 }) => {
   React.useEffect(() => {
     fetchDataSetQualityTestRuns({
-      dataqatestId: dataQATestId,
+      dataEntityId: dataQATestId,
       page: 1,
       size: 10,
     });

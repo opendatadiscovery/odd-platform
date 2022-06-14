@@ -3,15 +3,15 @@ import { Grid, Typography } from '@mui/material';
 import { formatDistanceStrict } from 'date-fns';
 import values from 'lodash/values';
 import {
+  DataEntityRunStatus,
   DataQualityTestExpectation,
-  DataQualityTestRunStatus,
 } from 'generated-sources';
 import TestRunStatusIcon from 'components/shared/TestRunStatusIcon/TestRunStatusIcon';
 import { Container } from './TestitemStyles';
 
 interface TestItemProps {
   active: boolean;
-  latestRunStatus: DataQualityTestRunStatus | undefined;
+  latestRunStatus: DataEntityRunStatus | undefined;
   testName: string;
   testStartTime: Date | undefined;
   testEndTime: Date | undefined;

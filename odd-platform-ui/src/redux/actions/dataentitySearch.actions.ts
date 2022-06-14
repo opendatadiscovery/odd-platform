@@ -1,14 +1,11 @@
-import { createAsyncAction, createAction } from 'typesafe-actions';
+import { createAction, createAsyncAction } from 'typesafe-actions';
 import {
+  FacetOptions,
   FacetStateUpdate,
   PaginatedResponse,
-  FacetOptions,
 } from 'redux/interfaces';
-import {
-  DataEntityList,
-  SearchFacetsData,
-  DataEntityRef,
-} from 'generated-sources';
+import { DataEntityList, SearchFacetsData } from 'generated-sources';
+import { createActionType } from 'lib/redux/helpers';
 
 export const getDataEntitySearchAction = createAsyncAction(
   'GET_DATA_ENTITIES_SEARCH__REQUEST',
@@ -40,12 +37,6 @@ export const getSearchFacetOptionsAction = createAsyncAction(
   'GET_SEARCH_FACET_OPTIONS__FAILURE'
 )<undefined, FacetOptions, undefined>();
 
-export const getDataEntitySearchSuggestionsAction = createAsyncAction(
-  'GET_DATA_ENTITIES_SEARCH_SUGGESTIONS__REQUEST',
-  'GET_DATA_ENTITIES_SEARCH_SUGGESTIONS__SUCCESS',
-  'GET_DATA_ENTITIES_SEARCH_SUGGESTIONS__FAILURE'
-)<undefined, DataEntityRef[], undefined>();
-
 export const changeDataEntitySearchFilterAction = createAction(
   'CHANGE_DATA_ENTITIES_SEARCH_FILTER'
 )<FacetStateUpdate>();
@@ -53,3 +44,10 @@ export const changeDataEntitySearchFilterAction = createAction(
 export const clearDataEntitySearchFiltersAction = createAction(
   'CLEAR_DATA_ENTITIES_SEARCH_FILTER'
 )<undefined>();
+
+export const dataEntitiesSearchActionTypePrefix = 'dataEntitiesSearch';
+
+export const fetchDataEntitySearchSuggestionsActionType = createActionType(
+  dataEntitiesSearchActionTypePrefix,
+  'fetchDataEntitySearchSuggestions'
+);

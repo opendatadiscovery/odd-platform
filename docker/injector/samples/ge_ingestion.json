@@ -1611,7 +1611,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_nation_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -1790,7 +1790,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_nation_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -1947,7 +1947,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_nation_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -2126,7 +2126,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_nation_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -2272,7 +2272,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_nation_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/NATION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -2407,7 +2407,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_page_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -2553,7 +2553,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_page_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -2677,7 +2677,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_page_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -2812,7 +2812,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_page_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -2969,7 +2969,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_page_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_PAGE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -3137,7 +3137,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_time_dim_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -3305,7 +3305,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_time_dim_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -3473,7 +3473,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_time_dim_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -3619,7 +3619,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_time_dim_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -3798,7 +3798,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_time_dim_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -3922,7 +3922,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_lineitem_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -4079,7 +4079,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_lineitem_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -4214,7 +4214,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_lineitem_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -4393,7 +4393,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_lineitem_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -4572,7 +4572,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_qualification",
         "dataset_list": [
-          " //snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -4740,7 +4740,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_verification",
         "dataset_list": [
-          " //snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -4875,7 +4875,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_qualification",
         "dataset_list": [
-          " //snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -5010,7 +5010,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_verification",
         "dataset_list": [
-          " //snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -5134,7 +5134,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_orders_validation",
         "dataset_list": [
-          " //snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
+          "//snwflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -5280,7 +5280,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_income_band_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -5448,7 +5448,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_income_band_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -5605,7 +5605,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_income_band_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -5751,7 +5751,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_income_band_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -5930,7 +5930,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_income_band_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -6065,7 +6065,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_promotion_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/PROMOTION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/PROMOTION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -6189,7 +6189,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_promotion_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/PROMOTION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/PROMOTION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -6357,7 +6357,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_promotion_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/PROMOTION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/PROMOTION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -6536,7 +6536,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_region_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -6660,7 +6660,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_region_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -6806,7 +6806,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_region_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -6963,7 +6963,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_region_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -7087,7 +7087,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_region_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/REGION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -7222,7 +7222,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_orders_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -7401,7 +7401,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_orders_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -7547,7 +7547,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_orders_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -7704,7 +7704,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_orders_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -7839,7 +7839,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_orders_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -8007,7 +8007,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_customer_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -8153,7 +8153,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -8310,7 +8310,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_customer_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -8434,7 +8434,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -8558,7 +8558,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -8693,7 +8693,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -8839,7 +8839,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_customer_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -9018,7 +9018,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_sales_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SALES"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -9175,7 +9175,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_sales_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SALES"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -9354,7 +9354,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_sales_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SALES"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -9478,7 +9478,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_sales_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SALES"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -9613,7 +9613,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_customer_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -9770,7 +9770,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_customer_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -9916,7 +9916,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_customer_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -10073,7 +10073,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -10197,7 +10197,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_income_band_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -10343,7 +10343,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_income_band_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -10467,7 +10467,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_income_band_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -10646,7 +10646,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_income_band_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -10781,7 +10781,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_income_band_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INCOME_BAND"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -10916,7 +10916,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_page_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_PAGE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -11051,7 +11051,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_page_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_PAGE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -11197,7 +11197,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_page_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_PAGE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -11332,7 +11332,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_household_demographics_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -11467,7 +11467,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_household_demographics_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -11613,7 +11613,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_household_demographics_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -11770,7 +11770,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_household_demographics_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -11938,7 +11938,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_customer_address_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_ADDRESS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_ADDRESS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -12117,7 +12117,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_customer_address_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_ADDRESS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_ADDRESS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -12274,7 +12274,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_customer_address_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_ADDRESS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_ADDRESS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -12442,7 +12442,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_supplier_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -12577,7 +12577,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_supplier_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -12723,7 +12723,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_supplier_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -12902,7 +12902,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_page_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_PAGE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -13070,7 +13070,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_page_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_PAGE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -13249,7 +13249,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_page_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_PAGE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -13428,7 +13428,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_reason_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/REASON"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/REASON"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -13585,7 +13585,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_reason_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/REASON"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/REASON"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -13731,7 +13731,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_reason_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/REASON"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/REASON"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -13899,7 +13899,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_demographics_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -14067,7 +14067,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_demographics_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -14213,7 +14213,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_demographics_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -14381,7 +14381,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_demographics_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -14549,7 +14549,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_demographics_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -14717,7 +14717,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_inventory_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INVENTORY"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INVENTORY"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -14852,7 +14852,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_inventory_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INVENTORY"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INVENTORY"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -15020,7 +15020,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_inventory_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INVENTORY"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/INVENTORY"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -15177,7 +15177,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_page_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_PAGE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -15323,7 +15323,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_page_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_PAGE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -15480,7 +15480,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_page_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_PAGE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -15604,7 +15604,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_page_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_PAGE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_PAGE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -15772,7 +15772,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_region_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/REGION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -15918,7 +15918,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_region_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/REGION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -16097,7 +16097,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_region_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/REGION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -16276,7 +16276,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_dbgen_version_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DBGEN_VERSION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DBGEN_VERSION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -16444,7 +16444,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_dbgen_version_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DBGEN_VERSION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DBGEN_VERSION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -16579,7 +16579,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_dbgen_version_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DBGEN_VERSION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DBGEN_VERSION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -16747,7 +16747,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_dbgen_version_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DBGEN_VERSION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DBGEN_VERSION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -16893,7 +16893,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_16_total_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -17028,7 +17028,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_16_total_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -17196,7 +17196,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_16_total_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -17353,7 +17353,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_16_total_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -17510,7 +17510,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_16_total_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_16_TOTAL"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -17689,7 +17689,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_sales_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -17813,7 +17813,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_sales_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -17937,7 +17937,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_sales_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -18061,7 +18061,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_sales_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -18218,7 +18218,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_sales_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SALES"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -18386,7 +18386,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -18554,7 +18554,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -18678,7 +18678,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -18813,7 +18813,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -18970,7 +18970,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -19149,7 +19149,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -19295,7 +19295,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -19452,7 +19452,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_customer_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -19609,7 +19609,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_nation_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/NATION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -19777,7 +19777,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_nation_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/NATION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -19912,7 +19912,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_nation_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/NATION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -20058,7 +20058,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_household_demographics_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -20226,7 +20226,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_household_demographics_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -20350,7 +20350,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_household_demographics_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -20496,7 +20496,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_household_demographics_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/HOUSEHOLD_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -20675,7 +20675,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_supplier_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -20821,7 +20821,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_supplier_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -20956,7 +20956,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_supplier_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -21080,7 +21080,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_supplier_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -21259,7 +21259,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_part_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -21394,7 +21394,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_part_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -21518,7 +21518,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_part_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -21653,7 +21653,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_part_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -21788,7 +21788,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_part_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PART"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -21967,7 +21967,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -22135,7 +22135,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -22281,7 +22281,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_returns_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_RETURNS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -22449,7 +22449,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -22606,7 +22606,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -22752,7 +22752,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -22909,7 +22909,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -23055,7 +23055,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_part_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -23234,7 +23234,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_part_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -23413,7 +23413,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_part_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -23592,7 +23592,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_part_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -23738,7 +23738,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_part_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PART"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -23895,7 +23895,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_customer_demographics_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -24063,7 +24063,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_customer_demographics_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -24242,7 +24242,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_customer_demographics_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_DEMOGRAPHICS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CUSTOMER_DEMOGRAPHICS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -24377,7 +24377,7 @@
       "data_quality_test": {
         "suite_name": "weather_hourly_14_total_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -24556,7 +24556,7 @@
       "data_quality_test": {
         "suite_name": "weather_hourly_14_total_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -24691,7 +24691,7 @@
       "data_quality_test": {
         "suite_name": "weather_hourly_14_total_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -24837,7 +24837,7 @@
       "data_quality_test": {
         "suite_name": "weather_hourly_14_total_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -24961,7 +24961,7 @@
       "data_quality_test": {
         "suite_name": "weather_hourly_14_total_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -25140,7 +25140,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_reason_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -25297,7 +25297,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_reason_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -25443,7 +25443,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_reason_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -25622,7 +25622,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_reason_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -25746,7 +25746,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_reason_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/REASON"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -25903,7 +25903,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -26049,7 +26049,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -26228,7 +26228,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -26385,7 +26385,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_partsupp_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -26564,7 +26564,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_partsupp_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -26688,7 +26688,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_partsupp_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -26856,7 +26856,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_partsupp_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -27024,7 +27024,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_partsupp_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -27181,7 +27181,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_item_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -27327,7 +27327,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_item_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -27495,7 +27495,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_item_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -27641,7 +27641,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_item_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -27809,7 +27809,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_item_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/ITEM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -27944,7 +27944,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_warehouse_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -28068,7 +28068,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_warehouse_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -28247,7 +28247,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_warehouse_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -28371,7 +28371,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_warehouse_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -28550,7 +28550,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_warehouse_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WAREHOUSE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -28685,7 +28685,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_supplier_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -28831,7 +28831,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_supplier_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -28999,7 +28999,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_supplier_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -29156,7 +29156,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_supplier_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -29291,7 +29291,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_partsupp_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -29470,7 +29470,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_partsupp_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -29649,7 +29649,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_partsupp_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -29795,7 +29795,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_partsupp_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -29952,7 +29952,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_partsupp_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -30087,7 +30087,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_address_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_ADDRESS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_ADDRESS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -30211,7 +30211,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_address_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_ADDRESS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_ADDRESS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -30346,7 +30346,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_address_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_ADDRESS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_ADDRESS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -30481,7 +30481,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_customer_address_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_ADDRESS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CUSTOMER_ADDRESS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -30660,7 +30660,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_ship_mode_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/SHIP_MODE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/SHIP_MODE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -30817,7 +30817,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_ship_mode_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/SHIP_MODE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/SHIP_MODE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -30963,7 +30963,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_ship_mode_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/SHIP_MODE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/SHIP_MODE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -31142,7 +31142,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_date_dim_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DATE_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DATE_DIM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -31299,7 +31299,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_date_dim_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DATE_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DATE_DIM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -31467,7 +31467,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_date_dim_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DATE_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DATE_DIM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -31646,7 +31646,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_date_dim_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DATE_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/DATE_DIM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -31792,7 +31792,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_site_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SITE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SITE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -31938,7 +31938,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_site_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SITE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SITE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -32062,7 +32062,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_site_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SITE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SITE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -32219,7 +32219,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_site_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SITE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_SITE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -32376,7 +32376,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_returns_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -32555,7 +32555,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -32723,7 +32723,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -32858,7 +32858,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -33004,7 +33004,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -33150,7 +33150,7 @@
       "data_quality_test": {
         "suite_name": "weather_hourly_16_total_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_16_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_16_TOTAL"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -33318,7 +33318,7 @@
       "data_quality_test": {
         "suite_name": "weather_hourly_16_total_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_16_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_16_TOTAL"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -33464,7 +33464,7 @@
       "data_quality_test": {
         "suite_name": "weather_hourly_16_total_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_16_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/HOURLY_16_TOTAL"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -33621,7 +33621,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_sales_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_SALES"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -33756,7 +33756,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_sales_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_SALES"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -33935,7 +33935,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_store_sales_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/STORE_SALES"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -34081,7 +34081,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -34216,7 +34216,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -34362,7 +34362,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -34508,7 +34508,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -34654,7 +34654,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_nation_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -34789,7 +34789,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_nation_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -34924,7 +34924,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_nation_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -35081,7 +35081,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_nation_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -35260,7 +35260,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_nation_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/NATION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -35439,7 +35439,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_orders_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -35574,7 +35574,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_orders_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -35698,7 +35698,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_orders_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -35822,7 +35822,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_lineitem_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -36001,7 +36001,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_lineitem_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -36147,7 +36147,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_lineitem_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -36282,7 +36282,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_lineitem_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -36439,7 +36439,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_returns_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -36618,7 +36618,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -36786,7 +36786,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -36932,7 +36932,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -37056,7 +37056,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -37191,7 +37191,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_call_center_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CALL_CENTER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CALL_CENTER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -37370,7 +37370,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_call_center_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CALL_CENTER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CALL_CENTER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -37538,7 +37538,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_call_center_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CALL_CENTER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CALL_CENTER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -37662,7 +37662,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_sales_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_SALES"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -37786,7 +37786,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_sales_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_SALES"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -37943,7 +37943,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_sales_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_SALES"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -38100,7 +38100,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_sales_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_SALES"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -38235,7 +38235,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_warehouse_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WAREHOUSE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WAREHOUSE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -38414,7 +38414,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_warehouse_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WAREHOUSE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WAREHOUSE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -38582,7 +38582,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_warehouse_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WAREHOUSE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WAREHOUSE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -38761,7 +38761,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_partsupp_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -38940,7 +38940,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_partsupp_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -39119,7 +39119,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_partsupp_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -39243,7 +39243,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_partsupp_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -39378,7 +39378,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_partsupp_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -39524,7 +39524,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -39659,7 +39659,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -39783,7 +39783,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -39940,7 +39940,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -40075,7 +40075,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_web_returns_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/WEB_RETURNS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -40221,7 +40221,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_14_total_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -40378,7 +40378,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_14_total_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -40502,7 +40502,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_14_total_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -40637,7 +40637,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_14_total_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -40805,7 +40805,7 @@
       "data_quality_test": {
         "suite_name": "weather_daily_14_total_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/DAILY_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -40951,7 +40951,7 @@
       "data_quality_test": {
         "suite_name": "weather_weather_14_total_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -41097,7 +41097,7 @@
       "data_quality_test": {
         "suite_name": "weather_weather_14_total_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -41221,7 +41221,7 @@
       "data_quality_test": {
         "suite_name": "weather_weather_14_total_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -41378,7 +41378,7 @@
       "data_quality_test": {
         "suite_name": "weather_weather_14_total_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -41502,7 +41502,7 @@
       "data_quality_test": {
         "suite_name": "weather_weather_14_total_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/WEATHER/tables/WEATHER_14_TOTAL"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -41626,7 +41626,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_promotion_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -41750,7 +41750,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_promotion_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -41896,7 +41896,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_promotion_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -42020,7 +42020,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_promotion_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -42188,7 +42188,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_promotion_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/PROMOTION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -42323,7 +42323,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_ship_mode_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/SHIP_MODE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/SHIP_MODE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -42491,7 +42491,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_ship_mode_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/SHIP_MODE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/SHIP_MODE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -42637,7 +42637,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_ship_mode_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/SHIP_MODE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/SHIP_MODE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -42761,7 +42761,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_ship_mode_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/SHIP_MODE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/SHIP_MODE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -42885,7 +42885,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_part_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -43042,7 +43042,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_part_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -43221,7 +43221,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_part_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -43389,7 +43389,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_part_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -43535,7 +43535,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_part_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PART"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -43714,7 +43714,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_time_dim_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -43871,7 +43871,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_time_dim_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -43995,7 +43995,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_time_dim_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -44119,7 +44119,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_time_dim_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -44254,7 +44254,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_time_dim_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/TIME_DIM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -44433,7 +44433,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_customer_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -44568,7 +44568,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_customer_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -44736,7 +44736,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_customer_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -44904,7 +44904,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_customer_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/CUSTOMER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/CUSTOMER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -45028,7 +45028,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_sales_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_SALES"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -45196,7 +45196,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_sales_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_SALES"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -45364,7 +45364,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_catalog_sales_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/CATALOG_SALES"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -45488,7 +45488,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_sales_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_SALES"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -45634,7 +45634,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_sales_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_SALES"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -45813,7 +45813,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_sales_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_SALES"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -45959,7 +45959,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_store_sales_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_SALES"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/STORE_SALES"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -46083,7 +46083,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_date_dim_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -46229,7 +46229,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_date_dim_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -46397,7 +46397,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_date_dim_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -46532,7 +46532,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_date_dim_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -46656,7 +46656,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_date_dim_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/DATE_DIM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -46813,7 +46813,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_part_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -46981,7 +46981,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_part_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -47127,7 +47127,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_part_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -47251,7 +47251,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_part_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -47375,7 +47375,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_part_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/PART"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -47532,7 +47532,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_site_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -47689,7 +47689,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_site_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -47824,7 +47824,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_site_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -47981,7 +47981,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_site_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -48127,7 +48127,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf10tcl_web_site_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF10TCL/tables/WEB_SITE"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -48262,7 +48262,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_region_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/REGION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -48419,7 +48419,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_region_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/REGION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -48543,7 +48543,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_region_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/REGION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -48689,7 +48689,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_orders_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -48846,7 +48846,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_orders_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -48981,7 +48981,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_orders_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -49149,7 +49149,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_orders_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -49284,7 +49284,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_orders_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/ORDERS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -49463,7 +49463,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_item_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/ITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/ITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -49620,7 +49620,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_item_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/ITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/ITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -49777,7 +49777,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_item_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/ITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/ITEM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -49934,7 +49934,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_supplier_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -50080,7 +50080,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_supplier_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -50259,7 +50259,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_supplier_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -50383,7 +50383,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_supplier_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -50529,7 +50529,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_supplier_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/SUPPLIER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -50653,7 +50653,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_nation_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/NATION"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -50832,7 +50832,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_nation_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/NATION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -50956,7 +50956,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_nation_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/NATION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -51080,7 +51080,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf10_nation_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/NATION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF10/tables/NATION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -51204,7 +51204,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_lineitem_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -51328,7 +51328,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_lineitem_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -51496,7 +51496,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1000_lineitem_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1000/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -51653,7 +51653,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_returns_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_RETURNS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -51788,7 +51788,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_returns_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_RETURNS"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -51934,7 +51934,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_returns_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_RETURNS"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -52080,7 +52080,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_catalog_returns_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_RETURNS"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CATALOG_RETURNS"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -52237,7 +52237,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_partsupp_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -52372,7 +52372,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_partsupp_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -52507,7 +52507,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_partsupp_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -52653,7 +52653,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_partsupp_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -52799,7 +52799,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_partsupp_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/PARTSUPP"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -52967,7 +52967,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_region_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/REGION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -53135,7 +53135,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_region_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/REGION"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -53259,7 +53259,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf1_region_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/REGION"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF1/tables/REGION"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -53405,7 +53405,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_call_center_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CALL_CENTER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CALL_CENTER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -53540,7 +53540,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_call_center_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CALL_CENTER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CALL_CENTER"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -53719,7 +53719,7 @@
       "data_quality_test": {
         "suite_name": "tpcds_sf100tcl_call_center_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CALL_CENTER"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCDS_SF100TCL/tables/CALL_CENTER"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -53843,7 +53843,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_lineitem_validation",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_validation_to_pass"
@@ -54000,7 +54000,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_lineitem_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -54124,7 +54124,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_lineitem_qualification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_qualification_to_pass"
@@ -54303,7 +54303,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_lineitem_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"
@@ -54427,7 +54427,7 @@
       "data_quality_test": {
         "suite_name": "tpch_sf100_lineitem_verification",
         "dataset_list": [
-          " //snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
+          "//snowflake/host/abcxyz.eu-central-1.snowflakecomputing.com/warehouses/COMPUTE_WH/databases/SNOWFLAKE_SAMPLE_DATA/schemas/TPCH_SF100/tables/LINEITEM"
         ],
         "expectation": {
           "type": "expect_verification_to_pass"

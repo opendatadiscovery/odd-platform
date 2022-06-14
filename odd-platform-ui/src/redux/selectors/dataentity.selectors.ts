@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
-import get from 'lodash/get';
 import { DataEntitiesState, RootState } from 'redux/interfaces';
 import {
   DataEntityClassNameEnum,
   DataEntityType,
+  DataEntityTypeNameEnum,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import {
@@ -208,6 +208,22 @@ export const getDataEntityIsQualityTest = createSelector(
     )
 );
 
+export const getDataEntityIsTransformerJob = createSelector(
+  dataEntitiesState,
+  getDataEntityId,
+  (dataEntities, dataEntityId) => {
+    const dataEntity = dataEntities.byId[dataEntityId];
+    const isDataEntityClassTransformer = dataEntity?.entityClasses?.some(
+      entityCLass =>
+        entityCLass.name === DataEntityClassNameEnum.TRANSFORMER
+    );
+    const isDataEntityTypeJob =
+      dataEntity?.type?.name === DataEntityTypeNameEnum.JOB;
+
+    return Boolean(isDataEntityClassTransformer && isDataEntityTypeJob);
+  }
+);
+
 // data entity groups
 export const getDataEntityGroupCreatingStatuses = createStatusesSelector(
   actions.createDataEntityGroupAction
@@ -219,4 +235,12 @@ export const getDataEntityGroupUpdatingStatuses = createStatusesSelector(
 
 export const getDataEntityGroupDeletingStatuses = createStatusesSelector(
   actions.deleteDataEntityGroupAction
+);
+
+export const getDataEntityAddToGroupStatuses = createStatusesSelector(
+  actions.addDataEntityToGroupActionType
+);
+
+export const getDataEntityDeleteFromGroupStatuses = createStatusesSelector(
+  actions.deleteDataEntityFromGroupActionType
 );

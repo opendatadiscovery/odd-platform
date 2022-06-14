@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  DataQualityTest,
-  DataQualityTestRunStatus,
-} from 'generated-sources';
+import { DataEntityRunStatus, DataQualityTest } from 'generated-sources';
 import { Collapse, Grid, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
@@ -73,7 +70,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                     key={testType}
                     count={count}
                     typeName={
-                      testType.toUpperCase() as DataQualityTestRunStatus
+                      testType.toUpperCase() as DataEntityRunStatus
                     }
                     size="small"
                   />

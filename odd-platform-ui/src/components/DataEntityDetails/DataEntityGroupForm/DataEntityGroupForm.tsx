@@ -28,15 +28,15 @@ import {
 import EntityItem from 'components/DataEntityDetails/DataEntityGroupForm/EntityItem/EntityItem';
 import { useHistory } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
+import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
+import SearchSuggestionsAutocomplete from 'components/shared/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
-import EntitiesSuggestionsAutocompleteContainer from './EntitiesSuggestionsAutoocomplete/EntitiesSuggestionsAutocompleteContainer';
-import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
 
 interface DataEntityGroupFormProps {
   btnCreateEl: JSX.Element;
 }
 
-interface DataEntityGroupFormData
+export interface DataEntityGroupFormData
   extends Omit<GeneratedDataEntityGroupFormData, 'type'> {
   type?: DataEntityType;
 }
@@ -173,7 +173,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         control={control}
         name="namespaceName"
         render={({ field }) => (
-          <NamespaceAutocompleteContainer controllerProps={field} />
+          <NamespaceAutocomplete controllerProps={field} />
         )}
       />
       <Controller
@@ -208,11 +208,14 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       <Controller
         control={control}
         name="entities"
-        rules={{ required: true }}
+        rules={{ required: true, validate: () => fields.length > 0 }}
         render={({ field }) => (
-          <EntitiesSuggestionsAutocompleteContainer
+          <SearchSuggestionsAutocomplete
+            placeholder="Search entities"
+            label="Entities"
             controllerProps={field}
             append={append}
+            addEntities
           />
         )}
       />

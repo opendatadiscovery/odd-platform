@@ -152,23 +152,25 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
         </Grid>
         {collapsedCustom}
       </Grid>
-      <Grid item container>
-        <Grid container>
-          <Grid item xs={12}>
-            <SubtitleContainer>
-              <Typography variant="h4">Pre-defined</Typography>
-            </SubtitleContainer>
+      {predefinedMetadata.length > 0 && (
+        <Grid item container>
+          <Grid container>
+            <Grid item xs={12}>
+              <SubtitleContainer>
+                <Typography variant="h4">Pre-defined</Typography>
+              </SubtitleContainer>
+            </Grid>
+            {predefinedMetadata?.slice(0, visibleLimit).map(item => (
+              <MetadataItem
+                dataEntityId={dataEntityId}
+                metadataItem={item}
+                key={item.field.id}
+              />
+            ))}
           </Grid>
-          {predefinedMetadata?.slice(0, visibleLimit).map(item => (
-            <MetadataItem
-              dataEntityId={dataEntityId}
-              metadataItem={item}
-              key={item.field.id}
-            />
-          ))}
+          {collapsedPredefined}
         </Grid>
-        {collapsedPredefined}
-      </Grid>
+      )}
     </>
   );
 };

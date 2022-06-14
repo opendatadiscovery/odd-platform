@@ -1,12 +1,6 @@
 import React from 'react';
-import {
-  Namespace,
-  NamespaceApiDeleteNamespaceRequest,
-  NamespaceApiGetNamespaceListRequest,
-} from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { CurrentPageInfo } from 'redux/interfaces/common';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
@@ -16,34 +10,36 @@ import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import {
+  getNamespaceCreatingStatuses,
+  getNamespaceDeletingStatuses,
+  getNamespaceList,
+  getNamespaceListFetchingStatuses,
+  getNamespaceListPageInfo,
+} from 'redux/selectors';
+import { fetchNamespaceList } from 'redux/thunks';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
-import NamespaceFormContainer from './NamespaceForm/NamespaceFormContainer';
+import NamespaceForm from './NamespaceForm/NamespaceForm';
 import NamespaceSkeletonItem from './NamespaceListSkeleton/NamespaceListSkeleton';
 import * as S from './NamespaceListStyles';
 
-interface NamespaceListProps {
-  namespacesList: Namespace[];
-  isFetching: boolean;
-  isDeleting: boolean;
-  isCreating: boolean;
-  fetchNamespaceList: (
-    params: NamespaceApiGetNamespaceListRequest
-  ) => void;
-  deleteNamespace: (
-    params: NamespaceApiDeleteNamespaceRequest
-  ) => Promise<void>;
-  pageInfo?: CurrentPageInfo;
-}
+const NamespaceList: React.FC = () => {
+  const dispatch = useAppDispatch();
 
-const NamespaceListView: React.FC<NamespaceListProps> = ({
-  namespacesList,
-  isFetching,
-  isDeleting,
-  isCreating,
-  fetchNamespaceList,
-  deleteNamespace,
-  pageInfo,
-}) => {
+  const namespacesList = useAppSelector(getNamespaceList);
+  const pageInfo = useAppSelector(getNamespaceListPageInfo);
+
+  const { isLoading: isNamespaceFetching } = useAppSelector(
+    getNamespaceListFetchingStatuses
+  );
+  const { isLoading: isNamespaceCreating } = useAppSelector(
+    getNamespaceCreatingStatuses
+  );
+  const { isLoading: isNamespaceDeleting } = useAppSelector(
+    getNamespaceDeletingStatuses
+  );
+
   const pageSize = 100;
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalNamespaces, setTotalNamespaces] = React.useState<
@@ -51,8 +47,16 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
   >(pageInfo?.total);
 
   React.useEffect(() => {
-    if (!searchText) fetchNamespaceList({ page: 1, size: pageSize });
-  }, [fetchNamespaceList, isCreating, isDeleting, searchText]);
+    if (!searchText)
+      dispatch(fetchNamespaceList({ page: 1, size: pageSize }));
+  }, [
+    fetchNamespaceList,
+    dispatch,
+    isNamespaceCreating,
+    isNamespaceDeleting,
+    pageSize,
+    searchText,
+  ]);
 
   React.useEffect(() => {
     if (!searchText) setTotalNamespaces(pageInfo?.total);
@@ -60,16 +64,20 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
-    fetchNamespaceList({
-      page: pageInfo.page + 1,
-      size: pageSize,
-      query: searchText,
-    });
+    dispatch(
+      fetchNamespaceList({
+        page: pageInfo.page + 1,
+        size: pageSize,
+        query: searchText,
+      })
+    );
   };
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      fetchNamespaceList({ page: 1, size: pageSize, query: searchText });
+      dispatch(
+        fetchNamespaceList({ page: 1, size: pageSize, query: searchText })
+      );
     }, 500),
     [searchText]
   );
@@ -117,7 +125,7 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <NamespaceFormContainer
+        <NamespaceForm
           btnEl={
             <AppButton
               size="medium"
@@ -144,7 +152,7 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
             dataLength={namespacesList.length}
             scrollThreshold="200px"
             loader={
-              isFetching ? (
+              isNamespaceFetching && (
                 <SkeletonWrapper
                   length={5}
                   renderContent={({ randomSkeletonPercentWidth, key }) => (
@@ -154,24 +162,23 @@ const NamespaceListView: React.FC<NamespaceListProps> = ({
                     />
                   )}
                 />
-              ) : null
+              )
             }
           >
             {namespacesList?.map(namespace => (
               <EditableNamespaceItem
                 key={namespace.id}
                 namespace={namespace}
-                deleteNamespace={deleteNamespace}
               />
             ))}
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isFetching && !namespacesList.length ? (
+      {!isNamespaceFetching && !namespacesList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Grid>
   );
 };
 
-export default NamespaceListView;
+export default NamespaceList;

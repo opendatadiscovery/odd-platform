@@ -14,7 +14,7 @@ import {
   getTermCreatingStatuses,
   getTermUpdatingStatuses,
 } from 'redux/selectors';
-import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
+import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -136,7 +136,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
         defaultValue={term?.namespace?.name}
         rules={{ required: true }}
         render={({ field }) => (
-          <NamespaceAutocompleteContainer controllerProps={field} />
+          <NamespaceAutocomplete controllerProps={field} />
         )}
       />
       <Controller
