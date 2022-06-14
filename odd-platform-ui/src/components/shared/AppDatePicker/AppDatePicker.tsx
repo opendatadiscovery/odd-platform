@@ -10,7 +10,7 @@ export const metadataBackendDateFormat = "yyyy-MM-dd'T'HH:mm:ss";
 export const minDate = new Date(1900, 0, 1);
 export const maxDate = new Date(2099, 11, 31);
 
-interface AppDatePickerProps
+export interface AppDatePickerProps
   extends Pick<
     DatePickerProps,
     | 'onChange'
@@ -40,16 +40,18 @@ const AppDatePicker: React.FC<AppDatePickerProps> = ({
     null
   );
 
-  React.useEffect(() => setSelectedDate(new Date(defaultDate)), [
-    defaultDate,
-  ]);
+  React.useEffect(
+    () => setSelectedDate(new Date(defaultDate)),
+    [defaultDate]
+  );
 
-  const AppDatePickerIcon = React.useCallback(() => <CalendarIcon />, [
-    CalendarIcon,
-  ]);
+  const AppDatePickerIcon = React.useCallback(
+    () => <CalendarIcon />,
+    [[CalendarIcon]]
+  );
 
   return (
-    <Box sx={sx} width="100%">
+    <Box aria-label="AppDatePicker" sx={sx} width="100%">
       <DatePicker
         minDate={minDate}
         maxDate={maxDate}

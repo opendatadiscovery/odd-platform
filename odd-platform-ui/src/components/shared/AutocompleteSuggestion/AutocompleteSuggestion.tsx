@@ -6,7 +6,7 @@ import {
   CreateNewOptionText,
 } from './AutocompleteSuggestionStyles';
 
-interface AutocompleteSuggestionProps {
+export interface AutocompleteSuggestionProps {
   optionLabel: string;
   optionName: string | undefined;
   sx?: SxProps<Theme>;
@@ -17,7 +17,12 @@ const AutocompleteSuggestion: React.FC<AutocompleteSuggestionProps> = ({
   optionName,
   sx,
 }) => (
-  <Typography sx={sx} variant="body2" component="span">
+  <Typography
+    sx={sx}
+    variant="body2"
+    component="span"
+    aria-label="AutocompleteSuggestion"
+  >
     <NoResultText>No result.</NoResultText>{' '}
     <CreateNewOptionText>
       Create new {optionLabel} &quot;{optionName}&quot;

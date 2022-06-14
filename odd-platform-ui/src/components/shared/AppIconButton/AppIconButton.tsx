@@ -2,7 +2,7 @@ import React from 'react';
 import { IconButtonProps } from '@mui/material';
 import { IconButtonColors, StyledIconButton } from './AppIconButtonStyles';
 
-interface AppIconButtonProps
+export interface AppIconButtonProps
   extends Pick<
     IconButtonProps,
     'onClick' | 'sx' | 'ref' | 'edge' | 'disabled' | 'id'
@@ -49,6 +49,7 @@ const AppIconButton: React.FC<AppIconButtonProps> = ({
     onClick={onClick}
     sx={sx}
     disabled={disabled}
+    aria-label="AppIconButton"
   >
     {icon}
   </StyledIconButton>

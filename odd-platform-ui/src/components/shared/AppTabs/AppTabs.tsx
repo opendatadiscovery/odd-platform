@@ -57,6 +57,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
       orientation={orientation}
       scrollButtons="auto"
       sx={sx}
+      aria-label="AppTabs"
     >
       {items.map(item => {
         const getHintLength = (): number => {
@@ -77,6 +78,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
             type={type}
             hidden={item.hidden}
             key={item.name}
+            aria-label="AppTab"
             label={
               <AppTabLabel
                 name={item.name}
@@ -95,6 +97,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
             type={type}
             hidden={item.hidden}
             key={item.name}
+            aria-label="AppTab"
             label={
               <AppTabLabel
                 name={item.name}

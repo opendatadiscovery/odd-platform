@@ -2,7 +2,7 @@ import React from 'react';
 import { MenuProps } from '@mui/material';
 import { StyledAppMenu } from './AppMenuStyles';
 
-interface AppMenuProps
+export interface AppMenuProps
   extends Pick<
     MenuProps,
     | 'children'
@@ -21,33 +21,19 @@ interface AppMenuProps
 }
 
 const AppMenu: React.FC<AppMenuProps> = ({
-  children,
-  anchorEl,
-  anchorOrigin,
-  id,
-  keepMounted,
-  transformOrigin,
-  open,
-  onClose,
-  MenuListProps,
   minWidth,
   maxWidth,
   maxHeight,
+  ...props
 }) => (
   <StyledAppMenu
-    anchorEl={anchorEl}
-    anchorOrigin={anchorOrigin}
-    id={id}
-    keepMounted={keepMounted}
-    transformOrigin={transformOrigin}
-    open={open}
-    onClose={onClose}
-    MenuListProps={MenuListProps}
+    {...props}
+    aria-label="AppMenu"
     $maxHeight={maxHeight}
     $maxWidth={maxWidth}
     $minWidth={minWidth}
   >
-    {children}
+    {props.children}
   </StyledAppMenu>
 );
 

@@ -7,7 +7,7 @@ import {
 } from 'components/shared/AppCircularProgress/interfaces';
 import * as S from './AppCircularProgressStyles';
 
-interface AppCircularProgressProps {
+export interface AppCircularProgressProps {
   text?: string;
   size: number;
   sx?: SxProps<Theme>;
@@ -22,13 +22,19 @@ const AppCircularProgress: React.FC<AppCircularProgressProps> = ({
   background = 'blue',
   progressBackground = 'light',
 }) => (
-  <S.Container $background={background} sx={sx} container>
+  <S.Container
+    $background={background}
+    sx={sx}
+    container
+    aria-label="AppCircularProgress"
+  >
     <S.SpinnerContainer container>
       <S.ProgressBack
         $progressBackground={progressBackground}
         size={size}
         variant="determinate"
         value={100}
+        aria-label="AppCircularProgressBack"
       />
       <S.Progress size={size} />
     </S.SpinnerContainer>

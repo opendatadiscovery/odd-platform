@@ -7,7 +7,7 @@ import SuccessIcon from 'components/shared/Icons/SuccessIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { SxProps } from '@mui/system';
 
-interface CopyButtonProps {
+export interface CopyButtonProps {
   text?: string;
   fallbackText?: string;
   popupText?: string;

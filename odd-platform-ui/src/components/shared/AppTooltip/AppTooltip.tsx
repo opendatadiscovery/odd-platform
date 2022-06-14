@@ -2,7 +2,7 @@ import React from 'react';
 import { TooltipProps } from '@mui/material';
 import * as S from 'components/shared/AppTooltip/AppTooltipStyles';
 
-interface AppTooltipProps
+export interface AppTooltipProps
   extends Pick<TooltipProps, 'placement' | 'followCursor' | 'sx'> {
   title: (props: {
     open?: boolean;
@@ -51,6 +51,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
       disableInteractive
       disableHoverListener={!hoverStatus}
       sx={sx}
+      role="tooltip"
     >
       <S.ChildrenContainer
         onMouseEnter={() => {
@@ -60,6 +61,7 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
         $isCursorPointer={hoverStatus || cursorPointer}
         $isOverflowed={isOverflowed}
         ref={childrenRef}
+        aria-label="AppTooltipChildrenContainer"
       >
         {children}
       </S.ChildrenContainer>

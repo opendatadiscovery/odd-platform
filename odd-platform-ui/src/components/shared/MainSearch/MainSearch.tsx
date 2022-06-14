@@ -130,7 +130,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
   };
 
   return (
-    <S.Container>
+    <S.Container aria-label="MainSearch">
       <S.Search>
         <S.SearchAutocomplete
           fullWidth

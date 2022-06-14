@@ -1,10 +1,10 @@
 import React from 'react';
 
-interface Props {
+export interface BooleanFormattedProps {
   value: string | boolean | undefined;
 }
 
-const BooleanFormatted: React.FC<Props> = ({ value }) => (
+const BooleanFormatted: React.FC<BooleanFormattedProps> = ({ value }) => (
   <>{value === true || value === 'true' ? 'Yes' : 'No'}</>
 );
 

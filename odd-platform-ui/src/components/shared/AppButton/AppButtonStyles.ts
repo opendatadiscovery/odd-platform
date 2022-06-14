@@ -52,6 +52,7 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
       ...breakpointDownLgBody2,
     },
     [`&.${buttonClasses.sizeSmall}`]: {
+      height: '20px',
       minWidth: 'auto',
       borderRadius: '4px',
       padding: theme.spacing(0.5, 0.5),

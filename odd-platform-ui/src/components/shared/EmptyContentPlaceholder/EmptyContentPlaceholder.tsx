@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import EmptyIcon from 'components/shared/Icons/EmptyIcon';
 
-interface EmptyContentPlaceholderProps {
+export interface EmptyContentPlaceholderProps {
   text?: string;
 }
 
@@ -17,6 +17,7 @@ const EmptyContentPlaceholder: React.FC<EmptyContentPlaceholderProps> = ({
       alignItems: 'center',
       alignSelf: 'flex-start',
     }}
+    aria-label="EmptyContentPlaceholder"
   >
     <EmptyIcon sx={{ mr: 0.5 }} />
     {text}

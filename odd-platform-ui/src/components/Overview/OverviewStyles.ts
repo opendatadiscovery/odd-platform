@@ -17,6 +17,8 @@ export const Container = styled('div')(({ theme }) => ({
   },
 }));
 
+export const Overview = styled('div')(() => ({}));
+
 export const TagsContainer = styled(Grid)(() => ({
   maxWidth: `${maxTagsContainerWidth}px`,
   justifyContent: 'center',

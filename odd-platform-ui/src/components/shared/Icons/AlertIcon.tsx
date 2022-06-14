@@ -3,7 +3,12 @@ import AppSvgIcon from 'components/shared/Icons/AppSvgIcon';
 import { SvgIconProps } from '@mui/material/SvgIcon';
 
 const AlertIcon: React.FC<SvgIconProps> = ({ sx, ...props }) => (
-  <AppSvgIcon sx={sx} viewBox="0 0 16 16" {...props}>
+  <AppSvgIcon
+    sx={sx}
+    viewBox="0 0 16 16"
+    {...props}
+    aria-label="AlertIcon"
+  >
     <svg fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         fillRule="evenodd"

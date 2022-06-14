@@ -10,7 +10,7 @@ describe('NumberFormatted', () => {
   it('NumberFormatted should return formatted number from string', () => {
     setupComponent({ value: '1000000' });
     expect(getByTestID('number-formatted-component').textContent).toBe(
-      '1000K'
+      '1M'
     );
   });
 
@@ -23,7 +23,9 @@ describe('NumberFormatted', () => {
 
   it('NumberFormatted should return empty string with wrong string value', () => {
     setupComponent({ value: 'a10aaa' });
-    expect(getByTestID('number-formatted-component').textContent).toBe('');
+    expect(getByTestID('number-formatted-component').textContent).toBe(
+      '0'
+    );
   });
 
   it('NumberFormatted should return empty string with undefined value', () => {
