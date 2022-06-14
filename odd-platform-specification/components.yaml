@@ -41,6 +41,7 @@ components:
           $ref: '#/components/schemas/PageInfo'
       required:
         - items
+        - page_info
 
     NamespaceFormData:
       type: object
@@ -604,6 +605,13 @@ components:
         - name
         - type
         - entities
+
+    DataEntityDataEntityGroupFormData:
+      type: object
+      properties:
+        data_entity_group_id:
+          type: integer
+          format: int64
 
     DataSetTestReport:
       type: object

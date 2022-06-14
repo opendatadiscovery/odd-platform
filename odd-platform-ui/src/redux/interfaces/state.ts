@@ -1,4 +1,4 @@
-import { ThunkAction } from '@reduxjs/toolkit';
+import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
   Alert,
@@ -71,9 +71,7 @@ export interface LabelsState {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface NamespacesState {
-  byId: { [namespaceId: string]: Namespace };
-  allIds: Namespace['id'][];
+export interface NamespacesState extends EntityState<Namespace> {
   pageInfo?: CurrentPageInfo;
 }
 

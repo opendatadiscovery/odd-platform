@@ -6,39 +6,35 @@ import {
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  DataEntityGroupFormData as GeneratedDataEntityGroupFormData,
-  DataEntityType,
+  CollectorFormData,
   Namespace,
-  NamespaceApiGetNamespaceListRequest,
-  NamespaceList,
+  TermFormData,
 } from 'generated-sources';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { ControllerRenderProps } from 'react-hook-form';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
+import { DataEntityGroupFormData } from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
+import { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 
 type FilterOption = Omit<Namespace, 'id' | 'namespace'> &
   Partial<Namespace>;
 
-interface DataEntityGroupFormData
-  extends Omit<GeneratedDataEntityGroupFormData, 'type'> {
-  type?: DataEntityType;
-}
-
 interface NamespaceAutocompleteProps {
-  searchNamespace: (
-    params: NamespaceApiGetNamespaceListRequest
-  ) => Promise<NamespaceList>;
-  controllerProps: ControllerRenderProps<
-    DataEntityGroupFormData,
-    'namespaceName'
-  >;
+  controllerProps:
+    | ControllerRenderProps<TermFormData, 'namespaceName'>
+    | ControllerRenderProps<DataEntityGroupFormData, 'namespaceName'>
+    | ControllerRenderProps<DataSourceFormDataValues, 'namespaceName'>
+    | ControllerRenderProps<CollectorFormData, 'namespaceName'>;
 }
 
 const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
-  searchNamespace,
   controllerProps,
 }) => {
+  const dispatch = useAppDispatch();
+
   type FilterChangeOption = FilterOption | string | { inputValue: string };
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
   const [options, setOptions] = React.useState<FilterOption[]>([]);
@@ -49,12 +45,12 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      searchNamespace({ query: searchText, page: 1, size: 30 }).then(
-        response => {
-          setOptions(response.items);
+      dispatch(searchNamespace({ query: searchText, page: 1, size: 30 }))
+        .unwrap()
+        .then(({ namespaceList }) => {
+          setOptions(namespaceList);
           setLoading(false);
-        }
-      );
+        });
     }, 500),
     [searchNamespace, setLoading, setOptions, searchText]
   );
@@ -159,7 +155,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
       handleHomeEndKeys
       selectOnFocus
       clearIcon={<ClearIcon />}
-      sx={{ mt: 1.5 }}
+      sx={{ mt: 1.25 }}
       renderInput={params => (
         <AppTextField
           {...params}

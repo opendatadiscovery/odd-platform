@@ -114,9 +114,10 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public Flux<DataEntityRef> getQuerySuggestions(final String query) {
+    public Flux<DataEntityRef> getQuerySuggestions(final String query, final Integer entityClassId,
+                                                   final Boolean manuallyCreated) {
         return Flux
-            .fromIterable(dataEntityRepository.getQuerySuggestions(query))
+            .fromIterable(dataEntityRepository.getQuerySuggestions(query, entityClassId, manuallyCreated))
             .map(dataEntityMapper::mapRef);
     }
 

@@ -7,12 +7,12 @@ import {
   differenceInSeconds,
   intervalToDuration,
 } from 'date-fns/esm';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
-  DataSourceFormData,
   DataSource,
   DataSourceApiRegisterDataSourceRequest,
   DataSourceApiUpdateDataSourceRequest,
+  DataSourceFormData,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
@@ -28,7 +28,7 @@ import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/D
 import AppRadio from 'components/shared/AppRadio/AppRadio';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
-import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
+import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 
 interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -335,7 +335,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         name="namespaceName"
         defaultValue={dataSource?.namespace?.name}
         render={({ field }) => (
-          <NamespaceAutocompleteContainer controllerProps={field} />
+          <NamespaceAutocomplete controllerProps={field} />
         )}
       />
       <Controller

@@ -3,6 +3,7 @@ import React from 'react';
 import { DataEntityDetails } from 'generated-sources';
 import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import OverviewGroups from 'components/DataEntityDetails/Overview/OverviewGroups/OverviewGroups';
 import OverviewDescriptionContainer from './OverviewDescription/OverviewDescriptionContainer';
 import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
 import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
@@ -58,6 +59,12 @@ const Overview: React.FC<OverviewProps> = ({
               />
             </SectionContainer>
           ) : null}
+          <SectionContainer square elevation={0}>
+            <OverviewGroups
+              dataEntityGroups={dataEntityDetails.dataEntityGroups}
+              dataEntityId={dataEntityId}
+            />
+          </SectionContainer>
           <SectionContainer square elevation={0}>
             <OverviewTags
               tags={dataEntityDetails.tags}

@@ -636,9 +636,21 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public List<DataEntityDto> getQuerySuggestions(final String query) {
+    public List<DataEntityDto> getQuerySuggestions(final String query, final Integer entityClassId,
+                                                   final Boolean manuallyCreated) {
         if (StringUtils.isEmpty(query)) {
             return emptyList();
+        }
+
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, query));
+        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
+        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
+        if (entityClassId != null) {
+            conditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {entityClassId}));
+        }
+        if (manuallyCreated != null) {
+            conditions.add(DATA_ENTITY.MANUALLY_CREATED.eq(manuallyCreated));
         }
 
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
@@ -650,9 +662,7 @@ public class DataEntityRepositoryImpl
             .select(rankField.as(RANK_FIELD_ALIAS))
             .from(SEARCH_ENTRYPOINT)
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(SEARCH_ENTRYPOINT.DATA_ENTITY_ID))
-            .where(jooqFTSHelper.ftsCondition(SEARCH_ENTRYPOINT.SEARCH_VECTOR, query))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
-            .and(DATA_ENTITY.DELETED_AT.isNull())
+            .where(conditions)
             .orderBy(RANK_FIELD_ALIAS.desc())
             .limit(SUGGESTION_LIMIT);
 

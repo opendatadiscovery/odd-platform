@@ -1,16 +1,16 @@
 import {
-  SearchApi,
   Configuration,
-  SearchApiGetSearchResultsRequest,
-  SearchApiGetFiltersForFacetRequest,
+  CountableSearchFilter,
   DataEntityList,
-  SearchFacetsData,
+  DataEntityRef,
+  SearchApi,
+  SearchApiGetFiltersForFacetRequest,
+  SearchApiGetSearchFacetListRequest,
+  SearchApiGetSearchResultsRequest,
+  SearchApiGetSearchSuggestionsRequest,
   SearchApiSearchRequest,
   SearchApiUpdateSearchFacetsRequest,
-  SearchApiGetSearchFacetListRequest,
-  CountableSearchFilter,
-  DataEntityRef,
-  SearchApiGetSearchSuggestionsRequest,
+  SearchFacetsData,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
@@ -20,16 +20,17 @@ import {
   OptionalFacetNames,
   PaginatedResponse,
 } from 'redux/interfaces';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const searchApiClient = new SearchApi(apiClientConf);
+const searchApi = new SearchApi(apiClientConf);
 
 export const createDataEntitiesSearch = createThunk<
   SearchApiSearchRequest,
   SearchFacetsData,
   SearchFacetsData
 >(
-  (params: SearchApiSearchRequest) => searchApiClient.search(params),
+  (params: SearchApiSearchRequest) => searchApi.search(params),
   actions.createDataEntitySearchAction,
   (response: SearchFacetsData) => response
 );
@@ -40,7 +41,7 @@ export const updateDataEntitiesSearch = createThunk<
   SearchFacetsData
 >(
   (params: SearchApiUpdateSearchFacetsRequest) =>
-    searchApiClient.updateSearchFacets(params),
+    searchApi.updateSearchFacets(params),
   actions.updateDataEntitySearchAction,
   (response: SearchFacetsData) => response
 );
@@ -51,7 +52,7 @@ export const getDataEntitiesSearchDetails = createThunk<
   SearchFacetsData
 >(
   (params: SearchApiGetSearchFacetListRequest) =>
-    searchApiClient.getSearchFacetList(params),
+    searchApi.getSearchFacetList(params),
   actions.getDataEntitySearchAction,
   (response: SearchFacetsData) => response
 );
@@ -62,7 +63,7 @@ export const getDataEntitiesSearchResults = createThunk<
   PaginatedResponse<DataEntityList>
 >(
   (params: SearchApiGetSearchResultsRequest) =>
-    searchApiClient.getSearchResults(params),
+    searchApi.getSearchResults(params),
   actions.getDataEntitySearchResultsAction,
   (
     response: DataEntityList,
@@ -83,7 +84,7 @@ export const getFacetOptions = createThunk<
   FacetOptions
 >(
   (params: SearchApiGetFiltersForFacetRequest) =>
-    searchApiClient.getFiltersForFacet(params),
+    searchApi.getFiltersForFacet(params),
   actions.getSearchFacetOptionsAction,
   (
     response: CountableSearchFilter[],
@@ -97,13 +98,18 @@ export const getFacetOptions = createThunk<
   })
 );
 
-export const fetchSearchSuggestions = createThunk<
-  SearchApiGetSearchSuggestionsRequest,
+export const fetchSearchSuggestions = createAsyncThunk<
   DataEntityRef[],
-  DataEntityRef[]
+  SearchApiGetSearchSuggestionsRequest
 >(
-  (params: SearchApiGetSearchSuggestionsRequest) =>
-    searchApiClient.getSearchSuggestions(params),
-  actions.getDataEntitySearchSuggestionsAction,
-  (response: DataEntityRef[]) => response
+  actions.fetchDataEntitySearchSuggestionsActionType,
+  async ({ query, entityClassId, manuallyCreated }) => {
+    const searchSuggestions = await searchApi.getSearchSuggestions({
+      query,
+      entityClassId,
+      manuallyCreated,
+    });
+
+    return searchSuggestions;
+  }
 );
