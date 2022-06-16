@@ -3,7 +3,6 @@ import { Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import {
   DataEntityRef,
-  SearchApiGetSearchSuggestionsRequest,
   SearchApiSearchRequest,
   SearchFacetsData,
 } from 'generated-sources';
@@ -11,18 +10,17 @@ import { dataEntityDetailsPath, searchPath } from 'lib/paths';
 import * as S from 'components/shared/MainSearch/MainSearchStyles';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useDebouncedCallback } from 'use-debounce';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { fetchSearchSuggestions } from 'redux/thunks';
+import SearchIcon from 'components/shared/Icons/SearchIcon';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
 
 interface AppSearchProps {
   className?: string;
   query?: string;
   placeholder?: string;
   suggestions: DataEntityRef[];
-  fetchSearchSuggestions: (
-    params: SearchApiGetSearchSuggestionsRequest
-  ) => Promise<DataEntityRef[]>;
   createDataEntitiesSearch: (
     params: SearchApiSearchRequest
   ) => Promise<SearchFacetsData>;
@@ -32,9 +30,10 @@ const MainSearch: React.FC<AppSearchProps> = ({
   placeholder,
   query,
   suggestions,
-  fetchSearchSuggestions,
   createDataEntitiesSearch,
 }) => {
+  const dispatch = useAppDispatch();
+
   const [searchText, setSearchText] = React.useState<string>('');
   const [options, setOptions] = React.useState<Partial<DataEntityRef>[]>(
     []
@@ -76,7 +75,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
 
   const getSuggestions = React.useCallback(
     useDebouncedCallback(() => {
-      fetchSearchSuggestions({ query: searchText }).then(() => {
+      dispatch(fetchSearchSuggestions({ query: searchText })).then(() => {
         setLoadingSuggestions(false);
       });
     }, 500),

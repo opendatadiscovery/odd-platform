@@ -1,9 +1,11 @@
 import {
   Configuration,
   DataEntityApi,
+  DataEntityApiAddDataEntityDataEntityGroupRequest,
   DataEntityApiAddDataEntityTermRequest,
   DataEntityApiCreateDataEntityGroupRequest,
   DataEntityApiCreateDataEntityTagsRelationsRequest,
+  DataEntityApiDeleteDataEntityFromDataEntityGroupRequest,
   DataEntityApiDeleteDataEntityGroupRequest,
   DataEntityApiDeleteTermFromDataEntityRequest,
   DataEntityApiGetDataEntityDetailsRequest,
@@ -197,3 +199,31 @@ export const deleteDataEntityGroup = createAsyncThunk<
   });
   return dataEntityGroupId;
 });
+
+export const addDataEntityToGroup = createAsyncThunk<
+  DataEntityRef,
+  DataEntityApiAddDataEntityDataEntityGroupRequest
+>(
+  actions.addDataEntityToGroupActionType,
+  async ({ dataEntityId, dataEntityDataEntityGroupFormData }) => {
+    const dataEntityGroupRef =
+      await dataEntityApi.addDataEntityDataEntityGroup({
+        dataEntityId,
+        dataEntityDataEntityGroupFormData,
+      });
+    return dataEntityGroupRef;
+  }
+);
+
+export const deleteDataEntityFromGroup = createAsyncThunk<
+  void,
+  DataEntityApiDeleteDataEntityFromDataEntityGroupRequest
+>(
+  actions.deleteDataEntityFromGroupActionType,
+  async ({ dataEntityId, dataEntityGroupId }) => {
+    await dataEntityApi.deleteDataEntityFromDataEntityGroup({
+      dataEntityId,
+      dataEntityGroupId,
+    });
+  }
+);

@@ -6,8 +6,8 @@ import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import * as S from './ManagementStyles';
 
 // lazy components
-const NamespaceListContainer = React.lazy(
-  () => import('./NamespaceList/NamespaceListContainer')
+const NamespaceList = React.lazy(
+  () => import('./NamespaceList/NamespaceList')
 );
 const OwnersListContainer = React.lazy(
   () => import('./OwnersList/OwnersListContainer')
@@ -71,7 +71,7 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
             <Route
               exact
               path="/management/namespaces"
-              component={NamespaceListContainer}
+              component={NamespaceList}
             />
             <Route
               exact

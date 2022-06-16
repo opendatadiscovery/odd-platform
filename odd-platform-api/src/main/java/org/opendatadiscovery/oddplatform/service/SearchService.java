@@ -25,5 +25,6 @@ public interface SearchService {
 
     Mono<DataEntityList> getSearchResults(final UUID searchId, final Integer page, final Integer size);
 
-    Flux<DataEntityRef> getQuerySuggestions(final String query);
+    Flux<DataEntityRef> getQuerySuggestions(final String query, final Integer entityClassId,
+                                            final Boolean manuallyCreated);
 }

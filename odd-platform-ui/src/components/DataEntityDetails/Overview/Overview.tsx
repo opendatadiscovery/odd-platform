@@ -1,8 +1,9 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { DataEntityDetails } from 'generated-sources';
+import { DataEntityDetails, DataSetTestReport } from 'generated-sources';
 import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import OverviewGroups from 'components/DataEntityDetails/Overview/OverviewGroups/OverviewGroups';
 import OverviewDescriptionContainer from './OverviewDescription/OverviewDescriptionContainer';
 import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
 import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
@@ -17,6 +18,7 @@ interface OverviewProps {
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
   isDataEntityDetailsFetching: boolean;
+  datasetQualityTestReport?: DataSetTestReport;
 }
 
 const Overview: React.FC<OverviewProps> = ({
@@ -24,6 +26,7 @@ const Overview: React.FC<OverviewProps> = ({
   dataEntityDetails,
   isDataset,
   isDataEntityDetailsFetching,
+  datasetQualityTestReport,
 }) => (
   <>
     {dataEntityDetails && !isDataEntityDetailsFetching ? (
@@ -51,13 +54,19 @@ const Overview: React.FC<OverviewProps> = ({
               dataEntityId={dataEntityDetails.id}
             />
           </SectionContainer>
-          {isDataset ? (
+          {isDataset && datasetQualityTestReport?.total ? (
             <SectionContainer square elevation={0}>
               <OverviewDataQualityReportContainer
                 dataEntityId={dataEntityId}
               />
             </SectionContainer>
           ) : null}
+          <SectionContainer square elevation={0}>
+            <OverviewGroups
+              dataEntityGroups={dataEntityDetails.dataEntityGroups}
+              dataEntityId={dataEntityId}
+            />
+          </SectionContainer>
           <SectionContainer square elevation={0}>
             <OverviewTags
               tags={dataEntityDetails.tags}
@@ -82,5 +91,4 @@ const Overview: React.FC<OverviewProps> = ({
     ) : null}
   </>
 );
-
 export default Overview;

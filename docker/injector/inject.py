@@ -6,7 +6,7 @@ from typing import Union, Dict, Any, Tuple, List
 
 import requests
 
-REACH_TRIES_NUMBER = 10
+REACH_TRIES_NUMBER = 20
 APP_PATH = os.getenv("APP_PATH") or "."
 
 
@@ -46,6 +46,7 @@ def inject_data(data: Dict[str, Any], token: str):
 
 
 platform_host_url = os.environ["PLATFORM_HOST_URL"]
+print(f"Platform host url: {platform_host_url}")
 
 data_sources_grouped = {ds["oddrn"]: ds for ds in read_datasources_json()}
 
@@ -63,10 +64,12 @@ for i in range(0, REACH_TRIES_NUMBER):
     try:
         hc_response = requests.get(f"{platform_host_url}/actuator/health")
     except requests.exceptions.ConnectionError:
+        print("Couldn't reach the platform")
         time.sleep(2)
         continue
 
     if hc_response.json().get('status') != 'UP':
+        print("Platform's not healthy yet")
         time.sleep(2)
         continue
 

@@ -1,10 +1,10 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {
-  CollectorFormData,
   Collector,
   CollectorApiRegisterCollectorRequest,
   CollectorApiUpdateCollectorRequest,
+  CollectorFormData,
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Typography } from '@mui/material';
@@ -12,7 +12,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { Asterisk } from 'components/Management/CollectorsList/CollectorForm/CollectorFormStyles';
-import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
+import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 
 interface CollectorFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -132,7 +132,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
         name="namespaceName"
         defaultValue={collector?.namespace?.name}
         render={({ field }) => (
-          <NamespaceAutocompleteContainer controllerProps={field} />
+          <NamespaceAutocomplete controllerProps={field} />
         )}
       />
       <Controller

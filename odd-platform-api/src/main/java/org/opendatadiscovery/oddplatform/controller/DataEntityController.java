@@ -6,6 +6,7 @@ import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
@@ -308,5 +309,24 @@ public class DataEntityController
         return alertService.getDataEntityAlerts(dataEntityId)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityRef>> addDataEntityDataEntityGroup(
+        final Long dataEntityId,
+        final Mono<DataEntityDataEntityGroupFormData> dataEntityDataEntityGroupFormData,
+        final ServerWebExchange exchange) {
+        return dataEntityDataEntityGroupFormData
+            .flatMap(fd -> entityService.addDataEntityToDEG(dataEntityId, fd))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteDataEntityFromDataEntityGroup(final Long dataEntityId,
+                                                                          final Long dataEntityGroupId,
+                                                                          final ServerWebExchange exchange) {
+        return entityService.deleteDataEntityFromDEG(dataEntityId, dataEntityGroupId)
+            .ignoreElements()
+            .thenReturn(ResponseEntity.noContent().build());
     }
 }

@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { DataQualityTestRunStatus } from 'generated-sources';
+import { DataEntityRunStatus } from 'generated-sources';
 
 export const Content = styled('div')<{
-  $typeName: DataQualityTestRunStatus;
+  $typeName: DataEntityRunStatus;
 }>(({ theme, $typeName }) => ({
   padding: theme.spacing(0.5),
   marginRight: theme.spacing(1),

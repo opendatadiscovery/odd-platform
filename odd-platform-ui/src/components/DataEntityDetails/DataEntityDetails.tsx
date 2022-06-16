@@ -16,6 +16,8 @@ import {
   AlertList,
   DataEntityApiGetDataEntityAlertsRequest,
   DataEntityDetails,
+  DataQualityApiGetDatasetTestReportRequest,
+  DataSetTestReport,
 } from 'generated-sources';
 import { FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -43,6 +45,8 @@ import AppPopover from 'components/shared/AppPopover/AppPopover';
 import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import {
+  getDataEntityAddToGroupStatuses,
+  getDataEntityDeleteFromGroupStatuses,
   getDataEntityGroupUpdatingStatuses,
   getSearchId,
 } from 'redux/selectors';
@@ -76,9 +80,14 @@ interface DataEntityDetailsProps {
   dataEntityDetails: DataEntityDetails;
   isDataset: boolean;
   isQualityTest: boolean;
+  isTransformerJob: boolean;
   fetchDataEntityAlerts: (
     params: DataEntityApiGetDataEntityAlertsRequest
   ) => Promise<AlertList>;
+  fetchDataSetQualityTestReport: (
+    params: DataQualityApiGetDatasetTestReportRequest
+  ) => Promise<DataSetTestReport>;
+  datasetQualityTestReport?: DataSetTestReport;
   dataEntityFetchingStatus: FetchStatus;
   openAlertsCount: number;
 }
@@ -89,7 +98,10 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   dataEntityDetails,
   isDataset,
   isQualityTest,
+  isTransformerJob,
   fetchDataEntityAlerts,
+  fetchDataSetQualityTestReport,
+  datasetQualityTestReport,
   dataEntityFetchingStatus,
   openAlertsCount,
 }) => {
@@ -100,15 +112,35 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     getDataEntityGroupUpdatingStatuses
   );
 
+  const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
+    getDataEntityAddToGroupStatuses
+  );
+
+  const { isLoaded: isDataEntityDeletedFromGroup } = useAppSelector(
+    getDataEntityDeleteFromGroupStatuses
+  );
+
   const searchId = useAppSelector(getSearchId);
 
   React.useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
-  }, [fetchDataEntityDetails, dataEntityId, isDataEntityGroupUpdated]);
+  }, [
+    fetchDataEntityDetails,
+    dataEntityId,
+    isDataEntityGroupUpdated,
+    isDataEntityAddedToGroup,
+    isDataEntityDeletedFromGroup,
+  ]);
 
   React.useEffect(() => {
     fetchDataEntityAlerts({ dataEntityId });
   }, []);
+
+  React.useEffect(() => {
+    fetchDataSetQualityTestReport({
+      dataEntityId,
+    });
+  }, [dataEntityId, fetchDataSetQualityTestReport]);
 
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
@@ -134,13 +166,13 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       {
         name: 'Test reports',
         link: dataEntityTestReportPath(dataEntityId),
-        hidden: !isDataset,
+        hidden: !isDataset || !datasetQualityTestReport?.total,
         value: 'test-reports',
       },
       {
         name: 'History',
         link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest,
+        hidden: !isQualityTest && !isTransformerJob,
         value: 'history',
       },
       {

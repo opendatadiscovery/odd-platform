@@ -79,6 +79,8 @@ management:
   health:
     ldap:
       enabled: false
+    redis:
+      enabled: false
 
 logging:
   level:

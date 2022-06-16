@@ -1,7 +1,7 @@
 import { createAsyncAction } from 'typesafe-actions';
 import {
   DataEntityList,
-  DataQualityTestRunList,
+  DataEntityRunList,
   DataSetTestReport,
 } from 'generated-sources';
 import {
@@ -27,6 +27,6 @@ export const fetchDataSetQualityTestRunsAction = createAsyncAction(
   'GET_DATA_SET_QUALITY_TEST_RUNS_REPORT__FAILURE'
 )<
   undefined,
-  PartialEntityUpdateParams<PaginatedResponse<DataQualityTestRunList>>,
+  PartialEntityUpdateParams<PaginatedResponse<DataEntityRunList>>,
   undefined
 >();

@@ -4,7 +4,6 @@ import {
   getDatasetTestReport,
   getDatasetTestReportFetching,
 } from 'redux/selectors/dataQualityTest.selectors';
-import { fetchDataSetQualityTestReport } from 'redux/thunks/dataQualityTest.thunks';
 import OverviewDataQualityReport from './OverviewDataQualityReport';
 
 const mapStateToProps = (
@@ -16,9 +15,7 @@ const mapStateToProps = (
   datasetQualityTestReport: getDatasetTestReport(state, dataEntityId),
 });
 
-const mapDispatchToProps = {
-  fetchDataSetQualityTestReport,
-};
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,
