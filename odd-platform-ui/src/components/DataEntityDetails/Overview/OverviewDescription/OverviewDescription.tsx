@@ -32,6 +32,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
   >('write');
   const [internalDescription, setInternalDescription] =
     React.useState<string>(dataEntityInternalDescription || '');
+
   const onEditClick = React.useCallback(
     () => setEditMode(true),
     [setEditMode]
@@ -66,10 +67,15 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
   );
 
   const saveMarkDownOnEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === 'Enter' && e.shiftKey) {
       handleDescriptionUpdate();
     }
   };
+
+  React.useEffect(
+    () => setInternalDescription(dataEntityInternalDescription),
+    [dataEntityInternalDescription, editMode]
+  );
 
   return (
     <>
@@ -91,9 +97,9 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
         </S.CaptionContainer>
         {editMode ? (
           // eslint-disable-next-line jsx-a11y/no-static-element-interactions
-          <div onKeyUp={saveMarkDownOnEnter}>
+          <div onKeyDown={saveMarkDownOnEnter}>
             <ReactMde
-              minEditorHeight={300}
+              minEditorHeight={120}
               value={internalDescription}
               onChange={setInternalDescription}
               selectedTab={selectedTab}
@@ -108,16 +114,16 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
             <S.FormActions>
               <AppButton
                 onClick={handleDescriptionUpdate}
-                size="medium"
-                color="primaryLight"
-                sx={{ mr: 0.5 }}
+                size="small"
+                color="primary"
+                sx={{ mr: 1 }}
               >
                 Save
               </AppButton>
               <AppButton
                 onClick={() => setEditMode(false)}
-                size="medium"
-                color="tertiary"
+                size="small"
+                color="primaryLight"
               >
                 Cancel
               </AppButton>
