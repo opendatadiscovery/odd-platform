@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -48,6 +47,7 @@ import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetStructureRepository;
+import org.opendatadiscovery.oddplatform.repository.DatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
@@ -75,6 +75,7 @@ public class IngestionServiceImpl implements IngestionService {
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final DataEntityRepository dataEntityRepository;
     private final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
+    private final DatasetVersionRepository datasetVersionRepository;
     private final DatasetStructureRepository datasetStructureRepository;
     private final LineageRepository lineageRepository;
     private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
@@ -106,19 +107,21 @@ public class IngestionServiceImpl implements IngestionService {
                     .map(EnrichedDataEntityIngestionDto::getId)
                     .collect(Collectors.toList());
 
+                // TODO: 17.06.2022 matmalik uncomment when refactored to reactive approach
+//                final Map<String, DatasetStructureDelta> datasetStructureDelta =
+//                    reactiveDatasetVersionRepository
+//                        .getLatestVersions(changedSchemaIds)
+//                        .flatMap(latestVersions -> {
+//                            final List<DatasetVersionPojo> havePenultimate = latestVersions.stream()
+//                                .filter(p -> p.getVersion() > 1)
+//                                .collect(Collectors.toList());
+//                            return reactiveDatasetVersionRepository.getPenaltimate(havePenultimate)
+//                                .switchIfEmpty(
+//                                    Mono.error(new NotFoundException("No DatasetVersionPojo found with penaltimate")))
+//                                .flatMap(penaltimateList -> getLastStructureDelta(havePenultimate, penaltimateList));
+//                        });
                 final Map<String, DatasetStructureDelta> datasetStructureDelta =
-                    reactiveDatasetVersionRepository
-                        .getLatestVersions(changedSchemaIds)
-                        .flatMap(latestVersions -> {
-                            final List<DatasetVersionPojo> havePenultimate = latestVersions.stream()
-                                .filter(p -> p.getVersion() > 1)
-                                .collect(Collectors.toList());
-                            return reactiveDatasetVersionRepository.getPenaltimate(havePenultimate)
-                                .switchIfEmpty(
-                                    Mono.error(new NotFoundException("No DatasetVersionPojo found with penaltimate")))
-                                .flatMap(penaltimateList -> getLastStructureDelta(havePenultimate, penaltimateList));
-                        })
-                        .block(); // TODO: 17.06.2022 matmalik remove this when refactored to reactive approach
+                    datasetVersionRepository.getLastStructureDelta(changedSchemaIds);
 
                 final List<AlertPojo> alerts = Stream.of(
                     alertLocator.locateDatasetBackIncSchema(datasetStructureDelta),
@@ -350,12 +353,15 @@ public class IngestionServiceImpl implements IngestionService {
             .map(EnrichedDataEntityIngestionDto::getId)
             .collect(Collectors.toSet());
 
-        final Mono<List<DatasetVersionPojo>> versions = reactiveDatasetVersionRepository
-            .getLatestVersions(datasetIds)
-            .map(fetchedVersions -> fetchedVersions.stream()
-                .map(fetchedVersion -> incrementVersion(datasetDict, fetchedVersion))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList()));
+        // TODO: 17.06.2022 matmalik uncomment when refactored to reactive approach
+//        final Mono<List<DatasetVersionPojo>> versions = reactiveDatasetVersionRepository
+//            .getLatestVersions(datasetIds)
+//            .map(fetchedVersions -> fetchedVersions.stream()
+//                .map(fetchedVersion -> incrementVersion(datasetDict, fetchedVersion))
+//                .filter(Objects::nonNull)
+//                .collect(Collectors.toList()));
+        final Mono<List<DatasetVersionPojo>> versions = Mono
+            .fromCallable(() -> datasetVersionRepository.getLatestVersions(datasetIds));
 
         final Map<String, List<DatasetFieldPojo>> datasetFields = datasetDict.values().stream()
             .collect(Collectors.toMap(
