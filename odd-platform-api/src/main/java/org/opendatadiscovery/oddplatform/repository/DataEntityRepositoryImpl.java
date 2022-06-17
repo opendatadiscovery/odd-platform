@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -59,23 +58,19 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
-import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityGroupLineageDto;
-import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
-import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
-import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
@@ -109,7 +104,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATI
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -144,6 +138,7 @@ public class DataEntityRepositoryImpl
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
     private final MetadataFieldValueRepository metadataFieldValueRepository;
     private final DatasetVersionRepository datasetVersionRepository;
+    private final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
     private final TermRepository termRepository;
     private final LineageRepository lineageRepository;
 
@@ -154,6 +149,7 @@ public class DataEntityRepositoryImpl
                                     final DataEntityTaskRunRepository dataEntityTaskRunRepository,
                                     final MetadataFieldValueRepository metadataFieldValueRepository,
                                     final DatasetVersionRepository datasetVersionRepository,
+                                    final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository,
                                     final TermRepository termRepository,
                                     final LineageRepository lineageRepository) {
         super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null,
@@ -164,6 +160,7 @@ public class DataEntityRepositoryImpl
         this.dataEntityTaskRunRepository = dataEntityTaskRunRepository;
         this.metadataFieldValueRepository = metadataFieldValueRepository;
         this.datasetVersionRepository = datasetVersionRepository;
+        this.reactiveDatasetVersionRepository = reactiveDatasetVersionRepository;
         this.termRepository = termRepository;
         this.lineageRepository = lineageRepository;
     }
@@ -806,7 +803,9 @@ public class DataEntityRepositoryImpl
             return;
         }
 
-        final List<DatasetVersionPojo> versions = datasetVersionRepository.getVersions(dto.getDataEntity().getOddrn());
+        final List<DatasetVersionPojo> versions =
+            reactiveDatasetVersionRepository.getVersions(dto.getDataEntity().getOddrn())
+                .block(); // TODO: 17.06.2022 matmalik remove this block after refactoring
 
         dto.setDatasetVersions(versions);
     }
