@@ -217,10 +217,8 @@ export const getDataEntityIsTransformerJob = createSelector(
       entityCLass =>
         entityCLass.name === DataEntityClassNameEnum.TRANSFORMER
     );
-    const isDataEntityTypeJob =
-      dataEntity?.type?.name === DataEntityTypeNameEnum.JOB;
 
-    return Boolean(isDataEntityClassTransformer && isDataEntityTypeJob);
+    return Boolean(isDataEntityClassTransformer);
   }
 );
 
