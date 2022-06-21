@@ -1,64 +1,60 @@
 import {
   Configuration,
   LabelApi,
-  LabelsResponse,
   Label,
   LabelApiCreateLabelRequest,
   LabelApiUpdateLabelRequest,
   LabelApiDeleteLabelRequest,
   LabelApiGetLabelListRequest,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { CurrentPageInfo } from 'redux/interfaces/common';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PaginatedResponse } from 'redux/interfaces/common';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new LabelApi(apiClientConf);
 
-export const fetchLabelsList = createThunk<
-  LabelApiGetLabelListRequest,
-  LabelsResponse,
-  PaginatedResponse<LabelsResponse>
->(
-  (params: LabelApiGetLabelListRequest) => apiClient.getLabelList(params),
-  actions.fetchLabelsAction,
-  (response: LabelsResponse, request: LabelApiGetLabelListRequest) => ({
-    ...response,
-    pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
-    },
-  })
-);
+export const fetchLabelsList = createAsyncThunk<
+  { items: Array<Label>; pageInfo: CurrentPageInfo },
+  LabelApiGetLabelListRequest
+>(actions.fetchLabelsAction, async ({ page, size, query }) => {
+  const { items, pageInfo } = await apiClient.getLabelList({
+    page,
+    size,
+    query,
+  });
 
-export const createLabel = createThunk<
-  LabelApiCreateLabelRequest,
+  return { items, pageInfo: { ...pageInfo, page } };
+});
+
+export const createLabel = createAsyncThunk<
   Label[],
-  Label[]
->(
-  (params: LabelApiCreateLabelRequest) => apiClient.createLabel(params),
-  actions.createLabelsAction,
-  (result: Label[]) => result
-);
+  LabelApiCreateLabelRequest
+>(actions.createLabelsAction, async ({ labelFormData }) => {
+  const label = await apiClient.createLabel({
+    labelFormData,
+  });
 
-export const updateLabel = createThunk<
-  LabelApiUpdateLabelRequest,
+  return label;
+});
+
+export const updateLabel = createAsyncThunk<
   Label,
-  Label
->(
-  (params: LabelApiUpdateLabelRequest) => apiClient.updateLabel(params),
-  actions.updateLabelAction,
-  (result: Label) => result
-);
+  LabelApiUpdateLabelRequest
+>(actions.updateLabelAction, async ({ labelId, labelFormData }) => {
+  const label = await apiClient.updateLabel({
+    labelId,
+    labelFormData,
+  });
 
-export const deleteLabel = createThunk<
-  LabelApiDeleteLabelRequest,
-  void,
-  number
->(
-  (params: LabelApiDeleteLabelRequest) => apiClient.deleteLabel(params),
-  actions.deleteLabelAction,
-  (_, reqParams) => reqParams.labelId
-);
+  return label;
+});
+
+export const deleteLabel = createAsyncThunk<
+  number,
+  LabelApiDeleteLabelRequest
+>(actions.deleteLabelAction, async ({ labelId }) => {
+  await apiClient.deleteLabel({ labelId });
+  return labelId;
+});

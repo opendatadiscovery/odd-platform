@@ -5,12 +5,12 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import AppButton from 'components/shared/AppButton/AppButton';
-import LabelEditFormContainer from '../LabelEditForm/LabelEditFormContainer';
+import LabelEditForm from '../LabelEditForm/LabelEditForm';
 import * as S from './EditableLabelItemStyles';
 
 interface EditableLabelItemProps {
   label: Label;
-  deleteLabel: (params: LabelApiDeleteLabelRequest) => Promise<void>;
+  deleteLabel: (params: LabelApiDeleteLabelRequest) => Promise<unknown>;
 }
 
 const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
@@ -30,7 +30,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
         </Typography>
       </Grid>
       <S.ActionsContainer item>
-        <LabelEditFormContainer
+        <LabelEditForm
           label={label}
           editBtn={
             <AppButton

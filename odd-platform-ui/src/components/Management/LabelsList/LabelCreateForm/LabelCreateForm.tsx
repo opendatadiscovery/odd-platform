@@ -1,11 +1,10 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import {
-  Label,
-  LabelApiCreateLabelRequest,
-  LabelFormData,
-} from 'generated-sources';
+import { LabelFormData } from 'generated-sources';
+import { getLabelCreatingStatuses } from 'redux/selectors';
+import { createLabel } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -13,8 +12,6 @@ import LabelCreateFormItem from './LabelCreateFormItem/LabelCreateFormItem';
 
 interface LabelCreateFormProps {
   btnCreateEl: JSX.Element;
-  isLoading: boolean;
-  createLabel: (params: LabelApiCreateLabelRequest) => Promise<Label[]>;
 }
 
 interface LabelCreateFormData {
@@ -23,9 +20,9 @@ interface LabelCreateFormData {
 
 const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
   btnCreateEl,
-  isLoading,
-  createLabel,
 }) => {
+  const dispatch = useAppDispatch();
+  const { isLoading } = useAppSelector(getLabelCreatingStatuses);
   const methods = useForm<LabelCreateFormData>({
     defaultValues: {
       labels: [
@@ -53,7 +50,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
   };
 
   const handleCreate = async (data: LabelCreateFormData) => {
-    createLabel({ labelFormData: data.labels }).then(
+    dispatch(createLabel({ labelFormData: data.labels })).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
         clearState();

@@ -64,8 +64,7 @@ export interface TagsState {
   allIds: Tag['id'][];
   pageInfo?: CurrentPageInfo;
 }
-
-export interface LabelsState {
+export interface LabelsState extends EntityState<Label> {
   byId: { [labelId: number]: Label };
   allIds: Label['id'][];
   pageInfo?: CurrentPageInfo;

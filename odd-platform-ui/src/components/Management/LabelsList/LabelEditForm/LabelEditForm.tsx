@@ -1,11 +1,13 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
+import { Label, LabelFormData } from 'generated-sources';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  Label,
-  LabelFormData,
-  LabelApiUpdateLabelRequest,
-} from 'generated-sources';
+  getLabelDeletingStatuses,
+  getLabelUpdatingStatuses,
+} from 'redux/selectors/labels.selectors';
+import { updateLabel } from 'redux/thunks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
@@ -14,25 +16,24 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 interface LabelEditFormProps {
   editBtn: JSX.Element;
   label: Label;
-  isLoading: boolean;
-  updateLabel: (params: LabelApiUpdateLabelRequest) => Promise<Label>;
 }
 
 const LabelEditForm: React.FC<LabelEditFormProps> = ({
   editBtn,
   label,
-  isLoading,
-  updateLabel,
 }) => {
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState,
-  } = useForm<LabelFormData>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-  });
+  const dispatch = useAppDispatch();
+  const { isLoading: isDeleting } = useAppSelector(
+    getLabelDeletingStatuses
+  );
+  const { isLoading: isUpdateing } = useAppSelector(
+    getLabelUpdatingStatuses
+  );
+  const { control, handleSubmit, reset, formState } =
+    useForm<LabelFormData>({
+      mode: 'onChange',
+      reValidateMode: 'onChange',
+    });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
@@ -46,10 +47,12 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
   };
 
   const handleUpdate = (data: LabelFormData) => {
-    updateLabel({
-      labelId: label.id,
-      labelFormData: data,
-    }).then(
+    dispatch(
+      updateLabel({
+        labelId: label.id,
+        labelFormData: data,
+      })
+    ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
         clearState();
@@ -115,7 +118,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isDeleting || isUpdateing}
       errorText={error}
     />
   );

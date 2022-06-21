@@ -5,11 +5,7 @@ import {
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
-import {
-  Label,
-  LabelApiGetLabelListRequest,
-  LabelsResponse,
-} from 'generated-sources';
+import { Label, LabelApiGetLabelListRequest } from 'generated-sources';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
@@ -18,9 +14,7 @@ import { UseFieldArrayReturn } from 'react-hook-form';
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
 
 interface LabelsAutocompleteProps {
-  searchLabels: (
-    params: LabelApiGetLabelListRequest
-  ) => Promise<LabelsResponse>;
+  searchLabels: (params: LabelApiGetLabelListRequest) => Promise<any>;
   appendLabel: UseFieldArrayReturn['append'];
 }
 

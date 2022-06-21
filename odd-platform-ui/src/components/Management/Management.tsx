@@ -12,9 +12,7 @@ const NamespaceList = React.lazy(
 const OwnersListContainer = React.lazy(
   () => import('./OwnersList/OwnersListContainer')
 );
-const LabelsListContainer = React.lazy(
-  () => import('./LabelsList/LabelsListContainer')
-);
+const LabelsList = React.lazy(() => import('./LabelsList/LabelsList'));
 const TagsListContainer = React.lazy(
   () => import('./TagsList/TagsListContainer')
 );
@@ -96,7 +94,7 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
             <Route
               exact
               path="/management/labels"
-              component={LabelsListContainer}
+              component={LabelsList}
             />
             <Redirect
               exact
