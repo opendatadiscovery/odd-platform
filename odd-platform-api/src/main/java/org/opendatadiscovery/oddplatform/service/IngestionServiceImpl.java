@@ -107,19 +107,6 @@ public class IngestionServiceImpl implements IngestionService {
                     .map(EnrichedDataEntityIngestionDto::getId)
                     .collect(Collectors.toList());
 
-                // TODO: 17.06.2022 matmalik uncomment when refactored to reactive approach
-//                final Map<String, DatasetStructureDelta> datasetStructureDelta =
-//                    reactiveDatasetVersionRepository
-//                        .getLatestVersions(changedSchemaIds)
-//                        .flatMap(latestVersions -> {
-//                            final List<DatasetVersionPojo> havePenultimate = latestVersions.stream()
-//                                .filter(p -> p.getVersion() > 1)
-//                                .collect(Collectors.toList());
-//                            return reactiveDatasetVersionRepository.getPenaltimate(havePenultimate)
-//                                .switchIfEmpty(
-//                                    Mono.error(new NotFoundException("No DatasetVersionPojo found with penaltimate")))
-//                                .flatMap(penaltimateList -> getLastStructureDelta(havePenultimate, penaltimateList));
-//                        });
                 final Map<String, DatasetStructureDelta> datasetStructureDelta =
                     datasetVersionRepository.getLastStructureDelta(changedSchemaIds);
 
@@ -353,13 +340,6 @@ public class IngestionServiceImpl implements IngestionService {
             .map(EnrichedDataEntityIngestionDto::getId)
             .collect(Collectors.toSet());
 
-        // TODO: 17.06.2022 matmalik uncomment when refactored to reactive approach
-//        final Mono<List<DatasetVersionPojo>> versions = reactiveDatasetVersionRepository
-//            .getLatestVersions(datasetIds)
-//            .map(fetchedVersions -> fetchedVersions.stream()
-//                .map(fetchedVersion -> incrementVersion(datasetDict, fetchedVersion))
-//                .filter(Objects::nonNull)
-//                .collect(Collectors.toList()));
         final Mono<List<DatasetVersionPojo>> versions = Mono
             .fromCallable(() -> datasetVersionRepository.getLatestVersions(datasetIds));
 

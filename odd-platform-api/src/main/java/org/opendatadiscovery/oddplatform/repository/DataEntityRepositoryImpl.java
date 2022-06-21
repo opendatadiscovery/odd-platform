@@ -803,9 +803,7 @@ public class DataEntityRepositoryImpl
             return;
         }
 
-        final List<DatasetVersionPojo> versions =
-            reactiveDatasetVersionRepository.getVersions(dto.getDataEntity().getOddrn())
-                .block(); // TODO: 17.06.2022 matmalik remove this block after refactoring
+        final List<DatasetVersionPojo> versions = datasetVersionRepository.getVersions(dto.getDataEntity().getOddrn());
 
         dto.setDatasetVersions(versions);
     }
