@@ -84,8 +84,7 @@ public class AlertLocatorImpl implements AlertLocator {
                 AlertTypeEnum.FAILED_JOB,
                 tr.getOddrn(),
                 String.format("Job %s failed with status %s", tr.getTaskName(), tr.getStatus())
-            ))
-            .collect(Collectors.toList());
+            )).toList();
     }
 
     private List<AlertPojo> locateDataQualityTestAlerts(final List<IngestionTaskRun> failedDQTestRuns) {
