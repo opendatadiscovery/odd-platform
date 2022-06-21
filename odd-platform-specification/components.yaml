@@ -1587,6 +1587,7 @@ components:
         - DISTRIBUTION_ANOMALY
         - BACKWARDS_INCOMPATIBLE_SCHEMA
         - FAILED_DQ_TEST
+        - FAILED_JOB
 
     AlertStatus:
       type: string
