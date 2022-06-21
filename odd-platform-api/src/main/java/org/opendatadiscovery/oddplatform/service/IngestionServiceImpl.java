@@ -108,7 +108,7 @@ public class IngestionServiceImpl implements IngestionService {
 
                 final List<AlertPojo> alerts = Stream.of(
                     alertLocator.locateDatasetBackIncSchema(datasetStructureDelta),
-                    alertLocator.locateDataQualityTestRunFailed(dataStructure.getTaskRuns()),
+                    alertLocator.locateDataEntityRunFailed(dataStructure.getTaskRuns()),
                     dataStructure.getEarlyAlerts()
                 ).flatMap(List::stream).collect(Collectors.toList());
 

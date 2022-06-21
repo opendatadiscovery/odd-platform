@@ -10,7 +10,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 public interface AlertLocator {
     List<AlertPojo> locateDatasetBackIncSchema(final Map<String, DatasetStructureDelta> structureDeltas);
 
-    List<AlertPojo> locateDataQualityTestRunFailed(final List<IngestionTaskRun> taskRuns);
+    List<AlertPojo> locateDataEntityRunFailed(final List<IngestionTaskRun> taskRuns);
 
     List<AlertPojo> locateEarlyBackIncSchema(final List<DataEntitySpecificAttributesDelta> deltas);
 }
