@@ -28,6 +28,7 @@ const TermSearchContainer = React.lazy(
 const AlertsContainer = React.lazy(
   () => import('./Alerts/AlertsContainer')
 );
+const Activity = React.lazy(() => import('./Activity/Activity'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -66,6 +67,7 @@ const App: React.FC = () => {
               path="/dataentities/:dataEntityId/:viewType?"
               component={DataEntityDetailsContainer}
             />
+            <Route path="/activity" component={Activity} />
           </Switch>
         </React.Suspense>
       </div>

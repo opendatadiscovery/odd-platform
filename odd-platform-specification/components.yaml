@@ -469,6 +469,8 @@ components:
           type: string
         has_alerts:
           type: boolean
+        manually_created:
+          type: boolean
       required:
         - id
 
@@ -1585,6 +1587,7 @@ components:
         - DISTRIBUTION_ANOMALY
         - BACKWARDS_INCOMPATIBLE_SCHEMA
         - FAILED_DQ_TEST
+        - FAILED_JOB
 
     AlertStatus:
       type: string
@@ -1835,36 +1838,28 @@ components:
     ActivityEventType:
       type: string
       enum:
-        - OWNER_CREATED
-        - OWNER_UPDATED
-        - OWNER_DELETED
-        - TAG_CREATED
-        - TAG_UPDATED
-        - TAG_DELETED
+        - OWNERSHIP_CREATED
+        - OWNERSHIP_UPDATED
+        - OWNERSHIP_DELETED
+        - TAGS_ASSOCIATION_UPDATED
         - DATA_ENTITY_CREATED
         - DATA_ENTITY_INFO_UPDATED
         - METADATA_UPDATED
-        - METADATA_DELETED
         - SCHEMA_UPDATED
         - RELATION_UPDATED
-        - TERM_CREATED
-        - TERM_UPDATED
-        - TERM_DELETED
+        - TERM_ASSOCIATION_CREATED
+        - TERM_ASSOCIATION_DELETED
         - DESCRIPTION_CREATED
         - DESCRIPTION_UPDATED
         - DESCRIPTION_DELETED
         - CUSTOM_METADATA_CREATED
         - CUSTOM_METADATA_UPDATED
         - CUSTOM_METADATA_DELETED
-        - ENUM_ASSOCIATION_CREATED
-        - ENUM_ASSOCIATION_UPDATED
-        - ENUM_ASSOCIATION_DELETED
+        - ENUMS_ASSOCIATION_UPDATED
         - DATASET_FIELD_DESCRIPTION_CREATED
         - DATASET_FIELD_DESCRIPTION_UPDATED
         - DATASET_FIELD_DESCRIPTION_DELETED
-        - DATASET_FIELD_LABEL_CREATED
-        - DATASET_FIELD_LABEL_UPDATED
-        - DATASET_FIELD_LABEL_DELETED
+        - DATASET_FIELD_LABEL_ASSOCIATION_UPDATED
         - CUSTOM_GROUP_CREATED
         - CUSTOM_GROUP_UPDATED
         - CUSTOM_GROUP_DELETED

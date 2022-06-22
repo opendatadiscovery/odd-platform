@@ -375,6 +375,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .externalName(pojo.getExternalName())
             .internalName(pojo.getInternalName())
             .entityClasses(entityClasses)
+            .manuallyCreated(pojo.getManuallyCreated())
             .url("");
     }
 

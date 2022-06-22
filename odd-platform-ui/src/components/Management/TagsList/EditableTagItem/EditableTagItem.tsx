@@ -1,24 +1,26 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { Tag, TagApiDeleteTagRequest } from 'generated-sources';
+import { useAppDispatch } from 'lib/redux/hooks';
+
+import { deleteTag } from 'redux/thunks';
+
+import { Tag } from 'generated-sources';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import TagEditFormContainer from 'components/Management/TagsList/TagEditForm/TagEditFormContainer';
+import TagEditForm from 'components/Management/TagsList/TagEditForm/TagEditForm';
 import AppButton from 'components/shared/AppButton/AppButton';
 import * as S from './EditableTagItemStyles';
 
 interface EditableTagItemProps {
   tag: Tag;
-  deleteTag: (params: TagApiDeleteTagRequest) => Promise<void>;
 }
 
-const EditableTagItem: React.FC<EditableTagItemProps> = ({
-  tag,
-  deleteTag,
-}) => {
+const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
+  const dispatch = useAppDispatch();
+
   const handleDelete = React.useCallback(
-    () => deleteTag({ tagId: tag.id }),
+    () => dispatch(deleteTag({ tagId: tag.id })),
     [tag, deleteTag]
   );
 
@@ -35,7 +37,7 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({
         </Typography>
       </S.Col>
       <S.ActionsContainer container item>
-        <TagEditFormContainer
+        <TagEditForm
           tag={tag}
           editBtn={
             <AppButton

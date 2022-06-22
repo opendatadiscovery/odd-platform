@@ -4,8 +4,8 @@ import loader from './loader.slice';
 import namespaces from './namespace.slice';
 import dataSources from './datasources.reducer';
 import dataEntities from './dataentities.slice';
-import tags from './tags.reducer';
-import labels from './labels.reducer';
+import tags from './tags.slice';
+import labels from './labels.slice';
 import search from './dataentitiesSearch.reducer';
 import searchSlice from './dataEntitySearch.slice';
 import metaData from './metadata.slice';
@@ -21,6 +21,7 @@ import appInfo from './appInfo.reducer';
 import collectors from './collectors.reducer';
 import terms from './terms.slice';
 import termSearch from './termSearch.reducer';
+import activities from './activity.slice';
 
 export default combineReducers({
   namespaces,
@@ -45,4 +46,5 @@ export default combineReducers({
   collectors,
   terms,
   termSearch,
+  activities,
 });

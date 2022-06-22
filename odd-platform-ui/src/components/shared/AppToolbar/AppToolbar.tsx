@@ -5,8 +5,8 @@ import {
   AssociatedOwner,
   SearchApiSearchRequest,
   SearchFacetsData,
-  TermSearchFacetsData,
   TermApiTermSearchRequest,
+  TermSearchFacetsData,
 } from 'generated-sources';
 import { useHistory, useLocation } from 'react-router-dom';
 import { searchPath, termSearchPath } from 'lib/paths';
@@ -75,6 +75,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
     { name: 'Management', link: '/management' },
     { name: 'Dictionary', link: '/termsearch' },
     { name: 'Alerts', link: '/alerts/' },
+    { name: 'Activity', link: '/activity' },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number | boolean>(

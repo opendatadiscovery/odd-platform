@@ -1,6 +1,8 @@
 import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
+  Activity,
+  ActivityEventType,
   Alert,
   AlertTotals,
   AppInfo,
@@ -33,6 +35,7 @@ import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest
 // eslint-disable-next-line lodash/import-scope
 import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
+import { ActivitiesTotals } from 'redux/interfaces/activities';
 import { DataSetStructureTypesCount } from './datasetStructure';
 import {
   FacetOptionsByName,
@@ -40,7 +43,7 @@ import {
   SearchTotalsByName,
 } from './search';
 import { DataEntityLineageById } from './dataentityLineage';
-import { CurrentPageInfo } from './common';
+import { ActivityPageInfo, CurrentPageInfo } from './common';
 import { DataEntityDetailsState } from './dataentities';
 import {
   TermSearchFacetOptionsByName,
@@ -59,15 +62,11 @@ export interface CollectorsState {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface TagsState {
-  byId: { [tagId: number]: Tag };
-  allIds: Tag['id'][];
+export interface TagsState extends EntityState<Tag> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface LabelsState {
-  byId: { [labelId: number]: Label };
-  allIds: Label['id'][];
+export interface LabelsState extends EntityState<Label> {
   pageInfo?: CurrentPageInfo;
 }
 
@@ -232,6 +231,13 @@ export interface TermLinkedListState {
     [termId: string]: number[];
   };
   pageInfo?: CurrentPageInfo;
+}
+
+export interface ActivitiesState {
+  totals: ActivitiesTotals;
+  activities: Activity[];
+  pageInfo: ActivityPageInfo;
+  activityEventTypes: ActivityEventType[];
 }
 
 export type RootState = ReturnType<typeof store.getState>;

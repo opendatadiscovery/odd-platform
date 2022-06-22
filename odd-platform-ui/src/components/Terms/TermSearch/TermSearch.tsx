@@ -17,13 +17,8 @@ import { useHistory } from 'react-router-dom';
 import TermSearchFiltersContainer from 'components/Terms/TermSearch/TermSearchFilters/TermSearchFiltersContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import {
-  TermSearchWrapper,
-  TermSearchContentWrapper,
-  TermSearchFiltersWrapper,
-  TermSearchResultsWrapper,
-  TermSearchCaption,
-} from './TermSearchStyles';
+import { Grid } from '@mui/material';
+import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
 import TermsForm from './TermForm/TermsForm';
 import TermsResultsContainer from './TermSearchResults/TermSearchResultsContainer';
 
@@ -108,13 +103,17 @@ const TermSearch: React.FC<TermsProps> = ({
 
   return (
     <>
-      <TermSearchWrapper>
-        <TermSearchContentWrapper container spacing={2}>
-          <TermSearchFiltersWrapper item xs={3}>
+      <S.MainContainer>
+        <S.ContentContainer container spacing={2}>
+          <S.LeftSidebarContainer item xs={3}>
             <TermSearchFiltersContainer />
-          </TermSearchFiltersWrapper>
-          <TermSearchResultsWrapper item xs={9}>
-            <TermSearchCaption>
+          </S.LeftSidebarContainer>
+          <S.ListContainer item xs={9}>
+            <Grid
+              container
+              justifyContent="space-between"
+              alignItems="center"
+            >
               <TermMainSearchContainer />
               <TermsForm
                 btnCreateEl={
@@ -127,11 +126,11 @@ const TermSearch: React.FC<TermsProps> = ({
                   </AppButton>
                 }
               />
-            </TermSearchCaption>
+            </Grid>
             <TermsResultsContainer />
-          </TermSearchResultsWrapper>
-        </TermSearchContentWrapper>
-      </TermSearchWrapper>
+          </S.ListContainer>
+        </S.ContentContainer>
+      </S.MainContainer>
       <AppErrorPage
         fetchStatus={termSearchFetchStatus}
         error={termSearchError}
