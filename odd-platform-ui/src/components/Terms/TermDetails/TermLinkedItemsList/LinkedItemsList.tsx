@@ -7,7 +7,8 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
 import LinkedItem from 'components/Terms/TermDetails/TermLinkedItemsList/LinkedItem/LinkedItem';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import { useDebouncedCallback } from 'use-debounce';
@@ -97,7 +98,7 @@ const LinkedItemsList: React.FC = () => {
         sx={{ mt: 2 }}
       >
         <Grid item xs={3} sx={{ mr: 1 }}>
-          <AppTextField
+          <AppInput
             size="medium"
             placeholder="Search"
             onKeyDown={handleKeyDownSearch}
@@ -121,7 +122,7 @@ const LinkedItemsList: React.FC = () => {
           />
         </Grid>
         <Grid item xs={2}>
-          <AppTextField
+          <AppSelect
             select
             defaultValue="All entities"
             onChange={handleOnClickSearch}
@@ -145,7 +146,7 @@ const LinkedItemsList: React.FC = () => {
                 )}
               </AppMenuItem>
             ))}
-          </AppTextField>
+          </AppSelect>
         </Grid>
       </Grid>
       <TermLinkedItemsResultsTableHeader

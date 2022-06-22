@@ -24,7 +24,6 @@ import {
 import AppTabs from 'components/shared/AppTabs/AppTabs';
 import TargetIcon from 'components/shared/Icons/TargetIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
@@ -34,6 +33,7 @@ import {
 import AppGraphCrossLink from 'components/shared/AppGraph/AppGraphCrossLink/AppGraphCrossLink';
 import { getDataEntityLineage } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
+import AppSelect from '../AppSelect/AppSelect';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
 import * as S from './AppGraphStyles';
@@ -448,7 +448,7 @@ const AppGraph: React.FC = () => {
           }
         />
         <Typography variant="subtitle2">Depth:</Typography>
-        <AppTextField
+        <AppSelect
           sx={{ width: 48 }}
           selectNative
           size="small"
@@ -463,7 +463,7 @@ const AppGraph: React.FC = () => {
               {i + 1}
             </option>
           ))}
-        </AppTextField>
+        </AppSelect>
       </S.ActionsContainer>
       <S.Layer className={svgInstanceRef}>
         <g className={gInstanceRef}>

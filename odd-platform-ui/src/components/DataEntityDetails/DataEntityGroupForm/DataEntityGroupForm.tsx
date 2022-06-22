@@ -10,7 +10,8 @@ import {
 } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
@@ -156,7 +157,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         control={control}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Data Entity Group Name"
             label="Name"
@@ -181,7 +182,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         control={control}
         rules={{ required: true }}
         render={({ field }) => (
-          <AppTextField
+          <AppSelect
             label="Type"
             select
             sx={{ mt: 1.5 }}
@@ -202,7 +203,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
                   {type.name}
                 </AppMenuItem>
               ))}
-          </AppTextField>
+          </AppSelect>
         )}
       />
       <Controller

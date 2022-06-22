@@ -17,7 +17,7 @@ import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
@@ -139,7 +139,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                   <Typography variant="subtitle2">
                     Current Revision:
                   </Typography>
-                  <AppTextField
+                  <AppSelect
                     sx={{ width: 52, ml: 1 }}
                     id="revision-select"
                     type="number"
@@ -153,7 +153,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                         {rev.version}
                       </option>
                     ))}
-                  </AppTextField>
+                  </AppSelect>
                 </>
               ) : null}
             </Grid>

@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
 import { SearchFilterStateSynced } from 'redux/interfaces/search';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import {
   TermSearchFacetStateUpdate,
@@ -40,7 +40,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
   return facetOptions.length ? (
     <Grid container>
       <Grid container item xs={12}>
-        <AppTextField
+        <AppSelect
           sx={{ mt: 2 }}
           label={name}
           select
@@ -66,7 +66,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
               {option.name}
             </AppMenuItem>
           ))}
-        </AppTextField>
+        </AppSelect>
       </Grid>
     </Grid>
   ) : null;

@@ -6,7 +6,7 @@ import {
 } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useDebouncedCallback } from 'use-debounce';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { ControllerRenderProps } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -33,14 +33,7 @@ interface SearchSuggestionsAutocompleteProps {
 
 const SearchSuggestionsAutocomplete: React.FC<
   SearchSuggestionsAutocompleteProps
-> = ({
-  placeholder,
-  label,
-  addEntities,
-  append,
-  controllerProps,
-  searchParams,
-}) => {
+> = ({ addEntities, append, controllerProps, searchParams }) => {
   const dispatch = useAppDispatch();
 
   const searchSuggestions = useAppSelector(getSearchSuggestions);
@@ -165,11 +158,10 @@ const SearchSuggestionsAutocomplete: React.FC<
       sx={{ mt: 1.5 }}
       renderInput={params => (
         <Grid container flexWrap="nowrap" alignItems="center">
-          <AppTextField
+          <AppInput
             {...params}
             ref={params.InputProps.ref}
-            placeholder={placeholder}
-            label={label}
+            label="Entities"
             customEndAdornment={{
               variant: 'loader',
               showAdornment: isSearchSuggestionsLoading,

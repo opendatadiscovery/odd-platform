@@ -10,7 +10,8 @@ import {
 import { updateLabel } from 'redux/thunks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 
 interface LabelEditFormProps {
@@ -80,7 +81,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
         defaultValue={label.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Label Name"
             customEndAdornment={{

@@ -7,7 +7,8 @@ import {
 } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import { ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchTermsList } from 'redux/thunks';
@@ -131,7 +132,7 @@ const TermsAutocomplete: React.FC<TermsAutocompleteProps> = ({
       value={{ name: searchText }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppTextField
+        <AppInput
           {...params}
           ref={params.InputProps.ref}
           placeholder="Enter term name…"

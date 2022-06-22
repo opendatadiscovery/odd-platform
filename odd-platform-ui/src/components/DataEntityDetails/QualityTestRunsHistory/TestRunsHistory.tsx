@@ -8,7 +8,7 @@ import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import capitalize from 'lodash/capitalize';
 import { Grid, Typography } from '@mui/material';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { CurrentPageInfo } from 'redux/interfaces';
@@ -56,7 +56,7 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
 
   return (
     <Grid container sx={{ mt: 2 }}>
-      <AppTextField
+      <AppSelect
         sx={{ minWidth: '200px' }}
         fullWidth={false}
         select
@@ -74,7 +74,7 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
             {capitalize(option)}
           </AppMenuItem>
         ))}
-      </AppTextField>
+      </AppSelect>
       <RunsTableHeader container wrap="nowrap" sx={{ mt: 2 }}>
         <ColContainer item $colType="md">
           <Typography variant="caption">Start time</Typography>

@@ -13,7 +13,7 @@ import AppDatePicker, {
   metadataDatePickerInputFormat,
   minDate,
 } from 'components/shared/AppDatePicker/AppDatePicker';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import AppRadio from 'components/shared/AppRadio/AppRadio';
 
 interface MetadataValueEditFieldProps {
@@ -113,7 +113,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
       defaultValue={metadataValue || ''}
       rules={{ required: true }}
       render={({ field }) => (
-        <AppTextField
+        <AppInput
           {...field}
           sx={{ mt: 1 }}
           size={size}
