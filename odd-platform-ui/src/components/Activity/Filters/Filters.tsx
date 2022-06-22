@@ -1,48 +1,50 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  DataSource,
-  DataSourceApiGetDataSourceListRequest,
-  DataSourceList,
-  Namespace,
-  NamespaceApiGetNamespaceListRequest,
-} from 'generated-sources';
-import { SearchClass } from 'redux/interfaces/search';
-import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemContainer';
-import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import * as S from './FiltersStyles';
-
-interface FiltersProps {
-  searchClass?: SearchClass;
-  datasources: DataSource[];
-  namespaces: Namespace[];
-  fetchDataSourcesList: (
-    params: DataSourceApiGetDataSourceListRequest
-  ) => Promise<DataSourceList>;
-  fetchNamespaceList: (
-    params: NamespaceApiGetNamespaceListRequest
-  ) => void;
-  clearDataEntitySearchFilters: () => void;
-  isSearchFacetsUpdating: boolean;
-  isDatasourceListFetching: boolean;
-}
-
-const Filters: React.FC<FiltersProps> = ({
-  searchClass,
-  datasources,
-  namespaces,
+import {
+  fetchActivityEventTypes,
   fetchDataSourcesList,
   fetchNamespaceList,
-  clearDataEntitySearchFilters,
-  isSearchFacetsUpdating,
-  isDatasourceListFetching,
-}) => {
+} from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { ActivityApiGetActivityRequest as ActivityFilters } from 'generated-sources';
+import {
+  getActivityEventTypes,
+  getDataSourcesList,
+  getNamespaceList,
+} from 'redux/selectors';
+import * as S from './FiltersStyles';
+import SingleFilter from './FilterItem/SingleFilter/SingleFilter';
+
+// interface FiltersProps {
+//   searchClass?: SearchClass;
+//   datasources: DataSource[];
+//   namespaces: Namespace[];
+//   fetchDataSourcesList: (
+//     params: DataSourceApiGetDataSourceListRequest
+//   ) => Promise<DataSourceList>;
+//   fetchNamespaceList: (
+//     params: NamespaceApiGetNamespaceListRequest
+//   ) => void;
+//   clearDataEntitySearchFilters: () => void;
+//   isSearchFacetsUpdating: boolean;
+//   isDatasourceListFetching: boolean;
+// }
+
+export type FilterNames = keyof ActivityFilters;
+
+const Filters: React.FC = () => {
+  const dispatch = useAppDispatch();
+
   React.useEffect(() => {
-    fetchDataSourcesList({ page: 1, size: 100 });
-    fetchNamespaceList({ page: 1, size: 100 });
+    dispatch(fetchDataSourcesList({ page: 1, size: 100 }));
+    dispatch(fetchNamespaceList({ page: 1, size: 100 }));
+    dispatch(fetchActivityEventTypes());
   }, []);
+
+  const datasources = useAppSelector(getDataSourcesList);
+  const namespaces = useAppSelector(getNamespaceList);
+  const eventTypes = useAppSelector(getActivityEventTypes);
 
   return (
     <S.Container>
@@ -51,46 +53,49 @@ const Filters: React.FC<FiltersProps> = ({
         <AppButton
           color="tertiary"
           size="medium"
-          onClick={() => clearDataEntitySearchFilters()}
+          // TODO clear filters
+          // onClick={() => clearDataEntitySearchFilters()}
         >
           Clear All
         </AppButton>
       </Grid>
       <S.ListContainer>
-        <SingleFilterItemContainer
+        <div>Period filter</div>
+        <SingleFilter
           key="ds"
-          facetName="datasources"
           name="Datasource"
-          facetOptions={datasources}
+          filterName="datasourceId"
+          filterOptions={datasources}
         />
-        {searchClass && searchClass > 0 ? (
-          <MultipleFilterItemContainer
-            key="st"
-            facetName="types"
-            name="Type"
-          />
-        ) : null}
-        <SingleFilterItemContainer
+        <SingleFilter
           key="ns"
-          facetName="namespaces"
+          filterName="namespaceId"
           name="Namespace"
-          facetOptions={namespaces}
+          filterOptions={namespaces}
         />
-        <MultipleFilterItemContainer
-          key="ow"
-          facetName="owners"
-          name="Owner"
+        {/* TODO check for work */}
+        <SingleFilter
+          key="at"
+          filterName="eventType"
+          name="Event type"
+          filterOptions={eventTypes}
         />
-        <MultipleFilterItemContainer
-          key="tg"
-          facetName="tags"
-          name="Tag"
-        />
-        <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
-          {(isSearchFacetsUpdating || isDatasourceListFetching) && (
-            <AppCircularProgress size={16} text="Updating filters" />
-          )}
-        </S.FacetsLoaderContainer>
+        {/* <MultipleFilterItemContainer */}
+        {/*  key="ow" */}
+        {/*  facetName="owners" */}
+        {/*  name="Owner" */}
+        {/* /> */}
+        {/* <MultipleFilterItemContainer */}
+        {/*  key="tg" */}
+        {/*  facetName="tags" */}
+        {/*  name="Tag" */}
+        {/* /> */}
+        {/* TODO update loader conditions */}
+        {/* <S.FacetsLoaderContainer container sx={{ mt: 2 }}> */}
+        {/*  {(isSearchFacetsUpdating || isDatasourceListFetching) && ( */}
+        {/*    <AppCircularProgress size={16} text="Updating filters" /> */}
+        {/*  )} */}
+        {/* </S.FacetsLoaderContainer> */}
       </S.ListContainer>
     </S.Container>
   );

@@ -25,7 +25,12 @@ export const getActivitiesPageInfo = createSelector(
   activities => activities.pageInfo
 );
 
-export const getActivitiesEventTypes = createSelector(
+export const getActivityEventTypes = createSelector(
   activitiesState,
   activities => activities.activityEventTypes
+);
+
+export const getActivitiesFilters = createSelector(
+  activitiesState,
+  activities => activities.filters
 );

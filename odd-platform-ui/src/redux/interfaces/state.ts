@@ -2,6 +2,7 @@ import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
   Activity,
+  ActivityApiGetActivityRequest as ActivityFilters,
   ActivityEventType,
   Alert,
   AlertTotals,
@@ -63,6 +64,7 @@ export interface CollectorsState {
 export interface TagsState extends EntityState<Tag> {
   pageInfo?: CurrentPageInfo;
 }
+
 export interface LabelsState extends EntityState<Label> {
   pageInfo?: CurrentPageInfo;
 }
@@ -235,6 +237,7 @@ export interface ActivitiesState {
   activities: Activity[];
   pageInfo: ActivityPageInfo;
   activityEventTypes: ActivityEventType[];
+  filters: ActivityFilters;
 }
 
 export type RootState = ReturnType<typeof store.getState>;

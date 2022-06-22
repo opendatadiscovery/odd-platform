@@ -2,10 +2,20 @@ import { ActivitiesState } from 'redux/interfaces/state';
 import { activitiesActionTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
+import { ActivityApiGetActivityRequest as ActivityFilters } from 'generated-sources';
+
+const endDate = new Date();
+const beginDate = new Date(endDate.setDate(endDate.getDate() - 7));
+const initialFiltersState: ActivityFilters = {
+  beginDate,
+  endDate,
+  size: 20,
+};
 
 export const initialState: ActivitiesState = {
   activityEventTypes: [],
   activities: [],
+  filters: initialFiltersState,
   totals: {
     totalCount: 0,
     upstreamCount: 0,
@@ -22,7 +32,12 @@ export const initialState: ActivitiesState = {
 export const activitiesSlice = createSlice({
   name: activitiesActionTypePrefix,
   initialState,
-  reducers: {},
+  reducers: {
+    setActivityFilters: (
+      state,
+      { payload }: { payload: ActivityFilters }
+    ) => ({ ...state, filters: { ...state.filters, ...payload } }),
+  },
   extraReducers: builder => {
     builder.addCase(
       thunks.fetchActivityEventTypes.fulfilled,
@@ -42,5 +57,7 @@ export const activitiesSlice = createSlice({
     );
   },
 });
+
+export const { setActivityFilters } = activitiesSlice.actions;
 
 export default activitiesSlice.reducer;
