@@ -10,7 +10,7 @@ import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import LabelsAutocompleteContainer from './LabelsAutocomplete/LabelsAutocompleteContainer';
+import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 import * as S from './DatasetFieldInfoEditFormStyles';
 
 interface DataSetFieldInfoEditFormProps {
@@ -30,7 +30,9 @@ type DatasetFieldInfoFormType = {
   internalDescription: string;
 };
 
-const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
+const DatasetFieldInfoEditForm: React.FC<
+  DataSetFieldInfoEditFormProps
+> = ({
   datasetFieldId,
   datasetFieldFormData,
   isLoading,
@@ -108,7 +110,7 @@ const DatasetFieldInfoEditForm: React.FC<DataSetFieldInfoEditFormProps> = ({
       <Typography variant="h5" color="texts.info">
         Add or edit labels and description
       </Typography>
-      <LabelsAutocompleteContainer appendLabel={append} />
+      <LabelsAutocomplete appendLabel={append} />
       <S.LabelItemsContainer sx={{ mt: 1, mb: 1.5 }}>
         {fields.map((label, index) => (
           <LabelItem
