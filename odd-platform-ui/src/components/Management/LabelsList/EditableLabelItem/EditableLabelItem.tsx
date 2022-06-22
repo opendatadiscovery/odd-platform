@@ -1,24 +1,26 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { Label, LabelApiDeleteLabelRequest } from 'generated-sources';
+import { Label } from 'generated-sources';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import AppButton from 'components/shared/AppButton/AppButton';
-import LabelEditFormContainer from '../LabelEditForm/LabelEditFormContainer';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { deleteLabel } from 'redux/thunks';
+
+import LabelEditForm from '../LabelEditForm/LabelEditForm';
 import * as S from './EditableLabelItemStyles';
 
 interface EditableLabelItemProps {
   label: Label;
-  deleteLabel: (params: LabelApiDeleteLabelRequest) => Promise<void>;
 }
 
 const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
   label,
-  deleteLabel,
 }) => {
+  const dispatch = useAppDispatch();
   const handleDelete = React.useCallback(
-    () => deleteLabel({ labelId: label.id }),
+    () => dispatch(deleteLabel({ labelId: label.id })),
     [label, deleteLabel]
   );
 
@@ -30,7 +32,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
         </Typography>
       </Grid>
       <S.ActionsContainer item>
-        <LabelEditFormContainer
+        <LabelEditForm
           label={label}
           editBtn={
             <AppButton
