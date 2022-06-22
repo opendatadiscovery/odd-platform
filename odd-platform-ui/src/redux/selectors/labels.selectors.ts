@@ -11,19 +11,19 @@ export const { selectAll: getLabelsList } =
   labelsAdapter.getSelectors<RootState>(state => state.labels);
 
 export const getLabelListFetchingStatuses = createStatusesSelector(
-  actions.fetchLabelsAction
+  actions.fetchLabelsActionType
 );
 
 export const getLabelCreatingStatuses = createStatusesSelector(
-  actions.createLabelsAction
+  actions.createLabelsActionType
 );
 
 export const getLabelUpdatingStatuses = createStatusesSelector(
-  actions.updateLabelAction
+  actions.updateLabelActionType
 );
 
 export const getLabelDeletingStatuses = createStatusesSelector(
-  actions.deleteLabelAction
+  actions.deleteLabelActionType
 );
 
 export const getLabelsListPage = createSelector(

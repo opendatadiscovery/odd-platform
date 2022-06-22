@@ -9,8 +9,6 @@ export const labelsAdapter = createEntityAdapter<Label>({
 });
 
 export const initialState: LabelsState = {
-  byId: {},
-  allIds: [],
   pageInfo: {
     total: 0,
     page: 0,

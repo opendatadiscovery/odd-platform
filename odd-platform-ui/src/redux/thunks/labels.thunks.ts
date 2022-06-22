@@ -18,7 +18,7 @@ const apiClient = new LabelApi(apiClientConf);
 export const fetchLabelsList = createAsyncThunk<
   { items: Array<Label>; pageInfo: CurrentPageInfo },
   LabelApiGetLabelListRequest
->(actions.fetchLabelsAction, async ({ page, size, query }) => {
+>(actions.fetchLabelsActionType, async ({ page, size, query }) => {
   const { items, pageInfo } = await apiClient.getLabelList({
     page,
     size,
@@ -31,7 +31,7 @@ export const fetchLabelsList = createAsyncThunk<
 export const createLabel = createAsyncThunk<
   Label[],
   LabelApiCreateLabelRequest
->(actions.createLabelsAction, async ({ labelFormData }) => {
+>(actions.createLabelsActionType, async ({ labelFormData }) => {
   const label = await apiClient.createLabel({
     labelFormData,
   });
@@ -42,7 +42,7 @@ export const createLabel = createAsyncThunk<
 export const updateLabel = createAsyncThunk<
   Label,
   LabelApiUpdateLabelRequest
->(actions.updateLabelAction, async ({ labelId, labelFormData }) => {
+>(actions.updateLabelActionType, async ({ labelId, labelFormData }) => {
   const label = await apiClient.updateLabel({
     labelId,
     labelFormData,
@@ -54,7 +54,7 @@ export const updateLabel = createAsyncThunk<
 export const deleteLabel = createAsyncThunk<
   number,
   LabelApiDeleteLabelRequest
->(actions.deleteLabelAction, async ({ labelId }) => {
+>(actions.deleteLabelActionType, async ({ labelId }) => {
   await apiClient.deleteLabel({ labelId });
   return labelId;
 });

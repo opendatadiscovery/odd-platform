@@ -10,7 +10,7 @@ import {
   getLabelCreatingStatuses,
   getLabelListFetchingStatuses,
 } from 'redux/selectors';
-import { fetchLabelsList, deleteLabel } from 'redux/thunks';
+import { fetchLabelsList } from 'redux/thunks';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabelsSkeletonItem from 'components/Management/LabelsList/LabelsSkeletonItem/LabelsSkeletonItem';
@@ -30,15 +30,15 @@ const LabelsListView: React.FC = () => {
   const labelsList = useAppSelector(getLabelsList);
   const pageInfo = useAppSelector(getLabelsListPage);
 
-  const { isLoading: isDeleting } = useAppSelector(
+  const { isLoading: isLabelDeleting } = useAppSelector(
     getLabelDeletingStatuses
   );
 
-  const { isLoading: isCreating } = useAppSelector(
+  const { isLoading: isLabelCreating } = useAppSelector(
     getLabelCreatingStatuses
   );
 
-  const { isLoading: isFetching } = useAppSelector(
+  const { isLoading: isLabelFetching } = useAppSelector(
     getLabelListFetchingStatuses
   );
 
@@ -51,7 +51,7 @@ const LabelsListView: React.FC = () => {
   React.useEffect(() => {
     if (!searchText)
       dispatch(fetchLabelsList({ page: 1, size: pageSize }));
-  }, [fetchLabelsList, isCreating, isDeleting, searchText]);
+  }, [fetchLabelsList, isLabelCreating, isLabelDeleting, searchText]);
 
   React.useEffect(() => {
     if (!searchText) setTotalLabels(pageInfo?.total);
@@ -89,10 +89,6 @@ const LabelsListView: React.FC = () => {
       handleSearch();
     }
   };
-
-  const deleteLabelItem = ({ labelId }: LabelApiDeleteLabelRequest) =>
-    dispatch(deleteLabel({ labelId }));
-
   return (
     <Grid container flexDirection="column" alignItems="center">
       <S.Caption container sx={{ mb: 1 }}>
@@ -150,7 +146,7 @@ const LabelsListView: React.FC = () => {
             dataLength={labelsList.length}
             scrollThreshold="200px"
             loader={
-              isFetching ? (
+              isLabelFetching ? (
                 <SkeletonWrapper
                   length={5}
                   renderContent={({ randomSkeletonPercentWidth, key }) => (
@@ -164,16 +160,12 @@ const LabelsListView: React.FC = () => {
             }
           >
             {labelsList?.map(label => (
-              <EditableLabelItem
-                key={label.id}
-                label={label}
-                deleteLabel={deleteLabelItem}
-              />
+              <EditableLabelItem key={label.id} label={label} />
             ))}
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isFetching && !labelsList.length ? (
+      {!isLabelFetching && !labelsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Grid>

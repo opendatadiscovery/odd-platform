@@ -2,22 +2,22 @@ import { createActionType } from 'lib/redux/helpers';
 
 export const labelsActionPrefix = 'labels';
 
-export const fetchLabelsAction = createActionType(
+export const fetchLabelsActionType = createActionType(
   labelsActionPrefix,
   'fetchLabels'
 );
 
-export const createLabelsAction = createActionType(
+export const createLabelsActionType = createActionType(
   labelsActionPrefix,
   'createLabel'
 );
 
-export const updateLabelAction = createActionType(
+export const updateLabelActionType = createActionType(
   labelsActionPrefix,
   'updateLabel'
 );
 
-export const deleteLabelAction = createActionType(
+export const deleteLabelActionType = createActionType(
   labelsActionPrefix,
   'deleteLabel'
 );

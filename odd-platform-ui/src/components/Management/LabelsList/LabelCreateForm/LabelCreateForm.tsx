@@ -22,7 +22,9 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
-  const { isLoading } = useAppSelector(getLabelCreatingStatuses);
+  const { isLoading: isLabelCreating } = useAppSelector(
+    getLabelCreatingStatuses
+  );
   const methods = useForm<LabelCreateFormData>({
     defaultValues: {
       labels: [
@@ -129,7 +131,7 @@ const LabelCreateForm: React.FC<LabelCreateFormProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isLabelCreating}
       errorText={error}
       clearState={clearState}
     />

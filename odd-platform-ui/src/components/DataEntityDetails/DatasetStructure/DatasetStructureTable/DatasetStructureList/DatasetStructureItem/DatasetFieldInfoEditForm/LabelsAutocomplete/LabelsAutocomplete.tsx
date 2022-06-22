@@ -4,8 +4,11 @@ import {
   AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
+import { fetchLabelsList as searchLabels } from 'redux/thunks/labels.thunks';
+import { useAppDispatch } from 'lib/redux/hooks';
+
 import { useDebouncedCallback } from 'use-debounce';
-import { Label, LabelApiGetLabelListRequest } from 'generated-sources';
+import { Label } from 'generated-sources';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
@@ -14,14 +17,14 @@ import { UseFieldArrayReturn } from 'react-hook-form';
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
 
 interface LabelsAutocompleteProps {
-  searchLabels: (params: LabelApiGetLabelListRequest) => Promise<any>;
   appendLabel: UseFieldArrayReturn['append'];
 }
 
 const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
-  searchLabels,
   appendLabel,
 }) => {
+  const dispatch = useAppDispatch();
+
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -31,12 +34,12 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      searchLabels({ page: 1, size: 30, query: searchText }).then(
-        response => {
+      dispatch(searchLabels({ page: 1, size: 30, query: searchText }))
+        .unwrap()
+        .then(({ items }) => {
           setLoading(false);
-          setOptions(response.items);
-        }
-      );
+          setOptions(items);
+        });
     }, 500),
     [searchLabels, setLoading, setOptions, searchText]
   );
