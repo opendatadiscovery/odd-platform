@@ -4,7 +4,6 @@ import {
   getDataEntityTags,
   getDataEntityTagsUpdating,
 } from 'redux/selectors/dataentity.selectors';
-import { fetchTagsList } from 'redux/thunks';
 import TagsEditForm from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditForm';
 
 const mapStateToProps = (
@@ -15,8 +14,6 @@ const mapStateToProps = (
   isLoading: getDataEntityTagsUpdating(state),
 });
 
-const mapDispatchToProps = {
-  searchTags: fetchTagsList,
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(TagsEditForm);

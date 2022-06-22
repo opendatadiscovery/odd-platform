@@ -15,9 +15,7 @@ const OwnersListContainer = React.lazy(
 const LabelsListContainer = React.lazy(
   () => import('./LabelsList/LabelsListContainer')
 );
-const TagsListContainer = React.lazy(
-  () => import('./TagsList/TagsListContainer')
-);
+const TagsList = React.lazy(() => import('./TagsList/TagsList'));
 const DataSourcesListContainer = React.lazy(
   () => import('./DataSourcesList/DataSourcesListContainer')
 );
@@ -88,11 +86,7 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
               path="/management/owners"
               component={OwnersListContainer}
             />
-            <Route
-              exact
-              path="/management/tags"
-              component={TagsListContainer}
-            />
+            <Route exact path="/management/tags" component={TagsList} />
             <Route
               exact
               path="/management/labels"
