@@ -18,7 +18,7 @@ import alerts from './alerts.reducer';
 import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';
 import termLinkedList from './termLinkedList.slice';
 import appInfo from './appInfo.reducer';
-import collectors from './collectors.reducer';
+import collectors from './collectors.slice';
 import terms from './terms.slice';
 import termSearch from './termSearch.reducer';
 

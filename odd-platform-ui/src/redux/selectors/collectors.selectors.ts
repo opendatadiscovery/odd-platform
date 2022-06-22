@@ -1,39 +1,30 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import { collectorAdapter } from 'redux/reducers/collectors.slice';
+import * as actions from 'redux/actions';
 import { CollectorsState } from 'redux/interfaces/state';
 
 const collectorsState = ({ collectors }: RootState): CollectorsState =>
   collectors;
 
-const getCollectorsListFetchingStatus = createLegacyFetchingSelector(
-  'GET_COLLECTOR_LIST'
+export const { selectAll: getCollectorsList } =
+  collectorAdapter.getSelectors<RootState>(state => state.collectors);
+
+export const getCollectorsListFetchingStatuses = createStatusesSelector(
+  actions.fetchCollectorsActionType
 );
 
-export const getIsCollectorsListFetching = createSelector(
-  getCollectorsListFetchingStatus,
-  status => status === 'fetching'
+export const getCollectorCreatingStatuses = createStatusesSelector(
+  actions.registerCollectorActionType
 );
 
-export const getCollectorsList = createSelector(
-  collectorsState,
-  collectors => collectors.allIds.map(id => collectors.byId[id])
+export const getCollectorDeletingStatuses = createStatusesSelector(
+  actions.deleteCollectorActionType
 );
 
-const getCollectorCreationStatus =
-  createLegacyFetchingSelector('POST_COLLECTOR');
-
-export const getIsCollectorCreating = createSelector(
-  getCollectorCreationStatus,
-  status => status === 'fetching'
-);
-
-const getCollectorDeletionStatus =
-  createLegacyFetchingSelector('DELETE_COLLECTOR');
-
-export const getIsCollectorDeleting = createSelector(
-  getCollectorDeletionStatus,
-  status => status === 'fetching'
+export const getCollectoruUpdatingStatuses = createStatusesSelector(
+  actions.updateCollectorActionType
 );
 
 export const getCollectorsListPage = createSelector(
