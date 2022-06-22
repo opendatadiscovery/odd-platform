@@ -12,10 +12,10 @@ const NamespaceList = React.lazy(
 const OwnersListContainer = React.lazy(
   () => import('./OwnersList/OwnersListContainer')
 );
+
 const LabelsList = React.lazy(() => import('./LabelsList/LabelsList'));
-const TagsListContainer = React.lazy(
-  () => import('./TagsList/TagsListContainer')
-);
+const TagsList = React.lazy(() => import('./TagsList/TagsList'));
+
 const DataSourcesListContainer = React.lazy(
   () => import('./DataSourcesList/DataSourcesListContainer')
 );
