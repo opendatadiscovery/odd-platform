@@ -1,7 +1,6 @@
 import {
   DataSourceApi,
   Configuration,
-  DataSourceList,
   DataSource,
   DataSourceApiGetDataSourceListRequest,
   DataSourceApiUpdateDataSourceRequest,
@@ -9,78 +8,72 @@ import {
   DataSourceApiDeleteDataSourceRequest,
   DataSourceApiRegenerateDataSourceTokenRequest,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
-import { DeleteDataSource } from 'redux/interfaces/datasources';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { CurrentPageInfo } from 'redux/interfaces/common';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PaginatedResponse } from 'redux/interfaces/common';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new DataSourceApi(apiClientConf);
 
-export const fetchDataSourcesList = createThunk<
-  DataSourceApiGetDataSourceListRequest,
-  DataSourceList,
-  PaginatedResponse<DataSourceList>
->(
-  (params: DataSourceApiGetDataSourceListRequest) =>
-    apiClient.getDataSourceList(params),
-  actions.fetchDataSourcesAction,
-  (
-    response: DataSourceList,
-    request: DataSourceApiGetDataSourceListRequest
-  ) => ({
-    ...response,
-    pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-      hasNext: request.size * request.page < response.pageInfo.total,
-    },
-  })
-);
+export const fetchDataSourcesList = createAsyncThunk<
+  { datasourcesList: Array<DataSource>; pageInfo: CurrentPageInfo },
+  DataSourceApiGetDataSourceListRequest
+>(actions.fetchDatasorcesActionType, async ({ page, size, query }) => {
+  const { items, pageInfo } = await apiClient.getDataSourceList({
+    page,
+    size,
+    query,
+  });
 
-export const updateDataSource = createThunk<
-  DataSourceApiUpdateDataSourceRequest,
+  return { datasourcesList: items, pageInfo: { ...pageInfo, page } };
+});
+
+export const updateDataSource = createAsyncThunk<
   DataSource,
-  DataSource
+  DataSourceApiUpdateDataSourceRequest
 >(
-  (params: DataSourceApiUpdateDataSourceRequest) =>
-    apiClient.updateDataSource(params),
-  actions.updateDataSourceAction,
-  (result: DataSource) => result
+  actions.updateDatasourceActionType,
+  async ({ dataSourceId, dataSourceUpdateFormData }) => {
+    const datasource = await apiClient.updateDataSource({
+      dataSourceId,
+      dataSourceUpdateFormData,
+    });
+
+    return datasource;
+  }
 );
 
-export const regenerateDataSourceToken = createThunk<
-  DataSourceApiRegenerateDataSourceTokenRequest,
+export const regenerateDataSourceToken = createAsyncThunk<
   DataSource,
-  DataSource
+  DataSourceApiRegenerateDataSourceTokenRequest
 >(
-  (params: DataSourceApiRegenerateDataSourceTokenRequest) =>
-    apiClient.regenerateDataSourceToken(params),
-  actions.regenerateDataSourceTokenAction,
-  (result: DataSource) => result
+  actions.regenerateDataSourceTokenActionType,
+  async ({ dataSourceId }) => {
+    const datasource = await apiClient.regenerateDataSourceToken({
+      dataSourceId,
+    });
+
+    return datasource;
+  }
 );
 
-export const registerDataSource = createThunk<
-  DataSourceApiRegisterDataSourceRequest,
+export const registerDataSource = createAsyncThunk<
   DataSource,
-  DataSource
->(
-  (params: DataSourceApiRegisterDataSourceRequest) =>
-    apiClient.registerDataSource(params),
-  actions.registerDataSourceAction,
-  (result: DataSource) => result
-);
+  DataSourceApiRegisterDataSourceRequest
+>(actions.registerDataSourceActionType, async ({ dataSourceFormData }) => {
+  const datasource = await apiClient.registerDataSource({
+    dataSourceFormData,
+  });
 
-export const deleteDataSource = createThunk<
-  DataSourceApiDeleteDataSourceRequest,
-  void,
-  DeleteDataSource
->(
-  (params: DataSourceApiDeleteDataSourceRequest) =>
-    apiClient.deleteDataSource(params),
-  actions.deleteDataSourceAction,
-  (_, request: DataSourceApiDeleteDataSourceRequest) => ({
-    dataSourceId: request.dataSourceId,
-  })
-);
+  return datasource;
+});
+
+export const deleteDataSource = createAsyncThunk<
+  number,
+  DataSourceApiDeleteDataSourceRequest
+>(actions.deleteDatasourceActionType, async ({ dataSourceId }) => {
+  await apiClient.deleteDataSource({ dataSourceId });
+
+  return dataSourceId;
+});
