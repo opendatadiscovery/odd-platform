@@ -59,9 +59,7 @@ export interface CollectorsState {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface TagsState {
-  byId: { [tagId: number]: Tag };
-  allIds: Tag['id'][];
+export interface TagsState extends EntityState<Tag> {
   pageInfo?: CurrentPageInfo;
 }
 export interface LabelsState extends EntityState<Label> {

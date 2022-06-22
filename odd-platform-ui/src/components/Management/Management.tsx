@@ -86,11 +86,7 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
               path="/management/owners"
               component={OwnersListContainer}
             />
-            <Route
-              exact
-              path="/management/tags"
-              component={TagsListContainer}
-            />
+            <Route exact path="/management/tags" component={TagsList} />
             <Route
               exact
               path="/management/labels"

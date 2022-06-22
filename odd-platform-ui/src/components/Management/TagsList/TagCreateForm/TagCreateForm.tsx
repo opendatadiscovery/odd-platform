@@ -1,11 +1,10 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import {
-  Tag,
-  TagApiCreateTagRequest,
-  TagFormData,
-} from 'generated-sources';
+import { TagFormData } from 'generated-sources';
+import { getTagCreatingStatuses } from 'redux/selectors';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { createTag } from 'redux/thunks/tags.thunks';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -13,19 +12,17 @@ import TagCreateFormItem from './TagCreateFormItem/TagCreateFormItem';
 
 interface TagCreateFormProps {
   btnCreateEl: JSX.Element;
-  isLoading: boolean;
-  createTag: (params: TagApiCreateTagRequest) => Promise<Tag[]>;
 }
 
 interface TagCreateFormData {
   tags: TagFormData[];
 }
 
-const TagCreateForm: React.FC<TagCreateFormProps> = ({
-  btnCreateEl,
-  isLoading,
-  createTag,
-}) => {
+const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
+  const dispatch = useAppDispatch();
+  const { isLoading: isTagCreating } = useAppSelector(
+    getTagCreatingStatuses
+  );
   const methods = useForm<TagCreateFormData>({
     defaultValues: {
       tags: [{ name: '', important: false }],
@@ -49,7 +46,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
   };
 
   const handleCreate = async (data: TagCreateFormData) => {
-    createTag({ tagFormData: data.tags }).then(
+    dispatch(createTag({ tagFormData: data.tags })).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
         clearState();
@@ -129,7 +126,7 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isTagCreating}
       errorText={error}
       clearState={clearState}
     />
