@@ -26,7 +26,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
   const { isLoading: isLabelDeleting } = useAppSelector(
     getLabelDeletingStatuses
   );
-  const { isLoading: isLabelUpdateing } = useAppSelector(
+  const { isLoading: isLabelUpdating } = useAppSelector(
     getLabelUpdatingStatuses
   );
   const { control, handleSubmit, reset, formState } =
@@ -118,7 +118,7 @@ const LabelEditForm: React.FC<LabelEditFormProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLabelDeleting || isLabelUpdateing}
+      isLoading={isLabelDeleting || isLabelUpdating}
       errorText={error}
     />
   );
