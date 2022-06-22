@@ -1113,6 +1113,10 @@ components:
           type: boolean
         is_value:
           type: boolean
+        is_primary_key:
+          type: boolean
+        is_sort_key:
+          type: boolean
         default_value:
           type: string
         external_description:
