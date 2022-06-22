@@ -15,7 +15,7 @@ export const getIsDataSourcesListFetching = createStatusesSelector(
   actions.fetchDatasorcesActionType
 );
 
-export const getIsDatasourceCreatingStatuses = createStatusesSelector(
+export const getDatasourceCreatingStatuses = createStatusesSelector(
   actions.registerDataSourceActionType
 );
 

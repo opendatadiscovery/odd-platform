@@ -8,7 +8,7 @@ import {
   getDataSourcesList,
   getIsDataSourcesListFetching,
 } from 'redux/selectors';
-import { fetchDataSourcesList } from 'redux/thunks/datasources.thunks';
+import { fetchDataSourcesList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 
 import { SearchClass } from 'redux/interfaces/search';

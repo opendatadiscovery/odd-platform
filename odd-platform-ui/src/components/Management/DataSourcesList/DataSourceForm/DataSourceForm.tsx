@@ -9,10 +9,7 @@ import {
 } from 'date-fns/esm';
 import { Controller, useForm } from 'react-hook-form';
 import { DataSource, DataSourceFormData } from 'generated-sources';
-import {
-  registerDataSource,
-  updateDataSource,
-} from 'redux/thunks/datasources.thunks';
+import { registerDataSource, updateDataSource } from 'redux/thunks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
   FormControlLabel,
@@ -20,7 +17,7 @@ import {
   RadioGroup,
   Typography,
 } from '@mui/material';
-import { getIsDatasourceCreatingStatuses } from 'redux/selectors';
+import { getDatasourceCreatingStatuses } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
@@ -49,7 +46,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const { isLoading: isDataSourceCreating } = useAppSelector(
-    getIsDatasourceCreatingStatuses
+    getDatasourceCreatingStatuses
   );
 
   const getDefaultValues = React.useCallback(

@@ -1,13 +1,17 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  Tag,
-  TagApiDeleteTagRequest,
-  TagApiGetPopularTagListRequest,
-} from 'generated-sources';
+  getTagCreatingStatuses,
+  getTAgDeletingStatuses,
+  getTagsList,
+  getTagsListPage,
+  getTagsListFetchingStatuses,
+} from 'redux/selectors';
+
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import { fetchTagsList } from 'redux/thunks';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
@@ -18,28 +22,28 @@ import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
-import TagCreateFormContainer from './TagCreateForm/TagCreateFormContainer';
+import TagCreateForm from './TagCreateForm/TagCreateForm';
+
 import * as S from './TagsListStyles';
 
-interface TagsListProps {
-  tagsList: Tag[];
-  isFetching: boolean;
-  isDeleting: boolean;
-  isCreating: boolean;
-  fetchTagsList: (params: TagApiGetPopularTagListRequest) => void;
-  deleteTag: (params: TagApiDeleteTagRequest) => Promise<void>;
-  pageInfo?: CurrentPageInfo;
-}
+const TagsListView: React.FC = () => {
+  const dispatch = useAppDispatch();
 
-const TagsListView: React.FC<TagsListProps> = ({
-  tagsList,
-  isFetching,
-  isDeleting,
-  isCreating,
-  fetchTagsList,
-  deleteTag,
-  pageInfo,
-}) => {
+  const { isLoading: isTagCreating } = useAppSelector(
+    getTagCreatingStatuses
+  );
+
+  const { isLoading: isTagDeleting } = useAppSelector(
+    getTAgDeletingStatuses
+  );
+
+  const { isLoading: isTagsFetching } = useAppSelector(
+    getTagsListFetchingStatuses
+  );
+
+  const tagsList = useAppSelector(getTagsList);
+  const pageInfo = useAppSelector(getTagsListPage);
+
   const pageSize = 100;
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalTags, setTotalTags] = React.useState<number | undefined>(
@@ -47,8 +51,8 @@ const TagsListView: React.FC<TagsListProps> = ({
   );
 
   React.useEffect(() => {
-    if (!searchText) fetchTagsList({ page: 1, size: pageSize });
-  }, [fetchTagsList, isCreating, isDeleting, searchText]);
+    if (!searchText) dispatch(fetchTagsList({ page: 1, size: pageSize }));
+  }, [fetchTagsList, isTagCreating, isTagDeleting, searchText]);
 
   React.useEffect(() => {
     if (!searchText) setTotalTags(pageInfo?.total);
@@ -56,16 +60,20 @@ const TagsListView: React.FC<TagsListProps> = ({
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
-    fetchTagsList({
-      page: pageInfo.page + 1,
-      size: pageSize,
-      query: searchText,
-    });
+    dispatch(
+      fetchTagsList({
+        page: pageInfo.page + 1,
+        size: pageSize,
+        query: searchText,
+      })
+    );
   };
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      fetchTagsList({ page: 1, size: pageSize, query: searchText });
+      dispatch(
+        fetchTagsList({ page: 1, size: pageSize, query: searchText })
+      );
     }, 500),
     [searchText]
   );
@@ -113,7 +121,7 @@ const TagsListView: React.FC<TagsListProps> = ({
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <TagCreateFormContainer
+        <TagCreateForm
           btnCreateEl={
             <AppButton
               size="medium"
@@ -145,7 +153,7 @@ const TagsListView: React.FC<TagsListProps> = ({
             dataLength={tagsList.length}
             scrollThreshold="200px"
             loader={
-              isFetching && (
+              isTagsFetching && (
                 <SkeletonWrapper
                   length={5}
                   renderContent={({ randomSkeletonPercentWidth, key }) => (
@@ -159,16 +167,12 @@ const TagsListView: React.FC<TagsListProps> = ({
             }
           >
             {tagsList?.map(tag => (
-              <EditableTagItem
-                key={tag.id}
-                tag={tag}
-                deleteTag={deleteTag}
-              />
+              <EditableTagItem key={tag.id} tag={tag} />
             ))}
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isFetching && !tagsList.length ? (
+      {!isTagsFetching && !tagsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Grid>

@@ -4,7 +4,7 @@ export const datasourceActionTypePrefix = 'datasources';
 
 export const fetchDatasorcesActionType = createActionType(
   datasourceActionTypePrefix,
-  'datasources'
+  'fetchDatasources'
 );
 
 export const updateDatasourceActionType = createActionType(
