@@ -1,10 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { addSeconds, formatDistanceToNowStrict } from 'date-fns';
-import {
-  DataSource,
-  DataSourceApiDeleteDataSourceRequest,
-} from 'generated-sources';
+import { DataSource } from 'generated-sources';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { deleteDataSource } from 'redux/thunks/datasources.thunks';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
@@ -12,23 +11,19 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
-import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormContainer';
-import DataSourceItemTokenContainer from './DataSourceItemToken/DataSourceItemTokenContainer';
+import DataSourceFormDialog from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
+import DataSourceItemToken from './DataSourceItemToken/DataSourceItemToken';
 import * as S from './DataSourceItemStyles';
 
 interface DataSourceItemProps {
   dataSource: DataSource;
-  deleteDataSource: (
-    params: DataSourceApiDeleteDataSourceRequest
-  ) => Promise<void>;
 }
 
-const DataSourceItem: React.FC<DataSourceItemProps> = ({
-  dataSource,
-  deleteDataSource,
-}) => {
+const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
+  const dispatch = useAppDispatch();
+
   const onDelete = React.useCallback(
-    () => deleteDataSource({ dataSourceId: dataSource.id }),
+    () => dispatch(deleteDataSource({ dataSourceId: dataSource.id })),
     [dataSource]
   );
 
@@ -41,7 +36,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
           </Typography>
         </Grid>
         <S.ActionsContainer item sm={4}>
-          <DataSourceFormDialogContainer
+          <DataSourceFormDialog
             dataSource={dataSource}
             btnCreateEl={
               <AppButton
@@ -110,7 +105,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({
               labelWidth={4}
               valueSx={{ ml: 0 }}
             >
-              <DataSourceItemTokenContainer dataSource={dataSource} />
+              <DataSourceItemToken dataSource={dataSource} />
             </LabeledInfoItem>
           )}
         </S.DescriptionContainer>

@@ -50,9 +50,7 @@ import {
   TermSearchFacetsByName,
 } from './termSearch';
 
-export interface DataSourcesState {
-  byId: { [dataSourceId: string]: DataSource };
-  allIds: DataSource['id'][];
+export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo?: CurrentPageInfo;
 }
 
@@ -65,7 +63,6 @@ export interface CollectorsState {
 export interface TagsState extends EntityState<Tag> {
   pageInfo?: CurrentPageInfo;
 }
-
 export interface LabelsState extends EntityState<Label> {
   pageInfo?: CurrentPageInfo;
 }

@@ -1,8 +1,8 @@
 import React from 'react';
-import {
-  DataSource,
-  DataSourceApiRegenerateDataSourceTokenRequest,
-} from 'generated-sources';
+import { DataSource } from 'generated-sources';
+import { regenerateDataSourceToken } from 'redux/thunks';
+import { useAppDispatch } from 'lib/redux/hooks';
+
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -11,15 +11,13 @@ import { TokenContainer, Token } from './DataSourceItemTokenStyles';
 
 interface DataSourceItemProps {
   dataSource: DataSource;
-  regenerateDataSourceToken: (
-    params: DataSourceApiRegenerateDataSourceTokenRequest
-  ) => Promise<DataSource>;
 }
 
 const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
   dataSource,
-  regenerateDataSourceToken,
 }) => {
+  const dispatch = useAppDispatch();
+
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
 
   React.useEffect(() => {
@@ -28,9 +26,11 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
 
   const onTokenRegenerate = React.useCallback(
     () =>
-      regenerateDataSourceToken({
-        dataSourceId: dataSource.id,
-      }),
+      dispatch(
+        regenerateDataSourceToken({
+          dataSourceId: dataSource.id,
+        })
+      ),
     [dataSource]
   );
 

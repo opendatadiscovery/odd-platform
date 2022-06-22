@@ -2,7 +2,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 import legacyLoader from './loader-reducer';
 import loader from './loader.slice';
 import namespaces from './namespace.slice';
-import dataSources from './datasources.reducer';
+import dataSources from './datasources.slice';
 import dataEntities from './dataentities.slice';
 import tags from './tags.slice';
 import labels from './labels.slice';
