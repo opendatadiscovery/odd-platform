@@ -47,9 +47,7 @@ import {
   TermSearchFacetsByName,
 } from './termSearch';
 
-export interface DataSourcesState {
-  byId: { [dataSourceId: string]: DataSource };
-  allIds: DataSource['id'][];
+export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo?: CurrentPageInfo;
 }
 
