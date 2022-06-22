@@ -1,41 +1,29 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
+import { labelsAdapter } from 'redux/reducers/labels.slice';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { LabelsState } from 'redux/interfaces/state';
+import * as actions from 'redux/actions';
 
 const labelsState = ({ labels }: RootState): LabelsState => labels;
 
-const getLabelsListFetchingStatus =
-  createLegacyFetchingSelector('GET_LABELS');
-export const getLabelsCreateStatus =
-  createLegacyFetchingSelector('POST_LABELS');
-export const getLabelUpdateStatus =
-  createLegacyFetchingSelector('PUT_LABEL');
-export const deleteLabelsUpdateStatus =
-  createLegacyFetchingSelector('DELETE_LABEL');
+export const { selectAll: getLabelsList } =
+  labelsAdapter.getSelectors<RootState>(state => state.labels);
 
-export const getIsLabelsListFetching = createSelector(
-  getLabelsListFetchingStatus,
-  status => status === 'fetching'
+export const getLabelListFetchingStatuses = createStatusesSelector(
+  actions.fetchLabelsActionType
 );
 
-export const getLabelsList = createSelector(labelsState, labels =>
-  labels.allIds.map(id => labels.byId[id])
+export const getLabelCreatingStatuses = createStatusesSelector(
+  actions.createLabelsActionType
 );
 
-export const getIsLabelCreating = createSelector(
-  getLabelsCreateStatus,
-  status => status === 'fetching'
+export const getLabelUpdatingStatuses = createStatusesSelector(
+  actions.updateLabelActionType
 );
 
-export const getIsLabelUpdating = createSelector(
-  getLabelUpdateStatus,
-  status => status === 'fetching'
-);
-
-export const getIsLabelDeleting = createSelector(
-  deleteLabelsUpdateStatus,
-  status => status === 'fetching'
+export const getLabelDeletingStatuses = createStatusesSelector(
+  actions.deleteLabelActionType
 );
 
 export const getLabelsListPage = createSelector(

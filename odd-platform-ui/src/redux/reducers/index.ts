@@ -5,7 +5,7 @@ import namespaces from './namespace.slice';
 import dataSources from './datasources.reducer';
 import dataEntities from './dataentities.slice';
 import tags from './tags.slice';
-import labels from './labels.reducer';
+import labels from './labels.slice';
 import search from './dataentitiesSearch.reducer';
 import searchSlice from './dataEntitySearch.slice';
 import metaData from './metadata.slice';
