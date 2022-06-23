@@ -1,5 +1,6 @@
 import {
   Configuration,
+  DataEntity,
   DataEntityList,
   DataEntityRunApi,
   DataEntityRunApiGetRunsRequest,
@@ -7,6 +8,7 @@ import {
   DataQualityApi,
   DataQualityApiGetDataEntityDataQATestsRequest,
   DataQualityApiGetDatasetTestReportRequest,
+  DataQualityApiSetDataQATestSeverityRequest,
   DataSetTestReport,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
@@ -16,9 +18,10 @@ import {
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const datasetQualityTestApiClient = new DataQualityApi(apiClientConf);
+const dataQualityApi = new DataQualityApi(apiClientConf);
 const dataEntityRunApi = new DataEntityRunApi(apiClientConf);
 
 export const fetchDataSetQualityTestReport = createThunk<
@@ -27,7 +30,7 @@ export const fetchDataSetQualityTestReport = createThunk<
   PartialEntityUpdateParams<DataSetTestReport>
 >(
   (params: DataQualityApiGetDatasetTestReportRequest) =>
-    datasetQualityTestApiClient.getDatasetTestReport(params),
+    dataQualityApi.getDatasetTestReport(params),
   actions.fetchDataSetQualityTestReportAction,
   (
     response: DataSetTestReport,
@@ -44,7 +47,7 @@ export const fetchDataSetQualityTestList = createThunk<
   PartialEntityUpdateParams<DataEntityList>
 >(
   (params: DataQualityApiGetDataEntityDataQATestsRequest) =>
-    datasetQualityTestApiClient.getDataEntityDataQATests(params),
+    dataQualityApi.getDataEntityDataQATests(params),
   actions.fetchDataSetQualityTestListAction,
   (
     response: DataEntityList,
@@ -76,4 +79,19 @@ export const fetchDataSetQualityTestRuns = createThunk<
       },
     },
   })
+);
+
+export const setDataQATestSeverity = createAsyncThunk<
+  DataEntity,
+  DataQualityApiSetDataQATestSeverityRequest
+>(
+  actions.setDataQATestSeverityActionType,
+  async ({ dataEntityId, dataqaTestId, body }) => {
+    const dataQATest = await dataQualityApi.setDataQATestSeverity({
+      dataEntityId,
+      dataqaTestId,
+      body,
+    });
+    return dataQATest;
+  }
 );

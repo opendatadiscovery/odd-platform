@@ -7,19 +7,19 @@ import { fetchDataSetQualityTestRuns } from 'redux/thunks';
 const mapStateToProps = (
   state: RootState,
   {
-    dataqatestId,
+    dataQATestId,
     dataEntityId,
     reportDetailsViewType,
   }: {
-    dataqatestId: number;
+    dataQATestId: number;
     dataEntityId: number;
     reportDetailsViewType: string;
   }
 ) => ({
-  dataQATestId: dataqatestId,
+  dataQATestId,
   dataEntityId,
   reportDetailsViewType,
-  qualityTest: getQualityTestByTestId(state, dataqatestId),
+  qualityTest: getQualityTestByTestId(state, dataQATestId),
 });
 
 const mapDispatchToProps = { fetchDataSetQualityTestRuns };

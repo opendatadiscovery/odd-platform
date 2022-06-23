@@ -31,21 +31,25 @@ type ViewType = 'overview' | 'linked-items';
 // useAppParams react-router
 interface RouteParams {
   dataEntityId: string;
+  dataQATestId: string;
   termId: string;
   viewType: ViewType;
 }
 
 interface AppRouteParams {
   dataEntityId: number;
+  dataQATestId: number;
   termId: number;
   viewType: ViewType;
 }
 
 export const useAppParams = (): AppRouteParams => {
-  const { dataEntityId, termId, viewType } = useParams<RouteParams>();
+  const { dataEntityId, termId, viewType, dataQATestId } =
+    useParams<RouteParams>();
 
   return {
     dataEntityId: parseInt(dataEntityId, 10),
+    dataQATestId: parseInt(dataQATestId, 10),
     termId: parseInt(termId, 10),
     viewType,
   };

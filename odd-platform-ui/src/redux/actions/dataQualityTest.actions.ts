@@ -8,6 +8,7 @@ import {
   PaginatedResponse,
   PartialEntityUpdateParams,
 } from 'redux/interfaces';
+import { createActionType } from 'lib/redux/helpers';
 
 export const fetchDataSetQualityTestReportAction = createAsyncAction(
   'GET_DATA_SET_QUALITY_TEST_REPORT__REQUEST',
@@ -30,3 +31,10 @@ export const fetchDataSetQualityTestRunsAction = createAsyncAction(
   PartialEntityUpdateParams<PaginatedResponse<DataEntityRunList>>,
   undefined
 >();
+
+const dataQATestActionTypePrefix = 'dataQATest';
+
+export const setDataQATestSeverityActionType = createActionType(
+  dataQATestActionTypePrefix,
+  'setDataQATestSeverity'
+);

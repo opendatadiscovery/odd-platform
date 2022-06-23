@@ -195,6 +195,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     isDataset,
     dataEntityDetails,
     openAlertsCount,
+    datasetQualityTestReport?.total,
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -378,12 +379,12 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:reportDetailsViewType?"
               component={TestReportContainer}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
+              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:reportDetailsViewType?"
               component={TestReportDetailsContainer}
             />
             <Route
