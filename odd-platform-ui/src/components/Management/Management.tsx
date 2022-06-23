@@ -20,8 +20,8 @@ const DataSourcesList = React.lazy(
   () => import('./DataSourcesList/DataSourcesList')
 );
 
-const CollectorsListContainer = React.lazy(
-  () => import('./CollectorsList/CollectorsListContainer')
+const CollectorsList = React.lazy(
+  () => import('./CollectorsList/CollectorsList')
 );
 
 interface ManagementProps {
@@ -79,7 +79,7 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
             <Route
               exact
               path="/management/collectors"
-              component={CollectorsListContainer}
+              component={CollectorsList}
             />
             <Route
               exact
