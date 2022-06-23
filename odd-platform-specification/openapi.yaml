@@ -1299,6 +1299,30 @@ paths:
       tags:
         - dataQuality
 
+  /api/datasets/{data_entity_id}/dataqatests/{dataqa_test_id}:
+    put:
+      summary: Set DataQA test severity
+      description: Sets DataQA test severity
+      operationId: setDataQATestSeverity
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataQATestIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataQualityTestSeverity'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntity'
+      tags:
+        - dataQuality
+
   /api/dataentitygroups/{data_entity_group_id}/children:
     get:
       summary: Get DataEntityGroup children

@@ -538,6 +538,13 @@ components:
       additionalProperties:
         type: string
 
+    DataQualityTestSeverity:
+      type: string
+      enum:
+        - MINOR
+        - AVERAGE
+        - MAJOR
+
     DataQualityTest:
       allOf:
         - $ref: '#/components/schemas/DataEntityBaseObject'
@@ -549,6 +556,8 @@ components:
               type: string
             expectation:
               $ref: '#/components/schemas/DataQualityTestExpectation'
+            severity:
+              $ref: '#/components/schemas/DataQualityTestSeverity'
             datasets_list:
               $ref: '#/components/schemas/DataEntityRefList'
             linked_url_list:
@@ -1810,6 +1819,14 @@ components:
 
     DataEntityIdParam:
       name: data_entity_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+
+    DataQATestIdParam:
+      name: dataqa_test_id
       in: path
       required: true
       schema:
