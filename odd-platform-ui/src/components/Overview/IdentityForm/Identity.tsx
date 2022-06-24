@@ -65,9 +65,9 @@ const Identity: React.FC<IdentityProps> = ({
         searchOwners({ page: 1, size: 30, query: optionsSearchText })
       )
         .unwrap()
-        .then(({ ownersList }) => {
+        .then(({ items }) => {
           setOptionsLoading(false);
-          setOptions(ownersList);
+          setOptions(items);
         });
     }, 500),
     [searchOwners, setOptionsLoading, setOptions, optionsSearchText]
@@ -143,8 +143,8 @@ const Identity: React.FC<IdentityProps> = ({
       })
     )
       .unwrap()
-      .then(({ ownersList }) => {
-        setPossibleOwners(ownersList);
+      .then(({ items }) => {
+        setPossibleOwners(items);
       });
   }, [identity]);
 

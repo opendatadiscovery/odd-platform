@@ -7,41 +7,46 @@ import {
 } from 'generated-sources';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { FilterNames } from 'components/Activity/Filters/Filters';
-import { getActivitiesFilters } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { setActivityFilters } from 'redux/reducers/activity.slice';
+import { setSingleActivityFilter } from 'redux/reducers/activity.slice';
 import { stringFormatted } from 'lib/helpers';
+import {
+  ActivitySingleFilterName,
+  ActivitySingleFilterOption,
+} from 'redux/interfaces';
+import { getActivitiesSelectedSingleFilterByFilterName } from 'redux/selectors';
 
 interface SingleFilterProps {
   name: string;
   filterOptions: DataSource[] | Namespace[] | ActivityEventType[];
-  filterName: FilterNames;
-  // handleSetFilters: (filters: ActivityFilters) => void;
+  filterName: ActivitySingleFilterName;
 }
 
 const SingleFilter: React.FC<SingleFilterProps> = ({
   name,
   filterOptions,
   filterName,
-  // handleSetFilters,
 }) => {
   const dispatch = useAppDispatch();
 
-  const filters = useAppSelector(getActivitiesFilters);
-  console.log('filters', filters);
+  const selectedOption = useAppSelector(state =>
+    getActivitiesSelectedSingleFilterByFilterName(state, filterName)
+  );
+
   const handleFilterSelect = (
-    option: string | { id: number | string; name: string }
+    option: ActivitySingleFilterOption | string
   ) => {
     if (typeof option === 'string') {
-      dispatch(setActivityFilters({ ...filters, [filterName]: option }));
-    } else {
       dispatch(
-        setActivityFilters({
-          ...filters,
-          [filterName]: option.id === 'All' ? null : option.id,
+        setSingleActivityFilter({
+          filterName,
+          data: option as ActivityEventType,
         })
       );
+    }
+
+    if (typeof option !== 'string' && 'id' in option) {
+      dispatch(setSingleActivityFilter({ filterName, data: option.id }));
     }
   };
 
@@ -64,7 +69,7 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
         return (
           <AppMenuItem
             key={option.id}
-            value={option.id}
+            value={option.name}
             onClick={() => handleFilterSelect(option)}
             maxWidth={190}
           >
@@ -75,7 +80,11 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
     [filterOptions]
   );
 
-  // const [] = React.useState<>('All');
+  const [selectValue, setSelectValue] = React.useState<string>('All');
+
+  React.useEffect(() => {
+    if (!selectedOption) setSelectValue('All');
+  }, [selectedOption, setSelectValue]);
 
   return filterOptions.length ? (
     <Grid container>
@@ -85,14 +94,8 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
           label={name}
           select
           id={`filter-${filterName}`}
-          defaultValue="All"
-          // value={
-          //   filters[filterName]
-          //     ? filterOptions?.find(
-          //         (el: any) => el.id === filters[filterName]
-          //       ).name
-          //     : 'All'
-          // }
+          value={selectValue}
+          onChange={e => setSelectValue(e.target.value)}
         >
           <AppMenuItem
             value="All"

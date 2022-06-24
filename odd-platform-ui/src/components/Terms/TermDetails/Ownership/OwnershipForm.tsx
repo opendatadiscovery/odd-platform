@@ -70,9 +70,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
         searchOwners({ page: 1, size: 30, query: ownersSearchText })
       )
         .unwrap()
-        .then(({ ownersList }) => {
+        .then(({ items }) => {
           setOwnersLoading(false);
-          setOwnerOptions(ownersList);
+          setOwnerOptions(items);
         });
     }, 500),
     [searchOwners, setOwnersLoading, setOwnerOptions, ownersSearchText]

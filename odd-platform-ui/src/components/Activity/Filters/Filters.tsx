@@ -7,31 +7,15 @@ import {
   fetchNamespaceList,
 } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { ActivityApiGetActivityRequest as ActivityFilters } from 'generated-sources';
 import {
   getActivityEventTypes,
   getDataSourcesList,
   getNamespaceList,
 } from 'redux/selectors';
+import MultipleFilter from 'components/Activity/Filters/FilterItem/MultipleFilter/MultipleFilter';
+import { clearActivityFilters } from 'redux/reducers/activity.slice';
 import * as S from './FiltersStyles';
 import SingleFilter from './FilterItem/SingleFilter/SingleFilter';
-
-// interface FiltersProps {
-//   searchClass?: SearchClass;
-//   datasources: DataSource[];
-//   namespaces: Namespace[];
-//   fetchDataSourcesList: (
-//     params: DataSourceApiGetDataSourceListRequest
-//   ) => Promise<DataSourceList>;
-//   fetchNamespaceList: (
-//     params: NamespaceApiGetNamespaceListRequest
-//   ) => void;
-//   clearDataEntitySearchFilters: () => void;
-//   isSearchFacetsUpdating: boolean;
-//   isDatasourceListFetching: boolean;
-// }
-
-export type FilterNames = keyof ActivityFilters;
 
 const Filters: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -53,8 +37,7 @@ const Filters: React.FC = () => {
         <AppButton
           color="tertiary"
           size="medium"
-          // TODO clear filters
-          // onClick={() => clearDataEntitySearchFilters()}
+          onClick={() => dispatch(clearActivityFilters())}
         >
           Clear All
         </AppButton>
@@ -80,16 +63,8 @@ const Filters: React.FC = () => {
           name="Event type"
           filterOptions={eventTypes}
         />
-        {/* <MultipleFilterItemContainer */}
-        {/*  key="ow" */}
-        {/*  facetName="owners" */}
-        {/*  name="Owner" */}
-        {/* /> */}
-        {/* <MultipleFilterItemContainer */}
-        {/*  key="tg" */}
-        {/*  facetName="tags" */}
-        {/*  name="Tag" */}
-        {/* /> */}
+        <MultipleFilter key="tg" filterName="tags" name="Tag" />
+        <MultipleFilter key="ow" filterName="owners" name="User" />
         {/* TODO update loader conditions */}
         {/* <S.FacetsLoaderContainer container sx={{ mt: 2 }}> */}
         {/*  {(isSearchFacetsUpdating || isDatasourceListFetching) && ( */}

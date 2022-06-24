@@ -1,5 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { ActivitiesState, RootState } from 'redux/interfaces';
+import {
+  ActivitiesState,
+  ActivityMultipleFilterName,
+  ActivitySingleFilterName,
+  RootState,
+} from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 
@@ -30,7 +35,31 @@ export const getActivityEventTypes = createSelector(
   activities => activities.activityEventTypes
 );
 
-export const getActivitiesFilters = createSelector(
+export const getActivitySingleFilterName = (
+  _: RootState,
+  filterName: ActivitySingleFilterName
+) => filterName;
+
+export const getActivitiesSelectedSingleFilterByFilterName =
+  createSelector(
+    activitiesState,
+    getActivitySingleFilterName,
+    (activities, filterName) => activities.selectedFilters[filterName]
+  );
+
+export const getActivityMultipleFilterName = (
+  _: RootState,
+  filterName: ActivityMultipleFilterName
+) => filterName;
+
+export const getActivitiesSelectedMultipleFiltersByFilterName =
+  createSelector(
+    activitiesState,
+    getActivityMultipleFilterName,
+    (activities, filterName) => activities.selectedFilters[filterName]
+  );
+
+export const getActivitiesQueryParams = createSelector(
   activitiesState,
-  activities => activities.filters
+  activities => activities.queryParams
 );

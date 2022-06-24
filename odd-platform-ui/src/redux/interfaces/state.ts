@@ -2,7 +2,6 @@ import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
   Activity,
-  ActivityApiGetActivityRequest as ActivityFilters,
   ActivityEventType,
   Alert,
   AlertTotals,
@@ -36,20 +35,21 @@ import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest
 // eslint-disable-next-line lodash/import-scope
 import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
-import { ActivitiesTotals } from 'redux/interfaces/activities';
-import { DataSetStructureTypesCount } from './datasetStructure';
 import {
+  ActivitiesTotals,
+  ActivityFilters,
+  ActivityPageInfo,
+  ActivityQueryParams,
+  CurrentPageInfo,
+  DataEntityDetailsState,
+  DataEntityLineageById,
+  DataSetStructureTypesCount,
   FacetOptionsByName,
   SearchFacetsByName,
   SearchTotalsByName,
-} from './search';
-import { DataEntityLineageById } from './dataentityLineage';
-import { ActivityPageInfo, CurrentPageInfo } from './common';
-import { DataEntityDetailsState } from './dataentities';
-import {
   TermSearchFacetOptionsByName,
   TermSearchFacetsByName,
-} from './termSearch';
+} from 'redux/interfaces';
 
 export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo?: CurrentPageInfo;
@@ -237,7 +237,8 @@ export interface ActivitiesState {
   activities: Activity[];
   pageInfo: ActivityPageInfo;
   activityEventTypes: ActivityEventType[];
-  filters: ActivityFilters;
+  selectedFilters: ActivityFilters;
+  queryParams: ActivityQueryParams;
 }
 
 export type RootState = ReturnType<typeof store.getState>;
