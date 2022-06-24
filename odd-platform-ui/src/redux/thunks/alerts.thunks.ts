@@ -1,119 +1,97 @@
 import {
-  Configuration,
+  Alert,
   AlertApi,
-  DataEntityApi,
-  AlertTotals,
+  AlertApiChangeAlertStatusRequest,
   AlertApiGetAllAlertsRequest,
   AlertApiGetAssociatedUserAlertsRequest,
   AlertApiGetDependentEntitiesAlertsRequest,
-  AlertApiChangeAlertStatusRequest,
-  DataEntityApiGetDataEntityAlertsRequest,
   AlertStatus,
-  // Alert,
+  AlertTotals,
+  Configuration,
+  DataEntityApi,
+  DataEntityApiGetDataEntityAlertsRequest,
+  PageInfo,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-// import { CurrentPageInfo } from 'redux/interfaces/common';
+import { CurrentPageInfo } from 'redux/interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new AlertApi(apiClientConf);
-const dataEntitApiClient = new DataEntityApi(apiClientConf);
+const alertApi = new AlertApi(apiClientConf);
+const dataEntityApi = new DataEntityApi(apiClientConf);
 
 export const fetchAlertsTotals = createAsyncThunk<AlertTotals>(
   actions.fetchAlertsTotalsActionType,
   async () => {
-    const response = await apiClient.getAlertTotals();
+    const response = await alertApi.getAlertTotals();
     return response;
   }
 );
 
 export const fetchAllAlertList = createAsyncThunk<
-  // TODO
-
-  // { items: Alert[]; pageInfo: CurrentPageInfo },
-  any,
+  { items: Alert[]; pageInfo: CurrentPageInfo },
   AlertApiGetAllAlertsRequest
 >(actions.fetchAlertListActionType, async ({ page, size }) => {
-  const { items, pageInfo } = await apiClient.getAllAlerts({
+  const { items, pageInfo } = await alertApi.getAllAlerts({
     page,
     size,
   });
   return {
     items,
-    pageInfo: {
-      ...pageInfo,
-      page,
-    },
+    pageInfo: { ...pageInfo, page },
   };
 });
 
 export const fetchMyAlertList = createAsyncThunk<
-  // TODO
-
-  // { items: Alert[]; pageInfo: CurrentPageInfo },
-  any,
+  { items: Alert[]; pageInfo: CurrentPageInfo },
   AlertApiGetAssociatedUserAlertsRequest
 >(actions.fetchMyAlertListActionType, async ({ page, size }) => {
-  const { items, pageInfo } = await apiClient.getAssociatedUserAlerts({
+  const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({
     page,
     size,
   });
   return {
     items,
-    pageInfo: {
-      ...pageInfo,
-      page,
-    },
+    pageInfo: { ...pageInfo, page },
   };
 });
 
 export const fetchMyDependentsAlertList = createAsyncThunk<
-  // TODO
-
-  // { items: Alert[]; pageInfo: CurrentPageInfo },
-  any,
+  { items: Alert[]; pageInfo: CurrentPageInfo },
   AlertApiGetDependentEntitiesAlertsRequest
 >(actions.fetchMyDependentsAlertListActionType, async ({ page, size }) => {
-  const { items, pageInfo } = await apiClient.getDependentEntitiesAlerts({
+  const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({
     page,
     size,
   });
   return {
     items,
-    pageInfo: {
-      ...pageInfo,
-      page,
-    },
+    pageInfo: { ...pageInfo, page },
   };
 });
 
 export const updateAlertStatus = createAsyncThunk<
-  { id: number; status: AlertStatus },
+  { alertId: number; status: AlertStatus },
   AlertApiChangeAlertStatusRequest
 >(
   actions.updateAlertStatusActionType,
   async ({ alertId, alertStatusFormData }) => {
-    const response = await apiClient.changeAlertStatus({
+    const status = await alertApi.changeAlertStatus({
       alertId,
       alertStatusFormData,
     });
 
-    return { id: alertId, status: response };
+    return { alertId, status };
   }
 );
 
 export const fetchDataEntityAlerts = createAsyncThunk<
-  // TODO
-
-  // { items: Alert[]; pageInfo: CurrentPageInfo },
-  any,
+  { items: Alert[]; pageInfo: PageInfo },
   DataEntityApiGetDataEntityAlertsRequest
 >(actions.fetchDataEntityAlertsActionType, async ({ dataEntityId }) => {
-  const { items, pageInfo } = await dataEntitApiClient.getDataEntityAlerts(
-    {
-      dataEntityId,
-    }
-  );
+  const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({
+    dataEntityId,
+  });
   return { items, pageInfo };
 });

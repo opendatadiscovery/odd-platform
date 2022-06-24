@@ -1610,6 +1610,9 @@ components:
             $ref: '#/components/schemas/Alert'
         page_info:
           $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
 
     AlertTotals:
       type: object

@@ -63,16 +63,18 @@ export const alertsSlice = createSlice({
       (state, { payload }) => {
         const { items, pageInfo } = payload;
         alertsAdapter.setAll(state, items);
-        state.pageInfo = pageInfo;
+        state.pageInfo = { ...pageInfo, page: 1 };
       }
     );
     builder.addCase(
       thunks.updateAlertStatus.fulfilled,
       (state, { payload }) => {
-        const { id, status } = payload;
-        // TODO
-        // state.entities[id].status = status;
-        // alertsAdapter.upsertOne(state, {...state, state.entities[id].status:status;});
+        const { alertId, status } = payload;
+
+        const currentAlert = state.entities[alertId];
+        if (currentAlert) {
+          currentAlert.status = status;
+        }
       }
     );
   },
