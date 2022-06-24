@@ -1,11 +1,6 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
-import {
-  getDataEntityAlertListFetching,
-  getDataEntityAlertsList,
-} from 'redux/selectors/alert.selectors';
-import { updateAlertStatus } from 'redux/thunks';
 import DataEntityAlerts from './DataEntityAlerts';
 
 interface RouteProps {
@@ -23,11 +18,9 @@ const mapStateToProps = (
   }: OwnProps
 ) => ({
   dataEntityId: parseInt(dataEntityId, 10),
-  alertsList: getDataEntityAlertsList(state, dataEntityId),
-  isAlertsFetching: getDataEntityAlertListFetching(state),
 });
 
-const mapDispatchToProps = { updateAlertStatus };
+const mapDispatchToProps = {};
 
 export default connect(
   mapStateToProps,

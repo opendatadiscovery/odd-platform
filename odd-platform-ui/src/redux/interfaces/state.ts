@@ -181,7 +181,7 @@ export interface SearchState {
   facetState: SearchFacetsByName;
 }
 
-export interface AlertsState {
+export interface AlertsState extends EntityState<Alert> {
   totals: AlertTotals;
   pageInfo: CurrentPageInfo;
   byId: {

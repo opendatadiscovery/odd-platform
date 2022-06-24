@@ -1,14 +1,6 @@
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
-import {
-  fetchAlertsTotals,
-  fetchAllAlertList,
-  fetchMyAlertList,
-  fetchMyDependentsAlertList,
-} from 'redux/thunks/alerts.thunks';
-import { getAlertTotals } from 'redux/selectors/alert.selectors';
-import * as actions from 'redux/actions';
 import Alerts from './Alerts';
 
 interface RouteProps {
@@ -26,15 +18,8 @@ const mapStateToProps = (
   }: OwnProps
 ) => ({
   viewType,
-  totals: getAlertTotals(state),
 });
 
-const mapDispatchToProps = {
-  fetchAlertsTotals,
-  fetchAllAlertList,
-  fetchMyAlertList,
-  fetchMyDependentsAlertList,
-  alertsFilterUpdateAction: actions.changeAlertsFilterAction,
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Alerts);

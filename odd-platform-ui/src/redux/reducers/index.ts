@@ -14,7 +14,7 @@ import datasetStructure from './datasetStructure.reducer';
 import dataEntityLineage from './dataEntityLineage/dataEntityLineage.slice';
 import profile from './profile.reducer';
 import dataQualityTest from './dataQualityTest.reducer';
-import alerts from './alerts.reducer';
+import alerts from './alerts.slice';
 import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';
 import termLinkedList from './termLinkedList.slice';
 import appInfo from './appInfo.reducer';

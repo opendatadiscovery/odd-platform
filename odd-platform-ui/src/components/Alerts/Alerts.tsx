@@ -1,46 +1,33 @@
 import { Typography } from '@mui/material';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  AlertTotals,
-  AlertList,
-  AlertApiGetAllAlertsRequest,
-  AlertApiGetAssociatedUserAlertsRequest,
-  AlertApiGetDependentEntitiesAlertsRequest,
-} from 'generated-sources';
-import { alertsPath } from 'lib/paths';
-import { AlertViewType } from 'redux/interfaces/alert';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import * as S from './AlertsStyles';
-import AlertsListContainer from './AlertsList/AlertsListContainer';
-
-interface AlertsProps {
-  totals: AlertTotals;
-  viewType: string;
-  alertsFilterUpdateAction: () => void;
-  fetchAlertsTotals: () => Promise<AlertTotals>;
-  fetchAllAlertList: (
-    params: AlertApiGetAllAlertsRequest
-  ) => Promise<AlertList>;
-  fetchMyAlertList: (
-    params: AlertApiGetAssociatedUserAlertsRequest
-  ) => Promise<AlertList>;
-  fetchMyDependentsAlertList: (
-    params: AlertApiGetDependentEntitiesAlertsRequest
-  ) => Promise<AlertList>;
-}
-
-const Alerts: React.FC<AlertsProps> = ({
-  viewType,
-  totals,
-  alertsFilterUpdateAction,
   fetchAlertsTotals,
   fetchAllAlertList,
   fetchMyAlertList,
   fetchMyDependentsAlertList,
-}) => {
+} from 'redux/thunks';
+import { getAlertTotals } from 'redux/selectors/alert.selectors';
+
+import { changeAlertsFilterAction } from 'redux/reducers/alerts.slice';
+
+import { alertsPath } from 'lib/paths';
+import { AlertViewType } from 'redux/interfaces/alert';
+import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
+import * as S from './AlertsStyles';
+import AlertsList from './AlertsList/AlertsList';
+
+interface AlertsProps {
+  viewType: string;
+}
+
+const Alerts: React.FC<AlertsProps> = ({ viewType }) => {
+  const dispatch = useAppDispatch();
+  const totals = useAppSelector(getAlertTotals);
   React.useEffect(() => {
-    fetchAlertsTotals();
+    dispatch(fetchAlertsTotals());
   }, [fetchAlertsTotals]);
 
   const tabs: AppTabItem<AlertViewType>[] = [
@@ -68,6 +55,10 @@ const Alerts: React.FC<AlertsProps> = ({
     viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
   );
 
+  const alertsFilterUpdateAction = useCallback(() => {
+    dispatch(changeAlertsFilterAction());
+  }, [changeAlertsFilterAction]);
+
   return (
     <S.Container>
       <Typography variant="h1" sx={{ mb: 2.75 }}>
@@ -83,24 +74,18 @@ const Alerts: React.FC<AlertsProps> = ({
         <Route
           exact
           path={alertsPath('all')}
-          render={() => (
-            <AlertsListContainer fetchAlerts={fetchAllAlertList} />
-          )}
+          render={() => <AlertsList fetchAlerts={fetchAllAlertList} />}
         />
         <Route
           exact
           path={alertsPath('my')}
-          render={() => (
-            <AlertsListContainer fetchAlerts={fetchMyAlertList} />
-          )}
+          render={() => <AlertsList fetchAlerts={fetchMyAlertList} />}
         />
         <Route
           exact
           path={alertsPath('dependents')}
           render={() => (
-            <AlertsListContainer
-              fetchAlerts={fetchMyDependentsAlertList}
-            />
+            <AlertsList fetchAlerts={fetchMyDependentsAlertList} />
           )}
         />
         <Redirect from="/alerts" to={alertsPath()} />

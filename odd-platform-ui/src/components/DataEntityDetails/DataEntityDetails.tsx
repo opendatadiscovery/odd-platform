@@ -37,6 +37,7 @@ import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   deleteDataEntityGroup,
   fetchDataEntityDetails,
+  fetchDataEntityAlerts,
 } from 'redux/thunks';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
@@ -49,6 +50,7 @@ import {
   getDataEntityDeleteFromGroupStatuses,
   getDataEntityGroupUpdatingStatuses,
   getSearchId,
+  getAlertList,
 } from 'redux/selectors';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import * as S from './DataEntityDetailsStyles';
@@ -81,15 +83,12 @@ interface DataEntityDetailsProps {
   isDataset: boolean;
   isQualityTest: boolean;
   isTransformerJob: boolean;
-  fetchDataEntityAlerts: (
-    params: DataEntityApiGetDataEntityAlertsRequest
-  ) => Promise<AlertList>;
   fetchDataSetQualityTestReport: (
     params: DataQualityApiGetDatasetTestReportRequest
   ) => Promise<DataSetTestReport>;
   datasetQualityTestReport?: DataSetTestReport;
   dataEntityFetchingStatus: FetchStatus;
-  openAlertsCount: number;
+  // openAlertsCount: number;
 }
 
 const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
@@ -99,11 +98,10 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   isDataset,
   isQualityTest,
   isTransformerJob,
-  fetchDataEntityAlerts,
   fetchDataSetQualityTestReport,
   datasetQualityTestReport,
   dataEntityFetchingStatus,
-  openAlertsCount,
+  // openAlertsCount,
 }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -111,6 +109,12 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
     getDataEntityGroupUpdatingStatuses
   );
+
+  const alerts = useAppSelector(getAlertList);
+
+  const openAlertsCount = alerts.filter(
+    alert => alert.status === 'OPEN'
+  ).length;
 
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
@@ -133,7 +137,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   ]);
 
   React.useEffect(() => {
-    fetchDataEntityAlerts({ dataEntityId });
+    dispatch(fetchDataEntityAlerts({ dataEntityId }));
   }, []);
 
   React.useEffect(() => {
@@ -179,7 +183,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         name: 'Alerts',
         link: dataEntityAlertsPath(dataEntityId),
         value: 'alerts',
-        hint: openAlertsCount,
+        hint: 500,
         hintType: 'alert',
       },
       {
