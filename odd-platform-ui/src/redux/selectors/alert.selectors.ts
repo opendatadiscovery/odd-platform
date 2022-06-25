@@ -1,15 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState, AlertsState } from 'redux/interfaces';
-import { Alert, AlertStatus } from 'generated-sources';
-import map from 'lodash/map';
 import { alertsAdapter } from 'redux/reducers/alerts.slice';
 import {
   createStatusesSelector,
   createLegacyFetchingSelector,
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
-
-import { getDataEntityId } from './dataentity.selectors';
 
 const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
 
@@ -48,28 +44,4 @@ export const getAlertTotals = createSelector(
 export const getAlertListPageInfo = createSelector(
   getAlertsState,
   alertsState => alertsState.pageInfo
-);
-
-export const getDataEntityOpenAlertListCount = createSelector(
-  getAlertsState,
-  getDataEntityId,
-  (alertsState, dataEntityId) =>
-    alertsState.alertIdsByDataEntityId[dataEntityId]?.reduce<Alert[]>(
-      (memo, id) => {
-        if (alertsState?.byId[id].status === AlertStatus.OPEN)
-          memo.push(alertsState?.byId[id]);
-        return memo;
-      },
-      []
-    ).length
-);
-
-export const getDataEntityAlertsList = createSelector(
-  getAlertsState,
-  getDataEntityId,
-  (alertsState, dataEntityId) =>
-    map(
-      alertsState.alertIdsByDataEntityId[dataEntityId],
-      (alertId: number) => alertsState?.byId[alertId]
-    )
 );

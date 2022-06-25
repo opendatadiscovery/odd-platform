@@ -13,11 +13,10 @@ import {
   searchPath,
 } from 'lib/paths';
 import {
-  AlertList,
-  DataEntityApiGetDataEntityAlertsRequest,
   DataEntityDetails,
   DataQualityApiGetDatasetTestReportRequest,
   DataSetTestReport,
+  AlertStatus,
 } from 'generated-sources';
 import { FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -34,11 +33,13 @@ import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+
 import {
   deleteDataEntityGroup,
   fetchDataEntityDetails,
   fetchDataEntityAlerts,
 } from 'redux/thunks';
+
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
@@ -88,7 +89,6 @@ interface DataEntityDetailsProps {
   ) => Promise<DataSetTestReport>;
   datasetQualityTestReport?: DataSetTestReport;
   dataEntityFetchingStatus: FetchStatus;
-  // openAlertsCount: number;
 }
 
 const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
@@ -101,7 +101,6 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   fetchDataSetQualityTestReport,
   datasetQualityTestReport,
   dataEntityFetchingStatus,
-  // openAlertsCount,
 }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -113,7 +112,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
   const alerts = useAppSelector(getAlertList);
 
   const openAlertsCount = alerts.filter(
-    alert => alert.status === 'OPEN'
+    alert => alert.status === AlertStatus.OPEN
   ).length;
 
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
@@ -183,7 +182,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         name: 'Alerts',
         link: dataEntityAlertsPath(dataEntityId),
         value: 'alerts',
-        hint: 500,
+        hint: openAlertsCount,
         hintType: 'alert',
       },
       {

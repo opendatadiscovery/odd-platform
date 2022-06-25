@@ -2,6 +2,7 @@ import { AlertsState } from 'redux/interfaces';
 import { Alert } from 'generated-sources';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { alertsActionPrefix } from 'redux/actions';
+
 import * as thunks from 'redux/thunks';
 
 export const alertsAdapter = createEntityAdapter<Alert>({
@@ -9,8 +10,6 @@ export const alertsAdapter = createEntityAdapter<Alert>({
 });
 
 export const initialState: AlertsState = {
-  byId: {},
-  allIds: [],
   totals: {},
   alertIdsByDataEntityId: {},
   pageInfo: {
@@ -38,7 +37,11 @@ export const alertsSlice = createSlice({
       thunks.fetchAllAlertList.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        alertsAdapter.setAll(state, items);
+        const entities: any = Object.values(state.entities).concat(items);
+        const paginatedArray = pageInfo.page > 1 ? entities : items;
+
+        alertsAdapter.setAll(state, paginatedArray);
+
         state.pageInfo = pageInfo;
       }
     );
@@ -46,7 +49,11 @@ export const alertsSlice = createSlice({
       thunks.fetchMyAlertList.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        alertsAdapter.setAll(state, items);
+        const entities: any = Object.values(state.entities).concat(items);
+        const paginatedArray = pageInfo.page > 1 ? entities : items;
+
+        alertsAdapter.setAll(state, paginatedArray);
+
         state.pageInfo = pageInfo;
       }
     );
@@ -54,7 +61,12 @@ export const alertsSlice = createSlice({
       thunks.fetchMyDependentsAlertList.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        alertsAdapter.setAll(state, items);
+        const entities: any = Object.values(state.entities).concat(items);
+
+        const paginatedArray = pageInfo.page > 1 ? entities : items;
+
+        alertsAdapter.setAll(state, paginatedArray);
+
         state.pageInfo = pageInfo;
       }
     );

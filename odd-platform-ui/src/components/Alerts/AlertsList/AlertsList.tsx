@@ -5,9 +5,12 @@ import {
   AlertApiGetAllAlertsRequest,
   AlertApiGetAssociatedUserAlertsRequest,
   AlertApiGetDependentEntitiesAlertsRequest,
-  AlertList,
   AlertStatus,
 } from 'generated-sources';
+
+import { AsyncThunkAction } from '@reduxjs/toolkit';
+import { CurrentPageInfo } from 'redux/interfaces';
+
 import {
   getAlertListPageInfo,
   getAlertListFetchingStatus,
@@ -30,7 +33,14 @@ interface AlertsListProps {
       | AlertApiGetAllAlertsRequest
       | AlertApiGetAssociatedUserAlertsRequest
       | AlertApiGetDependentEntitiesAlertsRequest
-  ) => any;
+  ) => AsyncThunkAction<
+    {
+      items: Alert[];
+      pageInfo: CurrentPageInfo;
+    },
+    unknown,
+    Record<string, unknown>
+  >;
 }
 
 const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {

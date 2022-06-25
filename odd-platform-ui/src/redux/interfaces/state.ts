@@ -184,10 +184,6 @@ export interface SearchState {
 export interface AlertsState extends EntityState<Alert> {
   totals: AlertTotals;
   pageInfo: CurrentPageInfo;
-  byId: {
-    [alertId: string]: Alert;
-  };
-  allIds: Alert['id'][];
   alertIdsByDataEntityId: {
     [dataEntityId: string]: Alert['id'][];
   };
