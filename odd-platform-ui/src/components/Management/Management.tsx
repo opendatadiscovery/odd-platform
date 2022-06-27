@@ -12,18 +12,16 @@ const NamespaceList = React.lazy(
 const OwnersListContainer = React.lazy(
   () => import('./OwnersList/OwnersListContainer')
 );
-const LabelsListContainer = React.lazy(
-  () => import('./LabelsList/LabelsListContainer')
-);
-const TagsListContainer = React.lazy(
-  () => import('./TagsList/TagsListContainer')
-);
-const DataSourcesListContainer = React.lazy(
-  () => import('./DataSourcesList/DataSourcesListContainer')
+
+const LabelsList = React.lazy(() => import('./LabelsList/LabelsList'));
+const TagsList = React.lazy(() => import('./TagsList/TagsList'));
+
+const DataSourcesList = React.lazy(
+  () => import('./DataSourcesList/DataSourcesList')
 );
 
-const CollectorsListContainer = React.lazy(
-  () => import('./CollectorsList/CollectorsListContainer')
+const CollectorsList = React.lazy(
+  () => import('./CollectorsList/CollectorsList')
 );
 
 interface ManagementProps {
@@ -76,27 +74,23 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
             <Route
               exact
               path="/management/datasources"
-              component={DataSourcesListContainer}
+              component={DataSourcesList}
             />
             <Route
               exact
               path="/management/collectors"
-              component={CollectorsListContainer}
+              component={CollectorsList}
             />
             <Route
               exact
               path="/management/owners"
               component={OwnersListContainer}
             />
-            <Route
-              exact
-              path="/management/tags"
-              component={TagsListContainer}
-            />
+            <Route exact path="/management/tags" component={TagsList} />
             <Route
               exact
               path="/management/labels"
-              component={LabelsListContainer}
+              component={LabelsList}
             />
             <Redirect
               exact

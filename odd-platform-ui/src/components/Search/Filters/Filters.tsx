@@ -1,12 +1,16 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  DataSource,
-  DataSourceApiGetDataSourceListRequest,
-  DataSourceList,
   Namespace,
   NamespaceApiGetNamespaceListRequest,
 } from 'generated-sources';
+import {
+  getDataSourcesList,
+  getIsDataSourcesListFetching,
+} from 'redux/selectors';
+import { fetchDataSourcesList } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+
 import { SearchClass } from 'redux/interfaces/search';
 import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemContainer';
 import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
@@ -16,31 +20,28 @@ import * as S from './FiltersStyles';
 
 interface FiltersProps {
   searchClass?: SearchClass;
-  datasources: DataSource[];
   namespaces: Namespace[];
-  fetchDataSourcesList: (
-    params: DataSourceApiGetDataSourceListRequest
-  ) => Promise<DataSourceList>;
   fetchNamespaceList: (
     params: NamespaceApiGetNamespaceListRequest
   ) => void;
   clearDataEntitySearchFilters: () => void;
   isSearchFacetsUpdating: boolean;
-  isDatasourceListFetching: boolean;
 }
 
 const Filters: React.FC<FiltersProps> = ({
   searchClass,
-  datasources,
   namespaces,
-  fetchDataSourcesList,
   fetchNamespaceList,
   clearDataEntitySearchFilters,
   isSearchFacetsUpdating,
-  isDatasourceListFetching,
 }) => {
+  const dispatch = useAppDispatch();
+  const datasources = useAppSelector(getDataSourcesList);
+  const { isLoading: isDatasourceListFetching } = useAppSelector(
+    getIsDataSourcesListFetching
+  );
   React.useEffect(() => {
-    fetchDataSourcesList({ page: 1, size: 100 });
+    dispatch(fetchDataSourcesList({ page: 1, size: 100 }));
     fetchNamespaceList({ page: 1, size: 100 });
   }, []);
 

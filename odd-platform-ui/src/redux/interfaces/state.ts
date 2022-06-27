@@ -47,27 +47,18 @@ import {
   TermSearchFacetsByName,
 } from './termSearch';
 
-export interface DataSourcesState {
-  byId: { [dataSourceId: string]: DataSource };
-  allIds: DataSource['id'][];
+export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface CollectorsState {
-  byId: { [collectorId: string]: Collector };
-  allIds: Collector['id'][];
+export interface CollectorsState extends EntityState<Collector> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface TagsState {
-  byId: { [tagId: number]: Tag };
-  allIds: Tag['id'][];
+export interface TagsState extends EntityState<Tag> {
   pageInfo?: CurrentPageInfo;
 }
-
-export interface LabelsState {
-  byId: { [labelId: number]: Label };
-  allIds: Label['id'][];
+export interface LabelsState extends EntityState<Label> {
   pageInfo?: CurrentPageInfo;
 }
 

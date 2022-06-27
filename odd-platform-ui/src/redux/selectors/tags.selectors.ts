@@ -1,38 +1,38 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
+import {
+  createLegacyFetchingSelector,
+  createStatusesSelector,
+} from 'redux/selectors/loader-selectors';
 import { TagsState } from 'redux/interfaces/state';
+import { tagsAdapter } from 'redux/reducers/tags.slice';
+import * as actions from 'redux/actions';
 
 const tagsState = ({ tags }: RootState): TagsState => tags;
 
 const getTagsListFetchingStatus = createLegacyFetchingSelector('GET_TAGS');
-export const getTagsCreateStatus =
-  createLegacyFetchingSelector('POST_TAGS');
-export const getTagUpdateStatus = createLegacyFetchingSelector('PUT_TAG');
-export const deleteTagsUpdateStatus =
-  createLegacyFetchingSelector('DELETE_TAG');
+
+export const getTagsListFetchingStatuses = createStatusesSelector(
+  actions.fetchTagsActionType
+);
+
+export const getTagCreatingStatuses = createStatusesSelector(
+  actions.createTagsActionType
+);
+
+export const getTagUpdatingStatuses = createStatusesSelector(
+  actions.updateTagActionType
+);
+
+export const getTAgDeletingStatuses = createStatusesSelector(
+  actions.deleteTagActionType
+);
+
+export const { selectAll: getTagsList } =
+  tagsAdapter.getSelectors<RootState>(state => state.tags);
 
 export const getIsTagsListFetching = createSelector(
   getTagsListFetchingStatus,
-  status => status === 'fetching'
-);
-
-export const getTagsList = createSelector(tagsState, tags =>
-  tags.allIds.map(id => tags.byId[id])
-);
-
-export const getIsTagCreating = createSelector(
-  getTagsCreateStatus,
-  status => status === 'fetching'
-);
-
-export const getIsTagUpdating = createSelector(
-  getTagUpdateStatus,
-  status => status === 'fetching'
-);
-
-export const getIsTagDeleting = createSelector(
-  deleteTagsUpdateStatus,
   status => status === 'fetching'
 );
 

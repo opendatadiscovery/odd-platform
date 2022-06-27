@@ -1,53 +1,55 @@
 import {
   Configuration,
   TagApi,
-  TagsResponse,
   Tag,
   TagApiCreateTagRequest,
   TagApiUpdateTagRequest,
   TagApiDeleteTagRequest,
   TagApiGetPopularTagListRequest,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
+import { CurrentPageInfo } from 'redux/interfaces/common';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PaginatedResponse } from 'redux/interfaces/common';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new TagApi(apiClientConf);
 
-export const fetchTagsList = createThunk<
-  TagApiGetPopularTagListRequest,
-  TagsResponse,
-  PaginatedResponse<TagsResponse>
->(
-  (params: TagApiGetPopularTagListRequest) =>
-    apiClient.getPopularTagList(params),
-  actions.fetchTagsAction,
-  (response: TagsResponse, request: TagApiGetPopularTagListRequest) => ({
-    ...response,
-    pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
-    },
-  })
+export const fetchTagsList = createAsyncThunk<
+  { items: Array<Tag>; pageInfo: CurrentPageInfo },
+  TagApiGetPopularTagListRequest
+>(actions.fetchTagsActionType, async ({ page, size, query }) => {
+  const { items, pageInfo } = await apiClient.getPopularTagList({
+    page,
+    size,
+    query,
+  });
+
+  return { items, pageInfo: { ...pageInfo, page } };
+});
+
+export const createTag = createAsyncThunk<Tag[], TagApiCreateTagRequest>(
+  actions.createTagsActionType,
+  async params => {
+    const result = await apiClient.createTag(params);
+    return result;
+  }
 );
 
-export const createTag = createThunk<TagApiCreateTagRequest, Tag[], Tag[]>(
-  (params: TagApiCreateTagRequest) => apiClient.createTag(params),
-  actions.createTagsAction,
-  (result: Tag[]) => result
+export const updateTag = createAsyncThunk<Tag, TagApiUpdateTagRequest>(
+  actions.updateTagActionType,
+  async ({ tagId, tagFormData }) => {
+    const tag = await apiClient.updateTag({ tagId, tagFormData });
+
+    return tag;
+  }
 );
 
-export const updateTag = createThunk<TagApiUpdateTagRequest, Tag, Tag>(
-  (params: TagApiUpdateTagRequest) => apiClient.updateTag(params),
-  actions.updateTagAction,
-  (result: Tag) => result
-);
+export const deleteTag = createAsyncThunk<number, TagApiDeleteTagRequest>(
+  actions.deleteTagActionType,
+  async ({ tagId }) => {
+    await apiClient.deleteTag({ tagId });
 
-export const deleteTag = createThunk<TagApiDeleteTagRequest, void, number>(
-  (params: TagApiDeleteTagRequest) => apiClient.deleteTag(params),
-  actions.deleteTagAction,
-  (_, reqParams) => reqParams.tagId
+    return tagId;
+  }
 );

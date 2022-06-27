@@ -1,8 +1,7 @@
 import React from 'react';
-import {
-  Collector,
-  CollectorApiRegenerateCollectorTokenRequest,
-} from 'generated-sources';
+import { Collector } from 'generated-sources';
+import { regenerateCollectorToken } from 'redux/thunks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -11,15 +10,13 @@ import { TokenContainer, Token } from './CollectorItemTokenStyles';
 
 interface CollectorItemProps {
   collector: Collector;
-  regenerateCollectorToken: (
-    params: CollectorApiRegenerateCollectorTokenRequest
-  ) => Promise<Collector>;
 }
 
 const CollectorItemToken: React.FC<CollectorItemProps> = ({
   collector,
-  regenerateCollectorToken,
 }) => {
+  const dispatch = useAppDispatch();
+
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
 
   React.useEffect(() => {
@@ -28,9 +25,11 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({
 
   const onTokenRegenerate = React.useCallback(
     () =>
-      regenerateCollectorToken({
-        collectorId: collector.id,
-      }),
+      dispatch(
+        regenerateCollectorToken({
+          collectorId: collector.id,
+        })
+      ),
     [collector]
   );
 
