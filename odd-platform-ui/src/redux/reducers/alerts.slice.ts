@@ -11,7 +11,6 @@ export const alertsAdapter = createEntityAdapter<Alert>({
 
 export const initialState: AlertsState = {
   totals: {},
-  alertIdsByDataEntityId: {},
   pageInfo: {
     total: 0,
     page: 0,
@@ -37,11 +36,8 @@ export const alertsSlice = createSlice({
       thunks.fetchAllAlertList.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        const entities: any = Object.values(state.entities).concat(items);
-        const paginatedArray = pageInfo.page > 1 ? entities : items;
 
-        alertsAdapter.setAll(state, paginatedArray);
-
+        alertsAdapter.setMany(state, items);
         state.pageInfo = pageInfo;
       }
     );
@@ -49,11 +45,8 @@ export const alertsSlice = createSlice({
       thunks.fetchMyAlertList.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        const entities: any = Object.values(state.entities).concat(items);
-        const paginatedArray = pageInfo.page > 1 ? entities : items;
 
-        alertsAdapter.setAll(state, paginatedArray);
-
+        alertsAdapter.setMany(state, items);
         state.pageInfo = pageInfo;
       }
     );
@@ -61,12 +54,8 @@ export const alertsSlice = createSlice({
       thunks.fetchMyDependentsAlertList.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        const entities: any = Object.values(state.entities).concat(items);
 
-        const paginatedArray = pageInfo.page > 1 ? entities : items;
-
-        alertsAdapter.setAll(state, paginatedArray);
-
+        alertsAdapter.setMany(state, items);
         state.pageInfo = pageInfo;
       }
     );

@@ -1,5 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import {
+  AlertViewType,
+  ManagementViewType,
+  TermsViewType,
+} from 'lib/interfaces';
 
 /**
  * Find out dynamically size of scrollbar width of client's browser.
@@ -26,19 +31,17 @@ export const useScrollBarWidth: (width?: number) => string = (
   return scrollbarWidth;
 };
 
-type ViewType = 'overview' | 'linked-items';
-
 // useAppParams react-router
 interface RouteParams {
   dataEntityId: string;
   termId: string;
-  viewType: ViewType;
+  viewType: TermsViewType | AlertViewType | ManagementViewType;
 }
 
 interface AppRouteParams {
   dataEntityId: number;
   termId: number;
-  viewType: ViewType;
+  viewType: TermsViewType | AlertViewType | ManagementViewType;
 }
 
 export const useAppParams = (): AppRouteParams => {

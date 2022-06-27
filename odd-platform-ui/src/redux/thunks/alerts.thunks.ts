@@ -21,6 +21,11 @@ const apiClientConf = new Configuration(BASE_PARAMS);
 const alertApi = new AlertApi(apiClientConf);
 const dataEntityApi = new DataEntityApi(apiClientConf);
 
+export interface AlertsResponse {
+  items: Alert[];
+  pageInfo: CurrentPageInfo;
+}
+
 export const fetchAlertsTotals = createAsyncThunk<AlertTotals>(
   actions.fetchAlertsTotalsActionType,
   async () => {
@@ -30,7 +35,7 @@ export const fetchAlertsTotals = createAsyncThunk<AlertTotals>(
 );
 
 export const fetchAllAlertList = createAsyncThunk<
-  { items: Alert[]; pageInfo: CurrentPageInfo },
+  AlertsResponse,
   AlertApiGetAllAlertsRequest
 >(actions.fetchAlertListActionType, async ({ page, size }) => {
   const { items, pageInfo } = await alertApi.getAllAlerts({
@@ -44,7 +49,7 @@ export const fetchAllAlertList = createAsyncThunk<
 });
 
 export const fetchMyAlertList = createAsyncThunk<
-  { items: Alert[]; pageInfo: CurrentPageInfo },
+  AlertsResponse,
   AlertApiGetAssociatedUserAlertsRequest
 >(actions.fetchMyAlertListActionType, async ({ page, size }) => {
   const { items, pageInfo } = await alertApi.getAssociatedUserAlerts({
@@ -58,7 +63,7 @@ export const fetchMyAlertList = createAsyncThunk<
 });
 
 export const fetchMyDependentsAlertList = createAsyncThunk<
-  { items: Alert[]; pageInfo: CurrentPageInfo },
+  AlertsResponse,
   AlertApiGetDependentEntitiesAlertsRequest
 >(actions.fetchMyDependentsAlertListActionType, async ({ page, size }) => {
   const { items, pageInfo } = await alertApi.getDependentEntitiesAlerts({

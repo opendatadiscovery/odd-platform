@@ -1,7 +1,6 @@
 import { Typography } from '@mui/material';
 import React, { useCallback } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
-
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   fetchAlertsTotals,
@@ -9,22 +8,18 @@ import {
   fetchMyAlertList,
   fetchMyDependentsAlertList,
 } from 'redux/thunks';
-import { getAlertTotals } from 'redux/selectors/alert.selectors';
-
+import { getAlertTotals } from 'redux/selectors';
 import { changeAlertsFilterAction } from 'redux/reducers/alerts.slice';
-
 import { alertsPath } from 'lib/paths';
-import { AlertViewType } from 'redux/interfaces/alert';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
+import { useAppParams } from 'lib/hooks';
+import { AlertViewType } from 'lib/interfaces';
 import * as S from './AlertsStyles';
 import AlertsList from './AlertsList/AlertsList';
 
-interface AlertsProps {
-  viewType: string;
-}
-
-const Alerts: React.FC<AlertsProps> = ({ viewType }) => {
+const Alerts: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { viewType } = useAppParams();
   const totals = useAppSelector(getAlertTotals);
   React.useEffect(() => {
     dispatch(fetchAlertsTotals());

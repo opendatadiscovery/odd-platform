@@ -1,24 +1,14 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState, AlertsState } from 'redux/interfaces';
+import { AlertsState, RootState } from 'redux/interfaces';
 import { alertsAdapter } from 'redux/reducers/alerts.slice';
-import {
-  createStatusesSelector,
-  createLegacyFetchingSelector,
-} from 'redux/selectors/loader-selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
+import { AlertStatus } from 'generated-sources';
 
 const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
 
 export const { selectAll: getAlertList } =
   alertsAdapter.getSelectors<RootState>(state => state.alerts);
-
-const getAlertTotalsFetchingStatus =
-  createLegacyFetchingSelector('GET_ALERT_TOTALS');
-
-export const getAlertTotalsFetching = createSelector(
-  getAlertTotalsFetchingStatus,
-  status => status === 'fetching'
-);
 
 export const getAlertTotalsFetchingStatuses = createStatusesSelector(
   actions.fetchAlertsTotalsActionType
@@ -44,4 +34,10 @@ export const getAlertTotals = createSelector(
 export const getAlertListPageInfo = createSelector(
   getAlertsState,
   alertsState => alertsState.pageInfo
+);
+
+export const getDataEntityOpenAlertsCount = createSelector(
+  getAlertList,
+  alertList =>
+    alertList.filter(alert => alert.status === AlertStatus.OPEN).length
 );

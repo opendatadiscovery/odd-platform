@@ -16,7 +16,6 @@ import {
   DataEntityDetails,
   DataQualityApiGetDatasetTestReportRequest,
   DataSetTestReport,
-  AlertStatus,
 } from 'generated-sources';
 import { FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -36,8 +35,8 @@ import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 
 import {
   deleteDataEntityGroup,
-  fetchDataEntityDetails,
   fetchDataEntityAlerts,
+  fetchDataEntityDetails,
 } from 'redux/thunks';
 
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
@@ -50,8 +49,8 @@ import {
   getDataEntityAddToGroupStatuses,
   getDataEntityDeleteFromGroupStatuses,
   getDataEntityGroupUpdatingStatuses,
+  getDataEntityOpenAlertsCount,
   getSearchId,
-  getAlertList,
 } from 'redux/selectors';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import * as S from './DataEntityDetailsStyles';
@@ -70,8 +69,8 @@ const TestReportContainer = React.lazy(
 const TestReportDetailsContainer = React.lazy(
   () => import('./TestReport/TestReportDetails/TestReportDetailsContainer')
 );
-const DataEntityAlertsContainer = React.lazy(
-  () => import('./DataEntityAlerts/DataEntityAlertsContainer')
+const DataEntityAlerts = React.lazy(
+  () => import('./DataEntityAlerts/DataEntityAlerts')
 );
 const QualityTestHistoryContainer = React.lazy(
   () => import('./QualityTestRunsHistory/TestRunsHistoryContainer')
@@ -109,11 +108,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     getDataEntityGroupUpdatingStatuses
   );
 
-  const alerts = useAppSelector(getAlertList);
-
-  const openAlertsCount = alerts.filter(
-    alert => alert.status === AlertStatus.OPEN
-  ).length;
+  const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
 
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
@@ -137,13 +132,8 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
 
   React.useEffect(() => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
-  }, []);
-
-  React.useEffect(() => {
-    fetchDataSetQualityTestReport({
-      dataEntityId,
-    });
-  }, [dataEntityId, fetchDataSetQualityTestReport]);
+    fetchDataSetQualityTestReport({ dataEntityId });
+  }, [dataEntityId]);
 
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
@@ -392,7 +382,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             <Route
               exact
               path="/dataentities/:dataEntityId/alerts"
-              component={DataEntityAlertsContainer}
+              component={DataEntityAlerts}
             />
             <Route
               exact
