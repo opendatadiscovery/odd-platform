@@ -176,6 +176,7 @@ public class IngestionServiceImplTest {
             });
         when(dataSourceRepository.getDtoByOddrn(anyString())).thenReturn(Mono.just(dataSourceDto));
         when(metadataIngestionService.ingestMetadata(any())).thenReturn(Mono.empty());
+        when(reactiveDatasetVersionRepository.getLatestVersions(any())).thenReturn(Mono.empty());
     }
 
     @Nested
