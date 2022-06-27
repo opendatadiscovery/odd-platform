@@ -123,7 +123,6 @@ const LinkedItemsList: React.FC = () => {
         </Grid>
         <Grid item xs={2}>
           <AppSelect
-            select
             defaultValue="All entities"
             onChange={handleOnClickSearch}
           >

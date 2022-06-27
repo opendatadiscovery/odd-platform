@@ -18,7 +18,6 @@ interface AppSelectProps
     | 'type'
     | 'name'
     | 'fullWidth'
-    | 'select'
     | 'SelectProps'
     | 'onSelect'
     | 'id'
@@ -37,7 +36,6 @@ const AppSelect: React.FC<AppSelectProps> = ({
   defaultValue,
   type,
   fullWidth = true,
-  select,
   SelectProps,
   onSelect,
   id,
@@ -55,7 +53,7 @@ const AppSelect: React.FC<AppSelectProps> = ({
     label={label}
     defaultValue={defaultValue}
     type={type}
-    select={select || selectNative}
+    select={selectNative}
     SelectProps={{
       ...SelectProps,
       IconComponent: DropdownIcon,

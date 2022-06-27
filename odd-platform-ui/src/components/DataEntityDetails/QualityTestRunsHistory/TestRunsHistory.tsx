@@ -59,7 +59,6 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
       <AppSelect
         sx={{ minWidth: '200px' }}
         fullWidth={false}
-        select
         value={alertStatus}
       >
         <AppMenuItem value="All" onClick={() => setAlertStatus('All')}>

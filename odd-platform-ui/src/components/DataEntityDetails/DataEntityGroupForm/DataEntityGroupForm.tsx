@@ -184,7 +184,6 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         render={({ field }) => (
           <AppSelect
             label="Type"
-            select
             sx={{ mt: 1.5 }}
             defaultValue={field.value?.name}
           >

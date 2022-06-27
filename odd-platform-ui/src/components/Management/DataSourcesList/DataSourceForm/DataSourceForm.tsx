@@ -293,7 +293,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
                   name="pullingInterval.format"
                   control={control}
                   render={({ field }) => (
-                    <AppSelect {...field} label="Pulling Interval" select>
+                    <AppSelect {...field} label="Pulling Interval">
                       {['minutes', 'hours', 'days', 'weeks'].map(value => (
                         <AppMenuItem key={value} value={value}>
                           {capitalize(value)}
