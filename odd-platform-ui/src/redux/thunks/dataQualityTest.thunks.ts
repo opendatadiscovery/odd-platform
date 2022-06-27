@@ -86,11 +86,11 @@ export const setDataQATestSeverity = createAsyncThunk<
   DataQualityApiSetDataQATestSeverityRequest
 >(
   actions.setDataQATestSeverityActionType,
-  async ({ dataEntityId, dataqaTestId, body }) => {
+  async ({ dataEntityId, dataqaTestId, dataQualityTestSeverityForm }) => {
     const dataQATest = await dataQualityApi.setDataQATestSeverity({
       dataEntityId,
       dataqaTestId,
-      body,
+      dataQualityTestSeverityForm,
     });
     return dataQATest;
   }

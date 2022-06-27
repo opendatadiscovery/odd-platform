@@ -30,7 +30,9 @@ const TestReportDetailsOverview: React.FC<
       setDataQATestSeverity({
         dataEntityId,
         dataqaTestId: dataQATestId,
-        body: e.target.value,
+        dataQualityTestSeverityForm: {
+          severity: e.target.value as DataQualityTestSeverity,
+        },
       })
     );
 
