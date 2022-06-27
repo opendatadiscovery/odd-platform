@@ -5,13 +5,12 @@ import lombok.RequiredArgsConstructor;
 import org.jooq.InsertResultStep;
 import org.jooq.Record1;
 import org.jooq.Record2;
-import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
-import org.opendatadiscovery.oddplatform.dto.LastTaskRunDto;
+import org.opendatadiscovery.oddplatform.dto.TestStatusWithSeverityDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataQualityTestSeverityRecord;
@@ -87,30 +86,29 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
     }
 
     @Override
-    public Flux<LastTaskRunDto> getDatasetTrafficLight(final long datasetId) {
+    public Flux<TestStatusWithSeverityDto> getDatasetTrafficLight(final long datasetId) {
         // @formatter:off
-        final SelectConditionStep<Record3<Long, String, String>> query = DSL
-            .select(DATA_ENTITY.ID, DATA_ENTITY_TASK_LAST_RUN.STATUS, DATA_QUALITY_TEST_SEVERITY.SEVERITY)
+        final SelectConditionStep<Record2<String,String>> query = DSL
+            .select(DATA_ENTITY_TASK_LAST_RUN.STATUS, DATA_QUALITY_TEST_SEVERITY.SEVERITY)
             .from(DATA_QUALITY_TEST_RELATIONS)
             .join(DATA_ENTITY)
-                .on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
+                .on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
             .join(DATA_ENTITY_TASK_LAST_RUN)
                 .on(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
-            .join(DATA_QUALITY_TEST_SEVERITY)
-                .on(DATA_QUALITY_TEST_SEVERITY.DATA_QUALITY_TEST_ID.eq(DATA_ENTITY.ID))
-            .where(DATA_QUALITY_TEST_SEVERITY.DATASET_ID.eq(datasetId));
+            .leftJoin(DATA_QUALITY_TEST_SEVERITY)
+                .on(DATA_QUALITY_TEST_SEVERITY.DATASET_ID.eq(DATA_ENTITY.ID))
+            .where(DATA_ENTITY.ID.eq(datasetId));
         // @formatter:on
-
-        System.out.println(query);
 
         return jooqReactiveOperations.flux(query).map(this::mapLastRunDto);
     }
 
-    private LastTaskRunDto mapLastRunDto(final Record3<Long, String, String> r) {
-        return new LastTaskRunDto(
-            r.value1(),
-            QualityRunStatus.valueOf(r.value2()),
-            DataQualityTestSeverity.valueOf(r.value3())
+    private TestStatusWithSeverityDto mapLastRunDto(final Record2<String, String> record) {
+        return new TestStatusWithSeverityDto(
+            QualityRunStatus.valueOf(record.value1()),
+            record.value2() == null
+                ? DataQualityTestSeverity.AVERAGE
+                : DataQualityTestSeverity.valueOf(record.value2())
         );
     }
 

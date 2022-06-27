@@ -1312,7 +1312,7 @@ paths:
       tags:
         - dataQuality
 
-  /api/datasets/{data_entity_id}/dataqatests/{dataqa_test_id}:
+  /api/datasets/{data_entity_id}/dataqatests/{dataqa_test_id}/severity:
     put:
       summary: Set DataQA test severity
       description: Sets DataQA test severity
