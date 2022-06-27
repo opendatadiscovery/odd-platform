@@ -2,7 +2,10 @@ package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverityForm;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +35,31 @@ public class DataQualityController implements DataQualityApi {
                                                                         final ServerWebExchange exchange) {
         return dataQualityService
             .getDatasetTestReport(dataEntityId)
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> getTrafficLight(final Long dataEntityId,
+                                                      final ServerWebExchange exchange) {
+        return dataQualityService
+            .getTrafficLight(dataEntityId)
+            .doOnNext(System.out::println)
+            .then(Mono.just(ResponseEntity.ok().build()));
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntity>> setDataQATestSeverity(
+        final Long dataEntityId,
+        final Long dataqaTestId,
+        final Mono<DataQualityTestSeverityForm> dataQualityTestSeverityForm,
+        final ServerWebExchange exchange
+    ) {
+        return dataQualityTestSeverityForm
+            .map(DataQualityTestSeverityForm::getSeverity)
+            .flatMap(severity -> dataQualityService.setDataQualityTestSeverity(dataqaTestId, dataEntityId, severity))
+            // TODO: remove subscribeOn after
+            //  https://github.com/opendatadiscovery/odd-platform/issues/623 is implemented
+            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 }

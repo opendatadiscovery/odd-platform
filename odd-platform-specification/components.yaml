@@ -538,6 +538,14 @@ components:
       additionalProperties:
         type: string
 
+    DataQualityTestSeverityForm:
+      type: object
+      properties:
+        severity:
+          $ref: '#/components/schemas/DataQualityTestSeverity'
+      required:
+        - severity
+
     DataQualityTestSeverity:
       type: string
       enum:

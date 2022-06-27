@@ -4,6 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.opendatadiscovery.oddplatform.auth.session.JooqSessionRepository;
 import org.opendatadiscovery.oddplatform.auth.session.PostgreSQLSessionHousekeepingJob;
 import org.opendatadiscovery.oddplatform.auth.session.PostgreSQLSessionHousekeepingJobHandler;
+import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -30,9 +31,10 @@ public class SessionConfiguration {
         @Bean
         @ConditionalOnProperty(prefix = "session", name = "provider", havingValue = "INTERNAL_POSTGRESQL")
         public ReactiveSessionRepository<MapSession> psqlReactiveSessionRepository(
-            final JooqReactiveOperations jooqReactiveOperations
-        ) {
-            return new JooqSessionRepository(jooqReactiveOperations);
+            final JooqReactiveOperations jooqReactiveOperations,
+            final JooqQueryHelper jooqQueryHelper
+            ) {
+            return new JooqSessionRepository(jooqReactiveOperations, jooqQueryHelper);
         }
 
         @ConditionalOnProperty(prefix = "session", name = "provider", havingValue = "INTERNAL_POSTGRESQL")

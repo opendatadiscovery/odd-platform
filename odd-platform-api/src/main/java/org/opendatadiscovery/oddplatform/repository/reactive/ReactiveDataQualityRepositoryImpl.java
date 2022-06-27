@@ -1,15 +1,20 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
-import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.jooq.InsertResultStep;
 import org.jooq.Record1;
 import org.jooq.Record2;
+import org.jooq.Record3;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
-import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
+import org.opendatadiscovery.oddplatform.dto.LastTaskRunDto;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.records.DataQualityTestSeverityRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
@@ -23,14 +28,14 @@ import static org.opendatadiscovery.oddplatform.ingestion.contract.model.Quality
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus.SUCCESS;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus.UNKNOWN;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TASK_RUN;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TASK_LAST_RUN;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_QUALITY_TEST_RELATIONS;
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_QUALITY_TEST_SEVERITY;
 
 @Repository
 @RequiredArgsConstructor
 public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
-    private final JooqQueryHelper jooqQueryHelper;
 
     @Override
     public Flux<String> getDataQualityTestOddrnsForDataset(final long datasetId) {
@@ -45,31 +50,71 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
 
     @Override
     public Mono<DatasetTestReportDto> getDatasetTestReport(final long datasetId) {
-        final SelectConditionStep<Record1<LocalDateTime>> maxEndTimeSubquery = DSL
-            .select(DSL.max(DATA_ENTITY_TASK_RUN.END_TIME))
-            .from(DATA_ENTITY_TASK_RUN)
-            .where(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
-            .and(DATA_ENTITY_TASK_RUN.END_TIME.isNotNull());
-
-        // @formatter:off
         final SelectHavingStep<Record2<String, Long>> query = DSL
-            .select(DATA_ENTITY_TASK_RUN.STATUS, count(DATA_ENTITY_TASK_RUN.ID).cast(Long.class))
+            .select(
+                DATA_ENTITY_TASK_LAST_RUN.STATUS,
+                count(DATA_ENTITY_TASK_LAST_RUN.LAST_TASK_RUN_ODDRN).cast(Long.class)
+            )
             .from(DATA_QUALITY_TEST_RELATIONS)
-            .join(DATA_ENTITY_TASK_RUN)
-                .on(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
+            .join(DATA_ENTITY_TASK_LAST_RUN)
+            .on(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
             .join(DATA_ENTITY)
-                .on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
+            .on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
             .where(DATA_ENTITY.ID.eq(datasetId))
-            .and(DATA_ENTITY_TASK_RUN.END_TIME.eq(maxEndTimeSubquery))
-            .groupBy(DATA_ENTITY_TASK_RUN.STATUS);
-        // @formatter:on
+            .groupBy(DATA_ENTITY_TASK_LAST_RUN.STATUS);
 
         return jooqReactiveOperations.flux(query)
             .collectMap(Record2::value1, Record2::value2)
-            .map(this::mapReport);
+            .map(this::mapTestReport);
     }
 
-    private DatasetTestReportDto mapReport(final Map<String, Long> report) {
+    @Override
+    public Mono<DataQualityTestSeverityPojo> setDataQualityTestSeverity(final long dataQualityTestId,
+                                                                        final long dataEntityId,
+                                                                        final DataQualityTestSeverity severity) {
+        final InsertResultStep<DataQualityTestSeverityRecord> query = DSL
+            .insertInto(DATA_QUALITY_TEST_SEVERITY)
+            .set(DATA_QUALITY_TEST_SEVERITY.DATA_QUALITY_TEST_ID, dataQualityTestId)
+            .set(DATA_QUALITY_TEST_SEVERITY.DATASET_ID, dataEntityId)
+            .set(DATA_QUALITY_TEST_SEVERITY.SEVERITY, severity.getValue())
+            .onDuplicateKeyUpdate()
+            .set(DATA_QUALITY_TEST_SEVERITY.SEVERITY, severity.getValue())
+            .returning();
+
+        return jooqReactiveOperations
+            .mono(query)
+            .map(r -> r.into(DataQualityTestSeverityPojo.class));
+    }
+
+    @Override
+    public Flux<LastTaskRunDto> getDatasetTrafficLight(final long datasetId) {
+        // @formatter:off
+        final SelectConditionStep<Record3<Long, String, String>> query = DSL
+            .select(DATA_ENTITY.ID, DATA_ENTITY_TASK_LAST_RUN.STATUS, DATA_QUALITY_TEST_SEVERITY.SEVERITY)
+            .from(DATA_QUALITY_TEST_RELATIONS)
+            .join(DATA_ENTITY)
+                .on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
+            .join(DATA_ENTITY_TASK_LAST_RUN)
+                .on(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
+            .join(DATA_QUALITY_TEST_SEVERITY)
+                .on(DATA_QUALITY_TEST_SEVERITY.DATA_QUALITY_TEST_ID.eq(DATA_ENTITY.ID))
+            .where(DATA_QUALITY_TEST_SEVERITY.DATASET_ID.eq(datasetId));
+        // @formatter:on
+
+        System.out.println(query);
+
+        return jooqReactiveOperations.flux(query).map(this::mapLastRunDto);
+    }
+
+    private LastTaskRunDto mapLastRunDto(final Record3<Long, String, String> r) {
+        return new LastTaskRunDto(
+            r.value1(),
+            QualityRunStatus.valueOf(r.value2()),
+            DataQualityTestSeverity.valueOf(r.value3())
+        );
+    }
+
+    private DatasetTestReportDto mapTestReport(final Map<String, Long> report) {
         return DatasetTestReportDto.builder()
             .successTotal(report.getOrDefault(SUCCESS.getValue(), 0L))
             .failedTotal(report.getOrDefault(FAILED.getValue(), 0L))

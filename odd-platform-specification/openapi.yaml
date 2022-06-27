@@ -1265,6 +1265,19 @@ paths:
       tags:
         - dataSet
 
+  /api/datasets/{data_entity_id}/traffic_light:
+    get:
+      summary: Get Dataset's traffic light
+      description: Gets Dataset's traffic light
+      operationId: getTrafficLight
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+      tags:
+        - dataQuality
+
   /api/datasets/{data_entity_id}/test_report:
     get:
       summary: Get Dataset's test report
@@ -1312,7 +1325,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './components.yaml/#/components/schemas/DataQualityTestSeverity'
+              $ref: './components.yaml/#/components/schemas/DataQualityTestSeverityForm'
       responses:
         '200':
           description: OK
