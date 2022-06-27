@@ -83,13 +83,13 @@ public class ReactiveDatasetVersionRepositoryImpl
             .collect(Collectors
                 .groupingBy(this::extractDatasetVersion,
                     Collectors.mapping(this::extractDatasetFieldDto, Collectors.toList())))
-            .map(m -> m.entrySet().stream()
+            .flatMap(m -> m.entrySet().stream()
                 .findFirst()
-                .map(e -> DatasetStructureDto.builder()
+                .map(e -> Mono.just(DatasetStructureDto.builder()
                     .datasetVersion(e.getKey())
                     .datasetFields(e.getValue())
-                    .build())
-                .orElseGet(DatasetStructureDto::new)
+                    .build()))
+                .orElse(Mono.empty())
             );
     }
 
@@ -129,13 +129,13 @@ public class ReactiveDatasetVersionRepositoryImpl
             .collect(Collectors
                 .groupingBy(this::extractDatasetVersion,
                     Collectors.mapping(this::extractDatasetFieldDto, Collectors.toList())))
-            .map(m -> m.entrySet().stream()
+            .flatMap(m -> m.entrySet().stream()
                 .findFirst()
-                .map(e -> DatasetStructureDto.builder()
+                .map(e -> Mono.just(DatasetStructureDto.builder()
                     .datasetVersion(e.getKey())
                     .datasetFields(e.getValue())
-                    .build())
-                .orElseGet(DatasetStructureDto::new)
+                    .build()))
+                .orElse(Mono.empty())
             );
     }
 
@@ -175,12 +175,12 @@ public class ReactiveDatasetVersionRepositoryImpl
     }
 
     @Override
-    public Mono<List<DatasetVersionPojo>> getPenaltimate(final List<DatasetVersionPojo> havePenultimate) {
-        if (havePenultimate.isEmpty()) {
+    public Mono<List<DatasetVersionPojo>> getPenultimateVersions(final List<DatasetVersionPojo> lastVersions) {
+        if (lastVersions.isEmpty()) {
             return Mono.empty();
         }
 
-        final Condition condition = havePenultimate.stream()
+        final Condition condition = lastVersions.stream()
             .map(v -> DATA_ENTITY.ODDRN.eq(v.getDatasetOddrn())
                 .and(DATASET_VERSION.VERSION.eq(v.getVersion() - 1)))
             .reduce(Condition::or)
@@ -198,7 +198,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     }
 
     @Override
-    public Mono<Map<Long, List<DatasetFieldPojo>>> getVidToFields(final Set<Long> dataVersionPojoIds) {
+    public Mono<Map<Long, List<DatasetFieldPojo>>> getVersionIdToDatasetFields(final Set<Long> dataVersionPojoIds) {
         final SelectConditionStep<Record> vidToFieldsSelect = DSL.select(DATASET_STRUCTURE.DATASET_VERSION_ID)
             .select(DATASET_FIELD.asterisk())
             .from(DATASET_FIELD)

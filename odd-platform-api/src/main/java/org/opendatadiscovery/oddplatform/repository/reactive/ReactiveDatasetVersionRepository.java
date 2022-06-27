@@ -18,7 +18,7 @@ public interface ReactiveDatasetVersionRepository extends ReactiveCRUDRepository
 
     Mono<List<DatasetVersionPojo>> getLatestVersions(final Collection<Long> datasetIds);
 
-    Mono<List<DatasetVersionPojo>> getPenaltimate(final List<DatasetVersionPojo> havePenultimate);
+    Mono<List<DatasetVersionPojo>> getPenultimateVersions(final List<DatasetVersionPojo> lastVersions);
 
-    Mono<Map<Long, List<DatasetFieldPojo>>> getVidToFields(Set<Long> dataVersionPojoIds);
+    Mono<Map<Long, List<DatasetFieldPojo>>> getVersionIdToDatasetFields(Set<Long> dataVersionPojoIds);
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,10 +62,12 @@ import org.opendatadiscovery.oddrn.model.ODDPlatformDataSourcePath;
 import org.opendatadiscovery.oddrn.model.OddrnPath;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuples;
 
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType.JOB_RUN;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
@@ -75,7 +78,6 @@ public class IngestionServiceImpl implements IngestionService {
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final DataEntityRepository dataEntityRepository;
     private final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
-    private final DatasetVersionRepository datasetVersionRepository;
     private final DatasetStructureRepository datasetStructureRepository;
     private final LineageRepository lineageRepository;
     private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
@@ -105,19 +107,29 @@ public class IngestionServiceImpl implements IngestionService {
                     .stream()
                     .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
                     .map(EnrichedDataEntityIngestionDto::getId)
-                    .collect(Collectors.toList());
+                    .toList();
 
-                final Map<String, DatasetStructureDelta> datasetStructureDelta =
-                    datasetVersionRepository.getLastStructureDelta(changedSchemaIds);
-
+                return reactiveDatasetVersionRepository.getLatestVersions(changedSchemaIds)
+                    .flatMap(latestVersions -> {
+                        final List<DatasetVersionPojo> latestVersionsWithPenultimates = latestVersions.stream()
+                            .filter(p -> p.getVersion() > 1)
+                            .collect(Collectors.toList());
+                        return reactiveDatasetVersionRepository.getPenultimateVersions(latestVersionsWithPenultimates)
+                            .defaultIfEmpty(List.of())
+                            .flatMap(penultimateList -> getLastStructureDelta(
+                                latestVersionsWithPenultimates, penultimateList))
+                            .map(map -> Tuples.of(map, dataStructure));
+                    });
+            })
+            .flatMap(function((delta, dataStructure) -> {
                 final List<AlertPojo> alerts = Stream.of(
-                    alertLocator.locateDatasetBackIncSchema(datasetStructureDelta),
+                    alertLocator.locateDatasetBackIncSchema(delta),
                     alertLocator.locateDataQualityTestRunFailed(dataStructure.getTaskRuns()),
                     dataStructure.getEarlyAlerts()
                 ).flatMap(List::stream).collect(Collectors.toList());
 
                 return alertService.createAlerts(alerts).thenReturn(dataStructure);
-            })
+            }))
             .flatMap(metricService::exportMetrics)
             .then();
     }
@@ -130,7 +142,7 @@ public class IngestionServiceImpl implements IngestionService {
         final Set<Long> dataVersionPojoIds = versions.stream()
             .map(DatasetVersionPojo::getId)
             .collect(Collectors.toSet());
-        return reactiveDatasetVersionRepository.getVidToFields(dataVersionPojoIds)
+        return reactiveDatasetVersionRepository.getVersionIdToDatasetFields(dataVersionPojoIds)
             .flatMap(vidToFields -> {
                 final Map<String, List<DatasetVersionPojo>> dsOddrnToVersions = versions
                     .stream()
@@ -340,8 +352,12 @@ public class IngestionServiceImpl implements IngestionService {
             .map(EnrichedDataEntityIngestionDto::getId)
             .collect(Collectors.toSet());
 
-        final Mono<List<DatasetVersionPojo>> versions = Mono
-            .fromCallable(() -> datasetVersionRepository.getLatestVersions(datasetIds));
+        final Mono<List<DatasetVersionPojo>> versions = reactiveDatasetVersionRepository
+            .getLatestVersions(datasetIds)
+            .map(fetchedVersions -> fetchedVersions.stream()
+                .map(fetchedVersion -> incrementVersion(datasetDict, fetchedVersion))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
 
         final Map<String, List<DatasetFieldPojo>> datasetFields = datasetDict.values().stream()
             .collect(Collectors.toMap(

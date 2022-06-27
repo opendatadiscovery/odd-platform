@@ -138,7 +138,6 @@ public class DataEntityRepositoryImpl
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
     private final MetadataFieldValueRepository metadataFieldValueRepository;
     private final DatasetVersionRepository datasetVersionRepository;
-    private final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
     private final TermRepository termRepository;
     private final LineageRepository lineageRepository;
 
@@ -149,7 +148,6 @@ public class DataEntityRepositoryImpl
                                     final DataEntityTaskRunRepository dataEntityTaskRunRepository,
                                     final MetadataFieldValueRepository metadataFieldValueRepository,
                                     final DatasetVersionRepository datasetVersionRepository,
-                                    final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository,
                                     final TermRepository termRepository,
                                     final LineageRepository lineageRepository) {
         super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null,
@@ -160,7 +158,6 @@ public class DataEntityRepositoryImpl
         this.dataEntityTaskRunRepository = dataEntityTaskRunRepository;
         this.metadataFieldValueRepository = metadataFieldValueRepository;
         this.datasetVersionRepository = datasetVersionRepository;
-        this.reactiveDatasetVersionRepository = reactiveDatasetVersionRepository;
         this.termRepository = termRepository;
         this.lineageRepository = lineageRepository;
     }

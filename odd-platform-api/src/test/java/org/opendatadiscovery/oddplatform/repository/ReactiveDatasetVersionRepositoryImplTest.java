@@ -64,6 +64,15 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("Test get Dataset Version from database, expecting dataset version not found")
+    void testGetDatasetVersionNotFound() {
+        final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
+        reactiveDatasetVersionRepository.getDatasetVersion(datasetVersionPojo.getId())
+            .as(StepVerifier::create)
+            .verifyComplete();
+    }
+
+    @Test
     @DisplayName("Test get List of DatasetVersion by oddrn from database")
     void testGetVersions() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
@@ -137,6 +146,15 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
+    @DisplayName("Test get latest Dataset Version from database, expecting latest dataset version not found")
+    void testGetLatestVersionsNotFound() {
+        final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
+        reactiveDatasetVersionRepository.getLatestDatasetVersion(datasetVersionPojo.getId())
+            .as(StepVerifier::create)
+            .verifyComplete();
+    }
+
+    @Test
     @DisplayName("Test get penaltimate of DatasetVersions list from database")
     void testGetPenaltimate() {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
@@ -152,7 +170,7 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
             reactiveDatasetVersionRepository.bulkCreate(expectedDatasetVersionPojoList).collectList().block();
         createdDatasetVersionPojos.removeIf(datasetVersionPojo -> datasetVersionPojo.getVersion() == 3L);
 
-        reactiveDatasetVersionRepository.getPenaltimate(expectedDatasetVersionPojoList)
+        reactiveDatasetVersionRepository.getPenultimateVersions(expectedDatasetVersionPojoList)
             .as(StepVerifier::create)
             .assertNext(penaltimateDatasetVersion -> {
                 assertThat(penaltimateDatasetVersion).isNotNull();
@@ -180,7 +198,7 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
 
         final Set<Long> datasetPojoIds =
             versions.stream().map(DatasetVersionPojo::getId).collect(Collectors.toSet());
-        reactiveDatasetVersionRepository.getVidToFields(datasetPojoIds)
+        reactiveDatasetVersionRepository.getVersionIdToDatasetFields(datasetPojoIds)
             .as(StepVerifier::create)
             .assertNext(map -> {
                 assertThat(map).isNotNull();

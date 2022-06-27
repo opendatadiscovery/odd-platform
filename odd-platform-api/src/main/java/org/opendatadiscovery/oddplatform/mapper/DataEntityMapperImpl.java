@@ -42,7 +42,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private final OwnershipMapper ownershipMapper;
     private final TagMapper tagMapper;
     private final MetadataFieldValueMapper metadataFieldValueMapper;
-    private final DatasetVersionMapper datasetVersionMapper;
+    private final DatasetVersionApiMapper datasetVersionApiMapper;
     private final DataEntityRunMapper dataEntityRunMapper;
     private final TermMapper termMapper;
 
@@ -219,7 +219,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .viewCount(pojo.getViewCount());
 
         if (entityClasses.contains(DataEntityClassDto.DATA_SET)) {
-            details.setVersionList(datasetVersionMapper.mapPojo(dto.getDatasetVersions()));
+            details.setVersionList(datasetVersionApiMapper.mapPojo(dto.getDatasetVersions()));
             details.setStats(mapStats(dto.getDataSetDetailsDto()));
         }
 
