@@ -5,6 +5,7 @@ import {
   DataSetField,
   DataSetFieldTypeTypeEnum,
   DataSetStats,
+  DataSetFieldTypeKeyEnum,
 } from 'generated-sources';
 import {
   DataSetFormattedStats,
@@ -12,9 +13,9 @@ import {
   DatasetStatsLabelMap,
 } from 'redux/interfaces/datasetStructure';
 import { format } from 'date-fns';
+import DatasetStructureKeyFieldLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureKeyFieldLabel/DatasetStructureKeyFieldLabel';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import LineBreakIcon from 'components/shared/Icons/LineBreakIcon';
@@ -23,6 +24,8 @@ import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/Dataset
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
+import TruncatedLabel from 'components/shared/TruncatedLabel/TruncatedLabel';
+
 import DatasetFieldInfoEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/DatasetFieldInfoEditFormContainer';
 import DatasetFieldEnumsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsEditFormContainer';
 import { ButtonColors } from 'components/shared/AppButton/AppButtonStyles';
@@ -53,7 +56,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   onSizeChange,
 }) => {
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
-
   let fieldStats = {} as DataSetFormattedStats;
   switch (datasetField.type.type) {
     case DataSetFieldTypeTypeEnum.STRING:
@@ -110,7 +112,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   const nestedBlockStyle = {
     paddingLeft: `${Math.min(nesting, 10) * 20 + 8}px`,
   };
-
   let collapseBlock;
   if (childFields?.length) {
     collapseBlock = (
@@ -147,7 +148,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       </AppButton>
     );
   }, [datasetField.enumValueCount]);
-
   return (
     <Grid container>
       <Grid item container>
@@ -185,12 +185,21 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                         datasetField.name}
                     </Typography>
                   </AppTooltip>
-                  <div>
-                    {datasetField.labels?.map(label => (
-                      <LabelItem key={label.id} labelName={label.name} />
-                    ))}
-                  </div>
                 </Grid>
+                <TruncatedLabel
+                  dataList={datasetField.labels}
+                  externalEntityId={datasetField.id}
+                />
+                {datasetField.isPrimaryKey && (
+                  <DatasetStructureKeyFieldLabel
+                    typeName={DataSetFieldTypeKeyEnum.PRIMARY}
+                  />
+                )}
+                {datasetField.isSortKey && (
+                  <DatasetStructureKeyFieldLabel
+                    typeName={DataSetFieldTypeKeyEnum.SORT}
+                  />
+                )}
                 <Grid item xs={12} sx={{ pr: 2.5 }}>
                   <AppTooltip
                     title={() => datasetField.internalDescription}
