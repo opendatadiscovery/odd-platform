@@ -5,7 +5,6 @@ import {
   DataSetField,
   DataSetFieldTypeTypeEnum,
   DataSetStats,
-  DataSetFieldTypeKeyEnum,
 } from 'generated-sources';
 import {
   DataSetFormattedStats,
@@ -191,14 +190,10 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                   externalEntityId={datasetField.id}
                 />
                 {datasetField.isPrimaryKey && (
-                  <DatasetStructureKeyFieldLabel
-                    typeName={DataSetFieldTypeKeyEnum.PRIMARY}
-                  />
+                  <DatasetStructureKeyFieldLabel typeName="primary" />
                 )}
                 {datasetField.isSortKey && (
-                  <DatasetStructureKeyFieldLabel
-                    typeName={DataSetFieldTypeKeyEnum.SORT}
-                  />
+                  <DatasetStructureKeyFieldLabel typeName="sort" />
                 )}
                 <Grid item xs={12} sx={{ pr: 2.5 }}>
                   <AppTooltip
