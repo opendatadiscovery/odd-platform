@@ -4,13 +4,11 @@ import java.util.Collection;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.jooq.InsertResultStep;
-import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
-import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
@@ -25,8 +23,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.count;
-import static org.jooq.impl.DSL.name;
-import static org.jooq.impl.DSL.table;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus.ABORTED;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus.BROKEN;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus.FAILED;
@@ -98,7 +94,7 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
         final DataEntity dataQualityTest = DATA_ENTITY.as("data_quality_test");
 
         // @formatter:off
-        final SelectConditionStep<Record2<String,String>> query = DSL
+        final SelectConditionStep<Record2<String, String>> query = DSL
             .select(DATA_ENTITY_TASK_LAST_RUN.STATUS, DATA_QUALITY_TEST_SEVERITY.SEVERITY)
             .from(DATA_QUALITY_TEST_RELATIONS)
             .join(dataset)

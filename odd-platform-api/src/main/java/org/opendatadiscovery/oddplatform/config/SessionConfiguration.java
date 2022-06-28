@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.session.MapSession;
 import org.springframework.session.ReactiveMapSessionRepository;
 import org.springframework.session.ReactiveSessionRepository;
@@ -33,7 +32,7 @@ public class SessionConfiguration {
         public ReactiveSessionRepository<MapSession> psqlReactiveSessionRepository(
             final JooqReactiveOperations jooqReactiveOperations,
             final JooqQueryHelper jooqQueryHelper
-            ) {
+        ) {
             return new JooqSessionRepository(jooqReactiveOperations, jooqQueryHelper);
         }
 

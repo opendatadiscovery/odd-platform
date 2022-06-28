@@ -20,7 +20,6 @@ import reactor.core.publisher.Mono;
 
 import static reactor.function.TupleUtils.consumer;
 
-
 @Service
 @RequiredArgsConstructor
 public class DataQualityServiceImpl implements DataQualityService {

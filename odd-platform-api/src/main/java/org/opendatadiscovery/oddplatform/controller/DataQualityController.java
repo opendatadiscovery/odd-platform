@@ -41,7 +41,6 @@ public class DataQualityController implements DataQualityApi {
     @Override
     public Mono<ResponseEntity<String>> getSLA(final Long dataEntityId,
                                                final ServerWebExchange exchange) {
-
         return dataQualityService
             .getSLA(dataEntityId)
             .map(this::generateSLAHtml)
