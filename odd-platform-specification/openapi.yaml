@@ -1265,16 +1265,20 @@ paths:
       tags:
         - dataSet
 
-  /api/datasets/{data_entity_id}/traffic_light:
+  /api/datasets/{data_entity_id}/sla:
     get:
-      summary: Get Dataset's traffic light
-      description: Gets Dataset's traffic light
-      operationId: getTrafficLight
+      summary: Get Dataset's SLA
+      description: Gets Dataset's SLA
+      operationId: getSLA
       parameters:
         - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
       responses:
         '200':
           description: OK
+          content:
+            text/html:
+              schema:
+                type: string
       tags:
         - dataQuality
 
