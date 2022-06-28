@@ -26,7 +26,7 @@ const TruncatedLabelMenu: React.FC<TruncatedLabelMenuProps> = ({
     setAnchorEl(null);
   };
   return (
-    <span>
+    <>
       <AppIconButton
         color="expand"
         icon={<MoreIcon />}
@@ -58,7 +58,7 @@ const TruncatedLabelMenu: React.FC<TruncatedLabelMenuProps> = ({
           </AppMenuItem>
         ))}
       </AppMenu>
-    </span>
+    </>
   );
 };
 
