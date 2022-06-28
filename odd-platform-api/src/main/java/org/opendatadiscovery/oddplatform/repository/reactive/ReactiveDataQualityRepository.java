@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
 import org.opendatadiscovery.oddplatform.dto.TestStatusWithSeverityDto;
@@ -17,4 +18,7 @@ public interface ReactiveDataQualityRepository {
                                                                  final DataQualityTestSeverity severity);
 
     Flux<TestStatusWithSeverityDto> getDatasetTrafficLight(final long datasetId);
+
+    Flux<DataQualityTestSeverityPojo> getSeverities(final Collection<String> dataQualityOddrns,
+                                                    final long datasetId);
 }

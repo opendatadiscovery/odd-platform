@@ -38,8 +38,12 @@ public class DataQualityServiceImpl implements DataQualityService {
             .switchIfEmpty(Mono.error(
                 new NotFoundException("Data quality tests for dataset with id %d not found".formatted(datasetId))))
             .collectList()
-            .map(dataEntityRepository::listDetailsByOddrns)
-            .map(dataEntityMapper::mapDataQualityTests);
+            .flatMap(oddrns -> dataQualityRepository.getSeverities(oddrns, datasetId)
+                .collectList()
+                .map(severities -> dataEntityMapper.mapDataQualityTests(
+                    dataEntityRepository.listDetailsByOddrns(oddrns),
+                    severities
+                )));
     }
 
     @Override
@@ -74,7 +78,7 @@ public class DataQualityServiceImpl implements DataQualityService {
                 "Fetch of data quality test details by id %d returned an empty object even though it shouldn't"
                     .formatted(dataQualityTest))))
             .map(Optional::get)
-            .map(dataEntityMapper::mapDataQualityTest);
+            .map(de -> dataEntityMapper.mapDataQualityTest(de, severity.toString()));
     }
 
     @Override
@@ -84,10 +88,10 @@ public class DataQualityServiceImpl implements DataQualityService {
             .switchIfEmpty(Mono.error(new NotFoundException("Dataset with id %d not found".formatted(datasetId))))
             .thenMany(dataQualityRepository.getDatasetTrafficLight(datasetId))
             .collectList()
-            .map(this::calculateTL);
+            .map(this::calculateSLA);
     }
 
-    private TrafficLightResult calculateTL(final List<TestStatusWithSeverityDto> tests) {
+    private TrafficLightResult calculateSLA(final List<TestStatusWithSeverityDto> tests) {
         if (tests.isEmpty()) {
             return TrafficLightResult.YELLOW;
         }
@@ -122,7 +126,7 @@ public class DataQualityServiceImpl implements DataQualityService {
             }
         }
 
-        if (failedAvg == totalAvg) {
+        if (totalAvg != 0 && failedAvg == totalAvg) {
             return TrafficLightResult.RED;
         }
 

@@ -1,17 +1,22 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.jooq.InsertResultStep;
+import org.jooq.Name;
+import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Record2;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
+import org.jooq.Table;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
 import org.opendatadiscovery.oddplatform.dto.TestStatusWithSeverityDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus;
+import org.opendatadiscovery.oddplatform.model.tables.DataEntity;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataQualityTestSeverityRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -20,6 +25,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.table;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus.ABORTED;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus.BROKEN;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus.FAILED;
@@ -87,20 +94,39 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
 
     @Override
     public Flux<TestStatusWithSeverityDto> getDatasetTrafficLight(final long datasetId) {
+        final DataEntity dataset = DATA_ENTITY.as("dataset");
+        final DataEntity dataQualityTest = DATA_ENTITY.as("data_quality_test");
+
         // @formatter:off
         final SelectConditionStep<Record2<String,String>> query = DSL
             .select(DATA_ENTITY_TASK_LAST_RUN.STATUS, DATA_QUALITY_TEST_SEVERITY.SEVERITY)
             .from(DATA_QUALITY_TEST_RELATIONS)
-            .join(DATA_ENTITY)
-                .on(DATA_ENTITY.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
+            .join(dataset)
+                .on(dataset.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATASET_ODDRN))
+            .join(dataQualityTest)
+                .on(dataQualityTest.ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
             .join(DATA_ENTITY_TASK_LAST_RUN)
                 .on(DATA_ENTITY_TASK_LAST_RUN.TASK_ODDRN.eq(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN))
             .leftJoin(DATA_QUALITY_TEST_SEVERITY)
-                .on(DATA_QUALITY_TEST_SEVERITY.DATASET_ID.eq(DATA_ENTITY.ID))
-            .where(DATA_ENTITY.ID.eq(datasetId));
+                .on(DATA_QUALITY_TEST_SEVERITY.DATASET_ID.eq(dataset.ID))
+                .and(DATA_QUALITY_TEST_SEVERITY.DATA_QUALITY_TEST_ID.eq(dataQualityTest.ID))
+            .where(dataset.ID.eq(datasetId));
         // @formatter:on
 
         return jooqReactiveOperations.flux(query).map(this::mapLastRunDto);
+    }
+
+    @Override
+    public Flux<DataQualityTestSeverityPojo> getSeverities(final Collection<String> dataQualityOddrns,
+                                                           final long datasetId) {
+        final SelectConditionStep<Record> query = DSL
+            .select(DATA_QUALITY_TEST_SEVERITY.fields())
+            .from(DATA_QUALITY_TEST_SEVERITY)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(DATA_QUALITY_TEST_SEVERITY.DATA_QUALITY_TEST_ID))
+            .where(DATA_ENTITY.ODDRN.in(dataQualityOddrns))
+            .and(DATA_QUALITY_TEST_SEVERITY.DATASET_ID.eq(datasetId));
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(DataQualityTestSeverityPojo.class));
     }
 
     private TestStatusWithSeverityDto mapLastRunDto(final Record2<String, String> record) {
