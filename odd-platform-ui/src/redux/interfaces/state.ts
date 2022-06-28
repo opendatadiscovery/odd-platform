@@ -51,9 +51,7 @@ export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface CollectorsState {
-  byId: { [collectorId: string]: Collector };
-  allIds: Collector['id'][];
+export interface CollectorsState extends EntityState<Collector> {
   pageInfo?: CurrentPageInfo;
 }
 

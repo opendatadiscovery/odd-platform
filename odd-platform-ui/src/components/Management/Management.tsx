@@ -19,8 +19,10 @@ const TagsList = React.lazy(() => import('./TagsList/TagsList'));
 const DataSourcesList = React.lazy(
   () => import('./DataSourcesList/DataSourcesList')
 );
-const CollectorsListContainer = React.lazy(
-  () => import('./CollectorsList/CollectorsListContainer')
+
+
+const CollectorsList = React.lazy(
+  () => import('./CollectorsList/CollectorsList')
 );
 
 const Management: React.FC = () => {
@@ -76,7 +78,7 @@ const Management: React.FC = () => {
             <Route
               exact
               path="/management/collectors"
-              component={CollectorsListContainer}
+              component={CollectorsList}
             />
             <Route
               exact
