@@ -1,44 +1,34 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState, AlertsState } from 'redux/interfaces';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
-import { Alert, AlertStatus } from 'generated-sources';
-import map from 'lodash/map';
-import { getDataEntityId } from './dataentity.selectors';
+import { AlertsState, RootState } from 'redux/interfaces';
+import { alertsAdapter } from 'redux/reducers/alerts.slice';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import * as actions from 'redux/actions';
+import { AlertStatus } from 'generated-sources';
 
 const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
 
-const getAlertTotalsFetchingStatus =
-  createLegacyFetchingSelector('GET_ALERT_TOTALS');
+export const { selectAll: getAlertList } =
+  alertsAdapter.getSelectors<RootState>(state => state.alerts);
 
-export const getAlertTotalsFetching = createSelector(
-  getAlertTotalsFetchingStatus,
-  status => status === 'fetching'
+export const getAlertTotalsFetchingStatuses = createStatusesSelector(
+  actions.fetchAlertsTotalsActionType
 );
 
-const getAlertListFetchingStatus =
-  createLegacyFetchingSelector('GET_ALERTS');
-
-export const getAlertListFetching = createSelector(
-  getAlertListFetchingStatus,
-  status => status === 'fetching'
+export const getAlertListFetchingStatus = createStatusesSelector(
+  actions.fetchAlertListActionType
 );
-
-const getDataEntityAlertListFetchingStatus = createLegacyFetchingSelector(
-  'GET_DATA_ENTITY_ALERTS'
+export const getMyAlertListFetchingStatus = createStatusesSelector(
+  actions.fetchMyAlertListActionType
 );
+export const getMyDependentsAlertListFetchingStatus =
+  createStatusesSelector(actions.fetchMyDependentsAlertListActionType);
 
-export const getDataEntityAlertListFetching = createSelector(
-  getDataEntityAlertListFetchingStatus,
-  status => status === 'fetching'
+export const getDataEntityAlertListFetchingStatus = createStatusesSelector(
+  actions.fetchDataEntityAlertsActionType
 );
-
 export const getAlertTotals = createSelector(
   getAlertsState,
   alertsState => alertsState.totals
-);
-
-export const getAlertList = createSelector(getAlertsState, alertsState =>
-  alertsState.allIds?.map(id => alertsState.byId[id])
 );
 
 export const getAlertListPageInfo = createSelector(
@@ -46,26 +36,8 @@ export const getAlertListPageInfo = createSelector(
   alertsState => alertsState.pageInfo
 );
 
-export const getDataEntityOpenAlertListCount = createSelector(
-  getAlertsState,
-  getDataEntityId,
-  (alertsState, dataEntityId) =>
-    alertsState.alertIdsByDataEntityId[dataEntityId]?.reduce<Alert[]>(
-      (memo, id) => {
-        if (alertsState.byId[id].status === AlertStatus.OPEN)
-          memo.push(alertsState.byId[id]);
-        return memo;
-      },
-      []
-    ).length
-);
-
-export const getDataEntityAlertsList = createSelector(
-  getAlertsState,
-  getDataEntityId,
-  (alertsState, dataEntityId) =>
-    map(
-      alertsState.alertIdsByDataEntityId[dataEntityId],
-      (alertId: number) => alertsState.byId[alertId]
-    )
+export const getDataEntityOpenAlertsCount = createSelector(
+  getAlertList,
+  alertList =>
+    alertList.filter(alert => alert.status === AlertStatus.OPEN).length
 );
