@@ -1,6 +1,6 @@
 package org.opendatadiscovery.oddplatform.dto;
 
-public enum TrafficLightResult {
+public enum SLA {
     RED,
     YELLOW,
     GREEN

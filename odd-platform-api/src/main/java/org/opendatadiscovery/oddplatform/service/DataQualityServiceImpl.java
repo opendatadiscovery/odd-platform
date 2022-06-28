@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
@@ -8,15 +7,14 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
-import org.opendatadiscovery.oddplatform.dto.TestStatusWithSeverityDto;
-import org.opendatadiscovery.oddplatform.dto.TrafficLightResult;
+import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.DataQualityMapper;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataQualityRepository;
+import org.opendatadiscovery.oddplatform.service.sla.SLACalculator;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -31,6 +29,7 @@ public class DataQualityServiceImpl implements DataQualityService {
     private final DataEntityRepository dataEntityRepository;
     private final DataQualityMapper dataQualityMapper;
     private final DataEntityMapper dataEntityMapper;
+    private final SLACalculator slaCalculator;
 
     @Override
     public Mono<DataEntityList> getDatasetTests(final long datasetId) {
@@ -82,66 +81,12 @@ public class DataQualityServiceImpl implements DataQualityService {
     }
 
     @Override
-    public Mono<TrafficLightResult> getTrafficLight(final long datasetId) {
+    public Mono<SLA> getSLA(final long datasetId) {
         return reactiveDataEntityRepository.exists(datasetId)
             .filter(e -> e)
             .switchIfEmpty(Mono.error(new NotFoundException("Dataset with id %d not found".formatted(datasetId))))
-            .thenMany(dataQualityRepository.getDatasetTrafficLight(datasetId))
+            .thenMany(dataQualityRepository.getSLA(datasetId))
             .collectList()
-            .map(this::calculateSLA);
-    }
-
-    private TrafficLightResult calculateSLA(final List<TestStatusWithSeverityDto> tests) {
-        if (tests.isEmpty()) {
-            return TrafficLightResult.YELLOW;
-        }
-
-        int failedAvg = 0;
-        int failedMinor = 0;
-
-        int totalAvg = 0;
-        int totalMinor = 0;
-
-        for (final TestStatusWithSeverityDto test : tests) {
-            if (test.status() != QualityRunStatus.SUCCESS) {
-                if (test.severity() == DataQualityTestSeverity.MAJOR) {
-                    return TrafficLightResult.RED;
-                }
-
-                if (test.severity() == DataQualityTestSeverity.AVERAGE) {
-                    failedAvg++;
-                }
-
-                if (test.severity() == DataQualityTestSeverity.MINOR) {
-                    failedMinor++;
-                }
-            }
-
-            if (test.severity() == DataQualityTestSeverity.AVERAGE) {
-                totalAvg++;
-            }
-
-            if (test.severity() == DataQualityTestSeverity.MINOR) {
-                totalMinor++;
-            }
-        }
-
-        if (totalAvg != 0 && failedAvg == totalAvg) {
-            return TrafficLightResult.RED;
-        }
-
-        if (failedAvg > 0) {
-            return TrafficLightResult.YELLOW;
-        }
-
-        if (failedAvg + 1 == totalAvg && failedMinor == totalMinor) {
-            return TrafficLightResult.YELLOW;
-        }
-
-        if (failedMinor == totalMinor) {
-            return TrafficLightResult.YELLOW;
-        }
-
-        return TrafficLightResult.GREEN;
+            .map(slaCalculator::calculateSLA);
     }
 }

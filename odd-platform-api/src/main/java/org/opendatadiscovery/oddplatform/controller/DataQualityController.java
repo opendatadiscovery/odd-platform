@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverityForm;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
@@ -42,7 +41,7 @@ public class DataQualityController implements DataQualityApi {
     public Mono<ResponseEntity<Void>> getTrafficLight(final Long dataEntityId,
                                                       final ServerWebExchange exchange) {
         return dataQualityService
-            .getTrafficLight(dataEntityId)
+            .getSLA(dataEntityId)
             .doOnNext(System.out::println)
             .then(Mono.just(ResponseEntity.ok().build()));
     }

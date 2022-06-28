@@ -93,7 +93,7 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
     }
 
     @Override
-    public Flux<TestStatusWithSeverityDto> getDatasetTrafficLight(final long datasetId) {
+    public Flux<TestStatusWithSeverityDto> getSLA(final long datasetId) {
         final DataEntity dataset = DATA_ENTITY.as("dataset");
         final DataEntity dataQualityTest = DATA_ENTITY.as("data_quality_test");
 

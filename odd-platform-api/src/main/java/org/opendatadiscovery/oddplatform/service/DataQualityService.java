@@ -4,7 +4,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
-import org.opendatadiscovery.oddplatform.dto.TrafficLightResult;
+import org.opendatadiscovery.oddplatform.dto.SLA;
 import reactor.core.publisher.Mono;
 
 public interface DataQualityService {
@@ -16,5 +16,5 @@ public interface DataQualityService {
                                                 final long datasetId,
                                                 final DataQualityTestSeverity severity);
 
-    Mono<TrafficLightResult> getTrafficLight(final long datasetId);
+    Mono<SLA> getSLA(final long datasetId);
 }

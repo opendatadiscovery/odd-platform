@@ -17,7 +17,7 @@ public interface ReactiveDataQualityRepository {
                                                                  final long dataEntityId,
                                                                  final DataQualityTestSeverity severity);
 
-    Flux<TestStatusWithSeverityDto> getDatasetTrafficLight(final long datasetId);
+    Flux<TestStatusWithSeverityDto> getSLA(final long datasetId);
 
     Flux<DataQualityTestSeverityPojo> getSeverities(final Collection<String> dataQualityOddrns,
                                                     final long datasetId);
