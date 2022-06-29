@@ -1823,9 +1823,215 @@ components:
         data_entity:
           $ref: '#/components/schemas/DataEntityRef'
         old_state:
-          type: string
+          $ref: '#/components/schemas/ActivityState'
         new_state:
+          $ref: '#/components/schemas/ActivityState'
+
+    ActivityState:
+      type: object
+      anyOf:
+        - $ref: '#/components/schemas/OwnershipActivityStateList'
+        - $ref: '#/components/schemas/TagActivityStateList'
+        - $ref: '#/components/schemas/DataEntityActivityState'
+        - $ref: '#/components/schemas/TermActivityStateList'
+        - $ref: '#/components/schemas/DescriptionActivityState'
+        - $ref: '#/components/schemas/InternalNameActivityState'
+        - $ref: '#/components/schemas/CustomMetadataActivityStateList'
+        - $ref: '#/components/schemas/DatasetFieldValuesActivityState'
+        - $ref: '#/components/schemas/DatasetFieldInformationActivityState'
+        - $ref: '#/components/schemas/CustomGroupActivityState'
+
+    OwnershipActivityStateList:
+      type: object
+      properties:
+        ownerships:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnershipActivityState'
+
+    OwnershipActivityState:
+      type: object
+      properties:
+        owner_name:
           type: string
+        role_name:
+          type: string
+
+    TagActivityStateList:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagActivityState'
+
+    TagActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        important:
+          type: boolean
+
+    DataEntityActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        oddrn:
+          type: string
+        description:
+          type: string
+        entity_classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClass'
+        type:
+          $ref: '#/components/schemas/DataEntityType'
+        external_name:
+          type: string
+
+    TermActivityStateList:
+      type: object
+      properties:
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermActivityState'
+
+    TermActivityState:
+      type: object
+      properties:
+        term_id:
+          type: integer
+          format: int64
+        term:
+          type: string
+        namespace:
+          type: string
+
+    DescriptionActivityState:
+      type: object
+      properties:
+        description:
+          type: string
+
+    InternalNameActivityState:
+      type: object
+      properties:
+        internal_name:
+          type: string
+
+    CustomMetadataActivityStateList:
+      type: object
+      properties:
+        metadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomMetadataActivityState'
+
+    CustomMetadataActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/MetadataFieldType'
+        value:
+          type: string
+
+    DatasetFieldValuesActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataSetFieldType'
+        enum_values:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetFieldEnumValuesActivityState'
+
+    DatasetFieldEnumValuesActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    DatasetFieldInformationActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataSetFieldType'
+        description:
+          type: string
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabelsActivityState'
+
+    LabelsActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    CustomGroupActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        internal_name:
+          type: string
+        entity_classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClass'
+        type:
+          $ref: '#/components/schemas/DataEntityType'
+        namespace_name:
+          type: string
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomGroupEntityActivityState'
+
+    CustomGroupEntityActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        internal_name:
+          type: string
+        external_name:
+          type: string
+        entity_classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClass'
 
     ActivityType:
       type: string
@@ -1843,23 +2049,19 @@ components:
         - OWNERSHIP_DELETED
         - TAGS_ASSOCIATION_UPDATED
         - DATA_ENTITY_CREATED
-        - DATA_ENTITY_INFO_UPDATED
-        - METADATA_UPDATED
-        - SCHEMA_UPDATED
-        - RELATION_UPDATED
-        - TERM_ASSOCIATION_CREATED
-        - TERM_ASSOCIATION_DELETED
-        - DESCRIPTION_CREATED
+        - DATA_ENTITY_OVERVIEW_UPDATED
+        - DATA_ENTITY_METADATA_UPDATED
+        - DATA_ENTITY_SCHEMA_UPDATED
+        - DATA_ENTITY_RELATION_UPDATED
+        - TERM_ASSIGNED
+        - TERM_ASSIGNMENT_DELETED
         - DESCRIPTION_UPDATED
-        - DESCRIPTION_DELETED
+        - INTERNAL_NAME_UPDATED
         - CUSTOM_METADATA_CREATED
         - CUSTOM_METADATA_UPDATED
         - CUSTOM_METADATA_DELETED
-        - ENUMS_ASSOCIATION_UPDATED
-        - DATASET_FIELD_DESCRIPTION_CREATED
-        - DATASET_FIELD_DESCRIPTION_UPDATED
-        - DATASET_FIELD_DESCRIPTION_DELETED
-        - DATASET_FIELD_LABEL_ASSOCIATION_UPDATED
+        - DATASET_FIELD_VALUES_UPDATED
+        - DATASET_FIELD_INFORMATION_UPDATED
         - CUSTOM_GROUP_CREATED
         - CUSTOM_GROUP_UPDATED
         - CUSTOM_GROUP_DELETED

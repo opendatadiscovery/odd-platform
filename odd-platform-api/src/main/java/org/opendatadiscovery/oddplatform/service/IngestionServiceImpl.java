@@ -20,6 +20,8 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
@@ -51,17 +53,20 @@ import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepositor
 import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataSourcePath;
 import org.opendatadiscovery.oddrn.model.OddrnPath;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType.JOB_RUN;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +82,7 @@ public class IngestionServiceImpl implements IngestionService {
     private final DataQualityTestRelationRepository dataQualityTestRelationRepository;
     private final DataEntityTaskRunRepository dataEntityTaskRunRepository;
     private final AlertService alertService;
+    private final ActivityService activityService;
     private final GroupEntityRelationRepository groupEntityRelationRepository;
     private final GroupParentGroupRelationRepository groupParentGroupRelationRepository;
 
@@ -114,8 +120,24 @@ public class IngestionServiceImpl implements IngestionService {
 
                 return alertService.createAlerts(alerts).thenReturn(dataStructure);
             })
+            .flatMap(dataStructure -> dataEntityCreatedEvents(dataStructure.getNewEntities())
+                .then(Mono.just(dataStructure)))
             .flatMap(metricService::exportMetrics)
             .then();
+    }
+
+    private Flux<ActivityCreateEvent> dataEntityCreatedEvents(final List<EnrichedDataEntityIngestionDto> newEntities) {
+        return Flux.fromStream(newEntities.stream())
+            .flatMap(dto -> Mono.zip(activityService.getContextInfo(Map.of(), ActivityEventType.DATA_ENTITY_CREATED),
+                    activityService.getUpdatedInfo(Map.of(), dto.getId(), ActivityEventType.DATA_ENTITY_CREATED))
+                .map(function((ci, newState) -> ActivityCreateEvent.builder()
+                    .dataEntityId(dto.getId())
+                    .oldState(ci.getOldState())
+                    .eventType(ActivityEventType.DATA_ENTITY_CREATED)
+                    .newState(newState)
+                    .build()
+                ))
+            );
     }
 
     private Mono<Long> acquireDataSourceId(final String dataSourceOddrn) {

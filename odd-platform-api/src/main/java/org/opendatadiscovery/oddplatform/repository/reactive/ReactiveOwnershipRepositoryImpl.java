@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
@@ -86,5 +87,23 @@ public class ReactiveOwnershipRepositoryImpl implements ReactiveOwnershipReposit
             .returning();
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(OwnershipPojo.class));
+    }
+
+    @Override
+    public Flux<OwnershipDto> getOwnershipsByDataEntityId(final long dataEntityId) {
+        final var query = DSL.select(OWNERSHIP.asterisk())
+            .select(ROLE.asterisk())
+            .select(OWNER.asterisk())
+            .from(OWNERSHIP)
+            .join(OWNER).on(OWNERSHIP.OWNER_ID.eq(OWNER.ID))
+            .join(ROLE).on(OWNERSHIP.ROLE_ID.eq(ROLE.ID))
+            .where(OWNERSHIP.DATA_ENTITY_ID.eq(dataEntityId));
+
+        return jooqReactiveOperations.flux(query)
+            .map(r -> OwnershipDto.builder()
+                .ownership(r.into(OWNERSHIP).into(OwnershipPojo.class))
+                .owner(r.into(OWNER).into(OwnerPojo.class))
+                .role(r.into(ROLE).into(RolePojo.class))
+                .build());
     }
 }

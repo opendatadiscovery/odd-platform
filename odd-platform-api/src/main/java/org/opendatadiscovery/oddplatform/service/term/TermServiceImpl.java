@@ -11,8 +11,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.TermDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRefList;
-import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
-import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.mapper.TermMapper;
@@ -22,6 +21,9 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermReposit
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.service.NamespaceService;
 import org.opendatadiscovery.oddplatform.service.TagService;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -94,7 +96,10 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @ReactiveTransactional
-    public Mono<TermRef> linkTermWithDataEntity(final Long termId, final Long dataEntityId) {
+    @ActivityLog(ActivityEventType.TERM_ASSIGNED)
+    public Mono<TermRef> linkTermWithDataEntity(final Long termId,
+                                                @ActivityParameter(ActivityParameterNames.TermAssigned.DATA_ENTITY_ID)
+                                                final Long dataEntityId) {
         return termRepository.createRelationWithDataEntity(dataEntityId, termId)
             .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
             .map(termMapper::mapToRef);
@@ -102,7 +107,10 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @ReactiveTransactional
-    public Mono<TermRef> removeTermFromDataEntity(final Long termId, final Long dataEntityId) {
+    @ActivityLog(ActivityEventType.TERM_ASSIGNMENT_DELETED)
+    public Mono<TermRef> removeTermFromDataEntity(final Long termId,
+                                                  @ActivityParameter(ActivityParameterNames.TermAssignmentDeleted.DATA_ENTITY_ID)
+                                                  final Long dataEntityId) {
         return termRepository.deleteRelationWithDataEntity(dataEntityId, termId)
             .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
             .map(termMapper::mapToRef);
@@ -130,10 +138,11 @@ public class TermServiceImpl implements TermService {
     private Mono<TermDetails> create(final TermFormData formData,
                                      final NamespacePojo namespace) {
         final TermPojo pojo = termMapper.mapToPojo(formData, namespace);
-        return termRepository
-            .create(pojo)
-            .map(term -> TermRefDto.builder().term(term).namespace(namespace).build())
-            .map(termRefDto -> termMapper.mapToDetails(new TermDetailsDto(termRefDto)));
+        return Mono.error(new RuntimeException());
+//        return termRepository
+//            .create(pojo)
+//            .map(term -> TermRefDto.builder().term(term).namespace(namespace).build())
+//            .map(termRefDto -> termMapper.mapToDetails(new TermDetailsDto(termRefDto)));
     }
 
     private Mono<TermDetails> updateSearchVectors(final TermDetails details) {

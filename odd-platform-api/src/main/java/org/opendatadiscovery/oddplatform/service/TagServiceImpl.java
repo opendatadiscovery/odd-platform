@@ -97,7 +97,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Flux<TagToDataEntityPojo> deleteRelationsWithDataEntityExcept(final long dataEntityId,
-                                                                   final Set<String> tagsToKeep) {
+                                                                         final Set<String> tagsToKeep) {
         return reactiveTagRepository.listByDataEntityId(dataEntityId)
             .collectList()
             .flatMapMany(currentTags -> {

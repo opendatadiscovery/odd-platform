@@ -21,6 +21,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -57,11 +58,13 @@ class OwnershipServiceImplTest {
     private ReactiveSearchEntrypointRepository searchEntrypointRepository;
     @Mock
     private OwnershipMapper ownershipMapper;
+    @Mock
+    private ActivityService activityService;
 
     @BeforeEach
     void setUp() {
         ownershipService = new OwnershipServiceImpl(roleService, ownerService, ownershipRepository,
-            searchEntrypointRepository, ownershipMapper);
+            searchEntrypointRepository, ownershipMapper, activityService);
     }
 
     @Test

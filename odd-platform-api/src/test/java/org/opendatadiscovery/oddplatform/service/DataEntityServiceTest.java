@@ -32,6 +32,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntity
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -69,6 +70,8 @@ public class DataEntityServiceTest {
     @Mock
     private NamespaceService namespaceService;
     @Mock
+    private ActivityService activityService;
+    @Mock
     private ReactiveDataEntityRepository reactiveDataEntityRepository;
     @Mock
     private ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
@@ -82,7 +85,7 @@ public class DataEntityServiceTest {
         dataEntityService = new DataEntityServiceImpl(dataEntityMapper, dataEntityRepository, authIdentityProvider,
             metadataFieldValueRepository, metadataFieldRepository, tagService, lineageRepository,
             metadataFieldMapper, metadataFieldValueMapper, reactiveSearchEntrypointRepository, tagMapper,
-            namespaceService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository, termRepository,
+            namespaceService, activityService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository, termRepository,
             ownershipRepository);
     }
 

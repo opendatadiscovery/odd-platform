@@ -4,6 +4,7 @@ import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermDto;
 import org.opendatadiscovery.oddplatform.dto.term.TermRefDto;
+import org.opendatadiscovery.oddplatform.model.tables.Term;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityToTermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -35,4 +36,6 @@ public interface ReactiveTermRepository extends ReactiveCRUDRepository<TermPojo>
     Mono<Page<TermDto>> findByState(final FacetStateDto state, final int page, final int size);
 
     Mono<Long> countByState(final FacetStateDto state);
+
+    Flux<TermRefDto> getDataEntityTerms(final long dataEntityId);
 }
