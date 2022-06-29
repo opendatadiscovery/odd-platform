@@ -42,7 +42,7 @@ public class ReactiveDataEntityRunRepositoryImpl implements ReactiveDataEntityRu
         final SelectConditionStep<Record> baseQuery = DSL
             .select(DATA_ENTITY_TASK_RUN.fields())
             .from(DATA_ENTITY_TASK_RUN)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATA_ENTITY_TASK_RUN.DATA_ENTITY_ODDRN))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATA_ENTITY_TASK_RUN.TASK_ODDRN))
             .where(conditions);
 
         final Select<? extends Record> query = jooqQueryHelper.paginate(

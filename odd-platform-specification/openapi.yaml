@@ -1266,6 +1266,23 @@ paths:
       tags:
         - dataSet
 
+  /api/datasets/{data_entity_id}/sla:
+    get:
+      summary: Get Dataset's SLA
+      description: Gets Dataset's SLA
+      operationId: getSLA
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+      tags:
+        - dataQuality
+
   /api/datasets/{data_entity_id}/test_report:
     get:
       summary: Get Dataset's test report
@@ -1297,6 +1314,30 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/DataEntityList'
+      tags:
+        - dataQuality
+
+  /api/datasets/{data_entity_id}/dataqatests/{dataqa_test_id}/severity:
+    put:
+      summary: Set DataQA test severity
+      description: Sets DataQA test severity
+      operationId: setDataQATestSeverity
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataQATestIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataQualityTestSeverityForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntity'
       tags:
         - dataQuality
 

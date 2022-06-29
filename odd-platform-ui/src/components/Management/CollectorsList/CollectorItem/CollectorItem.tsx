@@ -1,16 +1,15 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  Collector,
-  CollectorApiDeleteCollectorRequest,
-} from 'generated-sources';
+import { Collector } from 'generated-sources';
+import { deleteCollector } from 'redux/thunks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import CollectorFormDialogContainer from 'components/Management/CollectorsList/CollectorForm/CollectorFormContainer';
-import CollectorItemTokenContainer from './CollectorItemToken/CollectorItemTokenContainer';
+import CollectorFormDialog from 'components/Management/CollectorsList/CollectorForm/CollectorForm';
+import CollectorItemToken from './CollectorItemToken/CollectorItemToken';
 import {
   CollectorActionsContainer,
   CollectorDescriptionContainer,
@@ -19,17 +18,13 @@ import {
 
 interface CollectorItemProps {
   collector: Collector;
-  deleteCollector: (
-    params: CollectorApiDeleteCollectorRequest
-  ) => Promise<void>;
 }
 
-const CollectorItem: React.FC<CollectorItemProps> = ({
-  collector,
-  deleteCollector,
-}) => {
+const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
+  const dispatch = useAppDispatch();
+
   const onDelete = React.useCallback(
-    () => deleteCollector({ collectorId: collector.id }),
+    () => dispatch(deleteCollector({ collectorId: collector.id })),
     [collector]
   );
 
@@ -42,7 +37,7 @@ const CollectorItem: React.FC<CollectorItemProps> = ({
           </Typography>
         </Grid>
         <CollectorActionsContainer item sm={4}>
-          <CollectorFormDialogContainer
+          <CollectorFormDialog
             collector={collector}
             btnCreateEl={
               <AppButton
@@ -98,7 +93,7 @@ const CollectorItem: React.FC<CollectorItemProps> = ({
             label="Token"
             labelWidth={4}
           >
-            <CollectorItemTokenContainer collector={collector} />
+            <CollectorItemToken collector={collector} />
           </LabeledInfoItem>
         </CollectorDescriptionContainer>
       </Grid>

@@ -55,9 +55,7 @@ export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface CollectorsState {
-  byId: { [collectorId: string]: Collector };
-  allIds: Collector['id'][];
+export interface CollectorsState extends EntityState<Collector> {
   pageInfo?: CurrentPageInfo;
 }
 
@@ -186,16 +184,9 @@ export interface SearchState {
   facetState: SearchFacetsByName;
 }
 
-export interface AlertsState {
+export interface AlertsState extends EntityState<Alert> {
   totals: AlertTotals;
   pageInfo: CurrentPageInfo;
-  byId: {
-    [alertId: string]: Alert;
-  };
-  allIds: Alert['id'][];
-  alertIdsByDataEntityId: {
-    [dataEntityId: string]: Alert['id'][];
-  };
 }
 
 export interface ProfileState {

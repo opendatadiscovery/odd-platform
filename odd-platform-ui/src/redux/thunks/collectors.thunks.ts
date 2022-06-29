@@ -1,7 +1,6 @@
 import {
   CollectorApi,
   Configuration,
-  CollectorList,
   Collector,
   CollectorApiGetCollectorsListRequest,
   CollectorApiUpdateCollectorRequest,
@@ -9,77 +8,69 @@ import {
   CollectorApiDeleteCollectorRequest,
   CollectorApiRegenerateCollectorTokenRequest,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
-import { DeleteCollector } from 'redux/interfaces/collectors';
+import { CurrentPageInfo } from 'redux/interfaces/common';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PaginatedResponse } from 'redux/interfaces/common';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new CollectorApi(apiClientConf);
 
-export const fetchCollectorsList = createThunk<
-  CollectorApiGetCollectorsListRequest,
-  CollectorList,
-  PaginatedResponse<CollectorList>
->(
-  (params: CollectorApiGetCollectorsListRequest) =>
-    apiClient.getCollectorsList(params),
-  actions.fetchCollectorsAction,
-  (
-    response: CollectorList,
-    request: CollectorApiGetCollectorsListRequest
-  ) => ({
-    ...response,
-    pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-    },
-  })
-);
+export const fetchCollectorsList = createAsyncThunk<
+  { items: Array<Collector>; pageInfo: CurrentPageInfo },
+  CollectorApiGetCollectorsListRequest
+>(actions.fetchCollectorsActionType, async ({ page, size, query }) => {
+  const { items, pageInfo } = await apiClient.getCollectorsList({
+    page,
+    size,
+    query,
+  });
 
-export const updateCollector = createThunk<
-  CollectorApiUpdateCollectorRequest,
+  return { items, pageInfo: { ...pageInfo, page } };
+});
+
+export const updateCollector = createAsyncThunk<
   Collector,
-  Collector
+  CollectorApiUpdateCollectorRequest
 >(
-  (params: CollectorApiUpdateCollectorRequest) =>
-    apiClient.updateCollector(params),
-  actions.updateCollectorAction,
-  (result: Collector) => result
+  actions.updateCollectorActionType,
+  async ({ collectorId, collectorUpdateFormData }) => {
+    const collector = await apiClient.updateCollector({
+      collectorId,
+      collectorUpdateFormData,
+    });
+
+    return collector;
+  }
 );
 
-export const regenerateCollectorToken = createThunk<
-  CollectorApiRegenerateCollectorTokenRequest,
+export const regenerateCollectorToken = createAsyncThunk<
   Collector,
-  Collector
->(
-  (params: CollectorApiRegenerateCollectorTokenRequest) =>
-    apiClient.regenerateCollectorToken(params),
-  actions.regenerateCollectorTokenAction,
-  (result: Collector) => result
-);
+  CollectorApiRegenerateCollectorTokenRequest
+>(actions.regenerateCollectorTokenActionType, async ({ collectorId }) => {
+  const collector = await apiClient.regenerateCollectorToken({
+    collectorId,
+  });
 
-export const registerCollector = createThunk<
-  CollectorApiRegisterCollectorRequest,
+  return collector;
+});
+
+export const registerCollector = createAsyncThunk<
   Collector,
-  Collector
->(
-  (params: CollectorApiRegisterCollectorRequest) =>
-    apiClient.registerCollector(params),
-  actions.registerCollectorAction,
-  (result: Collector) => result
-);
+  CollectorApiRegisterCollectorRequest
+>(actions.registerCollectorActionType, async ({ collectorFormData }) => {
+  const collector = await apiClient.registerCollector({
+    collectorFormData,
+  });
 
-export const deleteCollector = createThunk<
-  CollectorApiDeleteCollectorRequest,
-  void,
-  DeleteCollector
->(
-  (params: CollectorApiDeleteCollectorRequest) =>
-    apiClient.deleteCollector(params),
-  actions.deleteCollectorAction,
-  (_, request: CollectorApiDeleteCollectorRequest) => ({
-    collectorId: request.collectorId,
-  })
-);
+  return collector;
+});
+
+export const deleteCollector = createAsyncThunk<
+  number,
+  CollectorApiDeleteCollectorRequest
+>(actions.deleteCollectorActionType, async ({ collectorId }) => {
+  await apiClient.deleteCollector({ collectorId });
+
+  return collectorId;
+});

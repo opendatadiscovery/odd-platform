@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 
 public interface DataEntityMapper
@@ -31,7 +32,12 @@ public interface DataEntityMapper
 
     DataEntity mapDataQualityTest(final DataEntityDetailsDto dto);
 
+    DataEntity mapDataQualityTest(final DataEntityDetailsDto dto, final String severity);
+
     DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos);
+
+    DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos,
+                                       final Collection<DataQualityTestSeverityPojo> severities);
 
     DataEntityType mapType(final DataEntityTypeDto type);
 
