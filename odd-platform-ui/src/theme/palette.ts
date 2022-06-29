@@ -223,6 +223,18 @@ export const palette = createPalette({
     TYPE_DURATION: { border: colors.blue40 },
     TYPE_UNKNOWN: { border: colors.black10 },
   },
+  key: {
+    Primary: {
+      background: colors.blue10,
+      color: colors.black70,
+      border: colors.blue30,
+    },
+    Sort: {
+      background: colors.blue10,
+      color: colors.black70,
+      border: colors.blue10,
+    },
+  },
   alert: {
     OPEN: {
       background: colors.red10,

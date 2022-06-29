@@ -1,5 +1,11 @@
 import React from 'react';
-import { ButtonProps, Collapse, Grid, Typography } from '@mui/material';
+import {
+  ButtonProps,
+  Collapse,
+  Grid,
+  Typography,
+  Box,
+} from '@mui/material';
 import round from 'lodash/round';
 import {
   DataSetField,
@@ -168,15 +174,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
               <Grid item sx={{ mr: 0.75 }}>
                 {collapseBlock}
               </Grid>
-              <Grid item container>
-                <Grid
-                  item
-                  xs={12}
-                  container
-                  alignItems="center"
-                  justifyContent="flex-start"
-                  sx={{ pr: 9 }}
-                >
+              <Grid item container alignItems="center">
+                <Box sx={{ display: 'flex', alignItems: 'start' }}>
                   <AppTooltip title={() => datasetField.name}>
                     <Typography noWrap>
                       {(datasetField.isKey && 'Key') ||
@@ -184,17 +183,17 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                         datasetField.name}
                     </Typography>
                   </AppTooltip>
-                </Grid>
-                <TruncatedLabel
-                  dataList={datasetField.labels}
-                  externalEntityId={datasetField.id}
-                />
-                {datasetField.isPrimaryKey && (
-                  <DatasetStructureKeyFieldLabel typeName="primary" />
-                )}
-                {datasetField.isSortKey && (
-                  <DatasetStructureKeyFieldLabel typeName="sort" />
-                )}
+                  <TruncatedLabel
+                    dataList={datasetField.labels}
+                    externalEntityId={datasetField.id}
+                  />
+                  {datasetField.isPrimaryKey && (
+                    <DatasetStructureKeyFieldLabel typeName="Primary" />
+                  )}
+                  {datasetField.isSortKey && (
+                    <DatasetStructureKeyFieldLabel typeName="Sort" />
+                  )}
+                </Box>
                 <Grid item xs={12} sx={{ pr: 2.5 }}>
                   <AppTooltip
                     title={() => datasetField.internalDescription}

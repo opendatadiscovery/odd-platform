@@ -1,11 +1,11 @@
 import React from 'react';
-import AppMenu from 'components/shared/AppMenu/AppMenu';
+import LabelMenu from 'components/shared/LabelMenu/LabelMenu';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import { Label } from 'generated-sources';
 
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import MoreIcon from 'components/shared/Icons/MoreIcon';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import LabelMenuItem from 'components/shared/LabelMenuItem/LabelMenuItem';
 
 interface TruncatedLabelMenuProps {
   dataList?: Label[];
@@ -38,7 +38,7 @@ const TruncatedLabelMenu: React.FC<TruncatedLabelMenuProps> = ({
         onClick={handleMenuOpen}
         height={20}
       />
-      <AppMenu
+      <LabelMenu
         anchorEl={anchorEl}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         transformOrigin={{ vertical: -4, horizontal: 'left' }}
@@ -49,15 +49,15 @@ const TruncatedLabelMenu: React.FC<TruncatedLabelMenuProps> = ({
           'aria-labelledby': 'menu-open-btn',
         }}
         onClose={handleMenuClose}
-        maxHeight={300}
-        maxWidth={240}
+        maxHeight={120}
+        maxWidth={400}
       >
         {dataList?.map(label => (
-          <AppMenuItem key={label.id}>
+          <LabelMenuItem key={label.id}>
             <LabelItem labelName={label.name} />
-          </AppMenuItem>
+          </LabelMenuItem>
         ))}
-      </AppMenu>
+      </LabelMenu>
     </>
   );
 };
