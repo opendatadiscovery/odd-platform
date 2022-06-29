@@ -2,7 +2,7 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
@@ -54,7 +54,7 @@ public class DataQualityServiceImpl implements DataQualityService {
     }
 
     @Override
-    @BlockingTransactional
+    @ReactiveTransactional
     public Mono<DataEntity> setDataQualityTestSeverity(final long dataQualityTest,
                                                        final long datasetId,
                                                        final DataQualityTestSeverity severity) {
