@@ -24,11 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
-class DatasetVersionApiMapperTest {
+class DatasetVersionMapperTest {
 
     @InjectMocks
-    DatasetVersionApiMapper datasetVersionApiMapper =
-        new DatasetVersionApiMapperImpl(new DatasetFieldApiMapperImpl(new LabelMapperImpl()));
+    DatasetVersionMapper datasetVersionMapper =
+        new DatasetVersionMapperImpl(
+            new DatasetFieldApiMapperImpl(new LabelMapperImpl()),
+            new OffsetDateTimeMapperImpl());
     private static final EasyRandom EASY_RANDOM;
 
     static {
@@ -41,7 +43,7 @@ class DatasetVersionApiMapperTest {
     void testDatasetVersion() {
         final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
 
-        final DataSetVersion dataSetVersion = datasetVersionApiMapper.mapPojo(datasetVersionPojo);
+        final DataSetVersion dataSetVersion = datasetVersionMapper.mapPojo(datasetVersionPojo);
 
         assertEquals(datasetVersionPojo.getVersion().intValue(), dataSetVersion.getVersion());
     }
@@ -59,7 +61,7 @@ class DatasetVersionApiMapperTest {
         });
 
         final DataSetStructure actualDataSetStructure =
-            datasetVersionApiMapper.mapDatasetStructure(expectedDatasetStructureDto);
+            datasetVersionMapper.mapDatasetStructure(expectedDatasetStructureDto);
 
         assertDatasetVersions(expectedDatasetStructureDto.getDatasetVersion(),
             actualDataSetStructure.getDataSetVersion());

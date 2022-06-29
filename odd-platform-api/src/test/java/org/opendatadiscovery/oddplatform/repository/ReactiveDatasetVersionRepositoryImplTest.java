@@ -198,7 +198,7 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
 
         final Set<Long> datasetPojoIds =
             versions.stream().map(DatasetVersionPojo::getId).collect(Collectors.toSet());
-        reactiveDatasetVersionRepository.getVersionIdToDatasetFields(datasetPojoIds)
+        reactiveDatasetVersionRepository.getDatasetVersionPojoIds(datasetPojoIds)
             .as(StepVerifier::create)
             .assertNext(map -> {
                 assertThat(map).isNotNull();

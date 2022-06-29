@@ -198,7 +198,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     }
 
     @Override
-    public Mono<Map<Long, List<DatasetFieldPojo>>> getVersionIdToDatasetFields(final Set<Long> dataVersionPojoIds) {
+    public Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersionPojoIds(final Set<Long> dataVersionPojoIds) {
         final SelectConditionStep<Record> vidToFieldsSelect = DSL.select(DATASET_STRUCTURE.DATASET_VERSION_ID)
             .select(DATASET_FIELD.asterisk())
             .from(DATASET_FIELD)

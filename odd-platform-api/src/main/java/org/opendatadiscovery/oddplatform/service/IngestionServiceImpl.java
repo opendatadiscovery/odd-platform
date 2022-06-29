@@ -48,7 +48,6 @@ import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.DatasetStructureRepository;
-import org.opendatadiscovery.oddplatform.repository.DatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
@@ -114,6 +113,9 @@ public class IngestionServiceImpl implements IngestionService {
                         final List<DatasetVersionPojo> latestVersionsWithPenultimates = latestVersions.stream()
                             .filter(p -> p.getVersion() > 1)
                             .collect(Collectors.toList());
+                        if (latestVersionsWithPenultimates.isEmpty()) {
+                            return Mono.empty();
+                        }
                         return reactiveDatasetVersionRepository.getPenultimateVersions(latestVersionsWithPenultimates)
                             .defaultIfEmpty(List.of())
                             .flatMap(penultimateList -> getLastStructureDelta(
@@ -142,7 +144,7 @@ public class IngestionServiceImpl implements IngestionService {
         final Set<Long> dataVersionPojoIds = versions.stream()
             .map(DatasetVersionPojo::getId)
             .collect(Collectors.toSet());
-        return reactiveDatasetVersionRepository.getVersionIdToDatasetFields(dataVersionPojoIds)
+        return reactiveDatasetVersionRepository.getDatasetVersionPojoIds(dataVersionPojoIds)
             .flatMap(vidToFields -> {
                 final Map<String, List<DatasetVersionPojo>> dsOddrnToVersions = versions
                     .stream()
