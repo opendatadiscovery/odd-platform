@@ -223,7 +223,7 @@ export const palette = createPalette({
     TYPE_DURATION: { border: colors.blue40 },
     TYPE_UNKNOWN: { border: colors.black10 },
   },
-  key: {
+  datasetFieldKey: {
     primary: {
       background: colors.blue10,
       color: colors.black70,

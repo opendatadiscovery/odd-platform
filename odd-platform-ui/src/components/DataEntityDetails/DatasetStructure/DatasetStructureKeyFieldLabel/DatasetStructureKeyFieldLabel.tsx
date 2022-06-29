@@ -3,16 +3,14 @@ import type { DatasetFieldKeyType } from './DatasetStructureKeyFieldLabelStyles'
 import * as S from './DatasetStructureKeyFieldLabelStyles';
 
 interface DatasetStructureKeyFieldLabelProps {
-  typeName: DatasetFieldKeyType;
+  keyType: DatasetFieldKeyType;
 }
 
 const DatasetStructureKeyFieldLabel: React.FC<
   DatasetStructureKeyFieldLabelProps
-> = ({ typeName }) => (
-  <S.Container title={typeName}>
-    <S.FilledContainer $typeName={typeName}>
-      {typeName} key
-    </S.FilledContainer>
+> = ({ keyType }) => (
+  <S.Container title={keyType}>
+    <S.FilledContainer $keyType={keyType}>{keyType} key</S.FilledContainer>
   </S.Container>
 );
 

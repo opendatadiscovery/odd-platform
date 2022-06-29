@@ -188,10 +188,10 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     labelList={datasetField.labels}
                   />
                   {datasetField.isPrimaryKey && (
-                    <DatasetStructureKeyFieldLabel typeName="primary" />
+                    <DatasetStructureKeyFieldLabel keyType="primary" />
                   )}
                   {datasetField.isSortKey && (
-                    <DatasetStructureKeyFieldLabel typeName="sort" />
+                    <DatasetStructureKeyFieldLabel keyType="sort" />
                   )}
                 </Box>
                 <Grid item xs={12} sx={{ pr: 2.5 }}>

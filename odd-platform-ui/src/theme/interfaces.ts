@@ -82,7 +82,7 @@ declare module '@mui/material/styles' {
     tag: TagType;
     structureLabel: StructureLabelType;
     alert: AlertType;
-    key: DatasetFieldKeyType;
+    datasetFieldKey: DatasetFieldKeyType;
     backgrounds: Partial<BackgroundType>;
     texts: TextType;
     textField: ItemCondition;
@@ -96,7 +96,7 @@ declare module '@mui/material/styles' {
     tag?: TagType;
     structureLabel?: StructureLabelType;
     alert?: AlertType;
-    key?: DatasetFieldKeyType;
+    datasetFieldKey?: DatasetFieldKeyType;
     backgrounds?: Partial<BackgroundType>;
     texts?: TextType;
     textField?: ItemCondition;

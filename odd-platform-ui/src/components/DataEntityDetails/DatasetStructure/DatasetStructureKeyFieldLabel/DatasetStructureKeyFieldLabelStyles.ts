@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export type DatasetFieldKeyType = 'primary' | 'sort';
 
 interface FilledContainerProps {
-  $typeName: DatasetFieldKeyType;
+  $keyType: DatasetFieldKeyType;
 }
 
 export const Container = styled('div')(({ theme }) => ({
@@ -13,14 +13,14 @@ export const Container = styled('div')(({ theme }) => ({
   whiteSpace: 'nowrap',
 }));
 export const FilledContainer = styled('span')<FilledContainerProps>(
-  ({ theme, $typeName }) => ({
+  ({ theme, $keyType }) => ({
     fontSize: theme.typography.body2.fontSize,
     lineHeight: theme.typography.body2.lineHeight,
     borderRadius: '12px',
     border: '1px solid',
     padding: theme.spacing(0, 1),
-    backgroundColor: theme.palette.key[$typeName].background,
-    borderColor: theme.palette.key[$typeName].border,
+    backgroundColor: theme.palette.datasetFieldKey[$keyType].background,
+    borderColor: theme.palette.datasetFieldKey[$keyType].border,
     marginLeft: '10px',
   })
 );
