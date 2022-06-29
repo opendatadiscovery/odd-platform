@@ -1,10 +1,10 @@
 import React from 'react';
 import {
+  Box,
   ButtonProps,
   Collapse,
   Grid,
   Typography,
-  Box,
 } from '@mui/material';
 import round from 'lodash/round';
 import {
@@ -184,14 +184,14 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     </Typography>
                   </AppTooltip>
                   <TruncatedLabel
-                    dataList={datasetField.labels}
-                    externalEntityId={datasetField.id}
+                    onSizeChange={onSizeChange}
+                    labelList={datasetField.labels}
                   />
                   {datasetField.isPrimaryKey && (
-                    <DatasetStructureKeyFieldLabel typeName="Primary" />
+                    <DatasetStructureKeyFieldLabel typeName="primary" />
                   )}
                   {datasetField.isSortKey && (
-                    <DatasetStructureKeyFieldLabel typeName="Sort" />
+                    <DatasetStructureKeyFieldLabel typeName="sort" />
                   )}
                 </Box>
                 <Grid item xs={12} sx={{ pr: 2.5 }}>

@@ -224,12 +224,12 @@ export const palette = createPalette({
     TYPE_UNKNOWN: { border: colors.black10 },
   },
   key: {
-    Primary: {
+    primary: {
       background: colors.blue10,
       color: colors.black70,
       border: colors.blue30,
     },
-    Sort: {
+    sort: {
       background: colors.blue10,
       color: colors.black70,
       border: colors.blue10,

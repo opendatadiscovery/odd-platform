@@ -1,10 +1,9 @@
 import React from 'react';
-
+import type { DatasetFieldKeyType } from './DatasetStructureKeyFieldLabelStyles';
 import * as S from './DatasetStructureKeyFieldLabelStyles';
 
-type KeyType = 'Primary' | 'Sort';
 interface DatasetStructureKeyFieldLabelProps {
-  typeName: KeyType;
+  typeName: DatasetFieldKeyType;
 }
 
 const DatasetStructureKeyFieldLabel: React.FC<
