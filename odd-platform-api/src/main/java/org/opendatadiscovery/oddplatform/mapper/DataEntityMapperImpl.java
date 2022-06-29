@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRun;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpectation;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
@@ -27,10 +29,12 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
+import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataQualityTestDetailsDto;
 
 @Component
@@ -290,6 +294,12 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
     @Override
     public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto) {
+        return mapDataQualityTest(dto, null);
+    }
+
+    @Override
+    public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto,
+                                         final String severity) {
         final DataQualityTestDetailsDto dqDto = dto.getDataQualityTestDetailsDto();
 
         final DataEntityRun latestRun = dqDto.latestTaskRun() != null
@@ -302,6 +312,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .expectation(mapDataQualityTestExpectation(dqDto))
             .latestRun(latestRun)
             .linkedUrlList(dqDto.linkedUrlList())
+            .severity(severity != null ? DataQualityTestSeverity.valueOf(severity) : null)
             .datasetsList(dqDto
                 .datasetList()
                 .stream()
@@ -313,6 +324,30 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     public DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos) {
         return new DataEntityList()
             .items(dtos.stream().map(this::mapDataQualityTest).collect(Collectors.toList()));
+    }
+
+    @Override
+    public DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos,
+                                              final Collection<DataQualityTestSeverityPojo> severities) {
+        final Map<Long, DataQualityTestSeverityPojo> severityMap = severities
+            .stream()
+            .collect(Collectors.toMap(
+                DataQualityTestSeverityPojo::getDataQualityTestId,
+                identity()
+            ));
+
+        final List<DataEntity> items = dtos.stream()
+            .map(d -> {
+                final String severity = Optional
+                    .ofNullable(severityMap.get(d.getDataEntity().getId()))
+                    .map(DataQualityTestSeverityPojo::getSeverity)
+                    .orElse(null);
+
+                return mapDataQualityTest(d, severity);
+            })
+            .toList();
+
+        return new DataEntityList().items(items);
     }
 
     @Override

@@ -131,6 +131,7 @@ public class IngestionServiceImpl implements IngestionService {
             .map(path -> ((ODDPlatformDataSourcePath) path).getDatasourceId())
             .flatMap(id -> dataSourceRepository.injectOddrn(id, dataSourceOddrn))
             .map(DataSourcePojo::getId);
+
         return dataSourceRepository.getDtoByOddrn(dataSourceOddrn)
             .map(dataSource -> dataSource.dataSource().getId())
             .switchIfEmpty(createDataSourceByOddrn);
@@ -428,9 +429,9 @@ public class IngestionServiceImpl implements IngestionService {
                                         final String name,
                                         final String oddrn) {
         return IngestionTaskRun.builder()
-            .taskName(name)
+            .taskRunName(name)
             .oddrn(oddrn)
-            .dataEntityOddrn(transformerRun.getTransformerOddrn())
+            .taskOddrn(transformerRun.getTransformerOddrn())
             .startTime(transformerRun.getStartTime())
             .endTime(transformerRun.getEndTime())
             .status(IngestionTaskRun.IngestionTaskRunStatus.valueOf(transformerRun.getStatus().name()))
@@ -443,9 +444,9 @@ public class IngestionServiceImpl implements IngestionService {
                                         final String name,
                                         final String oddrn) {
         return IngestionTaskRun.builder()
-            .taskName(name)
+            .taskRunName(name)
             .oddrn(oddrn)
-            .dataEntityOddrn(dataQualityTestRun.getDataQualityTestOddrn())
+            .taskOddrn(dataQualityTestRun.getDataQualityTestOddrn())
             .startTime(dataQualityTestRun.getStartTime())
             .endTime(dataQualityTestRun.getEndTime())
             .status(IngestionTaskRun.IngestionTaskRunStatus.valueOf(dataQualityTestRun.getStatus().name()))

@@ -33,7 +33,7 @@ public class TaskRunMetricExtractor implements MetricExtractor {
         final long status = taskRun.getStatus().equals(IngestionTaskRun.IngestionTaskRunStatus.SUCCESS) ? 1L : 0L;
 
         final Attributes attributes =
-            Attributes.of(AttributeKey.stringKey("job_oddrn"), taskRun.getDataEntityOddrn());
+            Attributes.of(AttributeKey.stringKey("job_oddrn"), taskRun.getTaskOddrn());
 
         return Stream.of(
             Pair.of(MetricDataTriplet.TASK_RUN_DURATION, longPointData(duration, attributes)),
