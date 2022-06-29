@@ -114,7 +114,8 @@ public class IngestionServiceImpl implements IngestionService {
                             .filter(p -> p.getVersion() > 1)
                             .collect(Collectors.toList());
                         if (latestVersionsWithPenultimates.isEmpty()) {
-                            return Mono.empty();
+                            return Mono.just(
+                                Tuples.of(Map.<String, DatasetStructureDelta>of(), dataStructure));
                         }
                         return reactiveDatasetVersionRepository.getPenultimateVersions(latestVersionsWithPenultimates)
                             .defaultIfEmpty(List.of())
@@ -139,8 +140,8 @@ public class IngestionServiceImpl implements IngestionService {
     @NotNull
     private Mono<Map<String, DatasetStructureDelta>> getLastStructureDelta(
         final List<DatasetVersionPojo> latestVersions,
-        final List<DatasetVersionPojo> penaltimateList) {
-        final List<DatasetVersionPojo> versions = ListUtils.union(latestVersions, penaltimateList);
+        final List<DatasetVersionPojo> penultimateList) {
+        final List<DatasetVersionPojo> versions = ListUtils.union(latestVersions, penultimateList);
         final Set<Long> dataVersionPojoIds = versions.stream()
             .map(DatasetVersionPojo::getId)
             .collect(Collectors.toSet());
