@@ -36,7 +36,7 @@ export type ActivityQueryParams = ActivityApiGetActivityRequest;
 
 export type ActivitySingleFilterName = keyof Pick<
   ActivityFilters,
-  'datasourceId' | 'namespaceId' | 'eventType'
+  'datasourceId' | 'namespaceId' | 'eventType' | 'type' | 'size'
 >;
 
 export interface ActivitySingleFilterPayload {

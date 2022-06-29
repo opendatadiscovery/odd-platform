@@ -2,6 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
 import Filters from './Filters/Filters';
+import ActivityResults from './ActivityResults/ActivityResults';
 
 const Activity: React.FC = () => {
   const history = useHistory();
@@ -13,8 +14,7 @@ const Activity: React.FC = () => {
           <Filters />
         </S.LeftSidebarContainer>
         <S.ListContainer item xs={9}>
-          lul
-          {/* <ResultsContainer /> */}
+          <ActivityResults />
         </S.ListContainer>
       </S.ContentContainer>
     </S.MainContainer>

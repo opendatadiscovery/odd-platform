@@ -11,6 +11,7 @@ import {
   AddActivityMultipleFilterPayload,
   DeleteActivityMultipleFilterPayload,
 } from 'redux/interfaces';
+import { ActivityType } from 'generated-sources';
 
 const endDate = new Date();
 const beginDate = new Date(endDate.setDate(endDate.getDate() - 7));
@@ -19,12 +20,14 @@ const initialQueryParams: ActivityQueryParams = {
   beginDate,
   endDate,
   size,
+  type: ActivityType.ALL,
 };
 
 const initialSelectedFilters: ActivityFilters = {
   beginDate,
   endDate,
   size,
+  type: ActivityType.ALL,
 };
 
 export const initialState: ActivitiesState = {
@@ -129,6 +132,20 @@ export const activitiesSlice = createSlice({
   name: activitiesActionTypePrefix,
   initialState,
   reducers: {
+    // setSingleQueryParam: (
+    //   state,
+    //   { payload }
+    // ) => {
+    //   const { filterName, data } = payload;
+    //
+    //   return {
+    //     ...state,
+    //     queryParams: {
+    //       ...state.queryParams,
+    //       [filterName]: data === 'All' ? null : data,
+    //     },
+    //   };
+    // },
     setSingleActivityFilter: (
       state,
       { payload }: ActivitySingleFilterPayload
