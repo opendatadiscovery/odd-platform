@@ -6,9 +6,7 @@ import {
   inputAdornmentClasses,
   inputBaseClasses,
   inputLabelClasses,
-  nativeSelectClasses,
   outlinedInputClasses,
-  selectClasses,
   TextField,
   textFieldClasses,
 } from '@mui/material';
@@ -92,11 +90,6 @@ export const StyledAppInput = styled(TextField)<AppInputStyleProps>(
       [`& .${inputLabelClasses.asterisk}`]: {
         color: theme.palette.warning.main,
       },
-    },
-    // overriding MUI select and native select icon position
-    [`& .${selectClasses.icon}, .${nativeSelectClasses.icon}`]: {
-      top: 'calc(50% - 8px)',
-      right: '8px',
     },
     // overriding DatePicker input's endAdornment button
     [`& .${outlinedInputClasses.root}`]: {

@@ -57,6 +57,7 @@ const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
   return (
     <Grid container sx={{ mt: 2 }}>
       <AppSelect
+        isDataEntityPage
         sx={{ minWidth: '200px' }}
         fullWidth={false}
         value={alertStatus}

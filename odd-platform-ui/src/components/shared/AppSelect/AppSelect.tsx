@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextFieldProps } from '@mui/material';
+import { SelectProps } from '@mui/material';
 import {
   StyledAppSelect,
   AppSelectSizes,
@@ -8,8 +8,7 @@ import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 
 interface AppSelectProps
   extends Pick<
-    TextFieldProps,
-    | 'onClick'
+    SelectProps,
     | 'onChange'
     | 'sx'
     | 'value'
@@ -18,17 +17,19 @@ interface AppSelectProps
     | 'type'
     | 'name'
     | 'fullWidth'
-    | 'SelectProps'
     | 'onSelect'
     | 'id'
+    | 'disabled'
+    | 'notched'
+    | 'placeholder'
   > {
   size?: AppSelectSizes;
   selectNative?: boolean;
+  isDataEntityPage?: boolean;
 }
 const AppSelect: React.FC<AppSelectProps> = ({
   children,
   size = 'medium',
-  onClick,
   sx,
   value,
   onChange,
@@ -36,31 +37,32 @@ const AppSelect: React.FC<AppSelectProps> = ({
   defaultValue,
   type,
   fullWidth = true,
-  SelectProps,
   onSelect,
   id,
+  disabled,
+  placeholder,
   selectNative,
+  isDataEntityPage = false,
 }) => (
   <StyledAppSelect
     $size={size}
     $isLabeled={!!label}
+    $isDataEntityPage={isDataEntityPage}
     variant="outlined"
     fullWidth={fullWidth}
     sx={sx}
+    disabled={disabled}
     value={value}
+    placeholder={placeholder}
     onChange={onChange}
-    onClick={onClick}
     label={label}
     defaultValue={defaultValue}
     type={type}
-    select={selectNative}
-    SelectProps={{
-      ...SelectProps,
-      IconComponent: DropdownIcon,
-      native: selectNative,
-    }}
+    IconComponent={DropdownIcon}
+    native={selectNative}
     onSelect={onSelect}
     id={id}
+    notched
     // eslint-disable-next-line react/jsx-no-duplicate-props
   >
     {children}

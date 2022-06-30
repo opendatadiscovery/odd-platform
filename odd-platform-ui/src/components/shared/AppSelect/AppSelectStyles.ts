@@ -1,17 +1,5 @@
 import styled from 'styled-components';
-import {
-  autocompleteClasses,
-  buttonBaseClasses,
-  formHelperTextClasses,
-  inputAdornmentClasses,
-  inputBaseClasses,
-  inputLabelClasses,
-  nativeSelectClasses,
-  outlinedInputClasses,
-  selectClasses,
-  TextField,
-  textFieldClasses,
-} from '@mui/material';
+import { nativeSelectClasses, selectClasses, Select } from '@mui/material';
 import { breakpointDownLgBody2, pxToRem } from 'theme/typography';
 
 export type AppSelectSizes = 'large' | 'medium' | 'small';
@@ -19,8 +7,8 @@ export type AppSelectSizes = 'large' | 'medium' | 'small';
 interface AppSelectStyleProps {
   $size: AppSelectSizes;
   $isLabeled?: boolean;
+  $isDataEntityPage?: boolean;
 }
-
 const isLarge = (size: string) => size === 'large';
 const inputYPaddingsBySize = (size: AppSelectSizes) => {
   if (size === 'large') return 1.25;
@@ -28,87 +16,81 @@ const inputYPaddingsBySize = (size: AppSelectSizes) => {
   return 0.75;
 };
 
-export const StyledAppSelect = styled(TextField)<AppSelectStyleProps>(
-  ({ theme, $size, $isLabeled }) => ({
-    [`&.${textFieldClasses.root}`]: {
-      [`& .${outlinedInputClasses.notchedOutline}`]: {
-        border: 'none',
-        top: 0,
-      },
-      [`& .${outlinedInputClasses.root}`]: {
-        [`& .${autocompleteClasses.input}`]: {
-          padding: theme.spacing(inputYPaddingsBySize($size), 1),
-        },
-        border: '1px solid',
-        borderColor:
-          theme.palette.textField[isLarge($size) ? 'active' : 'normal']
-            .border,
-        borderRadius: '4px',
-        backgroundColor: theme.palette.textField.normal.background,
-        padding: 0,
-        marginTop: $isLabeled ? theme.spacing(2) : 0,
-        '&:hover': {
-          borderColor:
-            theme.palette.textField.hover[
-              isLarge($size) ? 'color' : 'border'
-            ],
-        },
-      },
-      [`& .${outlinedInputClasses.focused}.${inputBaseClasses.focused}`]: {
+export const StyledAppSelect = styled(Select)<AppSelectStyleProps>(
+  ({ theme, $size, $isDataEntityPage }) => ({
+    '&.css-s7ktka-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+      {
         borderColor: isLarge($size)
           ? 'transparent'
           : theme.palette.textField.active.border,
         outline: isLarge($size) ? '2px solid' : 'none',
         outlineColor: theme.palette.textField.active.border,
+        borderWidth: theme.spacing(0.13),
       },
-      [`& .${outlinedInputClasses.error}`]: {
-        borderColor: `${theme.palette.textField.error?.border} !important`,
+    '&.css-1x93o3k-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+      {
+        borderColor: isLarge($size)
+          ? 'transparent'
+          : theme.palette.textField.active.border,
+        outline: isLarge($size) ? '2px solid' : 'none',
+        outlineColor: theme.palette.textField.active.border,
+        borderWidth: theme.spacing(0.13),
       },
-      [`& .${outlinedInputClasses.disabled}`]: {
-        borderColor: theme.palette.textField.disabled?.border,
+    '&.css-s02ubf-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+      {
+        borderColor: isLarge($size)
+          ? 'transparent'
+          : theme.palette.textField.active.border,
+        outline: isLarge($size) ? '2px solid' : 'none',
+        outlineColor: theme.palette.textField.active.border,
+        borderWidth: theme.spacing(0.13),
       },
-      [`& .${formHelperTextClasses.root}`]: {
-        color: theme.palette.textField.error?.border,
-        margin: 0,
-        lineHeight: '16px',
+
+    '&.css-145y0p8-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root.Mui-focused .MuiOutlinedInput-notchedOutline':
+      {
+        borderColor: isLarge($size)
+          ? 'transparent'
+          : theme.palette.textField.active.border,
+        outline: isLarge($size) ? '2px solid' : 'none',
+        outlineColor: theme.palette.textField.active.border,
+        borderWidth: theme.spacing(0.13),
       },
-      [`& .${inputBaseClasses.input}`]: {
-        padding: theme.spacing(inputYPaddingsBySize($size), 1),
-        fontWeight: 400,
-        fontSize: pxToRem(14),
-        lineHeight: pxToRem(20),
-        ...breakpointDownLgBody2,
-      },
-      [`& .${inputLabelClasses.root}`]: {
-        color: theme.palette.texts.secondary,
-        fontWeight: theme.typography.h5.fontWeight,
-        fontSize: theme.typography.h5.fontSize,
-        lineHeight: theme.typography.h5.lineHeight,
-        transform: 'none',
-        border: 'none',
-        outline: 'none !important',
-        top: theme.spacing(-0.25),
-      },
-      [`& .${inputLabelClasses.asterisk}`]: {
-        color: theme.palette.warning.main,
-      },
+
+    ...(!$isDataEntityPage
+      ? {
+          marginTop: theme.spacing(4),
+          legend: {
+            span: {
+              color: theme.palette.texts.secondary,
+              fontWeight: theme.typography.h5.fontWeight,
+              fontSize: theme.typography.h5.fontSize,
+              lineHeight: theme.typography.h5.lineHeight,
+              transform: 'none',
+              marginLeft: theme.spacing(-1.75),
+              border: 'none',
+              outline: 'none !important',
+              top: theme.spacing(-2),
+              opacity: 1,
+              position: 'absolute',
+            },
+          },
+        }
+      : {}),
+
+    select: {
+      padding: theme.spacing(0.25, 1),
     },
-    // overriding MUI select and native select icon position
+    [`& .${selectClasses.select}`]: {
+      padding: theme.spacing(inputYPaddingsBySize($size), 1),
+      fontWeight: 400,
+      fontSize: pxToRem(14),
+      lineHeight: pxToRem(20),
+
+      ...breakpointDownLgBody2,
+    },
     [`& .${selectClasses.icon}, .${nativeSelectClasses.icon}`]: {
       top: 'calc(50% - 8px)',
       right: '8px',
-    },
-    // overriding DatePicker input's endAdornment button
-    [`& .${outlinedInputClasses.root}`]: {
-      [`& .${inputAdornmentClasses.root}`]: {
-        [`& .${buttonBaseClasses.root}`]: {
-          marginRight: 0,
-          '&:hover': {
-            backgroundColor: 'unset',
-            color: theme.palette.button.unfilled.hover.color,
-          },
-        },
-      },
     },
   })
 );

@@ -40,10 +40,8 @@ interface AppInputProps
     | 'name'
     | 'fullWidth'
     | 'minRows'
-    | 'select'
   > {
   size?: AppInputSizes;
-  selectNative?: boolean;
   customStartAdornment?: AdornmentProps;
   customEndAdornment?: AdornmentProps;
 }
@@ -73,10 +71,8 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
       maxRows,
       multiline,
       name,
-      select,
       fullWidth = true,
       minRows,
-      selectNative,
     },
     ref
   ) => {
@@ -131,7 +127,6 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
         inputProps={inputProps}
         required={required}
         type={type}
-        select={select || selectNative}
         maxRows={maxRows}
         minRows={minRows}
         multiline={multiline}

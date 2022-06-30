@@ -1,5 +1,6 @@
-import { Box, Grid, Typography } from '@mui/material';
-import React, { ChangeEvent } from 'react';
+import React from 'react';
+
+import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import round from 'lodash/round';
 import toPairs from 'lodash/toPairs';
@@ -61,10 +62,8 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     }
   }, [fetchDataSetStructureLatest, dataEntityId]);
 
-  const handleRevisionChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const newVersionId = e.target.value as unknown as number;
+  const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
+    const newVersionId = event.target.value as unknown as number;
     fetchDataSetStructure({
       dataEntityId,
       versionId: newVersionId,
@@ -143,6 +142,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                     sx={{ width: 52, ml: 1 }}
                     id="revision-select"
                     type="number"
+                    isDataEntityPage
                     selectNative
                     size="small"
                     defaultValue={datasetStructureVersion}

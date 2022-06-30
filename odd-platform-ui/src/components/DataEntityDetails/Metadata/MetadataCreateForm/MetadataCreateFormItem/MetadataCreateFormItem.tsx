@@ -1,5 +1,10 @@
 import React from 'react';
-import { Autocomplete, Box, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  SelectChangeEvent,
+  Typography,
+} from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
@@ -14,6 +19,7 @@ import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { searchMetadata } from 'redux/thunks/metadata.thunks';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 
 interface MetadataCreateFormItemProps {
   itemIndex: number;
@@ -130,6 +136,9 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
     }
     return '';
   }, []);
+  const handleMetadataChange = (event: SelectChangeEvent<unknown>) => {
+    setSelectedType(event.target.value as MetadataFieldType);
+  };
 
   return (
     <>
@@ -201,24 +210,19 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
               defaultValue={selectedType}
               rules={{ required: true }}
               render={({ field }) => (
-                <AppInput
+                <AppSelect
                   {...field}
                   label="Type"
                   placeholder="Type"
-                  select
                   disabled={!!selectedField?.type}
-                  inputProps={{
-                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                      setSelectedType(e.target.value as MetadataFieldType);
-                    },
-                  }}
+                  onChange={handleMetadataChange}
                 >
                   {values(MetadataFieldType).map(type => (
                     <AppMenuItem key={type} value={type}>
                       {capitalize(type)}
                     </AppMenuItem>
                   ))}
-                </AppInput>
+                </AppSelect>
               )}
             />
           </Box>

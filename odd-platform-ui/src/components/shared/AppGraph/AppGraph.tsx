@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import {
   hierarchy,
   HierarchyPointLink,
@@ -10,7 +10,7 @@ import { zoom as d3zoom, zoomIdentity } from 'd3-zoom';
 import entries from 'lodash/entries';
 import maxBy from 'lodash/maxBy';
 import { v4 as uuidv4 } from 'uuid';
-import { Typography } from '@mui/material';
+import { SelectChangeEvent, Typography } from '@mui/material';
 import { DataEntityLineageStreamById } from 'redux/interfaces/dataentityLineage';
 import {
   Point,
@@ -298,9 +298,8 @@ const AppGraph: React.FC = () => {
     };
   };
 
-  const handleDepthChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => setSelectedDepth(e.target.value as unknown as number);
+  const handleDepthChange = (event: SelectChangeEvent<unknown>) =>
+    setSelectedDepth(event.target.value as unknown as number);
 
   const transformation: { translate: Point; scale: number } = {
     translate: { x: 0, y: 0 },
@@ -451,6 +450,7 @@ const AppGraph: React.FC = () => {
         <AppSelect
           sx={{ width: 48 }}
           selectNative
+          isDataEntityPage
           size="small"
           type="number"
           id="depth-select"
