@@ -64,6 +64,8 @@ public class DatasetVersionMapperImpl implements DatasetVersionMapper {
             .type(mapDatasetFieldType(pojo.getType().data()))
             .isKey(pojo.getIsKey())
             .isValue(pojo.getIsValue())
+            .isPrimaryKey(pojo.getIsPrimaryKey())
+            .isSortKey(pojo.getIsSortKey())
             .externalDescription(pojo.getExternalDescription())
             .internalDescription(pojo.getInternalDescription())
             .labels(mapLabels(dto.getLabelPojos()))
