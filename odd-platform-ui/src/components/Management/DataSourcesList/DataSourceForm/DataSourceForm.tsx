@@ -8,12 +8,8 @@ import {
   intervalToDuration,
 } from 'date-fns/esm';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  DataSource,
-  DataSourceApiRegisterDataSourceRequest,
-  DataSourceApiUpdateDataSourceRequest,
-  DataSourceFormData,
-} from 'generated-sources';
+import { DataSource, DataSourceFormData } from 'generated-sources';
+import { registerDataSource, updateDataSource } from 'redux/thunks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
   FormControlLabel,
@@ -21,6 +17,8 @@ import {
   RadioGroup,
   Typography,
 } from '@mui/material';
+import { getDatasourceCreatingStatuses } from 'redux/selectors';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
@@ -32,14 +30,7 @@ import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutoc
 
 interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
-  isLoading: boolean;
   dataSource?: DataSource;
-  registerDataSource: (
-    params: DataSourceApiRegisterDataSourceRequest
-  ) => Promise<DataSource>;
-  updateDataSource: (
-    params: DataSourceApiUpdateDataSourceRequest
-  ) => Promise<DataSource>;
 }
 
 export type DataSourceFormDataValues = Omit<
@@ -52,10 +43,12 @@ export type DataSourceFormDataValues = Omit<
 const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   dataSource,
   btnCreateEl,
-  isLoading,
-  registerDataSource,
-  updateDataSource,
 }) => {
+  const dispatch = useAppDispatch();
+  const { isLoading: isDataSourceCreating } = useAppSelector(
+    getDatasourceCreatingStatuses
+  );
+
   const getDefaultValues = React.useCallback(
     (): DataSourceFormDataValues => ({
       name: dataSource?.name || '',
@@ -158,11 +151,13 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           : dataSource?.pullingInterval,
     };
     (dataSource
-      ? updateDataSource({
-          dataSourceId: dataSource.id,
-          dataSourceUpdateFormData: parsedData,
-        })
-      : registerDataSource({ dataSourceFormData: parsedData })
+      ? dispatch(
+          updateDataSource({
+            dataSourceId: dataSource.id,
+            dataSourceUpdateFormData: parsedData,
+          })
+        )
+      : dispatch(registerDataSource({ dataSourceFormData: parsedData }))
     ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
@@ -383,7 +378,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isDataSourceCreating}
       errorText={error}
       clearState={clearState}
     />

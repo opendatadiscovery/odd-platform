@@ -1,34 +1,28 @@
-import { createAsyncAction } from 'typesafe-actions';
-import { DataSource, DataSourceList } from 'generated-sources';
-import { DeleteDataSource } from 'redux/interfaces/datasources';
-import { PaginatedResponse } from 'redux/interfaces';
+import { createActionType } from 'lib/redux/helpers';
 
-export const fetchDataSourcesAction = createAsyncAction(
-  'GET_DATASOURCE_LIST__REQUEST',
-  'GET_DATASOURCE_LIST__SUCCESS',
-  'GET_DATASOURCE_LIST__FAILURE'
-)<undefined, PaginatedResponse<DataSourceList>, undefined>();
+export const datasourceActionTypePrefix = 'datasources';
 
-export const updateDataSourceAction = createAsyncAction(
-  'PUT_DATASOURCE__REQUEST',
-  'PUT_DATASOURCE__SUCCESS',
-  'PUT_DATASOURCE__FAILURE'
-)<undefined, DataSource, undefined>();
+export const fetchDatasorcesActionType = createActionType(
+  datasourceActionTypePrefix,
+  'fetchDatasources'
+);
 
-export const regenerateDataSourceTokenAction = createAsyncAction(
-  'GET_DATASOURCE_NEW_TOKEN__REQUEST',
-  'GET_DATASOURCE_NEW_TOKEN__SUCCESS',
-  'GET_DATASOURCE_NEW_TOKEN__FAILURE'
-)<undefined, DataSource, undefined>();
+export const updateDatasourceActionType = createActionType(
+  datasourceActionTypePrefix,
+  'updateDatasource'
+);
 
-export const registerDataSourceAction = createAsyncAction(
-  'POST_DATASOURCE__REQUEST',
-  'POST_DATASOURCE__SUCCESS',
-  'POST_DATASOURCE__FAILURE'
-)<undefined, DataSource, undefined>();
+export const regenerateDataSourceTokenActionType = createActionType(
+  datasourceActionTypePrefix,
+  'regenerateDataSourceToken'
+);
 
-export const deleteDataSourceAction = createAsyncAction(
-  'DELETE_DATASOURCE__REQUEST',
-  'DELETE_DATASOURCE__SUCCESS',
-  'DELETE_DATASOURCE__FAILURE'
-)<undefined, DeleteDataSource, undefined>();
+export const registerDataSourceActionType = createActionType(
+  datasourceActionTypePrefix,
+  'registerDataSource'
+);
+
+export const deleteDatasourceActionType = createActionType(
+  datasourceActionTypePrefix,
+  'deleteDatasource'
+);

@@ -1,39 +1,37 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { Alert, AlertStatus } from 'generated-sources';
+import { updateAlertStatus } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  Alert,
-  AlertApiChangeAlertStatusRequest,
-  AlertStatus,
-} from 'generated-sources';
+  getDataEntityAlertListFetchingStatus,
+  getAlertList,
+} from 'redux/selectors/alert.selectors';
 import DataEntityAlertItem from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertItem/DataEntityAlertItem';
 import DataEntityAlertsSkeleton from 'components/DataEntityDetails/DataEntityAlerts/DataEntityAlertsSkeleton/DataEntityAlertsSkeleton';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import { AlertsTableHeader, ColContainer } from './DataEntityAlertsStyles';
 
-interface DataEntityAlertsProps {
-  alertsList: Alert[];
-  updateAlertStatus: (
-    params: AlertApiChangeAlertStatusRequest
-  ) => Promise<AlertStatus>;
-  isAlertsFetching: boolean;
-}
+const DataEntityAlerts: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { isLoading: isAlertsFetching } = useAppSelector(
+    getDataEntityAlertListFetchingStatus
+  );
+  const alertsList = useAppSelector(getAlertList);
 
-const DataEntityAlerts: React.FC<DataEntityAlertsProps> = ({
-  alertsList,
-  updateAlertStatus,
-  isAlertsFetching,
-}) => {
   const alertStatusHandler = React.useCallback(
     (alertId: Alert['id'], alertStatus: AlertStatus) => () => {
-      updateAlertStatus({
-        alertId,
-        alertStatusFormData: {
-          status:
-            alertStatus === AlertStatus.OPEN
-              ? AlertStatus.RESOLVED
-              : AlertStatus.OPEN,
-        },
-      });
+      dispatch(
+        updateAlertStatus({
+          alertId,
+          alertStatusFormData: {
+            status:
+              alertStatus === AlertStatus.OPEN
+                ? AlertStatus.RESOLVED
+                : AlertStatus.OPEN,
+          },
+        })
+      );
     },
     [updateAlertStatus]
   );

@@ -80,10 +80,10 @@ public class AlertLocatorImpl implements AlertLocator {
         }
         return failedDataTransformerRuns.stream()
             .map(tr -> buildAlert(
-                tr.getDataEntityOddrn(),
+                tr.getTaskOddrn(),
                 AlertTypeEnum.FAILED_JOB,
                 tr.getOddrn(),
-                String.format("Job %s failed with status %s", tr.getTaskName(), tr.getStatus())
+                String.format("Job %s failed with status %s", tr.getTaskRunName(), tr.getStatus())
             )).toList();
     }
 
@@ -92,18 +92,18 @@ public class AlertLocatorImpl implements AlertLocator {
             return List.of();
         }
         final Map<String, List<DataQualityTestRelationsPojo>> relationsMap = dataQualityTestRelationRepository
-            .getRelations(failedDQTestRuns.stream().map(IngestionTaskRun::getDataEntityOddrn).toList())
+            .getRelations(failedDQTestRuns.stream().map(IngestionTaskRun::getTaskOddrn).toList())
             .stream()
             .collect(Collectors.groupingBy(DataQualityTestRelationsPojo::getDataQualityTestOddrn));
         return failedDQTestRuns.stream()
             .flatMap(tr -> {
                 final List<DataQualityTestRelationsPojo> relatedPojos =
-                    relationsMap.getOrDefault(tr.getDataEntityOddrn(), List.of());
+                    relationsMap.getOrDefault(tr.getTaskOddrn(), List.of());
                 return relatedPojos.stream().map(p -> buildAlert(
                     p.getDatasetOddrn(),
                     AlertTypeEnum.FAILED_DQ_TEST,
                     tr.getOddrn(),
-                    String.format("Test %s failed with status %s", tr.getTaskName(), tr.getStatus())
+                    String.format("Test %s failed with status %s", tr.getTaskRunName(), tr.getStatus())
                 ));
             }).toList();
     }
