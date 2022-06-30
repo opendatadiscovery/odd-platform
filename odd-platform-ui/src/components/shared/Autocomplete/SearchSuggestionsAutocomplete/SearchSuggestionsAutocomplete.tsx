@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
 import {
   DataEntityRef,
@@ -54,6 +54,9 @@ const SearchSuggestionsAutocomplete: React.FC<
   );
   const [selectedOption, setSelectedOption] =
     React.useState<DataEntityRef | null>(null);
+  const [selectedOptionArray, setSelectedOptionArray] = useState<
+    DataEntityRef[]
+  >([]);
   const [autocompleteOpen, setAutocompleteOpen] =
     React.useState<boolean>(false);
 
@@ -103,14 +106,24 @@ const SearchSuggestionsAutocomplete: React.FC<
         value: Partial<DataEntityRef> | string | null
       ) => {
         setSelectedOption(value as DataEntityRef);
+        if (value !== null) {
+          setSelectedOptionArray((prev: DataEntityRef[]) => [
+            ...prev,
+            value as DataEntityRef,
+          ]);
+        }
+
         onChange(value as DataEntityRef);
       },
     []
   );
-
   const handleAddEntity = () => {
     if (append) {
-      append(selectedOption as DataEntityRef);
+      const ids = selectedOptionArray.map(entity => entity.id);
+      const filtredSelectionOptionArray = selectedOptionArray.filter(
+        ({ id }, index) => !ids.includes(id, index + 1)
+      );
+      append(filtredSelectionOptionArray as DataEntityRef[]);
     }
     setSearchText('');
     setSelectedOption(null);
