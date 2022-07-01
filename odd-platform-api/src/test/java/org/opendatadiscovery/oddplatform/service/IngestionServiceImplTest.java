@@ -59,6 +59,7 @@ import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import reactor.core.publisher.Mono;
@@ -92,6 +93,9 @@ public class IngestionServiceImplTest {
 
     @Mock
     private DatasetVersionRepository datasetVersionRepository;
+
+    @Mock
+    private ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
 
     @Mock
     private DatasetStructureRepository datasetStructureRepository;
@@ -172,6 +176,7 @@ public class IngestionServiceImplTest {
             });
         when(dataSourceRepository.getDtoByOddrn(anyString())).thenReturn(Mono.just(dataSourceDto));
         when(metadataIngestionService.ingestMetadata(any())).thenReturn(Mono.empty());
+        when(reactiveDatasetVersionRepository.getLatestVersions(any())).thenReturn(Mono.empty());
     }
 
     @Nested

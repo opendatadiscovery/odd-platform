@@ -20,7 +20,6 @@ const DataSourcesList = React.lazy(
   () => import('./DataSourcesList/DataSourcesList')
 );
 
-
 const CollectorsList = React.lazy(
   () => import('./CollectorsList/CollectorsList')
 );
