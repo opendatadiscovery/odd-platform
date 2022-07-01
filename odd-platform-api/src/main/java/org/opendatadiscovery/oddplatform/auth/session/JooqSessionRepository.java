@@ -19,12 +19,10 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SpringSessionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.SpringSessionAttributesRecord;
 import org.opendatadiscovery.oddplatform.model.tables.records.SpringSessionRecord;
+import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.session.MapSession;
 import org.springframework.session.ReactiveSessionRepository;
-import org.springframework.transaction.ReactiveTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.reactive.TransactionalOperator;
 import org.springframework.util.SerializationUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -35,6 +33,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.SPRING_SESSION_ATTR
 @RequiredArgsConstructor
 public class JooqSessionRepository implements ReactiveSessionRepository<MapSession> {
     private final JooqReactiveOperations jooqReactiveOperations;
+    private final JooqQueryHelper jooqQueryHelper;
 
     @Override
     public Mono<MapSession> createSession() {
@@ -132,13 +131,9 @@ public class JooqSessionRepository implements ReactiveSessionRepository<MapSessi
             .onDuplicateKeyUpdate()
             .set(Map.of(
                 SPRING_SESSION_ATTRIBUTES.ATTRIBUTE_BYTES,
-                excludedField(SPRING_SESSION_ATTRIBUTES.ATTRIBUTE_BYTES)
+                jooqQueryHelper.excludedField(SPRING_SESSION_ATTRIBUTES.ATTRIBUTE_BYTES)
             ))
             .returning();
-    }
-
-    private Field<?> excludedField(final Field<?> field) {
-        return DSL.field("excluded.%s".formatted(field.getName()));
     }
 
     private SpringSessionRecord recordFromSession(final MapSession session) {

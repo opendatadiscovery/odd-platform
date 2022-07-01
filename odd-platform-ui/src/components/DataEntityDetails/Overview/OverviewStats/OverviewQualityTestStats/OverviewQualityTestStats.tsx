@@ -2,8 +2,8 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {
-  DataEntityDetails,
   DataEntityClassNameEnum,
+  DataEntityDetails,
   DataQualityTest,
 } from 'generated-sources';
 import entries from 'lodash/entries';
@@ -101,9 +101,6 @@ const OverviewQualityTestStats: React.FC<
                 addSuffix: false,
               }
             )}
-        </LabeledInfoItem>
-        <LabeledInfoItem inline label="Severity" labelWidth={4}>
-          null
         </LabeledInfoItem>
         <Grid container>
           <Link to={dataEntityHistoryPath(qualityTest?.id)}>

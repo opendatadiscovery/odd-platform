@@ -17,7 +17,7 @@ import TestReport from './TestReport';
 
 interface RouteProps {
   dataEntityId: string;
-  dataqatestId: string;
+  dataQATestId: string;
   reportDetailsViewType: string;
 }
 
@@ -27,13 +27,13 @@ const mapStateToProps = (
   state: RootState,
   {
     match: {
-      params: { dataEntityId, dataqatestId, reportDetailsViewType },
+      params: { dataEntityId, dataQATestId, reportDetailsViewType },
     },
   }: OwnProps
 ) => ({
   reportDetailsViewType,
   dataEntityId: parseInt(dataEntityId, 10),
-  dataqatestId: parseInt(dataqatestId, 10),
+  dataQATestId: parseInt(dataQATestId, 10),
   datasetTestReport: getDatasetTestReport(state, dataEntityId),
   datasetQualityTestList: getDatasetQualityTestsBySuiteNames(
     state,
