@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public class ActivityCreateEvent {
     private long dataEntityId;
-    private ActivityEventType eventType;
-    private Object oldState;
-    private Object newState;
+    private ActivityEventTypeDto eventType;
+    private String oldState;
+    private String newState;
 }

@@ -33,7 +33,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
@@ -146,7 +146,7 @@ public class DataEntityServiceImpl
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(ActivityEventType.CUSTOM_GROUP_UPDATED)
+    @ActivityLog(ActivityEventTypeDto.CUSTOM_GROUP_UPDATED)
     public Mono<DataEntityRef> updateDataEntityGroup(
         @ActivityParameter(ActivityParameterNames.CustomGroupUpdated.DATA_ENTITY_ID) final Long id,
         final DataEntityGroupFormData formData) {
@@ -165,7 +165,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @ActivityLog(ActivityEventType.CUSTOM_GROUP_DELETED)
+    @ActivityLog(ActivityEventTypeDto.CUSTOM_GROUP_DELETED)
     public Mono<DataEntityPojo> deleteDataEntityGroup(
         @ActivityParameter(ActivityParameterNames.CustomGroupDeleted.DATA_ENTITY_ID) final Long id) {
         return reactiveDataEntityRepository.get(id)
@@ -295,7 +295,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @ActivityLog(ActivityEventType.DESCRIPTION_UPDATED)
+    @ActivityLog(ActivityEventTypeDto.DESCRIPTION_UPDATED)
     public Mono<InternalDescription> upsertDescription(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
                                                        final InternalDescriptionFormData formData) {
         return Mono.just(formData.getInternalDescription()).map(d -> {
@@ -305,7 +305,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @ActivityLog(ActivityEventType.INTERNAL_NAME_UPDATED)
+    @ActivityLog(ActivityEventTypeDto.INTERNAL_NAME_UPDATED)
     public Mono<InternalName> upsertBusinessName(
         @ActivityParameter(ActivityParameterNames.InternalNameUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final InternalNameFormData formData) {
@@ -318,7 +318,7 @@ public class DataEntityServiceImpl
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(ActivityEventType.TAGS_ASSOCIATION_UPDATED)
+    @ActivityLog(ActivityEventTypeDto.TAGS_ASSOCIATION_UPDATED)
     public Flux<Tag> upsertTags(
         @ActivityParameter(ActivityParameterNames.TagsAssociationUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final TagsFormData formData) {
@@ -463,13 +463,13 @@ public class DataEntityServiceImpl
     }
 
     private Mono<Void> logDEGCreatedActivityEvent(final DataEntityRef ref) {
-        return Mono.zip(activityService.getContextInfo(Map.of(), ActivityEventType.CUSTOM_GROUP_CREATED),
-                activityService.getUpdatedInfo(Map.of(), ref.getId(), ActivityEventType.CUSTOM_GROUP_CREATED))
+        return Mono.zip(activityService.getContextInfo(Map.of(), ActivityEventTypeDto.CUSTOM_GROUP_CREATED),
+                activityService.getUpdatedInfo(Map.of(), ref.getId(), ActivityEventTypeDto.CUSTOM_GROUP_CREATED))
             .map(function((ci, newState) -> ActivityCreateEvent.builder()
                 .dataEntityId(ref.getId())
                 .oldState(ci.getOldState())
                 .newState(newState)
-                .eventType(ActivityEventType.CUSTOM_GROUP_CREATED)
+                .eventType(ActivityEventTypeDto.CUSTOM_GROUP_CREATED)
                 .build()
             )).flatMap(activityService::createActivityEvent);
     }

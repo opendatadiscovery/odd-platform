@@ -14,14 +14,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.Role;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
-import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.OwnershipMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
-import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -29,7 +27,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -58,13 +55,11 @@ class OwnershipServiceImplTest {
     private ReactiveSearchEntrypointRepository searchEntrypointRepository;
     @Mock
     private OwnershipMapper ownershipMapper;
-    @Mock
-    private ActivityService activityService;
 
     @BeforeEach
     void setUp() {
         ownershipService = new OwnershipServiceImpl(roleService, ownerService, ownershipRepository,
-            searchEntrypointRepository, ownershipMapper, activityService);
+            searchEntrypointRepository, ownershipMapper);
     }
 
     @Test

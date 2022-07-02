@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType.DATASET_FIELD_VALUES_UPDATED;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.DATASET_FIELD_VALUES_UPDATED;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldValuesUpdated.DATASET_FIELD_ID;
 
 @Service

@@ -3,7 +3,7 @@ package org.opendatadiscovery.oddplatform.dto.activity;
 import lombok.Getter;
 
 @Getter
-public enum ActivityEventType {
+public enum ActivityEventTypeDto {
     OWNERSHIP_CREATED(false),
     OWNERSHIP_UPDATED(false),
     OWNERSHIP_DELETED(false),
@@ -28,7 +28,7 @@ public enum ActivityEventType {
 
     private final boolean systemEvent;
 
-    ActivityEventType(final boolean systemEvent) {
+    ActivityEventTypeDto(final boolean systemEvent) {
         this.systemEvent = systemEvent;
     }
 }

@@ -13,7 +13,7 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -36,11 +36,11 @@ public class ActivityAspect {
     private void fluxMethod() {
     }
 
-    @Around("monoMethod() && activityLogMethod()")
+    @Around("activityLogMethod() && monoMethod()")
     @ReactiveTransactional
     public Mono<?> monoActivityAspect(final ProceedingJoinPoint joinPoint) {
         final Map<String, Object> activityParameters = extractActivityParameters(joinPoint);
-        final ActivityEventType eventType = extractEventType(joinPoint);
+        final ActivityEventTypeDto eventType = extractEventType(joinPoint);
         return activityService.getContextInfo(activityParameters, eventType)
             .flatMap(info -> {
                 try {
@@ -53,11 +53,11 @@ public class ActivityAspect {
             });
     }
 
-    @Around("fluxMethod() && activityLogMethod()")
+    @Around("activityLogMethod() && fluxMethod()")
     @ReactiveTransactional
     public Flux<?> fluxActivityAspect(final ProceedingJoinPoint joinPoint) {
         final Map<String, Object> activityParameters = extractActivityParameters(joinPoint);
-        final ActivityEventType eventType = extractEventType(joinPoint);
+        final ActivityEventTypeDto eventType = extractEventType(joinPoint);
         return activityService.getContextInfo(activityParameters, eventType)
             .flatMapMany(info -> {
                 try {
@@ -73,7 +73,7 @@ public class ActivityAspect {
     }
 
     private Mono<Void> postActivity(final Map<String, Object> activityParameters,
-                                    final ActivityEventType eventType,
+                                    final ActivityEventTypeDto eventType,
                                     final ActivityContextInfo info) {
         return activityService.getUpdatedInfo(activityParameters, info.getDataEntityId(), eventType)
             .map(newState -> ActivityCreateEvent.builder()
@@ -100,7 +100,7 @@ public class ActivityAspect {
         return result;
     }
 
-    private ActivityEventType extractEventType(final ProceedingJoinPoint joinPoint) {
+    private ActivityEventTypeDto extractEventType(final ProceedingJoinPoint joinPoint) {
         final Method method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         return method.getAnnotation(ActivityLog.class).value();
     }

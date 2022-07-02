@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Predicate.not;
-import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType.DATASET_FIELD_INFORMATION_UPDATED;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.DATASET_FIELD_INFORMATION_UPDATED;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Service

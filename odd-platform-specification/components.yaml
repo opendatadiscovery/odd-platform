@@ -1846,28 +1846,40 @@ components:
           $ref: '#/components/schemas/ActivityState'
         new_state:
           $ref: '#/components/schemas/ActivityState'
+        system_event:
+          type: boolean
 
     ActivityState:
-      type: object
-      anyOf:
-        - $ref: '#/components/schemas/OwnershipActivityStateList'
-        - $ref: '#/components/schemas/TagActivityStateList'
-        - $ref: '#/components/schemas/DataEntityActivityState'
-        - $ref: '#/components/schemas/TermActivityStateList'
-        - $ref: '#/components/schemas/DescriptionActivityState'
-        - $ref: '#/components/schemas/InternalNameActivityState'
-        - $ref: '#/components/schemas/CustomMetadataActivityStateList'
-        - $ref: '#/components/schemas/DatasetFieldValuesActivityState'
-        - $ref: '#/components/schemas/DatasetFieldInformationActivityState'
-        - $ref: '#/components/schemas/CustomGroupActivityState'
-
-    OwnershipActivityStateList:
       type: object
       properties:
         ownerships:
           type: array
           items:
             $ref: '#/components/schemas/OwnershipActivityState'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagActivityState'
+        data_entity:
+          $ref: '#/components/schemas/DataEntityActivityState'
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermActivityState'
+        description:
+          $ref: '#/components/schemas/DescriptionActivityState'
+        internal_name:
+          $ref: '#/components/schemas/InternalNameActivityState'
+        custom_metadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomMetadataActivityState'
+        dataset_field_values:
+          $ref: '#/components/schemas/DatasetFieldValuesActivityState'
+        dataset_field_information:
+          $ref: '#/components/schemas/DatasetFieldInformationActivityState'
+        custom_group:
+          $ref: '#/components/schemas/CustomGroupActivityState'
 
     OwnershipActivityState:
       type: object
@@ -1876,14 +1888,6 @@ components:
           type: string
         role_name:
           type: string
-
-    TagActivityStateList:
-      type: object
-      properties:
-        tags:
-          type: array
-          items:
-            $ref: '#/components/schemas/TagActivityState'
 
     TagActivityState:
       type: object
@@ -1915,14 +1919,6 @@ components:
         external_name:
           type: string
 
-    TermActivityStateList:
-      type: object
-      properties:
-        terms:
-          type: array
-          items:
-            $ref: '#/components/schemas/TermActivityState'
-
     TermActivityState:
       type: object
       properties:
@@ -1945,14 +1941,6 @@ components:
       properties:
         internal_name:
           type: string
-
-    CustomMetadataActivityStateList:
-      type: object
-      properties:
-        metadata:
-          type: array
-          items:
-            $ref: '#/components/schemas/CustomMetadataActivityState'
 
     CustomMetadataActivityState:
       type: object
@@ -2117,6 +2105,17 @@ components:
       required: false
       schema:
         type: string
+
+    IdsParam:
+      name: ids
+      in: query
+      description: Entity ids
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+          format: int64
 
     DataEntityIdParam:
       name: data_entity_id

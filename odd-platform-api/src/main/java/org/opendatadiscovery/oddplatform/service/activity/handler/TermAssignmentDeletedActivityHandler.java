@@ -2,7 +2,7 @@ package org.opendatadiscovery.oddplatform.service.activity.handler;
 
 import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.springframework.stereotype.Component;
@@ -16,8 +16,8 @@ public class TermAssignmentDeletedActivityHandler extends AbstractTermActivityHa
     }
 
     @Override
-    public boolean isHandle(final ActivityEventType activityEventType) {
-        return activityEventType == ActivityEventType.TERM_ASSIGNMENT_DELETED;
+    public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
+        return activityEventTypeDto == ActivityEventTypeDto.TERM_ASSIGNMENT_DELETED;
     }
 
     @Override

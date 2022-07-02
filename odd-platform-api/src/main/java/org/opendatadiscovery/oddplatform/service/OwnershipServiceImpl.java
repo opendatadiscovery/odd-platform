@@ -18,11 +18,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
 
-import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType.OWNERSHIP_CREATED;
-import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType.OWNERSHIP_DELETED;
-import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType.OWNERSHIP_UPDATED;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_CREATED;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_DELETED;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_UPDATED;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipCreate.DATA_ENTITY_ID;
-import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipCreate.OWNERSHIP_FORM_DATA;
 import static reactor.function.TupleUtils.function;
 
 @Service
@@ -56,7 +55,8 @@ public class OwnershipServiceImpl implements OwnershipService {
 
     @Override
     @ActivityLog(OWNERSHIP_DELETED)
-    public Mono<Void> delete(@ActivityParameter(ActivityParameterNames.OwnershipDelete.OWNERSHIP_ID) final long ownershipId) {
+    public Mono<Void> delete(
+        @ActivityParameter(ActivityParameterNames.OwnershipDelete.OWNERSHIP_ID) final long ownershipId) {
         return ownershipRepository.delete(ownershipId)
             .then();
     }
@@ -64,8 +64,9 @@ public class OwnershipServiceImpl implements OwnershipService {
     @Override
     @ActivityLog(OWNERSHIP_UPDATED)
     @ReactiveTransactional
-    public Mono<Ownership> update(@ActivityParameter(ActivityParameterNames.OwnershipUpdate.OWNERSHIP_ID) final long ownershipId,
-                                  final OwnershipUpdateFormData formData) {
+    public Mono<Ownership> update(
+        @ActivityParameter(ActivityParameterNames.OwnershipUpdate.OWNERSHIP_ID) final long ownershipId,
+        final OwnershipUpdateFormData formData) {
         return ownershipRepository.get(ownershipId)
             .switchIfEmpty(Mono.error(new NotFoundException("Ownership with id = [%s] was not found", ownershipId)))
             .then(roleService.getOrCreate(formData.getRoleName()))

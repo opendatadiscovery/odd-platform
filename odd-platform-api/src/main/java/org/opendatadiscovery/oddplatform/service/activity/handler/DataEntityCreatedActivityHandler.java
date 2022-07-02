@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
@@ -18,8 +18,8 @@ public class DataEntityCreatedActivityHandler implements ActivityHandler {
     private final ReactiveDataEntityRepository dataEntityRepository;
 
     @Override
-    public boolean isHandle(final ActivityEventType activityEventType) {
-        return activityEventType == ActivityEventType.DATA_ENTITY_CREATED;
+    public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
+        return activityEventTypeDto == ActivityEventTypeDto.DATA_ENTITY_CREATED;
     }
 
     @Override

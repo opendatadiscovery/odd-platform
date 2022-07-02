@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldEnumValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
@@ -16,7 +16,7 @@ import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType.DATASET_FIELD_VALUES_UPDATED;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.DATASET_FIELD_VALUES_UPDATED;
 import static reactor.function.TupleUtils.function;
 
 @Component
@@ -26,8 +26,8 @@ public class DatasetFieldValuesUpdatedActivityHandler implements ActivityHandler
     private final ReactiveDatasetFieldRepository datasetFieldRepository;
 
     @Override
-    public boolean isHandle(final ActivityEventType activityEventType) {
-        return activityEventType == DATASET_FIELD_VALUES_UPDATED;
+    public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
+        return activityEventTypeDto == DATASET_FIELD_VALUES_UPDATED;
     }
 
     @Override

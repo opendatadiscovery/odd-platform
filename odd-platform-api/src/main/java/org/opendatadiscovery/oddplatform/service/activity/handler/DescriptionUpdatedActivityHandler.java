@@ -3,7 +3,7 @@ package org.opendatadiscovery.oddplatform.service.activity.handler;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DescriptionActivityStateDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
@@ -17,8 +17,8 @@ public class DescriptionUpdatedActivityHandler implements ActivityHandler {
     private final ReactiveDataEntityRepository dataEntityRepository;
 
     @Override
-    public boolean isHandle(final ActivityEventType activityEventType) {
-        return activityEventType == ActivityEventType.DESCRIPTION_UPDATED;
+    public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
+        return activityEventTypeDto == ActivityEventTypeDto.DESCRIPTION_UPDATED;
     }
 
     @Override

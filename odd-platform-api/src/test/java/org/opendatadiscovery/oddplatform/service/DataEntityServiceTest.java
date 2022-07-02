@@ -85,8 +85,8 @@ public class DataEntityServiceTest {
         dataEntityService = new DataEntityServiceImpl(dataEntityMapper, dataEntityRepository, authIdentityProvider,
             metadataFieldValueRepository, metadataFieldRepository, tagService, lineageRepository,
             metadataFieldMapper, metadataFieldValueMapper, reactiveSearchEntrypointRepository, tagMapper,
-            namespaceService, activityService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository, termRepository,
-            ownershipRepository);
+            namespaceService, activityService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository,
+            termRepository, ownershipRepository);
     }
 
     @Test

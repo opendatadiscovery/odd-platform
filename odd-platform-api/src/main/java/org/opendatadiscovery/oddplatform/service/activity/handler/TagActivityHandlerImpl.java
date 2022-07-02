@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TagActivityStateDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
@@ -18,8 +18,8 @@ public class TagActivityHandlerImpl implements ActivityHandler {
     private final ReactiveTagRepository tagRepository;
 
     @Override
-    public boolean isHandle(final ActivityEventType activityEventType) {
-        return activityEventType == ActivityEventType.TAGS_ASSOCIATION_UPDATED;
+    public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
+        return activityEventTypeDto == ActivityEventTypeDto.TAGS_ASSOCIATION_UPDATED;
     }
 
     @Override

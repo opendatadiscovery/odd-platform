@@ -1,13 +1,18 @@
 package org.opendatadiscovery.oddplatform.service.activity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityList;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityType;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.mapper.ActivityMapper;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveActivityRepository;
 import org.opendatadiscovery.oddplatform.service.activity.handler.ActivityHandler;
@@ -27,34 +32,43 @@ public class ActivityServiceImpl implements ActivityService {
     public Mono<Void> createActivityEvent(final ActivityCreateEvent event) {
         final LocalDateTime activityCreateTime = LocalDateTime.now();
         return activityTablePartitionManager.createPartitionIfNotExists(activityCreateTime.toLocalDate())
-            .then(getUsername(event.getEventType()))
-            .defaultIfEmpty("")
+            .then(authIdentityProvider.getUsername())
             .map(username -> activityMapper.mapToPojo(event, activityCreateTime, username))
+            .switchIfEmpty(Mono.defer(() -> Mono.just(activityMapper.mapToPojo(event, activityCreateTime, null))))
             .flatMap(activityRepository::save)
             .then();
     }
 
     @Override
     public Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters,
-                                                    final ActivityEventType eventType) {
+                                                    final ActivityEventTypeDto eventType) {
         return getActivityHandler(eventType).getContextInfo(parameters);
     }
 
     @Override
     public Mono<String> getUpdatedInfo(final Map<String, Object> parameters,
                                        final Long dataEntityId,
-                                       final ActivityEventType eventType) {
+                                       final ActivityEventTypeDto eventType) {
         return getActivityHandler(eventType).getUpdatedState(parameters, dataEntityId);
     }
 
-    private Mono<String> getUsername(final ActivityEventType eventType) {
-        if (eventType.isSystemEvent()) {
-            return Mono.just("system");
-        }
-        return authIdentityProvider.getUsername();
+    @Override
+    public Mono<ActivityList> getActivityList(final LocalDate beginDate, final LocalDate endDate, final Integer size,
+                                              final Long datasourceId,
+                                              final Long namespaceId,
+                                              final List<Long> tagIds,
+                                              final List<Long> ownerIds,
+                                              final List<Long> userIds,
+                                              final ActivityType type,
+                                              final ActivityEventType eventType,
+                                              final Long lastEventId,
+                                              final OffsetDateTime lastEventDateTime) {
+        return activityRepository.findActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds,
+                ownerIds, userIds, type, null, eventType, lastEventId, lastEventDateTime)
+            .map(a -> new ActivityList());
     }
 
-    private ActivityHandler getActivityHandler(final ActivityEventType eventType) {
+    private ActivityHandler getActivityHandler(final ActivityEventTypeDto eventType) {
         return handlers.stream().filter(handler -> handler.isHandle(eventType))
             .findFirst()
             .orElseThrow(() -> new RuntimeException("Can't find handler for event type " + eventType.name()));

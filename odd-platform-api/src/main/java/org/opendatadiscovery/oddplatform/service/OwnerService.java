@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnerList;
@@ -11,7 +12,7 @@ public interface OwnerService {
 
     Mono<Owner> get(final long id);
 
-    Mono<OwnerList> list(final int page, final int size, final String query);
+    Mono<OwnerList> list(final int page, final int size, final String query, final List<Long> ids);
 
     Mono<Owner> create(final OwnerFormData createEntityForm);
 

@@ -21,7 +21,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
@@ -128,12 +128,12 @@ public class IngestionServiceImpl implements IngestionService {
 
     private Flux<ActivityCreateEvent> dataEntityCreatedEvents(final List<EnrichedDataEntityIngestionDto> newEntities) {
         return Flux.fromStream(newEntities.stream())
-            .flatMap(dto -> Mono.zip(activityService.getContextInfo(Map.of(), ActivityEventType.DATA_ENTITY_CREATED),
-                    activityService.getUpdatedInfo(Map.of(), dto.getId(), ActivityEventType.DATA_ENTITY_CREATED))
+            .flatMap(dto -> Mono.zip(activityService.getContextInfo(Map.of(), ActivityEventTypeDto.DATA_ENTITY_CREATED),
+                    activityService.getUpdatedInfo(Map.of(), dto.getId(), ActivityEventTypeDto.DATA_ENTITY_CREATED))
                 .map(function((ci, newState) -> ActivityCreateEvent.builder()
                     .dataEntityId(dto.getId())
                     .oldState(ci.getOldState())
-                    .eventType(ActivityEventType.DATA_ENTITY_CREATED)
+                    .eventType(ActivityEventTypeDto.DATA_ENTITY_CREATED)
                     .newState(newState)
                     .build()
                 ))

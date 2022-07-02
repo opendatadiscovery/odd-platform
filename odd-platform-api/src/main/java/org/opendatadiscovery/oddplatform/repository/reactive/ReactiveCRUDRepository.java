@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
+import java.util.List;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -8,11 +9,9 @@ import reactor.core.publisher.Mono;
 public interface ReactiveCRUDRepository<POJO> {
     Mono<POJO> get(final long id);
 
-    Flux<POJO> list();
-
-    Flux<POJO> list(final String query);
-
     Mono<Page<POJO>> list(final int page, final int size, final String query);
+
+    Mono<Page<POJO>> list(final int page, final int size, final String query, final List<Long> ids);
 
     Mono<POJO> create(final POJO pojo);
 
@@ -23,6 +22,4 @@ public interface ReactiveCRUDRepository<POJO> {
     Flux<POJO> bulkUpdate(final Collection<POJO> pojos);
 
     Mono<POJO> delete(final long id);
-
-    Flux<POJO> delete(final Collection<Long> ids);
 }

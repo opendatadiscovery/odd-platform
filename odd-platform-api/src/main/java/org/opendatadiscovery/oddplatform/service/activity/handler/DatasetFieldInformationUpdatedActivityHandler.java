@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventType;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldLabelActivityStateDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
@@ -23,8 +23,8 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
     private final ReactiveDatasetFieldRepository datasetFieldRepository;
 
     @Override
-    public boolean isHandle(final ActivityEventType activityEventType) {
-        return activityEventType == ActivityEventType.DATASET_FIELD_INFORMATION_UPDATED;
+    public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
+        return activityEventTypeDto == ActivityEventTypeDto.DATASET_FIELD_INFORMATION_UPDATED;
     }
 
     @Override
