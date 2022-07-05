@@ -1,8 +1,13 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
@@ -328,5 +333,19 @@ public class DataEntityController
         return entityService.deleteDataEntityFromDEG(dataEntityId, dataEntityGroupId)
             .ignoreElements()
             .thenReturn(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<Activity>>> getDataEntityActivity(final Long dataEntityId,
+                                                                      final LocalDate beginDate,
+                                                                      final LocalDate endDate,
+                                                                      final Integer size,
+                                                                      final List<Long> userIds,
+                                                                      final ActivityEventType eventType,
+                                                                      final Long lastEventId,
+                                                                      final OffsetDateTime lastEventDateTime,
+                                                                      final ServerWebExchange exchange) {
+        return DataEntityApi.super.getDataEntityActivity(dataEntityId, beginDate, endDate, size, userIds, eventType,
+            lastEventId, lastEventDateTime, exchange);
     }
 }
