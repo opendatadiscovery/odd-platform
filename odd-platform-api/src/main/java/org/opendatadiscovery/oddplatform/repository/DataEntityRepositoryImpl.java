@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -59,17 +58,12 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataInputAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataQualityTestAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
-import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityGroupLineageDto;
-import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
-import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
-import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
@@ -109,7 +103,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATI
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
@@ -311,7 +304,8 @@ public class DataEntityRepositoryImpl
         return listAllByOddrns(oddrns, null, null, false);
     }
 
-    private List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
+    @Override
+    public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
                                                           final Integer page,
                                                           final Integer size,
                                                           final boolean skipHollow) {
@@ -392,10 +386,7 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public List<? extends DataEntityDto> listByOwner(final int page,
-                                                     final int size,
-                                                     final long ownerId,
-                                                     final LineageStreamKind streamKind) {
+    public List<String> listOddrnsByOwner(final long ownerId, final LineageStreamKind streamKind) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .selectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
             .build();
@@ -405,15 +396,13 @@ public class DataEntityRepositoryImpl
             .map(r -> jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY).get(DATA_ENTITY.ODDRN))
             .collect(Collectors.toSet());
 
-        final List<String> oddrns = lineageRepository
+        return lineageRepository
             .getLineageRelations(associatedOddrns, LineageDepth.empty(), streamKind)
             .stream()
             .flatMap(lp -> Stream.of(lp.getParentOddrn(), lp.getChildOddrn()))
             .distinct()
             .filter(not(associatedOddrns::contains))
             .collect(toList());
-
-        return listAllByOddrns(oddrns, page, size, true);
     }
 
     @Override

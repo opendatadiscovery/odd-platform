@@ -231,7 +231,12 @@ public class DataEntityServiceImpl
                                               final int size,
                                               final LineageStreamKind streamKind) {
         return authIdentityProvider.fetchAssociatedOwner()
-            .flatMapIterable(o -> entityRepository.listByOwner(page, size, o.getId(), streamKind))
+            .flatMapIterable(o -> {
+                    final List<String> oddrns = entityRepository
+                        .listOddrnsByOwner(o.getId(), streamKind);
+                    return entityRepository.listAllByOddrns(oddrns, page, size, true);
+                }
+            )
             .map(entityMapper::mapRef);
     }
 
