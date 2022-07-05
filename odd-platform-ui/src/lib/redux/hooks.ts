@@ -4,38 +4,68 @@ import {
   useSelector,
 } from 'react-redux';
 import {
-  ActivityQueryParams,
+  ActivityMultipleQueryData,
+  ActivityMultipleQueryName,
+  ActivityQueryNames,
+  ActivitySingleQueryData,
+  ActivitySingleQueryName,
   AppDispatch,
   RootState,
 } from 'redux/interfaces';
-import { ActivityEventType, ActivityType } from 'generated-sources';
+import {
+  deleteMultipleQueryParam,
+  setMultipleQueryParam,
+  setSingleQueryParam,
+} from 'redux/reducers/activity.slice';
+import { AnyAction, ThunkDispatch } from '@reduxjs/toolkit';
 
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
 export const useUpdateActivityQuery = (
-  queryName: keyof ActivityQueryParams,
-  queryData:
-    | Date
-    | number
-    | Array<number>
-    | ActivityType
-    | ActivityEventType,
-  updateType: 'add' | 'delete'
+  queryName: ActivityQueryNames,
+  queryData: ActivitySingleQueryData | ActivityMultipleQueryData,
+  updateType: 'add' | 'delete',
+  dispatch: ThunkDispatch<RootState, undefined, AnyAction>
 ) => {
-  const dispatch = useAppDispatch();
-  if (
-    queryName ===
-    ('beginDate' ||
-      'endDate' ||
-      'size' ||
-      'datasourceId' ||
-      'namespaceId' ||
-      'type' ||
-      'dataEntityId' ||
-      'eventType' ||
-      'lastEventDateTime')
-  ) {
-    // dispatch()
+  const singleQueryNames = [
+    'beginDate',
+    'endDate',
+    'size',
+    'datasourceId',
+    'namespaceId',
+    'type',
+    'dataEntityId',
+    'eventType',
+    'lastEventDateTime',
+  ];
+  const multipleQueryNames = ['tagIds', 'ownerIds', 'userIds'];
+
+  if (singleQueryNames.includes(queryName)) {
+    dispatch(
+      setSingleQueryParam({
+        queryName: queryName as ActivitySingleQueryName,
+        queryData: queryData as ActivitySingleQueryData,
+      })
+    );
+  }
+
+  if (multipleQueryNames.includes(queryName)) {
+    if (updateType === 'delete') {
+      console.log('hook', queryName, queryData);
+      dispatch(
+        deleteMultipleQueryParam({
+          queryName: queryName as ActivityMultipleQueryName,
+          queryParamId: queryData as number,
+        })
+      );
+    } else {
+      dispatch(
+        setMultipleQueryParam({
+          queryName: queryName as ActivityMultipleQueryName,
+          queryData: queryData as ActivityMultipleQueryData,
+        })
+      );
+    }
   }
 };

@@ -6,23 +6,39 @@ import {
 import { useDebouncedCallback } from 'use-debounce';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'lib/redux/hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useUpdateActivityQuery,
+} from 'lib/redux/hooks';
+import uniq from 'lodash/uniq';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
-import { ActivityMultipleFilterName } from 'redux/interfaces';
-import { addMultipleActivityFilter } from 'redux/reducers/activity.slice';
+import {
+  ActivityMultipleFilterOption,
+  ActivityMultipleQueryName,
+} from 'redux/interfaces';
+import { getActivitiesQueryParamsByQueryName } from 'redux/selectors';
+import { AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
 import * as S from './MultipleFilterAutocompleteStyles';
 
 interface MultipleFilterAutocompleteProps {
-  filterName: ActivityMultipleFilterName;
+  filterName: ActivityMultipleQueryName;
   name: string;
+  setSelectedOptions: (
+    options: Array<ActivityMultipleFilterOption>
+  ) => void;
 }
 
 const MultipleFilterAutocomplete: React.FC<
   MultipleFilterAutocompleteProps
-> = ({ name, filterName }) => {
-  type FilterOption = { id?: number; name?: string; important?: boolean };
+> = ({ name, filterName, setSelectedOptions }) => {
+  // type FilterOption = { id?: number; name?: string; important?: boolean };
+  type FilterOption = ActivityMultipleFilterOption;
 
   const dispatch = useAppDispatch();
+  const selectedOptionIds = useAppSelector(state =>
+    getActivitiesQueryParamsByQueryName(state, filterName)
+  ) as Array<number>;
 
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
@@ -32,7 +48,7 @@ const MultipleFilterAutocomplete: React.FC<
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      (filterName === 'tags'
+      (filterName === 'tagIds'
         ? dispatch(
             fetchTagsList({
               page: 1,
@@ -52,10 +68,35 @@ const MultipleFilterAutocomplete: React.FC<
         .then(response => {
           setLoading(false);
           setOptions(response.items);
+          console.log('response.items', response.items);
+          const selectedOptions = selectedOptionIds
+            ?.map(optionId =>
+              response.items.find(option => option.id === optionId)
+            )
+            .filter(
+              (option): option is ActivityMultipleFilterOption =>
+                typeof option !== undefined
+            );
+          // console.log(
+          //   'selectedOptions from auto',
+          //   selectedOptions,
+          //   response.items
+          // );
+          setSelectedOptions(selectedOptions);
         });
     }, 500),
     [setLoading, setOptions, searchText]
   );
+
+  // React.useEffect(() => {
+  //   const selectedOptions = selectedOptionIds
+  //     ?.map(optionId => options.find(option => option.id === optionId))
+  //     .filter(
+  //       (option): option is ActivityMultipleFilterOption =>
+  //         typeof option !== undefined
+  //     );
+  //   setSelectedOptions(selectedOptions);
+  // }, [selectedOptionIds, options]);
 
   const getOptionLabel = (option: FilterOption | string) => {
     if (typeof option === 'string') {
@@ -83,14 +124,46 @@ const MultipleFilterAutocomplete: React.FC<
     setSearchText(''); // Clear input on select
 
     if (value.id && value.name) {
-      dispatch(
-        addMultipleActivityFilter({
-          filterName,
-          data: [{ id: value.id, name: value.name }],
-        })
+      useUpdateActivityQuery(
+        filterName,
+        uniq([...(selectedOptionIds || []), value.id]),
+        'add',
+        dispatch
       );
+      // dispatch(
+      //   addMultipleActivityFilter({
+      //     filterName,
+      //     data: [{ id: value.id, name: value.name }],
+      //   })
+      // );
     }
   };
+
+  // React.useEffect(
+  //   () =>
+  //     useUpdateActivityQuery(
+  //       filterName,
+  //       uniq([...(selectedOptionIds || [])]),
+  //       'add',
+  //       dispatch
+  //     ),
+  //   [selectedOptionIds]
+  // );
+
+  const searchInputChange = React.useCallback(
+    (
+      _: React.ChangeEvent<unknown>,
+      query: string,
+      reason: AutocompleteInputChangeReason
+    ) => {
+      if (reason === 'input') {
+        setSearchText(query);
+      } else {
+        setSearchText(''); // Clear input on select
+      }
+    },
+    [setSearchText]
+  );
 
   const fillOptionMatches = (
     props: HTMLAttributes<HTMLLIElement>,
@@ -136,6 +209,7 @@ const MultipleFilterAutocomplete: React.FC<
       onOpen={() => setAutocompleteOpen(true)}
       onClose={() => setAutocompleteOpen(false)}
       onChange={handleAutocompleteSelect}
+      onInputChange={searchInputChange}
       options={options}
       getOptionLabel={getOptionLabel}
       loading={loading}

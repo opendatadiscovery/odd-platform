@@ -7,19 +7,22 @@ import {
 } from 'generated-sources';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { setSingleActivityFilter } from 'redux/reducers/activity.slice';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useUpdateActivityQuery,
+} from 'lib/redux/hooks';
 import { stringFormatted } from 'lib/helpers';
 import {
-  ActivitySingleFilterName,
   ActivitySingleFilterOption,
+  ActivitySingleQueryName,
 } from 'redux/interfaces';
-import { getActivitiesSelectedSingleFilterByFilterName } from 'redux/selectors';
+import { getActivitiesQueryParamsByQueryName } from 'redux/selectors';
 
 interface SingleFilterProps {
   name: string;
   filterOptions: DataSource[] | Namespace[] | ActivityEventType[];
-  filterName: ActivitySingleFilterName;
+  filterName: ActivitySingleQueryName;
 }
 
 const SingleFilter: React.FC<SingleFilterProps> = ({
@@ -30,23 +33,36 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
   const dispatch = useAppDispatch();
 
   const selectedOption = useAppSelector(state =>
-    getActivitiesSelectedSingleFilterByFilterName(state, filterName)
+    getActivitiesQueryParamsByQueryName(state, filterName)
   );
 
   const handleFilterSelect = (
     option: ActivitySingleFilterOption | string
   ) => {
+    // useUpdateActivityQuery(filterName, option, "add");
     if (typeof option === 'string') {
-      dispatch(
-        setSingleActivityFilter({
-          filterName,
-          data: option as ActivityEventType,
-        })
+      useUpdateActivityQuery(
+        filterName,
+        option as ActivityEventType,
+        'add',
+        dispatch
       );
+      // dispatch(
+      //   setSingleActivityFilter({
+      //     filterName,
+      //     data: option as ActivityEventType,
+      //   })
+      // );
     }
 
     if (typeof option !== 'string' && 'id' in option) {
-      dispatch(setSingleActivityFilter({ filterName, data: option.id }));
+      if (typeof option.id === 'number') {
+        useUpdateActivityQuery(filterName, option.id, 'add', dispatch);
+      }
+      if (option.id === 'All') {
+        useUpdateActivityQuery(filterName, null, 'add', dispatch);
+      }
+      // dispatch(setSingleActivityFilter({ filterName, data: option.id }));
     }
   };
 

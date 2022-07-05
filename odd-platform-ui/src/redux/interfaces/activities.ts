@@ -15,6 +15,7 @@ export interface ActivitySingleFilterOption {
 export interface ActivityMultipleFilterOption {
   id: number;
   name: string;
+  important?: boolean;
 }
 
 export interface ActivityFilters {
@@ -33,11 +34,39 @@ export interface ActivityFilters {
 }
 
 export type ActivityQueryParams = ActivityApiGetActivityRequest;
+export type ActivityQueryNames = keyof ActivityQueryParams;
 
 export type ActivitySingleFilterName = keyof Pick<
-  ActivityFilters,
+  ActivityQueryParams,
   'datasourceId' | 'namespaceId' | 'eventType' | 'type' | 'size'
 >;
+
+export type ActivitySingleQueryName = keyof Pick<
+  ActivityQueryParams,
+  | 'beginDate'
+  | 'endDate'
+  | 'size'
+  | 'datasourceId'
+  | 'namespaceId'
+  | 'type'
+  | 'dataEntityId'
+  | 'eventType'
+  | 'lastEventDateTime'
+>;
+
+export type ActivitySingleQueryData =
+  | Date
+  | number
+  | ActivityType
+  | ActivityEventType
+  | null;
+
+export type ActivityMultipleQueryName = keyof Pick<
+  ActivityQueryParams,
+  'tagIds' | 'ownerIds' | 'userIds'
+>;
+
+export type ActivityMultipleQueryData = Array<number>;
 
 export interface ActivitySingleFilterPayload {
   payload: {

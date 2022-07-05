@@ -2,7 +2,9 @@ import { createSelector } from '@reduxjs/toolkit';
 import {
   ActivitiesState,
   ActivityMultipleFilterName,
+  ActivityMultipleQueryName,
   ActivitySingleFilterName,
+  ActivitySingleQueryName,
   RootState,
 } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
@@ -35,37 +37,28 @@ export const getActivityEventTypes = createSelector(
   activities => activities.activityEventTypes
 );
 
-export const getSelectedActivityFilters = createSelector(
-  activitiesState,
-
-  activities => activities.selectedFilters
-);
-
 export const getActivitySingleFilterName = (
   _: RootState,
   filterName: ActivitySingleFilterName
 ) => filterName;
-
-export const getActivitiesSelectedSingleFilterByFilterName =
-  createSelector(
-    activitiesState,
-    getActivitySingleFilterName,
-    (activities, filterName) => activities.selectedFilters[filterName]
-  );
 
 export const getActivityMultipleFilterName = (
   _: RootState,
   filterName: ActivityMultipleFilterName
 ) => filterName;
 
-export const getActivitiesSelectedMultipleFiltersByFilterName =
-  createSelector(
-    activitiesState,
-    getActivityMultipleFilterName,
-    (activities, filterName) => activities.selectedFilters[filterName]
-  );
-
 export const getActivitiesQueryParams = createSelector(
   activitiesState,
   activities => activities.queryParams
+);
+
+export const getActivityQueryName = (
+  _: RootState,
+  queryName: ActivitySingleQueryName | ActivityMultipleQueryName
+) => queryName;
+
+export const getActivitiesQueryParamsByQueryName = createSelector(
+  activitiesState,
+  getActivityQueryName,
+  (activities, queryName) => activities.queryParams[queryName]
 );

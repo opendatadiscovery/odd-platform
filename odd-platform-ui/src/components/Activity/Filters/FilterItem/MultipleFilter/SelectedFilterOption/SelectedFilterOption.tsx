@@ -5,15 +5,15 @@ import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import {
-  ActivityMultipleFilterName,
   ActivityMultipleFilterOption,
+  ActivityMultipleQueryName,
 } from 'redux/interfaces';
-import { deleteMultipleActivityFilter } from 'redux/reducers/activity.slice';
+import { useUpdateActivityQuery } from 'lib/redux/hooks';
 import { Container } from './SelectedFilterOptionStyles';
 
 interface SelectedFilterOptionProps {
   selectedOption: ActivityMultipleFilterOption;
-  filterName: ActivityMultipleFilterName;
+  filterName: ActivityMultipleQueryName;
 }
 
 const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
@@ -23,12 +23,18 @@ const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
   const dispatch = useDispatch();
 
   const onRemoveClick = () => {
-    dispatch(
-      deleteMultipleActivityFilter({
-        filterName,
-        data: selectedOption,
-      })
+    useUpdateActivityQuery(
+      filterName,
+      selectedOption.id,
+      'delete',
+      dispatch
     );
+    // dispatch(
+    //   deleteMultipleActivityFilter({
+    //     filterName,
+    //     data: selectedOption,
+    //   })
+    // );
   };
 
   return (

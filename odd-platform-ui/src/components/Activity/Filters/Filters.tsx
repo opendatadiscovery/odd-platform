@@ -63,8 +63,8 @@ const Filters: React.FC = () => {
           name="Event type"
           filterOptions={eventTypes}
         />
-        <MultipleFilter key="tg" filterName="tags" name="Tag" />
-        <MultipleFilter key="ow" filterName="owners" name="User" />
+        <MultipleFilter key="tg" filterName="tagIds" name="Tag" />
+        <MultipleFilter key="ow" filterName="ownerIds" name="User" />
         {/* TODO update loader conditions */}
         {/* <S.FacetsLoaderContainer container sx={{ mt: 2 }}> */}
         {/*  {(isSearchFacetsUpdating || isDatasourceListFetching) && ( */}

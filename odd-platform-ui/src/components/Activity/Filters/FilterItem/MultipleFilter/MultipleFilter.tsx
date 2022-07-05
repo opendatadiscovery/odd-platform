@@ -1,28 +1,40 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { ActivityMultipleFilterName } from 'redux/interfaces';
-import { useAppSelector } from 'lib/redux/hooks';
-import { getActivitiesSelectedMultipleFiltersByFilterName } from 'redux/selectors';
+import {
+  ActivityMultipleFilterOption,
+  ActivityMultipleQueryName,
+} from 'redux/interfaces';
 import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFilterAutocomplete';
 import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
 
 interface MultipleFilterProps {
   name: string;
-  filterName: ActivityMultipleFilterName;
+  filterName: ActivityMultipleQueryName;
 }
 
 const MultipleFilter: React.FC<MultipleFilterProps> = ({
   name,
   filterName,
 }) => {
-  const selectedOptions = useAppSelector(state =>
-    getActivitiesSelectedMultipleFiltersByFilterName(state, filterName)
-  );
+  const [selectedOptions, setSelectedOptions] = React.useState<
+    Array<ActivityMultipleFilterOption> | undefined
+  >(undefined);
 
+  const handleSetSelectedOptions = React.useCallback(
+    (options: Array<ActivityMultipleFilterOption>) =>
+      setSelectedOptions(options),
+    [setSelectedOptions]
+  );
+  console.log('selectedOptions', selectedOptions);
   return (
     <Grid container>
       <Grid item xs={12}>
-        <MultipleFilterAutocomplete name={name} filterName={filterName} />
+        <MultipleFilterAutocomplete
+          name={name}
+          filterName={filterName}
+          // selectedOptionIds={selectedOptionIds}
+          setSelectedOptions={handleSetSelectedOptions}
+        />
       </Grid>
       <Grid
         display="inline-flex"
@@ -31,13 +43,15 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({
         sx={{ my: 0.25, mx: -0.25 }}
         container
       >
-        {selectedOptions?.map(option => (
-          <SelectedFilterOption
-            key={option.id}
-            filterName={filterName}
-            selectedOption={option}
-          />
-        ))}
+        {selectedOptions &&
+          selectedOptions?.length > 0 &&
+          selectedOptions.map(option => (
+            <SelectedFilterOption
+              key={option.id}
+              filterName={filterName}
+              selectedOption={option}
+            />
+          ))}
       </Grid>
     </Grid>
   );

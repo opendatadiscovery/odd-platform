@@ -66,3 +66,6 @@ export const datasetStructurePath = (
 // Alerts
 export const alertsPath = (viewType: AlertViewType = 'all') =>
   `/alerts/${viewType}`;
+
+// Activity
+export const activityPath = (query: string) => `/activity?${query}`;

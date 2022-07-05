@@ -37,7 +37,6 @@ import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
 import {
   ActivitiesTotals,
-  ActivityFilters,
   ActivityPageInfo,
   ActivityQueryParams,
   CurrentPageInfo,
@@ -237,7 +236,6 @@ export interface ActivitiesState {
   activities: Activity[];
   pageInfo: ActivityPageInfo;
   activityEventTypes: ActivityEventType[];
-  selectedFilters: ActivityFilters;
   queryParams: ActivityQueryParams;
 }
 

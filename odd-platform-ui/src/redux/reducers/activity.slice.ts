@@ -3,13 +3,11 @@ import { activitiesActionTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import {
-  ActivityFilters,
-  ActivityMultipleFilterName,
-  ActivityMultipleFilterOption,
+  ActivityMultipleQueryData,
+  ActivityMultipleQueryName,
   ActivityQueryParams,
-  ActivitySingleFilterPayload,
-  AddActivityMultipleFilterPayload,
-  DeleteActivityMultipleFilterPayload,
+  ActivitySingleQueryData,
+  ActivitySingleQueryName,
 } from 'redux/interfaces';
 import { ActivityType } from 'generated-sources';
 
@@ -23,18 +21,10 @@ const initialQueryParams: ActivityQueryParams = {
   type: ActivityType.ALL,
 };
 
-const initialSelectedFilters: ActivityFilters = {
-  beginDate,
-  endDate,
-  size,
-  type: ActivityType.ALL,
-};
-
 export const initialState: ActivitiesState = {
   activityEventTypes: [],
   activities: [],
   queryParams: initialQueryParams,
-  selectedFilters: initialSelectedFilters,
   totals: {
     totalCount: 0,
     upstreamCount: 0,
@@ -48,159 +38,78 @@ export const initialState: ActivitiesState = {
   },
 };
 
-const updateQueryParams = (
-  state: ActivitiesState,
-  filterName: ActivityMultipleFilterName,
-  queryParam:
-    | Array<ActivityMultipleFilterOption>
-    | ActivityMultipleFilterOption
-    | undefined,
-  type: string
-) => {
-  if (
-    filterName === 'tags' &&
-    Array.isArray(queryParam) &&
-    type === 'activities/addMultipleActivityFilter'
-  ) {
-    return {
-      ...state,
-      queryParams: {
-        ...state.queryParams,
-        tagIds: [
-          ...(state.queryParams.tagIds || []),
-          ...queryParam.map(param => param.id),
-        ],
-      },
-    };
-  }
-
-  if (
-    filterName === 'owners' &&
-    Array.isArray(queryParam) &&
-    type === 'activities/addMultipleActivityFilter'
-  ) {
-    return {
-      ...state,
-      queryParams: {
-        ...state.queryParams,
-        ownerIds: [
-          ...(state.queryParams.ownerIds || []),
-          ...queryParam.map(param => param.id),
-        ],
-      },
-    };
-  }
-
-  if (
-    filterName === 'tags' &&
-    !Array.isArray(queryParam) &&
-    queryParam &&
-    type === 'activities/deleteMultipleActivityFilter'
-  ) {
-    return {
-      ...state,
-      queryParams: {
-        ...state.queryParams,
-        tagIds: state.queryParams.tagIds?.filter(
-          tagId => tagId !== queryParam.id
-        ),
-      },
-    };
-  }
-
-  if (
-    filterName === 'owners' &&
-    !Array.isArray(queryParam) &&
-    queryParam &&
-    type === 'activities/deleteMultipleActivityFilter'
-  ) {
-    return {
-      ...state,
-      queryParams: {
-        ...state.queryParams,
-        ownerIds: state.queryParams.ownerIds?.filter(
-          ownerId => ownerId !== queryParam.id
-        ),
-      },
-    };
-  }
-
-  return state;
-};
-
 export const activitiesSlice = createSlice({
   name: activitiesActionTypePrefix,
   initialState,
   reducers: {
-    // setSingleQueryParam: (
-    //   state,
-    //   { payload }
-    // ) => {
-    //   const { filterName, data } = payload;
-    //
-    //   return {
-    //     ...state,
-    //     queryParams: {
-    //       ...state.queryParams,
-    //       [filterName]: data === 'All' ? null : data,
-    //     },
-    //   };
-    // },
-    setSingleActivityFilter: (
+    setSingleQueryParam: (
       state,
-      { payload }: ActivitySingleFilterPayload
+      {
+        payload,
+      }: {
+        payload: {
+          queryName: ActivitySingleQueryName;
+          queryData: ActivitySingleQueryData;
+        };
+      }
     ) => {
-      const { filterName, data } = payload;
+      const { queryName, queryData } = payload;
 
       return {
         ...state,
         queryParams: {
           ...state.queryParams,
-          [filterName]: data === 'All' ? null : data,
-        },
-        selectedFilters: { ...state.selectedFilters, [filterName]: data },
-      };
-    },
-
-    addMultipleActivityFilter: (
-      state,
-      { payload, type }: AddActivityMultipleFilterPayload
-    ) => {
-      const { filterName, data } = payload;
-
-      return {
-        ...state,
-        ...updateQueryParams(state, filterName, data, type),
-        selectedFilters: {
-          ...state.selectedFilters,
-          [filterName]: [
-            ...(state.selectedFilters[filterName] || []),
-            ...(data || []),
-          ],
+          [queryName]: queryData,
         },
       };
     },
-
-    deleteMultipleActivityFilter: (
+    setMultipleQueryParam: (
       state,
-      { payload, type }: DeleteActivityMultipleFilterPayload
+      {
+        payload,
+      }: {
+        payload: {
+          queryName: ActivityMultipleQueryName;
+          queryData: ActivityMultipleQueryData;
+        };
+      }
     ) => {
-      const { filterName, data } = payload;
+      const { queryName, queryData } = payload;
 
       return {
         ...state,
-        ...updateQueryParams(state, filterName, data, type),
-        selectedFilters: {
-          ...state.selectedFilters,
-          [filterName]: state.selectedFilters[filterName]?.filter(
-            filter => filter.id !== data.id
+        queryParams: {
+          ...state.queryParams,
+          [queryName]: queryData,
+        },
+      };
+    },
+
+    deleteMultipleQueryParam: (
+      state,
+      {
+        payload,
+      }: {
+        payload: {
+          queryName: ActivityMultipleQueryName;
+          queryParamId: number;
+        };
+      }
+    ) => {
+      const { queryName, queryParamId } = payload;
+
+      return {
+        ...state,
+        queryParams: {
+          ...state.queryParams,
+          [queryName]: state.queryParams[queryName]?.filter(
+            id => id !== queryParamId
           ),
         },
       };
     },
 
     clearActivityFilters: state => {
-      state.selectedFilters = initialSelectedFilters;
       state.queryParams = initialQueryParams;
 
       return state;
@@ -227,10 +136,10 @@ export const activitiesSlice = createSlice({
 });
 
 export const {
-  setSingleActivityFilter,
-  addMultipleActivityFilter,
-  deleteMultipleActivityFilter,
   clearActivityFilters,
+  setSingleQueryParam,
+  setMultipleQueryParam,
+  deleteMultipleQueryParam,
 } = activitiesSlice.actions;
 
 export default activitiesSlice.reducer;
