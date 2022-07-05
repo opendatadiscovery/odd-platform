@@ -2,9 +2,9 @@ import { createActionType } from 'lib/redux/helpers';
 
 export const activitiesActionTypePrefix = 'activities';
 
-export const fetchActivityEventTypesActionType = createActionType(
+export const fetchActivityCountsActionType = createActionType(
   activitiesActionTypePrefix,
-  'fetchActivityEventTypes'
+  'fetchActivityCounts'
 );
 
 export const fetchActivityListActionType = createActionType(

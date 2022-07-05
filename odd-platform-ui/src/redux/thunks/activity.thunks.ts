@@ -1,7 +1,9 @@
 import {
   Activity,
   ActivityApi,
+  ActivityApiGetActivityCountsRequest,
   ActivityApiGetActivityRequest,
+  ActivityCountInfo,
   Configuration,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -40,3 +42,10 @@ export const fetchActivityList = createAsyncThunk<
 
   return activities;
 });
+
+export const fetchActivityCounts = createAsyncThunk<
+  ActivityCountInfo,
+  ActivityApiGetActivityCountsRequest
+>(actions.fetchActivityCountsActionType, async params =>
+  activityApi.getActivityCounts(params)
+);

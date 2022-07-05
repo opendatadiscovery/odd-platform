@@ -1,7 +1,6 @@
 import { defineConfig, loadEnv, UserConfigExport } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
-import eslint from 'vite-plugin-eslint';
 import checker from 'vite-plugin-checker';
 
 export default defineConfig(({ mode }) => {
@@ -32,8 +31,11 @@ export default defineConfig(({ mode }) => {
         ...defaultConfig,
         ...(process.env.VITE_DEV_PROXY ? devServerConfig : {}),
         plugins: [
-          eslint(),
-          checker({ typescript: true }),
+          // eslint(),
+          checker({
+            typescript: true,
+            eslint: { lintCommand: 'eslint --ext .tsx,.ts src/' },
+          }),
           ...defaultPlugins,
         ],
       }

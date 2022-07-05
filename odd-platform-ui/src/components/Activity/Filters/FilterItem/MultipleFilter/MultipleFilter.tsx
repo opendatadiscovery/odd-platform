@@ -4,8 +4,12 @@ import {
   ActivityMultipleFilterOption,
   ActivityMultipleQueryName,
 } from 'redux/interfaces';
-import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFilterAutocomplete';
+import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { getActivitiesQueryParamsByQueryName } from 'redux/selectors';
+import { Owner, Tag } from 'generated-sources';
 import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
+import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFilterAutocomplete';
 
 interface MultipleFilterProps {
   name: string;
@@ -16,16 +20,43 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({
   name,
   filterName,
 }) => {
+  const dispatch = useAppDispatch();
+
   const [selectedOptions, setSelectedOptions] = React.useState<
-    Array<ActivityMultipleFilterOption> | undefined
+    Array<Tag | Owner> | undefined
   >(undefined);
+
+  const selectedOptionIds = useAppSelector(state =>
+    getActivitiesQueryParamsByQueryName(state, filterName)
+  ) as Array<number>;
 
   const handleSetSelectedOptions = React.useCallback(
     (options: Array<ActivityMultipleFilterOption>) =>
       setSelectedOptions(options),
     [setSelectedOptions]
   );
-  console.log('selectedOptions', selectedOptions);
+
+  React.useEffect(() => {
+    (filterName === 'tagIds'
+      ? dispatch(
+          fetchTagsList({
+            page: 1,
+            size: 100,
+            ids: selectedOptionIds,
+          })
+        )
+      : dispatch(
+          fetchOwnersList({
+            page: 1,
+            size: 100,
+            ids: selectedOptionIds,
+          })
+        )
+    )
+      .unwrap()
+      .then(({ items }) => setSelectedOptions(items));
+  }, [filterName, selectedOptionIds]);
+
   return (
     <Grid container>
       <Grid item xs={12}>
@@ -33,7 +64,7 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({
           name={name}
           filterName={filterName}
           // selectedOptionIds={selectedOptionIds}
-          setSelectedOptions={handleSetSelectedOptions}
+          // setSelectedOptions={handleSetSelectedOptions}
         />
       </Grid>
       <Grid

@@ -118,11 +118,16 @@ export const activitiesSlice = createSlice({
     builder.addCase(
       thunks.fetchActivityList.fulfilled,
       (state, { payload }) => {
-        const activities = payload;
-
-        state.activities = activities;
+        state.activities = payload;
         // state.totals = totals;
         // state.pageInfo = pageInfo;
+      }
+    );
+
+    builder.addCase(
+      thunks.fetchActivityCounts.fulfilled,
+      (state, { payload }) => {
+        state.counts = payload;
       }
     );
   },

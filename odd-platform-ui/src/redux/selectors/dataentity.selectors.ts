@@ -3,7 +3,6 @@ import { DataEntitiesState, RootState } from 'redux/interfaces';
 import {
   DataEntityClassNameEnum,
   DataEntityType,
-  DataEntityTypeNameEnum,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import {

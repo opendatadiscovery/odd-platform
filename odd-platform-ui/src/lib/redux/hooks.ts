@@ -25,7 +25,7 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export const useUpdateActivityQuery = (
   queryName: ActivityQueryNames,
   queryData: ActivitySingleQueryData | ActivityMultipleQueryData,
-  updateType: 'add' | 'delete',
+  updateType: 'add' | 'delete' | 'addFromQuery',
   dispatch: ThunkDispatch<RootState, undefined, AnyAction>
 ) => {
   const singleQueryNames = [
@@ -68,4 +68,10 @@ export const useUpdateActivityQuery = (
       );
     }
   }
+
+  // if (
+  //   updateType === 'addFromQuery' &&
+  //   singleQueryNames.includes(queryName)
+  // ) {
+  // }
 };

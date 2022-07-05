@@ -7,7 +7,6 @@ import {
   useAppSelector,
   useUpdateActivityQuery,
 } from 'lib/redux/hooks';
-// import {} from 'react-router-dom';
 import queryString, { StringifyOptions } from 'query-string';
 import {
   getActivitiesList,
