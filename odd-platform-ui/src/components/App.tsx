@@ -7,9 +7,7 @@ import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
 import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
 
 // lazy components
-const ManagementContainer = React.lazy(
-  () => import('./Management/ManagementContainer')
-);
+const Management = React.lazy(() => import('./Management/Management'));
 const DataEntityDetailsContainer = React.lazy(
   () => import('./DataEntityDetails/DataEntityDetailsContainer')
 );
@@ -25,9 +23,7 @@ const SearchContainer = React.lazy(
 const TermSearchContainer = React.lazy(
   () => import('./Terms/TermSearch/TermSearchContainer')
 );
-const AlertsContainer = React.lazy(
-  () => import('./Alerts/AlertsContainer')
-);
+const Alerts = React.lazy(() => import('./Alerts/Alerts'));
 const Activity = React.lazy(() => import('./Activity/Activity'));
 
 const App: React.FC = () => {
@@ -44,11 +40,8 @@ const App: React.FC = () => {
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
             <Route exact path="/" component={OverviewContainer} />
-            <Route path="/alerts/:viewType?" component={AlertsContainer} />
-            <Route
-              path="/management/:viewType?"
-              component={ManagementContainer}
-            />
+            <Route path="/alerts/:viewType?" component={Alerts} />
+            <Route path="/management/:viewType?" component={Management} />
             <Route
               exact
               path="/termsearch/:termSearchId?"

@@ -24,8 +24,8 @@ const getTabHintStylesByType = (
       return {
         backgroundColor: theme.palette.warning.main,
         borderRadius: '13px',
-        width: '20px',
-        height: '20px',
+        width: '23px',
+        height: '23px',
         color: theme.palette.common.white,
         fontSize: theme.typography.body2.fontSize,
         lineHeight: '12px',

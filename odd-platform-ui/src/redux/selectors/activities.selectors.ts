@@ -17,9 +17,9 @@ export const getActivitiesListFetchingStatuses = createStatusesSelector(
   actions.fetchActivityListActionType
 );
 
-export const getActivityTotals = createSelector(
+export const getActivityCounts = createSelector(
   activitiesState,
-  activities => activities.totals
+  activities => activities.counts
 );
 
 export const getActivitiesList = createSelector(
@@ -30,11 +30,6 @@ export const getActivitiesList = createSelector(
 export const getActivityPageInfo = createSelector(
   activitiesState,
   activities => activities.pageInfo
-);
-
-export const getActivityEventTypes = createSelector(
-  activitiesState,
-  activities => activities.activityEventTypes
 );
 
 export const getActivitySingleFilterName = (

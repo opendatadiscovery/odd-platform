@@ -14,8 +14,8 @@ import {
   getActivitiesListFetchingStatuses,
   getActivitiesQueryParams,
   getActivitiesQueryParamsByQueryName,
+  getActivityCounts,
   getActivityPageInfo,
-  getActivityTotals,
 } from 'redux/selectors';
 import { fetchActivityList } from 'redux/thunks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
@@ -37,7 +37,7 @@ const ActivityResults: React.FC = () => {
   const location = useLocation();
   const history = useHistory();
 
-  const activityTotals = useAppSelector(getActivityTotals);
+  const activityTotals = useAppSelector(getActivityCounts);
   const activityType = useAppSelector(state =>
     getActivitiesQueryParamsByQueryName(state, 'type')
   ) as ActivityType;

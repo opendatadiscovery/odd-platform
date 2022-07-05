@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class IngestionTaskRun {
-    private String taskName;
+    private String taskRunName;
     private String oddrn;
-    private String dataEntityOddrn;
+    private String taskOddrn;
     private OffsetDateTime startTime;
     private OffsetDateTime endTime;
     private IngestionTaskRunStatus status;

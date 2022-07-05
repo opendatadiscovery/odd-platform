@@ -19,7 +19,7 @@ public interface TagService {
 
     Mono<Tag> delete(final long tagId);
 
-    Mono<TagsResponse> listMostPopular(final String query, final int page, final int size);
+    Mono<TagsResponse> listMostPopular(final String query, final List<Long> ids, final int page, final int size);
 
     Mono<List<TagPojo>> getOrCreateTagsByName(final Set<String> tagNames);
 

@@ -19,10 +19,14 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Predicate.not;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.DATASET_FIELD_INFORMATION_UPDATED;
+import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +38,8 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     @Override
     @ReactiveTransactional
-    public Mono<DataSetField> updateDatasetField(final long datasetFieldId,
+    @ActivityLog(DATASET_FIELD_INFORMATION_UPDATED)
+    public Mono<DataSetField> updateDatasetField(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
                                                  final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         return reactiveDatasetFieldRepository.getDto(datasetFieldId)
             .switchIfEmpty(Mono.error(
@@ -80,16 +85,17 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
         final List<String> existingLabelsNames = existingLabels.stream()
             .map(LabelPojo::getName)
-            .collect(Collectors.toList());
+            .toList();
 
         final List<LabelPojo> labelsToCreate = names.stream()
             .filter(n -> !existingLabelsNames.contains(n))
             .map(n -> new LabelPojo().setName(n))
             .collect(Collectors.toList());
 
-        final List<Long> existingLabelIds =
-            existingLabels.stream().map(LabelPojo::getId).filter(not(idsToDelete::contains)).collect(
-                Collectors.toList());
+        final List<Long> existingLabelIds = existingLabels.stream()
+            .map(LabelPojo::getId)
+            .filter(not(idsToDelete::contains))
+            .toList();
 
         final Set<LabelPojo> pojos =
             Stream.concat(labelsToCreate.stream(), existingLabels.stream()).collect(Collectors.toSet());

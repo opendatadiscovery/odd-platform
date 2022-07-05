@@ -3,6 +3,8 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
+import { managementPath } from 'lib/paths';
+import { useAppParams } from 'lib/hooks';
 import * as S from './ManagementStyles';
 
 // lazy components
@@ -18,22 +20,20 @@ const DataSourcesList = React.lazy(
   () => import('./DataSourcesList/DataSourcesList')
 );
 
-const CollectorsListContainer = React.lazy(
-  () => import('./CollectorsList/CollectorsListContainer')
+const CollectorsList = React.lazy(
+  () => import('./CollectorsList/CollectorsList')
 );
 
-interface ManagementProps {
-  viewType: string;
-}
+const Management: React.FC = () => {
+  const { viewType } = useAppParams();
 
-const Management: React.FC<ManagementProps> = ({ viewType }) => {
   const [tabs] = React.useState<AppTabItem[]>([
-    { name: 'Namespaces', link: '/management/namespaces' },
-    { name: 'Datasources', link: '/management/datasources' },
-    { name: 'Collectors', link: '/management/collectors' },
-    { name: 'Owners', link: '/management/owners' },
-    { name: 'Tags', link: '/management/tags' },
-    { name: 'Labels', link: '/management/labels' },
+    { name: 'Namespaces', link: managementPath('namespaces') },
+    { name: 'Datasources', link: managementPath('datasources') },
+    { name: 'Collectors', link: managementPath('collectors') },
+    { name: 'Owners', link: managementPath('owners') },
+    { name: 'Tags', link: managementPath('tags') },
+    { name: 'Labels', link: managementPath('labels') },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -77,7 +77,7 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
             <Route
               exact
               path="/management/collectors"
-              component={CollectorsListContainer}
+              component={CollectorsList}
             />
             <Route
               exact

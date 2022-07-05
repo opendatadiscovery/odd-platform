@@ -22,10 +22,9 @@ const initialQueryParams: ActivityQueryParams = {
 };
 
 export const initialState: ActivitiesState = {
-  activityEventTypes: [],
   activities: [],
   queryParams: initialQueryParams,
-  totals: {
+  counts: {
     totalCount: 0,
     upstreamCount: 0,
     myObjectsCount: 0,
@@ -117,19 +116,13 @@ export const activitiesSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(
-      thunks.fetchActivityEventTypes.fulfilled,
-      (state, { payload }) => {
-        state.activityEventTypes = payload;
-      }
-    );
-    builder.addCase(
       thunks.fetchActivityList.fulfilled,
       (state, { payload }) => {
-        const { activities, pageInfo, totals } = payload;
+        const activities = payload;
 
         state.activities = activities;
-        state.totals = totals;
-        state.pageInfo = pageInfo;
+        // state.totals = totals;
+        // state.pageInfo = pageInfo;
       }
     );
   },

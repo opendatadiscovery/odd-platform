@@ -1,11 +1,10 @@
 import {
   ActivityApiGetActivityRequest,
   ActivityEventType,
-  ActivityList,
   ActivityType,
 } from 'generated-sources';
 
-export type ActivitiesTotals = Omit<ActivityList, 'items' | 'pageInfo'>;
+// export type ActivitiesTotals = Omit<ActivityList, 'items' | 'pageInfo'>;
 
 export interface ActivitySingleFilterOption {
   id: number | string;
@@ -49,7 +48,6 @@ export type ActivitySingleQueryName = keyof Pick<
   | 'datasourceId'
   | 'namespaceId'
   | 'type'
-  | 'dataEntityId'
   | 'eventType'
   | 'lastEventDateTime'
 >;

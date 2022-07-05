@@ -2,65 +2,78 @@ import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   Alert,
-  AlertApiChangeAlertStatusRequest,
   AlertApiGetAllAlertsRequest,
   AlertApiGetAssociatedUserAlertsRequest,
   AlertApiGetDependentEntitiesAlertsRequest,
   AlertStatus,
 } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import {
+  getAlertList,
+  getAlertListFetchingStatus,
+  getAlertListPageInfo,
+  getMyAlertListFetchingStatus,
+  getMyDependentsAlertListFetchingStatus,
+} from 'redux/selectors/alert.selectors';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { AlertsResponse, updateAlertStatus } from 'redux/thunks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import { Box, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import AlertListSkeleton from 'components/Alerts/AlertsList/AlertSkeletonItem/AlertSkeletonItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import { AsyncThunk } from '@reduxjs/toolkit';
 import * as S from './AlertsListStyles';
 import AlertItem from './AlertItem/AlertItem';
 
 interface AlertsListProps {
-  alerts: Alert[];
-  pageInfo: CurrentPageInfo;
-  alertListFetching: boolean;
-  fetchAlerts: (
-    params:
-      | AlertApiGetAllAlertsRequest
-      | AlertApiGetAssociatedUserAlertsRequest
-      | AlertApiGetDependentEntitiesAlertsRequest
-  ) => void;
-  updateAlertStatus: (
-    params: AlertApiChangeAlertStatusRequest
-  ) => Promise<AlertStatus>;
+  fetchAlerts: AsyncThunk<
+    AlertsResponse,
+    | AlertApiGetAllAlertsRequest
+    | AlertApiGetAssociatedUserAlertsRequest
+    | AlertApiGetDependentEntitiesAlertsRequest,
+    Record<string, unknown>
+  >;
 }
 
-const AlertsList: React.FC<AlertsListProps> = ({
-  alerts,
-  pageInfo,
-  alertListFetching,
-  fetchAlerts,
-  updateAlertStatus,
-}) => {
+const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
+  const dispatch = useAppDispatch();
+  const pageInfo = useAppSelector(getAlertListPageInfo);
+  const alerts = useAppSelector(getAlertList);
+  const { isLoading: isAlertListFetching } = useAppSelector(
+    getAlertListFetchingStatus
+  );
+  const { isLoading: isMyAlertListFetching } = useAppSelector(
+    getMyAlertListFetchingStatus
+  );
+  const { isLoading: isMyDependentsAlertListFetching } = useAppSelector(
+    getMyDependentsAlertListFetchingStatus
+  );
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
-    fetchAlerts({ page: pageInfo.page + 1, size: 30 });
+    dispatch(fetchAlerts({ page: pageInfo.page + 1, size: 30 }));
   };
 
   React.useEffect(() => {
-    fetchAlerts({
-      page: 1,
-      size: 30,
-    });
+    dispatch(
+      fetchAlerts({
+        page: 1,
+        size: 30,
+      })
+    );
   }, [fetchAlerts]);
 
   const alertStatusHandler = React.useCallback(
     (alertId: Alert['id'], alertStatus: AlertStatus) => () => {
-      updateAlertStatus({
-        alertId,
-        alertStatusFormData: {
-          status:
-            alertStatus === AlertStatus.OPEN
-              ? AlertStatus.RESOLVED
-              : AlertStatus.OPEN,
-        },
-      });
+      dispatch(
+        updateAlertStatus({
+          alertId,
+          alertStatusFormData: {
+            status:
+              alertStatus === AlertStatus.OPEN
+                ? AlertStatus.RESOLVED
+                : AlertStatus.OPEN,
+          },
+        })
+      );
     },
     [updateAlertStatus]
   );
@@ -68,7 +81,11 @@ const AlertsList: React.FC<AlertsListProps> = ({
   return (
     <Box sx={{ mt: 2 }}>
       <S.AlertsTableHeader container>
-        <S.ColContainer item $colType="name">
+        <S.ColContainer
+          item
+          $colType="name"
+          onClick={() => fetchNextPage()}
+        >
           <Typography variant="caption">Name</Typography>
         </S.ColContainer>
         <S.ColContainer item $colType="description">
@@ -94,33 +111,43 @@ const AlertsList: React.FC<AlertsListProps> = ({
         </S.ColContainer>
         <S.ColContainer item $colType="actionBtn" />
       </S.AlertsTableHeader>
-      <InfiniteScroll
-        dataLength={alerts?.length}
-        next={fetchNextPage}
-        hasMore={!!pageInfo?.hasNext}
-        loader={
-          alertListFetching && (
-            <SkeletonWrapper
-              renderContent={({ randomSkeletonPercentWidth, key }) => (
-                <AlertListSkeleton
-                  width={randomSkeletonPercentWidth()}
-                  key={key}
-                />
+      <Grid container>
+        <InfiniteScroll
+          dataLength={alerts?.length}
+          next={fetchNextPage}
+          hasMore={!!pageInfo?.hasNext}
+          loader={
+            (isAlertListFetching ||
+              isMyAlertListFetching ||
+              isMyDependentsAlertListFetching) && (
+              <SkeletonWrapper
+                renderContent={({ randomSkeletonPercentWidth, key }) => (
+                  <AlertListSkeleton
+                    width={randomSkeletonPercentWidth()}
+                    key={key}
+                  />
+                )}
+              />
+            )
+          }
+          scrollThreshold="200px"
+        >
+          {alerts?.map(alert => (
+            <AlertItem
+              alertStatusHandler={alertStatusHandler(
+                alert.id,
+                alert.status
               )}
+              key={alert.id}
+              alert={alert}
             />
-          )
-        }
-        scrollThreshold="200px"
-      >
-        {alerts?.map(alert => (
-          <AlertItem
-            alertStatusHandler={alertStatusHandler(alert.id, alert.status)}
-            key={alert.id}
-            alert={alert}
-          />
-        ))}
-      </InfiniteScroll>
-      {!alertListFetching && !alerts?.length ? (
+          ))}
+        </InfiniteScroll>
+      </Grid>
+      {(!isAlertListFetching ||
+        !isMyAlertListFetching ||
+        !isMyDependentsAlertListFetching) &&
+      !alerts?.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Box>

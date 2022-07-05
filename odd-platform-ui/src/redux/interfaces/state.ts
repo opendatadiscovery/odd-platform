@@ -2,7 +2,7 @@ import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
   Activity,
-  ActivityEventType,
+  ActivityCountInfo,
   Alert,
   AlertTotals,
   AppInfo,
@@ -36,7 +36,6 @@ import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest
 import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
 import {
-  ActivitiesTotals,
   ActivityPageInfo,
   ActivityQueryParams,
   CurrentPageInfo,
@@ -54,9 +53,7 @@ export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface CollectorsState {
-  byId: { [collectorId: string]: Collector };
-  allIds: Collector['id'][];
+export interface CollectorsState extends EntityState<Collector> {
   pageInfo?: CurrentPageInfo;
 }
 
@@ -185,16 +182,9 @@ export interface SearchState {
   facetState: SearchFacetsByName;
 }
 
-export interface AlertsState {
+export interface AlertsState extends EntityState<Alert> {
   totals: AlertTotals;
   pageInfo: CurrentPageInfo;
-  byId: {
-    [alertId: string]: Alert;
-  };
-  allIds: Alert['id'][];
-  alertIdsByDataEntityId: {
-    [dataEntityId: string]: Alert['id'][];
-  };
 }
 
 export interface ProfileState {
@@ -232,10 +222,9 @@ export interface TermLinkedListState {
 }
 
 export interface ActivitiesState {
-  totals: ActivitiesTotals;
+  counts: ActivityCountInfo;
   activities: Activity[];
   pageInfo: ActivityPageInfo;
-  activityEventTypes: ActivityEventType[];
   queryParams: ActivityQueryParams;
 }
 

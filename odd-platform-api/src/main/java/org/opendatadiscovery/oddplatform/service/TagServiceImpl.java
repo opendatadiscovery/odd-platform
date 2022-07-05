@@ -59,8 +59,9 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Mono<TagsResponse> listMostPopular(final String query, final int page, final int size) {
-        return reactiveTagRepository.listMostPopular(query, page, size)
+    public Mono<TagsResponse> listMostPopular(final String query, final List<Long> ids, final int page,
+                                              final int size) {
+        return reactiveTagRepository.listMostPopular(query, ids, page, size)
             .map(tagMapper::mapToTagsResponse);
     }
 
@@ -97,7 +98,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Flux<TagToDataEntityPojo> deleteRelationsWithDataEntityExcept(final long dataEntityId,
-                                                                   final Set<String> tagsToKeep) {
+                                                                         final Set<String> tagsToKeep) {
         return reactiveTagRepository.listByDataEntityId(dataEntityId)
             .collectList()
             .flatMapMany(currentTags -> {

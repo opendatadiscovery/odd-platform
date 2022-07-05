@@ -11,7 +11,6 @@ import {
   getPopularEntities,
 } from 'redux/selectors/dataentity.selectors';
 import { fetchIdentity } from 'redux/thunks/profile.thunks';
-import { fetchAlertsTotals } from 'redux/thunks/alerts.thunks';
 import {
   getIdentity,
   getIdentityFetched,
@@ -41,7 +40,6 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   fetchIdentity,
-  fetchAlertsTotals,
   fetchTagsList,
 };
 

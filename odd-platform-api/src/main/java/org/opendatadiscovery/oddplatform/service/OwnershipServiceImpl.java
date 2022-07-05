@@ -11,10 +11,17 @@ import org.opendatadiscovery.oddplatform.mapper.OwnershipMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
 
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_CREATED;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_DELETED;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_UPDATED;
+import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.OwnershipCreate.DATA_ENTITY_ID;
 import static reactor.function.TupleUtils.function;
 
 @Service
@@ -27,8 +34,9 @@ public class OwnershipServiceImpl implements OwnershipService {
     private final OwnershipMapper ownershipMapper;
 
     @Override
+    @ActivityLog(OWNERSHIP_CREATED)
     @ReactiveTransactional
-    public Mono<Ownership> create(final long dataEntityId,
+    public Mono<Ownership> create(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
                                   final OwnershipFormData formData) {
         return Mono.zip(ownerService.getOrCreate(formData.getOwnerName()),
                 roleService.getOrCreate(formData.getRoleName()))
@@ -46,15 +54,19 @@ public class OwnershipServiceImpl implements OwnershipService {
     }
 
     @Override
-    public Mono<Void> delete(final long ownershipId) {
+    @ActivityLog(OWNERSHIP_DELETED)
+    public Mono<Void> delete(
+        @ActivityParameter(ActivityParameterNames.OwnershipDelete.OWNERSHIP_ID) final long ownershipId) {
         return ownershipRepository.delete(ownershipId)
             .then();
     }
 
     @Override
+    @ActivityLog(OWNERSHIP_UPDATED)
     @ReactiveTransactional
-    public Mono<Ownership> update(final long ownershipId,
-                                  final OwnershipUpdateFormData formData) {
+    public Mono<Ownership> update(
+        @ActivityParameter(ActivityParameterNames.OwnershipUpdate.OWNERSHIP_ID) final long ownershipId,
+        final OwnershipUpdateFormData formData) {
         return ownershipRepository.get(ownershipId)
             .switchIfEmpty(Mono.error(new NotFoundException("Ownership with id = [%s] was not found", ownershipId)))
             .then(roleService.getOrCreate(formData.getRoleName()))

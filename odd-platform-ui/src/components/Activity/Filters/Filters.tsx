@@ -1,19 +1,12 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
-import {
-  fetchActivityEventTypes,
-  fetchDataSourcesList,
-  fetchNamespaceList,
-} from 'redux/thunks';
+import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import {
-  getActivityEventTypes,
-  getDataSourcesList,
-  getNamespaceList,
-} from 'redux/selectors';
+import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
 import MultipleFilter from 'components/Activity/Filters/FilterItem/MultipleFilter/MultipleFilter';
 import { clearActivityFilters } from 'redux/reducers/activity.slice';
+import { ActivityEventType } from 'generated-sources';
 import * as S from './FiltersStyles';
 import SingleFilter from './FilterItem/SingleFilter/SingleFilter';
 
@@ -23,12 +16,10 @@ const Filters: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataSourcesList({ page: 1, size: 100 }));
     dispatch(fetchNamespaceList({ page: 1, size: 100 }));
-    dispatch(fetchActivityEventTypes());
   }, []);
 
   const datasources = useAppSelector(getDataSourcesList);
   const namespaces = useAppSelector(getNamespaceList);
-  const eventTypes = useAppSelector(getActivityEventTypes);
 
   return (
     <S.Container>
@@ -61,7 +52,7 @@ const Filters: React.FC = () => {
           key="at"
           filterName="eventType"
           name="Event type"
-          filterOptions={eventTypes}
+          filterOptions={Object.values(ActivityEventType)}
         />
         <MultipleFilter key="tg" filterName="tagIds" name="Tag" />
         <MultipleFilter key="ow" filterName="ownerIds" name="User" />

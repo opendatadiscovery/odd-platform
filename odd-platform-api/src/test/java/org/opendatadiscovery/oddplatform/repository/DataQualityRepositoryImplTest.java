@@ -170,7 +170,7 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
             .flatMap(dqTest ->
                 Stream.generate(
                     () -> createTaskRun(dqTest.getOddrn(), statusEnumRandomizer.getRandomValue())).limit(5))
-            .collect(groupingBy(DataEntityTaskRunPojo::getDataEntityOddrn));
+            .collect(groupingBy(DataEntityTaskRunPojo::getTaskOddrn));
 
         dataEntityTaskRunRepository.persist(taskRuns.values().stream().flatMap(List::stream).toList());
 
@@ -200,7 +200,7 @@ class DataQualityRepositoryImplTest extends BaseIntegrationTest {
                                                 final IngestionTaskRunStatus status) {
         return new DataEntityTaskRunPojo()
             .setOddrn(UUID.randomUUID().toString())
-            .setDataEntityOddrn(dataQualityTestOddrn)
+            .setTaskOddrn(dataQualityTestOddrn)
             .setStartTime(LocalDateTime.now())
             .setEndTime(IngestionTaskRunStatus.RUNNING.equals(status) ? null : LocalDateTime.now())
             .setStatus(status.toString());

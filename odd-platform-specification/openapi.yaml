@@ -91,6 +91,7 @@ paths:
         - $ref: './components.yaml/#/components/parameters/SearchParam'
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
+        - $ref: './components.yaml/#/components/parameters/IdsParam'
       responses:
         '200':
           description: OK
@@ -288,6 +289,7 @@ paths:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - $ref: './components.yaml/#/components/parameters/IdsParam'
       responses:
         '200':
           description: OK
@@ -958,8 +960,8 @@ paths:
       description: Delete term from current data entity terms list
       operationId: deleteTermFromDataEntity
       parameters:
-          - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
-          - $ref: './components.yaml/#/components/parameters/TermIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/TermIdParam'
       responses:
         '204':
           $ref: './components.yaml/#/components/responses/Deleted'
@@ -1226,6 +1228,59 @@ paths:
       tags:
         - dataEntityRun
 
+  /api/dataentities/{data_entity_id}/activity:
+    get:
+      summary: Get activity for data entity
+      description: Get activity list for particular data entity
+      operationId: getDataEntityActivity
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - name: begin_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: user_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: event_type
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/ActivityEventType'
+        - name: last_event_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: last_event_date_time
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - $ref: './components.yaml/#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/Activity'
+      tags:
+        - dataEntity
+
   /api/datasets/{data_entity_id}/structure:
     get:
       summary: Get latest version's DataSet structure information
@@ -1266,6 +1321,23 @@ paths:
       tags:
         - dataSet
 
+  /api/datasets/{data_entity_id}/sla:
+    get:
+      summary: Get Dataset's SLA
+      description: Gets Dataset's SLA
+      operationId: getSLA
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            text/html:
+              schema:
+                type: string
+      tags:
+        - dataQuality
+
   /api/datasets/{data_entity_id}/test_report:
     get:
       summary: Get Dataset's test report
@@ -1300,6 +1372,30 @@ paths:
       tags:
         - dataQuality
 
+  /api/datasets/{data_entity_id}/dataqatests/{dataqa_test_id}/severity:
+    put:
+      summary: Set DataQA test severity
+      description: Sets DataQA test severity
+      operationId: setDataQATestSeverity
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+        - $ref: './components.yaml/#/components/parameters/DataQATestIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yaml/#/components/schemas/DataQualityTestSeverityForm'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntity'
+      tags:
+        - dataQuality
+
   /api/dataentitygroups/{data_entity_group_id}/children:
     get:
       summary: Get DataEntityGroup children
@@ -1331,12 +1427,12 @@ paths:
             schema:
               $ref: './components.yaml/#/components/schemas/DataEntityGroupFormData'
       responses:
-          '200':
-            description: OK
-            content:
-              application/json:
-                schema:
-                  $ref: './components.yaml/#/components/schemas/DataEntityRef'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityRef'
       tags:
         - dataEntity
 
@@ -1979,15 +2075,15 @@ paths:
           in: query
           schema:
             $ref: './components.yaml/#/components/schemas/ActivityType'
-        - name: data_entity_id
-          in: query
-          schema:
-            type: integer
-            format: int64
         - name: event_type
           in: query
           schema:
             $ref: './components.yaml/#/components/schemas/ActivityEventType'
+        - name: last_event_id
+          in: query
+          schema:
+            type: integer
+            format: int64
         - name: last_event_date_time
           in: query
           schema:
@@ -2000,21 +2096,71 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/ActivityList'
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/Activity'
       tags:
         - activity
 
-  /api/activity/event_types:
+  /api/activity/counts:
     get:
-      summary: Get activity event types
-      description: Returns list of activity event types
-      operationId: getActivityEventTypes
+      summary: Get activity counts
+      description: Returns activity counts for dedicated period
+      operationId: getActivityCounts
+      parameters:
+        - name: begin_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: datasource_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: namespace_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: tag_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: owner_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: user_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: event_type
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/ActivityEventType'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/ActivityEventTypeList'
+                $ref: './components.yaml/#/components/schemas/ActivityCountInfo'
       tags:
         - activity

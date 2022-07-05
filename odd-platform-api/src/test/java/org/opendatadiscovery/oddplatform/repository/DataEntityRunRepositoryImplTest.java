@@ -94,7 +94,7 @@ class DataEntityRunRepositoryImplTest extends BaseIntegrationTest {
                                                 final IngestionTaskRunStatus status) {
         return new DataEntityTaskRunPojo()
             .setOddrn(UUID.randomUUID().toString())
-            .setDataEntityOddrn(deOddrn)
+            .setTaskOddrn(deOddrn)
             .setStartTime(LocalDateTime.now())
             .setEndTime(IngestionTaskRunStatus.RUNNING.equals(status) ? null : LocalDateTime.now())
             .setStatus(status.toString());

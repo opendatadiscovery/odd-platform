@@ -17,4 +17,6 @@ public interface ReactiveOwnershipRepository {
     Mono<Boolean> existsByOwner(final long ownerId);
 
     Flux<OwnershipPojo> deleteByDataEntityId(final long dataEntityId);
+
+    Flux<OwnershipDto> getOwnershipsByDataEntityId(final long dataEntityId);
 }

@@ -1,11 +1,14 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  Collector,
-  CollectorApiGetCollectorsListRequest,
-} from 'generated-sources';
+  getCollectorsListPage,
+  getCollectorsList,
+  getCollectorDeletingStatuses,
+  getCollectorsListFetchingStatuses,
+} from 'redux/selectors';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useDebouncedCallback } from 'use-debounce';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import { fetchCollectorsList } from 'redux/thunks';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
@@ -15,28 +18,21 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import CollectorFormDialogContainer from 'components/Management/CollectorsList/CollectorForm/CollectorFormContainer';
+import CollectorFormDialog from 'components/Management/CollectorsList/CollectorForm/CollectorForm';
 import CollectorSkeletonItem from './CollectorSkeletonItem/CollectorSkeletonItem';
-import CollectorItemContainer from './CollectorItem/CollectorItemContainer';
+import CollectorItem from './CollectorItem/CollectorItem';
 import { CollectorCaption } from './CollectorsListStyles';
 
-interface CollectorsListProps {
-  collectorsList: Collector[];
-  fetchCollectorsList: (
-    params: CollectorApiGetCollectorsListRequest
-  ) => void;
-  isDeleting: boolean;
-  pageInfo?: CurrentPageInfo;
-  isCollectorsListFetching: boolean;
-}
-
-const CollectorsListView: React.FC<CollectorsListProps> = ({
-  collectorsList,
-  fetchCollectorsList,
-  isDeleting,
-  pageInfo,
-  isCollectorsListFetching,
-}) => {
+const CollectorsListView: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const pageInfo = useAppSelector(getCollectorsListPage);
+  const collectorsList = useAppSelector(getCollectorsList);
+  const { isLoading: isCollectorDeleting } = useAppSelector(
+    getCollectorDeletingStatuses
+  );
+  const { isLoading: isCollectorsListFetching } = useAppSelector(
+    getCollectorsListFetchingStatuses
+  );
   const pageSize = 30;
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalCollectors, setTotalCollectors] = React.useState<
@@ -45,9 +41,9 @@ const CollectorsListView: React.FC<CollectorsListProps> = ({
 
   React.useEffect(() => {
     if (!searchText) {
-      fetchCollectorsList({ page: 1, size: pageSize });
+      dispatch(fetchCollectorsList({ page: 1, size: pageSize }));
     }
-  }, [isDeleting, searchText]);
+  }, [isCollectorDeleting, searchText]);
 
   React.useEffect(() => {
     if (!searchText) setTotalCollectors(pageInfo?.total);
@@ -55,7 +51,9 @@ const CollectorsListView: React.FC<CollectorsListProps> = ({
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      fetchCollectorsList({ page: 1, size: pageSize, query: searchText });
+      dispatch(
+        fetchCollectorsList({ page: 1, size: pageSize, query: searchText })
+      );
     }, 500),
     [searchText]
   );
@@ -75,11 +73,13 @@ const CollectorsListView: React.FC<CollectorsListProps> = ({
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
-    fetchCollectorsList({
-      page: pageInfo.page + 1,
-      size: pageSize,
-      query: searchText,
-    });
+    dispatch(
+      fetchCollectorsList({
+        page: pageInfo.page + 1,
+        size: pageSize,
+        query: searchText,
+      })
+    );
   };
 
   return (
@@ -112,7 +112,7 @@ const CollectorsListView: React.FC<CollectorsListProps> = ({
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <CollectorFormDialogContainer
+        <CollectorFormDialog
           btnCreateEl={
             <AppButton
               size="medium"
@@ -160,7 +160,7 @@ const CollectorsListView: React.FC<CollectorsListProps> = ({
             >
               {collectorsList.map(collector => (
                 <Grid key={collector.id} sx={{ mb: 1 }}>
-                  <CollectorItemContainer
+                  <CollectorItem
                     key={collector.id}
                     collector={collector}
                   />
