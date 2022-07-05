@@ -54,6 +54,20 @@ export const activitiesSlice = createSlice({
     ) => {
       const { queryName, queryData } = payload;
 
+      if (
+        queryData !== null &&
+        (queryName === 'beginDate' || queryName === 'endDate')
+      ) {
+        const date = new Date(queryData);
+        return {
+          ...state,
+          queryParams: {
+            ...state.queryParams,
+            [queryName]: date,
+          },
+        };
+      }
+
       return {
         ...state,
         queryParams: {

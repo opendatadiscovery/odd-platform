@@ -18,7 +18,6 @@ import {
 } from 'redux/selectors';
 import { fetchActivityList } from 'redux/thunks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
@@ -93,18 +92,8 @@ const ActivityResults: React.FC = () => {
         dispatch
       )
     );
-    console.log('entries', Object.entries(parsedActivityQuery));
   }, []);
-  console.log('parsedActivityQuery', parsedActivityQuery);
-  // console.log(
-  //   'parsed',
-  //   queryString.parse(queryStringTest, {
-  //     parseNumbers: true,
-  //     arrayFormat: 'bracket-separator',
-  //     arrayFormatSeparator: '|',
-  //   })
-  // );
-  // console.log('history', history.push());
+
   const [tabs, setTabs] = React.useState<AppTabItem<ActivityType>[]>([]);
 
   React.useEffect(() => {
@@ -156,14 +145,15 @@ const ActivityResults: React.FC = () => {
     // );
   };
 
-  const fetchNextPage = () => {
-    if (!pageInfo.hasNext) return;
-    dispatch(fetchActivityList(queryParams));
-  };
+  // const fetchNextPage = () => {
+  //   if (!pageInfo.hasNext) return;
+  //   dispatch(fetchActivityList(queryParams));
+  // };
 
   React.useEffect(() => {
-    fetchNextPage();
-  }, [queryParams, pageInfo]);
+    console.log('queryParams', queryParams);
+    dispatch(fetchActivityList(queryParams));
+  }, [queryParams, fetchActivityList]);
 
   const activityItemSkeleton = React.useMemo(
     () => (
@@ -197,24 +187,33 @@ const ActivityResults: React.FC = () => {
         activityItemSkeleton
       ) : (
         <S.ListContainer id="results-list">
-          <InfiniteScroll
-            dataLength={activityResults.length}
-            next={fetchNextPage}
-            hasMore={pageInfo.hasNext}
-            loader={isActivityListFetching && activityItemSkeleton}
-            scrollThreshold="200px"
-            scrollableTarget="results-list"
-          >
-            {activityResults.map(activityItem => (
-              <div>lul</div>
-              // <ResultItem
-              //   key={searchResult.id}
-              //   searchClass={searchClass}
-              //   searchResult={searchResult}
-              //   totals={totals}
-              // />
-            ))}
-          </InfiniteScroll>
+          {activityResults.map(activityItem => (
+            <div>lul</div>
+            // <ResultItem
+            //   key={searchResult.id}
+            //   searchClass={searchClass}
+            //   searchResult={searchResult}
+            //   totals={totals}
+            // />
+          ))}
+          {/* <InfiniteScroll */}
+          {/*  dataLength={activityResults.length} */}
+          {/*  next={fetchNextPage} */}
+          {/*  hasMore={pageInfo.hasNext} */}
+          {/*  loader={isActivityListFetching && activityItemSkeleton} */}
+          {/*  scrollThreshold="200px" */}
+          {/*  scrollableTarget="results-list" */}
+          {/* > */}
+          {/*  {activityResults.map(activityItem => ( */}
+          {/*    <div>lul</div> */}
+          {/*    // <ResultItem */}
+          {/*    //   key={searchResult.id} */}
+          {/*    //   searchClass={searchClass} */}
+          {/*    //   searchResult={searchResult} */}
+          {/*    //   totals={totals} */}
+          {/*    // /> */}
+          {/*  ))} */}
+          {/* </InfiniteScroll> */}
           {!isActivityListFetching && !pageInfo.total ? (
             <EmptyContentPlaceholder text="No matches found" />
           ) : null}

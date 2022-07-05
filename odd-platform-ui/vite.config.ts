@@ -33,6 +33,7 @@ export default defineConfig(({ mode }) => {
         plugins: [
           // eslint(),
           checker({
+            overlay: { initialIsOpen: false },
             typescript: true,
             eslint: { lintCommand: 'eslint --ext .tsx,.ts src/' },
           }),

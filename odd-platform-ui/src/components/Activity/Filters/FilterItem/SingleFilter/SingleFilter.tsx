@@ -15,6 +15,7 @@ import {
 import { stringFormatted } from 'lib/helpers';
 import {
   ActivitySingleFilterOption,
+  ActivitySingleQueryData,
   ActivitySingleQueryName,
 } from 'redux/interfaces';
 import { getActivitiesQueryParamsByQueryName } from 'redux/selectors';
@@ -34,7 +35,7 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
 
   const selectedOption = useAppSelector(state =>
     getActivitiesQueryParamsByQueryName(state, filterName)
-  );
+  ) as ActivitySingleQueryData;
 
   const handleFilterSelect = (
     option: ActivitySingleFilterOption | string
@@ -96,22 +97,38 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
     [filterOptions]
   );
 
-  const [selectValue, setSelectValue] = React.useState<string>('All');
+  const setDefaultValue = () => {
+    if (filterName === 'datasourceId' || filterName === 'namespaceId') {
+      const newFilterOptions = filterOptions as Array<
+        DataSource | Namespace
+      >;
+      return (
+        newFilterOptions.find(el => el.id === selectedOption)?.name ||
+        'All'
+      );
+    }
 
-  React.useEffect(() => {
-    if (!selectedOption) setSelectValue('All');
-  }, [selectedOption, setSelectValue]);
+    if (filterName === 'eventType') {
+      const newFilterOptions = filterOptions as Array<ActivityEventType>;
+      const option = newFilterOptions.find(el => el === selectedOption);
+
+      return option || 'All';
+    }
+
+    return 'All';
+  };
 
   return filterOptions.length ? (
     <Grid container>
       <Grid container item xs={12}>
         <AppTextField
+          defaultValue={setDefaultValue()}
           sx={{ mt: 2 }}
           label={name}
           select
           id={`filter-${filterName}`}
-          value={selectValue}
-          onChange={e => setSelectValue(e.target.value)}
+          value={setDefaultValue()}
+          onChange={e => console.log(e.target.value)}
         >
           <AppMenuItem
             value="All"

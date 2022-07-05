@@ -4,10 +4,10 @@ import {
   ActivityMultipleFilterOption,
   ActivityMultipleQueryName,
 } from 'redux/interfaces';
-import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { getActivitiesQueryParamsByQueryName } from 'redux/selectors';
 import { Owner, Tag } from 'generated-sources';
+import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
 import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFilterAutocomplete';
 
@@ -37,24 +37,28 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({
   );
 
   React.useEffect(() => {
-    (filterName === 'tagIds'
-      ? dispatch(
-          fetchTagsList({
-            page: 1,
-            size: 100,
-            ids: selectedOptionIds,
-          })
-        )
-      : dispatch(
-          fetchOwnersList({
-            page: 1,
-            size: 100,
-            ids: selectedOptionIds,
-          })
-        )
-    )
-      .unwrap()
-      .then(({ items }) => setSelectedOptions(items));
+    if (selectedOptionIds?.length > 0) {
+      (filterName === 'tagIds'
+        ? dispatch(
+            fetchTagsList({
+              page: 1,
+              size: 100,
+              ids: selectedOptionIds,
+            })
+          )
+        : dispatch(
+            fetchOwnersList({
+              page: 1,
+              size: 100,
+              ids: selectedOptionIds,
+            })
+          )
+      )
+        .unwrap()
+        .then(({ items }) => setSelectedOptions(items));
+    } else {
+      setSelectedOptions([]);
+    }
   }, [filterName, selectedOptionIds]);
 
   return (
