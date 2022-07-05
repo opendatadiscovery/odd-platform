@@ -38,6 +38,7 @@ import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.LineageService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -56,17 +57,20 @@ public class DataEntityController
     private final AlertService alertService;
     private final TermService termService;
     private final LineageService lineageService;
+    private final ActivityService activityService;
 
     public DataEntityController(final DataEntityService entityService,
                                 final OwnershipService ownershipService,
                                 final AlertService alertService,
                                 final TermService termService,
-                                final LineageService lineageService) {
+                                final LineageService lineageService,
+                                final ActivityService activityService) {
         super(entityService);
         this.ownershipService = ownershipService;
         this.alertService = alertService;
         this.termService = termService;
         this.lineageService = lineageService;
+        this.activityService = activityService;
     }
 
     @Override
@@ -345,7 +349,9 @@ public class DataEntityController
                                                                       final Long lastEventId,
                                                                       final OffsetDateTime lastEventDateTime,
                                                                       final ServerWebExchange exchange) {
-        return DataEntityApi.super.getDataEntityActivity(dataEntityId, beginDate, endDate, size, userIds, eventType,
-            lastEventId, lastEventDateTime, exchange);
+        return Mono.just(
+            activityService.getDataEntityActivityList(beginDate, endDate, size, dataEntityId, userIds, eventType,
+                lastEventId, lastEventDateTime)
+        ).map(ResponseEntity::ok);
     }
 }
