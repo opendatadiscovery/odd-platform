@@ -1801,15 +1801,9 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
 
-    ActivityList:
+    ActivityCountInfo:
       type: object
       properties:
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/Activity'
-        page_info:
-          $ref: '#/components/schemas/PageInfo'
         total_count:
           type: integer
           format: int64
@@ -1823,8 +1817,6 @@ components:
           type: integer
           format: int64
       required:
-        - items
-        - page_info
         - total_count
         - my_objects_count
         - downstream_count

@@ -2096,9 +2096,72 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/ActivityList'
+                type: array
+                items:
+                  $ref: './components.yaml/#/components/schemas/Activity'
       tags:
         - activity
+
+  /api/activity/counts:
+    get:
+      summary: Get activity counts
+      description: Returns activity counts for dedicated period
+      operationId: getActivityCounts
+      parameters:
+        - name: begin_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: datasource_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: namespace_id
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: tag_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: owner_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: user_ids
+          in: query
+          schema:
+            type: array
+            items:
+              type: integer
+              format: int64
+        - name: event_type
+          in: query
+          schema:
+            $ref: './components.yaml/#/components/schemas/ActivityEventType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/ActivityCountInfo'
 
   /api/activity/event_types:
     get:
