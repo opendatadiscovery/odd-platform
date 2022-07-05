@@ -11,6 +11,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
+import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
@@ -58,6 +59,68 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                final ActivityEventTypeDto eventType,
                                                final Long lastEventId,
                                                final OffsetDateTime lastEventDateTime) {
+        final var baseQuery = buildBaseQuery(datasourceId, namespaceId, tagIds, ownerIds, userIds);
+        final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
+            ownerIds, userIds, eventType);
+        return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
+    }
+
+    @Override
+    public Flux<ActivityDto> findMyActivities(final LocalDate beginDate,
+                                              final LocalDate endDate,
+                                              final Integer size,
+                                              final Long datasourceId,
+                                              final Long namespaceId,
+                                              final List<Long> tagIds,
+                                              final List<Long> userIds,
+                                              final ActivityEventTypeDto eventType,
+                                              final Long currentOwnerId,
+                                              final Long lastEventId,
+                                              final OffsetDateTime lastEventDateTime) {
+        final var baseQuery = buildBaseQuery(datasourceId, namespaceId, tagIds, List.of(currentOwnerId), userIds);
+        final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
+            List.of(currentOwnerId), userIds, eventType);
+        return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
+    }
+
+    @Override
+    public Flux<ActivityDto> findDependentActivities(final LocalDate beginDate,
+                                                     final LocalDate endDate,
+                                                     final Integer size,
+                                                     final Long datasourceId,
+                                                     final Long namespaceId,
+                                                     final List<Long> tagIds,
+                                                     final List<Long> userIds,
+                                                     final ActivityEventTypeDto eventType,
+                                                     final List<String> oddrns,
+                                                     final Long lastEventId,
+                                                     final OffsetDateTime lastEventDateTime) {
+        final var baseQuery = buildBaseQuery(datasourceId, namespaceId, tagIds, List.of(), userIds);
+        final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
+            List.of(), userIds, eventType);
+        conditions.add(DATA_ENTITY.ODDRN.in(oddrns));
+        return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
+    }
+
+    @Override
+    public Flux<ActivityDto> findDataEntityActivities(final LocalDate beginDate,
+                                                      final LocalDate endDate,
+                                                      final Integer size,
+                                                      final Long dataEntityId,
+                                                      final List<Long> userIds,
+                                                      final ActivityEventTypeDto eventType,
+                                                      final Long lastEventId,
+                                                      final OffsetDateTime lastEventDateTime) {
+        final var baseQuery = buildBaseQuery(null, null, List.of(), List.of(), userIds);
+        final List<Condition> conditions = getCommonConditions(beginDate, endDate, null, null, List.of(),
+            List.of(), userIds, eventType);
+        conditions.add(DATA_ENTITY.ID.eq(dataEntityId));
+        return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
+    }
+
+    private SelectOnConditionStep<Record> buildBaseQuery(final Long datasourceId, final Long namespaceId,
+                                                         final List<Long> tagIds, final List<Long> ownerIds,
+                                                         final List<Long> userIds) {
         final List<Field<?>> selectFields = Stream
             .of(
                 ACTIVITY.fields(),
@@ -86,63 +149,20 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         if (CollectionUtils.isNotEmpty(userIds)) {
             query.leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY));
         }
-        final List<Condition> conditions = getConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
-            ownerIds, userIds, eventType);
-        final var whereStep = query.where(conditions)
-            .orderBy(ACTIVITY.CREATED_AT.desc(), ACTIVITY.ID.desc());
-        if (lastEventDateTime != null && lastEventId != null) {
-            whereStep.seek(lastEventDateTime.toLocalDateTime(), lastEventId);
-        }
-        whereStep.limit(size);
-        return jooqReactiveOperations.flux(whereStep)
-            .map(this::mapDto);
+        return query;
     }
 
-    @Override
-    public Flux<ActivityDto> findMyActivities(final LocalDate beginDate,
-                                              final LocalDate endDate,
-                                              final Integer size,
-                                              final Long datasourceId,
-                                              final Long namespaceId,
-                                              final List<Long> tagIds,
-                                              final List<Long> ownerIds,
-                                              final List<Long> userIds,
-                                              final ActivityEventTypeDto eventType,
-                                              final Long currentOwnerId,
-                                              final Long lastEventId,
-                                              final OffsetDateTime lastEventDateTime) {
-        return null;
-    }
-
-    @Override
-    public Flux<ActivityDto> findUpstreamActivities() {
-        return null;
-    }
-
-    @Override
-    public Flux<ActivityDto> findDownstreamActivities() {
-        return null;
-    }
-
-    @Override
-    public Flux<ActivityDto> findDataEntityActivities() {
-        return null;
-    }
-
-    private List<Condition> getConditions(final LocalDate beginDate,
-                                          final LocalDate endDate,
-                                          final Long datasourceId,
-                                          final Long namespaceId,
-                                          final List<Long> tagIds,
-                                          final List<Long> ownerIds,
-                                          final List<Long> userIds,
-                                          final ActivityEventTypeDto eventType) {
+    private List<Condition> getCommonConditions(final LocalDate beginDate,
+                                                final LocalDate endDate,
+                                                final Long datasourceId,
+                                                final Long namespaceId,
+                                                final List<Long> tagIds,
+                                                final List<Long> ownerIds,
+                                                final List<Long> userIds,
+                                                final ActivityEventTypeDto eventType) {
         final List<Condition> conditions = new ArrayList<>();
         conditions.add(ACTIVITY.CREATED_AT.greaterOrEqual(beginDate.atStartOfDay()));
         conditions.add(ACTIVITY.CREATED_AT.lessThan(endDate.atStartOfDay()));
-//        if (dataEntityId != null) {
-//            conditions.add(ACTIVITY.DATA_ENTITY_ID.eq(dataEntityId));
-//        }
         if (eventType != null) {
             conditions.add(ACTIVITY.EVENT_TYPE.eq(eventType.name()));
         }
@@ -162,6 +182,21 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
             conditions.add(USER_OWNER_MAPPING.OWNER_ID.in(userIds));
         }
         return conditions;
+    }
+
+    private Flux<ActivityDto> findActivities(final SelectOnConditionStep<Record> baseQuery,
+                                             final List<Condition> conditions,
+                                             final Long lastEventId,
+                                             final OffsetDateTime lastEventDateTime,
+                                             final Integer size) {
+        final var whereStep = baseQuery.where(conditions)
+            .orderBy(ACTIVITY.CREATED_AT.desc(), ACTIVITY.ID.desc());
+        if (lastEventDateTime != null && lastEventId != null) {
+            whereStep.seek(lastEventDateTime.toLocalDateTime(), lastEventId);
+        }
+        whereStep.limit(size);
+        return jooqReactiveOperations.flux(whereStep)
+            .map(this::mapDto);
     }
 
     private ActivityDto mapDto(final Record r) {

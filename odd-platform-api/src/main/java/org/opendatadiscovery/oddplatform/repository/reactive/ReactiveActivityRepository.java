@@ -30,16 +30,30 @@ public interface ReactiveActivityRepository {
                                        final Long datasourceId,
                                        final Long namespaceId,
                                        final List<Long> tagIds,
-                                       final List<Long> ownerIds,
                                        final List<Long> userIds,
                                        final ActivityEventTypeDto eventType,
                                        final Long currentOwnerId,
                                        final Long lastEventId,
                                        final OffsetDateTime lastEventDateTime);
 
-    Flux<ActivityDto> findUpstreamActivities();
+    Flux<ActivityDto> findDependentActivities(final LocalDate beginDate,
+                                              final LocalDate endDate,
+                                              final Integer size,
+                                              final Long datasourceId,
+                                              final Long namespaceId,
+                                              final List<Long> tagIds,
+                                              final List<Long> userIds,
+                                              final ActivityEventTypeDto eventType,
+                                              final List<String> oddrns,
+                                              final Long lastEventId,
+                                              final OffsetDateTime lastEventDateTime);
 
-    Flux<ActivityDto> findDownstreamActivities();
-
-    Flux<ActivityDto> findDataEntityActivities();
+    Flux<ActivityDto> findDataEntityActivities(final LocalDate beginDate,
+                                               final LocalDate endDate,
+                                               final Integer size,
+                                               final Long dataEntityId,
+                                               final List<Long> userIds,
+                                               final ActivityEventTypeDto eventType,
+                                               final Long lastEventId,
+                                               final OffsetDateTime lastEventDateTime);
 }

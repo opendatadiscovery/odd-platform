@@ -23,12 +23,25 @@ public interface ActivityService {
                                 final Long dataEntityId,
                                 final ActivityEventTypeDto eventType);
 
-    Flux<Activity> getActivityList(final LocalDate beginDate, final LocalDate endDate,
-                                   final Integer size, final Long datasourceId,
-                                   final Long namespaceId, final List<Long> tagIds,
-                                   final List<Long> ownerIds, final List<Long> userIds,
+    Flux<Activity> getActivityList(final LocalDate beginDate,
+                                   final LocalDate endDate,
+                                   final Integer size,
+                                   final Long datasourceId,
+                                   final Long namespaceId,
+                                   final List<Long> tagIds,
+                                   final List<Long> ownerIds,
+                                   final List<Long> userIds,
                                    final ActivityType type,
                                    final ActivityEventType eventType,
                                    final Long lastEventId,
                                    final OffsetDateTime lastEventDateTime);
+
+    Flux<Activity> getDataEntityActivityList(final LocalDate beginDate,
+                                             final LocalDate endDate,
+                                             final Integer size,
+                                             final Long dataEntityId,
+                                             final List<Long> userIds,
+                                             final ActivityEventType eventType,
+                                             final Long lastEventId,
+                                             final OffsetDateTime lastEventDateTime);
 }

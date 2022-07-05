@@ -13,6 +13,7 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.mapper.ActivityMapper;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveActivityRepository;
@@ -20,6 +21,7 @@ import org.opendatadiscovery.oddplatform.service.activity.handler.ActivityHandle
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +58,9 @@ public class ActivityServiceImpl implements ActivityService {
     }
 
     @Override
-    public Flux<Activity> getActivityList(final LocalDate beginDate, final LocalDate endDate, final Integer size,
+    public Flux<Activity> getActivityList(final LocalDate beginDate,
+                                          final LocalDate endDate,
+                                          final Integer size,
                                           final Long datasourceId,
                                           final Long namespaceId,
                                           final List<Long> tagIds,
@@ -71,26 +75,44 @@ public class ActivityServiceImpl implements ActivityService {
         }
         final ActivityEventTypeDto eventTypeDto =
             eventType != null ? ActivityEventTypeDto.valueOf(eventType.name()) : null;
-//        if (type == null) {
-//            type = ActivityType.ALL;
-//        }
-        // todo handle null
+        if (type == null) {
+            return fetchAllActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, ownerIds,
+                userIds, eventTypeDto, lastEventId, lastEventDateTime);
+        }
         return switch (type) {
-            case MY_OBJECTS ->
-                fetchMyActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, ownerIds, userIds,
-                    eventTypeDto, lastEventId, lastEventDateTime);
-            case DOWNSTREAM ->
-                fetchDownstreamActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, ownerIds,
-                    userIds, eventTypeDto, lastEventId, lastEventDateTime);
-            case UPSTREAM ->
-                fetchUpstreamActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, ownerIds,
-                    userIds, eventTypeDto, lastEventId, lastEventDateTime);
+            case MY_OBJECTS -> fetchMyActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, userIds,
+                eventTypeDto, lastEventId, lastEventDateTime);
+            case DOWNSTREAM -> fetchDependentActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds,
+                userIds, eventTypeDto, lastEventId, lastEventDateTime, LineageStreamKind.DOWNSTREAM);
+            case UPSTREAM -> fetchDependentActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds,
+                userIds, eventTypeDto, lastEventId, lastEventDateTime, LineageStreamKind.UPSTREAM);
             case ALL -> fetchAllActivities(beginDate, endDate, size, datasourceId, namespaceId, tagIds, ownerIds,
                 userIds, eventTypeDto, lastEventId, lastEventDateTime);
         };
     }
 
-    private Flux<Activity> fetchAllActivities(final LocalDate beginDate, final LocalDate endDate, final Integer size,
+    @Override
+    public Flux<Activity> getDataEntityActivityList(final LocalDate beginDate,
+                                                    final LocalDate endDate,
+                                                    final Integer size,
+                                                    final Long dataEntityId,
+                                                    final List<Long> userIds,
+                                                    final ActivityEventType eventType,
+                                                    final Long lastEventId,
+                                                    final OffsetDateTime lastEventDateTime) {
+        if (beginDate == null || endDate == null) {
+            return Flux.error(new IllegalArgumentException("Begin date and end date can't be null"));
+        }
+        final ActivityEventTypeDto eventTypeDto =
+            eventType != null ? ActivityEventTypeDto.valueOf(eventType.name()) : null;
+        return activityRepository.findDataEntityActivities(beginDate, endDate, size, dataEntityId, userIds,
+                eventTypeDto, lastEventId, lastEventDateTime)
+            .map(activityMapper::mapToActivity);
+    }
+
+    private Flux<Activity> fetchAllActivities(final LocalDate beginDate,
+                                              final LocalDate endDate,
+                                              final Integer size,
                                               final Long datasourceId,
                                               final Long namespaceId,
                                               final List<Long> tagIds,
@@ -104,50 +126,40 @@ public class ActivityServiceImpl implements ActivityService {
             .map(activityMapper::mapToActivity);
     }
 
-    private Flux<Activity> fetchMyActivities(final LocalDate beginDate, final LocalDate endDate, final Integer size,
+    private Flux<Activity> fetchMyActivities(final LocalDate beginDate,
+                                             final LocalDate endDate,
+                                             final Integer size,
                                              final Long datasourceId,
                                              final Long namespaceId,
                                              final List<Long> tagIds,
-                                             final List<Long> ownerIds,
                                              final List<Long> userIds,
                                              final ActivityEventTypeDto eventType,
                                              final Long lastEventId,
                                              final OffsetDateTime lastEventDateTime) {
         return authIdentityProvider.fetchAssociatedOwner()
             .flatMapMany(owner -> activityRepository.findMyActivities(beginDate, endDate, size, datasourceId,
-                namespaceId, tagIds, ownerIds, userIds, eventType, owner.getId(), lastEventId, lastEventDateTime))
+                namespaceId, tagIds, userIds, eventType, owner.getId(), lastEventId, lastEventDateTime))
             .map(activityMapper::mapToActivity)
             .switchIfEmpty(Flux.empty());
     }
 
-    private Flux<Activity> fetchDownstreamActivities(final LocalDate beginDate, final LocalDate endDate,
-                                                     final Integer size,
-                                                     final Long datasourceId,
-                                                     final Long namespaceId,
-                                                     final List<Long> tagIds,
-                                                     final List<Long> ownerIds,
-                                                     final List<Long> userIds,
-                                                     final ActivityEventTypeDto eventType,
-                                                     final Long lastEventId,
-                                                     final OffsetDateTime lastEventDateTime) {
+    private Flux<Activity> fetchDependentActivities(final LocalDate beginDate, final LocalDate endDate,
+                                                    final Integer size,
+                                                    final Long datasourceId,
+                                                    final Long namespaceId,
+                                                    final List<Long> tagIds,
+                                                    final List<Long> userIds,
+                                                    final ActivityEventTypeDto eventType,
+                                                    final Long lastEventId,
+                                                    final OffsetDateTime lastEventDateTime,
+                                                    final LineageStreamKind lineageStreamKind) {
         return authIdentityProvider.fetchAssociatedOwner()
-            .flatMapMany(owner -> activityRepository.findMyActivities(beginDate, endDate, size, datasourceId,
-                namespaceId, tagIds, ownerIds, userIds, eventType, owner.getId(), lastEventId, lastEventDateTime))
+            .map(owner -> dataEntityRepository.listOddrnsByOwner(owner.getId(), lineageStreamKind))
+            .flatMapMany(oddrns -> activityRepository.findDependentActivities(beginDate, endDate, size, datasourceId,
+                namespaceId, tagIds, userIds, eventType, oddrns, lastEventId, lastEventDateTime))
             .map(activityMapper::mapToActivity)
-            .switchIfEmpty(Flux.empty());
-    }
-
-    private Flux<Activity> fetchUpstreamActivities(final LocalDate beginDate, final LocalDate endDate,
-                                                   final Integer size,
-                                                   final Long datasourceId,
-                                                   final Long namespaceId,
-                                                   final List<Long> tagIds,
-                                                   final List<Long> ownerIds,
-                                                   final List<Long> userIds,
-                                                   final ActivityEventTypeDto eventType,
-                                                   final Long lastEventId,
-                                                   final OffsetDateTime lastEventDateTime) {
-        return Flux.just();
+            .switchIfEmpty(Flux.empty())
+            .subscribeOn(Schedulers.boundedElastic());
     }
 
     private ActivityHandler getActivityHandler(final ActivityEventTypeDto eventType) {
