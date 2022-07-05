@@ -2162,6 +2162,8 @@ paths:
             application/json:
               schema:
                 $ref: './components.yaml/#/components/schemas/ActivityCountInfo'
+      tags:
+        - activity
 
   /api/activity/event_types:
     get:
