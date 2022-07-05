@@ -11,7 +11,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
-import org.jooq.SelectOnConditionStep;
+import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
@@ -118,9 +118,61 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
     }
 
-    private SelectOnConditionStep<Record> buildBaseQuery(final Long datasourceId, final Long namespaceId,
-                                                         final List<Long> tagIds, final List<Long> ownerIds,
-                                                         final List<Long> userIds) {
+    @Override
+    public Mono<Long> getTotalActivitiesCount(final LocalDate beginDate,
+                                              final LocalDate endDate,
+                                              final Long datasourceId,
+                                              final Long namespaceId,
+                                              final List<Long> tagIds,
+                                              final List<Long> ownerIds,
+                                              final List<Long> userIds,
+                                              final ActivityEventTypeDto eventType) {
+        final var countQuery = DSL.selectCount()
+            .from(ACTIVITY);
+        addJoins(countQuery, datasourceId, namespaceId, tagIds, ownerIds, userIds);
+        final List<Condition> conditions =
+            getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, userIds, eventType);
+        return getActivityCount(countQuery, conditions);
+    }
+
+    @Override
+    public Mono<Long> getMyObjectsActivitiesCount(final LocalDate beginDate,
+                                                  final LocalDate endDate,
+                                                  final Long datasourceId,
+                                                  final Long namespaceId,
+                                                  final List<Long> tagIds,
+                                                  final List<Long> userIds,
+                                                  final ActivityEventTypeDto eventType,
+                                                  final Long currentOwnerId) {
+        final var countQuery = DSL.selectCount()
+            .from(ACTIVITY);
+        addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of(currentOwnerId), userIds);
+        final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
+            List.of(currentOwnerId), userIds, eventType);
+        return getActivityCount(countQuery, conditions);
+    }
+
+    @Override
+    public Mono<Long> getDependentActivitiesCount(final LocalDate beginDate,
+                                                  final LocalDate endDate,
+                                                  final Long datasourceId,
+                                                  final Long namespaceId,
+                                                  final List<Long> tagIds,
+                                                  final List<Long> userIds,
+                                                  final ActivityEventTypeDto eventType,
+                                                  final List<String> oddrns) {
+        final var countQuery = DSL.selectCount()
+            .from(ACTIVITY);
+        addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of(), userIds);
+        final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
+            List.of(), userIds, eventType);
+        conditions.add(DATA_ENTITY.ODDRN.in(oddrns));
+        return getActivityCount(countQuery, conditions);
+    }
+
+    private SelectJoinStep<?> buildBaseQuery(final Long datasourceId, final Long namespaceId,
+                                             final List<Long> tagIds, final List<Long> ownerIds,
+                                             final List<Long> userIds) {
         final List<Field<?>> selectFields = Stream
             .of(
                 ACTIVITY.fields(),
@@ -133,6 +185,13 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID))
             .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY))
             .leftJoin(OWNER).on(OWNER.ID.eq(USER_OWNER_MAPPING.OWNER_ID));
+        return addJoins(query, datasourceId, namespaceId, tagIds, ownerIds, userIds);
+    }
+
+    private SelectJoinStep<?> addJoins(final SelectJoinStep<?> query,
+                                       final Long datasourceId, final Long namespaceId,
+                                       final List<Long> tagIds, final List<Long> ownerIds,
+                                       final List<Long> userIds) {
         if (datasourceId != null || namespaceId != null) {
             query.leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID));
             if (namespaceId != null) {
@@ -184,7 +243,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         return conditions;
     }
 
-    private Flux<ActivityDto> findActivities(final SelectOnConditionStep<Record> baseQuery,
+    private Flux<ActivityDto> findActivities(final SelectJoinStep<?> baseQuery,
                                              final List<Condition> conditions,
                                              final Long lastEventId,
                                              final OffsetDateTime lastEventDateTime,
@@ -197,6 +256,14 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         whereStep.limit(size);
         return jooqReactiveOperations.flux(whereStep)
             .map(this::mapDto);
+    }
+
+    private Mono<Long> getActivityCount(final SelectJoinStep<?> baseQuery,
+                                        final List<Condition> conditions) {
+        final var whereStep = baseQuery.where(conditions)
+            .orderBy(ACTIVITY.CREATED_AT.desc(), ACTIVITY.ID.desc());
+        return jooqReactiveOperations.mono(whereStep)
+            .map(r -> r.into(Long.class));
     }
 
     private ActivityDto mapDto(final Record r) {

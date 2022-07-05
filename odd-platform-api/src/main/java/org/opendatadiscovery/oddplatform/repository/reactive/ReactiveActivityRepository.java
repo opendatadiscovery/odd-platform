@@ -56,4 +56,31 @@ public interface ReactiveActivityRepository {
                                                final ActivityEventTypeDto eventType,
                                                final Long lastEventId,
                                                final OffsetDateTime lastEventDateTime);
+
+    Mono<Long> getTotalActivitiesCount(final LocalDate beginDate,
+                                       final LocalDate endDate,
+                                       final Long datasourceId,
+                                       final Long namespaceId,
+                                       final List<Long> tagIds,
+                                       final List<Long> ownerIds,
+                                       final List<Long> userIds,
+                                       final ActivityEventTypeDto eventType);
+
+    Mono<Long> getMyObjectsActivitiesCount(final LocalDate beginDate,
+                                           final LocalDate endDate,
+                                           final Long datasourceId,
+                                           final Long namespaceId,
+                                           final List<Long> tagIds,
+                                           final List<Long> userIds,
+                                           final ActivityEventTypeDto eventType,
+                                           final Long currentOwnerId);
+
+    Mono<Long> getDependentActivitiesCount(final LocalDate beginDate,
+                                           final LocalDate endDate,
+                                           final Long datasourceId,
+                                           final Long namespaceId,
+                                           final List<Long> tagIds,
+                                           final List<Long> userIds,
+                                           final ActivityEventTypeDto eventType,
+                                           final List<String> oddrns);
 }

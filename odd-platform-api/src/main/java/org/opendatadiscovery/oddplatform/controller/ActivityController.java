@@ -22,10 +22,14 @@ public class ActivityController implements ActivityApi {
     private final ActivityService activityService;
 
     @Override
-    public Mono<ResponseEntity<Flux<Activity>>> getActivity(final LocalDate beginDate, final LocalDate endDate,
-                                                            final Integer size, final Long datasourceId,
-                                                            final Long namespaceId, final List<Long> tagIds,
-                                                            final List<Long> ownerIds, final List<Long> userIds,
+    public Mono<ResponseEntity<Flux<Activity>>> getActivity(final LocalDate beginDate,
+                                                            final LocalDate endDate,
+                                                            final Integer size,
+                                                            final Long datasourceId,
+                                                            final Long namespaceId,
+                                                            final List<Long> tagIds,
+                                                            final List<Long> ownerIds,
+                                                            final List<Long> userIds,
                                                             final ActivityType type,
                                                             final ActivityEventType eventType,
                                                             final Long lasEventId,
@@ -38,13 +42,17 @@ public class ActivityController implements ActivityApi {
     }
 
     @Override
-    public Mono<ResponseEntity<ActivityCountInfo>> getActivityCounts(final LocalDate beginDate, final LocalDate endDate,
-                                                                     final Long datasourceId, final Long namespaceId,
-                                                                     final List<Long> tagIds, final List<Long> ownerIds,
+    public Mono<ResponseEntity<ActivityCountInfo>> getActivityCounts(final LocalDate beginDate,
+                                                                     final LocalDate endDate,
+                                                                     final Long datasourceId,
+                                                                     final Long namespaceId,
+                                                                     final List<Long> tagIds,
+                                                                     final List<Long> ownerIds,
                                                                      final List<Long> userIds,
                                                                      final ActivityEventType eventType,
                                                                      final ServerWebExchange exchange) {
-        return ActivityApi.super.getActivityCounts(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds,
-            userIds, eventType, exchange);
+        return activityService.getActivityCounts(beginDate, endDate, datasourceId, namespaceId,
+                tagIds, ownerIds, userIds, eventType)
+            .map(ResponseEntity::ok);
     }
 }

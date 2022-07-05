@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityCountInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityType;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
@@ -110,6 +113,36 @@ public class ActivityServiceImpl implements ActivityService {
             .map(activityMapper::mapToActivity);
     }
 
+    @Override
+    public Mono<ActivityCountInfo> getActivityCounts(final LocalDate beginDate,
+                                                     final LocalDate endDate,
+                                                     final Long datasourceId,
+                                                     final Long namespaceId,
+                                                     final List<Long> tagIds,
+                                                     final List<Long> ownerIds,
+                                                     final List<Long> userIds,
+                                                     final ActivityEventType eventType) {
+        final ActivityEventTypeDto eventTypeDto =
+            eventType != null ? ActivityEventTypeDto.valueOf(eventType.name()) : null;
+        final Mono<Long> totalCount =
+            getTotalCount(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, userIds, eventTypeDto);
+        final Mono<Long> myObjectActivitiesCount =
+            getMyObjectActivitiesCount(beginDate, endDate, datasourceId, namespaceId,
+                tagIds, userIds, eventTypeDto);
+        final Mono<Long> downstreamActivitiesCount = getDependentActivitiesCount(beginDate, endDate, datasourceId,
+            namespaceId, tagIds, userIds, eventTypeDto, LineageStreamKind.DOWNSTREAM);
+        final Mono<Long> upstreamActivitiesCount = getDependentActivitiesCount(beginDate, endDate, datasourceId,
+            namespaceId, tagIds, userIds, eventTypeDto, LineageStreamKind.UPSTREAM);
+        return Mono.zip(totalCount, myObjectActivitiesCount, downstreamActivitiesCount, upstreamActivitiesCount)
+            .map(function(
+                (total, myObjectsCount, downstreamCount, upstreamCount) -> new ActivityCountInfo()
+                    .totalCount(total)
+                    .myObjectsCount(myObjectsCount)
+                    .downstreamCount(downstreamCount)
+                    .upstreamCount(upstreamCount)
+            ));
+    }
+
     private Flux<Activity> fetchAllActivities(final LocalDate beginDate,
                                               final LocalDate endDate,
                                               final Integer size,
@@ -143,7 +176,8 @@ public class ActivityServiceImpl implements ActivityService {
             .switchIfEmpty(Flux.empty());
     }
 
-    private Flux<Activity> fetchDependentActivities(final LocalDate beginDate, final LocalDate endDate,
+    private Flux<Activity> fetchDependentActivities(final LocalDate beginDate,
+                                                    final LocalDate endDate,
                                                     final Integer size,
                                                     final Long datasourceId,
                                                     final Long namespaceId,
@@ -159,6 +193,49 @@ public class ActivityServiceImpl implements ActivityService {
                 namespaceId, tagIds, userIds, eventType, oddrns, lastEventId, lastEventDateTime))
             .map(activityMapper::mapToActivity)
             .switchIfEmpty(Flux.empty())
+            .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    private Mono<Long> getTotalCount(final LocalDate beginDate,
+                                     final LocalDate endDate,
+                                     final Long datasourceId,
+                                     final Long namespaceId,
+                                     final List<Long> tagIds,
+                                     final List<Long> ownerIds,
+                                     final List<Long> userIds,
+                                     final ActivityEventTypeDto eventType) {
+        return activityRepository.getTotalActivitiesCount(beginDate, endDate, datasourceId, namespaceId, tagIds,
+                ownerIds, userIds, eventType)
+            .defaultIfEmpty(0L);
+    }
+
+    private Mono<Long> getMyObjectActivitiesCount(final LocalDate beginDate,
+                                                  final LocalDate endDate,
+                                                  final Long datasourceId,
+                                                  final Long namespaceId,
+                                                  final List<Long> tagIds,
+                                                  final List<Long> userIds,
+                                                  final ActivityEventTypeDto eventType) {
+        return authIdentityProvider.fetchAssociatedOwner()
+            .flatMap(
+                owner -> activityRepository.getMyObjectsActivitiesCount(beginDate, endDate, datasourceId, namespaceId,
+                    tagIds, userIds, eventType, owner.getId()))
+            .defaultIfEmpty(0L);
+    }
+
+    private Mono<Long> getDependentActivitiesCount(final LocalDate beginDate,
+                                                   final LocalDate endDate,
+                                                   final Long datasourceId,
+                                                   final Long namespaceId,
+                                                   final List<Long> tagIds,
+                                                   final List<Long> userIds,
+                                                   final ActivityEventTypeDto eventType,
+                                                   final LineageStreamKind lineageStreamKind) {
+        return authIdentityProvider.fetchAssociatedOwner()
+            .map(owner -> dataEntityRepository.listOddrnsByOwner(owner.getId(), lineageStreamKind))
+            .flatMap(oddrns -> activityRepository.getDependentActivitiesCount(beginDate, endDate, datasourceId,
+                namespaceId, tagIds, userIds, eventType, oddrns))
+            .defaultIfEmpty(0L)
             .subscribeOn(Schedulers.boundedElastic());
     }
 
