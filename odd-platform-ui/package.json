@@ -39,7 +39,7 @@
     ]
   },
   "dependencies": {
-    "@mui/lab": "^5.0.0-alpha.82",
+    "@mui/lab": "^5.0.0-alpha.87",
     "@mui/material": "^5.8.0",
     "@mui/system": "^5.8.0",
     "@reduxjs/toolkit": "^1.8.1",
