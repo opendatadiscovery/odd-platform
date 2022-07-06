@@ -9,8 +9,8 @@ import {
   getDataEntityAddToGroupStatuses,
   getDataEntityClassesList,
 } from 'redux/selectors';
-import SearchSuggestionsAutocomplete from 'components/shared/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 import { addDataEntityToGroup } from 'redux/thunks';
+import SearchSuggestionsAutocomplete from 'components/shared/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 
 interface AddDataEntityToGroupFormProps {
   btnCreateEl: JSX.Element;
@@ -95,7 +95,7 @@ const AddDataEntityToGroupForm: React.FC<
           <SearchSuggestionsAutocomplete
             placeholder="Search groups"
             label="Group name"
-            controllerProps={field}
+            formOnChange={field.onChange}
             searchParams={{
               entityClassId: dataEntityGroupClassId,
               manuallyCreated: true,

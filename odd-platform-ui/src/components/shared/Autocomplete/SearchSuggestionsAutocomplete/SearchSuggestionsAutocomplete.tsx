@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
 import {
   DataEntityRef,
@@ -8,27 +8,22 @@ import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useDebouncedCallback } from 'use-debounce';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { ControllerRenderProps } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchSearchSuggestions } from 'redux/thunks';
 import {
   getSearchSuggestions,
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
-import { DataEntityGroupFormData } from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
-import { AddDataEntityToGroupFormData } from 'components/DataEntityDetails/Overview/OverviewGroups/AddDataEntityToGroupForm/AddDataEntityToGroupForm';
+import { UseFieldArrayReturn } from 'react-hook-form';
 
 interface SearchSuggestionsAutocompleteProps {
   placeholder: string;
   label?: string;
   addEntities?: boolean;
-  append?: UseFieldArrayAppend<DataEntityGroupFormData['entities']>;
+  append?: UseFieldArrayReturn['append'];
   searchParams?: SearchApiGetSearchSuggestionsRequest;
-  controllerProps:
-    | ControllerRenderProps<DataEntityGroupFormData, 'entities'>
-    | ControllerRenderProps<AddDataEntityToGroupFormData, 'group'>;
+  formOnChange: (val: any) => void;
 }
 
 const SearchSuggestionsAutocomplete: React.FC<
@@ -38,8 +33,8 @@ const SearchSuggestionsAutocomplete: React.FC<
   label,
   addEntities,
   append,
-  controllerProps,
   searchParams,
+  formOnChange,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -54,9 +49,6 @@ const SearchSuggestionsAutocomplete: React.FC<
   );
   const [selectedOption, setSelectedOption] =
     React.useState<DataEntityRef | null>(null);
-  const [selectedOptionArray, setSelectedOptionArray] = useState<
-    DataEntityRef[]
-  >([]);
   const [autocompleteOpen, setAutocompleteOpen] =
     React.useState<boolean>(false);
 
@@ -100,30 +92,18 @@ const SearchSuggestionsAutocomplete: React.FC<
   };
 
   const handleOptionChange = React.useCallback(
-    (onChange: (val?: DataEntityRef) => void) =>
-      (
-        _: React.ChangeEvent<unknown>,
-        value: Partial<DataEntityRef> | string | null
-      ) => {
-        setSelectedOption(value as DataEntityRef);
-        if (value !== null) {
-          setSelectedOptionArray((prev: DataEntityRef[]) => [
-            ...prev,
-            value as DataEntityRef,
-          ]);
-        }
-
-        onChange(value as DataEntityRef);
-      },
+    (
+      _: React.ChangeEvent<unknown>,
+      value: Partial<DataEntityRef> | string | null
+    ) => {
+      setSelectedOption(value as DataEntityRef);
+      formOnChange(value);
+    },
     []
   );
   const handleAddEntity = () => {
     if (append) {
-      const ids = selectedOptionArray.map(entity => entity.id);
-      const filtredSelectionOptionArray = selectedOptionArray.filter(
-        ({ id }, index) => !ids.includes(id, index + 1)
-      );
-      append(filtredSelectionOptionArray as DataEntityRef[]);
+      append(selectedOption as DataEntityRef);
     }
     setSearchText('');
     setSelectedOption(null);
@@ -157,7 +137,6 @@ const SearchSuggestionsAutocomplete: React.FC<
 
   return (
     <Autocomplete
-      {...controllerProps}
       fullWidth
       value={{ externalName: searchText }}
       open={autocompleteOpen}
@@ -168,7 +147,7 @@ const SearchSuggestionsAutocomplete: React.FC<
         setAutocompleteOpen(false);
       }}
       onInputChange={handleInputChange}
-      onChange={handleOptionChange(controllerProps.onChange)}
+      onChange={handleOptionChange}
       getOptionLabel={getOptionLabel}
       options={options}
       loading={isSearchSuggestionsLoading}
