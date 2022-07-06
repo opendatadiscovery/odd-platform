@@ -11,6 +11,6 @@ public class JSONBSerializer extends JsonSerializer<JSONB> {
     @Override
     public void serialize(final JSONB value, final JsonGenerator gen,
                           final SerializerProvider serializers) throws IOException {
-        gen.writeObject(value.data());
+        gen.writeRawValue(value.data());
     }
 }
