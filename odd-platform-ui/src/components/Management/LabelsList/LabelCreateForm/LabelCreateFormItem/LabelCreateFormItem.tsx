@@ -1,7 +1,8 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import * as S from './LabelCreateFormItemStyles';
 
@@ -26,7 +27,7 @@ const LabelCreateFormItem: React.FC<LabelCreateFormItemProps> = ({
         defaultValue=""
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Label Name"
             name={`labels.${itemIndex}.name`}

@@ -13,7 +13,7 @@ import AppDatePicker, {
   metadataDatePickerInputFormat,
   minDate,
 } from 'components/shared/AppDatePicker/AppDatePicker';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import AppRadio from 'components/shared/AppRadio/AppRadio';
 
 interface MetadataValueEditFieldProps {
@@ -59,7 +59,6 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
         }}
         render={({ field, fieldState }) => (
           <AppDatePicker
-            // eslint-disable-next-line react/jsx-props-no-spreading
             {...field}
             sx={{ mt: 1 }}
             label={labeled ? defaultText : ''}
@@ -90,13 +89,13 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
           >
             <Grid container wrap="nowrap">
               <FormControlLabel
-                key="new"
+                key="true"
                 value="true"
                 control={<AppRadio />}
                 label="Yes"
               />
               <FormControlLabel
-                key="new"
+                key="false"
                 value="false"
                 control={<AppRadio />}
                 label="No"
@@ -114,7 +113,7 @@ const MetadataValueEditField: React.FC<MetadataValueEditFieldProps> = ({
       defaultValue={metadataValue || ''}
       rules={{ required: true }}
       render={({ field }) => (
-        <AppTextField
+        <AppInput
           {...field}
           sx={{ mt: 1 }}
           size={size}

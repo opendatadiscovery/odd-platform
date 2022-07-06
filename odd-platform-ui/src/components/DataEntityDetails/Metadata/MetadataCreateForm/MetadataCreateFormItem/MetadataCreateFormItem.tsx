@@ -1,5 +1,10 @@
 import React from 'react';
-import { Autocomplete, Box, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Box,
+  SelectChangeEvent,
+  Typography,
+} from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
@@ -9,11 +14,12 @@ import { MetadataField, MetadataFieldType } from 'generated-sources';
 import MetadataValueEditField from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { searchMetadata } from 'redux/thunks/metadata.thunks';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 
 interface MetadataCreateFormItemProps {
   itemIndex: number;
@@ -131,6 +137,14 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
     return '';
   }, []);
 
+  const handleMetadataChange = (
+    event: SelectChangeEvent<unknown>,
+    onChange: (val: unknown) => void
+  ) => {
+    setSelectedType(event.target.value as MetadataFieldType);
+    onChange(event.target.value);
+  };
+
   return (
     <>
       <Controller
@@ -162,7 +176,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
             clearIcon={<ClearIcon />}
             popupIcon={<DropdownIcon />}
             renderInput={params => (
-              <AppTextField
+              <AppInput
                 {...params}
                 {...register(`metadata[${itemIndex}].name`, {
                   required: true,
@@ -202,24 +216,20 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
               defaultValue={selectedType}
               rules={{ required: true }}
               render={({ field }) => (
-                <AppTextField
+                <AppSelect
                   {...field}
                   label="Type"
                   placeholder="Type"
-                  select
                   disabled={!!selectedField?.type}
-                  inputProps={{
-                    onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
-                      setSelectedType(e.target.value as MetadataFieldType);
-                    },
-                  }}
+                  onChange={e => handleMetadataChange(e, field.onChange)}
+                  value={selectedType}
                 >
                   {values(MetadataFieldType).map(type => (
                     <AppMenuItem key={type} value={type}>
                       {capitalize(type)}
                     </AppMenuItem>
                   ))}
-                </AppTextField>
+                </AppSelect>
               )}
             />
           </Box>

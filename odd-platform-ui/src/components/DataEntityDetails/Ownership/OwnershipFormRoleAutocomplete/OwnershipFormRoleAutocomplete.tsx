@@ -9,7 +9,8 @@ import {
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchRoleList } from 'redux/thunks';
@@ -126,7 +127,7 @@ const OwnershipFormRoleAutocomplete: React.FC<
       freeSolo
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppTextField
+        <AppInput
           {...params}
           sx={{ mt: 1.5 }}
           ref={params.InputProps.ref}
