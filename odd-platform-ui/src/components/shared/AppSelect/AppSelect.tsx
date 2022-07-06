@@ -30,19 +30,18 @@ interface AppSelectProps
 const AppSelect: React.FC<AppSelectProps> = ({
   size = 'medium',
   fullWidth = true,
+  label,
   ...props
 }) => (
   <Grid
     sx={
       props.containerSx || {
-        mt: props.label ? 2 : 0,
+        mt: label ? 2 : 0,
         width: fullWidth ? '100%' : 'auto',
       }
     }
   >
-    {props.label && (
-      <S.SelectLabel id="select-label-id">{props.label}</S.SelectLabel>
-    )}
+    {label && <S.SelectLabel id="select-label-id">{label}</S.SelectLabel>}
     <S.AppSelect
       {...props}
       $size={size}
