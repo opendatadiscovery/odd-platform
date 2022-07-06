@@ -49,7 +49,6 @@ export const updateNamespace = createAsyncThunk<
       namespaceId,
       namespaceUpdateFormData,
     });
-
     return namespace;
   }
 );

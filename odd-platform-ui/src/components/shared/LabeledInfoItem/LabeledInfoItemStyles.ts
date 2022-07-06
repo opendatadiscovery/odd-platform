@@ -44,7 +44,7 @@ export const LabelContainer = styled(Grid)(() => ({
 
 export const ValueContainer = styled(Grid)(() => ({
   width: '100%',
-  overflow: 'hidden',
+  overflow: 'inherit',
 }));
 
 export const Value = styled(Typography)<ValueProps>(

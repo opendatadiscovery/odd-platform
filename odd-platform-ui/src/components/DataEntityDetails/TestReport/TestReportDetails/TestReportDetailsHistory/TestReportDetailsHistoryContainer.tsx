@@ -10,7 +10,7 @@ import {
 } from 'redux/selectors/dataQualityTest.selectors';
 
 interface RouteProps {
-  dataqatestId: string;
+  dataQATestId: string;
 }
 
 type OwnProps = RouteComponentProps<RouteProps>;
@@ -19,13 +19,13 @@ const mapStateToProps = (
   state: RootState,
   {
     match: {
-      params: { dataqatestId },
+      params: { dataQATestId },
     },
   }: OwnProps
 ) => ({
-  dataQATestId: parseInt(dataqatestId, 10),
-  dataQATestRunsList: getQualityTestRunsList(state, dataqatestId),
-  dataQATestName: getQualityTestNameByTestId(state, dataqatestId),
+  dataQATestId: parseInt(dataQATestId, 10),
+  dataQATestRunsList: getQualityTestRunsList(state, dataQATestId),
+  dataQATestName: getQualityTestNameByTestId(state, dataQATestId),
   testRunsFetching: getDatasetTestRunsFetching(state),
 });
 
