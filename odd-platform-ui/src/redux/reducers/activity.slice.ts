@@ -2,6 +2,7 @@ import { ActivitiesState } from 'redux/interfaces/state';
 import { activitiesActionTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
+import { subDays } from 'date-fns';
 import {
   ActivityMultipleQueryData,
   ActivityMultipleQueryName,
@@ -11,8 +12,11 @@ import {
 } from 'redux/interfaces';
 import { ActivityType } from 'generated-sources';
 
+const beginDate = subDays(new Date(), 7);
 const endDate = new Date();
-const beginDate = new Date(endDate.setDate(endDate.getDate() - 7));
+
+// console.log('dates', beginDate, endDate);
+// const beginDate = new Date(endDate.setDate(endDate.getDate() - 7));
 const size = 20;
 const initialQueryParams: ActivityQueryParams = {
   beginDate,
@@ -53,6 +57,21 @@ export const activitiesSlice = createSlice({
       }
     ) => {
       const { queryName, queryData } = payload;
+
+      if (
+        queryData !== null &&
+        (queryName === 'beginDate' || queryName === 'endDate')
+      ) {
+        const date = new Date(queryData);
+        console.log('from slice', queryName, queryData, date);
+        return {
+          ...state,
+          queryParams: {
+            ...state.queryParams,
+            [queryName]: date,
+          },
+        };
+      }
 
       return {
         ...state,
@@ -118,11 +137,16 @@ export const activitiesSlice = createSlice({
     builder.addCase(
       thunks.fetchActivityList.fulfilled,
       (state, { payload }) => {
-        const activities = payload;
-
-        state.activities = activities;
+        state.activities = payload;
         // state.totals = totals;
         // state.pageInfo = pageInfo;
+      }
+    );
+
+    builder.addCase(
+      thunks.fetchActivityCounts.fulfilled,
+      (state, { payload }) => {
+        state.counts = payload;
       }
     );
   },

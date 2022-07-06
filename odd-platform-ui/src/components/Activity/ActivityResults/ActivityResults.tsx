@@ -7,7 +7,6 @@ import {
   useAppSelector,
   useUpdateActivityQuery,
 } from 'lib/redux/hooks';
-// import {} from 'react-router-dom';
 import queryString, { StringifyOptions } from 'query-string';
 import {
   getActivitiesList,
@@ -19,7 +18,6 @@ import {
 } from 'redux/selectors';
 import { fetchActivityList } from 'redux/thunks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import InfiniteScroll from 'react-infinite-scroll-component';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
@@ -53,39 +51,21 @@ const ActivityResults: React.FC = () => {
     arrayFormatSeparator: '|',
   };
 
-  const activityQueryString = React.useMemo(
-    () => queryString.stringify(queryParams, queryStringParams),
-    [queryParams, queryStringParams]
+  const activityQueryString = queryString.stringify(
+    queryParams,
+    queryStringParams
   );
 
   React.useEffect(() => {
     history.push(activityPath(activityQueryString));
   }, [activityQueryString]);
 
-  const parsedActivityQuery = React.useMemo(
-    () =>
-      queryString.parse(location.search, {
-        parseNumbers: true,
-        ...queryStringParams,
-      }),
-    [location.search, queryStringParams]
-  );
+  const parsedActivityQuery = queryString.parse(location.search, {
+    parseNumbers: true,
+    ...queryStringParams,
+  });
 
   React.useEffect(() => {
-    // {
-    //   // beginDate: "",
-    //   endDate: '',
-    //     size: 20,
-    //   datasourceId: 1,
-    //   namespaceId: 1,
-    //   tagIds: [1],
-    //   ownerIds: [1],
-    //   userIds: [1],
-    //   type: '',
-    //   // dataEntityId: 1,
-    //   // eventType: "",
-    //   // lastEventDateTime: "",
-    // }
     Object.entries(parsedActivityQuery).map(([queryName, queryData]) =>
       useUpdateActivityQuery(
         queryName as ActivityQueryNames,
@@ -94,18 +74,8 @@ const ActivityResults: React.FC = () => {
         dispatch
       )
     );
-    console.log('entries', Object.entries(parsedActivityQuery));
   }, []);
-  console.log('parsedActivityQuery', parsedActivityQuery);
-  // console.log(
-  //   'parsed',
-  //   queryString.parse(queryStringTest, {
-  //     parseNumbers: true,
-  //     arrayFormat: 'bracket-separator',
-  //     arrayFormatSeparator: '|',
-  //   })
-  // );
-  // console.log('history', history.push());
+
   const [tabs, setTabs] = React.useState<AppTabItem<ActivityType>[]>([]);
 
   React.useEffect(() => {
@@ -149,36 +119,22 @@ const ActivityResults: React.FC = () => {
       'add',
       dispatch
     );
-    // dispatch(
-    //   setSingleActivityFilter({
-    //     filterName: 'type',
-    //     data: newActivityType,
-    //   })
-    // );
-  };
-
-  const fetchNextPage = () => {
-    if (!pageInfo.hasNext) return;
-    dispatch(fetchActivityList(queryParams));
   };
 
   React.useEffect(() => {
-    fetchNextPage();
-  }, [queryParams, pageInfo]);
+    dispatch(fetchActivityList(queryParams));
+  }, [queryParams, fetchActivityList]);
 
-  const activityItemSkeleton = React.useMemo(
-    () => (
-      <SkeletonWrapper
-        length={10}
-        renderContent={({ randomSkeletonPercentWidth, key }) => (
-          <ActivityResultsItemSkeleton
-            width={randomSkeletonPercentWidth()}
-            key={key}
-          />
-        )}
-      />
-    ),
-    []
+  const activityItemSkeleton = () => (
+    <SkeletonWrapper
+      length={10}
+      renderContent={({ randomSkeletonPercentWidth, key }) => (
+        <ActivityResultsItemSkeleton
+          width={randomSkeletonPercentWidth()}
+          key={key}
+        />
+      )}
+    />
   );
 
   return (
@@ -195,27 +151,18 @@ const ActivityResults: React.FC = () => {
         />
       )}
       {isActivityListFetching ? (
-        activityItemSkeleton
+        activityItemSkeleton()
       ) : (
         <S.ListContainer id="results-list">
-          <InfiniteScroll
-            dataLength={activityResults.length}
-            next={fetchNextPage}
-            hasMore={pageInfo.hasNext}
-            loader={isActivityListFetching && activityItemSkeleton}
-            scrollThreshold="200px"
-            scrollableTarget="results-list"
-          >
-            {activityResults.map(activityItem => (
-              <div>lul</div>
-              // <ResultItem
-              //   key={searchResult.id}
-              //   searchClass={searchClass}
-              //   searchResult={searchResult}
-              //   totals={totals}
-              // />
-            ))}
-          </InfiniteScroll>
+          {activityResults.map(activityItem => (
+            <div>lul</div>
+            // <ResultItem
+            //   key={searchResult.id}
+            //   searchClass={searchClass}
+            //   searchResult={searchResult}
+            //   totals={totals}
+            // />
+          ))}
           {!isActivityListFetching && !pageInfo.total ? (
             <EmptyContentPlaceholder text="No matches found" />
           ) : null}

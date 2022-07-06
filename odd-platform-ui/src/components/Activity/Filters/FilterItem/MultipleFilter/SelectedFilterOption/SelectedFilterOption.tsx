@@ -29,12 +29,6 @@ const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
       'delete',
       dispatch
     );
-    // dispatch(
-    //   deleteMultipleActivityFilter({
-    //     filterName,
-    //     data: selectedOption,
-    //   })
-    // );
   };
 
   return (

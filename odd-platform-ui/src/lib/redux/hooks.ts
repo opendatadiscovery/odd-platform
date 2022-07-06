@@ -25,7 +25,7 @@ export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 export const useUpdateActivityQuery = (
   queryName: ActivityQueryNames,
   queryData: ActivitySingleQueryData | ActivityMultipleQueryData,
-  updateType: 'add' | 'delete',
+  updateType: 'add' | 'delete' | 'addFromQuery',
   dispatch: ThunkDispatch<RootState, undefined, AnyAction>
 ) => {
   const singleQueryNames = [
@@ -42,6 +42,22 @@ export const useUpdateActivityQuery = (
   const multipleQueryNames = ['tagIds', 'ownerIds', 'userIds'];
 
   if (singleQueryNames.includes(queryName)) {
+    // if (queryName === 'beginDate' || queryName === 'endDate') {
+    //   console.log(
+    //     'hook date',
+    //     queryName,
+    //     queryData,
+    //     new Date(queryData as string)
+    //   );
+    //   dispatch(
+    //     setSingleQueryParam({
+    //       queryName: queryName as ActivitySingleQueryName,
+    //       queryData: new Date(
+    //         queryData as string
+    //       ) as ActivitySingleQueryData,
+    //     })
+    //   );
+    // }
     dispatch(
       setSingleQueryParam({
         queryName: queryName as ActivitySingleQueryName,
@@ -68,4 +84,10 @@ export const useUpdateActivityQuery = (
       );
     }
   }
+
+  // if (
+  //   updateType === 'addFromQuery' &&
+  //   singleQueryNames.includes(queryName)
+  // ) {
+  // }
 };

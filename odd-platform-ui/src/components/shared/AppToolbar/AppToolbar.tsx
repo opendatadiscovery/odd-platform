@@ -15,6 +15,8 @@ import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { clearActivityFilters } from 'redux/reducers/activity.slice';
 import * as S from './AppToolbarStyles';
 
 interface AppToolbarProps {
@@ -43,6 +45,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
+  const dispatch = useAppDispatch();
 
   const handleProfileMenuOpen = (event: MouseEvent) => {
     setAnchorEl(event.currentTarget);
@@ -128,6 +131,8 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
           setSearchLoading(false);
         }
       );
+    } else if (tabs[idx].name === 'Activity') {
+      dispatch(clearActivityFilters());
     }
   };
 
