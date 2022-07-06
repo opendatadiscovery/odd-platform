@@ -51,39 +51,21 @@ const ActivityResults: React.FC = () => {
     arrayFormatSeparator: '|',
   };
 
-  const activityQueryString = React.useMemo(
-    () => queryString.stringify(queryParams, queryStringParams),
-    [queryParams, queryStringParams]
+  const activityQueryString = queryString.stringify(
+    queryParams,
+    queryStringParams
   );
 
   React.useEffect(() => {
     history.push(activityPath(activityQueryString));
   }, [activityQueryString]);
 
-  const parsedActivityQuery = React.useMemo(
-    () =>
-      queryString.parse(location.search, {
-        parseNumbers: true,
-        ...queryStringParams,
-      }),
-    [location.search, queryStringParams]
-  );
-
+  const parsedActivityQuery = queryString.parse(location.search, {
+    parseNumbers: true,
+    ...queryStringParams,
+  });
+  console.log('parsedActivityQuery', parsedActivityQuery);
   React.useEffect(() => {
-    // {
-    //   // beginDate: "",
-    //   endDate: '',
-    //     size: 20,
-    //   datasourceId: 1,
-    //   namespaceId: 1,
-    //   tagIds: [1],
-    //   ownerIds: [1],
-    //   userIds: [1],
-    //   type: '',
-    //   // dataEntityId: 1,
-    //   // eventType: "",
-    //   // lastEventDateTime: "",
-    // }
     Object.entries(parsedActivityQuery).map(([queryName, queryData]) =>
       useUpdateActivityQuery(
         queryName as ActivityQueryNames,

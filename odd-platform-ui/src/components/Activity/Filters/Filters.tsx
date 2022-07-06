@@ -7,6 +7,7 @@ import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
 import MultipleFilter from 'components/Activity/Filters/FilterItem/MultipleFilter/MultipleFilter';
 import { clearActivityFilters } from 'redux/reducers/activity.slice';
 import { ActivityEventType } from 'generated-sources';
+import CalendarFilter from 'components/Activity/Filters/FilterItem/CalendarFilter/CalendarFilter';
 import * as S from './FiltersStyles';
 import SingleFilter from './FilterItem/SingleFilter/SingleFilter';
 
@@ -34,7 +35,7 @@ const Filters: React.FC = () => {
         </AppButton>
       </Grid>
       <S.ListContainer>
-        <div>Period filter</div>
+        <CalendarFilter />
         <SingleFilter
           key="ds"
           name="Datasource"

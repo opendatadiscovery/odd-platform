@@ -9,6 +9,7 @@ import { SxProps } from '@mui/system';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 
 type AdornmentVariant = 'loader' | 'clear' | 'search';
+
 interface AdornmentProps {
   variant: AdornmentVariant;
   showAdornment: boolean;
@@ -45,6 +46,7 @@ interface AppTextFieldProps
     | 'onSelect'
     | 'id'
     | 'minRows'
+    | 'aria-readonly'
   > {
   size?: TextFieldSizes;
 
