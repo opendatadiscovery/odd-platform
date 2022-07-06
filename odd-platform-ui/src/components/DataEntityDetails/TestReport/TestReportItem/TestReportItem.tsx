@@ -14,7 +14,7 @@ import { TestReportBySuitNameHeader } from './TestReportItemStyles';
 interface TestReportItemProps {
   suitName: string;
   dataSetId: number;
-  dataqatestId: number;
+  dataQATestId: number;
   dataQATestList: DataQualityTest[];
   dataQATestReport: DataSetQualityTestsStatusCount;
 }
@@ -22,7 +22,7 @@ interface TestReportItemProps {
 const TestReportItem: React.FC<TestReportItemProps> = ({
   suitName,
   dataSetId,
-  dataqatestId,
+  dataQATestId,
   dataQATestList,
   dataQATestReport,
 }) => {
@@ -87,7 +87,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                 key={dataQATest.id}
               >
                 <TestItem
-                  active={dataqatestId === dataQATest.id}
+                  active={dataQATestId === dataQATest.id}
                   latestRunStatus={dataQATest.latestRun?.status}
                   testName={
                     dataQATest.internalName || dataQATest.externalName

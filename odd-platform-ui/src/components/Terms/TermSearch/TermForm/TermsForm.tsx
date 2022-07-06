@@ -194,6 +194,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
       isLoading={term ? isTermUpdating : isTermCreating}
       errorText={error}
       clearState={clearState}
+      formSubmitHandler={handleSubmit(onSubmit)}
     />
   );
 };

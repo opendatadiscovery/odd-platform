@@ -8,7 +8,7 @@ import {
 import { RouteComponentProps } from 'react-router-dom';
 
 interface RouteProps {
-  dataqatestId: string;
+  dataQATestId: string;
 }
 
 type OwnProps = RouteComponentProps<RouteProps>;
@@ -17,12 +17,12 @@ const mapStateToProps = (
   state: RootState,
   {
     match: {
-      params: { dataqatestId },
+      params: { dataQATestId },
     },
   }: OwnProps
 ) => ({
-  dataqatestId: parseInt(dataqatestId, 10),
-  qualityTest: getQualityTestByTestId(state, dataqatestId),
+  dataQATestId: parseInt(dataQATestId, 10),
+  qualityTest: getQualityTestByTestId(state, dataQATestId),
   isDatasetTestListFetching: getDatasetTestListFetching(state),
 });
 

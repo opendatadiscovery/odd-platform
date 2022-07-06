@@ -30,7 +30,7 @@ interface TestReportBySuitName {
 
 interface TestReportProps {
   dataEntityId: number;
-  dataqatestId: number;
+  dataQATestId: number;
   datasetTestReport: DataSetTestReport;
   datasetQualityTestList: DatasetQualityTestList;
   fetchDataSetQualityTestList: (
@@ -47,7 +47,7 @@ interface TestReportProps {
 
 const TestReport: React.FC<TestReportProps> = ({
   dataEntityId,
-  dataqatestId,
+  dataQATestId,
   datasetTestReport,
   datasetQualityTestList,
   fetchDataSetQualityTestList,
@@ -130,7 +130,7 @@ const TestReport: React.FC<TestReportProps> = ({
                       {Object.entries(datasetQualityTestList).map(
                         ([suitName, dataQATestList]) => (
                           <TestReportItemContainer
-                            dataqatestId={dataqatestId}
+                            dataQATestId={dataQATestId}
                             dataSetId={dataEntityId}
                             dataQATestReport={
                               testReportBySuitName[suitName]
@@ -145,11 +145,11 @@ const TestReport: React.FC<TestReportProps> = ({
                   )}
                 </Grid>
                 <Grid item xs={3}>
-                  {dataqatestId ? (
+                  {dataQATestId ? (
                     <AppPaper square elevation={0}>
                       <TestReportDetailsContainer
                         dataEntityId={dataEntityId}
-                        dataqatestId={dataqatestId}
+                        dataQATestId={dataQATestId}
                         reportDetailsViewType={reportDetailsViewType}
                       />
                     </AppPaper>

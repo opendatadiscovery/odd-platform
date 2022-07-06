@@ -150,6 +150,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
       <Controller
         name={`metadata.${itemIndex}.name`}
         defaultValue=""
+        rules={{ required: true }}
         control={control}
         render={({ field }) => (
           <Autocomplete
