@@ -44,6 +44,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
           sx={{ mt: 2 }}
           label={name}
           id={`filter-${facetName}`}
+          fullWidth
           value={
             selectedOptions?.length ? selectedOptions[0].entityId : 'All'
           }

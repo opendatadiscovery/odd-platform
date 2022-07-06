@@ -128,8 +128,9 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             </Grid>
             <Grid
               item
-              xs={4}
+              xs={2}
               container
+              flexWrap="nowrap"
               alignItems="center"
               justifyContent="flex-end"
             >
@@ -140,11 +141,9 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                   </Typography>
                   <AppSelect
                     sx={{ width: 52, ml: 1 }}
-                    id="revision-select"
+                    fullWidth={false}
                     type="number"
-                    isDataEntityPage
-                    selectNative
-                    size="small"
+                    native
                     defaultValue={datasetStructureVersion}
                     onChange={handleRevisionChange}
                   >

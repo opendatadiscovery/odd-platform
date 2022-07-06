@@ -1,10 +1,9 @@
 import React from 'react';
-import { SelectProps } from '@mui/material';
-import {
-  StyledAppSelect,
-  AppSelectSizes,
-} from 'components/shared/AppSelect/AppSelectStyles';
+import { Grid, SelectProps, Theme } from '@mui/material';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import { SxProps } from '@mui/system';
+import type { AppSelectSizes } from './AppSelectStyles';
+import * as S from './AppSelectStyles';
 
 interface AppSelectProps
   extends Pick<
@@ -22,51 +21,40 @@ interface AppSelectProps
     | 'disabled'
     | 'notched'
     | 'placeholder'
+    | 'native'
   > {
   size?: AppSelectSizes;
-  selectNative?: boolean;
-  isDataEntityPage?: boolean;
+  containerSx?: SxProps<Theme>;
 }
+
 const AppSelect: React.FC<AppSelectProps> = ({
-  children,
   size = 'medium',
-  sx,
-  value,
-  onChange,
-  label,
-  defaultValue,
-  type,
   fullWidth = true,
-  onSelect,
-  id,
-  disabled,
-  placeholder,
-  selectNative,
-  isDataEntityPage = false,
+  ...props
 }) => (
-  <StyledAppSelect
-    $size={size}
-    $isLabeled={!!label}
-    $isDataEntityPage={isDataEntityPage}
-    variant="outlined"
-    fullWidth={fullWidth}
-    sx={sx}
-    disabled={disabled}
-    value={value}
-    placeholder={placeholder}
-    onChange={onChange}
-    label={label}
-    defaultValue={defaultValue}
-    type={type}
-    IconComponent={DropdownIcon}
-    native={selectNative}
-    onSelect={onSelect}
-    id={id}
-    notched
-    // eslint-disable-next-line react/jsx-no-duplicate-props
+  <Grid
+    sx={
+      props.containerSx || {
+        mt: props.label ? 2 : 0,
+        width: fullWidth ? '100%' : 'auto',
+      }
+    }
   >
-    {children}
-  </StyledAppSelect>
+    {props.label && (
+      <S.SelectLabel id="select-label-id">{props.label}</S.SelectLabel>
+    )}
+    <S.AppSelect
+      {...props}
+      $size={size}
+      variant="outlined"
+      fullWidth={fullWidth}
+      labelId="select-label-id"
+      IconComponent={DropdownIcon}
+      notched
+    >
+      {props.children}
+    </S.AppSelect>
+  </Grid>
 );
 
 export default AppSelect;

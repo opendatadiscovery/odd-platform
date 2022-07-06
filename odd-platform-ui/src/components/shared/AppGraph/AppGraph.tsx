@@ -449,11 +449,10 @@ const AppGraph: React.FC = () => {
         <Typography variant="subtitle2">Depth:</Typography>
         <AppSelect
           sx={{ width: 48 }}
-          selectNative
-          isDataEntityPage
+          native
+          fullWidth={false}
           size="small"
           type="number"
-          id="depth-select"
           value={selectedDepth}
           onChange={handleDepthChange}
         >

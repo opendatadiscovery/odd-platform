@@ -136,8 +136,13 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
     }
     return '';
   }, []);
-  const handleMetadataChange = (event: SelectChangeEvent<unknown>) => {
+
+  const handleMetadataChange = (
+    event: SelectChangeEvent<unknown>,
+    onChange: (val: unknown) => void
+  ) => {
     setSelectedType(event.target.value as MetadataFieldType);
+    onChange(event.target.value);
   };
 
   return (
@@ -215,7 +220,8 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
                   label="Type"
                   placeholder="Type"
                   disabled={!!selectedField?.type}
-                  onChange={handleMetadataChange}
+                  onChange={e => handleMetadataChange(e, field.onChange)}
+                  value={selectedType}
                 >
                   {values(MetadataFieldType).map(type => (
                     <AppMenuItem key={type} value={type}>
