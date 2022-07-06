@@ -15,9 +15,9 @@ import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
+import org.opendatadiscovery.oddplatform.service.DatasetStructureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
@@ -31,7 +31,7 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
     @Autowired
     private DataEntityRepository dataEntityRepository;
     @Autowired
-    private DatasetStructureRepository datasetStructureRepository;
+    private DatasetStructureService datasetStructureService;
     private static final EasyRandom EASY_RANDOM;
 
     static {
@@ -188,13 +188,15 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
 
         final DatasetFieldDto datasetFieldDto = EASY_RANDOM.nextObject(DatasetFieldDto.class);
         final List<DatasetFieldPojo> datasetFieldPojos = List.of(datasetFieldDto.getDatasetFieldPojo());
+        final Map<String, List<DatasetFieldPojo>> datasetFields = Map.of(dataEntityPojo.getOddrn(), datasetFieldPojos);
 
         final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
         datasetVersionPojo.setDatasetOddrn(dataEntityPojo.getOddrn());
         datasetVersionPojo.setVersion(1L);
         final List<DatasetVersionPojo> versions = List.of(datasetVersionPojo);
-        final List<DatasetStructurePojo> datasetStructurePojos = datasetStructureRepository
-            .bulkCreate(versions, Map.of(dataEntityPojo.getOddrn(), datasetFieldPojos));
+
+        //create dataset structure
+        datasetStructureService.createDataStructure(versions, datasetFields, datasetFieldPojos).block();
 
         final Set<Long> datasetPojoIds =
             versions.stream().map(DatasetVersionPojo::getId).collect(Collectors.toSet());
