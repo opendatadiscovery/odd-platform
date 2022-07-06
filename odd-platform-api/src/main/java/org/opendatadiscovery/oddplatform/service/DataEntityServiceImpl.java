@@ -146,7 +146,7 @@ public class DataEntityServiceImpl
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(ActivityEventTypeDto.CUSTOM_GROUP_UPDATED)
+    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_UPDATED, isSystemEvent = false)
     public Mono<DataEntityRef> updateDataEntityGroup(
         @ActivityParameter(ActivityParameterNames.CustomGroupUpdated.DATA_ENTITY_ID) final Long id,
         final DataEntityGroupFormData formData) {
@@ -165,7 +165,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @ActivityLog(ActivityEventTypeDto.CUSTOM_GROUP_DELETED)
+    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_DELETED, isSystemEvent = false)
     public Mono<DataEntityPojo> deleteDataEntityGroup(
         @ActivityParameter(ActivityParameterNames.CustomGroupDeleted.DATA_ENTITY_ID) final Long id) {
         return reactiveDataEntityRepository.get(id)
@@ -300,7 +300,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @ActivityLog(ActivityEventTypeDto.DESCRIPTION_UPDATED)
+    @ActivityLog(event = ActivityEventTypeDto.DESCRIPTION_UPDATED, isSystemEvent = false)
     public Mono<InternalDescription> upsertDescription(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
                                                        final InternalDescriptionFormData formData) {
         return Mono.just(formData.getInternalDescription()).map(d -> {
@@ -310,7 +310,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @ActivityLog(ActivityEventTypeDto.INTERNAL_NAME_UPDATED)
+    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_NAME_UPDATED, isSystemEvent = false)
     public Mono<InternalName> upsertBusinessName(
         @ActivityParameter(ActivityParameterNames.InternalNameUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final InternalNameFormData formData) {
@@ -323,7 +323,7 @@ public class DataEntityServiceImpl
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(ActivityEventTypeDto.TAGS_ASSOCIATION_UPDATED)
+    @ActivityLog(event = ActivityEventTypeDto.TAGS_ASSOCIATION_UPDATED, isSystemEvent = false)
     public Flux<Tag> upsertTags(
         @ActivityParameter(ActivityParameterNames.TagsAssociationUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final TagsFormData formData) {
@@ -475,6 +475,7 @@ public class DataEntityServiceImpl
                 .oldState(ci.getOldState())
                 .newState(newState)
                 .eventType(ActivityEventTypeDto.CUSTOM_GROUP_CREATED)
+                .systemEvent(false)
                 .build()
             )).flatMap(activityService::createActivityEvent);
     }

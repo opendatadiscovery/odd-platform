@@ -10,4 +10,5 @@ public class ActivityCreateEvent {
     private ActivityEventTypeDto eventType;
     private String oldState;
     private String newState;
+    private boolean systemEvent;
 }

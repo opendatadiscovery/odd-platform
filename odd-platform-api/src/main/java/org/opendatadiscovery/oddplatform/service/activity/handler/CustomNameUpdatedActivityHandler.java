@@ -4,7 +4,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
-import org.opendatadiscovery.oddplatform.dto.activity.InternalNameActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.CustomNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
@@ -13,12 +13,12 @@ import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class InternalNameUpdatedActivityHandler implements ActivityHandler {
+public class CustomNameUpdatedActivityHandler implements ActivityHandler {
     private final ReactiveDataEntityRepository dataEntityRepository;
 
     @Override
     public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
-        return activityEventTypeDto == ActivityEventTypeDto.INTERNAL_NAME_UPDATED;
+        return activityEventTypeDto == ActivityEventTypeDto.CUSTOM_NAME_UPDATED;
     }
 
     @Override
@@ -39,6 +39,6 @@ public class InternalNameUpdatedActivityHandler implements ActivityHandler {
     }
 
     private String getState(final String internalName) {
-        return JSONSerDeUtils.serializeJson(new InternalNameActivityStateDto(internalName));
+        return JSONSerDeUtils.serializeJson(new CustomNameActivityStateDto(internalName));
     }
 }

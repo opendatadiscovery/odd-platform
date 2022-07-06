@@ -38,7 +38,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(DATASET_FIELD_INFORMATION_UPDATED)
+    @ActivityLog(event = DATASET_FIELD_INFORMATION_UPDATED, isSystemEvent = false)
     public Mono<DataSetField> updateDatasetField(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
                                                  final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         return reactiveDatasetFieldRepository.getDto(datasetFieldId)

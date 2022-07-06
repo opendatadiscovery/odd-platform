@@ -121,6 +121,7 @@ public class IngestionServiceImpl implements IngestionService {
                 return alertService.createAlerts(alerts).thenReturn(dataStructure);
             })
             .flatMap(dataStructure -> dataEntityCreatedEvents(dataStructure.getNewEntities())
+                .flatMap(activityService::createActivityEvent)
                 .then(Mono.just(dataStructure)))
             .flatMap(metricService::exportMetrics)
             .then();
@@ -135,6 +136,7 @@ public class IngestionServiceImpl implements IngestionService {
                     .oldState(ci.getOldState())
                     .eventType(ActivityEventTypeDto.DATA_ENTITY_CREATED)
                     .newState(newState)
+                    .systemEvent(true)
                     .build()
                 ))
             );

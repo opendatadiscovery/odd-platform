@@ -100,7 +100,7 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(ActivityEventTypeDto.TERM_ASSIGNED)
+    @ActivityLog(event = ActivityEventTypeDto.TERM_ASSIGNED, isSystemEvent = false)
     public Mono<TermRef> linkTermWithDataEntity(final Long termId,
                                                 @ActivityParameter(ActivityParameterNames.TermAssigned.DATA_ENTITY_ID)
                                                 final Long dataEntityId) {
@@ -111,7 +111,7 @@ public class TermServiceImpl implements TermService {
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(ActivityEventTypeDto.TERM_ASSIGNMENT_DELETED)
+    @ActivityLog(event = ActivityEventTypeDto.TERM_ASSIGNMENT_DELETED, isSystemEvent = false)
     public Mono<TermRef> removeTermFromDataEntity(final Long termId,
                                                   @ActivityParameter(DATA_ENTITY_ID)
                                                   final Long dataEntityId) {

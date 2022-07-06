@@ -12,5 +12,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 @Documented
 public @interface ActivityLog {
 
-    ActivityEventTypeDto value();
+    ActivityEventTypeDto event();
+
+    boolean isSystemEvent();
 }

@@ -1,4 +1,7 @@
 package org.opendatadiscovery.oddplatform.dto.activity;
 
-public record OwnershipActivityStateDto(String ownerName, String roleName) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record OwnershipActivityStateDto(@JsonProperty("owner_name") String ownerName,
+                                        @JsonProperty("role_name") String roleName) {
 }

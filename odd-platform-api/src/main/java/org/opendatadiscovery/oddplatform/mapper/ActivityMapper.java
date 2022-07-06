@@ -12,25 +12,29 @@ import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.CustomGroupActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.CustomNameActivityState;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldInformationActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldValuesActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DescriptionActivityState;
-import org.opendatadiscovery.oddplatform.api.contract.model.InternalNameActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermActivityState;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.CustomGroupActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.CustomNameActivityStateDto;
+import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DescriptionActivityStateDto;
-import org.opendatadiscovery.oddplatform.dto.activity.InternalNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.OwnershipActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TagActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.TermActivityStateDto;
@@ -42,12 +46,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Mapper(config = MapperConfig.class, uses = {OffsetDateTimeMapper.class})
 public abstract class ActivityMapper {
 
-    @Autowired
-    protected AssociatedOwnerMapper associatedOwnerMapper;
+    private AssociatedOwnerMapper associatedOwnerMapper;
+
+    private DataEntityMapper dataEntityMapper;
 
     @Autowired
-    protected DataEntityMapper dataEntityMapper;
+    public void setDataEntityMapper(final DataEntityMapper dataEntityMapper) {
+        this.dataEntityMapper = dataEntityMapper;
+    }
 
+    @Autowired
+    public void setAssociatedOwnerMapper(final AssociatedOwnerMapper associatedOwnerMapper) {
+        this.associatedOwnerMapper = associatedOwnerMapper;
+    }
+
+    @Mapping(source = "event.systemEvent", target = "isSystemEvent")
     public abstract ActivityPojo mapToPojo(final ActivityCreateEvent event, final LocalDateTime createdAt,
                                            final String createdBy);
 
@@ -62,6 +75,7 @@ public abstract class ActivityMapper {
     @Mapping(source = "activityDto.activity", target = "newState", qualifiedByName = "mapActivityNewState")
     @Mapping(source = "activityDto", target = "createdBy", qualifiedByName = "mapCreatedBy")
     @Mapping(source = "activityDto.activity", target = ".")
+    @Mapping(source = "activityDto.activity.isSystemEvent", target = "systemEvent")
     public abstract Activity mapToActivity(final ActivityDto activityDto);
 
     DataEntityRef mapDataEntity(final DataEntityPojo dataEntityPojo) {
@@ -82,23 +96,22 @@ public abstract class ActivityMapper {
 
     ActivityState mapState(final JSONB jsonb, final ActivityEventTypeDto eventTypeDto) {
         return switch (eventTypeDto) {
-            case OWNERSHIP_CREATED, OWNERSHIP_UPDATED, OWNERSHIP_DELETED -> mapOwnerships(jsonb);
-            case TAGS_ASSOCIATION_UPDATED -> mapTags(jsonb);
-            case TERM_ASSIGNED, TERM_ASSIGNMENT_DELETED -> mapTerms(jsonb);
-            case DESCRIPTION_UPDATED -> mapDescription(jsonb);
-            case INTERNAL_NAME_UPDATED -> mapInternalName(jsonb);
-            case CUSTOM_METADATA_CREATED, CUSTOM_METADATA_UPDATED, CUSTOM_METADATA_DELETED -> mapCustomMetadata(jsonb);
-            case DATASET_FIELD_VALUES_UPDATED -> mapDatasetFieldValues(jsonb);
-            case DATASET_FIELD_INFORMATION_UPDATED -> mapDatasetFieldInformation(jsonb);
-            case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED, CUSTOM_GROUP_DELETED -> mapCustomGroup(jsonb);
+            case OWNERSHIP_CREATED, OWNERSHIP_UPDATED, OWNERSHIP_DELETED -> mapOwnershipsState(jsonb);
+            case TAGS_ASSOCIATION_UPDATED -> mapTagsState(jsonb);
+            case DATA_ENTITY_CREATED -> mapDataEntityCreatedState(jsonb);
+            case TERM_ASSIGNED, TERM_ASSIGNMENT_DELETED -> mapTermsState(jsonb);
+            case DESCRIPTION_UPDATED -> mapDescriptionState(jsonb);
+            case CUSTOM_NAME_UPDATED -> mapCustomNameState(jsonb);
+            case DATASET_FIELD_VALUES_UPDATED -> mapDatasetFieldValuesState(jsonb);
+            case DATASET_FIELD_INFORMATION_UPDATED -> mapDatasetFieldInformationState(jsonb);
+            case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED, CUSTOM_GROUP_DELETED -> mapCustomGroupState(jsonb);
             default -> new ActivityState();
         };
     }
 
-    ActivityState mapOwnerships(final JSONB jsonb) {
-        final List<OwnershipActivityStateDto> stateDtos = JSONSerDeUtils.deserializeJson(jsonb.data(),
-            new TypeReference<List<OwnershipActivityStateDto>>() {
-            });
+    ActivityState mapOwnershipsState(final JSONB jsonb) {
+        final List<OwnershipActivityStateDto> stateDtos = JSONSerDeUtils
+            .deserializeJson(jsonb.data(), new TypeReference<>() {});
         final List<OwnershipActivityState> ownershipActivityStates = stateDtos.stream()
             .map(this::mapOwnershipActivityState).toList();
         return new ActivityState().ownerships(ownershipActivityStates);
@@ -106,10 +119,9 @@ public abstract class ActivityMapper {
 
     abstract OwnershipActivityState mapOwnershipActivityState(final OwnershipActivityStateDto dto);
 
-    ActivityState mapTags(final JSONB jsonb) {
-        final List<TagActivityStateDto> stateDtos = JSONSerDeUtils.deserializeJson(jsonb.data(),
-            new TypeReference<List<TagActivityStateDto>>() {
-            });
+    ActivityState mapTagsState(final JSONB jsonb) {
+        final List<TagActivityStateDto> stateDtos = JSONSerDeUtils
+            .deserializeJson(jsonb.data(), new TypeReference<>() {});
         final List<TagActivityState> tagActivityStates = stateDtos.stream()
             .map(this::mapTagActivityState).toList();
         return new ActivityState().tags(tagActivityStates);
@@ -117,10 +129,18 @@ public abstract class ActivityMapper {
 
     abstract TagActivityState mapTagActivityState(final TagActivityStateDto dto);
 
-    ActivityState mapTerms(final JSONB jsonb) {
-        final List<TermActivityStateDto> stateDtos = JSONSerDeUtils.deserializeJson(jsonb.data(),
-            new TypeReference<List<TermActivityStateDto>>() {
-            });
+    ActivityState mapDataEntityCreatedState(final JSONB jsonb) {
+        final DataEntityCreatedActivityStateDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), DataEntityCreatedActivityStateDto.class);
+        return new ActivityState().dataEntity(mapDataEntityActivityState(stateDto));
+    }
+
+    @Mapping(source = "dto.typeId", target = "type", qualifiedByName = "mapDataEntityType")
+    abstract DataEntityActivityState mapDataEntityActivityState(final DataEntityCreatedActivityStateDto dto);
+
+    ActivityState mapTermsState(final JSONB jsonb) {
+        final List<TermActivityStateDto> stateDtos = JSONSerDeUtils
+            .deserializeJson(jsonb.data(), new TypeReference<>() {});
         final List<TermActivityState> termActivityStates = stateDtos.stream()
             .map(this::mapTermActivityState).toList();
         return new ActivityState().terms(termActivityStates);
@@ -128,7 +148,7 @@ public abstract class ActivityMapper {
 
     abstract TermActivityState mapTermActivityState(final TermActivityStateDto dto);
 
-    ActivityState mapDescription(final JSONB jsonb) {
+    ActivityState mapDescriptionState(final JSONB jsonb) {
         final DescriptionActivityStateDto stateDto =
             JSONSerDeUtils.deserializeJson(jsonb.data(), DescriptionActivityStateDto.class);
         final DescriptionActivityState state = mapDescriptionActivityState(stateDto);
@@ -137,42 +157,42 @@ public abstract class ActivityMapper {
 
     abstract DescriptionActivityState mapDescriptionActivityState(final DescriptionActivityStateDto dto);
 
-    ActivityState mapInternalName(final JSONB jsonb) {
-        final InternalNameActivityStateDto stateDto =
-            JSONSerDeUtils.deserializeJson(jsonb.data(), InternalNameActivityStateDto.class);
-        final InternalNameActivityState state = mapInternalNameActivityState(stateDto);
-        return new ActivityState().internalName(state);
+    ActivityState mapCustomNameState(final JSONB jsonb) {
+        final CustomNameActivityStateDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), CustomNameActivityStateDto.class);
+        final CustomNameActivityState state = mapInternalNameActivityState(stateDto);
+        return new ActivityState().customName(state);
     }
 
-    abstract InternalNameActivityState mapInternalNameActivityState(final InternalNameActivityStateDto dto);
+    abstract CustomNameActivityState mapInternalNameActivityState(final CustomNameActivityStateDto dto);
 
-    ActivityState mapDatasetFieldValues(final JSONB jsonb) {
+    ActivityState mapDatasetFieldValuesState(final JSONB jsonb) {
         final DatasetFieldValuesActivityStateDto stateDto =
             JSONSerDeUtils.deserializeJson(jsonb.data(), DatasetFieldValuesActivityStateDto.class);
-        return new ActivityState().datasetFieldValues(mapDatasetFieldValuesState(stateDto));
+        return new ActivityState().datasetFieldValues(mapDatasetFieldValues(stateDto));
     }
 
-    @Mapping(source = "dto.type", target = "type", qualifiedByName = "deserializeType")
-    abstract DatasetFieldValuesActivityState mapDatasetFieldValuesState(final DatasetFieldValuesActivityStateDto dto);
+    @Mapping(source = "dto.type", target = "type", qualifiedByName = "deserializeDatasetFieldType")
+    abstract DatasetFieldValuesActivityState mapDatasetFieldValues(final DatasetFieldValuesActivityStateDto dto);
 
-    ActivityState mapDatasetFieldInformation(final JSONB jsonb) {
+    ActivityState mapDatasetFieldInformationState(final JSONB jsonb) {
         final DatasetFieldInformationActivityStateDto stateDto =
             JSONSerDeUtils.deserializeJson(jsonb.data(), DatasetFieldInformationActivityStateDto.class);
         return new ActivityState().datasetFieldInformation(mapDatasetFieldInformation(stateDto));
     }
 
-    @Mapping(source = "dto.type", target = "type", qualifiedByName = "deserializeType")
+    @Mapping(source = "dto.type", target = "type", qualifiedByName = "deserializeDatasetFieldType")
     abstract DatasetFieldInformationActivityState mapDatasetFieldInformation(
         final DatasetFieldInformationActivityStateDto dto);
 
-    ActivityState mapCustomGroup(final JSONB jsonb) {
+    ActivityState mapCustomGroupState(final JSONB jsonb) {
         final CustomGroupActivityStateDto stateDto =
             JSONSerDeUtils.deserializeJson(jsonb.data(), CustomGroupActivityStateDto.class);
         return new ActivityState().customGroup(mapCustomGroupActivityState(stateDto));
     }
 
-    //todo map typeId
     @Mapping(source = "name", target = "internalName")
+    @Mapping(source = "dto.typeId", target = "type", qualifiedByName = "mapDataEntityType")
     abstract CustomGroupActivityState mapCustomGroupActivityState(final CustomGroupActivityStateDto dto);
 
     List<DataEntityClass> mapDataEntityClasses(final List<Integer> entityClassIds) {
@@ -181,13 +201,16 @@ public abstract class ActivityMapper {
         return entityClasses.stream().map(dataEntityMapper::mapEntityClass).toList();
     }
 
-    @Named("deserializeType")
-    DataSetFieldType deserializeType(final JSONB type) {
-        return JSONSerDeUtils.deserializeJson(type.data(), DataSetFieldType.class);
+    @Named("mapDataEntityType")
+    DataEntityType mapDataEntityType(final Integer typeId) {
+        return DataEntityTypeDto.findById(typeId)
+            .map(dataEntityMapper::mapType)
+            .orElseThrow(() -> new IllegalArgumentException(String.format("No type with id %d was found", typeId)));
     }
 
-    ActivityState mapCustomMetadata(final JSONB jsonb) {
-        return new ActivityState();
+    @Named("deserializeDatasetFieldType")
+    DataSetFieldType deserializeDatasetFieldType(final JSONB type) {
+        return JSONSerDeUtils.deserializeJson(type.data(), DataSetFieldType.class);
     }
 
     @Named("mapCreatedBy")
