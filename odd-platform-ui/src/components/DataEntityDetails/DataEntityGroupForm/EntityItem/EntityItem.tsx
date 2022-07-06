@@ -16,8 +16,8 @@ const EntityItem: React.FC<TagItemProps> = ({
   entity,
 }) => (
   <Container container>
-    <Grid container>
-      <Typography variant="body1" sx={{ mr: 1 }}>
+    <Grid container flexWrap="nowrap" sx={{ width: 'calc(100% - 24px)' }}>
+      <Typography variant="body1" sx={{ mr: 1 }} noWrap>
         {entity.internalName || entity.externalName}
       </Typography>
       {entity.entityClasses?.map(entityClass => (

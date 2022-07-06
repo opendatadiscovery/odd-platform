@@ -80,7 +80,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
     [dataEntityGroupDetails]
   );
 
-  const { handleSubmit, control, reset, formState, setValue } =
+  const { handleSubmit, control, reset, formState, setValue, register } =
     useForm<DataEntityGroupFormData>({
       mode: 'onChange',
       reValidateMode: 'onChange',
@@ -205,19 +205,12 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
           </AppTextField>
         )}
       />
-      <Controller
-        control={control}
-        name="entities"
-        rules={{ required: true, validate: () => fields.length > 0 }}
-        render={({ field }) => (
-          <SearchSuggestionsAutocomplete
-            placeholder="Search entities"
-            label="Entities"
-            controllerProps={field}
-            append={append}
-            addEntities
-          />
-        )}
+      <SearchSuggestionsAutocomplete
+        placeholder="Search entities"
+        label="Entities"
+        formOnChange={register('entities').onChange}
+        append={append}
+        addEntities
       />
       <EntityItemsContainer sx={{ mt: 1.25 }}>
         {fields?.map((entity, index) => (
