@@ -24,15 +24,11 @@ import * as S from './MultipleFilterAutocompleteStyles';
 interface MultipleFilterAutocompleteProps {
   filterName: ActivityMultipleQueryName;
   name: string;
-  // setSelectedOptions: (
-  //   options: Array<ActivityMultipleFilterOption>
-  // ) => void;
 }
 
 const MultipleFilterAutocomplete: React.FC<
   MultipleFilterAutocompleteProps
 > = ({ name, filterName }) => {
-  // type FilterOption = { id?: number; name?: string; important?: boolean };
   type FilterOption = ActivityMultipleFilterOption;
 
   const dispatch = useAppDispatch();
@@ -68,35 +64,10 @@ const MultipleFilterAutocomplete: React.FC<
         .then(response => {
           setLoading(false);
           setOptions(response.items);
-          // console.log('response.items', response.items);
-          // const selectedOptions = selectedOptionIds
-          //   ?.map(optionId =>
-          //     response.items.find(option => option.id === optionId)
-          //   )
-          //   .filter(
-          //     (option): option is ActivityMultipleFilterOption =>
-          //       typeof option !== undefined
-          //   );
-          // // console.log(
-          // //   'selectedOptions from auto',
-          // //   selectedOptions,
-          // //   response.items
-          // // );
-          // setSelectedOptions(selectedOptions);
         });
     }, 500),
     [setLoading, setOptions, searchText]
   );
-
-  // React.useEffect(() => {
-  //   const selectedOptions = selectedOptionIds
-  //     ?.map(optionId => options.find(option => option.id === optionId))
-  //     .filter(
-  //       (option): option is ActivityMultipleFilterOption =>
-  //         typeof option !== undefined
-  //     );
-  //   setSelectedOptions(selectedOptions);
-  // }, [selectedOptionIds, options]);
 
   const getOptionLabel = (option: FilterOption | string) => {
     if (typeof option === 'string') {
@@ -130,25 +101,8 @@ const MultipleFilterAutocomplete: React.FC<
         'add',
         dispatch
       );
-      // dispatch(
-      //   addMultipleActivityFilter({
-      //     filterName,
-      //     data: [{ id: value.id, name: value.name }],
-      //   })
-      // );
     }
   };
-
-  // React.useEffect(
-  //   () =>
-  //     useUpdateActivityQuery(
-  //       filterName,
-  //       uniq([...(selectedOptionIds || [])]),
-  //       'add',
-  //       dispatch
-  //     ),
-  //   [selectedOptionIds]
-  // );
 
   const searchInputChange = React.useCallback(
     (

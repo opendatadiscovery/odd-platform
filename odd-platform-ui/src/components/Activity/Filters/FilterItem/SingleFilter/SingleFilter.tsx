@@ -40,7 +40,6 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
   const handleFilterSelect = (
     option: ActivitySingleFilterOption | string
   ) => {
-    // useUpdateActivityQuery(filterName, option, "add");
     if (typeof option === 'string') {
       useUpdateActivityQuery(
         filterName,
@@ -48,12 +47,6 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
         'add',
         dispatch
       );
-      // dispatch(
-      //   setSingleActivityFilter({
-      //     filterName,
-      //     data: option as ActivityEventType,
-      //   })
-      // );
     }
 
     if (typeof option !== 'string' && 'id' in option) {
@@ -63,7 +56,6 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
       if (option.id === 'All') {
         useUpdateActivityQuery(filterName, null, 'add', dispatch);
       }
-      // dispatch(setSingleActivityFilter({ filterName, data: option.id }));
     }
   };
 
@@ -128,7 +120,6 @@ const SingleFilter: React.FC<SingleFilterProps> = ({
           select
           id={`filter-${filterName}`}
           value={setDefaultValue()}
-          onChange={e => console.log(e.target.value)}
         >
           <AppMenuItem
             value="All"

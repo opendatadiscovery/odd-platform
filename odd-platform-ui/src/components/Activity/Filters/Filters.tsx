@@ -48,7 +48,6 @@ const Filters: React.FC = () => {
           name="Namespace"
           filterOptions={namespaces}
         />
-        {/* TODO check for work */}
         <SingleFilter
           key="at"
           filterName="eventType"

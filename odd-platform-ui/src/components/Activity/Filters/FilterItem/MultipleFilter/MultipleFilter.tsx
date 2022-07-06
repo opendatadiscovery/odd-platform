@@ -1,9 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import {
-  ActivityMultipleFilterOption,
-  ActivityMultipleQueryName,
-} from 'redux/interfaces';
+import { ActivityMultipleQueryName } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { getActivitiesQueryParamsByQueryName } from 'redux/selectors';
 import { Owner, Tag } from 'generated-sources';
@@ -29,12 +26,6 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({
   const selectedOptionIds = useAppSelector(state =>
     getActivitiesQueryParamsByQueryName(state, filterName)
   ) as Array<number>;
-
-  const handleSetSelectedOptions = React.useCallback(
-    (options: Array<ActivityMultipleFilterOption>) =>
-      setSelectedOptions(options),
-    [setSelectedOptions]
-  );
 
   React.useEffect(() => {
     if (selectedOptionIds?.length > 0) {
@@ -64,12 +55,7 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({
   return (
     <Grid container>
       <Grid item xs={12}>
-        <MultipleFilterAutocomplete
-          name={name}
-          filterName={filterName}
-          // selectedOptionIds={selectedOptionIds}
-          // setSelectedOptions={handleSetSelectedOptions}
-        />
+        <MultipleFilterAutocomplete name={name} filterName={filterName} />
       </Grid>
       <Grid
         display="inline-flex"

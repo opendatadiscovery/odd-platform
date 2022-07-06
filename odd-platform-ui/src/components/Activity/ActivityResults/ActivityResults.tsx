@@ -64,7 +64,7 @@ const ActivityResults: React.FC = () => {
     parseNumbers: true,
     ...queryStringParams,
   });
-  console.log('parsedActivityQuery', parsedActivityQuery);
+
   React.useEffect(() => {
     Object.entries(parsedActivityQuery).map(([queryName, queryData]) =>
       useUpdateActivityQuery(
@@ -119,37 +119,22 @@ const ActivityResults: React.FC = () => {
       'add',
       dispatch
     );
-    // dispatch(
-    //   setSingleActivityFilter({
-    //     filterName: 'type',
-    //     data: newActivityType,
-    //   })
-    // );
   };
 
-  // const fetchNextPage = () => {
-  //   if (!pageInfo.hasNext) return;
-  //   dispatch(fetchActivityList(queryParams));
-  // };
-
   React.useEffect(() => {
-    console.log('queryParams', queryParams);
     dispatch(fetchActivityList(queryParams));
   }, [queryParams, fetchActivityList]);
 
-  const activityItemSkeleton = React.useMemo(
-    () => (
-      <SkeletonWrapper
-        length={10}
-        renderContent={({ randomSkeletonPercentWidth, key }) => (
-          <ActivityResultsItemSkeleton
-            width={randomSkeletonPercentWidth()}
-            key={key}
-          />
-        )}
-      />
-    ),
-    []
+  const activityItemSkeleton = () => (
+    <SkeletonWrapper
+      length={10}
+      renderContent={({ randomSkeletonPercentWidth, key }) => (
+        <ActivityResultsItemSkeleton
+          width={randomSkeletonPercentWidth()}
+          key={key}
+        />
+      )}
+    />
   );
 
   return (
@@ -166,7 +151,7 @@ const ActivityResults: React.FC = () => {
         />
       )}
       {isActivityListFetching ? (
-        activityItemSkeleton
+        activityItemSkeleton()
       ) : (
         <S.ListContainer id="results-list">
           {activityResults.map(activityItem => (
@@ -178,24 +163,6 @@ const ActivityResults: React.FC = () => {
             //   totals={totals}
             // />
           ))}
-          {/* <InfiniteScroll */}
-          {/*  dataLength={activityResults.length} */}
-          {/*  next={fetchNextPage} */}
-          {/*  hasMore={pageInfo.hasNext} */}
-          {/*  loader={isActivityListFetching && activityItemSkeleton} */}
-          {/*  scrollThreshold="200px" */}
-          {/*  scrollableTarget="results-list" */}
-          {/* > */}
-          {/*  {activityResults.map(activityItem => ( */}
-          {/*    <div>lul</div> */}
-          {/*    // <ResultItem */}
-          {/*    //   key={searchResult.id} */}
-          {/*    //   searchClass={searchClass} */}
-          {/*    //   searchResult={searchResult} */}
-          {/*    //   totals={totals} */}
-          {/*    // /> */}
-          {/*  ))} */}
-          {/* </InfiniteScroll> */}
           {!isActivityListFetching && !pageInfo.total ? (
             <EmptyContentPlaceholder text="No matches found" />
           ) : null}
