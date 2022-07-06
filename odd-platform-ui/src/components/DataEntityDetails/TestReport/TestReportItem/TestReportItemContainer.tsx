@@ -5,12 +5,12 @@ import TestReportItem from 'components/DataEntityDetails/TestReport/TestReportIt
 const mapStateToProps = (
   state: RootState,
   {
-    dataqatestId,
+    dataQATestId,
   }: {
-    dataqatestId: number;
+    dataQATestId: number;
   }
 ) => ({
-  dataqatestId,
+  dataQATestId,
 });
 
 const mapDispatchToProps = {};

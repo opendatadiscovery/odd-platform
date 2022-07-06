@@ -10,11 +10,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import remarkGfm from 'remark-gfm';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
-import {
-  CaptionContainer,
-  FormActions,
-  Preview,
-} from './OverviewDescriptionStyles';
+import * as S from './OverviewDescriptionStyles';
 
 interface OverviewDescriptionProps {
   dataEntityId: number;
@@ -36,6 +32,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
   >('write');
   const [internalDescription, setInternalDescription] =
     React.useState<string>(dataEntityInternalDescription || '');
+
   const onEditClick = React.useCallback(
     () => setEditMode(true),
     [setEditMode]
@@ -62,17 +59,28 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
 
   const getPreview = React.useCallback(
     () => (
-      <Preview remarkPlugins={[remarkGfm]} className="markdown-body">
+      <S.Preview remarkPlugins={[remarkGfm]} className="markdown-body">
         {editMode ? internalDescription : dataEntityInternalDescription}
-      </Preview>
+      </S.Preview>
     ),
     [dataEntityInternalDescription, internalDescription, editMode]
+  );
+
+  const saveMarkDownOnEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' && e.shiftKey) {
+      handleDescriptionUpdate();
+    }
+  };
+
+  React.useEffect(
+    () => setInternalDescription(dataEntityInternalDescription),
+    [dataEntityInternalDescription, editMode]
   );
 
   return (
     <>
       <div>
-        <CaptionContainer>
+        <S.CaptionContainer>
           <Typography variant="h4">Custom</Typography>
           {editMode ? null : (
             <AppButton
@@ -86,11 +94,12 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               {dataEntityInternalDescription ? 'Edit' : 'Add'} description
             </AppButton>
           )}
-        </CaptionContainer>
+        </S.CaptionContainer>
         {editMode ? (
-          <div>
+          // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+          <div onKeyDown={saveMarkDownOnEnter}>
             <ReactMde
-              minEditorHeight={300}
+              minEditorHeight={120}
               value={internalDescription}
               onChange={setInternalDescription}
               selectedTab={selectedTab}
@@ -102,26 +111,26 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
                 },
               }}
             />
-            <FormActions>
+            <S.FormActions>
               <AppButton
                 onClick={handleDescriptionUpdate}
-                size="medium"
-                color="primaryLight"
-                sx={{ mr: 0.5 }}
+                size="small"
+                color="primary"
+                sx={{ mr: 1 }}
               >
                 Save
               </AppButton>
               <AppButton
                 onClick={() => setEditMode(false)}
-                size="medium"
-                color="tertiary"
+                size="small"
+                color="primaryLight"
               >
                 Cancel
               </AppButton>
               <Typography variant="subtitle2" color="error">
                 {error}
               </Typography>
-            </FormActions>
+            </S.FormActions>
           </div>
         ) : (
           <div>
@@ -153,9 +162,12 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
         <div>
           <Typography variant="h4">Pre-defined</Typography>
           <Typography variant="subtitle1">
-            <Preview className="markdown-body" remarkPlugins={[remarkGfm]}>
+            <S.Preview
+              className="markdown-body"
+              remarkPlugins={[remarkGfm]}
+            >
               {dataEntityExternalDescription}
-            </Preview>
+            </S.Preview>
           </Typography>
         </div>
       ) : null}

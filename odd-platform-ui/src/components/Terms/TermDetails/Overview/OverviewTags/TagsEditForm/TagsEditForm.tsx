@@ -284,6 +284,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isTermTagsUpdating}
       errorText={error}
+      formSubmitHandler={methods.handleSubmit(handleSubmit)}
     />
   );
 };

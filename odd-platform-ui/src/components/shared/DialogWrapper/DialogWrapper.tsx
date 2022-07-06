@@ -9,6 +9,7 @@ interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
     handleOpen: () => void;
     handleClose: () => void;
   }): JSX.Element;
+
   title: JSX.Element | string;
   renderContent: (actionsProps: {
     handleClose: () => void;
@@ -24,6 +25,7 @@ interface DialogWrapperProps extends Omit<DialogProps, 'title' | 'open'> {
   dialogContentId?: string;
   clearState?: () => void;
   maxWidth?: 'xs' | 'sm' | 'md' | 'xl';
+  formSubmitHandler?: any;
 }
 
 const DialogWrapper: React.FC<DialogWrapperProps> = ({
@@ -38,6 +40,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
   errorText,
   dialogContentId,
   clearState,
+  formSubmitHandler,
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
 
@@ -64,6 +67,16 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
     handleClose();
   }, [handleCloseSubmittedForm, handleClose]);
 
+  const dialogOnKeyDownHandler = (
+    event: React.KeyboardEvent<HTMLDivElement>
+  ) => {
+    if (event.key === 'Enter' && !event.shiftKey && formSubmitHandler) {
+      event.preventDefault();
+
+      formSubmitHandler();
+    }
+  };
+
   return (
     <>
       {renderOpenBtn({ handleOpen, handleClose })}
@@ -76,6 +89,7 @@ const DialogWrapper: React.FC<DialogWrapperProps> = ({
           maxWidth={maxWidth}
           scroll={scroll}
           aria-labelledby="max-width-dialog-title"
+          onKeyDown={dialogOnKeyDownHandler}
         >
           <S.Progress color="primary" $isLoading={isLoading} />
           <S.Title $isLoading={isLoading} id="max-width-dialog-title">

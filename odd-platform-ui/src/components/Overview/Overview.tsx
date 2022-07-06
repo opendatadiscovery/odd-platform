@@ -21,7 +21,9 @@ import {
   fetchMyDownstreamDataEntitiesList,
   fetchMyUpstreamDataEntitiesList,
   fetchPopularDataEntitiesList,
+  fetchAlertsTotals,
 } from 'redux/thunks';
+
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
@@ -41,7 +43,6 @@ interface OverviewProps {
   myDownstreamDataEntitiesFetching: boolean;
   popularDataEntitiesFetching: boolean;
   isMainOverviewContentFetching: boolean;
-  fetchAlertsTotals: () => Promise<AlertTotals>;
   fetchTagsList: (params: TagApiGetPopularTagListRequest) => void;
 }
 
@@ -58,7 +59,6 @@ const Overview: React.FC<OverviewProps> = ({
   myDownstreamDataEntitiesFetching,
   popularDataEntitiesFetching,
   isMainOverviewContentFetching,
-  fetchAlertsTotals,
   fetchTagsList,
 }) => {
   const dispatch = useAppDispatch();
@@ -76,7 +76,7 @@ const Overview: React.FC<OverviewProps> = ({
   }, [identity]);
 
   React.useEffect(() => {
-    fetchAlertsTotals();
+    dispatch(fetchAlertsTotals());
     fetchTagsList({ page: 1, size: 20 });
   }, []);
 

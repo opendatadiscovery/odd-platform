@@ -11,9 +11,9 @@ public class DataEntityTaskRunMapperImpl implements DataEntityTaskRunMapper {
     @Override
     public DataEntityTaskRunPojo mapTaskRun(final IngestionTaskRun taskRun) {
         return new DataEntityTaskRunPojo()
-            .setName(taskRun.getTaskName())
+            .setName(taskRun.getTaskRunName())
             .setOddrn(taskRun.getOddrn())
-            .setDataEntityOddrn(taskRun.getDataEntityOddrn())
+            .setTaskOddrn(taskRun.getTaskOddrn())
             .setType(taskRun.getType().name())
             .setStartTime(taskRun.getStartTime().toLocalDateTime())
             .setEndTime(taskRun.getEndTime().toLocalDateTime())

@@ -139,6 +139,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       isLoading={isUpdating}
       errorText={error}
       clearState={resetState}
+      formSubmitHandler={methods.handleSubmit(ownershipUpdate)}
     />
   );
 };

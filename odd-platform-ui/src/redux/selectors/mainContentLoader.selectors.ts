@@ -8,11 +8,9 @@ import {
 } from './dataentity.selectors';
 import { getIsTagsListFetching } from './tags.selectors';
 import { getIdentityFetching } from './profile.selectors';
-import { getAlertTotalsFetching } from './alert.selectors';
 
 export const getMainOverviewContentIsFetching = createSelector(
   getIsTagsListFetching,
-  getAlertTotalsFetching,
   getIdentityFetching,
   getMyDataEntitiesFetching,
   getMyUpstreamDataEntitiesFetching,

@@ -14,38 +14,27 @@ interface AppButtonProps
     | 'disabled'
     | 'type'
     | 'form'
+    | 'autoFocus'
+    | 'id'
+    | 'ref'
+    | 'children'
+    | 'itemRef'
   > {
   color: ButtonColors;
 }
 
-const AppButton: React.FC<AppButtonProps> = ({
-  children,
-  color,
-  size,
-  onClick,
-  sx,
-  startIcon,
-  endIcon,
-  fullWidth,
-  disabled,
-  type,
-  form,
-}) => (
-  <StyledAppButton
-    $color={color}
-    disableRipple
-    size={size}
-    onClick={onClick}
-    sx={sx}
-    startIcon={startIcon}
-    endIcon={endIcon}
-    fullWidth={fullWidth}
-    disabled={disabled}
-    type={type}
-    form={form}
-  >
-    {children}
-  </StyledAppButton>
+const AppButton: React.FC<AppButtonProps> = React.forwardRef(
+  ({ color, children, ...props }, ref) => (
+    <StyledAppButton
+      {...props}
+      focusRipple
+      $color={color}
+      ref={ref}
+      disableRipple
+    >
+      {children}
+    </StyledAppButton>
+  )
 );
 
 export default AppButton;

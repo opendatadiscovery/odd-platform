@@ -1,4 +1,4 @@
-import { AlertViewType } from 'redux/interfaces';
+import { AlertViewType, ManagementViewType } from 'lib/interfaces';
 
 export const searchPath = (searchId?: string) =>
   `/search${searchId ? `/${searchId}` : ''}`;
@@ -66,3 +66,8 @@ export const datasetStructurePath = (
 // Alerts
 export const alertsPath = (viewType: AlertViewType = 'all') =>
   `/alerts/${viewType}`;
+
+// Management page
+export const managementPath = (
+  viewType: ManagementViewType = 'namespaces'
+) => `/management/${viewType}`;
