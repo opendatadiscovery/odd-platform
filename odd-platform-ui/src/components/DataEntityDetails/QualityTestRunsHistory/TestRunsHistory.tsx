@@ -1,9 +1,15 @@
 import React from 'react';
+import { DataEntityRunStatus } from 'generated-sources';
+import { fetchDataEntityRuns } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  DataEntityRun,
-  DataEntityRunApiGetRunsRequest,
-  DataEntityRunStatus,
-} from 'generated-sources';
+  getDataEntityRunList,
+  getDataEntityRunsListPageInfo,
+  getDataEntityRunsFetchingStatuses,
+} from 'redux/selectors/dataEntityRun.selector';
+import { useAppParams } from 'lib/hooks';
+import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
+
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import capitalize from 'lodash/capitalize';
 import { Grid, Typography } from '@mui/material';
@@ -11,49 +17,41 @@ import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/E
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { CurrentPageInfo } from 'redux/interfaces';
 import TestRunSkeletonItem from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunSkeletonItem/TestRunSkeletonItem';
 import TestRunItem from './TestRunItem/TestRunItem';
 import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
 
-interface QualityTestHistoryProps {
-  dataQATestId: number;
-  dataQATestName?: string;
-  dataQATestRunsList: DataEntityRun[];
-  isTestRunsListFetching: boolean;
-  fetchDataSetQualityTestRuns: (
-    params: DataEntityRunApiGetRunsRequest
-  ) => void;
-  pageInfo: CurrentPageInfo;
-}
-
-const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
-  dataQATestId,
-  dataQATestName,
-  dataQATestRunsList,
-  isTestRunsListFetching,
-  fetchDataSetQualityTestRuns,
-  pageInfo,
-}) => {
+const TestRunsHistory: React.FC = () => {
   const pageSize = 100;
 
   const [alertStatus, setAlertStatus] = React.useState<
     DataEntityRunStatus | 'All'
   >('All');
 
+  const dispatch = useAppDispatch();
+  const { dataEntityId: dataQATestId } = useAppParams();
+  const dataQATestName = useAppSelector(state =>
+    getQualityTestNameByTestId(state, dataQATestId)
+  );
+  const pageInfo = useAppSelector(getDataEntityRunsListPageInfo);
+  const dataQATestRunsList = useAppSelector(getDataEntityRunList);
+  const { isLoading: isTestRunsListFetching } = useAppSelector(
+    getDataEntityRunsFetchingStatuses
+  );
   const fetchPage = (page?: number) => {
-    fetchDataSetQualityTestRuns({
-      dataEntityId: dataQATestId,
-      page: page || pageInfo.page + 1,
-      size: pageSize,
-      status: alertStatus === 'All' ? undefined : alertStatus,
-    });
+    dispatch(
+      fetchDataEntityRuns({
+        dataEntityId: dataQATestId,
+        page: page || pageInfo.page + 1,
+        size: pageSize,
+        status: alertStatus === 'All' ? undefined : alertStatus,
+      })
+    );
   };
 
   React.useEffect(() => {
     fetchPage(1);
-  }, [fetchDataSetQualityTestRuns, dataQATestId, alertStatus]);
-
+  }, [fetchDataEntityRuns, dataQATestId, alertStatus]);
   return (
     <Grid container sx={{ mt: 2 }}>
       <AppTextField

@@ -21,6 +21,7 @@ import appInfo from './appInfo.reducer';
 import collectors from './collectors.slice';
 import terms from './terms.slice';
 import termSearch from './termSearch.reducer';
+import dataEntityRuns from './dataEntityRuns.slice';
 
 export default combineReducers({
   namespaces,
@@ -45,4 +46,5 @@ export default combineReducers({
   collectors,
   terms,
   termSearch,
+  dataEntityRuns,
 });

@@ -113,12 +113,6 @@ export interface DataQualityTestState {
       [suiteName: string]: DataQualityTest['id'][];
     };
   };
-  qualityTestRunsById: {
-    [qualityTestRunId: string]: DataEntityRun;
-  };
-  allTestRunIdsByTestId: {
-    [qualityTestId: string]: DataEntityRun['id'][];
-  };
   qualityTestRunsPageInfo: CurrentPageInfo;
   datasetTestReportByEntityId: {
     [dataEntityId: string]: DataSetTestReport;
@@ -126,6 +120,10 @@ export interface DataQualityTestState {
   testReportBySuiteName: {
     [suiteName: string]: DataSetQualityTestsStatusCount;
   };
+}
+
+export interface DataEntityRunState extends EntityState<DataEntityRun> {
+  pageInfo: CurrentPageInfo;
 }
 
 export interface DataEntityLineageState {

@@ -4,7 +4,9 @@ import {
   DataQualityTestState,
   RootState,
 } from 'redux/interfaces';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import * as actions from 'redux/actions';
+
 import isEmpty from 'lodash/isEmpty';
 import { getDataEntityId } from './dataentity.selectors';
 
@@ -21,31 +23,12 @@ const getDataEntitiesState = ({
   dataEntities,
 }: RootState): DataEntitiesState => dataEntities;
 
-const getDatasetTestReportFetchingStatus = createLegacyFetchingSelector(
-  'GET_DATA_SET_QUALITY_TEST_REPORT'
+export const getDatasetTestReportFetchingStatuses = createStatusesSelector(
+  actions.fetchDataSetQualityTestReportActionType
 );
 
-export const getDatasetTestReportFetching = createSelector(
-  getDatasetTestReportFetchingStatus,
-  status => status === 'fetching'
-);
-
-const getDatasetTestRunsFetchingStatus = createLegacyFetchingSelector(
-  'GET_DATA_SET_QUALITY_TEST_RUNS_REPORT'
-);
-
-export const getDatasetTestRunsFetching = createSelector(
-  getDatasetTestRunsFetchingStatus,
-  status => status === 'fetching'
-);
-
-const getDatasetTestListFetchingStatus = createLegacyFetchingSelector(
-  'GET_DATA_SET_QUALITY_TEST_LIST_REPORT'
-);
-
-export const getDatasetTestListFetching = createSelector(
-  getDatasetTestListFetchingStatus,
-  status => status === 'fetching'
+export const getDatasetTestListFetchingStatuses = createStatusesSelector(
+  actions.fetchDataSetQualityTestListActionType
 );
 
 export const getDatasetTestReport = createSelector(
@@ -91,15 +74,6 @@ export const getDatasetQualityTestsBySuiteNames = createSelector(
 export const getTestReportListBySuiteName = createSelector(
   getDataQualityTestState,
   dataQualityTestState => dataQualityTestState.testReportBySuiteName
-);
-
-export const getQualityTestRunsList = createSelector(
-  getDataQualityTestState,
-  getDataQATestId,
-  (dataQualityTestState, dataQATestId) =>
-    dataQualityTestState.allTestRunIdsByTestId[dataQATestId]?.map(
-      testRunId => dataQualityTestState.qualityTestRunsById[testRunId]
-    ) || []
 );
 
 export const getQualityTestRunsListPage = createSelector(

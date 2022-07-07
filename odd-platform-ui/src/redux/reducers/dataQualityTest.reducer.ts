@@ -1,14 +1,10 @@
-import {
-  Action,
-  DataQualityTestState,
-  PaginatedResponse,
-} from 'redux/interfaces';
-import { getType } from 'typesafe-actions';
-import * as actions from 'redux/actions';
+import { DataQualityTestState } from 'redux/interfaces';
+import { createSlice } from '@reduxjs/toolkit';
+import * as thunks from 'redux/thunks';
+import { dataQualityTestTypePrefix } from 'redux/actions';
 import {
   DataEntity,
   DataEntityList,
-  DataEntityRunList,
   DataEntityRunStatus,
 } from 'generated-sources';
 import uniq from 'lodash/uniq';
@@ -16,8 +12,6 @@ import uniq from 'lodash/uniq';
 export const initialState: DataQualityTestState = {
   qualityTestsById: {},
   allSuiteNamesByDatasetId: {},
-  qualityTestRunsById: {},
-  allTestRunIdsByTestId: {},
   qualityTestRunsPageInfo: {
     total: 0,
     page: 0,
@@ -113,67 +107,29 @@ const createDataSetQualityTestList = (
       ...state,
     }
   );
-
-const createDataSetQualityRunsList = (
-  state: DataQualityTestState,
-  payload: PaginatedResponse<DataEntityRunList>,
-  dataQATestId: number | string
-) =>
-  payload.items.reduce(
-    (memo: DataQualityTestState, DataEntityRun) => ({
-      ...memo,
-      qualityTestRunsById: {
-        ...memo.qualityTestRunsById,
-        [DataEntityRun.id]: {
-          ...memo.qualityTestRunsById[DataEntityRun.id],
-          ...DataEntityRun,
-        },
-      },
-      allTestRunIdsByTestId: {
-        ...memo.allTestRunIdsByTestId,
-        [dataQATestId]: uniq([
-          ...(memo.allTestRunIdsByTestId?.[dataQATestId] || []),
-          DataEntityRun.id,
-        ]),
-      },
-    }),
-    {
-      ...state,
-      allTestRunIdsByTestId:
-        payload.pageInfo.page > 1
-          ? { ...state.allTestRunIdsByTestId }
-          : {},
-      qualityTestRunsPageInfo: payload.pageInfo,
-    }
-  );
-
-const reducer = (
-  state = initialState,
-  action: Action
-): DataQualityTestState => {
-  switch (action.type) {
-    case getType(actions.fetchDataSetQualityTestReportAction.success):
-      return {
+export const dataQualityTestSlice = createSlice({
+  name: dataQualityTestTypePrefix,
+  initialState,
+  reducers: {},
+  extraReducers: builder => {
+    builder.addCase(
+      thunks.fetchDataSetQualityTestReport.fulfilled,
+      (state, { payload }) => ({
         ...state,
         datasetTestReportByEntityId: {
-          [action.payload.entityId]: action.payload.value,
+          [payload.entityId]: payload.value,
         },
-      };
-    case getType(actions.fetchDataSetQualityTestListAction.success):
-      return createDataSetQualityTestList(
-        state,
-        action.payload.value,
-        action.payload.entityId
-      );
-    case getType(actions.fetchDataSetQualityTestRunsAction.success):
-      return createDataSetQualityRunsList(
-        state,
-        action.payload.value,
-        action.payload.entityId
-      );
-    default:
-      return state;
-  }
-};
-
-export default reducer;
+      })
+    );
+    builder.addCase(
+      thunks.fetchDataSetQualityTestList.fulfilled,
+      (state, { payload }) =>
+        createDataSetQualityTestList(
+          state,
+          payload.value,
+          payload.entityId
+        )
+    );
+  },
+});
+export default dataQualityTestSlice.reducer;
