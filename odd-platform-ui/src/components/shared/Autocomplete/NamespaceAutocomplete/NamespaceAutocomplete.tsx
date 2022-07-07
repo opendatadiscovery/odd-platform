@@ -11,7 +11,8 @@ import {
   TermFormData,
 } from 'generated-sources';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'lib/redux/hooks';
@@ -156,7 +157,7 @@ const NamespaceAutocomplete: React.FC<NamespaceAutocompleteProps> = ({
       clearIcon={<ClearIcon />}
       sx={{ mt: 1.25 }}
       renderInput={params => (
-        <AppTextField
+        <AppInput
           {...params}
           ref={params.InputProps.ref}
           placeholder="Namespace"

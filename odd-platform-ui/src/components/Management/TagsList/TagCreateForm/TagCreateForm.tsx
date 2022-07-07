@@ -91,7 +91,6 @@ const TagCreateForm: React.FC<TagCreateFormProps> = ({ btnCreateEl }) => {
         ))}
         <AppButton
           size="medium"
-          form="tag-create-form"
           color="primaryLight"
           startIcon={<AddIcon />}
           onClick={handleAppend}

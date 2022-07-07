@@ -15,7 +15,8 @@ import {
   SearchApiGetFiltersForFacetRequest,
   SearchFilter,
 } from 'generated-sources';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { FacetStateUpdate, OptionalFacetNames } from 'redux/interfaces';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
@@ -206,7 +207,7 @@ const MultipleFilterItemAutocomplete: React.FC<
       popupIcon={<DropdownIcon />}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppTextField
+        <AppInput
           {...params}
           sx={{ mt: 2 }}
           placeholder="Search by name"

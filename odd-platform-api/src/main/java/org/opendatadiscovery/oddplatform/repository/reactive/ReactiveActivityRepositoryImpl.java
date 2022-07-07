@@ -205,9 +205,6 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
         if (CollectionUtils.isNotEmpty(ownerIds)) {
             query.leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID));
         }
-        if (CollectionUtils.isNotEmpty(userIds)) {
-            query.leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY));
-        }
         return query;
     }
 
@@ -260,8 +257,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
 
     private Mono<Long> getActivityCount(final SelectJoinStep<?> baseQuery,
                                         final List<Condition> conditions) {
-        final var whereStep = baseQuery.where(conditions)
-            .orderBy(ACTIVITY.CREATED_AT.desc(), ACTIVITY.ID.desc());
+        final var whereStep = baseQuery.where(conditions);
         return jooqReactiveOperations.mono(whereStep)
             .map(r -> r.into(Long.class));
     }

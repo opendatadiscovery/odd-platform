@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Theme } from '@mui/material';
 import { SxProps } from '@mui/system';
 import { DatePicker, DatePickerProps } from '@mui/lab';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import CalendarIcon from 'components/shared/Icons/CalendarIcon';
 
 export const metadataDatePickerInputFormat = 'd MMM yyyy';
@@ -40,13 +40,15 @@ const AppDatePicker: React.FC<AppDatePickerProps> = ({
     null
   );
 
-  React.useEffect(() => setSelectedDate(new Date(defaultDate)), [
-    defaultDate,
-  ]);
+  React.useEffect(
+    () => setSelectedDate(new Date(defaultDate)),
+    [defaultDate]
+  );
 
-  const AppDatePickerIcon = React.useCallback(() => <CalendarIcon />, [
-    CalendarIcon,
-  ]);
+  const AppDatePickerIcon = React.useCallback(
+    () => <CalendarIcon />,
+    [CalendarIcon]
+  );
 
   return (
     <Box sx={sx} width="100%">
@@ -70,7 +72,7 @@ const AppDatePicker: React.FC<AppDatePickerProps> = ({
           OpenPickerIcon: AppDatePickerIcon,
         }}
         renderInput={params => (
-          <AppTextField
+          <AppInput
             {...params}
             ref={params.inputRef}
             type="date"

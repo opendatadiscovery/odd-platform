@@ -17,7 +17,8 @@ import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
@@ -100,7 +101,7 @@ const TagsListView: React.FC = () => {
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppTextField
+        <AppInput
           placeholder="Search tag..."
           value={searchText}
           sx={{ minWidth: '340px' }}

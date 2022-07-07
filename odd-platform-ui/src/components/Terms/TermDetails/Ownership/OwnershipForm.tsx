@@ -21,7 +21,8 @@ import {
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useAppParams } from 'lib/hooks';
@@ -295,7 +296,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
               freeSolo
               clearIcon={<ClearIcon />}
               renderInput={params => (
-                <AppTextField
+                <AppInput
                   {...params}
                   ref={params.InputProps.ref}
                   label="Owner name"
@@ -355,7 +356,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
             freeSolo
             clearIcon={<ClearIcon />}
             renderInput={params => (
-              <AppTextField
+              <AppInput
                 {...params}
                 sx={{ mt: 1.5 }}
                 ref={params.InputProps.ref}
@@ -414,6 +415,7 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       isLoading={isOwnerUpdating}
       errorText={error}
       clearState={resetState}
+      formSubmitHandler={methods.handleSubmit(ownershipUpdate)}
     />
   );
 };

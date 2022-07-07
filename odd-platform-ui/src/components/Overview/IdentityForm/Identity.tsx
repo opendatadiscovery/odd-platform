@@ -20,7 +20,7 @@ import {
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchOwnersList } from 'redux/thunks';
@@ -213,7 +213,7 @@ const Identity: React.FC<IdentityProps> = ({
                   clearIcon={<ClearIcon />}
                   renderInput={params => (
                     <>
-                      <AppTextField
+                      <AppInput
                         {...params}
                         ref={params.InputProps.ref}
                         name="name"

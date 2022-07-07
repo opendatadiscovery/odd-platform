@@ -38,6 +38,7 @@ public class ActivityAspect {
 
     @Around("activityLogMethod() && monoMethod()")
     @ReactiveTransactional
+    @SuppressWarnings("unchecked")
     public Mono<?> monoActivityAspect(final ProceedingJoinPoint joinPoint) {
         final Map<String, Object> activityParameters = extractActivityParameters(joinPoint);
         final ActivityEventTypeDto eventType = extractEventType(joinPoint);
@@ -57,6 +58,7 @@ public class ActivityAspect {
 
     @Around("activityLogMethod() && fluxMethod()")
     @ReactiveTransactional
+    @SuppressWarnings("unchecked")
     public Flux<?> fluxActivityAspect(final ProceedingJoinPoint joinPoint) {
         final Map<String, Object> activityParameters = extractActivityParameters(joinPoint);
         final ActivityEventTypeDto eventType = extractEventType(joinPoint);

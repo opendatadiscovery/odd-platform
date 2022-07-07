@@ -129,6 +129,8 @@ public class ActivityMapperTest {
         assertThat(activity.getSystemEvent()).isEqualTo(activityPojo.getIsSystemEvent());
         switch (eventTypeDto) {
             case OWNERSHIP_CREATED, OWNERSHIP_UPDATED, OWNERSHIP_DELETED -> validateOwnerships(activity, activityPojo);
+            default -> {
+            }
         }
     }
 

@@ -10,7 +10,8 @@ import {
 } from 'redux/selectors';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { Asterisk } from 'components/Management/CollectorsList/CollectorForm/CollectorFormStyles';
 import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
@@ -112,7 +113,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.5 }}
             label="Name"
@@ -139,7 +140,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
         name="description"
         control={control}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.25 }}
             label="Description"
