@@ -14,7 +14,7 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import { OptionsContainer } from 'components/Terms/TermDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import AppButton from 'components/shared/AppButton/AppButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   fetchTagsList as searchTags,
@@ -211,7 +211,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
         value={{ name: searchText }}
         clearIcon={<ClearIcon />}
         renderInput={params => (
-          <AppTextField
+          <AppInput
             {...params}
             ref={params.InputProps.ref}
             placeholder="Enter tag name…"
@@ -284,6 +284,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isTermTagsUpdating}
       errorText={error}
+      formSubmitHandler={methods.handleSubmit(handleSubmit)}
     />
   );
 };

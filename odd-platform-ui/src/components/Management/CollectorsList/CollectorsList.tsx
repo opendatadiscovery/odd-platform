@@ -15,7 +15,8 @@ import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import CollectorFormDialog from 'components/Management/CollectorsList/CollectorForm/CollectorForm';
@@ -91,7 +92,7 @@ const CollectorsListView: React.FC = () => {
         </Typography>
       </CollectorCaption>
       <CollectorCaption container sx={{ mb: 2 }}>
-        <AppTextField
+        <AppInput
           placeholder="Search collector..."
           sx={{ minWidth: '340px' }}
           fullWidth={false}

@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import {
   hierarchy,
   HierarchyPointLink,
@@ -10,7 +10,7 @@ import { zoom as d3zoom, zoomIdentity } from 'd3-zoom';
 import entries from 'lodash/entries';
 import maxBy from 'lodash/maxBy';
 import { v4 as uuidv4 } from 'uuid';
-import { Typography } from '@mui/material';
+import { SelectChangeEvent, Typography } from '@mui/material';
 import { DataEntityLineageStreamById } from 'redux/interfaces/dataentityLineage';
 import {
   Point,
@@ -24,7 +24,6 @@ import {
 import AppTabs from 'components/shared/AppTabs/AppTabs';
 import TargetIcon from 'components/shared/Icons/TargetIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
@@ -34,6 +33,7 @@ import {
 import AppGraphCrossLink from 'components/shared/AppGraph/AppGraphCrossLink/AppGraphCrossLink';
 import { getDataEntityLineage } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
+import AppSelect from '../AppSelect/AppSelect';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
 import * as S from './AppGraphStyles';
@@ -298,9 +298,8 @@ const AppGraph: React.FC = () => {
     };
   };
 
-  const handleDepthChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => setSelectedDepth(e.target.value as unknown as number);
+  const handleDepthChange = (event: SelectChangeEvent<unknown>) =>
+    setSelectedDepth(event.target.value as unknown as number);
 
   const transformation: { translate: Point; scale: number } = {
     translate: { x: 0, y: 0 },
@@ -448,12 +447,12 @@ const AppGraph: React.FC = () => {
           }
         />
         <Typography variant="subtitle2">Depth:</Typography>
-        <AppTextField
+        <AppSelect
           sx={{ width: 48 }}
-          selectNative
+          native
+          fullWidth={false}
           size="small"
           type="number"
-          id="depth-select"
           value={selectedDepth}
           onChange={handleDepthChange}
         >
@@ -463,7 +462,7 @@ const AppGraph: React.FC = () => {
               {i + 1}
             </option>
           ))}
-        </AppTextField>
+        </AppSelect>
       </S.ActionsContainer>
       <S.Layer className={svgInstanceRef}>
         <g className={gInstanceRef}>

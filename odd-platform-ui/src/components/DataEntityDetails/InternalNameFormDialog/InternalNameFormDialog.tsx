@@ -4,7 +4,7 @@ import { InternalNameFormData } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { updateDataEntityInternalName } from 'redux/thunks';
@@ -80,7 +80,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
         name="internalName"
         defaultValue={dataEntityInternalName || ''}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             label="Business name"
             placeholder="Enter business name"

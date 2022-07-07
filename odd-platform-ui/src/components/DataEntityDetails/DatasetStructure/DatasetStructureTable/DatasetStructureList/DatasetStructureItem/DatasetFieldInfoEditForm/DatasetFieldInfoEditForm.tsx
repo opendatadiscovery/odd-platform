@@ -8,7 +8,7 @@ import {
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 import * as S from './DatasetFieldInfoEditFormStyles';
@@ -25,6 +25,7 @@ interface DataSetFieldInfoEditFormProps {
   ) => Promise<DataSetField>;
   btnCreateEl: JSX.Element;
 }
+
 type DatasetFieldInfoFormType = {
   labels: { name: string }[];
   internalDescription: string;
@@ -127,7 +128,7 @@ const DatasetFieldInfoEditForm: React.FC<
         name="internalDescription"
         defaultValue={datasetFieldFormData.internalDescription || ''}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             label="Description"
             placeholder="Enter description"
@@ -166,6 +167,7 @@ const DatasetFieldInfoEditForm: React.FC<
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
+      formSubmitHandler={methods.handleSubmit(handleFormSubmit)}
     />
   );
 };

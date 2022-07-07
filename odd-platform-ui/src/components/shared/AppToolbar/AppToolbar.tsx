@@ -1,13 +1,15 @@
 import React, { MouseEvent } from 'react';
 import { Grid, Typography, useScrollTrigger } from '@mui/material';
 import {
-  AppInfo,
   AssociatedOwner,
   SearchApiSearchRequest,
   SearchFacetsData,
   TermApiTermSearchRequest,
   TermSearchFacetsData,
 } from 'generated-sources';
+import { fetchAppInfo } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { getVersion } from 'redux/selectors/appInfo.selectors';
 import { useHistory, useLocation } from 'react-router-dom';
 import { searchPath, termSearchPath } from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
@@ -15,13 +17,11 @@ import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppDispatch } from 'lib/redux/hooks';
 import { clearActivityFilters } from 'redux/reducers/activity.slice';
 import * as S from './AppToolbarStyles';
 
 interface AppToolbarProps {
   identity?: AssociatedOwner;
-  version?: string;
   fetchIdentity: () => Promise<AssociatedOwner | void>;
   createDataEntitiesSearch: (
     params: SearchApiSearchRequest
@@ -29,16 +29,13 @@ interface AppToolbarProps {
   createTermSearch: (
     params: TermApiTermSearchRequest
   ) => Promise<TermSearchFacetsData>;
-  fetchAppInfo: () => Promise<AppInfo | void>;
 }
 
 const AppToolbar: React.FC<AppToolbarProps> = ({
   identity,
-  version,
   createDataEntitiesSearch,
   createTermSearch,
   fetchIdentity,
-  fetchAppInfo,
 }) => {
   const location = useLocation();
   const history = useHistory();
@@ -46,7 +43,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
   const dispatch = useAppDispatch();
-
+  const version = useAppSelector(getVersion);
   const handleProfileMenuOpen = (event: MouseEvent) => {
     setAnchorEl(event.currentTarget);
   };
@@ -70,7 +67,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   React.useEffect(() => {
     fetchIdentity();
-    fetchAppInfo();
+    dispatch(fetchAppInfo());
   }, []);
 
   const [tabs] = React.useState<AppTabItem[]>([

@@ -4,7 +4,8 @@ import { Namespace, NamespaceFormData } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { createNamespace, updateNamespace } from 'redux/thunks';
@@ -89,7 +90,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
         defaultValue={namespace?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Namespace Name"
             customEndAdornment={{
