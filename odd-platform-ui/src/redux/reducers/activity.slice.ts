@@ -10,10 +10,9 @@ import {
   ActivitySingleQueryData,
   ActivitySingleQueryName,
 } from 'redux/interfaces';
-import { ActivityType } from 'generated-sources';
 
-const beginDate = subDays(new Date(), 7);
-const endDate = new Date();
+const beginDate = subDays(new Date(), 7).toISOString();
+const endDate = new Date().toISOString();
 
 // console.log('dates', beginDate, endDate);
 // const beginDate = new Date(endDate.setDate(endDate.getDate() - 7));
@@ -22,7 +21,7 @@ const initialQueryParams: ActivityQueryParams = {
   beginDate,
   endDate,
   size,
-  type: ActivityType.ALL,
+  // type: ActivityType.ALL,
 };
 
 export const initialState: ActivitiesState = {
@@ -62,13 +61,13 @@ export const activitiesSlice = createSlice({
         queryData !== null &&
         (queryName === 'beginDate' || queryName === 'endDate')
       ) {
-        const date = new Date(queryData);
-        console.log('from slice', queryName, queryData, date);
+        // const date = new Date(queryData);
+
         return {
           ...state,
           queryParams: {
             ...state.queryParams,
-            [queryName]: date,
+            [queryName]: queryData,
           },
         };
       }
@@ -138,8 +137,6 @@ export const activitiesSlice = createSlice({
       thunks.fetchActivityList.fulfilled,
       (state, { payload }) => {
         state.activities = payload;
-        // state.totals = totals;
-        // state.pageInfo = pageInfo;
       }
     );
 

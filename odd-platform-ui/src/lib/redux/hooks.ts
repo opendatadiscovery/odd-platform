@@ -68,7 +68,6 @@ export const useUpdateActivityQuery = (
 
   if (multipleQueryNames.includes(queryName)) {
     if (updateType === 'delete') {
-      console.log('hook', queryName, queryData);
       dispatch(
         deleteMultipleQueryParam({
           queryName: queryName as ActivityMultipleQueryName,

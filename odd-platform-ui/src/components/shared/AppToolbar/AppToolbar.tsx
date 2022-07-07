@@ -77,7 +77,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
     { name: 'Catalog', link: '/search' },
     { name: 'Management', link: '/management' },
     { name: 'Dictionary', link: '/termsearch' },
-    { name: 'Alerts', link: '/alerts/' },
+    { name: 'Alerts', link: '/alerts' },
     { name: 'Activity', link: '/activity' },
   ]);
 
@@ -89,6 +89,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
     const newTabIndex = tabs.findIndex(
       tab => tab.link && location.pathname.includes(tab.link)
     );
+
     if (newTabIndex >= 0) {
       setSelectedTab(newTabIndex);
     } else {

@@ -38,6 +38,9 @@ export const dataEntityHistoryPath = (entityId: number) =>
 export const dataEntityLinkedItemsPath = (entityId: number) =>
   `${dataEntityDetailsPath(entityId)}/linked-items`;
 
+export const dataEntityActivityPath = (entityId: number, query?: string) =>
+  `${dataEntityDetailsPath(entityId)}/activity?${query}`;
+
 // Test reports details
 export const testReportDetailsOverviewPath = (
   entityId: number,

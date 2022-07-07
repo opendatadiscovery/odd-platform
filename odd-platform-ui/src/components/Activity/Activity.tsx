@@ -1,11 +1,14 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
+import { useAppSelector } from 'lib/redux/hooks';
+import { getActivitiesQueryParams } from 'redux/selectors';
 import Filters from './Filters/Filters';
 import ActivityResults from './ActivityResults/ActivityResults';
 
 const Activity: React.FC = () => {
   const history = useHistory();
+  const queryParams = useAppSelector(getActivitiesQueryParams);
 
   return (
     <S.MainContainer>

@@ -9,6 +9,7 @@ export const BASE_PARAMS: ConfigurationParameters = {
 // content width constants
 export const toolbarHeight = 49;
 export const maxSidebarWidth = 240;
+export const activitySidebarWidth = 192;
 export const maxContentWidth = 1216;
 export const maxContentWidthWithoutSidebar = 1440;
 export const maxTagsContainerWidth = 920;

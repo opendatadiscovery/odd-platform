@@ -59,6 +59,7 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
         cleanable={false}
         value={[defaultRange.beginDate, defaultRange.endDate]}
         onOk={([beginDate, endDate]: ValueType) => {
+          console.log('beginDate, endDate', beginDate, endDate);
           if (beginDate && endDate) {
             useUpdateActivityQuery(
               'beginDate',

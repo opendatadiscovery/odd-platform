@@ -44,7 +44,12 @@ export const getActivityMultipleFilterName = (
 
 export const getActivitiesQueryParams = createSelector(
   activitiesState,
-  activities => activities.queryParams
+  activities => {
+    const beginDate = new Date(activities.queryParams.beginDate);
+    const endDate = new Date(activities.queryParams.endDate);
+
+    return { ...activities.queryParams, beginDate, endDate };
+  }
 );
 
 export const getActivityQueryName = (

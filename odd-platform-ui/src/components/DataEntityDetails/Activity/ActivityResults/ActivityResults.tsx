@@ -1,13 +1,13 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { ActivityType } from 'generated-sources';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
+import { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import {
   useAppDispatch,
   useAppSelector,
   useUpdateActivityQuery,
 } from 'lib/redux/hooks';
-import { StringifyOptions } from 'query-string';
+import queryString, { StringifyOptions } from 'query-string';
 import {
   getActivitiesList,
   getActivitiesListFetchingStatuses,
@@ -16,12 +16,17 @@ import {
   getActivityCounts,
   getActivityPageInfo,
 } from 'redux/selectors';
+import { fetchDataEntityActivityList } from 'redux/thunks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useHistory, useLocation } from 'react-router-dom';
-import { ActivitySingleQueryData } from 'redux/interfaces';
-import { fetchActivityCounts } from 'redux/thunks';
-import ActivityTabsSkeleton from './ActivityTabsSkeleton/ActivityTabsSkeleton';
+import {
+  ActivityMultipleQueryData,
+  ActivityQueryNames,
+  ActivitySingleQueryData,
+} from 'redux/interfaces';
+import { dataEntityActivityPath } from 'lib/paths';
+import { useAppParams } from 'lib/hooks';
 import ActivityResultsItemSkeleton from './ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import * as S from './ActivityResultsStyles';
 
@@ -29,6 +34,7 @@ const ActivityResults: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const history = useHistory();
+  const { dataEntityId } = useAppParams();
 
   const activityTotals = useAppSelector(getActivityCounts);
   const activityType = useAppSelector(state =>
@@ -46,36 +52,32 @@ const ActivityResults: React.FC = () => {
     arrayFormatSeparator: '|',
   };
 
-  // const activityQueryString = queryString.stringify(
-  //   queryParams,
-  //   queryStringParams
-  // );
-  //
-  // React.useEffect(() => {
-  //   history.push(activityPath(activityQueryString));
-  // }, [activityQueryString]);
-  //
-  // const parsedActivityQuery = queryString.parse(location.search, {
-  //   parseNumbers: true,
-  //   ...queryStringParams,
-  // });
-  //
-  // React.useEffect(() => {
-  //   Object.entries(parsedActivityQuery).map(([queryName, queryData]) =>
-  //     useUpdateActivityQuery(
-  //       queryName as ActivityQueryNames,
-  //       queryData as ActivitySingleQueryData | ActivityMultipleQueryData,
-  //       'add',
-  //       dispatch
-  //     )
-  //   );
-  // }, []);
+  const activityQueryString = queryString.stringify(
+    queryParams,
+    queryStringParams
+  );
 
   React.useEffect(() => {
-    console.log('reren');
-    dispatch(fetchActivityCounts(queryParams));
-    // dispatch(fetchActivityList(queryParams));
-  }, [queryParams]);
+    history.push(
+      dataEntityActivityPath(dataEntityId, activityQueryString)
+    );
+  }, []);
+
+  const parsedActivityQuery = queryString.parse(location.search, {
+    parseNumbers: true,
+    ...queryStringParams,
+  });
+
+  React.useEffect(() => {
+    Object.entries(parsedActivityQuery).map(([queryName, queryData]) =>
+      useUpdateActivityQuery(
+        queryName as ActivityQueryNames,
+        queryData as ActivitySingleQueryData | ActivityMultipleQueryData,
+        'add',
+        dispatch
+      )
+    );
+  }, []);
 
   const [tabs, setTabs] = React.useState<AppTabItem<ActivityType>[]>([]);
 
@@ -122,6 +124,12 @@ const ActivityResults: React.FC = () => {
     );
   };
 
+  React.useEffect(() => {
+    dispatch(
+      fetchDataEntityActivityList({ ...queryParams, dataEntityId })
+    );
+  }, []);
+
   const activityItemSkeleton = () => (
     <SkeletonWrapper
       length={10}
@@ -135,22 +143,22 @@ const ActivityResults: React.FC = () => {
   );
 
   return (
-    <Grid sx={{ mt: 2 }}>
-      {isActivityListFetching ? (
-        <ActivityTabsSkeleton length={tabs.length} />
-      ) : (
-        <AppTabs
-          type="primary"
-          items={tabs}
-          selectedTab={selectedTab}
-          handleTabChange={onActivityTypeChange}
-          isHintUpdated={isActivityListFetching}
-        />
-      )}
+    <Grid container sx={{ mt: 2 }}>
+      {/* {isActivityListFetching ? ( */}
+      {/*  <ActivityTabsSkeleton length={tabs.length} /> */}
+      {/* ) : ( */}
+      {/*  <AppTabs */}
+      {/*    type="primary" */}
+      {/*    items={tabs} */}
+      {/*    selectedTab={selectedTab} */}
+      {/*    handleTabChange={onActivityTypeChange} */}
+      {/*    isHintUpdated={isActivityListFetching} */}
+      {/*  /> */}
+      {/* )} */}
       {isActivityListFetching ? (
         activityItemSkeleton()
       ) : (
-        <S.ListContainer id="results-list">
+        <S.ListContainer container>
           {activityResults.map(activityItem => (
             <div>lul</div>
             // <ResultItem
