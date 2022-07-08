@@ -14,9 +14,7 @@ import {
   getActivitiesQueryParams,
   getActivitiesQueryParamsByQueryName,
   getActivityCounts,
-  getActivityPageInfo,
 } from 'redux/selectors';
-import { fetchDataEntityActivityList } from 'redux/thunks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -40,7 +38,7 @@ const ActivityResults: React.FC = () => {
   const activityType = useAppSelector(state =>
     getActivitiesQueryParamsByQueryName(state, 'type')
   ) as ActivityType;
-  const pageInfo = useAppSelector(getActivityPageInfo);
+  // const pageInfo = useAppSelector(getActivityPageInfo);
   const queryParams = useAppSelector(getActivitiesQueryParams);
   const activityResults = useAppSelector(getActivitiesList);
   const { isLoading: isActivityListFetching } = useAppSelector(
@@ -124,11 +122,11 @@ const ActivityResults: React.FC = () => {
     );
   };
 
-  React.useEffect(() => {
-    dispatch(
-      fetchDataEntityActivityList({ ...queryParams, dataEntityId })
-    );
-  }, []);
+  // React.useEffect(() => {
+  //   dispatch(
+  //     fetchDataEntityActivityList({ ...queryParams, dataEntityId })
+  //   );
+  // }, []);
 
   const activityItemSkeleton = () => (
     <SkeletonWrapper
@@ -168,7 +166,7 @@ const ActivityResults: React.FC = () => {
             //   totals={totals}
             // />
           ))}
-          {!isActivityListFetching && !pageInfo.total ? (
+          {!isActivityListFetching && !activityResults.length ? (
             <EmptyContentPlaceholder text="No matches found" />
           ) : null}
         </S.ListContainer>

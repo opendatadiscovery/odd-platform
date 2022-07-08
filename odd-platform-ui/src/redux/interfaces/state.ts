@@ -36,7 +36,6 @@ import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest
 import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
 import {
-  ActivityPageInfo,
   ActivityQueryParams,
   CurrentPageInfo,
   DataEntityDetailsState,
@@ -222,9 +221,8 @@ export interface TermLinkedListState {
 }
 
 export interface ActivitiesState {
-  counts: ActivityCountInfo;
   activities: Activity[];
-  pageInfo: ActivityPageInfo;
+  counts: ActivityCountInfo;
   queryParams: ActivityQueryParams;
 }
 

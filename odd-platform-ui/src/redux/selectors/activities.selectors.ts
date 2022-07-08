@@ -1,9 +1,9 @@
 import { createSelector } from '@reduxjs/toolkit';
 import {
   ActivitiesState,
-  ActivityMultipleFilterName,
+  ActivityCountParamsRequest,
   ActivityMultipleQueryName,
-  ActivitySingleFilterName,
+  ActivityQueryParams,
   ActivitySingleQueryName,
   RootState,
 } from 'redux/interfaces';
@@ -27,29 +27,9 @@ export const getActivitiesList = createSelector(
   activities => activities.activities
 );
 
-export const getActivityPageInfo = createSelector(
-  activitiesState,
-  activities => activities.pageInfo
-);
-
-export const getActivitySingleFilterName = (
-  _: RootState,
-  filterName: ActivitySingleFilterName
-) => filterName;
-
-export const getActivityMultipleFilterName = (
-  _: RootState,
-  filterName: ActivityMultipleFilterName
-) => filterName;
-
 export const getActivitiesQueryParams = createSelector(
   activitiesState,
-  activities => {
-    const beginDate = new Date(activities.queryParams.beginDate);
-    const endDate = new Date(activities.queryParams.endDate);
-
-    return { ...activities.queryParams, beginDate, endDate };
-  }
+  (activities): ActivityQueryParams => activities.queryParams
 );
 
 export const getActivityQueryName = (
@@ -61,4 +41,17 @@ export const getActivitiesQueryParamsByQueryName = createSelector(
   activitiesState,
   getActivityQueryName,
   (activities, queryName) => activities.queryParams[queryName]
+);
+
+export const getActivitiesQueryParamsByName = (
+  queryName: ActivitySingleQueryName | ActivityMultipleQueryName
+) =>
+  createSelector(
+    activitiesState,
+    activities => activities.queryParams[queryName]
+  );
+
+export const getActivitiesCountsParams = createSelector(
+  activitiesState,
+  (activities): ActivityCountParamsRequest => activities.queryParams
 );

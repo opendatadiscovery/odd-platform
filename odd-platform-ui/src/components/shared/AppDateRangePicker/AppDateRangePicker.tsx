@@ -3,19 +3,23 @@ import { addDays, endOfDay, format, startOfDay } from 'date-fns';
 import CalendarIcon from 'components/shared/Icons/CalendarIcon';
 import { DateRange, ValueType } from 'rsuite/esm/DateRangePicker/types';
 import 'rsuite/dist/rsuite.min.css';
-import { useAppDispatch, useUpdateActivityQuery } from 'lib/redux/hooks';
 import * as S from './AppDateRangePickerStyles';
 
 interface AppDateRangePickerProps {
   defaultRange: { beginDate: Date; endDate: Date };
   label: string;
+  getCurrentRange?: (rangeStart: Date, rangeEnd: Date) => void;
 }
 
 const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
   defaultRange,
   label,
+  getCurrentRange,
 }) => {
-  const dispatch = useAppDispatch();
+  const [{ rangeStart, rangeEnd }, setRange] = React.useState({
+    rangeStart: defaultRange.beginDate,
+    rangeEnd: defaultRange.endDate,
+  });
 
   const locale = {
     sunday: 'Sun',
@@ -47,6 +51,16 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     },
   ];
 
+  const handleOnOk = ([beginDate, endDate]: ValueType) => {
+    if (beginDate && endDate && getCurrentRange) {
+      setRange({ rangeStart: beginDate, rangeEnd: endDate });
+      getCurrentRange(beginDate, endDate);
+    }
+  };
+
+  const handleRenderValue = ([beginDate, endDate]: DateRange) =>
+    `${format(beginDate, 'd MMM')} - ${format(endDate, 'd MMM')}`;
+
   return (
     <>
       <S.DateRangePickerLabel>{label}</S.DateRangePickerLabel>
@@ -57,23 +71,10 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
         ranges={ranges}
         size="sm"
         cleanable={false}
-        value={[defaultRange.beginDate, defaultRange.endDate]}
-        onOk={([beginDate, endDate]: ValueType) => {
-          console.log('beginDate, endDate', beginDate, endDate);
-          if (beginDate && endDate) {
-            useUpdateActivityQuery(
-              'beginDate',
-              beginDate,
-              'add',
-              dispatch
-            );
-            useUpdateActivityQuery('endDate', endDate, 'add', dispatch);
-          }
-        }}
+        value={[rangeStart, rangeEnd]}
+        onOk={handleOnOk}
         caretAs={CalendarIcon}
-        renderValue={([beginDate, endDate]: DateRange) =>
-          `${format(beginDate, 'd MMM')} - ${format(endDate, 'd MMM')}`
-        }
+        renderValue={handleRenderValue}
       />
     </>
   );

@@ -9,33 +9,33 @@ import {
 } from 'lib/redux/hooks';
 import { StringifyOptions } from 'query-string';
 import {
+  getActivitiesCountsParams,
   getActivitiesList,
   getActivitiesListFetchingStatuses,
   getActivitiesQueryParams,
   getActivitiesQueryParamsByQueryName,
   getActivityCounts,
-  getActivityPageInfo,
 } from 'redux/selectors';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import { useHistory, useLocation } from 'react-router-dom';
 import { ActivitySingleQueryData } from 'redux/interfaces';
-import { fetchActivityCounts } from 'redux/thunks';
+import { fetchActivityCounts, fetchActivityList } from 'redux/thunks';
 import ActivityTabsSkeleton from './ActivityTabsSkeleton/ActivityTabsSkeleton';
 import ActivityResultsItemSkeleton from './ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import * as S from './ActivityResultsStyles';
 
 const ActivityResults: React.FC = () => {
   const dispatch = useAppDispatch();
-  const location = useLocation();
-  const history = useHistory();
+  // const location = useLocation();
+  // const history = useHistory();
 
   const activityTotals = useAppSelector(getActivityCounts);
   const activityType = useAppSelector(state =>
     getActivitiesQueryParamsByQueryName(state, 'type')
   ) as ActivityType;
-  const pageInfo = useAppSelector(getActivityPageInfo);
+  // const pageInfo = useAppSelector(getActivityPageInfo);
   const queryParams = useAppSelector(getActivitiesQueryParams);
+  const countParams = useAppSelector(getActivitiesCountsParams);
   const activityResults = useAppSelector(getActivitiesList);
   const { isLoading: isActivityListFetching } = useAppSelector(
     getActivitiesListFetchingStatuses
@@ -72,10 +72,13 @@ const ActivityResults: React.FC = () => {
   // }, []);
 
   React.useEffect(() => {
-    console.log('reren');
-    dispatch(fetchActivityCounts(queryParams));
-    // dispatch(fetchActivityList(queryParams));
-  }, [queryParams]);
+    dispatch(fetchActivityCounts(countParams));
+  }, [countParams, dispatch, fetchActivityCounts]);
+
+  React.useEffect(() => {
+    console.log('use', queryParams);
+    dispatch(fetchActivityList(queryParams));
+  }, [queryParams, dispatch, fetchActivityList]);
 
   const [tabs, setTabs] = React.useState<AppTabItem<ActivityType>[]>([]);
 
@@ -160,7 +163,7 @@ const ActivityResults: React.FC = () => {
             //   totals={totals}
             // />
           ))}
-          {!isActivityListFetching && !pageInfo.total ? (
+          {!isActivityListFetching && !activityResults.length ? (
             <EmptyContentPlaceholder text="No matches found" />
           ) : null}
         </S.ListContainer>

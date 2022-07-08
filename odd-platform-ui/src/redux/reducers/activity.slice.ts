@@ -2,26 +2,27 @@ import { ActivitiesState } from 'redux/interfaces/state';
 import { activitiesActionTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import { subDays } from 'date-fns';
+import { formatISO, subDays } from 'date-fns';
 import {
+  ActivityDateParams,
   ActivityMultipleQueryData,
   ActivityMultipleQueryName,
+  ActivityPayload,
   ActivityQueryParams,
   ActivitySingleQueryData,
   ActivitySingleQueryName,
 } from 'redux/interfaces';
 
-const beginDate = subDays(new Date(), 7).toISOString();
-const endDate = new Date().toISOString();
-
-// console.log('dates', beginDate, endDate);
-// const beginDate = new Date(endDate.setDate(endDate.getDate() - 7));
+const beginDate = formatISO(subDays(new Date(), 7), {
+  representation: 'date',
+});
+const endDate = formatISO(new Date(), { representation: 'date' });
 const size = 20;
+
 const initialQueryParams: ActivityQueryParams = {
   beginDate,
   endDate,
   size,
-  // type: ActivityType.ALL,
 };
 
 export const initialState: ActivitiesState = {
@@ -33,17 +34,22 @@ export const initialState: ActivitiesState = {
     myObjectsCount: 0,
     downstreamCount: 0,
   },
-  pageInfo: {
-    total: 0,
-    lastEventDateTime: new Date(),
-    hasNext: true,
-  },
 };
 
 export const activitiesSlice = createSlice({
   name: activitiesActionTypePrefix,
   initialState,
   reducers: {
+    setQueryDateParam: (
+      state,
+      { payload }: ActivityPayload<ActivityDateParams, string>
+    ): ActivitiesState => {
+      const { value, type } = payload;
+      state.queryParams[type] = value;
+
+      return state;
+    },
+
     setSingleQueryParam: (
       state,
       {
@@ -150,6 +156,7 @@ export const activitiesSlice = createSlice({
 });
 
 export const {
+  setQueryDateParam,
   clearActivityFilters,
   setSingleQueryParam,
   setMultipleQueryParam,
