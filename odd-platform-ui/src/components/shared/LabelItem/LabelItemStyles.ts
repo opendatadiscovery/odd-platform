@@ -3,11 +3,14 @@ import styled from 'styled-components';
 
 export const Container = styled(Typography)<{
   $unfilled?: boolean;
+  $systemLabel?: boolean;
   component: React.ElementType;
-}>(({ theme, $unfilled }) => ({
+}>(({ theme, $unfilled, $systemLabel }) => ({
   display: 'inline-flex',
   alignItems: 'center',
-  color: theme.palette.texts.info,
+  color: $systemLabel
+    ? theme.palette.texts.secondary
+    : theme.palette.texts.info,
   position: 'relative',
   backgroundColor:
     theme.palette.backgrounds[$unfilled ? 'default' : 'secondary'],

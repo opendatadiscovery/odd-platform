@@ -22,7 +22,10 @@ const TruncatedLabel: React.FC<TruncatedLabelProps> = ({
       <div>
         {labelList?.map(label => (
           <TruncateMarkup.Atom key={label.id}>
-            <LabelItem labelName={label.name} />
+            <LabelItem
+              systemLabel={label.external}
+              labelName={label.name}
+            />
           </TruncateMarkup.Atom>
         ))}
       </div>

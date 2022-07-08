@@ -54,6 +54,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
             .map(tag => (
               <TagItem
                 key={tag.id}
+                systemTag={tag.external}
                 label={tag.name}
                 important={tag.important}
                 sx={{ m: 0.5 }}
@@ -68,6 +69,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
                       .sort(tagsCompare)
                       .map(tag => (
                         <TagItem
+                          systemTag={tag.external}
                           key={tag.id}
                           label={tag.name}
                           important={tag.important}

@@ -13,6 +13,7 @@ interface TagItemProps {
   onClick?: () => void;
   sx?: SxProps<Theme>;
   cursorPointer?: boolean;
+  systemTag?: boolean;
 }
 
 const TagItem: React.FC<TagItemProps> = ({
@@ -23,17 +24,19 @@ const TagItem: React.FC<TagItemProps> = ({
   onClick,
   cursorPointer,
   sx,
+  systemTag,
 }) => (
   <S.Container
     variant="body1"
     $important={important}
+    $systemTag={systemTag}
     $removable={removable}
     $cursorPointer={cursorPointer}
     onClick={onClick}
     sx={sx}
   >
     {label}
-    {removable && (
+    {removable && !systemTag && (
       <AppIconButton
         size="small"
         color="unfilled"
