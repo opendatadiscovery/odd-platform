@@ -61,6 +61,14 @@ metrics:
     enabled: false
     otlp-endpoint: http://localhost:4317
 
+notifications:
+  enabled: false
+  webhook_url:
+  wal:
+    advisory-lock-id: 100
+    replication-slot-name: odd_platform_replication_slot
+    publication-name: odd_platform_publication_alert
+
 management:
   endpoints:
     enabled-by-default: false
@@ -88,4 +96,5 @@ logging:
     org.jooq.tools.LoggerListener: info
     io.r2dbc.postgresql.QUERY: info
     io.r2dbc.postgresql.PARAM: info
+    org.opendatadiscovery.oddplatform.notification: info
 
