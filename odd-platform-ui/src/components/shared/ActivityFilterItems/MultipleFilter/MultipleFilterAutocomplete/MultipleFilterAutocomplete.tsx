@@ -6,35 +6,26 @@ import {
 import { useDebouncedCallback } from 'use-debounce';
 import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import {
-  useAppDispatch,
-  useAppSelector,
-  useUpdateActivityQuery,
-} from 'lib/redux/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
 import uniq from 'lodash/uniq';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
-import {
-  ActivityMultipleFilterOption,
-  ActivityMultipleQueryName,
-} from 'redux/interfaces';
-import { getActivitiesQueryParamsByQueryName } from 'redux/selectors';
+import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
+import { setActivityQueryParam } from 'redux/reducers/activity.slice';
 import * as S from './MultipleFilterAutocompleteStyles';
 
 interface MultipleFilterAutocompleteProps {
-  filterName: ActivityMultipleQueryName;
+  filterName: ActivityQueryName;
   name: string;
+  selectedOptionIds: number[];
 }
 
 const MultipleFilterAutocomplete: React.FC<
   MultipleFilterAutocompleteProps
-> = ({ name, filterName }) => {
-  type FilterOption = ActivityMultipleFilterOption;
+> = ({ name, filterName, selectedOptionIds }) => {
+  type FilterOption = ActivityFilterOption;
 
   const dispatch = useAppDispatch();
-  const selectedOptionIds = useAppSelector(state =>
-    getActivitiesQueryParamsByQueryName(state, filterName)
-  ) as Array<number>;
 
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
@@ -94,12 +85,12 @@ const MultipleFilterAutocomplete: React.FC<
     if (typeof value === 'string') return;
     setSearchText(''); // Clear input on select
 
-    if (value.id && value.name) {
-      useUpdateActivityQuery(
-        filterName,
-        uniq([...(selectedOptionIds || []), value.id]),
-        'add',
-        dispatch
+    if (value.id) {
+      dispatch(
+        setActivityQueryParam({
+          queryName: filterName,
+          queryData: uniq([...(selectedOptionIds || []), value.id]),
+        })
       );
     }
   };

@@ -21,6 +21,15 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     rangeEnd: defaultRange.endDate,
   });
 
+  React.useEffect(
+    () =>
+      setRange({
+        rangeStart: defaultRange.beginDate,
+        rangeEnd: defaultRange.endDate,
+      }),
+    [defaultRange]
+  );
+
   const locale = {
     sunday: 'Sun',
     monday: 'Mon',

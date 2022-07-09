@@ -4,14 +4,12 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import { formatISO, subDays } from 'date-fns';
 import {
-  ActivityDateParams,
-  ActivityMultipleQueryData,
-  ActivityMultipleQueryName,
   ActivityPayload,
+  ActivityQueryData,
+  ActivityQueryName,
   ActivityQueryParams,
-  ActivitySingleQueryData,
-  ActivitySingleQueryName,
 } from 'redux/interfaces';
+import { ActivityType } from 'generated-sources';
 
 const beginDate = formatISO(subDays(new Date(), 7), {
   representation: 'date',
@@ -23,6 +21,7 @@ const initialQueryParams: ActivityQueryParams = {
   beginDate,
   endDate,
   size,
+  type: ActivityType.ALL,
 };
 
 export const initialState: ActivitiesState = {
@@ -40,42 +39,15 @@ export const activitiesSlice = createSlice({
   name: activitiesActionTypePrefix,
   initialState,
   reducers: {
-    setQueryDateParam: (
+    setActivityQueryParam: (
       state,
-      { payload }: ActivityPayload<ActivityDateParams, string>
+      { payload }: ActivityPayload<ActivityQueryName, ActivityQueryData>
     ): ActivitiesState => {
-      const { value, type } = payload;
-      state.queryParams[type] = value;
-
-      return state;
-    },
-
-    setSingleQueryParam: (
-      state,
-      {
-        payload,
-      }: {
-        payload: {
-          queryName: ActivitySingleQueryName;
-          queryData: ActivitySingleQueryData;
-        };
-      }
-    ) => {
       const { queryName, queryData } = payload;
 
-      if (
-        queryData !== null &&
-        (queryName === 'beginDate' || queryName === 'endDate')
-      ) {
-        // const date = new Date(queryData);
-
-        return {
-          ...state,
-          queryParams: {
-            ...state.queryParams,
-            [queryName]: queryData,
-          },
-        };
+      if (queryData === null) {
+        delete state.queryParams[queryName];
+        return state;
       }
 
       return {
@@ -86,48 +58,19 @@ export const activitiesSlice = createSlice({
         },
       };
     },
-    setMultipleQueryParam: (
+
+    deleteActivityQueryParam: (
       state,
-      {
-        payload,
-      }: {
-        payload: {
-          queryName: ActivityMultipleQueryName;
-          queryData: ActivityMultipleQueryData;
-        };
-      }
+      { payload }: ActivityPayload<ActivityQueryName, number>
     ) => {
       const { queryName, queryData } = payload;
+      const queryParams = state.queryParams[queryName] as Array<number>;
 
       return {
         ...state,
         queryParams: {
           ...state.queryParams,
-          [queryName]: queryData,
-        },
-      };
-    },
-
-    deleteMultipleQueryParam: (
-      state,
-      {
-        payload,
-      }: {
-        payload: {
-          queryName: ActivityMultipleQueryName;
-          queryParamId: number;
-        };
-      }
-    ) => {
-      const { queryName, queryParamId } = payload;
-
-      return {
-        ...state,
-        queryParams: {
-          ...state.queryParams,
-          [queryName]: state.queryParams[queryName]?.filter(
-            id => id !== queryParamId
-          ),
+          [queryName]: queryParams?.filter(id => id !== queryData),
         },
       };
     },
@@ -156,11 +99,9 @@ export const activitiesSlice = createSlice({
 });
 
 export const {
-  setQueryDateParam,
   clearActivityFilters,
-  setSingleQueryParam,
-  setMultipleQueryParam,
-  deleteMultipleQueryParam,
+  setActivityQueryParam,
+  deleteActivityQueryParam,
 } = activitiesSlice.actions;
 
 export default activitiesSlice.reducer;

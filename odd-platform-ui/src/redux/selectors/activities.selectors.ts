@@ -2,9 +2,8 @@ import { createSelector } from '@reduxjs/toolkit';
 import {
   ActivitiesState,
   ActivityCountParamsRequest,
-  ActivityMultipleQueryName,
+  ActivityQueryName,
   ActivityQueryParams,
-  ActivitySingleQueryName,
   RootState,
 } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
@@ -32,19 +31,8 @@ export const getActivitiesQueryParams = createSelector(
   (activities): ActivityQueryParams => activities.queryParams
 );
 
-export const getActivityQueryName = (
-  _: RootState,
-  queryName: ActivitySingleQueryName | ActivityMultipleQueryName
-) => queryName;
-
-export const getActivitiesQueryParamsByQueryName = createSelector(
-  activitiesState,
-  getActivityQueryName,
-  (activities, queryName) => activities.queryParams[queryName]
-);
-
 export const getActivitiesQueryParamsByName = (
-  queryName: ActivitySingleQueryName | ActivityMultipleQueryName
+  queryName: ActivityQueryName
 ) =>
   createSelector(
     activitiesState,

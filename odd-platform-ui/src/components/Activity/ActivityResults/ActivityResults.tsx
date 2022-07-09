@@ -2,38 +2,36 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { ActivityType } from 'generated-sources';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import {
-  useAppDispatch,
-  useAppSelector,
-  useUpdateActivityQuery,
-} from 'lib/redux/hooks';
-import { StringifyOptions } from 'query-string';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getActivitiesCountsParams,
   getActivitiesList,
   getActivitiesListFetchingStatuses,
   getActivitiesQueryParams,
-  getActivitiesQueryParamsByQueryName,
+  getActivitiesQueryParamsByName,
   getActivityCounts,
 } from 'redux/selectors';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import { ActivitySingleQueryData } from 'redux/interfaces';
 import { fetchActivityCounts, fetchActivityList } from 'redux/thunks';
+import { setActivityQueryParam } from 'redux/reducers/activity.slice';
+import { useAppQuery } from 'lib/hooks';
+import { ActivityQueryName, ActivityQueryParams } from 'redux/interfaces';
+import { useHistory, useLocation } from 'react-router-dom';
+import { activityPath } from 'lib/paths';
 import ActivityTabsSkeleton from './ActivityTabsSkeleton/ActivityTabsSkeleton';
 import ActivityResultsItemSkeleton from './ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import * as S from './ActivityResultsStyles';
 
 const ActivityResults: React.FC = () => {
   const dispatch = useAppDispatch();
-  // const location = useLocation();
-  // const history = useHistory();
+  const location = useLocation();
+  const history = useHistory();
 
   const activityTotals = useAppSelector(getActivityCounts);
-  const activityType = useAppSelector(state =>
-    getActivitiesQueryParamsByQueryName(state, 'type')
-  ) as ActivityType;
-  // const pageInfo = useAppSelector(getActivityPageInfo);
+  const activityType = useAppSelector(
+    getActivitiesQueryParamsByName('type')
+  );
   const queryParams = useAppSelector(getActivitiesQueryParams);
   const countParams = useAppSelector(getActivitiesCountsParams);
   const activityResults = useAppSelector(getActivitiesList);
@@ -41,44 +39,45 @@ const ActivityResults: React.FC = () => {
     getActivitiesListFetchingStatuses
   );
 
-  const queryStringParams: StringifyOptions = {
-    arrayFormat: 'bracket-separator',
-    arrayFormatSeparator: '|',
-  };
+  const [isQueryUpdated, setIsQueryUpdated] = React.useState(false);
 
-  // const activityQueryString = queryString.stringify(
-  //   queryParams,
-  //   queryStringParams
-  // );
-  //
-  // React.useEffect(() => {
-  //   history.push(activityPath(activityQueryString));
-  // }, [activityQueryString]);
-  //
-  // const parsedActivityQuery = queryString.parse(location.search, {
-  //   parseNumbers: true,
-  //   ...queryStringParams,
-  // });
-  //
-  // React.useEffect(() => {
-  //   Object.entries(parsedActivityQuery).map(([queryName, queryData]) =>
-  //     useUpdateActivityQuery(
-  //       queryName as ActivityQueryNames,
-  //       queryData as ActivitySingleQueryData | ActivityMultipleQueryData,
-  //       'add',
-  //       dispatch
-  //     )
-  //   );
-  // }, []);
+  const { query, params } = useAppQuery<ActivityQueryParams>(
+    queryParams,
+    location.search
+  );
 
   React.useEffect(() => {
-    dispatch(fetchActivityCounts(countParams));
-  }, [countParams, dispatch, fetchActivityCounts]);
+    history.push(activityPath(query));
+  }, [query]);
 
   React.useEffect(() => {
-    console.log('use', queryParams);
-    dispatch(fetchActivityList(queryParams));
-  }, [queryParams, dispatch, fetchActivityList]);
+    Object.entries(params).forEach(([queryName, queryData]) =>
+      dispatch(
+        setActivityQueryParam({
+          queryName: queryName as ActivityQueryName,
+          queryData,
+        })
+      )
+    );
+  }, []);
+
+  React.useEffect(() => {
+    if (query === location.search.substring(1)) {
+      setIsQueryUpdated(true);
+    }
+  }, [query, location.search]);
+
+  React.useEffect(() => {
+    if (isQueryUpdated) {
+      dispatch(fetchActivityCounts(countParams));
+    }
+  }, [countParams, isQueryUpdated]);
+
+  React.useEffect(() => {
+    if (isQueryUpdated) {
+      dispatch(fetchActivityList(queryParams));
+    }
+  }, [queryParams, isQueryUpdated]);
 
   const [tabs, setTabs] = React.useState<AppTabItem<ActivityType>[]>([]);
 
@@ -116,12 +115,12 @@ const ActivityResults: React.FC = () => {
   }, [tabs, activityType]);
 
   const onActivityTypeChange = (newTypeIndex: number) => {
-    const newActivityType = tabs[newTypeIndex].value;
-    useUpdateActivityQuery(
-      'type',
-      newActivityType as ActivitySingleQueryData,
-      'add',
-      dispatch
+    const newActivityType = tabs[newTypeIndex].value as ActivityType;
+    dispatch(
+      setActivityQueryParam({
+        queryName: 'type',
+        queryData: newActivityType,
+      })
     );
   };
 

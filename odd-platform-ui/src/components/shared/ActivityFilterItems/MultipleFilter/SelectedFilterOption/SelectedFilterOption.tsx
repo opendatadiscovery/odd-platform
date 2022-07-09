@@ -4,16 +4,13 @@ import { Typography } from '@mui/material';
 import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import {
-  ActivityMultipleFilterOption,
-  ActivityMultipleQueryName,
-} from 'redux/interfaces';
-import { useUpdateActivityQuery } from 'lib/redux/hooks';
+import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
+import { deleteActivityQueryParam } from 'redux/reducers/activity.slice';
 import { Container } from './SelectedFilterOptionStyles';
 
 interface SelectedFilterOptionProps {
-  selectedOption: ActivityMultipleFilterOption;
-  filterName: ActivityMultipleQueryName;
+  selectedOption: ActivityFilterOption;
+  filterName: ActivityQueryName;
 }
 
 const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
@@ -23,11 +20,11 @@ const SelectedFilterOption: React.FC<SelectedFilterOptionProps> = ({
   const dispatch = useDispatch();
 
   const onRemoveClick = () => {
-    useUpdateActivityQuery(
-      filterName,
-      selectedOption.id,
-      'delete',
-      dispatch
+    dispatch(
+      deleteActivityQueryParam({
+        queryName: filterName,
+        queryData: selectedOption.id,
+      })
     );
   };
 

@@ -4,12 +4,12 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
-import MultipleFilter from 'components/Activity/Filters/FilterItem/MultipleFilter/MultipleFilter';
 import { clearActivityFilters } from 'redux/reducers/activity.slice';
 import { ActivityEventType } from 'generated-sources';
-import CalendarFilter from 'components/Activity/Filters/FilterItem/CalendarFilter/CalendarFilter';
+import SingleFilter from 'components/shared/ActivityFilterItems/SingleFilter/SingleFilter';
+import CalendarFilter from 'components/shared/ActivityFilterItems/CalendarFilter/CalendarFilter';
+import MultipleFilter from 'components/shared/ActivityFilterItems/MultipleFilter/MultipleFilter';
 import * as S from './FiltersStyles';
-import SingleFilter from './FilterItem/SingleFilter/SingleFilter';
 
 const Filters: React.FC = () => {
   const dispatch = useAppDispatch();

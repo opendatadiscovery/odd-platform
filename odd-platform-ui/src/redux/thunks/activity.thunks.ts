@@ -11,7 +11,7 @@ import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import {
   ActivityCountParamsRequest,
-  ActivityListParamsRequest,
+  ActivityQueryParams,
 } from 'redux/interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -20,7 +20,7 @@ const dataEntityApi = new DataEntityApi(apiClientConf);
 
 export const fetchActivityList = createAsyncThunk<
   Activity[],
-  ActivityListParamsRequest
+  ActivityQueryParams
 >(actions.fetchActivityListActionType, async params => {
   const castedBeginDate = new Date(params.beginDate);
   const castedEndDate = new Date(params.endDate);

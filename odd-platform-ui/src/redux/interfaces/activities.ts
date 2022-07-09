@@ -1,11 +1,6 @@
 import { ActivityEventType, ActivityType } from 'generated-sources';
 
-export interface ActivitySingleFilterOption {
-  id: number | string;
-  name: string;
-}
-
-export interface ActivityMultipleFilterOption {
+export interface ActivityFilterOption {
   id: number;
   name: string;
   important?: boolean;
@@ -20,7 +15,7 @@ export interface ActivityQueryParams {
   tagIds?: Array<number>;
   ownerIds?: Array<number>;
   userIds?: Array<number>;
-  type?: ActivityType;
+  type: ActivityType;
   eventType?: ActivityEventType;
   lastEventId?: number;
   lastEventDateTime?: string;
@@ -37,54 +32,15 @@ export interface ActivityCountParamsRequest {
   eventType?: ActivityEventType;
 }
 
-export interface ActivityListParamsRequest {
-  beginDate: string;
-  endDate: string;
-  size: number;
-  datasourceId?: number;
-  namespaceId?: number;
-  tagIds?: Array<number>;
-  ownerIds?: Array<number>;
-  userIds?: Array<number>;
-  type?: ActivityType;
-  eventType?: ActivityEventType;
-  lastEventId?: number;
-  lastEventDateTime?: string;
-}
-
-export type ActivityQueryNames = keyof ActivityQueryParams;
-
-export type ActivitySingleQueryName = keyof Pick<
-  ActivityQueryParams,
-  | 'beginDate'
-  | 'endDate'
-  | 'size'
-  | 'datasourceId'
-  | 'namespaceId'
-  | 'type'
-  | 'eventType'
-  | 'lastEventDateTime'
->;
-
-export type ActivitySingleQueryData =
-  | Date
+export type ActivityQueryName = keyof ActivityQueryParams;
+export type ActivityQueryData =
   | number
   | ActivityType
   | ActivityEventType
-  | null;
+  | null
+  | string
+  | Array<number>;
 
-export type ActivityMultipleQueryName = keyof Pick<
-  ActivityQueryParams,
-  'tagIds' | 'ownerIds' | 'userIds'
->;
-
-export type ActivityMultipleQueryData = Array<number>;
-
-export type ActivityDateParams = keyof Pick<
-  ActivityQueryParams,
-  'beginDate' | 'endDate' | 'lastEventDateTime'
->;
-
-export interface ActivityPayload<PayloadType, PayloadValue> {
-  payload: { type: PayloadType; value: PayloadValue };
+export interface ActivityPayload<PayloadName, PayloadData> {
+  payload: { queryName: PayloadName; queryData: PayloadData };
 }

@@ -5,6 +5,7 @@ import {
   ManagementViewType,
   TermsViewType,
 } from 'lib/interfaces';
+import { parse, stringify, StringifyOptions } from 'query-string';
 
 /**
  * Find out dynamically size of scrollbar width of client's browser.
@@ -56,4 +57,26 @@ export const useAppParams = (): AppRouteParams => {
     termId: parseInt(termId, 10),
     viewType,
   };
+};
+
+export const useAppQuery = <QueryParams extends object>(
+  queryParams?: QueryParams,
+  queryString?: string
+): { query: string; params: QueryParams } => {
+  const queryStringOptions: StringifyOptions = {
+    arrayFormat: 'bracket-separator',
+    arrayFormatSeparator: '|',
+  };
+
+  const query = queryParams
+    ? stringify(queryParams, queryStringOptions)
+    : '';
+  const params = queryString
+    ? (parse(queryString, {
+        ...queryStringOptions,
+        parseNumbers: true,
+      }) as unknown as QueryParams)
+    : ({} as QueryParams);
+
+  return { query, params };
 };

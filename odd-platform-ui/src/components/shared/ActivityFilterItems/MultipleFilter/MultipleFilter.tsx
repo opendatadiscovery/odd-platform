@@ -1,8 +1,8 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { ActivityMultipleQueryName } from 'redux/interfaces';
+import { ActivityQueryName } from 'redux/interfaces';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { getActivitiesQueryParamsByQueryName } from 'redux/selectors';
+import { getActivitiesQueryParamsByName } from 'redux/selectors';
 import { Owner, Tag } from 'generated-sources';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
@@ -10,7 +10,7 @@ import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFil
 
 interface MultipleFilterProps {
   name: string;
-  filterName: ActivityMultipleQueryName;
+  filterName: ActivityQueryName;
 }
 
 const MultipleFilter: React.FC<MultipleFilterProps> = ({
@@ -23,8 +23,8 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({
     Array<Tag | Owner> | undefined
   >(undefined);
 
-  const selectedOptionIds = useAppSelector(state =>
-    getActivitiesQueryParamsByQueryName(state, filterName)
+  const selectedOptionIds = useAppSelector(
+    getActivitiesQueryParamsByName(filterName)
   ) as Array<number>;
 
   React.useEffect(() => {
@@ -55,7 +55,11 @@ const MultipleFilter: React.FC<MultipleFilterProps> = ({
   return (
     <Grid container>
       <Grid item xs={12}>
-        <MultipleFilterAutocomplete name={name} filterName={filterName} />
+        <MultipleFilterAutocomplete
+          name={name}
+          filterName={filterName}
+          selectedOptionIds={selectedOptionIds}
+        />
       </Grid>
       <Grid
         display="inline-flex"
