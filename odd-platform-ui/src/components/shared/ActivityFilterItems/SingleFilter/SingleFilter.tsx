@@ -5,13 +5,13 @@ import {
   DataSource,
   Namespace,
 } from 'generated-sources';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { stringFormatted } from 'lib/helpers';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { setActivityQueryParam } from 'redux/reducers/activity.slice';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 
 interface SingleFilterProps<OptionType> {
   name: string;
@@ -108,11 +108,10 @@ const SingleFilter = <
   return filterOptions.length ? (
     <Grid container>
       <Grid container item xs={12}>
-        <AppTextField
+        <AppSelect
           defaultValue="All"
           sx={{ mt: 2 }}
           label={name}
-          select
           id={`filter-${filterName}`}
           value={selectedOption}
         >
@@ -124,7 +123,7 @@ const SingleFilter = <
             All
           </AppMenuItem>
           {optionsList}
-        </AppTextField>
+        </AppSelect>
       </Grid>
     </Grid>
   ) : null;

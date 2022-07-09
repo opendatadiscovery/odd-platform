@@ -4,7 +4,6 @@ import {
   AutocompleteRenderOptionState,
 } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch } from 'lib/redux/hooks';
 import uniq from 'lodash/uniq';
@@ -12,6 +11,7 @@ import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
 import { setActivityQueryParam } from 'redux/reducers/activity.slice';
+import AppInput from 'components/shared/AppInput/AppInput';
 import * as S from './MultipleFilterAutocompleteStyles';
 
 interface MultipleFilterAutocompleteProps {
@@ -165,7 +165,7 @@ const MultipleFilterAutocomplete: React.FC<
       value={{ name: searchText, id: 0 }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppTextField
+        <AppInput
           {...params}
           sx={{ mt: 2 }}
           ref={params.InputProps.ref}
