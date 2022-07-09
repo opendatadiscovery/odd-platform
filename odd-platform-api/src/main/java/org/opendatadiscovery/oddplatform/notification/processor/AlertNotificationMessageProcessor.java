@@ -2,8 +2,8 @@ package org.opendatadiscovery.oddplatform.notification.processor;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.notification.NotificationsProperties;
-import org.opendatadiscovery.oddplatform.notification.wal.DecodedWALMessage;
 import org.opendatadiscovery.oddplatform.notification.processor.webhook.WebhookSender;
+import org.opendatadiscovery.oddplatform.notification.wal.DecodedWALMessage;
 import org.springframework.stereotype.Component;
 
 @Component

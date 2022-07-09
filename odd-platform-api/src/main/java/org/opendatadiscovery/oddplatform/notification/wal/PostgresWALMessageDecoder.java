@@ -26,8 +26,8 @@ import static java.util.stream.Collectors.toMap;
 @RequiredArgsConstructor
 @Slf4j
 public class PostgresWALMessageDecoder {
-    private final static int COLUMN_NAME_ID = 4;
-    private final static int COLUMN_TYPE_ID = 6;
+    private static final int COLUMN_NAME_ID = 4;
+    private static final int COLUMN_TYPE_ID = 6;
 
     // Value list should be an ordered one to preserve column order coming from RELATION messages
     private final Map<Integer, List<ColumnMeta>> tableColumns = new HashMap<>();
@@ -149,6 +149,8 @@ public class PostgresWALMessageDecoder {
                     columns.add(new Column(columnMeta.name(), columnMeta.type(), readColumnValueAsString(buffer)));
                 case NULL -> columns.add(new Column(columnMeta.name(), columnMeta.type(), null));
                 case UNCHANGED -> log.warn("Column: {}, Value: UNCHANGED", columnMeta.name());
+                default -> throw new IllegalArgumentException(
+                    "Unknown tuple data sub message type: %s".formatted(tupleDataSubMessageType));
             }
         }
 

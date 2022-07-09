@@ -86,11 +86,11 @@ public class AlertSlackNotificationMessageBuilder implements NotificationMessage
 
                 final String emoji = "RESOLVED".equals(status) ? ":white_check_mark:" : ":warning:";
 
-                return updatedBy != null ?
-                    UPDATE_TEMPLATE_WITH_UPDATED_BY.formatted(emoji, alertType, alertDescription,
-                        dataEntityOddrn, status, updatedBy, alertId) :
-                    UPDATE_TEMPLATE_WITHOUT_UPDATED_BY.formatted(emoji, alertType, alertDescription, dataEntityOddrn,
-                        status, alertId);
+                return updatedBy != null
+                    ? UPDATE_TEMPLATE_WITH_UPDATED_BY.formatted(emoji, alertType, alertDescription,
+                    dataEntityOddrn, status, updatedBy, alertId)
+                    : UPDATE_TEMPLATE_WITHOUT_UPDATED_BY.formatted(emoji, alertType, alertDescription, dataEntityOddrn,
+                    status, alertId);
             default:
                 throw new IllegalArgumentException(
                     "Unsupported operation for building an alert message: %s".formatted(message.operation()));
