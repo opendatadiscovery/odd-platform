@@ -68,6 +68,11 @@ interface TagType {
 
 type AlertType = Record<AlertStatus, ItemColors>;
 
+interface DatasetFieldKeyType {
+  primary: ItemColors;
+  sort: ItemColors;
+}
+
 declare module '@mui/material/styles' {
   interface Palette {
     entityClass: EntityClasses;
@@ -77,6 +82,7 @@ declare module '@mui/material/styles' {
     tag: TagType;
     structureLabel: StructureLabelType;
     alert: AlertType;
+    datasetFieldKey: DatasetFieldKeyType;
     backgrounds: Partial<BackgroundType>;
     texts: TextType;
     textField: ItemCondition;
@@ -90,6 +96,7 @@ declare module '@mui/material/styles' {
     tag?: TagType;
     structureLabel?: StructureLabelType;
     alert?: AlertType;
+    datasetFieldKey?: DatasetFieldKeyType;
     backgrounds?: Partial<BackgroundType>;
     texts?: TextType;
     textField?: ItemCondition;

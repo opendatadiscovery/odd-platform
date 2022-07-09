@@ -17,8 +17,9 @@ import LabelsSkeletonItem from 'components/Management/LabelsList/LabelsSkeletonI
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
@@ -98,7 +99,7 @@ const LabelsListView: React.FC = () => {
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppTextField
+        <AppInput
           placeholder="Search label..."
           sx={{ minWidth: '340px' }}
           fullWidth={false}

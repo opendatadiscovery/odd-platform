@@ -70,6 +70,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       isLoading={isLoading}
+      formSubmitHandler={onConfirm}
     />
   );
 };

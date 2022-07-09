@@ -1,8 +1,8 @@
-import { createAsyncAction } from 'typesafe-actions';
-import { AppInfo } from 'generated-sources';
+import { createActionType } from 'lib/redux/helpers';
 
-export const fetchAppInfo = createAsyncAction(
-  'GET_APP_INFO__REQUEST',
-  'GET_APP_INFO__SUCCESS',
-  'GET_APP_INFO__FAILURE'
-)<undefined, AppInfo | void, undefined>();
+export const appInfoActionPrefix = 'appInfo';
+
+export const fetchAppInfoActionType = createActionType(
+  appInfoActionPrefix,
+  'fetchAppInfo'
+);

@@ -10,7 +10,8 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import EditableOwnerItem from 'components/Management/OwnersList/EditableOwnerItem/EditableOwnerItem';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
@@ -102,7 +103,7 @@ const OwnersListView: React.FC<OwnersListProps> = ({
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppTextField
+        <AppInput
           placeholder="Search owner..."
           sx={{ minWidth: '340px' }}
           fullWidth={false}

@@ -2,7 +2,8 @@ import React from 'react';
 import { FormControlLabel } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
 import { TagItemBtnsContainer } from './TagCreateFormItemStyles';
@@ -28,7 +29,7 @@ const TagCreateFormItem: React.FC<TagCreateFormItemProps> = ({
         defaultValue=""
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Tag Name"
             name={`tags.${itemIndex}.name`}
