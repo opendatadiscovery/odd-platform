@@ -11,7 +11,7 @@ services:
       - 5432:5432
 
   odd-platform:
-    image: odd-platform:arm-test
+    image: ghcr.io/opendatadiscovery/odd-platform:latest
     restart: always
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://database:5432/${POSTGRES_DATABASE}
