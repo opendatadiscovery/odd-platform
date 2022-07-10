@@ -2,7 +2,7 @@ import { ActivitiesState } from 'redux/interfaces/state';
 import { activitiesActionTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import { formatISO, subDays } from 'date-fns';
+import { addDays, formatISO, startOfDay } from 'date-fns';
 import {
   ActivityPayload,
   ActivityQueryData,
@@ -11,7 +11,7 @@ import {
 } from 'redux/interfaces';
 import { ActivityType } from 'generated-sources';
 
-const beginDate = formatISO(subDays(new Date(), 7), {
+const beginDate = formatISO(startOfDay(addDays(new Date(), -6)), {
   representation: 'date',
 });
 const endDate = formatISO(new Date(), { representation: 'date' });

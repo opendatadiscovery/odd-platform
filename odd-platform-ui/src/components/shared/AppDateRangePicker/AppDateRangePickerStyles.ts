@@ -1,36 +1,32 @@
 import styled from 'styled-components';
-import { DateRangePicker, DateRangePickerProps } from 'rsuite';
-import 'rsuite/dist/rsuite.css';
+import InputIcon from 'react-multi-date-picker/components/input_icon';
+import { breakpointDownLgBody2, pxToRem } from 'theme/typography';
+import './overrides.css';
 
-export const AppDateRangePicker = styled(
-  DateRangePicker
-)<DateRangePickerProps>(({ theme }) => ({
-  '&.rs-picker': {
-    '& .rs-picker-toggle': {
-      borderColor: theme.palette.textField.normal.border,
-      borderRadius: '4px',
-      boxShadow: 'none',
-
-      '&.rs-picker-toggle:hover': {
-        borderColor: theme.palette.textField.hover.border,
-      },
-
-      '& .rs-picker-toggle-value': {
-        color: theme.palette.texts.primary,
-      },
-
-      '& .rs-picker-toggle-textbox': {
-        color: theme.palette.texts.primary,
-      },
-    },
+export const AppDateRangeInputIcon = styled(InputIcon)(({ theme }) => ({
+  width: '100%',
+  padding: theme.spacing(0.75, 1),
+  color: theme.palette.texts.primary,
+  fontWeight: 400,
+  fontSize: pxToRem(14),
+  lineHeight: pxToRem(20),
+  border: '1px solid',
+  borderColor: theme.palette.textField.normal.border,
+  borderRadius: '4px',
+  ...breakpointDownLgBody2,
+  '&:hover': {
+    borderColor: theme.palette.textField.hover.border,
   },
-  '&.rs-picker-toggle-wrapper': {
-    width: '100%',
+  '&:focus, &:active': {
+    borderColor: theme.palette.textField.active.border,
+  },
+  '& + svg': {
+    right: '8px !important',
+    stroke: theme.palette.texts.secondary,
   },
 }));
 
 export const DateRangePickerLabel = styled('div')(({ theme }) => ({
-  fontFamily: 'Roboto,Helvetica,Arial,sans-serif',
   color: theme.palette.texts.secondary,
   fontWeight: theme.typography.h5.fontWeight,
   fontSize: theme.typography.h5.fontSize,

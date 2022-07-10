@@ -1,45 +1,33 @@
 import React from 'react';
-import { addDays, endOfDay, format, startOfDay } from 'date-fns';
-import CalendarIcon from 'components/shared/Icons/CalendarIcon';
-import { DateRange, ValueType } from 'rsuite/esm/DateRangePicker/types';
-import 'rsuite/dist/rsuite.min.css';
+import { addDays, endOfDay, startOfDay } from 'date-fns';
+import DatePicker, { DateObject } from 'react-multi-date-picker';
+import AppDateRangePickerFooter from './AppDateRangePickerFooter/AppDateRangePickerFooter';
 import * as S from './AppDateRangePickerStyles';
 
 interface AppDateRangePickerProps {
   defaultRange: { beginDate: Date; endDate: Date };
   label: string;
-  getCurrentRange?: (rangeStart: Date, rangeEnd: Date) => void;
+  setCurrentRange?: (rangeStart: Date, rangeEnd: Date) => void;
 }
 
 const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
   defaultRange,
   label,
-  getCurrentRange,
+  setCurrentRange,
 }) => {
+  const datePickerRef = React.useRef<any>();
+
   const [{ rangeStart, rangeEnd }, setRange] = React.useState({
     rangeStart: defaultRange.beginDate,
     rangeEnd: defaultRange.endDate,
   });
 
-  React.useEffect(
-    () =>
-      setRange({
-        rangeStart: defaultRange.beginDate,
-        rangeEnd: defaultRange.endDate,
-      }),
-    [defaultRange]
-  );
-
-  const locale = {
-    sunday: 'Sun',
-    monday: 'Mon',
-    tuesday: 'Tue',
-    wednesday: 'Wed',
-    thursday: 'Thu',
-    friday: 'Fri',
-    saturday: 'Sat',
-    ok: 'Done',
-  };
+  React.useEffect(() => {
+    setRange({
+      rangeStart: defaultRange.beginDate,
+      rangeEnd: defaultRange.endDate,
+    });
+  }, [defaultRange]);
 
   const ranges = [
     {
@@ -60,30 +48,46 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     },
   ];
 
-  const handleOnOk = ([beginDate, endDate]: ValueType) => {
-    if (beginDate && endDate && getCurrentRange) {
-      setRange({ rangeStart: beginDate, rangeEnd: endDate });
-      getCurrentRange(beginDate, endDate);
-    }
-  };
-
-  const handleRenderValue = ([beginDate, endDate]: DateRange) =>
-    `${format(beginDate, 'd MMM')} - ${format(endDate, 'd MMM')}`;
+  const handleSetRange = React.useCallback(
+    ([beginDate, endDate]: Date[]) => {
+      setRange({
+        rangeStart: beginDate,
+        rangeEnd: endDate,
+      });
+    },
+    [setRange, setCurrentRange]
+  );
 
   return (
     <>
       <S.DateRangePickerLabel>{label}</S.DateRangePickerLabel>
-      <S.AppDateRangePicker
-        format="d MMM yyyy"
-        character=" - "
-        locale={locale}
-        ranges={ranges}
-        size="sm"
-        cleanable={false}
+      <DatePicker
+        format="D MMM"
+        range
+        arrow={false}
+        showOtherDays
+        multiple
+        offsetY={4}
+        numberOfMonths={2}
+        render={<S.AppDateRangeInputIcon />}
+        onChange={([start, end]: DateObject[]) =>
+          handleSetRange([start.toDate(), end.toDate()])
+        }
         value={[rangeStart, rangeEnd]}
-        onOk={handleOnOk}
-        caretAs={CalendarIcon}
-        renderValue={handleRenderValue}
+        plugins={[
+          <AppDateRangePickerFooter
+            position="bottom"
+            onClickDoneBtn={() => {
+              if (setCurrentRange) {
+                setCurrentRange(rangeStart, rangeEnd);
+              }
+              datePickerRef.current?.closeCalendar();
+            }}
+            ranges={ranges}
+            setRange={handleSetRange}
+          />,
+        ]}
+        ref={datePickerRef}
       />
     </>
   );
