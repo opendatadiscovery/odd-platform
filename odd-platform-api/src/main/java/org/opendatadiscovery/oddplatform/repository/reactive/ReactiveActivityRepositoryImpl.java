@@ -59,7 +59,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                final ActivityEventTypeDto eventType,
                                                final Long lastEventId,
                                                final OffsetDateTime lastEventDateTime) {
-        final var baseQuery = buildBaseQuery(datasourceId, namespaceId, tagIds, ownerIds, userIds);
+        final var baseQuery = buildBaseQuery(datasourceId, namespaceId, tagIds, ownerIds);
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
             ownerIds, userIds, eventType);
         return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
@@ -77,7 +77,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                               final Long currentOwnerId,
                                               final Long lastEventId,
                                               final OffsetDateTime lastEventDateTime) {
-        final var baseQuery = buildBaseQuery(datasourceId, namespaceId, tagIds, List.of(currentOwnerId), userIds);
+        final var baseQuery = buildBaseQuery(datasourceId, namespaceId, tagIds, List.of(currentOwnerId));
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
             List.of(currentOwnerId), userIds, eventType);
         return findActivities(baseQuery, conditions, lastEventId, lastEventDateTime, size);
@@ -95,7 +95,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                      final List<String> oddrns,
                                                      final Long lastEventId,
                                                      final OffsetDateTime lastEventDateTime) {
-        final var baseQuery = buildBaseQuery(datasourceId, namespaceId, tagIds, List.of(), userIds);
+        final var baseQuery = buildBaseQuery(datasourceId, namespaceId, tagIds, List.of());
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
             List.of(), userIds, eventType);
         conditions.add(DATA_ENTITY.ODDRN.in(oddrns));
@@ -111,7 +111,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                       final ActivityEventTypeDto eventType,
                                                       final Long lastEventId,
                                                       final OffsetDateTime lastEventDateTime) {
-        final var baseQuery = buildBaseQuery(null, null, List.of(), List.of(), userIds);
+        final var baseQuery = buildBaseQuery(null, null, List.of(), List.of());
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, null, null, List.of(),
             List.of(), userIds, eventType);
         conditions.add(DATA_ENTITY.ID.eq(dataEntityId));
@@ -128,8 +128,9 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                               final List<Long> userIds,
                                               final ActivityEventTypeDto eventType) {
         final var countQuery = DSL.selectCount()
-            .from(ACTIVITY);
-        addJoins(countQuery, datasourceId, namespaceId, tagIds, ownerIds, userIds);
+            .from(ACTIVITY)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID));
+        addJoins(countQuery, datasourceId, namespaceId, tagIds, ownerIds);
         final List<Condition> conditions =
             getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, userIds, eventType);
         return getActivityCount(countQuery, conditions);
@@ -145,8 +146,9 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                   final ActivityEventTypeDto eventType,
                                                   final Long currentOwnerId) {
         final var countQuery = DSL.selectCount()
-            .from(ACTIVITY);
-        addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of(currentOwnerId), userIds);
+            .from(ACTIVITY)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID));
+        addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of(currentOwnerId));
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
             List.of(currentOwnerId), userIds, eventType);
         return getActivityCount(countQuery, conditions);
@@ -162,8 +164,9 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                   final ActivityEventTypeDto eventType,
                                                   final List<String> oddrns) {
         final var countQuery = DSL.selectCount()
-            .from(ACTIVITY);
-        addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of(), userIds);
+            .from(ACTIVITY)
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID));
+        addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of());
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
             List.of(), userIds, eventType);
         conditions.add(DATA_ENTITY.ODDRN.in(oddrns));
@@ -171,8 +174,7 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
     }
 
     private SelectJoinStep<?> buildBaseQuery(final Long datasourceId, final Long namespaceId,
-                                             final List<Long> tagIds, final List<Long> ownerIds,
-                                             final List<Long> userIds) {
+                                             final List<Long> tagIds, final List<Long> ownerIds) {
         final List<Field<?>> selectFields = Stream
             .of(
                 ACTIVITY.fields(),
@@ -185,13 +187,12 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
             .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID))
             .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY))
             .leftJoin(OWNER).on(OWNER.ID.eq(USER_OWNER_MAPPING.OWNER_ID));
-        return addJoins(query, datasourceId, namespaceId, tagIds, ownerIds, userIds);
+        return addJoins(query, datasourceId, namespaceId, tagIds, ownerIds);
     }
 
     private SelectJoinStep<?> addJoins(final SelectJoinStep<?> query,
                                        final Long datasourceId, final Long namespaceId,
-                                       final List<Long> tagIds, final List<Long> ownerIds,
-                                       final List<Long> userIds) {
+                                       final List<Long> tagIds, final List<Long> ownerIds) {
         if (datasourceId != null || namespaceId != null) {
             query.leftJoin(DATA_SOURCE).on(DATA_SOURCE.ID.eq(DATA_ENTITY.DATA_SOURCE_ID));
             if (namespaceId != null) {
