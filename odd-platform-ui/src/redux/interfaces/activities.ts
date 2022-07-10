@@ -21,6 +21,17 @@ export interface ActivityQueryParams {
   lastEventDateTime?: string;
 }
 
+export interface DataEntityActivityQueryParams {
+  dataEntityId: number;
+  beginDate: string;
+  endDate: string;
+  size: number;
+  userIds?: Array<number>;
+  eventType?: ActivityEventType;
+  lastEventId?: number;
+  lastEventDateTime?: string;
+}
+
 export interface ActivityCountParamsRequest {
   beginDate: string;
   endDate: string;

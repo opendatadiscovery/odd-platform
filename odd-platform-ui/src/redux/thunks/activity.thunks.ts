@@ -4,7 +4,6 @@ import {
   ActivityCountInfo,
   Configuration,
   DataEntityApi,
-  DataEntityApiGetDataEntityActivityRequest,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
@@ -12,6 +11,7 @@ import { BASE_PARAMS } from 'lib/constants';
 import {
   ActivityCountParamsRequest,
   ActivityQueryParams,
+  DataEntityActivityQueryParams,
 } from 'redux/interfaces';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -38,10 +38,21 @@ export const fetchActivityList = createAsyncThunk<
 
 export const fetchDataEntityActivityList = createAsyncThunk<
   Activity[],
-  DataEntityApiGetDataEntityActivityRequest
->(actions.fetchDataEntityActivityListActionType, async params =>
-  dataEntityApi.getDataEntityActivity(params)
-);
+  DataEntityActivityQueryParams
+>(actions.fetchDataEntityActivityListActionType, async params => {
+  const castedBeginDate = new Date(params.beginDate);
+  const castedEndDate = new Date(params.endDate);
+  const castedLastEventDateTime = params.lastEventDateTime
+    ? new Date(params.lastEventDateTime)
+    : undefined;
+
+  return dataEntityApi.getDataEntityActivity({
+    ...params,
+    beginDate: castedBeginDate,
+    endDate: castedEndDate,
+    lastEventDateTime: castedLastEventDateTime,
+  });
+});
 
 export const fetchActivityCounts = createAsyncThunk<
   ActivityCountInfo,
