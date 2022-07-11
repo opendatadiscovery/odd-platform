@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://127.0.0.1:6432/odd-platform
+    url: jdbc:postgresql://127.0.0.1:5432/odd-platform
     username: odd-platform
     password: odd-platform-password
   jooq:
