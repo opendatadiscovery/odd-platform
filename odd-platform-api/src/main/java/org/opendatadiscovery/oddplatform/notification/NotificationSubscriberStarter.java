@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationSubscriberStarter {
-    private final ExecutorService executorService = Executors.newFixedThreadPool(1);
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private final PGConnectionFactory pgConnectionFactory;
     private final PostgresWALMessageDecoder messageDecoder;
