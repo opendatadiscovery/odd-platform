@@ -36,6 +36,7 @@ import org.opendatadiscovery.oddplatform.mapper.DataEntityTaskRunMapper;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityTaskRunMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldMapperImpl;
+import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapperImpl;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -91,7 +92,7 @@ public class IngestionServiceImplTest {
     private DataEntityRepositoryImpl dataEntityRepository;
 
     @Mock
-    private DatasetVersionRepository datasetVersionRepository;
+    private DatasetVersionMapper datasetVersionMapper;
 
     @Mock
     private DatasetStructureService datasetStructureService;
