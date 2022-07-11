@@ -12,10 +12,10 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Component
 @Slf4j
 public class SlackWebhookSender implements WebhookSender {
+    private final WebClient webClient = WebClient.create();
+
     @Override
     public void send(final String webhookUrl, final String message) {
-        final WebClient webClient = WebClient.create();
-
         webClient.post()
             .uri(URI.create(webhookUrl))
             .contentType(MediaType.APPLICATION_JSON)
