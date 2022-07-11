@@ -25,7 +25,11 @@ export const tagsSlice = createSlice({
       thunks.fetchTagsList.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        tagsAdapter.setAll(state, items);
+        if (pageInfo.page > 1) {
+          tagsAdapter.setMany(state, items);
+        } else {
+          tagsAdapter.setAll(state, items);
+        }
         state.pageInfo = pageInfo;
       }
     );

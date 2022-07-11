@@ -26,7 +26,11 @@ export const labelsSlice = createSlice({
       thunks.fetchLabelsList.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        labelsAdapter.setAll(state, items);
+        if (pageInfo.page > 1) {
+          labelsAdapter.setMany(state, items);
+        } else {
+          labelsAdapter.setAll(state, items);
+        }
         state.pageInfo = pageInfo;
       }
     );

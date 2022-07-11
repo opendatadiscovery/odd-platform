@@ -25,7 +25,11 @@ export const datasourceSlice = createSlice({
       thunks.fetchDataSourcesList.fulfilled,
       (state, { payload }) => {
         const { datasourcesList, pageInfo } = payload;
-        datasourceAdapter.setAll(state, datasourcesList);
+        if (pageInfo.page > 1) {
+          datasourceAdapter.setMany(state, datasourcesList);
+        } else {
+          datasourceAdapter.setAll(state, datasourcesList);
+        }
         state.pageInfo = pageInfo;
       }
     );

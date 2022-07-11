@@ -26,7 +26,12 @@ export const collectorSlice = createSlice({
       thunks.fetchCollectorsList.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        collectorAdapter.setAll(state, items);
+        if (pageInfo.page > 1) {
+          collectorAdapter.setMany(state, items);
+        } else {
+          collectorAdapter.setAll(state, items);
+        }
+
         state.pageInfo = pageInfo;
       }
     );
