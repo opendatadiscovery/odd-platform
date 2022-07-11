@@ -15,6 +15,8 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersion;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
@@ -74,6 +76,24 @@ class DatasetVersionMapperTest {
             assertNotNull(actual.getName());
             assertNotNull(actual.getOddrn());
         });
+    }
+
+    @Test
+    void testMapNewDatasetVersion() {
+        final DataEntityIngestionDto dataEntityIngestionDto = new DataEntityIngestionDto();
+        dataEntityIngestionDto.setDataSet(
+            new DataEntityIngestionDto.DataSetIngestionDto(
+                "parentOddrn", null, "structHash", 1L));
+        final long expectedVersion = 1L;
+        final EnrichedDataEntityIngestionDto enrichedDataEntityIngestionDto =
+            new EnrichedDataEntityIngestionDto(expectedVersion, dataEntityIngestionDto);
+        final DatasetVersionPojo actualDatasetVersionPojo =
+            datasetVersionMapper.mapDatasetVersion(enrichedDataEntityIngestionDto, expectedVersion);
+
+        assertEquals(expectedVersion, actualDatasetVersionPojo.getVersion());
+        assertEquals(enrichedDataEntityIngestionDto.getOddrn(), actualDatasetVersionPojo.getDatasetOddrn());
+        assertEquals(enrichedDataEntityIngestionDto.getDataSet().structureHash(),
+            actualDatasetVersionPojo.getVersionHash());
     }
 
     private void assertDatasetVersions(final DatasetVersionPojo expectedDatasetVersion,

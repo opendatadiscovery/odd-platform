@@ -181,8 +181,8 @@ public class IngestionServiceImplTest {
             });
         when(dataSourceRepository.getDtoByOddrn(anyString())).thenReturn(Mono.just(dataSourceDto));
         when(metadataIngestionService.ingestMetadata(any())).thenReturn(Mono.empty());
-        when(datasetStructureService.createDataStructure(any(), any(), any())).thenReturn(Mono.empty());
-        when(datasetStructureService.getVersions(any(), any())).thenReturn(Mono.empty());
+        when(datasetStructureService.createDataStructure(any(), any())).thenReturn(Mono.empty());
+        when(datasetStructureService.getNewDatasetVersionsIfChanged(any(), any())).thenReturn(Mono.empty());
     }
 
     @Nested

@@ -29,6 +29,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTes
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityTaskRunMapper;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldMapper;
+import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
@@ -49,12 +50,12 @@ import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
-import org.opendatadiscovery.oddplatform.utils.DatasetServiceUtils;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataSourcePath;
 import org.opendatadiscovery.oddrn.model.OddrnPath;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuples;
 
 import static java.util.Collections.emptyList;
 import static java.util.function.Function.identity;
@@ -69,6 +70,7 @@ public class IngestionServiceImpl implements IngestionService {
 
     private final ReactiveDataSourceRepository dataSourceRepository;
     private final DatasetStructureService datasetStructureService;
+    private final DatasetVersionMapper datasetVersionMapper;
 
     private final DataEntityRepository dataEntityRepository;
     private final LineageRepository lineageRepository;
@@ -100,7 +102,8 @@ public class IngestionServiceImpl implements IngestionService {
                     .filter(dto -> BooleanUtils.isTrue(dto.getDatasetSchemaChanged()))
                     .map(EnrichedDataEntityIngestionDto::getId)
                     .toList();
-                return datasetStructureService.createDatasetStructureTuple(dataStructure, changedSchemaIds);
+                return datasetStructureService.getLastDatasetStructureVersionDelta(changedSchemaIds)
+                    .map(map -> Tuples.of(map, dataStructure));
             })
             .flatMap(function((delta, dataStructure) -> {
                 final List<AlertPojo> alerts = Stream.of(
@@ -289,11 +292,7 @@ public class IngestionServiceImpl implements IngestionService {
                 dto -> datasetFieldMapper.mapFields(dto.getDataSet().fieldList())
             ));
 
-        final List<DatasetFieldPojo> datasetFieldPojos = datasetFields.values().stream()
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-
-        return datasetStructureService.createDataStructure(versions, datasetFields, datasetFieldPojos);
+        return datasetStructureService.createDataStructure(versions, datasetFields);
     }
 
     private Mono<List<DatasetStructurePojo>> ingestExistingDatasetStructure(final IngestionDataStructure split) {
@@ -309,7 +308,8 @@ public class IngestionServiceImpl implements IngestionService {
             .map(EnrichedDataEntityIngestionDto::getId)
             .collect(Collectors.toSet());
 
-        final Mono<List<DatasetVersionPojo>> versions = datasetStructureService.getVersions(datasetDict, datasetIds);
+        final Mono<List<DatasetVersionPojo>> versions = datasetStructureService.getNewDatasetVersionsIfChanged(
+            datasetDict, datasetIds);
 
         final Map<String, List<DatasetFieldPojo>> datasetFields = datasetDict.values().stream()
             .collect(Collectors.toMap(
@@ -320,10 +320,7 @@ public class IngestionServiceImpl implements IngestionService {
         return Mono.zipDelayError(versions, Mono.just(datasetFields))
             .flatMap(t -> {
                 final List<DatasetVersionPojo> datasetVersions = t.getT1();
-                final List<DatasetFieldPojo> datasetFieldPojos = t.getT2().values().stream()
-                    .flatMap(List::stream)
-                    .collect(Collectors.toList());
-                return datasetStructureService.createDataStructure(datasetVersions, datasetFields, datasetFieldPojos);
+                return datasetStructureService.createDataStructure(datasetVersions, datasetFields);
             });
     }
 
@@ -459,7 +456,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private DatasetVersionPojo mapNewDatasetVersion(final EnrichedDataEntityIngestionDto entity) {
-        return DatasetServiceUtils.mapNewDatasetVersion(entity, 1L);
+        return datasetVersionMapper.mapDatasetVersion(entity, 1L);
     }
 
     private Optional<OddrnPath> parseOddrn(final String oddrn) {

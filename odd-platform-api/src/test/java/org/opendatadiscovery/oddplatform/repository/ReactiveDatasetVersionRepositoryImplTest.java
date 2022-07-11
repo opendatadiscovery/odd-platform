@@ -196,7 +196,7 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
         final List<DatasetVersionPojo> versions = List.of(datasetVersionPojo);
 
         //create dataset structure
-        datasetStructureService.createDataStructure(versions, datasetFields, datasetFieldPojos).block();
+        datasetStructureService.createDataStructure(versions, datasetFields).block();
 
         final Set<Long> datasetPojoIds =
             versions.stream().map(DatasetVersionPojo::getId).collect(Collectors.toSet());

@@ -14,4 +14,12 @@ public interface OffsetDateTimeMapper {
 
         return localDateTime.atOffset(ZoneOffset.UTC);
     }
+
+    default LocalDateTime map(final OffsetDateTime offsetDateTime) {
+        if (offsetDateTime == null) {
+            return null;
+        }
+
+        return offsetDateTime.toLocalDateTime();
+    }
 }
