@@ -78,8 +78,7 @@ public class NotificationSubscriber extends Thread {
                     }
                 }
             } catch (final Exception e) {
-                log.error("Error occurred while subscribing: {}", e.getMessage());
-                e.printStackTrace();
+                log.error("Error occurred while subscribing: {}", e);
             } finally {
                 try {
                     replicationConnection.close();
