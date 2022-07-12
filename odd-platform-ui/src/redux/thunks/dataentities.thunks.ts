@@ -23,6 +23,7 @@ import {
   InternalName,
   Tag,
   TermRef,
+  DataEntityUsageInfo,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
@@ -227,3 +228,12 @@ export const deleteDataEntityFromGroup = createAsyncThunk<
     });
   }
 );
+
+export const getDataentitiesUsage = createAsyncThunk<
+  DataEntityUsageInfo,
+  void
+>(actions.fetchDataentitiesUsageActionType, async () => {
+  const { totalCount, unfilledCount, dataEntityClassesInfo } =
+    await dataEntityApi.getDataEntitiesUsage();
+  return { totalCount, unfilledCount, dataEntityClassesInfo };
+});

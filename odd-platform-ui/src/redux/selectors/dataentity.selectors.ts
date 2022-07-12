@@ -3,7 +3,6 @@ import { DataEntitiesState, RootState } from 'redux/interfaces';
 import {
   DataEntityClassNameEnum,
   DataEntityType,
-  DataEntityTypeNameEnum,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import {
@@ -93,6 +92,21 @@ export const getMyEntitiesUpstream = createSelector(
 export const getPopularEntities = createSelector(
   dataEntitiesState,
   dataEntities => dataEntities.popular
+);
+
+export const getDataEntitiesUsageTotalCount = createSelector(
+  dataEntitiesState,
+  dataEntities => dataEntities.dataEntityUsageTotalCount
+);
+
+export const getDataEntitiesUsageUnfilledCount = createSelector(
+  dataEntitiesState,
+  dataEntities => dataEntities.dataEntityUsageUnfilledCount
+);
+
+export const getDataEntityClassesInfo = createSelector(
+  dataEntitiesState,
+  dataEntities => dataEntities.dataEntityUsageClassesInfo
 );
 
 // Details

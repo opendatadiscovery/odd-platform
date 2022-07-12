@@ -1,21 +1,17 @@
-import { Grid, Typography } from '@mui/material';
+import { Grid, Typography, Box } from '@mui/material';
 import React from 'react';
 import {
-  AlertTotals,
   AssociatedOwner,
   DataEntityRef,
   TagApiGetPopularTagListRequest,
 } from 'generated-sources';
-import { alertsPath } from 'lib/paths';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
-import AlertIcon from 'components/shared/Icons/AlertIcon';
 import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
 import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import StarIcon from 'components/shared/Icons/StarIcon';
 import CatalogIcon from 'components/shared/Icons/CatalogIcon';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   fetchMyDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
@@ -23,9 +19,18 @@ import {
   fetchPopularDataEntitiesList,
   fetchAlertsTotals,
 } from 'redux/thunks';
+import {
+  getDataEntityClassesInfo,
+  getDataEntitiesUsageTotalCount,
+  getDataEntitiesUsageUnfilledCount,
+} from 'redux/selectors';
+import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
+
+import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
+
 import DataEntityList from './DataEntityList/DataEntityList';
 import TopTagsListContainer from './TopTagsList/TopTagsListContainer';
 import IdentityContainer from './IdentityForm/IdentityContainer';
@@ -33,7 +38,6 @@ import IdentityContainer from './IdentityForm/IdentityContainer';
 interface OverviewProps {
   identity?: AssociatedOwner;
   identityFetched: boolean;
-  alertTotals: AlertTotals;
   myEntities: DataEntityRef[];
   myEntitiesDownstream: DataEntityRef[];
   myEntitiesUpstream: DataEntityRef[];
@@ -49,7 +53,6 @@ interface OverviewProps {
 const Overview: React.FC<OverviewProps> = ({
   identity,
   identityFetched,
-  alertTotals,
   myEntities,
   myEntitiesDownstream,
   myEntitiesUpstream,
@@ -62,7 +65,13 @@ const Overview: React.FC<OverviewProps> = ({
   fetchTagsList,
 }) => {
   const dispatch = useAppDispatch();
-
+  const dataEntitiesUsageItems = useAppSelector(getDataEntityClassesInfo);
+  const dataEntityUsageTotalCount = useAppSelector(
+    getDataEntitiesUsageTotalCount
+  );
+  const dataEntityUsageUnfilledCount = useAppSelector(
+    getDataEntitiesUsageUnfilledCount
+  );
   React.useEffect(() => {
     if (!identity) return;
     const params = {
@@ -96,59 +105,53 @@ const Overview: React.FC<OverviewProps> = ({
           <S.TagsContainer container>
             <TopTagsListContainer />
           </S.TagsContainer>
-          <Grid
-            container
-            justifyContent="space-between"
-            sx={{ mt: 8 }}
-            wrap="nowrap"
-          >
-            <S.InfoBarItemAlerts item xs={3}>
-              <Grid container justifyContent="space-between">
-                <Typography variant="subtitle1">Alerts</Typography>
-                <S.AllAlertsBtnContainer to={alertsPath()}>
-                  <AppButton size="small" color="dropdown">
-                    See All
-                  </AppButton>
-                </S.AllAlertsBtnContainer>
-              </Grid>
-              <Grid container wrap="nowrap">
-                <S.AlertsContainer container wrap="nowrap">
-                  <AlertIcon sx={{ mb: -0.25 }} />
-                  <Typography variant="h2" sx={{ my: 0, mx: 0.5 }}>
-                    {alertTotals?.myTotal}
+          <Grid container sx={{ mt: 8 }} wrap="nowrap">
+            <S.DataEntitiesUsageContainer>
+              <S.DataEntitiesTotalContainer>
+                <Box>
+                  <Typography variant="h4">Total entities</Typography>
+                  <Typography variant="h1">
+                    {dataEntityUsageTotalCount}
                   </Typography>
-                  <S.InfoBarStatsText>my</S.InfoBarStatsText>
-                </S.AlertsContainer>
-                <S.AlertsContainer container wrap="nowrap">
-                  <Typography variant="h2" sx={{ my: 0, mx: 0.5 }}>
-                    {alertTotals?.dependentTotal}
-                  </Typography>
-                  <S.InfoBarStatsText>dependent</S.InfoBarStatsText>
-                </S.AlertsContainer>
-              </Grid>
-            </S.InfoBarItemAlerts>
-            <S.InfoBarItem item xs={3}>
-              <Typography variant="subtitle1">Overall quality</Typography>
-              <Typography variant="h2">98%</Typography>
-            </S.InfoBarItem>
-            <S.InfoBarItem item xs={3}>
-              <Typography variant="subtitle1">Downtime</Typography>
-              <Typography variant="h2">2</Typography>
-            </S.InfoBarItem>
-            <S.InfoBarItem item xs={3}>
-              <Typography variant="subtitle1">SLA</Typography>
-              <Grid container wrap="nowrap" alignItems="center">
-                <Typography variant="h2">98</Typography>
-                <Typography
-                  variant="h2"
-                  color="textSecondary"
-                  sx={{ mr: 0.5 }}
-                >
-                  /100
-                </Typography>
-                <S.InfoBarStatsText>target</S.InfoBarStatsText>
-              </Grid>
-            </S.InfoBarItem>
+                </Box>
+                <Box>
+                  <S.UfilledEntities>
+                    {dataEntityUsageUnfilledCount} unfilled entities
+                  </S.UfilledEntities>
+                </Box>
+              </S.DataEntitiesTotalContainer>
+
+              <S.ListItemContainer>
+                {dataEntitiesUsageItems?.map((item, index: number) => (
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      width: '45%',
+                    }}
+                  >
+                    <S.ListItem $index={index}>
+                      <EntityClassItem
+                        sx={{ ml: 0.5 }}
+                        key={item?.entityClass?.id}
+                        entityClassName={item?.entityClass?.name}
+                      />
+
+                      <Typography noWrap title={item?.entityClass?.name}>
+                        {item.entityClass &&
+                          DataEntityClassLabelMap.get(
+                            item.entityClass.name
+                          )?.normal}
+                      </Typography>
+                    </S.ListItem>
+                    <Typography variant="h4" noWrap>
+                      {item.totalCount}
+                    </Typography>
+                  </Box>
+                ))}
+              </S.ListItemContainer>
+            </S.DataEntitiesUsageContainer>
           </Grid>
           {identity?.owner ? (
             <S.DataEntityContainer container>

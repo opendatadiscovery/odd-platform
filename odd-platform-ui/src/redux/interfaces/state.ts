@@ -27,6 +27,7 @@ import {
   Term,
   TermDetails,
   TermRefList,
+  DataEntityClassUsageInfo,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -163,6 +164,9 @@ export interface DataEntitiesState {
     entityTypes: Dictionary<DataEntityType>;
     entityClasses: Dictionary<DataEntityClass>;
   };
+  dataEntityUsageTotalCount: number;
+  dataEntityUsageUnfilledCount: number;
+  dataEntityUsageClassesInfo?: DataEntityClassUsageInfo[];
 }
 
 export interface SearchState {

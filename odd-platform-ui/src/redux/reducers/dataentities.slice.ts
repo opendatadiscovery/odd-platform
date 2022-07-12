@@ -19,6 +19,9 @@ export const initialState: DataEntitiesState = {
   myUpstream: [],
   myDownstream: [],
   popular: [],
+  dataEntityUsageTotalCount: 0,
+  dataEntityUsageUnfilledCount: 0,
+  dataEntityUsageClassesInfo: [],
 };
 
 const updateDataEntity = (
