@@ -8,6 +8,7 @@ import org.jooq.JSONB;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.mapstruct.NullValueCheckStrategy;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
@@ -135,7 +136,8 @@ public abstract class ActivityMapper {
         return new ActivityState().dataEntity(mapDataEntityActivityState(stateDto));
     }
 
-    @Mapping(source = "dto.typeId", target = "type", qualifiedByName = "mapDataEntityType")
+    @Mapping(source = "dto.typeId", target = "type", qualifiedByName = "mapDataEntityType",
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     abstract DataEntityActivityState mapDataEntityActivityState(final DataEntityCreatedActivityStateDto dto);
 
     ActivityState mapTermsState(final JSONB jsonb) {
