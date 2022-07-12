@@ -1,6 +1,7 @@
 import React from 'react';
 import { Theme } from '@mui/material';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import SystemIcon from 'components/shared/Icons/SystemIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { SxProps } from '@mui/system';
 import * as S from './TagItemStyles';
@@ -30,13 +31,21 @@ const TagItem: React.FC<TagItemProps> = ({
     variant="body1"
     $important={important}
     $systemTag={systemTag}
-    $removable={removable}
     $cursorPointer={cursorPointer}
     onClick={onClick}
     sx={sx}
   >
+    {systemTag && (
+      <SystemIcon
+        sx={{
+          ml: 0.25,
+          marginTop: '6px',
+          marginLeft: 0,
+        }}
+      />
+    )}
     {label}
-    {removable && !systemTag && (
+    {removable && systemTag && (
       <AppIconButton
         size="small"
         color="unfilled"
