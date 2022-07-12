@@ -5,8 +5,8 @@ import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
 import { Owner, Tag } from 'generated-sources';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
-import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
-import MultipleFilterAutocomplete from './MultipleFilterAutocomplete/MultipleFilterAutocomplete';
+import SelectedFilterOption from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/SelectedFilterOption/SelectedFilterOption';
+import MultipleFilterAutocomplete from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/MultipleFilterAutocomplete/MultipleFilterAutocomplete';
 
 interface MultipleFilterProps {
   name: string;

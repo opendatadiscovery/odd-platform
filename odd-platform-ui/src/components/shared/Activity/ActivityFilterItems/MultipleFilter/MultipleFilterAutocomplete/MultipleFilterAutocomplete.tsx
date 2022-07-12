@@ -12,7 +12,7 @@ import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
 import { setActivityQueryParam } from 'redux/reducers/activity.slice';
 import AppInput from 'components/shared/AppInput/AppInput';
-import * as S from './MultipleFilterAutocompleteStyles';
+import * as S from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/MultipleFilterAutocomplete/MultipleFilterAutocompleteStyles';
 
 interface MultipleFilterAutocompleteProps {
   filterName: ActivityQueryName;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  getActivitiesList,
+  getActivitiesByDate,
   getActivitiesListFetchingStatuses,
   getActivitiesQueryParams,
 } from 'redux/selectors';
@@ -24,7 +24,7 @@ const ActivityResults: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
   const queryParams = useAppSelector(getActivitiesQueryParams);
-  const activityResults = useAppSelector(getActivitiesList);
+  const activityResults = useAppSelector(getActivitiesByDate);
   const { isLoading: isActivityListFetching } = useAppSelector(
     getActivitiesListFetchingStatuses
   );
@@ -83,15 +83,15 @@ const ActivityResults: React.FC = () => {
         activityItemSkeleton()
       ) : (
         <S.ListContainer container>
-          {activityResults.map(activityItem => (
-            <div>lul</div>
-            // <ResultItem
-            //   key={searchResult.id}
-            //   searchClass={searchClass}
-            //   searchResult={searchResult}
-            //   totals={totals}
-            // />
-          ))}
+          {/* {activityResults.map(activityItem => ( */}
+          {/*  <div>lul</div> */}
+          {/*  // <ResultItem */}
+          {/*  //   key={searchResult.id} */}
+          {/*  //   searchClass={searchClass} */}
+          {/*  //   searchResult={searchResult} */}
+          {/*  //   totals={totals} */}
+          {/*  // /> */}
+          {/* ))} */}
           {!isActivityListFetching && !activityResults.length ? (
             <EmptyContentPlaceholder text="No matches found" />
           ) : null}

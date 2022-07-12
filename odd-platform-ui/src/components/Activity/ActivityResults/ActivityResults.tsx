@@ -4,8 +4,9 @@ import { ActivityType } from 'generated-sources';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
+  getActivitiesByDate,
+  getActivitiesCount,
   getActivitiesCountsParams,
-  getActivitiesList,
   getActivitiesListFetchingStatuses,
   getActivitiesQueryParams,
   getActivitiesQueryParamsByName,
@@ -19,6 +20,8 @@ import { useAppQuery } from 'lib/hooks';
 import { ActivityQueryName, ActivityQueryParams } from 'redux/interfaces';
 import { useHistory, useLocation } from 'react-router-dom';
 import { activityPath } from 'lib/paths';
+import ActivityResultByDate from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityResultByDate';
+import AppButton from 'components/shared/AppButton/AppButton';
 import ActivityTabsSkeleton from './ActivityTabsSkeleton/ActivityTabsSkeleton';
 import ActivityResultsItemSkeleton from './ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import * as S from './ActivityResultsStyles';
@@ -34,7 +37,8 @@ const ActivityResults: React.FC = () => {
   );
   const queryParams = useAppSelector(getActivitiesQueryParams);
   const countParams = useAppSelector(getActivitiesCountsParams);
-  const activityResults = useAppSelector(getActivitiesList);
+  const activityResults = useAppSelector(getActivitiesByDate);
+  const activityCount = useAppSelector(getActivitiesCount);
   const { isLoading: isActivityListFetching } = useAppSelector(
     getActivitiesListFetchingStatuses
   );
@@ -136,6 +140,8 @@ const ActivityResults: React.FC = () => {
     />
   );
 
+  const [hideAllDetails, setHideAllDetails] = React.useState(false);
+
   return (
     <Grid sx={{ mt: 2 }}>
       {isActivityListFetching ? (
@@ -152,20 +158,54 @@ const ActivityResults: React.FC = () => {
       {isActivityListFetching ? (
         activityItemSkeleton()
       ) : (
-        <S.ListContainer id="results-list">
-          {activityResults.map(activityItem => (
-            <div>lul</div>
-            // <ResultItem
-            //   key={searchResult.id}
-            //   searchClass={searchClass}
-            //   searchResult={searchResult}
-            //   totals={totals}
-            // />
-          ))}
-          {!isActivityListFetching && !activityResults.length ? (
+        <>
+          {!isActivityListFetching && !activityCount ? (
             <EmptyContentPlaceholder text="No matches found" />
-          ) : null}
-        </S.ListContainer>
+          ) : (
+            <>
+              <Grid
+                container
+                justifyContent="flex-end"
+                sx={{
+                  mt: 2,
+                  py: 0.25,
+                  px: 2.5,
+                  borderBottom: '1px solid #EBECF0',
+                }}
+              >
+                <AppButton
+                  size="small"
+                  color="tertiary"
+                  onClick={() => setHideAllDetails(!hideAllDetails)}
+                  // sx={{ alignSelf: 'end' }}
+                >
+                  Hide all details
+                </AppButton>
+              </Grid>
+              <S.ListContainer>
+                {/* <Grid container justifyContent="flex-end"> */}
+                {/*  <AppButton */}
+                {/*    size="small" */}
+                {/*    color="tertiary" */}
+                {/*    sx={{ alignSelf: 'end' }} */}
+                {/*  > */}
+                {/*    Hide all details */}
+                {/*  </AppButton> */}
+                {/* </Grid> */}
+                {Object.entries(activityResults).map(
+                  ([activityDate, activities]) => (
+                    <ActivityResultByDate
+                      key={activityDate}
+                      activityDate={activityDate}
+                      activities={activities}
+                      hideAllDetails={hideAllDetails}
+                    />
+                  )
+                )}
+              </S.ListContainer>
+            </>
+          )}
+        </>
       )}
     </Grid>
   );

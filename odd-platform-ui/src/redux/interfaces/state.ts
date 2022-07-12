@@ -1,7 +1,6 @@
 import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
-  Activity,
   ActivityCountInfo,
   Alert,
   AlertTotals,
@@ -36,6 +35,7 @@ import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest
 import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
 import {
+  Activity,
   ActivityQueryParams,
   CurrentPageInfo,
   DataEntityDetailsState,
@@ -221,7 +221,9 @@ export interface TermLinkedListState {
 }
 
 export interface ActivitiesState {
-  activities: Activity[];
+  activitiesByDate: {
+    [date: string]: Activity[];
+  };
   counts: ActivityCountInfo;
   queryParams: ActivityQueryParams;
 }

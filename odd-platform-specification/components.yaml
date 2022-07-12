@@ -1844,6 +1844,13 @@ components:
           $ref: '#/components/schemas/ActivityState'
         system_event:
           type: boolean
+      required:
+        - event_type
+        - created_at
+        - data_entity
+        - old_state
+        - new_state
+        - system_event
 
     ActivityState:
       type: object

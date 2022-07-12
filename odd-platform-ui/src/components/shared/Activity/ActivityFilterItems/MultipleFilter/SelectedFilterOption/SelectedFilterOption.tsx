@@ -6,7 +6,7 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { deleteActivityQueryParam } from 'redux/reducers/activity.slice';
-import { Container } from './SelectedFilterOptionStyles';
+import { Container } from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/SelectedFilterOption/SelectedFilterOptionStyles';
 
 interface SelectedFilterOptionProps {
   selectedOption: ActivityFilterOption;

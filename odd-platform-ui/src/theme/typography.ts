@@ -57,28 +57,28 @@ export const typography = createTypography(palette as Palette, {
   subtitle1: {
     fontSize: pxToRem(14),
     lineHeight: pxToRem(20),
-    color: palette.text?.secondary,
+    color: palette.texts.secondary,
     fontWeight: 400,
     ...breakpointDownLgBody2,
   },
   subtitle2: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),
-    color: palette.text.secondary,
+    color: palette.texts.secondary,
     fontWeight: 400,
   },
   body1: {
     fontSize: pxToRem(14),
     lineHeight: pxToRem(20),
     fontWeight: 400,
-    color: palette.text.primary,
+    color: palette.texts.primary,
     ...breakpointDownLgBody2,
   },
   body2: {
     fontSize: pxToRem(12),
     lineHeight: pxToRem(16),
     fontWeight: 400,
-    color: palette.text.primary,
+    color: palette.texts.primary,
     ...breakpointDownLgBody2,
   },
   caption: {

@@ -21,9 +21,17 @@ export const getActivityCounts = createSelector(
   activities => activities.counts
 );
 
-export const getActivitiesList = createSelector(
+export const getActivitiesCount = createSelector(
   activitiesState,
-  activities => activities.activities
+  activities =>
+    Object.entries(activities.activitiesByDate)
+      .map(([_, activityList]) => activityList.length)
+      .reduce((acc, val) => acc + val, 0)
+);
+
+export const getActivitiesByDate = createSelector(
+  activitiesState,
+  activities => activities.activitiesByDate
 );
 
 export const getActivitiesQueryParams = createSelector(

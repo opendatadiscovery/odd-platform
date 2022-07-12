@@ -1,4 +1,15 @@
-import { ActivityEventType, ActivityType } from 'generated-sources';
+import {
+  Activity as GeneratedActivity,
+  ActivityApiGetActivityCountsRequest,
+  ActivityApiGetActivityRequest,
+  ActivityEventType,
+  ActivityType,
+  DataEntityApiGetDataEntityActivityRequest,
+} from 'generated-sources';
+
+export interface Activity extends Omit<GeneratedActivity, 'createdAt'> {
+  createdAt: number;
+}
 
 export interface ActivityFilterOption {
   id: number;
@@ -6,41 +17,33 @@ export interface ActivityFilterOption {
   important?: boolean;
 }
 
-export interface ActivityQueryParams {
-  beginDate: string;
-  endDate: string;
-  size: number;
-  datasourceId?: number;
-  namespaceId?: number;
-  tagIds?: Array<number>;
-  ownerIds?: Array<number>;
-  userIds?: Array<number>;
-  type: ActivityType;
-  eventType?: ActivityEventType;
-  lastEventId?: number;
-  lastEventDateTime?: string;
+export interface ActivityQueryParams
+  extends Omit<
+    ActivityApiGetActivityRequest,
+    'beginDate' | 'endDate' | 'lastEventDateTime'
+  > {
+  beginDate: number;
+  endDate: number;
+  lastEventDateTime?: number;
 }
 
-export interface DataEntityActivityQueryParams {
-  dataEntityId: number;
-  beginDate: string;
-  endDate: string;
-  size: number;
-  userIds?: Array<number>;
-  eventType?: ActivityEventType;
-  lastEventId?: number;
-  lastEventDateTime?: string;
+export interface DataEntityActivityQueryParams
+  extends Omit<
+    DataEntityApiGetDataEntityActivityRequest,
+    'beginDate' | 'endDate' | 'lastEventDateTime'
+  > {
+  beginDate: number;
+  endDate: number;
+  lastEventDateTime?: number;
 }
 
-export interface ActivityCountParamsRequest {
-  beginDate: string;
-  endDate: string;
-  datasourceId?: number;
-  namespaceId?: number;
-  tagIds?: Array<number>;
-  ownerIds?: Array<number>;
-  userIds?: Array<number>;
-  eventType?: ActivityEventType;
+export interface ActivityCountParamsRequest
+  extends Omit<
+    ActivityApiGetActivityCountsRequest,
+    'beginDate' | 'endDate'
+  > {
+  beginDate: number;
+  endDate: number;
 }
 
 export type ActivityQueryName = keyof ActivityQueryParams;

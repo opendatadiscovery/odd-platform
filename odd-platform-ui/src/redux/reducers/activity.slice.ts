@@ -2,19 +2,19 @@ import { ActivitiesState } from 'redux/interfaces/state';
 import { activitiesActionTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import { addDays, formatISO, startOfDay } from 'date-fns';
+import { addDays, format, startOfDay } from 'date-fns';
 import {
+  Activity,
   ActivityPayload,
   ActivityQueryData,
   ActivityQueryName,
   ActivityQueryParams,
 } from 'redux/interfaces';
 import { ActivityType } from 'generated-sources';
+import uniq from 'lodash/uniq';
 
-const beginDate = formatISO(startOfDay(addDays(new Date(), -6)), {
-  representation: 'date',
-});
-const endDate = formatISO(new Date(), { representation: 'date' });
+const beginDate = startOfDay(addDays(new Date(), -6)).getTime();
+const endDate = new Date().getTime();
 const size = 20;
 
 const initialQueryParams: ActivityQueryParams = {
@@ -25,7 +25,7 @@ const initialQueryParams: ActivityQueryParams = {
 };
 
 export const initialState: ActivitiesState = {
-  activities: [],
+  activitiesByDate: {},
   queryParams: initialQueryParams,
   counts: {
     totalCount: 0,
@@ -34,6 +34,8 @@ export const initialState: ActivitiesState = {
     downstreamCount: 0,
   },
 };
+
+const formattedDate = (date: number) => format(date, 'MMMM dd, yyyy');
 
 export const activitiesSlice = createSlice({
   name: activitiesActionTypePrefix,
@@ -84,9 +86,22 @@ export const activitiesSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(
       thunks.fetchActivityList.fulfilled,
-      (state, { payload }) => {
-        state.activities = payload;
-      }
+      (state, { payload }): ActivitiesState =>
+        payload.reduce(
+          (memo: ActivitiesState, activity: Activity) => ({
+            ...memo,
+            activitiesByDate: {
+              ...memo.activitiesByDate,
+              [formattedDate(activity.createdAt)]: uniq([
+                ...(memo.activitiesByDate[
+                  formattedDate(activity.createdAt)
+                ] || []),
+                activity,
+              ]),
+            },
+          }),
+          { ...state, activitiesByDate: {} }
+        )
     );
 
     builder.addCase(
