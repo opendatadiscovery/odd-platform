@@ -45,7 +45,7 @@ const TagItem: React.FC<TagItemProps> = ({
       />
     )}
     {label}
-    {removable && systemTag && (
+    {removable && !systemTag && (
       <AppIconButton
         size="small"
         color="unfilled"
