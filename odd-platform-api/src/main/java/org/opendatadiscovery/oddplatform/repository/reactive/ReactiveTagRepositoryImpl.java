@@ -3,6 +3,8 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
+import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Select;
 import org.jooq.SortOrder;
@@ -23,6 +25,8 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
+import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
@@ -31,6 +35,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
 public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRepository<TagRecord, TagPojo>
     implements ReactiveTagRepository {
     private static final String COUNT_FIELD = "count";
+    private static final String EXTERNAL_FIELD = "external";
 
     public ReactiveTagRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                      final JooqQueryHelper jooqQueryHelper) {
@@ -39,21 +44,25 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
+    public Mono<TagDto> getDto(final long id) {
+        final var query = DSL.select(TAG.fields())
+            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
+            .select(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL).as(EXTERNAL_FIELD))
+            .from(TAG)
+            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
+            .where(idCondition(id))
+            .groupBy(TAG.fields());
+
+        return jooqReactiveOperations.mono(query)
+            .map(this::mapTag);
+    }
+
+    @Override
     public Flux<TagPojo> listByNames(final Collection<String> names) {
         final var query = DSL.selectFrom(TAG)
             .where(addSoftDeleteFilter(TAG.NAME.in(names)));
         return jooqReactiveOperations.flux(query)
             .map(this::recordToPojo);
-    }
-
-    @Override
-    public Flux<TagPojo> listByDataEntityId(final long dataEntityId) {
-        final var query = DSL.select(TAG.fields())
-            .from(TAG_TO_DATA_ENTITY)
-            .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
-            .where(addSoftDeleteFilter(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId)));
-        return jooqReactiveOperations.flux(query)
-            .map(r -> r.into(TagPojo.class));
     }
 
     @Override
@@ -80,6 +89,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         final var cteSelect = DSL.with(tagCte.getName())
             .as(select)
             .select(tagCte.fields())
+            .select(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL).as(EXTERNAL_FIELD))
             .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
             .from(tagCte.getName())
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(tagCte.field(TAG.ID)))
@@ -96,13 +106,27 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDataEntityPojo> deleteDataEntityRelations(final long dataEntityId, final Collection<Long> tagIds) {
-        if (tagIds.isEmpty()) {
+    public Flux<TagToDataEntityPojo> listTagRelations(final Collection<Long> dataEntityIds) {
+        final var query = DSL.select(TAG_TO_DATA_ENTITY.fields())
+            .from(TAG_TO_DATA_ENTITY)
+            .join(TAG).on(TAG.ID.eq(TAG_TO_DATA_ENTITY.TAG_ID))
+            .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.in(dataEntityIds).and(TAG.IS_DELETED.isFalse()));
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(TagToDataEntityPojo.class));
+    }
+
+    @Override
+    public Flux<TagToDataEntityPojo> deleteDataEntityRelations(final Collection<TagToDataEntityPojo> relations) {
+        if (CollectionUtils.isEmpty(relations)) {
             return Flux.just();
         }
-
+        final Condition condition = relations.stream()
+            .map(pojo -> TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(pojo.getDataEntityId())
+                .and(TAG_TO_DATA_ENTITY.TAG_ID.eq(pojo.getTagId())))
+            .reduce(Condition::or)
+            .orElseThrow(() -> new RuntimeException("Couldn't build condition for tag deletion"));
         final var query = DSL.delete(TAG_TO_DATA_ENTITY)
-            .where(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId).and(TAG_TO_DATA_ENTITY.TAG_ID.in(tagIds)))
+            .where(condition)
             .returning();
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(TagToDataEntityPojo.class));
@@ -127,13 +151,12 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Flux<TagToDataEntityPojo> createDataEntityRelations(final long dataEntityId, final Collection<Long> tagIds) {
-        if (tagIds.isEmpty()) {
+    public Flux<TagToDataEntityPojo> createDataEntityRelations(final Collection<TagToDataEntityPojo> relations) {
+        if (CollectionUtils.isEmpty(relations)) {
             return Flux.just();
         }
 
-        final List<TagToDataEntityRecord> records = tagIds.stream()
-            .map(t -> new TagToDataEntityPojo().setDataEntityId(dataEntityId).setTagId(t))
+        final List<TagToDataEntityRecord> records = relations.stream()
             .map(p -> jooqReactiveOperations.newRecord(TAG_TO_DATA_ENTITY, p))
             .toList();
 
@@ -202,7 +225,8 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     private TagDto mapTag(final Record jooqRecord) {
         return new TagDto(
             jooqRecord.into(TagPojo.class),
-            jooqRecord.get(COUNT_FIELD, Long.class)
+            jooqRecord.get(COUNT_FIELD, Long.class),
+            jooqRecord.get(EXTERNAL_FIELD, Boolean.class)
         );
     }
 }

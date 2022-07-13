@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
@@ -12,4 +13,6 @@ public interface ReactiveDatasetFieldRepository extends ReactiveCRUDRepository<D
     Mono<DatasetFieldDto> getDto(final long datasetFieldId);
 
     Mono<Map<String, DatasetFieldPojo>> getExistingFieldsByOddrnAndType(final List<DatasetFieldPojo> fields);
+
+    Mono<List<DatasetFieldPojo>> getDatasetFieldsByOddrns(final Collection<String> oddrns);
 }

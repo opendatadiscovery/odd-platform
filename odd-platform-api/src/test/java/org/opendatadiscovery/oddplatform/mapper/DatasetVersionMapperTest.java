@@ -14,9 +14,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersion;
+import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
+import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
 
 import static org.jooq.JSONB.jsonb;
@@ -51,14 +54,22 @@ class DatasetVersionMapperTest {
     @Test
     @DisplayName("mapping dataset versions structure")
     void testDatasetVersionMapDatasetStructure() {
+        final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
+        final DatasetFieldPojo datasetFieldPojo = EASY_RANDOM.nextObject(DatasetFieldPojo.class);
         final DataSetFieldStat dataSetFieldStat = EASY_RANDOM.nextObject(DataSetFieldStat.class);
         final DataSetFieldType dataSetFieldType = EASY_RANDOM.nextObject(DataSetFieldType.class);
-        final DatasetStructureDto expectedDatasetStructureDto = EASY_RANDOM.nextObject(DatasetStructureDto.class);
-        expectedDatasetStructureDto.getDatasetFields().forEach(dsf -> {
-            final DatasetFieldPojo datasetFieldPojo = dsf.getDatasetFieldPojo();
-            datasetFieldPojo.setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
-            datasetFieldPojo.setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
-        });
+        final LabelPojo labelPojo = EASY_RANDOM.nextObject(LabelPojo.class);
+
+        final DatasetFieldDto datasetFieldDto = new DatasetFieldDto();
+        datasetFieldDto.setDatasetFieldPojo(datasetFieldPojo);
+        datasetFieldDto.setParentFieldId(1L);
+        datasetFieldDto.setEnumValueCount(2);
+        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, false)));
+        datasetFieldDto.getDatasetFieldPojo().setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
+        datasetFieldDto.getDatasetFieldPojo().setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
+
+        final DatasetStructureDto expectedDatasetStructureDto =
+            new DatasetStructureDto(datasetVersionPojo, List.of(datasetFieldDto));
 
         final DataSetStructure actualDataSetStructure =
             datasetVersionMapper.mapDatasetStructure(expectedDatasetStructureDto);

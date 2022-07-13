@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -55,6 +56,17 @@ public class ReactiveDatasetFieldRepositoryImpl
         return jooqReactiveOperations.flux(selectConditionStep)
             .map(r -> r.into(DatasetFieldPojo.class))
             .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, Function.identity()));
+    }
+
+    @Override
+    public Mono<List<DatasetFieldPojo>> getDatasetFieldsByOddrns(final Collection<String> oddrns) {
+        final var query = DSL
+            .selectFrom(DATASET_FIELD)
+            .where(DATASET_FIELD.ODDRN.in(oddrns));
+
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(DatasetFieldPojo.class))
+            .collectList();
     }
 
     @Override

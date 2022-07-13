@@ -18,9 +18,11 @@ import org.jooq.SelectOnConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
+import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DatasetVersionRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -28,6 +30,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.mapping;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
@@ -48,6 +51,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     implements ReactiveDatasetVersionRepository {
 
     public static final String LABELS = "labels";
+    public static final String LABEL_RELATIONS = "label_relations";
     public static final String ENUM_VALUE_COUNT = "enum_value_count";
     private final JooqRecordHelper jooqRecordHelper;
 
@@ -66,6 +70,7 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         final SelectHavingStep<Record> selectHavingStep = DSL
             .select(selectFields)
+            .select(jsonArrayAgg(field(LABEL_TO_DATASET_FIELD.asterisk().toString())).as(LABEL_RELATIONS))
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
             .select(count(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(DATASET_VERSION)
@@ -110,6 +115,7 @@ public class ReactiveDatasetVersionRepositoryImpl
 
         final SelectHavingStep<Record> selectHavingStep = DSL
             .select(selectFields)
+            .select(jsonArrayAgg(field(LABEL_TO_DATASET_FIELD.asterisk().toString())).as(LABEL_RELATIONS))
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
             .select(count(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(subquery)
@@ -222,8 +228,18 @@ public class ReactiveDatasetVersionRepositoryImpl
     private DatasetFieldDto extractDatasetFieldDto(final Record datasetVersionRecord) {
         return DatasetFieldDto.builder()
             .datasetFieldPojo(extractDatasetField(datasetVersionRecord))
-            .labelPojos(jooqRecordHelper.extractAggRelation(datasetVersionRecord, LABELS, LabelPojo.class))
+            .labels(extractLabels(datasetVersionRecord))
             .enumValueCount(datasetVersionRecord.get(ENUM_VALUE_COUNT, Integer.class))
             .build();
+    }
+
+    private List<LabelDto> extractLabels(final Record record) {
+        final Set<LabelPojo> labels = jooqRecordHelper.extractAggRelation(record, LABELS, LabelPojo.class);
+        final Map<Long, LabelToDatasetFieldPojo> relations =
+            jooqRecordHelper.extractAggRelation(record, LABEL_RELATIONS, LabelToDatasetFieldPojo.class).stream()
+                .collect(Collectors.toMap(LabelToDatasetFieldPojo::getLabelId, identity()));
+        return labels.stream()
+            .map(labelPojo -> new LabelDto(labelPojo, relations.get(labelPojo.getId()).getExternal()))
+            .toList();
     }
 }

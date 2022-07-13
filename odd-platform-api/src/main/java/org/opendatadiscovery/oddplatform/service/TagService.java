@@ -23,17 +23,14 @@ public interface TagService {
 
     Mono<List<TagPojo>> getOrCreateTagsByName(final Set<String> tagNames);
 
+    Mono<List<TagPojo>> updateRelationsWithDataEntity(final long dataEntityId,
+                                                      final Set<String> tagNames);
+
     Flux<TagToDataEntityPojo> deleteRelationsForDataEntity(final long dataEntityId);
-
-    Flux<TagToDataEntityPojo> createRelationsWithDataEntity(final long dataEntityId,
-                                                            final List<TagPojo> tags);
-
-    Flux<TagToDataEntityPojo> deleteRelationsWithDataEntityExcept(final long dataEntityId,
-                                                            final Set<String> tagsToKeep);
 
     Flux<TagToTermPojo> deleteRelationsWithTerm(final long termId,
                                                 final Set<String> tagsToKeep);
 
     Flux<TagToTermPojo> createRelationsWithTerm(final long termId,
-                                                      final List<TagPojo> tags);
+                                                final List<TagPojo> tags);
 }

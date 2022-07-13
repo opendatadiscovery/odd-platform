@@ -51,6 +51,7 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
+import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataConsumerAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataEntityAttributes;
@@ -69,6 +70,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
@@ -125,6 +127,7 @@ public class DataEntityRepositoryImpl
     };
     private static final int SUGGESTION_LIMIT = 5;
     private static final String DATA_ENTITY_CTE_NAME = "dataEntityCTE";
+    private static final String AGG_TAGS_RELATION_FIELD = "tags_relation";
     private static final String AGG_TAGS_FIELD = "tag";
     private static final String AGG_OWNERSHIP_FIELD = "ownership";
     private static final String AGG_OWNER_FIELD = "owner";
@@ -749,6 +752,7 @@ public class DataEntityRepositoryImpl
 
         if (config.isDimensions()) {
             selectStep = selectStep
+                .select(jsonArrayAgg(field(TAG_TO_DATA_ENTITY.asterisk().toString())).as(AGG_TAGS_RELATION_FIELD))
                 .select(jsonArrayAgg(field(TAG.asterisk().toString())).as(AGG_TAGS_FIELD))
                 .select(jsonArrayAgg(field(OWNER.asterisk().toString())).as(AGG_OWNER_FIELD))
                 .select(jsonArrayAgg(field(ROLE.asterisk().toString())).as(AGG_ROLE_FIELD))
@@ -1070,7 +1074,7 @@ public class DataEntityRepositoryImpl
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
-            .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
+            .tags(extractTags(r))
             .build();
     }
 
@@ -1085,8 +1089,18 @@ public class DataEntityRepositoryImpl
             .specificAttributes(extractSpecificAttributes(dataEntity))
             .namespace(jooqRecordHelper.extractRelation(r, NAMESPACE, NamespacePojo.class))
             .ownership(extractOwnershipRelation(r))
-            .tags(jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class))
+            .tags(extractTags(r))
             .build();
+    }
+
+    private List<TagDto> extractTags(final Record r) {
+        final Set<TagPojo> tagPojos = jooqRecordHelper.extractAggRelation(r, AGG_TAGS_FIELD, TagPojo.class);
+        final Map<Long, TagToDataEntityPojo> tagRelations = jooqRecordHelper.extractAggRelation(r,
+                AGG_TAGS_RELATION_FIELD, TagToDataEntityPojo.class).stream()
+            .collect(Collectors.toMap(TagToDataEntityPojo::getTagId, identity()));
+        return tagPojos.stream()
+            .map(pojo -> new TagDto(pojo, null, tagRelations.get(pojo.getId()).getExternal()))
+            .toList();
     }
 
     private List<OwnershipDto> extractOwnershipRelation(final Record r) {

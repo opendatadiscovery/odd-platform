@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static reactor.function.TupleUtils.function;
+
 @Service
 @RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
@@ -39,9 +41,11 @@ public class TagServiceImpl implements TagService {
     @Override
     @ReactiveTransactional
     public Mono<Tag> update(final long tagId, final TagFormData formData) {
-        return reactiveTagRepository.get(tagId)
+        return reactiveTagRepository.getDto(tagId)
             .switchIfEmpty(Mono.error(new NotFoundException("Can't find tag with id %s", tagId)))
-            .map(tag -> tagMapper.applyToPojo(formData, tag))
+            .filter(tagDto -> !tagDto.external())
+            .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't update tag which has external relations")))
+            .map(tag -> tagMapper.applyToPojo(formData, tag.tagPojo()))
             .flatMap(reactiveTagRepository::update)
             .flatMap(this::updateSearchVectors)
             .map(tagMapper::mapToTag);
@@ -50,8 +54,12 @@ public class TagServiceImpl implements TagService {
     @Override
     @ReactiveTransactional
     public Mono<Tag> delete(final long tagId) {
-        return Flux.zip(reactiveTagRepository.deleteTermRelations(tagId),
-                reactiveTagRepository.deleteDataEntityRelations(tagId))
+        return reactiveTagRepository.getDto(tagId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Can't find tag with id %s", tagId)))
+            .filter(tagDto -> !tagDto.external())
+            .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't delete tag which has external relations")))
+            .thenMany(Flux.zip(reactiveTagRepository.deleteTermRelations(tagId),
+                reactiveTagRepository.deleteDataEntityRelations(tagId)))
             .then(reactiveTagRepository.delete(tagId))
             .map(tagMapper::mapToTag)
             .flatMap(tag -> reactiveTermSearchEntrypointRepository.updateChangedTagVectors(tagId)
@@ -84,28 +92,37 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @ReactiveTransactional
+    public Mono<List<TagPojo>> updateRelationsWithDataEntity(final long dataEntityId,
+                                                             final Set<String> tagNames) {
+        final Mono<List<TagToDataEntityPojo>> currentRelations = reactiveTagRepository
+            .listTagRelations(List.of(dataEntityId))
+            .filter(pojo -> !pojo.getExternal())
+            .collectList();
+
+        final Mono<List<TagPojo>> newTagsState = getOrCreateTagsByName(tagNames);
+
+        return Mono.zip(currentRelations, newTagsState)
+            .flatMap(function((current, tags) -> {
+                final List<TagToDataEntityPojo> newStateRelations = tags.stream()
+                    .map(t -> new TagToDataEntityPojo()
+                        .setTagId(t.getId())
+                        .setDataEntityId(dataEntityId)
+                        .setExternal(false))
+                    .toList();
+                final List<TagToDataEntityPojo> pojosToDelete = current.stream()
+                    .filter(r -> !newStateRelations.contains(r))
+                    .toList();
+                return reactiveTagRepository.deleteDataEntityRelations(pojosToDelete)
+                    .thenMany(reactiveTagRepository.createDataEntityRelations(newStateRelations))
+                    .ignoreElements()
+                    .thenReturn(tags);
+            }));
+    }
+
+    @Override
     public Flux<TagToDataEntityPojo> deleteRelationsForDataEntity(final long dataEntityId) {
         return reactiveTagRepository.deleteRelationsForDataEntity(dataEntityId);
-    }
-
-    @Override
-    public Flux<TagToDataEntityPojo> createRelationsWithDataEntity(final long dataEntityId,
-                                                                   final List<TagPojo> tags) {
-        final List<Long> ids = tags.stream().map(TagPojo::getId).toList();
-        return reactiveTagRepository.createDataEntityRelations(dataEntityId, ids);
-    }
-
-    @Override
-    public Flux<TagToDataEntityPojo> deleteRelationsWithDataEntityExcept(final long dataEntityId,
-                                                                   final Set<String> tagsToKeep) {
-        return reactiveTagRepository.listByDataEntityId(dataEntityId)
-            .collectList()
-            .flatMapMany(currentTags -> {
-                final List<Long> idsToDelete = currentTags.stream()
-                    .filter(l -> !tagsToKeep.contains(l.getName()))
-                    .map(TagPojo::getId).toList();
-                return reactiveTagRepository.deleteDataEntityRelations(dataEntityId, idsToDelete);
-            });
     }
 
     @Override
