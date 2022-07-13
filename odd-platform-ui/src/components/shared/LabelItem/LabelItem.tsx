@@ -1,7 +1,8 @@
 import React from 'react';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { TypographyProps } from '@mui/material';
+import { Theme, TypographyProps } from '@mui/material';
+import { SxProps } from '@mui/system';
 import { Container } from './LabelItemStyles';
 
 interface LabelItemProps {
@@ -11,6 +12,7 @@ interface LabelItemProps {
   unfilled?: boolean;
   variant?: TypographyProps['variant'];
   component?: React.ElementType;
+  sx?: SxProps<Theme>;
 }
 
 const LabelItem: React.FC<LabelItemProps> = ({
@@ -20,10 +22,11 @@ const LabelItem: React.FC<LabelItemProps> = ({
   unfilled,
   variant = 'body2',
   component = 'span',
+  sx,
 }) => (
   <Container
     $unfilled={unfilled}
-    sx={{ m: 0.25 }}
+    sx={sx}
     noWrap
     variant={variant}
     component={component}

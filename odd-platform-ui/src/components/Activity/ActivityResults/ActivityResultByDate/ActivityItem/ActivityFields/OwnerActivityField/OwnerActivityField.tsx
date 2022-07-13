@@ -145,17 +145,18 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
     }
   }, [oldState, newState, eventType]);
 
-  const detailsStateComponent = React.useCallback(
-    (ownerName: string, roleName: string, isChanged?: boolean) => (
-      <OwnerWithRole
-        key={`${ownerName}-${roleName}`}
-        ownerName={ownerName}
-        roleName={roleName}
-        eventType={eventType}
-        isChanged={isChanged}
-      />
-    ),
-    [eventType]
+  const ownerWithRole = (
+    ownerName?: string,
+    roleName?: string,
+    isChanged?: boolean
+  ) => (
+    <OwnerWithRole
+      key={`${ownerName}-${roleName}`}
+      ownerName={ownerName}
+      roleName={roleName}
+      eventType={eventType}
+      isChanged={isChanged}
+    />
   );
 
   return (
@@ -170,9 +171,17 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
       />
       <ActivityFieldState
         isDetailsOpen={isDetailsOpen}
-        oldStateData={oldFilteredState}
-        newStateData={newFilteredState}
-        stateComponent={detailsStateComponent}
+        oldStateChildren={oldFilteredState.map(
+          ({ ownerName, roleName, isChanged }) =>
+            ownerWithRole(ownerName, roleName, isChanged)
+        )}
+        newStateChildren={newFilteredState.map(
+          ({ ownerName, roleName, isChanged }) =>
+            ownerWithRole(ownerName, roleName, isChanged)
+        )}
+        // oldStateData={oldFilteredState}
+        // newStateData={newFilteredState}
+        // stateComponent={detailsStateComponent}
       />
     </Grid>
   );

@@ -1925,10 +1925,10 @@ components:
     TermActivityState:
       type: object
       properties:
-        term_id:
+        id:
           type: integer
           format: int64
-        term:
+        name:
           type: string
         namespace:
           type: string
@@ -2072,7 +2072,8 @@ components:
         - CUSTOM_METADATA_UPDATED
         - CUSTOM_METADATA_DELETED
         - DATASET_FIELD_VALUES_UPDATED
-        - DATASET_FIELD_INFORMATION_UPDATED
+        - DATASET_FIELD_DESCRIPTION_UPDATED
+        - DATASET_FIELD_LABELS_UPDATED
         - CUSTOM_GROUP_CREATED
         - CUSTOM_GROUP_UPDATED
         - CUSTOM_GROUP_DELETED
