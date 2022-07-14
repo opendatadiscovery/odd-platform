@@ -36,13 +36,14 @@ const TagItem: React.FC<TagItemProps> = ({
     sx={sx}
   >
     {systemTag && (
-      <SystemIcon
-        sx={{
-          ml: 0.25,
-          marginTop: '6px',
-          marginLeft: 0,
-        }}
-      />
+      <S.SystemIconContainer>
+        <SystemIcon
+          important={important}
+          sx={{
+            ml: 0.25,
+          }}
+        />
+      </S.SystemIconContainer>
     )}
     {label}
     {removable && !systemTag && (

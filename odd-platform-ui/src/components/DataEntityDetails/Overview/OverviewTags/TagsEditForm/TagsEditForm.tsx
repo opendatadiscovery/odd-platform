@@ -27,10 +27,16 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   const dispatch = useAppDispatch();
 
   type DataEntityTagsFormType = {
-    tagNameList: { name: string; important: boolean }[];
+    tagNameList: {
+      name: string;
+      important: boolean;
+      external?: boolean;
+    }[];
   };
   const methods = useForm<DataEntityTagsFormType>({
-    defaultValues: { tagNameList: [{ name: '', important: false }] },
+    defaultValues: {
+      tagNameList: [{ name: '' }],
+    },
   });
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
@@ -42,6 +48,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
       tagNameList: dataEntityTags?.map(tag => ({
         name: tag.name,
         important: tag.important,
+        external: tag.external,
       })),
     });
     handleOpen();
@@ -102,6 +109,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
               <TagItem
                 sx={{ my: 0.5, mr: 0.5 }}
                 key={field.id}
+                systemTag={field.external}
                 label={field.name}
                 important={field.important}
                 removable
