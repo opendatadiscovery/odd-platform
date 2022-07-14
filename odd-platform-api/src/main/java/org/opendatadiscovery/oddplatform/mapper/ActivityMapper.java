@@ -148,6 +148,8 @@ public abstract class ActivityMapper {
         return new ActivityState().terms(termActivityStates);
     }
 
+    @Mapping(source = "dto.termId", target = "id")
+    @Mapping(source = "dto.term", target = "name")
     abstract TermActivityState mapTermActivityState(final TermActivityStateDto dto);
 
     ActivityState mapDescriptionState(final JSONB jsonb) {
