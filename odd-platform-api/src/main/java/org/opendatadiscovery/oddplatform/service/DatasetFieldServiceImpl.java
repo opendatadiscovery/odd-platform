@@ -19,13 +19,11 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
-import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Predicate.not;
-import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.DATASET_FIELD_INFORMATION_UPDATED;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Service
@@ -38,7 +36,6 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(event = DATASET_FIELD_INFORMATION_UPDATED, isSystemEvent = false)
     public Mono<DataSetField> updateDatasetField(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
                                                  final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         return reactiveDatasetFieldRepository.getDto(datasetFieldId)

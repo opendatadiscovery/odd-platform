@@ -203,7 +203,8 @@ public class ActivityMapperTest {
             case DESCRIPTION_UPDATED -> generateDescriptionState();
             case CUSTOM_NAME_UPDATED -> generateCustomNameState();
             case DATASET_FIELD_VALUES_UPDATED -> generateDatasetFieldValuesState();
-            case DATASET_FIELD_INFORMATION_UPDATED -> generateDatasetFieldInformationState();
+            case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
+                generateDatasetFieldInformationState();
             case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED, CUSTOM_GROUP_DELETED -> generateCustomGroupState();
             default -> "";
         };

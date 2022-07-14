@@ -24,7 +24,8 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
 
     @Override
     public boolean isHandle(final ActivityEventTypeDto activityEventTypeDto) {
-        return activityEventTypeDto == ActivityEventTypeDto.DATASET_FIELD_INFORMATION_UPDATED;
+        return activityEventTypeDto == ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED
+            || activityEventTypeDto == ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED;
     }
 
     @Override
