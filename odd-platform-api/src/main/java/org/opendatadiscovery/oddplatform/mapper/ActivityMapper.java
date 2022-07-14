@@ -104,7 +104,8 @@ public abstract class ActivityMapper {
             case DESCRIPTION_UPDATED -> mapDescriptionState(jsonb);
             case CUSTOM_NAME_UPDATED -> mapCustomNameState(jsonb);
             case DATASET_FIELD_VALUES_UPDATED -> mapDatasetFieldValuesState(jsonb);
-            case DATASET_FIELD_INFORMATION_UPDATED -> mapDatasetFieldInformationState(jsonb);
+            case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
+                mapDatasetFieldInformationState(jsonb);
             case CUSTOM_GROUP_CREATED, CUSTOM_GROUP_UPDATED, CUSTOM_GROUP_DELETED -> mapCustomGroupState(jsonb);
             default -> new ActivityState();
         };
@@ -112,7 +113,8 @@ public abstract class ActivityMapper {
 
     ActivityState mapOwnershipsState(final JSONB jsonb) {
         final List<OwnershipActivityStateDto> stateDtos = JSONSerDeUtils
-            .deserializeJson(jsonb.data(), new TypeReference<>() {});
+            .deserializeJson(jsonb.data(), new TypeReference<>() {
+            });
         final List<OwnershipActivityState> ownershipActivityStates = stateDtos.stream()
             .map(this::mapOwnershipActivityState).toList();
         return new ActivityState().ownerships(ownershipActivityStates);
@@ -122,7 +124,8 @@ public abstract class ActivityMapper {
 
     ActivityState mapTagsState(final JSONB jsonb) {
         final List<TagActivityStateDto> stateDtos = JSONSerDeUtils
-            .deserializeJson(jsonb.data(), new TypeReference<>() {});
+            .deserializeJson(jsonb.data(), new TypeReference<>() {
+            });
         final List<TagActivityState> tagActivityStates = stateDtos.stream()
             .map(this::mapTagActivityState).toList();
         return new ActivityState().tags(tagActivityStates);
@@ -142,7 +145,8 @@ public abstract class ActivityMapper {
 
     ActivityState mapTermsState(final JSONB jsonb) {
         final List<TermActivityStateDto> stateDtos = JSONSerDeUtils
-            .deserializeJson(jsonb.data(), new TypeReference<>() {});
+            .deserializeJson(jsonb.data(), new TypeReference<>() {
+            });
         final List<TermActivityState> termActivityStates = stateDtos.stream()
             .map(this::mapTermActivityState).toList();
         return new ActivityState().terms(termActivityStates);

@@ -17,6 +17,7 @@ import org.jooq.SelectHavingStep;
 import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.DatasetField;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
@@ -24,6 +25,7 @@ import org.opendatadiscovery.oddplatform.model.tables.records.DatasetFieldRecord
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -52,6 +54,7 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED, isSystemEvent = false)
     public Mono<DatasetFieldPojo> updateDescription(final long datasetFieldId, final String description) {
         final UpdateResultStep<DatasetFieldRecord> updateQuery = DSL.update(DATASET_FIELD)
             .set(DATASET_FIELD.INTERNAL_DESCRIPTION, description)
