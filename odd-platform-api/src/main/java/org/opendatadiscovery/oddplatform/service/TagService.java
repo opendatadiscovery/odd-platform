@@ -5,6 +5,7 @@ import java.util.Set;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsResponse;
+import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToTermPojo;
@@ -23,8 +24,8 @@ public interface TagService {
 
     Mono<List<TagPojo>> getOrCreateTagsByName(final Set<String> tagNames);
 
-    Mono<List<TagPojo>> updateRelationsWithDataEntity(final long dataEntityId,
-                                                      final Set<String> tagNames);
+    Mono<List<TagDto>> updateRelationsWithDataEntity(final long dataEntityId,
+                                                     final Set<String> tagNames);
 
     Flux<TagToDataEntityPojo> deleteRelationsForDataEntity(final long dataEntityId);
 

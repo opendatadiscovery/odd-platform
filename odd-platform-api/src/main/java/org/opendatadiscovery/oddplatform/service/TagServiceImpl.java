@@ -8,6 +8,7 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsResponse;
+import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
@@ -93,30 +94,29 @@ public class TagServiceImpl implements TagService {
 
     @Override
     @ReactiveTransactional
-    public Mono<List<TagPojo>> updateRelationsWithDataEntity(final long dataEntityId,
-                                                             final Set<String> tagNames) {
+    public Mono<List<TagDto>> updateRelationsWithDataEntity(final long dataEntityId,
+                                                            final Set<String> tagNames) {
         final Mono<List<TagToDataEntityPojo>> currentRelations = reactiveTagRepository
             .listTagRelations(List.of(dataEntityId))
             .filter(pojo -> !pojo.getExternal())
             .collectList();
 
-        final Mono<List<TagPojo>> newTagsState = getOrCreateTagsByName(tagNames);
+        final Mono<List<TagToDataEntityPojo>> updatedRelations = getOrCreateTagsByName(tagNames)
+            .map(tags -> tags.stream()
+                .map(t -> new TagToDataEntityPojo()
+                    .setTagId(t.getId())
+                    .setDataEntityId(dataEntityId)
+                    .setExternal(false))
+                .toList());
 
-        return Mono.zip(currentRelations, newTagsState)
-            .flatMap(function((current, tags) -> {
-                final List<TagToDataEntityPojo> newStateRelations = tags.stream()
-                    .map(t -> new TagToDataEntityPojo()
-                        .setTagId(t.getId())
-                        .setDataEntityId(dataEntityId)
-                        .setExternal(false))
-                    .toList();
+        return Mono.zip(currentRelations, updatedRelations)
+            .flatMap(function((current, updated) -> {
                 final List<TagToDataEntityPojo> pojosToDelete = current.stream()
-                    .filter(r -> !newStateRelations.contains(r))
+                    .filter(r -> !updated.contains(r))
                     .toList();
                 return reactiveTagRepository.deleteDataEntityRelations(pojosToDelete)
-                    .thenMany(reactiveTagRepository.createDataEntityRelations(newStateRelations))
-                    .ignoreElements()
-                    .thenReturn(tags);
+                    .thenMany(reactiveTagRepository.createDataEntityRelations(updated))
+                    .then(reactiveTagRepository.listDataEntityDtos(dataEntityId));
             }));
     }
 

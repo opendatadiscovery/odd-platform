@@ -1,6 +1,8 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
+import java.util.List;
+import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.TagDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
@@ -12,6 +14,8 @@ import reactor.core.publisher.Mono;
 public interface ReactiveTagRepository extends ReactiveCRUDRepository<TagPojo> {
 
     Mono<TagDto> getDto(final long id);
+
+    Mono<List<TagDto>> listDataEntityDtos(final Long dataEntityId);
 
     Flux<TagPojo> listByNames(final Collection<String> names);
 

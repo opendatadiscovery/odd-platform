@@ -25,8 +25,6 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_TERM;
@@ -55,6 +53,21 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
 
         return jooqReactiveOperations.mono(query)
             .map(this::mapTag);
+    }
+
+    @Override
+    public Mono<List<TagDto>> listDataEntityDtos(final Long dataEntityId) {
+        final var query = DSL.select(TAG.fields())
+            .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
+            .select(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL).as(EXTERNAL_FIELD))
+            .from(TAG)
+            .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
+            .where(addSoftDeleteFilter(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId)))
+            .groupBy(TAG.fields());
+
+        return jooqReactiveOperations.flux(query)
+            .map(this::mapTag)
+            .collectList();
     }
 
     @Override
