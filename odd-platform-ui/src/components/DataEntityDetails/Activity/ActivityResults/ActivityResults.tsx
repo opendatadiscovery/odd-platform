@@ -2,11 +2,9 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  getActivitiesByDate,
   getActivitiesListFetchingStatuses,
   getActivitiesQueryParams,
 } from 'redux/selectors';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useHistory, useLocation } from 'react-router-dom';
 import { dataEntityActivityPath } from 'lib/paths';
@@ -24,7 +22,7 @@ const ActivityResults: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
   const queryParams = useAppSelector(getActivitiesQueryParams);
-  const activityResults = useAppSelector(getActivitiesByDate);
+  // const activityResults = useAppSelector(getActivitiesByDate);
   const { isLoading: isActivityListFetching } = useAppSelector(
     getActivitiesListFetchingStatuses
   );
@@ -92,9 +90,9 @@ const ActivityResults: React.FC = () => {
           {/*  //   totals={totals} */}
           {/*  // /> */}
           {/* ))} */}
-          {!isActivityListFetching && !activityResults.length ? (
-            <EmptyContentPlaceholder text="No matches found" />
-          ) : null}
+          {/* {!isActivityListFetching && !activityResults.length ? ( */}
+          {/*  <EmptyContentPlaceholder text="No matches found" /> */}
+          {/* ) : null} */}
         </S.ListContainer>
       )}
     </Grid>

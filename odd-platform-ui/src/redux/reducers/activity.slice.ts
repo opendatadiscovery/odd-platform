@@ -1,9 +1,9 @@
-import { ActivitiesState } from 'redux/interfaces/state';
 import { activitiesActionTypePrefix } from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
-import { addDays, format, startOfDay } from 'date-fns';
+import { addDays, endOfDay, format } from 'date-fns';
 import {
+  ActivitiesState,
   Activity,
   ActivityPayload,
   ActivityQueryData,
@@ -13,7 +13,7 @@ import {
 import { ActivityType } from 'generated-sources';
 import uniq from 'lodash/uniq';
 
-const beginDate = startOfDay(addDays(new Date(), -6)).getTime();
+const beginDate = endOfDay(addDays(new Date(), -6)).getTime();
 const endDate = new Date().getTime();
 const size = 20;
 
@@ -33,6 +33,7 @@ export const initialState: ActivitiesState = {
     myObjectsCount: 0,
     downstreamCount: 0,
   },
+  pageInfo: { hasNext: true },
 };
 
 const formattedDate = (date: number) => format(date, 'MMMM dd, yyyy');
@@ -49,6 +50,7 @@ export const activitiesSlice = createSlice({
 
       if (queryData === null) {
         delete state.queryParams[queryName];
+        state.pageInfo.hasNext = true;
         return state;
       }
 
@@ -58,6 +60,8 @@ export const activitiesSlice = createSlice({
           ...state.queryParams,
           [queryName]: queryData,
         },
+        activitiesByDate: {},
+        pageInfo: { hasNext: true },
       };
     },
 
@@ -74,11 +78,13 @@ export const activitiesSlice = createSlice({
           ...state.queryParams,
           [queryName]: queryParams?.filter(id => id !== queryData),
         },
+        activitiesByDate: {},
+        pageInfo: { hasNext: true },
       };
     },
 
     clearActivityFilters: state => {
-      state.queryParams = initialQueryParams;
+      state = initialState;
 
       return state;
     },
@@ -86,8 +92,10 @@ export const activitiesSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(
       thunks.fetchActivityList.fulfilled,
-      (state, { payload }): ActivitiesState =>
-        payload.reduce(
+      (state, { payload }): ActivitiesState => {
+        const { activities, pageInfo } = payload;
+
+        return activities.reduce(
           (memo: ActivitiesState, activity: Activity) => ({
             ...memo,
             activitiesByDate: {
@@ -100,8 +108,13 @@ export const activitiesSlice = createSlice({
               ]),
             },
           }),
-          { ...state, activitiesByDate: {} }
-        )
+          {
+            ...state,
+            activitiesByDate: { ...state.activitiesByDate },
+            pageInfo,
+          }
+        );
+      }
     );
 
     builder.addCase(

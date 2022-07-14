@@ -1,14 +1,16 @@
-import { Typography } from '@mui/material';
+import { Typography, TypographyProps } from '@mui/material';
 import styled from 'styled-components';
 
-export const Container = styled(Typography)<{
-  $unfilled?: boolean;
-  component: React.ElementType;
-}>(({ theme, $unfilled }) => ({
+export const Container = styled(Typography)<
+  {
+    $unfilled?: boolean;
+    component: React.ElementType;
+  } & TypographyProps
+>(({ theme, $unfilled }) => ({
+  margin: theme.spacing(0.25),
   display: 'inline-flex',
   alignItems: 'center',
   color: theme.palette.texts.info,
-  position: 'relative',
   backgroundColor:
     theme.palette.backgrounds[$unfilled ? 'default' : 'secondary'],
   borderRadius: $unfilled ? '4px' : '2px',

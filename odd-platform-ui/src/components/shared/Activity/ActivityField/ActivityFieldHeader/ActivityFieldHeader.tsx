@@ -1,31 +1,41 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { ActivityEventType } from 'generated-sources';
-import OwnerWithRole, {
-  OwnerWithRoleProps,
-} from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/OwnerActivityField/OwnerWithRole/OwnerWithRole';
+import ActivityCreatedIcon from 'components/shared/Icons/ActivityCreatedIcon';
+import ActivityUpdatedIcon from 'components/shared/Icons/ActivityUpdatedIcon';
+import ActivityDeletedIcon from 'components/shared/Icons/ActivityDeletedIcon';
+import AppButton from 'components/shared/AppButton/AppButton';
 import * as S from './ActivityFieldHeaderStyles';
 
-interface ActivityFieldHeaderProps extends OwnerWithRoleProps {
-  icon: React.ReactNode;
+interface ActivityFieldHeaderProps {
   startText: string;
-  activityName: string;
-  contentEventType: 'created' | 'updated' | 'deleted';
+  activityName: string | undefined;
+  eventType: 'created' | 'updated' | 'deleted' | string;
+  showDetailsBtn?: boolean;
+  detailsBtnOnClick?: () => void;
+  isDetailsOpen?: boolean;
 }
 
 const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
-  icon,
   startText,
   activityName,
-  contentEventType,
-  ownerName,
-  roleName,
+  eventType,
+  showDetailsBtn,
+  detailsBtnOnClick,
+  isDetailsOpen,
 }) => {
-  const setStartText = (type: ActivityEventType) => {
-    if (type.includes('OWNERSHIP')) return 'Owner';
+  const [icon, setHeaderIcon] = React.useState<JSX.Element | null>(null);
 
-    return '';
-  };
+  React.useEffect(() => {
+    if (eventType === 'created') {
+      setHeaderIcon(<ActivityCreatedIcon />);
+    }
+    if (eventType === 'updated') {
+      setHeaderIcon(<ActivityUpdatedIcon />);
+    }
+    if (eventType === 'deleted') {
+      setHeaderIcon(<ActivityDeletedIcon />);
+    }
+  }, [eventType]);
 
   return (
     <S.FieldHeader container>
@@ -35,20 +45,21 @@ const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
           {startText}
         </Typography>
       )}
-      <Typography variant="h4">
-        {startText === 'Owner' ? (
-          <>
-            <OwnerWithRole ownerName={ownerName} roleName={roleName} />
-            {activityName}
-          </>
-        ) : (
-          activityName
-        )}
-      </Typography>
+      <Typography variant="h4">{activityName}</Typography>
       <Typography variant="subtitle1" color="texts.info">
         was
       </Typography>
-      <Typography variant="h4">{contentEventType}</Typography>
+      <Typography variant="h4">{eventType}</Typography>
+      {showDetailsBtn && (
+        <AppButton
+          size="small"
+          color="tertiary"
+          onClick={detailsBtnOnClick}
+          sx={{ position: 'inherit' }}
+        >
+          {isDetailsOpen ? 'Hide details' : `Show details`}
+        </AppButton>
+      )}
     </S.FieldHeader>
   );
 };

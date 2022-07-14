@@ -76,6 +76,7 @@ const OwnerActivityFieldHeader: React.FC<
           size="small"
           color="tertiary"
           onClick={detailsBtnOnClick}
+          sx={{ position: 'inherit' }}
         >
           {isDetailsOpen ? 'Hide details' : `Show details`}
         </AppButton>

@@ -1829,6 +1829,9 @@ components:
     Activity:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         event_type:
           $ref: '#/components/schemas/ActivityEventType'
         created_at:
@@ -1845,6 +1848,7 @@ components:
         system_event:
           type: boolean
       required:
+        - id
         - event_type
         - created_at
         - data_entity
