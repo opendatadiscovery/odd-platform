@@ -45,6 +45,10 @@ public class LabelIngestionServiceImpl implements LabelIngestionService {
             .map(datasetFieldMapper::mapField)
             .toList();
 
+        if (CollectionUtils.isEmpty(pojos)) {
+            return Mono.just(dataStructure);
+        }
+
         final Mono<Map<String, DatasetFieldPojo>> datasetFieldOddrnToPojo = datasetFieldRepository
             .getExistingFieldsByOddrnAndType(pojos);
         final Set<String> externalLabelNames = getLabelNames(datasetEntities);
