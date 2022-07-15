@@ -11,7 +11,7 @@ import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { setDataQATestSeverity } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 
 interface TestReportDetailsOverviewProps {

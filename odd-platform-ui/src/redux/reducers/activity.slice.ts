@@ -11,10 +11,10 @@ import {
   ActivityQueryParams,
 } from 'redux/interfaces';
 import { ActivityType } from 'generated-sources';
-import uniq from 'lodash/uniq';
+import uniqBy from 'lodash/uniqBy';
 
-const beginDate = endOfDay(addDays(new Date(), -6)).getTime();
-const endDate = new Date().getTime();
+const beginDate = endOfDay(addDays(new Date(), -5)).getTime();
+const endDate = endOfDay(addDays(new Date(), 1)).getTime();
 const size = 20;
 
 const initialQueryParams: ActivityQueryParams = {
@@ -100,12 +100,15 @@ export const activitiesSlice = createSlice({
             ...memo,
             activitiesByDate: {
               ...memo.activitiesByDate,
-              [formattedDate(activity.createdAt)]: uniq([
-                ...(memo.activitiesByDate[
-                  formattedDate(activity.createdAt)
-                ] || []),
-                activity,
-              ]),
+              [formattedDate(activity.createdAt)]: uniqBy(
+                [
+                  ...(memo.activitiesByDate[
+                    formattedDate(activity.createdAt)
+                  ] || []),
+                  activity,
+                ],
+                'id'
+              ),
             },
           }),
           {

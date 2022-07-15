@@ -2,25 +2,23 @@ import { Variant } from '@mui/material/styles/createTypography';
 import { Typography } from '@mui/material';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import React from 'react';
-import { ActivityEventType } from 'generated-sources';
+import { CRUDType } from 'lib/interfaces';
 import * as S from './OwnerWithRoleStyles';
 
 export interface OwnerWithRoleProps {
   ownerName?: string;
   roleName?: string;
-  isChanged?: boolean;
   ownerTypographyVariant?: Variant;
-  eventType?: ActivityEventType;
+  typeOfChange?: CRUDType;
 }
 
 const OwnerWithRole: React.FC<OwnerWithRoleProps> = ({
   ownerName,
   roleName,
-  isChanged,
   ownerTypographyVariant = 'body1',
-  eventType,
+  typeOfChange,
 }) => (
-  <S.Container container $eventType={eventType} $isChanged={isChanged}>
+  <S.Container container $typeOfChange={typeOfChange}>
     <Typography variant={ownerTypographyVariant} sx={{ mr: 0.5 }}>
       {ownerName}
     </Typography>

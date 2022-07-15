@@ -1,15 +1,14 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import ActivityCreatedIcon from 'components/shared/Icons/ActivityCreatedIcon';
-import ActivityUpdatedIcon from 'components/shared/Icons/ActivityUpdatedIcon';
-import ActivityDeletedIcon from 'components/shared/Icons/ActivityDeletedIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { CRUDType } from 'lib/interfaces';
+import { useSetActivityHeaderIcon } from 'lib/hooks/useSetActivityHeaderIcon';
 import * as S from './ActivityFieldHeaderStyles';
 
 interface ActivityFieldHeaderProps {
   startText: string;
-  activityName: string | undefined;
-  eventType: 'created' | 'updated' | 'deleted' | string;
+  activityName: string | JSX.Element | undefined;
+  eventType: CRUDType | string;
   showDetailsBtn?: boolean;
   detailsBtnOnClick?: () => void;
   isDetailsOpen?: boolean;
@@ -23,19 +22,7 @@ const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
   detailsBtnOnClick,
   isDetailsOpen,
 }) => {
-  const [icon, setHeaderIcon] = React.useState<JSX.Element | null>(null);
-
-  React.useEffect(() => {
-    if (eventType === 'created') {
-      setHeaderIcon(<ActivityCreatedIcon />);
-    }
-    if (eventType === 'updated') {
-      setHeaderIcon(<ActivityUpdatedIcon />);
-    }
-    if (eventType === 'deleted') {
-      setHeaderIcon(<ActivityDeletedIcon />);
-    }
-  }, [eventType]);
+  const { icon } = useSetActivityHeaderIcon(eventType);
 
   return (
     <S.FieldHeader container>

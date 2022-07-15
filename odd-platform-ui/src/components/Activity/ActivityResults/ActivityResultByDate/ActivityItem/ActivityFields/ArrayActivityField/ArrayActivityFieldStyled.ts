@@ -1,11 +1,10 @@
 import styled from 'styled-components';
 import { Grid, Theme } from '@mui/material';
-
-export type TypeOfChange = 'created' | 'updated' | 'deleted';
+import { CRUDType } from 'lib/interfaces';
 
 const setBackgroundColor = (
   theme: Theme,
-  eventType?: TypeOfChange
+  eventType?: CRUDType
 ): string => {
   switch (eventType) {
     case 'created':
@@ -20,7 +19,7 @@ const setBackgroundColor = (
 };
 
 export const ArrayItemWrapper = styled(Grid)<{
-  $typeOfChange?: TypeOfChange;
+  $typeOfChange?: CRUDType;
 }>(({ theme, $typeOfChange }) => ({
   borderRadius: '4px',
   backgroundColor: $typeOfChange

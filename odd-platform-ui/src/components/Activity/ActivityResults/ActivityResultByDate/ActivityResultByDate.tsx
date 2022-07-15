@@ -23,7 +23,7 @@ const ActivityResultByDate: React.FC<ActivityResultByDateProps> = ({
       </Typography>
       {activities.map(activity => (
         <ActivityItem
-          key={activity.createdAt}
+          key={activity.id}
           activity={activity}
           hideAllDetails={hideAllDetails}
         />

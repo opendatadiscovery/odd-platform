@@ -20,12 +20,12 @@ import { setActivityQueryParam } from 'redux/reducers/activity.slice';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ActivityQueryName, ActivityQueryParams } from 'redux/interfaces';
 import { activityPath } from 'lib/paths';
-import { useAppQuery } from 'lib/hooks';
-import ActivityTabsSkeleton from 'components/Activity/ActivityResults/ActivityTabsSkeleton/ActivityTabsSkeleton';
+import { useAppQuery } from 'lib/hooks/hooks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import ActivityResultByDate from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityResultByDate';
+import ActivityTabsSkeleton from './ActivityTabsSkeleton/ActivityTabsSkeleton';
+import ActivityResultByDate from './ActivityResultByDate/ActivityResultByDate';
 import ActivityResultsItemSkeleton from './ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import * as S from './ActivityResultsStyles';
 
@@ -42,7 +42,6 @@ const ActivityResults: React.FC = () => {
   const queryParams = useAppSelector(getActivitiesQueryParams);
   const countParams = useAppSelector(getActivitiesCountsParams);
   const activityResults = useAppSelector(getActivitiesByDate);
-  // const activityResults = useAppSelector(getActivitiesByDate);
   const activityCount = useAppSelector(getActivitiesCount);
   const { isLoading: isActivityListFetching } = useAppSelector(
     getActivitiesListFetchingStatuses
@@ -99,16 +98,9 @@ const ActivityResults: React.FC = () => {
 
   React.useEffect(() => {
     if (isQueryUpdated) {
-      console.log('fetch!');
       fetchNextPage();
     }
   }, [isQueryUpdated, queryParams]);
-
-  // React.useEffect(() => {
-  //   if (isQueryUpdated) {
-  //     dispatch(fetchActivityList(queryParams));
-  //   }
-  // }, [queryParams, isQueryUpdated]);
 
   const [tabs, setTabs] = React.useState<AppTabItem<ActivityType>[]>([]);
 
@@ -158,20 +150,13 @@ const ActivityResults: React.FC = () => {
   const activityItemSkeleton = () => (
     <SkeletonWrapper
       length={10}
-      renderContent={({ randomSkeletonPercentWidth, key }) => (
-        <ActivityResultsItemSkeleton
-          width={randomSkeletonPercentWidth()}
-          key={key}
-        />
+      renderContent={({ key }) => (
+        <ActivityResultsItemSkeleton width="100%" key={key} />
       )}
     />
   );
 
   const [hideAllDetails, setHideAllDetails] = React.useState(false);
-
-  // {!isActivityListFetching && activityCount === 0 ? (
-  //   <EmptyContentPlaceholder text="No matches found" />
-  // ) : (<>
 
   return (
     <Grid sx={{ mt: 2 }}>

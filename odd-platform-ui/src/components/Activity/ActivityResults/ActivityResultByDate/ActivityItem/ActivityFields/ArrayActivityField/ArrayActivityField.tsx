@@ -3,13 +3,15 @@ import { Grid } from '@mui/material';
 import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/Activity/ActivityField/ActivityFieldState/ActivityFieldState';
 import { TermActivityState } from 'generated-sources';
+import { CRUDType } from 'lib/interfaces';
+import isEmpty from 'lodash/isEmpty';
 import * as S from './ArrayActivityFieldStyled';
 
 interface ActivityData extends TermActivityState {
   id?: number;
   name?: string;
   important?: boolean;
-  typeOfChange?: 'created' | 'deleted';
+  typeOfChange?: CRUDType;
 }
 
 interface ArrayActivityFieldProps {
@@ -51,21 +53,20 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
 
   const [oldValues, setOldValues] = React.useState<ActivityData[]>([]);
   const [newValues, setNewValues] = React.useState<ActivityData[]>([]);
-  const [activityEvent, setActivityEvent] = React.useState<
-    'created' | 'deleted' | 'updated'
-  >('created');
+  const [activityEvent, setActivityEvent] =
+    React.useState<CRUDType>('created');
 
   React.useEffect(() => {
     setOldValues(setOldState());
     setNewValues(setNewState());
   }, [oldState, newState]);
 
-  React.useEffect(() => {
-    const createdPredicate = (value: ActivityData) =>
-      value.typeOfChange === 'created';
-    const deletedPredicate = (value: ActivityData) =>
-      value.typeOfChange === 'deleted';
+  const createdPredicate = (value: ActivityData) =>
+    value.typeOfChange === 'created';
+  const deletedPredicate = (value: ActivityData) =>
+    value.typeOfChange === 'deleted';
 
+  React.useEffect(() => {
     if (
       oldValues?.some(deletedPredicate) &&
       newValues?.some(createdPredicate)
@@ -84,6 +85,12 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
     }
   }, [oldValues, newValues]);
 
+  const renderStateItem = (value: ActivityData) => (
+    <S.ArrayItemWrapper $typeOfChange={value.typeOfChange}>
+      {stateItem(value.name || '', value.important)}
+    </S.ArrayItemWrapper>
+  );
+
   return (
     <Grid container flexDirection="column">
       <ActivityFieldHeader
@@ -98,20 +105,10 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
         stateDirection="row"
         isDetailsOpen={isDetailsOpen}
         oldStateChildren={
-          oldValues.length !== 0 &&
-          oldValues.map(value => (
-            <S.ArrayItemWrapper $typeOfChange={value.typeOfChange}>
-              {stateItem(value.name || '', value.important)}
-            </S.ArrayItemWrapper>
-          ))
+          !isEmpty(oldValues) && oldValues.map(renderStateItem)
         }
         newStateChildren={
-          newValues.length !== 0 &&
-          newValues.map(value => (
-            <S.ArrayItemWrapper $typeOfChange={value.typeOfChange}>
-              {stateItem(value.name || '', value.important)}
-            </S.ArrayItemWrapper>
-          ))
+          !isEmpty(newValues) && newValues.map(renderStateItem)
         }
       />
     </Grid>
