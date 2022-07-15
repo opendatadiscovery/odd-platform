@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,11 +14,13 @@ import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -375,6 +378,18 @@ public class DataEntityServiceImpl
                 (pojo, groupPojo) -> reactiveGroupEntityRelationRepository
                     .deleteRelations(groupPojo.getOddrn(), pojo.getOddrn())
             ));
+    }
+
+    @Override
+    public Mono<DataEntityUsageInfo> getDataEntityUsageInfo() {
+        return Mono.just(new DataEntityUsageInfo()
+            .totalCount(0L)
+            .unfilledCount(0L)
+            .dataEntityClassesInfo(Arrays.stream(DataEntityClassDto.values())
+                .map(dec -> new DataEntityClassUsageInfo()
+                    .entityClass(entityMapper.mapEntityClass(dec))
+                    .totalCount(0L))
+                .toList()));
     }
 
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,

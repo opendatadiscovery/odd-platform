@@ -14,6 +14,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTermFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -328,5 +329,11 @@ public class DataEntityController
         return entityService.deleteDataEntityFromDEG(dataEntityId, dataEntityGroupId)
             .ignoreElements()
             .thenReturn(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityUsageInfo>> getDataEntitiesUsage(final ServerWebExchange exchange) {
+        return entityService.getDataEntityUsageInfo()
+            .map(ResponseEntity::ok);
     }
 }
