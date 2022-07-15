@@ -41,7 +41,10 @@ public class LabelIngestionServiceImpl implements LabelIngestionService {
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .toList();
 
-        final List<DatasetFieldPojo> pojos = getDatasetFieldsWithLabelsStream(datasetEntities)
+        final List<DatasetFieldPojo> pojos = datasetEntities.stream()
+            .map(DataEntityIngestionDto::getDataSet)
+            .filter(ds -> CollectionUtils.isNotEmpty(ds.fieldList()))
+            .flatMap(ds -> ds.fieldList().stream())
             .map(datasetFieldMapper::mapField)
             .toList();
 

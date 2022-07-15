@@ -28,9 +28,6 @@ public class TagIngestionServiceImpl implements TagIngestionService {
     @ReactiveTransactional
     public Mono<IngestionDataStructure> ingestExternalTags(final IngestionDataStructure dataStructure) {
         final Set<String> tagNames = getTagNames(dataStructure);
-        if (CollectionUtils.isEmpty(tagNames)) {
-            return Mono.just(dataStructure);
-        }
         final Mono<List<TagToDataEntityPojo>> currentExternalRelations = reactiveTagRepository
             .listTagRelations(dataStructure.getAllIds())
             .filter(TagToDataEntityPojo::getExternal)
