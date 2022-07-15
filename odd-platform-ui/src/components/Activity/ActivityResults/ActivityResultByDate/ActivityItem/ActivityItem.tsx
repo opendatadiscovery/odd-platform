@@ -25,43 +25,10 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
   activity,
   hideAllDetails,
 }) => {
-  const setActivityField = (eventType: ActivityEventType) => {
-    let activityFieldComponent = null;
-
-    switch (eventType) {
-      case ActivityEventType.OWNERSHIP_CREATED:
-        activityFieldComponent = <Grid>owner created </Grid>;
-        break;
-      case ActivityEventType.OWNERSHIP_UPDATED:
-        activityFieldComponent = <Grid>owner updated </Grid>;
-        break;
-      case ActivityEventType.OWNERSHIP_DELETED:
-        activityFieldComponent = <Grid>owner deleted </Grid>;
-        break;
-      case ActivityEventType.TAGS_ASSOCIATION_UPDATED:
-        activityFieldComponent = <Grid>Tags uopdated </Grid>;
-        break;
-      default:
-        activityFieldComponent = <Grid>defaulr</Grid>;
-        break;
-    }
-
-    return <>{activityFieldComponent}</>;
-  };
-
-  // const getStateFieldName = (
-  //   eventType: ActivityEventType
-  // ): keyof ActivityState => {
-  //   const { stateFieldName } = ActivityTypeStateFieldNameMap.get(
-  //     activity.eventType
-  //   )!;
-  //   return stateFieldName;
-  // };
-
   const tagStateItem = React.useCallback(
-    (name, important) => (
+    (name, _, important) => (
       <TagItem
-        sx={{ width: 'max-content', backgroundColor: 'white' }}
+        sx={{ backgroundColor: 'white' }}
         label={name}
         important={important}
       />
@@ -70,12 +37,23 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
   );
 
   const labelStateItem = React.useCallback(
-    (labelName: string) => <LabelItem labelName={labelName} />,
+    (name: string) => <LabelItem labelName={name} />,
     []
   );
 
   const termStateItem = React.useCallback(
-    (labelName: string) => <div>{labelName}</div>,
+    (name: string, namespace?: string) => (
+      <Grid
+        flexDirection="column"
+        sx={{ backgroundColor: 'white', py: 0.25, px: 1 }}
+      >
+        <Typography
+          variant="body1"
+          color="texts.hint"
+        >{`Namespace: ${namespace}`}</Typography>
+        <Typography variant="body1">{name}</Typography>
+      </Grid>
+    ),
     []
   );
 
@@ -152,20 +130,15 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           hideAllDetails={hideAllDetails}
         />
       )}
-      {/* {activity.eventType === */}
-      {/*  ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED && */}
-      {/*  activity.oldState.datasetFieldInformation?.description && ( */}
-      {/*    <StringActivityField */}
-      {/*      activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} description`} */}
-      {/*      oldState={ */}
-      {/*        activity.oldState.datasetFieldInformation?.description */}
-      {/*      } */}
-      {/*      newState={ */}
-      {/*        activity.newState.datasetFieldInformation?.description */}
-      {/*      } */}
-      {/*      hideAllDetails={hideAllDetails} */}
-      {/*    /> */}
-      {/*  )} */}
+      {activity.eventType ===
+        ActivityEventType.DATASET_FIELD_DESCRIPTION_UPDATED && (
+        <StringActivityField
+          activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} description`}
+          oldState={activity.oldState.datasetFieldInformation?.description}
+          newState={activity.newState.datasetFieldInformation?.description}
+          hideAllDetails={hideAllDetails}
+        />
+      )}
       {activity.eventType ===
         ActivityEventType.TAGS_ASSOCIATION_UPDATED && (
         <ArrayActivityField
@@ -176,36 +149,37 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           stateItem={tagStateItem}
         />
       )}
-      {/* {activity.eventType === */}
-      {/*  ActivityEventType.DATASET_FIELD_LABELS_UPDATED && */}
-      {/*  activity.oldState.datasetFieldInformation?.labels && ( */}
-      {/*    <ArrayActivityField */}
-      {/*      activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} labels`} */}
-      {/*      oldState={activity.oldState.datasetFieldInformation?.labels} */}
-      {/*      newState={activity.newState.datasetFieldInformation?.labels} */}
-      {/*      hideAllDetails={hideAllDetails} */}
-      {/*      stateItem={labelStateItem} */}
-      {/*    /> */}
-      {/*  )} */}
+      {activity.eventType ===
+        ActivityEventType.DATASET_FIELD_LABELS_UPDATED && (
+        <ArrayActivityField
+          activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} labels`}
+          oldState={activity.oldState.datasetFieldInformation?.labels}
+          newState={activity.newState.datasetFieldInformation?.labels}
+          hideAllDetails={hideAllDetails}
+          stateItem={labelStateItem}
+        />
+      )}
       {activity.eventType === ActivityEventType.TERM_ASSIGNED && (
         <ArrayActivityField
-          activityName="Term"
+          startText="Term"
           oldState={activity.oldState.terms}
           newState={activity.newState.terms}
           hideAllDetails={hideAllDetails}
           eventType="added"
           stateItem={termStateItem}
+          stateDirection="column"
         />
       )}
       {activity.eventType ===
         ActivityEventType.TERM_ASSIGNMENT_DELETED && (
         <ArrayActivityField
-          activityName="Term"
+          startText="Term"
           oldState={activity.oldState.terms}
           newState={activity.newState.terms}
           hideAllDetails={hideAllDetails}
           eventType="deleted"
           stateItem={termStateItem}
+          stateDirection="column"
         />
       )}
     </S.Container>

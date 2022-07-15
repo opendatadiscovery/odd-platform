@@ -21,6 +21,7 @@ const setBackgroundColor = (
 export const ArrayItemWrapper = styled(Grid)<{
   $typeOfChange?: CRUDType;
 }>(({ theme, $typeOfChange }) => ({
+  width: 'max-content',
   borderRadius: '4px',
   backgroundColor: $typeOfChange
     ? setBackgroundColor(theme, $typeOfChange)

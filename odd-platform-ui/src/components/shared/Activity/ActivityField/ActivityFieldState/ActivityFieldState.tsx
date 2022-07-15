@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Collapse, Grid } from '@mui/material';
 import * as S from './ActivityFieldStateStyles';
 
@@ -6,7 +6,7 @@ interface ActivityFieldProps {
   isDetailsOpen: boolean;
   oldStateChildren?: React.ReactNode;
   newStateChildren?: React.ReactNode;
-  stateDirection?: 'row' | 'column';
+  stateDirection?: CSSProperties['flexDirection'];
 }
 
 const ActivityFieldState: React.FC<ActivityFieldProps> = ({

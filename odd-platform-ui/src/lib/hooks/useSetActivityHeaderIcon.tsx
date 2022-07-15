@@ -8,7 +8,7 @@ export const useSetActivityHeaderIcon = (eventType: CRUDType | string) => {
   const [icon, setHeaderIcon] = React.useState<JSX.Element | null>(null);
 
   React.useEffect(() => {
-    if (eventType === 'created') {
+    if (eventType === 'created' || eventType === 'added') {
       setHeaderIcon(<ActivityCreatedIcon />);
     }
     if (eventType === 'updated') {

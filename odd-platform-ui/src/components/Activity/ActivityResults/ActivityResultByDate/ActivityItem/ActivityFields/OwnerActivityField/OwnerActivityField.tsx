@@ -63,9 +63,14 @@ const OwnerActivityField: React.FC<ActivityItemProps> = ({
       newItem =>
         !oldState?.some(oldItem => newItem.ownerName === oldItem.ownerName)
     ) || {};
+
   const getUpdatedItem = () => {
     const updatedItem = newState?.find(newItem =>
-      oldState?.some(oldItem => newItem.roleName === oldItem.roleName)
+      oldState?.some(
+        oldItem =>
+          newItem.ownerName === oldItem.ownerName &&
+          newItem.roleName !== oldItem.roleName
+      )
     );
 
     return updatedItem ? { ...updatedItem, typeOfChange: 'updated' } : {};

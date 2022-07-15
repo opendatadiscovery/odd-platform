@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { Grid } from '@mui/material';
 import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/Activity/ActivityField/ActivityFieldState/ActivityFieldState';
@@ -18,9 +18,15 @@ interface ArrayActivityFieldProps {
   oldState: Array<ActivityData> | undefined;
   newState: Array<ActivityData> | undefined;
   hideAllDetails: boolean;
-  activityName: string;
+  startText?: string;
+  activityName?: string;
   eventType?: string;
-  stateItem: (name: string, important?: boolean) => JSX.Element;
+  stateItem: (
+    name: string,
+    namespace?: string,
+    important?: boolean
+  ) => JSX.Element;
+  stateDirection?: CSSProperties['flexDirection'];
 }
 
 const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
@@ -28,16 +34,21 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
   newState,
   hideAllDetails,
   activityName,
+  startText,
   eventType,
   stateItem,
+  stateDirection = 'row',
 }) => {
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
 
+  const [changedItem, setChangedItem] = React.useState<ActivityData>({});
+
   const setOldState = () =>
     oldState?.map<ActivityData>(oldItem => {
       if (!newState?.some(newItem => oldItem.id === newItem.id)) {
+        setChangedItem(oldItem);
         return { ...oldItem, typeOfChange: 'deleted' };
       }
       return oldItem;
@@ -46,6 +57,7 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
   const setNewState = () =>
     newState?.map<ActivityData>(newItem => {
       if (!oldState?.some(oldItem => oldItem.id === newItem.id)) {
+        setChangedItem(newItem);
         return { ...newItem, typeOfChange: 'created' };
       }
       return newItem;
@@ -87,22 +99,22 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
 
   const renderStateItem = (value: ActivityData) => (
     <S.ArrayItemWrapper $typeOfChange={value.typeOfChange}>
-      {stateItem(value.name || '', value.important)}
+      {stateItem(value.name || '', value.namespace, value.important)}
     </S.ArrayItemWrapper>
   );
 
   return (
     <Grid container flexDirection="column">
       <ActivityFieldHeader
-        startText=""
-        activityName={activityName}
+        startText={startText || ''}
+        activityName={activityName || changedItem.name}
         eventType={eventType || activityEvent}
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
         isDetailsOpen={isDetailsOpen}
       />
       <ActivityFieldState
-        stateDirection="row"
+        stateDirection={stateDirection}
         isDetailsOpen={isDetailsOpen}
         oldStateChildren={
           !isEmpty(oldValues) && oldValues.map(renderStateItem)
