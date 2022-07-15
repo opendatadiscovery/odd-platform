@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,6 +18,7 @@ import org.jooq.SelectHavingStep;
 import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
+import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.DatasetField;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
@@ -117,9 +119,11 @@ public class ReactiveDatasetFieldRepositoryImpl
         final DatasetFieldPojo pojo = datasetFieldRecord.into(DatasetFieldPojo.class);
         final Long parentFieldId = datasetFieldRecord.get("parent_field_id", Long.class);
 
+        final Set<LabelPojo> labels = jooqRecordHelper
+            .extractAggRelation(datasetFieldRecord, "labels", LabelPojo.class);
         return DatasetFieldDto.builder()
             .datasetFieldPojo(pojo)
-            .labelPojos(jooqRecordHelper.extractAggRelation(datasetFieldRecord, "labels", LabelPojo.class))
+            .labels(labels.stream().map(l -> new LabelDto(l, null)).toList())
             .parentFieldId(parentFieldId)
             .build();
     }

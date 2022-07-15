@@ -22,9 +22,8 @@ import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import static reactor.function.TupleUtils.function;
-import static java.util.function.Predicate.not;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor

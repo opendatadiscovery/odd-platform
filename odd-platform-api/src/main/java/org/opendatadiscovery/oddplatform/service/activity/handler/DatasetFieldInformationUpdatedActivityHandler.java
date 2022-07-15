@@ -5,6 +5,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
+import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
@@ -51,10 +52,11 @@ public class DatasetFieldInformationUpdatedActivityHandler implements ActivityHa
 
     private String getState(final DatasetFieldDto dto) {
         final List<DatasetFieldLabelActivityStateDto> labels;
-        if (CollectionUtils.isEmpty(dto.getLabelPojos())) {
+        if (CollectionUtils.isEmpty(dto.getLabels())) {
             labels = List.of();
         } else {
-            labels = dto.getLabelPojos().stream()
+            labels = dto.getLabels().stream()
+                .map(LabelDto::pojo)
                 .map(l -> new DatasetFieldLabelActivityStateDto(l.getId(), l.getName()))
                 .toList();
         }

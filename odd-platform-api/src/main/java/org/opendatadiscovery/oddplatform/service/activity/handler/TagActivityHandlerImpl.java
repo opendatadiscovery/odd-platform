@@ -38,9 +38,14 @@ public class TagActivityHandlerImpl implements ActivityHandler {
     }
 
     private Mono<String> getTagsState(final Long dataEntityId) {
-        return tagRepository.listByDataEntityId(dataEntityId)
-            .map(tag -> new TagActivityStateDto(tag.getId(), tag.getName(), tag.getImportant()))
-            .collectList()
+        return tagRepository.listDataEntityDtos(dataEntityId)
+            .map(tags -> tags.stream()
+                .map(tag -> new TagActivityStateDto(
+                    tag.tagPojo().getId(),
+                    tag.tagPojo().getName(),
+                    tag.tagPojo().getImportant()
+                ))
+                .toList())
             .map(this::getState);
     }
 
