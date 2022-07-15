@@ -23,7 +23,7 @@ public class DataEntityDimensionsDto extends DataEntityDto {
     protected NamespacePojo namespace;
     protected List<OwnershipDto> ownership;
     protected DataSourcePojo dataSource;
-    protected Collection<TagPojo> tags;
+    protected Collection<TagDto> tags;
     protected Collection<DataEntityPojo> parentGroups;
 
     protected DataEntityGroupDimensionsDto groupsDto;
@@ -40,7 +40,7 @@ public class DataEntityDimensionsDto extends DataEntityDto {
                                    final NamespacePojo namespace,
                                    final List<OwnershipDto> ownership,
                                    final DataSourcePojo dataSource,
-                                   final Collection<TagPojo> tags,
+                                   final Collection<TagDto> tags,
                                    final DataEntityGroupDimensionsDto groupsDto,
                                    final DataSetDetailsDto dataSetDetailsDto,
                                    final DataTransformerDetailsDto dataTransformerDetailsDto,

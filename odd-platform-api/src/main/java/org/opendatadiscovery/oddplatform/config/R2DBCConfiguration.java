@@ -11,7 +11,6 @@ import org.springframework.transaction.ReactiveTransactionManager;
 
 @Configuration
 public class R2DBCConfiguration {
-
     @Bean
     public ConnectionFactory connectionFactory(final DataSourceProperties dataSourceProperties) {
         final String r2dbcUrl = dataSourceProperties.getUrl().replace("jdbc", "r2dbc");

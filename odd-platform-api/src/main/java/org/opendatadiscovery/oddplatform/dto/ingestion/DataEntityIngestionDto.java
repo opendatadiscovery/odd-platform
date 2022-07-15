@@ -26,6 +26,7 @@ public class DataEntityIngestionDto {
     protected Set<DataEntityClassDto> entityClasses;
     protected DataEntityTypeDto type;
     protected Map<String, Object> metadata;
+    protected List<String> tags;
     protected String specificAttributesJson;
 
     protected DataSetIngestionDto dataSet;

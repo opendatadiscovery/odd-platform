@@ -328,11 +328,7 @@ public class DataEntityServiceImpl
         @ActivityParameter(ActivityParameterNames.TagsAssociationUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final TagsFormData formData) {
         final Set<String> names = new HashSet<>(formData.getTagNameList());
-
-        return tagService.deleteRelationsWithDataEntityExcept(dataEntityId, names)
-            .then(tagService.getOrCreateTagsByName(names))
-            .flatMap(tagsToLink -> tagService.createRelationsWithDataEntity(dataEntityId, tagsToLink)
-                .ignoreElements().thenReturn(tagsToLink))
+        return tagService.updateRelationsWithDataEntity(dataEntityId, names)
             .flatMap(tags -> reactiveSearchEntrypointRepository.updateTagVectorsForDataEntity(dataEntityId)
                 .thenReturn(tags))
             .flatMapIterable(tags -> tags.stream().map(tagMapper::mapToTag).toList());

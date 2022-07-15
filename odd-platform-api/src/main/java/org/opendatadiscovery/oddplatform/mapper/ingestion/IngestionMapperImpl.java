@@ -18,6 +18,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jooq.JSONB;
@@ -34,6 +35,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Pair;
@@ -81,6 +83,10 @@ public class IngestionMapperImpl implements IngestionMapper {
 
         if (dataEntity.getMetadata() != null && !dataEntity.getMetadata().isEmpty()) {
             builder = builder.metadata(dataEntity.getMetadata().get(0).getMetadata());
+        }
+
+        if (CollectionUtils.isNotEmpty(dataEntity.getTags())) {
+            builder = builder.tags(dataEntity.getTags().stream().map(Tag::getName).toList());
         }
 
         if (entityClasses.contains(DATA_SET)) {
