@@ -28,6 +28,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -39,6 +40,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Repository
 @Slf4j
@@ -57,7 +59,8 @@ public class ReactiveDatasetFieldRepositoryImpl
 
     @Override
     @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED, isSystemEvent = false)
-    public Mono<DatasetFieldPojo> updateDescription(final long datasetFieldId, final String description) {
+    public Mono<DatasetFieldPojo> updateDescription(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
+                                                    final String description) {
         final UpdateResultStep<DatasetFieldRecord> updateQuery = DSL.update(DATASET_FIELD)
             .set(DATASET_FIELD.INTERNAL_DESCRIPTION, description)
             .where(DATASET_FIELD.ID.eq(datasetFieldId)).returning();
