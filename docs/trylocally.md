@@ -42,7 +42,7 @@ You should be able to see metadata sample injected in the Platform.
 3. Save the changed file and run **from the project root folder** `docker-compose -f docker/demo.yaml up -d odd-collector`
 
 ### Result
-1. Open http://localhost:8080/management/datasources in your browser.\
+1. Open [http://localhost:8080/management/datasources](http://localhost:8080/management/datasources) in your browser.\
 You should be able to see a new data source with the name you've passed into the collector_config.yaml file (Default is `Sample demo data source`). Overall you should see 11 data sources in the list.
 
 2. Go to the **Catalog**. Select the created data source in the **Datasources** filter.\
@@ -58,12 +58,13 @@ You should be able to see 11 new entities of different types injected into the P
    * [supported data sources by odd-collector-aws](https://github.com/opendatadiscovery/odd-collector-aws/blob/main/README.md)
 
 ### Configure the existing Collector
-1. Add new entries under plugin list in the `docker/config/collector_config.yaml` See examples [here](https://github.com/opendatadiscovery/odd-collector/blob/main/README.md)
-2. Restart the Collector by running **from the project root folder** `docker-compose -f docker/demo.yaml` restart odd-collector
+1. Add new entries under plugin list in the `docker/config/collector_config.yaml`\
+See examples [here](https://github.com/opendatadiscovery/odd-collector/blob/main/README.md)
+2. Restart the Collector by running **from the project root folder** `docker-compose -f docker/demo.yaml restart odd-collector`
 ### Result
 You should be able to see new data sources and data entities that correspond with them.
 
 ### Troubleshooting
-**My entities from the sample data aren't shown in the platform.**
+**My entities from the sample data aren't shown in the Platform.**
 
 Check the logs by running from the project root folder `docker-compose -f docker/demo.yaml logs -f`.
