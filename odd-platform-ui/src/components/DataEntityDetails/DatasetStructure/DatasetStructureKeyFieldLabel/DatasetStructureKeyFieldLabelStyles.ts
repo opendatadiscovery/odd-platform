@@ -17,10 +17,9 @@ export const FilledContainer = styled('span')<FilledContainerProps>(
     fontSize: theme.typography.body2.fontSize,
     lineHeight: theme.typography.body2.lineHeight,
     borderRadius: '12px',
-    border: '1px solid',
     padding: theme.spacing(0, 1),
     backgroundColor: theme.palette.datasetFieldKey[$keyType].background,
-    borderColor: theme.palette.datasetFieldKey[$keyType].border,
     marginLeft: '10px',
+    color: theme.palette.common.white,
   })
 );

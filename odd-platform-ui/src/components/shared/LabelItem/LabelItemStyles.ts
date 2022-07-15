@@ -18,6 +18,6 @@ export const Container = styled(Typography)<{
   border: $unfilled ? '1px solid' : '',
   borderColor: theme.palette.divider,
   padding: $unfilled
-    ? theme.spacing(0.25, 0.5, 0.25, 1)
-    : theme.spacing(0, 0.25),
+    ? theme.spacing(0.25, 0.5, 0.25, 0.5)
+    : theme.spacing(0, 0.5),
 }));
