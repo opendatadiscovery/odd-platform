@@ -105,7 +105,11 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
   ) => {
     if (!value) return;
     setSearchText(''); // Clear input on select
-    appendLabel(typeof value === 'string' ? { name: value } : value);
+    appendLabel(
+      typeof value === 'string'
+        ? { name: value }
+        : { ...value, external: false }
+    );
   };
 
   return (

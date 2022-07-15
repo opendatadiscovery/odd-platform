@@ -13,3 +13,5 @@ CREATE TABLE IF NOT EXISTS activity
 ) PARTITION BY RANGE (created_at);
 
 CREATE INDEX IF NOT EXISTS activity_created_at_idx ON activity (created_at);
+
+CREATE INDEX IF NOT EXISTS activity_data_entity_id_idx ON activity (data_entity_id);

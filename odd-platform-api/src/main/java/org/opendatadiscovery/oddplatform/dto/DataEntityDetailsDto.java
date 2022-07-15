@@ -31,7 +31,7 @@ public class DataEntityDetailsDto extends DataEntityDimensionsDto {
                                 final NamespacePojo namespace,
                                 final List<OwnershipDto> ownership,
                                 final DataSourcePojo dataSource,
-                                final Collection<TagPojo> tags,
+                                final Collection<TagDto> tags,
                                 final Collection<MetadataDto> metadata,
                                 final Collection<DatasetVersionPojo> datasetVersions,
                                 final DataEntityGroupDimensionsDto dataEntityGroupDimensionsDto,

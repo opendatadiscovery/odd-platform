@@ -12,17 +12,23 @@ import org.jooq.JSONB;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
+import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
+import org.opendatadiscovery.oddplatform.utils.JSONTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jeasy.random.FieldPredicates.ofType;
+import static org.jooq.JSONB.jsonb;
 
 class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
 
@@ -186,15 +192,14 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
         final DataEntityPojo dataEntityPojo = dataEntityRepository
             .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString()))).get(0);
 
-        final DatasetFieldDto datasetFieldDto = EASY_RANDOM.nextObject(DatasetFieldDto.class);
+        final DatasetFieldDto datasetFieldDto = createDatasetFieldDto();
         final List<DatasetFieldPojo> datasetFieldPojos = List.of(datasetFieldDto.getDatasetFieldPojo());
 
         final DatasetVersionPojo datasetVersionPojo = EASY_RANDOM.nextObject(DatasetVersionPojo.class);
         datasetVersionPojo.setDatasetOddrn(dataEntityPojo.getOddrn());
         datasetVersionPojo.setVersion(1L);
         final List<DatasetVersionPojo> versions = List.of(datasetVersionPojo);
-        final List<DatasetStructurePojo> datasetStructurePojos = datasetStructureRepository
-            .bulkCreate(versions, Map.of(dataEntityPojo.getOddrn(), datasetFieldPojos));
+        datasetStructureRepository.bulkCreate(versions, Map.of(dataEntityPojo.getOddrn(), datasetFieldPojos));
 
         final Set<Long> datasetPojoIds =
             versions.stream().map(DatasetVersionPojo::getId).collect(Collectors.toSet());
@@ -206,5 +211,20 @@ class ReactiveDatasetVersionRepositoryImplTest extends BaseIntegrationTest {
                 assertThat(map.get(datasetVersionPojo.getId())).containsExactlyElementsOf(datasetFieldPojos);
             })
             .verifyComplete();
+    }
+
+    private DatasetFieldDto createDatasetFieldDto() {
+        final DatasetFieldPojo datasetFieldPojo = EASY_RANDOM.nextObject(DatasetFieldPojo.class);
+        final DataSetFieldStat dataSetFieldStat = EASY_RANDOM.nextObject(DataSetFieldStat.class);
+        final DataSetFieldType dataSetFieldType = EASY_RANDOM.nextObject(DataSetFieldType.class);
+        final LabelPojo labelPojo = EASY_RANDOM.nextObject(LabelPojo.class);
+        final DatasetFieldDto datasetFieldDto = new DatasetFieldDto();
+        datasetFieldDto.setDatasetFieldPojo(datasetFieldPojo);
+        datasetFieldDto.setParentFieldId(1L);
+        datasetFieldDto.setEnumValueCount(2);
+        datasetFieldDto.setLabels(List.of(new LabelDto(labelPojo, false)));
+        datasetFieldDto.getDatasetFieldPojo().setType(jsonb(JSONTestUtils.createJson(dataSetFieldType)));
+        datasetFieldDto.getDatasetFieldPojo().setStats(jsonb(JSONTestUtils.createJson(dataSetFieldStat)));
+        return datasetFieldDto;
     }
 }

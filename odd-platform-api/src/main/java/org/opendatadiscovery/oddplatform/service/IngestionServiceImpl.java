@@ -56,6 +56,8 @@ import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
+import org.opendatadiscovery.oddplatform.service.ingestion.LabelIngestionService;
+import org.opendatadiscovery.oddplatform.service.ingestion.TagIngestionService;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import org.opendatadiscovery.oddplatform.utils.Pair;
@@ -98,6 +100,8 @@ public class IngestionServiceImpl implements IngestionService {
 
     private final Generator oddrnGenerator = new Generator();
     private final MetadataIngestionService metadataIngestionService;
+    private final TagIngestionService tagIngestionService;
+    private final LabelIngestionService labelIngestionService;
 
     @Override
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
@@ -334,22 +338,23 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private Mono<IngestionDataStructure> ingestCompanions(final IngestionDataStructure dataStructure) {
-        return Mono
-            .zipDelayError(
+        return Mono.zipDelayError(
                 ingestDatasetStructure(dataStructure),
-                Mono.defer(() -> metadataIngestionService.ingestMetadata(dataStructure))
-            )
-            .map(m -> dataStructure);
+                Mono.defer(() -> metadataIngestionService.ingestMetadata(dataStructure)),
+                tagIngestionService.ingestExternalTags(dataStructure))
+            .thenReturn(dataStructure);
     }
 
-    private Mono<List<DatasetStructurePojo>> ingestDatasetStructure(final IngestionDataStructure split) {
-        return Mono
-            .zipDelayError(ingestNewDatasetStructure(split), ingestExistingDatasetStructure(split))
+    private Mono<List<DatasetStructurePojo>> ingestDatasetStructure(final IngestionDataStructure dataStructure) {
+        return Mono.zipDelayError(
+                ingestNewDatasetStructure(dataStructure),
+                ingestExistingDatasetStructure(dataStructure))
+            .flatMap(t -> labelIngestionService.ingestExternalLabels(dataStructure).thenReturn(t))
             .map(t -> ListUtils.union(t.getT1(), t.getT2()));
     }
 
-    private Mono<List<DatasetStructurePojo>> ingestNewDatasetStructure(final IngestionDataStructure split) {
-        final Map<Long, EnrichedDataEntityIngestionDto> datasetDict = split.getNewEntities().stream()
+    private Mono<List<DatasetStructurePojo>> ingestNewDatasetStructure(final IngestionDataStructure dataStructure) {
+        final Map<Long, EnrichedDataEntityIngestionDto> datasetDict = dataStructure.getNewEntities().stream()
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .collect(Collectors.toMap(EnrichedDataEntityIngestionDto::getId, identity()));
 
@@ -366,14 +371,13 @@ public class IngestionServiceImpl implements IngestionService {
         return Mono.fromCallable(() -> datasetStructureRepository.bulkCreate(versions, datasetFields));
     }
 
-    private Mono<List<DatasetStructurePojo>> ingestExistingDatasetStructure(final IngestionDataStructure split) {
-        final Map<String, EnrichedDataEntityIngestionDto> datasetDict = split.getExistingEntities().stream()
+    private Mono<List<DatasetStructurePojo>> ingestExistingDatasetStructure(final IngestionDataStructure structure) {
+        final Map<String, EnrichedDataEntityIngestionDto> datasetDict = structure.getExistingEntities().stream()
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .collect(Collectors.toMap(EnrichedDataEntityIngestionDto::getOddrn, identity()));
 
-        final Set<Long> datasetIds = split.getExistingEntities()
-            .stream()
+        final Set<Long> datasetIds = structure.getExistingEntities().stream()
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .map(EnrichedDataEntityIngestionDto::getId)

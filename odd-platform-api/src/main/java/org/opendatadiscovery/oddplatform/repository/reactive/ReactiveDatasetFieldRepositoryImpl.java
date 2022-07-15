@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,6 +18,7 @@ import org.jooq.SelectHavingStep;
 import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
+import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.DatasetField;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
@@ -26,6 +28,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
@@ -37,6 +40,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Repository
 @Slf4j
@@ -55,7 +59,8 @@ public class ReactiveDatasetFieldRepositoryImpl
 
     @Override
     @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED, isSystemEvent = false)
-    public Mono<DatasetFieldPojo> updateDescription(final long datasetFieldId, final String description) {
+    public Mono<DatasetFieldPojo> updateDescription(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
+                                                    final String description) {
         final UpdateResultStep<DatasetFieldRecord> updateQuery = DSL.update(DATASET_FIELD)
             .set(DATASET_FIELD.INTERNAL_DESCRIPTION, description)
             .where(DATASET_FIELD.ID.eq(datasetFieldId)).returning();
@@ -117,9 +122,11 @@ public class ReactiveDatasetFieldRepositoryImpl
         final DatasetFieldPojo pojo = datasetFieldRecord.into(DatasetFieldPojo.class);
         final Long parentFieldId = datasetFieldRecord.get("parent_field_id", Long.class);
 
+        final Set<LabelPojo> labels = jooqRecordHelper
+            .extractAggRelation(datasetFieldRecord, "labels", LabelPojo.class);
         return DatasetFieldDto.builder()
             .datasetFieldPojo(pojo)
-            .labelPojos(jooqRecordHelper.extractAggRelation(datasetFieldRecord, "labels", LabelPojo.class))
+            .labels(labels.stream().map(l -> new LabelDto(l, null)).toList())
             .parentFieldId(parentFieldId)
             .build();
     }
