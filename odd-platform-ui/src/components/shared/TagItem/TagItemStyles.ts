@@ -27,16 +27,3 @@ export const Container = styled(Typography)<ContainerProps>(
     },
   })
 );
-
-export const SystemIconContainer = styled('span')<ContainerProps>(
-  ({ theme }) => ({
-    marginRight: theme.spacing(0.5),
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    svg: {
-      height: theme.spacing(1.5),
-      width: theme.spacing(1.5),
-    },
-  })
-);

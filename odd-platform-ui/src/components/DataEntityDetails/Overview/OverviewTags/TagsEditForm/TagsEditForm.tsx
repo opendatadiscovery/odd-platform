@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Tag } from 'generated-sources';
 import compact from 'lodash/compact';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
@@ -9,6 +9,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import { useAppDispatch } from 'lib/redux/hooks';
 
 import { updateDataEntityTags } from 'redux/thunks';
+import { TagListContainer } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import TagsEditFormAutocomplete from './TagsEditFormAutocomplete/TagsEditFormAutocomplete';
 
 interface TagsEditProps {
@@ -104,7 +105,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
           id="tags-create-form"
           onSubmit={methods.handleSubmit(handleSubmit)}
         >
-          <Box sx={{ mt: 1 }}>
+          <TagListContainer sx={{ mt: 1 }}>
             {fields?.map((field, index) => (
               <TagItem
                 sx={{ my: 0.5, mr: 0.5 }}
@@ -116,7 +117,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
                 onRemoveClick={handleRemove(index)}
               />
             ))}
-          </Box>
+          </TagListContainer>
         </form>
       </FormProvider>
     </>

@@ -27,7 +27,11 @@ const TruncatedLabelMenu: React.FC<TruncatedLabelMenuProps> = ({
     transformOrigin={{ vertical: -4, horizontal: 'right' }}
   >
     {labelList?.map(label => (
-      <LabelItem key={label.id} labelName={label.name} />
+      <LabelItem
+        key={label.id}
+        labelName={label.name}
+        systemLabel={label.external}
+      />
     ))}
   </AppPopover>
 );

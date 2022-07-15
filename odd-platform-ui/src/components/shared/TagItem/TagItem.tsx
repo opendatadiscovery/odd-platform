@@ -35,16 +35,7 @@ const TagItem: React.FC<TagItemProps> = ({
     onClick={onClick}
     sx={sx}
   >
-    {systemTag && (
-      <S.SystemIconContainer>
-        <SystemIcon
-          important={important}
-          sx={{
-            ml: 0.25,
-          }}
-        />
-      </S.SystemIconContainer>
-    )}
+    {systemTag && <SystemIcon />}
     {label}
     {removable && !systemTag && (
       <AppIconButton
