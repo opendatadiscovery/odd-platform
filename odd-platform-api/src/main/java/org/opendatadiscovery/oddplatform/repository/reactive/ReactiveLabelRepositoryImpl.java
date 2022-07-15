@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.DeleteResultStep;
 import org.jooq.InsertResultStep;
@@ -105,6 +106,9 @@ public class ReactiveLabelRepositoryImpl
 
     @Override
     public Flux<LabelToDatasetFieldPojo> listLabelRelations(final Collection<Long> datasetFieldIds) {
+        if (CollectionUtils.isEmpty(datasetFieldIds)) {
+            return Flux.just();
+        }
         final var query = DSL.select(LABEL_TO_DATASET_FIELD.fields())
             .from(LABEL_TO_DATASET_FIELD)
             .join(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID))
