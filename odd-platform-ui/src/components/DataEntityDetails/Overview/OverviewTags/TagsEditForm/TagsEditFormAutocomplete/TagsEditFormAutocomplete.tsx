@@ -103,7 +103,11 @@ const TagsEditFormAutocomplete: React.FC<
   ) => {
     if (!value) return;
     setSearchText(''); // Clear input on select
-    append(typeof value === 'string' ? { name: value } : value);
+    append(
+      typeof value === 'string'
+        ? { name: value }
+        : { ...value, external: false }
+    );
   };
 
   return (
