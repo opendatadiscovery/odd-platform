@@ -3,7 +3,7 @@
 * [Overview](README.md)
 * [Architecture](Architecture.md)
   * [Adapter-oriented architecture](Adapters.md) 
-* [Quick Start](quickstart.md)
+* [Quick Start](quick_start.md)
 * [Try locally](trylocally.md)
 * [Configuration](configuration.md)
 * [Deployment](deployment.md)
