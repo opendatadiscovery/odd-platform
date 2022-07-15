@@ -15,17 +15,15 @@ This environment consists of:
 ### Assumptions
 * Ports 5432 and 8080 are free. Commands to check that might be:
    * Linux/Mac: `lsof -i -P -n | grep LISTEN | grep <PORT_NUMBER>`
-   * Windows Powershell: `Get-NetTCPConnection | where Localport -eq <PORT_NUMBER> | select Localport,OwningProcess` Replace `<PORT_NUMBER>` with 5432 and 8080. Empty output mean that the port is free and ready to go.
+   * Windows Powershell: `Get-NetTCPConnection | where Localport -eq <PORT_NUMBER> | select Localport,OwningProcess` Replace `<PORT_NUMBER>` with 5432 and 8080. Empty output mean that the port is free and ready to go
 ### Execution
 Run from the **project root folder** `docker-compose -f docker/demo.yaml up -d odd-platform-enricher`.
 ### Result
-1. Open http://localhost:8080/management/datasources in your browser.
+1. Open http://localhost:8080/management/datasources in your browser. \
+You should be able to see 10 predefined data sources in the list.
 
-You should be able to see 10 predefined data sources in the list
-
-2. Go to the **Catalog**
-
-You should be able to see metadata sample injected in the Platform
+2. Go to the **Catalog**. \
+You should be able to see metadata sample injected in the Platform.
 
 ## Step 2: Configuring and running Collector to gather metadata from the sample data source
 
@@ -35,22 +33,20 @@ You should be able to see metadata sample injected in the Platform
    * **Name**
    * **Namespace** (optional)
    * **Description** (optional)
-2. Click **Save**. Your collector should appear in the list
-Copy the token by clicking **Copy** right to the token value
+3. Click **Save**. Your collector should appear in the list 
+4. Copy the token by clicking **Copy** right to the token value
 
 ### Configure and run the Collector
 1. Paste the token obtained in the previous step into the `docker/config/collector_config.yaml` file under the `token` entry
-2. If you'd like, you may change the name of the `postgresql` plugin under the `name` entry.
+2. If you'd like, you may change the name of the `postgresql` plugin under the `name` entry
 3. Save the changed file and run **from the project root folder** `docker-compose -f docker/demo.yaml up -d odd-collector`
 
 ### Result
-1. Open http://localhost:8080/management/datasources in your browser
+1. Open http://localhost:8080/management/datasources in your browser.\
+You should be able to see a new data source with the name you've passed into the collector_config.yaml file (Default is `Sample demo data source`). Overall you should see 11 data sources in the list.
 
-You should be able to see a new data source with the name you've passed into the collector_config.yaml file (Default is `Sample demo data source`). Overall you should see 11 data sources in the list
-
-2. Go to the **Catalog**. Select the created data source in the **Datasources** filter
-
-You should be able to see 11 new entities of different types injected into the Platform
+2. Go to the **Catalog**. Select the created data source in the **Datasources** filter.\
+You should be able to see 11 new entities of different types injected into the Platform.
 
 ## Step 3 (Optional): Configuring and running Collector to gather metadata from your own data sources
 
@@ -70,4 +66,4 @@ You should be able to see new data sources and data entities that correspond wit
 ### Troubleshooting
 **My entities from the sample data aren't shown in the platform.**
 
-Check the logs by running from the project root folder `docker-compose -f docker/demo.yaml logs -f`
+Check the logs by running from the project root folder `docker-compose -f docker/demo.yaml logs -f`.
