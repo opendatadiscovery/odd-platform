@@ -8,14 +8,21 @@ import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
 import org.opendatadiscovery.oddplatform.api.contract.model.LabelFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.LabelsResponse;
+import org.opendatadiscovery.oddplatform.dto.LabelDto;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.LabelMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldInformationUpdated.DATASET_FIELD_ID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +34,20 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
     @Override
     public Mono<LabelsResponse> list(final int page, final int size, final String query) {
         return labelRepository.pageDto(page, size, query).map(labelMapper::mapToLabelResponse);
+    }
+
+    @Override
+    @ReactiveTransactional
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED, isSystemEvent = false)
+    public Mono<List<LabelDto>> updateDatasetFieldLabels(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
+                                                         final List<LabelToDatasetFieldPojo> currentRelations,
+                                                         final List<LabelToDatasetFieldPojo> updatedRelations) {
+        final List<LabelToDatasetFieldPojo> pojosToDelete = currentRelations.stream()
+            .filter(r -> !updatedRelations.contains(r))
+            .toList();
+        return labelRepository.deleteRelations(pojosToDelete)
+            .thenMany(labelRepository.createRelations(updatedRelations))
+            .then(labelRepository.listDatasetFieldDtos(datasetFieldId));
     }
 
     @Override
