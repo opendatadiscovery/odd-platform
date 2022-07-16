@@ -12,7 +12,7 @@ import { getAlertTotals } from 'redux/selectors';
 import { changeAlertsFilterAction } from 'redux/reducers/alerts.slice';
 import { alertsPath } from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import { AlertViewType } from 'lib/interfaces';
 import * as S from './AlertsStyles';
 import AlertsList from './AlertsList/AlertsList';

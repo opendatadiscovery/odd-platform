@@ -33,3 +33,9 @@ export const stringFormatted = (
     .map(capitalizeBy)
     .join(' ');
 };
+
+export const toDateWithoutOffset = (dateToCast: number): Date => {
+  const date = new Date(dateToCast);
+  const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - userTimezoneOffset);
+};

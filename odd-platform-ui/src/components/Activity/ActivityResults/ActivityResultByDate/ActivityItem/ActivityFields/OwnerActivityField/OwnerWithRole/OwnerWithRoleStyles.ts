@@ -1,35 +1,30 @@
 import { Grid, Theme } from '@mui/material';
 import styled from 'styled-components';
-import { ActivityEventType } from 'generated-sources';
-
-interface ContainerProps {
-  $eventType?: ActivityEventType;
-  $isChanged?: boolean;
-}
+import { CRUDType } from 'lib/interfaces';
 
 const setBackgroundColor = (
   theme: Theme,
-  eventType?: ActivityEventType
+  eventType?: CRUDType
 ): string => {
   switch (eventType) {
-    case ActivityEventType.OWNERSHIP_CREATED:
+    case 'created':
       return theme.palette.activityEvent.created;
-    case ActivityEventType.OWNERSHIP_UPDATED:
+    case 'updated':
       return theme.palette.activityEvent.updated;
-    case ActivityEventType.OWNERSHIP_DELETED:
+    case 'deleted':
       return theme.palette.activityEvent.deleted;
     default:
       return '';
   }
 };
 
-export const Container = styled(Grid)<ContainerProps>(
-  ({ theme, $eventType, $isChanged }) => ({
-    flexWrap: 'nowrap',
-    width: 'max-content',
-    borderRadius: '4px',
-    backgroundColor: $isChanged
-      ? setBackgroundColor(theme, $eventType)
-      : 'transparent',
-  })
-);
+export const Container = styled(Grid)<{
+  $typeOfChange?: CRUDType;
+}>(({ theme, $typeOfChange }) => ({
+  flexWrap: 'nowrap',
+  width: 'max-content',
+  borderRadius: '4px',
+  backgroundColor: $typeOfChange
+    ? setBackgroundColor(theme, $typeOfChange)
+    : 'transparent',
+}));

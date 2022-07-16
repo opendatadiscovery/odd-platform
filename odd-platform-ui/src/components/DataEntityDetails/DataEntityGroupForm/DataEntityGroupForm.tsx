@@ -15,7 +15,7 @@ import AppSelect from 'components/shared/AppSelect/AppSelect';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import {
   getDataEntityDetails,
   getDataEntityGroupCreatingStatuses,

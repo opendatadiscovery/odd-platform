@@ -224,6 +224,11 @@ export interface ActivitiesState {
   activitiesByDate: {
     [date: string]: Activity[];
   };
+  pageInfo: {
+    hasNext: boolean;
+    lastEventId?: number;
+    lastEventDateTime?: number;
+  };
   counts: ActivityCountInfo;
   queryParams: ActivityQueryParams;
 }

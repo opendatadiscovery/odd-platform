@@ -16,9 +16,18 @@ export const getActivitiesListFetchingStatuses = createStatusesSelector(
   actions.fetchActivityListActionType
 );
 
+export const getActivityCountsFetchingStatuses = createStatusesSelector(
+  actions.fetchActivityCountsActionType
+);
+
 export const getActivityCounts = createSelector(
   activitiesState,
   activities => activities.counts
+);
+
+export const getActivityPageInfo = createSelector(
+  activitiesState,
+  activities => activities.pageInfo
 );
 
 export const getActivitiesCount = createSelector(
