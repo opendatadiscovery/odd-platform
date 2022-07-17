@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.JSONB;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -200,10 +201,14 @@ public abstract class ActivityMapper {
     }
 
     @Mapping(source = "name", target = "internalName")
-    @Mapping(source = "dto.typeId", target = "type", qualifiedByName = "mapDataEntityType")
+    @Mapping(source = "dto.typeId", target = "type", qualifiedByName = "mapDataEntityType",
+        nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS)
     abstract CustomGroupActivityState mapCustomGroupActivityState(final CustomGroupActivityStateDto dto);
 
     List<DataEntityClass> mapDataEntityClasses(final List<Integer> entityClassIds) {
+        if (CollectionUtils.isEmpty(entityClassIds)) {
+            return List.of();
+        }
         final Set<DataEntityClassDto> entityClasses =
             DataEntityClassDto.findByIds(entityClassIds.toArray(Integer[]::new));
         return entityClasses.stream().map(dataEntityMapper::mapEntityClass).toList();
