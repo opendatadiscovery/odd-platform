@@ -1,9 +1,19 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
+import {
+  fetchActivityCounts,
+  fetchActivityList,
+  fetchDataSourcesList,
+  fetchNamespaceList,
+} from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
+import {
+  getActivitiesCountsParams,
+  getActivitiesQueryParams,
+  getDataSourcesList,
+  getNamespaceList,
+} from 'redux/selectors';
 import { clearActivityFilters } from 'redux/reducers/activity.slice';
 import { ActivityEventType } from 'generated-sources';
 import SingleFilter from 'components/shared/Activity/ActivityFilterItems/SingleFilter/SingleFilter';
@@ -21,6 +31,10 @@ const Filters: React.FC = () => {
 
   const datasources = useAppSelector(getDataSourcesList);
   const namespaces = useAppSelector(getNamespaceList);
+  const queryParams = useAppSelector(getActivitiesQueryParams);
+  const countParams = useAppSelector(getActivitiesCountsParams);
+
+  const asyncClearFilters = async () => dispatch(clearActivityFilters());
 
   return (
     <S.Container>
@@ -29,7 +43,12 @@ const Filters: React.FC = () => {
         <AppButton
           color="tertiary"
           size="medium"
-          onClick={() => dispatch(clearActivityFilters())}
+          onClick={() =>
+            asyncClearFilters().then(() => {
+              dispatch(fetchActivityList(queryParams));
+              dispatch(fetchActivityCounts(countParams));
+            })
+          }
         >
           Clear All
         </AppButton>
@@ -56,12 +75,6 @@ const Filters: React.FC = () => {
         />
         <MultipleFilter key="tg" filterName="tagIds" name="Tag" />
         <MultipleFilter key="ow" filterName="ownerIds" name="User" />
-        {/* TODO update loader conditions */}
-        {/* <S.FacetsLoaderContainer container sx={{ mt: 2 }}> */}
-        {/*  {(isSearchFacetsUpdating || isDatasourceListFetching) && ( */}
-        {/*    <AppCircularProgress size={16} text="Updating filters" /> */}
-        {/*  )} */}
-        {/* </S.FacetsLoaderContainer> */}
       </S.ListContainer>
     </S.Container>
   );

@@ -1,4 +1,5 @@
 import React from 'react';
+import SystemIcon from 'components/shared/Icons/SystemIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { Theme, TypographyProps } from '@mui/material';
@@ -35,6 +36,7 @@ const LabelItem: React.FC<LabelItemProps> = ({
     component={component}
     title={labelName}
   >
+    {systemLabel && <SystemIcon />}
     {labelName}
     {removable && !systemLabel && (
       <AppIconButton

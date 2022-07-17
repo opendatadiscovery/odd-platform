@@ -98,7 +98,7 @@ const ActivityResults: React.FC = () => {
 
   React.useEffect(() => {
     if (isQueryUpdated) {
-      fetchNextPage();
+      dispatch(fetchActivityList(queryParams));
     }
   }, [isQueryUpdated, queryParams]);
 
@@ -195,7 +195,7 @@ const ActivityResults: React.FC = () => {
           </Grid>
           <S.ListContainer id="activities-list">
             <InfiniteScroll
-              dataLength={activityTotals.totalCount}
+              dataLength={activityCount}
               next={fetchNextPage}
               hasMore={pageInfo.hasNext}
               loader={isActivityListFetching && activityItemSkeleton()}
