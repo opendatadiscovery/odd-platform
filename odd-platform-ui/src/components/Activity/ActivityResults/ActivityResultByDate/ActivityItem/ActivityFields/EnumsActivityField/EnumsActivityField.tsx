@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/Activity/ActivityField/ActivityFieldState/ActivityFieldState';
@@ -18,14 +18,12 @@ interface EnumsActivityFieldProps {
   oldState: DatasetFieldValuesActivityState | undefined;
   newState: DatasetFieldValuesActivityState | undefined;
   hideAllDetails: boolean;
-  stateDirection?: CSSProperties['flexDirection'];
 }
 
 const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
   oldState,
   newState,
   hideAllDetails,
-  stateDirection = 'row',
 }) => {
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
@@ -104,7 +102,7 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
         isDetailsOpen={isDetailsOpen}
       />
       <ActivityFieldState
-        stateDirection={stateDirection}
+        stateDirection="column"
         isDetailsOpen={isDetailsOpen}
         oldStateChildren={
           !isEmpty(oldValues) && (

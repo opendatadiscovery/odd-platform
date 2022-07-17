@@ -24,6 +24,7 @@ export const ArrayItemWrapper = styled(Grid)<{
   width: 'max-content',
   borderRadius: '4px',
   marginRight: theme.spacing($typeOfChange ? 0.5 : 0),
+  marginBottom: theme.spacing($typeOfChange ? 0.5 : 0),
   padding: theme.spacing($typeOfChange ? 0.5 : 0),
   backgroundColor: $typeOfChange
     ? setBackgroundColor(theme, $typeOfChange)

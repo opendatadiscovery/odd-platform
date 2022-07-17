@@ -16,6 +16,7 @@ import TagItem from 'components/shared/TagItem/TagItem';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import TermActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/TermActivityField/TermActivityField';
 import EnumsActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/EnumsActivityField/EnumsActivityField';
+import CustomGroupActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/CustomGroupActivityField/CustomGroupActivityField';
 import * as S from './ActivityItemStyles';
 
 interface ActivityItemProps {
@@ -49,7 +50,8 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
         <Grid item display="flex" flexWrap="nowrap" alignItems="center">
           <Link to={dataEntityDetailsPath(activity.dataEntity.id)}>
             <Typography variant="h3" sx={{ mr: 1, width: 'max-content' }}>
-              {activity.dataEntity.externalName}
+              {activity.dataEntity.externalName ||
+                activity.dataEntity.internalName}
             </Typography>
           </Link>
           {activity.dataEntity.entityClasses?.map(entityClass => (
@@ -170,7 +172,28 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
           oldState={activity.oldState.datasetFieldValues}
           newState={activity.newState.datasetFieldValues}
           hideAllDetails={hideAllDetails}
-          stateDirection="column"
+        />
+      )}
+      {activity.eventType === ActivityEventType.CUSTOM_GROUP_CREATED && (
+        <ActivityFieldHeader
+          eventType="created"
+          startText="Custom group"
+          activityName={`${activity.dataEntity.internalName}`}
+        />
+      )}
+      {activity.eventType === ActivityEventType.CUSTOM_GROUP_DELETED && (
+        <ActivityFieldHeader
+          eventType="deleted"
+          startText="Custom group"
+          activityName={`${activity.dataEntity.internalName}`}
+        />
+      )}
+      {activity.eventType === ActivityEventType.CUSTOM_GROUP_UPDATED && (
+        <CustomGroupActivityField
+          oldState={activity.oldState.customGroup}
+          newState={activity.newState.customGroup}
+          activityName={`${activity.dataEntity.internalName}`}
+          hideAllDetails={hideAllDetails}
         />
       )}
     </S.Container>

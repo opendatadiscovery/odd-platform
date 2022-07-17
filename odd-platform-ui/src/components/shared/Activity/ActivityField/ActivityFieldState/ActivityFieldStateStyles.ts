@@ -1,4 +1,4 @@
-import styled, { CSSObject } from 'styled-components';
+import styled from 'styled-components';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import { Grid } from '@mui/material';
 import { CSSProperties } from 'react';
@@ -18,34 +18,14 @@ export const Container = styled(Grid)(({ theme }) => ({
 
 export const StateContainer = styled(Grid)<{
   $stateDirection: CSSProperties['flexDirection'];
-}>(({ theme, $stateDirection }) => {
-  const basicStyles = {
-    flexDirection: $stateDirection,
-    flexWrap: 'wrap' as const,
-    alignContent: 'flex-start',
-    padding: theme.spacing(1.5),
-    border: '1px solid',
-    borderColor: theme.palette.divider,
-    borderRadius: '4px',
-    height: '100%',
-  };
-
-  const columnStyles: CSSObject = {
-    ...basicStyles,
-    '& > *': {
-      padding: theme.spacing(0.5),
-      '&:last-child': { marginBottom: 0 },
-    },
-  };
-
-  const rowStyles: CSSObject = {
-    ...basicStyles,
-    '& > *': {
-      padding: theme.spacing(0.5),
-      marginRight: theme.spacing(0.5),
-      '&:last-child': { marginRight: 0 },
-    },
-  };
-
-  return $stateDirection === 'column' ? columnStyles : rowStyles;
-});
+}>(({ theme, $stateDirection }) => ({
+  flexDirection: $stateDirection,
+  flexWrap: 'wrap' as const,
+  alignContent: 'flex-start',
+  alignItems: $stateDirection === 'column' ? 'flex-start' : 'center',
+  padding: theme.spacing(1.5),
+  border: '1px solid',
+  borderColor: theme.palette.divider,
+  borderRadius: '4px',
+  height: '100%',
+}));
