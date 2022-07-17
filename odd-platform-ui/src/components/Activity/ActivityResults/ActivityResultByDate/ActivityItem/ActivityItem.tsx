@@ -14,6 +14,8 @@ import StringActivityField from 'components/Activity/ActivityResults/ActivityRes
 import ArrayActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/ArrayActivityField/ArrayActivityField';
 import TagItem from 'components/shared/TagItem/TagItem';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
+import TermActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/TermActivityField/TermActivityField';
+import EnumsActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/EnumsActivityField/EnumsActivityField';
 import * as S from './ActivityItemStyles';
 
 interface ActivityItemProps {
@@ -38,22 +40,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
 
   const labelStateItem = React.useCallback(
     (name: string) => <LabelItem labelName={name} />,
-    []
-  );
-
-  const termStateItem = React.useCallback(
-    (name: string, namespace?: string) => (
-      <Grid
-        flexDirection="column"
-        sx={{ backgroundColor: 'white', py: 0.25, px: 1 }}
-      >
-        <Typography
-          variant="body1"
-          color="texts.hint"
-        >{`Namespace: ${namespace}`}</Typography>
-        <Typography variant="body1">{name}</Typography>
-      </Grid>
-    ),
     []
   );
 
@@ -152,7 +138,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
       {activity.eventType ===
         ActivityEventType.DATASET_FIELD_LABELS_UPDATED && (
         <ArrayActivityField
-          activityName={`Dataset field ${activity.oldState.datasetFieldInformation?.name} labels`}
+          activityName={`Labels in ${activity.oldState.datasetFieldInformation?.name} column`}
           oldState={activity.oldState.datasetFieldInformation?.labels}
           newState={activity.newState.datasetFieldInformation?.labels}
           hideAllDetails={hideAllDetails}
@@ -160,25 +146,30 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
         />
       )}
       {activity.eventType === ActivityEventType.TERM_ASSIGNED && (
-        <ArrayActivityField
-          startText="Term"
+        <TermActivityField
           oldState={activity.oldState.terms}
           newState={activity.newState.terms}
           hideAllDetails={hideAllDetails}
           eventType="added"
-          stateItem={termStateItem}
           stateDirection="column"
         />
       )}
       {activity.eventType ===
         ActivityEventType.TERM_ASSIGNMENT_DELETED && (
-        <ArrayActivityField
-          startText="Term"
+        <TermActivityField
           oldState={activity.oldState.terms}
           newState={activity.newState.terms}
           hideAllDetails={hideAllDetails}
           eventType="deleted"
-          stateItem={termStateItem}
+          stateDirection="column"
+        />
+      )}
+      {activity.eventType ===
+        ActivityEventType.DATASET_FIELD_VALUES_UPDATED && (
+        <EnumsActivityField
+          oldState={activity.oldState.datasetFieldValues}
+          newState={activity.newState.datasetFieldValues}
+          hideAllDetails={hideAllDetails}
           stateDirection="column"
         />
       )}

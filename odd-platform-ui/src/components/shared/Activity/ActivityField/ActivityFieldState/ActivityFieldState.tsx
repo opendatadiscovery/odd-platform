@@ -25,21 +25,13 @@ const ActivityFieldState: React.FC<ActivityFieldProps> = ({
       {isDetailsOpen ? (
         <S.Container container>
           {oldStateChildren && (
-            <S.StateContainer
-              $stateDirection={stateDirection}
-              container
-              flexWrap="nowrap"
-            >
+            <S.StateContainer $stateDirection={stateDirection} container>
               {oldStateChildren}
             </S.StateContainer>
           )}
           {oldStateChildren && newStateChildren && <S.SeparatorIcon />}
           {newStateChildren && (
-            <S.StateContainer
-              $stateDirection={stateDirection}
-              container
-              flexWrap="nowrap"
-            >
+            <S.StateContainer $stateDirection={stateDirection} container>
               {newStateChildren}
             </S.StateContainer>
           )}

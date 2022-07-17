@@ -21,6 +21,8 @@ export const StateContainer = styled(Grid)<{
 }>(({ theme, $stateDirection }) => {
   const basicStyles = {
     flexDirection: $stateDirection,
+    flexWrap: 'wrap' as const,
+    alignContent: 'flex-start',
     padding: theme.spacing(1.5),
     border: '1px solid',
     borderColor: theme.palette.divider,
@@ -32,7 +34,6 @@ export const StateContainer = styled(Grid)<{
     ...basicStyles,
     '& > *': {
       padding: theme.spacing(0.5),
-      marginBottom: theme.spacing(0.5),
       '&:last-child': { marginBottom: 0 },
     },
   };
