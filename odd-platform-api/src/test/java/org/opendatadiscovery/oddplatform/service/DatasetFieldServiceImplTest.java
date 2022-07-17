@@ -31,6 +31,7 @@ import static org.jooq.JSONB.jsonb;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -82,11 +83,7 @@ class DatasetFieldServiceImplTest {
             .thenReturn(Flux.just(labelPojo));
         when(reactiveDatasetFieldRepository.updateDescription(anyLong(), anyString()))
             .thenReturn(Mono.just(datasetFieldDto.getDatasetFieldPojo()));
-        when(reactiveLabelRepository.deleteRelations(any()))
-            .thenReturn(Flux.just(EASY_RANDOM.nextObject(LabelToDatasetFieldPojo.class)));
-        when(reactiveLabelRepository.createRelations(any()))
-            .thenReturn(Flux.just(EASY_RANDOM.nextObject(LabelToDatasetFieldPojo.class)));
-        when(reactiveLabelRepository.listDatasetFieldDtos(any())).thenReturn(
+        when(reactiveLabelService.updateDatasetFieldLabels(anyLong(), anyList(), anyList())).thenReturn(
             Mono.just(List.of(new LabelDto(labelPojo, false))));
         when(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(anyLong())).thenReturn(Mono.just(1));
         when(datasetFieldApiMapper.mapDto(any())).thenReturn(datasetField);
