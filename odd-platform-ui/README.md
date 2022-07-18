@@ -11,9 +11,15 @@ In the project directory, you can run:
 Installs project dependencies
 
 ### `npm run generate`
-Generates an openApi client in `src/generated-sources` from API specification `prospectlog-specification//openapi.yml`
+Generates an openApi client in `src/generated-sources` from API specification [odd-platform-specification/openapi.yaml](../odd-platform-specification/openapi.yaml)
+
+### `cp .env.example .env`
+Initializes dev environment
 
 ## Run application in dev mode
+
+### `npm run start:API`
+Runs the api with preseeded(demo) data
 
 ### `npm start`
 

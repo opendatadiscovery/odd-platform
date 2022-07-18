@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "vite",
+    "start:API": "docker-compose -f ../docker/demo.yaml up -d odd-platform-enricher",
     "build-only": "vite build",
     "clean": "rm -rf ./src/generated-sources",
     "build": "npm run generate && tsc --noEmit && vite build",
