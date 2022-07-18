@@ -1277,7 +1277,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: './components.yaml/#/components/schemas/Activity'
+                  $ref: './components.yaml/#/components/schemas/DataEntityActivity'
       tags:
         - dataEntity
 
@@ -2098,7 +2098,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: './components.yaml/#/components/schemas/Activity'
+                  $ref: './components.yaml/#/components/schemas/DataEntityActivity'
       tags:
         - activity
 

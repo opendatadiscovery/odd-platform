@@ -76,7 +76,9 @@ const DataEntityAlerts = React.lazy(
 const QualityTestHistoryContainer = React.lazy(
   () => import('./QualityTestRunsHistory/TestRunsHistoryContainer')
 );
-const Activity = React.lazy(() => import('./Activity/Activity'));
+const DataEntityActivity = React.lazy(
+  () => import('./DataEntityActivity/DataEntityActivity')
+);
 
 interface DataEntityDetailsProps {
   viewType: string;
@@ -405,7 +407,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             <Route
               exact
               path="/dataentities/:dataEntityId/activity"
-              component={Activity}
+              component={DataEntityActivity}
             />
             <Redirect
               from="/dataentities/:dataEntityId"

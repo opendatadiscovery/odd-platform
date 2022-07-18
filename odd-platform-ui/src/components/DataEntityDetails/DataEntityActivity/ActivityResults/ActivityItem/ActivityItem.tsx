@@ -14,7 +14,7 @@ import LabelItem from 'components/shared/LabelItem/LabelItem';
 import TermActivityField from 'components/shared/Activity/ActivityFields/TermActivityField/TermActivityField';
 import EnumsActivityField from 'components/shared/Activity/ActivityFields/EnumsActivityField/EnumsActivityField';
 import CustomGroupActivityField from 'components/shared/Activity/ActivityFields/CustomGroupActivityField/CustomGroupActivityField';
-import * as S from './ActivityItemStyles';
+import * as S from 'components/DataEntityDetails/DataEntityActivity/ActivityResults/ActivityItem/ActivityItemStyles';
 
 interface ActivityItemProps {
   activity: Activity;
@@ -75,11 +75,12 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
             hideAllDetails={hideAllDetails}
           />
         )}
-        {activity.eventType === ActivityEventType.CUSTOM_NAME_UPDATED && (
+        {activity.eventType ===
+          ActivityEventType.BUSINESS_NAME_UPDATED && (
           <StringActivityField
             activityName="Business name"
-            oldState={activity.oldState.customName?.internalName}
-            newState={activity.newState.customName?.internalName}
+            oldState={activity.oldState.businessName?.internalName}
+            newState={activity.newState.businessName?.internalName}
             hideAllDetails={hideAllDetails}
           />
         )}

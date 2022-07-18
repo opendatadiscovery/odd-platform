@@ -75,5 +75,5 @@ export const managementPath = (
   viewType: ManagementViewType = 'namespaces'
 ) => `/management/${viewType}`;
 
-// Activity
+// DataEntityActivity
 export const activityPath = (query: string) => `/activity?${query}`;

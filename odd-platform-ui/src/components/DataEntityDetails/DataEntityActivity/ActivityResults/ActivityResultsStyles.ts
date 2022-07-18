@@ -6,8 +6,6 @@ import {
 } from 'lib/constants';
 import styled from 'styled-components';
 
-const searchHeight = 40;
-
 export const ContentContainer = styled(Grid)(({ theme }) => ({
   padding: theme.spacing(0.25, 2.5),
   borderBottom: '1px solid',
@@ -17,8 +15,8 @@ export const ContentContainer = styled(Grid)(({ theme }) => ({
 
 export const ListContainer = styled(Grid)(({ theme }) => ({
   width: 'inherit',
-  height: `calc(100vh - ${toolbarHeight}px - ${searchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
-    8
+  height: `calc(100vh - ${toolbarHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
+    16
   )})`,
   overflowY: 'scroll',
   flexDirection: 'column',

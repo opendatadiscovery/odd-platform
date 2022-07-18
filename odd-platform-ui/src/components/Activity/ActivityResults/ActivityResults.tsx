@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { ActivityType } from 'generated-sources';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
@@ -25,7 +25,7 @@ import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/E
 import AppButton from 'components/shared/AppButton/AppButton';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import ActivityResultsItemSkeleton from 'components/shared/Activity/ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
-import ActivityResultByDate from './ActivityResultByDate/ActivityResultByDate';
+import ActivityItem from 'components/Activity/ActivityResults/ActivityItem/ActivityItem';
 import * as S from './ActivityResultsStyles';
 
 const ActivityResults: React.FC = () => {
@@ -199,12 +199,18 @@ const ActivityResults: React.FC = () => {
             >
               {Object.entries(activityResults).map(
                 ([activityDate, activities]) => (
-                  <ActivityResultByDate
-                    key={activityDate}
-                    activityDate={activityDate}
-                    activities={activities}
-                    hideAllDetails={hideAllDetails}
-                  />
+                  <Grid container>
+                    <Typography variant="subtitle2" sx={{ py: 1 }}>
+                      {activityDate}
+                    </Typography>
+                    {activities.map(activity => (
+                      <ActivityItem
+                        key={activity.id}
+                        activity={activity}
+                        hideAllDetails={hideAllDetails}
+                      />
+                    ))}
+                  </Grid>
                 )
               )}
             </InfiniteScroll>
