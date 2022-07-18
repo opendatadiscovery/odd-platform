@@ -188,6 +188,7 @@ public class IngestionServiceImplTest {
         when(tagIngestionService.ingestExternalTags(any())).thenReturn(Mono.empty());
         when(datasetStructureService.createDataStructure(any(), any())).thenReturn(Mono.empty());
         when(datasetStructureService.getNewDatasetVersionsIfChanged(any(), any())).thenReturn(Mono.empty());
+        when(datasetStructureService.getLastDatasetStructureVersionDelta(any())).thenReturn(Mono.empty());
     }
 
     @Nested
@@ -254,32 +255,6 @@ public class IngestionServiceImplTest {
                 .map(DataEntity::getDataset).filter(Objects::nonNull)
                 .flatMap(i -> i.getFieldList().stream())
                 .collect(Collectors.toList());
-
-//            Mockito.verify(reactiveDatasetStructureRepository, atLeastOnce())
-//                .bulkCreate(datasetStructurePojoCaptor.capture());
-
-//            assertThat(datasetVersionCaptor.getAllValues().get(0).stream()
-//                .map(DatasetVersionPojo::getDatasetOddrn)
-//                .collect(Collectors.toList())).hasSameElementsAs(actualDatasetOddrns);
-
-//            assertThat(datasetFieldsMapCaptor.getAllValues().get(0).keySet())
-//                .hasSameElementsAs(new HashSet<>(actualDatasetOddrns));
-
-//            assertThat(datasetFieldsMapCaptor.getAllValues().get(0).values().stream()
-//                .flatMap(i -> i.stream()
-//                    .map(DatasetFieldPojo::getOddrn))
-//                .collect(
-//                    Collectors.toList()))
-//                .hasSameElementsAs(dataSetFields.stream()
-//                    .map(DataSetField::getOddrn)
-//                    .collect(Collectors.toList()));
-
-//            assertThat(datasetFieldsMapCaptor.getAllValues().get(0).values().stream()
-//                .flatMap(i -> i.stream().map(DatasetFieldPojo::getName))
-//                .collect(Collectors.toList()))
-//                .hasSameElementsAs(dataSetFields.stream()
-//                    .map(DataSetField::getName)
-//                    .collect(Collectors.toList()));
         }
     }
 
