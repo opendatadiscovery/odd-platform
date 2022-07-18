@@ -21,9 +21,11 @@ const setBackgroundColor = (
 export const ArrayItemWrapper = styled(Grid)<{
   $typeOfChange?: CRUDType;
 }>(({ theme, $typeOfChange }) => ({
-  marginBottom: theme.spacing(0.5),
   width: 'max-content',
   borderRadius: '4px',
+  marginRight: theme.spacing($typeOfChange ? 0.5 : 0),
+  marginLeft: theme.spacing($typeOfChange ? 0.5 : 0),
+  padding: theme.spacing($typeOfChange ? 0.5 : 0),
   backgroundColor: $typeOfChange
     ? setBackgroundColor(theme, $typeOfChange)
     : 'transparent',

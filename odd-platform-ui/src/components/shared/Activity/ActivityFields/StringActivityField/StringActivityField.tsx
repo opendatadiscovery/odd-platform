@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
-import ActivityFieldState from 'components/shared/Activity/ActivityField/ActivityFieldState/ActivityFieldState';
+import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
+import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 
 interface ActivityFieldData {
   oldValue: string;

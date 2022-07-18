@@ -1,11 +1,11 @@
 import React, { CSSProperties } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
-import ActivityFieldState from 'components/shared/Activity/ActivityField/ActivityFieldState/ActivityFieldState';
+import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
+import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import { TermActivityState } from 'generated-sources';
 import { CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import * as S from './TermActivityFieldStyles';
+import * as S from 'components/shared/Activity/ActivityFields/TermActivityField/TermActivityFieldStyles';
 
 interface ActivityData extends TermActivityState {
   typeOfChange?: CRUDType;

@@ -1,102 +1,102 @@
 .rmdp-container {
-    width: 100%;
+    width: 100% !important;
 }
 
 .rmdp-calendar {
-    padding: 16px 16px 0 16px;
+    padding: 16px 16px 0 16px !important;
 }
 
 .rmdp-day-picker {
-    padding-bottom: 16px;
-    border-bottom: 1px solid #EBECF0;
+    padding-bottom: 16px !important;
+    border-bottom: 1px solid #EBECF0 !important;
 }
 
 .rmdp-border-bottom {
-    border: none;
+    border: none !important;
 }
 
 .rmdp-arrow-container {
-    border-radius: 0;
+    border-radius: 0 !important;
 }
 
 .rmdp-arrow-container:hover {
-    background-color: transparent;
-    box-shadow: none;
+    background-color: transparent !important;
+    box-shadow: none !important;
 }
 
 .rmdp-arrow-container:hover .rmdp-arrow {
-    border: solid #42526E;
-    border-width: 0 2px 2px 0;
+    border: solid #42526E !important;
+    border-width: 0 2px 2px 0 !important;
 }
 
 .rmdp-arrow {
-    border: solid #7A869A;
-    border-width: 0 2px 2px 0;
-    display: inline-block;
-    height: 8px;
-    margin-top: 5px;
-    padding: 4px;
-    width: 4px;
+    border: solid #7A869A !important;
+    border-width: 0 2px 2px 0 !important;
+    display: inline-block !important;
+    height: 8px !important;
+    margin-top: 5px !important;
+    padding: 4px !important;
+    width: 4px !important;
 }
 
 .rmdp-header-values {
-    font-weight: 500;
-    color: #091E42;
+    font-weight: 500 !important;
+    color: #091E42 !important;
 }
 
 .rmdp-week-day {
-    font-weight: 400;
-    font-size: 12px;
-    color: #7A869A;
+    font-weight: 400 !important;
+    font-size: 12px !important;
+    color: #7A869A !important;
 }
 
 .rmdp-week {
-    justify-content: center;
+    justify-content: center !important;
 }
 
 .rmdp-day.rmdp-deactive, .rmdp-day.rmdp-disabled {
-    color: #A8B0BD;
+    color: #A8B0BD !important;
 }
 
 .rmdp-day {
-    color: #091E42;
+    color: #091E42 !important;
 }
 
 .rmdp-day.rmdp-today span {
-    border: 1px solid #0080FF;
-    color: #091E42;
-    background-color: transparent;
+    border: 1px solid #0080FF !important;
+    color: #091E42 !important;
+    background-color: transparent !important;
 }
 
 .rmdp-day span {
-    border-radius: 4px;
+    border-radius: 4px !important;
 }
 
 .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover {
-    background-color: #E5F2FF;
-    color: #091E42;
+    background-color: #E5F2FF !important;
+    color: #091E42 !important;
 }
 
 .rmdp-range.start, .rmdp-range.end {
-    border-radius: 4px;
+    border-radius: 4px !important;
 }
 
 .rmdp-range {
-    background-color: #E5F2FF;
-    box-shadow: none;
-    color: #091E42;
+    background-color: #E5F2FF !important;
+    box-shadow: none !important;
+    color: #091E42 !important;
 }
 
 .rmdp-day.rmdp-range.start, .rmdp-day.rmdp-range.end {
-    background-color: #0080FF;
-    color: white;
+    background-color: #0080FF !important;
+    color: white !important;
 }
 
 .rmdp-day.rmdp-range.start span:hover, .rmdp-day.rmdp-range.end span:hover {
-    background-color: #0080FF;
-    color: white;
+    background-color: #0080FF !important;
+    color: white !important;
 }
 
 .rmdp-day.rmdp-today.rmdp-range.end span, .rmdp-day.rmdp-today.rmdp-range.start span {
-    color: white;
+    color: white !important;
 }

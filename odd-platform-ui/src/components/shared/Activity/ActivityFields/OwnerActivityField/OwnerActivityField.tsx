@@ -5,11 +5,11 @@ import {
   ActivityState,
   OwnershipActivityState,
 } from 'generated-sources';
-import ActivityFieldState from 'components/shared/Activity/ActivityField/ActivityFieldState/ActivityFieldState';
+import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import { CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
-import OwnerWithRole from './OwnerWithRole/OwnerWithRole';
+import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
+import OwnerWithRole from 'components/shared/Activity/ActivityFields/OwnerActivityField/OwnerWithRole/OwnerWithRole';
 
 type OwnerItem = OwnershipActivityState & {
   typeOfChange?: CRUDType;

@@ -1,14 +1,14 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
-import ActivityFieldState from 'components/shared/Activity/ActivityField/ActivityFieldState/ActivityFieldState';
+import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
+import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import {
   DatasetFieldEnumValuesActivityState,
   DatasetFieldValuesActivityState,
 } from 'generated-sources';
 import { CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import * as S from './EnumsActivityFieldStyles';
+import * as S from 'components/shared/Activity/ActivityFields/EnumsActivityField/EnumsActivityFieldStyles';
 
 interface ActivityData extends DatasetFieldEnumValuesActivityState {
   typeOfChange?: CRUDType;

@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { Grid, Theme } from '@mui/material';
+import styled from 'styled-components';
 import { CRUDType } from 'lib/interfaces';
 
 const setBackgroundColor = (
@@ -18,13 +18,13 @@ const setBackgroundColor = (
   }
 };
 
-export const ArrayItemWrapper = styled(Grid)<{
+export const Container = styled(Grid)<{
   $typeOfChange?: CRUDType;
 }>(({ theme, $typeOfChange }) => ({
+  flexWrap: 'nowrap',
   width: 'max-content',
   borderRadius: '4px',
-  marginRight: theme.spacing($typeOfChange ? 0.5 : 0),
-  padding: theme.spacing($typeOfChange ? 0.5 : 0),
+  padding: theme.spacing(0.5),
   backgroundColor: $typeOfChange
     ? setBackgroundColor(theme, $typeOfChange)
     : 'transparent',

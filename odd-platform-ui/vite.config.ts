@@ -31,7 +31,6 @@ export default defineConfig(({ mode }) => {
         ...defaultConfig,
         ...(process.env.VITE_DEV_PROXY ? devServerConfig : {}),
         plugins: [
-          // eslint(),
           checker({
             overlay: { initialIsOpen: false },
             typescript: true,

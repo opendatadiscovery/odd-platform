@@ -8,15 +8,15 @@ import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
 import { dataEntityDetailsPath } from 'lib/paths';
 import { ActivityEventType } from 'generated-sources';
-import OwnerActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/OwnerActivityField/OwnerActivityField';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
-import StringActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/StringActivityField/StringActivityField';
-import ArrayActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/ArrayActivityField/ArrayActivityField';
+import OwnerActivityField from 'components/shared/Activity/ActivityFields/OwnerActivityField/OwnerActivityField';
+import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
+import StringActivityField from 'components/shared/Activity/ActivityFields/StringActivityField/StringActivityField';
+import ArrayActivityField from 'components/shared/Activity/ActivityFields/ArrayActivityField/ArrayActivityField';
 import TagItem from 'components/shared/TagItem/TagItem';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
-import TermActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/TermActivityField/TermActivityField';
-import EnumsActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/EnumsActivityField/EnumsActivityField';
-import CustomGroupActivityField from 'components/Activity/ActivityResults/ActivityResultByDate/ActivityItem/ActivityFields/CustomGroupActivityField/CustomGroupActivityField';
+import TermActivityField from 'components/shared/Activity/ActivityFields/TermActivityField/TermActivityField';
+import EnumsActivityField from 'components/shared/Activity/ActivityFields/EnumsActivityField/EnumsActivityField';
+import CustomGroupActivityField from 'components/shared/Activity/ActivityFields/CustomGroupActivityField/CustomGroupActivityField';
 import * as S from './ActivityItemStyles';
 
 interface ActivityItemProps {
@@ -112,7 +112,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
       )}
       {activity.eventType === ActivityEventType.CUSTOM_NAME_UPDATED && (
         <StringActivityField
-          activityName="Custom name"
+          activityName="Business name"
           oldState={activity.oldState.customName?.internalName}
           newState={activity.newState.customName?.internalName}
           hideAllDetails={hideAllDetails}
@@ -192,7 +192,6 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
         <CustomGroupActivityField
           oldState={activity.oldState.customGroup}
           newState={activity.newState.customGroup}
-          activityName={`${activity.dataEntity.internalName}`}
           hideAllDetails={hideAllDetails}
         />
       )}

@@ -83,9 +83,16 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   );
 
   React.useEffect(() => {
-    const newTabIndex = tabs.findIndex(
-      tab => tab.link && location.pathname.includes(tab.link)
-    );
+    const newTabIndex = tabs.findIndex(tab => {
+      if (tab.link === '/activity') {
+        return (
+          location.pathname.includes(tab.link) &&
+          !location.pathname.includes('dataentities')
+        );
+      }
+
+      return tab.link && location.pathname.includes(tab.link);
+    });
 
     if (newTabIndex >= 0) {
       setSelectedTab(newTabIndex);

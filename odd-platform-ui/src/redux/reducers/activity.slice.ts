@@ -1,10 +1,14 @@
-import { activitiesActionTypePrefix } from 'redux/actions';
+import {
+  activitiesActionTypePrefix,
+  fetchActivityListActionType,
+} from 'redux/actions';
 import { createSlice } from '@reduxjs/toolkit';
 import * as thunks from 'redux/thunks';
 import { addDays, endOfDay, format } from 'date-fns';
 import {
   ActivitiesState,
   Activity,
+  ActivityListResponse,
   ActivityPayload,
   ActivityQueryData,
   ActivityQueryName,
@@ -15,12 +19,12 @@ import uniqBy from 'lodash/uniqBy';
 
 const beginDate = endOfDay(addDays(new Date(), -5)).getTime();
 const endDate = endOfDay(addDays(new Date(), 1)).getTime();
-const size = 20;
+export const activityListSize = 20;
 
 const initialQueryParams: ActivityQueryParams = {
   beginDate,
   endDate,
-  size,
+  size: activityListSize,
   type: ActivityType.ALL,
 };
 
@@ -37,6 +41,49 @@ export const initialState: ActivitiesState = {
 };
 
 const formattedDate = (date: number) => format(date, 'MMMM dd, yyyy');
+
+let currentActivityListActionType = fetchActivityListActionType;
+
+const isActivityListActionTypeChanged = (type: string) => {
+  const replacedActivityListActionType = type.replace('/fulfilled', '');
+
+  if (currentActivityListActionType !== replacedActivityListActionType) {
+    currentActivityListActionType = replacedActivityListActionType;
+    return true;
+  }
+  return false;
+};
+
+const updateActivitiesState = (
+  state: ActivitiesState,
+  { payload, type }: { payload: ActivityListResponse; type: string }
+): ActivitiesState => {
+  const { activities, pageInfo } = payload;
+
+  return activities.reduce(
+    (memo: ActivitiesState, activity: Activity) => ({
+      ...memo,
+      activitiesByDate: {
+        ...memo.activitiesByDate,
+        [formattedDate(activity.createdAt)]: uniqBy(
+          [
+            ...(memo.activitiesByDate[formattedDate(activity.createdAt)] ||
+              []),
+            activity,
+          ],
+          'id'
+        ),
+      },
+    }),
+    {
+      ...state,
+      activitiesByDate: isActivityListActionTypeChanged(type)
+        ? {}
+        : { ...state.activitiesByDate },
+      pageInfo,
+    }
+  );
+};
 
 export const activitiesSlice = createSlice({
   name: activitiesActionTypePrefix,
@@ -91,40 +138,20 @@ export const activitiesSlice = createSlice({
   },
   extraReducers: builder => {
     builder.addCase(
-      thunks.fetchActivityList.fulfilled,
-      (state, { payload }): ActivitiesState => {
-        const { activities, pageInfo } = payload;
-
-        return activities.reduce(
-          (memo: ActivitiesState, activity: Activity) => ({
-            ...memo,
-            activitiesByDate: {
-              ...memo.activitiesByDate,
-              [formattedDate(activity.createdAt)]: uniqBy(
-                [
-                  ...(memo.activitiesByDate[
-                    formattedDate(activity.createdAt)
-                  ] || []),
-                  activity,
-                ],
-                'id'
-              ),
-            },
-          }),
-          {
-            ...state,
-            activitiesByDate: { ...state.activitiesByDate },
-            pageInfo,
-          }
-        );
-      }
-    );
-
-    builder.addCase(
       thunks.fetchActivityCounts.fulfilled,
       (state, { payload }) => {
         state.counts = payload;
       }
+    );
+
+    builder.addCase(
+      thunks.fetchActivityList.fulfilled,
+      updateActivitiesState
+    );
+
+    builder.addCase(
+      thunks.fetchDataEntityActivityList.fulfilled,
+      updateActivitiesState
     );
   },
 });

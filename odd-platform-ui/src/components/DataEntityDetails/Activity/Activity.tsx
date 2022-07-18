@@ -8,7 +8,7 @@ const Activity: React.FC = () => {
   const history = useHistory();
 
   return (
-    <Grid container flexWrap="nowrap">
+    <Grid container sx={{ mt: 3 }} flexWrap="nowrap">
       <Filters />
       <ActivityResults />
     </Grid>

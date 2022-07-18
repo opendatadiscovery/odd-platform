@@ -24,9 +24,8 @@ import { useAppQuery } from 'lib/hooks/hooks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import ActivityTabsSkeleton from './ActivityTabsSkeleton/ActivityTabsSkeleton';
+import ActivityResultsItemSkeleton from 'components/shared/Activity/ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import ActivityResultByDate from './ActivityResultByDate/ActivityResultByDate';
-import ActivityResultsItemSkeleton from './ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 import * as S from './ActivityResultsStyles';
 
 const ActivityResults: React.FC = () => {
@@ -50,7 +49,7 @@ const ActivityResults: React.FC = () => {
     getActivityCountsFetchingStatuses
   );
 
-  const [isQueryUpdated, setIsQueryUpdated] = React.useState(true);
+  const [isQueryUpdated, setIsQueryUpdated] = React.useState(false);
 
   const { query, params } = useAppQuery<ActivityQueryParams>(
     queryParams,
@@ -160,17 +159,13 @@ const ActivityResults: React.FC = () => {
 
   return (
     <Grid sx={{ mt: 2 }}>
-      {isActivityCountsFetching ? (
-        <ActivityTabsSkeleton length={tabs.length} />
-      ) : (
-        <AppTabs
-          type="primary"
-          items={tabs}
-          selectedTab={selectedTab}
-          handleTabChange={onActivityTypeChange}
-          isHintUpdated={isActivityListFetching}
-        />
-      )}
+      <AppTabs
+        type="primary"
+        items={tabs}
+        selectedTab={selectedTab}
+        handleTabChange={onActivityTypeChange}
+        isHintUpdated={isActivityCountsFetching}
+      />
       {!isActivityListFetching && activityCount === 0 ? (
         <EmptyContentPlaceholder text="No matches found" />
       ) : (

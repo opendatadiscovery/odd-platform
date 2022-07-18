@@ -11,6 +11,17 @@ export interface Activity extends Omit<GeneratedActivity, 'createdAt'> {
   createdAt: number;
 }
 
+export interface ActivityPageInfo {
+  hasNext: boolean;
+  lastEventId?: number;
+  lastEventDateTime?: number;
+}
+
+export interface ActivityListResponse {
+  activities: Activity[];
+  pageInfo: ActivityPageInfo;
+}
+
 export interface ActivityFilterOption {
   id: number;
   name: string;

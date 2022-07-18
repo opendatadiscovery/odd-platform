@@ -27,7 +27,3 @@ export const Caption = styled(Grid)(() => ({
     [`${InternalNameEditBtnContainer}`]: { display: 'block' },
   },
 }));
-
-export const UpdatedAt = styled(Grid)(() => ({
-  display: 'none',
-}));

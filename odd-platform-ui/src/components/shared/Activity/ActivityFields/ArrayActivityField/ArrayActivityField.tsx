@@ -1,11 +1,11 @@
 import React, { CSSProperties } from 'react';
 import { Grid } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
-import ActivityFieldState from 'components/shared/Activity/ActivityField/ActivityFieldState/ActivityFieldState';
+import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
+import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import { TermActivityState } from 'generated-sources';
 import { CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import * as S from './ArrayActivityFieldStyled';
+import * as S from 'components/shared/Activity/ActivityFields/ArrayActivityField/ArrayActivityFieldStyled';
 
 interface ActivityData extends TermActivityState {
   id?: number;

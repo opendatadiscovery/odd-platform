@@ -2,8 +2,11 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
+  getActivitiesByDate,
+  getActivitiesCount,
   getActivitiesListFetchingStatuses,
   getActivitiesQueryParams,
+  getActivityPageInfo,
 } from 'redux/selectors';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useHistory, useLocation } from 'react-router-dom';
@@ -12,8 +15,12 @@ import { useAppParams, useAppQuery } from 'lib/hooks/hooks';
 import { ActivityQueryName, ActivityQueryParams } from 'redux/interfaces';
 import { setActivityQueryParam } from 'redux/reducers/activity.slice';
 import { fetchDataEntityActivityList } from 'redux/thunks';
+import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
+import AppButton from 'components/shared/AppButton/AppButton';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import ActivityResultsItemSkeleton from 'components/shared/Activity/ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
+import ActivityResultByDate from './ActivityResultsByDate/ActivityResultsByDate';
 import * as S from './ActivityResultsStyles';
-import ActivityResultsItemSkeleton from './ActivityResultsItemSkeleton/ActivityResultsItemSkeleton';
 
 const ActivityResults: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -22,11 +29,14 @@ const ActivityResults: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
   const queryParams = useAppSelector(getActivitiesQueryParams);
-  // const activityResults = useAppSelector(getActivitiesByDate);
+  const activityResults = useAppSelector(getActivitiesByDate);
+  const activityCount = useAppSelector(getActivitiesCount);
+  const pageInfo = useAppSelector(getActivityPageInfo);
   const { isLoading: isActivityListFetching } = useAppSelector(
     getActivitiesListFetchingStatuses
   );
 
+  const [hideAllDetails, setHideAllDetails] = React.useState(false);
   const [isQueryUpdated, setIsQueryUpdated] = React.useState(false);
 
   const { query, params } = useAppQuery<ActivityQueryParams>(
@@ -55,6 +65,19 @@ const ActivityResults: React.FC = () => {
     }
   }, [query, location.search]);
 
+  const fetchNextPage = () => {
+    if (!pageInfo?.hasNext) return;
+
+    dispatch(
+      fetchDataEntityActivityList({
+        ...queryParams,
+        dataEntityId,
+        lastEventId: pageInfo.lastEventId,
+        lastEventDateTime: pageInfo.lastEventDateTime,
+      })
+    );
+  };
+
   React.useEffect(() => {
     if (isQueryUpdated) {
       dispatch(
@@ -66,34 +89,49 @@ const ActivityResults: React.FC = () => {
   const activityItemSkeleton = () => (
     <SkeletonWrapper
       length={10}
-      renderContent={({ randomSkeletonPercentWidth, key }) => (
-        <ActivityResultsItemSkeleton
-          width={randomSkeletonPercentWidth()}
-          key={key}
-        />
+      renderContent={({ key }) => (
+        <ActivityResultsItemSkeleton width="100%" key={key} />
       )}
     />
   );
 
   return (
-    <Grid container sx={{ mt: 2 }}>
-      {isActivityListFetching ? (
-        activityItemSkeleton()
+    <Grid container>
+      {!isActivityListFetching && activityCount === 0 ? (
+        <EmptyContentPlaceholder text="No matches found" />
       ) : (
-        <S.ListContainer container>
-          {/* {activityResults.map(activityItem => ( */}
-          {/*  <div>lul</div> */}
-          {/*  // <ResultItem */}
-          {/*  //   key={searchResult.id} */}
-          {/*  //   searchClass={searchClass} */}
-          {/*  //   searchResult={searchResult} */}
-          {/*  //   totals={totals} */}
-          {/*  // /> */}
-          {/* ))} */}
-          {/* {!isActivityListFetching && !activityResults.length ? ( */}
-          {/*  <EmptyContentPlaceholder text="No matches found" /> */}
-          {/* ) : null} */}
-        </S.ListContainer>
+        <>
+          <S.ContentContainer container>
+            <AppButton
+              size="small"
+              color="tertiary"
+              onClick={() => setHideAllDetails(!hideAllDetails)}
+            >
+              Hide all details
+            </AppButton>
+          </S.ContentContainer>
+          <S.ListContainer id="activities-list">
+            <InfiniteScroll
+              dataLength={activityCount}
+              next={fetchNextPage}
+              hasMore={pageInfo.hasNext}
+              loader={isActivityListFetching && activityItemSkeleton()}
+              scrollThreshold="200px"
+              scrollableTarget="activities-list"
+            >
+              {Object.entries(activityResults).map(
+                ([activityDate, activities]) => (
+                  <ActivityResultByDate
+                    key={activityDate}
+                    activityDate={activityDate}
+                    activities={activities}
+                    hideAllDetails={hideAllDetails}
+                  />
+                )
+              )}
+            </InfiniteScroll>
+          </S.ListContainer>
+        </>
       )}
     </Grid>
   );

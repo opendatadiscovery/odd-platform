@@ -1,14 +1,14 @@
 import React from 'react';
 import { Box, Grid, Typography } from '@mui/material';
-import ActivityFieldHeader from 'components/shared/Activity/ActivityField/ActivityFieldHeader/ActivityFieldHeader';
+import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import { CustomGroupActivityState } from 'generated-sources';
 import { CRUDType } from 'lib/interfaces';
-import ActivityFieldState from 'components/shared/Activity/ActivityField/ActivityFieldState/ActivityFieldState';
+import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import isEmpty from 'lodash/isEmpty';
 import { dataEntityDetailsPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Link } from 'react-router-dom';
-import * as S from './CustomGroupActivityFieldStyles';
+import * as S from 'components/shared/Activity/ActivityFields/CustomGroupActivityField/CustomGroupActivityFieldStyles';
 
 interface GroupFieldData {
   id?: number;
@@ -27,12 +27,11 @@ interface CustomGroupActivityFieldProps {
   oldState: CustomGroupActivityState | undefined;
   newState: CustomGroupActivityState | undefined;
   hideAllDetails: boolean;
-  activityName?: string;
 }
 
 const CustomGroupActivityField: React.FC<
   CustomGroupActivityFieldProps
-> = ({ oldState, newState, hideAllDetails, activityName }) => {
+> = ({ oldState, newState, hideAllDetails }) => {
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
@@ -167,7 +166,7 @@ const CustomGroupActivityField: React.FC<
     <Grid container flexDirection="column">
       <ActivityFieldHeader
         startText="Custom group"
-        activityName={activityName}
+        activityName={oldValues.internalName.name}
         eventType="updated"
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
