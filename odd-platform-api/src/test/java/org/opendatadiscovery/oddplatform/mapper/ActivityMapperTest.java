@@ -29,8 +29,8 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
+import org.opendatadiscovery.oddplatform.dto.activity.BusinessNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.CustomGroupActivityStateDto;
-import org.opendatadiscovery.oddplatform.dto.activity.CustomNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldEnumValuesActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
@@ -201,7 +201,7 @@ public class ActivityMapperTest {
             case DATA_ENTITY_CREATED -> generateDataEntityCreatedState();
             case TAGS_ASSOCIATION_UPDATED -> generateTagsState();
             case DESCRIPTION_UPDATED -> generateDescriptionState();
-            case CUSTOM_NAME_UPDATED -> generateCustomNameState();
+            case BUSINESS_NAME_UPDATED -> generateBusinessNameState();
             case DATASET_FIELD_VALUES_UPDATED -> generateDatasetFieldValuesState();
             case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
                 generateDatasetFieldInformationState();
@@ -238,8 +238,8 @@ public class ActivityMapperTest {
         return JSONSerDeUtils.serializeJson(state);
     }
 
-    private String generateCustomNameState() {
-        final CustomNameActivityStateDto state = GENERATOR.nextObject(CustomNameActivityStateDto.class);
+    private String generateBusinessNameState() {
+        final BusinessNameActivityStateDto state = GENERATOR.nextObject(BusinessNameActivityStateDto.class);
         return JSONSerDeUtils.serializeJson(state);
     }
 

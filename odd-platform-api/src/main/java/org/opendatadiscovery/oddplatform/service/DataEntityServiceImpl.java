@@ -310,7 +310,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_NAME_UPDATED, isSystemEvent = false)
+    @ActivityLog(event = ActivityEventTypeDto.BUSINESS_NAME_UPDATED, isSystemEvent = false)
     public Mono<InternalName> upsertBusinessName(
         @ActivityParameter(ActivityParameterNames.InternalNameUpdated.DATA_ENTITY_ID) final long dataEntityId,
         final InternalNameFormData formData) {
