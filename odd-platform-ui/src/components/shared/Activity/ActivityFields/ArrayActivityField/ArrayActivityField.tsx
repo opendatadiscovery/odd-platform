@@ -2,12 +2,11 @@ import React, { CSSProperties } from 'react';
 import { Grid } from '@mui/material';
 import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
-import { TermActivityState } from 'generated-sources';
 import { CRUDType } from 'lib/interfaces';
 import isEmpty from 'lodash/isEmpty';
-import * as S from 'components/shared/Activity/ActivityFields/ArrayActivityField/ArrayActivityFieldStyled';
+import * as S from 'components/shared/Activity/ActivityFields/ArrayActivityField/ArrayActivityFieldStyles';
 
-interface ActivityData extends TermActivityState {
+interface ActivityData {
   id?: number;
   name?: string;
   important?: boolean;
@@ -21,11 +20,7 @@ interface ArrayActivityFieldProps {
   startText?: string;
   activityName?: string;
   eventType?: string;
-  stateItem: (
-    name: string,
-    namespace?: string,
-    important?: boolean
-  ) => JSX.Element;
+  stateItem: (name: string, important?: boolean) => JSX.Element;
   stateDirection?: CSSProperties['flexDirection'];
 }
 
@@ -45,23 +40,30 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
 
   const [changedItem, setChangedItem] = React.useState<ActivityData>({});
 
+  const sortChangedItemsLast = (item: ActivityData) =>
+    item.typeOfChange ? 1 : -1;
+
   const setOldState = () =>
-    oldState?.map<ActivityData>(oldItem => {
-      if (!newState?.some(newItem => oldItem.id === newItem.id)) {
-        setChangedItem(oldItem);
-        return { ...oldItem, typeOfChange: 'deleted' };
-      }
-      return oldItem;
-    }) || [];
+    oldState
+      ?.map<ActivityData>(oldItem => {
+        if (!newState?.some(newItem => oldItem.id === newItem.id)) {
+          setChangedItem(oldItem);
+          return { ...oldItem, typeOfChange: 'deleted' };
+        }
+        return oldItem;
+      })
+      .sort(sortChangedItemsLast) || [];
 
   const setNewState = () =>
-    newState?.map<ActivityData>(newItem => {
-      if (!oldState?.some(oldItem => oldItem.id === newItem.id)) {
-        setChangedItem(newItem);
-        return { ...newItem, typeOfChange: 'created' };
-      }
-      return newItem;
-    }) || [];
+    newState
+      ?.map<ActivityData>(newItem => {
+        if (!oldState?.some(oldItem => oldItem.id === newItem.id)) {
+          setChangedItem(newItem);
+          return { ...newItem, typeOfChange: 'created' };
+        }
+        return newItem;
+      })
+      .sort(sortChangedItemsLast) || [];
 
   const [oldValues, setOldValues] = React.useState<ActivityData[]>([]);
   const [newValues, setNewValues] = React.useState<ActivityData[]>([]);
@@ -99,7 +101,7 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
 
   const renderStateItem = (value: ActivityData) => (
     <S.ArrayItemWrapper $typeOfChange={value.typeOfChange}>
-      {stateItem(value.name || '', value.namespace, value.important)}
+      {stateItem(value.name || '', value.important)}
     </S.ArrayItemWrapper>
   );
 

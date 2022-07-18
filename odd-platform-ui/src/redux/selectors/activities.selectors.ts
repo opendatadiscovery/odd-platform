@@ -30,7 +30,7 @@ export const getActivityPageInfo = createSelector(
   activities => activities.pageInfo
 );
 
-export const getActivitiesCount = createSelector(
+export const getActivitiesListLength = createSelector(
   activitiesState,
   activities =>
     Object.entries(activities.activitiesByDate)

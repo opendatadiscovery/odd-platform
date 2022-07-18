@@ -29,6 +29,9 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);
 
+  const sortChangedItemsLast = (item: ActivityData) =>
+    item.typeOfChange ? 1 : -1;
+
   const setOldState = () =>
     oldState?.enumValues
       ?.map<ActivityData>(oldItem => {
@@ -39,17 +42,19 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
         }
         return oldItem;
       })
-      .reverse() || [];
+      .sort(sortChangedItemsLast) || [];
 
   const setNewState = () =>
-    newState?.enumValues?.map<ActivityData>(newItem => {
-      if (
-        !oldState?.enumValues?.some(oldItem => oldItem.id === newItem.id)
-      ) {
-        return { ...newItem, typeOfChange: 'created' };
-      }
-      return newItem;
-    }) || [];
+    newState?.enumValues
+      ?.map<ActivityData>(newItem => {
+        if (
+          !oldState?.enumValues?.some(oldItem => oldItem.id === newItem.id)
+        ) {
+          return { ...newItem, typeOfChange: 'created' };
+        }
+        return newItem;
+      })
+      .sort(sortChangedItemsLast) || [];
 
   const [oldValues, setOldValues] = React.useState<ActivityData[]>([]);
   const [newValues, setNewValues] = React.useState<ActivityData[]>([]);

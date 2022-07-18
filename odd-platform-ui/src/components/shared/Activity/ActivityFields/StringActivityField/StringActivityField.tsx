@@ -2,11 +2,12 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
 import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
+import { CRUDType } from 'lib/interfaces';
 
 interface ActivityFieldData {
   oldValue: string;
   newValue: string;
-  activityEvent: 'created' | 'updated' | 'deleted';
+  activityEvent: CRUDType;
   showDetails: boolean;
 }
 

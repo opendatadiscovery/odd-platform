@@ -8,8 +8,6 @@ export const ArrayItemWrapper = styled(Grid)<{
 }>(({ theme, $typeOfChange }) => ({
   width: 'max-content',
   borderRadius: '4px',
-  marginRight: theme.spacing($typeOfChange ? 0.5 : 0),
-  marginLeft: theme.spacing($typeOfChange ? 0.5 : 0),
   padding: theme.spacing($typeOfChange ? 0.5 : 0),
   backgroundColor: $typeOfChange
     ? setActivityBackgroundColor(theme, $typeOfChange)

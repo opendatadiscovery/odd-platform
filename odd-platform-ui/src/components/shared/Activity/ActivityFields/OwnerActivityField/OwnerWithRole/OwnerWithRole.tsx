@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import React from 'react';
 import { CRUDType } from 'lib/interfaces';
-import * as S from 'components/shared/Activity/ActivityFields/OwnerActivityField/OwnerWithRole/OwnerWithRoleStyles';
+import * as S from './OwnerWithRoleStyles';
 
 export interface OwnerWithRoleProps {
   ownerName?: string;

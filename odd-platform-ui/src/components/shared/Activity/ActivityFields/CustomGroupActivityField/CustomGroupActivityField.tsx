@@ -8,7 +8,7 @@ import isEmpty from 'lodash/isEmpty';
 import { dataEntityDetailsPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Link } from 'react-router-dom';
-import * as S from 'components/shared/Activity/ActivityFields/CustomGroupActivityField/CustomGroupActivityFieldStyles';
+import * as S from '../ArrayActivityField/ArrayActivityFieldStyles';
 
 interface GroupFieldData {
   id?: number;

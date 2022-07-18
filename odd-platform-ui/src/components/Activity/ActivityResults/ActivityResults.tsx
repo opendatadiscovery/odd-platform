@@ -5,9 +5,9 @@ import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getActivitiesByDate,
-  getActivitiesCount,
   getActivitiesCountsParams,
   getActivitiesListFetchingStatuses,
+  getActivitiesListLength,
   getActivitiesQueryParams,
   getActivitiesQueryParamsByName,
   getActivityCounts,
@@ -41,7 +41,7 @@ const ActivityResults: React.FC = () => {
   const queryParams = useAppSelector(getActivitiesQueryParams);
   const countParams = useAppSelector(getActivitiesCountsParams);
   const activityResults = useAppSelector(getActivitiesByDate);
-  const activityCount = useAppSelector(getActivitiesCount);
+  const activityCount = useAppSelector(getActivitiesListLength);
   const { isLoading: isActivityListFetching } = useAppSelector(
     getActivitiesListFetchingStatuses
   );

@@ -29,7 +29,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
   hideAllDetails,
 }) => {
   const tagStateItem = React.useCallback(
-    (name, _, important) => (
+    (name, important) => (
       <TagItem
         sx={{ backgroundColor: 'white' }}
         label={name}

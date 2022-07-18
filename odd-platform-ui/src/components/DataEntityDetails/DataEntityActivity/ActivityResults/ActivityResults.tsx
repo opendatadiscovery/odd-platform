@@ -3,8 +3,8 @@ import { Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getActivitiesByDate,
-  getActivitiesCount,
   getActivitiesListFetchingStatuses,
+  getActivitiesListLength,
   getActivitiesQueryParams,
   getActivityPageInfo,
 } from 'redux/selectors';
@@ -30,7 +30,7 @@ const ActivityResults: React.FC = () => {
 
   const queryParams = useAppSelector(getActivitiesQueryParams);
   const activityResults = useAppSelector(getActivitiesByDate);
-  const activityCount = useAppSelector(getActivitiesCount);
+  const activityCount = useAppSelector(getActivitiesListLength);
   const pageInfo = useAppSelector(getActivityPageInfo);
   const { isLoading: isActivityListFetching } = useAppSelector(
     getActivitiesListFetchingStatuses
