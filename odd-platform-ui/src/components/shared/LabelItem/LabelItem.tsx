@@ -11,6 +11,7 @@ interface LabelItemProps {
   unfilled?: boolean;
   variant?: TypographyProps['variant'];
   component?: React.ElementType;
+  systemLabel?: boolean;
 }
 
 const LabelItem: React.FC<LabelItemProps> = ({
@@ -20,17 +21,19 @@ const LabelItem: React.FC<LabelItemProps> = ({
   unfilled,
   variant = 'body2',
   component = 'span',
+  systemLabel,
 }) => (
   <Container
     $unfilled={unfilled}
     sx={{ m: 0.25 }}
     noWrap
+    $systemLabel={systemLabel}
     variant={variant}
     component={component}
     title={labelName}
   >
     {labelName}
-    {removable && (
+    {removable && !systemLabel && (
       <AppIconButton
         sx={{ ml: 0.25 }}
         size="small"

@@ -17,7 +17,7 @@ interface DataSetFieldInfoEditFormProps {
   datasetFieldId: number;
   datasetFieldFormData: {
     internalDescription: string;
-    labels: { name: string }[];
+    labels: { name: string; external?: boolean }[];
   };
   isLoading: boolean;
   updateDataSetFieldFormData: (
@@ -27,7 +27,7 @@ interface DataSetFieldInfoEditFormProps {
 }
 
 type DatasetFieldInfoFormType = {
-  labels: { name: string }[];
+  labels: { name: string; external?: boolean }[];
   internalDescription: string;
 };
 
@@ -44,6 +44,7 @@ const DatasetFieldInfoEditForm: React.FC<
     defaultValues: {
       labels: datasetFieldFormData.labels.map(label => ({
         name: label.name,
+        external: label.external,
       })),
       internalDescription: datasetFieldFormData.internalDescription,
     },
@@ -65,6 +66,7 @@ const DatasetFieldInfoEditForm: React.FC<
     methods.reset({
       labels: datasetFieldFormData.labels.map(label => ({
         name: label.name,
+        external: label.external,
       })),
       internalDescription: datasetFieldFormData.internalDescription,
     });
@@ -115,6 +117,7 @@ const DatasetFieldInfoEditForm: React.FC<
       <S.LabelItemsContainer sx={{ mt: 1, mb: 1.5 }}>
         {fields.map((label, index) => (
           <LabelItem
+            systemLabel={label.external}
             key={label.id}
             labelName={label.name}
             removable

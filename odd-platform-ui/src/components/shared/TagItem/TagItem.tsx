@@ -1,6 +1,7 @@
 import React from 'react';
 import { Theme } from '@mui/material';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import SystemIcon from 'components/shared/Icons/SystemIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { SxProps } from '@mui/system';
 import * as S from './TagItemStyles';
@@ -13,6 +14,7 @@ interface TagItemProps {
   onClick?: () => void;
   sx?: SxProps<Theme>;
   cursorPointer?: boolean;
+  systemTag?: boolean;
 }
 
 const TagItem: React.FC<TagItemProps> = ({
@@ -23,17 +25,19 @@ const TagItem: React.FC<TagItemProps> = ({
   onClick,
   cursorPointer,
   sx,
+  systemTag,
 }) => (
   <S.Container
     variant="body1"
     $important={important}
-    $removable={removable}
+    $systemTag={systemTag}
     $cursorPointer={cursorPointer}
     onClick={onClick}
     sx={sx}
   >
+    {systemTag && <SystemIcon />}
     {label}
-    {removable && (
+    {removable && !systemTag && (
       <AppIconButton
         size="small"
         color="unfilled"
