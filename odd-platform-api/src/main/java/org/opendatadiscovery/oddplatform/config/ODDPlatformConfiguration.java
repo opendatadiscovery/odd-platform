@@ -1,7 +1,7 @@
 package org.opendatadiscovery.oddplatform.config;
 
 import org.opendatadiscovery.oddplatform.config.properties.MetricExporterProperties;
-import org.opendatadiscovery.oddplatform.notification.NotificationsProperties;
+import org.opendatadiscovery.oddplatform.notification.config.NotificationsProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;

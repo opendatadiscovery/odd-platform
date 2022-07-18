@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.opendatadiscovery.oddplatform.notification.config.NotificationsProperties;
 import org.opendatadiscovery.oddplatform.notification.processor.AlertNotificationMessageProcessor;
 import org.opendatadiscovery.oddplatform.notification.wal.PostgresWALMessageDecoder;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -14,7 +15,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationSubscriberStarter {
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor(
+        r -> new Thread(r, "notification-subscriber-thread")
+    );
 
     private final PGConnectionFactory pgConnectionFactory;
     private final PostgresWALMessageDecoder messageDecoder;

@@ -1,11 +1,13 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
@@ -22,19 +24,14 @@ import static java.util.Collections.emptySet;
 public class JooqRecordHelper {
     private final DSLContext dslContext;
 
-    public <T> Set<T> extractAggRelation(final Record r, final String fieldName, final Class<T> fieldPojoClass) {
-        final Set<?> set;
-        try {
-            set = r.get(fieldName, Set.class);
-        } catch (final IllegalArgumentException e) {
-            return emptySet();
-        }
+    public <T> Set<T> extractAggRelation(final Record r,
+                                         final String fieldName,
+                                         final TypeReference<T> typeReference) {
+        return extractAggRelation(r, fieldName, t -> JSONSerDeUtils.deserializeJson(t, typeReference));
+    }
 
-        return set
-            .stream()
-            .map(t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass))
-            .filter(Objects::nonNull)
-            .collect(Collectors.toSet());
+    public <T> Set<T> extractAggRelation(final Record r, final String fieldName, final Class<T> fieldPojoClass) {
+        return extractAggRelation(r, fieldName, t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass));
     }
 
     public <P> P extractRelation(final Record r, final Table<?> relationTable, final Class<P> pojoClass) {
@@ -65,5 +62,22 @@ public class JooqRecordHelper {
         final Record record = dslContext.newRecord(remappedFields);
         record.fromMap(remappedValues);
         return record;
+    }
+
+    private <T> Set<T> extractAggRelation(final Record r,
+                                          final String fieldName,
+                                          final Function<? super Object, T> deserializer) {
+        final Set<?> set;
+
+        try {
+            set = r.get(fieldName, Set.class);
+        } catch (final IllegalArgumentException e) {
+            return emptySet();
+        }
+
+        return set.stream()
+            .map(deserializer)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 }

@@ -27,6 +27,15 @@ public class JSONSerDeUtils {
     }
 
     @Nullable
+    public static <T> T deserializeJson(final Object data, final TypeReference<T> typeReference) {
+        if (data == null || typeReference == null) {
+            return null;
+        }
+
+        return OBJECT_MAPPER.convertValue(data, typeReference);
+    }
+
+    @Nullable
     public static <T> T deserializeJson(final Object data, final Class<T> clazz) {
         if (data == null || clazz == null) {
             return null;

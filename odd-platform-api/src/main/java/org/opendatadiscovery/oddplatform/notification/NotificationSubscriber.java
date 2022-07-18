@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -12,7 +13,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.Table;
 import org.opendatadiscovery.oddplatform.model.Tables;
-import org.opendatadiscovery.oddplatform.notification.NotificationsProperties.WalProperties;
+import org.opendatadiscovery.oddplatform.notification.config.NotificationsProperties.WalProperties;
+import org.opendatadiscovery.oddplatform.notification.exception.NotificationSubscriberException;
 import org.opendatadiscovery.oddplatform.notification.processor.PostgresWALMessageProcessor;
 import org.opendatadiscovery.oddplatform.notification.wal.PostgresWALMessageDecoder;
 import org.postgresql.PGConnection;
@@ -38,14 +40,11 @@ public class NotificationSubscriber extends Thread {
             "publication_names", walProperties.getPublicationName()
         ));
 
-        while (true) {
+        while (!Thread.interrupted()) {
             final Connection replicationConnection = connectionFactory.getConnection(true);
 
             try {
-                replicationConnection.createStatement()
-                    .execute("SELECT pg_advisory_lock(%d)".formatted(walProperties.getAdvisoryLockId()));
-
-                log.debug("Acquired advisory lock on id = {}", walProperties.getAdvisoryLockId());
+                acquireAdvisoryLock(replicationConnection);
 
                 final PGConnection pgReplicationConnection = replicationConnection.unwrap(PGConnection.class);
 
@@ -61,6 +60,12 @@ public class NotificationSubscriber extends Thread {
 
                 try (final PGReplicationStream stream = streamBuilder.start()) {
                     while (true) {
+                        if (Thread.interrupted()) {
+                            log.warn("Notification subscriber thread interrupted while processing WAL messages");
+                            Thread.currentThread().interrupt();
+                            return;
+                        }
+
                         final ByteBuffer buffer = stream.readPending();
 
                         if (buffer == null) {
@@ -77,8 +82,11 @@ public class NotificationSubscriber extends Thread {
                         stream.setFlushedLSN(stream.getLastReceiveLSN());
                     }
                 }
+            } catch (final InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new NotificationSubscriberException(e);
             } catch (final Exception e) {
-                log.error("Error occurred while subscribing: {}", e);
+                log.error("Error occurred while subscribing", e);
             } finally {
                 try {
                     replicationConnection.close();
@@ -91,33 +99,43 @@ public class NotificationSubscriber extends Thread {
             try {
                 TimeUnit.SECONDS.sleep(10L);
             } catch (final InterruptedException e) {
-                log.error("Error while sleeping", e);
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
+                throw new NotificationSubscriberException(e);
             }
         }
+    }
+
+    private void acquireAdvisoryLock(final Connection replicationConnection) throws SQLException {
+        try (final Statement advisoryLockStatement = replicationConnection.createStatement()) {
+            advisoryLockStatement.execute(
+                "SELECT pg_advisory_lock(%d)".formatted(walProperties.getAdvisoryLockId()));
+        }
+
+        log.debug("Acquired advisory lock on id = {}", walProperties.getAdvisoryLockId());
     }
 
     private void registerReplicationSlot(final Connection connection,
                                          final PGConnection replicationConnection) throws SQLException {
         final String existsQuery = "SELECT EXISTS (SELECT slot_name FROM pg_replication_slots WHERE slot_name = ?)";
 
-        final PreparedStatement statement = connection.prepareStatement(existsQuery);
-        statement.setString(1, walProperties.getReplicationSlotName());
+        try (final PreparedStatement statement = connection.prepareStatement(existsQuery)) {
+            statement.setString(1, walProperties.getReplicationSlotName());
 
-        try (final ResultSet resultSet = statement.executeQuery()) {
-            resultSet.next();
-            if (!resultSet.getBoolean(1)) {
-                log.debug("Creating replication slot with name {}", walProperties.getReplicationSlotName());
-                replicationConnection.getReplicationAPI()
-                    .createReplicationSlot()
-                    .logical()
-                    .withSlotName(walProperties.getReplicationSlotName())
-                    .withOutputPlugin(PG_REPLICATION_OUTPUT_PLUGIN)
-                    .make();
+            try (final ResultSet resultSet = statement.executeQuery()) {
+                resultSet.next();
+                if (!resultSet.getBoolean(1)) {
+                    log.debug("Creating replication slot with name {}", walProperties.getReplicationSlotName());
+                    replicationConnection.getReplicationAPI()
+                        .createReplicationSlot()
+                        .logical()
+                        .withSlotName(walProperties.getReplicationSlotName())
+                        .withOutputPlugin(PG_REPLICATION_OUTPUT_PLUGIN)
+                        .make();
+                }
             }
         }
 
-        log.debug("Replication slot {} registed", walProperties.getReplicationSlotName());
+        log.debug("Replication slot {} registered", walProperties.getReplicationSlotName());
     }
 
     private void registerPublication(final Connection connection, final Table<?> targetTable) throws SQLException {
@@ -127,24 +145,25 @@ public class NotificationSubscriber extends Thread {
 
         final String existsQuery = "SELECT EXISTS (SELECT oid FROM pg_publication WHERE pubname = ?)";
 
-        final PreparedStatement existsStatement = connection.prepareStatement(existsQuery);
-        existsStatement.setString(1, walProperties.getPublicationName());
+        try (final PreparedStatement existsStatement = connection.prepareStatement(existsQuery)) {
+            existsStatement.setString(1, walProperties.getPublicationName());
 
-        try (final ResultSet resultSet = existsStatement.executeQuery()) {
-            resultSet.next();
-            if (!resultSet.getBoolean(1)) {
-                // PostgreSQL tables are always in a schema, so we don't need to check targetTable.getSchema() for null
-                final String tableName =
-                    String.format("%s.%s", targetTable.getSchema().getName(), targetTable.getName());
+            try (final ResultSet resultSet = existsStatement.executeQuery()) {
+                resultSet.next();
+                if (!resultSet.getBoolean(1)) {
+                    // PostgreSQL tables are always in a schema,
+                    // so we don't need to check targetTable.getSchema() for null
+                    final String tableName =
+                        String.format("%s.%s", targetTable.getSchema().getName(), targetTable.getName());
 
-                log.debug("Creating publication with name {} for table {}",
-                    walProperties.getPublicationName(), tableName);
+                    log.debug("Creating publication with name {} for table {}",
+                        walProperties.getPublicationName(), tableName);
 
-                connection.createStatement().execute(
-                    "CREATE PUBLICATION %s FOR TABLE %s".formatted(walProperties.getPublicationName(), tableName));
+                    connection.createStatement().execute(
+                        "CREATE PUBLICATION %s FOR TABLE %s".formatted(walProperties.getPublicationName(), tableName));
+                }
             }
         }
-
         log.debug("Publication {} registered", walProperties.getPublicationName());
     }
 }

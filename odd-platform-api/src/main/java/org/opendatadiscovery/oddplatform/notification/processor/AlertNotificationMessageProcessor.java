@@ -1,20 +1,37 @@
 package org.opendatadiscovery.oddplatform.notification.processor;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.opendatadiscovery.oddplatform.notification.NotificationsProperties;
-import org.opendatadiscovery.oddplatform.notification.processor.webhook.WebhookSender;
-import org.opendatadiscovery.oddplatform.notification.wal.DecodedWALMessage;
+import lombok.extern.slf4j.Slf4j;
+import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
+import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage;
+import org.opendatadiscovery.oddplatform.notification.translator.NotificationMessageTranslator;
+import org.opendatadiscovery.oddplatform.notification.sender.NotificationSender;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class AlertNotificationMessageProcessor implements PostgresWALMessageProcessor {
-    private final WebhookSender webhookSender;
-    private final NotificationsProperties notificationsProperties;
-    private final NotificationMessageBuilder messageBuilder;
+    private final List<NotificationSender<AlertNotificationMessage>> notificationSenders;
+    private final NotificationMessageTranslator<AlertNotificationMessage> messageEnricher;
 
     @Override
     public void process(final DecodedWALMessage message) {
-        webhookSender.send(notificationsProperties.getWebhookUrl(), messageBuilder.build(message));
+        final AlertNotificationMessage notificationMessage = messageEnricher.translate(message);
+
+        notificationSenders.forEach(sender -> sendMessage(sender, notificationMessage));
+    }
+
+    private void sendMessage(final NotificationSender<AlertNotificationMessage> notificationSender,
+                             final AlertNotificationMessage message) {
+        log.debug("Sending notification message via {}: {}", notificationSender.receiverId(), message);
+
+        try {
+            notificationSender.send(message);
+        } catch (final Exception e) {
+            log.error(String.format(
+                "Error occurred while sending notification via %s", notificationSender.receiverId()), e);
+        }
     }
 }
