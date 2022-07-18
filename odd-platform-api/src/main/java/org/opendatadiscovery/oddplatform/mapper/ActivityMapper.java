@@ -13,8 +13,8 @@ import org.mapstruct.NullValueCheckStrategy;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
+import org.opendatadiscovery.oddplatform.api.contract.model.BusinessNameActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.CustomGroupActivityState;
-import org.opendatadiscovery.oddplatform.api.contract.model.CustomNameActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityActivityState;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -31,8 +31,8 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
+import org.opendatadiscovery.oddplatform.dto.activity.BusinessNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.CustomGroupActivityStateDto;
-import org.opendatadiscovery.oddplatform.dto.activity.CustomNameActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DataEntityCreatedActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldInformationActivityStateDto;
 import org.opendatadiscovery.oddplatform.dto.activity.DatasetFieldValuesActivityStateDto;
@@ -103,7 +103,7 @@ public abstract class ActivityMapper {
             case DATA_ENTITY_CREATED -> mapDataEntityCreatedState(jsonb);
             case TERM_ASSIGNED, TERM_ASSIGNMENT_DELETED -> mapTermsState(jsonb);
             case DESCRIPTION_UPDATED -> mapDescriptionState(jsonb);
-            case CUSTOM_NAME_UPDATED -> mapCustomNameState(jsonb);
+            case BUSINESS_NAME_UPDATED -> mapBusinessNameState(jsonb);
             case DATASET_FIELD_VALUES_UPDATED -> mapDatasetFieldValuesState(jsonb);
             case DATASET_FIELD_DESCRIPTION_UPDATED, DATASET_FIELD_LABELS_UPDATED ->
                 mapDatasetFieldInformationState(jsonb);
@@ -166,14 +166,14 @@ public abstract class ActivityMapper {
 
     abstract DescriptionActivityState mapDescriptionActivityState(final DescriptionActivityStateDto dto);
 
-    ActivityState mapCustomNameState(final JSONB jsonb) {
-        final CustomNameActivityStateDto stateDto =
-            JSONSerDeUtils.deserializeJson(jsonb.data(), CustomNameActivityStateDto.class);
-        final CustomNameActivityState state = mapInternalNameActivityState(stateDto);
-        return new ActivityState().customName(state);
+    ActivityState mapBusinessNameState(final JSONB jsonb) {
+        final BusinessNameActivityStateDto stateDto =
+            JSONSerDeUtils.deserializeJson(jsonb.data(), BusinessNameActivityStateDto.class);
+        final BusinessNameActivityState state = mapInternalNameActivityState(stateDto);
+        return new ActivityState().businessName(state);
     }
 
-    abstract CustomNameActivityState mapInternalNameActivityState(final CustomNameActivityStateDto dto);
+    abstract BusinessNameActivityState mapInternalNameActivityState(final BusinessNameActivityStateDto dto);
 
     ActivityState mapDatasetFieldValuesState(final JSONB jsonb) {
         final DatasetFieldValuesActivityStateDto stateDto =

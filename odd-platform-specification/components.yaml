@@ -1879,8 +1879,8 @@ components:
             $ref: '#/components/schemas/TermActivityState'
         description:
           $ref: '#/components/schemas/DescriptionActivityState'
-        custom_name:
-          $ref: '#/components/schemas/CustomNameActivityState'
+        business_name:
+          $ref: '#/components/schemas/BusinessNameActivityState'
         custom_metadata:
           type: array
           items:
@@ -1947,7 +1947,7 @@ components:
         description:
           type: string
 
-    CustomNameActivityState:
+    BusinessNameActivityState:
       type: object
       properties:
         internal_name:
@@ -2075,7 +2075,7 @@ components:
         - TERM_ASSIGNED
         - TERM_ASSIGNMENT_DELETED
         - DESCRIPTION_UPDATED
-        - CUSTOM_NAME_UPDATED
+        - BUSINESS_NAME_UPDATED
         - CUSTOM_METADATA_CREATED
         - CUSTOM_METADATA_UPDATED
         - CUSTOM_METADATA_DELETED
