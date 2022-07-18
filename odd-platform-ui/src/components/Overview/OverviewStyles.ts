@@ -99,7 +99,7 @@ export const ListItem = styled('div')<{ $index?: number }>(
     p: {
       color: theme.palette.texts.info,
       fontSize: '14px',
-      marginLeft: theme.spacing(0.2),
+      marginLeft: theme.spacing(0.5),
     },
     h4: { color: theme.palette.texts.primary },
   })

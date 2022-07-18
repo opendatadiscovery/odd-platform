@@ -229,11 +229,10 @@ export const deleteDataEntityFromGroup = createAsyncThunk<
   }
 );
 
-export const getDataentitiesUsage = createAsyncThunk<
+export const fetchDataentitiesUsageInfo = createAsyncThunk<
   DataEntityUsageInfo,
   void
 >(actions.fetchDataentitiesUsageActionType, async () => {
-  const { totalCount, unfilledCount, dataEntityClassesInfo } =
-    await dataEntityApi.getDataEntitiesUsage();
-  return { totalCount, unfilledCount, dataEntityClassesInfo };
+  const response = await dataEntityApi.getDataEntitiesUsage();
+  return response;
 });

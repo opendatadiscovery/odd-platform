@@ -18,6 +18,7 @@ import {
   fetchMyUpstreamDataEntitiesList,
   fetchPopularDataEntitiesList,
   fetchAlertsTotals,
+  fetchDataentitiesUsageInfo,
 } from 'redux/thunks';
 import {
   getDataEntityClassesInfo,
@@ -87,6 +88,7 @@ const Overview: React.FC<OverviewProps> = ({
   React.useEffect(() => {
     dispatch(fetchAlertsTotals());
     fetchTagsList({ page: 1, size: 20 });
+    dispatch(fetchDataentitiesUsageInfo());
   }, []);
 
   return (
@@ -124,6 +126,7 @@ const Overview: React.FC<OverviewProps> = ({
               <S.ListItemContainer>
                 {dataEntitiesUsageItems?.map((item, index: number) => (
                   <Box
+                    key={item?.entityClass?.id}
                     sx={{
                       display: 'flex',
                       justifyContent: 'space-between',

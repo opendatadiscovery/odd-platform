@@ -19,9 +19,11 @@ export const initialState: DataEntitiesState = {
   myUpstream: [],
   myDownstream: [],
   popular: [],
-  dataEntityUsageTotalCount: 0,
-  dataEntityUsageUnfilledCount: 0,
-  dataEntityUsageClassesInfo: [],
+  dataEntityUsageInfo: {
+    totalCount: 0,
+    unfilledCount: 0,
+    dataEntityClassesInfo: [],
+  },
 };
 
 const updateDataEntity = (
@@ -243,6 +245,13 @@ export const dataEntitiesSlice = createSlice({
       (state, { payload }) => ({
         ...state,
         popular: payload,
+      })
+    );
+    builder.addCase(
+      thunks.fetchDataentitiesUsageInfo.fulfilled,
+      (state, { payload }) => ({
+        ...state,
+        dataEntityUsageInfo: payload,
       })
     );
 

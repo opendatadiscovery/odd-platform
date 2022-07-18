@@ -96,17 +96,17 @@ export const getPopularEntities = createSelector(
 
 export const getDataEntitiesUsageTotalCount = createSelector(
   dataEntitiesState,
-  dataEntities => dataEntities.dataEntityUsageTotalCount
+  dataEntities => dataEntities.dataEntityUsageInfo.totalCount
 );
 
 export const getDataEntitiesUsageUnfilledCount = createSelector(
   dataEntitiesState,
-  dataEntities => dataEntities.dataEntityUsageUnfilledCount
+  dataEntities => dataEntities.dataEntityUsageInfo.unfilledCount
 );
 
 export const getDataEntityClassesInfo = createSelector(
   dataEntitiesState,
-  dataEntities => dataEntities.dataEntityUsageClassesInfo
+  dataEntities => dataEntities.dataEntityUsageInfo.dataEntityClassesInfo
 );
 
 // Details
