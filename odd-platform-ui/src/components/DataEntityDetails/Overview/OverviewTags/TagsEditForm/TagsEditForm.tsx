@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Tag } from 'generated-sources';
 import compact from 'lodash/compact';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
@@ -9,6 +9,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import { useAppDispatch } from 'lib/redux/hooks';
 
 import { updateDataEntityTags } from 'redux/thunks';
+import { TagListContainer } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import TagsEditFormAutocomplete from './TagsEditFormAutocomplete/TagsEditFormAutocomplete';
 
 interface TagsEditProps {
@@ -27,10 +28,16 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
   const dispatch = useAppDispatch();
 
   type DataEntityTagsFormType = {
-    tagNameList: { name: string; important: boolean }[];
+    tagNameList: {
+      name: string;
+      important: boolean;
+      external?: boolean;
+    }[];
   };
   const methods = useForm<DataEntityTagsFormType>({
-    defaultValues: { tagNameList: [{ name: '', important: false }] },
+    defaultValues: {
+      tagNameList: [{ name: '' }],
+    },
   });
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
@@ -42,6 +49,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
       tagNameList: dataEntityTags?.map(tag => ({
         name: tag.name,
         important: tag.important,
+        external: tag.external,
       })),
     });
     handleOpen();
@@ -97,18 +105,19 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
           id="tags-create-form"
           onSubmit={methods.handleSubmit(handleSubmit)}
         >
-          <Box sx={{ mt: 1 }}>
+          <TagListContainer sx={{ mt: 1 }}>
             {fields?.map((field, index) => (
               <TagItem
                 sx={{ my: 0.5, mr: 0.5 }}
                 key={field.id}
+                systemTag={field.external}
                 label={field.name}
                 important={field.important}
                 removable
                 onRemoveClick={handleRemove(index)}
               />
             ))}
-          </Box>
+          </TagListContainer>
         </form>
       </FormProvider>
     </>
@@ -137,6 +146,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
+      formSubmitHandler={methods.handleSubmit(handleSubmit)}
     />
   );
 };

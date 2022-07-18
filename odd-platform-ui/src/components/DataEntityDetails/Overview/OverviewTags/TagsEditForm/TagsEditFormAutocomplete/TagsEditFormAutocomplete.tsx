@@ -10,9 +10,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { OptionsContainer } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import { fetchTagsList as searchTags } from 'redux/thunks';
-
 import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 
 interface TagsEditFormAutocompleteProps {
@@ -104,7 +103,11 @@ const TagsEditFormAutocomplete: React.FC<
   ) => {
     if (!value) return;
     setSearchText(''); // Clear input on select
-    append(typeof value === 'string' ? { name: value } : value);
+    append(
+      typeof value === 'string'
+        ? { name: value }
+        : { ...value, external: false }
+    );
   };
 
   return (
@@ -127,7 +130,7 @@ const TagsEditFormAutocomplete: React.FC<
       value={{ name: searchText }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppTextField
+        <AppInput
           {...params}
           ref={params.InputProps.ref}
           placeholder="Enter tag name…"

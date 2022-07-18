@@ -225,13 +225,13 @@ export const palette = createPalette({
   },
   datasetFieldKey: {
     primary: {
-      background: colors.blue10,
-      color: colors.black70,
+      background: colors.black30,
+      color: colors.white,
       border: colors.blue30,
     },
     sort: {
-      background: colors.blue10,
-      color: colors.black70,
+      background: colors.black30,
+      color: colors.white,
       border: colors.blue10,
     },
   },

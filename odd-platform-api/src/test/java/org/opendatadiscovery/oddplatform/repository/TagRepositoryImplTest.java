@@ -102,17 +102,19 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .blockOptional()
             .orElseThrow();
-        final List<Long> savedTagsListIds = savedTagsList.stream().map(TagPojo::getId).toList();
         final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
         final Long dataEntityId = testDataEntityList.get(0).getId();
+        final List<TagToDataEntityPojo> pojos = savedTagsList.stream()
+            .map(tag -> new TagToDataEntityPojo().setTagId(tag.getId()).setDataEntityId(dataEntityId))
+            .toList();
 
-        reactiveTagRepository.createDataEntityRelations(dataEntityId, savedTagsListIds)
+        reactiveTagRepository.createDataEntityRelations(pojos)
             .collectList()
             .as(StepVerifier::create)
             .assertNext(relations -> assertThat(relations).isNotEmpty()
                 .hasSize(numberOfTestTags)
                 .extracting(TagToDataEntityPojo::getTagId)
-                .containsExactlyInAnyOrder(savedTagsListIds.toArray(Long[]::new)))
+                .containsExactlyInAnyOrder(savedTagsList.stream().map(TagPojo::getId).toArray(Long[]::new)))
             .verifyComplete();
     }
 
@@ -126,12 +128,14 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .blockOptional()
             .orElseThrow();
-        final List<Long> savedTagsListIds = savedTagsList.stream().map(TagPojo::getId).toList();
         final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
-        final Long dataEntityId = testDataEntityList.get(0).getId();
-
-        reactiveTagRepository.createDataEntityRelations(dataEntityId, savedTagsListIds.subList(
-                numberOfTestTags - tagsNotInDE, savedTagsListIds.size()))
+        final List<TagToDataEntityPojo> pojos =
+            savedTagsList.subList(numberOfTestTags - tagsNotInDE, savedTagsList.size()).stream()
+                .map(tag -> new TagToDataEntityPojo()
+                    .setTagId(tag.getId())
+                    .setDataEntityId(testDataEntityList.get(0).getId()))
+                .toList();
+        reactiveTagRepository.createDataEntityRelations(pojos)
             .collectList()
             .as(StepVerifier::create)
             .assertNext(relations -> assertThat(relations).isNotEmpty().hasSize(numberOfTestTags - tagsNotInDE))
@@ -142,9 +146,8 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
     @DisplayName("Creates tags relations where list of tags is empty, expecting no relations are created")
     void testCreateRelationsIsEmpty() {
         final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
-        final Long dataEntityId = testDataEntityList.get(0).getId();
 
-        reactiveTagRepository.createDataEntityRelations(dataEntityId, List.of())
+        reactiveTagRepository.createDataEntityRelations(List.of())
             .as(StepVerifier::create)
             .verifyComplete();
     }
@@ -158,19 +161,22 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .blockOptional()
             .orElseThrow();
-        final List<Long> savedTagsListIds = savedTagsList.stream().map(TagPojo::getId).toList();
         final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
-        final Long dataEntityId = testDataEntityList.get(0).getId();
+        final List<TagToDataEntityPojo> savedTagsPojos = savedTagsList.stream()
+            .map(tag -> new TagToDataEntityPojo()
+                .setTagId(tag.getId())
+                .setDataEntityId(testDataEntityList.get(0).getId()))
+            .toList();
 
-        reactiveTagRepository.createDataEntityRelations(dataEntityId, savedTagsListIds).blockLast();
+        reactiveTagRepository.createDataEntityRelations(savedTagsPojos).blockLast();
 
-        reactiveTagRepository.deleteDataEntityRelations(dataEntityId, savedTagsListIds)
+        reactiveTagRepository.deleteDataEntityRelations(savedTagsPojos)
             .collectList()
             .as(StepVerifier::create)
             .assertNext(deletedRelations -> assertThat(deletedRelations)
                 .hasSize(numberOfTestTags)
                 .extracting(TagToDataEntityPojo::getTagId)
-                .containsExactlyInAnyOrder(savedTagsListIds.toArray(Long[]::new)))
+                .containsExactlyInAnyOrder(savedTagsList.stream().map(TagPojo::getId).toArray(Long[]::new)))
             .verifyComplete();
     }
 
@@ -183,13 +189,16 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
             .collectList()
             .blockOptional()
             .orElseThrow();
-        final List<Long> savedTagsListIds = savedTagsList.stream().map(TagPojo::getId).toList();
         final List<DataEntityPojo> testDataEntityList = dataEntityRepository.bulkCreate(List.of(new DataEntityPojo()));
-        final Long dataEntityId = testDataEntityList.get(0).getId();
+        final List<TagToDataEntityPojo> savedTagsPojos = savedTagsList.stream()
+            .map(tag -> new TagToDataEntityPojo()
+                .setTagId(tag.getId())
+                .setDataEntityId(testDataEntityList.get(0).getId()))
+            .toList();
 
-        reactiveTagRepository.createDataEntityRelations(dataEntityId, savedTagsListIds).blockLast();
+        reactiveTagRepository.createDataEntityRelations(savedTagsPojos).blockLast();
 
-        reactiveTagRepository.deleteDataEntityRelations(dataEntityId, List.of())
+        reactiveTagRepository.deleteDataEntityRelations(List.of())
             .as(StepVerifier::create)
             .verifyComplete();
     }

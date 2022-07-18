@@ -36,38 +36,40 @@ const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
           {tag.important ? 'important' : ''}
         </Typography>
       </S.Col>
-      <S.ActionsContainer container item>
-        <TagEditForm
-          tag={tag}
-          editBtn={
-            <AppButton
-              size="medium"
-              color="primaryLight"
-              startIcon={<EditIcon />}
-              sx={{ mr: 1 }}
-            >
-              Edit
-            </AppButton>
-          }
-        />
-        <ConfirmationDialog
-          actionTitle="Are you sure you want to delete this tag?"
-          actionName="Delete Tag"
-          actionText={
-            <>&quot;{tag.name}&quot; will be deleted permanently.</>
-          }
-          onConfirm={handleDelete}
-          actionBtn={
-            <AppButton
-              size="medium"
-              color="primaryLight"
-              startIcon={<DeleteIcon />}
-            >
-              Delete
-            </AppButton>
-          }
-        />
-      </S.ActionsContainer>
+      {!tag.external && (
+        <S.ActionsContainer container item>
+          <TagEditForm
+            tag={tag}
+            editBtn={
+              <AppButton
+                size="medium"
+                color="primaryLight"
+                startIcon={<EditIcon />}
+                sx={{ mr: 1 }}
+              >
+                Edit
+              </AppButton>
+            }
+          />
+          <ConfirmationDialog
+            actionTitle="Are you sure you want to delete this tag?"
+            actionName="Delete Tag"
+            actionText={
+              <>&quot;{tag.name}&quot; will be deleted permanently.</>
+            }
+            onConfirm={handleDelete}
+            actionBtn={
+              <AppButton
+                size="medium"
+                color="primaryLight"
+                startIcon={<DeleteIcon />}
+              >
+                Delete
+              </AppButton>
+            }
+          />
+        </S.ActionsContainer>
+      )}
     </S.Container>
   );
 };

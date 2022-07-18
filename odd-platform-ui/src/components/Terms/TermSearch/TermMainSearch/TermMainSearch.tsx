@@ -16,7 +16,8 @@ import {
   TermMainSearchSearch,
 } from 'components/Terms/TermSearch/TermMainSearch/TermMainSearchStyles';
 import { useDebouncedCallback } from 'use-debounce';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 
@@ -143,7 +144,7 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
           filterOptions={option => option}
           clearIcon={<ClearIcon />}
           renderInput={params => (
-            <AppTextField
+            <AppInput
               {...params}
               ref={params.InputProps.ref}
               size="large"

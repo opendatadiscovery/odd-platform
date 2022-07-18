@@ -2,7 +2,7 @@ import React, { HTMLInputTypeAttribute } from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useFormContext } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import {
@@ -19,12 +19,9 @@ interface DatasetFieldEnumsFormItemProps {
   enumValueType: DataSetFieldTypeTypeEnum;
 }
 
-const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
-  itemIndex,
-  onItemRemove,
-  enumValueType,
-  itemId,
-}) => {
+const DatasetFieldEnumsFormItem: React.FC<
+  DatasetFieldEnumsFormItemProps
+> = ({ itemIndex, onItemRemove, enumValueType, itemId }) => {
   const { control, getValues } = useFormContext();
   const [editMode, setEditMode] = React.useState<boolean>(false);
 
@@ -63,7 +60,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
             }}
             render={({ field }) => (
               <ValueNameContainer sx={{ mr: 1 }}>
-                <AppTextField
+                <AppInput
                   {...field}
                   placeholder="Name of value"
                   name={`enums.${itemIndex}.name`}
@@ -84,7 +81,7 @@ const DatasetFieldEnumsFormItem: React.FC<DatasetFieldEnumsFormItemProps> = ({
             control={control}
             render={({ field }) => (
               <ValueDescriptionContainer sx={{ mr: 1 }}>
-                <AppTextField
+                <AppInput
                   {...field}
                   sx={{ mr: 1 }}
                   placeholder="Description"

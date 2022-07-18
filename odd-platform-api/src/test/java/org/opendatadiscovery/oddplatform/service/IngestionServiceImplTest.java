@@ -52,7 +52,6 @@ import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepositoryImpl;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
-import org.opendatadiscovery.oddplatform.repository.DatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
@@ -61,6 +60,7 @@ import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetStructureRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
+import org.opendatadiscovery.oddplatform.service.ingestion.TagIngestionService;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import reactor.core.publisher.Mono;
@@ -142,6 +142,9 @@ public class IngestionServiceImplTest {
     @Mock
     private MetadataIngestionService metadataIngestionService;
 
+    @Mock
+    private TagIngestionService tagIngestionService;
+
     @InjectMocks
     private IngestionServiceImpl ingestionService;
 
@@ -182,6 +185,7 @@ public class IngestionServiceImplTest {
             });
         when(dataSourceRepository.getDtoByOddrn(anyString())).thenReturn(Mono.just(dataSourceDto));
         when(metadataIngestionService.ingestMetadata(any())).thenReturn(Mono.empty());
+        when(tagIngestionService.ingestExternalTags(any())).thenReturn(Mono.empty());
         when(datasetStructureService.createDataStructure(any(), any())).thenReturn(Mono.empty());
         when(datasetStructureService.getNewDatasetVersionsIfChanged(any(), any())).thenReturn(Mono.empty());
     }

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Box } from '@mui/material';
 
 export const OptionsContainer = styled('div')<{ $isImportant?: boolean }>(
   ({ theme, $isImportant }) =>
@@ -18,3 +19,10 @@ export const OptionsContainer = styled('div')<{ $isImportant?: boolean }>(
         }
       : { position: 'relative' }
 );
+
+export const TagListContainer = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'flex-start',
+  flexWrap: 'wrap',
+}));

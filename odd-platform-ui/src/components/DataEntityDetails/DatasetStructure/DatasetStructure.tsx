@@ -1,5 +1,6 @@
-import { Box, Grid, Typography } from '@mui/material';
-import React, { ChangeEvent } from 'react';
+import React from 'react';
+
+import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import round from 'lodash/round';
 import toPairs from 'lodash/toPairs';
@@ -17,7 +18,7 @@ import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
@@ -61,10 +62,8 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     }
   }, [fetchDataSetStructureLatest, dataEntityId]);
 
-  const handleRevisionChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const newVersionId = e.target.value as unknown as number;
+  const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
+    const newVersionId = event.target.value as unknown as number;
     fetchDataSetStructure({
       dataEntityId,
       versionId: newVersionId,
@@ -129,8 +128,9 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             </Grid>
             <Grid
               item
-              xs={4}
+              xs={2}
               container
+              flexWrap="nowrap"
               alignItems="center"
               justifyContent="flex-end"
             >
@@ -139,12 +139,11 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                   <Typography variant="subtitle2">
                     Current Revision:
                   </Typography>
-                  <AppTextField
+                  <AppSelect
                     sx={{ width: 52, ml: 1 }}
-                    id="revision-select"
+                    fullWidth={false}
                     type="number"
-                    selectNative
-                    size="small"
+                    native
                     defaultValue={datasetStructureVersion}
                     onChange={handleRevisionChange}
                   >
@@ -153,7 +152,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                         {rev.version}
                       </option>
                     ))}
-                  </AppTextField>
+                  </AppSelect>
                 </>
               ) : null}
             </Grid>

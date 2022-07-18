@@ -4,7 +4,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { Owner, OwnerFormData } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
@@ -79,7 +80,7 @@ const OwnerForm: React.FC<OwnerFormProps> = ({ btnCreateEl, owner }) => {
         defaultValue={owner?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Owner Name"
             customEndAdornment={{

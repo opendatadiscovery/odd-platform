@@ -10,7 +10,8 @@ import {
 } from 'redux/selectors';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
 
@@ -81,7 +82,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
         defaultValue={tag.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Tag Name"
             customEndAdornment={{

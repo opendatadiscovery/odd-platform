@@ -6,29 +6,24 @@ import {
 } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useDebouncedCallback } from 'use-debounce';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { ControllerRenderProps } from 'react-hook-form';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchSearchSuggestions } from 'redux/thunks';
 import {
   getSearchSuggestions,
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
-import { DataEntityGroupFormData } from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
-import { AddDataEntityToGroupFormData } from 'components/DataEntityDetails/Overview/OverviewGroups/AddDataEntityToGroupForm/AddDataEntityToGroupForm';
+import { UseFieldArrayReturn } from 'react-hook-form';
 
 interface SearchSuggestionsAutocompleteProps {
   placeholder: string;
   label?: string;
   addEntities?: boolean;
-  append?: UseFieldArrayAppend<DataEntityGroupFormData['entities']>;
+  append?: UseFieldArrayReturn['append'];
   searchParams?: SearchApiGetSearchSuggestionsRequest;
-  controllerProps:
-    | ControllerRenderProps<DataEntityGroupFormData, 'entities'>
-    | ControllerRenderProps<AddDataEntityToGroupFormData, 'group'>;
+  formOnChange: (val: any) => void;
 }
 
 const SearchSuggestionsAutocomplete: React.FC<
@@ -38,8 +33,8 @@ const SearchSuggestionsAutocomplete: React.FC<
   label,
   addEntities,
   append,
-  controllerProps,
   searchParams,
+  formOnChange,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -97,17 +92,15 @@ const SearchSuggestionsAutocomplete: React.FC<
   };
 
   const handleOptionChange = React.useCallback(
-    (onChange: (val?: DataEntityRef) => void) =>
-      (
-        _: React.ChangeEvent<unknown>,
-        value: Partial<DataEntityRef> | string | null
-      ) => {
-        setSelectedOption(value as DataEntityRef);
-        onChange(value as DataEntityRef);
-      },
+    (
+      _: React.ChangeEvent<unknown>,
+      value: Partial<DataEntityRef> | string | null
+    ) => {
+      setSelectedOption(value as DataEntityRef);
+      formOnChange(value);
+    },
     []
   );
-
   const handleAddEntity = () => {
     if (append) {
       append(selectedOption as DataEntityRef);
@@ -144,7 +137,6 @@ const SearchSuggestionsAutocomplete: React.FC<
 
   return (
     <Autocomplete
-      {...controllerProps}
       fullWidth
       value={{ externalName: searchText }}
       open={autocompleteOpen}
@@ -155,7 +147,7 @@ const SearchSuggestionsAutocomplete: React.FC<
         setAutocompleteOpen(false);
       }}
       onInputChange={handleInputChange}
-      onChange={handleOptionChange(controllerProps.onChange)}
+      onChange={handleOptionChange}
       getOptionLabel={getOptionLabel}
       options={options}
       loading={isSearchSuggestionsLoading}
@@ -165,11 +157,10 @@ const SearchSuggestionsAutocomplete: React.FC<
       sx={{ mt: 1.5 }}
       renderInput={params => (
         <Grid container flexWrap="nowrap" alignItems="center">
-          <AppTextField
+          <AppInput
             {...params}
             ref={params.InputProps.ref}
-            placeholder={placeholder}
-            label={label}
+            label="Entities"
             customEndAdornment={{
               variant: 'loader',
               showAdornment: isSearchSuggestionsLoading,

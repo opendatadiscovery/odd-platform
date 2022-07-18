@@ -1,12 +1,12 @@
 import React from 'react';
-import { Box, Collapse, Grid, Typography } from '@mui/material';
+import { Collapse, Grid, Typography } from '@mui/material';
 import { Tag } from 'generated-sources';
 import TagItem from 'components/shared/TagItem/TagItem';
 import EditIcon from 'components/shared/Icons/EditIcon';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import TagsEditContainer from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { CaptionContainer } from './OverviewTagsStyles';
+import { CaptionContainer, TagsContainer } from './OverviewTagsStyles';
 
 interface OverviewTagsProps {
   dataEntityId: number;
@@ -47,20 +47,21 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
         />
       </CaptionContainer>
       {tags?.length ? (
-        <Box sx={{ mx: -0.5, my: 0 }}>
+        <TagsContainer sx={{ mx: -0.5, my: 0 }}>
           {tags
             .slice(0, visibleLimit)
             .sort(tagsCompare)
             .map(tag => (
               <TagItem
                 key={tag.id}
+                systemTag={tag.external}
                 label={tag.name}
                 important={tag.important}
                 sx={{ m: 0.5 }}
               />
             ))}
           {tags?.length > visibleLimit ? (
-            <>
+            <Grid container flexDirection="column" alignItems="flex-start">
               <Collapse in={viewAll} timeout="auto" unmountOnExit>
                 {viewAll
                   ? tags
@@ -68,6 +69,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
                       .sort(tagsCompare)
                       .map(tag => (
                         <TagItem
+                          systemTag={tag.external}
                           key={tag.id}
                           label={tag.name}
                           important={tag.important}
@@ -79,14 +81,14 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
               <AppButton
                 size="small"
                 color="tertiary"
-                sx={{ display: 'flex', ml: 0.5, mt: 1.25 }}
+                sx={{ ml: 0.5, mt: 1.25 }}
                 onClick={() => setViewAll(!viewAll)}
               >
                 {viewAll ? 'Hide' : `View All (${tags?.length})`}
               </AppButton>
-            </>
+            </Grid>
           ) : null}
-        </Box>
+        </TagsContainer>
       ) : (
         <Grid
           item

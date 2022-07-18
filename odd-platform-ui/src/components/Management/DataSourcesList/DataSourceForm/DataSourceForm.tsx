@@ -20,7 +20,8 @@ import {
 import { getDatasourceCreatingStatuses } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormStyles';
 import AppRadio from 'components/shared/AppRadio/AppRadio';
@@ -193,7 +194,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.5 }}
             label="Name"
@@ -240,7 +241,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               validate: value => !!value?.trim(),
             }}
             render={({ field }) => (
-              <AppTextField
+              <AppInput
                 {...field}
                 sx={{ mt: 1.5 }}
                 label="ODDRN"
@@ -269,7 +270,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               validate: value => !!value?.trim(),
             }}
             render={({ field }) => (
-              <AppTextField
+              <AppInput
                 {...field}
                 sx={{ mt: 1.25 }}
                 label="URL"
@@ -292,17 +293,17 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
                   name="pullingInterval.format"
                   control={control}
                   render={({ field }) => (
-                    <AppTextField
+                    <AppSelect
                       {...field}
                       label="Pulling Interval"
-                      select
+                      containerSx={{ mt: 0 }}
                     >
                       {['minutes', 'hours', 'days', 'weeks'].map(value => (
                         <AppMenuItem key={value} value={value}>
                           {capitalize(value)}
                         </AppMenuItem>
                       ))}
-                    </AppTextField>
+                    </AppSelect>
                   )}
                 />
               </Grid>
@@ -311,7 +312,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
                   name="pullingInterval.value"
                   control={control}
                   render={({ field }) => (
-                    <AppTextField
+                    <AppInput
                       {...field}
                       label="Value"
                       placeholder="e.g. 1"
@@ -337,7 +338,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         name="description"
         control={control}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.25 }}
             label="Description"

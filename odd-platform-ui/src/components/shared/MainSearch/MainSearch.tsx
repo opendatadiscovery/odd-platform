@@ -7,14 +7,14 @@ import {
   SearchFacetsData,
 } from 'generated-sources';
 import { dataEntityDetailsPath, searchPath } from 'lib/paths';
-import * as S from 'components/shared/MainSearch/MainSearchStyles';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useDebouncedCallback } from 'use-debounce';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchSearchSuggestions } from 'redux/thunks';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import * as S from 'components/shared/MainSearch/MainSearchStyles';
 
 interface AppSearchProps {
   className?: string;
@@ -150,7 +150,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
           filterOptions={option => option}
           clearIcon={<ClearIcon />}
           renderInput={params => (
-            <AppTextField
+            <AppInput
               {...params}
               ref={params.InputProps.ref}
               size="large"
