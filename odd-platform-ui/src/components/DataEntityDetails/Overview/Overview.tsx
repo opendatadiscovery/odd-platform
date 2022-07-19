@@ -4,7 +4,7 @@ import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityDetails,
   getDataEntityDetailsFetching,
-  getDataEntityIsDataset,
+  getIsDataEntityBelongsToClass,
 } from 'redux/selectors/dataentity.selectors';
 import { getDatasetTestReport } from 'redux/selectors/dataQualityTest.selectors';
 import { useAppSelector } from 'lib/redux/hooks';
@@ -27,8 +27,8 @@ const Overview: React.FC = () => {
   const dataEntityDetails = useAppSelector(state =>
     getDataEntityDetails(state, dataEntityId)
   );
-  const isDataset = useAppSelector(state =>
-    getDataEntityIsDataset(state, dataEntityId)
+  const { isDataset } = useAppSelector(
+    getIsDataEntityBelongsToClass(dataEntityId)
   );
   const isDataEntityDetailsFetching = useAppSelector(
     getDataEntityDetailsFetching

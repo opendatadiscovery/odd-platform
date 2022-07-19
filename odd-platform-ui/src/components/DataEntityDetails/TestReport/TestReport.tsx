@@ -1,16 +1,16 @@
 import React from 'react';
 import { DataEntityRunStatus, DataQualityTest } from 'generated-sources';
 import {
-  getDatasetTestListFetchingStatuses,
-  getDatasetTestReportFetchingStatuses,
-  getDatasetTestReport,
   getDatasetQualityTestsBySuiteNames,
+  getDatasetTestListFetchingStatuses,
+  getDatasetTestReport,
+  getDatasetTestReportFetchingStatuses,
   getTestReportListBySuiteName,
 } from 'redux/selectors/dataQualityTest.selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  fetchDataSetQualityTestReport,
   fetchDataSetQualityTestList,
+  fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 
@@ -30,10 +30,10 @@ import {
 interface DatasetQualityTestList {
   [suiteName: string]: DataQualityTest[];
 }
+
 const TestReport: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { dataQATestId, dataEntityId, reportDetailsViewType } =
-    useAppParams();
+  const { dataQATestId, dataEntityId, viewType } = useAppParams();
   const datasetTestReport = useAppSelector(state =>
     getDatasetTestReport(state, dataEntityId)
   );
@@ -144,7 +144,7 @@ const TestReport: React.FC = () => {
                       <TestReportDetails
                         dataEntityId={dataEntityId}
                         dataQATestId={dataQATestId}
-                        reportDetailsViewType={reportDetailsViewType}
+                        reportDetailsViewType={viewType}
                       />
                     </AppPaper>
                   ) : null}

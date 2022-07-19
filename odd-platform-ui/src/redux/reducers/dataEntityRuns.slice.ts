@@ -26,11 +26,8 @@ export const dataEntityRunsSlice = createSlice({
       thunks.fetchDataEntityRuns.fulfilled,
       (state, { payload }) => {
         const { items, pageInfo } = payload;
-        if (pageInfo.page > 1) {
-          dataEntityRunAdapter.setMany(state, items);
-        } else {
-          dataEntityRunAdapter.setAll(state, items);
-        }
+
+        dataEntityRunAdapter.setMany(state, items);
         state.pageInfo = pageInfo;
       }
     );

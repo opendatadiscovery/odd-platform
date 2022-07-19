@@ -4,6 +4,7 @@ import {
   AlertViewType,
   ManagementViewType,
   TermsViewType,
+  TestReportViewType,
 } from 'lib/interfaces';
 
 /**
@@ -37,31 +38,27 @@ interface RouteParams {
   dataQATestId: string;
   termId: string;
   viewType: TermsViewType | AlertViewType | ManagementViewType;
-  reportDetailsViewType: string;
 }
 
 interface AppRouteParams {
   dataEntityId: number;
   dataQATestId: number;
   termId: number;
-  viewType: TermsViewType | AlertViewType | ManagementViewType;
-  reportDetailsViewType: string;
+  viewType:
+    | TermsViewType
+    | AlertViewType
+    | ManagementViewType
+    | TestReportViewType;
 }
 
 export const useAppParams = (): AppRouteParams => {
-  const {
-    dataEntityId,
-    termId,
-    viewType,
-    dataQATestId,
-    reportDetailsViewType,
-  } = useParams<RouteParams>();
+  const { dataEntityId, termId, viewType, dataQATestId } =
+    useParams<RouteParams>();
 
   return {
     dataEntityId: parseInt(dataEntityId, 10),
     dataQATestId: parseInt(dataQATestId, 10),
     termId: parseInt(termId, 10),
     viewType,
-    reportDetailsViewType,
   };
 };

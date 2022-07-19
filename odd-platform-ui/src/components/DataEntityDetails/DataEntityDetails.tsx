@@ -36,9 +36,7 @@ import {
 import {
   getDataEntityDetails,
   getDataEntityDetailsFetchingStatus,
-  getDataEntityIsDataset,
-  getDataEntityIsQualityTest,
-  getDataEntityIsTransformerJob,
+  getIsDataEntityBelongsToClass,
 } from 'redux/selectors/dataentity.selectors';
 import { getDatasetTestReport } from 'redux/selectors/dataQualityTest.selectors';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
@@ -86,14 +84,8 @@ const DataEntityDetailsView: React.FC = () => {
   const dataEntityDetails = useAppSelector(state =>
     getDataEntityDetails(state, dataEntityId)
   );
-  const isDataset = useAppSelector(state =>
-    getDataEntityIsDataset(state, dataEntityId)
-  );
-  const isQualityTest = useAppSelector(state =>
-    getDataEntityIsQualityTest(state, dataEntityId)
-  );
-  const isTransformerJob = useAppSelector(state =>
-    getDataEntityIsTransformerJob(state, dataEntityId)
+  const { isDataset, isQualityTest, isTransformer } = useAppSelector(
+    getIsDataEntityBelongsToClass(dataEntityId)
   );
   const datasetQualityTestReport = useAppSelector(state =>
     getDatasetTestReport(state, dataEntityId)
@@ -156,7 +148,7 @@ const DataEntityDetailsView: React.FC = () => {
       {
         name: 'History',
         link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest && !isTransformerJob,
+        hidden: !isQualityTest && !isTransformer,
         value: 'history',
       },
       {
@@ -363,12 +355,12 @@ const DataEntityDetailsView: React.FC = () => {
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:reportDetailsViewType?"
+              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?"
               component={TestReport}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:reportDetailsViewType?"
+              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?"
               component={TestReportDetails}
             />
             <Route

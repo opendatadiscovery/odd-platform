@@ -38,18 +38,6 @@ export const getDatasetTestReport = createSelector(
     dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
 );
 
-export const getDatasetQualityTestList = createSelector(
-  getDataQualityTestState,
-  dataQualityTestState => dataQualityTestState.qualityTestsById
-);
-
-export const getSuitNamesByDatasetId = createSelector(
-  getDataQualityTestState,
-  getDataEntityId,
-  (dataQualityTestState, dataEntityId) =>
-    dataQualityTestState.allSuiteNamesByDatasetId[dataEntityId]
-);
-
 export const getDatasetQualityTestsBySuiteNames = createSelector(
   getDataQualityTestState,
   getDataEntityId,
@@ -74,11 +62,6 @@ export const getDatasetQualityTestsBySuiteNames = createSelector(
 export const getTestReportListBySuiteName = createSelector(
   getDataQualityTestState,
   dataQualityTestState => dataQualityTestState.testReportBySuiteName
-);
-
-export const getQualityTestRunsListPage = createSelector(
-  getDataQualityTestState,
-  dataQualityTestState => dataQualityTestState.qualityTestRunsPageInfo
 );
 
 export const getQualityTestByTestId = createSelector(
