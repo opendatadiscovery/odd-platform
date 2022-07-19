@@ -71,8 +71,7 @@ public class ActivityAspect {
                     final Flux<Object> proceed = (Flux<Object>) joinPoint.proceed();
                     return proceed.collectList()
                         .flatMap(o -> postActivity(activityParameters, eventType, isSystemEvent, info).thenReturn(o))
-                        .flatMapMany(Flux::fromIterable)
-                        .switchIfEmpty(postActivity(activityParameters, eventType, isSystemEvent, info));
+                        .flatMapMany(Flux::fromIterable);
                 } catch (Throwable e) {
                     return Flux.error(e);
                 }
