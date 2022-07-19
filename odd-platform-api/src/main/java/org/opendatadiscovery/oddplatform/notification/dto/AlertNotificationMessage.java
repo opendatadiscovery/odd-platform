@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
-import org.opendatadiscovery.oddplatform.utils.Pair;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,7 +23,7 @@ public class AlertNotificationMessage extends NotificationMessage {
     private AlertedDataEntity dataEntity;
     private List<AlertedDataEntity> downstream;
 
-    public record AlertedDataEntity(long id, String name, Set<Pair<String, String>> owners) {
+    public record AlertedDataEntity(long id, String name, Set<OwnershipPair> owners) {
     }
 
     public enum AlertEventType {

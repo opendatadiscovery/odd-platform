@@ -59,7 +59,7 @@ public class SlackNotificationMessageGenerator {
     private String extractOwners(final AlertedDataEntity dataEntity) {
         return dataEntity.owners()
             .stream()
-            .map(owner -> String.format("@%s (%s)", owner.getLeft(), owner.getRight()))
+            .map(owner -> String.format("@%s (%s)", owner.ownerName(), owner.roleName()))
             .collect(joining(", "));
     }
 

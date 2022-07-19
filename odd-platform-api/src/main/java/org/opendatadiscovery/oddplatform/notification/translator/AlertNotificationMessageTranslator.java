@@ -13,7 +13,6 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.opendatadiscovery.oddplatform.api.contract.model.AlertType;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertTypeEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
@@ -21,8 +20,8 @@ import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessa
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage.AlertedDataEntity;
 import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage;
 import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage.Operation;
+import org.opendatadiscovery.oddplatform.notification.dto.OwnershipPair;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
-import org.opendatadiscovery.oddplatform.utils.Pair;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
@@ -93,13 +92,12 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
         return entities.get(0);
     }
 
-    // TODO: replace pair with an object
     private List<AlertedDataEntity> fetchAlertedDataEntities(final Collection<String> oddrns) {
         final List<Record> records = dslContext
             .select(DATA_ENTITY.ID, DATA_ENTITY.INTERNAL_NAME, DATA_ENTITY.EXTERNAL_NAME)
             .select(jsonArrayAgg(jsonObject(
-                jsonEntry("left", OWNER.NAME),
-                jsonEntry("right", ROLE.NAME))
+                jsonEntry("owner_name", OWNER.NAME),
+                jsonEntry("role_name", ROLE.NAME))
             ).as(OWNERS_FIELD_ALIAS))
             .from(DATA_ENTITY)
             .leftJoin(OWNERSHIP).on(OWNERSHIP.DATA_ENTITY_ID.eq(DATA_ENTITY.ID))
@@ -165,11 +163,11 @@ public class AlertNotificationMessageTranslator implements NotificationMessageTr
             ? record.get(DATA_ENTITY.EXTERNAL_NAME)
             : record.get(DATA_ENTITY.INTERNAL_NAME);
 
-        final Set<Pair<String, String>> owners = jooqRecordHelper
-            .extractAggRelation(record, OWNERS_FIELD_ALIAS, new TypeReference<Pair<String, String>>() {
+        final Set<OwnershipPair> owners = jooqRecordHelper
+            .extractAggRelation(record, OWNERS_FIELD_ALIAS, new TypeReference<OwnershipPair>() {
             })
             .stream()
-            .filter(p -> p.getRight() != null && p.getLeft() != null)
+            .filter(o -> o.ownerName() != null && o.roleName() != null)
             .collect(toSet());
 
         return new AlertedDataEntity(record.get(DATA_ENTITY.ID), name, owners);
