@@ -3,27 +3,27 @@ import { Grid, SelectChangeEvent, Typography } from '@mui/material';
 import TestReportDetailsOverviewSkeleton from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { format, formatDistanceStrict } from 'date-fns';
+import { DataQualityTestSeverity } from 'generated-sources';
 import {
-  DataQualityTest,
-  DataQualityTestSeverity,
-} from 'generated-sources';
+  getDatasetTestListFetchingStatuses,
+  getQualityTestByTestId,
+} from 'redux/selectors/dataQualityTest.selectors';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { setDataQATestSeverity } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks/hooks';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 
-interface TestReportDetailsOverviewProps {
-  qualityTest: DataQualityTest;
-  isDatasetTestListFetching: boolean;
-}
-
-const TestReportDetailsOverview: React.FC<
-  TestReportDetailsOverviewProps
-> = ({ qualityTest, isDatasetTestListFetching }) => {
+const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
+  const { isLoading: isDatasetTestListFetching } = useAppSelector(
+    getDatasetTestListFetchingStatuses
+  );
+  const qualityTest = useAppSelector(state =>
+    getQualityTestByTestId(state, dataQATestId)
+  );
 
   const handleSeverityChange = (e: SelectChangeEvent<unknown>) =>
     dispatch(

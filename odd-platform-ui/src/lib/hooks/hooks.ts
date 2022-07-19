@@ -4,6 +4,7 @@ import {
   AlertViewType,
   ManagementViewType,
   TermsViewType,
+  TestReportViewType,
 } from 'lib/interfaces';
 import { parse, stringify, StringifyOptions } from 'query-string';
 
@@ -44,7 +45,11 @@ interface AppRouteParams {
   dataEntityId: number;
   dataQATestId: number;
   termId: number;
-  viewType: TermsViewType | AlertViewType | ManagementViewType;
+  viewType:
+    | TermsViewType
+    | AlertViewType
+    | ManagementViewType
+    | TestReportViewType;
 }
 
 export const useAppParams = (): AppRouteParams => {

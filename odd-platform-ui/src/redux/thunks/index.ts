@@ -17,4 +17,5 @@ export * from './collectors.thunks';
 export * from './terms.thunks';
 export * from './termSearch.thunks';
 export * from './metadata.thunks';
+export * from './dataEntityRun.thunk';
 export * from './activity.thunks';

@@ -5,10 +5,9 @@ import {
   getTagCreatingStatuses,
   getTAgDeletingStatuses,
   getTagsList,
-  getTagsListPage,
   getTagsListFetchingStatuses,
+  getTagsListPage,
 } from 'redux/selectors';
-
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchTagsList } from 'redux/thunks';
@@ -18,7 +17,6 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppInput from 'components/shared/AppInput/AppInput';
-
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
