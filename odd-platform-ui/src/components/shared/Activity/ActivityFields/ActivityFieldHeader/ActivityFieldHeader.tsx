@@ -12,6 +12,7 @@ interface ActivityFieldHeaderProps {
   showDetailsBtn?: boolean;
   detailsBtnOnClick?: () => void;
   isDetailsOpen?: boolean;
+  plural?: boolean;
 }
 
 const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
@@ -21,6 +22,7 @@ const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
   showDetailsBtn,
   detailsBtnOnClick,
   isDetailsOpen,
+  plural,
 }) => {
   const { icon } = useSetActivityHeaderIcon(eventType);
 
@@ -34,7 +36,7 @@ const ActivityFieldHeader: React.FC<ActivityFieldHeaderProps> = ({
       )}
       <Typography variant="h4">{activityName}</Typography>
       <Typography variant="subtitle1" color="texts.info">
-        was
+        {plural ? 'were' : 'was'}
       </Typography>
       <Typography variant="h4">{eventType}</Typography>
       {showDetailsBtn && (
