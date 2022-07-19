@@ -40,7 +40,7 @@ public class SlackNotificationMessageGenerator {
         final SectionBlock owners = section(c -> c.text(markdownText(
             userEmoji(extractOwners(dataEntity)))));
 
-        final ArrayList<LayoutBlock> blocks = new ArrayList<>(List.of(header, alertBody, owners));
+        final List<LayoutBlock> blocks = new ArrayList<>(List.of(header, alertBody, owners));
 
         if (!message.getDownstream().isEmpty()) {
             final String downstreamMarkdownText =

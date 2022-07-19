@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class AlertNotificationMessageProcessor implements PostgresWALMessageProcessor {
     private final List<NotificationSender<AlertNotificationMessage>> notificationSenders;
-    private final NotificationMessageTranslator<AlertNotificationMessage> messageEnricher;
+    private final NotificationMessageTranslator<AlertNotificationMessage> messageTranslator;
 
     @Override
     public void process(final DecodedWALMessage message) {
-        final AlertNotificationMessage notificationMessage = messageEnricher.translate(message);
+        final AlertNotificationMessage notificationMessage = messageTranslator.translate(message);
 
         notificationSenders.forEach(sender -> sendMessage(sender, notificationMessage));
     }

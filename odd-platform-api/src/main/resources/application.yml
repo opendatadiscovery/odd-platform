@@ -70,7 +70,7 @@ notifications:
     replication-slot-name: odd_platform_replication_slot
     publication-name: odd_platform_publication_alert
 #  receivers:
-#  slack:
+#    slack:
 #      url:
 #      platform-base-url:
 #    webhook:
