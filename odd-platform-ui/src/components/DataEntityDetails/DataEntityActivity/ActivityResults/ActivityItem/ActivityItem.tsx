@@ -105,6 +105,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
             newState={activity.newState.tags}
             hideAllDetails={hideAllDetails}
             stateItem={tagStateItem}
+            plural
           />
         )}
         {activity.eventType ===
@@ -115,6 +116,7 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
             newState={activity.newState.datasetFieldInformation?.labels}
             hideAllDetails={hideAllDetails}
             stateItem={labelStateItem}
+            plural
           />
         )}
         {activity.eventType === ActivityEventType.TERM_ASSIGNED && (

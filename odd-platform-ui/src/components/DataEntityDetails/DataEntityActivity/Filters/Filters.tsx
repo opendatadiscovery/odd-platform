@@ -20,6 +20,19 @@ const Filters: React.FC = () => {
 
   const asyncClearFilters = async () => dispatch(clearActivityFilters());
 
+  const excludedTypes = [
+    'DATA_ENTITY_OVERVIEW_UPDATED',
+    'DATA_ENTITY_METADATA_UPDATED',
+    'DATA_ENTITY_SCHEMA_UPDATED',
+    'DATA_ENTITY_RELATION_UPDATED',
+    'CUSTOM_METADATA_CREATED',
+    'CUSTOM_METADATA_UPDATED',
+    'CUSTOM_METADATA_DELETED',
+  ];
+  const activityEventTypes = Object.values(ActivityEventType).filter(
+    type => !excludedTypes.some(discardedType => discardedType === type)
+  );
+
   return (
     <S.Container>
       <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
@@ -47,7 +60,7 @@ const Filters: React.FC = () => {
           key="at"
           filterName="eventType"
           name="Event type"
-          filterOptions={Object.values(ActivityEventType)}
+          filterOptions={activityEventTypes}
         />
         <MultipleFilter key="us" filterName="userIds" name="User" />
       </>
