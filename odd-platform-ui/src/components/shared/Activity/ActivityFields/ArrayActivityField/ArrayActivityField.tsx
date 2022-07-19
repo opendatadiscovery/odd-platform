@@ -22,6 +22,7 @@ interface ArrayActivityFieldProps {
   eventType?: string;
   stateItem: (name: string, important?: boolean) => JSX.Element;
   stateDirection?: CSSProperties['flexDirection'];
+  plural?: boolean;
 }
 
 const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
@@ -33,6 +34,7 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
   eventType,
   stateItem,
   stateDirection = 'row',
+  plural,
 }) => {
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
@@ -114,6 +116,7 @@ const ArrayActivityField: React.FC<ArrayActivityFieldProps> = ({
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
         isDetailsOpen={isDetailsOpen}
+        plural={plural}
       />
       <ActivityFieldState
         stateDirection={stateDirection}
