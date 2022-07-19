@@ -1,5 +1,4 @@
 import React from 'react';
-import { DataQualityTest } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import {
@@ -7,9 +6,12 @@ import {
   testReportDetailsHistoryPath,
   testReportDetailsOverviewPath,
 } from 'lib/paths';
+import { useAppSelector } from 'lib/redux/hooks';
+import { getQualityTestByTestId } from 'redux/selectors/dataQualityTest.selectors';
+
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
-import TestReportDetailsOverviewContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewContainer';
-import TestReportDetailsHistoryContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistoryContainer';
+import TestReportDetailsOverview from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverview';
+import TestReportDetailsHistory from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistory';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 
@@ -17,17 +19,18 @@ interface TestRunDetailsProps {
   dataQATestId: number;
   dataEntityId: number;
   reportDetailsViewType: string;
-  qualityTest: DataQualityTest;
 }
 
 const TestReportDetails: React.FC<TestRunDetailsProps> = ({
   dataQATestId,
   dataEntityId,
   reportDetailsViewType,
-  qualityTest,
 }) => {
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
+  const qualityTest = useAppSelector(state =>
+    getQualityTestByTestId(state, dataQATestId)
+  );
   React.useEffect(() => {
     setTabs([
       {
@@ -87,12 +90,12 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
           <Route
             exact
             path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview"
-            component={TestReportDetailsOverviewContainer}
+            component={TestReportDetailsOverview}
           />
           <Route
             exact
             path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/history"
-            component={TestReportDetailsHistoryContainer}
+            component={TestReportDetailsHistory}
           />
           <Redirect
             from="/dataentities/:dataEntityId/test-reports/:dataQATestId?"

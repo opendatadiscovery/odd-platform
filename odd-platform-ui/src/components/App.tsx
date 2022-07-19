@@ -8,8 +8,8 @@ import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
-const DataEntityDetailsContainer = React.lazy(
-  () => import('./DataEntityDetails/DataEntityDetailsContainer')
+const DataEntityDetails = React.lazy(
+  () => import('./DataEntityDetails/DataEntityDetails')
 );
 const TermDetails = React.lazy(
   () => import('./Terms/TermDetails/TermDetails')
@@ -57,7 +57,7 @@ const App: React.FC = () => {
             />
             <Route
               path="/dataentities/:dataEntityId/:viewType?"
-              component={DataEntityDetailsContainer}
+              component={DataEntityDetails}
             />
           </Switch>
         </React.Suspense>

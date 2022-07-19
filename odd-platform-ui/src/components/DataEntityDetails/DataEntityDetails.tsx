@@ -12,12 +12,6 @@ import {
   datasetStructurePath,
   searchPath,
 } from 'lib/paths';
-import {
-  DataEntityDetails,
-  DataQualityApiGetDatasetTestReportRequest,
-  DataSetTestReport,
-} from 'generated-sources';
-import { FetchStatus } from 'redux/interfaces';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
@@ -32,13 +26,19 @@ import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-
+import { useAppParams } from 'lib/hooks';
 import {
   deleteDataEntityGroup,
   fetchDataEntityAlerts,
   fetchDataEntityDetails,
+  fetchDataSetQualityTestReport,
 } from 'redux/thunks';
-
+import {
+  getDataEntityDetails,
+  getDataEntityDetailsFetchingStatus,
+  getIsDataEntityBelongsToClass,
+} from 'redux/selectors/dataentity.selectors';
+import { getDatasetTestReport } from 'redux/selectors/dataQualityTest.selectors';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
@@ -56,60 +56,43 @@ import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import * as S from './DataEntityDetailsStyles';
 
 // lazy components
-const OverviewContainer = React.lazy(
-  () => import('./Overview/OverviewContainer')
-);
+const Overview = React.lazy(() => import('./Overview/Overview'));
 const DatasetStructureContainer = React.lazy(
   () => import('./DatasetStructure/DatasetStructureContainer')
 );
 const Lineage = React.lazy(() => import('./Lineage/Lineage'));
-const TestReportContainer = React.lazy(
-  () => import('./TestReport/TestReportContainer')
-);
-const TestReportDetailsContainer = React.lazy(
-  () => import('./TestReport/TestReportDetails/TestReportDetailsContainer')
+const TestReport = React.lazy(() => import('./TestReport/TestReport'));
+const TestReportDetails = React.lazy(
+  () => import('./TestReport/TestReportDetails/TestReportDetails')
 );
 const DataEntityAlerts = React.lazy(
   () => import('./DataEntityAlerts/DataEntityAlerts')
 );
-const QualityTestHistoryContainer = React.lazy(
-  () => import('./QualityTestRunsHistory/TestRunsHistoryContainer')
+const QualityTestHistory = React.lazy(
+  () => import('./QualityTestRunsHistory/TestRunsHistory')
 );
 
-interface DataEntityDetailsProps {
-  viewType: string;
-  dataEntityId: number;
-  dataEntityDetails: DataEntityDetails;
-  isDataset: boolean;
-  isQualityTest: boolean;
-  isTransformerJob: boolean;
-  fetchDataSetQualityTestReport: (
-    params: DataQualityApiGetDatasetTestReportRequest
-  ) => Promise<DataSetTestReport>;
-  datasetQualityTestReport?: DataSetTestReport;
-  dataEntityFetchingStatus: FetchStatus;
-}
-
-const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
-  viewType,
-  dataEntityId,
-  dataEntityDetails,
-  isDataset,
-  isQualityTest,
-  isTransformerJob,
-  fetchDataSetQualityTestReport,
-  datasetQualityTestReport,
-  dataEntityFetchingStatus,
-}) => {
+const DataEntityDetailsView: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-
+  const { dataEntityId, viewType } = useAppParams();
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
     getDataEntityGroupUpdatingStatuses
   );
 
   const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
-
+  const dataEntityDetails = useAppSelector(state =>
+    getDataEntityDetails(state, dataEntityId)
+  );
+  const { isDataset, isQualityTest, isTransformer } = useAppSelector(
+    getIsDataEntityBelongsToClass(dataEntityId)
+  );
+  const datasetQualityTestReport = useAppSelector(state =>
+    getDatasetTestReport(state, dataEntityId)
+  );
+  const dataEntityFetchingStatus = useAppSelector(
+    getDataEntityDetailsFetchingStatus
+  );
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
   );
@@ -132,7 +115,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
 
   React.useEffect(() => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
-    fetchDataSetQualityTestReport({ dataEntityId });
+    dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
   }, [dataEntityId]);
 
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
@@ -165,7 +148,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       {
         name: 'History',
         link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest && !isTransformerJob,
+        hidden: !isQualityTest && !isTransformer,
         value: 'history',
       },
       {
@@ -358,7 +341,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             <Route
               exact
               path="/dataentities/:dataEntityId/overview"
-              component={OverviewContainer}
+              component={Overview}
             />
             <Route
               exact
@@ -372,13 +355,13 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:reportDetailsViewType?"
-              component={TestReportContainer}
+              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?"
+              component={TestReport}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:reportDetailsViewType?"
-              component={TestReportDetailsContainer}
+              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?"
+              component={TestReportDetails}
             />
             <Route
               exact
@@ -388,7 +371,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
             <Route
               exact
               path="/dataentities/:dataEntityId/history"
-              component={QualityTestHistoryContainer}
+              component={QualityTestHistory}
             />
             <Route
               exact
