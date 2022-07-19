@@ -52,7 +52,7 @@ public class ActivityAspect {
                     return proceed.flatMap(
                             o -> postActivity(activityParameters, eventType, isSystemEvent, info).thenReturn(o))
                         .switchIfEmpty(postActivity(activityParameters, eventType, isSystemEvent, info));
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     return Mono.error(e);
                 }
             });
@@ -72,7 +72,7 @@ public class ActivityAspect {
                     return proceed.collectList()
                         .flatMap(o -> postActivity(activityParameters, eventType, isSystemEvent, info).thenReturn(o))
                         .flatMapMany(Flux::fromIterable);
-                } catch (Throwable e) {
+                } catch (final Throwable e) {
                     return Flux.error(e);
                 }
             });

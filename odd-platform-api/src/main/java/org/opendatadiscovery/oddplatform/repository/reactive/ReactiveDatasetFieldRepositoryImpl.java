@@ -58,7 +58,7 @@ public class ReactiveDatasetFieldRepositoryImpl
     }
 
     @Override
-    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED, isSystemEvent = false)
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_DESCRIPTION_UPDATED)
     public Mono<DatasetFieldPojo> updateDescription(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
                                                     final String description) {
         final UpdateResultStep<DatasetFieldRecord> updateQuery = DSL.update(DATASET_FIELD)

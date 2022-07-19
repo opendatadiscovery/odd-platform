@@ -6,7 +6,6 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import reactor.core.publisher.Mono;
 
 public interface ActivityHandler {
-
     boolean isHandle(final ActivityEventTypeDto activityEventTypeDto);
 
     Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters);

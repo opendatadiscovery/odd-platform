@@ -34,7 +34,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     private final OwnershipMapper ownershipMapper;
 
     @Override
-    @ActivityLog(event = OWNERSHIP_CREATED, isSystemEvent = false)
+    @ActivityLog(event = OWNERSHIP_CREATED)
     @ReactiveTransactional
     public Mono<Ownership> create(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
                                   final OwnershipFormData formData) {
@@ -54,7 +54,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     }
 
     @Override
-    @ActivityLog(event = OWNERSHIP_DELETED, isSystemEvent = false)
+    @ActivityLog(event = OWNERSHIP_DELETED)
     public Mono<Void> delete(
         @ActivityParameter(ActivityParameterNames.OwnershipDelete.OWNERSHIP_ID) final long ownershipId) {
         return ownershipRepository.delete(ownershipId)
@@ -62,7 +62,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     }
 
     @Override
-    @ActivityLog(event = OWNERSHIP_UPDATED, isSystemEvent = false)
+    @ActivityLog(event = OWNERSHIP_UPDATED)
     @ReactiveTransactional
     public Mono<Ownership> update(
         @ActivityParameter(ActivityParameterNames.OwnershipUpdate.OWNERSHIP_ID) final long ownershipId,

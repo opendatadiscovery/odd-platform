@@ -38,7 +38,7 @@ public class ReactiveLabelServiceImpl implements ReactiveLabelService {
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED, isSystemEvent = false)
+    @ActivityLog(event = ActivityEventTypeDto.DATASET_FIELD_LABELS_UPDATED)
     public Mono<List<LabelDto>> updateDatasetFieldLabels(@ActivityParameter(DATASET_FIELD_ID) final long datasetFieldId,
                                                          final List<LabelToDatasetFieldPojo> currentRelations,
                                                          final List<LabelToDatasetFieldPojo> updatedRelations) {

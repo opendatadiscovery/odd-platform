@@ -14,5 +14,5 @@ public @interface ActivityLog {
 
     ActivityEventTypeDto event();
 
-    boolean isSystemEvent();
+    boolean isSystemEvent() default false;
 }

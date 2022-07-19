@@ -29,7 +29,7 @@ public class EnumValueServiceImpl implements EnumValueService {
 
     @Override
     @ReactiveTransactional
-    @ActivityLog(event = DATASET_FIELD_VALUES_UPDATED, isSystemEvent = false)
+    @ActivityLog(event = DATASET_FIELD_VALUES_UPDATED)
     public Mono<EnumValueList> createEnumValues(@ActivityParameter(DATASET_FIELD_ID) final Long datasetFieldId,
                                                 final List<EnumValueFormData> formData) {
         final List<EnumValuePojo> pojos = formData.stream()
