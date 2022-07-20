@@ -60,16 +60,16 @@ const updateActivitiesState = (
 ): ActivitiesState => {
   const { activities, pageInfo } = payload;
 
-  return activities.reduce(
+  return activities.reduceRight(
     (memo: ActivitiesState, activity: Activity) => ({
       ...memo,
       activitiesByDate: {
         ...memo.activitiesByDate,
         [formattedDate(activity.createdAt)]: uniqBy(
           [
+            activity,
             ...(memo.activitiesByDate[formattedDate(activity.createdAt)] ||
               []),
-            activity,
           ],
           'id'
         ),

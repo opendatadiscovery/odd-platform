@@ -100,11 +100,12 @@ const EnumsActivityField: React.FC<EnumsActivityFieldProps> = ({
     <Grid container flexDirection="column">
       <ActivityFieldHeader
         startText=""
-        activityName="ENUM association"
+        activityName="Dataset field values"
         eventType={activityEvent}
         showDetailsBtn
         detailsBtnOnClick={() => setIsDetailsOpen(!isDetailsOpen)}
         isDetailsOpen={isDetailsOpen}
+        plural
       />
       <ActivityFieldState
         stateDirection="column"
