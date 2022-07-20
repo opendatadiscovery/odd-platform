@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.notification.processor.message;
 
 import com.slack.api.model.block.LayoutBlock;
-import com.slack.api.model.block.SectionBlock;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -13,13 +12,15 @@ import static com.slack.api.model.block.Blocks.divider;
 import static com.slack.api.model.block.Blocks.section;
 import static com.slack.api.model.block.composition.BlockCompositions.markdownText;
 import static java.util.stream.Collectors.joining;
+import static org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage.AlertEventType;
 import static org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage.AlertedDataEntity;
-import static org.opendatadiscovery.oddplatform.notification.processor.message.EmojiUtils.exclamationEmoji;
-import static org.opendatadiscovery.oddplatform.notification.processor.message.EmojiUtils.linkEmoji;
-import static org.opendatadiscovery.oddplatform.notification.processor.message.EmojiUtils.userEmoji;
 import static org.opendatadiscovery.oddplatform.notification.processor.message.MarkdownUtils.bold;
 import static org.opendatadiscovery.oddplatform.notification.processor.message.MarkdownUtils.buildLink;
 import static org.opendatadiscovery.oddplatform.notification.processor.message.MarkdownUtils.italic;
+import static org.opendatadiscovery.oddplatform.notification.processor.message.SlackEmojiUtils.exclamationEmoji;
+import static org.opendatadiscovery.oddplatform.notification.processor.message.SlackEmojiUtils.linkEmoji;
+import static org.opendatadiscovery.oddplatform.notification.processor.message.SlackEmojiUtils.resolvedEmoji;
+import static org.opendatadiscovery.oddplatform.notification.processor.message.SlackEmojiUtils.userEmoji;
 
 @RequiredArgsConstructor
 public class SlackNotificationMessageGenerator {
@@ -31,16 +32,19 @@ public class SlackNotificationMessageGenerator {
         final AlertedDataEntity dataEntity = message.getDataEntity();
         final String eventAt = message.getEventAt().format(MESSAGE_DATETIME_FORMAT);
 
-        final SectionBlock header = section(c -> c.text(markdownText(
-            buildLink(bold(dataEntity.name()), buildDataEntityUrl(dataEntity.id())) + "\n" + italic(eventAt))));
+        final List<LayoutBlock> blocks = new ArrayList<>();
 
-        final SectionBlock alertBody = section(c -> c.text(markdownText(
-            exclamationEmoji(bold(message.getAlertType().getDescription()) + "\n" + message.getAlertDescription()))));
+        blocks.add(section(c -> c.text(markdownText(
+            buildLink(bold(dataEntity.name()), buildDataEntityUrl(dataEntity.id())) + "\n" + italic(eventAt)))));
 
-        final SectionBlock owners = section(c -> c.text(markdownText(
-            userEmoji(extractOwners(dataEntity)))));
+        if (AlertEventType.RESOLVED.equals(message.getEventType())) {
+            blocks.add(section(c -> c.text(markdownText(bold("This alert has been resolved")))));
+            blocks.add(section(c -> c.text(markdownText(resolvedEmoji(constructAlertBody(message))))));
+        } else {
+            blocks.add(section(c -> c.text(markdownText(exclamationEmoji(constructAlertBody(message))))));
+        }
 
-        final List<LayoutBlock> blocks = new ArrayList<>(List.of(header, alertBody, owners));
+        blocks.add(section(c -> c.text(markdownText(userEmoji(extractOwners(dataEntity))))));
 
         if (!message.getDownstream().isEmpty()) {
             final String downstreamMarkdownText =
@@ -54,6 +58,10 @@ public class SlackNotificationMessageGenerator {
         }
 
         return blocks;
+    }
+
+    private String constructAlertBody(final AlertNotificationMessage message) {
+        return bold(message.getAlertType().getDescription()) + "\n" + message.getAlertDescription();
     }
 
     private String extractOwners(final AlertedDataEntity dataEntity) {

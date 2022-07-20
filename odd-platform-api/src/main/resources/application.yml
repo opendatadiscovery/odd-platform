@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://127.0.0.1:6432/odd-platform
+    url: jdbc:postgresql://127.0.0.1:5432/odd-platform
     username: odd-platform
     password: odd-platform-password
   jooq:
@@ -103,4 +103,4 @@ logging:
     org.jooq.tools.LoggerListener: info
     io.r2dbc.postgresql.QUERY: info
     io.r2dbc.postgresql.PARAM: info
-    org.opendatadiscovery.oddplatform.notification: debug
+    org.opendatadiscovery.oddplatform.notification: info
