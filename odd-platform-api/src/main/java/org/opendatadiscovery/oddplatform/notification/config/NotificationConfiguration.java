@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.notification.config;
 
 import java.net.URI;
 import java.net.URL;
+import java.net.http.HttpClient;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
@@ -23,35 +24,35 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Slf4j
 public class NotificationConfiguration {
     @Bean
-    public WebClient webClient() {
-        return WebClient.create();
+    public HttpClient httpClient() {
+        return HttpClient.newHttpClient();
     }
 
     @Bean
     @ConditionalOnProperty(name = "notifications.receivers.slack.url")
     public NotificationSender<AlertNotificationMessage> slackNotificationSender(
         @Value("${notifications.receivers.slack.url}") final URI slackWebhookUrl,
-        final WebClient webClient,
+        final HttpClient httpClient,
         final SlackNotificationMessageGenerator messageGenerator
     ) {
         if (slackWebhookUrl.toString().isEmpty()) {
             throw new IllegalArgumentException("Slack webhook URL is empty");
         }
 
-        return new SlackNotificationSender(webClient, slackWebhookUrl, messageGenerator);
+        return new SlackNotificationSender(httpClient, slackWebhookUrl, messageGenerator);
     }
 
     @Bean
     @ConditionalOnProperty(name = "notifications.receivers.webhook.url")
     public NotificationSender<AlertNotificationMessage> webhookNotificationSender(
         @Value("${notifications.receivers.webhook.url}") final URI webhookUrl,
-        final WebClient webClient
+        final HttpClient httpClient
     ) {
         if (webhookUrl.toString().isEmpty()) {
             throw new IllegalArgumentException("Webhook URL is empty");
         }
 
-        return new WebhookNotificationSender(webClient, webhookUrl);
+        return new WebhookNotificationSender(httpClient, webhookUrl);
     }
 
     @Bean

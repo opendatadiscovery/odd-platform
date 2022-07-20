@@ -1,27 +1,26 @@
 package org.opendatadiscovery.oddplatform.notification.sender;
 
 import java.net.URI;
-import lombok.RequiredArgsConstructor;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
+import org.opendatadiscovery.oddplatform.notification.exception.NotificationSenderException;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
-@RequiredArgsConstructor
-public class WebhookNotificationSender implements NotificationSender<AlertNotificationMessage> {
-    private final WebClient webClient;
+public class WebhookNotificationSender extends AbstractNotificationSender<AlertNotificationMessage> {
     private final URI webhookUrl;
 
+    public WebhookNotificationSender(final HttpClient httpClient, final URI webhookUrl) {
+        super(httpClient);
+        this.webhookUrl = webhookUrl;
+    }
+
     @Override
-    public void send(final AlertNotificationMessage message) {
-        webClient.post()
+    public void send(final AlertNotificationMessage message) throws InterruptedException, NotificationSenderException {
+        sendAndValidate(HttpRequest.newBuilder()
             .uri(webhookUrl)
-            .contentType(MediaType.APPLICATION_JSON)
-            .body(BodyInserters.fromValue(JSONSerDeUtils.serializeJson(message)))
-            .retrieve()
-            .bodyToMono(String.class)
-            .block();
+            .POST(HttpRequest.BodyPublishers.ofString(JSONSerDeUtils.serializeJson(message)))
+            .build());
     }
 
     @Override

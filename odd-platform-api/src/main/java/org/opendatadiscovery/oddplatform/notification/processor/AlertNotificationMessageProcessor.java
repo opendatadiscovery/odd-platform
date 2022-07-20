@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.notification.dto.AlertNotificationMessage;
 import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage;
-import org.opendatadiscovery.oddplatform.notification.translator.NotificationMessageTranslator;
+import org.opendatadiscovery.oddplatform.notification.exception.NotificationSenderException;
 import org.opendatadiscovery.oddplatform.notification.sender.NotificationSender;
+import org.opendatadiscovery.oddplatform.notification.translator.NotificationMessageTranslator;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,21 +18,18 @@ public class AlertNotificationMessageProcessor implements PostgresWALMessageProc
     private final NotificationMessageTranslator<AlertNotificationMessage> messageTranslator;
 
     @Override
-    public void process(final DecodedWALMessage message) {
+    public void process(final DecodedWALMessage message) throws InterruptedException {
         final AlertNotificationMessage notificationMessage = messageTranslator.translate(message);
 
-        notificationSenders.forEach(sender -> sendMessage(sender, notificationMessage));
-    }
+        for (final NotificationSender<AlertNotificationMessage> notificationSender : notificationSenders) {
+            log.debug("Sending notification message via {}: {}", notificationSender.receiverId(), message);
 
-    private void sendMessage(final NotificationSender<AlertNotificationMessage> notificationSender,
-                             final AlertNotificationMessage message) {
-        log.debug("Sending notification message via {}: {}", notificationSender.receiverId(), message);
-
-        try {
-            notificationSender.send(message);
-        } catch (final Exception e) {
-            log.error(String.format(
-                "Error occurred while sending notification via %s", notificationSender.receiverId()), e);
+            try {
+                notificationSender.send(notificationMessage);
+            } catch (final NotificationSenderException e) {
+                log.error(String.format(
+                    "Error occurred while sending notification via %s", notificationSender.receiverId()), e);
+            }
         }
     }
 }

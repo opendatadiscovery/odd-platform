@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.Table;
 import org.opendatadiscovery.oddplatform.model.Tables;
 import org.opendatadiscovery.oddplatform.notification.config.NotificationsProperties.WalProperties;
+import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage;
 import org.opendatadiscovery.oddplatform.notification.exception.NotificationSubscriberException;
 import org.opendatadiscovery.oddplatform.notification.processor.PostgresWALMessageProcessor;
 import org.opendatadiscovery.oddplatform.notification.wal.PostgresWALMessageDecoder;
@@ -75,8 +77,11 @@ public class NotificationSubscriber extends Thread {
 
                         log.debug("processing LSN: {}", stream.getLastReceiveLSN());
 
-                        messageDecoder.decode(buffer)
-                            .ifPresent(messageProcessor::process);
+                        final Optional<DecodedWALMessage> decodedMessage = messageDecoder.decode(buffer);
+
+                        if (decodedMessage.isPresent()) {
+                            messageProcessor.process(decodedMessage.get());
+                        }
 
                         stream.setAppliedLSN(stream.getLastReceiveLSN());
                         stream.setFlushedLSN(stream.getLastReceiveLSN());
