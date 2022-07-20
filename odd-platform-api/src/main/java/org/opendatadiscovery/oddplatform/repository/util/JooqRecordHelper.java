@@ -27,11 +27,11 @@ public class JooqRecordHelper {
     public <T> Set<T> extractAggRelation(final Record r,
                                          final String fieldName,
                                          final TypeReference<T> typeReference) {
-        return extractAggRelation(r, fieldName, t -> JSONSerDeUtils.deserializeJson(t, typeReference));
+        return extractSetRelation(r, fieldName, t -> JSONSerDeUtils.deserializeJson(t, typeReference));
     }
 
     public <T> Set<T> extractAggRelation(final Record r, final String fieldName, final Class<T> fieldPojoClass) {
-        return extractAggRelation(r, fieldName, t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass));
+        return extractSetRelation(r, fieldName, t -> JSONSerDeUtils.deserializeJson(t, fieldPojoClass));
     }
 
     public <P> P extractRelation(final Record r, final Table<?> relationTable, final Class<P> pojoClass) {
@@ -64,7 +64,7 @@ public class JooqRecordHelper {
         return record;
     }
 
-    private <T> Set<T> extractAggRelation(final Record r,
+    private <T> Set<T> extractSetRelation(final Record r,
                                           final String fieldName,
                                           final Function<? super Object, T> deserializer) {
         final Set<?> set;

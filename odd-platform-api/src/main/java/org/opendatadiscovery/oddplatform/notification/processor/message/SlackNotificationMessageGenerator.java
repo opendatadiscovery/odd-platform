@@ -23,7 +23,7 @@ import static org.opendatadiscovery.oddplatform.notification.processor.message.M
 
 @RequiredArgsConstructor
 public class SlackNotificationMessageGenerator {
-    private final static DateTimeFormatter MESSAGE_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter MESSAGE_DATETIME_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final URL platformBaseUrl;
 
