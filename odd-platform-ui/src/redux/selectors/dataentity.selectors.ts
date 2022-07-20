@@ -1,6 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { DataEntitiesState, RootState } from 'redux/interfaces';
 import {
+  DataEntityClass,
   DataEntityClassNameEnum,
   DataEntityType,
 } from 'generated-sources';
@@ -203,38 +204,31 @@ export const getDataEntityInternalName = createSelector(
     dataEntities.byId[dataEntityId]?.internalName
 );
 
-export const getDataEntityIsDataset = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) =>
-    !!dataEntities.byId[dataEntityId]?.entityClasses?.find(
-      entityClass => entityClass.name === DataEntityClassNameEnum.SET
-    )
-);
+export const getIsDataEntityBelongsToClass = (
+  dataEntityId: number | string
+) =>
+  createSelector(dataEntitiesState, dataEntities => {
+    const dataEntityClasses =
+      dataEntities.byId[dataEntityId]?.entityClasses;
+    const isClassesEquals =
+      (desiredClass: DataEntityClassNameEnum) =>
+      (entityClass: DataEntityClass) =>
+        entityClass.name === desiredClass;
 
-export const getDataEntityIsQualityTest = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) =>
-    !!dataEntities.byId[dataEntityId]?.entityClasses?.find(
-      entityClass =>
-        entityClass.name === DataEntityClassNameEnum.QUALITY_TEST
-    )
-);
-
-export const getDataEntityIsTransformerJob = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) => {
-    const dataEntity = dataEntities.byId[dataEntityId];
-    const isDataEntityClassTransformer = dataEntity?.entityClasses?.some(
-      entityCLass =>
-        entityCLass.name === DataEntityClassNameEnum.TRANSFORMER
+    const isDataset = dataEntityClasses?.some(
+      isClassesEquals(DataEntityClassNameEnum.SET)
     );
 
-    return Boolean(isDataEntityClassTransformer);
-  }
-);
+    const isQualityTest = dataEntityClasses?.some(
+      isClassesEquals(DataEntityClassNameEnum.QUALITY_TEST)
+    );
+
+    const isTransformer = dataEntityClasses?.some(
+      isClassesEquals(DataEntityClassNameEnum.TRANSFORMER)
+    );
+
+    return { isDataset, isQualityTest, isTransformer };
+  });
 
 // data entity groups
 export const getDataEntityGroupCreatingStatuses = createStatusesSelector(

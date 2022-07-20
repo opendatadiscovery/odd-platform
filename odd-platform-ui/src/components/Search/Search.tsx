@@ -14,9 +14,9 @@ import MainSearchContainer from 'components/shared/MainSearch/MainSearchContaine
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import { searchPath } from 'lib/paths';
 import { useHistory } from 'react-router-dom';
+import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
 import FiltersContainer from './Filters/FiltersContainer';
 import ResultsContainer from './Results/ResultsContainer';
-import * as S from './SearchStyles';
 
 interface SearchProps {
   searchIdParam?: string;
@@ -104,17 +104,17 @@ const Search: React.FC<SearchProps> = ({
 
   return (
     <>
-      <S.Container>
+      <S.MainContainer>
         <S.ContentContainer container spacing={2}>
-          <S.FiltersContainer item xs={3}>
+          <S.LeftSidebarContainer item xs={3}>
             <FiltersContainer />
-          </S.FiltersContainer>
-          <S.ResultsContainer item xs={9}>
+          </S.LeftSidebarContainer>
+          <S.ListContainer item xs={9}>
             <MainSearchContainer placeholder="Search" />
             <ResultsContainer />
-          </S.ResultsContainer>
+          </S.ListContainer>
         </S.ContentContainer>
-      </S.Container>
+      </S.MainContainer>
       <AppErrorPage fetchStatus={searchFetchStatus} error={searchError} />
     </>
   );

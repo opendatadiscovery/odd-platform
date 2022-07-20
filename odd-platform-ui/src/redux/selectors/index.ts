@@ -19,3 +19,4 @@ export * from './tags.selectors';
 export * from './terms.selectors';
 export * from './termLinkedList.selectors';
 export * from './termSearch.selectors';
+export * from './activities.selectors';

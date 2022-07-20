@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record, P>
@@ -63,29 +61,17 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
     }
 
     @Override
-    public Flux<P> delete(final Collection<Long> ids) {
-        final Map<Field<?>, Object> updatedFieldsMap = getDeleteChangedFields();
-        final UpdateResultStep<R> query = DSL.update(recordTable)
-            .set(updatedFieldsMap)
-            .where(idCondition(ids))
-            .returning();
-
-        return jooqReactiveOperations.flux(query).map(this::recordToPojo);
-    }
-
-    @Override
     protected List<Condition> idCondition(final long id) {
         return addSoftDeleteFilter(super.idCondition(id));
     }
 
-    @Override
-    protected List<Condition> idCondition(final Collection<Long> ids) {
-        return addSoftDeleteFilter(super.idCondition(ids));
+    protected List<Condition> listCondition(final String nameQuery) {
+        return addSoftDeleteFilter(super.listCondition(nameQuery));
     }
 
     @Override
-    protected List<Condition> listCondition(final String nameQuery) {
-        return addSoftDeleteFilter(super.listCondition(nameQuery));
+    protected List<Condition> listCondition(final String nameQuery, final List<Long> ids) {
+        return addSoftDeleteFilter(super.listCondition(nameQuery, ids));
     }
 
     protected List<Condition> addSoftDeleteFilter(final Condition condition) {

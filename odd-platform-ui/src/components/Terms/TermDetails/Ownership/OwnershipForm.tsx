@@ -25,7 +25,7 @@ import AppInput from 'components/shared/AppInput/AppInput';
 
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import {
   createTermOwnership,
   fetchOwnersList,
@@ -71,9 +71,9 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
         searchOwners({ page: 1, size: 30, query: ownersSearchText })
       )
         .unwrap()
-        .then(({ ownersList }) => {
+        .then(({ items }) => {
           setOwnersLoading(false);
-          setOwnerOptions(ownersList);
+          setOwnerOptions(items);
         });
     }, 500),
     [searchOwners, setOwnersLoading, setOwnerOptions, ownersSearchText]

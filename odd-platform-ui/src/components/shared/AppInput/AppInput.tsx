@@ -1,13 +1,14 @@
 import React from 'react';
 import { CircularProgress, TextFieldProps, Theme } from '@mui/material';
 import {
-  StyledAppInput,
   AppInputSizes,
+  StyledAppInput,
 } from 'components/shared/AppInput/AppInputStyles';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { SxProps } from '@mui/system';
 
 type AdornmentVariant = 'loader' | 'clear' | 'search';
+
 interface AdornmentProps {
   variant: AdornmentVariant;
   showAdornment: boolean;
@@ -40,6 +41,7 @@ interface AppInputProps
     | 'name'
     | 'fullWidth'
     | 'minRows'
+    | 'onFocus'
   > {
   size?: AppInputSizes;
   customStartAdornment?: AdornmentProps;
@@ -73,6 +75,7 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
       name,
       fullWidth = true,
       minRows,
+      onFocus,
     },
     ref
   ) => {
@@ -131,6 +134,7 @@ const AppInput: React.FC<AppInputProps> = React.forwardRef(
         minRows={minRows}
         multiline={multiline}
         name={name}
+        onFocus={onFocus}
         // eslint-disable-next-line react/jsx-no-duplicate-props
         InputProps={{
           ...InputProps,

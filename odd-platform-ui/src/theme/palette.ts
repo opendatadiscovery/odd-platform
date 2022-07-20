@@ -251,4 +251,9 @@ export const palette = createPalette({
     disabled: { border: colors.black10 },
   },
   background: { default: colors.white },
+  activityEvent: {
+    created: colors.green10,
+    updated: colors.blue5,
+    deleted: colors.red5,
+  },
 });

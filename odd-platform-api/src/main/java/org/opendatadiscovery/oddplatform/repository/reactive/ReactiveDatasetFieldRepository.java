@@ -12,4 +12,6 @@ public interface ReactiveDatasetFieldRepository extends ReactiveCRUDRepository<D
     Mono<DatasetFieldDto> getDto(final long datasetFieldId);
 
     Mono<Map<String, DatasetFieldPojo>> getExistingFieldsByOddrnAndType(final List<DatasetFieldPojo> fields);
+
+    Mono<Long> getDataEntityIdByDatasetFieldId(final long datasetFieldId);
 }
