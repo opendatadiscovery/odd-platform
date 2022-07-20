@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material';
 import React from 'react';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import {
   getDataEntityDetails,
   getDataEntityDetailsFetching,

@@ -4,10 +4,10 @@ import { fetchDataEntityRuns } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getDataEntityRunList,
-  getDataEntityRunsListPageInfo,
   getDataEntityRunsFetchingStatuses,
+  getDataEntityRunsListPageInfo,
 } from 'redux/selectors/dataEntityRun.selector';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
 
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';

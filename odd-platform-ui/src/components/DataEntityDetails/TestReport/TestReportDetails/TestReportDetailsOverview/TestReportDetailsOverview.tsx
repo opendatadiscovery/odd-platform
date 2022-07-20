@@ -1,5 +1,5 @@
-import React, { ChangeEvent } from 'react';
-import { Grid, Typography } from '@mui/material';
+import React from 'react';
+import { Grid, SelectChangeEvent, Typography } from '@mui/material';
 import TestReportDetailsOverviewSkeleton from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { format, formatDistanceStrict } from 'date-fns';
@@ -9,11 +9,11 @@ import {
   getQualityTestByTestId,
 } from 'redux/selectors/dataQualityTest.selectors';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { setDataQATestSeverity } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -24,7 +24,8 @@ const TestReportDetailsOverview: React.FC = () => {
   const qualityTest = useAppSelector(state =>
     getQualityTestByTestId(state, dataQATestId)
   );
-  const handleSeverityChange = (e: ChangeEvent<HTMLInputElement>) =>
+
+  const handleSeverityChange = (e: SelectChangeEvent<unknown>) =>
     dispatch(
       setDataQATestSeverity({
         dataEntityId,
@@ -66,9 +67,13 @@ const TestReportDetailsOverview: React.FC = () => {
                   }
                 )}
             </LabeledInfoItem>
-            <LabeledInfoItem label="Severity" inline labelWidth={4}>
-              <AppTextField
-                select
+            <LabeledInfoItem
+              label="Severity"
+              inline
+              labelWidth={4}
+              valueComponent="div"
+            >
+              <AppSelect
                 size="small"
                 defaultValue={
                   qualityTest?.severity || DataQualityTestSeverity.AVERAGE
@@ -80,7 +85,7 @@ const TestReportDetailsOverview: React.FC = () => {
                     {severity}
                   </AppMenuItem>
                 ))}
-              </AppTextField>
+              </AppSelect>
             </LabeledInfoItem>
           </Grid>
           <Grid sx={{ mt: 2 }}>

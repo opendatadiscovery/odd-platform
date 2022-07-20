@@ -1,5 +1,7 @@
 import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import capitalize from 'lodash/capitalize';
+import { Theme } from '@mui/material';
+import { CRUDType } from 'lib/interfaces';
 
 export const isComplexField = (fieldType: DataSetFieldTypeTypeEnum) =>
   [
@@ -32,4 +34,26 @@ export const stringFormatted = (
     .slice(removePrefix ? 1 : 0)
     .map(capitalizeBy)
     .join(' ');
+};
+
+export const toDateWithoutOffset = (dateToCast: number): Date => {
+  const date = new Date(dateToCast);
+  const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - userTimezoneOffset);
+};
+
+export const setActivityBackgroundColor = (
+  theme: Theme,
+  eventType?: CRUDType
+): string => {
+  switch (eventType) {
+    case 'created':
+      return theme.palette.activityEvent.created;
+    case 'updated':
+      return theme.palette.activityEvent.updated;
+    case 'deleted':
+      return theme.palette.activityEvent.deleted;
+    default:
+      return '';
+  }
 };

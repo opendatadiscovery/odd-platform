@@ -3,6 +3,7 @@ import React from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import {
+  dataEntityActivityPath,
   dataEntityAlertsPath,
   dataEntityHistoryPath,
   dataEntityLineagePath,
@@ -24,9 +25,8 @@ import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
-import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import {
   deleteDataEntityGroup,
   fetchDataEntityAlerts,
@@ -43,7 +43,6 @@ import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
-import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import {
   getDataEntityAddToGroupStatuses,
@@ -53,6 +52,8 @@ import {
   getSearchId,
 } from 'redux/selectors';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
+import LinkedItemsListContainer from './LinkedItemsList/LinkedItemsListContainer';
 import * as S from './DataEntityDetailsStyles';
 
 // lazy components
@@ -70,6 +71,9 @@ const DataEntityAlerts = React.lazy(
 );
 const QualityTestHistory = React.lazy(
   () => import('./QualityTestRunsHistory/TestRunsHistory')
+);
+const DataEntityActivity = React.lazy(
+  () => import('./DataEntityActivity/DataEntityActivity')
 );
 
 const DataEntityDetailsView: React.FC = () => {
@@ -163,6 +167,11 @@ const DataEntityDetailsView: React.FC = () => {
         link: dataEntityLinkedItemsPath(dataEntityId),
         hidden: !dataEntityDetails?.hasChildren,
         value: 'linked-items',
+      },
+      {
+        name: 'Activity',
+        link: dataEntityActivityPath(dataEntityId),
+        value: 'activity',
       },
     ]);
   }, [
@@ -377,6 +386,11 @@ const DataEntityDetailsView: React.FC = () => {
               exact
               path="/dataentities/:dataEntityId/linked-items"
               component={LinkedItemsListContainer}
+            />
+            <Route
+              exact
+              path="/dataentities/:dataEntityId/activity"
+              component={DataEntityActivity}
             />
             <Redirect
               from="/dataentities/:dataEntityId"

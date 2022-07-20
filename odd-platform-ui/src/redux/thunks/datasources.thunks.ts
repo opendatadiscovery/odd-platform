@@ -1,12 +1,12 @@
 import {
-  DataSourceApi,
   Configuration,
   DataSource,
-  DataSourceApiGetDataSourceListRequest,
-  DataSourceApiUpdateDataSourceRequest,
-  DataSourceApiRegisterDataSourceRequest,
+  DataSourceApi,
   DataSourceApiDeleteDataSourceRequest,
+  DataSourceApiGetDataSourceListRequest,
   DataSourceApiRegenerateDataSourceTokenRequest,
+  DataSourceApiRegisterDataSourceRequest,
+  DataSourceApiUpdateDataSourceRequest,
 } from 'generated-sources';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { CurrentPageInfo } from 'redux/interfaces/common';
@@ -17,7 +17,7 @@ const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new DataSourceApi(apiClientConf);
 
 export const fetchDataSourcesList = createAsyncThunk<
-  { datasourcesList: Array<DataSource>; pageInfo: CurrentPageInfo },
+  { datasourceList: Array<DataSource>; pageInfo: CurrentPageInfo },
   DataSourceApiGetDataSourceListRequest
 >(actions.fetchDatasorcesActionType, async ({ page, size, query }) => {
   const { items, pageInfo } = await apiClient.getDataSourceList({
@@ -26,7 +26,7 @@ export const fetchDataSourcesList = createAsyncThunk<
     query,
   });
 
-  return { datasourcesList: items, pageInfo: { ...pageInfo, page } };
+  return { datasourceList: items, pageInfo: { ...pageInfo, page } };
 });
 
 export const updateDataSource = createAsyncThunk<

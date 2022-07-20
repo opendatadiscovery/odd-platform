@@ -1,7 +1,9 @@
 import React from 'react';
+import SystemIcon from 'components/shared/Icons/SystemIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import { TypographyProps } from '@mui/material';
+import { Theme, TypographyProps } from '@mui/material';
+import { SxProps } from '@mui/system';
 import { Container } from './LabelItemStyles';
 
 interface LabelItemProps {
@@ -12,6 +14,7 @@ interface LabelItemProps {
   variant?: TypographyProps['variant'];
   component?: React.ElementType;
   systemLabel?: boolean;
+  sx?: SxProps<Theme>;
 }
 
 const LabelItem: React.FC<LabelItemProps> = ({
@@ -22,16 +25,18 @@ const LabelItem: React.FC<LabelItemProps> = ({
   variant = 'body2',
   component = 'span',
   systemLabel,
+  sx,
 }) => (
   <Container
     $unfilled={unfilled}
-    sx={{ m: 0.25 }}
+    sx={sx || { m: 0.25 }}
     noWrap
     $systemLabel={systemLabel}
     variant={variant}
     component={component}
     title={labelName}
   >
+    {systemLabel && <SystemIcon />}
     {labelName}
     {removable && !systemLabel && (
       <AppIconButton

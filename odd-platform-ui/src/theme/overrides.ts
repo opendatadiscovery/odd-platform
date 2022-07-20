@@ -20,7 +20,7 @@ export const components: Components = {
   },
   MuiCssBaseline: {
     styleOverrides: {
-      'a:-webkit-any-link': {
+      a: {
         font: 'inherit',
         color: 'inherit',
         textDecoration: 'inherit',

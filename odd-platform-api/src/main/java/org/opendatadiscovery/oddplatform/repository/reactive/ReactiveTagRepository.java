@@ -21,7 +21,7 @@ public interface ReactiveTagRepository extends ReactiveCRUDRepository<TagPojo> {
 
     Flux<TagPojo> listByTerm(final long termId);
 
-    Mono<Page<TagDto>> listMostPopular(final String query, final int page, final int size);
+    Mono<Page<TagDto>> listMostPopular(final String query, final List<Long> ids, final int page, final int size);
 
     Flux<TagToDataEntityPojo> listTagRelations(final Collection<Long> dataEntityIds);
 

@@ -24,9 +24,9 @@ export const datasourceSlice = createSlice({
     builder.addCase(
       thunks.fetchDataSourcesList.fulfilled,
       (state, { payload }) => {
-        const { datasourcesList, pageInfo } = payload;
+        const { datasourceList, pageInfo } = payload;
 
-        datasourceAdapter.setMany(state, datasourcesList);
+        datasourceAdapter.setMany(state, datasourceList);
         state.pageInfo = pageInfo;
       }
     );

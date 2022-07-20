@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
@@ -57,15 +58,17 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
         final Set<String> names = new HashSet<>(datasetFieldUpdateFormData.getLabelNames());
 
         return getCurrentRelations(List.of(datasetFieldId)).zipWith(getUpdatedRelations(names, datasetFieldId))
-            .flatMap((function((current, updated) -> {
-                final List<LabelToDatasetFieldPojo> pojosToDelete = current.stream()
-                    .filter(r -> !updated.contains(r))
-                    .toList();
-                return reactiveLabelRepository.deleteRelations(pojosToDelete)
-                    .then(Mono.just(updated));
-            })))
-            .flatMapMany(reactiveLabelRepository::createRelations)
-            .then(reactiveLabelRepository.listDatasetFieldDtos(datasetFieldId));
+            .flatMap((function(
+                (current, updated) -> {
+                    if (labelsAreTheSame(current, updated)) {
+                        return reactiveLabelRepository.listDatasetFieldDtos(datasetFieldId);
+                    }
+                    final List<LabelToDatasetFieldPojo> currentInternalRelations = current.stream()
+                        .filter(pojo -> !pojo.getExternal())
+                        .toList();
+                    return labelService.updateDatasetFieldLabels(datasetFieldId, currentInternalRelations, updated);
+                }
+            )));
     }
 
     @NotNull
@@ -84,7 +87,6 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
 
     private Mono<List<LabelToDatasetFieldPojo>> getCurrentRelations(final Collection<Long> datasetFieldIds) {
         return reactiveLabelRepository.listLabelRelations(datasetFieldIds)
-            .filter(pojo -> !pojo.getExternal())
             .collectList();
     }
 
@@ -96,5 +98,14 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                 .setDatasetFieldId(datasetFieldId)
                 .setExternal(false))
             .collectList();
+    }
+
+    private boolean labelsAreTheSame(final List<LabelToDatasetFieldPojo> current,
+                                     final List<LabelToDatasetFieldPojo> updated) {
+        return CollectionUtils.isEqualCollection(extractLabelIds(current), extractLabelIds(updated));
+    }
+
+    private List<Long> extractLabelIds(final List<LabelToDatasetFieldPojo> relations) {
+        return relations.stream().map(LabelToDatasetFieldPojo::getLabelId).toList();
     }
 }

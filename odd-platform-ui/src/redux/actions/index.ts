@@ -17,4 +17,5 @@ export * from './appInfo.actions';
 export * from './collector.actions';
 export * from './terms.actions';
 export * from './termSearch.actions';
+export * from './activity.actions';
 export * from './dataEntityRun.actions';

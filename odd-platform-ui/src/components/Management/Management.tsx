@@ -4,7 +4,7 @@ import { Grid } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import { managementPath } from 'lib/paths';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import * as S from './ManagementStyles';
 
 // lazy components

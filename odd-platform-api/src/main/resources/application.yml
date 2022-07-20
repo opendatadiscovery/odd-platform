@@ -97,3 +97,8 @@ logging:
     io.r2dbc.postgresql.QUERY: info
     io.r2dbc.postgresql.PARAM: info
     org.opendatadiscovery.oddplatform.notification: info
+
+odd:
+  activity:
+    partition-period: 30
+

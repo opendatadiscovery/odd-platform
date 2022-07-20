@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
 import { Dictionary } from 'lodash/index';
-import { useScrollBarWidth } from 'lib/hooks';
+import { useScrollBarWidth } from 'lib/hooks/hooks';
 import {
   DataEntity,
   DataEntityClass,

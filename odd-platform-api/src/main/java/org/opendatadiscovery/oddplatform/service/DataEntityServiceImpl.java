@@ -32,6 +32,8 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
@@ -54,6 +56,10 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntity
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityGroupPath;
 import org.springframework.stereotype.Service;
@@ -63,6 +69,7 @@ import reactor.core.publisher.Mono;
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
+import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated.DATA_ENTITY_ID;
 import static reactor.function.TupleUtils.function;
 
 @Service
@@ -80,6 +87,7 @@ public class DataEntityServiceImpl
     private final TagService tagService;
     private final LineageRepository lineageRepository;
     private final NamespaceService namespaceService;
+    private final ActivityService activityService;
 
     private final MetadataFieldMapper metadataFieldMapper;
     private final MetadataFieldValueMapper metadataFieldValueMapper;
@@ -101,6 +109,7 @@ public class DataEntityServiceImpl
                                  final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository,
                                  final TagMapper tagMapper,
                                  final NamespaceService namespaceService,
+                                 final ActivityService activityService,
                                  final ReactiveDataEntityRepository reactiveDataEntityRepository,
                                  final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository,
                                  final ReactiveTermRepository reactiveTermRepository,
@@ -117,6 +126,7 @@ public class DataEntityServiceImpl
         this.reactiveSearchEntrypointRepository = reactiveSearchEntrypointRepository;
         this.tagMapper = tagMapper;
         this.namespaceService = namespaceService;
+        this.activityService = activityService;
         this.reactiveDataEntityRepository = reactiveDataEntityRepository;
         this.reactiveTermRepository = reactiveTermRepository;
         this.ownershipRepository = ownershipRepository;
@@ -136,9 +146,11 @@ public class DataEntityServiceImpl
 
     @Override
     @ReactiveTransactional
-    public Mono<DataEntityRef> updateDataEntityGroup(final Long id, final DataEntityGroupFormData formData) {
+    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_UPDATED)
+    public Mono<DataEntityRef> updateDataEntityGroup(
+        @ActivityParameter(ActivityParameterNames.CustomGroupUpdated.DATA_ENTITY_ID) final Long id,
+        final DataEntityGroupFormData formData) {
         return reactiveDataEntityRepository.get(id)
-            .doOnNext(pojo -> log.info("I'm here"))
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
             .filter(DataEntityPojo::getManuallyCreated)
             .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't update ingested data entity")))
@@ -153,7 +165,9 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<DataEntityPojo> deleteDataEntityGroup(final Long id) {
+    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_DELETED)
+    public Mono<DataEntityPojo> deleteDataEntityGroup(
+        @ActivityParameter(ActivityParameterNames.CustomGroupDeleted.DATA_ENTITY_ID) final Long id) {
         return reactiveDataEntityRepository.get(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
             .filter(DataEntityPojo::getManuallyCreated)
@@ -217,7 +231,12 @@ public class DataEntityServiceImpl
                                               final int size,
                                               final LineageStreamKind streamKind) {
         return authIdentityProvider.fetchAssociatedOwner()
-            .flatMapIterable(o -> entityRepository.listByOwner(page, size, o.getId(), streamKind))
+            .flatMapIterable(o -> {
+                    final List<String> oddrns = entityRepository
+                        .listOddrnsByOwner(o.getId(), streamKind);
+                    return entityRepository.listAllByOddrns(oddrns, page, size, true);
+                }
+            )
             .map(entityMapper::mapRef);
     }
 
@@ -281,7 +300,8 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<InternalDescription> upsertDescription(final long dataEntityId,
+    @ActivityLog(event = ActivityEventTypeDto.DESCRIPTION_UPDATED)
+    public Mono<InternalDescription> upsertDescription(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
                                                        final InternalDescriptionFormData formData) {
         return Mono.just(formData.getInternalDescription()).map(d -> {
             entityRepository.setDescription(dataEntityId, d);
@@ -290,8 +310,10 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<InternalName> upsertBusinessName(final long dataEntityId,
-                                                 final InternalNameFormData formData) {
+    @ActivityLog(event = ActivityEventTypeDto.BUSINESS_NAME_UPDATED)
+    public Mono<InternalName> upsertBusinessName(
+        @ActivityParameter(ActivityParameterNames.InternalNameUpdated.DATA_ENTITY_ID) final long dataEntityId,
+        final InternalNameFormData formData) {
         return Mono.just(formData.getInternalName())
             .map(name -> {
                 entityRepository.setInternalName(dataEntityId, name);
@@ -301,7 +323,10 @@ public class DataEntityServiceImpl
 
     @Override
     @ReactiveTransactional
-    public Flux<Tag> upsertTags(final long dataEntityId, final TagsFormData formData) {
+    @ActivityLog(event = ActivityEventTypeDto.TAGS_ASSOCIATION_UPDATED)
+    public Flux<Tag> upsertTags(
+        @ActivityParameter(ActivityParameterNames.TagsAssociationUpdated.DATA_ENTITY_ID) final long dataEntityId,
+        final TagsFormData formData) {
         final Set<String> names = new HashSet<>(formData.getTagNameList());
         return tagService.updateRelationsWithDataEntity(dataEntityId, names)
             .flatMap(tags -> reactiveSearchEntrypointRepository.updateTagVectorsForDataEntity(dataEntityId)
@@ -391,7 +416,8 @@ public class DataEntityServiceImpl
                     .ignoreElements().thenReturn(pojo);
             })
             .flatMap(this::updateSearchVectors)
-            .map(entityMapper::mapRef);
+            .map(entityMapper::mapRef)
+            .flatMap(ref -> logDEGCreatedActivityEvent(ref).thenReturn(ref));
     }
 
     private Mono<DataEntityRef> updateDEG(final DataEntityPojo pojo,
@@ -435,6 +461,19 @@ public class DataEntityServiceImpl
             reactiveSearchEntrypointRepository.updateDataEntityVectors(pojo.getId()),
             reactiveSearchEntrypointRepository.updateNamespaceVectorForDataEntity(pojo.getId())
         ).thenReturn(pojo);
+    }
+
+    private Mono<Void> logDEGCreatedActivityEvent(final DataEntityRef ref) {
+        return Mono.zip(activityService.getContextInfo(Map.of(), ActivityEventTypeDto.CUSTOM_GROUP_CREATED),
+                activityService.getUpdatedInfo(Map.of(), ref.getId(), ActivityEventTypeDto.CUSTOM_GROUP_CREATED))
+            .map(function((ci, newState) -> ActivityCreateEvent.builder()
+                .dataEntityId(ref.getId())
+                .oldState(ci.getOldState())
+                .newState(newState)
+                .eventType(ActivityEventTypeDto.CUSTOM_GROUP_CREATED)
+                .systemEvent(false)
+                .build()
+            )).flatMap(activityService::createActivityEvent);
     }
 
     private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {

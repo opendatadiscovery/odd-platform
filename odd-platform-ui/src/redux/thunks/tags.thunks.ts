@@ -1,11 +1,11 @@
 import {
   Configuration,
-  TagApi,
   Tag,
+  TagApi,
   TagApiCreateTagRequest,
-  TagApiUpdateTagRequest,
   TagApiDeleteTagRequest,
   TagApiGetPopularTagListRequest,
+  TagApiUpdateTagRequest,
 } from 'generated-sources';
 import { CurrentPageInfo } from 'redux/interfaces/common';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -18,11 +18,12 @@ const apiClient = new TagApi(apiClientConf);
 export const fetchTagsList = createAsyncThunk<
   { items: Array<Tag>; pageInfo: CurrentPageInfo },
   TagApiGetPopularTagListRequest
->(actions.fetchTagsActionType, async ({ page, size, query }) => {
+>(actions.fetchTagsActionType, async ({ page, size, query, ids }) => {
   const { items, pageInfo } = await apiClient.getPopularTagList({
     page,
     size,
     query,
+    ids,
   });
 
   return { items, pageInfo: { ...pageInfo, page } };

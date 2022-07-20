@@ -72,6 +72,7 @@ export const StyledAppInput = styled(TextField)<AppInputStyleProps>(
       },
       [`& .${inputBaseClasses.input}`]: {
         padding: theme.spacing(inputYPaddingsBySize($size), 1),
+        color: theme.palette.texts.primary,
         fontWeight: 400,
         fontSize: pxToRem(14),
         lineHeight: pxToRem(20),

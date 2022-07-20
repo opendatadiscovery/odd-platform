@@ -21,6 +21,7 @@ import appInfo from './appInfo.slice';
 import collectors from './collectors.slice';
 import terms from './terms.slice';
 import termSearch from './termSearch.reducer';
+import activities from './activity.slice';
 import dataEntityRuns from './dataEntityRuns.slice';
 
 export default combineReducers({
@@ -47,4 +48,5 @@ export default combineReducers({
   terms,
   termSearch,
   dataEntityRuns,
+  activities,
 });

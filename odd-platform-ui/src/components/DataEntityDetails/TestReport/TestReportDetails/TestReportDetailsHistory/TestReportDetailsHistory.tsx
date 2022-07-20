@@ -5,9 +5,8 @@ import {
   getDataEntityRunList,
   getDataEntityRunsFetchingStatuses,
 } from 'redux/selectors/dataEntityRun.selector';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
-
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceStrict } from 'date-fns';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';

@@ -9,3 +9,5 @@ export type ManagementViewType =
   | 'owners'
   | 'tags'
   | 'labels';
+
+export type CRUDType = 'created' | 'updated' | 'deleted';
