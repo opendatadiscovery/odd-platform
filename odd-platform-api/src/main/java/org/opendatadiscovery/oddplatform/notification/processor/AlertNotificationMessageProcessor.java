@@ -22,7 +22,7 @@ public class AlertNotificationMessageProcessor implements PostgresWALMessageProc
         final AlertNotificationMessage notificationMessage = messageTranslator.translate(message);
 
         for (final NotificationSender<AlertNotificationMessage> notificationSender : notificationSenders) {
-            log.debug("Sending notification message via {}: {}", notificationSender.receiverId(), message);
+            log.debug("Sending notification message via {}: {}", notificationSender.receiverId(), notificationMessage);
 
             try {
                 notificationSender.send(notificationMessage);
