@@ -7,11 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.notification.config.NotificationsProperties;
 import org.opendatadiscovery.oddplatform.notification.processor.AlertNotificationMessageProcessor;
 import org.opendatadiscovery.oddplatform.notification.wal.PostgresWALMessageDecoder;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 @Component
+@ConditionalOnProperty(value = "notifications.enabled", havingValue = "true")
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationSubscriberStarter {
@@ -26,12 +28,8 @@ public class NotificationSubscriberStarter {
 
     @EventListener(ApplicationReadyEvent.class)
     public void runLeaderElection() {
-        if (notificationsProperties.isEnabled()) {
-            log.debug("Notification subscription is enabled, starting WAL parser");
-            executorService.submit(new NotificationSubscriber(
-                notificationsProperties.getWal(), pgConnectionFactory, messageDecoder, messageProcessor));
-        }
-
-        log.debug("Notification subscription is disabled");
+        log.debug("Notification subscription is enabled, starting WAL parser");
+        executorService.submit(new NotificationSubscriber(
+            notificationsProperties.getWal(), pgConnectionFactory, messageDecoder, messageProcessor));
     }
 }
