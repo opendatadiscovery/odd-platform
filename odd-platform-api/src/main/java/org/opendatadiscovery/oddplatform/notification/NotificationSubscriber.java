@@ -164,8 +164,11 @@ public class NotificationSubscriber extends Thread {
                     log.debug("Creating publication with name {} for table {}",
                         walProperties.getPublicationName(), tableName);
 
-                    connection.createStatement().execute(
-                        "CREATE PUBLICATION %s FOR TABLE %s".formatted(walProperties.getPublicationName(), tableName));
+                    try (final Statement publicationStatement = connection.createStatement()) {
+                        publicationStatement.execute(
+                            "CREATE PUBLICATION %s FOR TABLE %s".formatted(walProperties.getPublicationName(),
+                                tableName));
+                    }
                 }
             }
         }
