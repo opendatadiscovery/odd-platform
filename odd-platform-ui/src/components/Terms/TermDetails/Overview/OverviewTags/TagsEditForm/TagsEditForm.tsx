@@ -24,7 +24,7 @@ import {
   getTermDetailsTags,
   getTermDetailsTagsUpdatingStatuses,
 } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 
 interface TagsEditProps {
   btnEditEl: JSX.Element;

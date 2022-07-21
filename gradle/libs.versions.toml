@@ -39,6 +39,7 @@ spring-security = { module = 'org.springframework.boot:spring-boot-starter-secur
 spring-thymeleaf = { module = 'org.springframework.boot:spring-boot-starter-thymeleaf' }
 spring-oauth2-client = { module = 'org.springframework.boot:spring-boot-starter-oauth2-client' }
 spring-oauth2-rs = { module = 'org.springframework.boot:spring-boot-starter-oauth2-resource-server' }
+spring-aop = { module = 'org.springframework.boot:spring-boot-starter-aop' }
 spring-session = { module = 'org.springframework.session:spring-session-core' }
 spring-ldap = { module = 'org.springframework.boot:spring-boot-starter-data-ldap' }
 spring-security-ldap = { module = 'org.springframework.security:spring-security-ldap' }
@@ -98,7 +99,8 @@ spring = [
     'spring-ldap',
     'spring-security-ldap',
     'spring-r2dbc',
-    'reactor-extra'
+    'reactor-extra',
+    'spring-aop'
 ]
 spring-redis-session = [
     'spring-data-session-redis',

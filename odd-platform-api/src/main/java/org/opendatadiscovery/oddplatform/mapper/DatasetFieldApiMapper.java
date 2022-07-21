@@ -16,7 +16,6 @@ public interface DatasetFieldApiMapper {
     @Mapping(source = "datasetFieldPojo", target = ".")
     @Mapping(source = "datasetFieldPojo.type", target = "type", qualifiedByName = "deserializeType")
     @Mapping(source = "datasetFieldPojo.stats", target = "stats", qualifiedByName = "deserializeStats")
-    @Mapping(source = "labelPojos", target = "labels")
     DataSetField mapDto(final DatasetFieldDto datasetFieldDto);
 
     @Named("deserializeType")

@@ -24,8 +24,8 @@ export const ownersSlice = createSlice({
     builder.addCase(
       thunks.fetchOwnersList.fulfilled,
       (state, { payload }): OwnersState => {
-        const { ownersList, pageInfo } = payload;
-        return ownersList.reduce(
+        const { items, pageInfo } = payload;
+        return items.reduce(
           (memo: OwnersState, owner) => ({
             ...memo,
             byId: {

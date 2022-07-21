@@ -32,7 +32,7 @@ import {
 } from 'redux/thunks';
 import AppGraphCrossLink from 'components/shared/AppGraph/AppGraphCrossLink/AppGraphCrossLink';
 import { getDataEntityLineage } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import AppSelect from '../AppSelect/AppSelect';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
