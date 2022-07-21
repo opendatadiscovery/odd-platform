@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import round from 'lodash/round';
 import toPairs from 'lodash/toPairs';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import {
   DataSetApiGetDataSetStructureByVersionIdRequest,
   DataSetApiGetDataSetStructureLatestRequest,
@@ -13,9 +13,7 @@ import {
 } from 'generated-sources';
 import AppInput from 'components/shared/AppInput/AppInput';
 import { getDatasetStructure } from 'redux/selectors/datasetStructure.selectors';
-
 import { useDebouncedCallback } from 'use-debounce';
-
 import { datasetStructurePath } from 'lib/paths';
 import { isComplexField } from 'lib/helpers';
 import { DataSetStructureTypesCount } from 'redux/interfaces/datasetStructure';
@@ -25,7 +23,6 @@ import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStruct
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 import { useAppSelector } from 'lib/redux/hooks';
-
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
@@ -58,7 +55,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
 }) => {
   const history = useHistory();
   const [searchText, setSearchText] = React.useState<string>('');
-  const [scrollToIndex, setScrollToIndex] = useState(0);
+  const [indexToScroll, setIndexToScroll] = React.useState(0);
 
   const datasetStructureRoot = useAppSelector(state =>
     getDatasetStructure(state, {
@@ -91,7 +88,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
       const indexItem = datasetStructureRoot.findIndex(item =>
         item.name.toLowerCase().includes(searchText.toLowerCase())
       );
-      setScrollToIndex(indexItem);
+      setIndexToScroll(indexItem);
     }, 500),
     [searchText]
   );
@@ -106,6 +103,10 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     if (event.key === 'Enter') {
       handleSearch();
     }
+  };
+  const clearSearchField = () => {
+    setSearchText('');
+    setIndexToScroll(0);
   };
 
   return (
@@ -179,6 +180,12 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                 InputProps={{ 'aria-label': 'search' }}
                 onKeyDown={handleKeyDown}
                 onChange={handleInputChange}
+                customEndAdornment={{
+                  variant: 'clear',
+                  showAdornment: !!searchText,
+                  onCLick: clearSearchField,
+                  icon: <ClearIcon />,
+                }}
               />
               {datasetStructureVersion ? (
                 <>
@@ -207,7 +214,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             <DatasetStructureTableContainer
               dataEntityId={dataEntityId}
               versionId={versionIdParam}
-              scrollToIndex={scrollToIndex}
+              indexToScroll={indexToScroll}
             />
           ) : null}
         </Grid>

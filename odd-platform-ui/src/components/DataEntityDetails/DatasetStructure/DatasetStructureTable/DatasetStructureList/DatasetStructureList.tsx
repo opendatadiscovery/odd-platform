@@ -13,7 +13,7 @@ interface DatasetStructureListProps {
   versionId?: number;
   datasetStructureRoot: DataSetField[];
   datasetRowsCount: number;
-  scrollToIndex: number;
+  indexToScroll: number;
 }
 
 const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
@@ -21,7 +21,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   datasetRowsCount,
   datasetStructureRoot,
   versionId,
-  scrollToIndex,
+  indexToScroll,
 }) => {
   const cache = new CellMeasurerCache({
     defaultHeight: 50,
@@ -78,8 +78,9 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
             rowCount={datasetRowsCount}
             rowHeight={cache.rowHeight}
             rowRenderer={renderListItem}
-            scrollToIndex={scrollToIndex}
+            scrollToIndex={indexToScroll}
             deferredMeasurementCache={cache}
+            scrollToAlignment="start"
           />
         )}
       </AutoSizer>
