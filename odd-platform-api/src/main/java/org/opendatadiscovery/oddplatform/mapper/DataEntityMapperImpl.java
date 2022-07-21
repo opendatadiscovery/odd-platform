@@ -410,8 +410,8 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .unfilledCount(pojo.getTotalCount() - filledEntitiesCount)
             .dataEntityClassesInfo(
                 Arrays.stream(DataEntityClassDto.values())
-                    .filter(dto -> dto != DataEntityClassDto.DATA_QUALITY_TEST_RUN &&
-                        dto != DataEntityClassDto.DATA_TRANSFORMER_RUN)
+                    .filter(dto -> dto != DataEntityClassDto.DATA_QUALITY_TEST_RUN
+                        && dto != DataEntityClassDto.DATA_TRANSFORMER_RUN)
                     .map(dto -> new DataEntityClassUsageInfo()
                         .entityClass(mapEntityClass(dto))
                         .totalCount(classesCount.getOrDefault(dto.getId(), 0L)))

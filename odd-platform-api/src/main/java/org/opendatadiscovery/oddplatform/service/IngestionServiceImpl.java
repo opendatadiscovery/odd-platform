@@ -350,8 +350,8 @@ public class IngestionServiceImpl implements IngestionService {
                                       final Long defaultValue) {
         Arrays.stream(entityClassIds).forEach(entityClassId -> {
             final DataEntityClassDto entityClassDto = DataEntityClassDto.findById(entityClassId)
-                .orElseThrow(() -> new IllegalArgumentException("Can't find entity class with id " +
-                    entityClassId));
+                .orElseThrow(() -> new IllegalArgumentException("Can't find entity class with id "
+                    + entityClassId));
             entityClassesDeltaMap.merge(entityClassDto, defaultValue, Long::sum);
         });
     }

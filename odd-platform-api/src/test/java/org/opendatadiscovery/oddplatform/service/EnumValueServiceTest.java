@@ -13,7 +13,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapperImpl;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -33,6 +35,8 @@ public class EnumValueServiceTest {
 
     @Mock
     private ReactiveEnumValueRepository enumValueRepository;
+    @Mock
+    private ReactiveDataEntityFilledRepository dataEntityFilledRepository;
 
     private final EnumValueMapper enumValueMapper = new EnumValueMapperImpl();
 
@@ -65,7 +69,7 @@ public class EnumValueServiceTest {
 
     @BeforeEach
     void setUp() {
-        enumValueService = new EnumValueServiceImpl(enumValueRepository, enumValueMapper);
+        enumValueService = new EnumValueServiceImpl(enumValueRepository, dataEntityFilledRepository, enumValueMapper);
     }
 
     @Test
@@ -83,6 +87,9 @@ public class EnumValueServiceTest {
             .thenReturn(Flux.just(existingEnumPojo));
 
         when(enumValueRepository.softDeleteOutdatedEnumValuesExcept(anyLong(), anyList())).thenReturn(Flux.empty());
+
+        when(dataEntityFilledRepository.markEntityFilledByDatasetField(anyLong()))
+            .thenReturn(Mono.just(new DataEntityFilledPojo()));
 
         enumValueService
             .createEnumValues(datasetFieldId, List.of(existingEnum, newEnum))

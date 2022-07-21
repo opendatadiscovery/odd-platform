@@ -34,8 +34,8 @@ public class ReactiveDataEntityStatisticsRepositoryImpl implements ReactiveDataE
         final var query = DSL.update(DATA_ENTITY_STATISTICS)
             .set(DATA_ENTITY_STATISTICS.TOTAL_COUNT, DATA_ENTITY_STATISTICS.TOTAL_COUNT.plus(delta))
             .set(DATA_ENTITY_STATISTICS.DATA_ENTITY_CLASSES_COUNT,
-                field(DATA_ENTITY_STATISTICS.DATA_ENTITY_CLASSES_COUNT +
-                    " || json_build_object(" + jsonUpdate + ")::jsonb", JSONB.class))
+                field(DATA_ENTITY_STATISTICS.DATA_ENTITY_CLASSES_COUNT
+                    + " || json_build_object(" + jsonUpdate + ")::jsonb", JSONB.class))
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DataEntityStatisticsPojo.class));
