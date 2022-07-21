@@ -1,8 +1,13 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
@@ -33,6 +38,7 @@ import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
 import org.opendatadiscovery.oddplatform.service.LineageService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,17 +57,20 @@ public class DataEntityController
     private final AlertService alertService;
     private final TermService termService;
     private final LineageService lineageService;
+    private final ActivityService activityService;
 
     public DataEntityController(final DataEntityService entityService,
                                 final OwnershipService ownershipService,
                                 final AlertService alertService,
                                 final TermService termService,
-                                final LineageService lineageService) {
+                                final LineageService lineageService,
+                                final ActivityService activityService) {
         super(entityService);
         this.ownershipService = ownershipService;
         this.alertService = alertService;
         this.termService = termService;
         this.lineageService = lineageService;
+        this.activityService = activityService;
     }
 
     @Override
@@ -328,5 +337,21 @@ public class DataEntityController
         return entityService.deleteDataEntityFromDEG(dataEntityId, dataEntityGroupId)
             .ignoreElements()
             .thenReturn(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<Activity>>> getDataEntityActivity(final Long dataEntityId,
+                                                                      final LocalDate beginDate,
+                                                                      final LocalDate endDate,
+                                                                      final Integer size,
+                                                                      final List<Long> userIds,
+                                                                      final ActivityEventType eventType,
+                                                                      final Long lastEventId,
+                                                                      final OffsetDateTime lastEventDateTime,
+                                                                      final ServerWebExchange exchange) {
+        return Mono.just(
+            activityService.getDataEntityActivityList(beginDate, endDate, size, dataEntityId, userIds, eventType,
+                lastEventId, lastEventDateTime)
+        ).map(ResponseEntity::ok);
     }
 }

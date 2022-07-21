@@ -115,6 +115,7 @@ const tabStyles = (
   [`&.${buttonBaseClasses.root}`]: {
     [`&.${tabClasses.root}`]: {
       alignItems: $orientation === 'vertical' ? 'flex-start' : 'center',
+      '&:hover, &:active, &:focus': { textDecoration: 'none' },
     },
   },
   [`&.${tabClasses.selected}`]: {

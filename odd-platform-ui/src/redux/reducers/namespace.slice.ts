@@ -26,7 +26,8 @@ export const namespaceSlice = createSlice({
       thunks.fetchNamespaceList.fulfilled,
       (state, { payload }) => {
         const { namespaceList, pageInfo } = payload;
-        namespaceAdapter.setAll(state, namespaceList);
+
+        namespaceAdapter.setMany(state, namespaceList);
         state.pageInfo = pageInfo;
       }
     );

@@ -19,6 +19,11 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDimensionsDto> listDimensionsByOddrns(final Collection<String> oddrns);
 
+    List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
+                                                  final Integer page,
+                                                  final Integer size,
+                                                  final boolean skipHollow);
+
     List<DataEntityDimensionsDto> listByEntityClass(final int page,
                                                     final int size,
                                                     final int entityClassId,
@@ -29,10 +34,7 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId);
 
-    List<? extends DataEntityDto> listByOwner(final int page,
-                                              final int size,
-                                              final long ownerId,
-                                              final LineageStreamKind streamKind);
+    List<String> listOddrnsByOwner(final long ownerId, final LineageStreamKind streamKind);
 
     List<? extends DataEntityDto> listPopular(final int page, final int size);
 
@@ -62,12 +64,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
     void setInternalName(final long dataEntityId, final String businessName);
 
     void calculateSearchEntrypoints(final Collection<Long> dataEntityIds);
-
-    void calculateDataEntityVectors(final Collection<Long> ids);
-
-    void calculateNamespaceVectors(final Collection<Long> ids);
-
-    void calculateDataSourceVectors(final Collection<Long> ids);
 
     void calculateMetadataVectors(final Collection<Long> ids);
 

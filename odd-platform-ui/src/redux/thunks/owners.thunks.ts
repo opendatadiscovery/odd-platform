@@ -44,16 +44,17 @@ export const fetchRoleList = createAsyncThunk<
 });
 
 export const fetchOwnersList = createAsyncThunk<
-  { ownersList: Array<Owner>; pageInfo: CurrentPageInfo },
+  { items: Array<Owner>; pageInfo: CurrentPageInfo },
   OwnerApiGetOwnerListRequest
->(actions.fetchOwnersAction, async ({ page, size, query }) => {
+>(actions.fetchOwnersAction, async ({ page, size, query, ids }) => {
   const { items, pageInfo } = await ownerApi.getOwnerList({
     page,
     size,
     query,
+    ids,
   });
 
-  return { ownersList: items, pageInfo: { ...pageInfo, page } };
+  return { items, pageInfo: { ...pageInfo, page } };
 });
 
 export const createOwner = createAsyncThunk<

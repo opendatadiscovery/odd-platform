@@ -20,8 +20,7 @@ import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
 import { DataEntityGroupFormData } from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 
-type FilterOption = Omit<Namespace, 'id' | 'namespace'> &
-  Partial<Namespace>;
+type FilterOption = Omit<Namespace, 'id' | 'name'> & Partial<Namespace>;
 
 interface NamespaceAutocompleteProps {
   controllerProps:

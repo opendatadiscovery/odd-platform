@@ -11,7 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendatadiscovery.oddplatform.api.contract.model.Alert;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
+import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.Identity;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
@@ -23,6 +25,8 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +35,7 @@ class AlertMapperTest {
     @Mock
     DataEntityMapper dataEntityMapper;
     @Mock
-    OwnerMapper ownerMapper;
+    AssociatedOwnerMapper associatedOwnerMapper;
 
     @InjectMocks
     AlertMapper alertMapper = new AlertMapperImpl(new OffsetDateTimeMapperImpl());
@@ -48,6 +52,10 @@ class AlertMapperTest {
         final AlertPojo alertPojo = new EasyRandom().nextObject(AlertPojo.class);
         alertPojo.setType(AlertTypeEnum.BACKWARDS_INCOMPATIBLE_SCHEMA.name());
         alertPojo.setStatus(AlertStatusEnum.OPEN.name());
+
+        final AssociatedOwner associatedOwner = new AssociatedOwner();
+        associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
+        when(associatedOwnerMapper.mapAssociatedOwner(anyString(), isNull())).thenReturn(associatedOwner);
 
         final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, null));
 
@@ -80,7 +88,10 @@ class AlertMapperTest {
         final OwnerPojo updatedByOwner = new EasyRandom().nextObject(OwnerPojo.class);
         final Owner owner = new EasyRandom().nextObject(Owner.class);
         owner.setName(updatedByOwner.getName());
-        when(ownerMapper.mapToOwner(any(OwnerPojo.class))).thenReturn(owner);
+        final AssociatedOwner associatedOwner = new AssociatedOwner();
+        associatedOwner.setOwner(owner);
+        associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
+        when(associatedOwnerMapper.mapAssociatedOwner(anyString(), any(OwnerPojo.class))).thenReturn(associatedOwner);
         final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, updatedByOwner));
 
         //when
@@ -112,7 +123,11 @@ class AlertMapperTest {
         final OwnerPojo updatedByOwner = new EasyRandom().nextObject(OwnerPojo.class);
         final Owner owner = new EasyRandom().nextObject(Owner.class);
         owner.setName(updatedByOwner.getName());
-        when(ownerMapper.mapToOwner(any(OwnerPojo.class))).thenReturn(owner);
+
+        final AssociatedOwner associatedOwner = new AssociatedOwner();
+        associatedOwner.setOwner(owner);
+        associatedOwner.setIdentity(new Identity().username(alertPojo.getStatusUpdatedBy()));
+        when(associatedOwnerMapper.mapAssociatedOwner(anyString(), any(OwnerPojo.class))).thenReturn(associatedOwner);
 
         final List<AlertDto> alertDtos = List.of(new AlertDto(alertPojo, dataEntityPojo, updatedByOwner));
         final long pageTotal = 2L;

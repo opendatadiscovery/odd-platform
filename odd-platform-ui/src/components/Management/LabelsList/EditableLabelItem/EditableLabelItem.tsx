@@ -31,38 +31,40 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
           {label.name}
         </Typography>
       </Grid>
-      <S.ActionsContainer item>
-        <LabelEditForm
-          label={label}
-          editBtn={
-            <AppButton
-              size="medium"
-              color="primaryLight"
-              startIcon={<EditIcon />}
-              sx={{ mr: 1 }}
-            >
-              Edit
-            </AppButton>
-          }
-        />
-        <ConfirmationDialog
-          actionTitle="Are you sure you want to delete this label?"
-          actionName="Delete Label"
-          actionText={
-            <>&quot;{label.name}&quot; will be deleted permanently.</>
-          }
-          onConfirm={handleDelete}
-          actionBtn={
-            <AppButton
-              size="medium"
-              color="primaryLight"
-              startIcon={<DeleteIcon />}
-            >
-              Delete
-            </AppButton>
-          }
-        />
-      </S.ActionsContainer>
+      {!label.external && (
+        <S.ActionsContainer item>
+          <LabelEditForm
+            label={label}
+            editBtn={
+              <AppButton
+                size="medium"
+                color="primaryLight"
+                startIcon={<EditIcon />}
+                sx={{ mr: 1 }}
+              >
+                Edit
+              </AppButton>
+            }
+          />
+          <ConfirmationDialog
+            actionTitle="Are you sure you want to delete this label?"
+            actionName="Delete Label"
+            actionText={
+              <>&quot;{label.name}&quot; will be deleted permanently.</>
+            }
+            onConfirm={handleDelete}
+            actionBtn={
+              <AppButton
+                size="medium"
+                color="primaryLight"
+                startIcon={<DeleteIcon />}
+              >
+                Delete
+              </AppButton>
+            }
+          />
+        </S.ActionsContainer>
+      )}
     </S.Container>
   );
 };

@@ -13,7 +13,7 @@ import owners from './owners.slice';
 import datasetStructure from './datasetStructure.reducer';
 import dataEntityLineage from './dataEntityLineage/dataEntityLineage.slice';
 import profile from './profile.reducer';
-import dataQualityTest from './dataQualityTest.reducer';
+import dataQualityTest from './dataQualityTest.slice';
 import alerts from './alerts.slice';
 import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';
 import termLinkedList from './termLinkedList.slice';
@@ -21,6 +21,8 @@ import appInfo from './appInfo.slice';
 import collectors from './collectors.slice';
 import terms from './terms.slice';
 import termSearch from './termSearch.reducer';
+import activities from './activity.slice';
+import dataEntityRuns from './dataEntityRuns.slice';
 
 export default combineReducers({
   namespaces,
@@ -45,4 +47,6 @@ export default combineReducers({
   collectors,
   terms,
   termSearch,
+  dataEntityRuns,
+  activities,
 });

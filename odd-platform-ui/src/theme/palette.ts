@@ -225,13 +225,13 @@ export const palette = createPalette({
   },
   datasetFieldKey: {
     primary: {
-      background: colors.blue10,
-      color: colors.black70,
+      background: colors.black30,
+      color: colors.white,
       border: colors.blue30,
     },
     sort: {
-      background: colors.blue10,
-      color: colors.black70,
+      background: colors.black30,
+      color: colors.white,
       border: colors.blue10,
     },
   },
@@ -251,4 +251,9 @@ export const palette = createPalette({
     disabled: { border: colors.black10 },
   },
   background: { default: colors.white },
+  activityEvent: {
+    created: colors.green10,
+    updated: colors.blue5,
+    deleted: colors.red5,
+  },
 });

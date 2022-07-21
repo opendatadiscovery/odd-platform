@@ -14,7 +14,7 @@ import SearchIcon from 'components/shared/Icons/SearchIcon';
 import { useDebouncedCallback } from 'use-debounce';
 import { stringFormatted } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams } from 'lib/hooks/hooks';
 import {
   getDataEntityClassesList,
   getTermLinkedList,

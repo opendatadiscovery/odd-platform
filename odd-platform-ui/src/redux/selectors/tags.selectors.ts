@@ -8,7 +8,7 @@ import { TagsState } from 'redux/interfaces/state';
 import { tagsAdapter } from 'redux/reducers/tags.slice';
 import * as actions from 'redux/actions';
 
-const tagsState = ({ tags }: RootState): TagsState => tags;
+export const tagsState = ({ tags }: RootState): TagsState => tags;
 
 const getTagsListFetchingStatus = createLegacyFetchingSelector('GET_TAGS');
 
@@ -28,7 +28,7 @@ export const getTAgDeletingStatuses = createStatusesSelector(
   actions.deleteTagActionType
 );
 
-export const { selectAll: getTagsList } =
+export const { selectAll: getTagsList, selectById: getTagById } =
   tagsAdapter.getSelectors<RootState>(state => state.tags);
 
 export const getIsTagsListFetching = createSelector(

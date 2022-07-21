@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.TagApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
@@ -36,8 +37,9 @@ public class TagController implements TagApi {
     public Mono<ResponseEntity<TagsResponse>> getPopularTagList(final Integer page,
                                                                 final Integer size,
                                                                 final String query,
+                                                                final List<Long> ids,
                                                                 final ServerWebExchange exchange) {
-        return tagService.listMostPopular(query, page, size)
+        return tagService.listMostPopular(query, ids, page, size)
             .map(ResponseEntity::ok);
     }
 
