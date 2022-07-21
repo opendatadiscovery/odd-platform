@@ -11,6 +11,7 @@ const mapStateToProps = (
   }: {
     dataEntityId: number;
     versionId?: number;
+    scrollToIndex: number;
   }
 ) => ({
   datasetStructureRoot: getDatasetStructure(state, {

@@ -13,6 +13,7 @@ interface DatasetStructureListProps {
   versionId?: number;
   datasetStructureRoot: DataSetField[];
   datasetRowsCount: number;
+  scrollToIndex: number;
 }
 
 const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
@@ -20,17 +21,16 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   datasetRowsCount,
   datasetStructureRoot,
   versionId,
+  scrollToIndex,
 }) => {
   const cache = new CellMeasurerCache({
     defaultHeight: 50,
     fixedWidth: true,
   });
-
   const rootStructureItems = React.useMemo(
     () => datasetStructureRoot.filter(field => !field.parentFieldId),
     [datasetStructureRoot]
   );
-
   const renderStructureItem = React.useCallback(
     (field: DataSetField, nesting: number, onSizeChange: () => void) => (
       <DatasetStructureItemContainer
@@ -78,6 +78,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
             rowCount={datasetRowsCount}
             rowHeight={cache.rowHeight}
             rowRenderer={renderListItem}
+            scrollToIndex={scrollToIndex}
             deferredMeasurementCache={cache}
           />
         )}

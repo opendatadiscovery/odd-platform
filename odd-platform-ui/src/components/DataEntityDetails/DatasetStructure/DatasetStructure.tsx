@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
@@ -11,6 +11,11 @@ import {
   DataSetStats,
   DataSetVersion,
 } from 'generated-sources';
+import AppInput from 'components/shared/AppInput/AppInput';
+import { getDatasetStructure } from 'redux/selectors/datasetStructure.selectors';
+
+import { useDebouncedCallback } from 'use-debounce';
+
 import { datasetStructurePath } from 'lib/paths';
 import { isComplexField } from 'lib/helpers';
 import { DataSetStructureTypesCount } from 'redux/interfaces/datasetStructure';
@@ -19,6 +24,8 @@ import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
+import { useAppSelector } from 'lib/redux/hooks';
+
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
@@ -50,6 +57,15 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   isDatasetStructureFetching,
 }) => {
   const history = useHistory();
+  const [searchText, setSearchText] = React.useState<string>('');
+  const [scrollToIndex, setScrollToIndex] = useState(0);
+
+  const datasetStructureRoot = useAppSelector(state =>
+    getDatasetStructure(state, {
+      datasetId: dataEntityId,
+      versionId: versionIdParam,
+    })
+  );
 
   React.useEffect(() => {
     if (versionIdParam) {
@@ -61,7 +77,6 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
       fetchDataSetStructureLatest({ dataEntityId });
     }
   }, [fetchDataSetStructureLatest, dataEntityId]);
-
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
     fetchDataSetStructure({
@@ -69,6 +84,28 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
       versionId: newVersionId,
     });
     history.push(datasetStructurePath(dataEntityId, newVersionId));
+  };
+
+  const handleSearch = React.useCallback(
+    useDebouncedCallback(() => {
+      const indexItem = datasetStructureRoot.findIndex(item =>
+        item.name.toLowerCase().includes(searchText.toLowerCase())
+      );
+      setScrollToIndex(indexItem);
+    }, 500),
+    [searchText]
+  );
+
+  const handleInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setSearchText(event.target.value);
+    handleSearch();
+  };
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      handleSearch();
+    }
   };
 
   return (
@@ -128,12 +165,21 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             </Grid>
             <Grid
               item
-              xs={2}
+              xs={4}
               container
               flexWrap="nowrap"
               alignItems="center"
               justifyContent="flex-end"
             >
+              <AppInput
+                placeholder="Search"
+                sx={{ minWidth: '250px', mr: 1 }}
+                fullWidth={false}
+                value={searchText}
+                InputProps={{ 'aria-label': 'search' }}
+                onKeyDown={handleKeyDown}
+                onChange={handleInputChange}
+              />
               {datasetStructureVersion ? (
                 <>
                   <Typography variant="subtitle2">
@@ -161,6 +207,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             <DatasetStructureTableContainer
               dataEntityId={dataEntityId}
               versionId={versionIdParam}
+              scrollToIndex={scrollToIndex}
             />
           ) : null}
         </Grid>
