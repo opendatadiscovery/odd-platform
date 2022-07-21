@@ -1,7 +1,9 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,6 +20,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.JSONB;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassesTotalDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
@@ -53,6 +56,7 @@ import org.opendatadiscovery.oddplatform.repository.DatasetStructureRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
@@ -91,6 +95,7 @@ public class IngestionServiceImpl implements IngestionService {
     private final ActivityService activityService;
     private final GroupEntityRelationRepository groupEntityRelationRepository;
     private final GroupParentGroupRelationRepository groupParentGroupRelationRepository;
+    private final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
 
     private final IngestionMapper ingestionMapper;
     private final DatasetFieldMapper datasetFieldMapper;
@@ -110,6 +115,7 @@ public class IngestionServiceImpl implements IngestionService {
             .map(this::ingestDependencies)
             .flatMap(this::ingestCompanions)
             .flatMap(this::calculateSearchEntrypoints)
+            .flatMap(this::calculateTotalCounts)
             .flatMap(dataStructure -> {
                 final List<Long> changedSchemaIds = dataStructure.getExistingEntities()
                     .stream()
@@ -214,22 +220,22 @@ public class IngestionServiceImpl implements IngestionService {
 
     private IngestionDataStructure buildStructure(final DataEntityList dataEntityList,
                                                   final Long dataSourceId) {
-        final Map<String, DataEntityIngestionDto> dtoDict = dataEntityList.getItems().stream()
+        final Map<String, DataEntityIngestionDto> ingestionDtoMap = dataEntityList.getItems().stream()
             .filter(d -> !d.getType().equals(JOB_RUN))
             .map(de -> ingestionMapper.createIngestionDto(de, dataSourceId))
             .collect(Collectors.toMap(DataEntityIngestionDto::getOddrn, identity()));
 
         final Map<String, DataEntityPojo> existingPojoDict = dataEntityRepository
-            .listDtosByOddrns(dtoDict.keySet(), true)
+            .listDtosByOddrns(ingestionDtoMap.keySet(), true)
             .stream()
             .map(DataEntityDto::getDataEntity)
             .collect(Collectors.toMap(DataEntityPojo::getOddrn, identity()));
 
-        final Map<Boolean, List<DataEntityIngestionDto>> dtoPartitions = dtoDict.values()
+        final Map<Boolean, List<DataEntityIngestionDto>> ingestionDtoPartitions = ingestionDtoMap.values()
             .stream()
             .collect(Collectors.partitioningBy(d -> existingPojoDict.containsKey(d.getOddrn())));
 
-        final List<EnrichedDataEntityIngestionDto> enrichedExistingDtos = dtoPartitions.get(true)
+        final List<EnrichedDataEntityIngestionDto> enrichedExistingDtos = ingestionDtoPartitions.get(true)
             .stream()
             .map(existingDto -> {
                 final DataEntityPojo existingPojo = existingPojoDict.get(existingDto.getOddrn());
@@ -242,18 +248,21 @@ public class IngestionServiceImpl implements IngestionService {
             })
             .collect(Collectors.toList());
 
-        final List<DataEntityPojo> dataEntityDtos = enrichedExistingDtos.stream()
+        final List<DataEntityPojo> entitiesToUpdate = enrichedExistingDtos.stream()
             .filter(EnrichedDataEntityIngestionDto::isUpdated)
             .map(ingestionMapper::dtoToPojo)
-            .collect(Collectors.toList());
+            .toList();
 
-        dataEntityRepository.bulkUpdate(dataEntityDtos);
+        dataEntityRepository.bulkUpdate(entitiesToUpdate);
 
         final List<EnrichedDataEntityIngestionDto> enrichedNewDtos = dataEntityRepository
-            .bulkCreate(ingestionMapper.dtoToPojo(dtoPartitions.get(false)))
+            .bulkCreate(ingestionMapper.dtoToPojo(ingestionDtoPartitions.get(false)))
             .stream()
-            .map(d -> new EnrichedDataEntityIngestionDto(d.getId(), dtoDict.get(d.getOddrn())))
+            .map(d -> new EnrichedDataEntityIngestionDto(d.getId(), ingestionDtoMap.get(d.getOddrn())))
             .collect(Collectors.toList());
+
+        final DataEntityClassesTotalDelta countsDelta = calculateTotalDeltaCount(enrichedNewDtos,
+            entitiesToUpdate, existingPojoDict);
 
         final List<IngestionTaskRun> taskRuns = dataEntityList.getItems().stream()
             .filter(d -> d.getType().equals(JOB_RUN))
@@ -285,7 +294,7 @@ public class IngestionServiceImpl implements IngestionService {
             .map(Optional::get)
             .collect(Collectors.toList());
 
-        final List<DataEntitySpecificAttributesDelta> dataTransformerAttrsDelta = dtoDict.entrySet()
+        final List<DataEntitySpecificAttributesDelta> dataTransformerAttrsDelta = ingestionDtoMap.entrySet()
             .stream()
             .filter(e -> existingPojoDict.containsKey(e.getKey()))
             .filter(e -> DataEntityTypeDto.MICROSERVICE != e.getValue().getType())
@@ -309,7 +318,42 @@ public class IngestionServiceImpl implements IngestionService {
             .groupEntityRelations(groupEntityRelations)
             .groupParentGroupRelations(groupParentGroupRelations)
             .earlyAlerts(alertLocator.locateEarlyBackIncSchema(dataTransformerAttrsDelta))
+            .entityClassesTotalDelta(countsDelta)
             .build();
+    }
+
+    private DataEntityClassesTotalDelta calculateTotalDeltaCount(final List<EnrichedDataEntityIngestionDto> newDtos,
+                                                                 final List<DataEntityPojo> entitiesToUpdate,
+                                                                 final Map<String, DataEntityPojo> existingPojoDict) {
+        final Map<DataEntityClassDto, Long> entityClassesDeltaMap = new HashMap<>();
+        newDtos.stream()
+            .flatMap(dto -> dto.getEntityClasses().stream())
+            .forEach(entityClass -> entityClassesDeltaMap.merge(entityClass, 1L, Long::sum));
+
+        entitiesToUpdate.forEach(pojo -> {
+            final DataEntityPojo previousVersion = existingPojoDict.get(pojo.getOddrn());
+            if (previousVersion.getEntityClassIds() != null && previousVersion.getEntityClassIds().length > 0) {
+                calculateDeltaValues(previousVersion.getEntityClassIds(), entityClassesDeltaMap, -1L);
+            }
+            calculateDeltaValues(pojo.getEntityClassIds(), entityClassesDeltaMap, 1L);
+        });
+
+        final long hollowUpdatedEntitiesCount = entitiesToUpdate.stream()
+            .filter(e -> existingPojoDict.get(e.getOddrn()).getHollow())
+            .count();
+
+        return new DataEntityClassesTotalDelta(hollowUpdatedEntitiesCount + newDtos.size(), entityClassesDeltaMap);
+    }
+
+    private void calculateDeltaValues(final Integer[] entityClassIds,
+                                      final Map<DataEntityClassDto, Long> entityClassesDeltaMap,
+                                      final Long defaultValue) {
+        Arrays.stream(entityClassIds).forEach(entityClassId -> {
+            final DataEntityClassDto entityClassDto = DataEntityClassDto.findById(entityClassId)
+                .orElseThrow(() -> new IllegalArgumentException("Can't find entity class with id " +
+                    entityClassId));
+            entityClassesDeltaMap.merge(entityClassDto, defaultValue, Long::sum);
+        });
     }
 
     private IngestionDataStructure ingestDependencies(final IngestionDataStructure dataStructure) {
@@ -528,6 +572,12 @@ public class IngestionServiceImpl implements IngestionService {
             .statusReason(dataQualityTestRun.getStatusReason())
             .type(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN)
             .build();
+    }
+
+    private Mono<IngestionDataStructure> calculateTotalCounts(final IngestionDataStructure dataStructure) {
+        return dataEntityStatisticsRepository.updateCounts(dataStructure.getEntityClassesTotalDelta().totalDelta(),
+                dataStructure.getEntityClassesTotalDelta().entityClassesDelta())
+            .thenReturn(dataStructure);
     }
 
     private Mono<IngestionDataStructure> calculateSearchEntrypoints(final IngestionDataStructure dataStructure) {

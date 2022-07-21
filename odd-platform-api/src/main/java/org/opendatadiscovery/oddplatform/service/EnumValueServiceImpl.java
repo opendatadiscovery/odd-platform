@@ -11,6 +11,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
@@ -25,6 +26,7 @@ import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.Dat
 @RequiredArgsConstructor
 public class EnumValueServiceImpl implements EnumValueService {
     private final ReactiveEnumValueRepository reactiveEnumValueRepository;
+    private final ReactiveDataEntityFilledRepository dataEntityFilledRepository;
     private final EnumValueMapper mapper;
 
     @Override
@@ -58,6 +60,8 @@ public class EnumValueServiceImpl implements EnumValueService {
                         reactiveEnumValueRepository.bulkCreate(partitions.get(false)))
                     .map(mapper::mapToEnum)
                     .collectList()
+                    .flatMap(list -> dataEntityFilledRepository.markEntityFilledByDatasetField(datasetFieldId)
+                        .thenReturn(list))
                     .map(list -> new EnumValueList().items(list)));
     }
 

@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +13,6 @@ import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
@@ -50,11 +48,14 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelations
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.repository.DataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
@@ -99,6 +100,9 @@ public class DataEntityServiceImpl
     private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
     private final ReactiveTermRepository reactiveTermRepository;
     private final ReactiveOwnershipRepository ownershipRepository;
+    private final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
+    private final ReactiveDataEntityFilledRepository reactiveDataEntityFilledRepository;
+    private final DataEntityFilledRepository dataEntityFilledRepository;
 
     public DataEntityServiceImpl(final DataEntityMapper entityMapper,
                                  final DataEntityRepository entityRepository,
@@ -116,7 +120,10 @@ public class DataEntityServiceImpl
                                  final ReactiveDataEntityRepository reactiveDataEntityRepository,
                                  final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository,
                                  final ReactiveTermRepository reactiveTermRepository,
-                                 final ReactiveOwnershipRepository ownershipRepository) {
+                                 final ReactiveOwnershipRepository ownershipRepository,
+                                 final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository,
+                                 final ReactiveDataEntityFilledRepository reactiveDataEntityFilledRepository,
+                                 final DataEntityFilledRepository dataEntityFilledRepository) {
         super(entityMapper, entityRepository);
 
         this.authIdentityProvider = authIdentityProvider;
@@ -134,6 +141,9 @@ public class DataEntityServiceImpl
         this.reactiveTermRepository = reactiveTermRepository;
         this.ownershipRepository = ownershipRepository;
         this.reactiveGroupEntityRelationRepository = reactiveGroupEntityRelationRepository;
+        this.dataEntityStatisticsRepository = dataEntityStatisticsRepository;
+        this.reactiveDataEntityFilledRepository = reactiveDataEntityFilledRepository;
+        this.dataEntityFilledRepository = dataEntityFilledRepository;
     }
 
     @Override
@@ -292,6 +302,7 @@ public class DataEntityServiceImpl
             .collect(Collectors.toList());
 
         entityRepository.calculateMetadataVectors(List.of(dataEntityId));
+        dataEntityFilledRepository.markEntityFilled(dataEntityId);
         return Mono.just(new MetadataFieldValueList().items(fields));
     }
 
@@ -309,7 +320,7 @@ public class DataEntityServiceImpl
         return Mono.just(formData.getInternalDescription()).map(d -> {
             entityRepository.setDescription(dataEntityId, d);
             return new InternalDescription().internalDescription(d);
-        });
+        }).flatMap(d -> reactiveDataEntityFilledRepository.markEntityFilled(dataEntityId).thenReturn(d));
     }
 
     @Override
@@ -321,7 +332,7 @@ public class DataEntityServiceImpl
             .map(name -> {
                 entityRepository.setInternalName(dataEntityId, name);
                 return new InternalName().internalName(name);
-            });
+            }).flatMap(d -> reactiveDataEntityFilledRepository.markEntityFilled(dataEntityId).thenReturn(d));
     }
 
     @Override
@@ -334,6 +345,7 @@ public class DataEntityServiceImpl
         return tagService.updateRelationsWithDataEntity(dataEntityId, names)
             .flatMap(tags -> reactiveSearchEntrypointRepository.updateTagVectorsForDataEntity(dataEntityId)
                 .thenReturn(tags))
+            .flatMap(tags -> reactiveDataEntityFilledRepository.markEntityFilled(dataEntityId).thenReturn(tags))
             .flatMapIterable(tags -> tags.stream().map(tagMapper::mapToTag).toList());
     }
 
@@ -380,8 +392,10 @@ public class DataEntityServiceImpl
                 (pojo, groupPojo) -> reactiveGroupEntityRelationRepository
                     .createRelations(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
                     .ignoreElements()
-                    .thenReturn(groupPojo)
-            )).map(entityMapper::mapRef);
+                    .thenReturn(groupPojo)))
+            .flatMap(
+                groupPojo -> reactiveDataEntityFilledRepository.markEntityFilled(dataEntityId).thenReturn(groupPojo))
+            .map(entityMapper::mapRef);
     }
 
     @Override
@@ -403,14 +417,9 @@ public class DataEntityServiceImpl
 
     @Override
     public Mono<DataEntityUsageInfo> getDataEntityUsageInfo() {
-        return Mono.just(new DataEntityUsageInfo()
-            .totalCount(0L)
-            .unfilledCount(0L)
-            .dataEntityClassesInfo(Arrays.stream(DataEntityClassDto.values())
-                .map(dec -> new DataEntityClassUsageInfo()
-                    .entityClass(entityMapper.mapEntityClass(dec))
-                    .totalCount(0L))
-                .toList()));
+        return Mono.zip(dataEntityStatisticsRepository.getStatistics(),
+                reactiveDataEntityFilledRepository.getFilledDataEntitiesCount())
+            .map(function(entityMapper::mapUsageInfo));
     }
 
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,
@@ -432,7 +441,10 @@ public class DataEntityServiceImpl
             })
             .flatMap(this::updateSearchVectors)
             .map(entityMapper::mapRef)
-            .flatMap(ref -> logDEGCreatedActivityEvent(ref).thenReturn(ref));
+            .flatMap(ref -> logDEGCreatedActivityEvent(ref).thenReturn(ref))
+            .flatMap(ref -> reactiveDataEntityFilledRepository.markEntityFilled(ref.getId()).thenReturn(ref))
+            .flatMap(ref -> dataEntityStatisticsRepository.updateCounts(1L, Map.of(DATA_ENTITY_GROUP, 1L))
+                .thenReturn(ref));
     }
 
     private Mono<DataEntityRef> updateDEG(final DataEntityPojo pojo,
@@ -453,6 +465,8 @@ public class DataEntityServiceImpl
 
     private Mono<DataEntityPojo> deleteDEG(final DataEntityPojo pojo) {
         return Flux.zip(
+            dataEntityStatisticsRepository.updateCounts(-1L, Map.of(DATA_ENTITY_GROUP, -1L)),
+            reactiveDataEntityFilledRepository.markEntityUnfilled(pojo.getId()),
             reactiveTermRepository.deleteRelationsWithTerms(pojo.getId()),
             reactiveGroupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
             tagService.deleteRelationsForDataEntity(pojo.getId()),

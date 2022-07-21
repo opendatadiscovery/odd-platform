@@ -23,11 +23,14 @@ import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
+import org.opendatadiscovery.oddplatform.repository.DataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
@@ -79,6 +82,12 @@ public class DataEntityServiceTest {
     private ReactiveTermRepository termRepository;
     @Mock
     private ReactiveOwnershipRepository ownershipRepository;
+    @Mock
+    private ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
+    @Mock
+    private ReactiveDataEntityFilledRepository reactiveDataEntityFilledRepository;
+    @Mock
+    private DataEntityFilledRepository dataEntityFilledRepository;
 
     @BeforeEach
     public void beforeAll() {
@@ -86,7 +95,8 @@ public class DataEntityServiceTest {
             metadataFieldValueRepository, metadataFieldRepository, tagService, lineageRepository,
             metadataFieldMapper, metadataFieldValueMapper, reactiveSearchEntrypointRepository, tagMapper,
             namespaceService, activityService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository,
-            termRepository, ownershipRepository);
+            termRepository, ownershipRepository, dataEntityStatisticsRepository, reactiveDataEntityFilledRepository,
+            dataEntityFilledRepository);
     }
 
     @Test

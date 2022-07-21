@@ -19,6 +19,7 @@ import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.mapper.TermMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.service.NamespaceService;
@@ -41,6 +42,7 @@ public class TermServiceImpl implements TermService {
     private final NamespaceService namespaceService;
     private final TagService tagService;
     private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
+    private final ReactiveDataEntityFilledRepository dataEntityFilledRepository;
     private final TermMapper termMapper;
     private final TagMapper tagMapper;
 
@@ -106,6 +108,7 @@ public class TermServiceImpl implements TermService {
                                                 final Long dataEntityId) {
         return termRepository.createRelationWithDataEntity(dataEntityId, termId)
             .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
+            .flatMap(termRefDto -> dataEntityFilledRepository.markEntityFilled(dataEntityId).thenReturn(termRefDto))
             .map(termMapper::mapToRef);
     }
 

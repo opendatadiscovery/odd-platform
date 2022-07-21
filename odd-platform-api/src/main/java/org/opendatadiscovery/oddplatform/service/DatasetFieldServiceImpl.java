@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
@@ -32,6 +33,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     private final ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
     private final ReactiveLabelRepository reactiveLabelRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
+    private final ReactiveDataEntityFilledRepository dataEntityFilledRepository;
 
     @Override
     @ReactiveTransactional
@@ -50,6 +52,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             })
             .flatMap(dto -> reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId)
                 .ignoreElement().thenReturn(dto))
+            .flatMap(dto -> dataEntityFilledRepository.markEntityFilledByDatasetField(datasetFieldId).thenReturn(dto))
             .map(datasetFieldApiMapper::mapDto);
     }
 

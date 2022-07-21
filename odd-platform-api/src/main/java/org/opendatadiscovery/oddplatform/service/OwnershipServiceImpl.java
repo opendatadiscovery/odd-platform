@@ -9,6 +9,7 @@ import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.OwnershipMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
@@ -31,6 +32,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     private final OwnerService ownerService;
     private final ReactiveOwnershipRepository ownershipRepository;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
+    private final ReactiveDataEntityFilledRepository dataEntityFilledRepository;
     private final OwnershipMapper ownershipMapper;
 
     @Override
@@ -50,6 +52,7 @@ public class OwnershipServiceImpl implements OwnershipService {
             .flatMap(function((owner, role, ownership) -> searchEntrypointRepository
                 .updateChangedOwnershipVectors(ownership.getId())
                 .thenReturn(new OwnershipDto(ownership, owner, role))))
+            .flatMap(ownershipDto -> dataEntityFilledRepository.markEntityFilled(dataEntityId).thenReturn(ownershipDto))
             .map(ownershipMapper::mapDto);
     }
 
