@@ -40,7 +40,10 @@ const Identity: React.FC<IdentityProps> = ({
   const dispatch = useAppDispatch();
   const searchOwners = fetchOwnersList;
 
-  const methods = useForm<OwnerFormData>({
+  const {
+    formState: { isDirty, isValid },
+    ...methods
+  } = useForm<OwnerFormData>({
     mode: 'onChange',
     defaultValues: {
       name: '',
@@ -273,9 +276,7 @@ const Identity: React.FC<IdentityProps> = ({
               type="submit"
               form="owner-connect-form"
               fullWidth
-              disabled={
-                !methods.formState.isValid || !methods.formState.isDirty
-              }
+              disabled={!isValid || !isDirty}
             >
               Sync owner
             </AppButton>
