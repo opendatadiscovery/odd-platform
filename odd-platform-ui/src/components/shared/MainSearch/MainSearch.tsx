@@ -6,7 +6,6 @@ import {
   SearchApiSearchRequest,
   SearchFacetsData,
 } from 'generated-sources';
-import { dataEntityDetailsPath, searchPath } from 'lib/paths';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useDebouncedCallback } from 'use-debounce';
 import { useAppDispatch } from 'lib/redux/hooks';
@@ -15,6 +14,7 @@ import SearchIcon from 'components/shared/Icons/SearchIcon';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import * as S from 'components/shared/MainSearch/MainSearchStyles';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 
 interface AppSearchProps {
   className?: string;
@@ -44,6 +44,8 @@ const MainSearch: React.FC<AppSearchProps> = ({
     React.useState<boolean>(false);
 
   const history = useHistory();
+
+  const { searchPath, dataEntityDetailsPath } = useAppPaths();
 
   const createSearch = () => {
     const searchQuery = {
@@ -102,6 +104,11 @@ const MainSearch: React.FC<AppSearchProps> = ({
     const typedOption = option as DataEntityRef;
     return typedOption.internalName || typedOption.externalName || '';
   };
+
+  // const pathToEntity = (id: number) =>
+  //   location.pathname.includes('embedded')
+  //     ? `/embedded${dataEntityDetailsPath(id)}`
+  //     : dataEntityDetailsPath(id);
 
   const renderOption = (
     props: React.HTMLAttributes<HTMLLIElement>,

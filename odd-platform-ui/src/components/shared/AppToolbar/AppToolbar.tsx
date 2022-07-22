@@ -11,13 +11,13 @@ import { fetchAppInfo } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { getVersion } from 'redux/selectors/appInfo.selectors';
 import { useHistory, useLocation } from 'react-router-dom';
-import { searchPath, termSearchPath } from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { clearActivityFilters } from 'redux/reducers/activity.slice';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 import * as S from './AppToolbarStyles';
 
 interface AppToolbarProps {
@@ -43,6 +43,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
   const dispatch = useAppDispatch();
+  const { searchPath, termSearchPath } = useAppPaths();
   const version = useAppSelector(getVersion);
   const handleProfileMenuOpen = (event: MouseEvent) => {
     setAnchorEl(event.currentTarget);

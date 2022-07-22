@@ -19,8 +19,7 @@ import { fetchActivityCounts, fetchActivityList } from 'redux/thunks';
 import { setActivityQueryParam } from 'redux/reducers/activity.slice';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ActivityQueryName, ActivityQueryParams } from 'redux/interfaces';
-import { activityPath } from 'lib/paths';
-import { useAppQuery } from 'lib/hooks/hooks';
+import { useAppPaths, useAppQuery } from 'lib/hooks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
 import InfiniteScroll from 'react-infinite-scroll-component';
@@ -32,6 +31,7 @@ const ActivityResults: React.FC = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const history = useHistory();
+  const { activityPath } = useAppPaths();
 
   const activityTotals = useAppSelector(getActivityCounts);
   const activityType = useAppSelector(

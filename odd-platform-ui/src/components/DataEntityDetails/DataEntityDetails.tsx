@@ -2,17 +2,6 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
-import {
-  dataEntityActivityPath,
-  dataEntityAlertsPath,
-  dataEntityHistoryPath,
-  dataEntityLineagePath,
-  dataEntityLinkedItemsPath,
-  dataEntityOverviewPath,
-  dataEntityTestReportPath,
-  datasetStructurePath,
-  searchPath,
-} from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
@@ -26,7 +15,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams } from 'lib/hooks';
 import {
   deleteDataEntityGroup,
   fetchDataEntityAlerts,
@@ -52,6 +41,7 @@ import {
   getSearchId,
 } from 'redux/selectors';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
 import LinkedItemsListContainer from './LinkedItemsList/LinkedItemsListContainer';
 import * as S from './DataEntityDetailsStyles';
@@ -79,6 +69,17 @@ const DataEntityActivity = React.lazy(
 const DataEntityDetailsView: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const {
+    searchPath,
+    dataEntityOverviewPath,
+    datasetStructurePath,
+    dataEntityLineagePath,
+    dataEntityTestReportPath,
+    dataEntityLinkedItemsPath,
+    dataEntityHistoryPath,
+    dataEntityAlertsPath,
+    dataEntityActivityPath,
+  } = useAppPaths();
   const { dataEntityId, viewType } = useAppParams();
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
     getDataEntityGroupUpdatingStatuses
@@ -349,52 +350,83 @@ const DataEntityDetailsView: React.FC = () => {
           <Switch>
             <Route
               exact
-              path="/dataentities/:dataEntityId/overview"
+              path={[
+                '/dataentities/:dataEntityId/overview',
+                '/embedded/dataentities/:dataEntityId/overview',
+              ]}
               component={Overview}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/structure/:versionId?"
+              path={[
+                '/dataentities/:dataEntityId/structure/:versionId?',
+                '/embedded/dataentities/:dataEntityId/structure/:versionId?',
+              ]}
               component={DatasetStructureContainer}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/lineage"
+              path={[
+                '/dataentities/:dataEntityId/lineage',
+                '/embedded/dataentities/:dataEntityId/lineage',
+              ]}
               component={Lineage}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?"
+              path={[
+                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
+                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
+              ]}
               component={TestReport}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?"
+              path={[
+                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
+                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
+              ]}
               component={TestReportDetails}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/alerts"
+              path={[
+                '/dataentities/:dataEntityId/alerts',
+                '/embedded/dataentities/:dataEntityId/alerts',
+              ]}
               component={DataEntityAlerts}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/history"
+              path={[
+                '/dataentities/:dataEntityId/history',
+                '/embedded/dataentities/:dataEntityId/history',
+              ]}
               component={QualityTestHistory}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/linked-items"
+              path={[
+                '/dataentities/:dataEntityId/linked-items',
+                '/embedded/dataentities/:dataEntityId/linked-items',
+              ]}
               component={LinkedItemsListContainer}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/activity"
+              path={[
+                '/dataentities/:dataEntityId/activity',
+                '/embedded/dataentities/:dataEntityId/activity',
+              ]}
               component={DataEntityActivity}
             />
             <Redirect
               from="/dataentities/:dataEntityId"
               to="/dataentities/:dataEntityId/overview"
+            />
+            <Redirect
+              from="/embedded/dataentities/:dataEntityId"
+              to="/embedded/dataentities/:dataEntityId/overview"
             />
           </Switch>
         </React.Suspense>

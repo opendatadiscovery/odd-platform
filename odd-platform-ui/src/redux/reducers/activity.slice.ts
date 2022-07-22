@@ -130,11 +130,7 @@ export const activitiesSlice = createSlice({
       };
     },
 
-    clearActivityFilters: state => {
-      state = initialState;
-
-      return state;
-    },
+    clearActivityFilters: () => initialState,
   },
   extraReducers: builder => {
     builder.addCase(

@@ -6,8 +6,8 @@ import {
   Tag,
 } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
-import { searchPath } from 'lib/paths';
 import TagItem from 'components/shared/TagItem/TagItem';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 
 interface TopTagsListProps {
   topTagsList: Tag[];
@@ -21,6 +21,7 @@ const TopTagsList: React.FC<TopTagsListProps> = ({
   createDataEntitiesSearch,
 }) => {
   const history = useHistory();
+  const { searchPath } = useAppPaths();
   const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
 
   const handleTagClick = React.useCallback(

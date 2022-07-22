@@ -12,7 +12,7 @@ import {
   fetchDataSetQualityTestList,
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams } from 'lib/hooks';
 
 import { Grid, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';

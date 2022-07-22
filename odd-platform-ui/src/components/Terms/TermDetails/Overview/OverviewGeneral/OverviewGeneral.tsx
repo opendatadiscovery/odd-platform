@@ -12,7 +12,7 @@ import LabelItem from 'components/shared/LabelItem/LabelItem';
 import OwnershipForm from 'components/Terms/TermDetails/Ownership/OwnershipForm';
 import { deleteTermOwnership } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams } from 'lib/hooks';
 import { getTermDetails } from 'redux/selectors/terms.selectors';
 import { getTermOwnership } from 'redux/selectors';
 import { OwnerActionBtns, OwnerItem } from './OverviewGeneralStyles';

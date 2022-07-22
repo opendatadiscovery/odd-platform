@@ -25,7 +25,7 @@ import AppInput from 'components/shared/AppInput/AppInput';
 
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams } from 'lib/hooks';
 import {
   createTermOwnership,
   fetchOwnersList,
