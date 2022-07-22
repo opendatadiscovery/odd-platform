@@ -2,7 +2,6 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { TermDetails, TermFormData } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
-import { termDetailsOverviewPath } from 'lib/paths';
 import { Typography } from '@mui/material';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -15,6 +14,7 @@ import {
   getTermUpdatingStatuses,
 } from 'redux/selectors';
 import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -27,6 +27,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const { termDetailsOverviewPath } = useAppPaths();
 
   const { isLoading: isTermCreating } = useAppSelector(
     getTermCreatingStatuses

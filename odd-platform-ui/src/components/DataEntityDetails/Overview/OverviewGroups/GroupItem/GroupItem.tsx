@@ -3,9 +3,9 @@ import { Grid, Typography } from '@mui/material';
 import CloseIcon from 'components/shared/Icons/CloseIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { DataEntityRef } from 'generated-sources';
-import { dataEntityDetailsPath } from 'lib/paths';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteDataEntityFromGroup } from 'redux/thunks';
+import { useAppPaths } from 'lib/hooks';
 import * as S from './GroupItemStyles';
 
 interface GroupItemProps {
@@ -15,6 +15,7 @@ interface GroupItemProps {
 
 const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
   const dispatch = useAppDispatch();
+  const { dataEntityDetailsPath } = useAppPaths();
   const groupDetailsLink = dataEntityDetailsPath(group.id);
 
   return (

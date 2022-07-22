@@ -3,8 +3,8 @@ import { Typography } from '@mui/material';
 import { DataEntityRef } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Link } from 'react-router-dom';
-import { dataEntityDetailsPath } from 'lib/paths';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
+import { useAppPaths } from 'lib/hooks';
 import * as S from './EntitiesListModalStyles';
 
 type LabelForTypes =
@@ -28,6 +28,8 @@ const EntitiesListModal: React.FC<EntitiesListModalProps> = ({
   entities,
   openBtnEl,
 }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
+
   const listItem = (item: DataEntityRef) => (
     <Link to={dataEntityDetailsPath(item.id)}>
       <S.ListItemContainer container>

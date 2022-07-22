@@ -8,7 +8,7 @@ import MultipleFilter from 'components/shared/Activity/ActivityFilterItems/Multi
 import CalendarFilter from 'components/shared/Activity/ActivityFilterItems/CalendarFilter/CalendarFilter';
 import SingleFilter from 'components/shared/Activity/ActivityFilterItems/SingleFilter/SingleFilter';
 import { fetchDataEntityActivityList } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams } from 'lib/hooks';
 import { getActivitiesQueryParams } from 'redux/selectors';
 import * as S from './FiltersStyles';
 

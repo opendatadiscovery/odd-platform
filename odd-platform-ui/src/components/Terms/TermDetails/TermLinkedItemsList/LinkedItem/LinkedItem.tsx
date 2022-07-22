@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import { dataEntityDetailsPath } from 'lib/paths';
+import { useAppPaths } from 'lib/hooks';
 import { TermLinkedItemsColContainer } from '../LinkedItemsListStyles';
 import { Container, ItemLink, NameContainer } from './LinkedItemStyles';
 
@@ -12,6 +12,7 @@ interface LinkedItemProps {
 }
 
 const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
   const detailsLink = dataEntityDetailsPath(linkedItem.id);
 
   return (

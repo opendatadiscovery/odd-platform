@@ -6,7 +6,6 @@ import {
   DataEntityRef,
   TagApiGetPopularTagListRequest,
 } from 'generated-sources';
-import { alertsPath } from 'lib/paths';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
 import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
@@ -17,13 +16,14 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { useAppDispatch } from 'lib/redux/hooks';
 import {
+  fetchAlertsTotals,
   fetchMyDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
   fetchMyUpstreamDataEntitiesList,
   fetchPopularDataEntitiesList,
-  fetchAlertsTotals,
 } from 'redux/thunks';
 
+import { useAppPaths } from 'lib/hooks';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
@@ -62,6 +62,7 @@ const Overview: React.FC<OverviewProps> = ({
   fetchTagsList,
 }) => {
   const dispatch = useAppDispatch();
+  const { alertsPath } = useAppPaths();
 
   React.useEffect(() => {
     if (!identity) return;

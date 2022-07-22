@@ -3,9 +3,9 @@ import { Grid, Typography } from '@mui/material';
 import CloseIcon from 'components/shared/Icons/CloseIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { TermRef } from 'generated-sources';
-import { termDetailsOverviewPath } from 'lib/paths';
 import { deleteDataEntityTerm } from 'redux/thunks';
 import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppPaths } from 'lib/hooks';
 import * as S from './TermItemStyles';
 
 interface TermItemProps {
@@ -15,6 +15,7 @@ interface TermItemProps {
 
 const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
   const dispatch = useAppDispatch();
+  const { termDetailsOverviewPath } = useAppPaths();
   const termDetailsLink = termDetailsOverviewPath(term.id);
 
   return (

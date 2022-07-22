@@ -2,7 +2,6 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { Term } from 'generated-sources';
-import { termDetailsOverviewPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
@@ -12,6 +11,7 @@ import {
 } from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteTerm } from 'redux/thunks';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 import {
   ActionsContainer,
   TermSearchResultsContainer,
@@ -26,6 +26,7 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
   termSearchResult,
 }) => {
   const dispatch = useAppDispatch();
+  const { termDetailsOverviewPath } = useAppPaths();
 
   const termDetailsOverviewLink = termDetailsOverviewPath(
     termSearchResult.id
