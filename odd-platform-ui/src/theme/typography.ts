@@ -92,4 +92,9 @@ export const typography = createTypography(palette as Palette, {
     lineHeight: pxToRem(84),
     fontWeight: 500,
   },
+  totalCountTitle: {
+    fontSize: pxToRem(40),
+    lineHeight: pxToRem(36),
+    fontWeight: 500,
+  },
 });

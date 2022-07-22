@@ -64,8 +64,6 @@ export const DataEntityContainer = styled(Grid)(({ theme }) => ({
 }));
 
 export const DataEntitiesUsageContainer = styled('div')(({ theme }) => ({
-  paddingLeft: theme.spacing(3),
-  paddingRight: theme.spacing(3),
   backgroundColor: theme.palette.background.default,
   borderRadius: theme.spacing(1),
   border: `1px solid ${theme.palette.backgrounds.secondary}`,
@@ -78,10 +76,7 @@ export const DataEntitiesUsageContainer = styled('div')(({ theme }) => ({
 export const UfilledEntities = styled('span')(({ theme }) => ({
   backgroundColor: theme.palette.reportStatus.BROKEN.background,
   border: `1px solid ${theme.palette.reportStatus.BROKEN.border}`,
-  paddingTop: theme.spacing(0.5),
-  paddingBottom: theme.spacing(0.5),
-  paddingRight: theme.spacing(1),
-  paddingLeft: theme.spacing(1),
+  padding: theme.spacing(0.5, 1),
   borderRadius: theme.spacing(1.8),
   color: theme.palette.info.main,
 }));
@@ -98,7 +93,7 @@ export const ListItem = styled('div')<{ $index?: number }>(
     alignItems: 'center',
     p: {
       color: theme.palette.texts.info,
-      fontSize: '14px',
+      fontSize: theme.typography.subtitle1.fontSize,
       marginLeft: theme.spacing(0.5),
     },
     h4: { color: theme.palette.texts.primary },
@@ -108,7 +103,7 @@ export const ListItem = styled('div')<{ $index?: number }>(
 export const ListItemContainer = styled('div')(({ theme }) => ({
   width: '80%',
   borderLeft: `1px solid ${theme.palette.divider} `,
-  padding: theme.spacing(3),
+  padding: theme.spacing(4),
   display: 'flex',
   justifyContent: 'space-between',
   flexWrap: 'wrap',
@@ -120,7 +115,8 @@ export const DataEntitiesTotalContainer = styled('div')(({ theme }) => ({
   justifyContent: 'space-between',
   h1: {
     color: theme.palette.texts.primary,
-    fontSize: '40px',
+    fontSize: theme.typography.totalCountTitle.fontSize,
+    lineHeight: theme.typography.totalCountTitle.lineHeight,
     marginBottom: theme.spacing(5),
     marginTop: theme.spacing(1.5),
   },
