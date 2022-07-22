@@ -255,13 +255,14 @@ public class IngestionServiceImpl implements IngestionService {
 
         dataEntityRepository.bulkUpdate(entitiesToUpdate);
 
+        final List<DataEntityPojo> pojosToCreate = ingestionMapper.dtoToPojo(ingestionDtoPartitions.get(false));
         final List<EnrichedDataEntityIngestionDto> enrichedNewDtos = dataEntityRepository
-            .bulkCreate(ingestionMapper.dtoToPojo(ingestionDtoPartitions.get(false)))
+            .bulkCreate(pojosToCreate)
             .stream()
             .map(d -> new EnrichedDataEntityIngestionDto(d.getId(), ingestionDtoMap.get(d.getOddrn())))
             .collect(Collectors.toList());
 
-        final DataEntityClassesTotalDelta countsDelta = calculateTotalDeltaCount(enrichedNewDtos,
+        final DataEntityClassesTotalDelta countsDelta = calculateTotalDeltaCount(pojosToCreate,
             entitiesToUpdate, existingPojoDict);
 
         final List<IngestionTaskRun> taskRuns = dataEntityList.getItems().stream()
@@ -322,13 +323,15 @@ public class IngestionServiceImpl implements IngestionService {
             .build();
     }
 
-    private DataEntityClassesTotalDelta calculateTotalDeltaCount(final List<EnrichedDataEntityIngestionDto> newDtos,
+    private DataEntityClassesTotalDelta calculateTotalDeltaCount(final List<DataEntityPojo> newPojos,
                                                                  final List<DataEntityPojo> entitiesToUpdate,
                                                                  final Map<String, DataEntityPojo> existingPojoDict) {
         final Map<DataEntityClassDto, Long> entityClassesDeltaMap = new HashMap<>();
-        newDtos.stream()
-            .flatMap(dto -> dto.getEntityClasses().stream())
-            .forEach(entityClass -> entityClassesDeltaMap.merge(entityClass, 1L, Long::sum));
+        final List<DataEntityPojo> searchablePojos = newPojos.stream()
+            .filter(pojo -> !pojo.getExcludeFromSearch())
+            .toList();
+        searchablePojos
+            .forEach(pojo -> calculateDeltaValues(pojo.getEntityClassIds(), entityClassesDeltaMap, 1L));
 
         entitiesToUpdate.forEach(pojo -> {
             final DataEntityPojo previousVersion = existingPojoDict.get(pojo.getOddrn());
@@ -342,7 +345,8 @@ public class IngestionServiceImpl implements IngestionService {
             .filter(e -> existingPojoDict.get(e.getOddrn()).getHollow())
             .count();
 
-        return new DataEntityClassesTotalDelta(hollowUpdatedEntitiesCount + newDtos.size(), entityClassesDeltaMap);
+        return new DataEntityClassesTotalDelta(hollowUpdatedEntitiesCount + searchablePojos.size(),
+            entityClassesDeltaMap);
     }
 
     private void calculateDeltaValues(final Integer[] entityClassIds,

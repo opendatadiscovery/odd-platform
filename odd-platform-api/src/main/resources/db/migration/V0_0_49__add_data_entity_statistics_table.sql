@@ -1,6 +1,5 @@
 CREATE TABLE IF NOT EXISTS data_entity_statistics
 (
-    id                        BIGSERIAL PRIMARY KEY,
     total_count               BIGINT NOT NULL DEFAULT 0,
     data_entity_classes_count jsonb
 );
