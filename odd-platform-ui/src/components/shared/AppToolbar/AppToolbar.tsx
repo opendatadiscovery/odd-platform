@@ -85,7 +85,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
 
   React.useEffect(() => {
     const newTabIndex = tabs.findIndex(tab => {
-      if (tab.link === '/activity') {
+      if (tab.link === '/activity' || tab.link === '/alerts') {
         return (
           location.pathname.includes(tab.link) &&
           !location.pathname.includes('dataentities')
