@@ -2,7 +2,6 @@ import { Typography } from '@mui/material';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
-import { Alert } from 'generated-sources';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
@@ -11,6 +10,8 @@ import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppPaths } from 'lib/hooks';
+import { Alert } from 'redux/interfaces';
+import { alertDateFormat } from 'lib/constants';
 import { ColContainer } from '../AlertsListStyles';
 import * as S from './AlertItemStyles';
 
@@ -24,6 +25,7 @@ const AlertItem: React.FC<AlertItemProps> = ({
   alertStatusHandler,
 }) => {
   const { dataEntityDetailsPath } = useAppPaths();
+
   return (
     <S.Container container>
       <ColContainer
@@ -80,20 +82,14 @@ const AlertItem: React.FC<AlertItemProps> = ({
       </ColContainer>
       <ColContainer item $colType="createdTime">
         <Typography variant="body1">
-          {alert.createdAt &&
-            format(alert.createdAt, 'd MMM yyyy, HH:MM a')}
+          {alert.createdAt && format(alert.createdAt, alertDateFormat)}
         </Typography>
       </ColContainer>
-      <ColContainer item $colType="updatedBy">
-        {/* <Typography variant="body1" noWrap> */}
-        {/*  {alert.statusUpdatedBy?.owner?.name || */}
-        {/*    alert.statusUpdatedBy?.identity.username} */}
-        {/* </Typography> */}
-      </ColContainer>
+      <ColContainer item $colType="updatedBy" />
       <ColContainer item $colType="updatedAt">
         <Typography variant="body1">
           {alert.statusUpdatedAt &&
-            format(alert.statusUpdatedAt, 'd MMM yyyy, HH:MM a')}
+            format(alert.statusUpdatedAt, alertDateFormat)}
         </Typography>
       </ColContainer>
       <ColContainer item $colType="actionBtn">

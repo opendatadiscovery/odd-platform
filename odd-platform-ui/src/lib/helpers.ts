@@ -42,6 +42,11 @@ export const toDateWithoutOffset = (dateToCast: number): Date => {
   return new Date(date.getTime() - userTimezoneOffset);
 };
 
+export const toTimestampWithoutOffset = (dateToCast: Date): number => {
+  const userTimezoneOffset = dateToCast.getTimezoneOffset() * 60000;
+  return dateToCast.getTime() + userTimezoneOffset;
+};
+
 export const setActivityBackgroundColor = (
   theme: Theme,
   eventType?: CRUDType
