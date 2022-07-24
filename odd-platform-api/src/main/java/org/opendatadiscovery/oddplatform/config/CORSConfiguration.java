@@ -24,7 +24,7 @@ public class CORSConfiguration {
             headers.add("Access-Control-Allow-Origin", "*");
             headers.add("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
             headers.add("Access-Control-Max-Age", "3600");
-            headers.add("Access-Control-Allow-Headers", "*");
+            headers.add("Access-Control-Allow-Headers", "Content-Type");
 
             if (request.getMethod() == HttpMethod.OPTIONS) {
                 response.setStatusCode(HttpStatus.OK);
