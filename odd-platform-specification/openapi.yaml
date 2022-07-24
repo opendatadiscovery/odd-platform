@@ -1332,9 +1332,10 @@ paths:
         '200':
           description: OK
           content:
-            text/html:
+            image/png:
               schema:
                 type: string
+                format: binary
       tags:
         - dataQuality
 

@@ -1,8 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.collections4.MultiValuedMap;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -10,12 +8,10 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSever
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -23,6 +19,15 @@ import reactor.core.scheduler.Schedulers;
 @RestController
 @RequiredArgsConstructor
 public class DataQualityController implements DataQualityApi {
+    @Value("classpath:sla/sla_green.png")
+    private Resource greenSLAResource;
+
+    @Value("classpath:sla/sla_yellow.png")
+    private Resource yellowSLAResource;
+
+    @Value("classpath:sla/sla_red.png")
+    private Resource redSLAResource;
+
     private final DataQualityService dataQualityService;
 
     @Override
@@ -45,16 +50,12 @@ public class DataQualityController implements DataQualityApi {
     }
 
     @Override
-    @CrossOrigin
-    public Mono<ResponseEntity<String>> getSLA(final Long dataEntityId,
-                                               final ServerWebExchange exchange) {
-        final HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.put("X-Frame-Options", List.of("allow"));
-
+    public Mono<ResponseEntity<Resource>> getSLA(final Long dataEntityId,
+                                                 final ServerWebExchange exchange) {
         return dataQualityService
             .getSLA(dataEntityId)
-            .map(this::generateSLAHtml)
-            .map(html -> new ResponseEntity<>(html, httpHeaders, HttpStatus.OK));
+            .map(this::resolveSLAResource)
+            .map(ResponseEntity::ok);
     }
 
     @Override
@@ -73,17 +74,11 @@ public class DataQualityController implements DataQualityApi {
             .map(ResponseEntity::ok);
     }
 
-    private String generateSLAHtml(final SLA sla) {
-        return """
-                <!DOCTYPE html>
-                <html>
-                <body>
-                <svg width="100" height="100">
-                  <rect width="100" height="100"
-                  style="fill:%s" />
-                </svg>
-                </body>
-                </html>
-            """.formatted(sla.toString());
+    private Resource resolveSLAResource(final SLA sla) {
+        return switch (sla) {
+            case RED -> redSLAResource;
+            case YELLOW -> yellowSLAResource;
+            case GREEN -> greenSLAResource;
+        };
     }
 }
