@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -8,7 +9,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSever
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
-import org.springframework.beans.factory.annotation.Value;
+import org.opendatadiscovery.oddplatform.service.SLAResourceResolver;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,16 +20,8 @@ import reactor.core.scheduler.Schedulers;
 @RestController
 @RequiredArgsConstructor
 public class DataQualityController implements DataQualityApi {
-    @Value("classpath:sla/sla_green.png")
-    private Resource greenSLAResource;
-
-    @Value("classpath:sla/sla_yellow.png")
-    private Resource yellowSLAResource;
-
-    @Value("classpath:sla/sla_red.png")
-    private Resource redSLAResource;
-
     private final DataQualityService dataQualityService;
+    private final SLAResourceResolver slaResourceResolver;
 
     @Override
     public Mono<ResponseEntity<DataEntityList>> getDataEntityDataQATests(final Long dataEntityId,
@@ -42,6 +35,7 @@ public class DataQualityController implements DataQualityApi {
     }
 
     @Override
+    @SneakyThrows
     public Mono<ResponseEntity<DataSetTestReport>> getDatasetTestReport(final Long dataEntityId,
                                                                         final ServerWebExchange exchange) {
         return dataQualityService
@@ -54,7 +48,7 @@ public class DataQualityController implements DataQualityApi {
                                                  final ServerWebExchange exchange) {
         return dataQualityService
             .getSLA(dataEntityId)
-            .map(this::resolveSLAResource)
+            .map(slaResourceResolver::resolve)
             .map(ResponseEntity::ok);
     }
 
@@ -74,11 +68,4 @@ public class DataQualityController implements DataQualityApi {
             .map(ResponseEntity::ok);
     }
 
-    private Resource resolveSLAResource(final SLA sla) {
-        return switch (sla) {
-            case RED -> redSLAResource;
-            case YELLOW -> yellowSLAResource;
-            case GREEN -> greenSLAResource;
-        };
-    }
 }
