@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityApi;
@@ -10,6 +11,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
@@ -46,10 +48,13 @@ public class DataQualityController implements DataQualityApi {
     @CrossOrigin
     public Mono<ResponseEntity<String>> getSLA(final Long dataEntityId,
                                                final ServerWebExchange exchange) {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.put("X-Frame-Options", List.of("allow"));
+
         return dataQualityService
             .getSLA(dataEntityId)
             .map(this::generateSLAHtml)
-            .map(ResponseEntity::ok);
+            .map(html -> new ResponseEntity<>(html, httpHeaders, HttpStatus.OK));
     }
 
     @Override
