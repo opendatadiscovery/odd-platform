@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.MultiValuedMap;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
@@ -8,8 +9,11 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSever
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -39,6 +43,7 @@ public class DataQualityController implements DataQualityApi {
     }
 
     @Override
+    @CrossOrigin
     public Mono<ResponseEntity<String>> getSLA(final Long dataEntityId,
                                                final ServerWebExchange exchange) {
         return dataQualityService
