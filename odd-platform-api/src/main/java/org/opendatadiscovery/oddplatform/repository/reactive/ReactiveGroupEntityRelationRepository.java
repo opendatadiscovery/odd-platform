@@ -12,4 +12,6 @@ public interface ReactiveGroupEntityRelationRepository {
     Flux<GroupEntityRelationsPojo> deleteRelations(final String groupOddrn, final String entityOddrn);
 
     Flux<GroupEntityRelationsPojo> createRelations(final String groupOddrn, final List<String> entityOddrns);
+
+    Flux<GroupEntityRelationsPojo> getManuallyCreatedRelations(final String entityOddrn);
 }

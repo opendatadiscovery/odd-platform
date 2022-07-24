@@ -9,6 +9,8 @@ import reactor.core.publisher.Mono;
 public interface ReactiveCRUDRepository<POJO> {
     Mono<POJO> get(final long id);
 
+    Flux<POJO> list();
+
     Mono<Page<POJO>> list(final int page, final int size, final String query);
 
     Mono<Page<POJO>> list(final int page, final int size, final String query, final List<Long> ids);
@@ -22,4 +24,6 @@ public interface ReactiveCRUDRepository<POJO> {
     Flux<POJO> bulkUpdate(final Collection<POJO> pojos);
 
     Mono<POJO> delete(final long id);
+
+    Flux<POJO> delete(final Collection<Long> ids);
 }

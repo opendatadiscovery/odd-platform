@@ -56,7 +56,7 @@ class DatasetFieldServiceImplTest {
     @Mock
     private ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
     @Mock
-    private ReactiveDataEntityFilledRepository reactiveDataEntityFilledRepository;
+    private DataEntityFilledService dataEntityFilledService;
 
     @BeforeEach
     void setUp() {
@@ -66,7 +66,7 @@ class DatasetFieldServiceImplTest {
             reactiveDatasetFieldRepository,
             reactiveLabelRepository,
             reactiveSearchEntrypointRepository,
-            reactiveDataEntityFilledRepository);
+            dataEntityFilledService);
     }
 
     @Test
@@ -91,7 +91,7 @@ class DatasetFieldServiceImplTest {
         when(reactiveLabelService.updateDatasetFieldLabels(anyLong(), anyList(), anyList())).thenReturn(
             Mono.just(List.of(new LabelDto(labelPojo, false))));
         when(reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(anyLong())).thenReturn(Mono.just(1));
-        when(reactiveDataEntityFilledRepository.markEntityFilledByDatasetField(anyLong()))
+        when(dataEntityFilledService.markEntityFilledByDatasetFieldId(anyLong(), any()))
             .thenReturn(Mono.just(new DataEntityFilledPojo()));
         when(datasetFieldApiMapper.mapDto(any())).thenReturn(datasetField);
 

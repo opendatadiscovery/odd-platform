@@ -114,8 +114,7 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return metadataObject.collectList()
-            .publishOn(Schedulers.boundedElastic())
-            .flatMap(moList -> Mono.defer(() -> entityService.createMetadata(dataEntityId, moList)))
+            .flatMap(moList -> entityService.createMetadata(dataEntityId, moList))
             .map(ResponseEntity::ok);
     }
 
@@ -125,9 +124,7 @@ public class DataEntityController
         final Long metadataFieldId,
         final ServerWebExchange exchange
     ) {
-        return entityService
-            .deleteMetadata(dataEntityId, metadataFieldId)
-            .subscribeOn(Schedulers.boundedElastic())
+        return entityService.deleteMetadata(dataEntityId, metadataFieldId)
             .map(m -> ResponseEntity.noContent().build());
     }
 
@@ -192,7 +189,6 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return internalDescriptionFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(form -> entityService.upsertDescription(dataEntityId, form))
             .map(ResponseEntity::ok);
     }
@@ -205,18 +201,14 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return metadataFieldValueUpdateFormData
-            .publishOn(Schedulers.boundedElastic())
-            .flatMap(form -> Mono.defer(
-                () -> entityService.upsertMetadataFieldValue(dataEntityId, metadataFieldId, form)))
+            .flatMap(form -> entityService.upsertMetadataFieldValue(dataEntityId, metadataFieldId, form))
             .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<DataEntityClassAndTypeDictionary>> getDataEntityClasses(
         final ServerWebExchange exchange) {
-        return entityService
-            .getDataEntityClassesAndTypes()
-            .subscribeOn(Schedulers.boundedElastic())
+        return entityService.getDataEntityClassesAndTypes()
             .map(ResponseEntity::ok);
     }
 
@@ -227,7 +219,6 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return internalNameFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(name -> entityService.upsertBusinessName(dataEntityId, name))
             .map(ResponseEntity::ok);
     }
@@ -238,11 +229,10 @@ public class DataEntityController
         final Mono<TagsFormData> tagsFormData,
         final ServerWebExchange exchange
     ) {
-        final Flux<Tag> labels = tagsFormData
-            .publishOn(Schedulers.boundedElastic())
+        final Flux<Tag> tags = tagsFormData
             .flatMapMany(form -> entityService.upsertTags(dataEntityId, form));
 
-        return Mono.just(ResponseEntity.ok(labels));
+        return Mono.just(ResponseEntity.ok(tags));
     }
 
     @Override
@@ -317,7 +307,6 @@ public class DataEntityController
     public Mono<ResponseEntity<AlertList>> getDataEntityAlerts(final Long dataEntityId,
                                                                final ServerWebExchange exchange) {
         return alertService.getDataEntityAlerts(dataEntityId)
-            .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
 

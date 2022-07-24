@@ -59,10 +59,6 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     Long countByState(final FacetStateDto state, final OwnerPojo ownerPojo);
 
-    void setDescription(final long dataEntityId, final String description);
-
-    void setInternalName(final long dataEntityId, final String businessName);
-
     void calculateSearchEntrypoints(final Collection<Long> dataEntityIds);
 
     void calculateMetadataVectors(final Collection<Long> ids);

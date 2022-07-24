@@ -11,18 +11,19 @@ import org.jetbrains.annotations.NotNull;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DatasetFieldUpdateFormData;
+import org.opendatadiscovery.oddplatform.dto.DataEntityFilledField;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.LabelDto;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldApiMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
 import static reactor.function.TupleUtils.function;
 
 @Service
@@ -33,7 +34,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     private final ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
     private final ReactiveLabelRepository reactiveLabelRepository;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
-    private final ReactiveDataEntityFilledRepository dataEntityFilledRepository;
+    private final DataEntityFilledService dataEntityFilledService;
 
     @Override
     @ReactiveTransactional
@@ -52,7 +53,20 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             })
             .flatMap(dto -> reactiveSearchEntrypointRepository.updateDatasetFieldSearchVectors(datasetFieldId)
                 .ignoreElement().thenReturn(dto))
-            .flatMap(dto -> dataEntityFilledRepository.markEntityFilledByDatasetField(datasetFieldId).thenReturn(dto))
+            .flatMap(dto -> {
+                final List<LabelDto> internalLabels = dto.getLabels().stream()
+                    .filter(l -> !l.external())
+                    .toList();
+                if (CollectionUtils.isEmpty(internalLabels)) {
+                    return dataEntityFilledService
+                        .markEntityUnfilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_LABELS)
+                        .thenReturn(dto);
+                } else {
+                    return dataEntityFilledService
+                        .markEntityFilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_LABELS)
+                        .thenReturn(dto);
+                }
+            })
             .map(datasetFieldApiMapper::mapDto);
     }
 
@@ -79,10 +93,19 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                                                     final DatasetFieldUpdateFormData datasetFieldUpdateFormData,
                                                     final DatasetFieldDto dto) {
         final DatasetFieldPojo currentPojo = dto.getDatasetFieldPojo();
-        final String newDescription = datasetFieldUpdateFormData.getDescription();
+        final String newDescription = StringUtils.isEmpty(datasetFieldUpdateFormData.getDescription()) ? null
+            : datasetFieldUpdateFormData.getDescription();
         if (!StringUtils.equals(currentPojo.getInternalDescription(), newDescription)) {
             currentPojo.setInternalDescription(newDescription);
             return reactiveDatasetFieldRepository.updateDescription(datasetFieldId, newDescription)
+                .flatMap(pojo -> {
+                    if (StringUtils.isEmpty(pojo.getInternalDescription())) {
+                        return dataEntityFilledService.markEntityUnfilledByDatasetFieldId(datasetFieldId,
+                            DataEntityFilledField.DATASET_FIELD_DESCRIPTION);
+                    }
+                    return dataEntityFilledService.markEntityFilledByDatasetFieldId(datasetFieldId,
+                        DataEntityFilledField.DATASET_FIELD_DESCRIPTION);
+                })
                 .thenReturn(dto);
         }
         return Mono.just(dto);

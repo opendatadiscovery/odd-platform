@@ -19,18 +19,20 @@ import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.mapper.TermMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityFilledRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.service.DataEntityFilledService;
 import org.opendatadiscovery.oddplatform.service.NamespaceService;
 import org.opendatadiscovery.oddplatform.service.TagService;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.TERMS;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.TermAssignmentDeleted.DATA_ENTITY_ID;
 
 @Service
@@ -42,7 +44,7 @@ public class TermServiceImpl implements TermService {
     private final NamespaceService namespaceService;
     private final TagService tagService;
     private final ReactiveTermSearchEntrypointRepository termSearchEntrypointRepository;
-    private final ReactiveDataEntityFilledRepository dataEntityFilledRepository;
+    private final DataEntityFilledService dataEntityFilledService;
     private final TermMapper termMapper;
     private final TagMapper tagMapper;
 
@@ -108,7 +110,7 @@ public class TermServiceImpl implements TermService {
                                                 final Long dataEntityId) {
         return termRepository.createRelationWithDataEntity(dataEntityId, termId)
             .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
-            .flatMap(termRefDto -> dataEntityFilledRepository.markEntityFilled(dataEntityId).thenReturn(termRefDto))
+            .flatMap(termRefDto -> dataEntityFilledService.markEntityFilled(dataEntityId, TERMS).thenReturn(termRefDto))
             .map(termMapper::mapToRef);
     }
 
@@ -116,10 +118,16 @@ public class TermServiceImpl implements TermService {
     @ReactiveTransactional
     @ActivityLog(event = ActivityEventTypeDto.TERM_ASSIGNMENT_DELETED)
     public Mono<TermRef> removeTermFromDataEntity(final Long termId,
-                                                  @ActivityParameter(DATA_ENTITY_ID)
-                                                  final Long dataEntityId) {
+                                                  @ActivityParameter(DATA_ENTITY_ID) final Long dataEntityId) {
         return termRepository.deleteRelationWithDataEntity(dataEntityId, termId)
-            .flatMap(relation -> termRepository.getTermRefDto(relation.getTermId()))
+            .flatMap(pojo -> termRepository.getDataEntityTerms(pojo.getDataEntityId()).collectList())
+            .flatMap(termDtos -> {
+                if (CollectionUtils.isEmpty(termDtos)) {
+                    return dataEntityFilledService.markEntityUnfilled(dataEntityId, TERMS);
+                }
+                return Mono.just(termDtos);
+            })
+            .then(termRepository.getTermRefDto(termId))
             .map(termMapper::mapToRef);
     }
 

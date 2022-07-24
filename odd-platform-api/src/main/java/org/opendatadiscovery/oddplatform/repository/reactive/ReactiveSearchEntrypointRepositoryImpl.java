@@ -29,6 +29,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
 import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
+import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
@@ -420,6 +422,38 @@ public class ReactiveSearchEntrypointRepositoryImpl implements ReactiveSearchEnt
             FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
             true,
             Map.of(labelName, LABEL.NAME)
+        );
+
+        return jooqReactiveOperations.mono(datasetFieldQuery);
+    }
+
+    @Override
+    public Mono<Integer> updateMetadataVectors(final long dataEntityId) {
+        final Field<Long> deId = field("data_entity_id", Long.class);
+
+        final List<Field<?>> fields = List.of(
+            METADATA_FIELD.NAME,
+            METADATA_FIELD_VALUE.VALUE
+        );
+
+        final SelectConditionStep<Record> select = DSL
+            .select(DATA_ENTITY.ID.as(deId))
+            .select(fields)
+            .from(METADATA_FIELD)
+            .join(METADATA_FIELD_VALUE).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
+            .and(DATA_ENTITY.HOLLOW.isFalse())
+            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
+            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .and(METADATA_FIELD.IS_DELETED.isFalse());
+
+        final Insert<? extends Record> datasetFieldQuery = jooqFTSHelper.buildVectorUpsert(
+            select,
+            deId,
+            fields,
+            SEARCH_ENTRYPOINT.METADATA_VECTOR,
+            FTS_CONFIG_DETAILS_MAP.get(FTSEntity.DATA_ENTITY),
+            true
         );
 
         return jooqReactiveOperations.mono(datasetFieldQuery);
