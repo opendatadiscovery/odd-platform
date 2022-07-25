@@ -28,7 +28,7 @@ public class CachingByteArraySLAResourceResolver implements SLAResourceResolver 
     }
 
     private static Map<SLA, Resource> initializeStorage() {
-        final HashMap<SLA, Resource> result = new HashMap<>();
+        final Map<SLA, Resource> result = new HashMap<>();
 
         for (final SLA sla : SLA.values()) {
             final Path slaPath = resolveSLAImagePath(sla);
