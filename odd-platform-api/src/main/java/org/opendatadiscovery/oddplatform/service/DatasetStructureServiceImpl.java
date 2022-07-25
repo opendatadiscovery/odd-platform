@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
-import org.jetbrains.annotations.NotNull;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
@@ -35,10 +35,10 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
     private final DatasetVersionMapper datasetVersionMapper;
 
     @Override
-    public Mono<List<DatasetStructurePojo>> createDataStructure(
-        final List<DatasetVersionPojo> versions,
-        final Map<String, List<DatasetFieldPojo>> datasetFields) {
-        final List<DatasetFieldPojo> datasetFieldPojos = datasetFields.values().stream()
+    @ReactiveTransactional
+    public Mono<List<DatasetStructurePojo>> createDatasetStructure(final List<DatasetVersionPojo> versions,
+                                                                   final Map<String, List<DatasetFieldPojo>> fields) {
+        final List<DatasetFieldPojo> datasetFieldPojos = fields.values().stream()
             .flatMap(List::stream)
             .collect(Collectors.toList());
         return reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos)
@@ -46,8 +46,7 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
             .flatMap(datasetFieldPojoMap ->
                 reactiveDatasetVersionRepository.bulkCreate(versions)
                     .collectList()
-                    .flatMap(createdVersions -> getDatasetPojoStructure(
-                        datasetFields, datasetFieldPojoMap, createdVersions))
+                    .map(createdVersions -> getDatasetPojoStructure(fields, datasetFieldPojoMap, createdVersions))
                     .flatMap(d -> reactiveDatasetStructureRepository.bulkCreate(d).collectList()));
     }
 
@@ -63,9 +62,7 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
                     return Mono.just(Map.of());
                 }
                 return reactiveDatasetVersionRepository.getPenultimateVersions(latestVersionsWithPenultimates)
-                    .defaultIfEmpty(List.of())
-                    .flatMap(penultimateList -> getLastStructureDelta(
-                        latestVersionsWithPenultimates, penultimateList));
+                    .flatMap(penultimateList -> getLastStructureDelta(latestVersionsWithPenultimates, penultimateList));
             });
     }
 
@@ -73,8 +70,7 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
     public Mono<List<DatasetVersionPojo>> getNewDatasetVersionsIfChanged(
         final Map<String, EnrichedDataEntityIngestionDto> datasetDict,
         final Set<Long> datasetIds) {
-        return reactiveDatasetVersionRepository
-            .getLatestVersions(datasetIds)
+        return reactiveDatasetVersionRepository.getLatestVersions(datasetIds)
             .map(fetchedVersions -> fetchedVersions.stream()
                 .map(fetchedVersion -> {
                     final EnrichedDataEntityIngestionDto dto = datasetDict.get(fetchedVersion.getDatasetOddrn());
@@ -83,7 +79,8 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
                         return null;
                     }
                     dto.setDatasetSchemaChanged(true);
-                    return datasetVersionMapper.mapDatasetVersion(dto, fetchedVersion.getVersion() + 1);
+                    return datasetVersionMapper.mapDatasetVersion(dto.getOddrn(), dto.getDataSet().structureHash(),
+                        fetchedVersion.getVersion() + 1);
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
@@ -96,7 +93,7 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
         final Set<Long> dataVersionPojoIds = versions.stream()
             .map(DatasetVersionPojo::getId)
             .collect(Collectors.toSet());
-        return reactiveDatasetVersionRepository.getDatasetVersionPojoIds(dataVersionPojoIds)
+        return reactiveDatasetVersionRepository.getDatasetVersionFields(dataVersionPojoIds)
             .flatMap(vidToFields -> {
                 final Map<String, List<DatasetVersionPojo>> dsOddrnToVersions = versions
                     .stream()
@@ -106,7 +103,7 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
                     .map(e -> {
                         final List<DatasetVersionPojo> v = e.getValue().stream()
                             .sorted(Comparator.comparing(DatasetVersionPojo::getVersion))
-                            .collect(Collectors.toList());
+                            .toList();
 
                         return Pair.of(e.getKey(), new DatasetStructureDelta(
                             vidToFields.get(v.get(0).getId()),
@@ -117,12 +114,11 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
             });
     }
 
-    @NotNull
-    protected Mono<List<DatasetStructurePojo>> getDatasetPojoStructure(
+    private List<DatasetStructurePojo> getDatasetPojoStructure(
         final Map<String, List<DatasetFieldPojo>> datasetFields,
         final Map<String, DatasetFieldPojo> datasetFieldPojoMap,
         final List<DatasetVersionPojo> createdVersions) {
-        final List<DatasetStructurePojo> structure = createdVersions.stream()
+        return createdVersions.stream()
             .flatMap(createdVersion -> datasetFields.get(createdVersion.getDatasetOddrn()).stream()
                 .map(f -> datasetFieldPojoMap.get(f.getOddrn()))
                 .map(DatasetFieldPojo::getId)
@@ -130,6 +126,5 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
                     .setDatasetFieldId(dfId)
                     .setDatasetVersionId(createdVersion.getId())))
             .collect(Collectors.toList());
-        return Mono.just(structure);
     }
 }

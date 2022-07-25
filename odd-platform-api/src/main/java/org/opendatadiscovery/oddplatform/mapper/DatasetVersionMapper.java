@@ -54,7 +54,7 @@ public interface DatasetVersionMapper {
     @Mapping(source = "datasetFields", target = "fieldList")
     DataSetStructure mapDatasetStructure(final DatasetStructureDto datasetStructureDto);
 
-    @Mapping(source = "entity.oddrn", target = "datasetOddrn")
-    @Mapping(source = "entity.dataSet.structureHash", target = "versionHash")
-    DatasetVersionPojo mapDatasetVersion(final EnrichedDataEntityIngestionDto entity, final long version);
+    DatasetVersionPojo mapDatasetVersion(final String datasetOddrn,
+                                         final String versionHash,
+                                         final long version);
 }

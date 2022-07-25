@@ -77,7 +77,7 @@ class DatasetStructureServiceImplTest {
         when(reactiveDatasetStructureRepository.bulkCreate(any())).thenReturn(Flux.just(datasetStructurePojos));
 
         final Mono<List<DatasetStructurePojo>> actualCreatedDataStructure =
-            datasetStructureService.createDataStructure(List.of(expectedVersion), expectedDatasetFieldsMap);
+            datasetStructureService.createDatasetStructure(List.of(expectedVersion), expectedDatasetFieldsMap);
 
         actualCreatedDataStructure.as(StepVerifier::create)
             .assertNext(a -> assertThat(a).isNotNull())
@@ -99,7 +99,7 @@ class DatasetStructureServiceImplTest {
             .thenReturn(Mono.just(List.of(expectedVersion, expectedPenultimateVersion)));
         when(reactiveDatasetVersionRepository.getPenultimateVersions(any()))
             .thenReturn(Mono.just(List.of(expectedVersion, expectedPenultimateVersion)));
-        when(reactiveDatasetVersionRepository.getDatasetVersionPojoIds(any()))
+        when(reactiveDatasetVersionRepository.getDatasetVersionFields(any()))
             .thenReturn(Mono.just(expectedDatasetFieldsMap));
 
         final Mono<Map<String, DatasetStructureDelta>> actualDelta =
@@ -142,7 +142,7 @@ class DatasetStructureServiceImplTest {
 
         when(reactiveDatasetVersionRepository.getLatestVersions(any()))
             .thenReturn(Mono.just(List.of(expectedVersion)));
-        when(datasetVersionMapper.mapDatasetVersion(any(), anyLong()))
+        when(datasetVersionMapper.mapDatasetVersion(any(), any(), anyLong()))
             .thenReturn(expectedVersion);
 
         final Mono<List<DatasetVersionPojo>> newDatasetVersionsIfChanged =

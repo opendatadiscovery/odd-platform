@@ -195,7 +195,7 @@ public class IngestionServiceImplTest {
         when(tagIngestionService.ingestExternalTags(any())).thenReturn(Mono.empty());
         when(dataEntityStatisticsRepository.updateCounts(anyLong(), anyMap()))
             .thenReturn(Mono.just(new DataEntityStatisticsPojo()));
-        when(datasetStructureService.createDataStructure(any(), any())).thenReturn(Mono.empty());
+        when(datasetStructureService.createDatasetStructure(any(), any())).thenReturn(Mono.empty());
         when(datasetStructureService.getNewDatasetVersionsIfChanged(any(), any())).thenReturn(Mono.empty());
         when(datasetStructureService.getLastDatasetStructureVersionDelta(any())).thenReturn(Mono.empty());
     }

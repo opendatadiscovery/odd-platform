@@ -11,12 +11,12 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import reactor.core.publisher.Mono;
 
 public interface DatasetStructureService {
-    Mono<List<DatasetStructurePojo>> createDataStructure(List<DatasetVersionPojo> versions,
-                                                         Map<String, List<DatasetFieldPojo>> datasetFields);
+    Mono<List<DatasetStructurePojo>> createDatasetStructure(final List<DatasetVersionPojo> versions,
+                                                         final Map<String, List<DatasetFieldPojo>> datasetFields);
 
-    Mono<Map<String, DatasetStructureDelta>> getLastDatasetStructureVersionDelta(List<Long> changedSchemaIds);
+    Mono<Map<String, DatasetStructureDelta>> getLastDatasetStructureVersionDelta(final List<Long> changedSchemaIds);
 
     Mono<List<DatasetVersionPojo>> getNewDatasetVersionsIfChanged(
-        Map<String, EnrichedDataEntityIngestionDto> datasetDict,
-        Set<Long> datasetIds);
+        final Map<String, EnrichedDataEntityIngestionDto> datasetDict,
+        final Set<Long> datasetIds);
 }

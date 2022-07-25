@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +63,6 @@ import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataSourcePath;
 import org.opendatadiscovery.oddrn.model.OddrnPath;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
@@ -370,7 +368,7 @@ public class IngestionServiceImpl implements IngestionService {
                 dto -> datasetFieldMapper.mapFields(dto.getDataSet().fieldList())
             ));
 
-        return datasetStructureService.createDataStructure(versions, datasetFields);
+        return datasetStructureService.createDatasetStructure(versions, datasetFields);
     }
 
     private Mono<List<DatasetStructurePojo>> ingestExistingDatasetStructure(final IngestionDataStructure structure) {
@@ -397,7 +395,7 @@ public class IngestionServiceImpl implements IngestionService {
         return Mono.zipDelayError(versions, Mono.just(datasetFields))
             .flatMap(t -> {
                 final List<DatasetVersionPojo> datasetVersions = t.getT1();
-                return datasetStructureService.createDataStructure(datasetVersions, datasetFields);
+                return datasetStructureService.createDatasetStructure(datasetVersions, datasetFields);
             });
     }
 
@@ -539,7 +537,7 @@ public class IngestionServiceImpl implements IngestionService {
     }
 
     private DatasetVersionPojo mapNewDatasetVersion(final EnrichedDataEntityIngestionDto entity) {
-        return datasetVersionMapper.mapDatasetVersion(entity, 1L);
+        return datasetVersionMapper.mapDatasetVersion(entity.getOddrn(), entity.getDataSet().structureHash(), 1L);
     }
 
     private Optional<OddrnPath> parseOddrn(final String oddrn) {
