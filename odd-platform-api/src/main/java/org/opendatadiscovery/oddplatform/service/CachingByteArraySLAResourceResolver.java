@@ -5,11 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -17,7 +14,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
 
 @Component
-@Slf4j
 public class CachingByteArraySLAResourceResolver implements SLAResourceResolver {
     private final Map<SLA, Resource> cache = initializeStorage();
 

@@ -1,13 +1,11 @@
 package org.opendatadiscovery.oddplatform.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataQualityApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverityForm;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
-import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
 import org.opendatadiscovery.oddplatform.service.SLAResourceResolver;
 import org.springframework.core.io.Resource;
@@ -35,7 +33,6 @@ public class DataQualityController implements DataQualityApi {
     }
 
     @Override
-    @SneakyThrows
     public Mono<ResponseEntity<DataSetTestReport>> getDatasetTestReport(final Long dataEntityId,
                                                                         final ServerWebExchange exchange) {
         return dataQualityService
@@ -67,5 +64,4 @@ public class DataQualityController implements DataQualityApi {
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
     }
-
 }
