@@ -4,7 +4,7 @@ import { DataEntityRef } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import { dataEntityDetailsPath } from 'lib/paths';
+import { useAppPaths } from 'lib/hooks';
 import * as S from './DataEntityListStyles';
 
 interface OverviewDataEntityProps {
@@ -19,9 +19,11 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
   entityListName,
   entityListIcon,
   isFetching,
-}) => (
-  <Grid item>
-    <S.DataEntityListContainer>
+}) => {
+  const { dataEntityDetailsPath } = useAppPaths();
+
+  return (
+    <Grid item>
       <S.SectionCaption variant="h4" sx={{ mb: 2 }}>
         {entityListIcon}
         {entityListName}
@@ -53,8 +55,8 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
           <EmptyContentPlaceholder />
         ) : null}
       </S.ListLinksContainer>
-    </S.DataEntityListContainer>
-  </Grid>
-);
+    </Grid>
+  );
+};
 
 export default DataEntityList;

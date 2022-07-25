@@ -10,16 +10,17 @@ import {
 } from 'redux/thunks';
 import { getAlertTotals } from 'redux/selectors';
 import { changeAlertsFilterAction } from 'redux/reducers/alerts.slice';
-import { alertsPath } from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import { useAppParams } from 'lib/hooks/hooks';
 import { AlertViewType } from 'lib/interfaces';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import * as S from './AlertsStyles';
 import AlertsList from './AlertsList/AlertsList';
 
 const Alerts: React.FC = () => {
   const dispatch = useAppDispatch();
   const { viewType } = useAppParams();
+  const { alertsPath } = useAppPaths();
+
   const totals = useAppSelector(getAlertTotals);
   React.useEffect(() => {
     dispatch(fetchAlertsTotals());

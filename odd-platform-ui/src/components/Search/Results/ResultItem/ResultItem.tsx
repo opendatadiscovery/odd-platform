@@ -4,7 +4,6 @@ import { format, formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity, DataEntityClassNameEnum } from 'generated-sources';
 import { SearchClass, SearchTotalsByName } from 'redux/interfaces/search';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import { dataEntityDetailsPath } from 'lib/paths';
 import TruncatedCell from 'components/shared/TruncatedCell/TruncatedCell';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
 import {
@@ -14,6 +13,7 @@ import {
 import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import { useAppPaths } from 'lib/hooks';
 import { Container, ItemLink } from './ResultItemStyles';
 
 interface ResultItemProps {
@@ -27,7 +27,9 @@ const ResultItem: React.FC<ResultItemProps> = ({
   searchClass,
   totals,
 }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
   const detailsLink = dataEntityDetailsPath(searchResult.id);
+
   const ResultItemPreview = React.useCallback(
     ({ open }) => (
       <ResultItemPreviewContainer

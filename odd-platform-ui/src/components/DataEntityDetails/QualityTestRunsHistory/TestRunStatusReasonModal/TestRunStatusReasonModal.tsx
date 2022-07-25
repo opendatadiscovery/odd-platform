@@ -4,10 +4,10 @@ import { Link } from 'react-router-dom';
 import { DataEntityRun } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { dataEntityDetailsPath } from 'lib/paths';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import { format, formatDistanceStrict } from 'date-fns';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
+import { useAppPaths } from 'lib/hooks';
 import {
   StatsContainer,
   StatusReasonContainer,
@@ -23,6 +23,8 @@ interface TestRunStatusReasonModalProps {
 const TestRunStatusReasonModal: React.FC<
   TestRunStatusReasonModalProps
 > = ({ btnCreateEl, dataQATestId, dataQATestName, dataQATestRun }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
+
   const modalTitle = (
     <Grid container justifyContent="space-between" alignItems="center">
       <Typography variant="h3" component="span">

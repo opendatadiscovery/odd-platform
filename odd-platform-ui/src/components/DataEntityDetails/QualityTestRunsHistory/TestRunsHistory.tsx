@@ -7,7 +7,7 @@ import {
   getDataEntityRunsFetchingStatuses,
   getDataEntityRunsListPageInfo,
 } from 'redux/selectors/dataEntityRun.selector';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams } from 'lib/hooks';
 import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
 
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';

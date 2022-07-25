@@ -63,11 +63,18 @@ metrics:
 
 notifications:
   enabled: false
-  webhook_url:
+  message:
+    downstream-entities-depth: 1
   wal:
     advisory-lock-id: 100
     replication-slot-name: odd_platform_replication_slot
     publication-name: odd_platform_publication_alert
+#  receivers:
+#    slack:
+#      url:
+#      platform-base-url:
+#    webhook:
+#      url:
 
 management:
   endpoints:

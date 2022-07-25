@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Theme } from '@mui/material';
 import { SxProps } from '@mui/system';
-import { DatePicker, DatePickerProps } from '@mui/lab';
 import AppInput from 'components/shared/AppInput/AppInput';
 import CalendarIcon from 'components/shared/Icons/CalendarIcon';
+import { DatePicker, DatePickerProps } from '@mui/x-date-pickers';
 
 export const metadataDatePickerInputFormat = 'd MMM yyyy';
 export const metadataBackendDateFormat = "yyyy-MM-dd'T'HH:mm:ss";
@@ -12,7 +12,7 @@ export const maxDate = new Date(2099, 11, 31);
 
 interface AppDatePickerProps
   extends Pick<
-    DatePickerProps,
+    DatePickerProps<Date, Date>,
     | 'onChange'
     | 'onAccept'
     | 'label'

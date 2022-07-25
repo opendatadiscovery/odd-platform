@@ -2,7 +2,6 @@ import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
   ActivityCountInfo,
-  Alert,
   AlertTotals,
   AppInfo,
   AssociatedOwner,
@@ -38,6 +37,7 @@ import { store } from 'redux/store';
 import {
   Activity,
   ActivityQueryParams,
+  Alert,
   CurrentPageInfo,
   DataEntityDetailsState,
   DataEntityLineageById,

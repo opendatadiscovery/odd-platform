@@ -39,7 +39,7 @@ const StringActivityField: React.FC<StringActivityFieldProps> = ({
   });
 
   React.useEffect(() => {
-    if (newState && oldState === undefined) {
+    if (newState && (oldState === undefined || oldState.length === 0)) {
       setFieldData({
         oldValue: '',
         newValue: newState,

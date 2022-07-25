@@ -27,7 +27,7 @@ public class PGConnectionFactory {
         PGProperty.USER.set(props, dataSourceProperties.getUsername());
         PGProperty.PASSWORD.set(props, dataSourceProperties.getPassword());
         if (replicationMode) {
-            PGProperty.ASSUME_MIN_SERVER_VERSION.set(props, "13.2");
+            PGProperty.ASSUME_MIN_SERVER_VERSION.set(props, "11.0");
             PGProperty.REPLICATION.set(props, "database");
             PGProperty.PREFER_QUERY_MODE.set(props, "simple");
         }

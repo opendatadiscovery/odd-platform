@@ -181,8 +181,8 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
             <Grid display="flex" flexWrap="nowrap" alignItems="center">
               <UserIcon stroke="black" />
               <Typography variant="body1" sx={{ ml: 0.5 }}>
-                {activity.createdBy?.identity.username ||
-                  activity.createdBy?.owner?.name}
+                {activity.createdBy?.owner?.name ||
+                  activity.createdBy?.identity.username}
               </Typography>
             </Grid>
           )}

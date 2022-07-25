@@ -2,11 +2,6 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
-import {
-  termDetailsLinkedItemsPath,
-  termDetailsOverviewPath,
-  termSearchPath,
-} from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
 import TermDetailsSkeleton from 'components/Terms/TermDetails/TermDetailsSkeleton/TermDetailsSkeleton';
@@ -21,7 +16,7 @@ import AppPopover from 'components/shared/AppPopover/AppPopover';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams } from 'lib/hooks';
 import {
   getTermDetails,
   getTermDetailsFetchingStatuses,
@@ -29,6 +24,7 @@ import {
 import { getTermSearchId } from 'redux/selectors/termSearch.selectors';
 import { deleteTerm, fetchTermDetails } from 'redux/thunks';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 import { TermDetailsComponentWrapper } from './TermDetailsStyles';
 
 // lazy components
@@ -46,6 +42,11 @@ const TermDetailsView: React.FC = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const { termId, viewType } = useAppParams();
+  const {
+    termSearchPath,
+    termDetailsOverviewPath,
+    termDetailsLinkedItemsPath,
+  } = useAppPaths();
 
   const {
     isLoading: isTermDetailsFetching,
