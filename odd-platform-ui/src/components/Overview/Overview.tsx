@@ -87,7 +87,6 @@ const Overview: React.FC<OverviewProps> = ({
     fetchTagsList({ page: 1, size: 20 });
     dispatch(fetchDataentitiesUsageInfo());
   }, []);
-
   return (
     <S.Container>
       {isMainOverviewContentFetching ? (
@@ -104,54 +103,57 @@ const Overview: React.FC<OverviewProps> = ({
           <S.TagsContainer container>
             <TopTagsListContainer />
           </S.TagsContainer>
-          <Grid container sx={{ mt: 8 }} wrap="nowrap">
-            <S.DataEntitiesUsageContainer>
-              <S.DataEntitiesTotalContainer>
-                <Box>
-                  <Typography variant="h4">Total entities</Typography>
-                  <Typography variant="h1">
-                    {dataEntityUsageTotalCount}
-                  </Typography>
-                </Box>
-                <Box>
-                  <S.UfilledEntities>
-                    {dataEntityUsageUnfilledCount} unfilled entities
-                  </S.UfilledEntities>
-                </Box>
-              </S.DataEntitiesTotalContainer>
-              <S.ListItemContainer>
-                {dataEntitiesUsageItems?.map((item, index) => (
-                  <Box
-                    key={item?.entityClass?.id}
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      width: '45%',
-                    }}
-                  >
-                    <S.ListItem $index={index}>
-                      <EntityClassItem
-                        sx={{ ml: 0.5 }}
-                        key={item?.entityClass?.id}
-                        entityClassName={item?.entityClass?.name}
-                      />
-                      <Typography noWrap title={item?.entityClass?.name}>
-                        {item.entityClass &&
-                          DataEntityClassLabelMap.get(
-                            item.entityClass.name
-                          )?.normal}
-                      </Typography>
-                    </S.ListItem>
-                    <Typography variant="h4" noWrap>
-                      {item.totalCount}
+          {(!identity?.identity ||
+            (identity.identity && identity.owner)) && (
+            <Grid container sx={{ mt: 8 }} wrap="nowrap">
+              <S.DataEntitiesUsageContainer>
+                <S.DataEntitiesTotalContainer>
+                  <Box>
+                    <Typography variant="h4">Total entities</Typography>
+                    <Typography variant="h1">
+                      {dataEntityUsageTotalCount}
                     </Typography>
                   </Box>
-                ))}
-              </S.ListItemContainer>
-            </S.DataEntitiesUsageContainer>
-          </Grid>
-          {identity?.owner ? (
+                  <Box>
+                    <S.UfilledEntities>
+                      {dataEntityUsageUnfilledCount} unfilled entities
+                    </S.UfilledEntities>
+                  </Box>
+                </S.DataEntitiesTotalContainer>
+                <S.ListItemContainer>
+                  {dataEntitiesUsageItems?.map((item, index) => (
+                    <Box
+                      key={item?.entityClass?.id}
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        width: '45%',
+                      }}
+                    >
+                      <S.ListItem $index={index}>
+                        <EntityClassItem
+                          sx={{ ml: 0.5 }}
+                          key={item?.entityClass?.id}
+                          entityClassName={item?.entityClass?.name}
+                        />
+                        <Typography noWrap title={item?.entityClass?.name}>
+                          {item.entityClass &&
+                            DataEntityClassLabelMap.get(
+                              item.entityClass.name
+                            )?.normal}
+                        </Typography>
+                      </S.ListItem>
+                      <Typography variant="h4" noWrap>
+                        {item.totalCount}
+                      </Typography>
+                    </Box>
+                  ))}
+                </S.ListItemContainer>
+              </S.DataEntitiesUsageContainer>
+            </Grid>
+          )}
+          {identity?.owner && identity?.identity ? (
             <S.DataEntityContainer container>
               <Grid item xs={3}>
                 <DataEntityList
@@ -189,7 +191,9 @@ const Overview: React.FC<OverviewProps> = ({
           ) : null}
         </>
       )}
-      {!identity?.owner && identityFetched ? <IdentityContainer /> : null}
+      {!identity?.owner && identity?.identity && identityFetched ? (
+        <IdentityContainer />
+      ) : null}
     </S.Container>
   );
 };
