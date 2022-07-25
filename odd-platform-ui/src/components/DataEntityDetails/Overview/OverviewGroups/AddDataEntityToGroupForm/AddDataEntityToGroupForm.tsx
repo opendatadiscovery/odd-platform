@@ -93,8 +93,6 @@ const AddDataEntityToGroupForm: React.FC<
         rules={{ required: true }}
         render={({ field }) => (
           <SearchSuggestionsAutocomplete
-            placeholder="Search groups"
-            label="Group name"
             formOnChange={field.onChange}
             searchParams={{
               entityClassId: dataEntityGroupClassId,

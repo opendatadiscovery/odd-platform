@@ -4,19 +4,20 @@ import {
   AssociatedOwner,
   SearchApiSearchRequest,
   SearchFacetsData,
-  TermSearchFacetsData,
   TermApiTermSearchRequest,
+  TermSearchFacetsData,
 } from 'generated-sources';
 import { fetchAppInfo } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { getVersion } from 'redux/selectors/appInfo.selectors';
 import { useHistory, useLocation } from 'react-router-dom';
-import { searchPath, termSearchPath } from 'lib/paths';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import { clearActivityFilters } from 'redux/reducers/activity.slice';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 import * as S from './AppToolbarStyles';
 
 interface AppToolbarProps {
@@ -42,6 +43,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
   const dispatch = useAppDispatch();
+  const { searchPath, termSearchPath } = useAppPaths();
   const version = useAppSelector(getVersion);
   const handleProfileMenuOpen = (event: MouseEvent) => {
     setAnchorEl(event.currentTarget);
@@ -73,7 +75,8 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
     { name: 'Catalog', link: '/search' },
     { name: 'Management', link: '/management' },
     { name: 'Dictionary', link: '/termsearch' },
-    { name: 'Alerts', link: '/alerts/' },
+    { name: 'Alerts', link: '/alerts' },
+    { name: 'Activity', link: '/activity' },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number | boolean>(
@@ -81,9 +84,17 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   );
 
   React.useEffect(() => {
-    const newTabIndex = tabs.findIndex(
-      tab => tab.link && location.pathname.includes(tab.link)
-    );
+    const newTabIndex = tabs.findIndex(tab => {
+      if (tab.link === '/activity' || tab.link === '/alerts') {
+        return (
+          location.pathname.includes(tab.link) &&
+          !location.pathname.includes('dataentities')
+        );
+      }
+
+      return tab.link && location.pathname.includes(tab.link);
+    });
+
     if (newTabIndex >= 0) {
       setSelectedTab(newTabIndex);
     } else {
@@ -126,6 +137,8 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
           setSearchLoading(false);
         }
       );
+    } else if (tabs[idx].name === 'Activity') {
+      dispatch(clearActivityFilters());
     }
   };
 

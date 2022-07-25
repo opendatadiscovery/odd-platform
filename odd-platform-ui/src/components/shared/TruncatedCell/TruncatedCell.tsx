@@ -2,8 +2,8 @@ import React, { MouseEvent } from 'react';
 import TruncateMarkup from 'react-truncate-markup';
 import { Link } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
-import { dataEntityDetailsPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { useAppPaths } from 'lib/hooks';
 import TruncatedCellMenu from './TruncatedCellMenu/TruncatedCellMenu';
 import * as S from './TruncatedCellStyles';
 
@@ -16,6 +16,8 @@ const TruncatedCell: React.FC<TruncatedCellProps> = ({
   dataList,
   externalEntityId,
 }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
+
   const getTruncateMarkupAtom = (item: DataEntityRef | string) => {
     const key = typeof item === 'string' ? item : item.id;
     const linkTo =

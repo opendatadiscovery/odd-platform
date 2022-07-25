@@ -312,7 +312,8 @@ public class DataEntityRepositoryImpl
         return listAllByOddrns(oddrns, null, null, false);
     }
 
-    private List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
+    @Override
+    public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
                                                           final Integer page,
                                                           final Integer size,
                                                           final boolean skipHollow) {
@@ -393,10 +394,7 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public List<? extends DataEntityDto> listByOwner(final int page,
-                                                     final int size,
-                                                     final long ownerId,
-                                                     final LineageStreamKind streamKind) {
+    public List<String> listOddrnsByOwner(final long ownerId, final LineageStreamKind streamKind) {
         final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
             .selectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
             .build();
@@ -406,15 +404,13 @@ public class DataEntityRepositoryImpl
             .map(r -> jooqRecordHelper.remapCte(r, DATA_ENTITY_CTE_NAME, DATA_ENTITY).get(DATA_ENTITY.ODDRN))
             .collect(Collectors.toSet());
 
-        final List<String> oddrns = lineageRepository
+        return lineageRepository
             .getLineageRelations(associatedOddrns, LineageDepth.empty(), streamKind)
             .stream()
             .flatMap(lp -> Stream.of(lp.getParentOddrn(), lp.getChildOddrn()))
             .distinct()
             .filter(not(associatedOddrns::contains))
             .collect(toList());
-
-        return listAllByOddrns(oddrns, page, size, true);
     }
 
     @Override
@@ -507,31 +503,6 @@ public class DataEntityRepositoryImpl
             .hasNext(true)
             .total(total)
             .build();
-    }
-
-    @Override
-    @BlockingTransactional
-    public void setDescription(final long dataEntityId, final String description) {
-        dslContext.update(DATA_ENTITY)
-            .set(DATA_ENTITY.INTERNAL_DESCRIPTION, description)
-            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
-            .where(DATA_ENTITY.ID.eq(dataEntityId))
-            .execute();
-
-        calculateDataEntityVectors(List.of(dataEntityId));
-    }
-
-    @Override
-    @BlockingTransactional
-    public void setInternalName(final long dataEntityId, final String businessName) {
-        final String newBusinessName = businessName != null && businessName.isEmpty() ? null : businessName;
-        dslContext.update(DATA_ENTITY)
-            .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
-            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
-            .where(DATA_ENTITY.ID.eq(dataEntityId))
-            .execute();
-
-        calculateDataEntityVectors(List.of(dataEntityId));
     }
 
     @Override

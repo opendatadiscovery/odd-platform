@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
@@ -13,12 +14,14 @@ import org.apache.commons.collections4.MapUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRun;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpectation;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
@@ -29,8 +32,10 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Component;
 
@@ -392,6 +397,26 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     @Override
     public DataEntityRef mapRef(final DataEntityPojo pojo) {
         return mapReference(pojo);
+    }
+
+    @Override
+    public DataEntityUsageInfo mapUsageInfo(final DataEntityStatisticsPojo pojo,
+                                            final Long filledEntitiesCount) {
+        final Map<Integer, Long> classesCount = JSONSerDeUtils.deserializeJson(pojo.getDataEntityClassesCount().data(),
+            new TypeReference<>() {
+            });
+        return new DataEntityUsageInfo()
+            .totalCount(pojo.getTotalCount())
+            .unfilledCount(pojo.getTotalCount() - filledEntitiesCount)
+            .dataEntityClassesInfo(
+                Arrays.stream(DataEntityClassDto.values())
+                    .filter(dto -> dto != DataEntityClassDto.DATA_QUALITY_TEST_RUN
+                        && dto != DataEntityClassDto.DATA_TRANSFORMER_RUN)
+                    .map(dto -> new DataEntityClassUsageInfo()
+                        .entityClass(mapEntityClass(dto))
+                        .totalCount(classesCount.getOrDefault(dto.getId(), 0L)))
+                    .toList()
+            );
     }
 
     private DataEntityRef mapReference(final DataEntityDto dto) {

@@ -83,7 +83,7 @@ const DatasetFieldInfoEditForm: React.FC<
       datasetFieldId,
       datasetFieldUpdateFormData: {
         labelNames: data.labels.map(label => label.name),
-        description: data.internalDescription,
+        description: data.internalDescription.trim() || undefined,
       },
     }).then(
       () => {

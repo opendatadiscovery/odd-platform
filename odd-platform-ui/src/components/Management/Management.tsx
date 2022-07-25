@@ -3,8 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
-import { managementPath } from 'lib/paths';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import * as S from './ManagementStyles';
 
 // lazy components
@@ -19,13 +18,13 @@ const TagsList = React.lazy(() => import('./TagsList/TagsList'));
 const DataSourcesList = React.lazy(
   () => import('./DataSourcesList/DataSourcesList')
 );
-
 const CollectorsList = React.lazy(
   () => import('./CollectorsList/CollectorsList')
 );
 
 const Management: React.FC = () => {
   const { viewType } = useAppParams();
+  const { managementPath } = useAppPaths();
 
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Namespaces', link: managementPath('namespaces') },

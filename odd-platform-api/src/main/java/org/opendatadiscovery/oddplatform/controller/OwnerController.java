@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.api.OwnerApi;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
@@ -29,8 +30,9 @@ public class OwnerController implements OwnerApi {
     public Mono<ResponseEntity<OwnerList>> getOwnerList(final Integer page,
                                                         final Integer size,
                                                         final String query,
+                                                        final List<Long> ids,
                                                         final ServerWebExchange exchange) {
-        return ownerService.list(page, size, query)
+        return ownerService.list(page, size, query, ids)
             .map(ResponseEntity::ok);
     }
 

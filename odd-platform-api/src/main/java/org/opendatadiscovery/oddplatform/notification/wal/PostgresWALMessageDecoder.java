@@ -14,8 +14,9 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.notification.PGConnectionFactory;
-import org.opendatadiscovery.oddplatform.notification.wal.DecodedWALMessage.Column;
-import org.opendatadiscovery.oddplatform.notification.wal.DecodedWALMessage.Operation;
+import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage;
+import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage.Column;
+import org.opendatadiscovery.oddplatform.notification.dto.DecodedWALMessage.Operation;
 import org.springframework.stereotype.Component;
 
 import static java.util.function.Function.identity;
@@ -114,8 +115,8 @@ public class PostgresWALMessageDecoder {
             throw new RuntimeException("No column meta for relation ID %d".formatted(relationId));
         }
 
-        // K = Identifies the following TupleData submessage as a key
-        // O = Identifies the following TupleData submessage as an old tuple
+        // K = Identifies the following TupleData sub-message as a key
+        // O = Identifies the following TupleData sub-message as an old tuple
         // Skipping as we don't need old tuple data at the moment
         if ('O' == tupleType || 'K' == tupleType) {
             skipColumnTupleData(buffer);

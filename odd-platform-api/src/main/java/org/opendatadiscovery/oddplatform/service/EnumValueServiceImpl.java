@@ -12,22 +12,31 @@ import org.opendatadiscovery.oddplatform.api.contract.model.EnumValueList;
 import org.opendatadiscovery.oddplatform.mapper.EnumValueMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_ENUMS;
+import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.DATASET_FIELD_VALUES_UPDATED;
+import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldValuesUpdated.DATASET_FIELD_ID;
 
 @Service
 @RequiredArgsConstructor
 public class EnumValueServiceImpl implements EnumValueService {
     private final ReactiveEnumValueRepository reactiveEnumValueRepository;
+    private final DataEntityFilledService dataEntityFilledService;
     private final EnumValueMapper mapper;
 
     @Override
     @ReactiveTransactional
-    public Mono<EnumValueList> createEnumValues(final Long datasetFieldId, final List<EnumValueFormData> formData) {
+    @ActivityLog(event = DATASET_FIELD_VALUES_UPDATED)
+    public Mono<EnumValueList> createEnumValues(@ActivityParameter(DATASET_FIELD_ID) final Long datasetFieldId,
+                                                final List<EnumValueFormData> formData) {
         final List<EnumValuePojo> pojos = formData.stream()
             .map(fd -> mapper.mapToPojo(fd, datasetFieldId))
-            .collect(Collectors.toList());
+            .toList();
 
         final List<String> enumNames = pojos.stream()
             .map(EnumValuePojo::getName)
@@ -49,9 +58,20 @@ public class EnumValueServiceImpl implements EnumValueService {
             .then(
                 Flux.concat(reactiveEnumValueRepository.bulkUpdate(partitions.get(true)),
                         reactiveEnumValueRepository.bulkCreate(partitions.get(false)))
-                .map(mapper::mapToEnum)
-                .collectList()
-                .map(list -> new EnumValueList().items(list)));
+                    .map(mapper::mapToEnum)
+                    .collectList()
+                    .flatMap(list -> {
+                        if (CollectionUtils.isEmpty(list)) {
+                            return dataEntityFilledService
+                                .markEntityUnfilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_ENUMS)
+                                .thenReturn(list);
+                        } else {
+                            return dataEntityFilledService
+                                .markEntityFilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_ENUMS)
+                                .thenReturn(list);
+                        }
+                    })
+                    .map(list -> new EnumValueList().items(list)));
     }
 
     @Override

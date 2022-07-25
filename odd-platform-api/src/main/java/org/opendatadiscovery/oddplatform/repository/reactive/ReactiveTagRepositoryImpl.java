@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
@@ -90,9 +91,14 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     }
 
     @Override
-    public Mono<Page<TagDto>> listMostPopular(final String query, final int page, final int size) {
+    public Mono<Page<TagDto>> listMostPopular(final String query, final List<Long> ids, final int page,
+                                              final int size) {
+        final List<Condition> conditions = listCondition(query);
+        if (CollectionUtils.isNotEmpty(ids)) {
+            conditions.add(TAG.ID.in(ids));
+        }
         final Select<TagRecord> homogeneousQuery = DSL.selectFrom(TAG)
-            .where(listCondition(query));
+            .where(conditions);
 
         final Select<? extends Record> select =
             paginate(homogeneousQuery, List.of(new OrderByField(TAG.ID, SortOrder.ASC)), (page - 1) * size, size);
@@ -114,7 +120,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
             .flatMap(records -> jooqQueryHelper.pageifyResult(
                 records,
                 this::mapTag,
-                fetchCount(query)
+                fetchCount(query, ids)
             ));
     }
 

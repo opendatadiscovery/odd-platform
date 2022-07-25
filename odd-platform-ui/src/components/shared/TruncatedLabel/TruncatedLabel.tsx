@@ -2,6 +2,7 @@ import React from 'react';
 import TruncateMarkup from 'react-truncate-markup';
 import { Label } from 'generated-sources';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
+import { Grid } from '@mui/material';
 import TruncatedLabelMenu from './TruncatedLabelMenu/TruncatedLabelMenu';
 
 interface TruncatedLabelProps {
@@ -19,7 +20,7 @@ const TruncatedLabel: React.FC<TruncatedLabelProps> = ({
       onTruncate={() => onSizeChange()}
       ellipsis={<TruncatedLabelMenu labelList={labelList} />}
     >
-      <div>
+      <Grid container alignItems="center">
         {labelList?.map(label => (
           <TruncateMarkup.Atom key={label.id}>
             <LabelItem
@@ -28,7 +29,7 @@ const TruncatedLabel: React.FC<TruncatedLabelProps> = ({
             />
           </TruncateMarkup.Atom>
         ))}
-      </div>
+      </Grid>
     </TruncateMarkup>
   </div>
 );

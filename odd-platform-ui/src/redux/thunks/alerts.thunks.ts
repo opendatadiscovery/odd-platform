@@ -1,5 +1,5 @@
 import {
-  Alert,
+  Alert as GeneratedAlert,
   AlertApi,
   AlertApiChangeAlertStatusRequest,
   AlertApiGetAllAlertsRequest,
@@ -15,7 +15,8 @@ import {
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { CurrentPageInfo } from 'redux/interfaces';
+import { Alert, CurrentPageInfo } from 'redux/interfaces';
+import { castItemDatesToTimestampInArray } from 'lib/redux/helpers';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const alertApi = new AlertApi(apiClientConf);
@@ -28,10 +29,7 @@ export interface AlertsResponse {
 
 export const fetchAlertsTotals = createAsyncThunk<AlertTotals>(
   actions.fetchAlertsTotalsActionType,
-  async () => {
-    const response = await alertApi.getAlertTotals();
-    return response;
-  }
+  async () => alertApi.getAlertTotals()
 );
 
 export const fetchAllAlertList = createAsyncThunk<
@@ -42,8 +40,9 @@ export const fetchAllAlertList = createAsyncThunk<
     page,
     size,
   });
+
   return {
-    items,
+    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
     pageInfo: { ...pageInfo, page },
   };
 });
@@ -57,7 +56,7 @@ export const fetchMyAlertList = createAsyncThunk<
     size,
   });
   return {
-    items,
+    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
     pageInfo: { ...pageInfo, page },
   };
 });
@@ -71,7 +70,7 @@ export const fetchMyDependentsAlertList = createAsyncThunk<
     size,
   });
   return {
-    items,
+    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
     pageInfo: { ...pageInfo, page },
   };
 });
@@ -98,5 +97,8 @@ export const fetchDataEntityAlerts = createAsyncThunk<
   const { items, pageInfo } = await dataEntityApi.getDataEntityAlerts({
     dataEntityId,
   });
-  return { items, pageInfo };
+  return {
+    items: castItemDatesToTimestampInArray<GeneratedAlert, Alert>(items),
+    pageInfo,
+  };
 });

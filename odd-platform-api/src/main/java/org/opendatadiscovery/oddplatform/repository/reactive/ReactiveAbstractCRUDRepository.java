@@ -1,10 +1,12 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -24,7 +26,6 @@ import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static java.util.Collections.emptyList;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.rowNumber;
@@ -73,20 +74,18 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     @Override
     public Flux<P> list() {
         return jooqReactiveOperations
-            .flux(baseSelectManyQuery(null))
-            .map(this::recordToPojo);
-    }
-
-    @Override
-    public Flux<P> list(final String nameQuery) {
-        return jooqReactiveOperations
-            .flux(baseSelectManyQuery(nameQuery))
+            .flux(baseSelectManyQuery(null, List.of()))
             .map(this::recordToPojo);
     }
 
     @Override
     public Mono<Page<P>> list(final int page, final int size, final String nameQuery) {
-        final Select<? extends Record> query = paginate(baseSelectManyQuery(nameQuery),
+        return list(page, size, nameQuery, List.of());
+    }
+
+    @Override
+    public Mono<Page<P>> list(final int page, final int size, final String nameQuery, final List<Long> ids) {
+        final Select<? extends Record> query = paginate(baseSelectManyQuery(nameQuery, ids),
             List.of(new OrderByField(idField, SortOrder.ASC)), page - 1, size);
 
         return jooqReactiveOperations.flux(query)
@@ -183,14 +182,29 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     protected Mono<Long> fetchCount(final String nameQuery) {
+        return fetchCount(nameQuery, List.of());
+    }
+
+    protected Mono<Long> fetchCount(final String nameQuery, final List<Long> ids) {
+        final List<Condition> conditions = listCondition(nameQuery, ids);
         return jooqReactiveOperations
-            .mono(DSL.selectCount().from(recordTable).where(listCondition(nameQuery)))
+            .mono(DSL.selectCount().from(recordTable).where(conditions))
             .map(r -> r.component1().longValue());
     }
 
     protected List<Condition> listCondition(final String nameQuery) {
-        return StringUtils.isNotEmpty(nameQuery)
-            ? List.of(nameField.containsIgnoreCase(nameQuery)) : emptyList();
+        return listCondition(nameQuery, List.of());
+    }
+
+    protected List<Condition> listCondition(final String nameQuery, final List<Long> ids) {
+        final List<Condition> conditions = new ArrayList<>();
+        if (StringUtils.isNotEmpty(nameQuery)) {
+            conditions.add(nameField.containsIgnoreCase(nameQuery));
+        }
+        if (CollectionUtils.isNotEmpty(ids)) {
+            conditions.add(idField.in(ids));
+        }
+        return conditions;
     }
 
     protected List<Condition> idCondition(final long id) {
@@ -201,10 +215,10 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
         return List.of(idField.in(ids));
     }
 
-    protected SelectConditionStep<R> baseSelectManyQuery(final String query) {
+    protected SelectConditionStep<R> baseSelectManyQuery(final String query, final List<Long> ids) {
         return DSL
             .selectFrom(recordTable)
-            .where(listCondition(query));
+            .where(listCondition(query, ids));
     }
 
     private R createRecord(final P pojo, final LocalDateTime updatedAt) {

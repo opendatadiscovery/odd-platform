@@ -73,6 +73,12 @@ interface DatasetFieldKeyType {
   sort: ItemColors;
 }
 
+interface ActivityEventType {
+  created: string;
+  updated: string;
+  deleted: string;
+}
+
 declare module '@mui/material/styles' {
   interface Palette {
     entityClass: EntityClasses;
@@ -86,6 +92,7 @@ declare module '@mui/material/styles' {
     backgrounds: Partial<BackgroundType>;
     texts: TextType;
     textField: ItemCondition;
+    activityEvent: ActivityEventType;
   }
 
   interface PaletteOptions {
@@ -100,6 +107,7 @@ declare module '@mui/material/styles' {
     backgrounds?: Partial<BackgroundType>;
     texts?: TextType;
     textField?: ItemCondition;
+    activityEvent?: ActivityEventType;
   }
 }
 
@@ -107,14 +115,17 @@ declare module '@mui/material/styles' {
 declare module '@mui/material/styles/createTypography' {
   interface Typography {
     errorCode: TypographyStyle;
+    totalCountTitle: TypographyStyle;
   }
 
   interface TypographyOptions {
     errorCode?: TypographyStyleOptions;
+    totalCountTitle?: TypographyStyleOptions;
   }
 }
 declare module '@mui/material/Typography/Typography' {
   interface TypographyPropsVariantOverrides {
     errorCode: true;
+    totalCountTitle: true;
   }
 }

@@ -40,6 +40,7 @@ import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapperImpl;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
@@ -57,6 +58,7 @@ import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepo
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetStructureRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
@@ -69,6 +71,8 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -126,6 +130,9 @@ public class IngestionServiceImplTest {
 
     @Mock
     private GroupParentGroupRelationRepository groupParentGroupRelationRepository;
+
+    @Mock
+    private ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
 
     @Spy
     private IngestionMapper ingestionMapper = new IngestionMapperImpl();
@@ -186,6 +193,8 @@ public class IngestionServiceImplTest {
         when(dataSourceRepository.getDtoByOddrn(anyString())).thenReturn(Mono.just(dataSourceDto));
         when(metadataIngestionService.ingestMetadata(any())).thenReturn(Mono.empty());
         when(tagIngestionService.ingestExternalTags(any())).thenReturn(Mono.empty());
+        when(dataEntityStatisticsRepository.updateCounts(anyLong(), anyMap()))
+            .thenReturn(Mono.just(new DataEntityStatisticsPojo()));
         when(datasetStructureService.createDataStructure(any(), any())).thenReturn(Mono.empty());
         when(datasetStructureService.getNewDatasetVersionsIfChanged(any(), any())).thenReturn(Mono.empty());
         when(datasetStructureService.getLastDatasetStructureVersionDelta(any())).thenReturn(Mono.empty());

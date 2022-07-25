@@ -4,12 +4,13 @@ import { toolbarHeight } from 'lib/constants';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
-const DataEntityDetailsContainer = React.lazy(
-  () => import('./DataEntityDetails/DataEntityDetailsContainer')
+const DataEntityDetails = React.lazy(
+  () => import('./DataEntityDetails/DataEntityDetails')
 );
 const TermDetails = React.lazy(
   () => import('./Terms/TermDetails/TermDetails')
@@ -24,6 +25,7 @@ const TermSearchContainer = React.lazy(
   () => import('./Terms/TermSearch/TermSearchContainer')
 );
 const Alerts = React.lazy(() => import('./Alerts/Alerts'));
+const Activity = React.lazy(() => import('./Activity/Activity'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -32,9 +34,11 @@ const App: React.FC = () => {
     dispatch(fetchDataEntitiesClassesAndTypes());
   }, []);
 
+  const { isPathEmbedded } = useAppPaths();
+
   return (
     <div className="App">
-      <AppToolbarContainer />
+      {!isPathEmbedded && <AppToolbarContainer />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
@@ -48,7 +52,7 @@ const App: React.FC = () => {
             />
             <Route
               exact
-              path="/search/:searchId?"
+              path={['/search/:searchId?', '/embedded/search/:searchId?']}
               component={SearchContainer}
             />
             <Route
@@ -56,9 +60,13 @@ const App: React.FC = () => {
               component={TermDetails}
             />
             <Route
-              path="/dataentities/:dataEntityId/:viewType?"
-              component={DataEntityDetailsContainer}
+              path={[
+                '/dataentities/:dataEntityId/:viewType?',
+                '/embedded/dataentities/:dataEntityId/:viewType?',
+              ]}
+              component={DataEntityDetails}
             />
+            <Route path="/activity" component={Activity} />
           </Switch>
         </React.Suspense>
       </div>

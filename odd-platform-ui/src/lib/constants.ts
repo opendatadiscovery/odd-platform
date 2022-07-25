@@ -9,6 +9,7 @@ export const BASE_PARAMS: ConfigurationParameters = {
 // content width constants
 export const toolbarHeight = 49;
 export const maxSidebarWidth = 240;
+export const activitySidebarWidth = 192;
 export const maxContentWidth = 1216;
 export const maxContentWidthWithoutSidebar = 1440;
 export const maxTagsContainerWidth = 920;
@@ -20,3 +21,6 @@ export const mainSkeletonHeight = '100%';
 // tabs constants
 export const primaryTabsHeight = 32;
 export const tabsContainerMargin = 16;
+
+// time formats
+export const alertDateFormat = 'd MMM yyyy, HH:mm';

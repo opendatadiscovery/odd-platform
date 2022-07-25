@@ -5,7 +5,7 @@ import { BoxProps } from '@mui/material';
 import * as S from './EntityClassItemStyles';
 
 export interface EntityClassItemProps extends Pick<BoxProps, 'sx'> {
-  entityClassName: DataEntityClassNameEnum;
+  entityClassName?: DataEntityClassNameEnum;
   fullName?: boolean;
 }
 
@@ -19,13 +19,15 @@ const EntityClassItem: React.FC<EntityClassItemProps> = ({
     $fullName={fullName}
     sx={sx}
     component="span"
-    title={DataEntityClassLabelMap.get(entityClassName)?.normal}
+    title={
+      entityClassName &&
+      DataEntityClassLabelMap.get(entityClassName)?.normal
+    }
   >
-    {
+    {entityClassName &&
       DataEntityClassLabelMap.get(entityClassName)?.[
         fullName ? 'normal' : 'short'
-      ]
-    }
+      ]}
   </S.Content>
 );
 

@@ -199,6 +199,29 @@ components:
         role_name:
           type: string
 
+    DataEntityUsageInfo:
+      type: object
+      properties:
+        total_count:
+          type: integer
+          format: int64
+        unfilled_count:
+          type: integer
+          format: int64
+        data_entity_classes_info:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClassUsageInfo'
+
+    DataEntityClassUsageInfo:
+      type: object
+      properties:
+        entity_class:
+          $ref: '#/components/schemas/DataEntityClass'
+        total_count:
+          type: integer
+          format: int64
+
     DataEntityClassAndTypeDictionary:
       type: object
       properties:
@@ -552,8 +575,8 @@ components:
       type: string
       enum:
         - MINOR
-        - AVERAGE
         - MAJOR
+        - CRITICAL
 
     DataQualityTest:
       allOf:
@@ -1809,6 +1832,283 @@ components:
           items:
             $ref: '#/components/schemas/SearchFilter'
 
+    ActivityCountInfo:
+      type: object
+      properties:
+        total_count:
+          type: integer
+          format: int64
+        my_objects_count:
+          type: integer
+          format: int64
+        downstream_count:
+          type: integer
+          format: int64
+        upstream_count:
+          type: integer
+          format: int64
+      required:
+        - total_count
+        - my_objects_count
+        - downstream_count
+        - upstream_count
+
+    Activity:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        event_type:
+          $ref: '#/components/schemas/ActivityEventType'
+        created_at:
+          type: string
+          format: date-time
+        created_by:
+          $ref: '#/components/schemas/AssociatedOwner'
+        data_entity:
+          $ref: '#/components/schemas/DataEntityRef'
+        old_state:
+          $ref: '#/components/schemas/ActivityState'
+        new_state:
+          $ref: '#/components/schemas/ActivityState'
+        system_event:
+          type: boolean
+      required:
+        - id
+        - event_type
+        - created_at
+        - data_entity
+        - old_state
+        - new_state
+        - system_event
+
+    ActivityState:
+      type: object
+      properties:
+        ownerships:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnershipActivityState'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TagActivityState'
+        data_entity:
+          $ref: '#/components/schemas/DataEntityActivityState'
+        terms:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermActivityState'
+        description:
+          $ref: '#/components/schemas/DescriptionActivityState'
+        business_name:
+          $ref: '#/components/schemas/BusinessNameActivityState'
+        custom_metadata:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomMetadataActivityState'
+        dataset_field_values:
+          $ref: '#/components/schemas/DatasetFieldValuesActivityState'
+        dataset_field_information:
+          $ref: '#/components/schemas/DatasetFieldInformationActivityState'
+        custom_group:
+          $ref: '#/components/schemas/CustomGroupActivityState'
+
+    OwnershipActivityState:
+      type: object
+      properties:
+        owner_name:
+          type: string
+        role_name:
+          type: string
+
+    TagActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        important:
+          type: boolean
+
+    DataEntityActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        oddrn:
+          type: string
+        description:
+          type: string
+        entity_classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClass'
+        type:
+          $ref: '#/components/schemas/DataEntityType'
+        external_name:
+          type: string
+
+    TermActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        namespace:
+          type: string
+
+    DescriptionActivityState:
+      type: object
+      properties:
+        description:
+          type: string
+
+    BusinessNameActivityState:
+      type: object
+      properties:
+        internal_name:
+          type: string
+
+    CustomMetadataActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/MetadataFieldType'
+        value:
+          type: string
+
+    DatasetFieldValuesActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataSetFieldType'
+        enum_values:
+          type: array
+          items:
+            $ref: '#/components/schemas/DatasetFieldEnumValuesActivityState'
+
+    DatasetFieldEnumValuesActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    DatasetFieldInformationActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/DataSetFieldType'
+        description:
+          type: string
+        labels:
+          type: array
+          items:
+            $ref: '#/components/schemas/LabelsActivityState'
+
+    LabelsActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+
+    CustomGroupActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        internal_name:
+          type: string
+        entity_classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClass'
+        type:
+          $ref: '#/components/schemas/DataEntityType'
+        namespace_name:
+          type: string
+        entities:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomGroupEntityActivityState'
+
+    CustomGroupEntityActivityState:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        internal_name:
+          type: string
+        external_name:
+          type: string
+        entity_classes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClass'
+
+    ActivityType:
+      type: string
+      enum:
+        - ALL
+        - MY_OBJECTS
+        - DOWNSTREAM
+        - UPSTREAM
+
+    ActivityEventType:
+      type: string
+      enum:
+        - OWNERSHIP_CREATED
+        - OWNERSHIP_UPDATED
+        - OWNERSHIP_DELETED
+        - TAGS_ASSOCIATION_UPDATED
+        - DATA_ENTITY_CREATED
+        - DATA_ENTITY_OVERVIEW_UPDATED
+        - DATA_ENTITY_METADATA_UPDATED
+        - DATA_ENTITY_SCHEMA_UPDATED
+        - DATA_ENTITY_RELATION_UPDATED
+        - TERM_ASSIGNED
+        - TERM_ASSIGNMENT_DELETED
+        - DESCRIPTION_UPDATED
+        - BUSINESS_NAME_UPDATED
+        - CUSTOM_METADATA_CREATED
+        - CUSTOM_METADATA_UPDATED
+        - CUSTOM_METADATA_DELETED
+        - DATASET_FIELD_VALUES_UPDATED
+        - DATASET_FIELD_DESCRIPTION_UPDATED
+        - DATASET_FIELD_LABELS_UPDATED
+        - CUSTOM_GROUP_CREATED
+        - CUSTOM_GROUP_UPDATED
+        - CUSTOM_GROUP_DELETED
+
   parameters:
     PageParam:
       name: page
@@ -1835,6 +2135,17 @@ components:
       required: false
       schema:
         type: string
+
+    IdsParam:
+      name: ids
+      in: query
+      description: Entity ids
+      required: false
+      schema:
+        type: array
+        items:
+          type: integer
+          format: int64
 
     DataEntityIdParam:
       name: data_entity_id

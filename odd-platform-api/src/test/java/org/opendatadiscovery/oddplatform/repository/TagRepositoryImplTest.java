@@ -243,7 +243,7 @@ class TagRepositoryImplTest extends BaseIntegrationTest {
         }
         reactiveTagRepository.bulkUpdate(createdTagsList).blockLast();
 
-        reactiveTagRepository.listMostPopular(testName, 1, numberOfTestTags)
+        reactiveTagRepository.listMostPopular(testName, List.of(), 1, numberOfTestTags)
             .as(StepVerifier::create)
             .assertNext(page -> {
                 assertThat(page.getTotal()).isEqualTo(numberOfPopularTags);

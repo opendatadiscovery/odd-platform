@@ -1,3 +1,4 @@
 /src/generated-sources/**
 node_modules
 build
+*.css

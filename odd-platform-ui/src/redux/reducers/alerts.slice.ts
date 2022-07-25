@@ -1,12 +1,13 @@
 import { AlertsState } from 'redux/interfaces';
-import { Alert } from 'generated-sources';
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { alertsActionPrefix } from 'redux/actions';
 
 import * as thunks from 'redux/thunks';
+import { Alert } from 'redux/interfaces/alerts';
 
 export const alertsAdapter = createEntityAdapter<Alert>({
   selectId: alert => alert.id,
+  sortComparer: (a, b) => b.createdAt - a.createdAt,
 });
 
 export const initialState: AlertsState = {
