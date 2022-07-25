@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Field;
 import org.jooq.JSONB;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
@@ -34,11 +35,15 @@ public class ReactiveDataEntityStatisticsRepositoryImpl implements ReactiveDataE
         final var query = DSL.update(DATA_ENTITY_STATISTICS)
             .set(DATA_ENTITY_STATISTICS.TOTAL_COUNT, DATA_ENTITY_STATISTICS.TOTAL_COUNT.plus(delta))
             .set(DATA_ENTITY_STATISTICS.DATA_ENTITY_CLASSES_COUNT,
-                field(DATA_ENTITY_STATISTICS.DATA_ENTITY_CLASSES_COUNT
-                    + " || json_build_object(" + jsonUpdate + ")::jsonb", JSONB.class))
+                field(jsonBuildObjectString(DATA_ENTITY_STATISTICS.DATA_ENTITY_CLASSES_COUNT, jsonUpdate), JSONB.class))
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DataEntityStatisticsPojo.class));
+    }
+
+    private String jsonBuildObjectString(final Field<?> fieldToUpdate,
+                                         final String newJson) {
+        return "%s || json_build_object(%s)::jsonb".formatted(fieldToUpdate, newJson);
     }
 
     private String buildJsonFieldUpdateString(final int dataEntityClassId,
