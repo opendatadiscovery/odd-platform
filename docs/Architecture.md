@@ -16,32 +16,36 @@ ODD Collector is a lightweight service which gathers metadata from all your data
 
 ### Collector types 
 #### [AWS Collector](https://github.com/opendatadiscovery/odd-collector-aws)
-* [Athena](https://github.com/opendatadiscovery/odd-collector-aws#athena)
-* [DynamoDB](https://github.com/opendatadiscovery/odd-collector-aws#dynamodb)
-* [Glue](https://github.com/opendatadiscovery/odd-collector-aws#glue)
-* [Kinesis](https://github.com/opendatadiscovery/odd-collector-aws#kinesis)
-* [Quicksight](https://github.com/opendatadiscovery/odd-collector-aws#quicksight)
-* [S3](https://github.com/opendatadiscovery/odd-collector-aws#s3)
-* [Sagemaker](https://github.com/opendatadiscovery/odd-collector-aws#sagemaker)
-* [Sagemaker Featurestore](https://github.com/opendatadiscovery/odd-collector-aws#sagemaker-featurestore)
-* [SQS](https://github.com/opendatadiscovery/odd-collector-aws#sqs)
+* Athena
+* DynamoDB
+* Glue
+* Kinesis
+* Quicksight
+* S3
+* Sagemaker
+* Sagemaker Featurestore
+* SQS
+
+[Config examples →](https://github.com/opendatadiscovery/odd-collector-aws/tree/main/config_examples)
 
 #### [Collector](https://github.com/opendatadiscovery/odd-collector)
-* [Cassandra](https://github.com/opendatadiscovery/odd-collector#cassandra)
-* [ClickHouse](https://github.com/opendatadiscovery/odd-collector#clickhouse)
-* [Dbt](https://github.com/opendatadiscovery/odd-collector#dbt)
-* [Elasticsearch](https://github.com/opendatadiscovery/odd-collector#elasticsearch)
-* [Feast](https://github.com/opendatadiscovery/odd-collector#feast)
-* [Hive](https://github.com/opendatadiscovery/odd-collector#hive)
-* [Kubeflow](https://github.com/opendatadiscovery/odd-collector#kubeflow)
-* [MongoDB](https://github.com/opendatadiscovery/odd-collector#mongodb)
-* [MySQL](https://github.com/opendatadiscovery/odd-collector#mysql)
-* [Neo4j](https://github.com/opendatadiscovery/odd-collector#neo4j)
-* [PostgreSQL](https://github.com/opendatadiscovery/odd-collector#postgresql)
-* [Redshift](https://github.com/opendatadiscovery/odd-collector#redshift)
-* [Snowflake](https://github.com/opendatadiscovery/odd-collector#snowflake)
-* [Tableau](https://github.com/opendatadiscovery/odd-collector#tableau)
-* [Tarantool](https://github.com/opendatadiscovery/odd-collector#tarantool)
+* Cassandra
+* ClickHouse
+* Dbt
+* Elasticsearch
+* Feast
+* Hive
+* Kubeflow
+* MongoDB
+* MySQL
+* Neo4j
+* PostgreSQL
+* Redshift
+* Snowflake
+* Tableau
+* Tarantool
+
+[Config examples →](https://github.com/opendatadiscovery/odd-collector/tree/main/config_examples)
 ## Collector vs Adapters
 A previous version of Platform architecture was based on adapters. This approach required to connect new adapter to each data source. Now you can install one Collector and ingest data from all your sources.
 ### Deprecated Adapters

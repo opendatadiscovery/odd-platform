@@ -6,6 +6,8 @@
 [Pipeline Monitoring and Alerting](#pipeline-monitoring-and-alerting) \
 [ML Experiment Logging](#ml-experiment-logging) \
 [Manual Object Tagging](#manual-object-tagging) \
+[Data entity groups](#data-entity-groups) \
+[Customized Dictionary](#customized-dictionary)\
 [Federation Data Catalog](#federation-data-catalog)
 
 ## Metadata Storage 
@@ -67,6 +69,18 @@ Manage your metadata by tagging tables, datasets and quality tests. Tags provide
 You may apply **tags** to metadata entities or use **labels** to mark elements of these entities.
 
 ![](.gitbook/img/tagging.gif)
+
+## Data entity groups
+Create groups to gather similar entities (datasets, transformers, quality tests, etc). Each group may be enriched with specific metadata, owners and [terms](#customized-dictionary).
+
+**Example:** an organization has ingested metadata related to its finances into the ODD Platform. All the entities are united into the Finance **Namespace** by default. To categorize entities, one creates Revenue and Payrolls groups.
+
+![](.gitbook/img/groups.gif)
+## Customized Dictionary
+Give an extra information about your data entities by creating terms that define these entities or processes related to them.\
+You may see all terms connected to a data entity on its overview page. All created terms are gathered in the **Dictionary** tab.
+
+![](.gitbook/img/terms.gif)
 ## Federation Data Catalog
 > :exclamation: Coming soon! The description below is for informational purposes only.
 
