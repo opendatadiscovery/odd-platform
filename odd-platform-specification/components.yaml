@@ -575,8 +575,8 @@ components:
       type: string
       enum:
         - MINOR
-        - AVERAGE
         - MAJOR
+        - CRITICAL
 
     DataQualityTest:
       allOf:
