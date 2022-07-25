@@ -45,7 +45,7 @@ class DatasetStructureServiceImplTest {
     @Mock
     private ReactiveDatasetStructureRepository reactiveDatasetStructureRepository;
     @Mock
-    private ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
+    private DatasetFieldService datasetFieldService;
     @Mock
     private DatasetVersionMapper datasetVersionMapper;
 
@@ -60,7 +60,7 @@ class DatasetStructureServiceImplTest {
     @BeforeEach
     void setUp() {
         datasetStructureService = new DatasetStructureServiceImpl(reactiveDatasetVersionRepository,
-            reactiveDatasetStructureRepository, reactiveDatasetFieldRepository, datasetVersionMapper);
+            reactiveDatasetStructureRepository, datasetFieldService, datasetVersionMapper);
     }
 
     @Test
@@ -72,7 +72,8 @@ class DatasetStructureServiceImplTest {
             expectedVersion.getDatasetOddrn(), List.of(expectedDatasetField));
         final DatasetStructurePojo datasetStructurePojos = EASY_RANDOM.nextObject(DatasetStructurePojo.class);
 
-        when(reactiveDatasetFieldRepository.bulkCreate(any())).thenReturn(Flux.just(expectedDatasetField));
+        when(datasetFieldService.createOrUpdateDatasetFields(any()))
+            .thenReturn(Mono.just(List.of(expectedDatasetField)));
         when(reactiveDatasetVersionRepository.bulkCreate(any())).thenReturn(Flux.just(expectedVersion));
         when(reactiveDatasetStructureRepository.bulkCreate(any())).thenReturn(Flux.just(datasetStructurePojos));
 

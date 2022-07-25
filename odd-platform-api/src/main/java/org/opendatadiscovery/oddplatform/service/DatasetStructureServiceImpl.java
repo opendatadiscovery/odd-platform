@@ -17,7 +17,6 @@ import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetStructureRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.utils.Pair;
@@ -31,7 +30,7 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
 
     private final ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
     private final ReactiveDatasetStructureRepository reactiveDatasetStructureRepository;
-    private final ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
+    private final DatasetFieldService datasetFieldService;
     private final DatasetVersionMapper datasetVersionMapper;
 
     @Override
@@ -41,8 +40,8 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
         final List<DatasetFieldPojo> datasetFieldPojos = fields.values().stream()
             .flatMap(List::stream)
             .collect(Collectors.toList());
-        return reactiveDatasetFieldRepository.bulkCreate(datasetFieldPojos)
-            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, Function.identity()))
+        return datasetFieldService.createOrUpdateDatasetFields(datasetFieldPojos)
+            .map(list -> list.stream().collect(Collectors.toMap(DatasetFieldPojo::getOddrn, Function.identity())))
             .flatMap(datasetFieldPojoMap ->
                 reactiveDatasetVersionRepository.bulkCreate(versions)
                     .collectList()
