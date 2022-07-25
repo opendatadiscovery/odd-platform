@@ -62,3 +62,8 @@ export const setActivityBackgroundColor = (
       return '';
   }
 };
+
+export const calculateWidth = (optionName: string, maxWidth: number) => {
+  const optionWidth = 14 * optionName.length;
+  return optionWidth > maxWidth ? maxWidth : 0;
+};

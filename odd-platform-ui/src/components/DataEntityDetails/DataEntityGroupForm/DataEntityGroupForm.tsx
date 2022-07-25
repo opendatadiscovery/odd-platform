@@ -8,6 +8,7 @@ import {
   DataEntityType,
   DataEntityTypeNameEnum,
 } from 'generated-sources';
+import { calculateWidth } from 'lib/helpers';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppInput from 'components/shared/AppInput/AppInput';
@@ -196,6 +197,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
                 <AppMenuItem
                   {...field}
                   key={type.id}
+                  maxWidth={calculateWidth(type.name, 400)}
                   value={type.name}
                   onClick={() => setValue('type', type)}
                 >

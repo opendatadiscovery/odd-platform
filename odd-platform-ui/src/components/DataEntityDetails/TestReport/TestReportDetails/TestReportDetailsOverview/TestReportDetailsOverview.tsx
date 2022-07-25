@@ -8,6 +8,7 @@ import {
   getDatasetTestListFetchingStatuses,
   getQualityTestByTestId,
 } from 'redux/selectors/dataQualityTest.selectors';
+import { calculateWidth } from 'lib/helpers';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
@@ -81,7 +82,11 @@ const TestReportDetailsOverview: React.FC = () => {
                 onChange={handleSeverityChange}
               >
                 {Object.keys(DataQualityTestSeverity)?.map(severity => (
-                  <AppMenuItem key={severity} value={severity}>
+                  <AppMenuItem
+                    key={severity}
+                    value={severity}
+                    maxWidth={calculateWidth(severity, 400)}
+                  >
                     {severity}
                   </AppMenuItem>
                 ))}

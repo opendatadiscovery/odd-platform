@@ -6,6 +6,7 @@ import {
   OptionalFacetNames,
   SearchFilterStateSynced,
 } from 'redux/interfaces/search';
+import { calculateWidth } from 'lib/helpers';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 
@@ -51,7 +52,6 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
         >
           <AppMenuItem
             value="All"
-            maxWidth={190}
             onClick={() => handleFilterSelect({ id: 'All', name: 'All' })}
           >
             All
@@ -61,7 +61,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
               key={option.id}
               value={option.id}
               onClick={() => handleFilterSelect(option)}
-              maxWidth={190}
+              maxWidth={calculateWidth(option.name, 400)}
             >
               {option.name}
             </AppMenuItem>
