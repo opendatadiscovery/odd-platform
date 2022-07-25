@@ -4,12 +4,12 @@ import {
   DataEntityClassNameEnum,
   DataEntityDetails,
 } from 'generated-sources';
-import { dataEntityDetailsPath } from 'lib/paths';
 import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
 import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
+import { useAppPaths } from 'lib/hooks';
 import {
   EntityLink,
   StatIconContainer,
@@ -33,6 +33,7 @@ const OverviewTransformerStats: React.FC<
   dataEntityName,
 }) => {
   const displayedEntitiesNumber = 10;
+  const { dataEntityDetailsPath } = useAppPaths();
 
   return (
     <Grid container>

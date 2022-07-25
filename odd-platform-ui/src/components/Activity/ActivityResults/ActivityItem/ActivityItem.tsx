@@ -6,7 +6,6 @@ import GearIcon from 'components/shared/Icons/GearIcon';
 import UserIcon from 'components/shared/Icons/UserIcon';
 import { format } from 'date-fns';
 import { Link } from 'react-router-dom';
-import { dataEntityDetailsPath } from 'lib/paths';
 import { ActivityEventType } from 'generated-sources';
 import OwnerActivityField from 'components/shared/Activity/ActivityFields/OwnerActivityField/OwnerActivityField';
 import ActivityFieldHeader from 'components/shared/Activity/ActivityFields/ActivityFieldHeader/ActivityFieldHeader';
@@ -18,6 +17,7 @@ import TermActivityField from 'components/shared/Activity/ActivityFields/TermAct
 import EnumsActivityField from 'components/shared/Activity/ActivityFields/EnumsActivityField/EnumsActivityField';
 import CustomGroupActivityField from 'components/shared/Activity/ActivityFields/CustomGroupActivityField/CustomGroupActivityField';
 import * as S from 'components/Activity/ActivityResults/ActivityItem/ActivityItemStyles';
+import { useAppPaths } from 'lib/hooks';
 
 interface ActivityItemProps {
   activity: Activity;
@@ -28,6 +28,8 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
   activity,
   hideAllDetails,
 }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
+
   const tagStateItem = React.useCallback(
     (name, important) => (
       <TagItem
@@ -75,8 +77,8 @@ const ActivityItem: React.FC<ActivityItemProps> = ({
             <Grid display="flex" flexWrap="nowrap" alignItems="center">
               <UserIcon stroke="black" />
               <Typography variant="body1" sx={{ ml: 0.5 }}>
-                {activity.createdBy?.identity.username ||
-                  activity.createdBy?.owner?.name}
+                {activity.createdBy?.owner?.name ||
+                  activity.createdBy?.identity.username}
               </Typography>
             </Grid>
           )}

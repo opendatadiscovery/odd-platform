@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, PopoverProps, Theme } from '@mui/material';
+import { PopoverProps, Theme } from '@mui/material';
 import { SxProps } from '@mui/system';
 import * as S from './AppPopoverStyles';
 
@@ -50,7 +50,7 @@ const AppPopover: React.FC<AppPopoverProps> = ({
         anchorOrigin={anchorOrigin}
         disableRestoreFocus
       >
-        <Box sx={childrenSx}>{children}</Box>
+        <S.PopoverChildren sx={childrenSx}>{children}</S.PopoverChildren>
       </S.AppPopover>
     </>
   );

@@ -11,7 +11,6 @@ import {
   DataSetStats,
   DataSetVersion,
 } from 'generated-sources';
-import { datasetStructurePath } from 'lib/paths';
 import { isComplexField } from 'lib/helpers';
 import { DataSetStructureTypesCount } from 'redux/interfaces/datasetStructure';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
@@ -19,6 +18,7 @@ import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
+import { useAppPaths } from 'lib/hooks';
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
@@ -50,6 +50,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   isDatasetStructureFetching,
 }) => {
   const history = useHistory();
+  const { datasetStructurePath } = useAppPaths();
 
   React.useEffect(() => {
     if (versionIdParam) {

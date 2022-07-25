@@ -13,11 +13,11 @@ import CatalogIcon from 'components/shared/Icons/CatalogIcon';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
+  fetchAlertsTotals,
   fetchMyDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
   fetchMyUpstreamDataEntitiesList,
   fetchPopularDataEntitiesList,
-  fetchAlertsTotals,
   fetchDataentitiesUsageInfo,
 } from 'redux/thunks';
 import {
@@ -27,6 +27,8 @@ import {
 } from 'redux/selectors';
 import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
+
+import { useAppPaths } from 'lib/hooks';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
@@ -70,6 +72,8 @@ const Overview: React.FC<OverviewProps> = ({
   const dataEntityUsageUnfilledCount = useAppSelector(
     getDataEntitiesUsageUnfilledCount
   );
+  const { alertsPath } = useAppPaths();
+
   React.useEffect(() => {
     if (!identity) return;
     const params = {

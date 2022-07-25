@@ -103,46 +103,46 @@ const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
         <S.ColContainer item $colType="createdTime">
           <Typography variant="caption">Created at</Typography>
         </S.ColContainer>
-        <S.ColContainer item $colType="updatedBy">
-          {/* <Typography variant="caption">Status updated by</Typography> */}
-        </S.ColContainer>
+        <S.ColContainer item $colType="updatedBy" />
         <S.ColContainer item $colType="updatedAt">
           <Typography variant="caption">Status updated at</Typography>
         </S.ColContainer>
         <S.ColContainer item $colType="actionBtn" />
       </S.AlertsTableHeader>
       <Grid container>
-        <InfiniteScroll
-          dataLength={alerts?.length}
-          next={fetchNextPage}
-          hasMore={!!pageInfo?.hasNext}
-          loader={
-            (isAlertListFetching ||
-              isMyAlertListFetching ||
-              isMyDependentsAlertListFetching) && (
-              <SkeletonWrapper
-                renderContent={({ randomSkeletonPercentWidth, key }) => (
-                  <AlertListSkeleton
-                    width={randomSkeletonPercentWidth()}
-                    key={key}
-                  />
+        <div style={{ width: '100%' }}>
+          <InfiniteScroll
+            dataLength={alerts?.length}
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            loader={
+              (isAlertListFetching ||
+                isMyAlertListFetching ||
+                isMyDependentsAlertListFetching) && (
+                <SkeletonWrapper
+                  renderContent={({ randomSkeletonPercentWidth, key }) => (
+                    <AlertListSkeleton
+                      width={randomSkeletonPercentWidth()}
+                      key={key}
+                    />
+                  )}
+                />
+              )
+            }
+            scrollThreshold="200px"
+          >
+            {alerts?.map(alert => (
+              <AlertItem
+                alertStatusHandler={alertStatusHandler(
+                  alert.id,
+                  alert.status
                 )}
+                key={alert.id}
+                alert={alert}
               />
-            )
-          }
-          scrollThreshold="200px"
-        >
-          {alerts?.map(alert => (
-            <AlertItem
-              alertStatusHandler={alertStatusHandler(
-                alert.id,
-                alert.status
-              )}
-              key={alert.id}
-              alert={alert}
-            />
-          ))}
-        </InfiniteScroll>
+            ))}
+          </InfiniteScroll>
+        </div>
       </Grid>
       {(!isAlertListFetching ||
         !isMyAlertListFetching ||

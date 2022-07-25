@@ -3,7 +3,6 @@ import { Grid, Typography } from '@mui/material';
 import { DataEntityLineageNode } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Link } from 'react-router-dom';
-import { dataEntityDetailsPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import {
@@ -11,6 +10,7 @@ import {
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
 import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppPaths } from 'lib/hooks';
 import * as S from './GroupedEntitiesListModalStyles';
 
 interface GroupedEntitiesListModalProps {
@@ -31,6 +31,7 @@ const GroupedEntitiesListModal: React.FC<
   rootNodeId,
 }) => {
   const dispatch = useAppDispatch();
+  const { dataEntityDetailsPath } = useAppPaths();
 
   const [isLoadMoreClicked, setIsLoadMoreClicked] =
     React.useState<boolean>(false);

@@ -15,7 +15,7 @@ import AppSelect from 'components/shared/AppSelect/AppSelect';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getDataEntityDetails,
   getDataEntityGroupCreatingStatuses,
@@ -28,7 +28,6 @@ import {
 } from 'redux/thunks';
 import EntityItem from 'components/DataEntityDetails/DataEntityGroupForm/EntityItem/EntityItem';
 import { useHistory } from 'react-router-dom';
-import { dataEntityDetailsPath } from 'lib/paths';
 import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 import SearchSuggestionsAutocomplete from 'components/shared/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
@@ -48,6 +47,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
   const history = useHistory();
+  const { dataEntityDetailsPath } = useAppPaths();
 
   const dataEntityGroupDetails: DataEntityDetails = useAppSelector(state =>
     getDataEntityDetails(state, dataEntityId)
@@ -206,8 +206,6 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         )}
       />
       <SearchSuggestionsAutocomplete
-        placeholder="Search entities"
-        label="Entities"
         formOnChange={register('entities').onChange}
         append={append}
         addEntities

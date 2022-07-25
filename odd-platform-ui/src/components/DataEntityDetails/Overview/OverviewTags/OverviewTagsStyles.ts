@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { CSSObject } from 'styled-components';
 import { Box } from '@mui/material';
 
 export const CaptionContainer = styled('div')(({ theme }) => ({
@@ -8,9 +8,12 @@ export const CaptionContainer = styled('div')(({ theme }) => ({
   marginBottom: theme.spacing(2.25),
 }));
 
-export const TagsContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
-  flexWrap: 'wrap',
-}));
+export const TagsContainer = styled(Box)(
+  () =>
+    ({
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      flexWrap: 'wrap',
+    } as CSSObject)
+);
