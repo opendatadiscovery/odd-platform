@@ -15,9 +15,11 @@ import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuples;
 
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.OWNERS;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_CREATED;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_DELETED;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.OWNERSHIP_UPDATED;
@@ -31,6 +33,7 @@ public class OwnershipServiceImpl implements OwnershipService {
     private final OwnerService ownerService;
     private final ReactiveOwnershipRepository ownershipRepository;
     private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
+    private final DataEntityFilledService dataEntityFilledService;
     private final OwnershipMapper ownershipMapper;
 
     @Override
@@ -50,15 +53,26 @@ public class OwnershipServiceImpl implements OwnershipService {
             .flatMap(function((owner, role, ownership) -> searchEntrypointRepository
                 .updateChangedOwnershipVectors(ownership.getId())
                 .thenReturn(new OwnershipDto(ownership, owner, role))))
+            .flatMap(
+                ownershipDto -> dataEntityFilledService.markEntityFilled(dataEntityId, OWNERS).thenReturn(ownershipDto))
             .map(ownershipMapper::mapDto);
     }
 
     @Override
     @ActivityLog(event = OWNERSHIP_DELETED)
+    @ReactiveTransactional
     public Mono<Void> delete(
         @ActivityParameter(ActivityParameterNames.OwnershipDelete.OWNERSHIP_ID) final long ownershipId) {
         return ownershipRepository.delete(ownershipId)
-            .then();
+            .flatMap(pojo -> ownershipRepository.getOwnershipsByDataEntityId(pojo.getDataEntityId())
+                .collectList()
+                .flatMap(ownershipDtos -> {
+                    if (CollectionUtils.isEmpty(ownershipDtos)) {
+                        return dataEntityFilledService.markEntityUnfilled(pojo.getDataEntityId(), OWNERS);
+                    }
+                    return Mono.just(ownershipDtos);
+                })
+            ).then();
     }
 
     @Override

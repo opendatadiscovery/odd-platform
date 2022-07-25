@@ -76,7 +76,7 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
 
     @Override
     public Map<SearchFilterId, Long> getEntityClassFacet(final FacetStateDto state) {
-        final List<Condition> conditions = new ArrayList<>();
+        final List<Condition> conditions = getDefaultConditions();
 
         final String entityClassUnnestedField = "entity_class_id";
         final String deCountField = "data_entity_count";
@@ -156,7 +156,7 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
             return Map.of();
         }
 
-        final List<Condition> conditions = new ArrayList<>();
+        final List<Condition> conditions = getDefaultConditions();
 
         var select = dslContext
             .select(DATA_ENTITY.TYPE_ID, count(DATA_ENTITY.ID))
@@ -262,9 +262,11 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
                 .and(DATA_SOURCE.ID.in(dataSourceIds));
         }
 
+        final List<Condition> conditions = getDefaultConditions();
+        conditions.add(OWNER.NAME.containsIgnoreCase((StringUtils.isNotEmpty(facetQuery) ? facetQuery : "")));
+        conditions.add(OWNER.IS_DELETED.isFalse());
         return select
-            .where(OWNER.NAME.containsIgnoreCase((StringUtils.isNotEmpty(facetQuery) ? facetQuery : "")))
-            .and(OWNER.IS_DELETED.isFalse())
+            .where(conditions)
             .groupBy(OWNER.ID, OWNER.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
             .limit(size)
@@ -305,9 +307,12 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
                 .and(DATA_SOURCE.ID.in(dataSourceIds));
         }
 
+        final List<Condition> conditions = getDefaultConditions();
+        conditions.add(TAG.NAME.containsIgnoreCase(StringUtils.isNotEmpty(facetQuery) ? facetQuery : ""));
+        conditions.add(TAG.IS_DELETED.isFalse());
+
         return select
-            .where(TAG.NAME.containsIgnoreCase(StringUtils.isNotEmpty(facetQuery) ? facetQuery : ""))
-            .and(TAG.IS_DELETED.isFalse())
+            .where(conditions)
             .groupBy(TAG.ID, TAG.NAME)
             .orderBy(countDistinct(SEARCH_ENTRYPOINT.DATA_ENTITY_ID).desc())
             .limit(size)
@@ -335,5 +340,13 @@ public class SearchFacetRepositoryImpl implements SearchFacetRepository {
             .entityId(entityClass.getId())
             .name(entityClass.name())
             .build();
+    }
+
+    private List<Condition> getDefaultConditions() {
+        final List<Condition> conditions = new ArrayList<>();
+        conditions.add(DATA_ENTITY.HOLLOW.isFalse());
+        conditions.add(DATA_ENTITY.DELETED_AT.isNull());
+        conditions.add(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
+        return conditions;
     }
 }

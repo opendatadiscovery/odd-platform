@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_ENUMS;
 import static org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto.DATASET_FIELD_VALUES_UPDATED;
 import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DatasetFieldValuesUpdated.DATASET_FIELD_ID;
 
@@ -25,6 +26,7 @@ import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.Dat
 @RequiredArgsConstructor
 public class EnumValueServiceImpl implements EnumValueService {
     private final ReactiveEnumValueRepository reactiveEnumValueRepository;
+    private final DataEntityFilledService dataEntityFilledService;
     private final EnumValueMapper mapper;
 
     @Override
@@ -58,6 +60,17 @@ public class EnumValueServiceImpl implements EnumValueService {
                         reactiveEnumValueRepository.bulkCreate(partitions.get(false)))
                     .map(mapper::mapToEnum)
                     .collectList()
+                    .flatMap(list -> {
+                        if (CollectionUtils.isEmpty(list)) {
+                            return dataEntityFilledService
+                                .markEntityUnfilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_ENUMS)
+                                .thenReturn(list);
+                        } else {
+                            return dataEntityFilledService
+                                .markEntityFilledByDatasetFieldId(datasetFieldId, DATASET_FIELD_ENUMS)
+                                .thenReturn(list);
+                        }
+                    })
                     .map(list -> new EnumValueList().items(list)));
     }
 

@@ -21,23 +21,27 @@ import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
-import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
-import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
@@ -50,9 +54,7 @@ public class DataEntityServiceTest {
     @Mock
     private AuthIdentityProvider authIdentityProvider;
     @Mock
-    private MetadataFieldValueRepository metadataFieldValueRepository;
-    @Mock
-    private MetadataFieldRepository metadataFieldRepository;
+    private ReactiveMetadataFieldValueRepository metadataFieldValueRepository;
     @Mock
     private TagService tagService;
     @Mock
@@ -79,14 +81,35 @@ public class DataEntityServiceTest {
     private ReactiveTermRepository termRepository;
     @Mock
     private ReactiveOwnershipRepository ownershipRepository;
+    @Mock
+    private ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
+    @Mock
+    private DataEntityFilledService dataEntityFilledService;
+    @Mock
+    private MetadataFieldService metadataFieldService;
 
     @BeforeEach
     public void beforeAll() {
-        dataEntityService = new DataEntityServiceImpl(dataEntityMapper, dataEntityRepository, authIdentityProvider,
-            metadataFieldValueRepository, metadataFieldRepository, tagService, lineageRepository,
-            metadataFieldMapper, metadataFieldValueMapper, reactiveSearchEntrypointRepository, tagMapper,
-            namespaceService, activityService, reactiveDataEntityRepository, reactiveGroupEntityRelationRepository,
-            termRepository, ownershipRepository);
+        dataEntityService = new DataEntityServiceImpl(
+            dataEntityMapper,
+            dataEntityRepository,
+            authIdentityProvider,
+            metadataFieldValueRepository,
+            tagService,
+            lineageRepository,
+            metadataFieldMapper,
+            metadataFieldValueMapper,
+            reactiveSearchEntrypointRepository,
+            tagMapper,
+            namespaceService,
+            activityService,
+            reactiveDataEntityRepository,
+            reactiveGroupEntityRelationRepository,
+            termRepository,
+            ownershipRepository,
+            dataEntityStatisticsRepository,
+            dataEntityFilledService,
+            metadataFieldService);
     }
 
     @Test
@@ -106,12 +129,15 @@ public class DataEntityServiceTest {
             createMetadataFieldValue(metadataFieldName, type, origin, metadataValue);
 
         when(metadataFieldMapper.mapObject(metadataObject)).thenReturn(fieldPojoBeforeCreation);
-        when(metadataFieldRepository.createIfNotExist(List.of(fieldPojoBeforeCreation)))
-            .thenReturn(List.of(fieldPojoAfterCreation));
-        when(metadataFieldValueRepository.bulkCreate(List.of(valuePojo))).thenReturn(List.of(valuePojo));
+        when(metadataFieldService.getOrCreateMetadataFields(List.of(fieldPojoBeforeCreation)))
+            .thenReturn(Mono.just(List.of(fieldPojoAfterCreation)));
+        when(metadataFieldValueRepository.bulkCreate(List.of(valuePojo)))
+            .thenReturn(Flux.fromIterable(List.of(valuePojo)));
         when(metadataFieldValueMapper.mapDto(new MetadataDto(fieldPojoAfterCreation, valuePojo)))
             .thenReturn(metadataFieldValue);
-        doNothing().when(dataEntityRepository).calculateMetadataVectors(List.of(dataEntityId));
+        when(reactiveSearchEntrypointRepository.updateMetadataVectors(dataEntityId)).thenReturn(Mono.just(1));
+        when(dataEntityFilledService.markEntityFilled(anyLong(), any()))
+            .thenReturn(Mono.just(new DataEntityFilledPojo()));
 
         final Mono<MetadataFieldValueList> metadataMono =
             dataEntityService.createMetadata(dataEntityId, List.of(metadataObject));
@@ -138,11 +164,11 @@ public class DataEntityServiceTest {
         final MetadataFieldValue metadataFieldValue =
             createMetadataFieldValue(metadataFieldName, type, origin, newValue);
 
-        when(metadataFieldRepository.get(fieldId)).thenReturn(Optional.of(metadataFieldPojo));
-        when(metadataFieldValueRepository.update(valuePojo)).thenReturn(valuePojo);
+        when(metadataFieldService.get(fieldId)).thenReturn(Mono.just(metadataFieldPojo));
+        when(metadataFieldValueRepository.update(valuePojo)).thenReturn(Mono.just(valuePojo));
         when(metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, valuePojo)))
             .thenReturn(metadataFieldValue);
-        doNothing().when(dataEntityRepository).calculateMetadataVectors(anyCollection());
+        when(reactiveSearchEntrypointRepository.updateMetadataVectors(dataEntityId)).thenReturn(Mono.just(1));
 
         final Mono<MetadataFieldValue> result =
             dataEntityService.upsertMetadataFieldValue(dataEntityId, fieldId, formData);

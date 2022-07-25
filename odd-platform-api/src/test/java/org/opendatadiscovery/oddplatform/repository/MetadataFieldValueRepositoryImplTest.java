@@ -43,21 +43,6 @@ public class MetadataFieldValueRepositoryImplTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void updateTest() {
-        final DataEntityPojo dataEntityPojo =
-            dataEntityRepository.bulkCreate(List.of(new DataEntityPojo())).get(0);
-        final MetadataFieldPojo fieldPojo = metadataFieldRepository.create(new MetadataFieldPojo());
-        final MetadataFieldValuePojo metadataFieldValue =
-            createMetadataFieldValue(fieldPojo.getId(), dataEntityPojo.getId());
-        final MetadataFieldValuePojo valuePojo = metadataFieldValueRepository.create(metadataFieldValue);
-        assertThat(valuePojo).isEqualTo(metadataFieldValue);
-
-        valuePojo.setValue(UUID.randomUUID().toString());
-        final MetadataFieldValuePojo updatedPojo = metadataFieldValueRepository.update(valuePojo);
-        assertThat(updatedPojo).isEqualTo(valuePojo);
-    }
-
-    @Test
     public void getDtosByDataEntityIdTest() {
         final DataEntityPojo firstDataEntityPojo =
             dataEntityRepository.bulkCreate(List.of(new DataEntityPojo())).get(0);
@@ -111,20 +96,6 @@ public class MetadataFieldValueRepositoryImplTest extends BaseIntegrationTest {
         assertThat(metadataFieldValuePojos)
             .hasSize(2)
             .hasSameElementsAs(List.of(firstMetadataFieldValue, secondMetadataFieldValue));
-    }
-
-    @Test
-    public void deleteTest() {
-        final DataEntityPojo dataEntityPojo =
-            dataEntityRepository.bulkCreate(List.of(new DataEntityPojo())).get(0);
-        final MetadataFieldPojo fieldPojo = metadataFieldRepository.create(new MetadataFieldPojo());
-        final MetadataFieldValuePojo metadataFieldValue =
-            createMetadataFieldValue(fieldPojo.getId(), dataEntityPojo.getId());
-        metadataFieldValueRepository.create(metadataFieldValue);
-        metadataFieldValueRepository.delete(dataEntityPojo.getId(), fieldPojo.getId());
-        final List<MetadataFieldValuePojo> pojos =
-            metadataFieldValueRepository.listByDataEntityIds(List.of(dataEntityPojo.getId()));
-        assertThat(pojos).isEmpty();
     }
 
     private MetadataFieldValuePojo createMetadataFieldValue(final Long metadataFieldId,

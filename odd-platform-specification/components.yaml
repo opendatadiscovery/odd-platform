@@ -199,6 +199,29 @@ components:
         role_name:
           type: string
 
+    DataEntityUsageInfo:
+      type: object
+      properties:
+        total_count:
+          type: integer
+          format: int64
+        unfilled_count:
+          type: integer
+          format: int64
+        data_entity_classes_info:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataEntityClassUsageInfo'
+
+    DataEntityClassUsageInfo:
+      type: object
+      properties:
+        entity_class:
+          $ref: '#/components/schemas/DataEntityClass'
+        total_count:
+          type: integer
+          format: int64
+
     DataEntityClassAndTypeDictionary:
       type: object
       properties:

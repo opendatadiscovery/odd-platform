@@ -32,7 +32,7 @@ public abstract class BaseIntegrationTest {
         public void initialize(final ConfigurableApplicationContext configurableApplicationContext) {
             final String newDbName = DatabaseGenerator.createDatabaseInContainer();
             TestPropertyValues.of(
-                "spring.datasource.url=" + "jdbc:postgresql://" + POSTGRE_SQL_CONTAINER.getContainerIpAddress() + ":"
+                "spring.datasource.url=" + "jdbc:postgresql://" + POSTGRE_SQL_CONTAINER.getHost() + ":"
                     + POSTGRE_SQL_CONTAINER.getMappedPort(POSTGRESQL_PORT) + "/" + newDbName,
                 "spring.datasource.username=" + POSTGRE_SQL_CONTAINER.getUsername(),
                 "spring.datasource.password=" + POSTGRE_SQL_CONTAINER.getPassword()

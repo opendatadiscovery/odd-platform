@@ -72,6 +72,13 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     @Override
+    public Flux<P> list() {
+        return jooqReactiveOperations
+            .flux(baseSelectManyQuery(null, List.of()))
+            .map(this::recordToPojo);
+    }
+
+    @Override
     public Mono<Page<P>> list(final int page, final int size, final String nameQuery) {
         return list(page, size, nameQuery, List.of());
     }
@@ -137,6 +144,13 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .map(this::recordToPojo);
     }
 
+    @Override
+    public Flux<P> delete(final Collection<Long> ids) {
+        return jooqReactiveOperations
+            .flux(DSL.deleteFrom(recordTable).where(idCondition(ids)).returning())
+            .map(this::recordToPojo);
+    }
+
     protected Mono<R> insertOne(final R record) {
         return jooqReactiveOperations.mono(DSL.insertInto(recordTable).set(record).returning());
     }
@@ -195,6 +209,10 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
     protected List<Condition> idCondition(final long id) {
         return List.of(idField.eq(id));
+    }
+
+    protected List<Condition> idCondition(final Collection<Long> ids) {
+        return List.of(idField.in(ids));
     }
 
     protected SelectConditionStep<R> baseSelectManyQuery(final String query, final List<Long> ids) {

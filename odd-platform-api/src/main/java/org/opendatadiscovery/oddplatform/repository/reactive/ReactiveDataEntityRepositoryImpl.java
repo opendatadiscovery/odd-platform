@@ -1,6 +1,8 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
@@ -79,5 +81,29 @@ public class ReactiveDataEntityRepositoryImpl
         return jooqReactiveOperations.flux(query)
             .map(r -> r.into(DataEntityPojo.class))
             .collectList();
+    }
+
+    @Override
+    public Mono<DataEntityPojo> setInternalName(final long dataEntityId, final String name) {
+        final String newBusinessName = StringUtils.isEmpty(name) ? null : name;
+        final var query = DSL.update(DATA_ENTITY)
+            .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
+            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
+            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .returning();
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.into(DataEntityPojo.class));
+    }
+
+    @Override
+    public Mono<DataEntityPojo> setInternalDescription(final long dataEntityId, final String description) {
+        final String newDescription = StringUtils.isEmpty(description) ? null : description;
+        final var query = DSL.update(DATA_ENTITY)
+            .set(DATA_ENTITY.INTERNAL_DESCRIPTION, newDescription)
+            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
+            .where(DATA_ENTITY.ID.eq(dataEntityId))
+            .returning();
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.into(DataEntityPojo.class));
     }
 }

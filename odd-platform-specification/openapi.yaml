@@ -790,6 +790,20 @@ paths:
                 $ref: './components.yaml/#/components/schemas/DataEntityRefList'
       tags:
         - search
+  /api/dataentities/usage:
+    get:
+      summary: Get data entities usage info
+      description: Returns information about data entities split by classes
+      operationId: getDataEntitiesUsage
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataEntityUsageInfo'
+      tags:
+        - dataEntity
   /api/dataentities/my:
     get:
       summary: Get my objects
