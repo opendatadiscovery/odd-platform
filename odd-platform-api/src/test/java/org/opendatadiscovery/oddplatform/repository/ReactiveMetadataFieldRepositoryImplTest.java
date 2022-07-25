@@ -75,6 +75,7 @@ public class ReactiveMetadataFieldRepositoryImplTest extends BaseIntegrationTest
         metadataFieldRepository.bulkCreate(List.of(first, second, third)).blockLast();
         final Mono<List<MetadataFieldPojo>> emptyPojos = metadataFieldRepository.listByKey(List.of());
         StepVerifier.create(emptyPojos)
+            .assertNext(list -> assertThat(list.isEmpty()).isTrue())
             .verifyComplete();
 
         final Mono<List<MetadataFieldPojo>> wrongTypePojo =
