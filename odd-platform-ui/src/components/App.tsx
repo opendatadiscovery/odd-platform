@@ -5,7 +5,7 @@ import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks/useAppPaths';
-import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
+import AppToolbar from './shared/AppToolbar/AppToolbar';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -15,9 +15,7 @@ const DataEntityDetails = React.lazy(
 const TermDetails = React.lazy(
   () => import('./Terms/TermDetails/TermDetails')
 );
-const OverviewContainer = React.lazy(
-  () => import('./Overview/OverviewContainer')
-);
+const Overview = React.lazy(() => import('./Overview/Overview'));
 const SearchContainer = React.lazy(
   () => import('./Search/SearchContainer')
 );
@@ -38,11 +36,11 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      {!isPathEmbedded && <AppToolbarContainer />}
+      {!isPathEmbedded && <AppToolbar />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
-            <Route exact path="/" component={OverviewContainer} />
+            <Route exact path="/" component={Overview} />
             <Route path="/alerts/:viewType?" component={Alerts} />
             <Route path="/management/:viewType?" component={Management} />
             <Route

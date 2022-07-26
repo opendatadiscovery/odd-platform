@@ -54,13 +54,17 @@ export const InfoBarStatsText = styled('span')(({ theme }) => ({
 }));
 
 export const DataEntityContainer = styled(Grid)(({ theme }) => ({
-  justifyContent: 'space-between',
   marginTop: theme.spacing(3.5),
   marginLeft: 'auto',
   marginRight: 'auto',
   flexWrap: 'nowrap',
-  '& > *': { paddingRight: theme.spacing(3) },
-  '& > :last-child': { paddingRight: theme.spacing(0) },
+  '& > *': {
+    padding: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    border: `1px solid ${theme.palette.backgrounds.secondary}`,
+    borderRadius: theme.spacing(1),
+  },
+  '& > :last-child': { marginRight: theme.spacing(0) },
 }));
 
 export const DataEntitiesUsageContainer = styled('div')(({ theme }) => ({

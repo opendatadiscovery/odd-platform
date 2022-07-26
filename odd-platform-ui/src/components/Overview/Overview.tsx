@@ -1,16 +1,22 @@
 import { Grid, Typography, Box } from '@mui/material';
 import React from 'react';
 import {
-  AssociatedOwner,
-  DataEntityRef,
-  TagApiGetPopularTagListRequest,
-} from 'generated-sources';
+  getMyDataEntitiesFetching,
+  getMyDownstreamDataEntitiesFetching,
+  getMyEntities,
+  getMyEntitiesDownstream,
+  getMyEntitiesUpstream,
+  getMyUpstreamDataEntitiesFetching,
+  getPopularDataEntitiesFetching,
+  getPopularEntities,
+} from 'redux/selectors/dataentity.selectors';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
 import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
 import StarIcon from 'components/shared/Icons/StarIcon';
 import CatalogIcon from 'components/shared/Icons/CatalogIcon';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import { getIdentityFetchedStatus } from 'redux/selectors/profile.selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   fetchAlertsTotals,
@@ -19,60 +25,53 @@ import {
   fetchMyUpstreamDataEntitiesList,
   fetchPopularDataEntitiesList,
   fetchDataentitiesUsageInfo,
+  fetchTagsList,
 } from 'redux/thunks';
 import {
   getDataEntityClassesInfo,
   getDataEntitiesUsageTotalCount,
   getDataEntitiesUsageUnfilledCount,
+  getMainOverviewContentIsFetching,
+  getIdentity,
 } from 'redux/selectors';
 import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-
-import { useAppPaths } from 'lib/hooks';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
 import TopTagsListContainer from './TopTagsList/TopTagsListContainer';
-import IdentityContainer from './IdentityForm/IdentityContainer';
+import Identity from './IdentityForm/Identity';
 
-interface OverviewProps {
-  identity?: AssociatedOwner;
-  identityFetched: boolean;
-  myEntities: DataEntityRef[];
-  myEntitiesDownstream: DataEntityRef[];
-  myEntitiesUpstream: DataEntityRef[];
-  popularEntities: DataEntityRef[];
-  myDataEntitiesFetching: boolean;
-  myUpstreamDataEntitiesFetching: boolean;
-  myDownstreamDataEntitiesFetching: boolean;
-  popularDataEntitiesFetching: boolean;
-  isMainOverviewContentFetching: boolean;
-  fetchTagsList: (params: TagApiGetPopularTagListRequest) => void;
-}
-
-const Overview: React.FC<OverviewProps> = ({
-  identity,
-  identityFetched,
-  myEntities,
-  myEntitiesDownstream,
-  myEntitiesUpstream,
-  popularEntities,
-  myDataEntitiesFetching,
-  myUpstreamDataEntitiesFetching,
-  myDownstreamDataEntitiesFetching,
-  popularDataEntitiesFetching,
-  isMainOverviewContentFetching,
-  fetchTagsList,
-}) => {
+const Overview: React.FC = () => {
   const dispatch = useAppDispatch();
   const dataEntitiesUsageItems = useAppSelector(getDataEntityClassesInfo);
+  const myEntities = useAppSelector(getMyEntities);
+  const myEntitiesDownstream = useAppSelector(getMyEntitiesDownstream);
+  const myEntitiesUpstream = useAppSelector(getMyEntitiesUpstream);
+  const popularEntities = useAppSelector(getPopularEntities);
+  const myDataEntitiesFetching = useAppSelector(getMyDataEntitiesFetching);
+  const myDownstreamDataEntitiesFetching = useAppSelector(
+    getMyDownstreamDataEntitiesFetching
+  );
+  const isMainOverviewContentFetching = useAppSelector(
+    getMainOverviewContentIsFetching
+  );
+  const popularDataEntitiesFetching = useAppSelector(
+    getPopularDataEntitiesFetching
+  );
+  const myUpstreamDataEntitiesFetching = useAppSelector(
+    getMyUpstreamDataEntitiesFetching
+  );
   const dataEntityUsageTotalCount = useAppSelector(
     getDataEntitiesUsageTotalCount
   );
+  const identity = useAppSelector(getIdentity);
   const dataEntityUsageUnfilledCount = useAppSelector(
     getDataEntitiesUsageUnfilledCount
   );
-  const { alertsPath } = useAppPaths();
+  const { isLoaded: identityFetched } = useAppSelector(
+    getIdentityFetchedStatus
+  );
 
   React.useEffect(() => {
     if (!identity) return;
@@ -88,7 +87,7 @@ const Overview: React.FC<OverviewProps> = ({
 
   React.useEffect(() => {
     dispatch(fetchAlertsTotals());
-    fetchTagsList({ page: 1, size: 20 });
+    dispatch(fetchTagsList({ page: 1, size: 20 }));
     dispatch(fetchDataentitiesUsageInfo());
   }, []);
   return (
@@ -196,7 +195,7 @@ const Overview: React.FC<OverviewProps> = ({
         </>
       )}
       {!identity?.owner && identity?.identity && identityFetched ? (
-        <IdentityContainer />
+        <Identity />
       ) : null}
     </S.Container>
   );

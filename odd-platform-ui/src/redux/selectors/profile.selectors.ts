@@ -1,6 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
+import {
+  createStatusesSelector,
+  createLegacyFetchingSelector,
+} from 'redux/selectors/loader-selectors';
+import * as actions from 'redux/actions';
 import { RootState, ProfileState } from 'redux/interfaces';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 
 const profileState = ({ profile }: RootState): ProfileState => profile;
 
@@ -12,9 +16,8 @@ export const getIdentityFetching = createSelector(
   status => status === 'fetching'
 );
 
-export const getIdentityFetched = createSelector(
-  getIdentityFetchingStatus,
-  status => status === 'fetched'
+export const getIdentityFetchedStatus = createStatusesSelector(
+  actions.fetchIdentityActionType
 );
 
 export const getIdentity = createSelector(

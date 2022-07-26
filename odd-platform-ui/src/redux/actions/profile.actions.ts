@@ -1,8 +1,11 @@
-import { createAsyncAction } from 'typesafe-actions';
-import { AssociatedOwner } from 'generated-sources';
+import { createActionType } from 'lib/redux/helpers';
 
-export const fetchIdentityAction = createAsyncAction(
-  'GET_IDENTITY__REQUEST',
-  'GET_IDENTITY__SUCCESS',
-  'GET_IDENTITY__FAILURE'
-)<undefined, AssociatedOwner | void, undefined>();
+export const profileActionPrefix = 'profile';
+export const fetchIdentityActionType = createActionType(
+  profileActionPrefix,
+  'fetchIdentity'
+);
+export const updateIdentityOwnerActionType = createActionType(
+  profileActionPrefix,
+  'updateIdenityOwner'
+);
