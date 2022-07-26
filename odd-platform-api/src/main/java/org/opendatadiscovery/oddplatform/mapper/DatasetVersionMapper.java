@@ -29,7 +29,7 @@ public interface DatasetVersionMapper {
 
     /**
      * This mapping is only required for the parentOddrn mapping.
-     * As there is a logic where we gathering map with oddrn and id of the DatasetFieldPojo.
+     * As there is a logic where we are gathering map with oddrn and id of the DatasetFieldPojo.
      *
      * @param datasetFieldDtos - list of DatasetFieldDto
      * @param dataSetFields    - list of mapped dataSetFields
