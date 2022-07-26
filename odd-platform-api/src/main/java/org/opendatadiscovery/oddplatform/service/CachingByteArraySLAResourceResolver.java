@@ -1,17 +1,14 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ResourceUtils;
 
 @Component
 public class CachingByteArraySLAResourceResolver implements SLAResourceResolver {
@@ -31,32 +28,28 @@ public class CachingByteArraySLAResourceResolver implements SLAResourceResolver 
         final Map<SLA, Resource> result = new HashMap<>();
 
         for (final SLA sla : SLA.values()) {
-            final Path slaPath = resolveSLAImagePath(sla);
-
-            final byte[] imageBytes;
+            final byte[] bytes;
             try {
-                imageBytes = Files.readAllBytes(slaPath);
+                bytes = resolveSLAImage(sla);
             } catch (final IOException e) {
-                throw new IllegalStateException("Couldn't read a file for %s SLA in a classpath".formatted(sla), e);
+                throw new IllegalStateException("Couldn't read a file of SLA %s".formatted(sla));
             }
 
-            result.put(sla, new ByteArrayResource(imageBytes));
+            result.put(sla, new ByteArrayResource(bytes));
         }
 
         return result;
     }
 
-    private static Path resolveSLAImagePath(final SLA sla) {
-        try {
-            final File file = switch (sla) {
-                case RED -> ResourceUtils.getFile("classpath:sla/sla_red.png");
-                case YELLOW -> ResourceUtils.getFile("classpath:sla/sla_yellow.png");
-                case GREEN -> ResourceUtils.getFile("classpath:sla/sla_green.png");
-            };
+    private static byte[] resolveSLAImage(final SLA sla) throws IOException {
+        final ClassPathResource resource = switch (sla) {
+            case RED -> new ClassPathResource("sla/sla_red.png");
+            case YELLOW -> new ClassPathResource("sla/sla_yellow.png");
+            case GREEN -> new ClassPathResource("sla/sla_green.png");
+        };
 
-            return file.toPath();
-        } catch (final FileNotFoundException e) {
-            throw new IllegalStateException("Couldn't resolve a file for %s SLA in a classpath".formatted(sla), e);
+        try (final InputStream stream = resource.getInputStream()) {
+            return stream.readAllBytes();
         }
     }
 }
