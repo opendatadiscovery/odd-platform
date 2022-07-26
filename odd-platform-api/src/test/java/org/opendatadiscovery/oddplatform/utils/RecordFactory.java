@@ -3,6 +3,8 @@ package org.opendatadiscovery.oddplatform.utils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.RecordComponent;
+import java.lang.reflect.Type;
+import java.lang.reflect.WildcardType;
 import java.util.Collection;
 import lombok.SneakyThrows;
 import org.jeasy.random.EasyRandom;
@@ -34,9 +36,16 @@ public class RecordFactory extends ObjenesisObjectFactory {
         final Object[] randomValues = new Object[recordComponents.length];
         for (int i = 0; i < recordComponents.length; i++) {
             if (Collection.class.isAssignableFrom(recordComponents[i].getType())) {
+                Type type = ((ParameterizedType) recordComponents[i].getGenericType()).getActualTypeArguments()[0];
+                String typeName;
+                if (type instanceof WildcardType) {
+                    // naively assume that we only have wildcards with upper bounds
+                    typeName = ((WildcardType) type).getUpperBounds()[0].getTypeName();
+                } else {
+                    typeName = type.getTypeName();
+                }
                 final Collection<?> collection =
-                    easyRandom.objects(Class.forName(((ParameterizedType) recordComponents[i].getGenericType())
-                            .getActualTypeArguments()[0].getTypeName()), 5)
+                    easyRandom.objects(Class.forName(typeName), 5)
                         .toList();
                 randomValues[i] = collection;
             } else {
