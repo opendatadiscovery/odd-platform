@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -402,9 +403,14 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     @Override
     public DataEntityUsageInfo mapUsageInfo(final DataEntityStatisticsPojo pojo,
                                             final Long filledEntitiesCount) {
-        final Map<Integer, Long> classesCount = JSONSerDeUtils.deserializeJson(pojo.getDataEntityClassesCount().data(),
-            new TypeReference<>() {
-            });
+        final Map<Integer, Long> classesCount;
+        if (pojo.getDataEntityClassesCount() == null) {
+            classesCount = new HashMap<>();
+        } else {
+            classesCount = JSONSerDeUtils.deserializeJson(pojo.getDataEntityClassesCount().data(),
+                new TypeReference<>() {
+                });
+        }
         return new DataEntityUsageInfo()
             .totalCount(pojo.getTotalCount())
             .unfilledCount(pojo.getTotalCount() - filledEntitiesCount)
