@@ -13,13 +13,7 @@ public interface LineageRepository {
 
     Optional<Long> getTargetsCount(final long dataEntityId);
 
-    List<LineagePojo> getLineageRelations(final List<String> oddrns);
-
     List<LineagePojo> getLineageRelations(final Set<String> rootOddrns,
                                           final LineageDepth depth,
                                           final LineageStreamKind streamKind);
-
-    Map<String, Integer> getChildrenCount(final Set<String> oddrns);
-
-    Map<String, Integer> getParentCount(final Set<String> oddrns);
 }

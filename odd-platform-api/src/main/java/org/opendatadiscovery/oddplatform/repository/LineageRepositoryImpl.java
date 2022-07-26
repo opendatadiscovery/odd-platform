@@ -2,7 +2,6 @@ package org.opendatadiscovery.oddplatform.repository;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -63,35 +62,6 @@ public class LineageRepositoryImpl implements LineageRepository {
             .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(LINEAGE.PARENT_ODDRN))
             .where(DATA_ENTITY.ID.eq(dataEntityId))
             .fetchOptionalInto(Long.class);
-    }
-
-    @Override
-    public Map<String, Integer> getChildrenCount(final Set<String> oddrns) {
-        final Field<Integer> childrenCount = countDistinct(LINEAGE.CHILD_ODDRN).as("children_count");
-        return dslContext.select(LINEAGE.PARENT_ODDRN, childrenCount)
-            .from(LINEAGE)
-            .where(LINEAGE.PARENT_ODDRN.in(oddrns))
-            .groupBy(LINEAGE.PARENT_ODDRN)
-            .fetchMap(LINEAGE.PARENT_ODDRN, childrenCount);
-    }
-
-    @Override
-    public Map<String, Integer> getParentCount(final Set<String> oddrns) {
-        final Field<Integer> parentsCount = countDistinct(LINEAGE.PARENT_ODDRN).as("parents_count");
-        return dslContext.select(LINEAGE.CHILD_ODDRN, parentsCount)
-            .from(LINEAGE)
-            .where(LINEAGE.CHILD_ODDRN.in(oddrns))
-            .groupBy(LINEAGE.CHILD_ODDRN)
-            .fetchMap(LINEAGE.CHILD_ODDRN, parentsCount);
-    }
-
-    @Override
-    public List<LineagePojo> getLineageRelations(final List<String> oddrns) {
-        return dslContext.selectDistinct(LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN)
-            .from(LINEAGE)
-            .where(LINEAGE.PARENT_ODDRN.in(oddrns).and(LINEAGE.CHILD_ODDRN.in(oddrns)))
-            .fetchStreamInto(LineagePojo.class)
-            .collect(toList());
     }
 
     @Override
