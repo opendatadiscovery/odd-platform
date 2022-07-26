@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 public interface DatasetStructureService {
     Mono<List<DatasetStructurePojo>> createDatasetStructure(final List<DatasetVersionPojo> versions,
-                                                         final Map<String, List<DatasetFieldPojo>> datasetFields);
+                                                            final Map<String, List<DatasetFieldPojo>> datasetFields);
 
     Mono<Map<String, DatasetStructureDelta>> getLastDatasetStructureVersionDelta(final List<Long> changedSchemaIds);
 
