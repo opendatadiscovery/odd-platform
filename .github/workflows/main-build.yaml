@@ -64,7 +64,7 @@ jobs:
           repository: provectus/environment-state
           token: ${{ env.MASKED_ODD_GIT_TOKEN }}
       - run: |
-          sed -i "s/tag:.*/tag: ci-${GITHUB_SHA::6}/" odd-platform.yaml
+          sed -i "s/tag:.*/tag: ci-${GITHUB_SHA::6}/" main/odd-platform.yaml
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
