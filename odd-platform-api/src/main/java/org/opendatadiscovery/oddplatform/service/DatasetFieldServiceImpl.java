@@ -70,6 +70,34 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
             .map(datasetFieldApiMapper::mapDto);
     }
 
+    @Override
+    @ReactiveTransactional
+    public Mono<List<DatasetFieldPojo>> createOrUpdateDatasetFields(final List<DatasetFieldPojo> fields) {
+        if (fields.isEmpty()) {
+            return Mono.just(List.of());
+        }
+        return reactiveDatasetFieldRepository.getExistingFieldsByOddrnAndType(fields)
+            .flatMap(existingFieldsMap -> {
+                final List<DatasetFieldPojo> fieldsToCreate = fields.stream()
+                    .filter(f -> !existingFieldsMap.containsKey(f.getOddrn()))
+                    .toList();
+
+                final List<DatasetFieldPojo> fieldsToUpdate = fields.stream()
+                    .filter(f -> existingFieldsMap.containsKey(f.getOddrn()))
+                    .map(newField -> {
+                        final DatasetFieldPojo previousVersion = existingFieldsMap.get(newField.getOddrn());
+                        final DatasetFieldPojo copyNew = datasetFieldApiMapper.copy(newField);
+                        copyNew.setId(previousVersion.getId());
+                        copyNew.setInternalDescription(previousVersion.getInternalDescription());
+                        return copyNew;
+                    })
+                    .toList();
+                return reactiveDatasetFieldRepository.bulkCreate(fieldsToCreate)
+                    .concatWith(reactiveDatasetFieldRepository.bulkUpdate(fieldsToUpdate))
+                    .collectList();
+            });
+    }
+
     private Mono<List<LabelDto>> updateDatasetFieldLabels(final long datasetFieldId,
                                                           final DatasetFieldUpdateFormData datasetFieldUpdateFormData) {
         final Set<String> names = new HashSet<>(datasetFieldUpdateFormData.getLabelNames());

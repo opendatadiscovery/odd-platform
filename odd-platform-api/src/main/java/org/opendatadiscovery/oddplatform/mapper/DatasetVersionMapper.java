@@ -13,6 +13,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStructure;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetVersion;
 import org.opendatadiscovery.oddplatform.dto.DatasetFieldDto;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 
@@ -28,7 +29,7 @@ public interface DatasetVersionMapper {
 
     /**
      * This mapping is only required for the parentOddrn mapping.
-     * As there is a logic where we gathering map with oddrn and id of the DatasetFieldPojo.
+     * As there is a logic where we are gathering map with oddrn and id of the DatasetFieldPojo.
      *
      * @param datasetFieldDtos - list of DatasetFieldDto
      * @param dataSetFields    - list of mapped dataSetFields
@@ -52,4 +53,8 @@ public interface DatasetVersionMapper {
     @Mapping(source = "datasetVersion", target = "dataSetVersion")
     @Mapping(source = "datasetFields", target = "fieldList")
     DataSetStructure mapDatasetStructure(final DatasetStructureDto datasetStructureDto);
+
+    DatasetVersionPojo mapDatasetVersion(final String datasetOddrn,
+                                         final String versionHash,
+                                         final long version);
 }
