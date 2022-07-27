@@ -1,16 +1,8 @@
 default_pulling_interval: 1
-token: "M8IUsNNXmB5Y1ZxXvE6L1q4WwI7BOnPqpAmfo44x"
+token: "J8YiSB4UtQBIYhp92xOkB6GigGV57YYgYAtnPS3i"
 plugins:
   - type: postgresql
-<<<<<<< HEAD
-<<<<<<< HEAD
-    name: My-first-source
-=======
-    name: Sample demo data source
->>>>>>> 5f1523f9d7c0d4e35c333f032a0386c98884c696
-=======
-    name: AEG-test
->>>>>>> f2105e3e558d45e3235f6083fadd775e552d203a
+    name: my-first-source
     host: !ENV ${SAMPLE_POSTGRES_HOST}
     port: 5432
     database: !ENV ${SAMPLE_POSTGRES_DATABASE}
