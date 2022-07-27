@@ -10,8 +10,6 @@ public interface ReactiveDataEntityFilledRepository {
     Mono<DataEntityFilledPojo> markEntityFilled(final Long dataEntityId,
                                                 final DataEntityFilledField dataEntityFilledField);
 
-    Mono<DataEntityFilledPojo> markEntityFilledByDatasetField(final Long datasetFieldId);
-
     Mono<DataEntityFilledPojo> markEntityFilledByDatasetField(final Long datasetFieldId,
                                                               final DataEntityFilledField dataEntityFilledField);
 
