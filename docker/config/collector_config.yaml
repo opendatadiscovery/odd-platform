@@ -1,10 +1,10 @@
 default_pulling_interval: 1
-token: "elBYMN9McmlgRpzn6PKqgEMsMCxtalvHxR78t29t"
+token: "M8IUsNNXmB5Y1ZxXvE6L1q4WwI7BOnPqpAmfo44x"
 plugins:
   - type: postgresql
 <<<<<<< HEAD
 <<<<<<< HEAD
-    name: AEG-test
+    name: My-first-source
 =======
     name: Sample demo data source
 >>>>>>> 5f1523f9d7c0d4e35c333f032a0386c98884c696

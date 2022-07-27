@@ -19,16 +19,17 @@ This environment consists of:
 ### Execution
 Run from the **project root folder** `docker-compose -f docker/demo.yaml up -d odd-platform-enricher`.
 ### Result
-1. Open http://localhost:8080/management/datasources in your browser. \
+1. Open [http://localhost:8080/management/datasources](http://localhost:8080/management/datasources) in your browser. \
 You should be able to see 10 predefined data sources in the list.
 
 2. Go to the **Catalog**. \
 You should be able to see metadata sample injected in the Platform.
 
+![](.gitbook/img/trylocally1.gif)
 ## Step 2: Configuring and running Collector to gather metadata from the sample data source
 
 ### Create Collector entity
-1. Go to the http://localhost:8080/management/collectors and select `Add collector`
+1. Go to the [http://localhost:8080/management/collectors](http://localhost:8080/management/collectors) and select `Add collector`
 2. Complete the following fields:
    * **Name**
    * **Namespace** (optional)
