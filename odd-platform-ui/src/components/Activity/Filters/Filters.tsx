@@ -68,7 +68,8 @@ const Filters: React.FC = () => {
           filterOptions={activityEventTypes}
         />
         <MultipleFilter key="tg" filterName="tagIds" name="Tag" />
-        <MultipleFilter key="ow" filterName="ownerIds" name="User" />
+        <MultipleFilter key="ow" filterName="ownerIds" name="Owner" />
+        <MultipleFilter key="us" filterName="userIds" name="User" />
       </S.ListContainer>
     </S.Container>
   );
