@@ -23,6 +23,7 @@ import org.jooq.TableField;
 import org.jooq.UpdatableRecord;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.opendatadiscovery.oddplatform.utils.Pair;
@@ -105,6 +106,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     }
 
     @Override
+    @BlockingTransactional
     public List<P> bulkCreate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
             return emptyList();
@@ -114,6 +116,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     }
 
     @Override
+    @BlockingTransactional
     public List<P> bulkUpdate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
             return emptyList();
