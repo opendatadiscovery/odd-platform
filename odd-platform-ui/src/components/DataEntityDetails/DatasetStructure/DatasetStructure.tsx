@@ -1,80 +1,91 @@
 import React from 'react';
-
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import round from 'lodash/round';
 import toPairs from 'lodash/toPairs';
+import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import {
-  DataSetApiGetDataSetStructureByVersionIdRequest,
-  DataSetApiGetDataSetStructureLatestRequest,
-  DataSetFieldTypeTypeEnum,
-  DataSetStats,
-  DataSetVersion,
-} from 'generated-sources';
+  fetchDataSetStructureLatest,
+  fetchDataSetStructure,
+} from 'redux/thunks/datasetStructure.thunks';
+import {
+  getDatasetStructureTypeStats,
+  getDatasetVersionId,
+  getDataSetStructureFetchingStatus,
+  getDataSetStructureLatestFetchingStatus,
+} from 'redux/selectors/datasetStructure.selectors';
+import {
+  getDatasetStats,
+  getDatasetVersions,
+} from 'redux/selectors/dataentity.selectors';
 import { isComplexField } from 'lib/helpers';
-import { DataSetStructureTypesCount } from 'redux/interfaces/datasetStructure';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
-import { useAppPaths } from 'lib/hooks';
-import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
+import { useAppPaths, useAppParams } from 'lib/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import DatasetStructureTable from './DatasetStructureTable/DatasetStructureTable';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
-interface DatasetStructureTableProps {
-  dataEntityId: number;
-  datasetStats: DataSetStats;
-  datasetVersions?: DataSetVersion[];
-  typesCount: DataSetStructureTypesCount;
-  versionIdParam?: number;
-  datasetStructureVersion?: number;
-  fetchDataSetStructureLatest: (
-    params: DataSetApiGetDataSetStructureLatestRequest
-  ) => void;
-  fetchDataSetStructure: (
-    params: DataSetApiGetDataSetStructureByVersionIdRequest
-  ) => void;
-  isDatasetStructureFetching: boolean;
-}
-
-const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
-  dataEntityId,
-  datasetStats,
-  datasetVersions,
-  typesCount,
-  versionIdParam,
-  datasetStructureVersion,
-  fetchDataSetStructureLatest,
-  fetchDataSetStructure,
-  isDatasetStructureFetching,
-}) => {
+const DatasetStructure: React.FC = () => {
   const history = useHistory();
+  const { dataEntityId, versionId } = useAppParams();
   const { datasetStructurePath } = useAppPaths();
+  const dispatch = useAppDispatch();
 
+  const { isLoading: isDatasetStructureFetching } = useAppSelector(
+    getDataSetStructureFetchingStatus
+  );
+  const { isLoading: isDatasetStructureLatestFetching } = useAppSelector(
+    getDataSetStructureLatestFetchingStatus
+  );
+  const datasetStats = useAppSelector(state =>
+    getDatasetStats(state, dataEntityId)
+  );
+  const datasetVersions = useAppSelector(state =>
+    getDatasetVersions(state, dataEntityId)
+  );
+  const datasetStructureVersion = useAppSelector(state =>
+    getDatasetVersionId(state, {
+      datasetId: dataEntityId,
+      versionId,
+    })
+  );
+  const typesCount = useAppSelector(state =>
+    getDatasetStructureTypeStats(state, {
+      datasetId: dataEntityId,
+      versionId,
+    })
+  );
   React.useEffect(() => {
-    if (versionIdParam) {
-      fetchDataSetStructure({
-        dataEntityId,
-        versionId: versionIdParam,
-      });
+    if (versionId) {
+      dispatch(
+        fetchDataSetStructure({
+          dataEntityId,
+          versionId,
+        })
+      );
     } else {
-      fetchDataSetStructureLatest({ dataEntityId });
+      dispatch(fetchDataSetStructureLatest({ dataEntityId }));
     }
   }, [fetchDataSetStructureLatest, dataEntityId]);
 
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
-    fetchDataSetStructure({
-      dataEntityId,
-      versionId: newVersionId,
-    });
+    dispatch(
+      fetchDataSetStructure({
+        dataEntityId,
+        versionId: newVersionId,
+      })
+    );
     history.push(datasetStructurePath(dataEntityId, newVersionId));
   };
 
   return (
     <Box sx={{ mt: 2 }}>
-      {isDatasetStructureFetching ? (
+      {isDatasetStructureFetching || isDatasetStructureLatestFetching ? (
         <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
             <DatasetStructureSkeleton
@@ -159,9 +170,9 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             </Grid>
           </Grid>
           {datasetStructureVersion ? (
-            <DatasetStructureTableContainer
+            <DatasetStructureTable
               dataEntityId={dataEntityId}
-              versionId={versionIdParam}
+              versionId={versionId}
             />
           ) : null}
         </Grid>
@@ -169,4 +180,4 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     </Box>
   );
 };
-export default DatasetStructureTable;
+export default DatasetStructure;

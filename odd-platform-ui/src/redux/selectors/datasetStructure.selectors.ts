@@ -1,7 +1,8 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { DatasetStructureState, RootState } from 'redux/interfaces';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
 import isNumber from 'lodash/isNumber';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import * as actions from 'redux/actions';
 import { EnumValue } from 'generated-sources';
 
 const getDatasetStructureState = ({
@@ -33,15 +34,11 @@ export const datasetParentFieldId = (
   { parentField }: { parentField?: number }
 ) => parentField;
 
-const getDataSetStructureFetchingStatus = createLegacyFetchingSelector(
-  'GET_DATA_SET_STRUCTURE'
+export const getDataSetStructureFetchingStatus = createStatusesSelector(
+  actions.fetchDataSetStructureActionType
 );
-
-export const getDataSetStructureFetching = createSelector(
-  getDataSetStructureFetchingStatus,
-  status => status === 'fetching'
-);
-
+export const getDataSetStructureLatestFetchingStatus =
+  createStatusesSelector(actions.fetchDataSetStructureLatestActionType);
 export const getDatasetStructure = createSelector(
   getDatasetStructureState,
   getDatasetVersionId,
@@ -67,14 +64,10 @@ export const getDatasetStructureTypeStats = createSelector(
 
 export const datasetFieldId = (_: RootState, fieldId: number) => fieldId;
 
-const getDatasetFieldFormDataUpdatingStatus = createLegacyFetchingSelector(
-  'PUT_DATA_SET_FIELD_FORM_DATA'
-);
-
-export const getDatasetFieldFormDataUpdating = createSelector(
-  getDatasetFieldFormDataUpdatingStatus,
-  status => status === 'fetching'
-);
+export const getDatasetFieldFormDataUpdatingStatus =
+  createStatusesSelector(
+    actions.updateDataSetFieldFormDataParamsActionType
+  );
 
 export const getDatasetFieldData = createSelector(
   getDatasetStructureState,
@@ -99,20 +92,10 @@ export const getDatasetFieldEnums = createSelector(
   }
 );
 
-const getDatasetFieldEnumsFetchingStatus = createLegacyFetchingSelector(
-  'GET_DATA_SET_FIELD_ENUM'
+export const getDatasetFieldEnumsFetchingStatus = createStatusesSelector(
+  actions.fetchDataSetFieldEnumActionType
 );
 
-const getDatasetFieldEnumsCreatingStatus = createLegacyFetchingSelector(
-  'POST_DATA_SET_FIELD_ENUM'
-);
-
-export const getDatasetFieldEnumsFetching = createSelector(
-  getDatasetFieldEnumsFetchingStatus,
-  statusFetch => statusFetch === 'fetching'
-);
-
-export const getDatasetFieldEnumsCreating = createSelector(
-  getDatasetFieldEnumsCreatingStatus,
-  statusCreate => statusCreate === 'fetching'
+export const getDatasetFieldEnumsCreatingStatus = createStatusesSelector(
+  actions.createDataSetFieldEnumActionType
 );

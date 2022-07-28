@@ -2,9 +2,11 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
-  DataSetField,
-  DatasetFieldApiUpdateDatasetFieldRequest,
-} from 'generated-sources';
+  getDatasetFieldFormDataUpdatingStatus,
+  getDatasetFieldData,
+} from 'redux/selectors/datasetStructure.selectors';
+import { updateDataSetFieldFormData } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -15,14 +17,6 @@ import * as S from './DatasetFieldInfoEditFormStyles';
 
 interface DataSetFieldInfoEditFormProps {
   datasetFieldId: number;
-  datasetFieldFormData: {
-    internalDescription: string;
-    labels: { name: string; external?: boolean }[];
-  };
-  isLoading: boolean;
-  updateDataSetFieldFormData: (
-    params: DatasetFieldApiUpdateDatasetFieldRequest
-  ) => Promise<DataSetField>;
   btnCreateEl: JSX.Element;
 }
 
@@ -33,13 +27,14 @@ type DatasetFieldInfoFormType = {
 
 const DatasetFieldInfoEditForm: React.FC<
   DataSetFieldInfoEditFormProps
-> = ({
-  datasetFieldId,
-  datasetFieldFormData,
-  isLoading,
-  updateDataSetFieldFormData,
-  btnCreateEl,
-}) => {
+> = ({ datasetFieldId, btnCreateEl }) => {
+  const dispatch = useAppDispatch();
+  const { isLoading } = useAppSelector(
+    getDatasetFieldFormDataUpdatingStatus
+  );
+  const datasetFieldFormData = useAppSelector(state =>
+    getDatasetFieldData(state, datasetFieldId)
+  );
   const methods = useForm<DatasetFieldInfoFormType>({
     defaultValues: {
       labels: datasetFieldFormData.labels.map(label => ({
@@ -79,13 +74,15 @@ const DatasetFieldInfoEditForm: React.FC<
   };
 
   const handleFormSubmit = (data: DatasetFieldInfoFormType) => {
-    updateDataSetFieldFormData({
-      datasetFieldId,
-      datasetFieldUpdateFormData: {
-        labelNames: data.labels.map(label => label.name),
-        description: data.internalDescription.trim() || undefined,
-      },
-    }).then(
+    dispatch(
+      updateDataSetFieldFormData({
+        datasetFieldId,
+        datasetFieldUpdateFormData: {
+          labelNames: data.labels.map(label => label.name),
+          description: data.internalDescription.trim() || undefined,
+        },
+      })
+    ).then(
       () => {
         setFormState({ ...initialFormState, isSuccessfulSubmit: true });
         clearFormState();

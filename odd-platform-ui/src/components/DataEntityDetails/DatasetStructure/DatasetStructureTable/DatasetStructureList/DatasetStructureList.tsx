@@ -6,7 +6,7 @@ import {
 import { List, ListRowProps } from 'react-virtualized/dist/commonjs/List';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import { DataSetField } from 'generated-sources';
-import DatasetStructureItemContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetStructureItemContainer';
+import DatasetStructureItem from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetStructureItem';
 
 interface DatasetStructureListProps {
   dataEntityId: number;
@@ -33,7 +33,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
 
   const renderStructureItem = React.useCallback(
     (field: DataSetField, nesting: number, onSizeChange: () => void) => (
-      <DatasetStructureItemContainer
+      <DatasetStructureItem
         key={field.id}
         dataEntityId={dataEntityId}
         versionId={versionId}

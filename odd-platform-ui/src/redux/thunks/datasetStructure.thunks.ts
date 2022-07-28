@@ -3,7 +3,6 @@ import {
   DataSetApi,
   DataSetApiGetDataSetStructureByVersionIdRequest,
   DataSetApiGetDataSetStructureLatestRequest,
-  DataSetField,
   DatasetFieldApi,
   DatasetFieldApiCreateEnumValueRequest,
   DatasetFieldApiGetEnumValuesRequest,
@@ -11,11 +10,11 @@ import {
   DataSetStructure,
   EnumValueList,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
 import {
   PartialEntityUpdateParams,
   UpdateDataSetFieldFormDataParams,
 } from 'redux/interfaces';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 
@@ -23,99 +22,93 @@ const apiClientConf = new Configuration(BASE_PARAMS);
 const datasetApiClient = new DataSetApi(apiClientConf);
 const datasetFieldApiClient = new DatasetFieldApi(apiClientConf);
 
-export const fetchDataSetStructureLatest = createThunk<
-  DataSetApiGetDataSetStructureLatestRequest,
-  DataSetStructure,
+export const fetchDataSetStructureLatest = createAsyncThunk<
   PartialEntityUpdateParams<{
     datasetStructure: DataSetStructure;
     latest?: boolean;
-  }>
+  }>,
+  DataSetApiGetDataSetStructureLatestRequest
 >(
-  (params: DataSetApiGetDataSetStructureLatestRequest) =>
-    datasetApiClient.getDataSetStructureLatest(params),
-  actions.fetchDataSetStructureAction,
-  (
-    response: DataSetStructure,
-    request: DataSetApiGetDataSetStructureLatestRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: {
-      datasetStructure: response,
-      latest: true,
-    },
-  })
+  actions.fetchDataSetStructureLatestActionType,
+  async ({ dataEntityId }) => {
+    const response = await datasetApiClient.getDataSetStructureLatest({
+      dataEntityId,
+    });
+    return {
+      entityId: dataEntityId,
+      value: {
+        datasetStructure: response,
+        latest: true,
+      },
+    };
+  }
 );
 
-export const fetchDataSetStructure = createThunk<
-  DataSetApiGetDataSetStructureByVersionIdRequest,
-  DataSetStructure,
+export const fetchDataSetStructure = createAsyncThunk<
   PartialEntityUpdateParams<{
     datasetStructure: DataSetStructure;
     latest?: boolean;
-  }>
+  }>,
+  DataSetApiGetDataSetStructureByVersionIdRequest
 >(
-  (params: DataSetApiGetDataSetStructureByVersionIdRequest) =>
-    datasetApiClient.getDataSetStructureByVersionId(params),
-  actions.fetchDataSetStructureAction,
-  (
-    response: DataSetStructure,
-    request: DataSetApiGetDataSetStructureByVersionIdRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: {
-      datasetStructure: response,
-    },
-  })
+  actions.fetchDataSetStructureActionType,
+  async ({ dataEntityId, versionId }) => {
+    const response = await datasetApiClient.getDataSetStructureByVersionId(
+      { dataEntityId, versionId }
+    );
+    return {
+      entityId: dataEntityId,
+      value: {
+        datasetStructure: response,
+      },
+    };
+  }
 );
 
-export const updateDataSetFieldFormData = createThunk<
-  DatasetFieldApiUpdateDatasetFieldRequest,
-  DataSetField,
-  UpdateDataSetFieldFormDataParams
+export const updateDataSetFieldFormData = createAsyncThunk<
+  UpdateDataSetFieldFormDataParams,
+  DatasetFieldApiUpdateDatasetFieldRequest
 >(
-  (params: DatasetFieldApiUpdateDatasetFieldRequest) =>
-    datasetFieldApiClient.updateDatasetField(params),
-  actions.updateDataSetFieldFormDataParamsAction,
-  (
-    response: DataSetField,
-    request: DatasetFieldApiUpdateDatasetFieldRequest
-  ) => ({
-    datasetFieldId: request.datasetFieldId,
-    internalDescription: response.internalDescription,
-    labels: response.labels,
-  })
+  actions.updateDataSetFieldFormDataParamsActionType,
+  async ({ datasetFieldId, datasetFieldUpdateFormData }) => {
+    const response = await datasetFieldApiClient.updateDatasetField({
+      datasetFieldId,
+      datasetFieldUpdateFormData,
+    });
+    return {
+      datasetFieldId,
+      internalDescription: response.internalDescription,
+      labels: response.labels,
+    };
+  }
 );
 
-export const fetchDataSetFieldEnum = createThunk<
-  DatasetFieldApiGetEnumValuesRequest,
-  EnumValueList,
-  PartialEntityUpdateParams<EnumValueList>
->(
-  (params: DatasetFieldApiGetEnumValuesRequest) =>
-    datasetFieldApiClient.getEnumValues(params),
-  actions.fetchDataSetFieldEnumAction,
-  (
-    response: EnumValueList,
-    request: DatasetFieldApiGetEnumValuesRequest
-  ) => ({
-    entityId: request.datasetFieldId,
+export const fetchDataSetFieldEnum = createAsyncThunk<
+  PartialEntityUpdateParams<EnumValueList>,
+  DatasetFieldApiGetEnumValuesRequest
+>(actions.fetchDataSetFieldEnumActionType, async ({ datasetFieldId }) => {
+  const response = await datasetFieldApiClient.getEnumValues({
+    datasetFieldId,
+  });
+  return {
+    entityId: datasetFieldId,
     value: response,
-  })
-);
+  };
+});
 
-export const createDataSetFieldEnum = createThunk<
-  DatasetFieldApiCreateEnumValueRequest,
-  EnumValueList,
-  PartialEntityUpdateParams<EnumValueList>
+export const createDataSetFieldEnum = createAsyncThunk<
+  PartialEntityUpdateParams<EnumValueList>,
+  DatasetFieldApiCreateEnumValueRequest
 >(
-  (params: DatasetFieldApiCreateEnumValueRequest) =>
-    datasetFieldApiClient.createEnumValue(params),
-  actions.createDataSetFieldEnumAction,
-  (
-    response: EnumValueList,
-    request: DatasetFieldApiCreateEnumValueRequest
-  ) => ({
-    entityId: request.datasetFieldId,
-    value: response,
-  })
+  actions.createDataSetFieldEnumActionType,
+  async ({ datasetFieldId, bulkEnumValueFormData }) => {
+    const response = await datasetFieldApiClient.createEnumValue({
+      datasetFieldId,
+      bulkEnumValueFormData,
+    });
+    return {
+      entityId: datasetFieldId,
+      value: response,
+    };
+  }
 );
