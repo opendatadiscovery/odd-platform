@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
-import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDelta;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
@@ -34,7 +33,6 @@ public class DatasetStructureServiceImpl implements DatasetStructureService {
     private final DatasetVersionMapper datasetVersionMapper;
 
     @Override
-    @ReactiveTransactional
     public Mono<List<DatasetStructurePojo>> createDatasetStructure(final List<DatasetVersionPojo> versions,
                                                                    final Map<String, List<DatasetFieldPojo>> fields) {
         final List<DatasetFieldPojo> datasetFieldPojos = fields.values().stream()

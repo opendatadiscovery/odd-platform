@@ -71,11 +71,11 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
     }
 
     @Override
-    @ReactiveTransactional
     public Mono<List<DatasetFieldPojo>> createOrUpdateDatasetFields(final List<DatasetFieldPojo> fields) {
         if (fields.isEmpty()) {
             return Mono.just(List.of());
         }
+
         return reactiveDatasetFieldRepository.getExistingFieldsByOddrnAndType(fields)
             .flatMap(existingFieldsMap -> {
                 final List<DatasetFieldPojo> fieldsToCreate = fields.stream()
