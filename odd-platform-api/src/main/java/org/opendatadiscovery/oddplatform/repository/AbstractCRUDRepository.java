@@ -135,6 +135,13 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
             })
             .collect(Collectors.toList());
 
+        if (idField == null) {
+            dslContext.batchUpdate(records).execute();
+
+            return records.stream()
+                .map(r -> r.into(entityClass))
+                .collect(Collectors.toList());
+        }
 
         return ListUtils.partition(records, BATCH_SIZE)
             .stream()
