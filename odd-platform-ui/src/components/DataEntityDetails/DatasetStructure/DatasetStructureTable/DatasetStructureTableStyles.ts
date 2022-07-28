@@ -2,7 +2,6 @@ import { Grid, GridProps } from '@mui/material';
 import styled from 'styled-components';
 
 export type ColType = 'name' | 'uniq' | 'missing' | 'stats';
-
 export const columnBasicStyles = {
   name: {
     flexGrow: 1,

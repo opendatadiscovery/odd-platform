@@ -1,6 +1,17 @@
 import { Grid, GridProps } from '@mui/material';
 import styled from 'styled-components';
 
+type ColType = 'uniq' | 'missing';
+export const columnItemBasicStyles = {
+  uniq: {
+    borderRight: '1px solid #F4F5F7',
+    borderLeft: '1px solid #F4F5F7',
+  },
+  missing: {
+    display: 'flex',
+    flexGrow: 1,
+  },
+};
 export const OptionsBtnContainer = styled(Grid)<GridProps>(() => ({
   display: 'flex',
   flexWrap: 'nowrap',
@@ -30,7 +41,18 @@ export const TypeContainer = styled(Grid)(() => ({
   alignItems: 'center',
 }));
 
-export const Divider = styled(Grid)(({ theme }) => ({
-  borderRight: '1px solid',
+export const Divider = styled(Grid)<{ $colType: ColType }>(
+  ({ theme, $colType }) => ({
+    borderRight: `1px solid ${theme.palette.backgrounds.primary} `,
+    ...columnItemBasicStyles[$colType],
+  })
+);
+
+export const MissingItem = styled(Grid)(({ theme }) => ({
+  display: 'flex',
+  flexGrow: 1,
+  padding: theme.spacing(0.5, 0),
+  alignItems: 'center',
   borderRightColor: theme.palette.backgrounds.primary,
+  borderLeftColor: theme.palette.backgrounds.primary,
 }));

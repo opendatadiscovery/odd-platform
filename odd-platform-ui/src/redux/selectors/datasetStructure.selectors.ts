@@ -56,6 +56,16 @@ export const getDatasetStructure = createSelector(
   }
 );
 
+export const getStatsNull = createSelector(
+  getDatasetStructure,
+  getDatasetVersionId,
+  datasetParentFieldId,
+  dataSetList =>
+    dataSetList
+      .map(dataset => dataset.stats)
+      .some(elem => elem?.name !== null)
+);
+
 export const getDatasetStructureTypeStats = createSelector(
   getDatasetStructureState,
   getDatasetVersionId,
