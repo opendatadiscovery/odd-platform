@@ -52,7 +52,7 @@ jobs:
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
   update_tag:
     needs: ["images"]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Masking token
         run: |
@@ -72,7 +72,7 @@ jobs:
           git push
   argocd_sync:
     needs: ["update_tag"]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Install ArgoCD CLI
         run: |
