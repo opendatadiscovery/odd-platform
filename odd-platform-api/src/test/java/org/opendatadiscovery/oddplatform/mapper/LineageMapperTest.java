@@ -1,5 +1,8 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.Test;
@@ -14,10 +17,6 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.opendatadiscovery.oddplatform.utils.RecordFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.jeasy.random.FieldPredicates.named;
@@ -41,12 +40,12 @@ class LineageMapperTest extends BaseIntegrationTest {
 
     @Test
     void mapLineageDto() {
-        var dto = DataEntityLineageDto.builder()
+        final var dto = DataEntityLineageDto.builder()
             .dataEntityDto(
                 EASY_RANDOM.nextObject(DataEntityDimensionsDto.class))
             .downstream(generateStreamDto())
             .build();
-        var result = mapper.mapLineageDto(dto);
+        final var result = mapper.mapLineageDto(dto);
         assertThat(result.getRoot().getId()).isEqualTo(dto.getDataEntityDto().getDataEntity().getId());
         assertThat(
             result.getDownstream().getNodes().stream().map(DataEntityLineageNode::getId).collect(Collectors.toList()))
@@ -65,8 +64,8 @@ class LineageMapperTest extends BaseIntegrationTest {
 
     @Test
     void mapGroupLineageDto() {
-        var dto = new DataEntityGroupLineageDto(List.of(generateStreamDto()));
-        var result = mapper.mapGroupLineageDto(dto);
+        final var dto = new DataEntityGroupLineageDto(List.of(generateStreamDto()));
+        final var result = mapper.mapGroupLineageDto(dto);
         assertThat(
             result.getItems().stream().flatMap(item -> item.getNodes().stream().map(DataEntityLineageNode::getId))
                 .collect(
@@ -87,9 +86,9 @@ class LineageMapperTest extends BaseIntegrationTest {
     }
 
     private DataEntityLineageStreamDto generateStreamDto() {
-        var nodes = EASY_RANDOM.objects(LineageNodeDto.class, 2).toList();
-        var deg = EASY_RANDOM.nextObject(DataEntityDimensionsDto.class);
-        var relations = Map.of(nodes.get(0).entity().getDataEntity().getId(),
+        final var nodes = EASY_RANDOM.objects(LineageNodeDto.class, 2).toList();
+        final var deg = EASY_RANDOM.nextObject(DataEntityDimensionsDto.class);
+        final var relations = Map.of(nodes.get(0).entity().getDataEntity().getId(),
             List.of(deg.getDataEntity().getId()),
             nodes.get(1).entity().getDataEntity().getId(),
             List.of(deg.getDataEntity().getId()));
