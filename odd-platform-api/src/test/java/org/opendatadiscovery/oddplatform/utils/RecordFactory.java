@@ -36,8 +36,9 @@ public class RecordFactory extends ObjenesisObjectFactory {
         final Object[] randomValues = new Object[recordComponents.length];
         for (int i = 0; i < recordComponents.length; i++) {
             if (Collection.class.isAssignableFrom(recordComponents[i].getType())) {
-                Type type = ((ParameterizedType) recordComponents[i].getGenericType()).getActualTypeArguments()[0];
-                String typeName;
+                final Type type =
+                    ((ParameterizedType) recordComponents[i].getGenericType()).getActualTypeArguments()[0];
+                final String typeName;
                 if (type instanceof WildcardType) {
                     // naively assume that we only have wildcards with upper bounds
                     typeName = ((WildcardType) type).getUpperBounds()[0].getTypeName();
