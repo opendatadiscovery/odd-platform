@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import round from 'lodash/round';
@@ -12,7 +12,6 @@ import {
 } from 'generated-sources';
 import AppInput from 'components/shared/AppInput/AppInput';
 import { getDatasetStructure } from 'redux/selectors/datasetStructure.selectors';
-import { useDebouncedCallback } from 'use-debounce';
 import { isComplexField } from 'lib/helpers';
 import { DataSetStructureTypesCount } from 'redux/interfaces/datasetStructure';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
@@ -22,7 +21,7 @@ import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 import { useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'lib/redux/hooks';
-
+import { useDebouncedCallback } from 'use-debounce';
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
@@ -55,7 +54,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
 }) => {
   const history = useHistory();
   const [searchText, setSearchText] = React.useState<string>('');
-  const [scrollToIndex, setScrollToIndex] = useState(0);
+  const [scrollToIndex, setScrollToIndex] = React.useState(-1);
 
   const datasetStructureRoot = useAppSelector(state =>
     getDatasetStructure(state, {
@@ -101,6 +100,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     setSearchText(event.target.value);
     handleSearch();
   };
+
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       handleSearch();
@@ -126,8 +126,8 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             alignItems="center"
             container
           >
-            <Grid item xs={8} container alignItems="center">
-              <Typography variant="h5" display="flex" sx={{ mr: 3 }}>
+            <Grid item xs={8} container alignItems="center" rowGap={0.5}>
+              <Typography variant="h5" sx={{ mr: 3, display: 'flex' }}>
                 <ColumnsIcon />
                 <NumberFormatted
                   sx={{ mx: 0.5 }}
@@ -139,7 +139,11 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
               </Typography>
               {toPairs(typesCount).map(([type, count]) =>
                 isComplexField(type as DataSetFieldTypeTypeEnum) ? null : (
-                  <Typography key={type} variant="h5" sx={{ mr: 5 }}>
+                  <Typography
+                    key={type}
+                    variant="h5"
+                    sx={{ mr: 5, display: 'flex', alignItems: 'center' }}
+                  >
                     {count}
                     <DatasetStructureFieldTypeLabel
                       sx={{ mx: 0.5 }}
