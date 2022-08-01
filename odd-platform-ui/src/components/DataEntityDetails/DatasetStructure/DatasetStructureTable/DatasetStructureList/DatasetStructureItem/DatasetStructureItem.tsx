@@ -88,7 +88,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       fieldStats = datasetField.stats
         ?.complexStats as DataSetFormattedStats;
   }
-
   const getCustomStat = React.useCallback(
     (fieldStatName: string) => {
       const label = DatasetStatsLabelMap.get(
@@ -135,7 +134,6 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       />
     );
   }
-
   const setEnumFormOpenBtn = React.useMemo(() => {
     let btnColor: ButtonColors = 'primaryLight';
     let btnText = 'Add values';
@@ -159,7 +157,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
         <S.RowInfo item xs={12} container>
           <Grid
             item
-            xs={6}
+            xs={datasetField.stats ? 12 : 6}
             container
             wrap="nowrap"
             justifyContent="space-between"
@@ -183,17 +181,21 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                         datasetField.name}
                     </Typography>
                   </AppTooltip>
-                  <TruncatedLabel
-                    onSizeChange={onSizeChange}
-                    labelList={datasetField.labels}
-                  />
-                  {datasetField.isPrimaryKey && (
-                    <DatasetStructureKeyFieldLabel keyType="primary" />
-                  )}
-                  {datasetField.isSortKey && (
-                    <DatasetStructureKeyFieldLabel keyType="sort" />
-                  )}
                 </Box>
+                <Grid item xs={12}>
+                  <Box sx={{ display: 'flex', alignItems: 'start' }}>
+                    <TruncatedLabel
+                      onSizeChange={onSizeChange}
+                      labelList={datasetField.labels}
+                    />
+                    {datasetField.isPrimaryKey && (
+                      <DatasetStructureKeyFieldLabel keyType="primary" />
+                    )}
+                    {datasetField.isSortKey && (
+                      <DatasetStructureKeyFieldLabel keyType="sort" />
+                    )}
+                  </Box>
+                </Grid>
                 <Grid item xs={12} sx={{ pr: 2.5 }}>
                   <AppTooltip
                     title={() => datasetField.internalDescription}
@@ -254,56 +256,66 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 checkForOverflow={false}
               >
                 <InformationIcon
-                  sx={{ display: 'flex', alignItems: 'center' }}
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginRight: 1,
+                  }}
                 />
               </AppTooltip>
             </S.TypeContainer>
           </Grid>
-          <S.Divider item xs={2} container>
-            <ColContainer item xs={6} $colType="uniq">
-              <NumberFormatted
-                sx={{ ml: 1 }}
-                value={fieldStats?.uniqueCount}
-              />
-              <Typography
-                sx={{ ml: 0.5 }}
-                variant="body1"
-                color="texts.hint"
-              >
-                {fieldStats?.uniqueCount && rowsCount
-                  ? `(${round(
-                      (fieldStats.uniqueCount * 100) / rowsCount,
-                      0
-                    )}%)`
+          {datasetField.stats && (
+            <>
+              <S.Divider $colType="uniq" item xs={1} container>
+                <ColContainer item xs={6} $colType="uniq">
+                  <NumberFormatted
+                    sx={{ ml: 1 }}
+                    value={fieldStats?.uniqueCount}
+                  />
+                  <Typography
+                    sx={{ ml: 0.5 }}
+                    variant="body1"
+                    color="texts.hint"
+                  >
+                    {fieldStats?.uniqueCount && rowsCount
+                      ? `(${round(
+                          (fieldStats.uniqueCount * 100) / rowsCount,
+                          0
+                        )}%)`
+                      : null}
+                  </Typography>
+                </ColContainer>
+              </S.Divider>
+              <S.Divider $colType="missing" item xs={1} container>
+                <ColContainer item xs={6} $colType="missing">
+                  <NumberFormatted
+                    sx={{ ml: 1 }}
+                    value={fieldStats?.nullsCount}
+                  />
+                  <Typography
+                    sx={{ ml: 0.5 }}
+                    variant="body1"
+                    color="texts.hint"
+                  >
+                    {fieldStats?.nullsCount && rowsCount
+                      ? `${round(
+                          (fieldStats.nullsCount * 100) / rowsCount,
+                          0
+                        )}%`
+                      : null}
+                  </Typography>
+                </ColContainer>
+              </S.Divider>
+              <ColContainer item xs={4} container $colType="stats">
+                {fieldStats
+                  ? Object.keys(fieldStats).map(fieldName =>
+                      getCustomStat(fieldName)
+                    )
                   : null}
-              </Typography>
-            </ColContainer>
-            <ColContainer item xs={6} $colType="missing">
-              <NumberFormatted
-                sx={{ ml: 1 }}
-                value={fieldStats?.nullsCount}
-              />
-              <Typography
-                sx={{ ml: 0.5 }}
-                variant="body1"
-                color="texts.hint"
-              >
-                {fieldStats?.nullsCount && rowsCount
-                  ? `${round(
-                      (fieldStats.nullsCount * 100) / rowsCount,
-                      0
-                    )}%`
-                  : null}
-              </Typography>
-            </ColContainer>
-          </S.Divider>
-          <ColContainer item xs={4} container $colType="stats">
-            {fieldStats
-              ? Object.keys(fieldStats).map(fieldName =>
-                  getCustomStat(fieldName)
-                )
-              : null}
-          </ColContainer>
+              </ColContainer>
+            </>
+          )}
         </S.RowInfo>
       </Grid>
       <Grid item xs={12}>
