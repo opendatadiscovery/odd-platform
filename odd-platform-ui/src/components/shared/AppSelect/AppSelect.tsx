@@ -45,11 +45,16 @@ const AppSelect: React.FC<AppSelectProps> = ({
     <S.AppSelect
       {...props}
       $size={size}
+      $isLabeled={!!label}
       variant="outlined"
       fullWidth={fullWidth}
       labelId="select-label-id"
       IconComponent={DropdownIcon}
       notched
+      MenuProps={{
+        anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+        transformOrigin: { vertical: 'top', horizontal: 'left' },
+      }}
     >
       {props.children}
     </S.AppSelect>

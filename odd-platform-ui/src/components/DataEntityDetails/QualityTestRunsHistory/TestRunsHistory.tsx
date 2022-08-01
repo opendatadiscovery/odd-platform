@@ -9,7 +9,6 @@ import {
 } from 'redux/selectors/dataEntityRun.selector';
 import { useAppParams } from 'lib/hooks';
 import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
-
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import capitalize from 'lodash/capitalize';
 import { Grid, Typography } from '@mui/material';
@@ -52,6 +51,7 @@ const TestRunsHistory: React.FC = () => {
   React.useEffect(() => {
     fetchPage(1);
   }, [fetchDataEntityRuns, dataQATestId, alertStatus]);
+
   return (
     <Grid container sx={{ mt: 2 }}>
       <AppSelect
