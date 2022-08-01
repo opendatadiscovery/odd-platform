@@ -12,7 +12,7 @@ import AppSelect from 'components/shared/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import { useDebouncedCallback } from 'use-debounce';
-import { stringFormatted, calculateWidth } from 'lib/helpers';
+import { stringFormatted } from 'lib/helpers';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
@@ -137,14 +137,6 @@ const LinkedItemsList: React.FC = () => {
                 key={entityClass.id}
                 value={entityClass.id}
                 onClick={() => setSelectedClassId(entityClass.id)}
-                maxWidth={calculateWidth(
-                  stringFormatted(
-                    entityClass.name,
-                    '_',
-                    'firstLetterOfEveryWord'
-                  ),
-                  400
-                )}
               >
                 {stringFormatted(
                   entityClass.name,

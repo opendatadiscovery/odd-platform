@@ -7,7 +7,6 @@ import {
 } from '@mui/material';
 import capitalize from 'lodash/capitalize';
 import values from 'lodash/values';
-import { calculateWidth } from 'lib/helpers';
 import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -226,11 +225,7 @@ const MetadataCreateFormItem: React.FC<MetadataCreateFormItemProps> = ({
                   value={selectedType}
                 >
                   {values(MetadataFieldType).map(type => (
-                    <AppMenuItem
-                      key={type}
-                      value={type}
-                      maxWidth={calculateWidth(type, 400)}
-                    >
+                    <AppMenuItem key={type} value={type}>
                       {capitalize(type)}
                     </AppMenuItem>
                   ))}

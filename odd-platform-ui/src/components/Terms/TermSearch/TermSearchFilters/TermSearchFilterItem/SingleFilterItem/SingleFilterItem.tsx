@@ -1,7 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
-import { calculateWidth } from 'lib/helpers';
 import { SearchFilterStateSynced } from 'redux/interfaces/search';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
@@ -61,7 +60,6 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
               key={option.id}
               value={option.id}
               onClick={() => handleFilterSelect(option)}
-              maxWidth={calculateWidth(option.name, 400)}
             >
               {option.name}
             </AppMenuItem>

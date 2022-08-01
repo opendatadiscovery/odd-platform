@@ -7,7 +7,7 @@ import {
 } from 'generated-sources';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { stringFormatted, calculateWidth } from 'lib/helpers';
+import { stringFormatted } from 'lib/helpers';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { setActivityQueryParam } from 'redux/reducers/activity.slice';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
@@ -84,10 +84,6 @@ const SingleFilter = <
               key={option}
               value={option}
               onClick={() => handleFilterSelect(option)}
-              maxWidth={calculateWidth(
-                stringFormatted(option, '_', 'firstLetterOfEveryWord'),
-                400
-              )}
             >
               {stringFormatted(option, '_', 'firstLetterOfEveryWord')}
             </AppMenuItem>
@@ -99,7 +95,6 @@ const SingleFilter = <
             key={option.id}
             value={option.name}
             onClick={() => handleFilterSelect(option)}
-            maxWidth={calculateWidth(option.name, 400)}
           >
             {option.name}
           </AppMenuItem>

@@ -7,10 +7,8 @@ import {
   getDataEntityRunsFetchingStatuses,
   getDataEntityRunsListPageInfo,
 } from 'redux/selectors/dataEntityRun.selector';
-import { calculateWidth } from 'lib/helpers';
 import { useAppParams } from 'lib/hooks';
 import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
-
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import capitalize from 'lodash/capitalize';
 import { Grid, Typography } from '@mui/material';
@@ -66,7 +64,6 @@ const TestRunsHistory: React.FC = () => {
         </AppMenuItem>
         {Object.keys(DataEntityRunStatus)?.map(option => (
           <AppMenuItem
-            maxWidth={calculateWidth(option, 400)}
             key={option}
             value={option}
             onClick={() => setAlertStatus(option as DataEntityRunStatus)}
