@@ -5,10 +5,10 @@ import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatus
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import TestItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestItem/TestItem';
-import { dataEntityTestPath } from 'lib/paths';
 import { Link } from 'react-router-dom';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import { useAppPaths } from 'lib/hooks';
 import { TestReportBySuitNameHeader } from './TestReportItemStyles';
 
 interface TestReportItemProps {
@@ -27,6 +27,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
   dataQATestReport,
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
+  const { dataEntityTestPath } = useAppPaths();
 
   React.useEffect(() => {
     if (dataQATestList.length < 5) setOpen(true);

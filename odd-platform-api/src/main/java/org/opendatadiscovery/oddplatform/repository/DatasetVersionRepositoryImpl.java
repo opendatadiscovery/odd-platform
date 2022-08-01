@@ -18,14 +18,11 @@ public class DatasetVersionRepositoryImpl
     extends AbstractCRUDRepository<DatasetVersionRecord, DatasetVersionPojo>
     implements DatasetVersionRepository {
 
-    private final JooqRecordHelper jooqRecordHelper;
-
     public DatasetVersionRepositoryImpl(final DSLContext dslContext,
                                         final JooqRecordHelper jooqRecordHelper,
                                         final JooqQueryHelper jooqQueryHelper) {
         super(dslContext, jooqQueryHelper, DATASET_VERSION, DATASET_VERSION.ID, null,
             null, DatasetVersionPojo.class);
-        this.jooqRecordHelper = jooqRecordHelper;
     }
 
     @Override

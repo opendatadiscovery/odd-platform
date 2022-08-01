@@ -1,14 +1,13 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { LabelApiDeleteLabelRequest } from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
 import {
+  getLabelCreatingStatuses,
+  getLabelDeletingStatuses,
+  getLabelListFetchingStatuses,
   getLabelsList,
   getLabelsListPage,
-  getLabelDeletingStatuses,
-  getLabelCreatingStatuses,
-  getLabelListFetchingStatuses,
 } from 'redux/selectors';
 import { fetchLabelsList } from 'redux/thunks';
 import AddIcon from 'components/shared/Icons/AddIcon';

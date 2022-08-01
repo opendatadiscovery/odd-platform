@@ -1,14 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import {
-  DataEntityDetails,
   DataEntityClassNameEnum,
+  DataEntityDetails,
 } from 'generated-sources';
-import { dataEntityDetailsPath } from 'lib/paths';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Grid, Typography } from '@mui/material';
 import EntitiesListModal from 'components/shared/EntitiesListModal/EntitiesListModal';
+import { useAppPaths } from 'lib/hooks';
 
 interface OverviewDataConsumerStatsProps {
   inputs: DataEntityDetails['inputList'];
@@ -20,6 +20,7 @@ const OverviewDataConsumerStats: React.FC<
   OverviewDataConsumerStatsProps
 > = ({ inputs, unknownInputsCount, dataEntityName }) => {
   const displayedEntitiesNumber = 10;
+  const { dataEntityDetailsPath } = useAppPaths();
 
   return (
     <Grid container>

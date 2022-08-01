@@ -4,6 +4,7 @@ import { toolbarHeight } from 'lib/constants';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
 
 // lazy components
@@ -33,9 +34,11 @@ const App: React.FC = () => {
     dispatch(fetchDataEntitiesClassesAndTypes());
   }, []);
 
+  const { isPathEmbedded } = useAppPaths();
+
   return (
     <div className="App">
-      <AppToolbarContainer />
+      {!isPathEmbedded && <AppToolbarContainer />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
@@ -49,7 +52,7 @@ const App: React.FC = () => {
             />
             <Route
               exact
-              path="/search/:searchId?"
+              path={['/search/:searchId?', '/embedded/search/:searchId?']}
               component={SearchContainer}
             />
             <Route
@@ -57,7 +60,10 @@ const App: React.FC = () => {
               component={TermDetails}
             />
             <Route
-              path="/dataentities/:dataEntityId/:viewType?"
+              path={[
+                '/dataentities/:dataEntityId/:viewType?',
+                '/embedded/dataentities/:dataEntityId/:viewType?',
+              ]}
               component={DataEntityDetails}
             />
             <Route path="/activity" component={Activity} />

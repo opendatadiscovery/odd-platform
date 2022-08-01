@@ -507,31 +507,6 @@ public class DataEntityRepositoryImpl
 
     @Override
     @BlockingTransactional
-    public void setDescription(final long dataEntityId, final String description) {
-        dslContext.update(DATA_ENTITY)
-            .set(DATA_ENTITY.INTERNAL_DESCRIPTION, description)
-            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
-            .where(DATA_ENTITY.ID.eq(dataEntityId))
-            .execute();
-
-        calculateDataEntityVectors(List.of(dataEntityId));
-    }
-
-    @Override
-    @BlockingTransactional
-    public void setInternalName(final long dataEntityId, final String businessName) {
-        final String newBusinessName = businessName != null && businessName.isEmpty() ? null : businessName;
-        dslContext.update(DATA_ENTITY)
-            .set(DATA_ENTITY.INTERNAL_NAME, newBusinessName)
-            .set(DATA_ENTITY.UPDATED_AT, LocalDateTime.now())
-            .where(DATA_ENTITY.ID.eq(dataEntityId))
-            .execute();
-
-        calculateDataEntityVectors(List.of(dataEntityId));
-    }
-
-    @Override
-    @BlockingTransactional
     public void calculateSearchEntrypoints(final Collection<Long> dataEntityIds) {
         calculateDataEntityVectors(dataEntityIds);
         calculateDataSourceVectors(dataEntityIds);

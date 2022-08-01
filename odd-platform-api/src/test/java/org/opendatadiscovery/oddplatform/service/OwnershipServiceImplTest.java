@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormD
 import org.opendatadiscovery.oddplatform.api.contract.model.Role;
 import org.opendatadiscovery.oddplatform.dto.OwnershipDto;
 import org.opendatadiscovery.oddplatform.mapper.OwnershipMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityFilledPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
@@ -55,11 +56,13 @@ class OwnershipServiceImplTest {
     private ReactiveSearchEntrypointRepository searchEntrypointRepository;
     @Mock
     private OwnershipMapper ownershipMapper;
+    @Mock
+    private DataEntityFilledService dataEntityFilledService;
 
     @BeforeEach
     void setUp() {
         ownershipService = new OwnershipServiceImpl(roleService, ownerService, ownershipRepository,
-            searchEntrypointRepository, ownershipMapper);
+            searchEntrypointRepository, dataEntityFilledService, ownershipMapper);
     }
 
     @Test
@@ -84,6 +87,8 @@ class OwnershipServiceImplTest {
         when(ownershipRepository.create(any(OwnershipPojo.class))).thenReturn(Mono.just(ownershipPojo));
         when(searchEntrypointRepository.updateChangedOwnershipVectors(anyLong())).thenReturn(Mono.just(1));
         when(ownershipMapper.mapDto(any(OwnershipDto.class))).thenReturn(ownership);
+        when(dataEntityFilledService.markEntityFilled(anyLong(), any()))
+            .thenReturn(Mono.just(new DataEntityFilledPojo()));
 
         final Mono<Ownership> actualOwnershipMono = ownershipService.create(1L, testOwnershipFromData);
 

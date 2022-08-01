@@ -31,6 +31,22 @@ export const DataEntityClassLabelMap: Map<
     DataEntityClassNameEnum.ENTITY_GROUP,
     { short: 'DEG', normal: 'Groups', plural: 'Groups' },
   ],
+  [
+    DataEntityClassNameEnum.QUALITY_TEST_RUN,
+    {
+      short: 'QTR',
+      normal: 'Quality Test Run',
+      plural: 'Quality Test Runs',
+    },
+  ],
+  [
+    DataEntityClassNameEnum.TRANSFORMER_RUN,
+    {
+      short: 'TSR',
+      normal: 'Transformer Run',
+      plural: 'Transformer Runs',
+    },
+  ],
 ]);
 
 export interface DataEntityDetailsState extends DataEntityDetails {

@@ -21,3 +21,6 @@ export const mainSkeletonHeight = '100%';
 // tabs constants
 export const primaryTabsHeight = 32;
 export const tabsContainerMargin = 16;
+
+// time formats
+export const alertDateFormat = 'd MMM yyyy, HH:mm';

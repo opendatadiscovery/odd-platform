@@ -3,10 +3,10 @@ import { Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { DataEntityRef } from 'generated-sources';
 import MoreIcon from 'components/shared/Icons/MoreIcon';
-import { dataEntityDetailsPath } from 'lib/paths';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import AppMenu from 'components/shared/AppMenu/AppMenu';
+import { useAppPaths } from 'lib/hooks';
 
 interface TruncatedCellMenuProps {
   dataList: DataEntityRef[] | string[] | undefined;
@@ -17,6 +17,8 @@ const TruncatedCellMenu: React.FC<TruncatedCellMenuProps> = ({
   dataList,
   menuId,
 }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleMenuOpen = (e: React.MouseEvent<HTMLButtonElement>) => {

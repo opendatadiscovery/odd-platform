@@ -60,19 +60,19 @@ const updateActivitiesState = (
 ): ActivitiesState => {
   const { activities, pageInfo } = payload;
 
-  return activities.reduceRight(
+  return activities.reduce(
     (memo: ActivitiesState, activity: Activity) => ({
       ...memo,
       activitiesByDate: {
         ...memo.activitiesByDate,
         [formattedDate(activity.createdAt)]: uniqBy(
           [
-            activity,
             ...(memo.activitiesByDate[formattedDate(activity.createdAt)] ||
               []),
+            activity,
           ],
           'id'
-        ),
+        ).sort((a, b) => b.createdAt - a.createdAt),
       },
     }),
     {
@@ -130,11 +130,7 @@ export const activitiesSlice = createSlice({
       };
     },
 
-    clearActivityFilters: state => {
-      state = initialState;
-
-      return state;
-    },
+    clearActivityFilters: () => initialState,
   },
   extraReducers: builder => {
     builder.addCase(

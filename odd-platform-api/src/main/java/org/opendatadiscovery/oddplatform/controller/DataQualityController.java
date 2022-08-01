@@ -6,8 +6,9 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverityForm;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
-import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.opendatadiscovery.oddplatform.service.DataQualityService;
+import org.opendatadiscovery.oddplatform.service.SLAResourceResolver;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -18,6 +19,7 @@ import reactor.core.scheduler.Schedulers;
 @RequiredArgsConstructor
 public class DataQualityController implements DataQualityApi {
     private final DataQualityService dataQualityService;
+    private final SLAResourceResolver slaResourceResolver;
 
     @Override
     public Mono<ResponseEntity<DataEntityList>> getDataEntityDataQATests(final Long dataEntityId,
@@ -39,11 +41,11 @@ public class DataQualityController implements DataQualityApi {
     }
 
     @Override
-    public Mono<ResponseEntity<String>> getSLA(final Long dataEntityId,
-                                               final ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Resource>> getSLA(final Long dataEntityId,
+                                                 final ServerWebExchange exchange) {
         return dataQualityService
             .getSLA(dataEntityId)
-            .map(this::generateSLAHtml)
+            .map(slaResourceResolver::resolve)
             .map(ResponseEntity::ok);
     }
 
@@ -61,19 +63,5 @@ public class DataQualityController implements DataQualityApi {
             //  https://github.com/opendatadiscovery/odd-platform/issues/623 is implemented
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
-    }
-
-    private String generateSLAHtml(final SLA sla) {
-        return """
-                <!DOCTYPE html>
-                <html>
-                <body>
-                <svg width="100" height="100">
-                  <rect width="100" height="100"
-                  style="fill:%s" />
-                </svg>
-                </body>
-                </html>
-            """.formatted(sla.toString());
     }
 }

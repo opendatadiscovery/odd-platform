@@ -1,19 +1,9 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
-import {
-  fetchActivityCounts,
-  fetchActivityList,
-  fetchDataSourcesList,
-  fetchNamespaceList,
-} from 'redux/thunks';
+import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import {
-  getActivitiesCountsParams,
-  getActivitiesQueryParams,
-  getDataSourcesList,
-  getNamespaceList,
-} from 'redux/selectors';
+import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
 import { clearActivityFilters } from 'redux/reducers/activity.slice';
 import { ActivityEventType } from 'generated-sources';
 import SingleFilter from 'components/shared/Activity/ActivityFilterItems/SingleFilter/SingleFilter';
@@ -31,11 +21,6 @@ const Filters: React.FC = () => {
 
   const datasources = useAppSelector(getDataSourcesList);
   const namespaces = useAppSelector(getNamespaceList);
-  const queryParams = useAppSelector(getActivitiesQueryParams);
-  const countParams = useAppSelector(getActivitiesCountsParams);
-
-  const asyncClearFilters = async () => dispatch(clearActivityFilters());
-
   const excludedTypes = [
     'DATA_ENTITY_OVERVIEW_UPDATED',
     'DATA_ENTITY_METADATA_UPDATED',
@@ -48,7 +33,6 @@ const Filters: React.FC = () => {
   const activityEventTypes = Object.values(ActivityEventType).filter(
     type => !excludedTypes.some(discardedType => discardedType === type)
   );
-
   return (
     <S.Container>
       <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
@@ -56,12 +40,9 @@ const Filters: React.FC = () => {
         <AppButton
           color="tertiary"
           size="medium"
-          onClick={() =>
-            asyncClearFilters().then(() => {
-              dispatch(fetchActivityList(queryParams));
-              dispatch(fetchActivityCounts(countParams));
-            })
-          }
+          onClick={() => {
+            dispatch(clearActivityFilters());
+          }}
         >
           Clear All
         </AppButton>
@@ -87,7 +68,8 @@ const Filters: React.FC = () => {
           filterOptions={activityEventTypes}
         />
         <MultipleFilter key="tg" filterName="tagIds" name="Tag" />
-        <MultipleFilter key="ow" filterName="ownerIds" name="User" />
+        <MultipleFilter key="ow" filterName="ownerIds" name="Owner" />
+        <MultipleFilter key="us" filterName="userIds" name="User" />
       </S.ListContainer>
     </S.Container>
   );

@@ -38,5 +38,14 @@ export const SectionCaption = styled(Typography)(({ theme }) => ({
   alignItems: 'center',
   '& > svg ': {
     marginRight: theme.spacing(0.5),
+    height: theme.spacing(2),
+    width: theme.spacing(2),
   },
+}));
+
+export const DataEntityListContainer = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.backgrounds.default,
+  padding: theme.spacing(1.5),
+  border: `1px solid ${theme.palette.backgrounds.secondary}`,
+  borderRadius: theme.spacing(1),
 }));

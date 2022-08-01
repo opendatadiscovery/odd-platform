@@ -1,11 +1,12 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { Alert } from 'generated-sources';
 import { format } from 'date-fns';
 import lowerCase from 'lodash/lowerCase';
 import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { Alert } from 'redux/interfaces';
+import { alertDateFormat } from 'lib/constants';
 import { ColContainer } from '../DataEntityAlertsStyles';
 import {
   ActionButtonsContainer,
@@ -24,7 +25,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
   <Container container>
     <ColContainer item $colType="date">
       <Typography variant="body1">
-        {alert.createdAt && format(alert.createdAt, 'd MMM yyyy, HH:MM a')}
+        {alert.createdAt && format(alert.createdAt, alertDateFormat)}
       </Typography>
     </ColContainer>
     <ColContainer item $colType="type">
@@ -51,7 +52,7 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
     <ColContainer item $colType="updatedTime">
       <Typography variant="body1">
         {alert.statusUpdatedAt &&
-          format(alert.statusUpdatedAt, 'd MMM yyyy, HH:MM a')}
+          format(alert.statusUpdatedAt, alertDateFormat)}
       </Typography>
     </ColContainer>
     <ActionButtonsContainer item $colType="actionBtn">

@@ -8,6 +8,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -70,4 +71,6 @@ public interface DataEntityService extends ReadOnlyCRUDService<DataEntity, DataE
     Mono<DataEntityRef> addDataEntityToDEG(final Long dataEntityId, final DataEntityDataEntityGroupFormData formData);
 
     Flux<GroupEntityRelationsPojo> deleteDataEntityFromDEG(final Long dataEntityId, final Long dataEntityGroupId);
+
+    Mono<DataEntityUsageInfo> getDataEntityUsageInfo();
 }

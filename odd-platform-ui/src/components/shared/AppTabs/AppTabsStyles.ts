@@ -15,7 +15,7 @@ export const TabsContainer = styled(Tabs)<{ $type: TabType }>(
               position: 'absolute',
               content: '""',
               bottom: '0px',
-              width: 'calc(100% - 16px)',
+              width: '100%',
               zIndex: -1,
               borderBottom: '1px solid',
               borderBottomColor: theme.palette.info.light,

@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +18,7 @@ public class MetadataFieldController implements MetadataApi {
     @Override
     public Mono<ResponseEntity<MetadataFieldList>> getMetadataFieldList(@Valid final String query,
                                                                         final ServerWebExchange exchange) {
-        return metadataFieldService.list(query)
-            .subscribeOn(Schedulers.boundedElastic())
+        return metadataFieldService.listInternalMetadata(query)
             .map(ResponseEntity::ok);
     }
 }

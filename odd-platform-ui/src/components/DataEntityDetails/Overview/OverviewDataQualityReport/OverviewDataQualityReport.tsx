@@ -2,14 +2,14 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { DataEntityRunStatus } from 'generated-sources';
-import { dataEntityTestReportPath } from 'lib/paths';
 import { useAppSelector } from 'lib/redux/hooks';
 import {
-  getDatasetTestReportFetchingStatuses,
   getDatasetTestReport,
+  getDatasetTestReportFetchingStatuses,
 } from 'redux/selectors/dataQualityTest.selectors';
 import OverviewDataQualityReportSkeleton from 'components/DataEntityDetails/Overview/OverviewDataQualityReport/OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
 import AppButton from 'components/shared/AppButton/AppButton';
+import { useAppPaths } from 'lib/hooks';
 import {
   Bar,
   Container,
@@ -23,6 +23,8 @@ interface OverviewDataQualityReportProps {
 const OverviewDataQualityReport: React.FC<
   OverviewDataQualityReportProps
 > = ({ dataEntityId }) => {
+  const { dataEntityTestReportPath } = useAppPaths();
+
   const { isLoading: isDatasetTestReportFetching } = useAppSelector(
     getDatasetTestReportFetchingStatuses
   );
