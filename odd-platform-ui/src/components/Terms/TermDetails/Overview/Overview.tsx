@@ -4,7 +4,7 @@ import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkel
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import OverviewGeneral from 'components/Terms/TermDetails/Overview/OverviewGeneral/OverviewGeneral';
 import { useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams } from 'lib/hooks';
 import {
   getTermDetails,
   getTermDetailsFetchingStatuses,

@@ -4,12 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
@@ -32,6 +30,7 @@ import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import static java.util.function.Function.identity;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
@@ -69,18 +68,26 @@ public class ReactiveDatasetFieldRepositoryImpl
 
     @Override
     public Mono<Map<String, DatasetFieldPojo>> getExistingFieldsByOddrnAndType(final List<DatasetFieldPojo> fields) {
-        final Condition condition = fields.stream()
-            .map(f -> DATASET_FIELD.ODDRN.eq(f.getOddrn()).and(DATASET_FIELD.TYPE.eq(f.getType())))
-            .reduce(Condition::or)
-            .orElseThrow(RuntimeException::new);
+        final Map<String, DatasetFieldPojo> fieldMap =
+            fields.stream().collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()));
+
+        final Set<String> oddrns = fields.stream().map(DatasetFieldPojo::getOddrn).collect(Collectors.toSet());
 
         final SelectConditionStep<DatasetFieldRecord> selectConditionStep = DSL
             .selectFrom(DATASET_FIELD)
-            .where(condition);
+            .where(DATASET_FIELD.ODDRN.in(oddrns));
 
         return jooqReactiveOperations.flux(selectConditionStep)
             .map(r -> r.into(DatasetFieldPojo.class))
-            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, Function.identity()));
+            .filter(fromDatabase -> {
+                final DatasetFieldPojo fromIngestion = fieldMap.get(fromDatabase.getOddrn());
+                if (fromIngestion == null) {
+                    throw new IllegalStateException("Unexpected behaviour while mapping dataset fields");
+                }
+
+                return fromDatabase.getType().equals(fromIngestion.getType());
+            })
+            .collect(Collectors.toMap(DatasetFieldPojo::getOddrn, identity()));
     }
 
     @Override

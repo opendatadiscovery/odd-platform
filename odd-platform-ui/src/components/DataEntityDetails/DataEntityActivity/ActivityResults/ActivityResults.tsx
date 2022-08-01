@@ -10,8 +10,7 @@ import {
 } from 'redux/selectors';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useHistory, useLocation } from 'react-router-dom';
-import { dataEntityActivityPath } from 'lib/paths';
-import { useAppParams, useAppQuery } from 'lib/hooks/hooks';
+import { useAppParams, useAppPaths, useAppQuery } from 'lib/hooks';
 import { ActivityQueryName, ActivityQueryParams } from 'redux/interfaces';
 import { setActivityQueryParam } from 'redux/reducers/activity.slice';
 import { fetchDataEntityActivityList } from 'redux/thunks';
@@ -27,6 +26,7 @@ const ActivityResults: React.FC = () => {
   const location = useLocation();
   const history = useHistory();
   const { dataEntityId } = useAppParams();
+  const { dataEntityActivityPath } = useAppPaths();
 
   const queryParams = useAppSelector(getActivitiesQueryParams);
   const activityResults = useAppSelector(getActivitiesByDate);

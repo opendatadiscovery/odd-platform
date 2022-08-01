@@ -12,7 +12,7 @@ import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { setDataQATestSeverity } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks/hooks';
+import { useAppParams } from 'lib/hooks';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 
 const TestReportDetailsOverview: React.FC = () => {
@@ -76,7 +76,7 @@ const TestReportDetailsOverview: React.FC = () => {
               <AppSelect
                 size="small"
                 defaultValue={
-                  qualityTest?.severity || DataQualityTestSeverity.AVERAGE
+                  qualityTest?.severity || DataQualityTestSeverity.MAJOR
                 }
                 onChange={handleSeverityChange}
               >

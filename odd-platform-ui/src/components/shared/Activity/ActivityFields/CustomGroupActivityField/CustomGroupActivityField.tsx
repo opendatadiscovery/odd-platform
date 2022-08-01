@@ -5,9 +5,9 @@ import { CustomGroupActivityState } from 'generated-sources';
 import { CRUDType } from 'lib/interfaces';
 import ActivityFieldState from 'components/shared/Activity/ActivityFields/ActivityFieldState/ActivityFieldState';
 import isEmpty from 'lodash/isEmpty';
-import { dataEntityDetailsPath } from 'lib/paths';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { Link } from 'react-router-dom';
+import { useAppPaths } from 'lib/hooks';
 import * as S from '../ArrayActivityField/ArrayActivityFieldStyles';
 
 interface GroupFieldData {
@@ -32,6 +32,8 @@ interface CustomGroupActivityFieldProps {
 const CustomGroupActivityField: React.FC<
   CustomGroupActivityFieldProps
 > = ({ oldState, newState, hideAllDetails }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
+
   const [isDetailsOpen, setIsDetailsOpen] = React.useState(false);
 
   React.useEffect(() => setIsDetailsOpen(false), [hideAllDetails]);

@@ -19,7 +19,7 @@ public class SLACalculatorTest {
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MAJOR)
+            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.CRITICAL)
         );
 
         assertThat(slaCalculator.calculateSLA(tests)).isEqualTo(SLA.RED);
@@ -28,14 +28,14 @@ public class SLACalculatorTest {
     @Test
     public void shouldBeRedIfAllAverageTestsFailed() {
         final List<TestStatusWithSeverityDto> tests = List.of(
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SKIPPED, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.BROKEN, DataQualityTestSeverity.AVERAGE)
+            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SKIPPED, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.BROKEN, DataQualityTestSeverity.MAJOR)
         );
 
         assertThat(slaCalculator.calculateSLA(tests)).isEqualTo(SLA.RED);
@@ -44,14 +44,14 @@ public class SLACalculatorTest {
     @Test
     public void shouldBeRedIfAllMinorTestsFailedAndMostAverageFailed() {
         final List<TestStatusWithSeverityDto> tests = List.of(
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
             new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE)
+            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR)
         );
 
         assertThat(slaCalculator.calculateSLA(tests)).isEqualTo(SLA.RED);
@@ -60,14 +60,14 @@ public class SLACalculatorTest {
     @Test
     public void shouldBeYellowIfAtLeastOneAverageTestFailed() {
         final List<TestStatusWithSeverityDto> tests = List.of(
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MAJOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE)
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR)
         );
 
         assertThat(slaCalculator.calculateSLA(tests)).isEqualTo(SLA.YELLOW);
@@ -76,14 +76,14 @@ public class SLACalculatorTest {
     @Test
     public void shouldBeYellowIfAllMinorTestFailed() {
         final List<TestStatusWithSeverityDto> tests = List.of(
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE)
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR)
         );
 
         assertThat(slaCalculator.calculateSLA(tests)).isEqualTo(SLA.YELLOW);
@@ -97,14 +97,14 @@ public class SLACalculatorTest {
     @Test
     public void shouldBeGreenIfAllIsSuccess() {
         final List<TestStatusWithSeverityDto> tests = List.of(
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE)
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR)
         );
 
         assertThat(slaCalculator.calculateSLA(tests)).isEqualTo(SLA.GREEN);
@@ -113,14 +113,14 @@ public class SLACalculatorTest {
     @Test
     public void shouldBeGreenIfMostMinorTestAreSuccess() {
         final List<TestStatusWithSeverityDto> tests = List.of(
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.CRITICAL),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.FAILED, DataQualityTestSeverity.MINOR),
             new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MINOR),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE),
-            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.AVERAGE)
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR),
+            new TestStatusWithSeverityDto(QualityRunStatus.SUCCESS, DataQualityTestSeverity.MAJOR)
         );
 
         assertThat(slaCalculator.calculateSLA(tests)).isEqualTo(SLA.GREEN);

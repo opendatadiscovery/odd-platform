@@ -84,7 +84,6 @@ const SingleFilter = <
               key={option}
               value={option}
               onClick={() => handleFilterSelect(option)}
-              maxWidth={190}
             >
               {stringFormatted(option, '_', 'firstLetterOfEveryWord')}
             </AppMenuItem>
@@ -96,7 +95,6 @@ const SingleFilter = <
             key={option.id}
             value={option.name}
             onClick={() => handleFilterSelect(option)}
-            maxWidth={190}
           >
             {option.name}
           </AppMenuItem>
@@ -117,7 +115,6 @@ const SingleFilter = <
         >
           <AppMenuItem
             value="All"
-            maxWidth={190}
             onClick={() => handleFilterSelect('All')}
           >
             All

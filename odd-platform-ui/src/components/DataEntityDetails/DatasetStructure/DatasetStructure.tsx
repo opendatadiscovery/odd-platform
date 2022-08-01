@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import round from 'lodash/round';
@@ -13,10 +12,7 @@ import {
 } from 'generated-sources';
 import AppInput from 'components/shared/AppInput/AppInput';
 import { getDatasetStructure } from 'redux/selectors/datasetStructure.selectors';
-
 import { useDebouncedCallback } from 'use-debounce';
-
-import { datasetStructurePath } from 'lib/paths';
 import { isComplexField } from 'lib/helpers';
 import { DataSetStructureTypesCount } from 'redux/interfaces/datasetStructure';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
@@ -24,6 +20,7 @@ import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
+import { useAppPaths } from 'lib/hooks';
 import { useAppSelector } from 'lib/redux/hooks';
 
 import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
@@ -66,6 +63,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
       versionId: versionIdParam,
     })
   );
+  const { datasetStructurePath } = useAppPaths();
 
   React.useEffect(() => {
     if (versionIdParam) {
@@ -77,6 +75,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
       fetchDataSetStructureLatest({ dataEntityId });
     }
   }, [fetchDataSetStructureLatest, dataEntityId]);
+
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
     fetchDataSetStructure({

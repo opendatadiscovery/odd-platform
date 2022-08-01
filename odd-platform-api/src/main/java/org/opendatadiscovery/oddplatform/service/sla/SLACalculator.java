@@ -22,11 +22,11 @@ public class SLACalculator {
 
         for (final TestStatusWithSeverityDto test : tests) {
             if (test.status() != QualityRunStatus.SUCCESS) {
-                if (test.severity() == DataQualityTestSeverity.MAJOR) {
+                if (test.severity() == DataQualityTestSeverity.CRITICAL) {
                     return SLA.RED;
                 }
 
-                if (test.severity() == DataQualityTestSeverity.AVERAGE) {
+                if (test.severity() == DataQualityTestSeverity.MAJOR) {
                     failedAvg++;
                 }
 
@@ -35,7 +35,7 @@ public class SLACalculator {
                 }
             }
 
-            if (test.severity() == DataQualityTestSeverity.AVERAGE) {
+            if (test.severity() == DataQualityTestSeverity.MAJOR) {
                 totalAvg++;
             }
 

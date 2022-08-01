@@ -15,4 +15,8 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
     Mono<DataEntityDimensionsDto> getDataEntityWithNamespace(final long dataEntityId);
 
     Mono<List<DataEntityPojo>> getDEGEntities(final String groupOddrn);
+
+    Mono<DataEntityPojo> setInternalName(final long dataEntityId, final String name);
+
+    Mono<DataEntityPojo> setInternalDescription(final long dataEntityId, final String description);
 }

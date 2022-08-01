@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useScrollBarWidth } from 'lib/hooks/hooks';
+import { useScrollBarWidth } from 'lib/hooks';
 import {
   Term,
   TermApiGetTermSearchResultsRequest,

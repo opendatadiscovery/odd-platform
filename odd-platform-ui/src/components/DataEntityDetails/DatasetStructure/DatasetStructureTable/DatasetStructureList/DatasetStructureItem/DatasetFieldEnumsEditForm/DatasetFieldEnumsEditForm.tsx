@@ -39,7 +39,9 @@ interface DatasetFieldEnumsFormData {
   enums: EnumValueFormData[];
 }
 
-const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
+const DatasetFieldEnumsEditForm: React.FC<
+  DataSetFieldEnumEditFormProps
+> = ({
   datasetFieldId,
   datasetFieldName,
   datasetFieldEnums,

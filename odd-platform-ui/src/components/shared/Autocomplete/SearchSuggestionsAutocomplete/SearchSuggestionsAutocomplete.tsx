@@ -18,8 +18,6 @@ import {
 import { UseFieldArrayReturn } from 'react-hook-form';
 
 interface SearchSuggestionsAutocompleteProps {
-  placeholder: string;
-  label?: string;
   addEntities?: boolean;
   append?: UseFieldArrayReturn['append'];
   searchParams?: SearchApiGetSearchSuggestionsRequest;
@@ -28,14 +26,7 @@ interface SearchSuggestionsAutocompleteProps {
 
 const SearchSuggestionsAutocomplete: React.FC<
   SearchSuggestionsAutocompleteProps
-> = ({
-  placeholder,
-  label,
-  addEntities,
-  append,
-  searchParams,
-  formOnChange,
-}) => {
+> = ({ addEntities, append, searchParams, formOnChange }) => {
   const dispatch = useAppDispatch();
 
   const searchSuggestions = useAppSelector(getSearchSuggestions);

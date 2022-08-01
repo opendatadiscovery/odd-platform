@@ -2,7 +2,6 @@ import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
   ActivityCountInfo,
-  Alert,
   AlertTotals,
   AppInfo,
   AssociatedOwner,
@@ -28,6 +27,7 @@ import {
   Term,
   TermDetails,
   TermRefList,
+  DataEntityUsageInfo,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -37,6 +37,7 @@ import { store } from 'redux/store';
 import {
   Activity,
   ActivityQueryParams,
+  Alert,
   CurrentPageInfo,
   DataEntityDetailsState,
   DataEntityLineageById,
@@ -162,6 +163,7 @@ export interface DataEntitiesState {
     entityTypes: Dictionary<DataEntityType>;
     entityClasses: Dictionary<DataEntityClass>;
   };
+  dataEntityUsageInfo: DataEntityUsageInfo;
 }
 
 export interface SearchState {

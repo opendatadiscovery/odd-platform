@@ -115,14 +115,17 @@ declare module '@mui/material/styles' {
 declare module '@mui/material/styles/createTypography' {
   interface Typography {
     errorCode: TypographyStyle;
+    totalCountTitle: TypographyStyle;
   }
 
   interface TypographyOptions {
     errorCode?: TypographyStyleOptions;
+    totalCountTitle?: TypographyStyleOptions;
   }
 }
 declare module '@mui/material/Typography/Typography' {
   interface TypographyPropsVariantOverrides {
     errorCode: true;
+    totalCountTitle: true;
   }
 }

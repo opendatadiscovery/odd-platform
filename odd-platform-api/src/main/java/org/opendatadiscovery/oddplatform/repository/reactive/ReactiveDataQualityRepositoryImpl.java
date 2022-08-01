@@ -129,7 +129,7 @@ public class ReactiveDataQualityRepositoryImpl implements ReactiveDataQualityRep
         return new TestStatusWithSeverityDto(
             QualityRunStatus.valueOf(record.value1()),
             record.value2() == null
-                ? DataQualityTestSeverity.AVERAGE
+                ? DataQualityTestSeverity.MAJOR
                 : DataQualityTestSeverity.valueOf(record.value2())
         );
     }

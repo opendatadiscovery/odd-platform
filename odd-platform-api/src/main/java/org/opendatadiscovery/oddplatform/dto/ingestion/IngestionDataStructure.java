@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Getter;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassesTotalDelta;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
@@ -16,6 +17,7 @@ public class IngestionDataStructure {
     private final List<EnrichedDataEntityIngestionDto> newEntities;
     private final List<EnrichedDataEntityIngestionDto> existingEntities;
     private final List<EnrichedDataEntityIngestionDto> allEntities;
+    private final DataEntityClassesTotalDelta entityClassesTotalDelta;
 
     private final List<IngestionTaskRun> taskRuns;
     private final List<LineagePojo> lineageRelations;
@@ -36,7 +38,8 @@ public class IngestionDataStructure {
                                   final List<DataQualityTestRelationsPojo> dataQARelations,
                                   final List<AlertPojo> earlyAlerts,
                                   final List<GroupEntityRelationsPojo> groupEntityRelations,
-                                  final List<GroupParentGroupRelationsPojo> groupParentGroupRelations) {
+                                  final List<GroupParentGroupRelationsPojo> groupParentGroupRelations,
+                                  final DataEntityClassesTotalDelta entityClassesTotalDelta) {
         this.newEntities = newEntities;
         this.existingEntities = existingEntities;
         this.allEntities = Stream.concat(newEntities.stream(), existingEntities.stream()).collect(Collectors.toList());
@@ -47,6 +50,7 @@ public class IngestionDataStructure {
         this.earlyAlerts = earlyAlerts;
         this.groupEntityRelations = groupEntityRelations;
         this.groupParentGroupRelations = groupParentGroupRelations;
+        this.entityClassesTotalDelta = entityClassesTotalDelta;
 
         this.existingIds = extractIds(existingEntities);
         this.newIds = extractIds(newEntities);

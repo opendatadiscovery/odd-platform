@@ -3,10 +3,10 @@ import { HierarchyPointNode } from 'd3-hierarchy';
 import { select } from 'd3-selection';
 import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
 import { useHistory } from 'react-router-dom';
-import { dataEntityLineagePath } from 'lib/paths';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
 import { DataEntityClassNameEnum } from 'generated-sources';
 import { StreamType } from 'redux/interfaces';
+import { useAppPaths } from 'lib/hooks';
 import NodeListButton from './NodeListButton/NodeListButton';
 import GroupedEntitiesListModal from './GroupedEntitiesListModal/GroupedEntitiesListModal';
 import * as S from './AppGraphNodeStyles';
@@ -49,10 +49,11 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   setInitialDepth,
 }) => {
   const history = useHistory();
+  const { dataEntityDetailsPath } = useAppPaths();
 
   const detailsLink =
     parent && data.externalName
-      ? dataEntityLineagePath(
+      ? dataEntityDetailsPath(
           data.originalGroupId ? data.originalGroupId : data.id
         )
       : '#';

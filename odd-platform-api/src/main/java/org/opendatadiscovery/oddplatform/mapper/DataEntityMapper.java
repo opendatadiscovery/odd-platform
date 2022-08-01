@@ -9,12 +9,14 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormD
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 
@@ -48,4 +50,7 @@ public interface DataEntityMapper
     DataEntityRef mapRef(final DataEntityDto dto);
 
     DataEntityRef mapRef(final DataEntityPojo pojo);
+
+    DataEntityUsageInfo mapUsageInfo(final DataEntityStatisticsPojo pojo,
+                                     final Long filledEntitiesCount);
 }
