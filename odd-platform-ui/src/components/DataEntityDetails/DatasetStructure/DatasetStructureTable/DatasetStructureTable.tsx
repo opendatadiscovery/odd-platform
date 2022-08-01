@@ -8,14 +8,14 @@ interface DatasetStructureTableProps {
   dataEntityId: number;
   versionId?: number;
   datasetStructureRoot: DataSetField[];
-  scrollToIndex: number;
+  indexToScroll: number;
 }
 
 const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   dataEntityId,
   versionId,
   datasetStructureRoot,
-  scrollToIndex,
+  indexToScroll,
 }) => (
   <S.Container item xs={12} sx={{ mt: 2.5 }}>
     <S.TableHeader container>
@@ -38,7 +38,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     </S.TableHeader>
     <Grid item xs={12} container>
       <DatasetStructureList
-        scrollToIndex={scrollToIndex}
+        indexToScroll={indexToScroll}
         dataEntityId={dataEntityId}
         versionId={versionId}
         datasetStructureRoot={datasetStructureRoot}

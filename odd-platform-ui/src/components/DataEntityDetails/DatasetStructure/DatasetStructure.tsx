@@ -3,6 +3,7 @@ import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import round from 'lodash/round';
 import toPairs from 'lodash/toPairs';
+import ClearIcon from 'components/shared/Icons/ClearIcon';
 import {
   DataSetApiGetDataSetStructureByVersionIdRequest,
   DataSetApiGetDataSetStructureLatestRequest,
@@ -54,7 +55,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
 }) => {
   const history = useHistory();
   const [searchText, setSearchText] = React.useState<string>('');
-  const [scrollToIndex, setScrollToIndex] = React.useState(-1);
+  const [indexToScroll, setIndexToScroll] = React.useState(-1);
 
   const datasetStructureRoot = useAppSelector(state =>
     getDatasetStructure(state, {
@@ -89,7 +90,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
       const indexItem = datasetStructureRoot.findIndex(item =>
         item.name.toLowerCase().includes(searchText.toLowerCase())
       );
-      setScrollToIndex(indexItem);
+      setIndexToScroll(indexItem);
     }, 500),
     [searchText]
   );
@@ -105,6 +106,11 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     if (event.key === 'Enter') {
       handleSearch();
     }
+  };
+
+  const clearSearchField = () => {
+    setSearchText('');
+    setIndexToScroll(-1);
   };
 
   return (
@@ -182,6 +188,12 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
                 InputProps={{ 'aria-label': 'search' }}
                 onKeyDown={handleKeyDown}
                 onChange={handleInputChange}
+                customEndAdornment={{
+                  variant: 'clear',
+                  showAdornment: !!searchText,
+                  onCLick: clearSearchField,
+                  icon: <ClearIcon />,
+                }}
               />
               {datasetStructureVersion ? (
                 <>
@@ -210,7 +222,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             <DatasetStructureTableContainer
               dataEntityId={dataEntityId}
               versionId={versionIdParam}
-              scrollToIndex={scrollToIndex}
+              indexToScroll={indexToScroll}
             />
           ) : null}
         </Grid>
