@@ -53,10 +53,12 @@ jobs:
   update_tag:
     needs: ["images"]
     runs-on: ubuntu-latest
+    env:
+      ODD_GIT_TOKEN: ${{ secrets.ODD_GIT_TOKEN }}
     steps:
       - name: Masking token
         run: |
-          INP_GIT_TOKEN=$(echo ${{ secrets.ODD_GIT_TOKEN }} | base64 -d)
+          INP_GIT_TOKEN=$(echo ${ODD_GIT_TOKEN} | base64 -d)
           echo ::add-mask::$INP_GIT_TOKEN
           echo MASKED_ODD_GIT_TOKEN="$INP_GIT_TOKEN" >> $GITHUB_ENV
       - uses: actions/checkout@v2
