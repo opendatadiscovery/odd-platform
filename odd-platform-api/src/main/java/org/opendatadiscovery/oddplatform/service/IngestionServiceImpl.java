@@ -39,7 +39,6 @@ import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
@@ -59,9 +58,6 @@ import org.opendatadiscovery.oddplatform.service.ingestion.LabelIngestionService
 import org.opendatadiscovery.oddplatform.service.ingestion.TagIngestionService;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
-import org.opendatadiscovery.oddrn.Generator;
-import org.opendatadiscovery.oddrn.model.ODDPlatformDataSourcePath;
-import org.opendatadiscovery.oddrn.model.OddrnPath;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -97,15 +93,16 @@ public class IngestionServiceImpl implements IngestionService {
     private final DataEntityTaskRunMapper dataEntityTaskRunMapper;
 
     private final MetricService metricService;
-
-    private final Generator oddrnGenerator = new Generator();
     private final MetadataIngestionService metadataIngestionService;
     private final TagIngestionService tagIngestionService;
     private final LabelIngestionService labelIngestionService;
 
     @Override
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
-        return acquireDataSourceId(dataEntityList.getDataSourceOddrn())
+        return dataSourceRepository.getDtoByOddrn(dataEntityList.getDataSourceOddrn())
+            .map(dataSource -> dataSource.dataSource().getId())
+            .switchIfEmpty(Mono.error(() -> new NotFoundException(
+                "Data source with oddrn %s hasn't been found", dataEntityList.getDataSourceOddrn())))
             .map(dsId -> buildStructure(dataEntityList, dsId))
             .map(this::ingestDependencies)
             .flatMap(this::ingestCompanions)
@@ -149,25 +146,6 @@ public class IngestionServiceImpl implements IngestionService {
                     .build()
                 ))
             );
-    }
-
-    private Mono<Long> acquireDataSourceId(final String dataSourceOddrn) {
-        final Mono<Long> createDataSourceByOddrn = Mono.just(dataSourceOddrn)
-            .map(this::parseOddrn)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .switchIfEmpty(
-                Mono.error(() -> new IllegalArgumentException("Oddrn parser returned empty object")))
-            .filter(path -> path instanceof ODDPlatformDataSourcePath)
-            .switchIfEmpty(
-                Mono.error(() -> new NotFoundException("Data source with oddrn %s hasn't been found", dataSourceOddrn)))
-            .map(path -> ((ODDPlatformDataSourcePath) path).getDatasourceId())
-            .flatMap(id -> dataSourceRepository.injectOddrn(id, dataSourceOddrn))
-            .map(DataSourcePojo::getId);
-
-        return dataSourceRepository.getDtoByOddrn(dataSourceOddrn)
-            .map(dataSource -> dataSource.dataSource().getId())
-            .switchIfEmpty(createDataSourceByOddrn);
     }
 
     private IngestionDataStructure buildStructure(final DataEntityList dataEntityList,
@@ -538,13 +516,5 @@ public class IngestionServiceImpl implements IngestionService {
 
     private DatasetVersionPojo mapNewDatasetVersion(final EnrichedDataEntityIngestionDto entity) {
         return datasetVersionMapper.mapDatasetVersion(entity.getOddrn(), entity.getDataSet().structureHash(), 1L);
-    }
-
-    private Optional<OddrnPath> parseOddrn(final String oddrn) {
-        try {
-            return oddrnGenerator.parse(oddrn);
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Couldn't parse %s into OddrnPath", oddrn), e);
-        }
     }
 }
