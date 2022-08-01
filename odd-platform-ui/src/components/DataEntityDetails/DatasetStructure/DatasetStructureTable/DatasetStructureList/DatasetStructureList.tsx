@@ -6,13 +6,14 @@ import {
 import { List, ListRowProps } from 'react-virtualized/dist/commonjs/List';
 import AutoSizer from 'react-virtualized/dist/commonjs/AutoSizer';
 import { DataSetField } from 'generated-sources';
-import DatasetStructureItemContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetStructureItemContainer';
+import DatasetStructureItemContainer from './DatasetStructureItem/DatasetStructureItemContainer';
 
 interface DatasetStructureListProps {
   dataEntityId: number;
   versionId?: number;
   datasetStructureRoot: DataSetField[];
   datasetRowsCount: number;
+  indexToScroll: number;
 }
 
 const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
@@ -20,17 +21,16 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
   datasetRowsCount,
   datasetStructureRoot,
   versionId,
+  indexToScroll,
 }) => {
   const cache = new CellMeasurerCache({
     defaultHeight: 50,
     fixedWidth: true,
   });
-
   const rootStructureItems = React.useMemo(
     () => datasetStructureRoot.filter(field => !field.parentFieldId),
     [datasetStructureRoot]
   );
-
   const renderStructureItem = React.useCallback(
     (field: DataSetField, nesting: number, onSizeChange: () => void) => (
       <DatasetStructureItemContainer
@@ -78,7 +78,9 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
             rowCount={datasetRowsCount}
             rowHeight={cache.rowHeight}
             rowRenderer={renderListItem}
+            scrollToIndex={indexToScroll}
             deferredMeasurementCache={cache}
+            scrollToAlignment="start"
           />
         )}
       </AutoSizer>
