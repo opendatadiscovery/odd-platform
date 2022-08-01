@@ -53,16 +53,6 @@ public class MetadataFieldValueRepositoryImpl
     }
 
     @Override
-    public MetadataFieldValuePojo update(final MetadataFieldValuePojo pojo) {
-        final MetadataFieldValueRecord r = pojoToRecord(pojo);
-        r.changed(METADATA_FIELD_VALUE.METADATA_FIELD_ID, false);
-        r.changed(METADATA_FIELD_VALUE.DATA_ENTITY_ID, false);
-        r.store();
-
-        return recordToPojo(r);
-    }
-
-    @Override
     public List<MetadataDto> getDtosByDataEntityId(final long dataEntityId) {
         return dslContext
             .select(METADATA_FIELD.fields())
@@ -82,14 +72,6 @@ public class MetadataFieldValueRepositoryImpl
             .fetchStream()
             .map(this::recordToPojo)
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public void delete(final long dataEntityId, final long metadataFieldId) {
-        dslContext.deleteFrom(METADATA_FIELD_VALUE)
-            .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(dataEntityId))
-            .and(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(metadataFieldId))
-            .execute();
     }
 
     private MetadataDto metadataDto(final Record r) {

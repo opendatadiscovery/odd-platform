@@ -8,6 +8,4 @@ public interface MetadataFieldValueRepository extends CRUDRepository<MetadataFie
     List<MetadataDto> getDtosByDataEntityId(final long dataEntityId);
 
     List<MetadataFieldValuePojo> listByDataEntityIds(final List<Long> dataEntityIds);
-
-    void delete(final long dataEntityId, final long metadataFieldId);
 }

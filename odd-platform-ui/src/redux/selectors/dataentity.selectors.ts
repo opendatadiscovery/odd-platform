@@ -95,6 +95,21 @@ export const getPopularEntities = createSelector(
   dataEntities => dataEntities.popular
 );
 
+export const getDataEntitiesUsageTotalCount = createSelector(
+  dataEntitiesState,
+  dataEntities => dataEntities.dataEntityUsageInfo.totalCount
+);
+
+export const getDataEntitiesUsageUnfilledCount = createSelector(
+  dataEntitiesState,
+  dataEntities => dataEntities.dataEntityUsageInfo.unfilledCount
+);
+
+export const getDataEntityClassesInfo = createSelector(
+  dataEntitiesState,
+  dataEntities => dataEntities.dataEntityUsageInfo.dataEntityClassesInfo
+);
+
 // Details
 export const getDataEntityDetailsFetchingStatus =
   createLegacyFetchingSelector(actions.fetchDataEntityDetailsAction);

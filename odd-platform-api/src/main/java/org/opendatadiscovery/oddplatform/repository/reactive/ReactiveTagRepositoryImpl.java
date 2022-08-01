@@ -46,7 +46,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     public Mono<TagDto> getDto(final long id) {
         final var query = DSL.select(TAG.fields())
             .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
-            .select(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL).as(EXTERNAL_FIELD))
+            .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL), false).as(EXTERNAL_FIELD))
             .from(TAG)
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .where(idCondition(id))
@@ -60,7 +60,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
     public Mono<List<TagDto>> listDataEntityDtos(final Long dataEntityId) {
         final var query = DSL.select(TAG.fields())
             .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
-            .select(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL).as(EXTERNAL_FIELD))
+            .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL), false).as(EXTERNAL_FIELD))
             .from(TAG)
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
             .where(addSoftDeleteFilter(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID.eq(dataEntityId)))
@@ -108,7 +108,7 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
         final var cteSelect = DSL.with(tagCte.getName())
             .as(select)
             .select(tagCte.fields())
-            .select(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL).as(EXTERNAL_FIELD))
+            .select(DSL.coalesce(DSL.boolOr(TAG_TO_DATA_ENTITY.EXTERNAL), false).as(EXTERNAL_FIELD))
             .select(DSL.count(TAG_TO_DATA_ENTITY.TAG_ID).as(COUNT_FIELD))
             .from(tagCte.getName())
             .leftJoin(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(tagCte.field(TAG.ID)))

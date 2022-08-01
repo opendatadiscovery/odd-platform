@@ -3,7 +3,6 @@ package org.opendatadiscovery.oddplatform.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,11 +36,14 @@ import org.opendatadiscovery.oddplatform.mapper.DataEntityTaskRunMapper;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityTaskRunMapperImpl;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.DatasetFieldMapperImpl;
+import org.opendatadiscovery.oddplatform.mapper.DatasetVersionMapper;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapper;
 import org.opendatadiscovery.oddplatform.mapper.ingestion.IngestionMapperImpl;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
@@ -51,14 +53,14 @@ import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepositoryImpl;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
-import org.opendatadiscovery.oddplatform.repository.DatasetStructureRepository;
-import org.opendatadiscovery.oddplatform.repository.DatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupEntityRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetStructureRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetVersionRepository;
 import org.opendatadiscovery.oddplatform.service.ingestion.TagIngestionService;
 import org.opendatadiscovery.oddplatform.service.metadata.MetadataIngestionService;
@@ -69,9 +71,10 @@ import reactor.test.StepVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.when;
 import static org.opendatadiscovery.oddplatform.utils.JSONTestUtils.deserializeJson;
 
@@ -93,13 +96,16 @@ public class IngestionServiceImplTest {
     private DataEntityRepositoryImpl dataEntityRepository;
 
     @Mock
-    private DatasetVersionRepository datasetVersionRepository;
+    private DatasetVersionMapper datasetVersionMapper;
+
+    @Mock
+    private DatasetStructureService datasetStructureService;
 
     @Mock
     private ReactiveDatasetVersionRepository reactiveDatasetVersionRepository;
 
     @Mock
-    private DatasetStructureRepository datasetStructureRepository;
+    private ReactiveDatasetStructureRepository reactiveDatasetStructureRepository;
 
     @Mock
     private MetadataFieldRepository metadataFieldRepository;
@@ -124,6 +130,9 @@ public class IngestionServiceImplTest {
 
     @Mock
     private GroupParentGroupRelationRepository groupParentGroupRelationRepository;
+
+    @Mock
+    private ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
 
     @Spy
     private IngestionMapper ingestionMapper = new IngestionMapperImpl();
@@ -166,6 +175,9 @@ public class IngestionServiceImplTest {
     private ArgumentCaptor<List<DatasetVersionPojo>> datasetVersionCaptor;
 
     @Captor
+    private ArgumentCaptor<List<DatasetStructurePojo>> datasetStructurePojoCaptor;
+
+    @Captor
     private ArgumentCaptor<Map<String, List<DatasetFieldPojo>>> datasetFieldsMapCaptor;
 
     @Captor
@@ -181,7 +193,11 @@ public class IngestionServiceImplTest {
         when(dataSourceRepository.getDtoByOddrn(anyString())).thenReturn(Mono.just(dataSourceDto));
         when(metadataIngestionService.ingestMetadata(any())).thenReturn(Mono.empty());
         when(tagIngestionService.ingestExternalTags(any())).thenReturn(Mono.empty());
-        when(reactiveDatasetVersionRepository.getLatestVersions(any())).thenReturn(Mono.empty());
+        when(dataEntityStatisticsRepository.updateCounts(anyLong(), anyMap()))
+            .thenReturn(Mono.just(new DataEntityStatisticsPojo()));
+        when(datasetStructureService.createDatasetStructure(any(), any())).thenReturn(Mono.empty());
+        when(datasetStructureService.getNewDatasetVersionsIfChanged(any(), any())).thenReturn(Mono.empty());
+        when(datasetStructureService.getLastDatasetStructureVersionDelta(any())).thenReturn(Mono.empty());
     }
 
     @Nested
@@ -248,32 +264,6 @@ public class IngestionServiceImplTest {
                 .map(DataEntity::getDataset).filter(Objects::nonNull)
                 .flatMap(i -> i.getFieldList().stream())
                 .collect(Collectors.toList());
-
-            Mockito.verify(datasetStructureRepository, atLeastOnce())
-                .bulkCreate(datasetVersionCaptor.capture(), datasetFieldsMapCaptor.capture());
-
-            assertThat(datasetVersionCaptor.getAllValues().get(0).stream()
-                .map(DatasetVersionPojo::getDatasetOddrn)
-                .collect(Collectors.toList())).hasSameElementsAs(actualDatasetOddrns);
-
-            assertThat(datasetFieldsMapCaptor.getAllValues().get(0).keySet())
-                .hasSameElementsAs(new HashSet<>(actualDatasetOddrns));
-
-            assertThat(datasetFieldsMapCaptor.getAllValues().get(0).values().stream()
-                .flatMap(i -> i.stream()
-                    .map(DatasetFieldPojo::getOddrn))
-                .collect(
-                    Collectors.toList()))
-                .hasSameElementsAs(dataSetFields.stream()
-                    .map(DataSetField::getOddrn)
-                    .collect(Collectors.toList()));
-
-            assertThat(datasetFieldsMapCaptor.getAllValues().get(0).values().stream()
-                .flatMap(i -> i.stream().map(DatasetFieldPojo::getName))
-                .collect(Collectors.toList()))
-                .hasSameElementsAs(dataSetFields.stream()
-                    .map(DataSetField::getName)
-                    .collect(Collectors.toList()));
         }
     }
 
@@ -321,10 +311,10 @@ public class IngestionServiceImplTest {
             assertThat(lineageCaptor.getValue()).isEqualTo(actualLineage);
 
             final Set<String> actualHollowOddrns = Stream.concat(
-                    Stream.of(dataEntityList.getDataSourceOddrn()),
-                    dataEntityList.getItems().stream()
-                        .filter(i -> i.getType() != DataEntityType.DAG)
-                        .map(DataEntity::getOddrn))
+                Stream.of(dataEntityList.getDataSourceOddrn()),
+                dataEntityList.getItems().stream()
+                    .filter(i -> i.getType() != DataEntityType.DAG)
+                    .map(DataEntity::getOddrn))
                 .collect(Collectors.toSet());
             Mockito.verify(dataEntityRepository).createHollow(hollowOddrnCaptor.capture());
             assertThat(hollowOddrnCaptor.getValue()).hasSameElementsAs(actualHollowOddrns);

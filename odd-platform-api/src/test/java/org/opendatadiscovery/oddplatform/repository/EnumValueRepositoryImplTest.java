@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.EnumValuePojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveEnumValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import reactor.test.StepVerifier;
@@ -20,13 +21,14 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
     private ReactiveEnumValueRepository enumValueRepository;
 
     @Autowired
-    private DatasetFieldRepository datasetFieldRepository;
+    private ReactiveDatasetFieldRepository reactiveDatasetFieldRepository;
 
     @Test
     @DisplayName("Returns enums that weren't deleted for a given dataset field id")
     public void getEnumValuesByFieldIdTest() {
-        final var datasetFieldPojos = datasetFieldRepository
-            .bulkCreate(List.of(new DatasetFieldPojo().setName("main"), new DatasetFieldPojo().setName("other")));
+        final var datasetFieldPojos = reactiveDatasetFieldRepository
+            .bulkCreate(List.of(new DatasetFieldPojo().setName("main"), new DatasetFieldPojo().setName("other")))
+            .collectList().block();
 
         final long mainDatasetFieldId = datasetFieldPojos
             .stream()
@@ -87,7 +89,8 @@ public class EnumValueRepositoryImplTest extends BaseIntegrationTest {
             .setDatasetFieldId(datasetFieldId)
             .setIsDeleted(false);
 
-        datasetFieldRepository.bulkCreate(List.of(new DatasetFieldPojo().setId(datasetFieldId)));
+        reactiveDatasetFieldRepository.bulkCreate(List.of(new DatasetFieldPojo().setId(datasetFieldId)))
+            .collectList().block();
 
         enumValueRepository.bulkCreate(List.of(pojoToSoftDelete, pojoToKeep)).blockLast();
 

@@ -77,7 +77,7 @@ const TestReportDetailsOverview: React.FC = () => {
               <AppSelect
                 size="small"
                 defaultValue={
-                  qualityTest?.severity || DataQualityTestSeverity.AVERAGE
+                  qualityTest?.severity || DataQualityTestSeverity.MAJOR
                 }
                 onChange={handleSeverityChange}
               >

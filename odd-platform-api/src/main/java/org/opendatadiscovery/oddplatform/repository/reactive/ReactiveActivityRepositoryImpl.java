@@ -129,7 +129,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                               final ActivityEventTypeDto eventType) {
         final var countQuery = DSL.selectCount()
             .from(ACTIVITY)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID));
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID))
+            .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY));
         addJoins(countQuery, datasourceId, namespaceId, tagIds, ownerIds);
         final List<Condition> conditions =
             getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds, ownerIds, userIds, eventType);
@@ -147,7 +148,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                   final Long currentOwnerId) {
         final var countQuery = DSL.selectCount()
             .from(ACTIVITY)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID));
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID))
+            .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY));
         addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of(currentOwnerId));
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
             List.of(currentOwnerId), userIds, eventType);
@@ -165,7 +167,8 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
                                                   final List<String> oddrns) {
         final var countQuery = DSL.selectCount()
             .from(ACTIVITY)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID));
+            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(ACTIVITY.DATA_ENTITY_ID))
+            .leftJoin(USER_OWNER_MAPPING).on(USER_OWNER_MAPPING.OIDC_USERNAME.eq(ACTIVITY.CREATED_BY));
         addJoins(countQuery, datasourceId, namespaceId, tagIds, List.of());
         final List<Condition> conditions = getCommonConditions(beginDate, endDate, datasourceId, namespaceId, tagIds,
             List.of(), userIds, eventType);
