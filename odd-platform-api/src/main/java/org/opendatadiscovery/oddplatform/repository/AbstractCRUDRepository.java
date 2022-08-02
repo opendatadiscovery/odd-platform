@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -42,6 +43,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     protected final Table<R> recordTable;
     protected final Field<Long> idField;
     protected final Field<String> nameField;
+    protected final Field<LocalDateTime> createdAtField;
     protected final Field<LocalDateTime> updatedAtField;
     protected final Class<P> pojoClass;
 
@@ -154,8 +156,10 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
 
                 final Table<?> table = DSL.table(result);
 
+                final List<Field<?>> nonUpdatableFields = getNonUpdatableFields();
                 final Map<? extends Field<?>, Field<?>> fields = Arrays
                     .stream(recordTable.fields())
+                    .filter(f -> !nonUpdatableFields.contains(f))
                     .map(r -> Pair.of(r, table.field(r.getName())))
                     .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
@@ -194,6 +198,17 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
 
     protected List<Condition> listCondition(final String nameQuery) {
         return StringUtils.hasLength(nameQuery) ? List.of(nameField.containsIgnoreCase(nameQuery)) : emptyList();
+    }
+
+    protected List<Field<?>> getNonUpdatableFields() {
+        final List<Field<?>> fields = new ArrayList<>();
+        if (idField != null) {
+            fields.add(idField);
+        }
+        if (createdAtField != null) {
+            fields.add(createdAtField);
+        }
+        return fields;
     }
 
     protected <E> List<E> bulkInsert(final Collection<E> entities, final Class<E> entityClass) {
