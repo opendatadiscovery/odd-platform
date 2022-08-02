@@ -2,8 +2,8 @@ import React from 'react';
 import { MenuItemProps } from '@mui/material';
 import { Variant } from '@mui/material/styles/createTypography';
 import {
-  StyledAppMenuItem,
   StyledAppListItemText,
+  StyledAppMenuItem,
 } from './AppMenuItemStyles';
 
 interface AppMenuItemProps
@@ -22,7 +22,7 @@ const AppMenuItem: React.FC<AppMenuItemProps> = ({
   onClick,
   value,
   divider,
-  maxWidth,
+  maxWidth = 400,
   minWidth,
   removeTextStyles = false,
   fontVariant = 'body1',

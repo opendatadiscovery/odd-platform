@@ -1,96 +1,26 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { DatasetStructureState, RootState } from 'redux/interfaces';
-import isNumber from 'lodash/isNumber';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import { EnumValue } from 'generated-sources';
+import { emptyArr } from 'lib/constants';
 
-const getDatasetStructureState = ({
-  datasetStructure,
-}: RootState): DatasetStructureState => datasetStructure;
-
-export const getDatasetVersionId = (
-  { datasetStructure }: RootState,
-  {
-    datasetId,
-    versionId,
-  }: { datasetId?: string | number; versionId?: string | number }
-) => {
-  if (versionId) {
-    const versionIdNum = isNumber(versionId)
-      ? versionId
-      : parseInt(versionId, 10);
-    return datasetStructure.allFieldIdsByVersion[versionIdNum]
-      ? versionIdNum
-      : undefined;
-  }
-  return datasetId
-    ? datasetStructure.latestVersionByDataset[datasetId]
-    : undefined;
-};
-
-export const datasetParentFieldId = (
-  _: RootState,
-  { parentField }: { parentField?: number }
-) => parentField;
+interface DatasetStructureIds {
+  datasetId: number;
+  versionId?: number;
+  parentFieldId?: number;
+}
 
 export const getDataSetStructureFetchingStatus = createStatusesSelector(
   actions.fetchDataSetStructureActionType
 );
 export const getDataSetStructureLatestFetchingStatus =
   createStatusesSelector(actions.fetchDataSetStructureLatestActionType);
-export const getDatasetStructure = createSelector(
-  getDatasetStructureState,
-  getDatasetVersionId,
-  datasetParentFieldId,
-  (datasetStructureState, versionId, parentFieldId) => {
-    if (!versionId) return [];
-    return (
-      datasetStructureState.allFieldIdsByVersion[versionId][
-        parentFieldId || 0
-      ]?.map(fieldId => datasetStructureState.fieldById[fieldId]) || []
-    );
-  }
-);
-
-export const getDatasetStructureTypeStats = createSelector(
-  getDatasetStructureState,
-  getDatasetVersionId,
-  (datasetStructureState, versionId) => {
-    if (!versionId) return {};
-    return datasetStructureState.statsByVersionId[versionId];
-  }
-);
-
-export const datasetFieldId = (_: RootState, fieldId: number) => fieldId;
 
 export const getDatasetFieldFormDataUpdatingStatus =
   createStatusesSelector(
     actions.updateDataSetFieldFormDataParamsActionType
   );
-
-export const getDatasetFieldData = createSelector(
-  getDatasetStructureState,
-  datasetFieldId,
-  (datasetStructureState, fieldId) => {
-    if (!fieldId) return { internalDescription: '', labels: [] };
-    return {
-      internalDescription:
-        datasetStructureState.fieldById[fieldId]?.internalDescription ||
-        '',
-      labels: datasetStructureState.fieldById[fieldId]?.labels || [],
-    };
-  }
-);
-
-export const getDatasetFieldEnums = createSelector(
-  getDatasetStructureState,
-  datasetFieldId,
-  (datasetStructureState, fieldId) => {
-    if (!fieldId) return [{ name: '', description: '' } as EnumValue];
-    return datasetStructureState.fieldEnumsByFieldId[fieldId] || [];
-  }
-);
 
 export const getDatasetFieldEnumsFetchingStatus = createStatusesSelector(
   actions.fetchDataSetFieldEnumActionType
@@ -99,3 +29,74 @@ export const getDatasetFieldEnumsFetchingStatus = createStatusesSelector(
 export const getDatasetFieldEnumsCreatingStatus = createStatusesSelector(
   actions.createDataSetFieldEnumActionType
 );
+
+const getDatasetStructureState = ({
+  datasetStructure,
+}: RootState): DatasetStructureState => datasetStructure;
+
+export const getDatasetVersionId = ({
+  datasetId,
+  versionId,
+}: DatasetStructureIds) =>
+  createSelector(getDatasetStructureState, datasetStructureState => {
+    if (versionId) {
+      return datasetStructureState.allFieldIdsByVersion[versionId]
+        ? versionId
+        : undefined;
+    }
+    return datasetId
+      ? datasetStructureState.latestVersionByDataset[datasetId]
+      : undefined;
+  });
+
+export const getDatasetStructure = ({
+  datasetId,
+  versionId,
+  parentFieldId,
+}: DatasetStructureIds) =>
+  createSelector(
+    getDatasetStructureState,
+    getDatasetVersionId({ datasetId, versionId }),
+    (datasetStructureState, currentVersionId) => {
+      if (!currentVersionId) return [];
+      return (
+        datasetStructureState.allFieldIdsByVersion[currentVersionId][
+          parentFieldId || 0
+        ]?.map(fieldId => datasetStructureState.fieldById[fieldId]) || []
+      );
+    }
+  );
+
+export const getDatasetStructureTypeStats = ({
+  datasetId,
+  versionId,
+}: DatasetStructureIds) =>
+  createSelector(
+    getDatasetStructureState,
+    getDatasetVersionId({ datasetId, versionId }),
+    (datasetStructureState, currentVersionId) => {
+      if (!currentVersionId) return {};
+      return datasetStructureState.statsByVersionId[currentVersionId];
+    }
+  );
+
+export const getDatasetFieldData = (datasetFieldId: number) =>
+  createSelector(getDatasetStructureState, datasetStructureState => {
+    if (!datasetFieldId) return { internalDescription: '', labels: [] };
+    return {
+      internalDescription:
+        datasetStructureState.fieldById[datasetFieldId]
+          ?.internalDescription || '',
+      labels:
+        datasetStructureState.fieldById[datasetFieldId]?.labels || [],
+    };
+  });
+
+export const getDatasetFieldEnums = (datasetFieldId: number) =>
+  createSelector(getDatasetStructureState, datasetStructureState => {
+    if (!datasetFieldId)
+      return [{ name: '', description: '' } as EnumValue];
+    return (
+      datasetStructureState.fieldEnumsByFieldId[datasetFieldId] || emptyArr
+    );
+  });

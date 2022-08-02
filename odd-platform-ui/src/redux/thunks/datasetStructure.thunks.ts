@@ -7,12 +7,11 @@ import {
   DatasetFieldApiCreateEnumValueRequest,
   DatasetFieldApiGetEnumValuesRequest,
   DatasetFieldApiUpdateDatasetFieldRequest,
-  DataSetStructure,
-  EnumValueList,
 } from 'generated-sources';
 import {
-  PartialEntityUpdateParams,
-  UpdateDataSetFieldFormDataParams,
+  DataSetFieldEnumsResponse,
+  DataSetStructureResponse,
+  UpdateDataSetFieldFormResponse,
 } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import * as actions from 'redux/actions';
@@ -23,92 +22,94 @@ const datasetApiClient = new DataSetApi(apiClientConf);
 const datasetFieldApiClient = new DatasetFieldApi(apiClientConf);
 
 export const fetchDataSetStructureLatest = createAsyncThunk<
-  PartialEntityUpdateParams<{
-    datasetStructure: DataSetStructure;
-    latest?: boolean;
-  }>,
+  DataSetStructureResponse,
   DataSetApiGetDataSetStructureLatestRequest
 >(
   actions.fetchDataSetStructureLatestActionType,
   async ({ dataEntityId }) => {
-    const response = await datasetApiClient.getDataSetStructureLatest({
-      dataEntityId,
-    });
+    const { dataSetVersion, fieldList } =
+      await datasetApiClient.getDataSetStructureLatest({
+        dataEntityId,
+      });
+
     return {
-      entityId: dataEntityId,
-      value: {
-        datasetStructure: response,
-        latest: true,
-      },
+      dataEntityId,
+      dataSetVersionId: dataSetVersion.id,
+      fieldList,
+      isLatestVersion: true,
     };
   }
 );
 
 export const fetchDataSetStructure = createAsyncThunk<
-  PartialEntityUpdateParams<{
-    datasetStructure: DataSetStructure;
-    latest?: boolean;
-  }>,
+  DataSetStructureResponse,
   DataSetApiGetDataSetStructureByVersionIdRequest
 >(
   actions.fetchDataSetStructureActionType,
   async ({ dataEntityId, versionId }) => {
-    const response = await datasetApiClient.getDataSetStructureByVersionId(
-      { dataEntityId, versionId }
-    );
+    const { dataSetVersion, fieldList } =
+      await datasetApiClient.getDataSetStructureByVersionId({
+        dataEntityId,
+        versionId,
+      });
+
     return {
-      entityId: dataEntityId,
-      value: {
-        datasetStructure: response,
-      },
+      dataEntityId,
+      dataSetVersionId: dataSetVersion.id,
+      fieldList,
+      isLatestVersion: false,
     };
   }
 );
 
 export const updateDataSetFieldFormData = createAsyncThunk<
-  UpdateDataSetFieldFormDataParams,
+  UpdateDataSetFieldFormResponse,
   DatasetFieldApiUpdateDatasetFieldRequest
 >(
   actions.updateDataSetFieldFormDataParamsActionType,
   async ({ datasetFieldId, datasetFieldUpdateFormData }) => {
-    const response = await datasetFieldApiClient.updateDatasetField({
-      datasetFieldId,
-      datasetFieldUpdateFormData,
-    });
+    const { internalDescription, labels } =
+      await datasetFieldApiClient.updateDatasetField({
+        datasetFieldId,
+        datasetFieldUpdateFormData,
+      });
+
     return {
       datasetFieldId,
-      internalDescription: response.internalDescription,
-      labels: response.labels,
+      internalDescription,
+      labels,
     };
   }
 );
 
 export const fetchDataSetFieldEnum = createAsyncThunk<
-  PartialEntityUpdateParams<EnumValueList>,
+  DataSetFieldEnumsResponse,
   DatasetFieldApiGetEnumValuesRequest
 >(actions.fetchDataSetFieldEnumActionType, async ({ datasetFieldId }) => {
-  const response = await datasetFieldApiClient.getEnumValues({
+  const { items } = await datasetFieldApiClient.getEnumValues({
     datasetFieldId,
   });
+
   return {
-    entityId: datasetFieldId,
-    value: response,
+    datasetFieldId,
+    enumValueList: items,
   };
 });
 
 export const createDataSetFieldEnum = createAsyncThunk<
-  PartialEntityUpdateParams<EnumValueList>,
+  DataSetFieldEnumsResponse,
   DatasetFieldApiCreateEnumValueRequest
 >(
   actions.createDataSetFieldEnumActionType,
   async ({ datasetFieldId, bulkEnumValueFormData }) => {
-    const response = await datasetFieldApiClient.createEnumValue({
+    const { items } = await datasetFieldApiClient.createEnumValue({
       datasetFieldId,
       bulkEnumValueFormData,
     });
+
     return {
-      entityId: datasetFieldId,
-      value: response,
+      datasetFieldId,
+      enumValueList: items,
     };
   }
 );

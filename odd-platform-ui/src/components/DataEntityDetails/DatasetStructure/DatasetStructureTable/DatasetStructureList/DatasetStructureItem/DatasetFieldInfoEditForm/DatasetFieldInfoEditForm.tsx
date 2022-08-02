@@ -2,9 +2,9 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
-  getDatasetFieldFormDataUpdatingStatus,
   getDatasetFieldData,
-} from 'redux/selectors/datasetStructure.selectors';
+  getDatasetFieldFormDataUpdatingStatus,
+} from 'redux/selectors';
 import { updateDataSetFieldFormData } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
@@ -32,9 +32,10 @@ const DatasetFieldInfoEditForm: React.FC<
   const { isLoading } = useAppSelector(
     getDatasetFieldFormDataUpdatingStatus
   );
-  const datasetFieldFormData = useAppSelector(state =>
-    getDatasetFieldData(state, datasetFieldId)
+  const datasetFieldFormData = useAppSelector(
+    getDatasetFieldData(datasetFieldId)
   );
+
   const methods = useForm<DatasetFieldInfoFormType>({
     defaultValues: {
       labels: datasetFieldFormData.labels.map(label => ({

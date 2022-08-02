@@ -43,7 +43,7 @@ public class ReactiveLabelRepositoryImpl
     @Override
     public Mono<LabelDto> getDto(final long id) {
         final var query = DSL.select(LABEL.fields())
-            .select(DSL.boolOr(LABEL_TO_DATASET_FIELD.EXTERNAL).as(EXTERNAL_FIELD))
+            .select(DSL.coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.EXTERNAL), false).as(EXTERNAL_FIELD))
             .from(LABEL)
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .where(idCondition(id))
@@ -56,7 +56,7 @@ public class ReactiveLabelRepositoryImpl
     @Override
     public Mono<List<LabelDto>> listDatasetFieldDtos(final Long datasetFieldId) {
         final var query = DSL.select(LABEL.fields())
-            .select(DSL.boolOr(LABEL_TO_DATASET_FIELD.EXTERNAL).as(EXTERNAL_FIELD))
+            .select(DSL.coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.EXTERNAL), false).as(EXTERNAL_FIELD))
             .from(LABEL)
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(LABEL.ID))
             .where(addSoftDeleteFilter(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(datasetFieldId)))
@@ -80,7 +80,7 @@ public class ReactiveLabelRepositoryImpl
         final var cteSelect = DSL.with(labelCte.getName())
             .as(select)
             .select(labelCte.fields())
-            .select(DSL.boolOr(LABEL_TO_DATASET_FIELD.EXTERNAL).as(EXTERNAL_FIELD))
+            .select(DSL.coalesce(DSL.boolOr(LABEL_TO_DATASET_FIELD.EXTERNAL), false).as(EXTERNAL_FIELD))
             .from(labelCte.getName())
             .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.LABEL_ID.eq(labelCte.field(LABEL.ID)))
             .groupBy(labelCte.fields());

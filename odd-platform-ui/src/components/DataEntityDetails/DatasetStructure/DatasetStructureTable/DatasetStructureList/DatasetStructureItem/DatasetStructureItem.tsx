@@ -16,26 +16,26 @@ import {
   DataSetFormattedStats,
   DataSetFormattedStatsKeys,
   DatasetStatsLabelMap,
-} from 'redux/interfaces/datasetStructure';
+} from 'redux/interfaces';
 import { format } from 'date-fns';
 import { useAppSelector } from 'lib/redux/hooks';
-import DatasetStructureKeyFieldLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureKeyFieldLabel/DatasetStructureKeyFieldLabel';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import { isComplexField } from 'lib/helpers';
-import { getDatasetStructure } from 'redux/selectors/datasetStructure.selectors';
+import { getDatasetStructure } from 'redux/selectors';
 import LineBreakIcon from 'components/shared/Icons/LineBreakIcon';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TruncatedLabel from 'components/shared/TruncatedLabel/TruncatedLabel';
-import DatasetFieldInfoEditForm from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
-import DatasetFieldEnumsEditForm from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsEditForm';
 import { ButtonColors } from 'components/shared/AppButton/AppButtonStyles';
+import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
+import DatasetFieldEnumsEditForm from './DatasetFieldEnumsEditForm/DatasetFieldEnumsEditForm';
+import DatasetStructureFieldTypeLabel from '../../../DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
+import DatasetStructureKeyFieldLabel from '../../../DatasetStructureKeyFieldLabel/DatasetStructureKeyFieldLabel';
 import { ColContainer } from '../../DatasetStructureTableStyles';
 import * as S from './DatasetStructureItemStyles';
 
@@ -92,11 +92,12 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       fieldStats = datasetField.stats
         ?.complexStats as DataSetFormattedStats;
   }
-  const datasetStructure = useAppSelector(state =>
-    getDatasetStructure(state, {
+
+  const datasetStructure = useAppSelector(
+    getDatasetStructure({
       datasetId: dataEntityId,
       versionId,
-      parentField: datasetField.id,
+      parentFieldId: datasetField.id,
     })
   );
 
@@ -168,6 +169,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       </AppButton>
     );
   }, [datasetField.enumValueCount]);
+
   return (
     <Grid container>
       <Grid item container>

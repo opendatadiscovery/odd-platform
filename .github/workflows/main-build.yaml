@@ -52,19 +52,14 @@ jobs:
         run: docker push ${{ env.REGISTRY }}/${{ github.event.repository.name }}:ci-${GITHUB_SHA::6}
   update_tag:
     needs: ["images"]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Masking token
-        run: |
-          INP_GIT_TOKEN=$(echo ${ODD_GIT_TOKEN} | base64 -d)
-          echo ::add-mask::$INP_GIT_TOKEN
-          echo MASKED_ODD_GIT_TOKEN="$INP_GIT_TOKEN" >> $GITHUB_ENV
       - uses: actions/checkout@v2
         with:
           repository: provectus/environment-state
-          token: ${{ env.MASKED_ODD_GIT_TOKEN }}
+          token: ${{ secrets.ODD_GIT_TOKEN }}
       - run: |
-          sed -i "s/tag:.*/tag: ci-${GITHUB_SHA::6}/" odd-platform.yaml
+          sed -i "s/tag:.*/tag: ci-${GITHUB_SHA::6}/" main/odd-platform.yaml
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
@@ -72,7 +67,7 @@ jobs:
           git push
   argocd_sync:
     needs: ["update_tag"]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Install ArgoCD CLI
         run: |

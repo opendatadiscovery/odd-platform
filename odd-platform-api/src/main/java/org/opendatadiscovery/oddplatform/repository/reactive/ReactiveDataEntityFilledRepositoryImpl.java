@@ -44,26 +44,10 @@ public class ReactiveDataEntityFilledRepositoryImpl implements ReactiveDataEntit
     }
 
     @Override
-    public Mono<DataEntityFilledPojo> markEntityFilledByDatasetField(final Long datasetFieldId) {
-        final var query = DSL.select(DATA_ENTITY.ID)
-            .from(DATASET_FIELD)
-            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .join(DATASET_VERSION).on(DATASET_VERSION.ID.eq(DATASET_STRUCTURE.DATASET_VERSION_ID))
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
-            .where(DATASET_FIELD.ID.eq(datasetFieldId));
-        final var insertQuery = DSL.insertInto(DATA_ENTITY_FILLED)
-            .select(query)
-            .onDuplicateKeyIgnore()
-            .returning();
-        return jooqReactiveOperations.mono(insertQuery)
-            .map(r -> r.into(DataEntityFilledPojo.class));
-    }
-
-    @Override
     public Mono<DataEntityFilledPojo> markEntityFilledByDatasetField(final Long datasetFieldId,
                                                                      final DataEntityFilledField filledField) {
         final Map<Field<?>, Object> updatedFieldsMap = buildUpdatedFieldsMap(filledField, true);
-        final var selectQuery = DSL.select(DATA_ENTITY.ID)
+        final var selectQuery = DSL.selectDistinct(DATA_ENTITY.ID)
             .from(DATASET_FIELD)
             .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
             .join(DATASET_VERSION).on(DATASET_VERSION.ID.eq(DATASET_STRUCTURE.DATASET_VERSION_ID))
@@ -95,7 +79,7 @@ public class ReactiveDataEntityFilledRepositoryImpl implements ReactiveDataEntit
     public Mono<DataEntityFilledPojo> markEntityUnfilledByDatasetField(final Long datasetFieldId,
                                                                        final DataEntityFilledField filledField) {
         final Map<Field<?>, Object> updatedFieldsMap = buildUpdatedFieldsMap(filledField, false);
-        final var selectQuery = DSL.select(DATA_ENTITY.ID)
+        final var selectQuery = DSL.selectDistinct(DATA_ENTITY.ID)
             .from(DATASET_FIELD)
             .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
             .join(DATASET_VERSION).on(DATASET_VERSION.ID.eq(DATASET_STRUCTURE.DATASET_VERSION_ID))

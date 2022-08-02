@@ -1,13 +1,12 @@
 import {
+  DataSetFieldEnumsResponse,
+  DataSetStructureResponse,
   DatasetStructureState,
   DataSetStructureTypesCount,
 } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
 import { createSlice } from '@reduxjs/toolkit';
-import { EnumValue } from 'generated-sources';
 import { datasetStructureActionTypePrefix } from 'redux/actions';
-
-import uniqBy from 'lodash/uniqBy';
 
 export const initialState: DatasetStructureState = {
   fieldById: {},
@@ -17,6 +16,76 @@ export const initialState: DatasetStructureState = {
   fieldEnumsByFieldId: {},
 };
 
+export const updateDatasetStructure = (
+  state: DatasetStructureState,
+  { payload }: { payload: DataSetStructureResponse }
+): DatasetStructureState => {
+  const { dataEntityId, dataSetVersionId, fieldList, isLatestVersion } =
+    payload;
+
+  return {
+    ...state,
+    fieldById: fieldList.reduce(
+      (memo, datasetField) => ({
+        ...memo,
+        [datasetField.id]: datasetField,
+      }),
+      state.fieldById
+    ),
+    allFieldIdsByVersion: {
+      ...state.allFieldIdsByVersion,
+      [dataSetVersionId]: fieldList.reduce<{
+        [key: number]: number[];
+      }>(
+        (fieldsList, field) => ({
+          ...fieldsList,
+          [field.parentFieldId || 0]: [
+            ...(fieldsList[field.parentFieldId || 0] || []),
+            field.id,
+          ],
+        }),
+        {}
+      ),
+    },
+    statsByVersionId: {
+      ...state.statsByVersionId,
+      [dataSetVersionId]: fieldList.reduce<DataSetStructureTypesCount>(
+        (typeStats, field) => ({
+          ...typeStats,
+          [field.type.type]: (typeStats[field.type.type] || 0) + 1,
+        }),
+        {}
+      ),
+    },
+    latestVersionByDataset: {
+      ...state.latestVersionByDataset,
+      ...(isLatestVersion ? { [dataEntityId]: dataSetVersionId } : null),
+    },
+  };
+};
+
+const updateDataSetFieldEnums = (
+  state: DatasetStructureState,
+  { payload }: { payload: DataSetFieldEnumsResponse }
+): DatasetStructureState => {
+  const { datasetFieldId, enumValueList } = payload;
+
+  return {
+    ...state,
+    fieldEnumsByFieldId: {
+      ...state.fieldEnumsByFieldId,
+      [datasetFieldId]: enumValueList || [],
+    },
+    fieldById: {
+      ...state.fieldById,
+      [datasetFieldId]: {
+        ...state.fieldById[datasetFieldId],
+        enumValueCount: enumValueList?.length,
+      },
+    },
+  };
+};
+
 export const datasetStructureSlice = createSlice({
   name: datasetStructureActionTypePrefix,
   initialState,
@@ -24,154 +93,41 @@ export const datasetStructureSlice = createSlice({
   extraReducers: builder => {
     builder.addCase(
       thunks.fetchDataSetStructureLatest.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        fieldById: payload.value.datasetStructure.fieldList.reduce(
-          (memo, datasetField) => ({
-            ...memo,
-            [datasetField.id]: datasetField,
-          }),
-          state.fieldById
-        ),
-        allFieldIdsByVersion: {
-          ...state.allFieldIdsByVersion,
-          [payload.value.datasetStructure.dataSetVersion.id]:
-            payload.value.datasetStructure.fieldList.reduce<{
-              [key: number]: number[];
-            }>(
-              (fieldsList, field) => ({
-                ...fieldsList,
-                [field.parentFieldId || 0]: [
-                  ...(fieldsList[field.parentFieldId || 0] || []),
-                  field.id,
-                ],
-              }),
-              {}
-            ),
-        },
-        statsByVersionId: {
-          ...state.statsByVersionId,
-          [payload.value.datasetStructure.dataSetVersion.id]:
-            payload.value.datasetStructure.fieldList.reduce<DataSetStructureTypesCount>(
-              (typeStats, field) => ({
-                ...typeStats,
-                [field.type.type]: (typeStats[field.type.type] || 0) + 1,
-              }),
-              {}
-            ),
-        },
-        latestVersionByDataset: {
-          ...state.latestVersionByDataset,
-          ...(payload.value.latest
-            ? {
-                [payload.entityId]:
-                  payload.value.datasetStructure.dataSetVersion.id,
-              }
-            : null),
-        },
-        fieldEnumsByFieldId: state.fieldEnumsByFieldId,
-      })
+      updateDatasetStructure
     );
+
     builder.addCase(
       thunks.fetchDataSetStructure.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        fieldById: payload.value.datasetStructure.fieldList.reduce(
-          (memo, datasetField) => ({
-            ...memo,
-            [datasetField.id]: datasetField,
-          }),
-          state.fieldById
-        ),
-        allFieldIdsByVersion: {
-          ...state.allFieldIdsByVersion,
-          [payload.value.datasetStructure.dataSetVersion.id]:
-            payload.value.datasetStructure.fieldList.reduce<{
-              [key: number]: number[];
-            }>(
-              (fieldsList, field) => ({
-                ...fieldsList,
-                [field.parentFieldId || 0]: [
-                  ...(fieldsList[field.parentFieldId || 0] || []),
-                  field.id,
-                ],
-              }),
-              {}
-            ),
-        },
-        statsByVersionId: {
-          ...state.statsByVersionId,
-          [payload.value.datasetStructure.dataSetVersion.id]:
-            payload.value.datasetStructure.fieldList.reduce<DataSetStructureTypesCount>(
-              (typeStats, field) => ({
-                ...typeStats,
-                [field.type.type]: (typeStats[field.type.type] || 0) + 1,
-              }),
-              {}
-            ),
-        },
-        latestVersionByDataset: {
-          ...state.latestVersionByDataset,
-          ...(payload.value.latest
-            ? {
-                [payload.entityId]:
-                  payload.value.datasetStructure.dataSetVersion.id,
-              }
-            : null),
-        },
-        fieldEnumsByFieldId: state.fieldEnumsByFieldId,
-      })
+      updateDatasetStructure
     );
+
     builder.addCase(
       thunks.updateDataSetFieldFormData.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        fieldById: {
-          ...state.fieldById,
-          [payload.datasetFieldId]: {
-            ...state.fieldById[payload.datasetFieldId],
-            internalDescription: payload.internalDescription,
-            labels: payload.labels,
+      (state, { payload }): DatasetStructureState => {
+        const { datasetFieldId, internalDescription, labels } = payload;
+
+        return {
+          ...state,
+          fieldById: {
+            ...state.fieldById,
+            [datasetFieldId]: {
+              ...state.fieldById[datasetFieldId],
+              internalDescription,
+              labels,
+            },
           },
-        },
-      })
+        };
+      }
     );
+
     builder.addCase(
       thunks.fetchDataSetFieldEnum.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        fieldEnumsByFieldId:
-          payload.value.items?.reduce(
-            (
-              memo: DatasetStructureState['fieldEnumsByFieldId'],
-              enumItem: EnumValue
-            ) => ({
-              ...memo,
-              [payload.entityId]: uniqBy(
-                [...(memo[payload.entityId] || []), enumItem],
-                'id'
-              ),
-            }),
-            { ...state.fieldEnumsByFieldId }
-          ) || [],
-      })
+      updateDataSetFieldEnums
     );
+
     builder.addCase(
       thunks.createDataSetFieldEnum.fulfilled,
-      (state, { payload }) => ({
-        ...state,
-        fieldEnumsByFieldId: {
-          ...state.fieldEnumsByFieldId,
-          [payload.entityId]: payload.value.items || [],
-        },
-        fieldById: {
-          ...state.fieldById,
-          [payload.entityId]: {
-            ...state.fieldById[payload.entityId],
-            enumValueCount: payload.value.items?.length,
-          },
-        },
-      })
+      updateDataSetFieldEnums
     );
   },
 });

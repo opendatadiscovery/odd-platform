@@ -1,8 +1,10 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.DSLContext;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.ResultQuery;
 import org.jooq.RowCountQuery;
 import org.jooq.SQLDialect;
@@ -44,5 +46,11 @@ public class JooqReactiveOperations {
     public <R extends Record> R newRecord(final Table<R> table,
                                           final Object source) {
         return mappingDSLContext.newRecord(table, source);
+    }
+
+    public <R extends Record> Result<Record> newResult(final Table<R> table, final List<R> records) {
+        final Result<Record> result = mappingDSLContext.newResult(table.fields());
+        result.addAll(records);
+        return result;
     }
 }

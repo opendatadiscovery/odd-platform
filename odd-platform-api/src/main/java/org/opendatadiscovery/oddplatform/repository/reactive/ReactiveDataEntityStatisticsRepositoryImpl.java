@@ -43,7 +43,7 @@ public class ReactiveDataEntityStatisticsRepositoryImpl implements ReactiveDataE
 
     private String jsonBuildObjectString(final Field<?> fieldToUpdate,
                                          final String newJson) {
-        return "%s || json_build_object(%s)::jsonb".formatted(fieldToUpdate, newJson);
+        return "COALESCE(%s, '{}'::jsonb) || json_build_object(%s)::jsonb".formatted(fieldToUpdate, newJson);
     }
 
     private String buildJsonFieldUpdateString(final int dataEntityClassId,
