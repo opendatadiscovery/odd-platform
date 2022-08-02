@@ -42,10 +42,12 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
                                                     final Class<P> pojoClass,
                                                     final Field<String> nameField,
                                                     final Field<Long> idField,
+                                                    final Field<LocalDateTime> createdAtField,
                                                     final Field<LocalDateTime> updatedAtField,
                                                     final Field<Boolean> deletedField,
                                                     final Field<LocalDateTime> deletedAtField) {
-        super(jooqReactiveOperations, jooqQueryHelper, recordTable, pojoClass, nameField, idField, updatedAtField);
+        super(jooqReactiveOperations, jooqQueryHelper, recordTable, pojoClass, nameField, idField,
+            createdAtField, updatedAtField);
 
         this.deletedField = deletedField;
         this.deletedAtField = deletedAtField;
@@ -110,5 +112,17 @@ public abstract class ReactiveAbstractSoftDeleteCRUDRepository<R extends Record,
             updatedFieldsMap.put(deletedAtField, LocalDateTime.now());
         }
         return updatedFieldsMap;
+    }
+
+    @Override
+    protected List<Field<?>> getNonUpdatableFields() {
+        final List<Field<?>> fields = new ArrayList<>(super.getNonUpdatableFields());
+        if (deletedField != null) {
+            fields.add(deletedField);
+        }
+        if (deletedAtField != null) {
+            fields.add(deletedAtField);
+        }
+        return fields;
     }
 }
