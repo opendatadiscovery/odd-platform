@@ -77,7 +77,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                                       final JooqQueryHelper jooqQueryHelper,
                                       final JooqFTSHelper jooqFTSHelper) {
         super(jooqReactiveOperations, jooqQueryHelper, TERM, TermPojo.class, TERM.NAME, TERM.ID,
-            TERM.UPDATED_AT, TERM.IS_DELETED, TERM.DELETED_AT);
+            TERM.CREATED_AT, TERM.UPDATED_AT, TERM.IS_DELETED, TERM.DELETED_AT);
         this.jooqRecordHelper = jooqRecordHelper;
         this.jooqFTSHelper = jooqFTSHelper;
     }
