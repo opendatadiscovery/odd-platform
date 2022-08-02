@@ -43,6 +43,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     private static final String DEFAULT_NAME_FIELD = "name";
     private static final String DEFAULT_ID_FIELD = "id";
     private static final String DEFAULT_UPDATED_AT_FIELD = "updated_at";
+    private static final String DEFAULT_CREATED_AT_FIELD = "created_at";
 
     private static final String PAGE_METADATA_TOTAL_FIELD = "_total";
     private static final String PAGE_METADATA_NEXT_FIELD = "_next";
@@ -56,6 +57,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
     protected final Field<String> nameField;
     protected final Field<Long> idField;
+    protected final Field<LocalDateTime> createdAtField;
     protected final Field<LocalDateTime> updatedAtField;
 
     public ReactiveAbstractCRUDRepository(final JooqReactiveOperations jooqReactiveOperations,
@@ -69,6 +71,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
         this.nameField = recordTable.field(DEFAULT_NAME_FIELD, String.class);
         this.idField = recordTable.field(DEFAULT_ID_FIELD, Long.class);
+        this.createdAtField = recordTable.field(DEFAULT_CREATED_AT_FIELD, LocalDateTime.class);
         this.updatedAtField = recordTable.field(DEFAULT_UPDATED_AT_FIELD, LocalDateTime.class);
     }
 
@@ -197,8 +200,10 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .map(rs -> {
                 final Table<?> table = DSL.table(jooqReactiveOperations.newResult(recordTable, rs));
 
+                final List<Field<?>> nonUpdatableFields = getNonUpdatableFields();
                 final Map<? extends Field<?>, Field<?>> fields = Arrays
                     .stream(recordTable.fields())
+                    .filter(f -> !nonUpdatableFields.contains(f))
                     .map(r -> Pair.of(r, table.field(r.getName())))
                     .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
@@ -252,6 +257,17 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
         return DSL
             .selectFrom(recordTable)
             .where(listCondition(query, ids));
+    }
+
+    protected List<Field<?>> getNonUpdatableFields() {
+        final List<Field<?>> fields = new ArrayList<>();
+        if (idField != null) {
+            fields.add(idField);
+        }
+        if (createdAtField != null) {
+            fields.add(createdAtField);
+        }
+        return fields;
     }
 
     private R createRecord(final P pojo, final LocalDateTime updatedAt) {

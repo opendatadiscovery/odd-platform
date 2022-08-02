@@ -38,8 +38,8 @@ public class ReactiveTagRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRep
 
     public ReactiveTagRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
                                      final JooqQueryHelper jooqQueryHelper) {
-        super(jooqReactiveOperations, jooqQueryHelper, TAG, TagPojo.class, TAG.NAME, TAG.ID, TAG.UPDATED_AT,
-            TAG.IS_DELETED, null);
+        super(jooqReactiveOperations, jooqQueryHelper, TAG, TagPojo.class, TAG.NAME, TAG.ID, TAG.CREATED_AT,
+            TAG.UPDATED_AT, TAG.IS_DELETED, null);
     }
 
     @Override
