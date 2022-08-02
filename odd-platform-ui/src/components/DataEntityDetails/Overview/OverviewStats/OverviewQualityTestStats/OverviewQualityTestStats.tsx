@@ -109,9 +109,6 @@ const OverviewQualityTestStats: React.FC<
                 }
               )}
           </LabeledInfoItem>
-          <LabeledInfoItem inline label="Severity" labelWidth={4}>
-            null
-          </LabeledInfoItem>
           <Grid container>
             <Link to={dataEntityHistoryPath(qualityTest?.id)}>
               <AppButton size="small" color="tertiary">
@@ -131,7 +128,8 @@ const OverviewQualityTestStats: React.FC<
                   inline
                   key={key}
                   label={key}
-                  labelWidth={8}
+                  labelWidth={7}
+                  valueWrap
                 >
                   {value}
                 </LabeledInfoItem>
