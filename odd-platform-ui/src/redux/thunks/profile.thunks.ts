@@ -1,7 +1,7 @@
 import {
+  AssociatedOwner,
   Configuration,
   IdentityApi,
-  AssociatedOwner,
   IdentityApiAssociateOwnerRequest,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
@@ -13,16 +13,12 @@ const apiClient = new IdentityApi(apiClientConf);
 
 export const fetchIdentity = createAsyncThunk<AssociatedOwner>(
   actions.fetchIdentityActionType,
-  async () => {
-    const response = await apiClient.whoami();
-    return response;
-  }
+  async () => apiClient.whoami()
 );
 
 export const updateIdentityOwner = createAsyncThunk<
   AssociatedOwner,
   IdentityApiAssociateOwnerRequest
->(actions.updateIdentityOwnerActionType, async params => {
-  const response = await apiClient.associateOwner(params);
-  return response;
-});
+>(actions.updateIdentityOwnerActionType, async params =>
+  apiClient.associateOwner(params)
+);

@@ -3,37 +3,38 @@ import React from 'react';
 import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityDetails,
-  getDataEntityDetailsFetching,
+  getDataEntityDetailsFetchingStatuses,
   getDatasetTestReport,
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
 import { useAppSelector } from 'lib/redux/hooks';
-import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import OverviewGroups from 'components/DataEntityDetails/Overview/OverviewGroups/OverviewGroups';
-import OverviewDescriptionContainer from './OverviewDescription/OverviewDescriptionContainer';
+import { SkeletonWrapper } from 'components/shared';
+import OverviewGroups from './OverviewGroups/OverviewGroups';
+import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
+import OverviewDescription from './OverviewDescription/OverviewDescription';
 import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
-import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
+import OverviewStats from './OverviewStats/OverviewStats';
 import OverviewTags from './OverviewTags/OverviewTags';
 import { SectionContainer } from './OverviewStyles';
-import OverviewGeneralContainer from './OverviewGeneral/OverviewGeneralContainer';
+import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewDataQualityReport from './OverviewDataQualityReport/OverviewDataQualityReport';
 import OverviewTerms from './OverviewTerms/OverviewTerms';
 
 const Overview: React.FC = () => {
   const { dataEntityId } = useAppParams();
 
-  const dataEntityDetails = useAppSelector(state =>
-    getDataEntityDetails(state, dataEntityId)
+  const dataEntityDetails = useAppSelector(
+    getDataEntityDetails(dataEntityId)
   );
   const { isDataset } = useAppSelector(
     getIsDataEntityBelongsToClass(dataEntityId)
   );
-  const isDataEntityDetailsFetching = useAppSelector(
-    getDataEntityDetailsFetching
-  );
   const datasetQualityTestReport = useAppSelector(state =>
     getDatasetTestReport(state, dataEntityId)
+  );
+
+  const { isLoading: isDataEntityDetailsFetching } = useAppSelector(
+    getDataEntityDetailsFetchingStatuses
   );
 
   return (
@@ -42,7 +43,7 @@ const Overview: React.FC = () => {
         <Grid container spacing={2} sx={{ mt: 0 }}>
           <Grid item xs={8}>
             <SectionContainer elevation={9}>
-              <OverviewStatsContainer dataEntityId={dataEntityId} />
+              <OverviewStats />
             </SectionContainer>
             <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
               Metadata
@@ -54,14 +55,12 @@ const Overview: React.FC = () => {
               About
             </Typography>
             <SectionContainer square elevation={0}>
-              <OverviewDescriptionContainer dataEntityId={dataEntityId} />
+              <OverviewDescription />
             </SectionContainer>
           </Grid>
           <Grid item xs={4}>
             <SectionContainer square elevation={0}>
-              <OverviewGeneralContainer
-                dataEntityId={dataEntityDetails.id}
-              />
+              <OverviewGeneral />
             </SectionContainer>
             {isDataset && datasetQualityTestReport?.total ? (
               <SectionContainer square elevation={0}>
@@ -75,10 +74,7 @@ const Overview: React.FC = () => {
               />
             </SectionContainer>
             <SectionContainer square elevation={0}>
-              <OverviewTags
-                tags={dataEntityDetails.tags}
-                dataEntityId={dataEntityId}
-              />
+              <OverviewTags tags={dataEntityDetails.tags} />
             </SectionContainer>
             <SectionContainer square elevation={0}>
               <OverviewTerms

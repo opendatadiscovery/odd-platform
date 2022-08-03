@@ -1,5 +1,4 @@
-import { Grid, GridProps } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Box, Grid } from '@mui/material';
 import {
   maxContentWidthWithoutSidebar,
   maxTagsContainerWidth,
@@ -21,36 +20,6 @@ export const TagsContainer = styled(Grid)(() => ({
   maxWidth: `${maxTagsContainerWidth}px`,
   justifyContent: 'center',
   margin: '0 auto',
-}));
-
-export const InfoBarItem = styled(Grid)(({ theme }) => ({
-  height: '56px',
-  marginRight: theme.spacing(3),
-  padding: theme.spacing(1, 2),
-  backgroundColor: theme.palette.backgrounds.primary,
-  borderRadius: '4px',
-}));
-
-export const AllAlertsBtnContainer = styled(Link)(({ theme }) => ({
-  visibility: 'hidden',
-  fontSize: theme.typography.subtitle2.fontSize,
-  lineHeight: theme.typography.subtitle2.lineHeight,
-}));
-
-export const InfoBarItemAlerts = styled(InfoBarItem)<GridProps>(() => ({
-  '&:hover': {
-    [`${AllAlertsBtnContainer}`]: { visibility: 'visible' },
-  },
-}));
-
-export const AlertsContainer = styled(Grid)(() => ({
-  width: '33%',
-  alignItems: 'center',
-}));
-
-export const InfoBarStatsText = styled('span')(({ theme }) => ({
-  color: theme.palette.texts.hint,
-  lineHeight: theme.typography.h2.lineHeight,
 }));
 
 export const DataEntityContainer = styled(Grid)(({ theme }) => ({
@@ -77,13 +46,14 @@ export const DataEntitiesUsageContainer = styled('div')(({ theme }) => ({
   justifyContent: 'space-between',
 }));
 
-export const UfilledEntities = styled('span')(({ theme }) => ({
+export const UnfilledEntities = styled('span')(({ theme }) => ({
   backgroundColor: theme.palette.reportStatus.BROKEN.background,
   border: `1px solid ${theme.palette.reportStatus.BROKEN.border}`,
   padding: theme.spacing(0.5, 1),
   borderRadius: theme.spacing(1.8),
   color: theme.palette.info.main,
 }));
+
 export const ListItem = styled('div')<{ $index?: number }>(
   ({ theme, $index }) => ({
     borderTop:
@@ -112,6 +82,14 @@ export const ListItemContainer = styled('div')(({ theme }) => ({
   justifyContent: 'space-between',
   flexWrap: 'wrap',
 }));
+
+export const ListItemWrapper = styled(Box)(() => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  width: '45%',
+}));
+
 export const DataEntitiesTotalContainer = styled('div')(({ theme }) => ({
   padding: theme.spacing(3),
   display: 'flex',

@@ -1,31 +1,30 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import { Tag } from 'generated-sources';
 import compact from 'lodash/compact';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import TagItem from 'components/shared/TagItem/TagItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'lib/redux/hooks';
-
+import { AppButton, DialogWrapper, TagItem } from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { updateDataEntityTags } from 'redux/thunks';
-import { TagListContainer } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
+import { useAppParams } from 'lib/hooks';
+import {
+  getDataEntityTags,
+  getDataEntityTagsUpdatingStatuses,
+} from 'redux/selectors';
+import { TagListContainer } from './TagsEditFormStyles';
 import TagsEditFormAutocomplete from './TagsEditFormAutocomplete/TagsEditFormAutocomplete';
 
 interface TagsEditProps {
-  dataEntityId: number;
-  dataEntityTags?: Tag[];
-  isLoading: boolean;
   btnEditEl: JSX.Element;
 }
 
-const TagsEditForm: React.FC<TagsEditProps> = ({
-  dataEntityId,
-  dataEntityTags,
-  isLoading,
-  btnEditEl,
-}) => {
+const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
+
+  const dataEntityTags = useAppSelector(getDataEntityTags(dataEntityId));
+  const { isLoading: isTagsUpdating } = useAppSelector(
+    getDataEntityTagsUpdatingStatuses
+  );
 
   type DataEntityTagsFormType = {
     tagNameList: {
@@ -144,7 +143,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isTagsUpdating}
       errorText={error}
       formSubmitHandler={methods.handleSubmit(handleSubmit)}
     />
