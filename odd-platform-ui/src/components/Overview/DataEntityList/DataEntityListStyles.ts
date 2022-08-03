@@ -12,31 +12,42 @@ export const ListLinksContainer = styled('ul')(({ theme }) => ({
   },
 }));
 
-export const ListLink = styled(Link)(({ theme }) => ({
-  padding: theme.spacing(0.25),
-  display: 'flex',
-  flexWrap: 'nowrap',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-  textDecoration: 'none',
-  color: theme.palette.texts?.primary,
-  borderRadius: '4px',
-  '&.has-alerts': {
-    backgroundColor: theme.palette.alert.OPEN.background,
-    '&:hover': {
-      backgroundColor: theme.palette.alert.OPEN.border,
+export const ListLink = styled(Link)<{ $hasAlerts?: boolean }>(
+  ({ theme, $hasAlerts }) => ({
+    padding: theme.spacing(0.25),
+    display: 'flex',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    textDecoration: 'none',
+    color: theme.palette.texts?.primary,
+    borderRadius: '4px',
+    '&:active': {
+      backgroundColor: theme.palette.backgrounds.secondary,
     },
-  },
-  '&:hover': {
-    backgroundColor: theme.palette.backgrounds.primary,
-    '& > *': {
-      color: theme.palette.texts?.primary,
-    },
-  },
-  '&:active': {
-    backgroundColor: theme.palette.backgrounds.secondary,
-  },
-}));
+    ...($hasAlerts
+      ? {
+          backgroundColor: theme.palette.alert.OPEN.background,
+          '&:hover': {
+            backgroundColor: theme.palette.alert.OPEN.border,
+          },
+        }
+      : {
+          '&:hover': {
+            backgroundColor: theme.palette.backgrounds.primary,
+          },
+        }),
+  })
+);
+
+export const ListLinkInnerItem = styled('div')<{ $bounded?: boolean }>(
+  ({ $bounded }) => ({
+    display: 'flex',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    overflow: $bounded ? 'hidden' : undefined,
+  })
+);
 
 export const SectionCaption = styled(Typography)(({ theme }) => ({
   color: theme.palette.texts?.primary,

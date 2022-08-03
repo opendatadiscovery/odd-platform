@@ -34,14 +34,9 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
           <li key={item.id}>
             <S.ListLink
               to={dataEntityDetailsPath(item.id)}
-              className={item.hasAlerts ? 'has-alerts' : undefined}
+              $hasAlerts={item.hasAlerts}
             >
-              <Box
-                display="flex"
-                flexWrap="nowrap"
-                alignItems="center"
-                overflow="hidden"
-              >
+              <S.ListLinkInnerItem $bounded>
                 {item.hasAlerts ? <AlertIcon sx={{ mr: 0.5 }} /> : null}
 
                 <Typography
@@ -50,9 +45,9 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
                 >
                   {item.internalName || item.externalName}
                 </Typography>
-              </Box>
+              </S.ListLinkInnerItem>
 
-              <Box display="flex" flexWrap="nowrap" alignItems="center">
+              <S.ListLinkInnerItem>
                 {item.entityClasses?.map(entityClass => (
                   <EntityClassItem
                     sx={{ ml: 0.5 }}
@@ -60,7 +55,7 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
                     entityClassName={entityClass.name}
                   />
                 ))}
-              </Box>
+              </S.ListLinkInnerItem>
             </S.ListLink>
           </li>
         ))}
