@@ -22,7 +22,7 @@ public class DatasetVersionRepositoryImpl
                                         final JooqRecordHelper jooqRecordHelper,
                                         final JooqQueryHelper jooqQueryHelper) {
         super(dslContext, jooqQueryHelper, DATASET_VERSION, DATASET_VERSION.ID, null,
-            null, DatasetVersionPojo.class);
+            DATASET_VERSION.CREATED_AT, null, DatasetVersionPojo.class);
     }
 
     @Override

@@ -34,10 +34,11 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                                             final Field<Boolean> deletedField,
                                             final Field<String> collisionIdentifier,
                                             final Field<String> nameField,
+                                            final Field<LocalDateTime> createdAtField,
                                             final Field<LocalDateTime> updatedAtField,
                                             final Class<P> pojoClass) {
         this(dslContext, jooqQueryHelper, recordTable, idField, deletedField, List.of(collisionIdentifier),
-            nameField, updatedAtField, pojoClass);
+            nameField, createdAtField, updatedAtField, pojoClass);
     }
 
     public AbstractSoftDeleteCRUDRepository(final DSLContext dslContext,
@@ -47,9 +48,10 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
                                             final Field<Boolean> deletedField,
                                             final List<Field<String>> collisionIdentifiers,
                                             final Field<String> nameField,
+                                            final Field<LocalDateTime> createdAtField,
                                             final Field<LocalDateTime> updatedAtField,
                                             final Class<P> pojoClass) {
-        super(dslContext, jooqQueryHelper, recordTable, idField, nameField, updatedAtField, pojoClass);
+        super(dslContext, jooqQueryHelper, recordTable, idField, nameField, createdAtField, updatedAtField, pojoClass);
         this.deletedField = deletedField;
         this.collisionIdentifiers = List.copyOf(collisionIdentifiers);
     }
@@ -173,6 +175,15 @@ public abstract class AbstractSoftDeleteCRUDRepository<R extends UpdatableRecord
     @Override
     protected List<Condition> listCondition(final String nameQuery) {
         return addSoftDeleteFilter(super.listCondition(nameQuery));
+    }
+
+    @Override
+    protected List<Field<?>> getNonUpdatableFields() {
+        final List<Field<?>> fields = new ArrayList<>(super.getNonUpdatableFields());
+        if (deletedField != null) {
+            fields.add(deletedField);
+        }
+        return fields;
     }
 
     protected List<Condition> addSoftDeleteFilter(final List<Condition> conditions) {
