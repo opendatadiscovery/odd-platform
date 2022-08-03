@@ -7,15 +7,15 @@ import * as S from './DatasetStructureTableStyles';
 interface DatasetStructureTableProps {
   dataEntityId: number;
   versionId?: number;
-  datasetStructureRoot: DataSetField[];
   indexToScroll: number;
+  datasetStructureRoot: DataSetField[];
 }
 
 const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   dataEntityId,
   versionId,
-  datasetStructureRoot,
   indexToScroll,
+  datasetStructureRoot,
 }) => (
   <S.Container item xs={12} sx={{ mt: 2.5 }}>
     <S.TableHeader container>
@@ -38,13 +38,14 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     </S.TableHeader>
     <Grid item xs={12} container>
       <DatasetStructureList
-        indexToScroll={indexToScroll}
         dataEntityId={dataEntityId}
         versionId={versionId}
         datasetStructureRoot={datasetStructureRoot}
         datasetRowsCount={datasetStructureRoot.length}
+        indexToScroll={indexToScroll}
       />
     </Grid>
   </S.Container>
 );
+
 export default DatasetStructureTable;

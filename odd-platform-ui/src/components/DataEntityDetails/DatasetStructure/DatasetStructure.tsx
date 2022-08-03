@@ -3,85 +3,83 @@ import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
 import round from 'lodash/round';
 import toPairs from 'lodash/toPairs';
+import {
+  fetchDataSetStructure,
+  fetchDataSetStructureLatest,
+} from 'redux/thunks';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import {
-  DataSetApiGetDataSetStructureByVersionIdRequest,
-  DataSetApiGetDataSetStructureLatestRequest,
-  DataSetFieldTypeTypeEnum,
-  DataSetStats,
-  DataSetVersion,
-} from 'generated-sources';
+  getDatasetStats,
+  getDatasetStructure,
+  getDataSetStructureFetchingStatus,
+  getDataSetStructureLatestFetchingStatus,
+  getDatasetStructureTypeStats,
+  getDatasetVersionId,
+  getDatasetVersions,
+} from 'redux/selectors';
+import { DataSetFieldTypeTypeEnum } from 'generated-sources';
 import AppInput from 'components/shared/AppInput/AppInput';
-import { getDatasetStructure } from 'redux/selectors/datasetStructure.selectors';
 import { isComplexField } from 'lib/helpers';
-import { DataSetStructureTypesCount } from 'redux/interfaces/datasetStructure';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
 import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
-import { useAppPaths } from 'lib/hooks';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppParams, useAppPaths } from 'lib/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useDebouncedCallback } from 'use-debounce';
-import DatasetStructureTableContainer from './DatasetStructureTable/DatasetStructureTableContainer';
+import DatasetStructureTable from './DatasetStructureTable/DatasetStructureTable';
 import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
-interface DatasetStructureTableProps {
-  dataEntityId: number;
-  datasetStats: DataSetStats;
-  datasetVersions?: DataSetVersion[];
-  typesCount: DataSetStructureTypesCount;
-  versionIdParam?: number;
-  datasetStructureVersion?: number;
-  fetchDataSetStructureLatest: (
-    params: DataSetApiGetDataSetStructureLatestRequest
-  ) => void;
-  fetchDataSetStructure: (
-    params: DataSetApiGetDataSetStructureByVersionIdRequest
-  ) => void;
-  isDatasetStructureFetching: boolean;
-}
-
-const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
-  dataEntityId,
-  datasetStats,
-  datasetVersions,
-  typesCount,
-  versionIdParam,
-  datasetStructureVersion,
-  fetchDataSetStructureLatest,
-  fetchDataSetStructure,
-  isDatasetStructureFetching,
-}) => {
+const DatasetStructure: React.FC = () => {
+  const dispatch = useAppDispatch();
   const history = useHistory();
+  const { dataEntityId, versionId } = useAppParams();
+  const { datasetStructurePath } = useAppPaths();
+
   const [searchText, setSearchText] = React.useState<string>('');
   const [indexToScroll, setIndexToScroll] = React.useState(-1);
 
-  const datasetStructureRoot = useAppSelector(state =>
-    getDatasetStructure(state, {
-      datasetId: dataEntityId,
-      versionId: versionIdParam,
-    })
+  const datasetStructureRoot = useAppSelector(
+    getDatasetStructure({ datasetId: dataEntityId, versionId })
   );
-  const { datasetStructurePath } = useAppPaths();
+
+  const { isLoading: isDatasetStructureFetching } = useAppSelector(
+    getDataSetStructureFetchingStatus
+  );
+  const { isLoading: isDatasetStructureLatestFetching } = useAppSelector(
+    getDataSetStructureLatestFetchingStatus
+  );
+  const datasetStats = useAppSelector(getDatasetStats(dataEntityId));
+  const datasetVersions = useAppSelector(getDatasetVersions(dataEntityId));
+  const datasetStructureVersion = useAppSelector(
+    getDatasetVersionId({ datasetId: dataEntityId, versionId })
+  );
+  const typesCount = useAppSelector(
+    getDatasetStructureTypeStats({ datasetId: dataEntityId, versionId })
+  );
 
   React.useEffect(() => {
-    if (versionIdParam) {
-      fetchDataSetStructure({
-        dataEntityId,
-        versionId: versionIdParam,
-      });
+    if (versionId) {
+      dispatch(
+        fetchDataSetStructure({
+          dataEntityId,
+          versionId,
+        })
+      );
     } else {
-      fetchDataSetStructureLatest({ dataEntityId });
+      dispatch(fetchDataSetStructureLatest({ dataEntityId }));
     }
   }, [fetchDataSetStructureLatest, dataEntityId]);
 
   const handleRevisionChange = (event: SelectChangeEvent<unknown>) => {
     const newVersionId = event.target.value as unknown as number;
-    fetchDataSetStructure({
-      dataEntityId,
-      versionId: newVersionId,
-    });
+    dispatch(
+      fetchDataSetStructure({
+        dataEntityId,
+        versionId: newVersionId,
+      })
+    );
     history.push(datasetStructurePath(dataEntityId, newVersionId));
   };
 
@@ -115,7 +113,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
 
   return (
     <Box sx={{ mt: 2 }}>
-      {isDatasetStructureFetching ? (
+      {isDatasetStructureFetching || isDatasetStructureLatestFetching ? (
         <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
             <DatasetStructureSkeleton
@@ -219,9 +217,10 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
             </Grid>
           </Grid>
           {datasetStructureVersion ? (
-            <DatasetStructureTableContainer
+            <DatasetStructureTable
+              datasetStructureRoot={datasetStructureRoot}
               dataEntityId={dataEntityId}
-              versionId={versionIdParam}
+              versionId={versionId}
               indexToScroll={indexToScroll}
             />
           ) : null}
@@ -230,4 +229,4 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
     </Box>
   );
 };
-export default DatasetStructureTable;
+export default DatasetStructure;

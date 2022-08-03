@@ -48,8 +48,8 @@ import * as S from './DataEntityDetailsStyles';
 
 // lazy components
 const Overview = React.lazy(() => import('./Overview/Overview'));
-const DatasetStructureContainer = React.lazy(
-  () => import('./DatasetStructure/DatasetStructureContainer')
+const DatasetStructure = React.lazy(
+  () => import('./DatasetStructure/DatasetStructure')
 );
 const Lineage = React.lazy(() => import('./Lineage/Lineage'));
 const TestReport = React.lazy(() => import('./TestReport/TestReport'));
@@ -362,7 +362,7 @@ const DataEntityDetailsView: React.FC = () => {
                 '/dataentities/:dataEntityId/structure/:versionId?',
                 '/embedded/dataentities/:dataEntityId/structure/:versionId?',
               ]}
-              component={DatasetStructureContainer}
+              component={DatasetStructure}
             />
             <Route
               exact

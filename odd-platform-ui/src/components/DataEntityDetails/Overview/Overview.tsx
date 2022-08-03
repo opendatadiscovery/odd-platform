@@ -4,9 +4,9 @@ import { useAppParams } from 'lib/hooks';
 import {
   getDataEntityDetails,
   getDataEntityDetailsFetching,
+  getDatasetTestReport,
   getIsDataEntityBelongsToClass,
-} from 'redux/selectors/dataentity.selectors';
-import { getDatasetTestReport } from 'redux/selectors/dataQualityTest.selectors';
+} from 'redux/selectors';
 import { useAppSelector } from 'lib/redux/hooks';
 import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
@@ -15,7 +15,6 @@ import OverviewDescriptionContainer from './OverviewDescription/OverviewDescript
 import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
 import OverviewStatsContainer from './OverviewStats/OverviewStatsContainer';
 import OverviewTags from './OverviewTags/OverviewTags';
-
 import { SectionContainer } from './OverviewStyles';
 import OverviewGeneralContainer from './OverviewGeneral/OverviewGeneralContainer';
 import OverviewDataQualityReport from './OverviewDataQualityReport/OverviewDataQualityReport';
@@ -36,6 +35,7 @@ const Overview: React.FC = () => {
   const datasetQualityTestReport = useAppSelector(state =>
     getDatasetTestReport(state, dataEntityId)
   );
+
   return (
     <>
       {dataEntityDetails && !isDataEntityDetailsFetching ? (
