@@ -16,24 +16,26 @@ import {
   DataSetFormattedStats,
   DataSetFormattedStatsKeys,
   DatasetStatsLabelMap,
-} from 'redux/interfaces/datasetStructure';
+} from 'redux/interfaces';
 import { format } from 'date-fns';
-import DatasetStructureKeyFieldLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureKeyFieldLabel/DatasetStructureKeyFieldLabel';
+import { useAppSelector } from 'lib/redux/hooks';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
+import { isComplexField } from 'lib/helpers';
+import { getDatasetStructure } from 'redux/selectors';
 import LineBreakIcon from 'components/shared/Icons/LineBreakIcon';
 import InformationIcon from 'components/shared/Icons/InformationIcon';
-import DatasetStructureFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import AppButton from 'components/shared/AppButton/AppButton';
 import TruncatedLabel from 'components/shared/TruncatedLabel/TruncatedLabel';
-
-import DatasetFieldInfoEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldInfoEditForm/DatasetFieldInfoEditFormContainer';
-import DatasetFieldEnumsEditFormContainer from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldEnumsEditForm/DatasetFieldEnumsEditFormContainer';
 import { ButtonColors } from 'components/shared/AppButton/AppButtonStyles';
+import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
+import DatasetFieldEnumsEditForm from './DatasetFieldEnumsEditForm/DatasetFieldEnumsEditForm';
+import DatasetStructureFieldTypeLabel from '../../../DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
+import DatasetStructureKeyFieldLabel from '../../../DatasetStructureKeyFieldLabel/DatasetStructureKeyFieldLabel';
 import { ColContainer } from '../../DatasetStructureTableStyles';
 import * as S from './DatasetStructureItemStyles';
 
@@ -42,7 +44,8 @@ interface DatasetStructureItemProps {
   nesting: number;
   rowsCount: DataSetStats['rowsCount'];
   datasetField: DataSetField;
-  childFields: DataSetField[];
+  dataEntityId: number;
+  versionId?: number;
   renderStructureItem: (
     field: DataSetField,
     nesting: number,
@@ -56,8 +59,9 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   nesting,
   rowsCount,
   datasetField,
-  childFields,
   renderStructureItem,
+  dataEntityId,
+  versionId,
   onSizeChange,
 }) => {
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
@@ -88,6 +92,18 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       fieldStats = datasetField.stats
         ?.complexStats as DataSetFormattedStats;
   }
+
+  const datasetStructure = useAppSelector(
+    getDatasetStructure({
+      datasetId: dataEntityId,
+      versionId,
+      parentFieldId: datasetField.id,
+    })
+  );
+
+  const childFields = isComplexField(datasetField.type.type)
+    ? datasetStructure
+    : [];
 
   const getCustomStat = React.useCallback(
     (fieldStatName: string) => {
@@ -153,6 +169,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
       </AppButton>
     );
   }, [datasetField.enumValueCount]);
+
   return (
     <Grid container>
       <Grid item container>
@@ -225,14 +242,14 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                 DataSetFieldTypeTypeEnum.INTEGER ||
               datasetField.type.type ===
                 DataSetFieldTypeTypeEnum.STRING ? (
-                <DatasetFieldEnumsEditFormContainer
+                <DatasetFieldEnumsEditForm
                   datasetFieldId={datasetField.id}
                   datasetFieldName={datasetField.name}
                   enumValueType={datasetField.type.type}
                   btnCreateEl={setEnumFormOpenBtn}
                 />
               ) : null}
-              <DatasetFieldInfoEditFormContainer
+              <DatasetFieldInfoEditForm
                 datasetFieldId={datasetField.id}
                 btnCreateEl={
                   <AppButton size="medium" color="primaryLight">

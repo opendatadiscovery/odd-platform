@@ -131,7 +131,7 @@ const AppGraph: React.FC = () => {
   const nodeSizeInitial = {
     x: 200,
     y: 160,
-    mx: 300,
+    mx: 150,
     my: 24,
   };
 

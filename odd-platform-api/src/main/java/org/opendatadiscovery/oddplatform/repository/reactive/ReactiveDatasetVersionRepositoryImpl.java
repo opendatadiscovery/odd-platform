@@ -33,6 +33,7 @@ import reactor.core.publisher.Mono;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.mapping;
 import static org.jooq.impl.DSL.count;
+import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
 import static org.jooq.impl.DSL.max;
@@ -72,7 +73,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(selectFields)
             .select(jsonArrayAgg(field(LABEL_TO_DATASET_FIELD.asterisk().toString())).as(LABEL_RELATIONS))
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
-            .select(count(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
+            .select(countDistinct(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(DATASET_VERSION)
             .leftJoin(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
             .leftJoin(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
@@ -117,7 +118,7 @@ public class ReactiveDatasetVersionRepositoryImpl
             .select(selectFields)
             .select(jsonArrayAgg(field(LABEL_TO_DATASET_FIELD.asterisk().toString())).as(LABEL_RELATIONS))
             .select(jsonArrayAgg(field(LABEL.asterisk().toString())).as(LABELS))
-            .select(count(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
+            .select(countDistinct(ENUM_VALUE.ID).as(ENUM_VALUE_COUNT))
             .from(subquery)
             .join(DATASET_VERSION)
             .on(DATASET_VERSION.DATASET_ODDRN.eq(subquery.field(DATASET_VERSION.DATASET_ODDRN)))
@@ -183,7 +184,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     @Override
     public Mono<List<DatasetVersionPojo>> getPenultimateVersions(final List<DatasetVersionPojo> lastVersions) {
         if (lastVersions.isEmpty()) {
-            return Mono.empty();
+            return Mono.just(List.of());
         }
 
         final Condition condition = lastVersions.stream()
@@ -204,7 +205,7 @@ public class ReactiveDatasetVersionRepositoryImpl
     }
 
     @Override
-    public Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersionPojoIds(final Set<Long> dataVersionPojoIds) {
+    public Mono<Map<Long, List<DatasetFieldPojo>>> getDatasetVersionFields(final Set<Long> dataVersionPojoIds) {
         final SelectConditionStep<Record> vidToFieldsSelect = DSL.select(DATASET_STRUCTURE.DATASET_VERSION_ID)
             .select(DATASET_FIELD.asterisk())
             .from(DATASET_FIELD)

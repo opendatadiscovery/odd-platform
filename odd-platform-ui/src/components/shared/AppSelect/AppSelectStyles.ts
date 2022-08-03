@@ -11,19 +11,20 @@ export type AppSelectSizes = 'medium' | 'small';
 
 interface AppSelectStyleProps {
   $size: AppSelectSizes;
+  $isLabeled?: boolean;
 }
 
 const isMedium = (size: AppSelectSizes) => size === 'medium';
 
 export const AppSelect = styled(Select)<AppSelectStyleProps>(
-  ({ theme, $size }) => ({
+  ({ theme, $size, $isLabeled }) => ({
     [`& .${outlinedInputClasses.notchedOutline}`]: {
       borderColor: theme.palette.textField.normal.border,
       borderWidth: '1px',
     },
     [`&.${outlinedInputClasses.root}`]: {
       height: isMedium($size) ? '32px' : '24px',
-      marginTop: theme.spacing(0.5),
+      marginTop: $isLabeled ? theme.spacing(0.5) : 0,
 
       '&:hover': {
         [`& .${outlinedInputClasses.notchedOutline}`]: {

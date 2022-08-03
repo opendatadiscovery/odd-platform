@@ -258,9 +258,7 @@ const Identity: React.FC = () => {
               type="submit"
               form="owner-connect-form"
               fullWidth
-              disabled={
-                !methods.formState.isValid || !methods.formState.isDirty
-              }
+              disabled={!methods.formState.isValid}
             >
               Sync owner
             </AppButton>

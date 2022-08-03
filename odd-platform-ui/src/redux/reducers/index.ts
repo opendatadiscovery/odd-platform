@@ -10,7 +10,7 @@ import search from './dataentitiesSearch.reducer';
 import searchSlice from './dataEntitySearch.slice';
 import metaData from './metadata.slice';
 import owners from './owners.slice';
-import datasetStructure from './datasetStructure.reducer';
+import datasetStructure from './datasetStructure.slice';
 import dataEntityLineage from './dataEntityLineage/dataEntityLineage.slice';
 import profile from './profile.slice';
 import dataQualityTest from './dataQualityTest.slice';

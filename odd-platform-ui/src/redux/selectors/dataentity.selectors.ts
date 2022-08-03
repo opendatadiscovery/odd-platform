@@ -184,18 +184,17 @@ export const getDataEntityExternalDescription = createSelector(
   dataEntityDetails => dataEntityDetails.externalDescription
 );
 
-export const getDatasetVersions = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) =>
-    dataEntities.byId[dataEntityId]?.versionList
-);
+export const getDatasetVersions = (dataEntityId: number) =>
+  createSelector(
+    dataEntitiesState,
+    dataEntities => dataEntities.byId[dataEntityId]?.versionList
+  );
 
-export const getDatasetStats = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) => dataEntities.byId[dataEntityId]?.stats
-);
+export const getDatasetStats = (dataEntityId: number) =>
+  createSelector(
+    dataEntitiesState,
+    dataEntities => dataEntities.byId[dataEntityId]?.stats
+  );
 
 export const getDataEntityInternalName = createSelector(
   dataEntitiesState,
