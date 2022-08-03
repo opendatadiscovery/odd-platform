@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getTagCreatingStatuses,
-  getTAgDeletingStatuses,
+  getTagDeletingStatuses,
   getTagsList,
   getTagsListFetchingStatuses,
   getTagsListPage,
@@ -11,14 +11,14 @@ import {
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchTagsList } from 'redux/thunks';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { AddIcon, ClearIcon, SearchIcon } from 'components/shared/Icons';
+import {
+  AppButton,
+  AppInput,
+  EmptyContentPlaceholder,
+  NumberFormatted,
+  SkeletonWrapper,
+} from 'components/shared';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateForm from './TagCreateForm/TagCreateForm';
@@ -33,7 +33,7 @@ const TagsListView: React.FC = () => {
   );
 
   const { isLoading: isTagDeleting } = useAppSelector(
-    getTAgDeletingStatuses
+    getTagDeletingStatuses
   );
 
   const { isLoading: isTagsFetching } = useAppSelector(
