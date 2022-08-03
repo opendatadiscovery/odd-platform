@@ -59,7 +59,7 @@ export const DataEntityContainer = styled(Grid)(({ theme }) => ({
   marginLeft: 'auto',
   marginRight: 'auto',
   flexWrap: 'nowrap',
-  '& > *': { paddingRight: theme.spacing(3) },
+  '& > *': { paddingRight: theme.spacing(1.5) },
   '& > :last-child': { paddingRight: theme.spacing(0) },
 }));
 
