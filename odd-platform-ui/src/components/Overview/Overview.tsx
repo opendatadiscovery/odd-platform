@@ -1,74 +1,85 @@
-import { Grid, Typography, Box } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import React from 'react';
 import {
-  AssociatedOwner,
-  DataEntityRef,
-  TagApiGetPopularTagListRequest,
-} from 'generated-sources';
-import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
-import UpstreamIcon from 'components/shared/Icons/UpstreamIcon';
-import DownstreamIcon from 'components/shared/Icons/DownstreamIcon';
-import StarIcon from 'components/shared/Icons/StarIcon';
-import CatalogIcon from 'components/shared/Icons/CatalogIcon';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+  getDataEntitiesUsageTotalCount,
+  getDataEntitiesUsageUnfilledCount,
+  getDataEntityClassesUsageInfo,
+  getIdentity,
+  getIdentityFetchingStatuses,
+  getIsMainOverviewContentFetching,
+  getMyDataEntitiesFetchingStatuses,
+  getMyDownstreamFetchingStatuses,
+  getMyEntities,
+  getMyEntitiesDownstream,
+  getMyEntitiesUpstream,
+  getMyUpstreamDataEntitiesFetchingStatuses,
+  getPopularDataEntitiesFetchingStatuses,
+  getPopularEntities,
+} from 'redux/selectors';
+import {
+  EntityClassItem,
+  MainSearchContainer,
+  SkeletonWrapper,
+} from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   fetchAlertsTotals,
+  fetchDataentitiesUsageInfo,
   fetchMyDataEntitiesList,
   fetchMyDownstreamDataEntitiesList,
   fetchMyUpstreamDataEntitiesList,
   fetchPopularDataEntitiesList,
-  fetchDataentitiesUsageInfo,
+  fetchTagsList,
 } from 'redux/thunks';
+import { DataEntityClassLabelMap } from 'redux/interfaces';
 import {
-  getDataEntityClassesInfo,
-  getDataEntitiesUsageTotalCount,
-  getDataEntitiesUsageUnfilledCount,
-} from 'redux/selectors';
-import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
+  CatalogIcon,
+  DownstreamIcon,
+  StarIcon,
+  UpstreamIcon,
+} from 'components/shared/Icons';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
 import DataEntityList from './DataEntityList/DataEntityList';
 import TopTagsListContainer from './TopTagsList/TopTagsListContainer';
-import IdentityContainer from './IdentityForm/IdentityContainer';
+import Identity from './IdentityForm/Identity';
 
-interface OverviewProps {
-  identity?: AssociatedOwner;
-  identityFetched: boolean;
-  myEntities: DataEntityRef[];
-  myEntitiesDownstream: DataEntityRef[];
-  myEntitiesUpstream: DataEntityRef[];
-  popularEntities: DataEntityRef[];
-  myDataEntitiesFetching: boolean;
-  myUpstreamDataEntitiesFetching: boolean;
-  myDownstreamDataEntitiesFetching: boolean;
-  popularDataEntitiesFetching: boolean;
-  isMainOverviewContentFetching: boolean;
-  fetchTagsList: (params: TagApiGetPopularTagListRequest) => void;
-}
-
-const Overview: React.FC<OverviewProps> = ({
-  identity,
-  identityFetched,
-  myEntities,
-  myEntitiesDownstream,
-  myEntitiesUpstream,
-  popularEntities,
-  myDataEntitiesFetching,
-  myUpstreamDataEntitiesFetching,
-  myDownstreamDataEntitiesFetching,
-  popularDataEntitiesFetching,
-  isMainOverviewContentFetching,
-  fetchTagsList,
-}) => {
+const Overview: React.FC = () => {
   const dispatch = useAppDispatch();
-  const dataEntitiesUsageItems = useAppSelector(getDataEntityClassesInfo);
+
+  const identity = useAppSelector(getIdentity);
+  const myEntities = useAppSelector(getMyEntities);
+  const myEntitiesDownstream = useAppSelector(getMyEntitiesDownstream);
+  const myEntitiesUpstream = useAppSelector(getMyEntitiesUpstream);
+  const popularEntities = useAppSelector(getPopularEntities);
+
+  const dataEntityClassesUsageInfo = useAppSelector(
+    getDataEntityClassesUsageInfo
+  );
   const dataEntityUsageTotalCount = useAppSelector(
     getDataEntitiesUsageTotalCount
   );
   const dataEntityUsageUnfilledCount = useAppSelector(
     getDataEntitiesUsageUnfilledCount
+  );
+
+  const isMainOverviewContentFetching = useAppSelector(
+    getIsMainOverviewContentFetching
+  );
+  const { isLoading: isMyDataEntitiesFetching } = useAppSelector(
+    getMyDataEntitiesFetchingStatuses
+  );
+  const { isLoading: isUpstreamDataEntitiesFetching } = useAppSelector(
+    getMyUpstreamDataEntitiesFetchingStatuses
+  );
+  const { isLoading: isDownstreamDataEntitiesFetching } = useAppSelector(
+    getMyDownstreamFetchingStatuses
+  );
+  const { isLoading: isPopularDataEntitiesFetching } = useAppSelector(
+    getPopularDataEntitiesFetchingStatuses
+  );
+  const { isLoaded: isIdentityFetched } = useAppSelector(
+    getIdentityFetchingStatuses
   );
 
   React.useEffect(() => {
@@ -85,9 +96,10 @@ const Overview: React.FC<OverviewProps> = ({
 
   React.useEffect(() => {
     dispatch(fetchAlertsTotals());
-    fetchTagsList({ page: 1, size: 20 });
+    dispatch(fetchTagsList({ page: 1, size: 20 }));
     dispatch(fetchDataentitiesUsageInfo());
   }, []);
+
   return (
     <S.Container>
       {isMainOverviewContentFetching ? (
@@ -116,22 +128,14 @@ const Overview: React.FC<OverviewProps> = ({
                     </Typography>
                   </Box>
                   <Box>
-                    <S.UfilledEntities>
+                    <S.UnfilledEntities>
                       {dataEntityUsageUnfilledCount} unfilled entities
-                    </S.UfilledEntities>
+                    </S.UnfilledEntities>
                   </Box>
                 </S.DataEntitiesTotalContainer>
                 <S.ListItemContainer>
-                  {dataEntitiesUsageItems?.map((item, index) => (
-                    <Box
-                      key={item?.entityClass?.id}
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        width: '45%',
-                      }}
-                    >
+                  {dataEntityClassesUsageInfo?.map((item, index) => (
+                    <S.ListItemWrapper key={item?.entityClass?.id}>
                       <S.ListItem $index={index}>
                         <EntityClassItem
                           sx={{ ml: 0.5 }}
@@ -148,7 +152,7 @@ const Overview: React.FC<OverviewProps> = ({
                       <Typography variant="h4" noWrap>
                         {item.totalCount}
                       </Typography>
-                    </Box>
+                    </S.ListItemWrapper>
                   ))}
                 </S.ListItemContainer>
               </S.DataEntitiesUsageContainer>
@@ -161,7 +165,7 @@ const Overview: React.FC<OverviewProps> = ({
                   dataEntitiesList={myEntities}
                   entityListName="My Objects"
                   entityListIcon={<CatalogIcon />}
-                  isFetching={myDataEntitiesFetching}
+                  isFetching={isMyDataEntitiesFetching}
                 />
               </Grid>
               <Grid item xs={3}>
@@ -169,7 +173,7 @@ const Overview: React.FC<OverviewProps> = ({
                   dataEntitiesList={myEntitiesUpstream}
                   entityListName="Upstream dependents"
                   entityListIcon={<UpstreamIcon />}
-                  isFetching={myUpstreamDataEntitiesFetching}
+                  isFetching={isUpstreamDataEntitiesFetching}
                 />
               </Grid>
               <Grid item xs={3}>
@@ -177,7 +181,7 @@ const Overview: React.FC<OverviewProps> = ({
                   dataEntitiesList={myEntitiesDownstream}
                   entityListName="Downstream dependents"
                   entityListIcon={<DownstreamIcon />}
-                  isFetching={myDownstreamDataEntitiesFetching}
+                  isFetching={isDownstreamDataEntitiesFetching}
                 />
               </Grid>
               <Grid item xs={3}>
@@ -185,15 +189,15 @@ const Overview: React.FC<OverviewProps> = ({
                   dataEntitiesList={popularEntities}
                   entityListName="Popular"
                   entityListIcon={<StarIcon />}
-                  isFetching={popularDataEntitiesFetching}
+                  isFetching={isPopularDataEntitiesFetching}
                 />
               </Grid>
             </S.DataEntityContainer>
           ) : null}
         </>
       )}
-      {!identity?.owner && identity?.identity && identityFetched ? (
-        <IdentityContainer />
+      {!identity?.owner && identity?.identity && isIdentityFetched ? (
+        <Identity />
       ) : null}
     </S.Container>
   );

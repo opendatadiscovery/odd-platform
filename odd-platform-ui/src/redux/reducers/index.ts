@@ -12,7 +12,7 @@ import metaData from './metadata.slice';
 import owners from './owners.slice';
 import datasetStructure from './datasetStructure.slice';
 import dataEntityLineage from './dataEntityLineage/dataEntityLineage.slice';
-import profile from './profile.reducer';
+import profile from './profile.slice';
 import dataQualityTest from './dataQualityTest.slice';
 import alerts from './alerts.slice';
 import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';

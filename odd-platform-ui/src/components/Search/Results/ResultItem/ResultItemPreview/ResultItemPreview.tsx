@@ -1,40 +1,58 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import * as S from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewStyles';
-import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import {
-  DataEntityDetails,
-  MetadataFieldType,
-  MetadataFieldValue,
-} from 'generated-sources';
-import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
+  AppCircularProgress,
+  BooleanFormatted,
+  LabeledInfoItem,
+  NumberFormatted,
+} from 'components/shared';
+import { MetadataFieldType, MetadataFieldValue } from 'generated-sources';
 import { format } from 'date-fns';
-import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
 import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchDataEntityDetails } from 'redux/thunks';
+import {
+  getDataEntityCustomMetadataList,
+  getDataEntityDetails,
+  getDataEntityDetailsFetchingStatuses,
+  getDataEntityPredefinedMetadataList,
+} from 'redux/selectors';
+import * as S from './ResultItemPreviewStyles';
 
 interface ResultItemPreviewProps {
   dataEntityId: number;
-  dataEntityDetails: DataEntityDetails;
-  isDataEntityLoading: boolean;
-  predefinedMetadata: MetadataFieldValue[];
-  customMetadata: MetadataFieldValue[];
+  // dataEntityDetails: DataEntityDetails;
+  // isDataEntityLoading: boolean;
+  // predefinedMetadata: MetadataFieldValue[];
+  // customMetadata: MetadataFieldValue[];
   fetchData?: boolean;
 }
 
 const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   dataEntityId,
-  dataEntityDetails,
-  isDataEntityLoading,
-  predefinedMetadata,
-  customMetadata,
+  // dataEntityDetails,
+  // isDataEntityLoading,
+  // predefinedMetadata,
+  // customMetadata,
   fetchData,
 }) => {
   const dispatch = useAppDispatch();
   const metadataNum = 5;
+
+  const dataEntityDetails = useAppSelector(
+    getDataEntityDetails(dataEntityId)
+  );
+  const predefinedMetadata = useAppSelector(state =>
+    getDataEntityPredefinedMetadataList(state, dataEntityId)
+  );
+  const customMetadata = useAppSelector(state =>
+    getDataEntityCustomMetadataList(state, dataEntityId)
+  );
+
+  const { isLoading: isDataEntityDetailsFetching } = useAppSelector(
+    getDataEntityDetailsFetchingStatuses
+  );
 
   React.useEffect(() => {
     if (fetchData && !dataEntityDetails)
@@ -74,7 +92,15 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
 
   return (
     <S.Container container>
-      {!isDataEntityLoading ? (
+      {isDataEntityDetailsFetching ? (
+        <Grid container justifyContent="center">
+          <AppCircularProgress
+            background="transparent"
+            progressBackground="dark"
+            size={50}
+          />
+        </Grid>
+      ) : (
         <>
           <Grid container>
             <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
@@ -142,14 +168,6 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
             </S.AboutText>
           </S.AboutContainer>
         </>
-      ) : (
-        <Grid container justifyContent="center">
-          <AppCircularProgress
-            background="transparent"
-            progressBackground="dark"
-            size={50}
-          />
-        </Grid>
       )}
     </S.Container>
   );
