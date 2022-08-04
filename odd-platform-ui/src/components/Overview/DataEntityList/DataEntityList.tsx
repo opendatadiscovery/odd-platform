@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import React from 'react';
 import { DataEntityRef } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
@@ -23,39 +23,48 @@ const DataEntityList: React.FC<OverviewDataEntityProps> = ({
   const { dataEntityDetailsPath } = useAppPaths();
 
   return (
-    <Grid item>
+    <S.DataEntityListContainer item>
       <S.SectionCaption variant="h4" sx={{ mb: 2 }}>
         {entityListIcon}
         {entityListName}
       </S.SectionCaption>
+
       <S.ListLinksContainer>
         {dataEntitiesList.map(item => (
           <li key={item.id}>
-            <Grid container alignItems="center" wrap="nowrap">
-              <S.ListLink to={dataEntityDetailsPath(item.id)}>
+            <S.ListLink
+              to={dataEntityDetailsPath(item.id)}
+              $hasAlerts={item.hasAlerts}
+            >
+              <S.ListLinkInnerItem $bounded>
                 {item.hasAlerts ? <AlertIcon sx={{ mr: 0.5 }} /> : null}
+
                 <Typography
                   noWrap
                   title={item.internalName || item.externalName}
                 >
                   {item.internalName || item.externalName}
                 </Typography>
-              </S.ListLink>
-              {item.entityClasses?.map(entityClass => (
-                <EntityClassItem
-                  sx={{ ml: 0.5 }}
-                  key={entityClass.id}
-                  entityClassName={entityClass.name}
-                />
-              ))}
-            </Grid>
+              </S.ListLinkInnerItem>
+
+              <S.ListLinkInnerItem>
+                {item.entityClasses?.map(entityClass => (
+                  <EntityClassItem
+                    sx={{ ml: 0.5 }}
+                    key={entityClass.id}
+                    entityClassName={entityClass.name}
+                  />
+                ))}
+              </S.ListLinkInnerItem>
+            </S.ListLink>
           </li>
         ))}
+
         {!isFetching && !dataEntitiesList.length ? (
           <EmptyContentPlaceholder />
         ) : null}
       </S.ListLinksContainer>
-    </Grid>
+    </S.DataEntityListContainer>
   );
 };
 
