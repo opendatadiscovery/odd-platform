@@ -9,20 +9,23 @@ import * as S from './DatasetStructureTableStyles';
 interface DatasetStructureTableProps {
   dataEntityId: number;
   versionId?: number;
+  indexToScroll: number;
   datasetStructureRoot: DataSetField[];
 }
 
 const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
   dataEntityId,
   versionId,
+  indexToScroll,
   datasetStructureRoot,
 }) => {
-  const isStatsNull = useAppSelector(state =>
-    getStatsNull(state, {
+  const isStatsNull = useAppSelector(
+    getStatsNull({
       datasetId: dataEntityId,
       versionId,
     })
   );
+
   return (
     <S.Container item xs={12} sx={{ mt: 2.5 }}>
       <S.TableHeader container>
@@ -53,6 +56,7 @@ const DatasetStructureTable: React.FC<DatasetStructureTableProps> = ({
           versionId={versionId}
           datasetStructureRoot={datasetStructureRoot}
           datasetRowsCount={datasetStructureRoot.length}
+          indexToScroll={indexToScroll}
         />
       </Grid>
     </S.Container>

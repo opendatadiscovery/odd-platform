@@ -157,7 +157,7 @@ public class DataEntityRepositoryImpl
                                     final DatasetVersionRepository datasetVersionRepository,
                                     final TermRepository termRepository,
                                     final LineageRepository lineageRepository) {
-        super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null,
+        super(dslContext, jooqQueryHelper, DATA_ENTITY, DATA_ENTITY.ID, null, null,
             DATA_ENTITY.UPDATED_AT, DataEntityDimensionsDto.class);
 
         this.jooqFTSHelper = jooqFTSHelper;

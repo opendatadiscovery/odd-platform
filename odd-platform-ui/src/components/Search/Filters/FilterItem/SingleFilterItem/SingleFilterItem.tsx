@@ -44,14 +44,12 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
           sx={{ mt: 2 }}
           label={name}
           id={`filter-${facetName}`}
-          fullWidth
           value={
             selectedOptions?.length ? selectedOptions[0].entityId : 'All'
           }
         >
           <AppMenuItem
             value="All"
-            maxWidth={190}
             onClick={() => handleFilterSelect({ id: 'All', name: 'All' })}
           >
             All
@@ -61,7 +59,6 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
               key={option.id}
               value={option.id}
               onClick={() => handleFilterSelect(option)}
-              maxWidth={190}
             >
               {option.name}
             </AppMenuItem>

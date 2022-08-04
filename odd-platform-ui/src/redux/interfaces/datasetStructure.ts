@@ -1,13 +1,15 @@
 import {
-  DataSetFieldType,
-  StringFieldStat,
-  BooleanFieldStat,
   BinaryFieldStat,
-  NumberFieldStat,
+  BooleanFieldStat,
   ComplexFieldStat,
-  DateTimeFieldStat,
+  DataSetField,
+  DataSetFieldType,
   DataSetFieldTypeTypeEnum,
+  DateTimeFieldStat,
+  EnumValue,
   Label,
+  NumberFieldStat,
+  StringFieldStat,
 } from 'generated-sources';
 
 export type DataSetFormattedStats = StringFieldStat &
@@ -63,7 +65,7 @@ export const DatasetStatsLabelMap: Map<DataSetFormattedStatsKeys, string> =
     ['medianValue', 'Median'],
   ]);
 
-export interface UpdateDataSetFieldFormDataParams {
+export interface UpdateDataSetFieldFormResponse {
   datasetFieldId: number;
   internalDescription?: string;
   labels?: Label[];
@@ -72,3 +74,15 @@ export interface UpdateDataSetFieldFormDataParams {
 export type DataSetStructureTypesCount = Partial<
   Record<DataSetFieldType['type'], number>
 >;
+
+export interface DataSetStructureResponse {
+  dataEntityId: number;
+  dataSetVersionId: number;
+  fieldList: DataSetField[];
+  isLatestVersion: boolean;
+}
+
+export interface DataSetFieldEnumsResponse {
+  datasetFieldId: number;
+  enumValueList: EnumValue[] | undefined;
+}

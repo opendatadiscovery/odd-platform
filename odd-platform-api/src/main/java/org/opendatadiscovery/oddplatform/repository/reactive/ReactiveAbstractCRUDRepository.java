@@ -2,27 +2,33 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
 import org.jooq.OrderField;
 import org.jooq.Record;
+import org.jooq.Row13;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SortOrder;
 import org.jooq.Table;
+import org.jooq.UpdateResultStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.OrderByField;
 import org.opendatadiscovery.oddplatform.utils.Page;
+import org.opendatadiscovery.oddplatform.utils.Pair;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -32,9 +38,12 @@ import static org.jooq.impl.DSL.rowNumber;
 
 @RequiredArgsConstructor
 public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implements ReactiveCRUDRepository<P> {
-    public static final String DEFAULT_NAME_FIELD = "name";
-    public static final String DEFAULT_ID_FIELD = "id";
-    public static final String DEFAULT_UPDATED_AT_FIELD = "updated_at";
+    private static final int BATCH_SIZE = 1000;
+
+    private static final String DEFAULT_NAME_FIELD = "name";
+    private static final String DEFAULT_ID_FIELD = "id";
+    private static final String DEFAULT_UPDATED_AT_FIELD = "updated_at";
+    private static final String DEFAULT_CREATED_AT_FIELD = "created_at";
 
     private static final String PAGE_METADATA_TOTAL_FIELD = "_total";
     private static final String PAGE_METADATA_NEXT_FIELD = "_next";
@@ -48,6 +57,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
     protected final Field<String> nameField;
     protected final Field<Long> idField;
+    protected final Field<LocalDateTime> createdAtField;
     protected final Field<LocalDateTime> updatedAtField;
 
     public ReactiveAbstractCRUDRepository(final JooqReactiveOperations jooqReactiveOperations,
@@ -61,6 +71,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
 
         this.nameField = recordTable.field(DEFAULT_NAME_FIELD, String.class);
         this.idField = recordTable.field(DEFAULT_ID_FIELD, Long.class);
+        this.createdAtField = recordTable.field(DEFAULT_CREATED_AT_FIELD, LocalDateTime.class);
         this.updatedAtField = recordTable.field(DEFAULT_UPDATED_AT_FIELD, LocalDateTime.class);
     }
 
@@ -108,6 +119,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     @Override
+    @ReactiveTransactional
     public Flux<P> bulkCreate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
             return Flux.just();
@@ -123,6 +135,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     @Override
+    @ReactiveTransactional
     public Flux<P> bulkUpdate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
             return Flux.just();
@@ -165,20 +178,45 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     protected Flux<R> insertMany(final List<R> records) {
-        InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
+        return ListUtils.partition(records, BATCH_SIZE)
+            .stream()
+            .map(rs -> {
+                InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
 
-        for (int i = 0; i < records.size() - 1; i++) {
-            insertStep = insertStep.set(records.get(i)).newRecord();
-        }
+                for (int i = 0; i < rs.size() - 1; i++) {
+                    insertStep = insertStep.set(rs.get(i)).newRecord();
+                }
 
-        return jooqReactiveOperations
-            .flux(insertStep.set(records.get(records.size() - 1)).returning(recordTable.fields()));
+                return jooqReactiveOperations
+                    .flux(insertStep.set(rs.get(rs.size() - 1)).returning(recordTable.fields()));
+            })
+            .reduce(Flux::concat)
+            .orElse(Flux.empty());
     }
 
-    @ReactiveTransactional
     protected Flux<R> updateMany(final List<R> records) {
-        // TODO: update
-        return Flux.fromIterable(records).flatMap(this::updateOne);
+        return ListUtils.partition(records, BATCH_SIZE)
+            .stream()
+            .map(rs -> {
+                final Table<?> table = DSL.table(jooqReactiveOperations.newResult(recordTable, rs));
+
+                final List<Field<?>> nonUpdatableFields = getNonUpdatableFields();
+                final Map<? extends Field<?>, Field<?>> fields = Arrays
+                    .stream(recordTable.fields())
+                    .filter(f -> !nonUpdatableFields.contains(f))
+                    .map(r -> Pair.of(r, table.field(r.getName())))
+                    .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+
+                final UpdateResultStep<R> returning = DSL.update(recordTable)
+                    .set(fields)
+                    .from(table)
+                    .where(idField.eq(table.field(idField.getName(), Long.class)))
+                    .returning();
+
+                return jooqReactiveOperations.flux(returning);
+            })
+            .reduce(Flux::concat)
+            .orElse(Flux.just());
     }
 
     protected Mono<Long> fetchCount(final String nameQuery) {
@@ -219,6 +257,17 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
         return DSL
             .selectFrom(recordTable)
             .where(listCondition(query, ids));
+    }
+
+    protected List<Field<?>> getNonUpdatableFields() {
+        final List<Field<?>> fields = new ArrayList<>();
+        if (idField != null) {
+            fields.add(idField);
+        }
+        if (createdAtField != null) {
+            fields.add(createdAtField);
+        }
+        return fields;
     }
 
     private R createRecord(final P pojo, final LocalDateTime updatedAt) {

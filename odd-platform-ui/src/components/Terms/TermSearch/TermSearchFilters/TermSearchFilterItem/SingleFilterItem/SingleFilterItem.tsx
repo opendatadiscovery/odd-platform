@@ -60,7 +60,6 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
               key={option.id}
               value={option.id}
               onClick={() => handleFilterSelect(option)}
-              maxWidth={190}
             >
               {option.name}
             </AppMenuItem>

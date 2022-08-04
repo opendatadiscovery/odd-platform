@@ -1,10 +1,19 @@
-import { ConfigurationParameters } from 'generated-sources';
+import {
+  ConfigurationParameters,
+  DataQualityTestSeverity,
+} from 'generated-sources';
 
 export const BASE_PARAMS: ConfigurationParameters = {
   basePath: import.meta.env.VITE_API_URL || '',
   credentials: 'same-origin',
   headers: { 'Content-Type': 'application/json' },
 };
+
+export const ORDERED_SEVERITY = [
+  DataQualityTestSeverity.CRITICAL,
+  DataQualityTestSeverity.MAJOR,
+  DataQualityTestSeverity.MINOR,
+];
 
 // content width constants
 export const toolbarHeight = 49;
@@ -24,3 +33,6 @@ export const tabsContainerMargin = 16;
 
 // time formats
 export const alertDateFormat = 'd MMM yyyy, HH:mm';
+
+// empty structures
+export const emptyArr = [];
