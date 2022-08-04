@@ -5,6 +5,8 @@ components:
       properties:
         username:
           type: string
+        is_admin:
+          type: boolean
       required:
         - username
 
