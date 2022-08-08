@@ -27,12 +27,19 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
     defaultHeight: 50,
     fixedWidth: true,
   });
+
   const rootStructureItems = React.useMemo(
     () => datasetStructureRoot.filter(field => !field.parentFieldId),
     [datasetStructureRoot]
   );
+
   const renderStructureItem = React.useCallback(
-    (field: DataSetField, nesting: number, onSizeChange: () => void) => (
+    (
+      field: DataSetField,
+      nesting: number,
+      onSizeChange: () => void,
+      rowHeight?: string | number
+    ) => (
       <DatasetStructureItem
         key={field.id}
         dataEntityId={dataEntityId}
@@ -46,6 +53,7 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
           (datasetStructureRoot?.length < 20 && nesting < 1)
         }
         renderStructureItem={renderStructureItem}
+        rowHeight={rowHeight}
       />
     ),
     [datasetStructureRoot, datasetRowsCount, dataEntityId, versionId]
@@ -61,7 +69,12 @@ const DatasetStructureList: React.FC<DatasetStructureListProps> = ({
     >
       {({ measure }) => (
         <div style={style}>
-          {renderStructureItem(rootStructureItems[index], 0, measure)}
+          {renderStructureItem(
+            rootStructureItems[index],
+            0,
+            measure,
+            style.height
+          )}
         </div>
       )}
     </CellMeasurer>

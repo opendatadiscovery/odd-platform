@@ -1,15 +1,13 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { DatasetStructureState, RootState } from 'redux/interfaces';
+import {
+  DatasetStructureIds,
+  DatasetStructureState,
+  RootState,
+} from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import { EnumValue } from 'generated-sources';
 import { emptyArr } from 'lib/constants';
-
-interface DatasetStructureIds {
-  datasetId: number;
-  versionId?: number;
-  parentFieldId?: number;
-}
 
 export const getDataSetStructureFetchingStatus = createStatusesSelector(
   actions.fetchDataSetStructureActionType
@@ -59,6 +57,7 @@ export const getDatasetStructure = ({
     getDatasetVersionId({ datasetId, versionId }),
     (datasetStructureState, currentVersionId) => {
       if (!currentVersionId) return [];
+
       return (
         datasetStructureState.allFieldIdsByVersion[currentVersionId][
           parentFieldId || 0
@@ -76,21 +75,23 @@ export const getDatasetStructureTypeStats = ({
     getDatasetVersionId({ datasetId, versionId }),
     (datasetStructureState, currentVersionId) => {
       if (!currentVersionId) return {};
-      return datasetStructureState.statsByVersionId[currentVersionId];
+      return datasetStructureState.statsByVersionId[currentVersionId]
+        .typeStats;
     }
   );
 
-export const getStatsNull = ({
+export const getIsUniqStatsExist = ({
   datasetId,
   versionId,
-  parentFieldId,
 }: DatasetStructureIds) =>
   createSelector(
-    getDatasetStructure({ datasetId, versionId, parentFieldId }),
-    dataSetList =>
-      dataSetList
-        .map(dataset => dataset.stats)
-        .some(elem => elem?.name !== null)
+    getDatasetStructureState,
+    getDatasetVersionId({ datasetId, versionId }),
+    (datasetStructureState, currentVersionId) => {
+      if (!currentVersionId) return false;
+      return datasetStructureState.statsByVersionId[currentVersionId]
+        .isUniqueStatsExist;
+    }
   );
 
 export const getDatasetFieldData = (datasetFieldId: number) =>

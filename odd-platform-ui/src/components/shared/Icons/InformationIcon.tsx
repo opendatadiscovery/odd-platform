@@ -6,6 +6,7 @@ import { Theme } from '@mui/material';
 
 const styles = ({ theme }: { theme?: Theme }) => ({
   color: theme?.palette.texts.hint,
+  display: 'flex',
   '&:hover': {
     color: theme?.palette.texts.secondary,
   },
@@ -28,4 +29,5 @@ const InformationIcon: React.FC<SvgIconProps> = React.forwardRef(
     </AppSvgIcon>
   )
 );
+
 export default styled(InformationIcon)(styles);
