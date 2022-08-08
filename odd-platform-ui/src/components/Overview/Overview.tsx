@@ -116,48 +116,45 @@ const Overview: React.FC = () => {
           <S.TagsContainer container>
             <TopTagsListContainer />
           </S.TagsContainer>
-          {(!identity?.identity ||
-            (identity.identity && identity.owner)) && (
-            <Grid container sx={{ mt: 8 }} wrap="nowrap">
-              <S.DataEntitiesUsageContainer>
-                <S.DataEntitiesTotalContainer>
-                  <Box>
-                    <Typography variant="h4">Total entities</Typography>
-                    <Typography variant="h1">
-                      {dataEntityUsageTotalCount}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <S.UnfilledEntities>
-                      {dataEntityUsageUnfilledCount} unfilled entities
-                    </S.UnfilledEntities>
-                  </Box>
-                </S.DataEntitiesTotalContainer>
-                <S.ListItemContainer>
-                  {dataEntityClassesUsageInfo?.map((item, index) => (
-                    <S.ListItemWrapper key={item?.entityClass?.id}>
-                      <S.ListItem $index={index}>
-                        <EntityClassItem
-                          sx={{ ml: 0.5 }}
-                          key={item?.entityClass?.id}
-                          entityClassName={item?.entityClass?.name}
-                        />
-                        <Typography noWrap title={item?.entityClass?.name}>
-                          {item.entityClass &&
-                            DataEntityClassLabelMap.get(
-                              item.entityClass.name
-                            )?.normal}
-                        </Typography>
-                      </S.ListItem>
-                      <Typography variant="h4" noWrap>
-                        {item.totalCount}
+          <Grid container sx={{ mt: 8 }} wrap="nowrap">
+            <S.DataEntitiesUsageContainer>
+              <S.DataEntitiesTotalContainer>
+                <Box>
+                  <Typography variant="h4">Total entities</Typography>
+                  <Typography variant="h1">
+                    {dataEntityUsageTotalCount}
+                  </Typography>
+                </Box>
+                <Box>
+                  <S.UnfilledEntities>
+                    {dataEntityUsageUnfilledCount} unfilled entities
+                  </S.UnfilledEntities>
+                </Box>
+              </S.DataEntitiesTotalContainer>
+              <S.ListItemContainer>
+                {dataEntityClassesUsageInfo?.map((item, index) => (
+                  <S.ListItemWrapper key={item?.entityClass?.id}>
+                    <S.ListItem $index={index}>
+                      <EntityClassItem
+                        sx={{ ml: 0.5 }}
+                        key={item?.entityClass?.id}
+                        entityClassName={item?.entityClass?.name}
+                      />
+                      <Typography noWrap title={item?.entityClass?.name}>
+                        {item.entityClass &&
+                          DataEntityClassLabelMap.get(
+                            item.entityClass.name
+                          )?.normal}
                       </Typography>
-                    </S.ListItemWrapper>
-                  ))}
-                </S.ListItemContainer>
-              </S.DataEntitiesUsageContainer>
-            </Grid>
-          )}
+                    </S.ListItem>
+                    <Typography variant="h4" noWrap>
+                      {item.totalCount}
+                    </Typography>
+                  </S.ListItemWrapper>
+                ))}
+              </S.ListItemContainer>
+            </S.DataEntitiesUsageContainer>
+          </Grid>
           {identity?.owner && identity?.identity ? (
             <S.DataEntityContainer container>
               <Grid item xs={3}>
