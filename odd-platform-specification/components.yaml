@@ -5,8 +5,10 @@ components:
       properties:
         username:
           type: string
-        is_admin:
-          type: boolean
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
       required:
         - username
 
@@ -17,8 +19,16 @@ components:
           $ref: '#/components/schemas/Identity'
         owner:
           $ref: '#/components/schemas/Owner'
+        association_request_created:
+          type: boolean
       required:
         - identity
+
+    Permission:
+      type: string
+      enum:
+        - MANAGEMENT_CONTROL
+        - DATA_ENTITY_EDIT
 
     Namespace:
       type: object
@@ -2110,6 +2120,49 @@ components:
         - CUSTOM_GROUP_CREATED
         - CUSTOM_GROUP_UPDATED
         - CUSTOM_GROUP_DELETED
+
+    OwnerAssociationRequestList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OwnerAssociationRequest'
+        page_info:
+          $ref: '#/components/schemas/PageInfo'
+      required:
+        - items
+        - page_info
+
+    OwnerAssociationRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        owner_name:
+          type: string
+        status:
+          $ref: '#/components/schemas/OwnerAssociationRequestStatus'
+      required:
+        - id
+        - username
+        - owner_name
+
+    OwnerAssociationRequestStatus:
+      type: string
+      enum:
+        - PENDING
+        - APPROVED
+        - DECLINED
+
+    OwnerAssociationRequestStatusFormData:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/OwnerAssociationRequestStatus'
 
   parameters:
     PageParam:
