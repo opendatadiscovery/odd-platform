@@ -7,6 +7,7 @@ import {
 import {
   getDataSourcesList,
   getIsDataSourcesListFetching,
+  getSearchUpdateStatuses,
 } from 'redux/selectors';
 import { fetchDataSourcesList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
@@ -16,6 +17,7 @@ import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/Mu
 import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
+import { clearDataEntitySearchFacets } from 'redux/reducers/dataEntitySearch.slice';
 import * as S from './FiltersStyles';
 
 interface FiltersProps {
@@ -24,22 +26,27 @@ interface FiltersProps {
   fetchNamespaceList: (
     params: NamespaceApiGetNamespaceListRequest
   ) => void;
-  clearDataEntitySearchFilters: () => void;
-  isSearchFacetsUpdating: boolean;
+  // clearDataEntitySearchFilters: () => void;
+  // isSearchFacetsUpdating: boolean;
 }
 
 const Filters: React.FC<FiltersProps> = ({
   searchClass,
   namespaces,
   fetchNamespaceList,
-  clearDataEntitySearchFilters,
-  isSearchFacetsUpdating,
+  // clearDataEntitySearchFilters,
+  // isSearchFacetsUpdating,
 }) => {
   const dispatch = useAppDispatch();
+
   const datasources = useAppSelector(getDataSourcesList);
   const { isLoading: isDatasourceListFetching } = useAppSelector(
     getIsDataSourcesListFetching
   );
+  const { isLoading: isSearchUpdating } = useAppSelector(
+    getSearchUpdateStatuses
+  );
+
   React.useEffect(() => {
     dispatch(fetchDataSourcesList({ page: 1, size: 100 }));
     fetchNamespaceList({ page: 1, size: 100 });
@@ -52,7 +59,7 @@ const Filters: React.FC<FiltersProps> = ({
         <AppButton
           color="tertiary"
           size="medium"
-          onClick={() => clearDataEntitySearchFilters()}
+          onClick={() => dispatch(clearDataEntitySearchFacets())}
         >
           Clear All
         </AppButton>
@@ -88,7 +95,7 @@ const Filters: React.FC<FiltersProps> = ({
           name="Tag"
         />
         <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
-          {(isSearchFacetsUpdating || isDatasourceListFetching) && (
+          {(isSearchUpdating || isDatasourceListFetching) && (
             <AppCircularProgress size={16} text="Updating filters" />
           )}
         </S.FacetsLoaderContainer>

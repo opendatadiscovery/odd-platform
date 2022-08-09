@@ -4,7 +4,6 @@ import {
   getSearchQuery,
   getSearchSuggestions,
 } from 'redux/selectors/dataentitySearch.selectors';
-import { createDataEntitiesSearch } from 'redux/thunks';
 import MainSearch from 'components/shared/MainSearch/MainSearch';
 
 const mapStateToProps = (state: RootState) => ({
@@ -12,8 +11,6 @@ const mapStateToProps = (state: RootState) => ({
   suggestions: getSearchSuggestions(state),
 });
 
-const mapDispatchToProps = {
-  createDataEntitiesSearch,
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainSearch);

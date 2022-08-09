@@ -4,10 +4,6 @@ import {
   getSearchEntityClass,
   getSearchFiltersSynced,
   getSearchId,
-  getSearchIsCreating,
-  getSearchIsCreatingAndFetching,
-  getSearchIsFetching,
-  getSearchIsUpdated,
   getSearchResults,
   getSearchResultsPage,
   getSearchTotals,
@@ -23,10 +19,10 @@ const mapStateToProps = (state: RootState) => ({
   searchResults: getSearchResults(state),
   pageInfo: getSearchResultsPage(state),
   searchFiltersSynced: getSearchFiltersSynced(state),
-  isSearchFetching: getSearchIsFetching(state),
-  isSearchCreatingAndFetching: getSearchIsCreatingAndFetching(state),
-  isSearchUpdated: getSearchIsUpdated(state),
-  isSearchCreating: getSearchIsCreating(state),
+  // isSearchFetching: getSearchIsFetching(state),
+  // isSearchCreatingAndFetching: getSearchIsCreatingAndFetching(state),
+  // isSearchUpdated: getSearchIsUpdated(state),
+  // isSearchCreating: getSearchIsCreating(state),
 });
 
 const mapDispatchToProps = {};

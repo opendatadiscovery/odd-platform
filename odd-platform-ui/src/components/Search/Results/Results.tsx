@@ -1,6 +1,5 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import { useDispatch } from 'react-redux';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
 import { Dictionary } from 'lodash/index';
@@ -15,7 +14,6 @@ import {
   SearchClass,
   SearchTotalsByName,
 } from 'redux/interfaces';
-import * as actions from 'redux/actions';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
@@ -26,8 +24,15 @@ import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupFor
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { getDataEntityGroupDeletingStatuses } from 'redux/selectors';
+import {
+  getDataEntityGroupDeletingStatuses,
+  getSearchCreatingStatuses,
+  getSearchIsCreatingAndFetching,
+  getSearchIsFetching,
+  getSearchUpdateStatuses,
+} from 'redux/selectors';
 import { fetchDataEntitySearchResults } from 'redux/thunks';
+import { changeDataEntitySearchFacet } from 'redux/reducers/dataEntitySearch.slice';
 import * as S from './ResultsStyles';
 
 interface ResultsProps {
@@ -38,10 +43,10 @@ interface ResultsProps {
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
   totals: SearchTotalsByName;
-  isSearchFetching: boolean;
-  isSearchCreatingAndFetching: boolean;
-  isSearchUpdated: boolean;
-  isSearchCreating: boolean;
+  // isSearchFetching: boolean;
+  // isSearchCreatingAndFetching: boolean;
+  // isSearchUpdated: boolean;
+  // isSearchCreating: boolean;
 }
 
 const Results: React.FC<ResultsProps> = ({
@@ -52,13 +57,23 @@ const Results: React.FC<ResultsProps> = ({
   pageInfo,
   totals,
   searchFiltersSynced,
-  isSearchFetching,
-  isSearchCreatingAndFetching,
-  isSearchUpdated,
-  isSearchCreating,
+  // isSearchFetching,
+  // isSearchCreatingAndFetching,
+  // isSearchUpdated,
+  // isSearchCreating,
 }) => {
-  const oldDispatch = useDispatch();
   const dispatch = useAppDispatch();
+
+  const isSearchFetching = useAppSelector(getSearchIsFetching);
+  const isSearchCreatingAndFetching = useAppSelector(
+    getSearchIsCreatingAndFetching
+  );
+  const { isLoading: isSearchUpdating } = useAppSelector(
+    getSearchUpdateStatuses
+  );
+  const { isLoading: isSearchCreating } = useAppSelector(
+    getSearchCreatingStatuses
+  );
 
   const [tabs, setTabs] = React.useState<AppTabItem<SearchClass>[]>([]);
 
@@ -120,8 +135,8 @@ const Results: React.FC<ResultsProps> = ({
     const newType = tabs[newTypeIndex]?.value
       ? get(dataEntityClassesDict, `${tabs[newTypeIndex].value}`)
       : null;
-    oldDispatch(
-      actions.changeDataEntitySearchFilterAction({
+    dispatch(
+      changeDataEntitySearchFacet({
         facetName: 'entityClasses',
         facetOptionId: newType?.id || tabs[newTypeIndex].value,
         facetOptionName:
@@ -182,7 +197,7 @@ const Results: React.FC<ResultsProps> = ({
           items={tabs}
           selectedTab={selectedTab}
           handleTabChange={onSearchClassChange}
-          isHintUpdated={isSearchUpdated}
+          isHintUpdated={isSearchUpdating}
         />
       )}
       {tabs[selectedTab]?.name === 'Groups' && (
@@ -291,7 +306,7 @@ const Results: React.FC<ResultsProps> = ({
             hasMore={pageInfo.hasNext}
             loader={
               // isSearchFetching && (
-              false && (
+              isSearchFetching && (
                 <SkeletonWrapper
                   length={10}
                   renderContent={({ randomSkeletonPercentWidth, key }) => (

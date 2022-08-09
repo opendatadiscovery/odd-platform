@@ -7,8 +7,6 @@ import {
 } from 'redux/selectors/dataentitySearch.selectors';
 import { OptionalFacetNames } from 'redux/interfaces/dataEntitySearch';
 import MultipleFilterItem from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItem';
-import * as actions from 'redux/actions';
-import { getFacetOptions } from 'redux/thunks/dataentitiesSearch.thunks';
 
 const mapStateToProps = (
   state: RootState,
@@ -20,8 +18,7 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  setFacets: actions.changeDataEntitySearchFilterAction,
-  searchFacetOptions: getFacetOptions,
+  // setFacets: actions.changeDataEntitySearchFilterAction,
 };
 
 export default connect(

@@ -2,19 +2,20 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
 import {
-  FacetStateUpdate,
   OptionalFacetNames,
   SearchFilterStateSynced,
 } from 'redux/interfaces/dataEntitySearch';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { changeDataEntitySearchFacet } from 'redux/reducers/dataEntitySearch.slice';
 
 interface FilterItemProps {
   name: string;
   facetName: OptionalFacetNames;
   facetOptions: SearchFilter[];
   selectedOptions: SearchFilterStateSynced[] | undefined;
-  setFacets: (option: FacetStateUpdate) => void;
+  // setFacets: (option: FacetStateUpdate) => void;
 }
 
 const SingleFilterItem: React.FC<FilterItemProps> = ({
@@ -22,19 +23,24 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
   facetName,
   facetOptions,
   selectedOptions,
-  setFacets,
+  // setFacets,
 }) => {
+  const dispatch = useAppDispatch();
+
   const handleFilterSelect = React.useCallback(
     (option: { id: number | string; name: string }) => {
-      setFacets({
-        facetName,
-        facetOptionId: option.id,
-        facetOptionName: option.name,
-        facetOptionState: true,
-        facetSingle: true,
-      });
+      dispatch(
+        changeDataEntitySearchFacet({
+          facetName,
+          facetOptionId: option.id,
+          facetOptionName: option.name,
+          facetOptionState: true,
+          facetSingle: true,
+        })
+      );
     },
-    [setFacets, facetName]
+    // TODO check changeDataEntitySearchFacet deps
+    [changeDataEntitySearchFacet, facetName]
   );
 
   return facetOptions.length ? (

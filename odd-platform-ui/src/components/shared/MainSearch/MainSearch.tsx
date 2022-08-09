@@ -1,15 +1,14 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
-import {
-  DataEntityRef,
-  SearchApiSearchRequest,
-  SearchFacetsData,
-} from 'generated-sources';
+import { DataEntityRef } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { useDebouncedCallback } from 'use-debounce';
 import { useAppDispatch } from 'lib/redux/hooks';
-import { fetchSearchSuggestions } from 'redux/thunks';
+import {
+  createDataEntitiesSearch,
+  fetchSearchSuggestions,
+} from 'redux/thunks';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
@@ -21,16 +20,16 @@ interface AppSearchProps {
   query?: string;
   placeholder?: string;
   suggestions: DataEntityRef[];
-  createDataEntitiesSearch: (
-    params: SearchApiSearchRequest
-  ) => Promise<SearchFacetsData>;
+  // createDataEntitiesSearch: (
+  //   params: SearchApiSearchRequest
+  // ) => Promise<SearchFacetsData>;
 }
 
 const MainSearch: React.FC<AppSearchProps> = ({
   placeholder,
   query,
   suggestions,
-  createDataEntitiesSearch,
+  // createDataEntitiesSearch,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -53,12 +52,12 @@ const MainSearch: React.FC<AppSearchProps> = ({
       pageSize: 30,
       filters: {},
     };
-    createDataEntitiesSearch({ searchFormData: searchQuery }).then(
-      search => {
-        const searchLink = searchPath(search.searchId);
+    dispatch(createDataEntitiesSearch({ searchFormData: searchQuery }))
+      .unwrap()
+      .then(({ searchId }) => {
+        const searchLink = searchPath(searchId);
         history.replace(searchLink);
-      }
-    );
+      });
     history.push(searchPath());
   };
 

@@ -29,6 +29,7 @@ export type SearchFilterStateSynced = SearchFilterState & {
 export type SearchFacetStateById = {
   [facetOptionId: string]: SearchFilterStateSynced;
 };
+
 export type SearchFacetsByName = {
   [facetName in SearchFacetNames]?: SearchFacetStateById;
 };

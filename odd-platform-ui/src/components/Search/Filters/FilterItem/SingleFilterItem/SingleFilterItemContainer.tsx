@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { getSelectedSearchFacetOptions } from 'redux/selectors/dataentitySearch.selectors';
 import { OptionalFacetNames } from 'redux/interfaces/dataEntitySearch';
-import * as actions from 'redux/actions';
 import SingleFilterItem from './SingleFilterItem';
 
 const mapStateToProps = (
@@ -13,7 +12,7 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  setFacets: actions.changeDataEntitySearchFilterAction,
+  // setFacets: actions.changeDataEntitySearchFilterAction,
 };
 
 export default connect(

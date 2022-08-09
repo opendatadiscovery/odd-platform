@@ -12,14 +12,15 @@ import { useDebouncedCallback } from 'use-debounce';
 import {
   CountableSearchFilter,
   MultipleFacetType,
-  SearchApiGetFiltersForFacetRequest,
   SearchFilter,
 } from 'generated-sources';
 import AppInput from 'components/shared/AppInput/AppInput';
-
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { FacetStateUpdate, OptionalFacetNames } from 'redux/interfaces';
+import { OptionalFacetNames } from 'redux/interfaces';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { getDataEntitySearchFacetOptions } from 'redux/thunks';
+import { changeDataEntitySearchFacet } from 'redux/reducers/dataEntitySearch.slice';
 import {
   FilterCount,
   HighlightedTextPart,
@@ -30,10 +31,10 @@ interface MultipleFilterItemAutocompleteProps {
   name: string;
   facetName: OptionalFacetNames;
   facetOptionsAll: CountableSearchFilter[];
-  setFacets: (option: FacetStateUpdate) => void;
-  searchFacetOptions: (
-    params: SearchApiGetFiltersForFacetRequest
-  ) => Promise<CountableSearchFilter[]>;
+  // setFacets: (option: FacetStateUpdate) => void;
+  // searchFacetOptions: (
+  //   params: SearchApiGetFiltersForFacetRequest
+  // ) => Promise<CountableSearchFilter[]>;
 }
 
 const MultipleFilterItemAutocomplete: React.FC<
@@ -43,9 +44,11 @@ const MultipleFilterItemAutocomplete: React.FC<
   name,
   facetName,
   facetOptionsAll,
-  setFacets,
-  searchFacetOptions,
+  // setFacets,
+  // searchFacetOptions,
 }) => {
+  const dispatch = useAppDispatch();
+
   type FilterOption = Omit<SearchFilter, 'id' | 'count' | 'selected'> &
     Partial<CountableSearchFilter>;
 
@@ -62,12 +65,14 @@ const MultipleFilterItemAutocomplete: React.FC<
   ) => {
     if (!option) return;
     setSearchText(''); // Clear input on select
-    setFacets({
-      facetName,
-      facetOptionId: option.id,
-      facetOptionName: option.name,
-      facetOptionState: true,
-    });
+    dispatch(
+      changeDataEntitySearchFacet({
+        facetName,
+        facetOptionId: option.id,
+        facetOptionName: option.name,
+        facetOptionState: true,
+      })
+    );
   };
 
   const searchInputChange = React.useCallback(
@@ -112,19 +117,24 @@ const MultipleFilterItemAutocomplete: React.FC<
   const handleFacetSearch = React.useCallback(
     useDebouncedCallback(() => {
       setFacetOptionsLoading(true);
-      searchFacetOptions({
-        searchId,
-        facetType: facetName.toUpperCase() as MultipleFacetType,
-        page: 1,
-        size: 30,
-        query: searchText,
-      }).then(response => {
-        setFacetOptionsLoading(false);
-        setFacetOptions(response);
-      });
+      dispatch(
+        getDataEntitySearchFacetOptions({
+          searchId,
+          facetType: facetName.toUpperCase() as MultipleFacetType,
+          page: 1,
+          size: 30,
+          query: searchText,
+        })
+      )
+        .unwrap()
+        .then(response => {
+          setFacetOptionsLoading(false);
+          setFacetOptions(response.facetOptions);
+        });
     }, 500),
     [
-      searchFacetOptions,
+      // TODO do we need getDataEntitySearchFacetOptions dep?
+      getDataEntitySearchFacetOptions,
       setFacetOptionsLoading,
       setFacetOptions,
       searchText,
