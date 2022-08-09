@@ -9,7 +9,6 @@ import {
   DataEntity,
   DataEntityClass,
   DataEntityClassNameEnum,
-  SearchApiGetSearchResultsRequest,
 } from 'generated-sources';
 import {
   CurrentPageInfo,
@@ -26,8 +25,9 @@ import ResultItem from 'components/Search/Results/ResultItem/ResultItem';
 import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { getDataEntityGroupDeletingStatuses } from 'redux/selectors';
+import { fetchDataEntitySearchResults } from 'redux/thunks';
 import * as S from './ResultsStyles';
 
 interface ResultsProps {
@@ -38,9 +38,6 @@ interface ResultsProps {
   pageInfo: CurrentPageInfo;
   searchFiltersSynced: boolean;
   totals: SearchTotalsByName;
-  getDataEntitiesSearchResults: (
-    params: SearchApiGetSearchResultsRequest
-  ) => void;
   isSearchFetching: boolean;
   isSearchCreatingAndFetching: boolean;
   isSearchUpdated: boolean;
@@ -55,13 +52,13 @@ const Results: React.FC<ResultsProps> = ({
   pageInfo,
   totals,
   searchFiltersSynced,
-  getDataEntitiesSearchResults,
   isSearchFetching,
   isSearchCreatingAndFetching,
   isSearchUpdated,
   isSearchCreating,
 }) => {
-  const dispatch = useDispatch();
+  const oldDispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const [tabs, setTabs] = React.useState<AppTabItem<SearchClass>[]>([]);
 
@@ -123,7 +120,7 @@ const Results: React.FC<ResultsProps> = ({
     const newType = tabs[newTypeIndex]?.value
       ? get(dataEntityClassesDict, `${tabs[newTypeIndex].value}`)
       : null;
-    dispatch(
+    oldDispatch(
       actions.changeDataEntitySearchFilterAction({
         facetName: 'entityClasses',
         facetOptionId: newType?.id || tabs[newTypeIndex].value,
@@ -139,11 +136,13 @@ const Results: React.FC<ResultsProps> = ({
 
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
-    getDataEntitiesSearchResults({
-      searchId,
-      page: pageInfo.page + 1,
-      size: pageSize,
-    });
+    dispatch(
+      fetchDataEntitySearchResults({
+        searchId,
+        page: pageInfo.page + 1,
+        size: pageSize,
+      })
+    );
   };
 
   React.useEffect(() => {
@@ -158,11 +157,13 @@ const Results: React.FC<ResultsProps> = ({
 
   const fetchPageAfterDeleting = () => {
     if (pageInfo.page && isDataEntityGroupDeleted) {
-      getDataEntitiesSearchResults({
-        searchId,
-        page: pageInfo.page,
-        size: pageSize,
-      });
+      dispatch(
+        fetchDataEntitySearchResults({
+          searchId,
+          page: pageInfo.page,
+          size: pageSize,
+        })
+      );
     }
   };
 
@@ -289,7 +290,8 @@ const Results: React.FC<ResultsProps> = ({
             next={fetchNextPage}
             hasMore={pageInfo.hasNext}
             loader={
-              isSearchFetching && (
+              // isSearchFetching && (
+              false && (
                 <SkeletonWrapper
                   length={10}
                   renderContent={({ randomSkeletonPercentWidth, key }) => (

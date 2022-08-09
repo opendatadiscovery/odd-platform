@@ -13,7 +13,6 @@ import {
   getSearchTotals,
 } from 'redux/selectors/dataentitySearch.selectors';
 import { getDataEntityClassesDict } from 'redux/selectors/dataentity.selectors';
-import { getDataEntitiesSearchResults } from 'redux/thunks/dataentitiesSearch.thunks';
 import Results from './Results';
 
 const mapStateToProps = (state: RootState) => ({
@@ -30,8 +29,6 @@ const mapStateToProps = (state: RootState) => ({
   isSearchCreating: getSearchIsCreating(state),
 });
 
-const mapDispatchToProps = {
-  getDataEntitiesSearchResults,
-};
+const mapDispatchToProps = {};
 
 export default connect(mapStateToProps, mapDispatchToProps)(Results);

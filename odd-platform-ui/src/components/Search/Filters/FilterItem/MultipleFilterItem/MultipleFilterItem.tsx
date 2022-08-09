@@ -3,7 +3,7 @@ import { Grid } from '@mui/material';
 import {
   OptionalFacetNames,
   SearchFilterStateSynced,
-} from 'redux/interfaces/search';
+} from 'redux/interfaces/dataEntitySearch';
 import SelectedFilterOption from 'components/Search/Filters/FilterItem/SelectedFilterOption/SelectedFilterOption';
 import MultipleFilterItemAutocompleteContainer from './MultipleFilterItemAutocomplete/MultipleFilterItemAutocompleteContainer';
 

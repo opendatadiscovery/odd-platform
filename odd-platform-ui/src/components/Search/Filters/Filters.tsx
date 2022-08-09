@@ -11,7 +11,7 @@ import {
 import { fetchDataSourcesList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 
-import { SearchClass } from 'redux/interfaces/search';
+import { SearchClass } from 'redux/interfaces/dataEntitySearch';
 import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemContainer';
 import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
 import AppButton from 'components/shared/AppButton/AppButton';

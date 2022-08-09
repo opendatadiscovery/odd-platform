@@ -5,7 +5,7 @@ import {
   FacetStateUpdate,
   OptionalFacetNames,
   SearchFilterStateSynced,
-} from 'redux/interfaces/search';
+} from 'redux/interfaces/dataEntitySearch';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 

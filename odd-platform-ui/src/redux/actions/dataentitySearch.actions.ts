@@ -1,10 +1,6 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
-import {
-  FacetOptions,
-  FacetStateUpdate,
-  PaginatedResponse,
-} from 'redux/interfaces';
-import { DataEntityList, SearchFacetsData } from 'generated-sources';
+import { FacetOptions, FacetStateUpdate } from 'redux/interfaces';
+import { SearchFacetsData } from 'generated-sources';
 import { createActionType } from 'lib/redux/helpers';
 
 export const getDataEntitySearchAction = createAsyncAction(
@@ -25,11 +21,11 @@ export const updateDataEntitySearchAction = createAsyncAction(
   'PUT_DATA_ENTITIES_SEARCH__FAILURE'
 )<undefined, SearchFacetsData, undefined>();
 
-export const getDataEntitySearchResultsAction = createAsyncAction(
-  'GET_DATA_ENTITIES_SEARCH_RESULTS__REQUEST',
-  'GET_DATA_ENTITIES_SEARCH_RESULTS__SUCCESS',
-  'GET_DATA_ENTITIES_SEARCH_RESULTS__FAILURE'
-)<undefined, PaginatedResponse<DataEntityList>, undefined>();
+// export const getDataEntitySearchResultsAction = createAsyncAction(
+//   'GET_DATA_ENTITIES_SEARCH_RESULTS__REQUEST',
+//   'GET_DATA_ENTITIES_SEARCH_RESULTS__SUCCESS',
+//   'GET_DATA_ENTITIES_SEARCH_RESULTS__FAILURE'
+// )<undefined, PaginatedResponse<DataEntityList>, undefined>();
 
 export const getSearchFacetOptionsAction = createAsyncAction(
   'GET_SEARCH_FACET_OPTIONS__REQUEST',
@@ -50,4 +46,29 @@ export const dataEntitiesSearchActionTypePrefix = 'dataEntitiesSearch';
 export const fetchDataEntitySearchSuggestionsActionType = createActionType(
   dataEntitiesSearchActionTypePrefix,
   'fetchDataEntitySearchSuggestions'
+);
+
+export const getDataEntitySearchActionType = createActionType(
+  dataEntitiesSearchActionTypePrefix,
+  'getDataEntitySearch'
+);
+
+export const createDataEntitySearchActionType = createActionType(
+  dataEntitiesSearchActionTypePrefix,
+  'createDataEntitySearch'
+);
+
+export const updateDataEntitySearchActionType = createActionType(
+  dataEntitiesSearchActionTypePrefix,
+  'updateDataEntitySearch'
+);
+
+export const fetchDataEntitySearchResultsActionType = createActionType(
+  dataEntitiesSearchActionTypePrefix,
+  'fetchDataEntitySearchResults'
+);
+
+export const getDataEntitySearchFacetOptionsActionType = createActionType(
+  dataEntitiesSearchActionTypePrefix,
+  'getDataEntitySearchFacetOptions'
 );

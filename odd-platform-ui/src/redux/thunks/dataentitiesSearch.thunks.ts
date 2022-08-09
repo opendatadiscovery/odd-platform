@@ -1,7 +1,7 @@
 import {
   Configuration,
   CountableSearchFilter,
-  DataEntityList,
+  DataEntity,
   DataEntityRef,
   SearchApi,
   SearchApiGetFiltersForFacetRequest,
@@ -16,9 +16,9 @@ import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import {
+  CurrentPageInfo,
   FacetOptions,
   OptionalFacetNames,
-  PaginatedResponse,
 } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -57,25 +57,48 @@ export const getDataEntitiesSearchDetails = createThunk<
   (response: SearchFacetsData) => response
 );
 
-export const getDataEntitiesSearchResults = createThunk<
-  SearchApiGetSearchResultsRequest,
-  DataEntityList,
-  PaginatedResponse<DataEntityList>
+// export const getDataEntitiesSearchResults = createThunk<
+//   SearchApiGetSearchResultsRequest,
+//   DataEntityList,
+//   PaginatedResponse<DataEntityList>
+// >(
+//   (params: SearchApiGetSearchResultsRequest) =>
+//     searchApi.getSearchResults(params),
+//   actions.getDataEntitySearchResultsAction,
+//   (
+//     response: DataEntityList,
+//     request: SearchApiGetSearchResultsRequest
+//   ) => ({
+//     ...response,
+//     pageInfo: {
+//       ...response.pageInfo,
+//       page: request.page,
+//       hasNext: request.size * request.page < response.pageInfo.total,
+//     },
+//   })
+// );
+
+export const fetchDataEntitySearchResults = createAsyncThunk<
+  { items: DataEntity[]; pageInfo: CurrentPageInfo },
+  SearchApiGetSearchResultsRequest
 >(
-  (params: SearchApiGetSearchResultsRequest) =>
-    searchApi.getSearchResults(params),
-  actions.getDataEntitySearchResultsAction,
-  (
-    response: DataEntityList,
-    request: SearchApiGetSearchResultsRequest
-  ) => ({
-    ...response,
-    pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
-    },
-  })
+  actions.fetchDataEntitySearchResultsActionType,
+  async ({ searchId, page, size }) => {
+    const { items, pageInfo } = await searchApi.getSearchResults({
+      searchId,
+      page,
+      size,
+    });
+
+    return {
+      items,
+      pageInfo: {
+        ...pageInfo,
+        page,
+        hasNext: page * size < pageInfo.total,
+      },
+    };
+  }
 );
 
 export const getFacetOptions = createThunk<
@@ -97,6 +120,23 @@ export const getFacetOptions = createThunk<
     page: request.page,
   })
 );
+
+export const getDataEntitySearchFacetOptions = createAsyncThunk<
+  FacetOptions,
+  SearchApiGetFiltersForFacetRequest
+>(actions.getDataEntitySearchFacetOptionsActionType, async params => {
+  const countableSearchFilters = await searchApi.getFiltersForFacet(
+    params
+  );
+  const { query, page, facetType } = params;
+
+  return {
+    // TODO check for lowerCase
+    facetName: query ? undefined : facetType,
+    facetOptions: countableSearchFilters,
+    page,
+  };
+});
 
 export const fetchSearchSuggestions = createAsyncThunk<
   DataEntityRef[],

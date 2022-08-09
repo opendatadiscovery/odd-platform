@@ -8,7 +8,7 @@ import {
   SearchApiUpdateSearchFacetsRequest,
   SearchFacetsData,
 } from 'generated-sources';
-import { SearchFacetsByName } from 'redux/interfaces/search';
+import { SearchFacetsByName } from 'redux/interfaces/dataEntitySearch';
 import { ErrorState, FetchStatus } from 'redux/interfaces/loader';
 import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
 import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';

@@ -5,7 +5,7 @@ import {
   getSearchId,
   getSelectedSearchFacetOptions,
 } from 'redux/selectors/dataentitySearch.selectors';
-import { OptionalFacetNames } from 'redux/interfaces/search';
+import { OptionalFacetNames } from 'redux/interfaces/dataEntitySearch';
 import MultipleFilterItem from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItem';
 import * as actions from 'redux/actions';
 import { getFacetOptions } from 'redux/thunks/dataentitiesSearch.thunks';

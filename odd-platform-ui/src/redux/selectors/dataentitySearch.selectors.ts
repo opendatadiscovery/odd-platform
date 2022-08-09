@@ -21,7 +21,8 @@ import {
 } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 
-const searchState = ({ search }: RootState): SearchState => search;
+const searchState = ({ dataEntitySearch }: RootState): SearchState =>
+  dataEntitySearch;
 
 export const getSearchCreationStatus = createLegacyFetchingSelector(
   'POST_DATA_ENTITIES_SEARCH'
@@ -39,8 +40,8 @@ export const getSearchUpdateStatus = createLegacyFetchingSelector(
   'PUT_DATA_ENTITIES_SEARCH'
 );
 
-export const getSearchResultsFetchStatus = createLegacyFetchingSelector(
-  'GET_DATA_ENTITIES_SEARCH_RESULTS'
+export const getSearchResultsFetchStatuses = createStatusesSelector(
+  actions.fetchDataEntitySearchResultsActionType
 );
 
 export const getSearchFiltersSynced = createSelector(
@@ -48,12 +49,24 @@ export const getSearchFiltersSynced = createSelector(
   search => search.isFacetsStateSynced
 );
 
+// export const getIsMainOverviewContentFetching = createSelector(
+//   getTagsListFetchingStatuses,
+//   getIdentityFetchingStatuses,
+//   getMyDataEntitiesFetchingStatuses,
+//   getMyUpstreamDataEntitiesFetchingStatuses,
+//   getMyDownstreamFetchingStatuses,
+//   getPopularDataEntitiesFetchingStatuses,
+//   getIdentityFetchingStatuses,
+//   (...isFetchingFlags) =>
+//     compact(isFetchingFlags.map(({ isLoading }) => isLoading)).length > 0
+// );
+
 export const getSearchIsFetching = createSelector(
   getSearchCreationStatus,
   getSearchFetchStatus,
   getSearchUpdateStatus,
   getSearchFiltersSynced,
-  getSearchResultsFetchStatus,
+  getSearchResultsFetchStatuses,
   searchState,
   (
     statusCreate,
@@ -63,9 +76,12 @@ export const getSearchIsFetching = createSelector(
     statusResults,
     search
   ) =>
-    [statusCreate, statusFetch, statusUpdate, statusResults].includes(
-      'fetching'
-    ) ||
+    [
+      statusCreate,
+      statusFetch,
+      statusUpdate,
+      statusResults.isLoading,
+    ].includes('fetching') ||
     !isSynced ||
     (!!search.results.pageInfo.total && !search.results.items.length)
 );
@@ -160,11 +176,8 @@ export const getSearchResultsPage = createSelector(
   search => search.results.pageInfo
 );
 
-const sliceSearchState = ({ searchSlice }: RootState): SearchState =>
-  searchSlice;
-
 export const getSearchSuggestions = createSelector(
-  sliceSearchState,
+  searchState,
   search => search.suggestions || []
 );
 

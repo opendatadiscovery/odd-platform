@@ -201,34 +201,34 @@ const reducer = (state = initialState, action: Action): SearchState => {
     case getType(actions.getDataEntitySearchAction.success):
     case getType(actions.updateDataEntitySearchAction.success):
       return updateSearchState(state, action.payload);
-    case getType(actions.getDataEntitySearchResultsAction.success):
-      return {
-        ...state,
-        results: {
-          items:
-            action.payload.pageInfo.page > 1
-              ? [...state.results.items, ...action.payload.items]
-              : action.payload.items,
-          pageInfo: action.payload.pageInfo,
-        },
-      };
+    // case getType(actions.getDataEntitySearchResultsAction.success):
+    //   return {
+    //     ...state,
+    //     results: {
+    //       items:
+    //         action.payload.pageInfo.page > 1
+    //           ? [...state.results.items, ...action.payload.items]
+    //           : action.payload.items,
+    //       pageInfo: action.payload.pageInfo,
+    //     },
+    //   };
     case getType(actions.changeDataEntitySearchFilterAction):
       return updateFacet(state, action.payload);
     case getType(actions.clearDataEntitySearchFiltersAction):
       return clearFilters(state);
-    case getType(actions.getSearchFacetOptionsAction.success):
-      return action.payload.facetName
-        ? {
-            ...state,
-            facets: {
-              ...state.facets,
-              [action.payload.facetName]: {
-                items: action.payload.facetOptions,
-                pageInfo: action.payload.page,
-              },
-            },
-          }
-        : state;
+    // case getType(actions.getSearchFacetOptionsAction.success):
+    //   return action.payload.facetName
+    //     ? {
+    //         ...state,
+    //         facets: {
+    //           ...state.facets,
+    //           [action.payload.facetName]: {
+    //             items: action.payload.facetOptions,
+    //             pageInfo: action.payload.page,
+    //           },
+    //         },
+    //       }
+    //     : state;
     default:
       return state;
   }
