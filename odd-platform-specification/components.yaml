@@ -2146,6 +2146,11 @@ components:
           type: string
         status:
           $ref: '#/components/schemas/OwnerAssociationRequestStatus'
+        status_updated_by:
+          $ref: '#/components/schemas/AssociatedOwner'
+        status_updated_at:
+          type: string
+          format: date-time
       required:
         - id
         - username

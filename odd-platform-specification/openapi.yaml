@@ -2173,6 +2173,10 @@ paths:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/SearchParam'
+        - name: active
+          in: query
+          schema:
+            type: boolean
       responses:
         '200':
           description: OK
