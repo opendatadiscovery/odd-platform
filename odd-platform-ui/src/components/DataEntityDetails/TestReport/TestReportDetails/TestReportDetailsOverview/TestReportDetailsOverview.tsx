@@ -14,6 +14,7 @@ import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { setDataQATestSeverity } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
+import { ORDERED_SEVERITY } from 'lib/constants';
 
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -80,7 +81,7 @@ const TestReportDetailsOverview: React.FC = () => {
                 }
                 onChange={handleSeverityChange}
               >
-                {Object.keys(DataQualityTestSeverity)?.map(severity => (
+                {ORDERED_SEVERITY.map(severity => (
                   <AppMenuItem key={severity} value={severity}>
                     {severity}
                   </AppMenuItem>

@@ -8,12 +8,16 @@ import {
   DataEntityType,
   DataEntityTypeNameEnum,
 } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-import AppSelect from 'components/shared/AppSelect/AppSelect';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import {
+  AppButton,
+  AppInput,
+  AppMenuItem,
+  AppSelect,
+  DialogWrapper,
+  NamespaceAutocomplete,
+  SearchSuggestionsAutocomplete,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
@@ -21,15 +25,13 @@ import {
   getDataEntityGroupCreatingStatuses,
   getDataEntityGroupUpdatingStatuses,
   getDataEntityTypesByClassName,
-} from 'redux/selectors/dataentity.selectors';
+} from 'redux/selectors';
 import {
   createDataEntityGroup,
   updateDataEntityGroup,
 } from 'redux/thunks';
-import EntityItem from 'components/DataEntityDetails/DataEntityGroupForm/EntityItem/EntityItem';
 import { useHistory } from 'react-router-dom';
-import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
-import SearchSuggestionsAutocomplete from 'components/shared/Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
+import EntityItem from './EntityItem/EntityItem';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
 
 interface DataEntityGroupFormProps {
@@ -49,8 +51,8 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
   const history = useHistory();
   const { dataEntityDetailsPath } = useAppPaths();
 
-  const dataEntityGroupDetails: DataEntityDetails = useAppSelector(state =>
-    getDataEntityDetails(state, dataEntityId)
+  const dataEntityGroupDetails: DataEntityDetails = useAppSelector(
+    getDataEntityDetails(dataEntityId)
   );
 
   const types = useAppSelector(state =>

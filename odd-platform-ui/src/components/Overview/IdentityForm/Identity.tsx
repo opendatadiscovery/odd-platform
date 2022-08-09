@@ -6,44 +6,34 @@ import {
   useForm,
 } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
+import { getIdentity } from 'redux/selectors/profile.selectors';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import { AssociatedOwner, Owner, OwnerFormData } from 'generated-sources';
+import { Owner, OwnerFormData } from 'generated-sources';
+// import { updateIdentityOwner } from 'redux/thunks/profile.thunks';
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 import * as S from './IdentityStyles';
 
-interface IdentityProps {
-  identity?: AssociatedOwner;
-  // updateIdentityOwner: (
-  //   params: IdentityApiAssociateOwnerRequest
-  // ) => Promise<void | AssociatedOwner>;
-}
-
-const Identity: React.FC<IdentityProps> = ({
-  identity,
-  // updateIdentityOwner,
-}) => {
+const Identity: React.FC = () => {
   const dispatch = useAppDispatch();
+  const identity = useAppSelector(getIdentity);
   const searchOwners = fetchOwnersList;
-
   const methods = useForm<OwnerFormData>({
     mode: 'onChange',
     defaultValues: {
       name: '',
     },
   });
-
   const [possibleOwners, setPossibleOwners] = React.useState<Owner[]>([]);
-
   type FilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
@@ -125,7 +115,7 @@ const Identity: React.FC<IdentityProps> = ({
   }, [autocompleteOpen, optionsSearchText]);
 
   const onSubmit = (data: OwnerFormData) => {
-    // updateIdentityOwner({ ownerFormData: data });
+    // dispatch(updateIdentityOwner({ ownerFormData: data }));
   };
 
   React.useEffect(() => {

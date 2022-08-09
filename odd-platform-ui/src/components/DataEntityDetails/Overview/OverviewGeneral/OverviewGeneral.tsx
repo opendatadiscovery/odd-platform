@@ -1,33 +1,33 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { format } from 'date-fns';
-import { DataEntityDetails, Ownership } from 'generated-sources';
-import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
-import CopyButton from 'components/shared/CopyButton/CopyButton';
-import { useAppDispatch } from 'lib/redux/hooks';
+import {
+  AppButton,
+  AppIconButton,
+  ConfirmationDialog,
+  CopyButton,
+  LabeledInfoItem,
+  LabelItem,
+} from 'components/shared';
+import { AddIcon, DeleteIcon, EditIcon } from 'components/shared/Icons';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { deleteDataEntityOwnership } from 'redux/thunks';
+import {
+  getDataEntityDetails,
+  getDataEntityOwnership,
+} from 'redux/selectors';
+import { useAppParams } from 'lib/hooks';
 import * as S from './OverviewGeneralStyles';
-import OwnershipFormContainer from '../../Ownership/OwnershipFormContainer';
+import OwnershipForm from '../../Ownership/OwnershipForm';
 
-interface OverviewGeneralProps {
-  dataEntityId: number;
-  dataEntityDetails: DataEntityDetails;
-  ownership: Ownership[];
-}
-
-const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
-  dataEntityId,
-  dataEntityDetails,
-  ownership,
-}) => {
+const OverviewGeneral: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
+
+  const dataEntityDetails = useAppSelector(
+    getDataEntityDetails(dataEntityId)
+  );
+  const ownership = useAppSelector(getDataEntityOwnership(dataEntityId));
 
   const handleOwnershipDelete = (ownershipId: number) => () =>
     dispatch(deleteDataEntityOwnership({ dataEntityId, ownershipId }));
@@ -83,7 +83,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
               <S.OwnerItem key={ownershipItem.id}>
                 {ownershipItem.owner.name}
                 <LabelItem labelName={ownershipItem.role?.name} />
-                <OwnershipFormContainer
+                <OwnershipForm
                   dataEntityId={dataEntityDetails.id}
                   dataEntityOwnership={ownershipItem}
                   ownerEditBtn={
@@ -120,7 +120,7 @@ const OverviewGeneral: React.FC<OverviewGeneralProps> = ({
                 />
               </S.OwnerItem>
             ))}
-            <OwnershipFormContainer
+            <OwnershipForm
               dataEntityId={dataEntityDetails.id}
               ownerEditBtn={
                 <AppButton

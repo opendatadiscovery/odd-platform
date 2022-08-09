@@ -1,22 +1,16 @@
 import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
 import { Tag } from 'generated-sources';
-import TagItem from 'components/shared/TagItem/TagItem';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import TagsEditContainer from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormContainer';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { AppButton, TagItem } from 'components/shared';
+import { AddIcon, EditIcon } from 'components/shared/Icons';
+import TagsEditForm from './TagsEditForm/TagsEditForm';
 import { CaptionContainer, TagsContainer } from './OverviewTagsStyles';
 
 interface OverviewTagsProps {
-  dataEntityId: number;
   tags?: Tag[];
 }
 
-const OverviewTags: React.FC<OverviewTagsProps> = ({
-  tags,
-  dataEntityId,
-}) => {
+const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
 
@@ -32,8 +26,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
     <div>
       <CaptionContainer>
         <Typography variant="h4">Tags</Typography>
-        <TagsEditContainer
-          dataEntityId={dataEntityId}
+        <TagsEditForm
           btnEditEl={
             <AppButton
               size="medium"
@@ -99,8 +92,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({
           wrap="nowrap"
         >
           <Typography variant="subtitle2">Not created.</Typography>
-          <TagsEditContainer
-            dataEntityId={dataEntityId}
+          <TagsEditForm
             btnEditEl={
               <AppButton size="small" color="tertiary" onClick={() => {}}>
                 Add tags

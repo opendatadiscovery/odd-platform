@@ -26,7 +26,7 @@ public class MetadataFieldRepositoryImpl
     public MetadataFieldRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
         super(dslContext, jooqQueryHelper, METADATA_FIELD, METADATA_FIELD.ID, METADATA_FIELD.IS_DELETED,
             List.of(METADATA_FIELD.NAME, METADATA_FIELD.TYPE),
-            METADATA_FIELD.NAME, null, MetadataFieldPojo.class);
+            METADATA_FIELD.NAME, null, null, MetadataFieldPojo.class);
     }
 
     @Override

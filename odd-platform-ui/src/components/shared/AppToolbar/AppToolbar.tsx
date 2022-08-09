@@ -1,50 +1,39 @@
 import React, { MouseEvent } from 'react';
 import { Grid, Typography, useScrollTrigger } from '@mui/material';
+import { getIdentity, getVersion } from 'redux/selectors';
 import {
-  AssociatedOwner,
-  SearchApiSearchRequest,
-  SearchFacetsData,
-  TermApiTermSearchRequest,
-  TermSearchFacetsData,
-} from 'generated-sources';
-import { fetchAppInfo } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { getVersion } from 'redux/selectors/appInfo.selectors';
-import { useHistory, useLocation } from 'react-router-dom';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import DropdownIcon from 'components/shared/Icons/DropdownIcon';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import AppMenu from 'components/shared/AppMenu/AppMenu';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { clearActivityFilters } from 'redux/reducers/activity.slice';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
-import * as S from './AppToolbarStyles';
-
-interface AppToolbarProps {
-  identity?: AssociatedOwner;
-  fetchIdentity: () => Promise<AssociatedOwner | void>;
-  createDataEntitiesSearch: (
-    params: SearchApiSearchRequest
-  ) => Promise<SearchFacetsData>;
-  createTermSearch: (
-    params: TermApiTermSearchRequest
-  ) => Promise<TermSearchFacetsData>;
-}
-
-const AppToolbar: React.FC<AppToolbarProps> = ({
-  identity,
   createDataEntitiesSearch,
   createTermSearch,
+  fetchAppInfo,
   fetchIdentity,
-}) => {
+} from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useHistory, useLocation } from 'react-router-dom';
+import { DropdownIcon } from 'components/shared/Icons';
+import { clearActivityFilters } from 'redux/reducers/activity.slice';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
+import {
+  AppIconButton,
+  AppMenu,
+  AppMenuItem,
+  AppTabItem,
+  AppTabs,
+} from 'components/shared';
+import * as S from './AppToolbarStyles';
+
+const AppToolbar: React.FC = () => {
   const location = useLocation();
   const history = useHistory();
+  const dispatch = useAppDispatch();
+  const { searchPath, termSearchPath } = useAppPaths();
+
+  const version = useAppSelector(getVersion);
+  const identity = useAppSelector(getIdentity);
+
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
-  const dispatch = useAppDispatch();
-  const { searchPath, termSearchPath } = useAppPaths();
-  const version = useAppSelector(getVersion);
+
   const handleProfileMenuOpen = (event: MouseEvent) => {
     setAnchorEl(event.currentTarget);
   };
@@ -67,7 +56,7 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   React.useEffect(() => setElevation(trigger ? 3 : 0), [trigger]);
 
   React.useEffect(() => {
-    fetchIdentity();
+    dispatch(fetchIdentity());
     dispatch(fetchAppInfo());
   }, []);
 
@@ -115,13 +104,14 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         pageSize: 30,
         filters: {},
       };
-      createTermSearch({ termSearchFormData: termSearchQuery }).then(
-        termSearch => {
-          const termSearchLink = termSearchPath(termSearch.searchId);
-          history.replace(termSearchLink);
-          setTermSearchLoading(false);
-        }
-      );
+
+      dispatch(
+        createTermSearch({ termSearchFormData: termSearchQuery })
+      ).then(termSearch => {
+        const termSearchLink = termSearchPath(termSearch.searchId);
+        history.replace(termSearchLink);
+        setTermSearchLoading(false);
+      });
     } else if (tabs[idx].name === 'Catalog') {
       if (searchLoading) return;
       setSearchLoading(true);
@@ -130,13 +120,14 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         pageSize: 30,
         filters: {},
       };
-      createDataEntitiesSearch({ searchFormData: searchQuery }).then(
-        search => {
-          const searchLink = searchPath(search.searchId);
-          history.replace(searchLink);
-          setSearchLoading(false);
-        }
-      );
+
+      dispatch(
+        createDataEntitiesSearch({ searchFormData: searchQuery })
+      ).then(search => {
+        const searchLink = searchPath(search.searchId);
+        history.replace(searchLink);
+        setSearchLoading(false);
+      });
     } else if (tabs[idx].name === 'Activity') {
       dispatch(clearActivityFilters());
     }

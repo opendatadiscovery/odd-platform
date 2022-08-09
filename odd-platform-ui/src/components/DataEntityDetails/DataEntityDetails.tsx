@@ -2,18 +2,26 @@ import { Grid, Typography } from '@mui/material';
 import React from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
-import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
+import {
+  AppButton,
+  AppIconButton,
+  AppLoadingPage,
+  AppMenuItem,
+  AppPopover,
+  AppTabItem,
+  AppTabs,
+  ConfirmationDialog,
+  EntityClassItem,
+  EntityTypeItem,
+  LabelItem,
+  SkeletonWrapper,
+} from 'components/shared';
+import {
+  AddIcon,
+  EditIcon,
+  KebabIcon,
+  TimeGapIcon,
+} from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
@@ -23,25 +31,19 @@ import {
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import {
-  getDataEntityDetails,
-  getDataEntityDetailsFetchingStatus,
-  getIsDataEntityBelongsToClass,
-} from 'redux/selectors/dataentity.selectors';
-import { getDatasetTestReport } from 'redux/selectors/dataQualityTest.selectors';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import KebabIcon from 'components/shared/Icons/KebabIcon';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import AppPopover from 'components/shared/AppPopover/AppPopover';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import {
   getDataEntityAddToGroupStatuses,
   getDataEntityDeleteFromGroupStatuses,
+  getDataEntityDetails,
+  getDataEntityDetailsFetchingStatuses,
   getDataEntityGroupUpdatingStatuses,
   getDataEntityOpenAlertsCount,
+  getDatasetTestReport,
+  getIsDataEntityBelongsToClass,
   getSearchId,
 } from 'redux/selectors';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
 import { useAppPaths } from 'lib/hooks/useAppPaths';
+import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
+import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
 import LinkedItemsListContainer from './LinkedItemsList/LinkedItemsListContainer';
 import * as S from './DataEntityDetailsStyles';
@@ -69,6 +71,7 @@ const DataEntityActivity = React.lazy(
 const DataEntityDetailsView: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const { dataEntityId, viewType } = useAppParams();
   const {
     searchPath,
     dataEntityOverviewPath,
@@ -80,33 +83,34 @@ const DataEntityDetailsView: React.FC = () => {
     dataEntityAlertsPath,
     dataEntityActivityPath,
   } = useAppPaths();
-  const { dataEntityId, viewType } = useAppParams();
-  const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
-    getDataEntityGroupUpdatingStatuses
-  );
 
   const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
-  const dataEntityDetails = useAppSelector(state =>
-    getDataEntityDetails(state, dataEntityId)
+  const searchId = useAppSelector(getSearchId);
+  const dataEntityDetails = useAppSelector(
+    getDataEntityDetails(dataEntityId)
   );
   const { isDataset, isQualityTest, isTransformer } = useAppSelector(
     getIsDataEntityBelongsToClass(dataEntityId)
   );
-  const datasetQualityTestReport = useAppSelector(state =>
-    getDatasetTestReport(state, dataEntityId)
+
+  const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
+    getDataEntityGroupUpdatingStatuses
   );
-  const dataEntityFetchingStatus = useAppSelector(
-    getDataEntityDetailsFetchingStatus
-  );
+  const {
+    isLoading: isDataEntityDetailsFetching,
+    isLoaded: isDataEntityDetailsFetched,
+  } = useAppSelector(getDataEntityDetailsFetchingStatuses);
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
   );
-
   const { isLoaded: isDataEntityDeletedFromGroup } = useAppSelector(
     getDataEntityDeleteFromGroupStatuses
   );
 
-  const searchId = useAppSelector(getSearchId);
+  // TODO change selectors
+  const datasetQualityTestReport = useAppSelector(state =>
+    getDatasetTestReport(state, dataEntityId)
+  );
 
   React.useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
@@ -202,7 +206,7 @@ const DataEntityDetailsView: React.FC = () => {
 
   return (
     <S.Container>
-      {dataEntityDetails && dataEntityFetchingStatus !== 'fetching' ? (
+      {dataEntityDetails && !isDataEntityDetailsFetching ? (
         <>
           <Grid
             container
@@ -231,8 +235,7 @@ const DataEntityDetailsView: React.FC = () => {
                   />
                 )}
                 <S.InternalNameEditBtnContainer>
-                  <InternalNameFormDialogContainer
-                    dataEntityId={dataEntityId}
+                  <InternalNameFormDialog
                     btnCreateEl={
                       <AppButton
                         size="small"
@@ -336,7 +339,7 @@ const DataEntityDetailsView: React.FC = () => {
           </Grid>
         </>
       ) : null}
-      {dataEntityFetchingStatus === 'fetching' ? (
+      {isDataEntityDetailsFetching ? (
         <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
             <DataEntityDetailsSkeleton
@@ -345,7 +348,7 @@ const DataEntityDetailsView: React.FC = () => {
           )}
         />
       ) : null}
-      {dataEntityFetchingStatus !== 'errorFetching' ? (
+      {isDataEntityDetailsFetched ? (
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
             <Route
@@ -431,7 +434,6 @@ const DataEntityDetailsView: React.FC = () => {
           </Switch>
         </React.Suspense>
       ) : null}
-      <AppErrorPage fetchStatus={dataEntityFetchingStatus} />
     </S.Container>
   );
 };

@@ -1,29 +1,30 @@
 import React from 'react';
 import ReactMde from 'react-mde';
 import { Grid, Typography } from '@mui/material';
-import { DataEntityDetailsBaseObject } from 'generated-sources';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import AddIcon from 'components/shared/Icons/AddIcon';
+import { AddIcon, EditIcon } from 'components/shared/Icons';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
 import AppButton from 'components/shared/AppButton/AppButton';
 import remarkGfm from 'remark-gfm';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
+import { useAppParams } from 'lib/hooks';
+import {
+  getDataEntityExternalDescription,
+  getDataEntityInternalDescription,
+} from 'redux/selectors';
 import * as S from './OverviewDescriptionStyles';
 
-interface OverviewDescriptionProps {
-  dataEntityId: number;
-  dataEntityInternalDescription: DataEntityDetailsBaseObject['internalDescription'];
-  dataEntityExternalDescription: DataEntityDetailsBaseObject['externalDescription'];
-}
-
-const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
-  dataEntityId,
-  dataEntityInternalDescription,
-  dataEntityExternalDescription,
-}) => {
+const OverviewDescription: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
+
+  const DEInternalDescription = useAppSelector(
+    getDataEntityInternalDescription(dataEntityId)
+  );
+  const DEExternalDescription = useAppSelector(
+    getDataEntityExternalDescription(dataEntityId)
+  );
 
   const [editMode, setEditMode] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>('');
@@ -31,7 +32,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
     'write' | 'preview'
   >('write');
   const [internalDescription, setInternalDescription] =
-    React.useState<string>(dataEntityInternalDescription || '');
+    React.useState<string>(DEInternalDescription || '');
 
   const onEditClick = React.useCallback(
     () => setEditMode(true),
@@ -60,10 +61,10 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
   const getPreview = React.useCallback(
     () => (
       <S.Preview remarkPlugins={[remarkGfm]} className="markdown-body">
-        {editMode ? internalDescription : dataEntityInternalDescription}
+        {editMode ? internalDescription : DEInternalDescription}
       </S.Preview>
     ),
-    [dataEntityInternalDescription, internalDescription, editMode]
+    [DEInternalDescription, internalDescription, editMode]
   );
 
   const saveMarkDownOnEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -73,8 +74,8 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
   };
 
   React.useEffect(
-    () => setInternalDescription(dataEntityInternalDescription),
-    [dataEntityInternalDescription, editMode]
+    () => setInternalDescription(DEInternalDescription),
+    [DEInternalDescription, editMode]
   );
 
   return (
@@ -88,10 +89,10 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               size="medium"
               color="primaryLight"
               startIcon={
-                dataEntityInternalDescription ? <EditIcon /> : <AddIcon />
+                DEInternalDescription ? <EditIcon /> : <AddIcon />
               }
             >
-              {dataEntityInternalDescription ? 'Edit' : 'Add'} description
+              {DEInternalDescription ? 'Edit' : 'Add'} description
             </AppButton>
           )}
         </S.CaptionContainer>
@@ -134,7 +135,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
           </div>
         ) : (
           <div>
-            {dataEntityInternalDescription ? (
+            {DEInternalDescription ? (
               getPreview()
             ) : (
               <Grid
@@ -158,7 +159,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
           </div>
         )}
       </div>
-      {dataEntityExternalDescription ? (
+      {DEExternalDescription ? (
         <div>
           <Typography variant="h4">Pre-defined</Typography>
           <Typography variant="subtitle1">
@@ -166,7 +167,7 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               className="markdown-body"
               remarkPlugins={[remarkGfm]}
             >
-              {dataEntityExternalDescription}
+              {DEExternalDescription}
             </S.Preview>
           </Typography>
         </div>
