@@ -11,6 +11,7 @@ import {
   DataEntityRef,
   DataEntityRun,
   DataEntityType,
+  DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
   DataSetTestReport,
@@ -27,7 +28,6 @@ import {
   Term,
   TermDetails,
   TermRefList,
-  DataEntityUsageInfo,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -166,7 +166,7 @@ export interface DataEntitiesState {
   dataEntityUsageInfo: DataEntityUsageInfo;
 }
 
-export interface SearchState {
+export interface DataEntitySearchState {
   searchId: string;
   query: string;
   myObjects: boolean;

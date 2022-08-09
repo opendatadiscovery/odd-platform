@@ -2,11 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 import { dataEntitiesSearchActionTypePrefix } from 'redux/actions';
 import * as thunks from 'redux/thunks';
 import {
+  DataEntitySearchState,
   FacetStateUpdate,
   SearchFacetNames,
   SearchFacetStateById,
   SearchFilterStateSynced,
-  SearchState,
 } from 'redux/interfaces';
 import {
   CountableSearchFilter,
@@ -19,7 +19,7 @@ import { assignWith } from 'lib/redux/helpers';
 import values from 'lodash/values';
 import get from 'lodash/get';
 
-const initialState: SearchState = {
+const initialState: DataEntitySearchState = {
   searchId: '',
   query: '',
   myObjects: false,
@@ -39,65 +39,71 @@ const initialState: SearchState = {
 };
 
 const updateSearchState = (
-  state: SearchState,
+  state: DataEntitySearchState,
   { payload }: { payload: SearchFacetsData }
-): SearchState => {
+): DataEntitySearchState => {
   const { facetState, searchId, query, myObjects, total, myObjectsTotal } =
     payload;
 
-  const newSearchFacetsById = mapValues(
-    facetState,
-    facetOptions =>
-      facetOptions &&
-      reduce<CountableSearchFilter | SearchFilter, SearchFacetStateById>(
-        facetOptions,
-        (memo, facetOption) => ({
-          ...memo,
-          [facetOption.id]: {
-            entityId: facetOption.id,
-            entityName: facetOption.name,
-            selected:
-              'selected' in facetOption ? !!facetOption.selected : true,
-            syncedState: true,
-          },
-        }),
-        {}
-      )
+  const setFacetOptionsById = (
+    facetOptions: CountableSearchFilter[] | SearchFilter[] | undefined
+  ) =>
+    reduce<CountableSearchFilter | SearchFilter, SearchFacetStateById>(
+      facetOptions,
+      (memo, facetOption) => ({
+        ...memo,
+        [facetOption.id]: {
+          entityId: facetOption.id,
+          entityName: facetOption.name,
+          selected:
+            'selected' in facetOption ? !!facetOption.selected : true,
+          syncedState: true,
+        },
+      }),
+      {}
+    );
+
+  const newSearchFacetsById = mapValues(facetState, setFacetOptionsById);
+
+  const totals = facetState.entityClasses?.reduce(
+    (acc, facetOption) => ({
+      ...acc,
+      [facetOption.name]: facetOption,
+    }),
+    {
+      all: total || 0,
+      myObjectsTotal: myObjectsTotal || 0,
+    }
   );
+
+  const assignFacetStateWithNewFacets = (
+    currFacetState: SearchFacetStateById,
+    facetName: string
+  ) =>
+    assignWith<SearchFacetStateById, SearchFacetStateById>(
+      currFacetState || {},
+      newSearchFacetsById[facetName as SearchFacetNames] || {},
+      (currFilterState, syncedFilterState) => {
+        if (
+          currFilterState &&
+          currFilterState.selected !== syncedFilterState.selected
+        ) {
+          return { ...currFilterState, syncedState: false }; // Keep unsynced filter state (due to debounce).
+        }
+        return syncedFilterState;
+      }
+    );
 
   return {
     ...state,
     searchId,
     query,
     myObjects: !!myObjects,
-    totals: facetState.entityClasses?.reduce(
-      (acc, facetOption) => ({
-        ...acc,
-        [facetOption.name]: facetOption,
-      }),
-      {
-        all: total || 0,
-        myObjectsTotal: myObjectsTotal || 0,
-      }
-    ),
+    totals,
     facetState:
       searchId !== state.searchId
         ? newSearchFacetsById
-        : mapValues(state.facetState, (currFacetState, facetName) =>
-            assignWith<SearchFacetStateById, SearchFacetStateById>(
-              currFacetState || {},
-              newSearchFacetsById[facetName as SearchFacetNames] || {},
-              (currFilterState, syncedFilterState) => {
-                if (
-                  currFilterState &&
-                  currFilterState.selected !== syncedFilterState.selected
-                ) {
-                  return { ...currFilterState, syncedState: false }; // Keep unsynced filter state (due to debounce).
-                }
-                return syncedFilterState;
-              }
-            )
-          ),
+        : mapValues(state.facetState, assignFacetStateWithNewFacets),
     isFacetsStateSynced: true,
     results: {
       items: [],
@@ -114,10 +120,13 @@ export const dataEntitiesSearchSlice = createSlice({
   name: dataEntitiesSearchActionTypePrefix,
   initialState,
   reducers: {
-    clearDataEntitySearchFacets: (state: SearchState): SearchState => ({
-      ...state,
-      isFacetsStateSynced: false,
-      facetState: mapValues(state.facetState, (filter, facetName) => {
+    clearDataEntitySearchFacets: (
+      state: DataEntitySearchState
+    ): DataEntitySearchState => {
+      const getClearedFacetState = (
+        _: SearchFacetStateById,
+        facetName: string
+      ) => {
         if (facetName === 'entityClasses')
           return state.facetState.entityClasses; // Not clearing entityClasses filter
         return reduce<SearchFacetStateById, SearchFacetStateById>(
@@ -136,57 +145,80 @@ export const dataEntitiesSearchSlice = createSlice({
           },
           {}
         );
-      }),
-    }),
+      };
+
+      return {
+        ...state,
+        isFacetsStateSynced: false,
+        facetState: mapValues(state.facetState, getClearedFacetState),
+      };
+    },
 
     changeDataEntitySearchFacet: (
-      state: SearchState,
+      state: DataEntitySearchState,
       { payload }: { payload: FacetStateUpdate }
-    ): SearchState => {
-      if (!payload.facetName) return state;
+    ): DataEntitySearchState => {
+      const {
+        facetName,
+        facetOptionId,
+        facetOptionName,
+        facetOptionState,
+        facetSingle,
+      } = payload;
+
+      const currentFacetState = state.facetState[facetName];
+
+      if (!facetName) return state;
       // Unselect previous type
       let selectedOptionState: SearchFilterStateSynced | undefined;
-      if (payload.facetSingle) {
-        const selectedOption = values(
-          state.facetState[payload.facetName]
-        ).find(filter => filter.selected);
+      if (facetSingle) {
+        const selectedOption = values(currentFacetState).find(
+          filter => filter.selected
+        );
+
         if (selectedOption) {
+          const entityId = get(
+            selectedOption,
+            'entityId',
+            get(selectedOption, 'id')
+          );
+          const entityName = get(
+            selectedOption,
+            'entityName',
+            get(selectedOption, 'name')
+          );
+
           selectedOptionState = {
-            entityId: get(
-              selectedOption,
-              'entityId',
-              get(selectedOption, 'id')
-            ),
-            entityName: get(
-              selectedOption,
-              'entityName',
-              get(selectedOption, 'name')
-            ),
+            entityId,
+            entityName,
             selected: false,
             syncedState: false,
           };
         }
       }
+
+      const myObjects =
+        facetName === 'entityClasses'
+          ? facetOptionId === 'my'
+          : state.myObjects;
+
       return {
         ...state,
         isFacetsStateSynced: false,
-        myObjects:
-          payload.facetName === 'entityClasses'
-            ? payload.facetOptionId === 'my'
-            : state.myObjects,
+        myObjects,
         facetState: {
           ...state.facetState,
-          [payload.facetName]: {
-            ...state.facetState[payload.facetName],
+          [facetName]: {
+            ...currentFacetState,
             ...(selectedOptionState && {
               [selectedOptionState.entityId]: selectedOptionState,
             }),
-            ...(payload.facetOptionId &&
-              typeof payload.facetOptionId === 'number' && {
-                [payload.facetOptionId]: {
-                  entityId: payload.facetOptionId,
-                  entityName: payload.facetOptionName,
-                  selected: payload.facetOptionState,
+            ...(facetOptionId &&
+              typeof facetOptionId === 'number' && {
+                [facetOptionId]: {
+                  entityId: facetOptionId,
+                  entityName: facetOptionName,
+                  selected: facetOptionState,
                   syncedState: false,
                 },
               }),
@@ -222,7 +254,7 @@ export const dataEntitiesSearchSlice = createSlice({
 
     builder.addCase(
       thunks.fetchDataEntitySearchResults.fulfilled,
-      (state, { payload }): SearchState => {
+      (state, { payload }): DataEntitySearchState => {
         const { items, pageInfo } = payload;
         const paginatedItems =
           pageInfo.page > 1 ? [...state.results.items, ...items] : items;
@@ -233,7 +265,7 @@ export const dataEntitiesSearchSlice = createSlice({
 
     builder.addCase(
       thunks.getDataEntitySearchFacetOptions.fulfilled,
-      (state, { payload }): SearchState => {
+      (state, { payload }): DataEntitySearchState => {
         const { facetName, facetOptions, page } = payload;
 
         return facetName
@@ -241,7 +273,6 @@ export const dataEntitiesSearchSlice = createSlice({
               ...state,
               facets: {
                 ...state.facets,
-                // TODO check pageInfo of page
                 [facetName]: { items: facetOptions, page },
               },
             }

@@ -5,7 +5,7 @@ import {
   getSearchFiltersSynced,
   getSearchId,
   getSearchResults,
-  getSearchResultsPage,
+  getSearchResultsPageInfo,
   getSearchTotals,
 } from 'redux/selectors/dataentitySearch.selectors';
 import { getDataEntityClassesDict } from 'redux/selectors/dataentity.selectors';
@@ -17,7 +17,7 @@ const mapStateToProps = (state: RootState) => ({
   dataEntityClassesDict: getDataEntityClassesDict(state),
   totals: getSearchTotals(state),
   searchResults: getSearchResults(state),
-  pageInfo: getSearchResultsPage(state),
+  pageInfo: getSearchResultsPageInfo(state),
   searchFiltersSynced: getSearchFiltersSynced(state),
   // isSearchFetching: getSearchIsFetching(state),
   // isSearchCreatingAndFetching: getSearchIsCreatingAndFetching(state),

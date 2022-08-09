@@ -6,24 +6,22 @@ import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
 import transform from 'lodash/transform';
 import {
+  DataEntitySearchState,
   OptionalFacetNames,
   RootState,
   SearchClass,
   SearchFacetStateById,
   SearchFilterStateSynced,
-  SearchState,
 } from 'redux/interfaces';
 import { DataEntityClassNameEnum } from 'generated-sources';
-import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import { createStatusesSelector } from 'redux/selectors';
 import * as actions from 'redux/actions';
 import compact from 'lodash/compact';
+import { emptyArr } from 'lib/constants';
 
-const searchState = ({ dataEntitySearch }: RootState): SearchState =>
-  dataEntitySearch;
-
-// export const getSearchCreationStatus = createLegacyFetchingSelector(
-//   'POST_DATA_ENTITIES_SEARCH'
-// );
+const searchState = ({
+  dataEntitySearch,
+}: RootState): DataEntitySearchState => dataEntitySearch;
 
 export const getSearchCreatingStatuses = createStatusesSelector(
   actions.createDataEntitySearchActionType
@@ -32,14 +30,6 @@ export const getSearchCreatingStatuses = createStatusesSelector(
 export const getSearchFetchStatuses = createStatusesSelector(
   actions.getDataEntitySearchActionType
 );
-
-// export const getSearchFetchError = createLegacyErrorSelector(
-//   'GET_DATA_ENTITIES_SEARCH'
-// );
-
-// export const getSearchUpdateStatus = createLegacyFetchingSelector(
-//   'PUT_DATA_ENTITIES_SEARCH'
-// );
 
 export const getSearchUpdateStatuses = createStatusesSelector(
   actions.updateDataEntitySearchActionType
@@ -57,18 +47,6 @@ export const getSearchFiltersSynced = createSelector(
   searchState,
   search => search.isFacetsStateSynced
 );
-
-// export const getIsMainOverviewContentFetching = createSelector(
-//   getTagsListFetchingStatuses,
-//   getIdentityFetchingStatuses,
-//   getMyDataEntitiesFetchingStatuses,
-//   getMyUpstreamDataEntitiesFetchingStatuses,
-//   getMyDownstreamFetchingStatuses,
-//   getPopularDataEntitiesFetchingStatuses,
-//   getIdentityFetchingStatuses,
-//   (...isFetchingFlags) =>
-//     compact(isFetchingFlags.map(({ isLoading }) => isLoading)).length > 0
-// );
 
 export const getSearchIsFetching = createSelector(
   getSearchCreatingStatuses,
@@ -102,16 +80,6 @@ export const getSearchIsCreatingAndFetching = createSelector(
     compact([isSearchCreating, isSearchFetching]).length > 0
 );
 
-// export const getSearchIsCreating = createSelector(
-//   getSearchCreationStatus,
-//   statusCreate => statusCreate === 'fetching'
-// );
-//
-// export const getSearchIsUpdated = createSelector(
-//   getSearchUpdateStatus,
-//   statusUpdate => statusUpdate === 'fetching'
-// );
-
 export const getSearchId = createSelector(
   searchState,
   search => search.searchId
@@ -135,7 +103,8 @@ const getSearchFacetName = (
 export const getSearchFacetsByType = createSelector(
   searchState,
   getSearchFacetName,
-  (search, searchFacet) => values(search.facets[searchFacet]?.items) || []
+  (search, searchFacet) =>
+    values(search.facets[searchFacet]?.items) || emptyArr
 );
 
 export const getSearchEntityClass = createSelector(searchState, search => {
@@ -152,7 +121,7 @@ export const getSelectedSearchFacetOptions = createSelector(
   searchState,
   getSearchFacetName,
   (search, facetName) => {
-    if (!search.facetState[facetName]) return [];
+    if (!search.facetState[facetName]) return emptyArr;
     return transform<SearchFacetStateById, SearchFilterStateSynced[]>(
       search.facetState[facetName] || {},
       (memo, facetOption) => {
@@ -180,12 +149,12 @@ export const getSearchResults = createSelector(
   search => search.results.items
 );
 
-export const getSearchResultsPage = createSelector(
+export const getSearchResultsPageInfo = createSelector(
   searchState,
   search => search.results.pageInfo
 );
 
 export const getSearchSuggestions = createSelector(
   searchState,
-  search => search.suggestions || []
+  search => search.suggestions || emptyArr
 );
