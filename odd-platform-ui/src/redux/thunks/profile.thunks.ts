@@ -1,8 +1,7 @@
 import {
+  AssociatedOwner,
   Configuration,
   IdentityApi,
-  AssociatedOwner,
-  IdentityApiAssociateOwnerRequest,
 } from 'generated-sources';
 import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
@@ -21,13 +20,13 @@ export const fetchIdentity = createThunk<
   (response: AssociatedOwner | void) => response
 );
 
-export const updateIdentityOwner = createThunk<
-  IdentityApiAssociateOwnerRequest,
-  AssociatedOwner | void,
-  AssociatedOwner | void
->(
-  (params: IdentityApiAssociateOwnerRequest) =>
-    apiClient.associateOwner(params),
-  actions.fetchIdentityAction,
-  (response: AssociatedOwner | void) => response
-);
+// export const updateIdentityOwner = createThunk<
+//   IdentityApiAssociateOwnerRequest,
+//   AssociatedOwner | void,
+//   AssociatedOwner | void
+// >(
+//   (params: IdentityApiAssociateOwnerRequest) =>
+//     apiClient.associateOwner(params),
+//   actions.fetchIdentityAction,
+//   (response: AssociatedOwner | void) => response
+// );

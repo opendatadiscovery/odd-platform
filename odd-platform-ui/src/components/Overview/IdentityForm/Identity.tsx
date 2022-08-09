@@ -11,12 +11,7 @@ import {
   createFilterOptions,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import {
-  AssociatedOwner,
-  IdentityApiAssociateOwnerRequest,
-  Owner,
-  OwnerFormData,
-} from 'generated-sources';
+import { AssociatedOwner, Owner, OwnerFormData } from 'generated-sources';
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -28,14 +23,14 @@ import * as S from './IdentityStyles';
 
 interface IdentityProps {
   identity?: AssociatedOwner;
-  updateIdentityOwner: (
-    params: IdentityApiAssociateOwnerRequest
-  ) => Promise<void | AssociatedOwner>;
+  // updateIdentityOwner: (
+  //   params: IdentityApiAssociateOwnerRequest
+  // ) => Promise<void | AssociatedOwner>;
 }
 
 const Identity: React.FC<IdentityProps> = ({
   identity,
-  updateIdentityOwner,
+  // updateIdentityOwner,
 }) => {
   const dispatch = useAppDispatch();
   const searchOwners = fetchOwnersList;
@@ -130,7 +125,7 @@ const Identity: React.FC<IdentityProps> = ({
   }, [autocompleteOpen, optionsSearchText]);
 
   const onSubmit = (data: OwnerFormData) => {
-    updateIdentityOwner({ ownerFormData: data });
+    // updateIdentityOwner({ ownerFormData: data });
   };
 
   React.useEffect(() => {

@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { getIdentity } from 'redux/selectors/profile.selectors';
-import { updateIdentityOwner } from 'redux/thunks/profile.thunks';
+// import { updateIdentityOwner } from 'redux/thunks/profile.thunks';
 import Identity from './Identity';
 
 const mapStateToProps = (state: RootState) => ({
@@ -9,7 +9,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const mapDispatchToProps = {
-  updateIdentityOwner,
+  // updateIdentityOwner,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Identity);
