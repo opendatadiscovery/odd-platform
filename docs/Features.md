@@ -10,7 +10,7 @@
 [Data Entity Report](#data-entity-report) \
 [Customized Dictionary](#customized-dictionary) \
 [Change History](#change-history) \
-[Dataset Quality Statuses (SLA)](#dataset-quality-statuses-(sla)) 
+[Dataset Quality Statuses (SLA)](#dataset-quality-statuses-sla) 
 
 ## Metadata Storage 
 The Storage is a data catalog which gathers metadata from your sources. Data processing is based on the near real-time approach.  A storage space is not limited. \
