@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -9,8 +10,11 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-public interface ReactiveLineageRepository {
-    Mono<LineagePojo> replaceLineagePaths(final List<LineagePojo> pojos);
+public interface ReactiveLineageRepository extends ReactiveCRUDRepository<LineagePojo> {
+
+    Flux<LineagePojo> batchDeleteByEstablisherOddrn(Collection<String> oddrns);
+
+    Flux<LineagePojo> batchInsertLineages(final List<LineagePojo> pojos);
 
     Mono<Long> getTargetsCount(final long dataEntityId);
 

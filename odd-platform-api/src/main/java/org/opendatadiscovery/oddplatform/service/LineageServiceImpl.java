@@ -37,6 +37,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind.DOWNSTREAM;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
@@ -103,10 +104,7 @@ public class LineageServiceImpl implements LineageService {
                         .zip(groupEntityRelationRepository.fetchGroupRelations(oddrnsToFetch),
                             lineageRepository.getChildrenCount(oddrnsToFetch),
                             lineageRepository.getParentCount(oddrnsToFetch))
-                        .map(tuple -> {
-                            final Map<String, List<String>> groupRelations = tuple.getT1();
-                            final Map<String, Integer> childrenCountMap = tuple.getT2();
-                            final Map<String, Integer> parentsCountMap = tuple.getT3();
+                        .map(function((groupRelations, childrenCountMap, parentsCountMap) -> {
                             final Map<String, DataEntityDimensionsDto> dataEntityDimensionsDtoMap =
                                 dataEntityRepository.listDimensionsByOddrns(
                                         SetUtils.union(oddrnsToFetch, groupRelations.keySet()))
@@ -137,9 +135,18 @@ public class LineageServiceImpl implements LineageService {
                                 return builder.upstream(lineageStream)
                                     .build();
                             }
-                        });
+                        }));
                 }))
             .map(lineageMapper::mapLineageDto);
+    }
+
+    public Flux<LineagePojo> replaceLineagePaths(final List<LineagePojo> pojos) {
+        final Set<String> establishers = pojos.stream()
+            .map(LineagePojo::getEstablisherOddrn)
+            .collect(Collectors.toSet());
+
+        return lineageRepository.batchDeleteByEstablisherOddrn(establishers)
+            .thenMany(lineageRepository.batchInsertLineages(pojos));
     }
 
     private DataEntityLineageStreamDto getLineageStream(
