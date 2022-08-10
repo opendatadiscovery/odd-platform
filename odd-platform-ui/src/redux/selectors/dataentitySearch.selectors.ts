@@ -43,7 +43,7 @@ export const getSearchSuggestionsFetchingStatuses = createStatusesSelector(
   actions.fetchDataEntitySearchSuggestionsActionType
 );
 
-export const getSearchFiltersSynced = createSelector(
+export const getSearchFacetsSynced = createSelector(
   searchState,
   search => search.isFacetsStateSynced
 );
@@ -53,7 +53,7 @@ export const getSearchIsFetching = createSelector(
   getSearchFetchStatuses,
   getSearchUpdateStatuses,
   getSearchResultsFetchStatuses,
-  getSearchFiltersSynced,
+  getSearchFacetsSynced,
   searchState,
   (
     { isLoading: isSearchCreating },
@@ -113,6 +113,7 @@ export const getSearchEntityClass = createSelector(searchState, search => {
     omit(search.totals, ['all', 'myObjectsTotal']),
     filterItem => filterItem?.selected
   );
+
   return (search.totals[selectedClass as DataEntityClassNameEnum]?.id ||
     'all') as SearchClass;
 });

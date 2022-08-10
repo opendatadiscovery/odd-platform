@@ -2,8 +2,7 @@ import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import mapValues from 'lodash/mapValues';
 import values from 'lodash/values';
-import { SearchFacetsByName } from 'redux/interfaces/dataEntitySearch';
-import MainSearchContainer from 'components/shared/MainSearch/MainSearchContainer';
+import { MainSearch } from 'components/shared';
 import { useHistory } from 'react-router-dom';
 import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
 import { useAppPaths } from 'lib/hooks/useAppPaths';
@@ -13,43 +12,35 @@ import {
   getDataEntitiesSearch,
   updateDataEntitiesSearch,
 } from 'redux/thunks';
-import { getSearchCreatingStatuses } from 'redux/selectors';
+import {
+  getSearchCreatingStatuses,
+  getSearchFacetsData,
+  getSearchFacetsSynced,
+  getSearchId,
+  getSearchMyObjects,
+  getSearchQuery,
+} from 'redux/selectors';
+import { useAppParams } from 'lib/hooks';
 import FiltersContainer from './Filters/FiltersContainer';
-import ResultsContainer from './Results/ResultsContainer';
+import Results from './Results/Results';
 
-interface SearchProps {
-  searchIdParam?: string;
-  searchId: string;
-  searchQuery: string;
-  searchMyObjects: boolean;
-  searchFacetParams: SearchFacetsByName;
-  searchFacetsSynced: boolean;
-  // searchFetchStatus: FetchStatus;
-  // searchError?: ErrorState;
-  // isSearchCreating: boolean;
-}
-
-const Search: React.FC<SearchProps> = ({
-  searchIdParam,
-  searchId,
-  searchQuery,
-  searchMyObjects,
-  searchFacetParams,
-  searchFacetsSynced,
-  // searchFetchStatus,
-  // searchError,
-  // isSearchCreating,
-}) => {
+const Search: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { searchPath } = useAppPaths();
+  const { searchId: routerSearchId } = useAppParams();
 
+  const searchId = useAppSelector(getSearchId);
+  const searchQuery = useAppSelector(getSearchQuery);
+  const searchMyObjects = useAppSelector(getSearchMyObjects);
+  const searchFacetParams = useAppSelector(getSearchFacetsData);
+  const searchFacetsSynced = useAppSelector(getSearchFacetsSynced);
   const { isLoading: isSearchCreating } = useAppSelector(
     getSearchCreatingStatuses
   );
 
   React.useEffect(() => {
-    if (!searchIdParam && !isSearchCreating && !searchId) {
+    if (!routerSearchId && !isSearchCreating && !searchId) {
       const emptySearchQuery = {
         query: '',
         pageSize: 30,
@@ -64,18 +55,17 @@ const Search: React.FC<SearchProps> = ({
           history.replace(searchLink);
         });
     }
-    // TODO do we need createDataEntitiesSearch deps?
-  }, [searchIdParam, createDataEntitiesSearch, isSearchCreating]);
+  }, [routerSearchId, isSearchCreating]);
 
   React.useEffect(() => {
-    if (!searchId && searchIdParam) {
+    if (!searchId && routerSearchId) {
       dispatch(
         getDataEntitiesSearch({
-          searchId: searchIdParam,
+          searchId: routerSearchId,
         })
       );
     }
-  }, [searchId, searchIdParam]);
+  }, [searchId, routerSearchId]);
 
   const updateSearchFacets = React.useCallback(
     useDebouncedCallback(
@@ -110,8 +100,8 @@ const Search: React.FC<SearchProps> = ({
           <FiltersContainer />
         </S.LeftSidebarContainer>
         <S.ListContainer item xs={9}>
-          <MainSearchContainer placeholder="Search" />
-          <ResultsContainer />
+          <MainSearch placeholder="Search" />
+          <Results />
         </S.ListContainer>
       </S.ContentContainer>
     </S.MainContainer>

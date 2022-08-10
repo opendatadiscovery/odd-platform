@@ -3,8 +3,7 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { DataEntity, DataEntityClass } from 'generated-sources';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
+import SearchResultsSkeleton from 'components/Search/Results/SearchResultsSkeleton/SearchResultsSkeleton';
 import LinkedItem from 'components/Terms/TermDetails/TermLinkedItemsList/LinkedItem/LinkedItem';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppInput from 'components/shared/AppInput/AppInput';
@@ -173,15 +172,7 @@ const LinkedItemsList: React.FC = () => {
         </TermLinkedItemsColContainer>
       </TermLinkedItemsResultsTableHeader>
       {isLinkedListFetching ? (
-        <SkeletonWrapper
-          length={10}
-          renderContent={({ randomSkeletonPercentWidth, key }) => (
-            <SearchResultsSkeletonItem
-              width={randomSkeletonPercentWidth()}
-              key={key}
-            />
-          )}
-        />
+        <SearchResultsSkeleton />
       ) : (
         <TermLinkedItemsListContainer id="term-linked-items-list">
           {termLinkedList && (
@@ -189,22 +180,7 @@ const LinkedItemsList: React.FC = () => {
               dataLength={termLinkedList?.length}
               next={fetchNextPage}
               hasMore={!!pageInfo?.hasNext}
-              loader={
-                isLinkedListFetching && (
-                  <SkeletonWrapper
-                    length={10}
-                    renderContent={({
-                      randomSkeletonPercentWidth,
-                      key,
-                    }) => (
-                      <SearchResultsSkeletonItem
-                        width={randomSkeletonPercentWidth()}
-                        key={key}
-                      />
-                    )}
-                  />
-                )
-              }
+              loader={isLinkedListFetching && <SearchResultsSkeleton />}
               scrollThreshold="200px"
               scrollableTarget="term-linked-items-list"
             >

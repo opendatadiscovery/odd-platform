@@ -1,6 +1,6 @@
 export { default as SkeletonWrapper } from './SkeletonWrapper/SkeletonWrapper';
 export { default as EntityClassItem } from './EntityClassItem/EntityClassItem';
-export { default as MainSearchContainer } from './MainSearch/MainSearchContainer';
+export { default as MainSearch } from './MainSearch/MainSearch';
 export { default as AppIconButton } from './AppIconButton/AppIconButton';
 export { default as AppMenu } from './AppMenu/AppMenu';
 export { default as AppMenuItem } from './AppMenuItem/AppMenuItem';
@@ -26,3 +26,4 @@ export { default as AppCheckbox } from './AppCheckbox/AppCheckbox';
 export { default as EmptyContentPlaceholder } from './EmptyContentPlaceholder/EmptyContentPlaceholder';
 export { default as NamespaceAutocomplete } from './Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 export { default as SearchSuggestionsAutocomplete } from './Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
+export { default as AppToolbar } from './AppToolbar/AppToolbar';
