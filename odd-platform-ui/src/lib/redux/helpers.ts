@@ -1,18 +1,27 @@
 import { toTimestampWithoutOffset } from 'lib/helpers';
 
-export const assignWith = <TargetType, SourceType>(
+export const assignWith = <
+  TargetType extends Record<string, any>,
+  SourceType extends Record<string, any>,
+  ReturnType extends Record<
+    keyof TargetType | keyof SourceType,
+    unknown
+  > = TargetType & SourceType
+>(
   target: TargetType,
   source: SourceType,
-  customizer: (targetValue: any, sourceValue: any) => any
-) => {
-  const targetEntries = Object.entries(source);
-  const sourceEntries = Object.entries(source);
-  const result = targetEntries.map(([targetKey, targetValue], idx) => {
-    const { 1: sourceValue } = sourceEntries[idx];
-    return [targetKey, customizer(targetValue, sourceValue)];
-  });
-  return Object.fromEntries(result);
-};
+  customizer: <K extends keyof SourceType>(
+    targetValue: K extends keyof TargetType ? TargetType[K] : undefined,
+    sourceValue: SourceType[K]
+  ) => ReturnType[K]
+): ReturnType =>
+  Object.keys(source).reduce(
+    (ac, sourceKey) => ({
+      ...ac,
+      [sourceKey]: customizer(target[sourceKey], source[sourceKey]),
+    }),
+    target
+  ) as ReturnType;
 
 export const createActionType = (actionPrefix: string, action: string) =>
   `${actionPrefix}/${action}`;
