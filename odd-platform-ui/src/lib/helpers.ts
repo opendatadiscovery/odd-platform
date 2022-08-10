@@ -1,4 +1,7 @@
-import { DataSetFieldTypeTypeEnum } from 'generated-sources';
+import {
+  DataQualityTestExpectation,
+  DataSetFieldTypeTypeEnum,
+} from 'generated-sources';
 import capitalize from 'lodash/capitalize';
 import { Theme } from '@mui/material';
 import { CRUDType } from 'lib/interfaces';
@@ -62,3 +65,8 @@ export const setActivityBackgroundColor = (
       return '';
   }
 };
+
+export const hasDataQualityTestExpectations = (
+  expectations?: DataQualityTestExpectation
+) =>
+  expectations && Object.keys(expectations).some(key => expectations[key]);

@@ -8,7 +8,9 @@ import {
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
 import { useAppSelector } from 'lib/redux/hooks';
+import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { SkeletonWrapper } from 'components/shared';
+import { DataQualityTestExpectation } from 'generated-sources';
 import OverviewGroups from './OverviewGroups/OverviewGroups';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import OverviewDescription from './OverviewDescription/OverviewDescription';
@@ -19,6 +21,7 @@ import { SectionContainer } from './OverviewStyles';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewDataQualityReport from './OverviewDataQualityReport/OverviewDataQualityReport';
 import OverviewTerms from './OverviewTerms/OverviewTerms';
+import OverviewExpectations from './OverviewExpectatios/OverviewExpectatios';
 
 const Overview: React.FC = () => {
   const { dataEntityId } = useAppParams();
@@ -45,6 +48,22 @@ const Overview: React.FC = () => {
             <SectionContainer elevation={9}>
               <OverviewStats />
             </SectionContainer>
+            {hasDataQualityTestExpectations(
+              dataEntityDetails?.expectation
+            ) && (
+              <>
+                <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
+                  Expectations
+                </Typography>
+                <SectionContainer square elevation={0}>
+                  <OverviewExpectations
+                    data={
+                      dataEntityDetails.expectation as DataQualityTestExpectation
+                    }
+                  />
+                </SectionContainer>
+              </>
+            )}
             <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
               Metadata
             </Typography>

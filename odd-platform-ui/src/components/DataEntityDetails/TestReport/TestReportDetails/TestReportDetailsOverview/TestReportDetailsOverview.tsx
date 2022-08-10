@@ -3,7 +3,10 @@ import { Grid, SelectChangeEvent, Typography } from '@mui/material';
 import TestReportDetailsOverviewSkeleton from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { format, formatDistanceStrict } from 'date-fns';
-import { DataQualityTestSeverity } from 'generated-sources';
+import {
+  DataQualityTestExpectation,
+  DataQualityTestSeverity,
+} from 'generated-sources';
 import {
   getDatasetTestListFetchingStatuses,
   getQualityTestByTestId,
@@ -15,6 +18,8 @@ import { setDataQATestSeverity } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 import { ORDERED_SEVERITY } from 'lib/constants';
+import { hasDataQualityTestExpectations } from 'lib/helpers';
+import TestReportDetailsOverviewExpectationsModal from './TestReportDetailsOverviewExpectationsModal';
 
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -38,7 +43,7 @@ const TestReportDetailsOverview: React.FC = () => {
     );
 
   return (
-    <Grid container direction="column">
+    <Grid container direction="column" wrap="nowrap">
       {isDatasetTestListFetching ? (
         <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
@@ -49,7 +54,7 @@ const TestReportDetailsOverview: React.FC = () => {
         />
       ) : (
         <>
-          <Grid sx={{ mt: 2 }}>
+          <Grid item sx={{ mt: 2 }} xs={12}>
             <LabeledInfoItem label="Date" inline labelWidth={4}>
               {qualityTest?.latestRun?.startTime &&
                 format(
@@ -89,38 +94,62 @@ const TestReportDetailsOverview: React.FC = () => {
               </AppSelect>
             </LabeledInfoItem>
           </Grid>
-          <Grid sx={{ mt: 2 }}>
-            {qualityTest?.expectation &&
-              Object.entries(qualityTest.expectation).map(
-                ([key, value]) =>
-                  value && (
-                    <LabeledInfoItem
-                      key={key}
-                      label={key}
-                      inline
-                      labelWidth={4}
-                    >
-                      {value}
-                    </LabeledInfoItem>
-                  )
-              )}
-          </Grid>
-          <Grid sx={{ mt: 2 }}>
-            <Typography variant="h4">Links</Typography>
-            <Grid container item xs={4} sx={{ mt: 1 }}>
-              {qualityTest?.linkedUrlList?.map(link => (
-                <Typography variant="body1">{link}</Typography>
-              ))}
+
+          {hasDataQualityTestExpectations(qualityTest?.expectation) && (
+            <Grid item container sx={{ mt: 2 }} xs={12}>
+              <Grid item container xs={12} alignItems="center">
+                <Grid item xs={6}>
+                  <Typography variant="body2" color="texts.secondary">
+                    Expectations
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={6} textAlign="right">
+                  <TestReportDetailsOverviewExpectationsModal
+                    expectations={
+                      qualityTest.expectation as DataQualityTestExpectation
+                    }
+                    qualityTestName={qualityTest.externalName}
+                  />
+                </Grid>
+              </Grid>
+
+              <Grid item sx={{ mt: 2 }} xs={12}>
+                {Object.entries(
+                  qualityTest.expectation as DataQualityTestExpectation
+                ).map(
+                  ([key, value]) =>
+                    value && (
+                      <LabeledInfoItem
+                        key={key}
+                        label={key}
+                        inline
+                        labelWidth={4}
+                        valueComponent="p"
+                      >
+                        {value}
+                      </LabeledInfoItem>
+                    )
+                )}
+              </Grid>
             </Grid>
-          </Grid>
-          <Grid sx={{ mt: 2 }}>
-            <Typography variant="h4">Execution</Typography>
-            <Grid container item xs={12} sx={{ mt: 1 }}>
-              <Typography variant="body2" color="texts.secondary">
-                No information about test execution is available.
-              </Typography>
+          )}
+
+          {!!qualityTest?.linkedUrlList?.length && (
+            <Grid item sx={{ mt: 2 }} xs={12}>
+              <Typography variant="h4">Links</Typography>
+              <Grid container item xs={12} sx={{ mt: 1 }}>
+                {qualityTest.linkedUrlList.map(link => (
+                  <Typography
+                    variant="body1"
+                    sx={{ wordBreak: 'break-word' }}
+                  >
+                    {link}
+                  </Typography>
+                ))}
+              </Grid>
             </Grid>
-          </Grid>
+          )}
         </>
       )}
     </Grid>
