@@ -4,8 +4,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
 import org.jooq.CommonTableExpression;
 import org.jooq.Field;
 import org.jooq.InsertValuesStep3;
@@ -20,6 +18,7 @@ import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.LineageRecord;
+import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
@@ -34,30 +33,31 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 
 @Repository
-@RequiredArgsConstructor
-public class ReactiveLineageRepositoryImpl implements ReactiveLineageRepository {
-
-    private final JooqReactiveOperations jooqReactiveOperations;
+public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepository<LineageRecord, LineagePojo>
+    implements ReactiveLineageRepository {
+    public ReactiveLineageRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
+                                         final JooqQueryHelper jooqQueryHelper) {
+        super(jooqReactiveOperations, jooqQueryHelper, LINEAGE, LineagePojo.class);
+    }
 
     @Override
     @ReactiveTransactional
-    public Mono<LineagePojo> replaceLineagePaths(final List<LineagePojo> pojos) {
-        final Set<String> establishers = pojos.stream()
-            .map(LineagePojo::getEstablisherOddrn)
-            .collect(Collectors.toSet());
+    public Flux<LineagePojo> batchDeleteByEstablisherOddrn(final Collection<String> establishers) {
+        final var query = DSL.deleteFrom(LINEAGE)
+            .where(LINEAGE.ESTABLISHER_ODDRN.in(establishers));
+        return jooqReactiveOperations.flux(query.returning()).map(r -> r.into(LineagePojo.class));
+    }
 
-        DSL.deleteFrom(LINEAGE)
-            .where(LINEAGE.ESTABLISHER_ODDRN.in(establishers))
-            .execute();
-
+    @Override
+    @ReactiveTransactional
+    public Flux<LineagePojo> batchInsertLineages(final List<LineagePojo> pojos) {
         InsertValuesStep3<LineageRecord, String, String, String> step
             = DSL.insertInto(LINEAGE, LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN, LINEAGE.ESTABLISHER_ODDRN);
 
         for (final LineagePojo p : pojos) {
             step = step.values(p.getParentOddrn(), p.getChildOddrn(), p.getEstablisherOddrn());
         }
-
-        return jooqReactiveOperations.mono(step.onDuplicateKeyIgnore().returning()).map(r -> r.into(LineagePojo.class));
+        return jooqReactiveOperations.flux(step.onDuplicateKeyIgnore().returning()).map(r -> r.into(LineagePojo.class));
     }
 
     @Override

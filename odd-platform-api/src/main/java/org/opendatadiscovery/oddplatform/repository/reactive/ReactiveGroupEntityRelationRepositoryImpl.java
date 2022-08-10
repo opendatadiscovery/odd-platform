@@ -96,7 +96,7 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     @Override
     public Mono<Map<String, List<String>>> fetchGroupRelations(final Collection<String> childOddrns) {
         if (CollectionUtils.isEmpty(childOddrns)) {
-            return Mono.empty();
+            return Mono.just(Map.of());
         }
 
         final var query = DSL
