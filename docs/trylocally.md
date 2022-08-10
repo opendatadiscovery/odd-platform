@@ -49,6 +49,8 @@ You should be able to see a new data source with the name you've passed into the
 2. Go to the **Catalog**. Select the created data source in the **Datasources** filter.\
 You should be able to see 11 new entities of different types injected into the Platform.
 
+![](.gitbook/img/trylocally2.gif)
+
 ## Step 3 (Optional): Configuring and running Collector to gather metadata from your own data sources
 
 ### Assumptions
