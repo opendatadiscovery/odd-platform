@@ -22,19 +22,11 @@ import * as S from './ResultItemPreviewStyles';
 
 interface ResultItemPreviewProps {
   dataEntityId: number;
-  // dataEntityDetails: DataEntityDetails;
-  // isDataEntityLoading: boolean;
-  // predefinedMetadata: MetadataFieldValue[];
-  // customMetadata: MetadataFieldValue[];
   fetchData?: boolean;
 }
 
 const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   dataEntityId,
-  // dataEntityDetails,
-  // isDataEntityLoading,
-  // predefinedMetadata,
-  // customMetadata,
   fetchData,
 }) => {
   const dispatch = useAppDispatch();
@@ -49,7 +41,6 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   const customMetadata = useAppSelector(state =>
     getDataEntityCustomMetadataList(state, dataEntityId)
   );
-
   const { isLoading: isDataEntityDetailsFetching } = useAppSelector(
     getDataEntityDetailsFetchingStatuses
   );

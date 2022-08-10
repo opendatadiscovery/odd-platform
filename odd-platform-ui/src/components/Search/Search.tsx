@@ -21,7 +21,7 @@ import {
   getSearchQuery,
 } from 'redux/selectors';
 import { useAppParams } from 'lib/hooks';
-import FiltersContainer from './Filters/FiltersContainer';
+import Filters from './Filters/Filters';
 import Results from './Results/Results';
 
 const Search: React.FC = () => {
@@ -97,7 +97,7 @@ const Search: React.FC = () => {
     <S.MainContainer>
       <S.ContentContainer container spacing={2}>
         <S.LeftSidebarContainer item xs={3}>
-          <FiltersContainer />
+          <Filters />
         </S.LeftSidebarContainer>
         <S.ListContainer item xs={9}>
           <MainSearch placeholder="Search" />

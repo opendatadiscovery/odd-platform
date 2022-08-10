@@ -95,17 +95,11 @@ export const getSearchMyObjects = createSelector(
   search => search.myObjects
 );
 
-const getSearchFacetName = (
-  _: RootState,
-  searchFacet: OptionalFacetNames
-) => searchFacet;
-
-export const getSearchFacetsByType = createSelector(
-  searchState,
-  getSearchFacetName,
-  (search, searchFacet) =>
-    values(search.facets[searchFacet]?.items) || emptyArr
-);
+export const getSearchFacetsByType = (facetName: OptionalFacetNames) =>
+  createSelector(
+    searchState,
+    search => values(search.facets[facetName]?.items) || emptyArr
+  );
 
 export const getSearchEntityClass = createSelector(searchState, search => {
   if (search.myObjects) return 'my' as SearchClass;
@@ -118,10 +112,10 @@ export const getSearchEntityClass = createSelector(searchState, search => {
     'all') as SearchClass;
 });
 
-export const getSelectedSearchFacetOptions = createSelector(
-  searchState,
-  getSearchFacetName,
-  (search, facetName) => {
+export const getSelectedSearchFacetOptions = (
+  facetName: OptionalFacetNames
+) =>
+  createSelector(searchState, search => {
     if (!search.facetState[facetName]) return emptyArr;
     return transform<SearchFacetStateById, SearchFilterStateSynced[]>(
       search.facetState[facetName] || {},
@@ -131,8 +125,7 @@ export const getSelectedSearchFacetOptions = createSelector(
       },
       []
     );
-  }
-);
+  });
 
 export const getSearchFacetsData = createSelector(searchState, search =>
   mapValues(search.facetState, facetState =>

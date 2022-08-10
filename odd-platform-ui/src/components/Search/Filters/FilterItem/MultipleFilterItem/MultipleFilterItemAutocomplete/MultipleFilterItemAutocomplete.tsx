@@ -14,40 +14,27 @@ import {
   MultipleFacetType,
   SearchFilter,
 } from 'generated-sources';
-import AppInput from 'components/shared/AppInput/AppInput';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { AppInput } from 'components/shared';
+import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
 import { OptionalFacetNames } from 'redux/interfaces';
-import DropdownIcon from 'components/shared/Icons/DropdownIcon';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { getDataEntitySearchFacetOptions } from 'redux/thunks';
 import { changeDataEntitySearchFacet } from 'redux/reducers/dataEntitySearch.slice';
-import {
-  FilterCount,
-  HighlightedTextPart,
-} from './MultipleFilterItemAutocompleteStyles';
+import { getSearchFacetsByType, getSearchId } from 'redux/selectors';
+import * as S from './MultipleFilterItemAutocompleteStyles';
 
 interface MultipleFilterItemAutocompleteProps {
-  searchId: string;
   name: string;
   facetName: OptionalFacetNames;
-  facetOptionsAll: CountableSearchFilter[];
-  // setFacets: (option: FacetStateUpdate) => void;
-  // searchFacetOptions: (
-  //   params: SearchApiGetFiltersForFacetRequest
-  // ) => Promise<CountableSearchFilter[]>;
 }
 
 const MultipleFilterItemAutocomplete: React.FC<
   MultipleFilterItemAutocompleteProps
-> = ({
-  searchId,
-  name,
-  facetName,
-  facetOptionsAll,
-  // setFacets,
-  // searchFacetOptions,
-}) => {
+> = ({ name, facetName }) => {
   const dispatch = useAppDispatch();
+
+  const searchId = useAppSelector(getSearchId);
+  const facetOptionsAll = useAppSelector(getSearchFacetsByType(facetName));
 
   type FilterOption = Omit<SearchFilter, 'id' | 'count' | 'selected'> &
     Partial<CountableSearchFilter>;
@@ -133,7 +120,6 @@ const MultipleFilterItemAutocomplete: React.FC<
         });
     }, 500),
     [
-      // TODO do we need getDataEntitySearchFacetOptions dep?
       getDataEntitySearchFacetOptions,
       setFacetOptionsLoading,
       setFacetOptions,
@@ -161,7 +147,7 @@ const MultipleFilterItemAutocomplete: React.FC<
         <li {...props}>
           <Grid container justifyContent="space-between">
             <span>{formattedOptionName}</span>
-            <FilterCount>{option.count}</FilterCount>
+            <S.FilterCount>{option.count}</S.FilterCount>
           </Grid>
         </li>
       );
@@ -172,7 +158,7 @@ const MultipleFilterItemAutocomplete: React.FC<
       return (
         <span>
           {parts.map((part, i) => (
-            <HighlightedTextPart
+            <S.HighlightedTextPart
               // eslint-disable-next-line react/no-array-index-key
               key={i}
               isHighlighted={
@@ -180,7 +166,7 @@ const MultipleFilterItemAutocomplete: React.FC<
               }
             >
               {part}
-            </HighlightedTextPart>
+            </S.HighlightedTextPart>
           ))}
         </span>
       );
@@ -190,7 +176,7 @@ const MultipleFilterItemAutocomplete: React.FC<
       <li {...props}>
         <Grid container justifyContent="space-between">
           {highlightedText(formattedOptionName, state.inputValue)}
-          <FilterCount>{option.count}</FilterCount>
+          <S.FilterCount>{option.count}</S.FilterCount>
         </Grid>
       </li>
     );
