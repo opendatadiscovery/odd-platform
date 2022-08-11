@@ -14,3 +14,4 @@ export { default as SearchIcon } from './SearchIcon';
 export { default as PlusIcon } from './PlusIcon';
 export { default as MinusIcon } from './MinusIcon';
 export { default as GraphIcon } from './GraphIcon';
+export { default as ColumnsIcon } from './ColumnsIcon';

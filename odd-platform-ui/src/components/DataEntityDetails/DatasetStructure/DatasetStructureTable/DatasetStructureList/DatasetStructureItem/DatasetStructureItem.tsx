@@ -21,11 +21,11 @@ import {
   MinusIcon,
   PlusIcon,
 } from 'components/shared/Icons';
+import DatasetFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldTypeLabel/DatasetFieldTypeLabel';
 import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
 import DatasetFieldEnumsEditForm from './DatasetFieldEnumsEditForm/DatasetFieldEnumsEditForm';
 import DatasetFieldCollapsedDescription from './DatasetFieldCollapsedDescription/DatasetFieldCollapsedDescription';
 import DatasetStructureKeyFieldLabel from '../../../DatasetStructureKeyFieldLabel/DatasetStructureKeyFieldLabel';
-import DatasetStructureFieldTypeLabel from '../../../DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 import * as S from './DatasetStructureItemStyles';
 import DatasetFieldStats from './DatasetFieldStats/DatasetFieldStats';
 
@@ -177,7 +177,7 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                       btnCreateEl={setEnumFormOpenBtn}
                     />
                   ) : null}
-                  <DatasetStructureFieldTypeLabel
+                  <DatasetFieldTypeLabel
                     typeName={datasetField.type.type}
                     sx={{ mr: 1 }}
                   />
