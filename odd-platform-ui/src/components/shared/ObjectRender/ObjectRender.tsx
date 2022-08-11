@@ -1,122 +1,163 @@
-import React, { useCallback, useState } from 'react';
-import { Typography } from '@mui/material';
+import React, { useCallback, useEffect, useState } from 'react';
 import * as S from './ObjectRenderStyles';
 
 const PREVIEW_COUNT = 3;
 
+const isInteractiveNode = (node: any) =>
+  node != null && typeof node === 'object' && Object.keys(node).length > 0;
+
 type ObjectRenderProps = {
   input: any;
+  parentKey?: string;
   deep?: number;
   isOpen?: boolean;
-  preview?: boolean;
+  isPreview?: boolean;
+  onToggle?: (e: React.SyntheticEvent<HTMLSpanElement>) => void;
 };
 
 const ObjectRender: React.FC<ObjectRenderProps> = ({
   input,
+  parentKey,
   deep = 0,
   isOpen = deep === 0,
-  preview = false,
+  isPreview = false,
+  onToggle = () => {},
 }) => {
-  const [open, setOpen] = useState<Record<string, boolean>>({});
+  const [isChildNodeOpen, setChildNodeOpen] = useState<
+    Record<string, boolean>
+  >({});
 
-  const onToggle = useCallback(e => {
-    const key = e.target?.dataset.key;
-    setOpen(s => ({ ...s, [key]: !s[key] }));
-  }, []);
+  const onToggleChildNode = useCallback(
+    (e: React.SyntheticEvent<HTMLSpanElement>) => {
+      const target = e.target as HTMLSpanElement;
+      const { key } = target.dataset;
+      if (key) setChildNodeOpen(s => ({ ...s, [key]: !s[key] }));
+    },
+    []
+  );
+
+  const onOpenCurrentNode = useCallback(
+    () => onToggle({ target: { dataset: { key: parentKey } } } as any),
+    [onToggle, parentKey]
+  );
+
+  useEffect(() => {
+    if (!isOpen) setChildNodeOpen({});
+  }, [isOpen]);
 
   if (input == null)
     return (
-      <Typography component="span" color="texts.secondary">
-        null
-      </Typography>
+      <S.ObjectRenderSpan color="texts.secondary">null</S.ObjectRenderSpan>
     );
 
   if (typeof input === 'object') {
     const isArray = input instanceof Array;
     const entries = Object.entries(input);
 
-    return (
-      <>
-        <Typography component="span" color="texts.secondary">
-          {isArray ? '[' : '{'}
-        </Typography>
-        {isOpen ? (
-          <>
-            <br />
-            {entries.map(([key, value]) => (
-              <React.Fragment key={key}>
-                <S.ObjectRenderKey
-                  $deep={deep}
-                  $interactive={value != null && typeof value === 'object'}
-                  variant="h4"
-                  onClick={onToggle}
-                  component="span"
-                  role="button"
-                  data-key={key}
-                >
-                  {key}:
-                </S.ObjectRenderKey>{' '}
-                <ObjectRender
-                  input={value}
-                  deep={deep + 1}
-                  isOpen={open[key]}
-                  preview
-                />
-                <br />
-              </React.Fragment>
-            ))}
-          </>
-        ) : (
-          preview &&
-          entries.map(
+    const openBracket = (
+      <S.ObjectRenderSpan color="texts.secondary">
+        {isArray ? '[' : '{'}
+      </S.ObjectRenderSpan>
+    );
+
+    const closeBracket = (
+      <S.ObjectRenderSpan ml={isOpen ? deep : 0} color="texts.secondary">
+        {isArray ? ']' : '}'}
+      </S.ObjectRenderSpan>
+    );
+
+    const collapses = (
+      <S.ObjectRenderSpan color="texts.hint">...</S.ObjectRenderSpan>
+    );
+
+    if (isOpen)
+      return (
+        <>
+          {openBracket}
+          <br />
+          {entries.map(([key, value]) => (
+            <React.Fragment key={key}>
+              <S.ObjectRenderKey
+                $deep={deep}
+                variant="h4"
+                role="button"
+                data-key={key}
+                {...(isInteractiveNode(value) && {
+                  $interactive: true,
+                  onClick: onToggleChildNode,
+                  role: 'button',
+                })}
+              >
+                {key}:
+              </S.ObjectRenderKey>{' '}
+              <ObjectRender
+                input={value}
+                deep={deep + 1}
+                isOpen={isChildNodeOpen[key]}
+                isPreview={isOpen}
+                onToggle={onToggleChildNode}
+                parentKey={key}
+              />
+              <br />
+            </React.Fragment>
+          ))}
+          {closeBracket}
+        </>
+      );
+
+    if (isPreview)
+      return (
+        <S.ObjectRenderInteractiveSpan
+          {...(isInteractiveNode(input) && {
+            $interactive: true,
+            onClick: onOpenCurrentNode,
+            role: 'button',
+          })}
+        >
+          {openBracket}
+          {entries.map(
             ([key, value], i) =>
               i < PREVIEW_COUNT && (
                 <React.Fragment key={key}>
                   {!isArray && (
-                    <Typography component="span" color="texts.secondary">
+                    <S.ObjectRenderSpan color="texts.hint">
                       {key}:{' '}
-                    </Typography>
+                    </S.ObjectRenderSpan>
                   )}
                   <ObjectRender input={value} deep={deep + 1} />
                   {i < entries.length - 1 && (
-                    <Typography component="span" color="texts.secondary">
+                    <S.ObjectRenderSpan color="texts.secondary">
                       {', '}
-                    </Typography>
+                    </S.ObjectRenderSpan>
                   )}
                 </React.Fragment>
               )
-          )
-        )}
-
-        {!isOpen &&
-          ((preview && entries.length > PREVIEW_COUNT) || !preview) && (
-            <Typography component="span" color="texts.secondary">
-              ...
-            </Typography>
           )}
+          {entries.length > PREVIEW_COUNT && collapses}
+          {closeBracket}
+        </S.ObjectRenderInteractiveSpan>
+      );
 
-        <Typography
-          component="span"
-          ml={isOpen ? deep : 0}
-          color="texts.secondary"
-        >
-          {isArray ? ']' : '}'}
-        </Typography>
+    return (
+      <>
+        {openBracket}
+        {collapses}
+        {closeBracket}
       </>
     );
   }
 
   if (['number', 'boolean'].includes(typeof input))
     return (
-      <Typography component="span" color="runStatus.BROKEN">
+      <S.ObjectRenderSpan color="runStatus.BROKEN">
         {input.toString()}
-      </Typography>
+      </S.ObjectRenderSpan>
     );
 
   return (
-    <Typography component="span" color="runStatus.SUCCESS">
+    <S.ObjectRenderSpan color="runStatus.SUCCESS">
       &quot;{input}&quot;
-    </Typography>
+    </S.ObjectRenderSpan>
   );
 };
 
