@@ -2202,7 +2202,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yaml/#/components/schemas/AssociatedOwner'
+                $ref: './components.yaml/#/components/schemas/OwnerAssociationRequest'
       tags:
         - ownerAssociationRequest
 
