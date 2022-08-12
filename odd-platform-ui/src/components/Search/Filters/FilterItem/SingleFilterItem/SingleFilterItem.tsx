@@ -43,6 +43,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
         <AppSelect
           sx={{ mt: 2 }}
           label={name}
+          maxMenuHeight={464}
           id={`filter-${facetName}`}
           value={
             selectedOptions?.length ? selectedOptions[0].entityId : 'All'
