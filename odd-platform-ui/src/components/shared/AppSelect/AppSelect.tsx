@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, SelectProps, Theme } from '@mui/material';
-import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import { DropdownIcon } from 'components/shared/Icons';
 import { SxProps } from '@mui/system';
 import type { AppSelectSizes } from './AppSelectStyles';
 import * as S from './AppSelectStyles';
@@ -22,15 +22,19 @@ interface AppSelectProps
     | 'notched'
     | 'placeholder'
     | 'native'
+    | 'children'
+    | 'onOpen'
   > {
   size?: AppSelectSizes;
   containerSx?: SxProps<Theme>;
+  maxMenuHeight?: number;
 }
 
 const AppSelect: React.FC<AppSelectProps> = ({
   size = 'medium',
   fullWidth = true,
   label,
+  maxMenuHeight,
   ...props
 }) => (
   <Grid
@@ -54,6 +58,10 @@ const AppSelect: React.FC<AppSelectProps> = ({
       MenuProps={{
         anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
         transformOrigin: { vertical: 'top', horizontal: 'left' },
+        sx: {
+          marginTop: '4px',
+          maxHeight: maxMenuHeight ? `${maxMenuHeight}px` : 'unset',
+        },
       }}
     >
       {props.children}

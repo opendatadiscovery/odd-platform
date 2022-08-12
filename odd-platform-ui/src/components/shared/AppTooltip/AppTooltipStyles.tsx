@@ -1,12 +1,11 @@
 import React from 'react';
 import { Theme } from '@mui/material/styles';
-import { Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
+import { Box, Tooltip, tooltipClasses, TooltipProps } from '@mui/material';
 import styled, { CSSObject } from 'styled-components';
 
 export type TooltipColorTypes = 'light' | 'dark';
 
-interface TooltipStyleProps {
-  $maxWidth: number;
+interface TooltipStyleProps extends TooltipProps {
   $type: TooltipColorTypes;
 }
 
@@ -17,13 +16,11 @@ interface ChildrenContainerProps {
 
 const getTooltipStylesByType = (
   theme: Theme,
-  type: TooltipColorTypes,
-  $maxWidth?: number
+  type: TooltipColorTypes
 ): CSSObject => {
   if (type === 'dark')
     return {
       color: theme.palette.divider,
-      maxWidth: `${$maxWidth}px`,
       borderRadius: '4px',
       padding: theme.spacing(0.25, 0.5),
       backgroundColor: theme.palette.info.dark,
@@ -31,7 +28,6 @@ const getTooltipStylesByType = (
 
   return {
     color: theme.palette.texts.info,
-    maxWidth: `${$maxWidth}px`,
     borderRadius: '4px',
     padding: theme.spacing(1),
     border: '1px solid',
@@ -42,23 +38,28 @@ const getTooltipStylesByType = (
 
 export const AppTooltip = styled(
   ({ className, ...props }: TooltipProps) => (
-    // eslint-disable-next-line react/jsx-props-no-spreading
     <Tooltip {...props} classes={{ popper: className }} />
   )
-)<TooltipStyleProps>(({ theme, $type, $maxWidth }) => ({
+)<TooltipStyleProps>(({ theme, $type }) => ({
   [`&.${tooltipClasses.popper}`]: {
     [`& .${tooltipClasses.tooltip}`]: {
       fontSize: theme.typography.body2.fontSize,
       fontWeight: theme.typography.body2.fontWeight,
       lineHeight: theme.typography.body2.lineHeight,
-      ...getTooltipStylesByType(theme, $type, $maxWidth),
+      ...getTooltipStylesByType(theme, $type),
     },
   },
 }));
 
-export const ChildrenContainer = styled('div')<ChildrenContainerProps>(
+export const ChildrenContainer = styled(Box)<ChildrenContainerProps>(
   ({ $isCursorPointer, $isOverflowed }) => ({
     cursor: $isCursorPointer ? 'pointer' : 'auto',
     overflow: $isOverflowed ? 'hidden' : 'initial',
+    ...($isOverflowed
+      ? {
+          maxWidth: '0px',
+          minWidth: '100%',
+        }
+      : {}),
   })
 );

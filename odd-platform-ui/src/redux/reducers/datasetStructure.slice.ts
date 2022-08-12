@@ -7,6 +7,7 @@ import {
 import * as thunks from 'redux/thunks';
 import { createSlice } from '@reduxjs/toolkit';
 import { datasetStructureActionTypePrefix } from 'redux/actions';
+import compact from 'lodash/compact';
 
 export const initialState: DatasetStructureState = {
   fieldById: {},
@@ -22,6 +23,8 @@ export const updateDatasetStructure = (
 ): DatasetStructureState => {
   const { dataEntityId, dataSetVersionId, fieldList, isLatestVersion } =
     payload;
+
+  let isUniqueStatsExist = false;
 
   return {
     ...state,
@@ -49,12 +52,23 @@ export const updateDatasetStructure = (
     },
     statsByVersionId: {
       ...state.statsByVersionId,
-      [dataSetVersionId]: fieldList.reduce<DataSetStructureTypesCount>(
-        (typeStats, field) => ({
-          ...typeStats,
-          [field.type.type]: (typeStats[field.type.type] || 0) + 1,
-        }),
-        {}
+      [dataSetVersionId]: fieldList.reduce<{
+        typeStats: DataSetStructureTypesCount;
+        isUniqueStatsExist: boolean;
+      }>(
+        ({ typeStats }, field) => {
+          const uniqStats = compact(Object.values(field.stats || {}));
+          if (uniqStats.length > 0) isUniqueStatsExist = true;
+
+          return {
+            typeStats: {
+              ...typeStats,
+              [field.type.type]: (typeStats[field.type.type] || 0) + 1,
+            },
+            isUniqueStatsExist,
+          };
+        },
+        { typeStats: {}, isUniqueStatsExist: false }
       ),
     },
     latestVersionByDataset: {

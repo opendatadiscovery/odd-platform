@@ -133,6 +133,8 @@ const DatasetFieldInfoEditForm: React.FC<
             {...field}
             label="Description"
             placeholder="Enter description"
+            multiline
+            maxRows={4}
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,

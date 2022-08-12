@@ -11,6 +11,7 @@ import {
   DataEntityRef,
   DataEntityRun,
   DataEntityType,
+  DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
   DataSetTestReport,
@@ -27,7 +28,6 @@ import {
   Term,
   TermDetails,
   TermRefList,
-  DataEntityUsageInfo,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -96,7 +96,10 @@ export interface DatasetStructureState {
     };
   };
   statsByVersionId: {
-    [versionId: number]: DataSetStructureTypesCount;
+    [versionId: number]: {
+      typeStats: DataSetStructureTypesCount;
+      isUniqueStatsExist: boolean;
+    };
   };
   latestVersionByDataset: {
     [datasetId: string]: DataSetVersion['id'];
