@@ -13,10 +13,10 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.jooq.OrderField;
 import org.jooq.Record;
-import org.jooq.Row13;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SortOrder;
@@ -38,6 +38,7 @@ import static org.jooq.impl.DSL.rowNumber;
 
 @RequiredArgsConstructor
 public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implements ReactiveCRUDRepository<P> {
+    // TODO: remove all batches except one place. use helper method
     private static final int BATCH_SIZE = 1000;
 
     private static final String DEFAULT_NAME_FIELD = "name";
@@ -119,6 +120,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     @Override
+    // TODO: set propagation?
     @ReactiveTransactional
     public Flux<P> bulkCreate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
@@ -135,6 +137,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     @Override
+    // TODO: set propagation?
     @ReactiveTransactional
     public Flux<P> bulkUpdate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
@@ -178,6 +181,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     protected Flux<R> insertMany(final List<R> records) {
+        // TODO: extract every ListUtils.partition to helpers
         return ListUtils.partition(records, BATCH_SIZE)
             .stream()
             .map(rs -> {
@@ -192,6 +196,28 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             })
             .reduce(Flux::concat)
             .orElse(Flux.empty());
+    }
+
+    protected Mono<Void> insertManyHeadless(final List<R> records, final boolean failOnDuplicateKey) {
+        // TODO: extract every ListUtils.partition to helpers
+        return ListUtils.partition(records, BATCH_SIZE)
+            .stream()
+            .map(rs -> {
+                InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
+
+                for (int i = 0; i < rs.size() - 1; i++) {
+                    insertStep = insertStep.set(rs.get(i)).newRecord();
+                }
+
+                InsertSetMoreStep<R> query = insertStep.set(rs.get(rs.size() - 1));
+
+                return !failOnDuplicateKey
+                    ? jooqReactiveOperations.mono(query.onDuplicateKeyIgnore())
+                    : jooqReactiveOperations.mono(query);
+            })
+            .reduce((m1, m2) -> m1.zipWith(m2, Integer::sum))
+            .orElseThrow(() -> new IllegalStateException("Records' list was empty"))
+            .then();
     }
 
     protected Flux<R> updateMany(final List<R> records) {
@@ -270,7 +296,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
         return fields;
     }
 
-    private R createRecord(final P pojo, final LocalDateTime updatedAt) {
+    protected R createRecord(final P pojo, final LocalDateTime updatedAt) {
         final R record = pojoToRecord(pojo);
 
         if (updatedAtField != null) {

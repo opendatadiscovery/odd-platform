@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Getter;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassesTotalDelta;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
+import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRelationsPojo;
@@ -24,7 +24,7 @@ public class IngestionDataStructure {
     private final List<DataQualityTestRelationsPojo> dataQARelations;
     private final List<GroupEntityRelationsPojo> groupEntityRelations;
     private final List<GroupParentGroupRelationsPojo> groupParentGroupRelations;
-    private final List<AlertPojo> earlyAlerts;
+    private final List<DataEntitySpecificAttributesDelta> specificAttributesDeltas;
 
     private final List<Long> existingIds;
     private final List<Long> newIds;
@@ -36,7 +36,7 @@ public class IngestionDataStructure {
                                   final List<IngestionTaskRun> taskRuns,
                                   final List<LineagePojo> lineageRelations,
                                   final List<DataQualityTestRelationsPojo> dataQARelations,
-                                  final List<AlertPojo> earlyAlerts,
+                                  final List<DataEntitySpecificAttributesDelta> specificAttributesDeltas,
                                   final List<GroupEntityRelationsPojo> groupEntityRelations,
                                   final List<GroupParentGroupRelationsPojo> groupParentGroupRelations,
                                   final DataEntityClassesTotalDelta entityClassesTotalDelta) {
@@ -47,11 +47,12 @@ public class IngestionDataStructure {
         this.taskRuns = taskRuns;
         this.lineageRelations = lineageRelations;
         this.dataQARelations = dataQARelations;
-        this.earlyAlerts = earlyAlerts;
+        this.specificAttributesDeltas = specificAttributesDeltas;
         this.groupEntityRelations = groupEntityRelations;
         this.groupParentGroupRelations = groupParentGroupRelations;
         this.entityClassesTotalDelta = entityClassesTotalDelta;
 
+        // TODO: rewrite
         this.existingIds = extractIds(existingEntities);
         this.newIds = extractIds(newEntities);
         this.allIds = extractIds(this.allEntities);

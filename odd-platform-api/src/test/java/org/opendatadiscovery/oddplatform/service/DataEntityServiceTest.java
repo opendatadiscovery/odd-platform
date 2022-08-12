@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,9 +39,7 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -131,7 +128,7 @@ public class DataEntityServiceTest {
         when(metadataFieldMapper.mapObject(metadataObject)).thenReturn(fieldPojoBeforeCreation);
         when(metadataFieldService.getOrCreateMetadataFields(List.of(fieldPojoBeforeCreation)))
             .thenReturn(Mono.just(List.of(fieldPojoAfterCreation)));
-        when(metadataFieldValueRepository.bulkCreate(List.of(valuePojo)))
+        when(metadataFieldValueRepository.bulkCreateReturning(List.of(valuePojo)))
             .thenReturn(Flux.fromIterable(List.of(valuePojo)));
         when(metadataFieldValueMapper.mapDto(new MetadataDto(fieldPojoAfterCreation, valuePojo)))
             .thenReturn(metadataFieldValue);

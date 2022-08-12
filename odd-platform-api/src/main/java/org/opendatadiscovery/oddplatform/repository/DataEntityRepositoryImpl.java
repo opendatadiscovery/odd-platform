@@ -13,8 +13,6 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Builder;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
@@ -24,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.Insert;
 import org.jooq.Name;
 import org.jooq.OrderField;
 import org.jooq.Record;
@@ -38,10 +35,8 @@ import org.jooq.SelectLimitStep;
 import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectOrderByStep;
 import org.jooq.SelectSelectStep;
-import org.jooq.SortField;
 import org.jooq.SortOrder;
 import org.jooq.Table;
-import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
@@ -63,7 +58,6 @@ import org.opendatadiscovery.oddplatform.dto.attributes.DataSetAttributes;
 import org.opendatadiscovery.oddplatform.dto.attributes.DataTransformerAttributes;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
-import org.opendatadiscovery.oddplatform.model.tables.SearchEntrypoint;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
@@ -75,7 +69,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.RolePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToDataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.DataEntityRecord;
-import org.opendatadiscovery.oddplatform.repository.util.FTSEntity;
+import org.opendatadiscovery.oddplatform.repository.util.DataEntityQueryConfig;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
@@ -118,7 +112,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.ROLE;
 import static org.opendatadiscovery.oddplatform.model.Tables.SEARCH_ENTRYPOINT;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG;
 import static org.opendatadiscovery.oddplatform.model.Tables.TAG_TO_DATA_ENTITY;
-import static org.opendatadiscovery.oddplatform.repository.util.FTSConfig.FTS_CONFIG_DETAILS_MAP;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.DATA_ENTITY_CONDITIONS;
 import static org.opendatadiscovery.oddplatform.repository.util.FTSConstants.RANK_FIELD_ALIAS;
 
@@ -171,7 +164,7 @@ public class DataEntityRepositoryImpl
 
     @Override
     public Optional<DataEntityDimensionsDto> get(final long id) {
-        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+        final DataEntityQueryConfig config = DataEntityQueryConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
             .build();
 
@@ -241,7 +234,7 @@ public class DataEntityRepositoryImpl
         return Page.<DataEntityDimensionsDto>builder()
             .hasNext(false)
             .total(fetchCount(query))
-            .data(listByConfig(DataEntitySelectConfig.builder().build()))
+            .data(listByConfig(DataEntityQueryConfig.builder().build()))
             .build();
     }
 
@@ -280,7 +273,7 @@ public class DataEntityRepositoryImpl
 
     @Override
     public Collection<DataEntityDetailsDto> listDetailsByOddrns(final Collection<String> oddrns) {
-        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+        final DataEntityQueryConfig config = DataEntityQueryConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(CollectionUtils.emptyIfNull(oddrns))))
             .build();
 
@@ -296,7 +289,7 @@ public class DataEntityRepositoryImpl
             return emptyList();
         }
 
-        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+        final DataEntityQueryConfig config = DataEntityQueryConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(oddrns)))
             .includeHollow(includeHollow)
             .build();
@@ -321,13 +314,13 @@ public class DataEntityRepositoryImpl
             return emptyList();
         }
 
-        DataEntitySelectConfig.DataEntitySelectConfigBuilder configBuilder = DataEntitySelectConfig.builder()
+        DataEntityQueryConfig.DataEntityQueryConfigBuilder configBuilder = DataEntityQueryConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ODDRN.in(oddrns)))
             .includeHollow(!skipHollow);
 
         if (page != null && size != null) {
             configBuilder = configBuilder.cteLimitOffset(
-                new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size));
+                new DataEntityQueryConfig.LimitOffset(size, (page - 1) * size));
         }
 
         return listByConfig(configBuilder.build());
@@ -344,10 +337,10 @@ public class DataEntityRepositoryImpl
             .filter(Objects::nonNull)
             .collect(toList());
 
-        final DataEntitySelectConfig config = DataEntitySelectConfig
+        final DataEntityQueryConfig config = DataEntityQueryConfig
             .builder()
             .cteSelectConditions(cteSelectConditions)
-            .cteLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
+            .cteLimitOffset(new DataEntityQueryConfig.LimitOffset(size, (page - 1) * size))
             .build();
 
         return listByConfig(config);
@@ -360,14 +353,14 @@ public class DataEntityRepositoryImpl
         if (entityClassId != null) {
             cteConditions.add(DATA_ENTITY.ENTITY_CLASS_IDS.contains(new Integer[] {entityClassId}));
         }
-        DataEntitySelectConfig.DataEntitySelectConfigBuilder builder = DataEntitySelectConfig
+        DataEntityQueryConfig.DataEntityQueryConfigBuilder builder = DataEntityQueryConfig
             .builder()
             .cteSelectConditions(cteConditions)
             .selectConditions(List.of(DATA_ENTITY_TO_TERM.TERM_ID.eq(termId)));
 
         if (StringUtils.isNotEmpty(query)) {
             builder = builder.fts(
-                new DataEntitySelectConfig.Fts(query));
+                new DataEntityQueryConfig.Fts(query));
         }
         final List<DataEntityDimensionsDto> entities = dataEntitySelect(builder.build())
             .limit(size)
@@ -381,7 +374,7 @@ public class DataEntityRepositoryImpl
 
     @Override
     public List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId) {
-        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+        final DataEntityQueryConfig config = DataEntityQueryConfig.builder()
             .selectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
             .build();
 
@@ -395,7 +388,7 @@ public class DataEntityRepositoryImpl
 
     @Override
     public List<String> listOddrnsByOwner(final long ownerId, final LineageStreamKind streamKind) {
-        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+        final DataEntityQueryConfig config = DataEntityQueryConfig.builder()
             .selectConditions(singletonList(OWNERSHIP.OWNER_ID.eq(ownerId)))
             .build();
 
@@ -415,8 +408,8 @@ public class DataEntityRepositoryImpl
 
     @Override
     public List<? extends DataEntityDto> listPopular(final int page, final int size) {
-        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
-            .cteLimitOffset(new DataEntitySelectConfig.LimitOffset(size, (page - 1) * size))
+        final DataEntityQueryConfig config = DataEntityQueryConfig.builder()
+            .cteLimitOffset(new DataEntityQueryConfig.LimitOffset(size, (page - 1) * size))
             .orderBy(DATA_ENTITY.VIEW_COUNT.sort(SortOrder.DESC))
             .build();
 
@@ -426,7 +419,7 @@ public class DataEntityRepositoryImpl
     @Override
     @BlockingTransactional
     public Optional<DataEntityDetailsDto> getDetails(final long id) {
-        final DataEntitySelectConfig config = DataEntitySelectConfig.builder()
+        final DataEntityQueryConfig config = DataEntityQueryConfig.builder()
             .cteSelectConditions(singletonList(DATA_ENTITY.ID.eq(id)))
             .build();
 
@@ -440,7 +433,7 @@ public class DataEntityRepositoryImpl
     public List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                                      final Integer page,
                                                                      final Integer size) {
-        final DataEntitySelectConfig config = DataEntitySelectConfig
+        final DataEntityQueryConfig config = DataEntityQueryConfig
             .builder()
             .selectConditions(List.of(DATA_ENTITY.as(AGG_PARENT_ENTITY_FIELD).ID.eq(dataEntityGroupId)))
             .build();
@@ -477,14 +470,14 @@ public class DataEntityRepositoryImpl
             joinConditions.add(OWNER.ID.eq(owner.getId()));
         }
 
-        DataEntitySelectConfig.DataEntitySelectConfigBuilder builder = DataEntitySelectConfig
+        DataEntityQueryConfig.DataEntityQueryConfigBuilder builder = DataEntityQueryConfig
             .builder()
             .cteSelectConditions(conditionsPair.getLeft())
             .selectConditions(joinConditions);
 
         if (StringUtils.isNotEmpty(state.getQuery())) {
             builder = builder.fts(
-                new DataEntitySelectConfig.Fts(state.getQuery()));
+                new DataEntityQueryConfig.Fts(state.getQuery()));
         }
 
         final SelectLimitStep<Record> baseQuery = dataEntitySelect(builder.build());
@@ -715,7 +708,7 @@ public class DataEntityRepositoryImpl
         ).execute();
     }
 
-    private List<DataEntityDimensionsDto> listByConfig(final DataEntitySelectConfig config) {
+    private List<DataEntityDimensionsDto> listByConfig(final DataEntityQueryConfig config) {
         final List<DataEntityDimensionsDto> entities = dataEntitySelect(config)
             .fetchStream()
             .map(this::mapDimensionRecord)
@@ -724,7 +717,7 @@ public class DataEntityRepositoryImpl
         return enrichDataEntityDimensionsDto(entities);
     }
 
-    private SelectLimitStep<Record> dataEntitySelect(final DataEntitySelectConfig config) {
+    private SelectLimitStep<Record> dataEntitySelect(final DataEntityQueryConfig config) {
         final Name deCteName = name(DATA_ENTITY_CTE_NAME);
 
         final Select<Record> dataEntitySelect = cteDataEntitySelect(config);
@@ -1150,7 +1143,7 @@ public class DataEntityRepositoryImpl
             .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
     }
 
-    private Select<Record> cteDataEntitySelect(final DataEntitySelectConfig config) {
+    private Select<Record> cteDataEntitySelect(final DataEntityQueryConfig config) {
         Select<Record> dataEntitySelect;
 
         final List<OrderField<?>> orderFields = new ArrayList<>();
@@ -1198,29 +1191,5 @@ public class DataEntityRepositoryImpl
         }
 
         return dataEntitySelect;
-    }
-
-    @Builder
-    @Data
-    private static class DataEntitySelectConfig {
-        private List<Condition> cteSelectConditions;
-        private LimitOffset cteLimitOffset;
-        private List<Condition> selectConditions;
-        private boolean includeHollow;
-
-        @Builder.Default
-        private boolean dimensions = true;
-
-        private SortField<?> orderBy;
-        private Fts fts;
-
-        private record LimitOffset(int limit, int offset) {
-        }
-
-        private record Fts(Field<?> rankFieldAlias, String query) {
-            Fts(final String query) {
-                this(RANK_FIELD_ALIAS, query);
-            }
-        }
     }
 }

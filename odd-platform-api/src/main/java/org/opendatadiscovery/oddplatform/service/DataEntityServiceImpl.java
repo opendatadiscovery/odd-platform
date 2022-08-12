@@ -295,7 +295,7 @@ public class DataEntityServiceImpl
                 return Tuples.of(fieldsMap, metadataFieldValuePojos);
             })
             .flatMap(function((fieldsMap, metadataFieldValuePojos) -> reactiveMetadataFieldValueRepository
-                .bulkCreate(metadataFieldValuePojos)
+                .bulkCreateReturning(metadataFieldValuePojos)
                 .map(mfv -> {
                     final MetadataFieldPojo metadataFieldPojo = fieldsMap.get(mfv.getMetadataFieldId());
                     return metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, mfv));
@@ -332,7 +332,8 @@ public class DataEntityServiceImpl
     public Mono<Void> deleteMetadata(final long dataEntityId, final long metadataFieldId) {
         return reactiveMetadataFieldValueRepository.delete(dataEntityId, metadataFieldId)
             .then(reactiveSearchEntrypointRepository.updateMetadataVectors(dataEntityId))
-            .then(reactiveMetadataFieldValueRepository.listByDataEntityIds(List.of(dataEntityId), INTERNAL))
+            .thenMany(reactiveMetadataFieldValueRepository.listByDataEntityIds(List.of(dataEntityId), INTERNAL))
+            .collectList()
             .flatMap(metadata -> {
                 if (CollectionUtils.isEmpty(metadata)) {
                     return dataEntityFilledService.markEntityUnfilled(dataEntityId, INTERNAL_METADATA);

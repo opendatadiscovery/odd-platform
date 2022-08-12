@@ -10,6 +10,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetStructurePojo
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
 import reactor.core.publisher.Mono;
 
+// TODO: revise
 public interface DatasetStructureService {
     Mono<List<DatasetStructurePojo>> createDatasetStructure(final List<DatasetVersionPojo> versions,
                                                             final Map<String, List<DatasetFieldPojo>> datasetFields);

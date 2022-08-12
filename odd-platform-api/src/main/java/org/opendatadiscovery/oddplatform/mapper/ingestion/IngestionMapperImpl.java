@@ -26,15 +26,18 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataConsumer;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityGroup;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataInput;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTest;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataQualityTestRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSet;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetFieldType;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformer;
+import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataTransformerRun;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
@@ -151,6 +154,48 @@ public class IngestionMapperImpl implements IngestionMapper {
     @Override
     public <T extends DataEntityIngestionDto> List<DataEntityPojo> dtoToPojo(final Collection<T> dtos) {
         return dtos.stream().map(this::dtoToPojo).collect(Collectors.toList());
+    }
+
+    @Override
+    public IngestionTaskRun mapTaskRun(final DataEntity dataEntity) {
+        if (dataEntity.getDataTransformerRun() == null && dataEntity.getDataQualityTestRun() == null) {
+            // TODO: enhanced validation + proper exception
+            throw new IllegalArgumentException("Data Entity doesn't have task run data");
+        }
+
+        return dataEntity.getDataTransformerRun() != null
+            ? mapTaskRun(dataEntity.getDataTransformerRun(), dataEntity.getName(), dataEntity.getOddrn())
+            : mapTaskRun(dataEntity.getDataQualityTestRun(), dataEntity.getName(), dataEntity.getOddrn());
+    }
+
+    private IngestionTaskRun mapTaskRun(final DataTransformerRun transformerRun,
+                                        final String name,
+                                        final String oddrn) {
+        return IngestionTaskRun.builder()
+            .taskRunName(name)
+            .oddrn(oddrn)
+            .taskOddrn(transformerRun.getTransformerOddrn())
+            .startTime(transformerRun.getStartTime())
+            .endTime(transformerRun.getEndTime())
+            .status(IngestionTaskRun.IngestionTaskRunStatus.valueOf(transformerRun.getStatus().name()))
+            .statusReason(transformerRun.getStatusReason())
+            .type(IngestionTaskRun.IngestionTaskRunType.DATA_TRANSFORMER_RUN)
+            .build();
+    }
+
+    private IngestionTaskRun mapTaskRun(final DataQualityTestRun dataQualityTestRun,
+                                        final String name,
+                                        final String oddrn) {
+        return IngestionTaskRun.builder()
+            .taskRunName(name)
+            .oddrn(oddrn)
+            .taskOddrn(dataQualityTestRun.getDataQualityTestOddrn())
+            .startTime(dataQualityTestRun.getStartTime())
+            .endTime(dataQualityTestRun.getEndTime())
+            .status(IngestionTaskRun.IngestionTaskRunStatus.valueOf(dataQualityTestRun.getStatus().name()))
+            .statusReason(dataQualityTestRun.getStatusReason())
+            .type(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN)
+            .build();
     }
 
     private DataEntityIngestionDto.DataSetIngestionDto createDatasetIngestionDto(final DataSet dataEntity) {

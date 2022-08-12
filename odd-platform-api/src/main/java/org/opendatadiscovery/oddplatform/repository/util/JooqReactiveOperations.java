@@ -1,7 +1,9 @@
 package org.opendatadiscovery.oddplatform.repository.util;
 
 import java.util.List;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.ListUtils;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Result;
@@ -18,6 +20,8 @@ import reactor.core.publisher.Mono;
 @Component
 @RequiredArgsConstructor
 public class JooqReactiveOperations {
+    private final static int BATCH_SIZE = 1000;
+
     private final DSLContext mappingDSLContext = DSL.using(SQLDialect.POSTGRES);
 
     private final DatabaseClient databaseClient;
@@ -41,6 +45,27 @@ public class JooqReactiveOperations {
             DSL.using(c).attach(query);
             return Flux.from(query);
         });
+    }
+
+    public <T> Mono<Void> executeInPartition(final List<T> entities,
+                                             final Function<List<T>, Mono<Integer>> mapper) {
+        // TODO: add simple if checking whether list is less than batchsize
+        return ListUtils.partition(entities, BATCH_SIZE)
+            .stream()
+            .map(mapper)
+            .reduce((m1, m2) -> m1.zipWith(m2, Integer::sum))
+            .orElseThrow(() -> new IllegalStateException("Given list of entities was empty"))
+            .then();
+    }
+
+    public <T, R extends Record> Flux<R> executeInPartitionReturning(final List<T> entities,
+                                                                     final Function<List<T>, Flux<R>> mapper) {
+        // TODO: add simple if checking whether list is less than batchsize
+        return ListUtils.partition(entities, BATCH_SIZE)
+            .stream()
+            .map(mapper)
+            .reduce(Flux::concat)
+            .orElse(Flux.empty());
     }
 
     public <R extends Record> R newRecord(final Table<R> table,

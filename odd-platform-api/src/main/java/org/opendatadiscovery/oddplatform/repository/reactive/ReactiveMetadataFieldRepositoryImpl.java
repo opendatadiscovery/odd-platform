@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import org.jooq.Condition;
@@ -12,6 +13,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
@@ -42,18 +44,18 @@ public class ReactiveMetadataFieldRepositoryImpl
     }
 
     @Override
-    public Mono<List<MetadataFieldPojo>> listByKey(final Collection<MetadataKey> keys) {
+    public Flux<MetadataFieldPojo> listByKey(final Collection<MetadataKey> keys) {
         if (keys.isEmpty()) {
-            return Mono.just(List.of());
+            return Flux.just();
         }
+
         final Condition condition = keys.stream()
             .map(t -> METADATA_FIELD.NAME.eq(t.fieldName()).and(METADATA_FIELD.TYPE.eq(t.fieldType().toString())))
             .reduce(Condition::or)
             .orElseThrow();
-        final var query = DSL.selectFrom(METADATA_FIELD)
-            .where(addSoftDeleteFilter(condition));
-        return jooqReactiveOperations.flux(query)
-            .map(this::recordToPojo)
-            .collectList();
+
+        return jooqReactiveOperations
+            .flux(DSL.selectFrom(METADATA_FIELD).where(addSoftDeleteFilter(condition)))
+            .map(this::recordToPojo);
     }
 }

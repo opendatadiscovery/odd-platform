@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.service.ingestion;
+package org.opendatadiscovery.oddplatform.service.ingestion.handler;
 
 import java.util.List;
 import java.util.Map;
@@ -20,21 +20,24 @@ import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
-public class TagIngestionServiceImpl implements TagIngestionService {
+public class ExternalTagIngestionHandler implements IngestionHandler {
     private final TagService tagService;
     private final ReactiveTagRepository reactiveTagRepository;
 
+    // TODO: revise
     @Override
     @ReactiveTransactional
-    public Mono<IngestionDataStructure> ingestExternalTags(final IngestionDataStructure dataStructure) {
+    public Mono<Void> handle(final IngestionDataStructure dataStructure) {
         final Set<String> tagNames = getTagNames(dataStructure);
         final Mono<List<TagToDataEntityPojo>> currentExternalRelations = reactiveTagRepository
             .listTagRelations(dataStructure.getAllIds())
             .filter(TagToDataEntityPojo::getExternal)
             .collectList();
+
         final Mono<List<TagToDataEntityPojo>> updatedExternalRelations = tagService.getOrCreateTagsByName(tagNames)
             .map(tags -> tags.stream().collect(Collectors.toMap(TagPojo::getName, identity())))
             .map(tagsMap -> getUpdatedRelations(tagsMap, dataStructure));
+
         return Mono.zip(currentExternalRelations, updatedExternalRelations)
             .flatMap(function((current, updated) -> {
                 final List<TagToDataEntityPojo> pojosToDelete = current.stream()
@@ -44,7 +47,7 @@ public class TagIngestionServiceImpl implements TagIngestionService {
                     .then(Mono.just(updated));
             }))
             .flatMapMany(reactiveTagRepository::createDataEntityRelations)
-            .then(Mono.just(dataStructure));
+            .then();
     }
 
     private List<TagToDataEntityPojo> getUpdatedRelations(final Map<String, TagPojo> tagsMap,
