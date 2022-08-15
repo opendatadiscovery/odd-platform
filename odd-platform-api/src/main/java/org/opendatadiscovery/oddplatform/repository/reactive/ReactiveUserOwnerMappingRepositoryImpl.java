@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.repository;
+package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import lombok.RequiredArgsConstructor;
 import org.jooq.impl.DSL;
@@ -13,7 +13,7 @@ import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
 @RequiredArgsConstructor
-public class UserOwnerMappingRepositoryImpl implements UserOwnerMappingRepository {
+public class ReactiveUserOwnerMappingRepositoryImpl implements ReactiveUserOwnerMappingRepository {
     private final JooqReactiveOperations jooqReactiveOperations;
 
     @Override

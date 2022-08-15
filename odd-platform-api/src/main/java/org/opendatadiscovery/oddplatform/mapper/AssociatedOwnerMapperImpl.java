@@ -3,7 +3,7 @@ package org.opendatadiscovery.oddplatform.mapper;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.Identity;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,9 +12,9 @@ public class AssociatedOwnerMapperImpl implements AssociatedOwnerMapper {
     private final OwnerMapper ownerMapper;
 
     @Override
-    public AssociatedOwner mapAssociatedOwner(final String username, final OwnerPojo owner) {
+    public AssociatedOwner mapAssociatedOwner(final AssociatedOwnerDto dto) {
         return new AssociatedOwner()
-            .owner(owner != null ? ownerMapper.mapToOwner(owner) : null)
-            .identity(new Identity().username(username));
+            .owner(dto.owner() != null ? ownerMapper.mapToOwner(dto.owner()) : null)
+            .identity(new Identity().username(dto.username()));
     }
 }
