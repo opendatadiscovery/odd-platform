@@ -19,7 +19,7 @@ import AppInput from 'components/shared/AppInput/AppInput';
 
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 
 interface TermMainSearchProps {
   query?: string;

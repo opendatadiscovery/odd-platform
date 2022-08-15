@@ -14,7 +14,7 @@ import SearchIcon from 'components/shared/Icons/SearchIcon';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import * as S from 'components/shared/MainSearch/MainSearchStyles';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 
 interface AppSearchProps {
   className?: string;

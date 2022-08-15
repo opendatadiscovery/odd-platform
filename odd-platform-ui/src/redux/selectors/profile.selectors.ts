@@ -2,6 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import { ProfileState, RootState } from 'redux/interfaces';
+import { emptyArr } from 'lib/constants';
 
 const profileState = ({ profile }: RootState): ProfileState => profile;
 
@@ -15,9 +16,9 @@ export const getOwnership = createSelector(
   profile => profile.owner?.owner
 );
 
-export const getPermissions = createSelector(
+export const getUserPermissions = createSelector(
   profileState,
-  profile => profile.owner?.identity.permissions
+  profile => profile.owner?.identity.permissions || emptyArr
 );
 
 export const getAssociationRequestStatus = createSelector(

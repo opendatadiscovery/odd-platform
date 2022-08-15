@@ -18,7 +18,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import { Grid } from '@mui/material';
 import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 import TermsForm from './TermForm/TermsForm';
 import TermsResultsContainer from './TermSearchResults/TermSearchResultsContainer';
 

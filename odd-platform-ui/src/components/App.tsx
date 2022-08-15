@@ -1,11 +1,12 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
-import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
+import { AppLoadingPage, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
-import AppToolbar from './shared/AppToolbar/AppToolbar';
+import { useAppPaths } from 'lib/hooks';
+import { PermissionProvider } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -62,7 +63,13 @@ const App: React.FC = () => {
                 '/dataentities/:dataEntityId/:viewType?',
                 '/embedded/dataentities/:dataEntityId/:viewType?',
               ]}
-              component={DataEntityDetails}
+              render={() => (
+                <PermissionProvider
+                  permissions={[Permission.DATA_ENTITY_EDIT]}
+                >
+                  <DataEntityDetails />
+                </PermissionProvider>
+              )}
             />
             <Route path="/activity" component={Activity} />
           </Switch>

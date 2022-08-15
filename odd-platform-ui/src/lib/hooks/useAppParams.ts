@@ -26,7 +26,7 @@ interface AppRouteParams {
     | TestReportViewType;
 }
 
-export const useAppParams = (): AppRouteParams => {
+const useAppParams = (): AppRouteParams => {
   const { dataEntityId, termId, viewType, dataQATestId, versionId } =
     useParams<RouteParams>();
 
@@ -38,3 +38,5 @@ export const useAppParams = (): AppRouteParams => {
     versionId: parseInt(versionId, 10),
   };
 };
+
+export default useAppParams;

@@ -4,6 +4,7 @@ export { default as MainSearchContainer } from './MainSearch/MainSearchContainer
 export { default as AppIconButton } from './AppIconButton/AppIconButton';
 export { default as AppMenu } from './AppMenu/AppMenu';
 export { default as AppMenuItem } from './AppMenuItem/AppMenuItem';
+export { default as AppToolbar } from './AppToolbar/AppToolbar';
 export { default as AppTabs, type AppTabItem } from './AppTabs/AppTabs';
 export { default as BooleanFormatted } from './BooleanFormatted/BooleanFormatted';
 export { default as AppCircularProgress } from './AppCircularProgress/AppCircularProgress';

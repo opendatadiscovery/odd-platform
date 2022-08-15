@@ -15,7 +15,7 @@ import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
 // import { searchPath } from 'lib/paths';
 import { useHistory } from 'react-router-dom';
 import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 import FiltersContainer from './Filters/FiltersContainer';
 import ResultsContainer from './Results/ResultsContainer';
 

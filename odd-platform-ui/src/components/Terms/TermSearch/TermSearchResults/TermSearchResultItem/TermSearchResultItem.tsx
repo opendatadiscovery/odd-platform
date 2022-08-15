@@ -11,7 +11,7 @@ import {
 } from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteTerm } from 'redux/thunks';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 import {
   ActionsContainer,
   TermSearchResultsContainer,

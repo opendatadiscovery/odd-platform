@@ -7,7 +7,7 @@ import {
 } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import TagItem from 'components/shared/TagItem/TagItem';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 
 interface TopTagsListProps {
   topTagsList: Tag[];

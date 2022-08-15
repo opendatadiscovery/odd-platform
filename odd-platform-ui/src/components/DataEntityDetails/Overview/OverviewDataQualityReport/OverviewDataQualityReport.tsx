@@ -28,8 +28,8 @@ const OverviewDataQualityReport: React.FC<
   const { isLoading: isDatasetTestReportFetching } = useAppSelector(
     getDatasetTestReportFetchingStatuses
   );
-  const datasetQualityTestReport = useAppSelector(state =>
-    getDatasetTestReport(state, dataEntityId)
+  const datasetQualityTestReport = useAppSelector(
+    getDatasetTestReport(dataEntityId)
   );
   return (
     <Container>
