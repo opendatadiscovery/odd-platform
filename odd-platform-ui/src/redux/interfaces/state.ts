@@ -170,7 +170,7 @@ export interface DataEntitiesState {
   dataEntityUsageInfo: DataEntityUsageInfo;
 }
 
-export interface SearchState {
+export interface DataEntitySearchState {
   searchId: string;
   query: string;
   myObjects: boolean;

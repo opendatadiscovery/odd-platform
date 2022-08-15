@@ -17,9 +17,7 @@ const TermDetails = React.lazy(
   () => import('./Terms/TermDetails/TermDetails')
 );
 const Overview = React.lazy(() => import('./Overview/Overview'));
-const SearchContainer = React.lazy(
-  () => import('./Search/SearchContainer')
-);
+const Search = React.lazy(() => import('./Search/Search'));
 const TermSearchContainer = React.lazy(
   () => import('./Terms/TermSearch/TermSearchContainer')
 );
@@ -52,7 +50,7 @@ const App: React.FC = () => {
             <Route
               exact
               path={['/search/:searchId?', '/embedded/search/:searchId?']}
-              component={SearchContainer}
+              component={Search}
             />
             <Route
               path="/terms/:termId/:viewType?"

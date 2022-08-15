@@ -6,8 +6,7 @@ import dataSources from './datasources.slice';
 import dataEntities from './dataentities.slice';
 import tags from './tags.slice';
 import labels from './labels.slice';
-import search from './dataentitiesSearch.reducer';
-import searchSlice from './dataEntitySearch.slice';
+import dataEntitySearch from './dataEntitySearch.slice';
 import metaData from './metadata.slice';
 import owners from './owners.slice';
 import datasetStructure from './datasetStructure.slice';
@@ -29,8 +28,7 @@ export default combineReducers({
   namespaces,
   dataSources,
   dataEntities,
-  search,
-  searchSlice,
+  dataEntitySearch,
   loader,
   legacyLoader,
   tags,

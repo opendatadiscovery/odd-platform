@@ -1,25 +1,17 @@
 import React from 'react';
-import {
-  SearchApiSearchRequest,
-  SearchFacetsData,
-  SearchFormData,
-  Tag,
-} from 'generated-sources';
+import { SearchFormData, Tag } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import TagItem from 'components/shared/TagItem/TagItem';
 import { useAppPaths } from 'lib/hooks';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { createDataEntitiesSearch } from 'redux/thunks';
 
 interface TopTagsListProps {
   topTagsList: Tag[];
-  createDataEntitiesSearch: (
-    params: SearchApiSearchRequest
-  ) => Promise<SearchFacetsData>;
 }
 
-const TopTagsList: React.FC<TopTagsListProps> = ({
-  topTagsList,
-  createDataEntitiesSearch,
-}) => {
+const TopTagsList: React.FC<TopTagsListProps> = ({ topTagsList }) => {
+  const dispatch = useAppDispatch();
   const history = useHistory();
   const { searchPath } = useAppPaths();
   const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
@@ -34,12 +26,12 @@ const TopTagsList: React.FC<TopTagsListProps> = ({
           tags: [{ entityId: id, entityName: name, selected: true }],
         },
       };
-      createDataEntitiesSearch({ searchFormData: searchQuery }).then(
-        search => {
-          const searchLink = searchPath(search.searchId);
+      dispatch(createDataEntitiesSearch({ searchFormData: searchQuery }))
+        .unwrap()
+        .then(({ searchId }) => {
+          const searchLink = searchPath(searchId);
           history.replace(searchLink);
-        }
-      );
+        });
       history.push(searchPath());
     },
     [searchLoading, setSearchLoading, createDataEntitiesSearch, history]

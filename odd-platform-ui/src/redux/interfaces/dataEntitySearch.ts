@@ -1,8 +1,8 @@
 import {
-  FacetState,
-  SearchFilterState,
   CountableSearchFilter,
   DataEntityClassNameEnum,
+  FacetState,
+  SearchFilterState,
 } from 'generated-sources';
 import { CurrentPageInfo } from './common';
 
@@ -19,7 +19,7 @@ export type FacetStateUpdate = {
 };
 
 export type SearchTotalsByName = {
-  [facetName in DataEntityClassNameEnum]?: CountableSearchFilter;
+  [entityClassName in DataEntityClassNameEnum]?: CountableSearchFilter;
 } & { all?: number; myObjectsTotal?: number };
 
 export type SearchFilterStateSynced = SearchFilterState & {
@@ -29,6 +29,7 @@ export type SearchFilterStateSynced = SearchFilterState & {
 export type SearchFacetStateById = {
   [facetOptionId: string]: SearchFilterStateSynced;
 };
+
 export type SearchFacetsByName = {
   [facetName in SearchFacetNames]?: SearchFacetStateById;
 };

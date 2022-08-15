@@ -7,7 +7,7 @@ import * as S from './AppTabLabelStyles';
 interface AppTabLabelProps {
   name: string;
   showHint: boolean;
-  isHintUpdated?: boolean;
+  isHintUpdating?: boolean;
   hint?: number | string;
   hintType?: HintType;
 }
@@ -16,26 +16,26 @@ const AppTabLabel: React.FC<AppTabLabelProps> = ({
   name,
   showHint,
   hint,
-  isHintUpdated,
+  isHintUpdating,
   hintType = 'primary',
 }) => {
-  const getLabelContent = (hintIsUpdating?: boolean) =>
-    hintIsUpdating ? (
-      <S.HintContainer $hintType={hintType}>
-        <Skeleton width="18px" height="27px" />
-      </S.HintContainer>
-    ) : (
-      <S.HintContainer $hintType={hintType}>
-        <NumberFormatted value={hint} precision={0} />
-      </S.HintContainer>
-    );
-
+  const labelContent = React.useMemo(
+    () =>
+      isHintUpdating ? (
+        <S.HintContainer $hintType={hintType}>
+          <Skeleton width="18px" height="27px" />
+        </S.HintContainer>
+      ) : (
+        <S.HintContainer $hintType={hintType}>
+          <NumberFormatted value={hint} precision={0} />
+        </S.HintContainer>
+      ),
+    [isHintUpdating, hintType, hint]
+  );
   return (
     <S.Container variant="body1" component="span">
       {name}
-      {showHint && hint !== undefined
-        ? getLabelContent(isHintUpdated)
-        : null}
+      {showHint && hint !== undefined ? labelContent : null}
     </S.Container>
   );
 };
