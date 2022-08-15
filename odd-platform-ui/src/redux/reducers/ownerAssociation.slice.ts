@@ -20,8 +20,27 @@ export const ownerAssociationSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(
-      thunks.fetchIdentity.fulfilled,
-      (state, { payload }) => {}
+      thunks.createOwnerAssociationRequest.fulfilled,
+      (state, { payload }) => {
+        ownerAssociationAdapter.addOne(state, payload);
+      }
+    );
+
+    builder.addCase(
+      thunks.fetchOwnerAssociationRequestList.fulfilled,
+      (state, { payload }) => {
+        const { items, pageInfo } = payload;
+
+        ownerAssociationAdapter.setMany(state, items);
+        state.pageInfo = pageInfo;
+      }
+    );
+
+    builder.addCase(
+      thunks.updateOwnerAssociationRequest.fulfilled,
+      (state, { payload }) => {
+        ownerAssociationAdapter.setOne(state, payload);
+      }
     );
   },
 });
