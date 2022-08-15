@@ -164,7 +164,7 @@ const ActivityResults: React.FC = () => {
         items={tabs}
         selectedTab={selectedTab}
         handleTabChange={onActivityTypeChange}
-        isHintUpdated={isActivityCountsFetching}
+        isHintUpdating={isActivityCountsFetching}
       />
       {!isActivityListFetching && activityCount === 0 ? (
         <EmptyContentPlaceholder text="No matches found" />

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
-import { SearchFilterStateSynced } from 'redux/interfaces/search';
+import { SearchFilterStateSynced } from 'redux/interfaces/dataEntitySearch';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import {

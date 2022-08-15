@@ -121,13 +121,13 @@ const AppToolbar: React.FC = () => {
         filters: {},
       };
 
-      dispatch(
-        createDataEntitiesSearch({ searchFormData: searchQuery })
-      ).then(search => {
-        const searchLink = searchPath(search.searchId);
-        history.replace(searchLink);
-        setSearchLoading(false);
-      });
+      dispatch(createDataEntitiesSearch({ searchFormData: searchQuery }))
+        .unwrap()
+        .then(({ searchId }) => {
+          const searchLink = searchPath(searchId);
+          history.replace(searchLink);
+          setSearchLoading(false);
+        });
     } else if (tabs[idx].name === 'Activity') {
       dispatch(clearActivityFilters());
     }

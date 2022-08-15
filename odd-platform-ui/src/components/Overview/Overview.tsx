@@ -18,7 +18,7 @@ import {
 } from 'redux/selectors';
 import {
   EntityClassItem,
-  MainSearchContainer,
+  MainSearch,
   SkeletonWrapper,
 } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
@@ -111,7 +111,7 @@ const Overview: React.FC = () => {
       ) : (
         <>
           <Grid container justifyContent="center" sx={{ pt: 8, pb: 9 }}>
-            <MainSearchContainer />
+            <MainSearch />
           </Grid>
           <S.TagsContainer container>
             <TopTagsListContainer />

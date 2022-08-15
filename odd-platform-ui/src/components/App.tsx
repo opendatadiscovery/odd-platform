@@ -1,11 +1,10 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
-import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
+import { AppLoadingPage, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
 import { useAppPaths } from 'lib/hooks/useAppPaths';
-import AppToolbar from './shared/AppToolbar/AppToolbar';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -16,9 +15,7 @@ const TermDetails = React.lazy(
   () => import('./Terms/TermDetails/TermDetails')
 );
 const Overview = React.lazy(() => import('./Overview/Overview'));
-const SearchContainer = React.lazy(
-  () => import('./Search/SearchContainer')
-);
+const Search = React.lazy(() => import('./Search/Search'));
 const TermSearchContainer = React.lazy(
   () => import('./Terms/TermSearch/TermSearchContainer')
 );
@@ -51,7 +48,7 @@ const App: React.FC = () => {
             <Route
               exact
               path={['/search/:searchId?', '/embedded/search/:searchId?']}
-              component={SearchContainer}
+              component={Search}
             />
             <Route
               path="/terms/:termId/:viewType?"

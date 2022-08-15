@@ -22,7 +22,7 @@ interface AppTabsProps
   handleTabChange: (newTab: number) => void;
   selectedTab?: number | boolean;
   type: TabType;
-  isHintUpdated?: boolean;
+  isHintUpdating?: boolean;
 }
 
 const AppTabs: React.FC<AppTabsProps> = ({
@@ -31,7 +31,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
   selectedTab,
   type,
   orientation,
-  isHintUpdated = false,
+  isHintUpdating = false,
   sx,
 }) => {
   const selectedTabState = selectedTab === -1 ? false : selectedTab;
@@ -81,7 +81,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
                 name={item.name}
                 showHint={setHintShowed()}
                 hint={item.hint}
-                isHintUpdated={isHintUpdated}
+                isHintUpdating={isHintUpdating}
                 hintType={item.hintType}
               />
             }
@@ -99,7 +99,7 @@ const AppTabs: React.FC<AppTabsProps> = ({
                 name={item.name}
                 showHint={setHintShowed()}
                 hint={item.hint}
-                isHintUpdated={isHintUpdated}
+                isHintUpdating={isHintUpdating}
                 hintType={item.hintType}
               />
             }
