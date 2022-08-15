@@ -97,15 +97,6 @@ Please before contributing check out our [Contributing Guide](./CONTRIBUTING.md)
 ODD Platform works with many of the tools you're already using: 
 
 <table>
-    <style>
-        td:nth-child(1) {
-            text-align: left;
-            height: 40px;
-        }
-        td:nth-child(2) {
-            width: 200px;
-        }
-    </style>
     <thead>
         <tr>
             <th colspan="2">Existing integrations</th>
@@ -253,6 +244,7 @@ ODD Platform works with many of the tools you're already using:
         </tr>
     </tbody>
 </table>
+
 ## ODD Data Model
 
 ODD operates the following high-level types of entities:
