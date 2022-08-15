@@ -11,6 +11,7 @@ import {
   DataEntityRef,
   DataEntityRun,
   DataEntityType,
+  DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
   DataSetTestReport,
@@ -22,12 +23,12 @@ import {
   MetadataFieldValue,
   Namespace,
   Owner,
+  OwnerAssociationRequest,
   Ownership,
   Tag,
   Term,
   TermDetails,
   TermRefList,
-  DataEntityUsageInfo,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -188,6 +189,11 @@ export interface AlertsState extends EntityState<Alert> {
 
 export interface ProfileState {
   owner?: AssociatedOwner;
+}
+
+export interface OwnerAssociationState
+  extends EntityState<OwnerAssociationRequest> {
+  pageInfo: CurrentPageInfo;
 }
 
 export interface AppInfoState {

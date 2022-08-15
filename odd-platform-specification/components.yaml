@@ -19,8 +19,8 @@ components:
           $ref: '#/components/schemas/Identity'
         owner:
           $ref: '#/components/schemas/Owner'
-        association_request_created:
-          type: boolean
+        association_request_status:
+          $ref: '#/components/schemas/OwnerAssociationRequestStatus'
       required:
         - identity
 

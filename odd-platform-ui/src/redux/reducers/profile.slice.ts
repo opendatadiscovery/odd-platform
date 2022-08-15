@@ -19,7 +19,6 @@ export const profileSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(thunks.fetchIdentity.fulfilled, updateIdentity);
-    // builder.addCase(thunks.updateIdentityOwner.fulfilled, updateIdentity);
   },
 });
 
