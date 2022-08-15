@@ -158,7 +158,7 @@ const AppToolbar: React.FC = () => {
             </Grid>
             <S.SectionDesktop item>
               <S.UserAvatar stroke="currentColor" />
-              <S.UserName>{identity?.identity.username}</S.UserName>
+              <S.UserName>{identity?.username}</S.UserName>
               <AppIconButton
                 icon={<DropdownIcon />}
                 color="unfilled"

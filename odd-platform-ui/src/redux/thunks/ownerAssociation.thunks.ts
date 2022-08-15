@@ -19,7 +19,7 @@ const ownerAssociationRequestApi = new OwnerAssociationRequestApi(
 export const createOwnerAssociationRequest = createAsyncThunk<
   OwnerAssociationRequest,
   OwnerAssociationRequestApiCreateOwnerAssociationRequestRequest
->(actions.createOwnerAssociationActionType, async params =>
+>(actions.createOwnerAssociationRequestActionType, async params =>
   ownerAssociationRequestApi.createOwnerAssociationRequest(params)
 );
 
@@ -36,8 +36,11 @@ export const fetchOwnerAssociationRequestList = createAsyncThunk<
 });
 
 export const updateOwnerAssociationRequest = createAsyncThunk<
-  OwnerAssociationRequest,
+  number,
   OwnerAssociationRequestApiUpdateOwnerAssociationRequestRequest
->(actions.updateOwnerAssociationRequestActionType, async params =>
-  ownerAssociationRequestApi.updateOwnerAssociationRequest(params)
-);
+>(actions.updateOwnerAssociationRequestActionType, async params => {
+  const { id } =
+    await ownerAssociationRequestApi.updateOwnerAssociationRequest(params);
+
+  return id;
+});

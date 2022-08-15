@@ -7,7 +7,22 @@ const profileState = ({ profile }: RootState): ProfileState => profile;
 
 export const getIdentity = createSelector(
   profileState,
-  profile => profile.owner
+  profile => profile.owner?.identity
+);
+
+export const getOwnership = createSelector(
+  profileState,
+  profile => profile.owner?.owner
+);
+
+export const getPermissions = createSelector(
+  profileState,
+  profile => profile.owner?.identity.permissions
+);
+
+export const getAssociationRequestStatus = createSelector(
+  profileState,
+  profile => profile.owner?.associationRequestStatus
 );
 
 export const getIdentityFetchingStatuses = createStatusesSelector(

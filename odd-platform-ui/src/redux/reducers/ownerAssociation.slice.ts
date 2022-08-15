@@ -39,7 +39,7 @@ export const ownerAssociationSlice = createSlice({
     builder.addCase(
       thunks.updateOwnerAssociationRequest.fulfilled,
       (state, { payload }) => {
-        ownerAssociationAdapter.setOne(state, payload);
+        ownerAssociationAdapter.removeOne(state, payload);
       }
     );
   },

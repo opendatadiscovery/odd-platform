@@ -119,12 +119,12 @@ const Identity: React.FC = () => {
   };
 
   React.useEffect(() => {
-    if (!identity?.identity.username) return;
+    if (!identity?.username) return;
     dispatch(
       searchOwners({
         page: 1,
         size: 30,
-        query: identity?.identity.username,
+        query: identity?.username,
       })
     )
       .unwrap()
@@ -148,9 +148,7 @@ const Identity: React.FC = () => {
           direction="column"
         >
           <Typography variant="h3">
-            {identity?.identity.username ? (
-              <>Hi {identity?.identity.username}.</>
-            ) : null}{' '}
+            {identity?.username ? <>Hi {identity?.username}.</> : null}{' '}
             Sync your account with existing owner.
           </Typography>
           <Typography variant="subtitle2">

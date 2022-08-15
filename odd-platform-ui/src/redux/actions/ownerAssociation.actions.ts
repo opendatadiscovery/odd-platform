@@ -2,7 +2,7 @@ import { createActionType } from 'lib/redux/helpers';
 
 export const ownerAssociationActionPrefix = 'ownerAssociation';
 
-export const createOwnerAssociationActionType = createActionType(
+export const createOwnerAssociationRequestActionType = createActionType(
   ownerAssociationActionPrefix,
   'createOwnerAssociation'
 );

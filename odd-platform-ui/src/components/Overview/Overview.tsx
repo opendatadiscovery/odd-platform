@@ -13,6 +13,7 @@ import {
   getMyEntitiesDownstream,
   getMyEntitiesUpstream,
   getMyUpstreamDataEntitiesFetchingStatuses,
+  getOwnership,
   getPopularDataEntitiesFetchingStatuses,
   getPopularEntities,
 } from 'redux/selectors';
@@ -48,6 +49,7 @@ const Overview: React.FC = () => {
   const dispatch = useAppDispatch();
 
   const identity = useAppSelector(getIdentity);
+  const ownership = useAppSelector(getOwnership);
   const myEntities = useAppSelector(getMyEntities);
   const myEntitiesDownstream = useAppSelector(getMyEntitiesDownstream);
   const myEntitiesUpstream = useAppSelector(getMyEntitiesUpstream);
@@ -155,7 +157,7 @@ const Overview: React.FC = () => {
               </S.ListItemContainer>
             </S.DataEntitiesUsageContainer>
           </Grid>
-          {identity?.owner && identity?.identity ? (
+          {identity && ownership ? (
             <S.DataEntityContainer container>
               <Grid item xs={3}>
                 <DataEntityList
@@ -193,9 +195,7 @@ const Overview: React.FC = () => {
           ) : null}
         </>
       )}
-      {!identity?.owner && identity?.identity && isIdentityFetched ? (
-        <Identity />
-      ) : null}
+      {!ownership && identity && isIdentityFetched ? <Identity /> : null}
     </S.Container>
   );
 };
