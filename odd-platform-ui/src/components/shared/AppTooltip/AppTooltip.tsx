@@ -1,6 +1,7 @@
 import React from 'react';
-import { TooltipProps } from '@mui/material';
+import { Theme, TooltipProps } from '@mui/material';
 import * as S from 'components/shared/AppTooltip/AppTooltipStyles';
+import { SxProps } from '@mui/system';
 
 interface AppTooltipProps
   extends Pick<TooltipProps, 'placement' | 'followCursor' | 'sx'> {
@@ -8,11 +9,9 @@ interface AppTooltipProps
     open?: boolean;
   }) => React.ReactElement | string | undefined;
   type?: S.TooltipColorTypes;
-  maxWidth?: number;
   checkForOverflow?: boolean;
-  isOverflowed?: boolean;
   children?: React.ReactNode | React.ReactElement | string;
-  cursorPointer?: boolean;
+  childSx?: SxProps<Theme>;
 }
 
 const AppTooltip: React.FC<AppTooltipProps> = ({
@@ -21,45 +20,43 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
   followCursor = true,
   title,
   type = 'light',
-  maxWidth = 320,
   checkForOverflow = true,
-  isOverflowed = true,
   sx,
-  cursorPointer = false,
+  childSx,
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
 
-  const [hoverStatus, setHover] = React.useState<boolean>(true);
+  const [isOverflowed, setIsOverflow] = React.useState(checkForOverflow);
   const childrenRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (checkForOverflow && childrenRef.current) {
-      const el =
+    if (childrenRef.current && checkForOverflow) {
+      const element =
         childrenRef.current.firstElementChild || childrenRef.current;
-      const { scrollWidth, clientWidth } = el;
-      setHover(!hoverStatus && scrollWidth > clientWidth);
+      const { scrollWidth, clientWidth } = element;
+      setIsOverflow(scrollWidth > clientWidth);
     }
-  }, [children, childrenRef, childrenRef.current]);
+  }, [childrenRef.current]);
 
   return (
     <S.AppTooltip
-      $maxWidth={maxWidth}
       $type={type}
       title={title({ open }) || ''}
       placement={placement}
       followCursor={followCursor}
       disableInteractive
-      disableHoverListener={!hoverStatus}
+      disableHoverListener={checkForOverflow ? !isOverflowed : false}
       sx={sx}
     >
       <S.ChildrenContainer
         onMouseEnter={() => {
-          if (hoverStatus) setOpen(true);
+          if (checkForOverflow ? isOverflowed : true) setOpen(true);
         }}
         onMouseLeave={() => setOpen(false)}
-        $isCursorPointer={hoverStatus || cursorPointer}
+        $isCursorPointer={checkForOverflow ? isOverflowed : true}
         $isOverflowed={isOverflowed}
         ref={childrenRef}
+        sx={childSx}
       >
         {children}
       </S.ChildrenContainer>

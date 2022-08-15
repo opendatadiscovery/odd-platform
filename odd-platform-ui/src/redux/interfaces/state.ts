@@ -97,7 +97,10 @@ export interface DatasetStructureState {
     };
   };
   statsByVersionId: {
-    [versionId: number]: DataSetStructureTypesCount;
+    [versionId: number]: {
+      typeStats: DataSetStructureTypesCount;
+      isUniqueStatsExist: boolean;
+    };
   };
   latestVersionByDataset: {
     [datasetId: string]: DataSetVersion['id'];

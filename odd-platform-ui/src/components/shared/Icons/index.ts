@@ -11,3 +11,7 @@ export { default as KebabIcon } from './KebabIcon';
 export { default as ClearIcon } from './ClearIcon';
 export { default as InformationIcon } from './InformationIcon';
 export { default as SearchIcon } from './SearchIcon';
+export { default as PlusIcon } from './PlusIcon';
+export { default as MinusIcon } from './MinusIcon';
+export { default as GraphIcon } from './GraphIcon';
+export { default as ColumnsIcon } from './ColumnsIcon';

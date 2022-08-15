@@ -86,3 +86,9 @@ export interface DataSetFieldEnumsResponse {
   datasetFieldId: number;
   enumValueList: EnumValue[] | undefined;
 }
+
+export interface DatasetStructureIds {
+  datasetId: number;
+  versionId?: number;
+  parentFieldId?: number;
+}
