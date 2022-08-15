@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnershipPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AlertRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired
-    private AlertRepository alertRepository;
+    private ReactiveAlertRepository alertRepository;
 
     @Autowired
     private DataEntityRepository dataEntityRepository;

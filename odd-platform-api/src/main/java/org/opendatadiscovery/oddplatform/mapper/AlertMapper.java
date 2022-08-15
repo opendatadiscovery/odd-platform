@@ -10,6 +10,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.PageInfo;
+import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public abstract class AlertMapper {
 
     @Named("statusUpdatedBy")
     public AssociatedOwner mapAssociatedOwner(final AlertDto alertDto) {
-        return associatedOwnerMapper
-            .mapAssociatedOwner(alertDto.getAlert().getStatusUpdatedBy(), alertDto.getUpdatedByOwner());
+        return associatedOwnerMapper.mapAssociatedOwner(
+                new AssociatedOwnerDto(alertDto.getAlert().getStatusUpdatedBy(), alertDto.getUpdatedByOwner()));
     }
 
     @Named("dataEntity")

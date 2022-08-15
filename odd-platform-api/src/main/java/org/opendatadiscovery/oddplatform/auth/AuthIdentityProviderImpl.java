@@ -4,7 +4,7 @@ import java.security.Principal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
-import org.opendatadiscovery.oddplatform.repository.UserOwnerMappingRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthIdentityProviderImpl implements AuthIdentityProvider {
-    private final UserOwnerMappingRepository userOwnerMappingRepository;
+    private final ReactiveUserOwnerMappingRepository userOwnerMappingRepository;
 
     @Override
     public Mono<String> getUsername() {

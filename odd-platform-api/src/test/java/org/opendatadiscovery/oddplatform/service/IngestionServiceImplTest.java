@@ -49,7 +49,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelations
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
-import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepositoryImpl;
 import org.opendatadiscovery.oddplatform.repository.DataEntityTaskRunRepository;
 import org.opendatadiscovery.oddplatform.repository.DataQualityTestRelationRepository;
@@ -58,6 +57,7 @@ import org.opendatadiscovery.oddplatform.repository.GroupParentGroupRelationRepo
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
 import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetStructureRepository;
@@ -123,7 +123,7 @@ public class IngestionServiceImplTest {
     private DataEntityTaskRunRepository dataEntityTaskRunRepository;
 
     @Mock
-    private AlertRepository alertRepository;
+    private ReactiveAlertRepository alertRepository;
 
     @Mock
     private GroupEntityRelationRepository groupEntityRelationRepository;
@@ -311,10 +311,10 @@ public class IngestionServiceImplTest {
             assertThat(lineageCaptor.getValue()).isEqualTo(actualLineage);
 
             final Set<String> actualHollowOddrns = Stream.concat(
-                Stream.of(dataEntityList.getDataSourceOddrn()),
-                dataEntityList.getItems().stream()
-                    .filter(i -> i.getType() != DataEntityType.DAG)
-                    .map(DataEntity::getOddrn))
+                    Stream.of(dataEntityList.getDataSourceOddrn()),
+                    dataEntityList.getItems().stream()
+                        .filter(i -> i.getType() != DataEntityType.DAG)
+                        .map(DataEntity::getOddrn))
                 .collect(Collectors.toSet());
             Mockito.verify(dataEntityRepository).createHollow(hollowOddrnCaptor.capture());
             assertThat(hollowOddrnCaptor.getValue()).hasSameElementsAs(actualHollowOddrns);

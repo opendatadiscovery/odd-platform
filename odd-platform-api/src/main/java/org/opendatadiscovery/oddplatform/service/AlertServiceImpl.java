@@ -19,7 +19,7 @@ import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
 import org.opendatadiscovery.oddplatform.mapper.AlertMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
-import org.opendatadiscovery.oddplatform.repository.AlertRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
@@ -30,7 +30,7 @@ public class AlertServiceImpl implements AlertService {
     private static final DateTimeFormatter ALERT_MANAGER_TIME_FORMATTER =
         DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    private final AlertRepository alertRepository;
+    private final ReactiveAlertRepository alertRepository;
     private final AlertMapper alertMapper;
     private final AuthIdentityProvider authIdentityProvider;
 

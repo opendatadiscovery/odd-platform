@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.repository;
+package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Collection;
 import java.util.List;
@@ -6,11 +6,10 @@ import java.util.Set;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertDto;
 import org.opendatadiscovery.oddplatform.dto.alert.AlertStatusEnum;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveCRUDRepository;
 import org.opendatadiscovery.oddplatform.utils.Page;
 import reactor.core.publisher.Mono;
 
-public interface AlertRepository extends ReactiveCRUDRepository<AlertPojo> {
+public interface ReactiveAlertRepository extends ReactiveCRUDRepository<AlertPojo> {
 
     /**
      * Retrieves all alerts with status AlertStatusEnum.OPEN.

@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.repository;
+package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -25,7 +25,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.AlertPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.AlertRecord;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAbstractCRUDRepository;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.opendatadiscovery.oddplatform.repository.util.JooqRecordHelper;
@@ -46,14 +45,14 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
-public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRecord, AlertPojo>
-    implements AlertRepository {
+public class ReactiveAlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRecord, AlertPojo>
+    implements ReactiveAlertRepository {
 
     private final JooqRecordHelper jooqRecordHelper;
 
-    public AlertRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
-                               final JooqQueryHelper jooqQueryHelper,
-                               final JooqRecordHelper jooqRecordHelper) {
+    public ReactiveAlertRepositoryImpl(final JooqReactiveOperations jooqReactiveOperations,
+                                       final JooqQueryHelper jooqQueryHelper,
+                                       final JooqRecordHelper jooqRecordHelper) {
         super(jooqReactiveOperations, jooqQueryHelper, ALERT, AlertPojo.class);
         this.jooqRecordHelper = jooqRecordHelper;
     }
@@ -266,8 +265,8 @@ public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRec
         }
 
         return jooqReactiveOperations.flux(insertStep.set(alertRecords.get(alertRecords.size() - 1))
-            .onDuplicateKeyIgnore()
-            .returning(ALERT.fields()))
+                .onDuplicateKeyIgnore()
+                .returning(ALERT.fields()))
             .map(r -> r.into(AlertPojo.class))
             .collectList();
     }
