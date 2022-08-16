@@ -2,15 +2,9 @@ import { createSlice } from '@reduxjs/toolkit';
 import { profileActionPrefix } from 'redux/actions';
 import { ProfileState } from 'redux/interfaces';
 import * as thunks from 'redux/thunks';
-import { AssociatedOwner } from 'generated-sources';
 
-export const initialState: ProfileState = {};
-
-const updateIdentity = (
-  state: ProfileState,
-  { payload }: { payload: AssociatedOwner }
-) => {
-  state.owner = payload;
+export const initialState: ProfileState = {
+  owner: { identity: { username: '' } },
 };
 
 export const profileSlice = createSlice({
@@ -18,7 +12,19 @@ export const profileSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(thunks.fetchIdentity.fulfilled, updateIdentity);
+    builder.addCase(
+      thunks.fetchIdentity.fulfilled,
+      (state, { payload }) => {
+        state.owner = payload;
+      }
+    );
+    builder.addCase(
+      thunks.createOwnerAssociationRequest.fulfilled,
+      (state, { payload }) => {
+        const { status } = payload;
+        state.owner.associationRequestStatus = status;
+      }
+    );
   },
 });
 

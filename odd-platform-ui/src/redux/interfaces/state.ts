@@ -191,7 +191,7 @@ export interface AlertsState extends EntityState<Alert> {
 }
 
 export interface ProfileState {
-  owner?: AssociatedOwner;
+  owner: AssociatedOwner;
 }
 
 export interface OwnerAssociationState

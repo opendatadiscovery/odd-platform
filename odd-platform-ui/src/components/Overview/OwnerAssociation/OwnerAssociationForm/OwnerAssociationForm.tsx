@@ -13,17 +13,19 @@ import {
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { Owner, OwnerFormData } from 'generated-sources';
-// import { updateIdentityOwner } from 'redux/thunks/profile.thunks';
 import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { fetchOwnersList } from 'redux/thunks';
-import * as S from './IdentityStyles';
+import {
+  createOwnerAssociationRequest,
+  fetchOwnersList,
+} from 'redux/thunks';
+import * as S from './OwnerAssociationFormStyles';
 
-const Identity: React.FC = () => {
+const OwnerAssociationForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const identity = useAppSelector(getIdentity);
   const searchOwners = fetchOwnersList;
@@ -115,7 +117,7 @@ const Identity: React.FC = () => {
   }, [autocompleteOpen, optionsSearchText]);
 
   const onSubmit = (data: OwnerFormData) => {
-    // dispatch(updateIdentityOwner({ ownerFormData: data }));
+    dispatch(createOwnerAssociationRequest({ ownerFormData: data }));
   };
 
   React.useEffect(() => {
@@ -131,7 +133,7 @@ const Identity: React.FC = () => {
       .then(({ items }) => {
         setPossibleOwners(items);
       });
-  }, [identity]);
+  }, [identity?.username]);
 
   return (
     <S.Container>
@@ -173,7 +175,6 @@ const Identity: React.FC = () => {
               rules={{ required: true }}
               render={({ field }) => (
                 <Autocomplete
-                  // eslint-disable-next-line react/jsx-props-no-spreading
                   {...field}
                   fullWidth
                   id="owners-name-search"
@@ -267,4 +268,4 @@ const Identity: React.FC = () => {
   );
 };
 
-export default Identity;
+export default OwnerAssociationForm;

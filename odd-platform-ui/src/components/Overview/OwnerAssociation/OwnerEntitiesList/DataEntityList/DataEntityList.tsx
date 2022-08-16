@@ -1,11 +1,11 @@
-import { Typography, Box } from '@mui/material';
+import { Typography } from '@mui/material';
 import React from 'react';
 import { DataEntityRef } from 'generated-sources';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AlertIcon from 'components/shared/Icons/AlertIcon';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import { useAppPaths } from 'lib/hooks';
-import * as S from './DataEntityListStyles';
+import * as S from 'components/Overview/OwnerAssociation/OwnerEntitiesList/DataEntityList/DataEntityListStyles';
 
 interface OverviewDataEntityProps {
   dataEntitiesList: DataEntityRef[];

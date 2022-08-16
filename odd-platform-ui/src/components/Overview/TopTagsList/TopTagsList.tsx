@@ -1,20 +1,19 @@
 import React from 'react';
-import { SearchFormData, Tag } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
-import TagItem from 'components/shared/TagItem/TagItem';
+import { TagItem } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { createDataEntitiesSearch } from 'redux/thunks';
+import { getTagsList } from 'redux/selectors';
+import { SearchFormData } from 'generated-sources';
 
-interface TopTagsListProps {
-  topTagsList: Tag[];
-}
-
-const TopTagsList: React.FC<TopTagsListProps> = ({ topTagsList }) => {
+const TopTagsList: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { searchPath } = useAppPaths();
-  const [searchLoading, setSearchLoading] = React.useState<boolean>(false);
+
+  const topTagsList = useAppSelector(getTagsList);
+  const [searchLoading, setSearchLoading] = React.useState(false);
 
   const handleTagClick = React.useCallback(
     (id: number, name: string) => () => {
@@ -37,10 +36,13 @@ const TopTagsList: React.FC<TopTagsListProps> = ({ topTagsList }) => {
     [searchLoading, setSearchLoading, createDataEntitiesSearch, history]
   );
 
-  // sorting by importance and usedCount
-  const sortedTags = topTagsList
-    .filter(tag => tag.important)
-    .concat(topTagsList.filter(tag => !tag.important));
+  const sortedTags = React.useMemo(
+    () =>
+      topTagsList
+        .filter(tag => tag.important)
+        .concat(topTagsList.filter(tag => !tag.important)),
+    [topTagsList]
+  );
 
   return (
     <>
