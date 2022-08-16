@@ -13,6 +13,9 @@ public class AssociatedOwnerMapperImpl implements AssociatedOwnerMapper {
 
     @Override
     public AssociatedOwner mapAssociatedOwner(final AssociatedOwnerDto dto) {
+        if (dto == null) {
+            return null;
+        }
         return new AssociatedOwner()
             .owner(dto.owner() != null ? ownerMapper.mapToOwner(dto.owner()) : null)
             .identity(new Identity().username(dto.username()));
