@@ -9,7 +9,7 @@ import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,
 } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './GroupedEntitiesListModalStyles';
 

@@ -25,7 +25,7 @@ import AppTabs from 'components/shared/AppTabs/AppTabs';
 import TargetIcon from 'components/shared/Icons/TargetIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   fetchDataEntityDownstreamLineage,
   fetchDataEntityUpstreamLineage,

@@ -10,7 +10,7 @@ import {
 } from 'redux/selectors/dataQualityTest.selectors';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { setDataQATestSeverity } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import AppSelect from 'components/shared/AppSelect/AppSelect';

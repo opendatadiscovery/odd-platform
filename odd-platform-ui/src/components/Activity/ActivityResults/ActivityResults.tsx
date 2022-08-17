@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { ActivityType } from 'generated-sources';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getActivitiesByDate,
   getActivitiesCountsParams,

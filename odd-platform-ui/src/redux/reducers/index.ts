@@ -1,4 +1,6 @@
-import { combineReducers } from '@reduxjs/toolkit';
+import { combineReducers, Reducer } from '@reduxjs/toolkit';
+import { RootState } from 'redux/interfaces';
+import { RESET_STATE_ACTION_TYPE } from 'redux/lib/unauthenticatedMiddleware';
 import legacyLoader from './loader-reducer';
 import loader from './loader.slice';
 import namespaces from './namespace.slice';
@@ -23,7 +25,7 @@ import termSearch from './termSearch.reducer';
 import activities from './activity.slice';
 import dataEntityRuns from './dataEntityRuns.slice';
 
-export default combineReducers({
+export const combinedReducer = combineReducers({
   namespaces,
   dataSources,
   dataEntities,
@@ -48,3 +50,11 @@ export default combineReducers({
   dataEntityRuns,
   activities,
 });
+
+export const rootReducer: Reducer<RootState> = (state, action) => {
+  if (action.type === RESET_STATE_ACTION_TYPE) {
+    state = {} as RootState;
+  }
+
+  return combinedReducer(state, action);
+};

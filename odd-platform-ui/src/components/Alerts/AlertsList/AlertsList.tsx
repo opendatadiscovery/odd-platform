@@ -14,7 +14,7 @@ import {
   getMyAlertListFetchingStatus,
   getMyDependentsAlertListFetchingStatus,
 } from 'redux/selectors/alert.selectors';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { AlertsResponse, updateAlertStatus } from 'redux/thunks';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import { Box, Grid, Typography } from '@mui/material';

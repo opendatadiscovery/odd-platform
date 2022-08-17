@@ -4,7 +4,7 @@ import { DataEntityTermFormData, TermRef } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { addDataEntityTerm } from 'redux/thunks';
 import TermsAutocomplete from './TermsAutocomplete/TermsAutocomplete';
 

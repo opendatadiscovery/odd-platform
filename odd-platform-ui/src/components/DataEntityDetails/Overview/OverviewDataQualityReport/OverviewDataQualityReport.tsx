@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { DataEntityRunStatus } from 'generated-sources';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import {
   getDatasetTestReport,
   getDatasetTestReportFetchingStatuses,

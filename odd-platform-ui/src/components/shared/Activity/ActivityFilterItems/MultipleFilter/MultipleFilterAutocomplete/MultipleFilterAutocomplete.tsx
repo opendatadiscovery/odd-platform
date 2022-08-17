@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { useDebouncedCallback } from 'use-debounce';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import uniq from 'lodash/uniq';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';

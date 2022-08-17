@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Alert, AlertStatus } from 'generated-sources';
 import { updateAlertStatus } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityAlertListFetchingStatus,
   getAlertList,

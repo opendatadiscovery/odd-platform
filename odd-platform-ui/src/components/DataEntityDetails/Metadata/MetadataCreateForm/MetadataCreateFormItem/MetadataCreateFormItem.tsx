@@ -17,7 +17,7 @@ import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppInput from 'components/shared/AppInput/AppInput';
 import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { searchMetadata } from 'redux/thunks/metadata.thunks';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 

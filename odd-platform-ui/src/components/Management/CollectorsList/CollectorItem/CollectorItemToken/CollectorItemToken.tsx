@@ -1,7 +1,7 @@
 import React from 'react';
 import { Collector } from 'generated-sources';
 import { regenerateCollectorToken } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';

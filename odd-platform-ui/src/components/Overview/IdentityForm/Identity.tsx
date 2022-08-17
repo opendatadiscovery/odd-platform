@@ -19,7 +19,7 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 import * as S from './IdentityStyles';
 

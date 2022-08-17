@@ -15,7 +15,7 @@ import AppInput from 'components/shared/AppInput/AppInput';
 
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { ControllerRenderProps } from 'react-hook-form';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
 import { DataEntityGroupFormData } from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';

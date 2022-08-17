@@ -18,7 +18,7 @@ import DropdownIcon from 'components/shared/Icons/DropdownIcon';
 import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import { stringFormatted } from 'lib/helpers';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import {
   deleteDataEntityCustomMetadata,
   updateDataEntityCustomMetadata,

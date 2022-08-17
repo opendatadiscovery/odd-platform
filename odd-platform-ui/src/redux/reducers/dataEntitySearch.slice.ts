@@ -15,7 +15,7 @@ import {
 } from 'generated-sources';
 import mapValues from 'lodash/mapValues';
 import reduce from 'lodash/reduce';
-import { assignWith } from 'lib/redux/helpers';
+import { assignWith } from 'redux/lib/helpers';
 import values from 'lodash/values';
 import get from 'lodash/get';
 

@@ -21,7 +21,7 @@ import {
   MainSearch,
   SkeletonWrapper,
 } from 'components/shared';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   fetchAlertsTotals,
   fetchDataentitiesUsageInfo,

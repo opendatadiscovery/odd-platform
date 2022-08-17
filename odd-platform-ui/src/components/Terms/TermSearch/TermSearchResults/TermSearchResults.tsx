@@ -11,7 +11,7 @@ import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/E
 import TermSearchResultsSkeletonItem from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsSkeletonItem/TermSearchResultsSkeletonItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import TermSearchResultItem from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultItem/TermSearchResultItem';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { getTermDeletingStatuses } from 'redux/selectors/terms.selectors';
 import {
   TermSearchListContainer,

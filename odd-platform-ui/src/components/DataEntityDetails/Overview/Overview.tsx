@@ -7,7 +7,7 @@ import {
   getDatasetTestReport,
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { SkeletonWrapper } from 'components/shared';
 import OverviewGroups from './OverviewGroups/OverviewGroups';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';

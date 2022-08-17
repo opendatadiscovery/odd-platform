@@ -1,7 +1,7 @@
 import { Typography } from '@mui/material';
 import React, { useCallback } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   fetchAlertsTotals,
   fetchAllAlertList,

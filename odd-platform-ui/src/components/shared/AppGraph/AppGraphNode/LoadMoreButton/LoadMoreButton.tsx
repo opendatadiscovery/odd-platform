@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataEntityLineageStreamFetching } from 'redux/selectors';
 import { select } from 'd3-selection';
 import { interpolateString } from 'd3-interpolate';

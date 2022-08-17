@@ -6,7 +6,7 @@ import { MainSearch } from 'components/shared';
 import { useHistory } from 'react-router-dom';
 import * as S from 'components/shared/StyledComponents/PageWithLeftSidebar';
 import { useAppPaths } from 'lib/hooks/useAppPaths';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   createDataEntitiesSearch,
   getDataEntitiesSearch,

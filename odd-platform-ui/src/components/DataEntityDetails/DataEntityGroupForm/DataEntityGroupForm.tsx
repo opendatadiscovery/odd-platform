@@ -18,7 +18,7 @@ import {
   SearchSuggestionsAutocomplete,
 } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getDataEntityDetails,

@@ -5,7 +5,7 @@ import EditIcon from 'components/shared/Icons/EditIcon';
 import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteLabel } from 'redux/thunks';
 
 import LabelEditForm from '../LabelEditForm/LabelEditForm';

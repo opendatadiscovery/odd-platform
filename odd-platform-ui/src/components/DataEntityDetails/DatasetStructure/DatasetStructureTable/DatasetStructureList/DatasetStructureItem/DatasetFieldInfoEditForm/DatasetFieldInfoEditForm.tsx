@@ -6,7 +6,7 @@ import {
   getDatasetFieldFormDataUpdatingStatus,
 } from 'redux/selectors';
 import { updateDataSetFieldFormData } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import LabelItem from 'components/shared/LabelItem/LabelItem';
 import AppButton from 'components/shared/AppButton/AppButton';

@@ -7,7 +7,7 @@ import {
   fetchAppInfo,
   fetchIdentity,
 } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useHistory, useLocation } from 'react-router-dom';
 import { DropdownIcon } from 'components/shared/Icons';
 import { clearActivityFilters } from 'redux/reducers/activity.slice';

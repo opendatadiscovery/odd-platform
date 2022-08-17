@@ -3,7 +3,7 @@ import React from 'react';
 import OverviewSkeleton from 'components/DataEntityDetails/Overview/OverviewSkeleton/OverviewSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import OverviewGeneral from 'components/Terms/TermDetails/Overview/OverviewGeneral/OverviewGeneral';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
   getTermDetails,

@@ -3,7 +3,7 @@ import { SearchFormData, Tag } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import TagItem from 'components/shared/TagItem/TagItem';
 import { useAppPaths } from 'lib/hooks/useAppPaths';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { createDataEntitiesSearch } from 'redux/thunks';
 
 interface TopTagsListProps {

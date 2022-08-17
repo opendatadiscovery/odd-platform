@@ -10,7 +10,7 @@ import {
   LabelItem,
 } from 'components/shared';
 import { AddIcon, DeleteIcon, EditIcon } from 'components/shared/Icons';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { deleteDataEntityOwnership } from 'redux/thunks';
 import {
   getDataEntityDetails,

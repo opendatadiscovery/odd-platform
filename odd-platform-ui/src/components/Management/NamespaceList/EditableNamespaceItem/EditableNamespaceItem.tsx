@@ -6,7 +6,7 @@ import DeleteIcon from 'components/shared/Icons/DeleteIcon';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { deleteNamespace } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import NamespaceForm from '../NamespaceForm/NamespaceForm';
 import * as S from './EditableNamespaceItemStyles';
 

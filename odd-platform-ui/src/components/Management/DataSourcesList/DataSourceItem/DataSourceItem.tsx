@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { addSeconds, formatDistanceToNowStrict } from 'date-fns';
 import { DataSource } from 'generated-sources';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { deleteDataSource } from 'redux/thunks/datasources.thunks';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';

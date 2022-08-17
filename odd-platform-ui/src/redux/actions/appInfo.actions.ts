@@ -1,4 +1,4 @@
-import { createActionType } from 'lib/redux/helpers';
+import { createActionType } from 'redux/lib/helpers';
 
 export const appInfoActionPrefix = 'appInfo';
 

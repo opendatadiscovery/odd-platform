@@ -4,7 +4,7 @@ import { InternalNameFormData } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
 import { AppButton, AppInput, DialogWrapper } from 'components/shared';
 import { ClearIcon } from 'components/shared/Icons';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { updateDataEntityInternalName } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { fetchDataEntityRuns } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityRunList,
   getDataEntityRunsFetchingStatuses,

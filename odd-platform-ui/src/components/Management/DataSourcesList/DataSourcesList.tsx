@@ -7,7 +7,7 @@ import {
   getIsDataSourcesListFetching,
 } from 'redux/selectors';
 import { fetchDataSourcesList } from 'redux/thunks';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddIcon from 'components/shared/Icons/AddIcon';

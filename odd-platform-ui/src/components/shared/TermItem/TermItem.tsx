@@ -4,7 +4,7 @@ import CloseIcon from 'components/shared/Icons/CloseIcon';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { TermRef } from 'generated-sources';
 import { deleteDataEntityTerm } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './TermItemStyles';
 

@@ -5,7 +5,7 @@ import {
   DataSetFieldTypeTypeEnum,
   DataSetStats,
 } from 'generated-sources';
-import { useAppSelector } from 'lib/redux/hooks';
+import { useAppSelector } from 'redux/lib/hooks';
 import { isComplexField } from 'lib/helpers';
 import { getDatasetStructure, getIsUniqStatsExist } from 'redux/selectors';
 import {

@@ -6,7 +6,7 @@ import {
   getCollectorDeletingStatuses,
   getCollectorsListFetchingStatuses,
 } from 'redux/selectors';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchCollectorsList } from 'redux/thunks';
 import InfiniteScroll from 'react-infinite-scroll-component';

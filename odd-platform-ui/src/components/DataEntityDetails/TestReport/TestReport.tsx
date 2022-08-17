@@ -7,7 +7,7 @@ import {
   getDatasetTestReportFetchingStatuses,
   getTestReportListBySuiteName,
 } from 'redux/selectors/dataQualityTest.selectors';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   fetchDataSetQualityTestList,
   fetchDataSetQualityTestReport,

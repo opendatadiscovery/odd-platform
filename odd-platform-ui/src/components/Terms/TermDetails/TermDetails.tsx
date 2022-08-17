@@ -15,7 +15,7 @@ import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { useAppParams } from 'lib/hooks';
 import {
   getTermDetails,

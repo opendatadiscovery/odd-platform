@@ -15,7 +15,7 @@ import { OptionsContainer } from 'components/Terms/TermDetails/Overview/Overview
 import AppButton from 'components/shared/AppButton/AppButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import AppInput from 'components/shared/AppInput/AppInput';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   fetchTagsList as searchTags,
   updateTermDetailsTags,

@@ -4,7 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import get from 'lodash/get';
 import { useScrollBarWidth } from 'lib/hooks';
 import { DataEntityClassNameEnum } from 'generated-sources';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
   getDataEntityClassesDict,
   getDataEntityGroupDeletingStatuses,

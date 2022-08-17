@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Collector } from 'generated-sources';
 import { deleteCollector } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import EditIcon from 'components/shared/Icons/EditIcon';

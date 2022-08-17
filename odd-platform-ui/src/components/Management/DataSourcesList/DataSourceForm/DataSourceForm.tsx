@@ -18,7 +18,7 @@ import {
   Typography,
 } from '@mui/material';
 import { getDatasourceCreatingStatuses } from 'redux/selectors';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppInput from 'components/shared/AppInput/AppInput';
 import AppSelect from 'components/shared/AppSelect/AppSelect';

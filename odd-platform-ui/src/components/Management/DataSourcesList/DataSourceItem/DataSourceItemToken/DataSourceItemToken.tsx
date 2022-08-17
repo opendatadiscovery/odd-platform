@@ -1,7 +1,7 @@
 import React from 'react';
 import { DataSource } from 'generated-sources';
 import { regenerateDataSourceToken } from 'redux/thunks';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import { Typography } from '@mui/material';

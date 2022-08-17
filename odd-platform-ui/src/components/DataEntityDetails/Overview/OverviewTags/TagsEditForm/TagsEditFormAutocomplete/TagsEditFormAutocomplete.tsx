@@ -5,7 +5,7 @@ import {
   AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch } from 'redux/lib/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { OptionsContainer } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';

@@ -14,7 +14,7 @@ import AppInput from 'components/shared/AppInput/AppInput';
 
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { fetchOwnersList } from 'redux/thunks';
 import {
   getOwnerCreatingStatuses,

@@ -7,7 +7,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import AppInput from 'components/shared/AppInput/AppInput';
 
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { createOwner, updateOwner } from 'redux/thunks';
 import { getOwnerCreatingStatuses } from 'redux/selectors';
 
