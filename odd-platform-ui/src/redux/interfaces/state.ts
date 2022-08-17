@@ -237,9 +237,7 @@ export interface ActivitiesState {
   queryParams: ActivityQueryParams;
 }
 
-// export type RootState = ReturnType<typeof store.getState>;
 export type RootState = ReturnType<typeof combinedReducer>;
-
 export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;
