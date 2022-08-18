@@ -58,6 +58,11 @@ paths:
         - $ref: './components.yaml/#/components/parameters/PageParam'
         - $ref: './components.yaml/#/components/parameters/SizeParam'
         - $ref: './components.yaml/#/components/parameters/IdsParam'
+        - name: allowedForSync
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: OK
