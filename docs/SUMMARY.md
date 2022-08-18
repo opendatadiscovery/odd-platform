@@ -2,7 +2,6 @@
 
 * [Overview](README.md)
 * [Architecture](Architecture.md)
-  * [Adapter-oriented architecture](Adapters.md) 
 * [Try locally](trylocally.md)
 * [Features](Features.md)
 * [Use cases](Use_cases.md)

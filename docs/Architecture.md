@@ -1,6 +1,4 @@
 # Architecture
-[Collector](#collector) \
-[Collector vs Adapters](#collector-vs-adapters)
 
 The diagram below contains the structure of the Platform and shows principles of data exchange between ODD and your in-house components.
 
@@ -46,6 +44,7 @@ ODD Collector is a lightweight service which gathers metadata from all your data
 * Tarantool
 
 [Config examples →](https://github.com/opendatadiscovery/odd-collector/tree/main/config_examples)
+<!---
 ## Collector vs Adapters
 A previous version of Platform architecture was based on adapters. This approach required to connect new adapter to each data source. Now you can install one Collector and ingest data from all your sources.
 ### Deprecated Adapters
