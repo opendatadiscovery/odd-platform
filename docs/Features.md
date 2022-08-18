@@ -6,7 +6,11 @@
 [Pipeline Monitoring and Alerting](#pipeline-monitoring-and-alerting) \
 [ML Experiment Logging](#ml-experiment-logging) \
 [Manual Object Tagging](#manual-object-tagging) \
-[Federation Data Catalog](#federation-data-catalog)
+[Data Entity Groups](#data-entity-groups) \
+[Data Entity Report](#data-entity-report) \
+[Dictionary Terms](#dictionary-terms) \
+[Activity Feed for Monitoring Changes](#activity-feed-for-monitoring-changes) \
+[Dataset Quality Statuses (SLA)](#dataset-quality-statuses-sla) 
 
 ## Metadata Storage 
 The Storage is a data catalog which gathers metadata from your sources. Data processing is based on the near real-time approach.  A storage space is not limited. \
@@ -51,6 +55,9 @@ In the Platform you may find two types of alerts:
 
 **Dataset alerts** and **job alerts** detect backward-incompatible changes of schemas and source targets.
 
+### Alert notifications
+You may configure alert notifications using Slack or Webhook. It allows send third-party notifications when alerts appear or have been resolved.    
+
 ![](.gitbook/img/alerting.gif)
 
 ## ML Experiment Logging 
@@ -67,6 +74,46 @@ Manage your metadata by tagging tables, datasets and quality tests. Tags provide
 You may apply **tags** to metadata entities or use **labels** to mark elements of these entities.
 
 ![](.gitbook/img/tagging.gif)
+
+## Data Entity Groups
+Create groups to gather similar entities (datasets, transformers, quality tests, etc). Each group may be enriched with specific metadata, owners and [terms](#customized-dictionary).
+
+**Example:** an organization has ingested metadata related to its finances into the ODD Platform. All the entities are united into the Finance **Namespace** by default. To categorize entities, one creates Revenue and Payrolls groups.
+
+![](.gitbook/img/groups.gif)
+
+## Data Entity Report
+A report collects statistical information about data entities on the main page of the Platform. It represents:
+* Total amount of entities
+* Counters for Datasets, Quality Tests, Data Inputs, Transformers and [Groups](#data-entity-groups)
+* Unfilled entities that have only titles and lack metadata, owners, tags, related terms and other descriptive information
+
+![](.gitbook/img/report.png)
+## Dictionary terms
+Give an extra information about your data entities by creating terms that define these entities or processes related to them.\
+You may see all terms connected to a data entity on its overview page. All created terms are gathered in the **Dictionary** tab.
+
+![](.gitbook/img/terms.gif)
+
+## Activity Feed for Monitoring Changes
+Track changes of your data entities by monitoring the **Activity** page or **Activity** tabs placed on pages of data entities. Also, to search needed changes, you may filter events by datasources, namespaces, users and date.
+
+Event types:
+* `CREATED` – a data entity, [data entity group](#data-entity-groups) or a descriptive field related to a data entity was created. 
+* `DELETED` – a data entity, [data entity group](#data-entity-groups) or a descriptive field related to data entity was deleted.
+* `UPDATED` – an existing data entity or a descriptive field related to  data entity was edited.
+* `ADDED` (`ASSIGNED`) – an existing tag or term was linked to a data entity.
+
+![](.gitbook/img/activity.gif)
+## Dataset Quality Statuses (SLA)
+Use **Minor**, **Major** and **Critical** statuses to mark dataset's [test suite results](#data-quality-test-results-import) depending on how trustworthy they are. Then you may easily import these statuses directly to a BI report:
+1. Go to the dataset main page and select the **Test reports** tab.
+2. Click on a job and then, on the right panel, select a status.
+3. To add the status into your BI report, use the following URL: `https://{platform_url}/api/datasets/{dataset_id}/sla`
+
+**Result**: statuses are displayed in the BI-report as color indicators (**Minor** = green, **Major** = yellow, **Critical** = red). 
+
+<!---
 ## Federation Data Catalog
 > :exclamation: Coming soon! The description below is for informational purposes only.
 
@@ -77,7 +124,6 @@ The Catalog is a tool which helps to bring distributed catalogs together in the 
 To collect data from decentralized sources ODD uses a pull strategy ([read more](Adapters.md) about the strategies). \
 To connect your data sources with the Platform use the [API](https://github.com/opendatadiscovery/odd-platform/tree/main/odd-platform-specification). 
 
-<!---
 | Object name | Description |
 | --- | ----------- |
 | **DataInput** | Title |
