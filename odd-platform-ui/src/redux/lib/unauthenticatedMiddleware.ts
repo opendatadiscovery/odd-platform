@@ -1,20 +1,9 @@
-import { createAction, Middleware } from '@reduxjs/toolkit';
-
-export const RESET_STATE_ACTION_TYPE = 'resetState';
-export const resetStateAction = createAction(
-  RESET_STATE_ACTION_TYPE,
-  () => ({
-    payload: null,
-  })
-);
+import { Middleware } from '@reduxjs/toolkit';
 
 export const unauthenticatedMiddleware: Middleware =
-  ({ dispatch }) =>
-  next =>
-  action => {
+  () => next => action => {
     if (action.payload?.status === 401) {
-      dispatch(resetStateAction());
-      window.location.href = '/';
+      window.location.reload();
     }
 
     return next(action);

@@ -1,6 +1,5 @@
 import { combineReducers, Reducer } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { RESET_STATE_ACTION_TYPE } from 'redux/lib/unauthenticatedMiddleware';
 import legacyLoader from './loader-reducer';
 import loader from './loader.slice';
 import namespaces from './namespace.slice';
@@ -51,10 +50,5 @@ export const combinedReducer = combineReducers({
   activities,
 });
 
-export const rootReducer: Reducer<RootState> = (state, action) => {
-  if (action.type === RESET_STATE_ACTION_TYPE) {
-    state = {} as RootState;
-  }
-
-  return combinedReducer(state, action);
-};
+export const rootReducer: Reducer<RootState> = (state, action) =>
+  combinedReducer(state, action);
