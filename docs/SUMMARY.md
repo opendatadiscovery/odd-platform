@@ -1,9 +1,8 @@
 # Table of contents
 
 * [Overview](README.md)
-* [Quickstart](Quickstart.md)
 * [Architecture](Architecture.md)
-  * [Adapter-oriented architecture](Adapters.md)
+* [Try locally](trylocally.md)
 * [Features](Features.md)
 * [Use cases](Use\_cases.md)
   * [Data compliance for Data Scientists](dc\_data\_compliance.md)
