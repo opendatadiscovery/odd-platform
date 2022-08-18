@@ -9,7 +9,7 @@
 [Data Entity Groups](#data-entity-groups) \
 [Data Entity Report](#data-entity-report) \
 [Dictionary Terms](#dictionary-terms) \
-[Activity Feed for Monitoring Changes](#act) \
+[Activity Feed for Monitoring Changes](#activity-feed-for-monitoring-changes) \
 [Dataset Quality Statuses (SLA)](#dataset-quality-statuses-sla) 
 
 ## Metadata Storage 
