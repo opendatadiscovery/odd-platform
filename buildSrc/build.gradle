@@ -1,0 +1,20 @@
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation libs.bundles.jooq.codegen
+}
+
+gradlePlugin {
+    plugins {
+        GeneratorPlugin {
+            id = "org.opendatadiscovery.internal.plugin.jooq-generate"
+            implementationClass = "org.opendatadiscovery.internal.plugin.JooqGeneratePlugin"
+        }
+    }
+}

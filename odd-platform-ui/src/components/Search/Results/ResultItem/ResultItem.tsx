@@ -2,18 +2,17 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity, DataEntityClassNameEnum } from 'generated-sources';
-import { SearchClass, SearchTotalsByName } from 'redux/interfaces/search';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import { dataEntityDetailsPath } from 'lib/paths';
-import TruncatedCell from 'components/shared/TruncatedCell/TruncatedCell';
-import InformationIcon from 'components/shared/Icons/InformationIcon';
+import { SearchClass, SearchTotalsByName } from 'redux/interfaces';
 import {
-  ColContainer,
-  NameContainer,
-} from 'components/Search/Results/ResultsStyles';
-import ResultItemPreviewContainer from 'components/Search/Results/ResultItem/ResultItemPreview/ResultItemPreviewContainer';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+  AppTooltip,
+  EntityClassItem,
+  NumberFormatted,
+  TruncatedCell,
+} from 'components/shared';
+import { InformationIcon } from 'components/shared/Icons';
+import { useAppPaths } from 'lib/hooks';
+import { ColContainer, NameContainer } from '../ResultsStyles';
+import ResultItemPreview from './ResultItemPreview/ResultItemPreview';
 import { Container, ItemLink } from './ResultItemStyles';
 
 interface ResultItemProps {
@@ -27,15 +26,14 @@ const ResultItem: React.FC<ResultItemProps> = ({
   searchClass,
   totals,
 }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
   const detailsLink = dataEntityDetailsPath(searchResult.id);
-  const ResultItemPreview = React.useCallback(
+
+  const resultItemPreview = React.useCallback(
     ({ open }) => (
-      <ResultItemPreviewContainer
-        dataEntityId={searchResult.id}
-        fetchData={open}
-      />
+      <ResultItemPreview dataEntityId={searchResult.id} fetchData={open} />
     ),
-    []
+    [searchResult.id]
   );
 
   return (
@@ -58,13 +56,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
             >
               {searchResult.internalName || searchResult.externalName}
             </Typography>
-            <AppTooltip
-              maxWidth={285}
-              checkForOverflow={false}
-              isOverflowed={false}
-              title={ResultItemPreview}
-            >
-              <InformationIcon sx={{ display: 'flex', ml: 1.25 }} />
+            <AppTooltip checkForOverflow={false} title={resultItemPreview}>
+              <InformationIcon sx={{ ml: 1.25 }} />
             </AppTooltip>
           </NameContainer>
           <Grid

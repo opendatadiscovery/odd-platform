@@ -14,9 +14,12 @@ import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/Aut
 import { OptionsContainer } from 'components/Terms/TermDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import AppButton from 'components/shared/AppButton/AppButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { fetchTagsList, updateTermDetailsTags } from 'redux/thunks';
+import {
+  fetchTagsList as searchTags,
+  updateTermDetailsTags,
+} from 'redux/thunks';
 import {
   getTermDetailsTags,
   getTermDetailsTagsUpdatingStatuses,
@@ -30,8 +33,6 @@ interface TagsEditProps {
 const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const dispatch = useAppDispatch();
   const { termId } = useAppParams();
-
-  const searchTags = fetchTagsList;
 
   const termDetailsTags = useAppSelector(state =>
     getTermDetailsTags(state, termId)
@@ -52,12 +53,12 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      dispatch(searchTags({ page: 1, size: 30, query: searchText })).then(
-        response => {
+      dispatch(searchTags({ page: 1, size: 30, query: searchText }))
+        .unwrap()
+        .then(({ items }) => {
           setLoading(false);
-          setOptions(response.items);
-        }
-      );
+          setOptions(items);
+        });
     }, 500),
     [searchTags, setLoading, setOptions, searchText]
   );
@@ -210,7 +211,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
         value={{ name: searchText }}
         clearIcon={<ClearIcon />}
         renderInput={params => (
-          <AppTextField
+          <AppInput
             {...params}
             ref={params.InputProps.ref}
             placeholder="Enter tag name…"
@@ -283,6 +284,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isTermTagsUpdating}
       errorText={error}
+      formSubmitHandler={methods.handleSubmit(handleSubmit)}
     />
   );
 };

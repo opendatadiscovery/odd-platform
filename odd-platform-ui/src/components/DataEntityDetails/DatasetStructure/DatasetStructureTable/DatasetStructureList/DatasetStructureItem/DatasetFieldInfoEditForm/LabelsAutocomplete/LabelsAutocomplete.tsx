@@ -4,30 +4,28 @@ import {
   AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
+import { fetchLabelsList as searchLabels } from 'redux/thunks/labels.thunks';
+import { useAppDispatch } from 'lib/redux/hooks';
+
 import { useDebouncedCallback } from 'use-debounce';
-import {
-  Label,
-  LabelApiGetLabelListRequest,
-  LabelsResponse,
-} from 'generated-sources';
+import { Label } from 'generated-sources';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { UseFieldArrayReturn } from 'react-hook-form';
 
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
 
 interface LabelsAutocompleteProps {
-  searchLabels: (
-    params: LabelApiGetLabelListRequest
-  ) => Promise<LabelsResponse>;
   appendLabel: UseFieldArrayReturn['append'];
 }
 
 const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
-  searchLabels,
   appendLabel,
 }) => {
+  const dispatch = useAppDispatch();
+
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -37,12 +35,12 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      searchLabels({ page: 1, size: 30, query: searchText }).then(
-        response => {
+      dispatch(searchLabels({ page: 1, size: 30, query: searchText }))
+        .unwrap()
+        .then(({ items }) => {
           setLoading(false);
-          setOptions(response.items);
-        }
-      );
+          setOptions(items);
+        });
     }, 500),
     [searchLabels, setLoading, setOptions, searchText]
   );
@@ -107,7 +105,11 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
   ) => {
     if (!value) return;
     setSearchText(''); // Clear input on select
-    appendLabel(typeof value === 'string' ? { name: value } : value);
+    appendLabel(
+      typeof value === 'string'
+        ? { name: value }
+        : { ...value, external: false }
+    );
   };
 
   return (
@@ -130,7 +132,7 @@ const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({
       value={{ name: searchText }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppTextField
+        <AppInput
           {...params}
           sx={{ mt: 1.5 }}
           ref={params.InputProps.ref}

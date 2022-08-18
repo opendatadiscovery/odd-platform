@@ -1,19 +1,26 @@
 import React from 'react';
+import { DataEntityRunStatus, DataQualityTest } from 'generated-sources';
 import {
-  DataQualityApiGetDataEntityDataQATestsRequest,
-  DataQualityApiGetDatasetTestReportRequest,
-  DataQualityTest,
-  DataQualityTestRunStatus,
-  DataSetTestReport,
-} from 'generated-sources';
+  getDatasetQualityTestsBySuiteNames,
+  getDatasetTestListFetchingStatuses,
+  getDatasetTestReport,
+  getDatasetTestReportFetchingStatuses,
+  getTestReportListBySuiteName,
+} from 'redux/selectors/dataQualityTest.selectors';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import {
+  fetchDataSetQualityTestList,
+  fetchDataSetQualityTestReport,
+} from 'redux/thunks';
+import { useAppParams } from 'lib/hooks';
+
 import { Grid, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
-import TestReportItemContainer from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemContainer';
-import TestReportDetailsContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsContainer';
+import TestReportItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItem';
+import TestReportDetails from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetails';
 import TestReportItemSkeleton from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
 import TestReportSkeleton from 'components/DataEntityDetails/TestReport/TestReportSkeleton/TestReportSkeleton';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
 import AppPaper from 'components/shared/AppPaper/AppPaper';
 import {
   TestReportContainer,
@@ -24,42 +31,29 @@ interface DatasetQualityTestList {
   [suiteName: string]: DataQualityTest[];
 }
 
-interface TestReportBySuitName {
-  [suiteName: string]: DataSetQualityTestsStatusCount;
-}
+const TestReport: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { dataQATestId, dataEntityId, viewType } = useAppParams();
+  const datasetTestReport = useAppSelector(state =>
+    getDatasetTestReport(state, dataEntityId)
+  );
 
-interface TestReportProps {
-  dataEntityId: number;
-  dataqatestId: number;
-  datasetTestReport: DataSetTestReport;
-  datasetQualityTestList: DatasetQualityTestList;
-  fetchDataSetQualityTestList: (
-    params: DataQualityApiGetDataEntityDataQATestsRequest
-  ) => void;
-  fetchDataSetQualityTestReport: (
-    params: DataQualityApiGetDatasetTestReportRequest
-  ) => void;
-  testReportBySuitName: TestReportBySuitName;
-  reportDetailsViewType: string;
-  isDatasetTestListFetching: boolean;
-  isDatasetTestReportFetching: boolean;
-}
+  const datasetQualityTestList: DatasetQualityTestList = useAppSelector(
+    state => getDatasetQualityTestsBySuiteNames(state, dataEntityId)
+  );
+  const testReportBySuitName = useAppSelector(
+    getTestReportListBySuiteName
+  );
 
-const TestReport: React.FC<TestReportProps> = ({
-  dataEntityId,
-  dataqatestId,
-  datasetTestReport,
-  datasetQualityTestList,
-  fetchDataSetQualityTestList,
-  fetchDataSetQualityTestReport,
-  testReportBySuitName,
-  reportDetailsViewType,
-  isDatasetTestListFetching,
-  isDatasetTestReportFetching,
-}) => {
+  const { isLoading: isDatasetTestListFetching } = useAppSelector(
+    getDatasetTestListFetchingStatuses
+  );
+  const { isLoading: isDatasetTestReportFetching } = useAppSelector(
+    getDatasetTestReportFetchingStatuses
+  );
   React.useEffect(() => {
-    fetchDataSetQualityTestReport({ dataEntityId });
-    fetchDataSetQualityTestList({ dataEntityId });
+    dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
+    dispatch(fetchDataSetQualityTestList({ dataEntityId }));
   }, [fetchDataSetQualityTestReport, dataEntityId]);
 
   return (
@@ -77,27 +71,27 @@ const TestReport: React.FC<TestReportProps> = ({
               <TestReportContainer container item>
                 <TestRunStatusItem
                   count={datasetTestReport?.successTotal}
-                  typeName={DataQualityTestRunStatus.SUCCESS}
+                  typeName={DataEntityRunStatus.SUCCESS}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.failedTotal}
-                  typeName={DataQualityTestRunStatus.FAILED}
+                  typeName={DataEntityRunStatus.FAILED}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.brokenTotal}
-                  typeName={DataQualityTestRunStatus.BROKEN}
+                  typeName={DataEntityRunStatus.BROKEN}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.abortedTotal}
-                  typeName={DataQualityTestRunStatus.ABORTED}
+                  typeName={DataEntityRunStatus.ABORTED}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.skippedTotal}
-                  typeName={DataQualityTestRunStatus.SKIPPED}
+                  typeName={DataEntityRunStatus.SKIPPED}
                 />
                 <TestRunStatusItem
                   count={datasetTestReport?.unknownTotal}
-                  typeName={DataQualityTestRunStatus.UNKNOWN}
+                  typeName={DataEntityRunStatus.UNKNOWN}
                 />
               </TestReportContainer>
               <Grid container item justifyContent="flex-end">
@@ -129,8 +123,8 @@ const TestReport: React.FC<TestReportProps> = ({
                     <TestReportItemCont container>
                       {Object.entries(datasetQualityTestList).map(
                         ([suitName, dataQATestList]) => (
-                          <TestReportItemContainer
-                            dataqatestId={dataqatestId}
+                          <TestReportItem
+                            dataQATestId={dataQATestId}
                             dataSetId={dataEntityId}
                             dataQATestReport={
                               testReportBySuitName[suitName]
@@ -145,12 +139,12 @@ const TestReport: React.FC<TestReportProps> = ({
                   )}
                 </Grid>
                 <Grid item xs={3}>
-                  {dataqatestId ? (
+                  {dataQATestId ? (
                     <AppPaper square elevation={0}>
-                      <TestReportDetailsContainer
+                      <TestReportDetails
                         dataEntityId={dataEntityId}
-                        dataqatestId={dataqatestId}
-                        reportDetailsViewType={reportDetailsViewType}
+                        dataQATestId={dataQATestId}
+                        reportDetailsViewType={viewType}
                       />
                     </AppPaper>
                   ) : null}

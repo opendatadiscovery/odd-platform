@@ -1,43 +1,42 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import {
-  Tag,
-  TagApiGetPopularTagListRequest,
-  TagsResponse,
-} from 'generated-sources';
+import { Typography } from '@mui/material';
 import compact from 'lodash/compact';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import TagItem from 'components/shared/TagItem/TagItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { AppButton, DialogWrapper, TagItem } from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { updateDataEntityTags } from 'redux/thunks';
+import { useAppParams } from 'lib/hooks';
+import {
+  getDataEntityTags,
+  getDataEntityTagsUpdatingStatuses,
+} from 'redux/selectors';
+import { TagListContainer } from './TagsEditFormStyles';
 import TagsEditFormAutocomplete from './TagsEditFormAutocomplete/TagsEditFormAutocomplete';
 
 interface TagsEditProps {
-  dataEntityId: number;
-  dataEntityTags?: Tag[];
-  isLoading: boolean;
-  searchTags: (
-    params: TagApiGetPopularTagListRequest
-  ) => Promise<TagsResponse>;
   btnEditEl: JSX.Element;
 }
 
-const TagsEditForm: React.FC<TagsEditProps> = ({
-  dataEntityId,
-  dataEntityTags,
-  isLoading,
-  searchTags,
-  btnEditEl,
-}) => {
+const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
+
+  const dataEntityTags = useAppSelector(getDataEntityTags(dataEntityId));
+  const { isLoading: isTagsUpdating } = useAppSelector(
+    getDataEntityTagsUpdatingStatuses
+  );
 
   type DataEntityTagsFormType = {
-    tagNameList: { name: string; important: boolean }[];
+    tagNameList: {
+      name: string;
+      important: boolean;
+      external?: boolean;
+    }[];
   };
   const methods = useForm<DataEntityTagsFormType>({
-    defaultValues: { tagNameList: [{ name: '', important: false }] },
+    defaultValues: {
+      tagNameList: [{ name: '' }],
+    },
   });
   const { fields, append, remove } = useFieldArray({
     control: methods.control,
@@ -49,6 +48,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
       tagNameList: dataEntityTags?.map(tag => ({
         name: tag.name,
         important: tag.important,
+        external: tag.external,
       })),
     });
     handleOpen();
@@ -98,24 +98,25 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
 
   const formContent = () => (
     <>
-      <TagsEditFormAutocomplete searchTags={searchTags} append={append} />
+      <TagsEditFormAutocomplete append={append} />
       <FormProvider {...methods}>
         <form
           id="tags-create-form"
           onSubmit={methods.handleSubmit(handleSubmit)}
         >
-          <Box sx={{ mt: 1 }}>
+          <TagListContainer sx={{ mt: 1 }}>
             {fields?.map((field, index) => (
               <TagItem
                 sx={{ my: 0.5, mr: 0.5 }}
                 key={field.id}
+                systemTag={field.external}
                 label={field.name}
                 important={field.important}
                 removable
                 onRemoveClick={handleRemove(index)}
               />
             ))}
-          </Box>
+          </TagListContainer>
         </form>
       </FormProvider>
     </>
@@ -142,8 +143,9 @@ const TagsEditForm: React.FC<TagsEditProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isTagsUpdating}
       errorText={error}
+      formSubmitHandler={methods.handleSubmit(handleSubmit)}
     />
   );
 };

@@ -3,11 +3,11 @@ import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { DataEntity, DataEntityClass } from 'generated-sources';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import SearchResultsSkeletonItem from 'components/Search/Results/SearchResultsSkeletonItem/SearchResultsSkeletonItem';
+import SearchResultsSkeleton from 'components/Search/Results/SearchResultsSkeleton/SearchResultsSkeleton';
 import LinkedItem from 'components/Terms/TermDetails/TermLinkedItemsList/LinkedItem/LinkedItem';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import { useDebouncedCallback } from 'use-debounce';
@@ -97,7 +97,7 @@ const LinkedItemsList: React.FC = () => {
         sx={{ mt: 2 }}
       >
         <Grid item xs={3} sx={{ mr: 1 }}>
-          <AppTextField
+          <AppInput
             size="medium"
             placeholder="Search"
             onKeyDown={handleKeyDownSearch}
@@ -121,8 +121,7 @@ const LinkedItemsList: React.FC = () => {
           />
         </Grid>
         <Grid item xs={2}>
-          <AppTextField
-            select
+          <AppSelect
             defaultValue="All entities"
             onChange={handleOnClickSearch}
           >
@@ -145,7 +144,7 @@ const LinkedItemsList: React.FC = () => {
                 )}
               </AppMenuItem>
             ))}
-          </AppTextField>
+          </AppSelect>
         </Grid>
       </Grid>
       <TermLinkedItemsResultsTableHeader
@@ -173,15 +172,7 @@ const LinkedItemsList: React.FC = () => {
         </TermLinkedItemsColContainer>
       </TermLinkedItemsResultsTableHeader>
       {isLinkedListFetching ? (
-        <SkeletonWrapper
-          length={10}
-          renderContent={({ randomSkeletonPercentWidth, key }) => (
-            <SearchResultsSkeletonItem
-              width={randomSkeletonPercentWidth()}
-              key={key}
-            />
-          )}
-        />
+        <SearchResultsSkeleton />
       ) : (
         <TermLinkedItemsListContainer id="term-linked-items-list">
           {termLinkedList && (
@@ -189,22 +180,7 @@ const LinkedItemsList: React.FC = () => {
               dataLength={termLinkedList?.length}
               next={fetchNextPage}
               hasMore={!!pageInfo?.hasNext}
-              loader={
-                isLinkedListFetching && (
-                  <SkeletonWrapper
-                    length={10}
-                    renderContent={({
-                      randomSkeletonPercentWidth,
-                      key,
-                    }) => (
-                      <SearchResultsSkeletonItem
-                        width={randomSkeletonPercentWidth()}
-                        key={key}
-                      />
-                    )}
-                  />
-                )
-              }
+              loader={isLinkedListFetching && <SearchResultsSkeleton />}
               scrollThreshold="200px"
               scrollableTarget="term-linked-items-list"
             >

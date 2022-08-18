@@ -3,114 +3,129 @@ import React from 'react';
 import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
 import { formatDistanceToNowStrict } from 'date-fns';
 import {
-  dataEntityAlertsPath,
-  dataEntityHistoryPath,
-  dataEntityLineagePath,
-  dataEntityLinkedItemsPath,
-  dataEntityOverviewPath,
-  dataEntityTestReportPath,
-  datasetStructurePath,
-  searchPath,
-} from 'lib/paths';
+  AppButton,
+  AppIconButton,
+  AppLoadingPage,
+  AppMenuItem,
+  AppPopover,
+  AppTabItem,
+  AppTabs,
+  ConfirmationDialog,
+  EntityClassItem,
+  EntityTypeItem,
+  LabelItem,
+  SkeletonWrapper,
+} from 'components/shared';
 import {
-  AlertList,
-  DataEntityApiGetDataEntityAlertsRequest,
-  DataEntityDetails,
-} from 'generated-sources';
-import { FetchStatus } from 'redux/interfaces';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import TimeGapIcon from 'components/shared/Icons/TimeGapIcon';
-import InternalNameFormDialogContainer from 'components/DataEntityDetails/InternalNameFormDialog/InternalNameFormDialogContainer';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
-import DataEntityDetailsSkeleton from 'components/DataEntityDetails/DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import AppErrorPage from 'components/shared/AppErrorPage/AppErrorPage';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
-import LinkedItemsListContainer from 'components/DataEntityDetails/LinkedItemsList/LinkedItemsListContainer';
+  AddIcon,
+  EditIcon,
+  KebabIcon,
+  TimeGapIcon,
+} from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useAppParams } from 'lib/hooks';
 import {
   deleteDataEntityGroup,
+  fetchDataEntityAlerts,
   fetchDataEntityDetails,
+  fetchDataSetQualityTestReport,
 } from 'redux/thunks';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import KebabIcon from 'components/shared/Icons/KebabIcon';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import AppPopover from 'components/shared/AppPopover/AppPopover';
-import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import {
+  getDataEntityAddToGroupStatuses,
+  getDataEntityDeleteFromGroupStatuses,
+  getDataEntityDetails,
+  getDataEntityDetailsFetchingStatuses,
   getDataEntityGroupUpdatingStatuses,
+  getDataEntityOpenAlertsCount,
+  getDatasetTestReport,
+  getIsDataEntityBelongsToClass,
   getSearchId,
 } from 'redux/selectors';
-import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
+import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
+import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
+import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
+import LinkedItemsListContainer from './LinkedItemsList/LinkedItemsListContainer';
 import * as S from './DataEntityDetailsStyles';
 
 // lazy components
-const OverviewContainer = React.lazy(
-  () => import('./Overview/OverviewContainer')
+const Overview = React.lazy(() => import('./Overview/Overview'));
+const DatasetStructure = React.lazy(
+  () => import('./DatasetStructure/DatasetStructure')
 );
-const DatasetStructureContainer = React.lazy(
-  () => import('./DatasetStructure/DatasetStructureContainer')
+const Lineage = React.lazy(() => import('./Lineage/Lineage'));
+const TestReport = React.lazy(() => import('./TestReport/TestReport'));
+const TestReportDetails = React.lazy(
+  () => import('./TestReport/TestReportDetails/TestReportDetails')
 );
-const LineageContainer = React.lazy(
-  () => import('./Lineage/LineageContainer')
+const DataEntityAlerts = React.lazy(
+  () => import('./DataEntityAlerts/DataEntityAlerts')
 );
-const TestReportContainer = React.lazy(
-  () => import('./TestReport/TestReportContainer')
+const QualityTestHistory = React.lazy(
+  () => import('./QualityTestRunsHistory/TestRunsHistory')
 );
-const TestReportDetailsContainer = React.lazy(
-  () => import('./TestReport/TestReportDetails/TestReportDetailsContainer')
-);
-const DataEntityAlertsContainer = React.lazy(
-  () => import('./DataEntityAlerts/DataEntityAlertsContainer')
-);
-const QualityTestHistoryContainer = React.lazy(
-  () => import('./QualityTestRunsHistory/TestRunsHistoryContainer')
+const DataEntityActivity = React.lazy(
+  () => import('./DataEntityActivity/DataEntityActivity')
 );
 
-interface DataEntityDetailsProps {
-  viewType: string;
-  dataEntityId: number;
-  dataEntityDetails: DataEntityDetails;
-  isDataset: boolean;
-  isQualityTest: boolean;
-  fetchDataEntityAlerts: (
-    params: DataEntityApiGetDataEntityAlertsRequest
-  ) => Promise<AlertList>;
-  dataEntityFetchingStatus: FetchStatus;
-  openAlertsCount: number;
-}
-
-const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
-  viewType,
-  dataEntityId,
-  dataEntityDetails,
-  isDataset,
-  isQualityTest,
-  fetchDataEntityAlerts,
-  dataEntityFetchingStatus,
-  openAlertsCount,
-}) => {
+const DataEntityDetailsView: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const { dataEntityId, viewType } = useAppParams();
+  const {
+    searchPath,
+    dataEntityOverviewPath,
+    datasetStructurePath,
+    dataEntityLineagePath,
+    dataEntityTestReportPath,
+    dataEntityLinkedItemsPath,
+    dataEntityHistoryPath,
+    dataEntityAlertsPath,
+    dataEntityActivityPath,
+  } = useAppPaths();
+
+  const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
+  const searchId = useAppSelector(getSearchId);
+  const dataEntityDetails = useAppSelector(
+    getDataEntityDetails(dataEntityId)
+  );
+  const { isDataset, isQualityTest, isTransformer } = useAppSelector(
+    getIsDataEntityBelongsToClass(dataEntityId)
+  );
 
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
     getDataEntityGroupUpdatingStatuses
   );
+  const {
+    isLoading: isDataEntityDetailsFetching,
+    isLoaded: isDataEntityDetailsFetched,
+  } = useAppSelector(getDataEntityDetailsFetchingStatuses);
+  const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
+    getDataEntityAddToGroupStatuses
+  );
+  const { isLoaded: isDataEntityDeletedFromGroup } = useAppSelector(
+    getDataEntityDeleteFromGroupStatuses
+  );
 
-  const searchId = useAppSelector(getSearchId);
+  // TODO change selectors
+  const datasetQualityTestReport = useAppSelector(state =>
+    getDatasetTestReport(state, dataEntityId)
+  );
 
   React.useEffect(() => {
     dispatch(fetchDataEntityDetails({ dataEntityId }));
-  }, [fetchDataEntityDetails, dataEntityId, isDataEntityGroupUpdated]);
+  }, [
+    fetchDataEntityDetails,
+    dataEntityId,
+    isDataEntityGroupUpdated,
+    isDataEntityAddedToGroup,
+    isDataEntityDeletedFromGroup,
+  ]);
 
   React.useEffect(() => {
-    fetchDataEntityAlerts({ dataEntityId });
-  }, []);
+    dispatch(fetchDataEntityAlerts({ dataEntityId }));
+    dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
+  }, [dataEntityId]);
 
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
 
@@ -136,13 +151,13 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
       {
         name: 'Test reports',
         link: dataEntityTestReportPath(dataEntityId),
-        hidden: !isDataset,
+        hidden: !isDataset || !datasetQualityTestReport?.total,
         value: 'test-reports',
       },
       {
         name: 'History',
         link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest,
+        hidden: !isQualityTest && !isTransformer,
         value: 'history',
       },
       {
@@ -158,6 +173,11 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
         hidden: !dataEntityDetails?.hasChildren,
         value: 'linked-items',
       },
+      {
+        name: 'Activity',
+        link: dataEntityActivityPath(dataEntityId),
+        value: 'activity',
+      },
     ]);
   }, [
     dataEntityId,
@@ -165,6 +185,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
     isDataset,
     dataEntityDetails,
     openAlertsCount,
+    datasetQualityTestReport?.total,
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -185,7 +206,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
 
   return (
     <S.Container>
-      {dataEntityDetails && dataEntityFetchingStatus !== 'fetching' ? (
+      {dataEntityDetails && !isDataEntityDetailsFetching ? (
         <>
           <Grid
             container
@@ -214,8 +235,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
                   />
                 )}
                 <S.InternalNameEditBtnContainer>
-                  <InternalNameFormDialogContainer
-                    dataEntityId={dataEntityId}
+                  <InternalNameFormDialog
                     btnCreateEl={
                       <AppButton
                         size="small"
@@ -319,7 +339,7 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
           </Grid>
         </>
       ) : null}
-      {dataEntityFetchingStatus === 'fetching' ? (
+      {isDataEntityDetailsFetching ? (
         <SkeletonWrapper
           renderContent={({ randomSkeletonPercentWidth }) => (
             <DataEntityDetailsSkeleton
@@ -328,57 +348,92 @@ const DataEntityDetailsView: React.FC<DataEntityDetailsProps> = ({
           )}
         />
       ) : null}
-      {dataEntityFetchingStatus !== 'errorFetching' ? (
+      {isDataEntityDetailsFetched ? (
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
             <Route
               exact
-              path="/dataentities/:dataEntityId/overview"
-              component={OverviewContainer}
+              path={[
+                '/dataentities/:dataEntityId/overview',
+                '/embedded/dataentities/:dataEntityId/overview',
+              ]}
+              component={Overview}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/structure/:versionId?"
-              component={DatasetStructureContainer}
+              path={[
+                '/dataentities/:dataEntityId/structure/:versionId?',
+                '/embedded/dataentities/:dataEntityId/structure/:versionId?',
+              ]}
+              component={DatasetStructure}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/lineage"
-              component={LineageContainer}
+              path={[
+                '/dataentities/:dataEntityId/lineage',
+                '/embedded/dataentities/:dataEntityId/lineage',
+              ]}
+              component={Lineage}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
-              component={TestReportContainer}
+              path={[
+                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
+                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
+              ]}
+              component={TestReport}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/:reportDetailsViewType?"
-              component={TestReportDetailsContainer}
+              path={[
+                '/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
+                '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/:viewType?',
+              ]}
+              component={TestReportDetails}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/alerts"
-              component={DataEntityAlertsContainer}
+              path={[
+                '/dataentities/:dataEntityId/alerts',
+                '/embedded/dataentities/:dataEntityId/alerts',
+              ]}
+              component={DataEntityAlerts}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/history"
-              component={QualityTestHistoryContainer}
+              path={[
+                '/dataentities/:dataEntityId/history',
+                '/embedded/dataentities/:dataEntityId/history',
+              ]}
+              component={QualityTestHistory}
             />
             <Route
               exact
-              path="/dataentities/:dataEntityId/linked-items"
+              path={[
+                '/dataentities/:dataEntityId/linked-items',
+                '/embedded/dataentities/:dataEntityId/linked-items',
+              ]}
               component={LinkedItemsListContainer}
+            />
+            <Route
+              exact
+              path={[
+                '/dataentities/:dataEntityId/activity',
+                '/embedded/dataentities/:dataEntityId/activity',
+              ]}
+              component={DataEntityActivity}
             />
             <Redirect
               from="/dataentities/:dataEntityId"
               to="/dataentities/:dataEntityId/overview"
             />
+            <Redirect
+              from="/embedded/dataentities/:dataEntityId"
+              to="/embedded/dataentities/:dataEntityId/overview"
+            />
           </Switch>
         </React.Suspense>
       ) : null}
-      <AppErrorPage fetchStatus={dataEntityFetchingStatus} />
     </S.Container>
   );
 };

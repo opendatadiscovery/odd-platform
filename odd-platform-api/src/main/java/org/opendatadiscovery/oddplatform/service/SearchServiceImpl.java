@@ -16,6 +16,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.MultipleFacetType;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFacetsData;
 import org.opendatadiscovery.oddplatform.api.contract.model.SearchFormData;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
+import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
 import org.opendatadiscovery.oddplatform.dto.FacetType;
 import org.opendatadiscovery.oddplatform.dto.SearchFilterDto;
@@ -27,14 +28,19 @@ import org.opendatadiscovery.oddplatform.mapper.SearchMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.SearchFacetsPojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.SearchFacetRepository;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import static java.util.Collections.emptyList;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class SearchServiceImpl implements SearchService {
+    private static final Page<DataEntityDimensionsDto> EMPTY_SEARCH_RESPONSE = new Page<>(emptyList(), 0, false);
+
     private final SearchMapper searchMapper;
     private final FacetStateMapper facetStateMapper;
     private final DataEntityMapper dataEntityMapper;
@@ -105,7 +111,7 @@ public class SearchServiceImpl implements SearchService {
                 if (state.isMyObjects()) {
                     return authIdentityProvider.fetchAssociatedOwner()
                         .map(owner -> dataEntityRepository.findByState(state, page, size, owner))
-                        .switchIfEmpty(Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size)));
+                        .switchIfEmpty(Mono.defer(() -> Mono.just(EMPTY_SEARCH_RESPONSE)));
                 }
 
                 return Mono.fromCallable(() -> dataEntityRepository.findByState(state, page, size));
@@ -114,9 +120,10 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public Flux<DataEntityRef> getQuerySuggestions(final String query) {
+    public Flux<DataEntityRef> getQuerySuggestions(final String query, final Integer entityClassId,
+                                                   final Boolean manuallyCreated) {
         return Flux
-            .fromIterable(dataEntityRepository.getQuerySuggestions(query))
+            .fromIterable(dataEntityRepository.getQuerySuggestions(query, entityClassId, manuallyCreated))
             .map(dataEntityMapper::mapRef);
     }
 

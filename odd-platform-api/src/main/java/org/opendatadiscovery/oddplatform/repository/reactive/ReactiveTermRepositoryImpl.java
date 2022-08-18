@@ -32,7 +32,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TagPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermOwnershipPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TermPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.TermRecord;
-import org.opendatadiscovery.oddplatform.repository.util.FTSConstants;
 import org.opendatadiscovery.oddplatform.repository.util.JooqFTSHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
@@ -78,7 +77,7 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
                                       final JooqQueryHelper jooqQueryHelper,
                                       final JooqFTSHelper jooqFTSHelper) {
         super(jooqReactiveOperations, jooqQueryHelper, TERM, TermPojo.class, TERM.NAME, TERM.ID,
-            TERM.UPDATED_AT, TERM.IS_DELETED, TERM.DELETED_AT);
+            TERM.CREATED_AT, TERM.UPDATED_AT, TERM.IS_DELETED, TERM.DELETED_AT);
         this.jooqRecordHelper = jooqRecordHelper;
         this.jooqFTSHelper = jooqFTSHelper;
     }
@@ -344,6 +343,21 @@ public class ReactiveTermRepositoryImpl extends ReactiveAbstractSoftDeleteCRUDRe
 
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(Long.class));
+    }
+
+    @Override
+    public Flux<TermRefDto> getDataEntityTerms(final long dataEntityId) {
+        final var query = DSL
+            .select(TERM.fields())
+            .select(NAMESPACE.fields())
+            .from(TERM)
+            .join(NAMESPACE).on(NAMESPACE.ID.eq(TERM.NAMESPACE_ID))
+            .join(DATA_ENTITY_TO_TERM)
+            .on(DATA_ENTITY_TO_TERM.TERM_ID.eq(TERM.ID).and(DATA_ENTITY_TO_TERM.DELETED_AT.isNull())
+                .and(DATA_ENTITY_TO_TERM.DATA_ENTITY_ID.eq(dataEntityId)))
+            .where(TERM.IS_DELETED.isFalse());
+        return jooqReactiveOperations.flux(query)
+            .map(this::mapRecordToRefDto);
     }
 
     private TermRefDto mapRecordToRefDto(final Record record) {

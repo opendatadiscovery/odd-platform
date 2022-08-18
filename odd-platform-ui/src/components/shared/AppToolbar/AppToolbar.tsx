@@ -1,45 +1,35 @@
 import React, { MouseEvent } from 'react';
 import { Grid, Typography, useScrollTrigger } from '@mui/material';
+import { getIdentity, getVersion } from 'redux/selectors';
 import {
-  AppInfo,
-  AssociatedOwner,
-  SearchApiSearchRequest,
-  SearchFacetsData,
-  TermSearchFacetsData,
-  TermApiTermSearchRequest,
-} from 'generated-sources';
-import { useHistory, useLocation } from 'react-router-dom';
-import { searchPath, termSearchPath } from 'lib/paths';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import DropdownIcon from 'components/shared/Icons/DropdownIcon';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import AppMenu from 'components/shared/AppMenu/AppMenu';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
-import * as S from './AppToolbarStyles';
-
-interface AppToolbarProps {
-  identity?: AssociatedOwner;
-  version?: string;
-  fetchIdentity: () => Promise<AssociatedOwner | void>;
-  createDataEntitiesSearch: (
-    params: SearchApiSearchRequest
-  ) => Promise<SearchFacetsData>;
-  createTermSearch: (
-    params: TermApiTermSearchRequest
-  ) => Promise<TermSearchFacetsData>;
-  fetchAppInfo: () => Promise<AppInfo | void>;
-}
-
-const AppToolbar: React.FC<AppToolbarProps> = ({
-  identity,
-  version,
   createDataEntitiesSearch,
   createTermSearch,
-  fetchIdentity,
   fetchAppInfo,
-}) => {
+  fetchIdentity,
+} from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { useHistory, useLocation } from 'react-router-dom';
+import { DropdownIcon } from 'components/shared/Icons';
+import { clearActivityFilters } from 'redux/reducers/activity.slice';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
+import {
+  AppIconButton,
+  AppMenu,
+  AppMenuItem,
+  AppTabItem,
+  AppTabs,
+} from 'components/shared';
+import * as S from './AppToolbarStyles';
+
+const AppToolbar: React.FC = () => {
   const location = useLocation();
   const history = useHistory();
+  const dispatch = useAppDispatch();
+  const { searchPath, termSearchPath } = useAppPaths();
+
+  const version = useAppSelector(getVersion);
+  const identity = useAppSelector(getIdentity);
+
   const menuId = 'primary-search-account-menu';
   const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
   const isMenuOpen = Boolean(anchorEl);
@@ -66,15 +56,16 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   React.useEffect(() => setElevation(trigger ? 3 : 0), [trigger]);
 
   React.useEffect(() => {
-    fetchIdentity();
-    fetchAppInfo();
+    dispatch(fetchIdentity());
+    dispatch(fetchAppInfo());
   }, []);
 
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Catalog', link: '/search' },
     { name: 'Management', link: '/management' },
     { name: 'Dictionary', link: '/termsearch' },
-    { name: 'Alerts', link: '/alerts/' },
+    { name: 'Alerts', link: '/alerts' },
+    { name: 'Activity', link: '/activity' },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number | boolean>(
@@ -82,9 +73,17 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
   );
 
   React.useEffect(() => {
-    const newTabIndex = tabs.findIndex(
-      tab => tab.link && location.pathname.includes(tab.link)
-    );
+    const newTabIndex = tabs.findIndex(tab => {
+      if (tab.link === '/activity' || tab.link === '/alerts') {
+        return (
+          location.pathname.includes(tab.link) &&
+          !location.pathname.includes('dataentities')
+        );
+      }
+
+      return tab.link && location.pathname.includes(tab.link);
+    });
+
     if (newTabIndex >= 0) {
       setSelectedTab(newTabIndex);
     } else {
@@ -105,13 +104,14 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         pageSize: 30,
         filters: {},
       };
-      createTermSearch({ termSearchFormData: termSearchQuery }).then(
-        termSearch => {
-          const termSearchLink = termSearchPath(termSearch.searchId);
-          history.replace(termSearchLink);
-          setTermSearchLoading(false);
-        }
-      );
+
+      dispatch(
+        createTermSearch({ termSearchFormData: termSearchQuery })
+      ).then(termSearch => {
+        const termSearchLink = termSearchPath(termSearch.searchId);
+        history.replace(termSearchLink);
+        setTermSearchLoading(false);
+      });
     } else if (tabs[idx].name === 'Catalog') {
       if (searchLoading) return;
       setSearchLoading(true);
@@ -120,13 +120,16 @@ const AppToolbar: React.FC<AppToolbarProps> = ({
         pageSize: 30,
         filters: {},
       };
-      createDataEntitiesSearch({ searchFormData: searchQuery }).then(
-        search => {
-          const searchLink = searchPath(search.searchId);
+
+      dispatch(createDataEntitiesSearch({ searchFormData: searchQuery }))
+        .unwrap()
+        .then(({ searchId }) => {
+          const searchLink = searchPath(searchId);
           history.replace(searchLink);
           setSearchLoading(false);
-        }
-      );
+        });
+    } else if (tabs[idx].name === 'Activity') {
+      dispatch(clearActivityFilters());
     }
   };
 

@@ -1,49 +1,50 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
-import {
-  FacetStateUpdate,
-  OptionalFacetNames,
-  SearchFilterStateSynced,
-} from 'redux/interfaces/search';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import { OptionalFacetNames } from 'redux/interfaces';
+import { AppMenuItem, AppSelect } from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { changeDataEntitySearchFacet } from 'redux/reducers/dataEntitySearch.slice';
+import { getSelectedSearchFacetOptions } from 'redux/selectors';
 
 interface FilterItemProps {
   name: string;
   facetName: OptionalFacetNames;
   facetOptions: SearchFilter[];
-  selectedOptions: SearchFilterStateSynced[] | undefined;
-  setFacets: (option: FacetStateUpdate) => void;
 }
 
 const SingleFilterItem: React.FC<FilterItemProps> = ({
   name,
   facetName,
   facetOptions,
-  selectedOptions,
-  setFacets,
 }) => {
+  const dispatch = useAppDispatch();
+  const selectedOptions = useAppSelector(
+    getSelectedSearchFacetOptions(facetName)
+  );
+
   const handleFilterSelect = React.useCallback(
     (option: { id: number | string; name: string }) => {
-      setFacets({
-        facetName,
-        facetOptionId: option.id,
-        facetOptionName: option.name,
-        facetOptionState: true,
-        facetSingle: true,
-      });
+      dispatch(
+        changeDataEntitySearchFacet({
+          facetName,
+          facetOptionId: option.id,
+          facetOptionName: option.name,
+          facetOptionState: true,
+          facetSingle: true,
+        })
+      );
     },
-    [setFacets, facetName]
+    [facetName]
   );
 
   return facetOptions.length ? (
     <Grid container>
       <Grid container item xs={12}>
-        <AppTextField
+        <AppSelect
           sx={{ mt: 2 }}
           label={name}
-          select
+          maxMenuHeight={464}
           id={`filter-${facetName}`}
           value={
             selectedOptions?.length ? selectedOptions[0].entityId : 'All'
@@ -51,7 +52,6 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
         >
           <AppMenuItem
             value="All"
-            maxWidth={190}
             onClick={() => handleFilterSelect({ id: 'All', name: 'All' })}
           >
             All
@@ -61,12 +61,11 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
               key={option.id}
               value={option.id}
               onClick={() => handleFilterSelect(option)}
-              maxWidth={190}
             >
               {option.name}
             </AppMenuItem>
           ))}
-        </AppTextField>
+        </AppSelect>
       </Grid>
     </Grid>
   ) : null;

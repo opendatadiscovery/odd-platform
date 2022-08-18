@@ -4,8 +4,9 @@ import {
   RootState,
   TermLinkedListState,
 } from 'redux/interfaces';
-import { createStatusesSelector, getTermId } from 'redux/selectors';
+import { getTermId } from 'redux/selectors';
 import * as actions from 'redux/actions';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 
 const termLinkedListState = ({
   termLinkedList,

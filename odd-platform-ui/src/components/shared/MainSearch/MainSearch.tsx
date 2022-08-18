@@ -1,50 +1,44 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
-import {
-  DataEntityRef,
-  SearchApiGetSearchSuggestionsRequest,
-  SearchApiSearchRequest,
-  SearchFacetsData,
-} from 'generated-sources';
-import { dataEntityDetailsPath, searchPath } from 'lib/paths';
-import * as S from 'components/shared/MainSearch/MainSearchStyles';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
+import { DataEntityRef } from 'generated-sources';
+import { AppInput, EntityClassItem } from 'components/shared';
 import { useDebouncedCallback } from 'use-debounce';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import {
+  createDataEntitiesSearch,
+  fetchSearchSuggestions,
+} from 'redux/thunks';
+import { ClearIcon, SearchIcon } from 'components/shared/Icons';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
+import {
+  getSearchQuery,
+  getSearchSuggestions,
+  getSearchSuggestionsFetchingStatuses,
+} from 'redux/selectors';
+import * as S from './MainSearchStyles';
 
 interface AppSearchProps {
-  className?: string;
-  query?: string;
   placeholder?: string;
-  suggestions: DataEntityRef[];
-  fetchSearchSuggestions: (
-    params: SearchApiGetSearchSuggestionsRequest
-  ) => Promise<DataEntityRef[]>;
-  createDataEntitiesSearch: (
-    params: SearchApiSearchRequest
-  ) => Promise<SearchFacetsData>;
 }
 
-const MainSearch: React.FC<AppSearchProps> = ({
-  placeholder,
-  query,
-  suggestions,
-  fetchSearchSuggestions,
-  createDataEntitiesSearch,
-}) => {
+const MainSearch: React.FC<AppSearchProps> = ({ placeholder }) => {
+  const dispatch = useAppDispatch();
+  const history = useHistory();
+  const { searchPath, dataEntityDetailsPath } = useAppPaths();
+
+  const query = useAppSelector(getSearchQuery);
+  const suggestions = useAppSelector(getSearchSuggestions);
+  const { isLoading: isSuggestionsLoading } = useAppSelector(
+    getSearchSuggestionsFetchingStatuses
+  );
+
   const [searchText, setSearchText] = React.useState<string>('');
   const [options, setOptions] = React.useState<Partial<DataEntityRef>[]>(
     []
   );
   const [autocompleteOpen, setAutocompleteOpen] =
     React.useState<boolean>(false);
-  const [loadingSuggestions, setLoadingSuggestions] =
-    React.useState<boolean>(false);
-
-  const history = useHistory();
 
   const createSearch = () => {
     const searchQuery = {
@@ -52,12 +46,12 @@ const MainSearch: React.FC<AppSearchProps> = ({
       pageSize: 30,
       filters: {},
     };
-    createDataEntitiesSearch({ searchFormData: searchQuery }).then(
-      search => {
-        const searchLink = searchPath(search.searchId);
+    dispatch(createDataEntitiesSearch({ searchFormData: searchQuery }))
+      .unwrap()
+      .then(({ searchId }) => {
+        const searchLink = searchPath(searchId);
         history.replace(searchLink);
-      }
-    );
+      });
     history.push(searchPath());
   };
 
@@ -76,11 +70,9 @@ const MainSearch: React.FC<AppSearchProps> = ({
 
   const getSuggestions = React.useCallback(
     useDebouncedCallback(() => {
-      fetchSearchSuggestions({ query: searchText }).then(() => {
-        setLoadingSuggestions(false);
-      });
+      dispatch(fetchSearchSuggestions({ query: searchText }));
     }, 500),
-    [searchText, setOptions, setLoadingSuggestions, fetchSearchSuggestions]
+    [searchText, setOptions, fetchSearchSuggestions]
   );
 
   React.useEffect(() => {
@@ -93,11 +85,10 @@ const MainSearch: React.FC<AppSearchProps> = ({
 
   React.useEffect(() => {
     if (!searchText) return;
-    setLoadingSuggestions(autocompleteOpen);
     if (autocompleteOpen) {
       getSuggestions();
     }
-  }, [autocompleteOpen, searchText]);
+  }, [autocompleteOpen, searchText, getSuggestions]);
 
   const getOptionLabel = (option: unknown) => {
     const typedOption = option as DataEntityRef;
@@ -146,12 +137,12 @@ const MainSearch: React.FC<AppSearchProps> = ({
           onInputChange={handleInputChange}
           getOptionLabel={getOptionLabel}
           options={options}
-          loading={loadingSuggestions}
+          loading={isSuggestionsLoading}
           freeSolo
           filterOptions={option => option}
           clearIcon={<ClearIcon />}
           renderInput={params => (
-            <AppTextField
+            <AppInput
               {...params}
               ref={params.InputProps.ref}
               size="large"
@@ -168,7 +159,7 @@ const MainSearch: React.FC<AppSearchProps> = ({
               }}
               customEndAdornment={{
                 variant: 'loader',
-                showAdornment: loadingSuggestions,
+                showAdornment: isSuggestionsLoading,
                 position: { mr: 4 },
               }}
             />

@@ -2,6 +2,8 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Record;
+import org.jooq.SelectConditionStep;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.GroupEntityRelationsRecord;
@@ -9,6 +11,7 @@ import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 
+import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 
 @Repository
@@ -38,6 +41,16 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     }
 
     @Override
+    public Flux<GroupEntityRelationsPojo> deleteRelations(final String groupOddrn, final String entityOddrn) {
+        final var query = DSL.deleteFrom(GROUP_ENTITY_RELATIONS)
+            .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn)
+                .and(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(entityOddrn)))
+            .returning();
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(GroupEntityRelationsPojo.class));
+    }
+
+    @Override
     public Flux<GroupEntityRelationsPojo> createRelations(final String groupOddrn, final List<String> entityOddrns) {
         if (entityOddrns.isEmpty()) {
             return Flux.just();
@@ -59,5 +72,15 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
                 .onDuplicateKeyIgnore()
                 .returning(GROUP_ENTITY_RELATIONS.fields())
         ).map(r -> r.into(GroupEntityRelationsPojo.class));
+    }
+
+    @Override
+    public Flux<GroupEntityRelationsPojo> getManuallyCreatedRelations(final String entityOddrn) {
+        final SelectConditionStep<Record> query = DSL.select()
+            .from(GROUP_ENTITY_RELATIONS)
+            .join(DATA_ENTITY).on(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(DATA_ENTITY.ODDRN))
+            .where(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(entityOddrn).and(DATA_ENTITY.MANUALLY_CREATED.isTrue()));
+        return jooqReactiveOperations.flux(query)
+            .map(r -> r.into(GroupEntityRelationsPojo.class));
     }
 }

@@ -1,38 +1,37 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import {
-  CollectorFormData,
-  Collector,
-  CollectorApiRegisterCollectorRequest,
-  CollectorApiUpdateCollectorRequest,
-} from 'generated-sources';
+import { Controller, useForm } from 'react-hook-form';
+import { Collector, CollectorFormData } from 'generated-sources';
+import { updateCollector, registerCollector } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
+import {
+  getCollectorCreatingStatuses,
+  getCollectoruUpdatingStatuses,
+} from 'redux/selectors';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { Asterisk } from 'components/Management/CollectorsList/CollectorForm/CollectorFormStyles';
-import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
+import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 
 interface CollectorFormDialogProps {
   btnCreateEl: JSX.Element;
-  isLoading: boolean;
   collector?: Collector;
-  registerCollector: (
-    params: CollectorApiRegisterCollectorRequest
-  ) => Promise<Collector>;
-  updateCollector: (
-    params: CollectorApiUpdateCollectorRequest
-  ) => Promise<Collector>;
 }
 
 const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   collector,
   btnCreateEl,
-  isLoading,
-  registerCollector,
-  updateCollector,
 }) => {
+  const dispatch = useAppDispatch();
+  const { isLoading: isCollectorCreating } = useAppSelector(
+    getCollectorCreatingStatuses
+  );
+  const { isLoading: isCollectorUpdating } = useAppSelector(
+    getCollectoruUpdatingStatuses
+  );
   const getDefaultValues = React.useCallback(
     (): CollectorFormData => ({
       name: collector?.name || '',
@@ -72,11 +71,13 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
   const onSubmit = (data: CollectorFormData) => {
     const parsedData = { ...data };
     (collector
-      ? updateCollector({
-          collectorId: collector.id,
-          collectorUpdateFormData: parsedData,
-        })
-      : registerCollector({ collectorFormData: parsedData })
+      ? dispatch(
+          updateCollector({
+            collectorId: collector.id,
+            collectorUpdateFormData: parsedData,
+          })
+        )
+      : dispatch(registerCollector({ collectorFormData: parsedData }))
     ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
@@ -112,7 +113,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.5 }}
             label="Name"
@@ -132,14 +133,14 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
         name="namespaceName"
         defaultValue={collector?.namespace?.name}
         render={({ field }) => (
-          <NamespaceAutocompleteContainer controllerProps={field} />
+          <NamespaceAutocomplete controllerProps={field} />
         )}
       />
       <Controller
         name="description"
         control={control}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.25 }}
             label="Description"
@@ -180,7 +181,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
       renderContent={collectorFormContent}
       renderActions={collectorFormActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isCollectorCreating || isCollectorUpdating}
       errorText={error}
       clearState={clearState}
     />

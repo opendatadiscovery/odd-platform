@@ -1,7 +1,7 @@
-import { ThunkAction } from '@reduxjs/toolkit';
+import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
-  Alert,
+  ActivityCountInfo,
   AlertTotals,
   AppInfo,
   AssociatedOwner,
@@ -9,9 +9,10 @@ import {
   DataEntity,
   DataEntityClass,
   DataEntityRef,
+  DataEntityRun,
   DataEntityType,
+  DataEntityUsageInfo,
   DataQualityTest,
-  DataQualityTestRun,
   DataSetField,
   DataSetTestReport,
   DataSetVersion,
@@ -33,47 +34,38 @@ import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest
 // eslint-disable-next-line lodash/import-scope
 import { Dictionary } from 'lodash';
 import { store } from 'redux/store';
-import { DataSetStructureTypesCount } from './datasetStructure';
 import {
+  Activity,
+  ActivityQueryParams,
+  Alert,
+  CurrentPageInfo,
+  DataEntityDetailsState,
+  DataEntityLineageById,
+  DataSetStructureTypesCount,
   FacetOptionsByName,
   SearchFacetsByName,
   SearchTotalsByName,
-} from './search';
-import { DataEntityLineageById } from './dataentityLineage';
-import { CurrentPageInfo } from './common';
-import { DataEntityDetailsState } from './dataentities';
-import {
   TermSearchFacetOptionsByName,
   TermSearchFacetsByName,
-} from './termSearch';
+} from 'redux/interfaces';
 
-export interface DataSourcesState {
-  byId: { [dataSourceId: string]: DataSource };
-  allIds: DataSource['id'][];
+export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface CollectorsState {
-  byId: { [collectorId: string]: Collector };
-  allIds: Collector['id'][];
+export interface CollectorsState extends EntityState<Collector> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface TagsState {
-  byId: { [tagId: number]: Tag };
-  allIds: Tag['id'][];
+export interface TagsState extends EntityState<Tag> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface LabelsState {
-  byId: { [labelId: number]: Label };
-  allIds: Label['id'][];
+export interface LabelsState extends EntityState<Label> {
   pageInfo?: CurrentPageInfo;
 }
 
-export interface NamespacesState {
-  byId: { [namespaceId: string]: Namespace };
-  allIds: Namespace['id'][];
+export interface NamespacesState extends EntityState<Namespace> {
   pageInfo?: CurrentPageInfo;
 }
 
@@ -104,7 +96,10 @@ export interface DatasetStructureState {
     };
   };
   statsByVersionId: {
-    [versionId: number]: DataSetStructureTypesCount;
+    [versionId: number]: {
+      typeStats: DataSetStructureTypesCount;
+      isUniqueStatsExist: boolean;
+    };
   };
   latestVersionByDataset: {
     [datasetId: string]: DataSetVersion['id'];
@@ -123,12 +118,6 @@ export interface DataQualityTestState {
       [suiteName: string]: DataQualityTest['id'][];
     };
   };
-  qualityTestRunsById: {
-    [qualityTestRunId: string]: DataQualityTestRun;
-  };
-  allTestRunIdsByTestId: {
-    [qualityTestId: string]: DataQualityTestRun['id'][];
-  };
   qualityTestRunsPageInfo: CurrentPageInfo;
   datasetTestReportByEntityId: {
     [dataEntityId: string]: DataSetTestReport;
@@ -136,6 +125,10 @@ export interface DataQualityTestState {
   testReportBySuiteName: {
     [suiteName: string]: DataSetQualityTestsStatusCount;
   };
+}
+
+export interface DataEntityRunState extends EntityState<DataEntityRun> {
+  pageInfo: CurrentPageInfo;
 }
 
 export interface DataEntityLineageState {
@@ -173,9 +166,10 @@ export interface DataEntitiesState {
     entityTypes: Dictionary<DataEntityType>;
     entityClasses: Dictionary<DataEntityClass>;
   };
+  dataEntityUsageInfo: DataEntityUsageInfo;
 }
 
-export interface SearchState {
+export interface DataEntitySearchState {
   searchId: string;
   query: string;
   myObjects: boolean;
@@ -190,16 +184,9 @@ export interface SearchState {
   facetState: SearchFacetsByName;
 }
 
-export interface AlertsState {
+export interface AlertsState extends EntityState<Alert> {
   totals: AlertTotals;
   pageInfo: CurrentPageInfo;
-  byId: {
-    [alertId: string]: Alert;
-  };
-  allIds: Alert['id'][];
-  alertIdsByDataEntityId: {
-    [dataEntityId: string]: Alert['id'][];
-  };
 }
 
 export interface ProfileState {
@@ -234,6 +221,19 @@ export interface TermLinkedListState {
     [termId: string]: number[];
   };
   pageInfo?: CurrentPageInfo;
+}
+
+export interface ActivitiesState {
+  activitiesByDate: {
+    [date: string]: Activity[];
+  };
+  pageInfo: {
+    hasNext: boolean;
+    lastEventId?: number;
+    lastEventDateTime?: number;
+  };
+  counts: ActivityCountInfo;
+  queryParams: ActivityQueryParams;
 }
 
 export type RootState = ReturnType<typeof store.getState>;

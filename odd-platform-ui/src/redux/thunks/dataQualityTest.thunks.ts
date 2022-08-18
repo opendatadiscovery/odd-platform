@@ -1,77 +1,63 @@
 import {
   Configuration,
-  DataQualityApiGetDatasetTestReportRequest,
-  DataQualityApi,
-  DataSetTestReport,
-  DataQualityApiGetDataEntityDataQATestsRequest,
+  DataEntity,
   DataEntityList,
-  DataQualityApiGetRunsRequest,
-  DataQualityTestRunList,
+  DataQualityApi,
+  DataQualityApiGetDataEntityDataQATestsRequest,
+  DataQualityApiGetDatasetTestReportRequest,
+  DataQualityApiSetDataQATestSeverityRequest,
+  DataSetTestReport,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
-import {
-  PaginatedResponse,
-  PartialEntityUpdateParams,
-} from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const datasetQualityTestApiClient = new DataQualityApi(apiClientConf);
+const dataQualityApi = new DataQualityApi(apiClientConf);
 
-export const fetchDataSetQualityTestReport = createThunk<
-  DataQualityApiGetDatasetTestReportRequest,
-  DataSetTestReport,
-  PartialEntityUpdateParams<DataSetTestReport>
+export const fetchDataSetQualityTestReport = createAsyncThunk<
+  { entityId: number; value: DataSetTestReport },
+  DataQualityApiGetDatasetTestReportRequest
 >(
-  (params: DataQualityApiGetDatasetTestReportRequest) =>
-    datasetQualityTestApiClient.getDatasetTestReport(params),
-  actions.fetchDataSetQualityTestReportAction,
-  (
-    response: DataSetTestReport,
-    request: DataQualityApiGetDatasetTestReportRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: response,
-  })
+  actions.fetchDataSetQualityTestReportActionType,
+  async ({ dataEntityId }) => {
+    const response = await dataQualityApi.getDatasetTestReport({
+      dataEntityId,
+    });
+    return { entityId: dataEntityId, value: response };
+  }
 );
 
-export const fetchDataSetQualityTestList = createThunk<
-  DataQualityApiGetDataEntityDataQATestsRequest,
-  DataEntityList,
-  PartialEntityUpdateParams<DataEntityList>
+export const fetchDataSetQualityTestList = createAsyncThunk<
+  {
+    entityId: number;
+    value: DataEntityList;
+  },
+  DataQualityApiGetDataEntityDataQATestsRequest
 >(
-  (params: DataQualityApiGetDataEntityDataQATestsRequest) =>
-    datasetQualityTestApiClient.getDataEntityDataQATests(params),
-  actions.fetchDataSetQualityTestListAction,
-  (
-    response: DataEntityList,
-    request: DataQualityApiGetDataEntityDataQATestsRequest
-  ) => ({
-    entityId: request.dataEntityId,
-    value: response,
-  })
+  actions.fetchDataSetQualityTestListActionType,
+  async ({ dataEntityId }) => {
+    const response = await dataQualityApi.getDataEntityDataQATests({
+      dataEntityId,
+    });
+    return {
+      entityId: dataEntityId,
+      value: response,
+    };
+  }
 );
 
-export const fetchDataSetQualityTestRuns = createThunk<
-  DataQualityApiGetRunsRequest,
-  DataQualityTestRunList,
-  PartialEntityUpdateParams<PaginatedResponse<DataQualityTestRunList>>
+export const setDataQATestSeverity = createAsyncThunk<
+  DataEntity,
+  DataQualityApiSetDataQATestSeverityRequest
 >(
-  (params: DataQualityApiGetRunsRequest) =>
-    datasetQualityTestApiClient.getRuns(params),
-  actions.fetchDataSetQualityTestRunsAction,
-  (
-    response: DataQualityTestRunList,
-    request: DataQualityApiGetRunsRequest
-  ) => ({
-    entityId: request.dataqatestId,
-    value: {
-      items: response.items,
-      pageInfo: {
-        ...response.pageInfo,
-        page: request.page,
-      },
-    },
-  })
+  actions.setDataQATestSeverityActionType,
+  async ({ dataEntityId, dataqaTestId, dataQualityTestSeverityForm }) => {
+    const dataQATest = await dataQualityApi.setDataQATestSeverity({
+      dataEntityId,
+      dataqaTestId,
+      dataQualityTestSeverityForm,
+    });
+    return dataQATest;
+  }
 );

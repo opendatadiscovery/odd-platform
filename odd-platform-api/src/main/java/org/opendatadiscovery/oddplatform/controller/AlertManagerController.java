@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.opendatadiscovery.oddplatform.dto.ExternalAlert;
+import org.opendatadiscovery.oddplatform.dto.alert.ExternalAlert;
 import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;

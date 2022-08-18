@@ -8,35 +8,37 @@ import {
   DataEntityType,
   DataEntityTypeNameEnum,
 } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import {
+  AppButton,
+  AppInput,
+  AppMenuItem,
+  AppSelect,
+  DialogWrapper,
+  NamespaceAutocomplete,
+  SearchSuggestionsAutocomplete,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getDataEntityDetails,
   getDataEntityGroupCreatingStatuses,
   getDataEntityGroupUpdatingStatuses,
   getDataEntityTypesByClassName,
-} from 'redux/selectors/dataentity.selectors';
+} from 'redux/selectors';
 import {
   createDataEntityGroup,
   updateDataEntityGroup,
 } from 'redux/thunks';
-import EntityItem from 'components/DataEntityDetails/DataEntityGroupForm/EntityItem/EntityItem';
 import { useHistory } from 'react-router-dom';
-import { dataEntityDetailsPath } from 'lib/paths';
+import EntityItem from './EntityItem/EntityItem';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
-import EntitiesSuggestionsAutocompleteContainer from './EntitiesSuggestionsAutoocomplete/EntitiesSuggestionsAutocompleteContainer';
-import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
 
 interface DataEntityGroupFormProps {
   btnCreateEl: JSX.Element;
 }
 
-interface DataEntityGroupFormData
+export interface DataEntityGroupFormData
   extends Omit<GeneratedDataEntityGroupFormData, 'type'> {
   type?: DataEntityType;
 }
@@ -47,9 +49,10 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
   const history = useHistory();
+  const { dataEntityDetailsPath } = useAppPaths();
 
-  const dataEntityGroupDetails: DataEntityDetails = useAppSelector(state =>
-    getDataEntityDetails(state, dataEntityId)
+  const dataEntityGroupDetails: DataEntityDetails = useAppSelector(
+    getDataEntityDetails(dataEntityId)
   );
 
   const types = useAppSelector(state =>
@@ -80,7 +83,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
     [dataEntityGroupDetails]
   );
 
-  const { handleSubmit, control, reset, formState, setValue } =
+  const { handleSubmit, control, reset, formState, setValue, register } =
     useForm<DataEntityGroupFormData>({
       mode: 'onChange',
       reValidateMode: 'onChange',
@@ -156,7 +159,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         control={control}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Data Entity Group Name"
             label="Name"
@@ -173,7 +176,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         control={control}
         name="namespaceName"
         render={({ field }) => (
-          <NamespaceAutocompleteContainer controllerProps={field} />
+          <NamespaceAutocomplete controllerProps={field} />
         )}
       />
       <Controller
@@ -181,9 +184,8 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         control={control}
         rules={{ required: true }}
         render={({ field }) => (
-          <AppTextField
+          <AppSelect
             label="Type"
-            select
             sx={{ mt: 1.5 }}
             defaultValue={field.value?.name}
           >
@@ -202,19 +204,13 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
                   {type.name}
                 </AppMenuItem>
               ))}
-          </AppTextField>
+          </AppSelect>
         )}
       />
-      <Controller
-        control={control}
-        name="entities"
-        rules={{ required: true }}
-        render={({ field }) => (
-          <EntitiesSuggestionsAutocompleteContainer
-            controllerProps={field}
-            append={append}
-          />
-        )}
+      <SearchSuggestionsAutocomplete
+        formOnChange={register('entities').onChange}
+        append={append}
+        addEntities
       />
       <EntityItemsContainer sx={{ mt: 1.25 }}>
         {fields?.map((entity, index) => (

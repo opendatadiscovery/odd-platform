@@ -11,6 +11,12 @@ spring:
     urls: ""
     dn:
       pattern: ""
+#  redis:
+#    host: localhost
+#    port: 6379
+#    username:
+#    password:
+#    database: 0
 #  security:
 #    oauth2:
 #      resourceserver:
@@ -33,6 +39,10 @@ cognito:
   enabled: false
   logoutUrl:
 
+session:
+  # INTERNAL_POSTGRESQL, REDIS, IN_MEMORY
+  provider: IN_MEMORY
+
 auth:
   # DISABLED, LOGIN_FORM, OAUTH2
   type: DISABLED
@@ -50,6 +60,21 @@ metrics:
   export:
     enabled: false
     otlp-endpoint: http://localhost:4317
+
+notifications:
+  enabled: false
+  message:
+    downstream-entities-depth: 1
+  wal:
+    advisory-lock-id: 100
+    replication-slot-name: odd_platform_replication_slot
+    publication-name: odd_platform_publication_alert
+#  receivers:
+#    slack:
+#      url:
+#      platform-base-url:
+#    webhook:
+#      url:
 
 management:
   endpoints:
@@ -69,6 +94,8 @@ management:
   health:
     ldap:
       enabled: false
+    redis:
+      enabled: false
 
 logging:
   level:
@@ -76,4 +103,9 @@ logging:
     org.jooq.tools.LoggerListener: info
     io.r2dbc.postgresql.QUERY: info
     io.r2dbc.postgresql.PARAM: info
+    org.opendatadiscovery.oddplatform.notification: info
+
+odd:
+  activity:
+    partition-period: 30
 

@@ -1,42 +1,42 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  DataSource,
-  DataSourceApiGetDataSourceListRequest,
-} from 'generated-sources';
+  getDataSourcesListPage,
+  getDataSourcesList,
+  getDatasourceDeletingStatuses,
+  getIsDataSourcesListFetching,
+} from 'redux/selectors';
+import { fetchDataSourcesList } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useDebouncedCallback } from 'use-debounce';
-import { CurrentPageInfo } from 'redux/interfaces/common';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import DataSourceFormDialogContainer from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormContainer';
+import DataSourceForm from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
-import DataSourceItemContainer from './DataSourceItem/DataSourceItemContainer';
+import DataSourceItem from './DataSourceItem/DataSourceItem';
 import * as S from './DataSourcesListStyles';
 
-interface DataSourcesListProps {
-  dataSourcesList: DataSource[];
-  fetchDataSourcesList: (
-    params: DataSourceApiGetDataSourceListRequest
-  ) => void;
-  isDeleting: boolean;
-  pageInfo?: CurrentPageInfo;
-  isDataSourcesListFetching: boolean;
-}
+const DataSourcesListView: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const dataSourcesList = useAppSelector(getDataSourcesList);
 
-const DataSourcesListView: React.FC<DataSourcesListProps> = ({
-  dataSourcesList,
-  fetchDataSourcesList,
-  isDeleting,
-  pageInfo,
-  isDataSourcesListFetching,
-}) => {
+  const pageInfo = useAppSelector(getDataSourcesListPage);
+
+  const { isLoading: isDataSourcesListFetching } = useAppSelector(
+    getIsDataSourcesListFetching
+  );
+  const { isLoading: isDataSourceDeleting } = useAppSelector(
+    getDatasourceDeletingStatuses
+  );
+
   const pageSize = 30;
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalDataSources, setTotalDataSources] = React.useState<
@@ -45,9 +45,9 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
 
   React.useEffect(() => {
     if (!searchText) {
-      fetchDataSourcesList({ page: 1, size: pageSize });
+      dispatch(fetchDataSourcesList({ page: 1, size: pageSize }));
     }
-  }, [isDeleting, searchText]);
+  }, [isDataSourceDeleting, searchText]);
 
   React.useEffect(() => {
     if (!searchText) setTotalDataSources(pageInfo?.total);
@@ -55,7 +55,13 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      fetchDataSourcesList({ page: 1, size: pageSize, query: searchText });
+      dispatch(
+        fetchDataSourcesList({
+          page: 1,
+          size: pageSize,
+          query: searchText,
+        })
+      );
     }, 500),
     [searchText]
   );
@@ -75,11 +81,13 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
-    fetchDataSourcesList({
-      page: pageInfo.page + 1,
-      size: pageSize,
-      query: searchText,
-    });
+    dispatch(
+      fetchDataSourcesList({
+        page: pageInfo.page + 1,
+        size: pageSize,
+        query: searchText,
+      })
+    );
   };
 
   return (
@@ -91,7 +99,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppTextField
+        <AppInput
           placeholder="Search datasource..."
           sx={{ minWidth: '340px' }}
           fullWidth={false}
@@ -112,7 +120,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <DataSourceFormDialogContainer
+        <DataSourceForm
           btnCreateEl={
             <AppButton
               size="medium"
@@ -160,7 +168,7 @@ const DataSourcesListView: React.FC<DataSourcesListProps> = ({
             >
               {dataSourcesList.map(dataSource => (
                 <Grid key={dataSource.id} sx={{ mb: 1 }}>
-                  <DataSourceItemContainer
+                  <DataSourceItem
                     key={dataSource.id}
                     dataSource={dataSource}
                   />

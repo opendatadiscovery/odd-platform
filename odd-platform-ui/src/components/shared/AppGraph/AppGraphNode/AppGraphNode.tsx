@@ -1,35 +1,20 @@
 import React from 'react';
 import { HierarchyPointNode } from 'd3-hierarchy';
 import { select } from 'd3-selection';
-import { interpolateString } from 'd3-interpolate';
 import { DataEntityClassLabelMap } from 'redux/interfaces/dataentities';
-import { Link } from 'react-router-dom';
-import { dataEntityDetailsPath } from 'lib/paths';
+import { useHistory } from 'react-router-dom';
 import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
-import {
-  DataEntityClassNameEnum,
-  DataEntityLineage,
-} from 'generated-sources';
-import GroupedEntitiesListModal from 'components/shared/AppGraph/AppGraphNode/GroupedEntitiesListModal/GroupedEntitiesListModal';
-import NodeListButton from 'components/shared/AppGraph/AppGraphNode/NodeListButton/NodeListButton';
-import {
-  Attribute,
-  AttributeLabel,
-  Container,
-  EntityClassContainer,
-  LoadMoreButton,
-  LoadMoreButtonName,
-  LoadMoreSpinner,
-  LoadMoreSpinnerBackground,
-  Placeholder,
-  RootNodeRect,
-  Title,
-  TypeLabel,
-  UnknownEntityNameCircle,
-  UnknownEntityNameCrossedLine,
-} from './AppGraphNodeStyles';
+import { DataEntityClassNameEnum } from 'generated-sources';
+import { StreamType } from 'redux/interfaces';
+import { useAppPaths } from 'lib/hooks';
+import NodeListButton from './NodeListButton/NodeListButton';
+import GroupedEntitiesListModal from './GroupedEntitiesListModal/GroupedEntitiesListModal';
+import * as S from './AppGraphNodeStyles';
+import LoadMoreButton from './LoadMoreButton/LoadMoreButton';
 
 interface AppGraphNodeProps {
+  appGraphNodeType: StreamType;
+  rootNodeId: number;
   data: TreeNodeDatum;
   position: Point;
   parent: HierarchyPointNode<TreeNodeDatum> | null;
@@ -42,16 +27,15 @@ interface AppGraphNodeProps {
   compactView: boolean;
   enableLegacyTransitions: boolean;
   transitionDuration: number;
-  fetchMoreLineage: (
-    entityId: number,
-    lineageDepth: number
-  ) => Promise<DataEntityLineage>;
   reverse?: boolean;
-  isStreamFetching: boolean;
   hasChildren: boolean;
+  nodeDepth: number;
+  setInitialDepth: (depth: number) => void;
 }
 
 const AppGraphNode: React.FC<AppGraphNodeProps> = ({
+  appGraphNodeType,
+  rootNodeId,
   data,
   transitionDuration,
   position,
@@ -59,17 +43,25 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
   nodeSize,
   compactView,
   enableLegacyTransitions,
-  fetchMoreLineage,
   reverse,
-  isStreamFetching,
   hasChildren,
+  nodeDepth,
+  setInitialDepth,
 }) => {
+  const history = useHistory();
+  const { dataEntityDetailsPath } = useAppPaths();
+
   const detailsLink =
     parent && data.externalName
       ? dataEntityDetailsPath(
           data.originalGroupId ? data.originalGroupId : data.id
         )
       : '#';
+
+  const handleNodeClick = () => {
+    setInitialDepth(nodeDepth);
+    history.push(detailsLink);
+  };
 
   let nodeRef: SVGGElement;
   const titleLayout = {
@@ -91,6 +83,14 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     height: 16,
     my: compactView ? 11 : 16,
     mx: 2,
+  };
+  const loadMoreLayout = {
+    x: nodeSize.x,
+    y: nodeSize.y / 2,
+    width: 91,
+    height: 24,
+    my: 4,
+    mx: 8,
   };
 
   const setTransform = (
@@ -134,77 +134,72 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     }
   };
 
+  const upstreamArrow = (
+    <svg
+      width="6"
+      height="6"
+      viewBox="0 0 6 6"
+      x={0}
+      y={-attributeLayout.y + attributeLayout.my + titleLayout.my}
+    >
+      <path
+        d="M5.2 1L1 1M1 1L1 5.2M1 1L7 7"
+        stroke="#A8B0BD"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+
+  const downstreamArrow = (
+    <svg
+      width="6"
+      height="6"
+      viewBox="0 0 8 8"
+      x={0}
+      y={-attributeLayout.y + attributeLayout.my + titleLayout.my}
+    >
+      <path
+        d="M2.8 7L7 7M7 7L7 2.8M7 7L1 0.999999"
+        stroke="#A8B0BD"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+
   const commitTransform = () => {
     const newTransform = setTransform(position, parent);
     applyTransform(newTransform, transitionDuration);
   };
 
-  // load more btn
-  let loadMoreRef: SVGGElement;
-  const loadMoreLayout = {
-    x: nodeSize.x,
-    y: nodeSize.y / 2,
-    width: 91,
-    height: 24,
-    my: 4,
-    mx: 8,
-  };
+  React.useEffect(() => {
+    commitTransform();
+  }, [commitTransform]);
 
   const [showLoadMore, setShowLoadMore] = React.useState<boolean>(false);
+  const [hideLoadMore, setHideLoadMore] = React.useState<boolean>(false);
+  const hideLoadMoreHandler = React.useCallback(
+    () => setHideLoadMore(true),
+    [setHideLoadMore]
+  );
 
   const handleLoadMoreMouseEnter = () => setShowLoadMore(true);
   const handleLoadMoreMouseLeave = () => setShowLoadMore(false);
-
-  const loadMoreButtonHandler = () => {
-    if (parent?.children) {
-      fetchMoreLineage(data.id, 1).then(() => setShowLoadMore(false));
-    }
-  };
-
-  const loadMoreTransformTranslate = `translate(${
-    reverse
-      ? -loadMoreLayout.mx - loadMoreLayout.width
-      : loadMoreLayout.x + loadMoreLayout.mx
-  },${loadMoreLayout.y - loadMoreLayout.height / 2})`;
-
-  let loadMoreSpinnerRef: SVGGElement;
-
-  // spinner parameters
-  const centerX = 46;
-  const centerY = 12;
-  const radius = 8;
-  const strokeWidth = 2;
-
-  const loadMoreSpinnerTransform = () => {
-    select(loadMoreSpinnerRef)
-      .attr('cx', centerX)
-      .attr('cy', centerY)
-      .attr('r', radius)
-      .attr('stroke-width', strokeWidth)
-      .attr('stroke-linecap', 'round')
-      .attr('stroke-dasharray', 2 * Math.PI * radius)
-      .attr('stroke-dashoffset', 50)
-      .transition()
-      .duration(2000)
-      .attrTween('transform', () =>
-        interpolateString(
-          `translate(0, 0) rotate(0, ${centerX}, ${centerY})`,
-          `translate(0, 0) rotate(360, ${centerX}, ${centerY})`
-        )
-      )
-      .attr('stroke-dashoffset', 0)
-      .on('end', loadMoreSpinnerTransform);
-  };
-
-  React.useEffect(() => {
-    commitTransform();
-    loadMoreSpinnerTransform();
-  }, [commitTransform, loadMoreSpinnerTransform]);
 
   const isDEG = !!data.entityClasses?.find(
     entityClass =>
       entityClass.name === DataEntityClassNameEnum.ENTITY_GROUP
   );
+
+  const hasMoreLineage =
+    appGraphNodeType === 'downstream'
+      ? Boolean(data.childrenCount)
+      : Boolean(data.parentsCount);
+
+  const showParentChildrenCount = reverse
+    ? Boolean(data.childrenCount)
+    : Boolean(data.parentsCount);
 
   return (
     <g
@@ -228,28 +223,27 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
         fill="transparent"
       />
 
-      <Container>
-        <RootNodeRect
+      <S.NodeContainer>
+        <S.RootNodeRect
           width={nodeSize.x}
           height={nodeSize.y}
           $parent={!!parent}
         />
         <g transform={`translate(${titleLayout.x},${titleLayout.y})`}>
           {data.externalName ? (
-            <Link to={detailsLink}>
-              <Title
-                className="wrap-text"
-                width={nodeSize.x - titleLayout.x * 2}
-              >
-                <title>{data.internalName || data.externalName}</title>
-                <tspan x={0} y={0} className="visible-text" />
-                <tspan className="ellip">...</tspan>
-              </Title>
-            </Link>
+            <S.Title
+              className="wrap-text"
+              width={nodeSize.x - titleLayout.x * 2}
+              onClick={handleNodeClick}
+            >
+              <title>{data.internalName || data.externalName}</title>
+              <tspan x={0} y={0} className="visible-text" />
+              <tspan className="ellip">...</tspan>
+            </S.Title>
           ) : (
             <>
-              <UnknownEntityNameCircle />
-              <UnknownEntityNameCrossedLine />
+              <S.UnknownEntityNameCircle />
+              <S.UnknownEntityNameCrossedLine />
             </>
           )}
         </g>
@@ -258,8 +252,8 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
             nodeSize.y - entityClassLayout.my
           })`}
         >
-          <Attribute>
-            <Placeholder
+          <S.Attribute>
+            <S.Placeholder
               x={0}
               y={0}
               $show={
@@ -267,19 +261,29 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               }
             >
               No Information
-            </Placeholder>
-          </Attribute>
+            </S.Placeholder>
+          </S.Attribute>
         </g>
         <g
           transform={`translate(${attributeLayout.x},${attributeLayout.y})`}
           style={{ display: compactView ? 'none' : 'initial' }}
         >
-          <Attribute>
-            <AttributeLabel key={`nsl-${data.id}`} x={0} y={0}>
+          {showParentChildrenCount && data.externalName ? (
+            <>
+              {reverse ? downstreamArrow : upstreamArrow}
+              <S.Count x={10} y={-attributeLayout.height}>
+                {reverse
+                  ? `${data.childrenCount}`
+                  : `${data.parentsCount}`}
+              </S.Count>
+            </>
+          ) : null}
+          <S.Attribute>
+            <S.AttributeLabel key={`nsl-${data.id}`} x={0} y={0}>
               Space
-            </AttributeLabel>
-          </Attribute>
-          <Attribute
+            </S.AttributeLabel>
+          </S.Attribute>
+          <S.Attribute
             className="wrap-text"
             width={
               nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
@@ -292,24 +296,24 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               className="visible-text"
             />
             <tspan className="ellip">...</tspan>
-            <Placeholder
+            <S.Placeholder
               x={attributeLayout.labelWidth}
               y={0}
               $show={!data.dataSource?.namespace}
             >
               No Information
-            </Placeholder>
-          </Attribute>
-          <Attribute>
-            <AttributeLabel
+            </S.Placeholder>
+          </S.Attribute>
+          <S.Attribute>
+            <S.AttributeLabel
               key={`dsl-${data.id}`}
               x={0}
               y={attributeLayout.height}
             >
               Source
-            </AttributeLabel>
-          </Attribute>
-          <Attribute
+            </S.AttributeLabel>
+          </S.Attribute>
+          <S.Attribute
             className="wrap-text"
             width={
               nodeSize.x - titleLayout.x * 2 - attributeLayout.labelWidth
@@ -322,30 +326,31 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               className="visible-text"
             />
             <tspan className="ellip">...</tspan>
-            <Placeholder
+            <S.Placeholder
               x={attributeLayout.labelWidth}
               y={attributeLayout.height}
               $show={!data.dataSource}
             >
               No Information
-            </Placeholder>
-          </Attribute>
+            </S.Placeholder>
+          </S.Attribute>
           {data.nodesRelatedWithDEG &&
             data.nodesRelatedWithDEG?.length > 0 && (
               <>
-                <Attribute>
-                  <AttributeLabel
+                <S.Attribute>
+                  <S.AttributeLabel
                     key={`dsl-${data.id}`}
                     x={0}
                     y={attributeLayout.height * 2}
                   >
                     Items
-                  </AttributeLabel>
-                </Attribute>
+                  </S.AttributeLabel>
+                </S.Attribute>
                 <GroupedEntitiesListModal
                   entities={data.nodesRelatedWithDEG}
                   dataEntityName={data.internalName || data.externalName}
-                  fetchMoreLineage={fetchMoreLineage}
+                  appGraphNodeType={appGraphNodeType}
+                  rootNodeId={rootNodeId}
                   openBtnEl={
                     <NodeListButton
                       text={`${
@@ -368,12 +373,12 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
               nodeSize.y - entityClassLayout.my - entityClassLayout.height
             })`}
           >
-            <EntityClassContainer
+            <S.EntityClassContainer
               $entityClassName={entityClass.name}
               width={entityClassLayout.width}
               height={entityClassLayout.height}
             />
-            <TypeLabel
+            <S.TypeLabel
               x={entityClassLayout.width / 2}
               y={entityClassLayout.height / 2 + 1}
             >
@@ -383,51 +388,30 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
                   {DataEntityClassLabelMap.get(entityClass.name)?.normal}
                 </title>
               </tspan>
-            </TypeLabel>
+            </S.TypeLabel>
           </g>
         ))}
-      </Container>
+      </S.NodeContainer>
 
-      {!hasChildren && showLoadMore && !isDEG && (
-        <LoadMoreButton
-          ref={n => {
-            if (n) {
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              loadMoreRef = n;
+      {!hasChildren &&
+        !hideLoadMore &&
+        showLoadMore &&
+        hasMoreLineage &&
+        !isDEG && (
+          <LoadMoreButton
+            hideLoadMore={hideLoadMoreHandler}
+            rootNodeId={rootNodeId}
+            dataEntityId={data.id}
+            loadMoreLayout={loadMoreLayout}
+            appGraphNodeType={appGraphNodeType}
+            reverse={reverse}
+            loadMoreCount={
+              appGraphNodeType === 'downstream'
+                ? data.childrenCount
+                : data.parentsCount
             }
-          }}
-          transform={loadMoreTransformTranslate}
-          onClick={loadMoreButtonHandler}
-        >
-          <rect
-            width={loadMoreLayout.width}
-            height={loadMoreLayout.height}
-            rx={16}
           />
-          {isStreamFetching ? (
-            <g>
-              <LoadMoreSpinnerBackground
-                cx={centerX}
-                cy={centerY}
-                r={radius}
-                strokeWidth={strokeWidth}
-              />
-              <LoadMoreSpinner
-                ref={n => {
-                  if (n) loadMoreSpinnerRef = n;
-                }}
-              />
-            </g>
-          ) : (
-            <LoadMoreButtonName
-              x={loadMoreLayout.width / 2}
-              y={loadMoreLayout.height / 2 + loadMoreLayout.my}
-            >
-              Load more
-            </LoadMoreButtonName>
-          )}
-        </LoadMoreButton>
-      )}
+        )}
     </g>
   );
 };

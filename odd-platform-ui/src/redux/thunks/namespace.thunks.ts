@@ -1,72 +1,63 @@
 import {
   Configuration,
-  NamespaceApi,
-  NamespaceList,
   Namespace,
+  NamespaceApi,
   NamespaceApiCreateNamespaceRequest,
-  NamespaceApiUpdateNamespaceRequest,
   NamespaceApiDeleteNamespaceRequest,
   NamespaceApiGetNamespaceListRequest,
+  NamespaceApiUpdateNamespaceRequest,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import { PaginatedResponse } from 'redux/interfaces/common';
+import { CurrentPageInfo } from 'redux/interfaces/common';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new NamespaceApi(apiClientConf);
+const namespaceApi = new NamespaceApi(apiClientConf);
 
-export const fetchNamespaceList = createThunk<
-  NamespaceApiGetNamespaceListRequest,
-  NamespaceList,
-  PaginatedResponse<NamespaceList>
->(
-  (params: NamespaceApiGetNamespaceListRequest) =>
-    apiClient.getNamespaceList(params),
-  actions.fetchNamespacesAction,
-  (
-    response: NamespaceList,
-    request: NamespaceApiGetNamespaceListRequest
-  ) => ({
-    ...response,
-    pageInfo: {
-      ...response.pageInfo,
-      total: response.pageInfo?.total || 0,
-      page: request.page,
-      hasNext: response.items.length === request.size,
-    },
-  })
-);
+export const fetchNamespaceList = createAsyncThunk<
+  { namespaceList: Array<Namespace>; pageInfo: CurrentPageInfo },
+  NamespaceApiGetNamespaceListRequest
+>(actions.fetchNamespacesActionType, async ({ page, size, query }) => {
+  const { items, pageInfo } = await namespaceApi.getNamespaceList({
+    page,
+    size,
+    query,
+  });
 
-export const createNamespace = createThunk<
-  NamespaceApiCreateNamespaceRequest,
+  return { namespaceList: items, pageInfo: { ...pageInfo, page } };
+});
+
+export const createNamespace = createAsyncThunk<
   Namespace,
-  Namespace
->(
-  (params: NamespaceApiCreateNamespaceRequest) =>
-    apiClient.createNamespace(params),
-  actions.createNamespacesAction,
-  (result: Namespace) => result
-);
+  NamespaceApiCreateNamespaceRequest
+>(actions.createNamespaceActionType, async ({ namespaceFormData }) => {
+  const namespace = await namespaceApi.createNamespace({
+    namespaceFormData,
+  });
 
-export const updateNamespace = createThunk<
-  NamespaceApiUpdateNamespaceRequest,
+  return namespace;
+});
+
+export const updateNamespace = createAsyncThunk<
   Namespace,
-  Namespace
+  NamespaceApiUpdateNamespaceRequest
 >(
-  (params: NamespaceApiUpdateNamespaceRequest) =>
-    apiClient.updateNamespace(params),
-  actions.updateNamespaceAction,
-  (result: Namespace) => result
+  actions.updateNamespaceActionType,
+  async ({ namespaceId, namespaceUpdateFormData }) => {
+    const namespace = await namespaceApi.updateNamespace({
+      namespaceId,
+      namespaceUpdateFormData,
+    });
+    return namespace;
+  }
 );
 
-export const deleteNamespace = createThunk<
-  NamespaceApiDeleteNamespaceRequest,
-  void,
-  number
->(
-  (params: NamespaceApiDeleteNamespaceRequest) =>
-    apiClient.deleteNamespace(params),
-  actions.deleteNamespaceAction,
-  (_, reqParams) => reqParams.namespaceId
-);
+export const deleteNamespace = createAsyncThunk<
+  number,
+  NamespaceApiDeleteNamespaceRequest
+>(actions.deleteNamespaceActionType, async ({ namespaceId }) => {
+  await namespaceApi.deleteNamespace({ namespaceId });
+
+  return namespaceId;
+});

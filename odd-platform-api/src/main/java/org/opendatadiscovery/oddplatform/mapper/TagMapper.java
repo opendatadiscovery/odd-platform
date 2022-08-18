@@ -25,7 +25,7 @@ public interface TagMapper {
 
     Tag mapToTag(final TagPojo pojo);
 
-    List<Tag> mapToTagList(final Collection<TagPojo> pojos);
+    List<Tag> mapToTagList(final Collection<TagDto> dtos);
 
     default TagsResponse mapToTagsResponse(final Page<TagDto> page) {
         return new TagsResponse()

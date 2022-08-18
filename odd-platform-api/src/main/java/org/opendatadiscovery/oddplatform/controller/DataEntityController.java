@@ -1,11 +1,17 @@
 package org.opendatadiscovery.oddplatform.controller;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.api.DataEntityApi;
+import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
+import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
@@ -13,6 +19,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityTermFormData;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -27,10 +34,12 @@ import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipUpdateFormD
 import org.opendatadiscovery.oddplatform.api.contract.model.Tag;
 import org.opendatadiscovery.oddplatform.api.contract.model.TagsFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.TermRef;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.service.AlertService;
 import org.opendatadiscovery.oddplatform.service.DataEntityService;
+import org.opendatadiscovery.oddplatform.service.LineageService;
 import org.opendatadiscovery.oddplatform.service.OwnershipService;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.term.TermService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,15 +57,21 @@ public class DataEntityController
     private final OwnershipService ownershipService;
     private final AlertService alertService;
     private final TermService termService;
+    private final LineageService lineageService;
+    private final ActivityService activityService;
 
     public DataEntityController(final DataEntityService entityService,
                                 final OwnershipService ownershipService,
                                 final AlertService alertService,
-                                final TermService termService) {
+                                final TermService termService,
+                                final LineageService lineageService,
+                                final ActivityService activityService) {
         super(entityService);
         this.ownershipService = ownershipService;
         this.alertService = alertService;
         this.termService = termService;
+        this.lineageService = lineageService;
+        this.activityService = activityService;
     }
 
     @Override
@@ -99,8 +114,7 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return metadataObject.collectList()
-            .publishOn(Schedulers.boundedElastic())
-            .flatMap(moList -> Mono.defer(() -> entityService.createMetadata(dataEntityId, moList)))
+            .flatMap(moList -> entityService.createMetadata(dataEntityId, moList))
             .map(ResponseEntity::ok);
     }
 
@@ -110,9 +124,7 @@ public class DataEntityController
         final Long metadataFieldId,
         final ServerWebExchange exchange
     ) {
-        return entityService
-            .deleteMetadata(dataEntityId, metadataFieldId)
-            .subscribeOn(Schedulers.boundedElastic())
+        return entityService.deleteMetadata(dataEntityId, metadataFieldId)
             .map(m -> ResponseEntity.noContent().build());
     }
 
@@ -177,7 +189,6 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return internalDescriptionFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(form -> entityService.upsertDescription(dataEntityId, form))
             .map(ResponseEntity::ok);
     }
@@ -190,18 +201,14 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return metadataFieldValueUpdateFormData
-            .publishOn(Schedulers.boundedElastic())
-            .flatMap(form -> Mono.defer(
-                () -> entityService.upsertMetadataFieldValue(dataEntityId, metadataFieldId, form)))
+            .flatMap(form -> entityService.upsertMetadataFieldValue(dataEntityId, metadataFieldId, form))
             .map(ResponseEntity::ok);
     }
 
     @Override
     public Mono<ResponseEntity<DataEntityClassAndTypeDictionary>> getDataEntityClasses(
         final ServerWebExchange exchange) {
-        return entityService
-            .getDataEntityClassesAndTypes()
-            .subscribeOn(Schedulers.boundedElastic())
+        return entityService.getDataEntityClassesAndTypes()
             .map(ResponseEntity::ok);
     }
 
@@ -212,7 +219,6 @@ public class DataEntityController
         final ServerWebExchange exchange
     ) {
         return internalNameFormData
-            .publishOn(Schedulers.boundedElastic())
             .flatMap(name -> entityService.upsertBusinessName(dataEntityId, name))
             .map(ResponseEntity::ok);
     }
@@ -223,18 +229,17 @@ public class DataEntityController
         final Mono<TagsFormData> tagsFormData,
         final ServerWebExchange exchange
     ) {
-        final Flux<Tag> labels = tagsFormData
-            .publishOn(Schedulers.boundedElastic())
+        final Flux<Tag> tags = tagsFormData
             .flatMapMany(form -> entityService.upsertTags(dataEntityId, form));
 
-        return Mono.just(ResponseEntity.ok(labels));
+        return Mono.just(ResponseEntity.ok(tags));
     }
 
     @Override
     public Mono<ResponseEntity<DataEntityLineage>> getDataEntityDownstreamLineage(final Long dataEntityId,
                                                                                   final Integer lineageDepth,
                                                                                   final ServerWebExchange exchange) {
-        return entityService
+        return lineageService
             .getLineage(dataEntityId, lineageDepth, LineageStreamKind.DOWNSTREAM)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
@@ -244,7 +249,7 @@ public class DataEntityController
     public Mono<ResponseEntity<DataEntityLineage>> getDataEntityUpstreamLineage(final Long dataEntityId,
                                                                                 final Integer lineageDepth,
                                                                                 final ServerWebExchange exchange) {
-        return entityService
+        return lineageService
             .getLineage(dataEntityId, lineageDepth, LineageStreamKind.UPSTREAM)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
@@ -253,7 +258,7 @@ public class DataEntityController
     @Override
     public Mono<ResponseEntity<DataEntityGroupLineageList>> getDataEntityGroupsLineage(final Long dataEntityGroupId,
                                                                                        final ServerWebExchange exch) {
-        return entityService
+        return lineageService
             .getDataEntityGroupLineage(dataEntityGroupId)
             .subscribeOn(Schedulers.boundedElastic())
             .map(ResponseEntity::ok);
@@ -302,7 +307,47 @@ public class DataEntityController
     public Mono<ResponseEntity<AlertList>> getDataEntityAlerts(final Long dataEntityId,
                                                                final ServerWebExchange exchange) {
         return alertService.getDataEntityAlerts(dataEntityId)
-            .subscribeOn(Schedulers.boundedElastic())
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityRef>> addDataEntityDataEntityGroup(
+        final Long dataEntityId,
+        final Mono<DataEntityDataEntityGroupFormData> dataEntityDataEntityGroupFormData,
+        final ServerWebExchange exchange) {
+        return dataEntityDataEntityGroupFormData
+            .flatMap(fd -> entityService.addDataEntityToDEG(dataEntityId, fd))
+            .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteDataEntityFromDataEntityGroup(final Long dataEntityId,
+                                                                          final Long dataEntityGroupId,
+                                                                          final ServerWebExchange exchange) {
+        return entityService.deleteDataEntityFromDEG(dataEntityId, dataEntityGroupId)
+            .ignoreElements()
+            .thenReturn(ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<Activity>>> getDataEntityActivity(final Long dataEntityId,
+                                                                      final LocalDate beginDate,
+                                                                      final LocalDate endDate,
+                                                                      final Integer size,
+                                                                      final List<Long> userIds,
+                                                                      final ActivityEventType eventType,
+                                                                      final Long lastEventId,
+                                                                      final OffsetDateTime lastEventDateTime,
+                                                                      final ServerWebExchange exchange) {
+        return Mono.just(
+            activityService.getDataEntityActivityList(beginDate, endDate, size, dataEntityId, userIds, eventType,
+                lastEventId, lastEventDateTime)
+        ).map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<DataEntityUsageInfo>> getDataEntitiesUsage(final ServerWebExchange exchange) {
+        return entityService.getDataEntityUsageInfo()
             .map(ResponseEntity::ok);
     }
 }

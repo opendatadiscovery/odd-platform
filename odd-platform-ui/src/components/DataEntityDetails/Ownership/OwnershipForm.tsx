@@ -2,31 +2,36 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { Ownership, OwnershipFormData } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import OwnershipFormOwnerAutocomplete from 'components/DataEntityDetails/Ownership/OwnershipFormOwnerAutocomplete/OwnershipFormOwnerAutocomplete';
-import OwnershipFormRoleAutocomplete from 'components/DataEntityDetails/Ownership/OwnershipFormRoleAutocomplete/OwnershipFormRoleAutocomplete';
-import { useAppDispatch } from 'lib/redux/hooks';
+import {
+  AppButton,
+  DialogWrapper,
+  LabeledInfoItem,
+} from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   createDataEntityOwnership,
   updateDataEntityOwnership,
 } from 'redux/thunks';
+import { getDataEntityOwnerUpdatingStatuses } from 'redux/selectors';
+import OwnershipFormRoleAutocomplete from './OwnershipFormRoleAutocomplete/OwnershipFormRoleAutocomplete';
+import OwnershipFormOwnerAutocomplete from './OwnershipFormOwnerAutocomplete/OwnershipFormOwnerAutocomplete';
 
 interface OwnershipFormProps {
   dataEntityId: number;
   dataEntityOwnership?: Ownership;
   ownerEditBtn: JSX.Element;
-  isUpdating: boolean;
 }
 
 const OwnershipForm: React.FC<OwnershipFormProps> = ({
   dataEntityId,
   dataEntityOwnership,
   ownerEditBtn,
-  isUpdating,
 }) => {
   const dispatch = useAppDispatch();
+
+  const { isLoading: isOwnershipUpdating } = useAppSelector(
+    getDataEntityOwnerUpdatingStatuses
+  );
 
   const methods = useForm<OwnershipFormData>({
     mode: 'onChange',
@@ -136,9 +141,10 @@ const OwnershipForm: React.FC<OwnershipFormProps> = ({
       renderContent={formContent}
       renderActions={ownerEditDialogActions}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isUpdating}
+      isLoading={isOwnershipUpdating}
       errorText={error}
       clearState={resetState}
+      formSubmitHandler={methods.handleSubmit(ownershipUpdate)}
     />
   );
 };

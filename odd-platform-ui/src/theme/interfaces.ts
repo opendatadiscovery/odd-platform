@@ -2,7 +2,7 @@ import { TypeBackground } from '@mui/material/styles/createPalette';
 import {
   AlertStatus,
   DataEntityClassNameEnum,
-  DataQualityTestRunStatus,
+  DataEntityRunStatus,
   DataSetFieldTypeTypeEnum,
 } from 'generated-sources';
 import { TypographyStyle } from '@mui/material';
@@ -30,9 +30,9 @@ type EntityClasses = Record<DataEntityClassNameEnum, string>;
 
 type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 
-type ReportStatus = Record<DataQualityTestRunStatus, ItemColors>;
+type ReportStatus = Record<DataEntityRunStatus, ItemColors>;
 
-type RunStatus = Record<DataQualityTestRunStatus, string>;
+type RunStatus = Record<DataEntityRunStatus, string>;
 
 interface TextType {
   primary: string;
@@ -68,6 +68,17 @@ interface TagType {
 
 type AlertType = Record<AlertStatus, ItemColors>;
 
+interface DatasetFieldKeyType {
+  primary: ItemColors;
+  sort: ItemColors;
+}
+
+interface ActivityEventType {
+  created: string;
+  updated: string;
+  deleted: string;
+}
+
 declare module '@mui/material/styles' {
   interface Palette {
     entityClass: EntityClasses;
@@ -77,9 +88,11 @@ declare module '@mui/material/styles' {
     tag: TagType;
     structureLabel: StructureLabelType;
     alert: AlertType;
+    datasetFieldKey: DatasetFieldKeyType;
     backgrounds: Partial<BackgroundType>;
     texts: TextType;
     textField: ItemCondition;
+    activityEvent: ActivityEventType;
   }
 
   interface PaletteOptions {
@@ -90,9 +103,11 @@ declare module '@mui/material/styles' {
     tag?: TagType;
     structureLabel?: StructureLabelType;
     alert?: AlertType;
+    datasetFieldKey?: DatasetFieldKeyType;
     backgrounds?: Partial<BackgroundType>;
     texts?: TextType;
     textField?: ItemCondition;
+    activityEvent?: ActivityEventType;
   }
 }
 
@@ -100,14 +115,17 @@ declare module '@mui/material/styles' {
 declare module '@mui/material/styles/createTypography' {
   interface Typography {
     errorCode: TypographyStyle;
+    totalCountTitle: TypographyStyle;
   }
 
   interface TypographyOptions {
     errorCode?: TypographyStyleOptions;
+    totalCountTitle?: TypographyStyleOptions;
   }
 }
 declare module '@mui/material/Typography/Typography' {
   interface TypographyPropsVariantOverrides {
     errorCode: true;
+    totalCountTitle: true;
   }
 }

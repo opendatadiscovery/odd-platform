@@ -1,33 +1,26 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
-import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
+import { AppLoadingPage, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
-import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 
 // lazy components
-const ManagementContainer = React.lazy(
-  () => import('./Management/ManagementContainer')
-);
-const DataEntityDetailsContainer = React.lazy(
-  () => import('./DataEntityDetails/DataEntityDetailsContainer')
+const Management = React.lazy(() => import('./Management/Management'));
+const DataEntityDetails = React.lazy(
+  () => import('./DataEntityDetails/DataEntityDetails')
 );
 const TermDetails = React.lazy(
   () => import('./Terms/TermDetails/TermDetails')
 );
-const OverviewContainer = React.lazy(
-  () => import('./Overview/OverviewContainer')
-);
-const SearchContainer = React.lazy(
-  () => import('./Search/SearchContainer')
-);
+const Overview = React.lazy(() => import('./Overview/Overview'));
+const Search = React.lazy(() => import('./Search/Search'));
 const TermSearchContainer = React.lazy(
   () => import('./Terms/TermSearch/TermSearchContainer')
 );
-const AlertsContainer = React.lazy(
-  () => import('./Alerts/AlertsContainer')
-);
+const Alerts = React.lazy(() => import('./Alerts/Alerts'));
+const Activity = React.lazy(() => import('./Activity/Activity'));
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -36,18 +29,17 @@ const App: React.FC = () => {
     dispatch(fetchDataEntitiesClassesAndTypes());
   }, []);
 
+  const { isPathEmbedded } = useAppPaths();
+
   return (
     <div className="App">
-      <AppToolbarContainer />
+      {!isPathEmbedded && <AppToolbar />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
-            <Route exact path="/" component={OverviewContainer} />
-            <Route path="/alerts/:viewType?" component={AlertsContainer} />
-            <Route
-              path="/management/:viewType?"
-              component={ManagementContainer}
-            />
+            <Route exact path="/" component={Overview} />
+            <Route path="/alerts/:viewType?" component={Alerts} />
+            <Route path="/management/:viewType?" component={Management} />
             <Route
               exact
               path="/termsearch/:termSearchId?"
@@ -55,17 +47,21 @@ const App: React.FC = () => {
             />
             <Route
               exact
-              path="/search/:searchId?"
-              component={SearchContainer}
+              path={['/search/:searchId?', '/embedded/search/:searchId?']}
+              component={Search}
             />
             <Route
               path="/terms/:termId/:viewType?"
               component={TermDetails}
             />
             <Route
-              path="/dataentities/:dataEntityId/:viewType?"
-              component={DataEntityDetailsContainer}
+              path={[
+                '/dataentities/:dataEntityId/:viewType?',
+                '/embedded/dataentities/:dataEntityId/:viewType?',
+              ]}
+              component={DataEntityDetails}
             />
+            <Route path="/activity" component={Activity} />
           </Switch>
         </React.Suspense>
       </div>

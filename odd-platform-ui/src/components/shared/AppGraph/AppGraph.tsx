@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import {
   hierarchy,
   HierarchyPointLink,
@@ -10,50 +10,42 @@ import { zoom as d3zoom, zoomIdentity } from 'd3-zoom';
 import entries from 'lodash/entries';
 import maxBy from 'lodash/maxBy';
 import { v4 as uuidv4 } from 'uuid';
-import { Typography } from '@mui/material';
+import { SelectChangeEvent, Typography } from '@mui/material';
+import { DataEntityLineageStreamById } from 'redux/interfaces/dataentityLineage';
 import {
-  DataEntityLineageById,
-  DataEntityLineageRootNodeId,
-  DataEntityLineageStreamById,
-} from 'redux/interfaces/dataentityLineage';
-import { Point, TreeNodeDatum } from 'redux/interfaces/graph';
+  Point,
+  TreeLinkDatum,
+  TreeNodeDatum,
+} from 'redux/interfaces/graph';
 import {
-  DataEntityApiGetDataEntityDownstreamLineageRequest,
-  DataEntityApiGetDataEntityUpstreamLineageRequest,
-  DataEntityLineage,
   DataEntityLineageEdge,
   DataEntityLineageNode,
 } from 'generated-sources';
 import AppTabs from 'components/shared/AppTabs/AppTabs';
 import TargetIcon from 'components/shared/Icons/TargetIcon';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
 import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import {
+  fetchDataEntityDownstreamLineage,
+  fetchDataEntityUpstreamLineage,
+} from 'redux/thunks';
+import AppGraphCrossLink from 'components/shared/AppGraph/AppGraphCrossLink/AppGraphCrossLink';
+import { getDataEntityLineage } from 'redux/selectors';
+import { useAppParams } from 'lib/hooks';
+import AppSelect from '../AppSelect/AppSelect';
 import AppGraphLink from './AppGraphLink/AppGraphLink';
 import AppGraphNode from './AppGraphNode/AppGraphNode';
 import * as S from './AppGraphStyles';
 
-export interface AppGraphProps {
-  dataEntityId: number;
-  data: DataEntityLineageById;
-  fetchDataEntityDownstreamLineage: (
-    params: DataEntityApiGetDataEntityDownstreamLineageRequest &
-      DataEntityLineageRootNodeId
-  ) => Promise<DataEntityLineage>;
-  fetchDataEntityUpstreamLineage: (
-    params: DataEntityApiGetDataEntityUpstreamLineageRequest &
-      DataEntityLineageRootNodeId
-  ) => Promise<DataEntityLineage>;
-  isStreamFetching: boolean;
-}
+const AppGraph: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
 
-const AppGraph: React.FC<AppGraphProps> = ({
-  dataEntityId,
-  data,
-  fetchDataEntityDownstreamLineage,
-  fetchDataEntityUpstreamLineage,
-  isStreamFetching,
-}) => {
+  const data = useAppSelector(state =>
+    getDataEntityLineage(state, dataEntityId)
+  );
+
   const svgInstanceRef = `rd3t-svg-${uuidv4()}`;
   const gInstanceRef = `rd3t-g-${uuidv4()}`;
   const [compactView, setCompactView] = React.useState<boolean>(false);
@@ -64,14 +56,16 @@ const AppGraph: React.FC<AppGraphProps> = ({
   const enableLegacyTransitions = false;
   const scaleExtent = { min: 0.1, max: 3 };
   const defaultDepth = 1;
-  const [selectedDepth, setSelectedDepth] = React.useState<number>(
-    defaultDepth
+  const [selectedDepth, setSelectedDepth] =
+    React.useState<number>(defaultDepth);
+
+  const setInitialDepth = React.useCallback(
+    (depth: number) => setSelectedDepth(depth),
+    [setSelectedDepth]
   );
 
-  const [
-    isLineageFetching,
-    setIsLineageFetching,
-  ] = React.useState<boolean>(true);
+  const [isLineageFetching, setIsLineageFetching] =
+    React.useState<boolean>(true);
 
   const [parsedData, setParsedData] = React.useState<{
     root: TreeNodeDatum;
@@ -99,9 +93,11 @@ const AppGraph: React.FC<AppGraphProps> = ({
     nodesUp: [],
     linksUp: [],
     crossLinksUp: [],
+    replacedCrossLinksUp: [],
     nodesDown: [],
     linksDown: [],
     crossLinksDown: [],
+    replacedCrossLinksDown: [],
     depth: { upstream: 0, downstream: 0 },
   };
   const [
@@ -109,19 +105,23 @@ const AppGraph: React.FC<AppGraphProps> = ({
       nodesUp,
       linksUp,
       crossLinksUp,
+      replacedCrossLinksUp,
       nodesDown,
       linksDown,
       crossLinksDown,
+      replacedCrossLinksDown,
       depth,
     },
     setTreeState,
   ] = React.useState<{
     nodesUp: HierarchyPointNode<TreeNodeDatum>[];
-    linksUp: HierarchyPointLink<TreeNodeDatum>[];
+    linksUp: TreeLinkDatum[];
     crossLinksUp: HierarchyPointLink<TreeNodeDatum>[];
+    replacedCrossLinksUp: TreeLinkDatum[];
     nodesDown: HierarchyPointNode<TreeNodeDatum>[];
     linksDown: HierarchyPointLink<TreeNodeDatum>[];
     crossLinksDown: HierarchyPointLink<TreeNodeDatum>[];
+    replacedCrossLinksDown: TreeLinkDatum[];
     depth: {
       upstream: number;
       downstream: number;
@@ -131,7 +131,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
   const nodeSizeInitial = {
     x: 200,
     y: 160,
-    mx: 300,
+    mx: 150,
     my: 24,
   };
 
@@ -147,27 +147,13 @@ const AppGraph: React.FC<AppGraphProps> = ({
       lineageDepth: selectedDepth,
       rootNodeId: dataEntityId,
     };
-    fetchDataEntityDownstreamLineage(params)
-      .then(() => fetchDataEntityUpstreamLineage(params))
-      .then(() => setIsLineageFetching(false));
+    dispatch(fetchDataEntityDownstreamLineage(params)).then(() =>
+      setIsLineageFetching(false)
+    );
+    dispatch(fetchDataEntityUpstreamLineage(params)).then(() =>
+      setIsLineageFetching(false)
+    );
   }, [selectedDepth, dataEntityId]);
-
-  const fetchUpstreamLineage = (entityId: number, lineageDepth: number) =>
-    fetchDataEntityUpstreamLineage({
-      dataEntityId: entityId,
-      lineageDepth,
-      rootNodeId: dataEntityId,
-    });
-
-  const fetchDownstreamLineage = (
-    entityId: number,
-    lineageDepth: number
-  ) =>
-    fetchDataEntityDownstreamLineage({
-      dataEntityId: entityId,
-      lineageDepth,
-      rootNodeId: dataEntityId,
-    });
 
   const assignInternalProps = (
     nodeData: DataEntityLineageNode
@@ -215,17 +201,33 @@ const AppGraph: React.FC<AppGraphProps> = ({
     const nUp = rootNodeUp.descendants();
     const lUp = rootNodeUp.links();
 
-    const crossLUp = parsedData?.upstream?.crossEdges?.map(edge =>
-      edge.sourceId === parsedData.root.id
-        ? {
-            source: nUp.find(node => node.data.id === edge.targetId)!,
-            target: nUp.find(node => node.data.id === edge.sourceId)!,
-          }
-        : {
-            target: nUp.find(node => node.data.id === edge.targetId)!,
-            source: nUp.find(node => node.data.id === edge.sourceId)!,
-          }
-    );
+    const crossLUp = parsedData.upstream.crossEdges?.reduce<
+      TreeLinkDatum[]
+    >((memo, edge) => {
+      const sourceNode = nUp.find(node => node.data.id === edge.sourceId);
+      const targetNode = nUp.find(node => node.data.id === edge.targetId);
+
+      if (sourceNode && targetNode) {
+        const crossLink = {
+          source: sourceNode,
+          target: targetNode,
+        };
+        const replacedCrossLink = {
+          source: targetNode,
+          target: sourceNode,
+        };
+
+        if (sourceNode.depth < targetNode.depth) {
+          replacedCrossLinksUp.push(replacedCrossLink);
+          memo.push(replacedCrossLink);
+          return memo;
+        }
+
+        memo.push(crossLink);
+      }
+
+      return memo;
+    }, []);
 
     const treeDown = d3tree<TreeNodeDatum>()
       .nodeSize([nodeSize.y + nodeSize.my, nodeSize.x + nodeSize.mx])
@@ -248,25 +250,47 @@ const AppGraph: React.FC<AppGraphProps> = ({
     const nDown = rootNodeDown.descendants();
     const lDown = rootNodeDown.links();
 
-    const crossLDown = parsedData?.downstream?.crossEdges?.map(edge =>
-      edge.targetId !== parsedData.root.id
-        ? {
-            source: nDown.find(node => node.data.id === edge.targetId)!,
-            target: nDown.find(node => node.data.id === edge.sourceId)!,
-          }
-        : {
-            target: nDown.find(node => node.data.id === edge.targetId)!,
-            source: nDown.find(node => node.data.id === edge.sourceId)!,
-          }
-    );
+    const crossLDown = parsedData.downstream.crossEdges?.reduce<
+      TreeLinkDatum[]
+    >((memo, edge) => {
+      const sourceNode = nDown.find(
+        node => node.data.id === edge.sourceId
+      );
+      const targetNode = nDown.find(
+        node => node.data.id === edge.targetId
+      );
+
+      if (sourceNode && targetNode) {
+        const crossLink = {
+          source: sourceNode,
+          target: targetNode,
+        };
+        const replacedCrossLink = {
+          source: targetNode,
+          target: sourceNode,
+        };
+
+        if (sourceNode.depth < targetNode.depth) {
+          replacedCrossLinksDown.push(replacedCrossLink);
+          memo.push(replacedCrossLink);
+          return memo;
+        }
+
+        memo.push(crossLink);
+      }
+
+      return memo;
+    }, []);
 
     return {
       nodesUp: nUp,
       linksUp: lUp,
       crossLinksUp: crossLUp,
+      replacedCrossLinksUp,
       nodesDown: nDown,
       linksDown: lDown,
       crossLinksDown: crossLDown,
+      replacedCrossLinksDown,
       depth: {
         upstream: maxBy(nUp, node => node.depth)?.depth || 0,
         downstream: maxBy(nDown, node => node.depth)?.depth || 0,
@@ -274,9 +298,8 @@ const AppGraph: React.FC<AppGraphProps> = ({
     };
   };
 
-  const handleDepthChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => setSelectedDepth((e.target.value as unknown) as number);
+  const handleDepthChange = (event: SelectChangeEvent<unknown>) =>
+    setSelectedDepth(event.target.value as unknown as number);
 
   const transformation: { translate: Point; scale: number } = {
     translate: { x: 0, y: 0 },
@@ -372,7 +395,7 @@ const AppGraph: React.FC<AppGraphProps> = ({
   React.useEffect(() => {
     if (!data) return;
     setParsedData({
-      root: assignInternalProps(data.root),
+      root: assignInternalProps(data.rootNode),
       upstream: {
         ...data.upstream,
         nodesById: parseData(data.upstream?.nodesById),
@@ -424,13 +447,13 @@ const AppGraph: React.FC<AppGraphProps> = ({
           }
         />
         <Typography variant="subtitle2">Depth:</Typography>
-        <AppTextField
+        <AppSelect
           sx={{ width: 48 }}
-          selectNative
+          native
+          fullWidth={false}
           size="small"
           type="number"
-          id="depth-select"
-          defaultValue={selectedDepth}
+          value={selectedDepth}
           onChange={handleDepthChange}
         >
           {new Array(20).fill(0).map((_, i) => (
@@ -439,33 +462,37 @@ const AppGraph: React.FC<AppGraphProps> = ({
               {i + 1}
             </option>
           ))}
-        </AppTextField>
+        </AppSelect>
       </S.ActionsContainer>
       <S.Layer className={svgInstanceRef}>
         <g className={gInstanceRef}>
-          {crossLinksDown?.map(linkData => (
-            <AppGraphLink
-              crossLink
-              key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
+          {crossLinksDown?.map((linkData, idx) => (
+            <AppGraphCrossLink
+              // eslint-disable-next-line react/no-array-index-key
+              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
               linkData={linkData}
               nodeSize={nodeSize}
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
+              replacedCrossLinks={replacedCrossLinksDown}
             />
           ))}
-          {crossLinksUp?.map(linkData => (
-            <AppGraphLink
-              crossLink
-              key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
+          {crossLinksUp?.map((linkData, idx) => (
+            <AppGraphCrossLink
+              // eslint-disable-next-line react/no-array-index-key
+              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
               reverse
               linkData={linkData}
               nodeSize={nodeSize}
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
+              replacedCrossLinks={replacedCrossLinksUp}
             />
           ))}
           {nodesUp?.map(node => (
             <AppGraphNode
+              appGraphNodeType="upstream"
+              rootNodeId={dataEntityId}
               key={`node-${node.x}${node.y}`}
               reverse
               data={node.data}
@@ -475,13 +502,15 @@ const AppGraph: React.FC<AppGraphProps> = ({
               compactView={compactView}
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
-              fetchMoreLineage={fetchUpstreamLineage}
-              isStreamFetching={isStreamFetching}
               hasChildren={!!node.children?.length}
+              nodeDepth={node.depth}
+              setInitialDepth={setInitialDepth}
             />
           ))}
           {nodesDown?.map(node => (
             <AppGraphNode
+              appGraphNodeType="downstream"
+              rootNodeId={dataEntityId}
               key={`node-${node.x}${node.y}`}
               data={node.data}
               position={{ x: node.x, y: node.y }}
@@ -490,15 +519,16 @@ const AppGraph: React.FC<AppGraphProps> = ({
               compactView={compactView}
               enableLegacyTransitions={enableLegacyTransitions}
               transitionDuration={transitionDuration}
-              fetchMoreLineage={fetchDownstreamLineage}
-              isStreamFetching={isStreamFetching}
               hasChildren={!!node.children?.length}
+              nodeDepth={node.depth}
+              setInitialDepth={setInitialDepth}
             />
           ))}
 
-          {linksUp?.map(linkData => (
+          {linksUp?.map((linkData, idx) => (
             <AppGraphLink
-              key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
               reverse
               linkData={linkData}
               nodeSize={nodeSize}
@@ -506,9 +536,10 @@ const AppGraph: React.FC<AppGraphProps> = ({
               transitionDuration={transitionDuration}
             />
           ))}
-          {linksDown?.map(linkData => (
+          {linksDown?.map((linkData, idx) => (
             <AppGraphLink
-              key={`link-${linkData.source.data.id}-${linkData.target.data.id}`}
+              // eslint-disable-next-line react/no-array-index-key
+              key={`link-${linkData.source.data.id}/${idx}-${linkData.target.data.id}/${idx}`}
               linkData={linkData}
               nodeSize={nodeSize}
               enableLegacyTransitions={enableLegacyTransitions}

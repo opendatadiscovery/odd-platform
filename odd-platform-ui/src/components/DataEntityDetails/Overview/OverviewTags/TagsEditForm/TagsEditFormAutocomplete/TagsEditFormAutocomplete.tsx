@@ -1,32 +1,28 @@
 import React from 'react';
 import { Autocomplete, Typography } from '@mui/material';
-import {
-  Tag,
-  TagApiGetPopularTagListRequest,
-  TagFormData,
-  TagsResponse,
-} from 'generated-sources';
+import { Tag, TagFormData } from 'generated-sources';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
+import { useAppDispatch } from 'lib/redux/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
 import { OptionsContainer } from 'components/DataEntityDetails/Overview/OverviewTags/TagsEditForm/TagsEditFormStyles';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+import { fetchTagsList as searchTags } from 'redux/thunks';
 import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 
 interface TagsEditFormAutocompleteProps {
-  searchTags: (
-    params: TagApiGetPopularTagListRequest
-  ) => Promise<TagsResponse>;
   append: UseFieldArrayAppend<TagFormData>;
 }
 
 const TagsEditFormAutocomplete: React.FC<
   TagsEditFormAutocompleteProps
-> = ({ searchTags, append }) => {
+> = ({ append }) => {
+  const dispatch = useAppDispatch();
+
   type FilterOption = Omit<Tag, 'id'> & Partial<Tag>;
   const [options, setOptions] = React.useState<FilterOption[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] = React.useState(false);
@@ -37,12 +33,12 @@ const TagsEditFormAutocomplete: React.FC<
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
       setLoading(true);
-      searchTags({ page: 1, size: 30, query: searchText }).then(
-        response => {
+      dispatch(searchTags({ page: 1, size: 30, query: searchText }))
+        .unwrap()
+        .then(({ items }) => {
           setLoading(false);
-          setOptions(response.items);
-        }
-      );
+          setOptions(items);
+        });
     }, 500),
     [searchTags, setLoading, setOptions, searchText]
   );
@@ -107,7 +103,11 @@ const TagsEditFormAutocomplete: React.FC<
   ) => {
     if (!value) return;
     setSearchText(''); // Clear input on select
-    append(typeof value === 'string' ? { name: value } : value);
+    append(
+      typeof value === 'string'
+        ? { name: value }
+        : { ...value, external: false }
+    );
   };
 
   return (
@@ -130,7 +130,7 @@ const TagsEditFormAutocomplete: React.FC<
       value={{ name: searchText }}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppTextField
+        <AppInput
           {...params}
           ref={params.InputProps.ref}
           placeholder="Enter tag name…"

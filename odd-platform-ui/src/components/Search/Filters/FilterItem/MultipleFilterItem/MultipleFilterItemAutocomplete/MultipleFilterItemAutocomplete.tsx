@@ -12,39 +12,30 @@ import { useDebouncedCallback } from 'use-debounce';
 import {
   CountableSearchFilter,
   MultipleFacetType,
-  SearchApiGetFiltersForFacetRequest,
   SearchFilter,
 } from 'generated-sources';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { FacetStateUpdate, OptionalFacetNames } from 'redux/interfaces';
-import DropdownIcon from 'components/shared/Icons/DropdownIcon';
-import {
-  FilterCount,
-  HighlightedTextPart,
-} from './MultipleFilterItemAutocompleteStyles';
+import { AppInput } from 'components/shared';
+import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
+import { OptionalFacetNames } from 'redux/interfaces';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { getDataEntitySearchFacetOptions } from 'redux/thunks';
+import { changeDataEntitySearchFacet } from 'redux/reducers/dataEntitySearch.slice';
+import { getSearchFacetsByType, getSearchId } from 'redux/selectors';
+import * as S from './MultipleFilterItemAutocompleteStyles';
 
 interface MultipleFilterItemAutocompleteProps {
-  searchId: string;
   name: string;
   facetName: OptionalFacetNames;
-  facetOptionsAll: CountableSearchFilter[];
-  setFacets: (option: FacetStateUpdate) => void;
-  searchFacetOptions: (
-    params: SearchApiGetFiltersForFacetRequest
-  ) => Promise<CountableSearchFilter[]>;
 }
 
 const MultipleFilterItemAutocomplete: React.FC<
   MultipleFilterItemAutocompleteProps
-> = ({
-  searchId,
-  name,
-  facetName,
-  facetOptionsAll,
-  setFacets,
-  searchFacetOptions,
-}) => {
+> = ({ name, facetName }) => {
+  const dispatch = useAppDispatch();
+
+  const searchId = useAppSelector(getSearchId);
+  const facetOptionsAll = useAppSelector(getSearchFacetsByType(facetName));
+
   type FilterOption = Omit<SearchFilter, 'id' | 'count' | 'selected'> &
     Partial<CountableSearchFilter>;
 
@@ -61,12 +52,14 @@ const MultipleFilterItemAutocomplete: React.FC<
   ) => {
     if (!option) return;
     setSearchText(''); // Clear input on select
-    setFacets({
-      facetName,
-      facetOptionId: option.id,
-      facetOptionName: option.name,
-      facetOptionState: true,
-    });
+    dispatch(
+      changeDataEntitySearchFacet({
+        facetName,
+        facetOptionId: option.id,
+        facetOptionName: option.name,
+        facetOptionState: true,
+      })
+    );
   };
 
   const searchInputChange = React.useCallback(
@@ -111,19 +104,23 @@ const MultipleFilterItemAutocomplete: React.FC<
   const handleFacetSearch = React.useCallback(
     useDebouncedCallback(() => {
       setFacetOptionsLoading(true);
-      searchFacetOptions({
-        searchId,
-        facetType: facetName.toUpperCase() as MultipleFacetType,
-        page: 1,
-        size: 30,
-        query: searchText,
-      }).then(response => {
-        setFacetOptionsLoading(false);
-        setFacetOptions(response);
-      });
+      dispatch(
+        getDataEntitySearchFacetOptions({
+          searchId,
+          facetType: facetName.toUpperCase() as MultipleFacetType,
+          page: 1,
+          size: 30,
+          query: searchText,
+        })
+      )
+        .unwrap()
+        .then(response => {
+          setFacetOptionsLoading(false);
+          setFacetOptions(response.facetOptions);
+        });
     }, 500),
     [
-      searchFacetOptions,
+      getDataEntitySearchFacetOptions,
       setFacetOptionsLoading,
       setFacetOptions,
       searchText,
@@ -150,7 +147,7 @@ const MultipleFilterItemAutocomplete: React.FC<
         <li {...props}>
           <Grid container justifyContent="space-between">
             <span>{formattedOptionName}</span>
-            <FilterCount>{option.count}</FilterCount>
+            <S.FilterCount>{option.count}</S.FilterCount>
           </Grid>
         </li>
       );
@@ -161,7 +158,7 @@ const MultipleFilterItemAutocomplete: React.FC<
       return (
         <span>
           {parts.map((part, i) => (
-            <HighlightedTextPart
+            <S.HighlightedTextPart
               // eslint-disable-next-line react/no-array-index-key
               key={i}
               isHighlighted={
@@ -169,7 +166,7 @@ const MultipleFilterItemAutocomplete: React.FC<
               }
             >
               {part}
-            </HighlightedTextPart>
+            </S.HighlightedTextPart>
           ))}
         </span>
       );
@@ -179,7 +176,7 @@ const MultipleFilterItemAutocomplete: React.FC<
       <li {...props}>
         <Grid container justifyContent="space-between">
           {highlightedText(formattedOptionName, state.inputValue)}
-          <FilterCount>{option.count}</FilterCount>
+          <S.FilterCount>{option.count}</S.FilterCount>
         </Grid>
       </li>
     );
@@ -206,7 +203,7 @@ const MultipleFilterItemAutocomplete: React.FC<
       popupIcon={<DropdownIcon />}
       clearIcon={<ClearIcon />}
       renderInput={params => (
-        <AppTextField
+        <AppInput
           {...params}
           sx={{ mt: 2 }}
           placeholder="Search by name"

@@ -1,23 +1,20 @@
 import React from 'react';
-import {
-  DataQualityTest,
-  DataQualityTestRunStatus,
-} from 'generated-sources';
+import { DataEntityRunStatus, DataQualityTest } from 'generated-sources';
 import { Collapse, Grid, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import MinusIcon from 'components/shared/Icons/MinusIcon';
 import PlusIcon from 'components/shared/Icons/PlusIcon';
 import TestItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestItem/TestItem';
-import { dataEntityTestPath } from 'lib/paths';
 import { Link } from 'react-router-dom';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import { useAppPaths } from 'lib/hooks';
 import { TestReportBySuitNameHeader } from './TestReportItemStyles';
 
 interface TestReportItemProps {
   suitName: string;
   dataSetId: number;
-  dataqatestId: number;
+  dataQATestId: number;
   dataQATestList: DataQualityTest[];
   dataQATestReport: DataSetQualityTestsStatusCount;
 }
@@ -25,11 +22,12 @@ interface TestReportItemProps {
 const TestReportItem: React.FC<TestReportItemProps> = ({
   suitName,
   dataSetId,
-  dataqatestId,
+  dataQATestId,
   dataQATestList,
   dataQATestReport,
 }) => {
   const [open, setOpen] = React.useState<boolean>(false);
+  const { dataEntityTestPath } = useAppPaths();
 
   React.useEffect(() => {
     if (dataQATestList.length < 5) setOpen(true);
@@ -73,7 +71,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                     key={testType}
                     count={count}
                     typeName={
-                      testType.toUpperCase() as DataQualityTestRunStatus
+                      testType.toUpperCase() as DataEntityRunStatus
                     }
                     size="small"
                   />
@@ -90,7 +88,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                 key={dataQATest.id}
               >
                 <TestItem
-                  active={dataqatestId === dataQATest.id}
+                  active={dataQATestId === dataQATest.id}
                   latestRunStatus={dataQATest.latestRun?.status}
                   testName={
                     dataQATest.internalName || dataQATest.externalName

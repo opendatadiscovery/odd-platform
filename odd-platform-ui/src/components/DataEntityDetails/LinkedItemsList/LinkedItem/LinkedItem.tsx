@@ -2,8 +2,8 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { DataEntity } from 'generated-sources';
-import { dataEntityDetailsPath } from 'lib/paths';
 import { ColContainer } from 'components/Search/Results/ResultsStyles';
+import { useAppPaths } from 'lib/hooks';
 import { Container, ItemLink } from './LinkedItemStyles';
 
 interface LinkedItemProps {
@@ -11,6 +11,7 @@ interface LinkedItemProps {
 }
 
 const LinkedItem: React.FC<LinkedItemProps> = ({ linkedItem }) => {
+  const { dataEntityDetailsPath } = useAppPaths();
   const detailsLink = dataEntityDetailsPath(linkedItem.id);
 
   return (

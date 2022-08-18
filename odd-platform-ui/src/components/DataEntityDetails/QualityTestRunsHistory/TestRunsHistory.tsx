@@ -1,82 +1,77 @@
 import React from 'react';
+import { DataEntityRunStatus } from 'generated-sources';
+import { fetchDataEntityRuns } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  DataQualityApiGetRunsRequest,
-  DataQualityTestRun,
-  DataQualityTestRunStatus,
-} from 'generated-sources';
+  getDataEntityRunList,
+  getDataEntityRunsFetchingStatuses,
+  getDataEntityRunsListPageInfo,
+} from 'redux/selectors/dataEntityRun.selector';
+import { useAppParams } from 'lib/hooks';
+import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import capitalize from 'lodash/capitalize';
 import { Grid, Typography } from '@mui/material';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { CurrentPageInfo } from 'redux/interfaces';
 import TestRunSkeletonItem from 'components/DataEntityDetails/QualityTestRunsHistory/TestRunSkeletonItem/TestRunSkeletonItem';
 import TestRunItem from './TestRunItem/TestRunItem';
 import { ColContainer, RunsTableHeader } from './TestRunsHistoryStyles';
 
-interface QualityTestHistoryProps {
-  dataQATestId: number;
-  dataQATestName?: string;
-  dataQATestRunsList: DataQualityTestRun[];
-  isTestRunsListFetching: boolean;
-  fetchDataSetQualityTestRuns: (
-    params: DataQualityApiGetRunsRequest
-  ) => void;
-  pageInfo: CurrentPageInfo;
-}
-
-const TestRunsHistory: React.FC<QualityTestHistoryProps> = ({
-  dataQATestId,
-  dataQATestName,
-  dataQATestRunsList,
-  isTestRunsListFetching,
-  fetchDataSetQualityTestRuns,
-  pageInfo,
-}) => {
+const TestRunsHistory: React.FC = () => {
   const pageSize = 100;
 
   const [alertStatus, setAlertStatus] = React.useState<
-    DataQualityTestRunStatus | 'All'
+    DataEntityRunStatus | 'All'
   >('All');
 
+  const dispatch = useAppDispatch();
+  const { dataEntityId: dataQATestId } = useAppParams();
+  const dataQATestName = useAppSelector(state =>
+    getQualityTestNameByTestId(state, dataQATestId)
+  );
+  const pageInfo = useAppSelector(getDataEntityRunsListPageInfo);
+  const dataQATestRunsList = useAppSelector(getDataEntityRunList);
+  const { isLoading: isTestRunsListFetching } = useAppSelector(
+    getDataEntityRunsFetchingStatuses
+  );
   const fetchPage = (page?: number) => {
-    fetchDataSetQualityTestRuns({
-      dataqatestId: dataQATestId,
-      page: page || pageInfo.page + 1,
-      size: pageSize,
-      status: alertStatus === 'All' ? undefined : alertStatus,
-    });
+    dispatch(
+      fetchDataEntityRuns({
+        dataEntityId: dataQATestId,
+        page: page || pageInfo.page + 1,
+        size: pageSize,
+        status: alertStatus === 'All' ? undefined : alertStatus,
+      })
+    );
   };
 
   React.useEffect(() => {
     fetchPage(1);
-  }, [fetchDataSetQualityTestRuns, dataQATestId, alertStatus]);
+  }, [fetchDataEntityRuns, dataQATestId, alertStatus]);
 
   return (
     <Grid container sx={{ mt: 2 }}>
-      <AppTextField
+      <AppSelect
         sx={{ minWidth: '200px' }}
         fullWidth={false}
-        select
         value={alertStatus}
       >
         <AppMenuItem value="All" onClick={() => setAlertStatus('All')}>
           Show all statuses
         </AppMenuItem>
-        {Object.keys(DataQualityTestRunStatus)?.map(option => (
+        {Object.keys(DataEntityRunStatus)?.map(option => (
           <AppMenuItem
             key={option}
             value={option}
-            onClick={() =>
-              setAlertStatus(option as DataQualityTestRunStatus)
-            }
+            onClick={() => setAlertStatus(option as DataEntityRunStatus)}
           >
             {capitalize(option)}
           </AppMenuItem>
         ))}
-      </AppTextField>
+      </AppSelect>
       <RunsTableHeader container wrap="nowrap" sx={{ mt: 2 }}>
         <ColContainer item $colType="md">
           <Typography variant="caption">Start time</Typography>

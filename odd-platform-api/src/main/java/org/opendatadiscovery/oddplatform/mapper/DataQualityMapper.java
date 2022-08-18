@@ -1,17 +1,15 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRun;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRunList;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.dto.DatasetTestReportDto;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
-import org.opendatadiscovery.oddplatform.utils.Page;
 
+@Mapper(config = MapperConfig.class, uses = OffsetDateTimeMapper.class)
 public interface DataQualityMapper {
-    DataQualityTestRun mapDataQualityTestRun(final long dataQualityTestId, final DataEntityTaskRunPojo run);
-
-    DataQualityTestRunList mapDataQualityTestRuns(final long dataQualityTestId,
-                                                  final Page<DataEntityTaskRunPojo> page);
-
+    @Mapping(
+        target = "score",
+        expression = "java( report.getTotal() != 0 ? (int)(100 * report.getSuccessTotal() / report.getTotal()) : 0 )"
+    )
     DataSetTestReport mapDatasetTestReport(final DatasetTestReportDto report);
 }

@@ -1,10 +1,10 @@
 import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
-import { DataQualityTestRunStatus } from 'generated-sources';
+import { DataEntityRunStatus } from 'generated-sources';
 import { ElementType } from 'react';
 
 interface ValueProps {
-  $runStatus?: DataQualityTestRunStatus;
+  $runStatus?: DataEntityRunStatus;
   $valueColor?: string;
   $inline?: boolean;
   component: ElementType;
@@ -44,7 +44,7 @@ export const LabelContainer = styled(Grid)(() => ({
 
 export const ValueContainer = styled(Grid)(() => ({
   width: '100%',
-  overflow: 'hidden',
+  overflow: 'inherit',
 }));
 
 export const Value = styled(Typography)<ValueProps>(

@@ -1,27 +1,23 @@
-import { createAsyncAction } from 'typesafe-actions';
-import { TagsResponse, Tag } from 'generated-sources';
-import { PaginatedResponse } from 'redux/interfaces/common';
+import { createActionType } from 'lib/redux/helpers';
 
-export const fetchTagsAction = createAsyncAction(
-  'GET_TAGS__REQUEST',
-  'GET_TAGS__SUCCESS',
-  'GET_TAGS__FAILURE'
-)<undefined, PaginatedResponse<TagsResponse>, undefined>();
+export const tagsActionTypePrefix = 'tags';
 
-export const createTagsAction = createAsyncAction(
-  'POST_TAGS__REQUEST',
-  'POST_TAGS__SUCCESS',
-  'POST_TAGS__FAILURE'
-)<undefined, Tag[], undefined>();
+export const fetchTagsActionType = createActionType(
+  tagsActionTypePrefix,
+  'fetchTags'
+);
 
-export const updateTagAction = createAsyncAction(
-  'PUT_TAG__REQUEST',
-  'PUT_TAG__SUCCESS',
-  'PUT_TAG__FAILURE'
-)<undefined, Tag, undefined>();
+export const createTagsActionType = createActionType(
+  tagsActionTypePrefix,
+  'createTags'
+);
 
-export const deleteTagAction = createAsyncAction(
-  'DELETE_TAG__REQUEST',
-  'DELETE_TAG__SUCCESS',
-  'DELETE_TAG__FAILURE'
-)<undefined, number, undefined>();
+export const updateTagActionType = createActionType(
+  tagsActionTypePrefix,
+  'updateTags'
+);
+
+export const deleteTagActionType = createActionType(
+  tagsActionTypePrefix,
+  'deleteTag'
+);

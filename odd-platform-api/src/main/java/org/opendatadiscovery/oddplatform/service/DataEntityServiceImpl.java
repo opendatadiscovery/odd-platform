@@ -9,16 +9,15 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDataEntityGroupFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescription;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalDescriptionFormData;
 import org.opendatadiscovery.oddplatform.api.contract.model.InternalName;
@@ -33,8 +32,11 @@ import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
-import org.opendatadiscovery.oddplatform.dto.MetadataDto;
+import org.opendatadiscovery.oddplatform.dto.TagDto;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
+import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
@@ -42,27 +44,43 @@ import org.opendatadiscovery.oddplatform.mapper.MetadataFieldMapper;
 import org.opendatadiscovery.oddplatform.mapper.MetadataFieldValueMapper;
 import org.opendatadiscovery.oddplatform.mapper.TagMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.LineageRepository;
-import org.opendatadiscovery.oddplatform.repository.MetadataFieldRepository;
-import org.opendatadiscovery.oddplatform.repository.MetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveGroupEntityRelationRepository;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveMetadataFieldValueRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityLog;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityParameter;
+import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
+import org.opendatadiscovery.oddplatform.utils.ActivityParameterNames;
 import org.opendatadiscovery.oddrn.Generator;
 import org.opendatadiscovery.oddrn.model.ODDPlatformDataEntityGroupPath;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuples;
 
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_ENTITY_GROUP;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataSetDetailsDto;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.CUSTOM_GROUP;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_DESCRIPTION;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_METADATA;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_NAME;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.INTERNAL_TAGS;
+import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.MANUALLY_CREATED;
+import static org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin.INTERNAL;
+import static org.opendatadiscovery.oddplatform.utils.ActivityParameterNames.DescriptionUpdated.DATA_ENTITY_ID;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @Slf4j
@@ -73,26 +91,28 @@ public class DataEntityServiceImpl
     private final Generator oddrnGenerator = new Generator();
 
     private final AuthIdentityProvider authIdentityProvider;
-    private final MetadataFieldValueRepository metadataFieldValueRepository;
+    private final ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository;
     private final ReactiveDataEntityRepository reactiveDataEntityRepository;
-    private final MetadataFieldRepository metadataFieldRepository;
     private final TagService tagService;
     private final LineageRepository lineageRepository;
     private final NamespaceService namespaceService;
+    private final ActivityService activityService;
 
     private final MetadataFieldMapper metadataFieldMapper;
     private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final TagMapper tagMapper;
     private final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository;
-    private final ReactiveGroupEntityRelationRepository groupEntityRelationRepository;
+    private final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository;
     private final ReactiveTermRepository reactiveTermRepository;
     private final ReactiveOwnershipRepository ownershipRepository;
+    private final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository;
+    private final DataEntityFilledService dataEntityFilledService;
+    private final MetadataFieldService metadataFieldService;
 
     public DataEntityServiceImpl(final DataEntityMapper entityMapper,
                                  final DataEntityRepository entityRepository,
                                  final AuthIdentityProvider authIdentityProvider,
-                                 final MetadataFieldValueRepository metadataFieldValueRepository,
-                                 final MetadataFieldRepository metadataFieldRepository,
+                                 final ReactiveMetadataFieldValueRepository reactiveMetadataFieldValueRepository,
                                  final TagService tagService,
                                  final LineageRepository lineageRepository,
                                  final MetadataFieldMapper metadataFieldMapper,
@@ -100,15 +120,18 @@ public class DataEntityServiceImpl
                                  final ReactiveSearchEntrypointRepository reactiveSearchEntrypointRepository,
                                  final TagMapper tagMapper,
                                  final NamespaceService namespaceService,
+                                 final ActivityService activityService,
                                  final ReactiveDataEntityRepository reactiveDataEntityRepository,
-                                 final ReactiveGroupEntityRelationRepository groupEntityRelationRepository,
+                                 final ReactiveGroupEntityRelationRepository reactiveGroupEntityRelationRepository,
                                  final ReactiveTermRepository reactiveTermRepository,
-                                 final ReactiveOwnershipRepository ownershipRepository) {
+                                 final ReactiveOwnershipRepository ownershipRepository,
+                                 final ReactiveDataEntityStatisticsRepository dataEntityStatisticsRepository,
+                                 final DataEntityFilledService dataEntityFilledService,
+                                 final MetadataFieldService metadataFieldService) {
         super(entityMapper, entityRepository);
 
         this.authIdentityProvider = authIdentityProvider;
-        this.metadataFieldValueRepository = metadataFieldValueRepository;
-        this.metadataFieldRepository = metadataFieldRepository;
+        this.reactiveMetadataFieldValueRepository = reactiveMetadataFieldValueRepository;
         this.tagService = tagService;
         this.lineageRepository = lineageRepository;
         this.metadataFieldMapper = metadataFieldMapper;
@@ -116,10 +139,14 @@ public class DataEntityServiceImpl
         this.reactiveSearchEntrypointRepository = reactiveSearchEntrypointRepository;
         this.tagMapper = tagMapper;
         this.namespaceService = namespaceService;
+        this.activityService = activityService;
         this.reactiveDataEntityRepository = reactiveDataEntityRepository;
-        this.groupEntityRelationRepository = groupEntityRelationRepository;
         this.reactiveTermRepository = reactiveTermRepository;
         this.ownershipRepository = ownershipRepository;
+        this.reactiveGroupEntityRelationRepository = reactiveGroupEntityRelationRepository;
+        this.dataEntityStatisticsRepository = dataEntityStatisticsRepository;
+        this.dataEntityFilledService = dataEntityFilledService;
+        this.metadataFieldService = metadataFieldService;
     }
 
     @Override
@@ -135,9 +162,11 @@ public class DataEntityServiceImpl
 
     @Override
     @ReactiveTransactional
-    public Mono<DataEntityRef> updateDataEntityGroup(final Long id, final DataEntityGroupFormData formData) {
+    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_UPDATED)
+    public Mono<DataEntityRef> updateDataEntityGroup(
+        @ActivityParameter(ActivityParameterNames.CustomGroupUpdated.DATA_ENTITY_ID) final Long id,
+        final DataEntityGroupFormData formData) {
         return reactiveDataEntityRepository.get(id)
-            .doOnNext(pojo -> log.info("I'm here"))
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
             .filter(DataEntityPojo::getManuallyCreated)
             .switchIfEmpty(Mono.error(new IllegalArgumentException("Can't update ingested data entity")))
@@ -152,7 +181,9 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<DataEntityPojo> deleteDataEntityGroup(final Long id) {
+    @ActivityLog(event = ActivityEventTypeDto.CUSTOM_GROUP_DELETED)
+    public Mono<DataEntityPojo> deleteDataEntityGroup(
+        @ActivityParameter(ActivityParameterNames.CustomGroupDeleted.DATA_ENTITY_ID) final Long id) {
         return reactiveDataEntityRepository.get(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Data entity group with id %s doesn't exist", id)))
             .filter(DataEntityPojo::getManuallyCreated)
@@ -216,7 +247,12 @@ public class DataEntityServiceImpl
                                               final int size,
                                               final LineageStreamKind streamKind) {
         return authIdentityProvider.fetchAssociatedOwner()
-            .flatMapIterable(o -> entityRepository.listByOwner(page, size, o.getId(), streamKind))
+            .flatMapIterable(o -> {
+                    final List<String> oddrns = entityRepository
+                        .listOddrnsByOwner(o.getId(), streamKind);
+                    return entityRepository.listAllByOddrns(oddrns, page, size, true);
+                }
+            )
             .map(entityMapper::mapRef);
     }
 
@@ -236,7 +272,7 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    @BlockingTransactional
+    @ReactiveTransactional
     public Mono<MetadataFieldValueList> createMetadata(final long dataEntityId,
                                                        final List<MetadataObject> metadataList) {
         final Map<MetadataKey, MetadataObject> metadataObjectMap = metadataList.stream()
@@ -247,73 +283,32 @@ public class DataEntityServiceImpl
             .map(metadataFieldMapper::mapObject)
             .collect(Collectors.toList());
 
-        final Map<Long, MetadataFieldPojo> metadataFields = metadataFieldRepository
-            .createIfNotExist(mfPojos)
-            .stream()
-            .collect(Collectors.toMap(MetadataFieldPojo::getId, identity()));
-
-        final List<MetadataFieldValuePojo> mfvPojos = metadataFields.values().stream()
-            .map(metadataFieldPojo -> new MetadataFieldValuePojo()
-                .setMetadataFieldId(metadataFieldPojo.getId())
-                .setValue(metadataObjectMap.get(new MetadataKey(metadataFieldPojo)).getValue())
-                .setDataEntityId(dataEntityId))
-            .toList();
-
-        final List<MetadataFieldValue> fields = metadataFieldValueRepository
-            .bulkCreate(mfvPojos)
-            .stream()
-            .map(mfv -> {
-                final MetadataFieldPojo metadataFieldPojo = metadataFields.get(mfv.getMetadataFieldId());
-                return metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, mfv));
+        return metadataFieldService.getOrCreateMetadataFields(mfPojos)
+            .map(pojos -> pojos.stream().collect(Collectors.toMap(MetadataFieldPojo::getId, identity())))
+            .map(fieldsMap -> {
+                final List<MetadataFieldValuePojo> metadataFieldValuePojos = fieldsMap.values().stream()
+                    .map(metadataFieldPojo -> new MetadataFieldValuePojo()
+                        .setMetadataFieldId(metadataFieldPojo.getId())
+                        .setValue(metadataObjectMap.get(new MetadataKey(metadataFieldPojo)).getValue())
+                        .setDataEntityId(dataEntityId))
+                    .toList();
+                return Tuples.of(fieldsMap, metadataFieldValuePojos);
             })
-            .collect(Collectors.toList());
-
-        entityRepository.calculateMetadataVectors(List.of(dataEntityId));
-        return Mono.just(new MetadataFieldValueList().items(fields));
-    }
-
-    @Override
-    public Mono<Void> deleteMetadata(final long dataEntityId, final long metadataFieldId) {
-        return Mono
-            .fromRunnable(() -> metadataFieldValueRepository.delete(dataEntityId, metadataFieldId))
-            .then();
-    }
-
-    @Override
-    public Mono<InternalDescription> upsertDescription(final long dataEntityId,
-                                                       final InternalDescriptionFormData formData) {
-        return Mono.just(formData.getInternalDescription()).map(d -> {
-            entityRepository.setDescription(dataEntityId, d);
-            return new InternalDescription().internalDescription(d);
-        });
-    }
-
-    @Override
-    public Mono<InternalName> upsertBusinessName(final long dataEntityId,
-                                                 final InternalNameFormData formData) {
-        return Mono.just(formData.getInternalName())
-            .map(name -> {
-                entityRepository.setInternalName(dataEntityId, name);
-                return new InternalName().internalName(name);
-            });
+            .flatMap(function((fieldsMap, metadataFieldValuePojos) -> reactiveMetadataFieldValueRepository
+                .bulkCreate(metadataFieldValuePojos)
+                .map(mfv -> {
+                    final MetadataFieldPojo metadataFieldPojo = fieldsMap.get(mfv.getMetadataFieldId());
+                    return metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, mfv));
+                }).collectList()))
+            .flatMap(fields -> reactiveSearchEntrypointRepository.updateMetadataVectors(dataEntityId)
+                .thenReturn(fields))
+            .flatMap(fields -> dataEntityFilledService.markEntityFilled(dataEntityId, INTERNAL_METADATA)
+                .thenReturn(fields))
+            .map(fields -> new MetadataFieldValueList().items(fields));
     }
 
     @Override
     @ReactiveTransactional
-    public Flux<Tag> upsertTags(final long dataEntityId, final TagsFormData formData) {
-        final Set<String> names = new HashSet<>(formData.getTagNameList());
-
-        return tagService.deleteRelationsWithDataEntityExcept(dataEntityId, names)
-            .then(tagService.getOrCreateTagsByName(names))
-            .flatMap(tagsToLink -> tagService.createRelationsWithDataEntity(dataEntityId, tagsToLink)
-                .ignoreElements().thenReturn(tagsToLink))
-            .flatMap(tags -> reactiveSearchEntrypointRepository.updateTagVectorsForDataEntity(dataEntityId)
-                .thenReturn(tags))
-            .flatMapIterable(tags -> tags.stream().map(tagMapper::mapToTag).toList());
-    }
-
-    @Override
-    @BlockingTransactional
     public Mono<MetadataFieldValue> upsertMetadataFieldValue(final long dataEntityId,
                                                              final long metadataFieldId,
                                                              final MetadataFieldValueUpdateFormData formData) {
@@ -322,25 +317,93 @@ public class DataEntityServiceImpl
             .setMetadataFieldId(metadataFieldId)
             .setValue(formData.getValue());
 
-        final MetadataFieldPojo metadataFieldPojo = metadataFieldRepository.get(metadataFieldId)
-            .orElseThrow(NotFoundException::new);
-
-        final MetadataFieldValuePojo enrichedPojo = metadataFieldValueRepository.update(metadataFieldValuePojo);
-        entityRepository.calculateMetadataVectors(List.of(dataEntityId));
-
-        return Mono.just(metadataFieldValueMapper.mapDto(new MetadataDto(metadataFieldPojo, enrichedPojo)));
+        return metadataFieldService.get(metadataFieldId)
+            .flatMap(fieldPojo -> reactiveMetadataFieldValueRepository.update(metadataFieldValuePojo)
+                .map(valuePojo -> Tuples.of(fieldPojo, valuePojo)))
+            .flatMap(function((fieldPojo, valuePojo) -> reactiveSearchEntrypointRepository
+                .updateMetadataVectors(dataEntityId)
+                .thenReturn(Tuples.of(fieldPojo, valuePojo))))
+            .map(function(
+                (fieldPojo, valuePojo) -> metadataFieldValueMapper.mapDto(new MetadataDto(fieldPojo, valuePojo))));
     }
 
     @Override
-    public Mono<DataEntityLineage> getLineage(final long dataEntityId,
-                                              final int lineageDepth,
-                                              final LineageStreamKind lineageStreamKind) {
-        return Mono
-            .fromCallable(() -> entityRepository.getLineage(dataEntityId, lineageDepth, lineageStreamKind))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException())
-                : Mono.just(optional.get()))
-            .map(entityMapper::mapLineageDto);
+    @ReactiveTransactional
+    public Mono<Void> deleteMetadata(final long dataEntityId, final long metadataFieldId) {
+        return reactiveMetadataFieldValueRepository.delete(dataEntityId, metadataFieldId)
+            .then(reactiveSearchEntrypointRepository.updateMetadataVectors(dataEntityId))
+            .then(reactiveMetadataFieldValueRepository.listByDataEntityIds(List.of(dataEntityId), INTERNAL))
+            .flatMap(metadata -> {
+                if (CollectionUtils.isEmpty(metadata)) {
+                    return dataEntityFilledService.markEntityUnfilled(dataEntityId, INTERNAL_METADATA);
+                }
+                return Mono.just(metadata);
+            })
+            .then();
+    }
+
+    @Override
+    @ActivityLog(event = ActivityEventTypeDto.DESCRIPTION_UPDATED)
+    @ReactiveTransactional
+    public Mono<InternalDescription> upsertDescription(@ActivityParameter(DATA_ENTITY_ID) final long dataEntityId,
+                                                       final InternalDescriptionFormData formData) {
+        return reactiveDataEntityRepository.setInternalDescription(dataEntityId, formData.getInternalDescription())
+            .map(pojo -> new InternalDescription().internalDescription(pojo.getInternalDescription()))
+            .flatMap(in -> reactiveSearchEntrypointRepository.updateDataEntityVectors(dataEntityId)
+                .thenReturn(in))
+            .flatMap(in -> {
+                if (StringUtils.isNotEmpty(in.getInternalDescription())) {
+                    return dataEntityFilledService.markEntityFilled(dataEntityId, INTERNAL_DESCRIPTION)
+                        .thenReturn(in);
+                } else {
+                    return dataEntityFilledService.markEntityUnfilled(dataEntityId, INTERNAL_DESCRIPTION)
+                        .thenReturn(in);
+                }
+            });
+    }
+
+    @Override
+    @ActivityLog(event = ActivityEventTypeDto.BUSINESS_NAME_UPDATED)
+    @ReactiveTransactional
+    public Mono<InternalName> upsertBusinessName(
+        @ActivityParameter(ActivityParameterNames.InternalNameUpdated.DATA_ENTITY_ID) final long dataEntityId,
+        final InternalNameFormData formData) {
+        return reactiveDataEntityRepository.setInternalName(dataEntityId, formData.getInternalName())
+            .map(pojo -> new InternalName().internalName(pojo.getInternalName()))
+            .flatMap(in -> reactiveSearchEntrypointRepository.updateDataEntityVectors(dataEntityId)
+                .thenReturn(in))
+            .flatMap(in -> {
+                if (StringUtils.isNotEmpty(in.getInternalName())) {
+                    return dataEntityFilledService.markEntityFilled(dataEntityId, INTERNAL_NAME)
+                        .thenReturn(in);
+                } else {
+                    return dataEntityFilledService.markEntityUnfilled(dataEntityId, INTERNAL_NAME)
+                        .thenReturn(in);
+                }
+            });
+    }
+
+    @Override
+    @ReactiveTransactional
+    @ActivityLog(event = ActivityEventTypeDto.TAGS_ASSOCIATION_UPDATED)
+    public Flux<Tag> upsertTags(
+        @ActivityParameter(ActivityParameterNames.TagsAssociationUpdated.DATA_ENTITY_ID) final long dataEntityId,
+        final TagsFormData formData) {
+        final Set<String> names = new HashSet<>(formData.getTagNameList());
+        return tagService.updateRelationsWithDataEntity(dataEntityId, names)
+            .flatMap(tags -> reactiveSearchEntrypointRepository.updateTagVectorsForDataEntity(dataEntityId)
+                .thenReturn(tags))
+            .flatMap(tags -> {
+                final List<TagDto> internalTags = tags.stream()
+                    .filter(t -> !t.external())
+                    .toList();
+                if (CollectionUtils.isEmpty(internalTags)) {
+                    return dataEntityFilledService.markEntityUnfilled(dataEntityId, INTERNAL_TAGS).thenReturn(tags);
+                } else {
+                    return dataEntityFilledService.markEntityFilled(dataEntityId, INTERNAL_TAGS).thenReturn(tags);
+                }
+            })
+            .flatMapIterable(tags -> tags.stream().map(tagMapper::mapToTag).toList());
     }
 
     @Override
@@ -353,12 +416,62 @@ public class DataEntityServiceImpl
     }
 
     @Override
-    public Mono<DataEntityGroupLineageList> getDataEntityGroupLineage(final Long dataEntityGroupId) {
-        return Mono.fromCallable(() -> entityRepository.getDataEntityGroupLineage(dataEntityGroupId))
-            .flatMap(optional -> optional.isEmpty()
-                ? Mono.error(new NotFoundException())
-                : Mono.just(optional.get()))
-            .map(entityMapper::mapGroupLineageDto);
+    @ReactiveTransactional
+    public Mono<DataEntityRef> addDataEntityToDEG(final Long dataEntityId,
+                                                  final DataEntityDataEntityGroupFormData formData) {
+        final Mono<DataEntityPojo> dataEntityMono = reactiveDataEntityRepository.get(dataEntityId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity with id %s doesn't exist", dataEntityId)));
+        final Mono<DataEntityPojo> groupPojoMono = reactiveDataEntityRepository.get(formData.getDataEntityGroupId())
+            .filter(this::isManuallyCreatedDEG)
+            .switchIfEmpty(Mono.error(
+                new IllegalArgumentException(
+                    "Entity with id %s is not manually created DEG".formatted(formData.getDataEntityGroupId()))));
+        return dataEntityMono.zipWith(groupPojoMono)
+            .flatMap(function(
+                (pojo, groupPojo) -> reactiveGroupEntityRelationRepository
+                    .createRelations(groupPojo.getOddrn(), List.of(pojo.getOddrn()))
+                    .ignoreElements()
+                    .thenReturn(groupPojo)))
+            .flatMap(
+                groupPojo -> dataEntityFilledService.markEntityFilled(dataEntityId, CUSTOM_GROUP).thenReturn(groupPojo))
+            .map(entityMapper::mapRef);
+    }
+
+    @Override
+    @ReactiveTransactional
+    public Flux<GroupEntityRelationsPojo> deleteDataEntityFromDEG(final Long dataEntityId,
+                                                                  final Long dataEntityGroupId) {
+        final Mono<DataEntityPojo> dataEntityMono = reactiveDataEntityRepository.get(dataEntityId)
+            .switchIfEmpty(Mono.error(new NotFoundException("Data entity with id %s doesn't exist", dataEntityId)));
+        final Mono<DataEntityPojo> groupPojoMono = reactiveDataEntityRepository.get(dataEntityGroupId)
+            .filter(this::isManuallyCreatedDEG)
+            .switchIfEmpty(Mono.error(
+                new IllegalArgumentException(
+                    "Entity with id %s is not manually created DEG".formatted(dataEntityGroupId))));
+        return dataEntityMono.zipWith(groupPojoMono)
+            .flatMap(function((pojo, groupPojo) -> reactiveGroupEntityRelationRepository
+                .deleteRelations(groupPojo.getOddrn(), pojo.getOddrn())
+                .collectList()
+                .map(relations -> Tuples.of(relations, pojo.getOddrn()))
+            ))
+            .flatMapMany(function((relations, dataEntityOddrn) -> reactiveGroupEntityRelationRepository
+                .getManuallyCreatedRelations(dataEntityOddrn)
+                .collectList()
+                .flatMapMany(groups -> {
+                    if (CollectionUtils.isEmpty(groups)) {
+                        return dataEntityFilledService.markEntityUnfilled(dataEntityId, CUSTOM_GROUP)
+                            .thenMany(Flux.fromIterable(relations));
+                    }
+                    return Flux.fromIterable(relations);
+                }))
+            );
+    }
+
+    @Override
+    public Mono<DataEntityUsageInfo> getDataEntityUsageInfo() {
+        return Mono.zip(dataEntityStatisticsRepository.getStatistics(),
+                dataEntityFilledService.getFilledDataEntitiesCount())
+            .map(function(entityMapper::mapUsageInfo));
     }
 
     private Mono<DataEntityRef> createDEG(final DataEntityGroupFormData formData,
@@ -375,11 +488,15 @@ public class DataEntityServiceImpl
             .flatMap(pojo -> {
                 final List<String> entityOddrns =
                     formData.getEntities().stream().map(DataEntityRef::getOddrn).toList();
-                return groupEntityRelationRepository.createRelations(pojo.getOddrn(), entityOddrns)
+                return reactiveGroupEntityRelationRepository.createRelations(pojo.getOddrn(), entityOddrns)
                     .ignoreElements().thenReturn(pojo);
             })
             .flatMap(this::updateSearchVectors)
-            .map(entityMapper::mapRef);
+            .map(entityMapper::mapRef)
+            .flatMap(ref -> logDEGCreatedActivityEvent(ref).thenReturn(ref))
+            .flatMap(ref -> dataEntityFilledService.markEntityFilled(ref.getId(), MANUALLY_CREATED).thenReturn(ref))
+            .flatMap(ref -> dataEntityStatisticsRepository.updateCounts(1L, Map.of(DATA_ENTITY_GROUP, 1L))
+                .thenReturn(ref));
     }
 
     private Mono<DataEntityRef> updateDEG(final DataEntityPojo pojo,
@@ -390,9 +507,9 @@ public class DataEntityServiceImpl
         return Mono.just(formData)
             .map(fd -> entityMapper.applyToPojo(fd, namespace, pojo))
             .flatMap(reactiveDataEntityRepository::update)
-            .flatMap(degPojo -> groupEntityRelationRepository.deleteRelationsExcept(degPojo.getOddrn(), entityOddrns)
-                .ignoreElements().thenReturn(degPojo))
-            .flatMap(degPojo -> groupEntityRelationRepository.createRelations(degPojo.getOddrn(), entityOddrns)
+            .flatMap(degPojo -> reactiveGroupEntityRelationRepository
+                .deleteRelationsExcept(degPojo.getOddrn(), entityOddrns).ignoreElements().thenReturn(degPojo))
+            .flatMap(degPojo -> reactiveGroupEntityRelationRepository.createRelations(degPojo.getOddrn(), entityOddrns)
                 .ignoreElements().thenReturn(degPojo))
             .flatMap(this::updateSearchVectors)
             .map(entityMapper::mapRef);
@@ -400,18 +517,20 @@ public class DataEntityServiceImpl
 
     private Mono<DataEntityPojo> deleteDEG(final DataEntityPojo pojo) {
         return Flux.zip(
+            dataEntityStatisticsRepository.updateCounts(-1L, Map.of(DATA_ENTITY_GROUP, -1L)),
             reactiveTermRepository.deleteRelationsWithTerms(pojo.getId()),
-            groupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
+            reactiveGroupEntityRelationRepository.deleteRelationsForDEG(pojo.getOddrn()),
             tagService.deleteRelationsForDataEntity(pojo.getId()),
-            ownershipRepository.deleteByDataEntityId(pojo.getId())
+            ownershipRepository.deleteByDataEntityId(pojo.getId()),
+            dataEntityFilledService.markEntityUnfilled(pojo.getId(), MANUALLY_CREATED)
         ).then(reactiveDataEntityRepository.delete(pojo.getId()));
     }
 
     private String generateOddrn(final DataEntityPojo pojo) {
         try {
             return oddrnGenerator.generate(ODDPlatformDataEntityGroupPath.builder()
-                    .id(pojo.getId())
-                    .build(), "id");
+                .id(pojo.getId())
+                .build(), "id");
         } catch (Exception e) {
             log.error("Error while generating oddrn for data entity {}", pojo.getId(), e);
             throw new RuntimeException(e);
@@ -423,5 +542,23 @@ public class DataEntityServiceImpl
             reactiveSearchEntrypointRepository.updateDataEntityVectors(pojo.getId()),
             reactiveSearchEntrypointRepository.updateNamespaceVectorForDataEntity(pojo.getId())
         ).thenReturn(pojo);
+    }
+
+    private Mono<Void> logDEGCreatedActivityEvent(final DataEntityRef ref) {
+        return Mono.zip(activityService.getContextInfo(Map.of(), ActivityEventTypeDto.CUSTOM_GROUP_CREATED),
+                activityService.getUpdatedInfo(Map.of(), ref.getId(), ActivityEventTypeDto.CUSTOM_GROUP_CREATED))
+            .map(function((ci, newState) -> ActivityCreateEvent.builder()
+                .dataEntityId(ref.getId())
+                .oldState(ci.getOldState())
+                .newState(newState)
+                .eventType(ActivityEventTypeDto.CUSTOM_GROUP_CREATED)
+                .systemEvent(false)
+                .build()
+            )).flatMap(activityService::createActivityEvent);
+    }
+
+    private boolean isManuallyCreatedDEG(final DataEntityPojo pojo) {
+        return pojo.getManuallyCreated()
+            && ArrayUtils.contains(pojo.getEntityClassIds(), DATA_ENTITY_GROUP.getId());
     }
 }

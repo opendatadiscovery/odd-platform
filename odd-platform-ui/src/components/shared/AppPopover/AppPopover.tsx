@@ -1,5 +1,6 @@
 import React from 'react';
-import { PopoverProps } from '@mui/material';
+import { PopoverProps, Theme } from '@mui/material';
+import { SxProps } from '@mui/system';
 import * as S from './AppPopoverStyles';
 
 interface AppPopoverProps extends Omit<PopoverProps, 'open'> {
@@ -7,6 +8,7 @@ interface AppPopoverProps extends Omit<PopoverProps, 'open'> {
     onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
     ariaDescribedBy: string | undefined;
   }) => React.ReactElement;
+  childrenSx?: SxProps<Theme>;
 }
 
 const AppPopover: React.FC<AppPopoverProps> = ({
@@ -14,6 +16,7 @@ const AppPopover: React.FC<AppPopoverProps> = ({
   anchorOrigin,
   renderOpenBtn,
   sx,
+  childrenSx,
   ...props
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
@@ -35,10 +38,9 @@ const AppPopover: React.FC<AppPopoverProps> = ({
   const id = open ? 'appPopover' : undefined;
 
   return (
-    <div>
+    <>
       {renderOpenBtn({ onClick: handleClick, ariaDescribedBy: id })}
       <S.AppPopover
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...props}
         sx={sx}
         id={id}
@@ -48,9 +50,9 @@ const AppPopover: React.FC<AppPopoverProps> = ({
         anchorOrigin={anchorOrigin}
         disableRestoreFocus
       >
-        {children}
+        <S.PopoverChildren sx={childrenSx}>{children}</S.PopoverChildren>
       </S.AppPopover>
-    </div>
+    </>
   );
 };
 export default AppPopover;

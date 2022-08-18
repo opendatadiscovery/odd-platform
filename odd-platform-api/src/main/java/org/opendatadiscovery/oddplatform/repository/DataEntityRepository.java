@@ -6,10 +6,8 @@ import java.util.Optional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
 import org.opendatadiscovery.oddplatform.dto.FacetStateDto;
-import org.opendatadiscovery.oddplatform.dto.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.utils.Page;
@@ -21,30 +19,26 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     List<DataEntityDimensionsDto> listDimensionsByOddrns(final Collection<String> oddrns);
 
+    List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
+                                                  final Integer page,
+                                                  final Integer size,
+                                                  final boolean skipHollow);
+
     List<DataEntityDimensionsDto> listByEntityClass(final int page,
-                                             final int size,
-                                             final int entityClassId,
-                                             final Integer typeId);
+                                                    final int size,
+                                                    final int entityClassId,
+                                                    final Integer typeId);
 
     List<DataEntityDimensionsDto> listByTerm(final long termId, final String query, final Integer entityClassId,
                                              final int page, final int size);
 
     List<DataEntityDto> listByOwner(final int page, final int size, final long ownerId);
 
-    List<? extends DataEntityDto> listByOwner(final int page,
-                                              final int size,
-                                              final long ownerId,
-                                              final LineageStreamKind streamKind);
+    List<String> listOddrnsByOwner(final long ownerId, final LineageStreamKind streamKind);
 
     List<? extends DataEntityDto> listPopular(final int page, final int size);
 
     Optional<DataEntityDetailsDto> getDetails(final long id);
-
-    Optional<DataEntityLineageDto> getLineage(final long dataEntityId,
-                                              final int lineageDepth,
-                                              final LineageStreamKind streamKind);
-
-    Optional<DataEntityGroupLineageDto> getDataEntityGroupLineage(final Long dataEntityGroupId);
 
     Page<DataEntityDimensionsDto> findByState(final FacetStateDto state, final int page, final int size);
 
@@ -65,21 +59,12 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     Long countByState(final FacetStateDto state, final OwnerPojo ownerPojo);
 
-    void setDescription(final long dataEntityId, final String description);
-
-    void setInternalName(final long dataEntityId, final String businessName);
-
     void calculateSearchEntrypoints(final Collection<Long> dataEntityIds);
-
-    void calculateDataEntityVectors(final Collection<Long> ids);
-
-    void calculateNamespaceVectors(final Collection<Long> ids);
-
-    void calculateDataSourceVectors(final Collection<Long> ids);
 
     void calculateMetadataVectors(final Collection<Long> ids);
 
-    List<DataEntityDto> getQuerySuggestions(final String query);
+    List<DataEntityDto> getQuerySuggestions(final String query, final Integer entityClassId,
+                                            final Boolean manuallyCreated);
 
     List<DataEntityDimensionsDto> getDataEntityGroupsChildren(final Long dataEntityGroupId,
                                                               final Integer page,

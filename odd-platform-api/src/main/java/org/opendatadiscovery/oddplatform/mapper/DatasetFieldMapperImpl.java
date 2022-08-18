@@ -18,6 +18,8 @@ public class DatasetFieldMapperImpl implements DatasetFieldMapper {
             .setOddrn(field.getOddrn())
             .setParentFieldOddrn(field.getParentFieldOddrn())
             .setFieldOrder(0)
+            .setIsPrimaryKey(field.getIsPrimaryKey() != null ? field.getIsPrimaryKey() : false)
+            .setIsSortKey(field.getIsSortKey() != null ? field.getIsSortKey() : false)
             .setStats(JSONB.jsonb(JSONSerDeUtils.serializeJson(field.getStats())))
             .setType(JSONB.jsonb(JSONSerDeUtils.serializeJson(field.getType())))
             .setIsKey(field.getIsKey())

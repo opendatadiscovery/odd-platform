@@ -2,27 +2,32 @@ import { Typography } from '@mui/material';
 import React from 'react';
 import { InternalNameFormData } from 'generated-sources';
 import { Controller, useForm } from 'react-hook-form';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { AppButton, AppInput, DialogWrapper } from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { updateDataEntityInternalName } from 'redux/thunks';
+import { useAppParams } from 'lib/hooks';
+import {
+  getDataEntityInternalName,
+  getDataEntityInternalNameUpdatingStatuses,
+} from 'redux/selectors';
 
 interface InternalNameFormDialogProps {
   btnCreateEl: JSX.Element;
-  isLoading: boolean;
-  dataEntityId: number;
-  dataEntityInternalName?: string;
 }
 
 const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   btnCreateEl,
-  isLoading,
-  dataEntityId,
-  dataEntityInternalName,
 }) => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
+
+  const dataEntityInternalName = useAppSelector(
+    getDataEntityInternalName(dataEntityId)
+  );
+  const { isLoading: isInternalNameUpdating } = useAppSelector(
+    getDataEntityInternalNameUpdatingStatuses
+  );
 
   const { handleSubmit, control, reset } = useForm<InternalNameFormData>({
     mode: 'all',
@@ -80,7 +85,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
         name="internalName"
         defaultValue={dataEntityInternalName || ''}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             label="Business name"
             placeholder="Enter business name"
@@ -118,7 +123,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isInternalNameUpdating}
       errorText={error}
       clearState={clearState}
     />

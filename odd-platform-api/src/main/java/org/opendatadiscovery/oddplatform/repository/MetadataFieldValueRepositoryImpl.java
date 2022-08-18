@@ -3,12 +3,11 @@ package org.opendatadiscovery.oddplatform.repository;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
-import org.opendatadiscovery.oddplatform.dto.MetadataDto;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MetadataFieldValueRecord;
@@ -26,7 +25,7 @@ public class MetadataFieldValueRepositoryImpl
 
     public MetadataFieldValueRepositoryImpl(final DSLContext dslContext, final JooqQueryHelper jooqQueryHelper) {
         super(dslContext, jooqQueryHelper, METADATA_FIELD_VALUE, null, null,
-            null, MetadataFieldValuePojo.class);
+            null, null, MetadataFieldValuePojo.class);
     }
 
     @Override
@@ -54,16 +53,6 @@ public class MetadataFieldValueRepositoryImpl
     }
 
     @Override
-    public MetadataFieldValuePojo update(final MetadataFieldValuePojo pojo) {
-        final MetadataFieldValueRecord r = pojoToRecord(pojo);
-        r.changed(METADATA_FIELD_VALUE.METADATA_FIELD_ID, false);
-        r.changed(METADATA_FIELD_VALUE.DATA_ENTITY_ID, false);
-        r.store();
-
-        return recordToPojo(r);
-    }
-
-    @Override
     public List<MetadataDto> getDtosByDataEntityId(final long dataEntityId) {
         return dslContext
             .select(METADATA_FIELD.fields())
@@ -83,14 +72,6 @@ public class MetadataFieldValueRepositoryImpl
             .fetchStream()
             .map(this::recordToPojo)
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public void delete(final long dataEntityId, final long metadataFieldId) {
-        dslContext.deleteFrom(METADATA_FIELD_VALUE)
-            .where(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(dataEntityId))
-            .and(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(metadataFieldId))
-            .execute();
     }
 
     private MetadataDto metadataDto(final Record r) {

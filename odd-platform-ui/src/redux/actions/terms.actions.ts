@@ -31,3 +31,14 @@ export const updateTermDetailsTagsAction = createActionType(
   termsActionTypePrefix,
   'updateTermDetailsTags'
 );
+
+// dataEntity terms
+export const addDataEntityTermAction = createActionType(
+  termsActionTypePrefix,
+  'addDataEntityTerm'
+);
+
+export const deleteDataEntityTermAction = createActionType(
+  termsActionTypePrefix,
+  'deleteDataEntityTerm'
+);

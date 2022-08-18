@@ -1,45 +1,42 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  Namespace,
-  NamespaceFormData,
-  NamespaceApiUpdateNamespaceRequest,
-  NamespaceApiCreateNamespaceRequest,
-} from 'generated-sources';
+import { Namespace, NamespaceFormData } from 'generated-sources';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { createNamespace, updateNamespace } from 'redux/thunks';
+import {
+  getNamespaceCreatingStatuses,
+  getNamespaceUpdatingStatuses,
+} from 'redux/selectors';
 
 interface NamespaceFormProps {
   btnEl: JSX.Element;
   namespace?: Namespace;
-  isLoading: boolean;
-  createNamespace: (
-    params: NamespaceApiCreateNamespaceRequest
-  ) => Promise<Namespace>;
-  updateNamespace: (
-    params: NamespaceApiUpdateNamespaceRequest
-  ) => Promise<Namespace>;
 }
 
 const NamespaceForm: React.FC<NamespaceFormProps> = ({
   btnEl,
   namespace,
-  isLoading,
-  createNamespace,
-  updateNamespace,
 }) => {
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState,
-  } = useForm<NamespaceFormData>({
-    mode: 'onChange',
-    reValidateMode: 'onChange',
-  });
+  const dispatch = useAppDispatch();
+
+  const { isLoading: isNamespaceCreating } = useAppSelector(
+    getNamespaceCreatingStatuses
+  );
+  const { isLoading: isNamespaceUpdating } = useAppSelector(
+    getNamespaceUpdatingStatuses
+  );
+
+  const { control, handleSubmit, reset, formState } =
+    useForm<NamespaceFormData>({
+      mode: 'onChange',
+      reValidateMode: 'onChange',
+    });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
   const [{ error, isSuccessfulSubmit }, setState] = React.useState<{
@@ -54,13 +51,17 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
 
   const handleUpdate = (data: NamespaceFormData) => {
     (namespace
-      ? updateNamespace({
-          namespaceId: namespace.id,
-          namespaceUpdateFormData: data,
-        })
-      : createNamespace({
-          namespaceFormData: data,
-        })
+      ? dispatch(
+          updateNamespace({
+            namespaceId: namespace.id,
+            namespaceUpdateFormData: data,
+          })
+        )
+      : dispatch(
+          createNamespace({
+            namespaceFormData: data,
+          })
+        )
     ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
@@ -89,7 +90,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
         defaultValue={namespace?.name || ''}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Namespace Name"
             customEndAdornment={{
@@ -127,7 +128,7 @@ const NamespaceForm: React.FC<NamespaceFormProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isNamespaceCreating || isNamespaceUpdating}
       errorText={error}
       clearState={clearState}
     />

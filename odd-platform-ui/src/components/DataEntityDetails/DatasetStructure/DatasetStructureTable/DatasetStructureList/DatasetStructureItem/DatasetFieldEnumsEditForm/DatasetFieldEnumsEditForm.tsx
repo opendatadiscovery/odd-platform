@@ -2,12 +2,19 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import {
-  DatasetFieldApiCreateEnumValueRequest,
-  DatasetFieldApiGetEnumValuesRequest,
   DataSetFieldTypeTypeEnum,
   EnumValueFormData,
-  EnumValueList,
 } from 'generated-sources';
+import {
+  getDatasetFieldEnums,
+  getDatasetFieldEnumsCreatingStatus,
+  getDatasetFieldEnumsFetchingStatus,
+} from 'redux/selectors';
+import {
+  createDataSetFieldEnum,
+  fetchDataSetFieldEnum,
+} from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AddIcon from 'components/shared/Icons/AddIcon';
@@ -22,15 +29,6 @@ import {
 interface DataSetFieldEnumEditFormProps {
   datasetFieldId: number;
   datasetFieldName: string;
-  datasetFieldEnums: EnumValueList['items'];
-  isFetching: boolean;
-  isCreating: boolean;
-  fetchDataSetFieldEnum: (
-    params: DatasetFieldApiGetEnumValuesRequest
-  ) => Promise<EnumValueList>;
-  createDataSetFieldEnum: (
-    params: DatasetFieldApiCreateEnumValueRequest
-  ) => Promise<EnumValueList>;
   btnCreateEl: JSX.Element;
   enumValueType: DataSetFieldTypeTypeEnum;
 }
@@ -39,27 +37,34 @@ interface DatasetFieldEnumsFormData {
   enums: EnumValueFormData[];
 }
 
-const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
-  datasetFieldId,
-  datasetFieldName,
-  datasetFieldEnums,
-  isFetching,
-  isCreating,
-  fetchDataSetFieldEnum,
-  createDataSetFieldEnum,
-  btnCreateEl,
-  enumValueType,
-}) => {
-  const defaultEnums =
-    datasetFieldEnums && datasetFieldEnums?.length > 0
-      ? {
-          enums: datasetFieldEnums?.map(enumItem => ({
-            id: enumItem.id,
-            name: enumItem.name,
-            description: enumItem.description,
-          })),
-        }
-      : { enums: [{ name: '', description: '' }] };
+const DatasetFieldEnumsEditForm: React.FC<
+  DataSetFieldEnumEditFormProps
+> = ({ datasetFieldId, datasetFieldName, btnCreateEl, enumValueType }) => {
+  const dispatch = useAppDispatch();
+
+  const { isLoading: isEnumsCreating } = useAppSelector(
+    getDatasetFieldEnumsCreatingStatus
+  );
+  const { isLoading: isEnumsFetching } = useAppSelector(
+    getDatasetFieldEnumsFetchingStatus
+  );
+  const datasetFieldEnums = useAppSelector(
+    getDatasetFieldEnums(datasetFieldId)
+  );
+
+  const defaultEnums = React.useMemo(() => {
+    if (datasetFieldEnums[0] && 'id' in datasetFieldEnums[0]) {
+      return {
+        enums: datasetFieldEnums.map(enumItem => ({
+          id: enumItem.id,
+          name: enumItem.name,
+          description: enumItem.description,
+        })),
+      };
+    }
+
+    return { enums: [{ name: '', description: '' }] };
+  }, [datasetFieldEnums]);
 
   const methods = useForm<DatasetFieldEnumsFormData>({
     defaultValues: defaultEnums,
@@ -79,11 +84,11 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
 
   React.useEffect(() => {
     methods.reset(defaultEnums);
-  }, [datasetFieldEnums]);
+  }, [defaultEnums]);
 
   const onOpen = (handleOpen: () => void) => () => {
     if (btnCreateEl.props.onClick) btnCreateEl.props.onClick();
-    fetchDataSetFieldEnum({ datasetFieldId });
+    dispatch(fetchDataSetFieldEnum({ datasetFieldId }));
     handleOpen();
   };
 
@@ -93,16 +98,18 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
   };
 
   const handleFormSubmit = (data: DatasetFieldEnumsFormData) => {
-    createDataSetFieldEnum({
-      datasetFieldId,
-      bulkEnumValueFormData: {
-        items: data.enums.map(enumItem => ({
-          id: enumItem.id,
-          name: enumItem.name,
-          description: enumItem.description,
-        })),
-      },
-    }).then(
+    dispatch(
+      createDataSetFieldEnum({
+        datasetFieldId,
+        bulkEnumValueFormData: {
+          items: data.enums.map(enumItem => ({
+            id: enumItem.id,
+            name: enumItem.name,
+            description: enumItem.description,
+          })),
+        },
+      })
+    ).then(
       () => {
         setFormState({ ...initialFormState, isSuccessfulSubmit: true });
         clearFormState();
@@ -153,7 +160,7 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
 
   const formContent = () => (
     <>
-      {isFetching ? (
+      {isEnumsFetching ? (
         <Grid container justifyContent="center">
           <AppCircularProgress
             background="transparent"
@@ -209,7 +216,7 @@ const DatasetFieldEnumsEditForm: React.FC<DataSetFieldEnumEditFormProps> = ({
       renderContent={formContent}
       renderActions={({ handleClose }) => formActionButtons(handleClose)}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isCreating}
+      isLoading={isEnumsCreating}
       errorText={error}
       maxWidth="xl"
       clearState={clearFormState}

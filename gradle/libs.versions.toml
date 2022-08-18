@@ -1,0 +1,157 @@
+[versions]
+spring-webflux = '5.3.19'
+reactor-extra = '3.4.8'
+micrometer-registry-prometheus = '1.9.0'
+ingestion-contract-server = '0.1.14'
+oddrn-generator-java = '0.1.10'
+apache-collections = '4.4'
+apache-lang = '3.12.0'
+r2dbc-spi = '1.0.0.RELEASE'
+r2dbc-pool = '0.8.8.RELEASE'
+jooq = '3.16.6'
+jooq-codegen = '3.14.9'
+flyway-core = '8.5.10'
+psql-driver = '42.4.0'
+javax-validation = '2.0.1.Final'
+javax-annotation = '1.3.2'
+jackson-annotations = '2.13.2'
+jackson-datatype-jsr310 = '2.13.3'
+jackson-databind-nullable = '0.2.2'
+jetbrains-annotations = '23.0.0'
+swagger-annotations = '1.5.23'
+springfox-core = '3.0.0'
+mapstruct = '1.4.2.Final'
+opentelemetry = '1.6.0'
+opentelemetry-alpha = '1.6.0-alpha'
+slack-api-model = '1.24.0'
+lombok = '1.18.24'
+testcontainers = '1.17.1'
+slf4j-api = '1.7.30'
+logback = '1.2.11'
+easy-random-core = '5.0.0'
+
+[libraries]
+spring-starter-webflux = { module = 'org.springframework.boot:spring-boot-starter-webflux' }
+spring-webflux = { module = 'org.springframework:spring-webflux', version.ref = 'spring-webflux' }
+spring-jooq = { module = 'org.springframework.boot:spring-boot-starter-jooq' }
+spring-actuator = { module = 'org.springframework.boot:spring-boot-starter-actuator' }
+spring-security = { module = 'org.springframework.boot:spring-boot-starter-security' }
+spring-thymeleaf = { module = 'org.springframework.boot:spring-boot-starter-thymeleaf' }
+spring-oauth2-client = { module = 'org.springframework.boot:spring-boot-starter-oauth2-client' }
+spring-oauth2-rs = { module = 'org.springframework.boot:spring-boot-starter-oauth2-resource-server' }
+spring-aop = { module = 'org.springframework.boot:spring-boot-starter-aop' }
+spring-session = { module = 'org.springframework.session:spring-session-core' }
+spring-ldap = { module = 'org.springframework.boot:spring-boot-starter-data-ldap' }
+spring-security-ldap = { module = 'org.springframework.security:spring-security-ldap' }
+spring-r2dbc = { module = 'org.springframework:spring-r2dbc' }
+spring-data-redis = { module = 'org.springframework.boot:spring-boot-starter-data-redis-reactive' }
+spring-data-session-redis = { module = 'org.springframework.session:spring-session-data-redis' }
+reactor-extra = { module = 'io.projectreactor.addons:reactor-extra', version.ref = 'reactor-extra' }
+micrometer-registry-prometheus = { module = 'io.micrometer:micrometer-registry-prometheus', version.ref = 'micrometer-registry-prometheus' }
+ingestion-contract-server = { module = 'org.opendatadiscovery:ingestion-contract-server', version.ref = 'ingestion-contract-server' }
+oddrn-generator-java = { module = 'org.opendatadiscovery:oddrn-generator-java', version.ref = 'oddrn-generator-java' }
+apache-collections = { module = 'org.apache.commons:commons-collections4', version.ref = 'apache-collections' }
+apache-lang = { module = 'org.apache.commons:commons-lang3', version.ref = 'apache-lang' }
+r2dbc-spi = { module = 'io.r2dbc:r2dbc-spi', version.ref = 'r2dbc-spi' }
+r2dbc-postgresql = { module = 'io.r2dbc:r2dbc-postgresql' }
+r2dbc-pool = { module = 'io.r2dbc:r2dbc-pool', version.ref = 'r2dbc-pool' }
+jooq = { module = 'org.jooq:jooq', version.ref = 'jooq' }
+jooq-codegen = { module = 'org.jooq:jooq-codegen', version.ref = 'jooq-codegen' }
+flyway-core = { module = 'org.flywaydb:flyway-core', version.ref = 'flyway-core' }
+psql-driver = { module = 'org.postgresql:postgresql', version.ref = 'psql-driver' }
+javax-validation = { module = 'javax.validation:validation-api', version.ref = 'javax-validation' }
+javax-annotation = { module = 'javax.annotation:javax.annotation-api', version.ref = 'javax-annotation' }
+jackson-datatype-jsr310 = { module = 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310', version.ref = 'jackson-datatype-jsr310' }
+jackson-databind-nullable = { module = 'org.openapitools:jackson-databind-nullable', version.ref = 'jackson-databind-nullable' }
+jackson-annotations = { module = 'com.fasterxml.jackson.core:jackson-annotations', version.ref = 'jackson-annotations' }
+jetbrains-annotations = { module = 'org.jetbrains:annotations', version.ref = 'jetbrains-annotations' }
+swagger-annotations = { module = 'io.swagger:swagger-annotations', version.ref = 'swagger-annotations' }
+springfox-core = { module = 'io.springfox:springfox-core', version.ref = 'springfox-core' }
+mapstruct = { module = 'org.mapstruct:mapstruct', version.ref = 'mapstruct' }
+mapstruct-processor = { module = 'org.mapstruct:mapstruct-processor', version.ref = 'mapstruct' }
+opentelemetry-api = { module = 'io.opentelemetry:opentelemetry-api', version.ref = 'opentelemetry' }
+opentelemetry-api-metrics = { module = 'io.opentelemetry:opentelemetry-api-metrics', version.ref = 'opentelemetry-alpha' }
+opentelemetry-sdk-metrics = { module = 'io.opentelemetry:opentelemetry-sdk-metrics', version.ref = 'opentelemetry-alpha' }
+opentelemetry-exporter-otlp-metrics = { module = 'io.opentelemetry:opentelemetry-exporter-otlp-metrics', version.ref = 'opentelemetry-alpha' }
+slack-api-model = { module = 'com.slack.api:slack-api-model', version.ref = 'slack-api-model' }
+lombok = { module = 'org.projectlombok:lombok', version.ref = 'lombok' }
+slf4j-api = { module = 'org.slf4j:slf4j-api', version.ref = 'slf4j-api' }
+jul-to-slf4j = { module = 'org.slf4j:jul-to-slf4j', version.ref = 'slf4j-api' }
+logback-classic = { module = 'ch.qos.logback:logback-classic', version.ref = 'logback' }
+logback-core = { module = 'ch.qos.logback:logback-core', version.ref = 'logback' }
+spring-boot-test = { module = 'org.springframework.boot:spring-boot-starter-test' }
+reactor-test = { module = 'io.projectreactor:reactor-test' }
+testcontainers = { module = 'org.testcontainers:testcontainers', version.ref = 'testcontainers' }
+testcontainers-postgresql = { module = 'org.testcontainers:postgresql', version.ref = 'testcontainers' }
+testcontainers-junit-jupiter = { module = 'org.testcontainers:junit-jupiter', version.ref = 'testcontainers' }
+easy-random-core = { module = 'org.jeasy:easy-random-core', version.ref = 'easy-random-core' }
+
+[bundles]
+spring = [
+    'spring-starter-webflux',
+    'spring-jooq',
+    'spring-actuator',
+    'spring-security',
+    'spring-thymeleaf',
+    'spring-oauth2-client',
+    'spring-oauth2-rs',
+    'spring-session',
+    'spring-ldap',
+    'spring-security-ldap',
+    'spring-r2dbc',
+    'reactor-extra',
+    'spring-aop'
+]
+spring-redis-session = [
+    'spring-data-session-redis',
+    'spring-data-redis'
+]
+internal = [
+    'ingestion-contract-server',
+    'oddrn-generator-java'
+]
+apache-commons = [
+    'apache-collections',
+    'apache-lang'
+]
+r2dbc = [
+    'r2dbc-spi',
+    'r2dbc-postgresql',
+    'r2dbc-pool'
+]
+flyway = [
+    'flyway-core',
+    'psql-driver'
+]
+opentelemetry = [
+    'opentelemetry-api',
+    'opentelemetry-api-metrics',
+    'opentelemetry-sdk-metrics',
+    'opentelemetry-exporter-otlp-metrics'
+]
+testcontainers = [
+    'testcontainers',
+    'testcontainers-postgresql',
+    'testcontainers-junit-jupiter'
+]
+openapi = [
+    'spring-webflux',
+    'javax-validation',
+    'javax-annotation',
+    'jackson-databind-nullable',
+    'swagger-annotations',
+    'springfox-core',
+    "jackson-annotations",
+]
+jooq-codegen = [
+    'flyway-core',
+    'psql-driver',
+    'testcontainers',
+    'testcontainers-postgresql',
+    'jooq-codegen',
+    'slf4j-api',
+    'jul-to-slf4j',
+    'logback-classic',
+    'logback-core',
+    "jackson-annotations"
+]

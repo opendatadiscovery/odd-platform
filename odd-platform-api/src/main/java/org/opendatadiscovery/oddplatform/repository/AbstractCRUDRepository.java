@@ -1,25 +1,33 @@
 package org.opendatadiscovery.oddplatform.repository;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.InsertSetStep;
 import org.jooq.Record;
+import org.jooq.Result;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UpdatableRecord;
 import org.jooq.exception.DataAccessException;
+import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.repository.util.JooqQueryHelper;
 import org.opendatadiscovery.oddplatform.utils.Page;
+import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.util.StringUtils;
 
 import static java.util.Collections.emptyList;
@@ -27,6 +35,7 @@ import static java.util.Collections.emptyList;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> implements CRUDRepository<P> {
+    private static final int BATCH_SIZE = 1000;
 
     protected final DSLContext dslContext;
     protected final JooqQueryHelper jooqQueryHelper;
@@ -34,6 +43,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     protected final Table<R> recordTable;
     protected final Field<Long> idField;
     protected final Field<String> nameField;
+    protected final Field<LocalDateTime> createdAtField;
     protected final Field<LocalDateTime> updatedAtField;
     protected final Class<P> pojoClass;
 
@@ -98,6 +108,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     }
 
     @Override
+    @BlockingTransactional
     public List<P> bulkCreate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
             return emptyList();
@@ -107,6 +118,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
     }
 
     @Override
+    @BlockingTransactional
     public List<P> bulkUpdate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
             return emptyList();
@@ -117,6 +129,7 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
 
     protected <E> List<E> bulkUpdate(final Collection<E> entities, final Class<E> entityClass) {
         final LocalDateTime now = LocalDateTime.now();
+
         final List<R> records = entities.stream()
             .map(e -> {
                 final R record = dslContext.newRecord(recordTable, e);
@@ -127,11 +140,38 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
             })
             .collect(Collectors.toList());
 
-        dslContext.batchUpdate(records).execute();
+        if (idField == null) {
+            dslContext.batchUpdate(records).execute();
 
-        return records.stream()
+            return records.stream()
+                .map(r -> r.into(entityClass))
+                .collect(Collectors.toList());
+        }
+
+        return ListUtils.partition(records, BATCH_SIZE)
+            .stream()
+            .flatMap(rs -> {
+                final Result<Record> result = dslContext.newResult(recordTable.fields());
+                result.addAll(rs);
+
+                final Table<?> table = DSL.table(result);
+
+                final List<Field<?>> nonUpdatableFields = getNonUpdatableFields();
+                final Map<? extends Field<?>, Field<?>> fields = Arrays
+                    .stream(recordTable.fields())
+                    .filter(f -> !nonUpdatableFields.contains(f))
+                    .map(r -> Pair.of(r, table.field(r.getName())))
+                    .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+
+                return dslContext.update(recordTable)
+                    .set(fields)
+                    .from(table)
+                    .where(idField.eq(table.field(idField.getName(), Long.class)))
+                    .returning()
+                    .fetchStream();
+            })
             .map(r -> r.into(entityClass))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     @Override
@@ -160,23 +200,36 @@ public abstract class AbstractCRUDRepository<R extends UpdatableRecord<R>, P> im
         return StringUtils.hasLength(nameQuery) ? List.of(nameField.containsIgnoreCase(nameQuery)) : emptyList();
     }
 
+    protected List<Field<?>> getNonUpdatableFields() {
+        final List<Field<?>> fields = new ArrayList<>();
+        if (idField != null) {
+            fields.add(idField);
+        }
+        if (createdAtField != null) {
+            fields.add(createdAtField);
+        }
+        return fields;
+    }
+
     protected <E> List<E> bulkInsert(final Collection<E> entities, final Class<E> entityClass) {
         final List<R> records = entities.stream()
             .map(e -> dslContext.newRecord(recordTable, e))
-            .collect(Collectors.toList());
+            .toList();
 
-        InsertSetStep<R> insertStep = dslContext.insertInto(recordTable);
-        for (int i = 0; i < records.size() - 1; i++) {
-            insertStep = insertStep.set(records.get(i)).newRecord();
-        }
+        return ListUtils.partition(records, BATCH_SIZE).stream()
+            .flatMap(rs -> {
+                InsertSetStep<R> insertStep = dslContext.insertInto(recordTable);
+                for (int i = 0; i < rs.size() - 1; i++) {
+                    insertStep = insertStep.set(rs.get(i)).newRecord();
+                }
 
-        return insertStep
-            .set(records.get(records.size() - 1))
-            .returning(recordTable.fields())
-            .fetch()
-            .stream()
-            .map(r -> r.into(entityClass))
-            .collect(Collectors.toList());
+                return insertStep
+                    .set(rs.get(rs.size() - 1))
+                    .returning(recordTable.fields())
+                    .fetchStream()
+                    .map(r -> r.into(entityClass));
+            })
+            .toList();
     }
 
     protected Long fetchCount(final String nameQuery) {

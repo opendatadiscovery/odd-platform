@@ -1,74 +1,78 @@
 import { createActionType } from 'lib/redux/helpers';
-import { termsActionTypePrefix } from 'redux/actions/terms.actions';
 
 export const dataEntitiesActionTypePrefix = 'dataEntities';
 
-export const fetchDataEntitiesClassesAndTypesAction = createActionType(
+export const fetchDataEntitiesClassesAndTypesActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'fetchDataEntityClassesAndTypes'
 );
 
-export const fetchDataEntityDetailsAction = createActionType(
+export const fetchDataEntityDetailsActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'fetchDataEntityDetails'
 );
 
-export const updateDataEntityTagsAction = createActionType(
+export const updateDataEntityTagsActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'updateDataEntityTags'
 );
 
-export const updateDataEntityInternalDescriptionAction = createActionType(
-  dataEntitiesActionTypePrefix,
-  'updateDataEntityInternalDescription'
-);
+export const updateDataEntityInternalDescriptionActionType =
+  createActionType(
+    dataEntitiesActionTypePrefix,
+    'updateDataEntityInternalDescription'
+  );
 
-export const updateDataEntityInternalNameAction = createActionType(
+export const updateDataEntityInternalNameActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'updateDataEntityInternalName'
 );
 
-export const fetchMyDataEntitiesAction = createActionType(
+export const fetchMyDataEntitiesActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'fetchMyDataEntities'
 );
 
-export const fetchMyUpstreamDataEntitiesAction = createActionType(
+export const fetchMyUpstreamDataEntitiesActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'fetchMyUpstreamDataEntities'
 );
 
-export const fetchMyDownstreamDataEntitiesAction = createActionType(
+export const fetchMyDownstreamDataEntitiesActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'fetchMyDownstreamDataEntities'
 );
 
-export const fetchPopularDataEntitiesAction = createActionType(
+export const fetchPopularDataEntitiesActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'fetchMyPopularDataEntities'
 );
 
 // data entity groups
-export const createDataEntityGroupAction = createActionType(
+export const createDataEntityGroupActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'createDataEntityGroup'
 );
-export const updateDataEntityGroupAction = createActionType(
+export const updateDataEntityGroupActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'updateDataEntityGroup'
 );
-export const deleteDataEntityGroupAction = createActionType(
+export const deleteDataEntityGroupActionType = createActionType(
   dataEntitiesActionTypePrefix,
   'deleteDataEntityGroup'
 );
 
-// terms
-export const addDataEntityTermAction = createActionType(
-  termsActionTypePrefix,
-  'addDataEntityTerm'
+export const addDataEntityToGroupActionType = createActionType(
+  dataEntitiesActionTypePrefix,
+  'addDataEntityToGroup'
 );
 
-export const deleteDataEntityTermAction = createActionType(
-  termsActionTypePrefix,
-  'deleteDataEntityTerm'
+export const deleteDataEntityFromGroupActionType = createActionType(
+  dataEntitiesActionTypePrefix,
+  'deleteDataEntityFromGroup'
+);
+
+export const fetchDataEntitiesUsageActionType = createActionType(
+  dataEntitiesActionTypePrefix,
+  'dataEntitiesUsage'
 );

@@ -4,21 +4,22 @@ import { useHistory } from 'react-router-dom';
 import {
   TermApiGetTermSearchSuggestionsRequest,
   TermApiTermSearchRequest,
-  TermRefList,
   TermRef,
+  TermRefList,
   TermSearchFacetsData,
 } from 'generated-sources';
-import { termDetailsOverviewPath, termSearchPath } from 'lib/paths';
 import {
-  TermMainSearchSuggestionItem,
-  TermMainSearchContainer,
   TermMainSearchAutocomplete,
+  TermMainSearchContainer,
   TermMainSearchSearch,
+  TermMainSearchSuggestionItem,
 } from 'components/Terms/TermSearch/TermMainSearch/TermMainSearchStyles';
 import { useDebouncedCallback } from 'use-debounce';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import SearchIcon from 'components/shared/Icons/SearchIcon';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 
 interface TermMainSearchProps {
   query?: string;
@@ -44,6 +45,7 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
   const [autocompleteOpen, setAutocompleteOpen] =
     React.useState<boolean>(false);
 
+  const { termSearchPath, termDetailsOverviewPath } = useAppPaths();
   const history = useHistory();
 
   const createSearch = () => {
@@ -143,7 +145,7 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
           filterOptions={option => option}
           clearIcon={<ClearIcon />}
           renderInput={params => (
-            <AppTextField
+            <AppInput
               {...params}
               ref={params.InputProps.ref}
               size="large"

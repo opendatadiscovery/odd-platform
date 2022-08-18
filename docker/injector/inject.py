@@ -1,13 +1,15 @@
 import glob
 import json
 import os
+import requests
 import time
 from typing import Union, Dict, Any, Tuple, List
 
-import requests
-
-REACH_TRIES_NUMBER = 10
+REACH_TRIES_NUMBER = 20
 APP_PATH = os.getenv("APP_PATH") or "."
+
+platform_host_url = os.environ["PLATFORM_HOST_URL"]
+print(f"Platform host url: {platform_host_url}")
 
 
 def read_sample_json(json_filename: str) -> Tuple[str, Dict[str, Any]]:
@@ -45,8 +47,6 @@ def inject_data(data: Dict[str, Any], token: str):
         raise Exception(f"Couldn't inject data for {data['data_source_oddrn']}")
 
 
-platform_host_url = os.environ["PLATFORM_HOST_URL"]
-
 data_sources_grouped = {ds["oddrn"]: ds for ds in read_datasources_json()}
 
 ingestion_samples_grouped = {
@@ -63,10 +63,12 @@ for i in range(0, REACH_TRIES_NUMBER):
     try:
         hc_response = requests.get(f"{platform_host_url}/actuator/health")
     except requests.exceptions.ConnectionError:
+        print("Couldn't reach the platform")
         time.sleep(2)
         continue
 
     if hc_response.json().get('status') != 'UP':
+        print("Platform's not healthy yet")
         time.sleep(2)
         continue
 

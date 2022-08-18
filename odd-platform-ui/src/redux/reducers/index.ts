@@ -1,31 +1,33 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import legacyLoader from './loader-reducer';
 import loader from './loader.slice';
-import namespaces from './namespace.reducer';
-import dataSources from './datasources.reducer';
+import namespaces from './namespace.slice';
+import dataSources from './datasources.slice';
 import dataEntities from './dataentities.slice';
-import tags from './tags.reducer';
-import labels from './labels.reducer';
-import search from './dataentitiesSearch.reducer';
+import tags from './tags.slice';
+import labels from './labels.slice';
+import dataEntitySearch from './dataEntitySearch.slice';
 import metaData from './metadata.slice';
 import owners from './owners.slice';
-import datasetStructure from './datasetStructure.reducer';
-import dataEntityLineage from './dataentityLineage.reducer';
-import profile from './profile.reducer';
-import dataQualityTest from './dataQualityTest.reducer';
-import alerts from './alerts.reducer';
+import datasetStructure from './datasetStructure.slice';
+import dataEntityLineage from './dataEntityLineage/dataEntityLineage.slice';
+import profile from './profile.slice';
+import dataQualityTest from './dataQualityTest.slice';
+import alerts from './alerts.slice';
 import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';
 import termLinkedList from './termLinkedList.slice';
-import appInfo from './appInfo.reducer';
-import collectors from './collectors.reducer';
+import appInfo from './appInfo.slice';
+import collectors from './collectors.slice';
 import terms from './terms.slice';
 import termSearch from './termSearch.reducer';
+import activities from './activity.slice';
+import dataEntityRuns from './dataEntityRuns.slice';
 
 export default combineReducers({
   namespaces,
   dataSources,
   dataEntities,
-  search,
+  dataEntitySearch,
   loader,
   legacyLoader,
   tags,
@@ -43,4 +45,6 @@ export default combineReducers({
   collectors,
   terms,
   termSearch,
+  dataEntityRuns,
+  activities,
 });

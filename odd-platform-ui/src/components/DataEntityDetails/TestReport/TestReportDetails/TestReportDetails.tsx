@@ -1,33 +1,36 @@
 import React from 'react';
-import { DataQualityTest } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import {
-  dataEntityDetailsPath,
-  testReportDetailsHistoryPath,
-  testReportDetailsOverviewPath,
-} from 'lib/paths';
+import { useAppSelector } from 'lib/redux/hooks';
+import { getQualityTestByTestId } from 'redux/selectors/dataQualityTest.selectors';
 import { Link, Redirect, Route, Switch } from 'react-router-dom';
-import TestReportDetailsOverviewContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewContainer';
-import TestReportDetailsHistoryContainer from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistoryContainer';
+import TestReportDetailsOverview from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverview';
+import TestReportDetailsHistory from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsHistory/TestReportDetailsHistory';
 import AppButton from 'components/shared/AppButton/AppButton';
 import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import { useAppPaths } from 'lib/hooks';
 
 interface TestRunDetailsProps {
   dataQATestId: number;
   dataEntityId: number;
   reportDetailsViewType: string;
-  qualityTest: DataQualityTest;
 }
 
 const TestReportDetails: React.FC<TestRunDetailsProps> = ({
   dataQATestId,
   dataEntityId,
   reportDetailsViewType,
-  qualityTest,
 }) => {
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
+  const {
+    dataEntityDetailsPath,
+    testReportDetailsOverviewPath,
+    testReportDetailsHistoryPath,
+  } = useAppPaths();
 
+  const qualityTest = useAppSelector(state =>
+    getQualityTestByTestId(state, dataQATestId)
+  );
   React.useEffect(() => {
     setTabs([
       {
@@ -86,17 +89,27 @@ const TestReportDetails: React.FC<TestRunDetailsProps> = ({
         <Switch>
           <Route
             exact
-            path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/overview"
-            component={TestReportDetailsOverviewContainer}
+            path={[
+              '/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview',
+              '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview',
+            ]}
+            component={TestReportDetailsOverview}
           />
           <Route
             exact
-            path="/dataentities/:dataEntityId/test-reports/:dataqatestId?/history"
-            component={TestReportDetailsHistoryContainer}
+            path={[
+              '/dataentities/:dataEntityId/test-reports/:dataQATestId?/history',
+              '/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/history',
+            ]}
+            component={TestReportDetailsHistory}
           />
           <Redirect
-            from="/dataentities/:dataEntityId/test-reports/:dataqatestId?"
-            to="/dataentities/:dataEntityId/test-reports/:dataqatestId?/overview"
+            from="/dataentities/:dataEntityId/test-reports/:dataQATestId?"
+            to="/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview"
+          />
+          <Redirect
+            from="/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?"
+            to="/embedded/dataentities/:dataEntityId/test-reports/:dataQATestId?/overview"
           />
         </Switch>
       </Grid>

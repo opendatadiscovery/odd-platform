@@ -3,41 +3,36 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { Grid } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import * as S from './ManagementStyles';
 
 // lazy components
-const NamespaceListContainer = React.lazy(
-  () => import('./NamespaceList/NamespaceListContainer')
+const NamespaceList = React.lazy(
+  () => import('./NamespaceList/NamespaceList')
 );
 const OwnersListContainer = React.lazy(
   () => import('./OwnersList/OwnersListContainer')
 );
-const LabelsListContainer = React.lazy(
-  () => import('./LabelsList/LabelsListContainer')
+const LabelsList = React.lazy(() => import('./LabelsList/LabelsList'));
+const TagsList = React.lazy(() => import('./TagsList/TagsList'));
+const DataSourcesList = React.lazy(
+  () => import('./DataSourcesList/DataSourcesList')
 );
-const TagsListContainer = React.lazy(
-  () => import('./TagsList/TagsListContainer')
-);
-const DataSourcesListContainer = React.lazy(
-  () => import('./DataSourcesList/DataSourcesListContainer')
-);
-
-const CollectorsListContainer = React.lazy(
-  () => import('./CollectorsList/CollectorsListContainer')
+const CollectorsList = React.lazy(
+  () => import('./CollectorsList/CollectorsList')
 );
 
-interface ManagementProps {
-  viewType: string;
-}
+const Management: React.FC = () => {
+  const { viewType } = useAppParams();
+  const { managementPath } = useAppPaths();
 
-const Management: React.FC<ManagementProps> = ({ viewType }) => {
   const [tabs] = React.useState<AppTabItem[]>([
-    { name: 'Namespaces', link: '/management/namespaces' },
-    { name: 'Datasources', link: '/management/datasources' },
-    { name: 'Collectors', link: '/management/collectors' },
-    { name: 'Owners', link: '/management/owners' },
-    { name: 'Tags', link: '/management/tags' },
-    { name: 'Labels', link: '/management/labels' },
+    { name: 'Namespaces', link: managementPath('namespaces') },
+    { name: 'Datasources', link: managementPath('datasources') },
+    { name: 'Collectors', link: managementPath('collectors') },
+    { name: 'Owners', link: managementPath('owners') },
+    { name: 'Tags', link: managementPath('tags') },
+    { name: 'Labels', link: managementPath('labels') },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -71,32 +66,28 @@ const Management: React.FC<ManagementProps> = ({ viewType }) => {
             <Route
               exact
               path="/management/namespaces"
-              component={NamespaceListContainer}
+              component={NamespaceList}
             />
             <Route
               exact
               path="/management/datasources"
-              component={DataSourcesListContainer}
+              component={DataSourcesList}
             />
             <Route
               exact
               path="/management/collectors"
-              component={CollectorsListContainer}
+              component={CollectorsList}
             />
             <Route
               exact
               path="/management/owners"
               component={OwnersListContainer}
             />
-            <Route
-              exact
-              path="/management/tags"
-              component={TagsListContainer}
-            />
+            <Route exact path="/management/tags" component={TagsList} />
             <Route
               exact
               path="/management/labels"
-              component={LabelsListContainer}
+              component={LabelsList}
             />
             <Redirect
               exact

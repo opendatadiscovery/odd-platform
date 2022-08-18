@@ -140,7 +140,7 @@ export const palette = createPalette({
       disabled: { background: colors.white, color: colors.blue20 },
     },
     tertiary: {
-      normal: { background: colors.white, color: colors.blue60 },
+      normal: { background: colors.transparent, color: colors.blue60 },
       hover: { background: colors.blue5, color: colors.blue60 },
       active: { background: colors.blue10, color: colors.blue65 },
     },
@@ -223,6 +223,18 @@ export const palette = createPalette({
     TYPE_DURATION: { border: colors.blue40 },
     TYPE_UNKNOWN: { border: colors.black10 },
   },
+  datasetFieldKey: {
+    primary: {
+      background: colors.black30,
+      color: colors.white,
+      border: colors.blue30,
+    },
+    sort: {
+      background: colors.black30,
+      color: colors.white,
+      border: colors.blue10,
+    },
+  },
   alert: {
     OPEN: {
       background: colors.red10,
@@ -239,4 +251,9 @@ export const palette = createPalette({
     disabled: { border: colors.black10 },
   },
   background: { default: colors.white },
+  activityEvent: {
+    created: colors.green10,
+    updated: colors.blue5,
+    deleted: colors.red5,
+  },
 });

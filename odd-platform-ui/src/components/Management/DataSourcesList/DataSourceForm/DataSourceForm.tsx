@@ -7,13 +7,9 @@ import {
   differenceInSeconds,
   intervalToDuration,
 } from 'date-fns/esm';
-import { useForm, Controller } from 'react-hook-form';
-import {
-  DataSourceFormData,
-  DataSource,
-  DataSourceApiRegisterDataSourceRequest,
-  DataSourceApiUpdateDataSourceRequest,
-} from 'generated-sources';
+import { Controller, useForm } from 'react-hook-form';
+import { DataSource, DataSourceFormData } from 'generated-sources';
+import { registerDataSource, updateDataSource } from 'redux/thunks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
   FormControlLabel,
@@ -21,25 +17,21 @@ import {
   RadioGroup,
   Typography,
 } from '@mui/material';
+import { getDatasourceCreatingStatuses } from 'redux/selectors';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+import AppSelect from 'components/shared/AppSelect/AppSelect';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { Asterisk } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceFormStyles';
 import AppRadio from 'components/shared/AppRadio/AppRadio';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
-import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
+import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 
 interface DataSourceFormDialogProps {
   btnCreateEl: JSX.Element;
-  isLoading: boolean;
   dataSource?: DataSource;
-  registerDataSource: (
-    params: DataSourceApiRegisterDataSourceRequest
-  ) => Promise<DataSource>;
-  updateDataSource: (
-    params: DataSourceApiUpdateDataSourceRequest
-  ) => Promise<DataSource>;
 }
 
 export type DataSourceFormDataValues = Omit<
@@ -52,10 +44,12 @@ export type DataSourceFormDataValues = Omit<
 const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
   dataSource,
   btnCreateEl,
-  isLoading,
-  registerDataSource,
-  updateDataSource,
 }) => {
+  const dispatch = useAppDispatch();
+  const { isLoading: isDataSourceCreating } = useAppSelector(
+    getDatasourceCreatingStatuses
+  );
+
   const getDefaultValues = React.useCallback(
     (): DataSourceFormDataValues => ({
       name: dataSource?.name || '',
@@ -158,11 +152,13 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           : dataSource?.pullingInterval,
     };
     (dataSource
-      ? updateDataSource({
-          dataSourceId: dataSource.id,
-          dataSourceUpdateFormData: parsedData,
-        })
-      : registerDataSource({ dataSourceFormData: parsedData })
+      ? dispatch(
+          updateDataSource({
+            dataSourceId: dataSource.id,
+            dataSourceUpdateFormData: parsedData,
+          })
+        )
+      : dispatch(registerDataSource({ dataSourceFormData: parsedData }))
     ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
@@ -198,7 +194,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.5 }}
             label="Name"
@@ -245,7 +241,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               validate: value => !!value?.trim(),
             }}
             render={({ field }) => (
-              <AppTextField
+              <AppInput
                 {...field}
                 sx={{ mt: 1.5 }}
                 label="ODDRN"
@@ -274,7 +270,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
               validate: value => !!value?.trim(),
             }}
             render={({ field }) => (
-              <AppTextField
+              <AppInput
                 {...field}
                 sx={{ mt: 1.25 }}
                 label="URL"
@@ -297,17 +293,17 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
                   name="pullingInterval.format"
                   control={control}
                   render={({ field }) => (
-                    <AppTextField
+                    <AppSelect
                       {...field}
                       label="Pulling Interval"
-                      select
+                      containerSx={{ mt: 0 }}
                     >
                       {['minutes', 'hours', 'days', 'weeks'].map(value => (
                         <AppMenuItem key={value} value={value}>
                           {capitalize(value)}
                         </AppMenuItem>
                       ))}
-                    </AppTextField>
+                    </AppSelect>
                   )}
                 />
               </Grid>
@@ -316,7 +312,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
                   name="pullingInterval.value"
                   control={control}
                   render={({ field }) => (
-                    <AppTextField
+                    <AppInput
                       {...field}
                       label="Value"
                       placeholder="e.g. 1"
@@ -335,14 +331,14 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
         name="namespaceName"
         defaultValue={dataSource?.namespace?.name}
         render={({ field }) => (
-          <NamespaceAutocompleteContainer controllerProps={field} />
+          <NamespaceAutocomplete controllerProps={field} />
         )}
       />
       <Controller
         name="description"
         control={control}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.25 }}
             label="Description"
@@ -383,7 +379,7 @@ const DataSourceForm: React.FC<DataSourceFormDialogProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isDataSourceCreating}
       errorText={error}
       clearState={clearState}
     />

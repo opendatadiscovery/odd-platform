@@ -15,7 +15,8 @@ public class JSONSerDeUtils {
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         .registerModules(
             new JavaTimeModule(),
-            new SimpleModule().addDeserializer(JSONB.class, new JSONBDeserializer())
+            new SimpleModule().addDeserializer(JSONB.class, new JSONBDeserializer()),
+            new SimpleModule().addSerializer(JSONB.class, new JSONBSerializer())
         ).setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
 
     public static <T> T deserializeJson(final String data, final Class<T> clazz) {
@@ -24,6 +25,15 @@ public class JSONSerDeUtils {
         } catch (final JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Nullable
+    public static <T> T deserializeJson(final Object data, final TypeReference<T> typeReference) {
+        if (data == null || typeReference == null) {
+            return null;
+        }
+
+        return OBJECT_MAPPER.convertValue(data, typeReference);
     }
 
     @Nullable

@@ -1,33 +1,30 @@
 import React from 'react';
 import ReactMde from 'react-mde';
 import { Grid, Typography } from '@mui/material';
-import { DataEntityDetailsBaseObject } from 'generated-sources';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import AddIcon from 'components/shared/Icons/AddIcon';
+import { AddIcon, EditIcon } from 'components/shared/Icons';
 import 'react-mde/lib/styles/css/react-mde-all.css';
 import 'github-markdown-css';
 import AppButton from 'components/shared/AppButton/AppButton';
 import remarkGfm from 'remark-gfm';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { updateDataEntityInternalDescription } from 'redux/thunks';
+import { useAppParams } from 'lib/hooks';
 import {
-  CaptionContainer,
-  FormActions,
-  Preview,
-} from './OverviewDescriptionStyles';
+  getDataEntityExternalDescription,
+  getDataEntityInternalDescription,
+} from 'redux/selectors';
+import * as S from './OverviewDescriptionStyles';
 
-interface OverviewDescriptionProps {
-  dataEntityId: number;
-  dataEntityInternalDescription: DataEntityDetailsBaseObject['internalDescription'];
-  dataEntityExternalDescription: DataEntityDetailsBaseObject['externalDescription'];
-}
-
-const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
-  dataEntityId,
-  dataEntityInternalDescription,
-  dataEntityExternalDescription,
-}) => {
+const OverviewDescription: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { dataEntityId } = useAppParams();
+
+  const DEInternalDescription = useAppSelector(
+    getDataEntityInternalDescription(dataEntityId)
+  );
+  const DEExternalDescription = useAppSelector(
+    getDataEntityExternalDescription(dataEntityId)
+  );
 
   const [editMode, setEditMode] = React.useState<boolean>(false);
   const [error, setError] = React.useState<string>('');
@@ -35,7 +32,8 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
     'write' | 'preview'
   >('write');
   const [internalDescription, setInternalDescription] =
-    React.useState<string>(dataEntityInternalDescription || '');
+    React.useState<string>(DEInternalDescription || '');
+
   const onEditClick = React.useCallback(
     () => setEditMode(true),
     [setEditMode]
@@ -62,17 +60,28 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
 
   const getPreview = React.useCallback(
     () => (
-      <Preview remarkPlugins={[remarkGfm]} className="markdown-body">
-        {editMode ? internalDescription : dataEntityInternalDescription}
-      </Preview>
+      <S.Preview remarkPlugins={[remarkGfm]} className="markdown-body">
+        {editMode ? internalDescription : DEInternalDescription}
+      </S.Preview>
     ),
-    [dataEntityInternalDescription, internalDescription, editMode]
+    [DEInternalDescription, internalDescription, editMode]
+  );
+
+  const saveMarkDownOnEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter' && e.shiftKey) {
+      handleDescriptionUpdate();
+    }
+  };
+
+  React.useEffect(
+    () => setInternalDescription(DEInternalDescription),
+    [DEInternalDescription, editMode]
   );
 
   return (
     <>
       <div>
-        <CaptionContainer>
+        <S.CaptionContainer>
           <Typography variant="h4">Custom</Typography>
           {editMode ? null : (
             <AppButton
@@ -80,17 +89,18 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
               size="medium"
               color="primaryLight"
               startIcon={
-                dataEntityInternalDescription ? <EditIcon /> : <AddIcon />
+                DEInternalDescription ? <EditIcon /> : <AddIcon />
               }
             >
-              {dataEntityInternalDescription ? 'Edit' : 'Add'} description
+              {DEInternalDescription ? 'Edit' : 'Add'} description
             </AppButton>
           )}
-        </CaptionContainer>
+        </S.CaptionContainer>
         {editMode ? (
-          <div>
+          // eslint-disable-next-line jsx-a11y/no-static-element-interactions
+          <div onKeyDown={saveMarkDownOnEnter}>
             <ReactMde
-              minEditorHeight={300}
+              minEditorHeight={120}
               value={internalDescription}
               onChange={setInternalDescription}
               selectedTab={selectedTab}
@@ -102,30 +112,30 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
                 },
               }}
             />
-            <FormActions>
+            <S.FormActions>
               <AppButton
                 onClick={handleDescriptionUpdate}
-                size="medium"
-                color="primaryLight"
-                sx={{ mr: 0.5 }}
+                size="small"
+                color="primary"
+                sx={{ mr: 1 }}
               >
                 Save
               </AppButton>
               <AppButton
                 onClick={() => setEditMode(false)}
-                size="medium"
-                color="tertiary"
+                size="small"
+                color="primaryLight"
               >
                 Cancel
               </AppButton>
               <Typography variant="subtitle2" color="error">
                 {error}
               </Typography>
-            </FormActions>
+            </S.FormActions>
           </div>
         ) : (
           <div>
-            {dataEntityInternalDescription ? (
+            {DEInternalDescription ? (
               getPreview()
             ) : (
               <Grid
@@ -149,13 +159,16 @@ const OverviewDescription: React.FC<OverviewDescriptionProps> = ({
           </div>
         )}
       </div>
-      {dataEntityExternalDescription ? (
+      {DEExternalDescription ? (
         <div>
           <Typography variant="h4">Pre-defined</Typography>
           <Typography variant="subtitle1">
-            <Preview className="markdown-body" remarkPlugins={[remarkGfm]}>
-              {dataEntityExternalDescription}
-            </Preview>
+            <S.Preview
+              className="markdown-body"
+              remarkPlugins={[remarkGfm]}
+            >
+              {DEExternalDescription}
+            </S.Preview>
           </Typography>
         </div>
       ) : null}

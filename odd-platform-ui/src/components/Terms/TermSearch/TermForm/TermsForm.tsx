@@ -2,11 +2,10 @@ import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { TermDetails, TermFormData } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
-import { termDetailsOverviewPath } from 'lib/paths';
 import { Typography } from '@mui/material';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { createTerm, updateTerm } from 'redux/thunks';
@@ -14,7 +13,8 @@ import {
   getTermCreatingStatuses,
   getTermUpdatingStatuses,
 } from 'redux/selectors';
-import NamespaceAutocompleteContainer from './NamespaceAutocomplete/NamespaceAutocompleteContainer';
+import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
 
 interface TermsFormDialogProps {
   btnCreateEl: JSX.Element;
@@ -27,6 +27,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
 }) => {
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const { termDetailsOverviewPath } = useAppPaths();
 
   const { isLoading: isTermCreating } = useAppSelector(
     getTermCreatingStatuses
@@ -116,7 +117,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.5 }}
             label="Name"
@@ -136,7 +137,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
         defaultValue={term?.namespace?.name}
         rules={{ required: true }}
         render={({ field }) => (
-          <NamespaceAutocompleteContainer controllerProps={field} />
+          <NamespaceAutocomplete controllerProps={field} />
         )}
       />
       <Controller
@@ -148,7 +149,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
           validate: value => !!value.trim(),
         }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             sx={{ mt: 1.25 }}
             label="Definition"
@@ -194,6 +195,7 @@ const TermsForm: React.FC<TermsFormDialogProps> = ({
       isLoading={term ? isTermUpdating : isTermCreating}
       errorText={error}
       clearState={clearState}
+      formSubmitHandler={handleSubmit(onSubmit)}
     />
   );
 };

@@ -1,10 +1,10 @@
 package org.opendatadiscovery.oddplatform.mapper;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,36 +15,32 @@ import org.apache.commons.collections4.MapUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClass;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassAndTypeDictionary;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityClassUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupFormData;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdge;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageNode;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageStream;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRun;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityUsageInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestExpectation;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestRun;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityGroupLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageDto;
-import org.opendatadiscovery.oddplatform.dto.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.DataSourceDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityPojo;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.DataSourcePojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityStatisticsPojo;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestSeverityPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.NamespacePojo;
+import org.opendatadiscovery.oddplatform.utils.JSONSerDeUtils;
 import org.opendatadiscovery.oddplatform.utils.Page;
-import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Component;
 
-import static java.util.Collections.emptyList;
+import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto.DataQualityTestDetailsDto;
 
 @Component
@@ -57,7 +53,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     private final TagMapper tagMapper;
     private final MetadataFieldValueMapper metadataFieldValueMapper;
     private final DatasetVersionMapper datasetVersionMapper;
-    private final DataQualityMapper dataQualityMapper;
+    private final DataEntityRunMapper dataEntityRunMapper;
     private final TermMapper termMapper;
 
     @Override
@@ -266,7 +262,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
                     .map(this::mapReference)
                     .collect(Collectors.toList()))
                 .linkedUrlList(dto.getDataQualityTestDetailsDto().linkedUrlList())
-                .latestRun(dataQualityMapper.mapDataQualityTestRun(
+                .latestRun(dataEntityRunMapper.mapDataEntityRun(
                     dto.getDataEntity().getId(),
                     dto.getDataQualityTestDetailsDto().latestTaskRun())
                 )
@@ -304,10 +300,16 @@ public class DataEntityMapperImpl implements DataEntityMapper {
 
     @Override
     public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto) {
+        return mapDataQualityTest(dto, null);
+    }
+
+    @Override
+    public DataEntity mapDataQualityTest(final DataEntityDetailsDto dto,
+                                         final String severity) {
         final DataQualityTestDetailsDto dqDto = dto.getDataQualityTestDetailsDto();
 
-        final DataQualityTestRun latestRun = dqDto.latestTaskRun() != null
-            ? dataQualityMapper.mapDataQualityTestRun(dto.getDataEntity().getId(), dqDto.latestTaskRun())
+        final DataEntityRun latestRun = dqDto.latestTaskRun() != null
+            ? dataEntityRunMapper.mapDataEntityRun(dto.getDataEntity().getId(), dqDto.latestTaskRun())
             : null;
 
         return mapPojo(dto)
@@ -316,6 +318,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .expectation(mapDataQualityTestExpectation(dqDto))
             .latestRun(latestRun)
             .linkedUrlList(dqDto.linkedUrlList())
+            .severity(severity != null ? DataQualityTestSeverity.valueOf(severity) : null)
             .datasetsList(dqDto
                 .datasetList()
                 .stream()
@@ -327,6 +330,30 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     public DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos) {
         return new DataEntityList()
             .items(dtos.stream().map(this::mapDataQualityTest).collect(Collectors.toList()));
+    }
+
+    @Override
+    public DataEntityList mapDataQualityTests(final Collection<DataEntityDetailsDto> dtos,
+                                              final Collection<DataQualityTestSeverityPojo> severities) {
+        final Map<Long, DataQualityTestSeverityPojo> severityMap = severities
+            .stream()
+            .collect(Collectors.toMap(
+                DataQualityTestSeverityPojo::getDataQualityTestId,
+                identity()
+            ));
+
+        final List<DataEntity> items = dtos.stream()
+            .map(d -> {
+                final String severity = Optional
+                    .ofNullable(severityMap.get(d.getDataEntity().getId()))
+                    .map(DataQualityTestSeverityPojo::getSeverity)
+                    .orElse(null);
+
+                return mapDataQualityTest(d, severity);
+            })
+            .toList();
+
+        return new DataEntityList().items(items);
     }
 
     @Override
@@ -364,24 +391,6 @@ public class DataEntityMapperImpl implements DataEntityMapper {
     }
 
     @Override
-    public DataEntityLineage mapLineageDto(final DataEntityLineageDto dto) {
-        return new DataEntityLineage()
-            .root(mapNode(dto.getDataEntityDto()))
-            .upstream(mapStream(dto.getUpstream()))
-            .downstream(mapStream(dto.getDownstream()));
-    }
-
-    @Override
-    public DataEntityGroupLineageList mapGroupLineageDto(final DataEntityGroupLineageDto dataEntityGroupLineageDto) {
-        final List<DataEntityLineageStream> lineageStreams = dataEntityGroupLineageDto.lineageItems()
-            .stream()
-            .map(this::mapStream)
-            .toList();
-
-        return new DataEntityGroupLineageList().items(lineageStreams);
-    }
-
-    @Override
     public DataEntityRef mapRef(final DataEntityDto dto) {
         return mapReference(dto);
     }
@@ -391,60 +400,29 @@ public class DataEntityMapperImpl implements DataEntityMapper {
         return mapReference(pojo);
     }
 
-    private DataEntityLineageStream mapStream(final DataEntityLineageStreamDto stream) {
-        final Map<Long, List<Long>> groupsRelations = stream.getGroupsRelations();
-
-        final Set<Long> streamGroups = new HashSet<>();
-        final List<DataEntityLineageNode> nodes = new ArrayList<>();
-
-        for (final DataEntityDimensionsDto node : stream.getNodes()) {
-            final List<Long> groupIds = groupsRelations.get(node.getDataEntity().getId());
-            if (groupIds != null) {
-                streamGroups.addAll(groupIds);
-            }
-
-            nodes.add(mapNode(node, groupIds));
+    @Override
+    public DataEntityUsageInfo mapUsageInfo(final DataEntityStatisticsPojo pojo,
+                                            final Long filledEntitiesCount) {
+        final Map<Integer, Long> classesCount;
+        if (pojo.getDataEntityClassesCount() == null) {
+            classesCount = new HashMap<>();
+        } else {
+            classesCount = JSONSerDeUtils.deserializeJson(pojo.getDataEntityClassesCount().data(),
+                new TypeReference<>() {
+                });
         }
-
-        return new DataEntityLineageStream()
-            .nodes(nodes)
-            .edges(stream.getEdges().stream().map(this::mapEdge).collect(Collectors.toList()))
-            .groups(stream.getGroups()
-                .stream()
-                .filter(g -> streamGroups.contains(g.getDataEntity().getId()))
-                .map(this::mapNode)
-                .collect(Collectors.toList()));
-    }
-
-    private DataEntityLineageEdge mapEdge(final Pair<Long, Long> edge) {
-        return new DataEntityLineageEdge()
-            .sourceId(edge.getLeft())
-            .targetId(edge.getRight());
-    }
-
-    private DataEntityLineageNode mapNode(final DataEntityDimensionsDto dto) {
-        return mapNode(dto, emptyList());
-    }
-
-    private DataEntityLineageNode mapNode(final DataEntityDimensionsDto dto, final List<Long> groupId) {
-        final DataEntityPojo dataEntity = dto.getDataEntity();
-        final DataSourcePojo dataSource = dto.getDataSource();
-
-        final List<DataEntityClass> entityClasses =
-            DataEntityClassDto.findByIds(dto.getDataEntity().getEntityClassIds())
-                .stream()
-                .map(this::mapEntityClass)
-                .toList();
-
-        return new DataEntityLineageNode()
-            .id(dataEntity.getId())
-            .entityClasses(entityClasses)
-            .externalName(dataEntity.getExternalName())
-            .internalName(dataEntity.getInternalName())
-            .groupIdList(groupId)
-            .dataSource(dataSource != null
-                ? dataSourceMapper.mapDto(new DataSourceDto(dto.getDataSource(), dto.getNamespace(), null))
-                : null);
+        return new DataEntityUsageInfo()
+            .totalCount(pojo.getTotalCount())
+            .unfilledCount(pojo.getTotalCount() - filledEntitiesCount)
+            .dataEntityClassesInfo(
+                Arrays.stream(DataEntityClassDto.values())
+                    .filter(dto -> dto != DataEntityClassDto.DATA_QUALITY_TEST_RUN
+                        && dto != DataEntityClassDto.DATA_TRANSFORMER_RUN)
+                    .map(dto -> new DataEntityClassUsageInfo()
+                        .entityClass(mapEntityClass(dto))
+                        .totalCount(classesCount.getOrDefault(dto.getId(), 0L)))
+                    .toList()
+            );
     }
 
     private DataEntityRef mapReference(final DataEntityDto dto) {
@@ -463,6 +441,7 @@ public class DataEntityMapperImpl implements DataEntityMapper {
             .externalName(pojo.getExternalName())
             .internalName(pojo.getInternalName())
             .entityClasses(entityClasses)
+            .manuallyCreated(pojo.getManuallyCreated())
             .url("");
     }
 

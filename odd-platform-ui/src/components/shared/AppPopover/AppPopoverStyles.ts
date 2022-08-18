@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { Popover, popoverClasses } from '@mui/material';
+import styled, { CSSObject } from 'styled-components';
+import { Box, Popover, popoverClasses } from '@mui/material';
 
 export const AppPopover = styled(Popover)(({ theme }) => ({
   [`&.${popoverClasses.root}`]: {
@@ -13,3 +13,12 @@ export const AppPopover = styled(Popover)(({ theme }) => ({
     },
   },
 }));
+
+export const PopoverChildren = styled(Box)(
+  () =>
+    ({
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+    } as CSSObject)
+);

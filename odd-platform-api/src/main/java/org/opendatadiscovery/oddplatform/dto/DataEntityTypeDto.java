@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import static java.util.function.Function.identity;
 
@@ -37,6 +38,13 @@ public enum DataEntityTypeDto {
         .collect(Collectors.toMap(DataEntityTypeDto::getId, identity()));
     @Getter
     private final int id;
+
+    public String resolveName() {
+        return Arrays.stream(name().split("_"))
+            .map(String::toLowerCase)
+            .map(StringUtils::capitalize)
+            .collect(Collectors.joining(" "));
+    }
 
     public static Optional<DataEntityTypeDto> findById(final int id) {
         return Optional.ofNullable(MAP.get(id));

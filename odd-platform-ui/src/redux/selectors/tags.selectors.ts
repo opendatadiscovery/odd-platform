@@ -1,40 +1,29 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from 'redux/interfaces';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
-import { TagsState } from 'redux/interfaces/state';
+import { createStatusesSelector } from 'redux/selectors';
+import { RootState, TagsState } from 'redux/interfaces';
+import { tagsAdapter } from 'redux/reducers/tags.slice';
+import * as actions from 'redux/actions';
 
-const tagsState = ({ tags }: RootState): TagsState => tags;
+export const tagsState = ({ tags }: RootState): TagsState => tags;
 
-const getTagsListFetchingStatus = createLegacyFetchingSelector('GET_TAGS');
-export const getTagsCreateStatus =
-  createLegacyFetchingSelector('POST_TAGS');
-export const getTagUpdateStatus = createLegacyFetchingSelector('PUT_TAG');
-export const deleteTagsUpdateStatus =
-  createLegacyFetchingSelector('DELETE_TAG');
-
-export const getIsTagsListFetching = createSelector(
-  getTagsListFetchingStatus,
-  status => status === 'fetching'
+export const getTagsListFetchingStatuses = createStatusesSelector(
+  actions.fetchTagsActionType
 );
 
-export const getTagsList = createSelector(tagsState, tags =>
-  tags.allIds.map(id => tags.byId[id])
+export const getTagCreatingStatuses = createStatusesSelector(
+  actions.createTagsActionType
 );
 
-export const getIsTagCreating = createSelector(
-  getTagsCreateStatus,
-  status => status === 'fetching'
+export const getTagUpdatingStatuses = createStatusesSelector(
+  actions.updateTagActionType
 );
 
-export const getIsTagUpdating = createSelector(
-  getTagUpdateStatus,
-  status => status === 'fetching'
+export const getTagDeletingStatuses = createStatusesSelector(
+  actions.deleteTagActionType
 );
 
-export const getIsTagDeleting = createSelector(
-  deleteTagsUpdateStatus,
-  status => status === 'fetching'
-);
+export const { selectAll: getTagsList } =
+  tagsAdapter.getSelectors<RootState>(state => state.tags);
 
 export const getTagsListPage = createSelector(
   tagsState,

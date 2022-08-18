@@ -1,45 +1,47 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import {
-  Label,
-  LabelApiDeleteLabelRequest,
-  LabelApiGetLabelListRequest,
-} from 'generated-sources';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import { CurrentPageInfo } from 'redux/interfaces/common';
+import {
+  getLabelCreatingStatuses,
+  getLabelDeletingStatuses,
+  getLabelListFetchingStatuses,
+  getLabelsList,
+  getLabelsListPage,
+} from 'redux/selectors';
+import { fetchLabelsList } from 'redux/thunks';
 import AddIcon from 'components/shared/Icons/AddIcon';
 import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
 import LabelsSkeletonItem from 'components/Management/LabelsList/LabelsSkeletonItem/LabelsSkeletonItem';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
 import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
+import AppInput from 'components/shared/AppInput/AppInput';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+
 import SearchIcon from 'components/shared/Icons/SearchIcon';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import EditableLabelItem from './EditableLabelItem/EditableLabelItem';
-import LabelCreateFormContainer from './LabelCreateForm/LabelCreateFormContainer';
+import LabelCreateForm from './LabelCreateForm/LabelCreateForm';
 import * as S from './LabelsListStyles';
 
-interface LabelsListProps {
-  labelsList: Label[];
-  isFetching: boolean;
-  isDeleting: boolean;
-  isCreating: boolean;
-  fetchLabelsList: (params: LabelApiGetLabelListRequest) => void;
-  deleteLabel: (params: LabelApiDeleteLabelRequest) => Promise<void>;
-  pageInfo?: CurrentPageInfo;
-}
+const LabelsListView: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const labelsList = useAppSelector(getLabelsList);
+  const pageInfo = useAppSelector(getLabelsListPage);
 
-const LabelsListView: React.FC<LabelsListProps> = ({
-  labelsList,
-  isFetching,
-  isDeleting,
-  isCreating,
-  fetchLabelsList,
-  deleteLabel,
-  pageInfo,
-}) => {
+  const { isLoading: isLabelDeleting } = useAppSelector(
+    getLabelDeletingStatuses
+  );
+
+  const { isLoading: isLabelCreating } = useAppSelector(
+    getLabelCreatingStatuses
+  );
+
+  const { isLoading: isLabelFetching } = useAppSelector(
+    getLabelListFetchingStatuses
+  );
+
   const pageSize = 100;
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalLabels, setTotalLabels] = React.useState<number | undefined>(
@@ -47,8 +49,9 @@ const LabelsListView: React.FC<LabelsListProps> = ({
   );
 
   React.useEffect(() => {
-    if (!searchText) fetchLabelsList({ page: 1, size: pageSize });
-  }, [fetchLabelsList, isCreating, isDeleting, searchText]);
+    if (!searchText)
+      dispatch(fetchLabelsList({ page: 1, size: pageSize }));
+  }, [fetchLabelsList, isLabelCreating, isLabelDeleting, searchText]);
 
   React.useEffect(() => {
     if (!searchText) setTotalLabels(pageInfo?.total);
@@ -56,16 +59,20 @@ const LabelsListView: React.FC<LabelsListProps> = ({
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
-    fetchLabelsList({
-      page: pageInfo.page + 1,
-      size: pageSize,
-      query: searchText,
-    });
+    dispatch(
+      fetchLabelsList({
+        page: pageInfo.page + 1,
+        size: pageSize,
+        query: searchText,
+      })
+    );
   };
 
   const handleSearch = React.useCallback(
     useDebouncedCallback(() => {
-      fetchLabelsList({ page: 1, size: pageSize, query: searchText });
+      dispatch(
+        fetchLabelsList({ page: 1, size: pageSize, query: searchText })
+      );
     }, 500),
     [searchText]
   );
@@ -82,7 +89,6 @@ const LabelsListView: React.FC<LabelsListProps> = ({
       handleSearch();
     }
   };
-
   return (
     <Grid container flexDirection="column" alignItems="center">
       <S.Caption container sx={{ mb: 1 }}>
@@ -92,7 +98,7 @@ const LabelsListView: React.FC<LabelsListProps> = ({
         </Typography>
       </S.Caption>
       <S.Caption container sx={{ mb: 2 }}>
-        <AppTextField
+        <AppInput
           placeholder="Search label..."
           sx={{ minWidth: '340px' }}
           fullWidth={false}
@@ -113,7 +119,7 @@ const LabelsListView: React.FC<LabelsListProps> = ({
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <LabelCreateFormContainer
+        <LabelCreateForm
           btnCreateEl={
             <AppButton
               size="medium"
@@ -140,7 +146,7 @@ const LabelsListView: React.FC<LabelsListProps> = ({
             dataLength={labelsList.length}
             scrollThreshold="200px"
             loader={
-              isFetching ? (
+              isLabelFetching ? (
                 <SkeletonWrapper
                   length={5}
                   renderContent={({ randomSkeletonPercentWidth, key }) => (
@@ -154,16 +160,12 @@ const LabelsListView: React.FC<LabelsListProps> = ({
             }
           >
             {labelsList?.map(label => (
-              <EditableLabelItem
-                key={label.id}
-                label={label}
-                deleteLabel={deleteLabel}
-              />
+              <EditableLabelItem key={label.id} label={label} />
             ))}
           </InfiniteScroll>
         </Grid>
       </Grid>
-      {!isFetching && !labelsList.length ? (
+      {!isLabelFetching && !labelsList.length ? (
         <EmptyContentPlaceholder />
       ) : null}
     </Grid>

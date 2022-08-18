@@ -86,10 +86,10 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
 
   const formActionButtons = () => (
     <AppButton
-      type="submit"
       size="large"
-      color="primary"
+      type="submit"
       form="metadata-create-form"
+      color="primary"
       fullWidth
       disabled={!methods.formState.isValid}
     >
@@ -109,6 +109,8 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
       handleCloseSubmittedForm={isSuccessfulSubmit}
       isLoading={isLoading}
       errorText={error}
+      clearState={clearState}
+      formSubmitHandler={methods.handleSubmit(createMetadata)}
     />
   );
 };

@@ -1,59 +1,26 @@
 import { createSelector } from '@reduxjs/toolkit';
-import get from 'lodash/get';
 import { DataEntitiesState, RootState } from 'redux/interfaces';
 import {
+  DataEntityClass,
   DataEntityClassNameEnum,
   DataEntityType,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
-import {
-  createLegacyFetchingSelector,
-  createStatusesSelector,
-} from 'redux/selectors/loader-selectors';
+import { createStatusesSelector } from 'redux/selectors';
 
 const dataEntitiesState = ({
   dataEntities,
 }: RootState): DataEntitiesState => dataEntities;
 
-const getMyDataEntitiesFetchingStatus = createLegacyFetchingSelector(
-  actions.fetchMyDataEntitiesAction
-);
-
-const getMyUpstreamDataEntitiesFetchingStatus =
-  createLegacyFetchingSelector(actions.fetchMyUpstreamDataEntitiesAction);
-
-const getMyDownstreamFetchingStatus = createLegacyFetchingSelector(
-  actions.fetchMyDownstreamDataEntitiesAction
-);
-
-const getPopularDataEntitiesFetchingStatus = createLegacyFetchingSelector(
-  actions.fetchPopularDataEntitiesAction
-);
-
-export const getMyDataEntitiesFetching = createSelector(
-  getMyDataEntitiesFetchingStatus,
-  status => status === 'fetching'
-);
-
-export const getMyUpstreamDataEntitiesFetching = createSelector(
-  getMyUpstreamDataEntitiesFetchingStatus,
-  status => status === 'fetching'
-);
-
-export const getMyDownstreamDataEntitiesFetching = createSelector(
-  getMyDownstreamFetchingStatus,
-  status => status === 'fetching'
-);
-
-export const getPopularDataEntitiesFetching = createSelector(
-  getPopularDataEntitiesFetchingStatus,
-  status => status === 'fetching'
-);
-
 const dataEntityClassName = (
   _: RootState,
   entityClassName: DataEntityClassNameEnum
 ) => entityClassName;
+
+export const getDataEntityId = (
+  _: RootState,
+  dataEntityId: number | string
+) => dataEntityId;
 
 export const getDataEntityTypesByClassName = createSelector(
   dataEntitiesState,
@@ -63,6 +30,32 @@ export const getDataEntityTypesByClassName = createSelector(
       entityClass => entityClass.name === entityClassName
     )?.types || []
 );
+
+export const getIsDataEntityBelongsToClass = (
+  dataEntityId: number | string
+) =>
+  createSelector(dataEntitiesState, dataEntities => {
+    const dataEntityClasses =
+      dataEntities.byId[dataEntityId]?.entityClasses;
+    const isClassesEquals =
+      (desiredClass: DataEntityClassNameEnum) =>
+      (entityClass: DataEntityClass) =>
+        entityClass.name === desiredClass;
+
+    const isDataset = dataEntityClasses?.some(
+      isClassesEquals(DataEntityClassNameEnum.SET)
+    );
+
+    const isQualityTest = dataEntityClasses?.some(
+      isClassesEquals(DataEntityClassNameEnum.QUALITY_TEST)
+    );
+
+    const isTransformer = dataEntityClasses?.some(
+      isClassesEquals(DataEntityClassNameEnum.TRANSFORMER)
+    );
+
+    return { isDataset, isQualityTest, isTransformer };
+  });
 
 export const getDataEntityClassesList = createSelector(
   dataEntitiesState,
@@ -95,128 +88,111 @@ export const getPopularEntities = createSelector(
   dataEntities => dataEntities.popular
 );
 
-// Details
-export const getDataEntityDetailsFetchingStatus =
-  createLegacyFetchingSelector(actions.fetchDataEntityDetailsAction);
-
-export const getDataEntityDetailsFetching = createSelector(
-  getDataEntityDetailsFetchingStatus,
-  status => status === 'fetching'
+export const getDataEntitiesUsageTotalCount = createSelector(
+  dataEntitiesState,
+  dataEntities => dataEntities.dataEntityUsageInfo.totalCount
 );
 
-export const getDataEntityDetailsFetched = createSelector(
-  getDataEntityDetailsFetchingStatus,
-  status => status === 'fetched'
+export const getDataEntitiesUsageUnfilledCount = createSelector(
+  dataEntitiesState,
+  dataEntities => dataEntities.dataEntityUsageInfo.unfilledCount
 );
 
-export const getDataEntityDetailsErrorFetching = createSelector(
-  getDataEntityDetailsFetchingStatus,
-  status => status === 'errorFetching'
+export const getDataEntityClassesUsageInfo = createSelector(
+  dataEntitiesState,
+  dataEntities => dataEntities.dataEntityUsageInfo.dataEntityClassesInfo
 );
 
-const getDataEntityTagsUpdateStatus = createLegacyFetchingSelector(
-  actions.updateDataEntityTagsAction
+// details
+export const getDataEntityDetails = (dataEntityId: number) =>
+  createSelector(
+    dataEntitiesState,
+    dataEntities => dataEntities.byId[dataEntityId]
+  );
+
+export const getDataEntityInternalName = (dataEntityId: number) =>
+  createSelector(
+    dataEntitiesState,
+    dataEntities => dataEntities.byId[dataEntityId]?.internalName
+  );
+
+export const getDataEntityTags = (dataEntityId: number) =>
+  createSelector(
+    dataEntitiesState,
+    dataEntities => dataEntities.byId[dataEntityId]?.tags || []
+  );
+
+export const getDataEntityInternalDescription = (dataEntityId: number) =>
+  createSelector(
+    getDataEntityDetails(dataEntityId),
+    dataEntityDetails => dataEntityDetails.internalDescription
+  );
+
+export const getDataEntityExternalDescription = (dataEntityId: number) =>
+  createSelector(
+    getDataEntityDetails(dataEntityId),
+    dataEntityDetails => dataEntityDetails.externalDescription
+  );
+
+// datasets
+export const getDatasetVersions = (dataEntityId: number) =>
+  createSelector(
+    dataEntitiesState,
+    dataEntities => dataEntities.byId[dataEntityId]?.versionList
+  );
+
+export const getDatasetStats = (dataEntityId: number) =>
+  createSelector(
+    dataEntitiesState,
+    dataEntities => dataEntities.byId[dataEntityId]?.stats
+  );
+
+// statuses selectors
+export const getMyDataEntitiesFetchingStatuses = createStatusesSelector(
+  actions.fetchMyDataEntitiesActionType
 );
 
-export const getDataEntityTagsUpdating = createSelector(
-  getDataEntityTagsUpdateStatus,
-  status => status === 'fetching'
+export const getMyUpstreamDataEntitiesFetchingStatuses =
+  createStatusesSelector(actions.fetchMyUpstreamDataEntitiesActionType);
+
+export const getMyDownstreamFetchingStatuses = createStatusesSelector(
+  actions.fetchMyDownstreamDataEntitiesActionType
 );
 
-const getDataEntityOwnerUpdateStatus = createLegacyFetchingSelector(
+export const getPopularDataEntitiesFetchingStatuses =
+  createStatusesSelector(actions.fetchPopularDataEntitiesActionType);
+
+export const getDataEntityDetailsFetchingStatuses = createStatusesSelector(
+  actions.fetchDataEntityDetailsActionType
+);
+
+export const getDataEntityInternalNameUpdatingStatuses =
+  createStatusesSelector(actions.updateDataEntityInternalNameActionType);
+
+export const getDataEntityTagsUpdatingStatuses = createStatusesSelector(
+  actions.updateDataEntityTagsActionType
+);
+
+export const getDataEntityOwnerUpdatingStatuses = createStatusesSelector(
   actions.updateDataEntityOwnershipAction
 );
 
-export const getDataEntityOwnerUpdating = createSelector(
-  getDataEntityOwnerUpdateStatus,
-  status => status === 'fetching'
-);
-
-const getDataEntityInternalNameUpdateStatus = createLegacyFetchingSelector(
-  actions.updateDataEntityInternalNameAction
-);
-
-export const getDataEntityInternalNameUpdating = createSelector(
-  getDataEntityInternalNameUpdateStatus,
-  status => status === 'fetching'
-);
-
-export const getDataEntityId = (
-  _: RootState,
-  dataEntityId: number | string
-) => dataEntityId;
-
-export const getDataEntityDetails = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) => dataEntities.byId[dataEntityId]
-);
-
-export const getDataEntityTags = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) =>
-    dataEntities.byId[dataEntityId]?.tags || []
-);
-
-export const getDataEntityInternalDescription = createSelector(
-  getDataEntityDetails,
-  dataEntityDetails => dataEntityDetails.internalDescription
-);
-
-export const getDataEntityExternalDescription = createSelector(
-  getDataEntityDetails,
-  dataEntityDetails => dataEntityDetails.externalDescription
-);
-
-export const getDatasetVersions = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) =>
-    dataEntities.byId[dataEntityId]?.versionList
-);
-
-export const getDatasetStats = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) => dataEntities.byId[dataEntityId]?.stats
-);
-
-export const getDataEntityInternalName = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) =>
-    dataEntities.byId[dataEntityId]?.internalName
-);
-
-export const getDataEntityIsDataset = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) =>
-    !!dataEntities.byId[dataEntityId]?.entityClasses?.find(
-      entityClass => entityClass.name === DataEntityClassNameEnum.SET
-    )
-);
-
-export const getDataEntityIsQualityTest = createSelector(
-  dataEntitiesState,
-  getDataEntityId,
-  (dataEntities, dataEntityId) =>
-    !!dataEntities.byId[dataEntityId]?.entityClasses?.find(
-      entityClass =>
-        entityClass.name === DataEntityClassNameEnum.QUALITY_TEST
-    )
-);
-
-// data entity groups
 export const getDataEntityGroupCreatingStatuses = createStatusesSelector(
-  actions.createDataEntityGroupAction
+  actions.createDataEntityGroupActionType
 );
 
 export const getDataEntityGroupUpdatingStatuses = createStatusesSelector(
-  actions.updateDataEntityGroupAction
+  actions.updateDataEntityGroupActionType
 );
 
 export const getDataEntityGroupDeletingStatuses = createStatusesSelector(
-  actions.deleteDataEntityGroupAction
+  actions.deleteDataEntityGroupActionType
+);
+
+export const getDataEntityAddToGroupStatuses = createStatusesSelector(
+  actions.addDataEntityToGroupActionType
+);
+
+export const getDataEntityDeleteFromGroupStatuses = createStatusesSelector(
+  actions.deleteDataEntityFromGroupActionType
 );

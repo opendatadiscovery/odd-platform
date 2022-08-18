@@ -1,9 +1,6 @@
 import { Typography } from '@mui/material';
 import styled from 'styled-components';
-import {
-  DataQualityTestRunStatus,
-  DataSetTestReport,
-} from 'generated-sources';
+import { DataEntityRunStatus, DataSetTestReport } from 'generated-sources';
 
 export const Container = styled('div')(() => ({
   width: '100%',
@@ -15,7 +12,7 @@ export const Container = styled('div')(() => ({
 }));
 
 interface CountLabelProps {
-  $testRunStatus: DataQualityTestRunStatus;
+  $testRunStatus: DataEntityRunStatus;
 }
 
 interface BarProps extends CountLabelProps {
@@ -43,11 +40,12 @@ export const Bar = styled('div')<BarProps>(
         (Math.round(totalPercentTestReport) + 1)
       }%`;
     const calculateOtherStatusesMaxWidth = (
-      testRunStatus: DataQualityTestRunStatus,
+      testRunStatus: DataEntityRunStatus,
       adjustment: number,
       testReport?: DataSetTestReport
     ): number => {
-      const keyTestRunStatus = `${testRunStatus.toLowerCase()}Total` as keyof DataSetTestReport;
+      const keyTestRunStatus =
+        `${testRunStatus.toLowerCase()}Total` as keyof DataSetTestReport;
       const runStatusTotalTestReport =
         (testReport && testReport[keyTestRunStatus]) || 0;
       const totalPercentTestReport =
@@ -55,7 +53,7 @@ export const Bar = styled('div')<BarProps>(
       return totalPercentTestReport * adjustment;
     };
     const calculatedMaxWidth =
-      $testRunStatus === DataQualityTestRunStatus.SUCCESS
+      $testRunStatus === DataEntityRunStatus.SUCCESS
         ? calculateSuccessMaxWidth(succRelation)
         : `${calculateOtherStatusesMaxWidth(
             $testRunStatus,

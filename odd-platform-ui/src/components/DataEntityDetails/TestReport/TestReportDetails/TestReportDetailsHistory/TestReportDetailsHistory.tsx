@@ -1,8 +1,12 @@
 import React from 'react';
+import { fetchDataEntityRuns } from 'redux/thunks';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  DataQualityApiGetRunsRequest,
-  DataQualityTestRun,
-} from 'generated-sources';
+  getDataEntityRunList,
+  getDataEntityRunsFetchingStatuses,
+} from 'redux/selectors/dataEntityRun.selector';
+import { useAppParams } from 'lib/hooks';
+import { getQualityTestNameByTestId } from 'redux/selectors/dataQualityTest.selectors';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceStrict } from 'date-fns';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
@@ -14,31 +18,26 @@ import {
   QualityTestRunItemContainer,
 } from './TestReportDetailsHistoryStyles';
 
-interface TestReportDetailsHistoryProps {
-  dataQATestRunsList: DataQualityTestRun[];
-  dataQATestId: number;
-  dataQATestName: string;
-  testRunsFetching: boolean;
-  fetchDataSetQualityTestRuns: (
-    params: DataQualityApiGetRunsRequest
-  ) => void;
-}
+const TestReportDetailsHistory: React.FC = () => {
+  const { dataQATestId } = useAppParams();
+  const dispatch = useAppDispatch();
+  const dataQATestRunsList = useAppSelector(getDataEntityRunList);
+  const dataQATestName = useAppSelector(state =>
+    getQualityTestNameByTestId(state, dataQATestId)
+  );
+  const { isLoading: testRunsFetching } = useAppSelector(
+    getDataEntityRunsFetchingStatuses
+  );
 
-const TestReportDetailsHistory: React.FC<TestReportDetailsHistoryProps> = ({
-  dataQATestRunsList,
-  dataQATestId,
-  dataQATestName,
-  testRunsFetching,
-  fetchDataSetQualityTestRuns,
-}) => {
   React.useEffect(() => {
-    fetchDataSetQualityTestRuns({
-      dataqatestId: dataQATestId,
-      page: 1,
-      size: 10,
-    });
-  }, [fetchDataSetQualityTestRuns, dataQATestId]);
-
+    dispatch(
+      fetchDataEntityRuns({
+        dataEntityId: dataQATestId,
+        page: 1,
+        size: 10,
+      })
+    );
+  }, [fetchDataEntityRuns, dataQATestId]);
   return (
     <Grid container sx={{ mt: 2 }}>
       {dataQATestRunsList?.map(dataQATestRun => (

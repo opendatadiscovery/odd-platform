@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.SetUtils;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
@@ -46,29 +47,18 @@ public class AlertLocatorImpl implements AlertLocator {
     }
 
     @Override
-    public List<AlertPojo> locateDataQualityTestRunFailed(final List<IngestionTaskRun> taskRuns) {
-        final List<IngestionTaskRun> failedTaskRuns = taskRuns.stream()
-            .filter(tr -> tr.getType().equals(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN))
+    public List<AlertPojo> locateDataEntityRunFailed(final List<IngestionTaskRun> taskRuns) {
+        final Map<IngestionTaskRun.IngestionTaskRunType, List<IngestionTaskRun>> failedTaskRunsMap = taskRuns.stream()
             .filter(tr -> TASK_RUN_BAD_STATUSES.contains(tr.getStatus()))
-            .toList();
-        if (failedTaskRuns.isEmpty()) {
+            .collect(Collectors.groupingBy(IngestionTaskRun::getType));
+        if (failedTaskRunsMap.isEmpty()) {
             return List.of();
         }
-        final Map<String, List<DataQualityTestRelationsPojo>> relationsMap = dataQualityTestRelationRepository
-            .getRelations(failedTaskRuns.stream().map(IngestionTaskRun::getDataEntityOddrn).toList())
-            .stream()
-            .collect(Collectors.groupingBy(DataQualityTestRelationsPojo::getDataQualityTestOddrn));
-        return taskRuns.stream()
-            .flatMap(tr -> {
-                final List<DataQualityTestRelationsPojo> relatedPojos =
-                    relationsMap.getOrDefault(tr.getDataEntityOddrn(), List.of());
-                return relatedPojos.stream().map(p -> buildAlert(
-                    p.getDatasetOddrn(),
-                    AlertTypeEnum.FAILED_DQ_TEST,
-                    tr.getOddrn(),
-                    String.format("Test %s failed with status %s", tr.getTaskName(), tr.getStatus())
-                ));
-            }).toList();
+        final List<AlertPojo> dqAlerts = locateDataQualityTestAlerts(
+            failedTaskRunsMap.get(IngestionTaskRun.IngestionTaskRunType.DATA_QUALITY_TEST_RUN));
+        final List<AlertPojo> jobAlerts = locateDataTransformerAlerts(
+            failedTaskRunsMap.get(IngestionTaskRun.IngestionTaskRunType.DATA_TRANSFORMER_RUN));
+        return Stream.concat(dqAlerts.stream(), jobAlerts.stream()).toList();
     }
 
     @Override
@@ -82,6 +72,40 @@ public class AlertLocatorImpl implements AlertLocator {
             .flatMap(this::locateAlertsInDCDelta);
 
         return Stream.concat(transformerAlerts, consumerAlerts).collect(Collectors.toList());
+    }
+
+    private List<AlertPojo> locateDataTransformerAlerts(final List<IngestionTaskRun> failedDataTransformerRuns) {
+        if (CollectionUtils.isEmpty(failedDataTransformerRuns)) {
+            return List.of();
+        }
+        return failedDataTransformerRuns.stream()
+            .map(tr -> buildAlert(
+                tr.getTaskOddrn(),
+                AlertTypeEnum.FAILED_JOB,
+                tr.getOddrn(),
+                String.format("Job %s failed with status %s", tr.getTaskRunName(), tr.getStatus())
+            )).toList();
+    }
+
+    private List<AlertPojo> locateDataQualityTestAlerts(final List<IngestionTaskRun> failedDQTestRuns) {
+        if (CollectionUtils.isEmpty(failedDQTestRuns)) {
+            return List.of();
+        }
+        final Map<String, List<DataQualityTestRelationsPojo>> relationsMap = dataQualityTestRelationRepository
+            .getRelations(failedDQTestRuns.stream().map(IngestionTaskRun::getTaskOddrn).toList())
+            .stream()
+            .collect(Collectors.groupingBy(DataQualityTestRelationsPojo::getDataQualityTestOddrn));
+        return failedDQTestRuns.stream()
+            .flatMap(tr -> {
+                final List<DataQualityTestRelationsPojo> relatedPojos =
+                    relationsMap.getOrDefault(tr.getTaskOddrn(), List.of());
+                return relatedPojos.stream().map(p -> buildAlert(
+                    p.getDatasetOddrn(),
+                    AlertTypeEnum.FAILED_DQ_TEST,
+                    tr.getOddrn(),
+                    String.format("Test %s failed with status %s", tr.getTaskRunName(), tr.getStatus())
+                ));
+            }).toList();
     }
 
     private Stream<AlertPojo> locateAlertsInDSDelta(final Map.Entry<String, DatasetStructureDelta> e) {

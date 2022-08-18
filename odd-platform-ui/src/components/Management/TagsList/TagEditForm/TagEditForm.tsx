@@ -1,30 +1,37 @@
 import React from 'react';
-import { Typography, FormControlLabel, Box } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
+import { Box, FormControlLabel, Typography } from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
+import { Tag, TagFormData } from 'generated-sources';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { updateTag } from 'redux/thunks';
 import {
-  Tag,
-  TagFormData,
-  TagApiUpdateTagRequest,
-} from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppTextField from 'components/shared/AppTextField/AppTextField';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
+  getTagDeletingStatuses,
+  getTagUpdatingStatuses,
+} from 'redux/selectors';
+import {
+  AppButton,
+  AppCheckbox,
+  AppInput,
+  DialogWrapper,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 
 interface TagEditFormProps {
   editBtn: JSX.Element;
   tag: Tag;
-  isLoading: boolean;
-  updateTag: (params: TagApiUpdateTagRequest) => Promise<Tag>;
 }
 
-const TagEditForm: React.FC<TagEditFormProps> = ({
-  editBtn,
-  tag,
-  isLoading,
-  updateTag,
-}) => {
+const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
+  const dispatch = useAppDispatch();
+
+  const { isLoading: isTagUpdating } = useAppSelector(
+    getTagUpdatingStatuses
+  );
+
+  const { isLoading: isTagDeleting } = useAppSelector(
+    getTagDeletingStatuses
+  );
+
   const { handleSubmit, control, reset, formState } = useForm<TagFormData>(
     {
       mode: 'onChange',
@@ -43,10 +50,12 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
   };
 
   const handleUpdate = (data: TagFormData) => {
-    updateTag({
-      tagId: tag.id,
-      tagFormData: data,
-    }).then(
+    dispatch(
+      updateTag({
+        tagId: tag.id,
+        tagFormData: data,
+      })
+    ).then(
       () => {
         setState({ ...initialState, isSuccessfulSubmit: true });
         clearState();
@@ -74,7 +83,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
         defaultValue={tag.name}
         rules={{ required: true, validate: value => !!value.trim() }}
         render={({ field }) => (
-          <AppTextField
+          <AppInput
             {...field}
             placeholder="Tag Name"
             customEndAdornment={{
@@ -129,7 +138,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isTagUpdating || isTagDeleting}
       errorText={error}
       clearState={clearState}
     />

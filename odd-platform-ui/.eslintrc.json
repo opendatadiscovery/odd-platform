@@ -72,7 +72,8 @@
       {
         "props": true,
         "ignorePropertyModificationsFor": [
-          "state"
+          "state",
+          "localState"
         ]
       }
     ]
