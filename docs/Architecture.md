@@ -4,28 +4,13 @@ The diagram below contains the structure of the Platform and shows principles of
 
 ![](.gitbook/img/architecture_collector.png)
 
-A **Push-client** is a provider which sends information directly to the central repository of the Platform. Also [read](Adapters.md#push-and-pull-strategies) about a push-strategy.
-## Collector
-> :exclamation: The Collector is an upgraded version of a metadata gathering service. [Adapters](Adapters.md#adapters) will be deprecated soon!  
+**Push-client** is a provider which sends information directly to the central repository of the Platform. Also [read](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md#push-model) about a push-strategy.
 
-ODD Collector is a lightweight service which gathers metadata from all your data sources: 
+**ODD Collector** is a lightweight service which gathers metadata from all your data sources: 
 * It manages your metadata according to the [Specification](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md).
 * It connects to all your data sources simultaneously and provides configurable scheduling.
 
 ### Collector types 
-#### [AWS Collector](https://github.com/opendatadiscovery/odd-collector-aws)
-* Athena
-* DynamoDB
-* Glue
-* Kinesis
-* Quicksight
-* S3
-* Sagemaker
-* Sagemaker Featurestore
-* SQS
-
-[Config examples →](https://github.com/opendatadiscovery/odd-collector-aws/tree/main/config_examples)
-
 #### [Collector](https://github.com/opendatadiscovery/odd-collector)
 * Cassandra
 * ClickHouse
@@ -44,6 +29,24 @@ ODD Collector is a lightweight service which gathers metadata from all your data
 * Tarantool
 
 [Config examples →](https://github.com/opendatadiscovery/odd-collector/tree/main/config_examples)
+
+#### [AWS Collector](https://github.com/opendatadiscovery/odd-collector-aws)
+* Athena
+* DynamoDB
+* Glue
+* Kinesis
+* Quicksight
+* S3
+* Sagemaker
+* Sagemaker Featurestore
+* SQS
+
+[Config examples →](https://github.com/opendatadiscovery/odd-collector-aws/tree/main/config_examples)
+
+#### [GCP Collector](https://github.com/opendatadiscovery/odd-collector-gcp)
+* BigQuery
+
+[Config examples →](https://github.com/opendatadiscovery/odd-collector-gcp#config-example)
 <!---
 ## Collector vs Adapters
 A previous version of Platform architecture was based on adapters. This approach required to connect new adapter to each data source. Now you can install one Collector and ingest data from all your sources.
