@@ -8,8 +8,8 @@
 [Manual Object Tagging](#manual-object-tagging) \
 [Data Entity Groups](#data-entity-groups) \
 [Data Entity Report](#data-entity-report) \
-[Customized Dictionary](#customized-dictionary) \
-[Change History](#change-history) \
+[Dictionary Terms](#dictionary-terms) \
+[Activity Feed for Monitoring Changes](#act) \
 [Dataset Quality Statuses (SLA)](#dataset-quality-statuses-sla) 
 
 ## Metadata Storage 
@@ -89,14 +89,14 @@ A report collects statistical information about data entities on the main page o
 * Unfilled entities that have only titles and lack metadata, owners, tags, related terms and other descriptive information
 
 ![](.gitbook/img/report.png)
-## Customized Dictionary
+## Dictionary terms
 Give an extra information about your data entities by creating terms that define these entities or processes related to them.\
 You may see all terms connected to a data entity on its overview page. All created terms are gathered in the **Dictionary** tab.
 
 ![](.gitbook/img/terms.gif)
 
-## Change History
-Track changes of your data entities by monitoring the **Activity** page, which gathers events in chronological order. Also, to searach needed changes, you may filter events by datasources, namespaces, users and date.
+## Activity Feed for Monitoring Changes
+Track changes of your data entities by monitoring the **Activity** page or **Activity** tabs placed on pages of data entities. Also, to search needed changes, you may filter events by datasources, namespaces, users and date.
 
 Event types:
 * `CREATED` – a data entity, [data entity group](#data-entity-groups) or a descriptive field related to a data entity was created. 
@@ -106,7 +106,7 @@ Event types:
 
 ![](.gitbook/img/activity.gif)
 ## Dataset Quality Statuses (SLA)
-Use **Minor**, **Major** and **Critical** statuses to mark dataset's [test suit results](#data-quality-test-results-import) depending on how trustworthy they are. Then you may easily import these statuses directly to a BI report:
+Use **Minor**, **Major** and **Critical** statuses to mark dataset's [test suite results](#data-quality-test-results-import) depending on how trustworthy they are. Then you may easily import these statuses directly to a BI report:
 1. Go to the dataset main page and select the **Test reports** tab.
 2. Click on a job and then, on the right panel, select a status.
 3. To add the status into your BI report, use the following URL: `https://{platform_url}/api/datasets/{dataset_id}/sla`
