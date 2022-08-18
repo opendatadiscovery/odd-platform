@@ -6,15 +6,11 @@ import { useAppSelector } from 'lib/redux/hooks';
 import {
   getDatasetTestReport,
   getDatasetTestReportFetchingStatuses,
-} from 'redux/selectors/dataQualityTest.selectors';
-import OverviewDataQualityReportSkeleton from 'components/DataEntityDetails/Overview/OverviewDataQualityReport/OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
-import AppButton from 'components/shared/AppButton/AppButton';
+} from 'redux/selectors';
+import { AppButton } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
-import {
-  Bar,
-  Container,
-  CountLabel,
-} from './OverviewDataQualityReportStyles';
+import OverviewDataQualityReportSkeleton from './OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
+import * as S from './OverviewDataQualityReportStyles';
 
 interface OverviewDataQualityReportProps {
   dataEntityId: number;
@@ -31,8 +27,9 @@ const OverviewDataQualityReport: React.FC<
   const datasetQualityTestReport = useAppSelector(state =>
     getDatasetTestReport(state, dataEntityId)
   );
+
   return (
-    <Container>
+    <S.Container>
       {isDatasetTestReportFetching ? (
         <OverviewDataQualityReportSkeleton />
       ) : (
@@ -72,36 +69,38 @@ const OverviewDataQualityReport: React.FC<
             <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.successTotal}
             </Typography>
-            <CountLabel
+            <S.CountLabel
               variant="body1"
               $testRunStatus={DataEntityRunStatus.SUCCESS}
             >
               passed
-            </CountLabel>
+            </S.CountLabel>
           </Grid>
           <Grid item container sx={{ mt: 0.5, mb: 0.5 }}>
-            <Bar
-              $testReport={datasetQualityTestReport}
-              $testRunStatus={DataEntityRunStatus.SUCCESS}
-            />
             <Grid item container wrap="nowrap">
-              <Bar
+              <S.Bar
+                $testReport={datasetQualityTestReport}
+                $testRunStatus={DataEntityRunStatus.SUCCESS}
+              />
+              <S.Bar
                 $testReport={datasetQualityTestReport}
                 $testRunStatus={DataEntityRunStatus.FAILED}
               />
-              <Bar
+            </Grid>
+            <Grid item container wrap="nowrap">
+              <S.Bar
                 $testReport={datasetQualityTestReport}
                 $testRunStatus={DataEntityRunStatus.BROKEN}
               />
-              <Bar
+              <S.Bar
                 $testReport={datasetQualityTestReport}
                 $testRunStatus={DataEntityRunStatus.SKIPPED}
               />
-              <Bar
+              <S.Bar
                 $testReport={datasetQualityTestReport}
                 $testRunStatus={DataEntityRunStatus.ABORTED}
               />
-              <Bar
+              <S.Bar
                 $testReport={datasetQualityTestReport}
                 $testRunStatus={DataEntityRunStatus.UNKNOWN}
               />
@@ -111,60 +110,60 @@ const OverviewDataQualityReport: React.FC<
             <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.failedTotal}
             </Typography>
-            <CountLabel
+            <S.CountLabel
               variant="body1"
               $testRunStatus={DataEntityRunStatus.FAILED}
             >
               failed
-            </CountLabel>
+            </S.CountLabel>
           </Grid>
           <Grid item container sx={{ mt: 0.25 }}>
             <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.brokenTotal}
             </Typography>
-            <CountLabel
+            <S.CountLabel
               variant="body1"
               $testRunStatus={DataEntityRunStatus.BROKEN}
             >
               broken
-            </CountLabel>
+            </S.CountLabel>
           </Grid>
           <Grid item container sx={{ mt: 0.25 }}>
             <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.abortedTotal}
             </Typography>
-            <CountLabel
+            <S.CountLabel
               variant="body1"
               $testRunStatus={DataEntityRunStatus.ABORTED}
             >
               aborted
-            </CountLabel>
+            </S.CountLabel>
           </Grid>
           <Grid item container sx={{ mt: 0.25 }}>
             <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.skippedTotal}
             </Typography>
-            <CountLabel
+            <S.CountLabel
               variant="body1"
               $testRunStatus={DataEntityRunStatus.SKIPPED}
             >
               skipped
-            </CountLabel>
+            </S.CountLabel>
           </Grid>
           <Grid item container sx={{ mt: 0.25 }}>
             <Typography variant="body1" sx={{ mr: 0.5 }}>
               {datasetQualityTestReport?.unknownTotal}
             </Typography>
-            <CountLabel
+            <S.CountLabel
               variant="body1"
               $testRunStatus={DataEntityRunStatus.UNKNOWN}
             >
               unknown
-            </CountLabel>
+            </S.CountLabel>
           </Grid>
         </Grid>
       )}
-    </Container>
+    </S.Container>
   );
 };
 
