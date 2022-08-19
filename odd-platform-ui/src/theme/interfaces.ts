@@ -53,6 +53,7 @@ interface ButtonType {
   unfilled: ItemCondition;
   collapse: ItemCondition;
   valueCount: ItemCondition;
+  animationParas: { start: string; end: string };
 }
 
 interface BackgroundType extends TypeBackground {

@@ -2,14 +2,6 @@ import { Grid, Typography } from '@mui/material';
 import styled from 'styled-components';
 import { maxIdentityFormContentWidth } from 'lib/constants';
 
-export const Container = styled('div')(({ theme }) => ({
-  marginTop: theme.spacing(4),
-  padding: theme.spacing(4.5, 3, 4, 3),
-  border: '1px solid',
-  borderColor: theme.palette.divider,
-  borderRadius: '8px',
-}));
-
 export const FormContainer = styled('form')(({ theme }) => ({
   width: '100%',
   maxWidth: maxIdentityFormContentWidth,

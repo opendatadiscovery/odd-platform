@@ -1,6 +1,6 @@
 import React from 'react';
 import { ButtonProps } from '@mui/material';
-import { ButtonColors, StyledAppButton } from './AppButtonStyles';
+import { ButtonColors, Loader, StyledAppButton } from './AppButtonStyles';
 
 interface AppButtonProps
   extends Pick<
@@ -21,10 +21,11 @@ interface AppButtonProps
     | 'itemRef'
   > {
   color: ButtonColors;
+  isLoading?: boolean;
 }
 
 const AppButton: React.FC<AppButtonProps> = React.forwardRef(
-  ({ color, children, ...props }, ref) => (
+  ({ color, isLoading, children, ...props }, ref) => (
     <StyledAppButton
       {...props}
       focusRipple
@@ -32,7 +33,7 @@ const AppButton: React.FC<AppButtonProps> = React.forwardRef(
       ref={ref}
       disableRipple
     >
-      {children}
+      {isLoading ? <Loader /> : children}
     </StyledAppButton>
   )
 );

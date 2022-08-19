@@ -15,3 +15,6 @@ export { default as PlusIcon } from './PlusIcon';
 export { default as MinusIcon } from './MinusIcon';
 export { default as GraphIcon } from './GraphIcon';
 export { default as ColumnsIcon } from './ColumnsIcon';
+export { default as WaitIcon } from './WaitIcon';
+export { default as RequestAcceptedIcon } from './RequestAcceptedIcon';
+export { default as RequestDeclinedIcon } from './RequestDeclinedIcon';

@@ -886,9 +886,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: './components.yaml/#/components/schemas/Permission'
+                $ref: './components.yaml/#/components/schemas/Actions'
       tags:
         - dataEntity
   /api/dataentities/{data_entity_id}/description:

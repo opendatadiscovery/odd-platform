@@ -5,10 +5,8 @@ components:
       properties:
         username:
           type: string
-        permissions:
-          type: array
-          items:
-            $ref: '#/components/schemas/Permission'
+        actions:
+          $ref: '#/components/schemas/Actions'
       required:
         - username
 
@@ -29,6 +27,18 @@ components:
       enum:
         - MANAGEMENT_CONTROL
         - DATA_ENTITY_EDIT
+
+    Actions:
+      type: object
+      properties:
+        allowed:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+        forbidden:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
 
     Namespace:
       type: object

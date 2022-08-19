@@ -186,6 +186,7 @@ export const palette = createPalette({
       hover: { background: colors.black15, color: colors.black70 },
       active: { background: colors.black15, color: colors.black90 },
     },
+    animationParas: { start: colors.blue30, end: colors.blue5 },
   },
   tag: {
     main: {
