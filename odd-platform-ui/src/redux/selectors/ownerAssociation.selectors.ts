@@ -8,14 +8,26 @@ export const ownerAssociationState = ({
   ownerAssociation,
 }: RootState): OwnerAssociationState => ownerAssociation;
 
-export const { selectAll: getOwnerAssociationRequestsList } =
+export const { selectAll: getNewAssociationRequestsList } =
   ownerAssociationAdapter.getSelectors<RootState>(
-    state => state.ownerAssociation
+    state => state.ownerAssociation.newRequests
   );
 
-export const getOwnerAssociationRequestsPageInfo = createSelector(
+export const { selectAll: getResolvedAssociationRequestsList } =
+  ownerAssociationAdapter.getSelectors<RootState>(
+    state => state.ownerAssociation.resolvedRequests
+  );
+
+export const getNewOwnerAssociationRequestsPageInfo = createSelector(
   ownerAssociationState,
-  ownerAssociationRequestsList => ownerAssociationRequestsList.pageInfo
+  ownerAssociationRequestsList =>
+    ownerAssociationRequestsList.newRequests.pageInfo
+);
+
+export const getResolvedOwnerAssociationRequestsPageInfo = createSelector(
+  ownerAssociationState,
+  ownerAssociationRequestsList =>
+    ownerAssociationRequestsList.resolvedRequests.pageInfo
 );
 
 export const getOwnerAssociationRequestsListFetchingStatuses =

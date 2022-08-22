@@ -6,6 +6,8 @@ export type ButtonColors =
   | 'primary'
   | 'primaryLight'
   | 'secondary'
+  | 'secondarySuccess'
+  | 'secondaryWarn'
   | 'tertiary'
   | 'dropdown'
   | 'expandText'

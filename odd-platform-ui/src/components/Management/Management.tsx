@@ -4,6 +4,7 @@ import { Grid } from '@mui/material';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
 import { useAppParams, useAppPaths } from 'lib/hooks';
+import OwnerAssociations from 'components/Management/OwnerAssociations/OwnerAssociations';
 import * as S from './ManagementStyles';
 
 // lazy components
@@ -33,6 +34,7 @@ const Management: React.FC = () => {
     { name: 'Owners', link: managementPath('owners') },
     { name: 'Tags', link: managementPath('tags') },
     { name: 'Labels', link: managementPath('labels') },
+    { name: 'Associations', link: managementPath('associations') },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -43,7 +45,7 @@ const Management: React.FC = () => {
         ? tabs.findIndex(tab => tab.name.toLowerCase() === viewType)
         : 0
     );
-  }, [tabs]);
+  }, [tabs, viewType]);
 
   return (
     <S.Container container wrap="nowrap">
@@ -88,6 +90,11 @@ const Management: React.FC = () => {
               exact
               path="/management/labels"
               component={LabelsList}
+            />
+            <Route
+              exact
+              path="/management/associations/:viewType?"
+              component={OwnerAssociations}
             />
             <Redirect
               exact

@@ -24,7 +24,11 @@ export const createOwnerAssociationRequest = createAsyncThunk<
 );
 
 export const fetchOwnerAssociationRequestList = createAsyncThunk<
-  { items: Array<OwnerAssociationRequest>; pageInfo: CurrentPageInfo },
+  {
+    items: Array<OwnerAssociationRequest>;
+    pageInfo: CurrentPageInfo;
+    active: boolean;
+  },
   OwnerAssociationRequestApiGetOwnerAssociationRequestListRequest
 >(actions.fetchOwnerAssociationRequestsListActionType, async params => {
   const { items, pageInfo } =
@@ -32,7 +36,11 @@ export const fetchOwnerAssociationRequestList = createAsyncThunk<
       params
     );
 
-  return { items, pageInfo: { ...pageInfo, page: params.page } };
+  return {
+    items,
+    pageInfo: { ...pageInfo, page: params.page },
+    active: params.active,
+  };
 });
 
 export const updateOwnerAssociationRequest = createAsyncThunk<

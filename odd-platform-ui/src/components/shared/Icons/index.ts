@@ -18,3 +18,6 @@ export { default as ColumnsIcon } from './ColumnsIcon';
 export { default as WaitIcon } from './WaitIcon';
 export { default as RequestAcceptedIcon } from './RequestAcceptedIcon';
 export { default as RequestDeclinedIcon } from './RequestDeclinedIcon';
+export { default as SuccessIcon } from './SuccessIcon';
+export { default as AcceptIcon } from './AcceptIcon';
+export { default as RejectIcon } from './RejectIcon';

@@ -194,9 +194,13 @@ export interface ProfileState {
   owner: AssociatedOwner;
 }
 
-export interface OwnerAssociationState
-  extends EntityState<OwnerAssociationRequest> {
-  pageInfo: CurrentPageInfo;
+export interface OwnerAssociationState {
+  newRequests: {
+    pageInfo: CurrentPageInfo;
+  } & EntityState<OwnerAssociationRequest>;
+  resolvedRequests: {
+    pageInfo: CurrentPageInfo;
+  } & EntityState<OwnerAssociationRequest>;
 }
 
 export interface AppInfoState {

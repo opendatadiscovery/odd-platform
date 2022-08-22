@@ -2180,6 +2180,7 @@ paths:
           in: query
           schema:
             type: boolean
+          required: true
       responses:
         '200':
           description: OK

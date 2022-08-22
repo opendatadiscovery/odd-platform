@@ -1,6 +1,7 @@
 import {
   AlertViewType,
   ManagementViewType,
+  OwnerAssociationRequestsViewType,
   TermsViewType,
   TestReportViewType,
 } from 'lib/interfaces';
@@ -12,7 +13,11 @@ interface RouteParams {
   termId: string;
   versionId: string;
   searchId: string;
-  viewType: TermsViewType | AlertViewType | ManagementViewType;
+  viewType:
+    | TermsViewType
+    | AlertViewType
+    | ManagementViewType
+    | OwnerAssociationRequestsViewType;
 }
 
 interface AppRouteParams {
@@ -25,7 +30,8 @@ interface AppRouteParams {
     | TermsViewType
     | AlertViewType
     | ManagementViewType
-    | TestReportViewType;
+    | TestReportViewType
+    | OwnerAssociationRequestsViewType;
 }
 
 const useAppParams = (): AppRouteParams => {

@@ -10,8 +10,14 @@ export const ownerAssociationAdapter =
   });
 
 export const initialState: OwnerAssociationState = {
-  pageInfo: { total: 0, page: 0, hasNext: true },
-  ...ownerAssociationAdapter.getInitialState(),
+  newRequests: {
+    pageInfo: { total: 0, page: 0, hasNext: true },
+    ...ownerAssociationAdapter.getInitialState(),
+  },
+  resolvedRequests: {
+    pageInfo: { total: 0, page: 0, hasNext: true },
+    ...ownerAssociationAdapter.getInitialState(),
+  },
 };
 
 export const ownerAssociationSlice = createSlice({
@@ -22,24 +28,39 @@ export const ownerAssociationSlice = createSlice({
     builder.addCase(
       thunks.createOwnerAssociationRequest.fulfilled,
       (state, { payload }) => {
-        ownerAssociationAdapter.addOne(state, payload);
+        ownerAssociationAdapter.addOne(state.newRequests, payload);
       }
     );
 
     builder.addCase(
       thunks.fetchOwnerAssociationRequestList.fulfilled,
       (state, { payload }) => {
-        const { items, pageInfo } = payload;
+        const { items, pageInfo, active } = payload;
 
-        ownerAssociationAdapter.setMany(state, items);
-        state.pageInfo = pageInfo;
+        if (active) {
+          state.newRequests.pageInfo = pageInfo;
+          if (pageInfo.page > 1) {
+            ownerAssociationAdapter.setMany(state.newRequests, items);
+            return state;
+          }
+          ownerAssociationAdapter.setAll(state.newRequests, items);
+          return state;
+        }
+
+        state.resolvedRequests.pageInfo = pageInfo;
+        if (pageInfo.page > 1) {
+          ownerAssociationAdapter.setMany(state.resolvedRequests, items);
+          return state;
+        }
+        ownerAssociationAdapter.setAll(state.resolvedRequests, items);
+        return state;
       }
     );
 
     builder.addCase(
       thunks.updateOwnerAssociationRequest.fulfilled,
       (state, { payload }) => {
-        ownerAssociationAdapter.removeOne(state, payload);
+        ownerAssociationAdapter.removeOne(state.newRequests, payload);
       }
     );
   },
