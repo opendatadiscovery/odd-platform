@@ -12,6 +12,6 @@
   ## ⚙ Configuration and Deployment
 * [Try locally](trylocally.md)
 * [Configure ODD Platform](configuration/odd-platform.md)
-## Tutorials
+   ## Tutorials
 
 
