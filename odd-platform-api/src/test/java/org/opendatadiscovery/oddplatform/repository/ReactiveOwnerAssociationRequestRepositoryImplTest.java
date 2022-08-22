@@ -138,13 +138,42 @@ public class ReactiveOwnerAssociationRequestRepositoryImplTest extends BaseInteg
             }).verifyComplete();
     }
 
+    @Test
+    public void getLastRequestForUsernameTest() {
+        final OwnerPojo firstOwner = ownerRepository.create(createOwnerPojo()).block();
+        final String username = UUID.randomUUID().toString();
+        final OwnerAssociationRequestPojo declinedPojo = createPojos(OwnerAssociationRequestStatus.DECLINED,
+            username,
+            UUID.randomUUID().toString(), List.of(firstOwner)).get(0);
+        final OwnerAssociationRequestPojo pendingPojo = createPojos(OwnerAssociationRequestStatus.PENDING,
+            username,
+            null, List.of(firstOwner)).get(0);
+        final OwnerAssociationRequestPojo savedDeclinedPojo = repository.create(declinedPojo).block();
+        final OwnerAssociationRequestPojo savedPendingPojo = repository.create(pendingPojo).block();
+        repository.getLastRequestForUsername(username)
+            .as(StepVerifier::create)
+            .assertNext(pojo -> assertThat(pojo).isEqualTo(savedPendingPojo))
+            .verifyComplete();
+
+        repository.getLastRequestForUsername(UUID.randomUUID().toString())
+            .as(StepVerifier::create)
+            .verifyComplete();
+    }
+
     private List<OwnerAssociationRequestPojo> createPojos(final OwnerAssociationRequestStatus status,
+                                                          final String adminUsername,
+                                                          final List<OwnerPojo> owners) {
+        return createPojos(status, null, adminUsername, owners);
+    }
+
+    private List<OwnerAssociationRequestPojo> createPojos(final OwnerAssociationRequestStatus status,
+                                                          final String username,
                                                           final String adminUsername,
                                                           final List<OwnerPojo> owners) {
         return owners.stream()
             .map(owner -> {
                 final OwnerAssociationRequestPojo pojo = new OwnerAssociationRequestPojo();
-                pojo.setUsername(UUID.randomUUID().toString());
+                pojo.setUsername(username != null ? username : UUID.randomUUID().toString());
                 pojo.setOwnerId(owner.getId());
                 pojo.setStatus(status.getValue());
                 if (status != OwnerAssociationRequestStatus.PENDING) {

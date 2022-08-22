@@ -18,6 +18,7 @@ public class AssociatedOwnerMapperImpl implements AssociatedOwnerMapper {
         }
         return new AssociatedOwner()
             .owner(dto.owner() != null ? ownerMapper.mapToOwner(dto.owner()) : null)
-            .identity(new Identity().username(dto.username()));
+            .identity(new Identity().username(dto.username()))
+            .associationRequestStatus(dto.lastRequestStatus());
     }
 }

@@ -106,7 +106,8 @@ public class ActivityMapperTest {
             .identity(new Identity().username(activityPojo.getCreatedBy()));
 
         lenient()
-            .when(associatedOwnerMapper.mapAssociatedOwner(new AssociatedOwnerDto(activityPojo.getCreatedBy(), owner)))
+            .when(associatedOwnerMapper
+                .mapAssociatedOwner(new AssociatedOwnerDto(activityPojo.getCreatedBy(), owner, null)))
             .thenReturn(identity);
 
         lenient().when(dataEntityMapper.mapType(any(DataEntityTypeDto.class))).thenReturn(dataEntityType);

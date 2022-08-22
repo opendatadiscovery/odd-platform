@@ -89,7 +89,7 @@ public class OwnerAssociationRequestMapperTest {
         final String updatedUserOwnerName = UUID.randomUUID().toString();
         final OffsetDateTime offsetDateTime = pojo.getStatusUpdatedAt().atOffset(ZoneOffset.UTC);
         final AssociatedOwnerDto ownerDto = new AssociatedOwnerDto(pojo.getUsername(),
-            new OwnerPojo().setName(updatedUserOwnerName));
+            new OwnerPojo().setName(updatedUserOwnerName), null);
         final OwnerAssociationRequestDto dto = new OwnerAssociationRequestDto(pojo, ownerName, ownerDto);
 
         final AssociatedOwner identity = new AssociatedOwner()

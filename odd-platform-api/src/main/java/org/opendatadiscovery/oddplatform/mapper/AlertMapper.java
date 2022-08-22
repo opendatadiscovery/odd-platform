@@ -26,7 +26,7 @@ public abstract class AlertMapper {
     @Named("statusUpdatedBy")
     public AssociatedOwner mapAssociatedOwner(final AlertDto alertDto) {
         return associatedOwnerMapper.mapAssociatedOwner(
-                new AssociatedOwnerDto(alertDto.getAlert().getStatusUpdatedBy(), alertDto.getUpdatedByOwner()));
+                new AssociatedOwnerDto(alertDto.getAlert().getStatusUpdatedBy(), alertDto.getUpdatedByOwner(), null));
     }
 
     @Named("dataEntity")
