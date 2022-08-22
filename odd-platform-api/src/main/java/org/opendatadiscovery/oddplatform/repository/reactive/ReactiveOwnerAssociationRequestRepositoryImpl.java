@@ -107,6 +107,16 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
             ));
     }
 
+    @Override
+    public Mono<OwnerAssociationRequestPojo> getLastRequestForUsername(final String username) {
+        final var query = DSL.selectFrom(OWNER_ASSOCIATION_REQUEST)
+            .where(OWNER_ASSOCIATION_REQUEST.USERNAME.eq(username))
+            .orderBy(OWNER_ASSOCIATION_REQUEST.CREATED_AT.desc())
+            .limit(1);
+        return jooqReactiveOperations.mono(query)
+            .map(r -> r.into(OWNER_ASSOCIATION_REQUEST).into(OwnerAssociationRequestPojo.class));
+    }
+
     private Mono<Long> fetchCount(final String query,
                                   final Boolean active) {
         final List<Condition> conditions = getConditions(query, active);
@@ -144,8 +154,8 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
         final Record statusUpdatedRecord = jooqRecordHelper.remapCte(r, STATUS_UPDATED_OWNER_ALIAS, OWNER);
         final OwnerPojo statusOwner = jooqRecordHelper.extractRelation(statusUpdatedRecord, OWNER, OwnerPojo.class);
 
-        final AssociatedOwnerDto associatedOwnerDto =
-            pojo.getStatusUpdatedBy() != null ? new AssociatedOwnerDto(pojo.getStatusUpdatedBy(), statusOwner) : null;
+        final AssociatedOwnerDto associatedOwnerDto = pojo.getStatusUpdatedBy() != null
+            ? new AssociatedOwnerDto(pojo.getStatusUpdatedBy(), statusOwner, null) : null;
         return new OwnerAssociationRequestDto(pojo, requestOwner.getName(), associatedOwnerDto);
     }
 }

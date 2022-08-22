@@ -43,8 +43,13 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    public Mono<OwnerList> list(final int page, final int size, final String query, final List<Long> ids) {
-        return ownerRepository.list(page, size, query, ids).map(ownerMapper::mapToOwnerList);
+    public Mono<OwnerList> list(final int page,
+                                final int size,
+                                final String query,
+                                final List<Long> ids,
+                                final Boolean allowedForSync) {
+        return ownerRepository.list(page, size, query, ids, allowedForSync)
+            .map(ownerMapper::mapToOwnerList);
     }
 
     @Override
