@@ -9,9 +9,8 @@
   * [Visibility for Data Quality Engineer](dq\_visibility.md)
   * [Data preparation for Visualization Engineer](viz\_preparation.md)
   * [Service Provider and Pre-Sales](service\_presales.md)
-  ## Configuration and Deployment
-* [Try locally](trylocally.md)
-* [Configure ODD Platform](configuration/odd-platform.md)
 
+## Configuration and Deployment
 
-
+* [Try locally](configuration-and-deployment/trylocally.md)
+* [Configure ODD Platform](configuration-and-deployment/odd-platform.md)
