@@ -95,7 +95,7 @@ const Search: React.FC = () => {
 
   return (
     <S.MainContainer>
-      <S.ContentContainer container spacing={2}>
+      <S.ContentContainer container>
         <S.LeftSidebarContainer item xs={3}>
           <Filters />
         </S.LeftSidebarContainer>

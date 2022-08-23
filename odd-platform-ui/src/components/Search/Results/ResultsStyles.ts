@@ -37,6 +37,7 @@ const searchHeight = 40;
 export const ResultsTableHeader = styled(Grid)(({ theme }) => ({
   borderBottom: '1px solid',
   borderBottomColor: theme.palette.divider,
+  '& > *': { padding: theme.spacing(0, 1) },
 }));
 
 export const ColContainer = styled(Grid)<{
@@ -55,7 +56,7 @@ export const NameContainer = styled(Grid)<GridProps>(() => ({
 
 export const ListContainer = styled(Grid)(({ theme }) => ({
   height: `calc(100vh - ${toolbarHeight}px - ${searchHeight}px - ${primaryTabsHeight}px - ${tabsContainerMargin}px - ${theme.spacing(
-    8
+    11.5
   )})`,
   overflowY: 'scroll',
 }));

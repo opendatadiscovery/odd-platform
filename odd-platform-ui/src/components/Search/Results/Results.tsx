@@ -198,7 +198,7 @@ const Results: React.FC = () => {
           </S.ColContainer>
         )}
         {searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP) && (
-          <S.ColContainer item $colType="colxs">
+          <S.ColContainer item $colType="colsm">
             <Typography variant="caption">Number of entities</Typography>
           </S.ColContainer>
         )}
