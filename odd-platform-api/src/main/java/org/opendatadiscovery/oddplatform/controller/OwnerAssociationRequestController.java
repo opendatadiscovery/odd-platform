@@ -29,8 +29,8 @@ public class OwnerAssociationRequestController implements OwnerAssociationReques
     @Override
     public Mono<ResponseEntity<OwnerAssociationRequestList>> getOwnerAssociationRequestList(final Integer page,
                                                                                             final Integer size,
-                                                                                            final String query,
                                                                                             final Boolean active,
+                                                                                            final String query,
                                                                                             final ServerWebExchange e) {
         return ownerAssociationRequestService.getOwnerAssociationRequestList(page, size, query, active)
             .map(ResponseEntity::ok);

@@ -21,6 +21,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
+import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
+import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
 public class ReactiveDataEntityRepositoryImpl
@@ -106,5 +108,17 @@ public class ReactiveDataEntityRepositoryImpl
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DataEntityPojo.class));
+    }
+
+    @Override
+    public Mono<Boolean> userIsDataEntityOwner(final long dataEntityId,
+                                               final String username) {
+        final var existsQuery = DSL.select(OWNERSHIP.fields())
+            .from(OWNERSHIP)
+            .join(USER_OWNER_MAPPING).on(OWNERSHIP.OWNER_ID.eq(USER_OWNER_MAPPING.OWNER_ID))
+            .where(OWNERSHIP.DATA_ENTITY_ID.eq(dataEntityId).and(USER_OWNER_MAPPING.OIDC_USERNAME.eq(username)));
+
+        final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(existsQuery);
+        return jooqReactiveOperations.mono(query).map(Record1::component1).switchIfEmpty(Mono.just(false));
     }
 }
