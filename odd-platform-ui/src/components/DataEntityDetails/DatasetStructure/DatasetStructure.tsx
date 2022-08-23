@@ -1,13 +1,10 @@
 import React from 'react';
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
-import round from 'lodash/round';
-import toPairs from 'lodash/toPairs';
 import {
   fetchDataSetStructure,
   fetchDataSetStructureLatest,
 } from 'redux/thunks';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
 import {
   getDatasetStats,
   getDatasetStructure,
@@ -17,19 +14,19 @@ import {
   getDatasetVersionId,
   getDatasetVersions,
 } from 'redux/selectors';
-import { DataSetFieldTypeTypeEnum } from 'generated-sources';
-import AppInput from 'components/shared/AppInput/AppInput';
-import { isComplexField } from 'lib/helpers';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import ColumnsIcon from 'components/shared/Icons/ColumnsIcon';
-import DatasetStructureSkeleton from 'components/DataEntityDetails/DatasetStructure/DatasetStructureSkeleton/DatasetStructureSkeleton';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import AppSelect from 'components/shared/AppSelect/AppSelect';
+import { ClearIcon, ColumnsIcon } from 'components/shared/Icons';
+import {
+  AppInput,
+  AppSelect,
+  NumberFormatted,
+  SkeletonWrapper,
+} from 'components/shared';
 import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useDebouncedCallback } from 'use-debounce';
+import DatasetStructureSkeleton from './DatasetStructureSkeleton/DatasetStructureSkeleton';
+import DatasetStructureTypeCountLabelList from './DatasetStructureTypeCountLabelList/DatasetStructureTypeCountLabelList';
 import DatasetStructureTable from './DatasetStructureTable/DatasetStructureTable';
-import DatasetStructureFieldTypeLabel from './DatasetStructureFieldTypeLabel/DatasetStructureFieldTypeLabel';
 
 const DatasetStructure: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -111,6 +108,8 @@ const DatasetStructure: React.FC = () => {
     setIndexToScroll(-1);
   };
 
+  const [labelsListOpened, setLabelsListOpened] = React.useState(false);
+
   return (
     <Box sx={{ mt: 2 }}>
       {isDatasetStructureFetching || isDatasetStructureLatestFetching ? (
@@ -127,11 +126,12 @@ const DatasetStructure: React.FC = () => {
             item
             xs={12}
             justifyContent="space-between"
-            alignItems="center"
+            alignItems={labelsListOpened ? 'flex-start' : 'center'}
             container
+            flexWrap="nowrap"
           >
-            <Grid item xs={8} container alignItems="center" rowGap={0.5}>
-              <Typography variant="h5" sx={{ mr: 3, display: 'flex' }}>
+            <Grid item xs={0.8}>
+              <Typography variant="h5" sx={{ display: 'flex' }}>
                 <ColumnsIcon />
                 <NumberFormatted
                   sx={{ mx: 0.5 }}
@@ -141,38 +141,17 @@ const DatasetStructure: React.FC = () => {
                   columns
                 </Typography>
               </Typography>
-              {toPairs(typesCount).map(([type, count]) =>
-                isComplexField(type as DataSetFieldTypeTypeEnum) ? null : (
-                  <Typography
-                    key={type}
-                    variant="h5"
-                    sx={{ mr: 5, display: 'flex', alignItems: 'center' }}
-                  >
-                    {count}
-                    <DatasetStructureFieldTypeLabel
-                      sx={{ mx: 0.5 }}
-                      typeName={type as DataSetFieldTypeTypeEnum}
-                    />
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="texts.hint"
-                    >
-                      {count && datasetStats?.fieldsCount
-                        ? round(
-                            (count * 100) / datasetStats.fieldsCount,
-                            2
-                          )
-                        : 0}
-                      %
-                    </Typography>
-                  </Typography>
-                )
-              )}
+            </Grid>
+            <Grid item xs={7.7} container flexWrap="nowrap">
+              <DatasetStructureTypeCountLabelList
+                fieldsCount={datasetStats.fieldsCount}
+                typesCount={typesCount}
+                onListOpening={setLabelsListOpened}
+              />
             </Grid>
             <Grid
               item
-              xs={4}
+              xs={3.5}
               container
               flexWrap="nowrap"
               alignItems="center"

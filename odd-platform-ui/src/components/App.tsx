@@ -1,11 +1,12 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { toolbarHeight } from 'lib/constants';
-import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
+import { AppLoadingPage, AppToolbar } from 'components/shared';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchDataEntitiesClassesAndTypes } from 'redux/thunks';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
-import AppToolbarContainer from './shared/AppToolbar/AppToolbarContainer';
+import { useAppPaths } from 'lib/hooks';
+import { PermissionProvider } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 
 // lazy components
 const Management = React.lazy(() => import('./Management/Management'));
@@ -15,12 +16,8 @@ const DataEntityDetails = React.lazy(
 const TermDetails = React.lazy(
   () => import('./Terms/TermDetails/TermDetails')
 );
-const OverviewContainer = React.lazy(
-  () => import('./Overview/OverviewContainer')
-);
-const SearchContainer = React.lazy(
-  () => import('./Search/SearchContainer')
-);
+const Overview = React.lazy(() => import('./Overview/Overview'));
+const Search = React.lazy(() => import('./Search/Search'));
 const TermSearchContainer = React.lazy(
   () => import('./Terms/TermSearch/TermSearchContainer')
 );
@@ -38,11 +35,11 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      {!isPathEmbedded && <AppToolbarContainer />}
+      {!isPathEmbedded && <AppToolbar />}
       <div style={{ paddingTop: `${toolbarHeight}px` }}>
         <React.Suspense fallback={<AppLoadingPage />}>
           <Switch>
-            <Route exact path="/" component={OverviewContainer} />
+            <Route exact path="/" component={Overview} />
             <Route path="/alerts/:viewType?" component={Alerts} />
             <Route path="/management/:viewType?" component={Management} />
             <Route
@@ -53,7 +50,7 @@ const App: React.FC = () => {
             <Route
               exact
               path={['/search/:searchId?', '/embedded/search/:searchId?']}
-              component={SearchContainer}
+              component={Search}
             />
             <Route
               path="/terms/:termId/:viewType?"
@@ -64,7 +61,13 @@ const App: React.FC = () => {
                 '/dataentities/:dataEntityId/:viewType?',
                 '/embedded/dataentities/:dataEntityId/:viewType?',
               ]}
-              component={DataEntityDetails}
+              render={() => (
+                <PermissionProvider
+                  permissions={[Permission.DATA_ENTITY_EDIT]}
+                >
+                  <DataEntityDetails />
+                </PermissionProvider>
+              )}
             />
             <Route path="/activity" component={Activity} />
           </Switch>

@@ -6,13 +6,12 @@ import dataSources from './datasources.slice';
 import dataEntities from './dataentities.slice';
 import tags from './tags.slice';
 import labels from './labels.slice';
-import search from './dataentitiesSearch.reducer';
-import searchSlice from './dataEntitySearch.slice';
+import dataEntitySearch from './dataEntitySearch.slice';
 import metaData from './metadata.slice';
 import owners from './owners.slice';
 import datasetStructure from './datasetStructure.slice';
 import dataEntityLineage from './dataEntityLineage/dataEntityLineage.slice';
-import profile from './profile.reducer';
+import profile from './profile.slice';
 import dataQualityTest from './dataQualityTest.slice';
 import alerts from './alerts.slice';
 import dataEntityGroupLinkedList from './dataEntityGroupLinkedList.slice';
@@ -23,13 +22,13 @@ import terms from './terms.slice';
 import termSearch from './termSearch.reducer';
 import activities from './activity.slice';
 import dataEntityRuns from './dataEntityRuns.slice';
+import ownerAssociation from './ownerAssociation.slice';
 
 export default combineReducers({
   namespaces,
   dataSources,
   dataEntities,
-  search,
-  searchSlice,
+  dataEntitySearch,
   loader,
   legacyLoader,
   tags,
@@ -49,4 +48,5 @@ export default combineReducers({
   termSearch,
   dataEntityRuns,
   activities,
+  ownerAssociation,
 });

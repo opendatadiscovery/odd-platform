@@ -1,6 +1,6 @@
 import { CountableSearchFilter, TermFacetState } from 'generated-sources';
+import { SearchFacetStateById } from 'redux/interfaces/dataEntitySearch';
 import { CurrentPageInfo } from './common';
-import { SearchFacetStateById } from './search';
 
 export type TermSearchOptionalFacetMap = TermFacetState;
 export type TermSearchOptionalFacetNames =

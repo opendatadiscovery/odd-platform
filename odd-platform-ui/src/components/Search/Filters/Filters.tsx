@@ -1,48 +1,36 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import {
-  Namespace,
-  NamespaceApiGetNamespaceListRequest,
-} from 'generated-sources';
-import {
   getDataSourcesList,
   getIsDataSourcesListFetching,
+  getNamespaceList,
+  getSearchEntityClass,
+  getSearchUpdateStatuses,
 } from 'redux/selectors';
-import { fetchDataSourcesList } from 'redux/thunks';
+import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-
-import { SearchClass } from 'redux/interfaces/search';
-import MultipleFilterItemContainer from 'components/Search/Filters/FilterItem/MultipleFilterItem/MultipleFilterItemContainer';
-import SingleFilterItemContainer from 'components/Search/Filters/FilterItem/SingleFilterItem/SingleFilterItemContainer';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
+import { AppButton, AppCircularProgress } from 'components/shared';
+import { clearDataEntitySearchFacets } from 'redux/reducers/dataEntitySearch.slice';
+import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
+import SingleFilterItem from './FilterItem/SingleFilterItem/SingleFilterItem';
 import * as S from './FiltersStyles';
 
-interface FiltersProps {
-  searchClass?: SearchClass;
-  namespaces: Namespace[];
-  fetchNamespaceList: (
-    params: NamespaceApiGetNamespaceListRequest
-  ) => void;
-  clearDataEntitySearchFilters: () => void;
-  isSearchFacetsUpdating: boolean;
-}
-
-const Filters: React.FC<FiltersProps> = ({
-  searchClass,
-  namespaces,
-  fetchNamespaceList,
-  clearDataEntitySearchFilters,
-  isSearchFacetsUpdating,
-}) => {
+const Filters: React.FC = () => {
   const dispatch = useAppDispatch();
+
   const datasources = useAppSelector(getDataSourcesList);
+  const namespaces = useAppSelector(getNamespaceList);
+  const searchClass = useAppSelector(getSearchEntityClass);
   const { isLoading: isDatasourceListFetching } = useAppSelector(
     getIsDataSourcesListFetching
   );
+  const { isLoading: isSearchUpdating } = useAppSelector(
+    getSearchUpdateStatuses
+  );
+
   React.useEffect(() => {
     dispatch(fetchDataSourcesList({ page: 1, size: 100 }));
-    fetchNamespaceList({ page: 1, size: 100 });
+    dispatch(fetchNamespaceList({ page: 1, size: 100 }));
   }, []);
 
   return (
@@ -52,43 +40,31 @@ const Filters: React.FC<FiltersProps> = ({
         <AppButton
           color="tertiary"
           size="medium"
-          onClick={() => clearDataEntitySearchFilters()}
+          onClick={() => dispatch(clearDataEntitySearchFacets())}
         >
           Clear All
         </AppButton>
       </Grid>
       <S.ListContainer>
-        <SingleFilterItemContainer
+        <SingleFilterItem
           key="ds"
           facetName="datasources"
           name="Datasource"
           facetOptions={datasources}
         />
         {searchClass && searchClass > 0 ? (
-          <MultipleFilterItemContainer
-            key="st"
-            facetName="types"
-            name="Type"
-          />
+          <MultipleFilterItem key="st" facetName="types" name="Type" />
         ) : null}
-        <SingleFilterItemContainer
+        <SingleFilterItem
           key="ns"
           facetName="namespaces"
           name="Namespace"
           facetOptions={namespaces}
         />
-        <MultipleFilterItemContainer
-          key="ow"
-          facetName="owners"
-          name="Owner"
-        />
-        <MultipleFilterItemContainer
-          key="tg"
-          facetName="tags"
-          name="Tag"
-        />
+        <MultipleFilterItem key="ow" facetName="owners" name="Owner" />
+        <MultipleFilterItem key="tg" facetName="tags" name="Tag" />
         <S.FacetsLoaderContainer container sx={{ mt: 2 }}>
-          {(isSearchFacetsUpdating || isDatasourceListFetching) && (
+          {(isSearchUpdating || isDatasourceListFetching) && (
             <AppCircularProgress size={16} text="Updating filters" />
           )}
         </S.FacetsLoaderContainer>

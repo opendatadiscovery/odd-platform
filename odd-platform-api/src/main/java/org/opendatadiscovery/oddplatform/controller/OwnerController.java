@@ -31,8 +31,9 @@ public class OwnerController implements OwnerApi {
                                                         final Integer size,
                                                         final String query,
                                                         final List<Long> ids,
+                                                        final Boolean allowedForSync,
                                                         final ServerWebExchange exchange) {
-        return ownerService.list(page, size, query, ids)
+        return ownerService.list(page, size, query, ids, allowedForSync)
             .map(ResponseEntity::ok);
     }
 

@@ -1,6 +1,7 @@
 import {
   AlertViewType,
   ManagementViewType,
+  OwnerAssociationRequestsViewType,
   TermsViewType,
   TestReportViewType,
 } from 'lib/interfaces';
@@ -11,7 +12,12 @@ interface RouteParams {
   dataQATestId: string;
   termId: string;
   versionId: string;
-  viewType: TermsViewType | AlertViewType | ManagementViewType;
+  searchId: string;
+  viewType:
+    | TermsViewType
+    | AlertViewType
+    | ManagementViewType
+    | OwnerAssociationRequestsViewType;
 }
 
 interface AppRouteParams {
@@ -19,16 +25,24 @@ interface AppRouteParams {
   dataQATestId: number;
   termId: number;
   versionId: number;
+  searchId: string;
   viewType:
     | TermsViewType
     | AlertViewType
     | ManagementViewType
-    | TestReportViewType;
+    | TestReportViewType
+    | OwnerAssociationRequestsViewType;
 }
 
-export const useAppParams = (): AppRouteParams => {
-  const { dataEntityId, termId, viewType, dataQATestId, versionId } =
-    useParams<RouteParams>();
+const useAppParams = (): AppRouteParams => {
+  const {
+    dataEntityId,
+    termId,
+    viewType,
+    dataQATestId,
+    versionId,
+    searchId,
+  } = useParams<RouteParams>();
 
   return {
     dataEntityId: parseInt(dataEntityId, 10),
@@ -36,5 +50,8 @@ export const useAppParams = (): AppRouteParams => {
     termId: parseInt(termId, 10),
     viewType,
     versionId: parseInt(versionId, 10),
+    searchId,
   };
 };
+
+export default useAppParams;

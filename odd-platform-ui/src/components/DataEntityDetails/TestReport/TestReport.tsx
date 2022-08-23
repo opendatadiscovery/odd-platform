@@ -6,14 +6,13 @@ import {
   getDatasetTestReport,
   getDatasetTestReportFetchingStatuses,
   getTestReportListBySuiteName,
-} from 'redux/selectors/dataQualityTest.selectors';
+} from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   fetchDataSetQualityTestList,
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
-
 import { Grid, Typography } from '@mui/material';
 import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
 import TestReportItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItem';
@@ -34,8 +33,8 @@ interface DatasetQualityTestList {
 const TestReport: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataQATestId, dataEntityId, viewType } = useAppParams();
-  const datasetTestReport = useAppSelector(state =>
-    getDatasetTestReport(state, dataEntityId)
+  const datasetTestReport = useAppSelector(
+    getDatasetTestReport(dataEntityId)
   );
 
   const datasetQualityTestList: DatasetQualityTestList = useAppSelector(

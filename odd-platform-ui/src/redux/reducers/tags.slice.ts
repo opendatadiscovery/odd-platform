@@ -7,6 +7,7 @@ import * as thunks from 'redux/thunks';
 export const tagsAdapter = createEntityAdapter<Tag>({
   selectId: tag => tag.id,
 });
+
 export const initialState: TagsState = {
   pageInfo: {
     total: 0,

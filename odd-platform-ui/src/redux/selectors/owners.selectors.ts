@@ -5,7 +5,6 @@ import { OwnersState } from 'redux/interfaces/state';
 import { Owner } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { getTermId } from 'redux/selectors/terms.selectors';
-import { getDataEntityId } from './dataentity.selectors';
 
 const ownersState = ({ owners }: RootState): OwnersState => owners;
 
@@ -49,14 +48,14 @@ export const getOwnerSuggestionsList = createSelector(
     }, [])
 );
 
-export const getDataEntityOwnership = createSelector(
-  ownersState,
-  getDataEntityId,
-  (owners, dataEntityId) =>
-    owners.ownershipDataEntity[dataEntityId]?.allIds.map(
-      id => owners.ownershipDataEntity[dataEntityId].byId[id]
-    ) || []
-);
+export const getDataEntityOwnership = (dataEntityId: number) =>
+  createSelector(
+    ownersState,
+    owners =>
+      owners.ownershipDataEntity[dataEntityId]?.allIds.map(
+        id => owners.ownershipDataEntity[dataEntityId].byId[id]
+      ) || []
+  );
 
 // Terms
 export const getTermOwnership = createSelector(

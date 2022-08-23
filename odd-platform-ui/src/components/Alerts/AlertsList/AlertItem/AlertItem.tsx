@@ -6,12 +6,12 @@ import AlertStatusItem from 'components/shared/AlertStatusItem/AlertStatusItem';
 import KebabIcon from 'components/shared/Icons/KebabIcon';
 import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
 import AppPopover from 'components/shared/AppPopover/AppPopover';
 import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppPaths } from 'lib/hooks';
 import { Alert } from 'redux/interfaces';
 import { alertDateFormat } from 'lib/constants';
+import { AppTooltip } from 'components/shared';
 import { ColContainer } from '../AlertsListStyles';
 import * as S from './AlertItemStyles';
 
@@ -44,7 +44,6 @@ const AlertItem: React.FC<AlertItemProps> = ({
             }
           >
             <AppTooltip
-              cursorPointer
               title={() =>
                 alert.dataEntity?.internalName ||
                 alert.dataEntity?.externalName

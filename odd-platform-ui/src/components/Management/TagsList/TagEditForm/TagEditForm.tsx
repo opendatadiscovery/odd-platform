@@ -1,19 +1,20 @@
 import React from 'react';
-import { Typography, FormControlLabel, Box } from '@mui/material';
-import { useForm, Controller } from 'react-hook-form';
+import { Box, FormControlLabel, Typography } from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
 import { Tag, TagFormData } from 'generated-sources';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { updateTag } from 'redux/thunks';
 import {
+  getTagDeletingStatuses,
   getTagUpdatingStatuses,
-  getTAgDeletingStatuses,
 } from 'redux/selectors';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppCheckbox from 'components/shared/AppCheckbox/AppCheckbox';
+import {
+  AppButton,
+  AppCheckbox,
+  AppInput,
+  DialogWrapper,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 
 interface TagEditFormProps {
   editBtn: JSX.Element;
@@ -28,7 +29,7 @@ const TagEditForm: React.FC<TagEditFormProps> = ({ editBtn, tag }) => {
   );
 
   const { isLoading: isTagDeleting } = useAppSelector(
-    getTAgDeletingStatuses
+    getTagDeletingStatuses
   );
 
   const { handleSubmit, control, reset, formState } = useForm<TagFormData>(

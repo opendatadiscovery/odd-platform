@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import { SearchFilterStateSynced } from 'redux/interfaces/search';
+import { SearchFilterStateSynced } from 'redux/interfaces/dataEntitySearch';
 import { TermSearchOptionalFacetNames } from 'redux/interfaces/termSearch';
 import SelectedFilterOption from './SelectedFilterOption/SelectedFilterOption';
 import MultipleFilterItemAutocompleteContainer from './MultipleFilterItemAutocomplete/MultipleFilterItemAutocompleteContainer';

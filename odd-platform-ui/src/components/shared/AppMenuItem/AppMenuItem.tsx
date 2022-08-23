@@ -1,15 +1,12 @@
 import React from 'react';
 import { MenuItemProps } from '@mui/material';
 import { Variant } from '@mui/material/styles/createTypography';
-import {
-  StyledAppListItemText,
-  StyledAppMenuItem,
-} from './AppMenuItemStyles';
+import * as S from './AppMenuItemStyles';
 
 interface AppMenuItemProps
   extends Pick<
     MenuItemProps,
-    'children' | 'onClick' | 'divider' | 'value' | 'defaultValue'
+    'children' | 'onClick' | 'divider' | 'value' | 'defaultValue' | 'ref'
   > {
   minWidth?: number;
   maxWidth?: number;
@@ -17,33 +14,39 @@ interface AppMenuItemProps
   fontVariant?: Variant;
 }
 
-const AppMenuItem: React.FC<AppMenuItemProps> = ({
-  children,
-  onClick,
-  value,
-  divider,
-  maxWidth = 400,
-  minWidth,
-  removeTextStyles = false,
-  fontVariant = 'body1',
-  defaultValue,
-}) => (
-  <StyledAppMenuItem
-    disableRipple
-    value={value}
-    onClick={onClick}
-    divider={divider}
-    $maxWidth={maxWidth}
-    $minWidth={minWidth}
-    defaultValue={defaultValue}
-  >
-    <StyledAppListItemText
-      $removeTextStyles={removeTextStyles}
-      $fontVariant={fontVariant}
+const AppMenuItem: React.FC<AppMenuItemProps> = React.forwardRef(
+  (
+    {
+      children,
+      onClick,
+      value,
+      divider,
+      maxWidth = 400,
+      minWidth,
+      removeTextStyles = false,
+      fontVariant = 'body1',
+      defaultValue,
+    },
+    ref
+  ) => (
+    <S.StyledAppMenuItem
+      disableRipple
+      value={value}
+      onClick={onClick}
+      divider={divider}
+      $maxWidth={maxWidth}
+      $minWidth={minWidth}
+      defaultValue={defaultValue}
+      ref={ref}
     >
-      {children}
-    </StyledAppListItemText>
-  </StyledAppMenuItem>
+      <S.StyledAppListItemText
+        $removeTextStyles={removeTextStyles}
+        $fontVariant={fontVariant}
+      >
+        {children}
+      </S.StyledAppListItemText>
+    </S.StyledAppMenuItem>
+  )
 );
 
 export default AppMenuItem;

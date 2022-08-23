@@ -18,6 +18,8 @@ export const Container = styled(Grid)(({ theme }) => ({
 
 export const NameContainer = styled('div')(() => ({
   overflow: 'auto',
+  width: '100%',
+  cursor: 'pointer',
 }));
 
 export const TypesContainer = styled('div')<CSSObject>(() => ({

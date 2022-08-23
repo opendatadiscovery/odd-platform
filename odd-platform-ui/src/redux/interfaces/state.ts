@@ -11,6 +11,7 @@ import {
   DataEntityRef,
   DataEntityRun,
   DataEntityType,
+  DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
   DataSetTestReport,
@@ -22,12 +23,12 @@ import {
   MetadataFieldValue,
   Namespace,
   Owner,
+  OwnerAssociationRequest,
   Ownership,
   Tag,
   Term,
   TermDetails,
   TermRefList,
-  DataEntityUsageInfo,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -96,7 +97,10 @@ export interface DatasetStructureState {
     };
   };
   statsByVersionId: {
-    [versionId: number]: DataSetStructureTypesCount;
+    [versionId: number]: {
+      typeStats: DataSetStructureTypesCount;
+      isUniqueStatsExist: boolean;
+    };
   };
   latestVersionByDataset: {
     [datasetId: string]: DataSetVersion['id'];
@@ -166,7 +170,7 @@ export interface DataEntitiesState {
   dataEntityUsageInfo: DataEntityUsageInfo;
 }
 
-export interface SearchState {
+export interface DataEntitySearchState {
   searchId: string;
   query: string;
   myObjects: boolean;
@@ -187,7 +191,16 @@ export interface AlertsState extends EntityState<Alert> {
 }
 
 export interface ProfileState {
-  owner?: AssociatedOwner;
+  owner: AssociatedOwner;
+}
+
+export interface OwnerAssociationState {
+  newRequests: {
+    pageInfo: CurrentPageInfo;
+  } & EntityState<OwnerAssociationRequest>;
+  resolvedRequests: {
+    pageInfo: CurrentPageInfo;
+  } & EntityState<OwnerAssociationRequest>;
 }
 
 export interface AppInfoState {

@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { createStatusesSelector } from 'redux/selectors';
 import { RootState, TermsState } from 'redux/interfaces';
 import * as actions from 'redux/actions';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 
 const termsState = ({ terms }: RootState): TermsState => terms;
 
@@ -14,7 +14,6 @@ export const getTermDetails = createSelector(
 );
 
 // Tags
-
 export const getTermDetailsTags = createSelector(
   termsState,
   getTermId,

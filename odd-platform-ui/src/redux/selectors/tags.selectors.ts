@@ -1,16 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
-import { RootState } from 'redux/interfaces';
-import {
-  createLegacyFetchingSelector,
-  createStatusesSelector,
-} from 'redux/selectors/loader-selectors';
-import { TagsState } from 'redux/interfaces/state';
+import { createStatusesSelector } from 'redux/selectors';
+import { RootState, TagsState } from 'redux/interfaces';
 import { tagsAdapter } from 'redux/reducers/tags.slice';
 import * as actions from 'redux/actions';
 
 export const tagsState = ({ tags }: RootState): TagsState => tags;
-
-const getTagsListFetchingStatus = createLegacyFetchingSelector('GET_TAGS');
 
 export const getTagsListFetchingStatuses = createStatusesSelector(
   actions.fetchTagsActionType
@@ -24,17 +18,12 @@ export const getTagUpdatingStatuses = createStatusesSelector(
   actions.updateTagActionType
 );
 
-export const getTAgDeletingStatuses = createStatusesSelector(
+export const getTagDeletingStatuses = createStatusesSelector(
   actions.deleteTagActionType
 );
 
-export const { selectAll: getTagsList, selectById: getTagById } =
+export const { selectAll: getTagsList } =
   tagsAdapter.getSelectors<RootState>(state => state.tags);
-
-export const getIsTagsListFetching = createSelector(
-  getTagsListFetchingStatus,
-  status => status === 'fetching'
-);
 
 export const getTagsListPage = createSelector(
   tagsState,

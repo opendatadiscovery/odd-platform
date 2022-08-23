@@ -16,7 +16,7 @@ import AppPopover from 'components/shared/AppPopover/AppPopover';
 import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
 import TermsForm from 'components/Terms/TermSearch/TermForm/TermsForm';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import {
   getTermDetails,
   getTermDetailsFetchingStatuses,
@@ -24,7 +24,6 @@ import {
 import { getTermSearchId } from 'redux/selectors/termSearch.selectors';
 import { deleteTerm, fetchTermDetails } from 'redux/thunks';
 import EntityTypeItem from 'components/shared/EntityTypeItem/EntityTypeItem';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
 import { TermDetailsComponentWrapper } from './TermDetailsStyles';
 
 // lazy components
