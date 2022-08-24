@@ -45,7 +45,7 @@ import { useAppPaths } from 'lib/hooks/useAppPaths';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
-import LinkedItemsListContainer from './LinkedItemsList/LinkedItemsListContainer';
+import LinkedItemsList from './LinkedItemsList/LinkedItemsList';
 import * as S from './DataEntityDetailsStyles';
 
 // lazy components
@@ -413,7 +413,7 @@ const DataEntityDetailsView: React.FC = () => {
                 '/dataentities/:dataEntityId/linked-items',
                 '/embedded/dataentities/:dataEntityId/linked-items',
               ]}
-              component={LinkedItemsListContainer}
+              component={LinkedItemsList}
             />
             <Route
               exact

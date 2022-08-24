@@ -1,30 +1,30 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { DataEntity } from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import LinkedItem from 'components/DataEntityDetails/LinkedItemsList/LinkedItem/LinkedItem';
-import LinkedItemSkeleton from 'components/DataEntityDetails/LinkedItemsList/LinkedItemSkeleton/LinkedItemSkeleton';
-import { useAppDispatch } from 'lib/redux/hooks';
+import { EmptyContentPlaceholder } from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchDataEntityGroupLinkedList } from 'redux/thunks';
+import { useAppParams } from 'lib/hooks';
+import {
+  getDataEntityGroupLinkedList,
+  getDataEntityGroupLinkedListPage,
+  getDEGLinkedListFetchingStatuses,
+} from 'redux/selectors';
+import LinkedItem from './LinkedItem/LinkedItem';
 import * as S from './LinkedItemsListStyles';
+import LinkedListSkeleton from './LinkedListSkeleton/LinkedListSkeleton';
 
-interface LinkedItemsListProps {
-  dataEntityGroupId: number;
-  dataEntityGroupLinkedList: DataEntity[];
-  pageInfo?: CurrentPageInfo;
-  isLinkedListFetching: boolean;
-}
-
-const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
-  dataEntityGroupId,
-  dataEntityGroupLinkedList,
-  pageInfo,
-  isLinkedListFetching,
-}) => {
+const LinkedItemsList: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { dataEntityId: dataEntityGroupId } = useAppParams();
+
+  const dataEntityGroupLinkedList = useAppSelector(
+    getDataEntityGroupLinkedList(dataEntityGroupId)
+  );
+  const pageInfo = useAppSelector(getDataEntityGroupLinkedListPage);
+  const { isLoading: isLinkedListFetching } = useAppSelector(
+    getDEGLinkedListFetchingStatuses
+  );
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
@@ -61,15 +61,7 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
         </S.ColContainer>
       </S.ResultsTableHeader>
       {isLinkedListFetching ? (
-        <SkeletonWrapper
-          length={10}
-          renderContent={({ randomSkeletonPercentWidth, key }) => (
-            <LinkedItemSkeleton
-              width={randomSkeletonPercentWidth()}
-              key={key}
-            />
-          )}
-        />
+        <LinkedListSkeleton length={10} />
       ) : (
         <S.ListContainer id="linked-items-list">
           {dataEntityGroupLinkedList && (
@@ -78,20 +70,7 @@ const LinkedItemsList: React.FC<LinkedItemsListProps> = ({
               next={fetchNextPage}
               hasMore={!!pageInfo?.hasNext}
               loader={
-                isLinkedListFetching && (
-                  <SkeletonWrapper
-                    length={10}
-                    renderContent={({
-                      randomSkeletonPercentWidth,
-                      key,
-                    }) => (
-                      <LinkedItemSkeleton
-                        width={randomSkeletonPercentWidth()}
-                        key={key}
-                      />
-                    )}
-                  />
-                )
+                isLinkedListFetching && <LinkedListSkeleton length={10} />
               }
               scrollThreshold="200px"
               scrollableTarget="linked-items-list"

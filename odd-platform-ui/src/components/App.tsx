@@ -16,8 +16,8 @@ const TermDetails = React.lazy(
 );
 const Overview = React.lazy(() => import('./Overview/Overview'));
 const Search = React.lazy(() => import('./Search/Search'));
-const TermSearchContainer = React.lazy(
-  () => import('./Terms/TermSearch/TermSearchContainer')
+const TermSearch = React.lazy(
+  () => import('./Terms/TermSearch/TermSearch')
 );
 const Alerts = React.lazy(() => import('./Alerts/Alerts'));
 const Activity = React.lazy(() => import('./Activity/Activity'));
@@ -43,7 +43,7 @@ const App: React.FC = () => {
             <Route
               exact
               path="/termsearch/:termSearchId?"
-              component={TermSearchContainer}
+              component={TermSearch}
             />
             <Route
               exact

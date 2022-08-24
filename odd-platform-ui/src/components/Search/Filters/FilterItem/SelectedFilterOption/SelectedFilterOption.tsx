@@ -6,7 +6,7 @@ import { OptionalFacetNames } from 'redux/interfaces/dataEntitySearch';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { useAppDispatch } from 'lib/redux/hooks';
-import { changeDataEntitySearchFacet } from 'redux/reducers/dataEntitySearch.slice';
+import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import { Container } from './SelectedFilterOptionStyles';
 
 interface FilterItemProps {

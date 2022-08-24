@@ -1,9 +1,9 @@
 import { Grid } from '@mui/material';
+import styled from 'styled-components';
 import {
   TermSearchResultsColType,
   termSearchResultsColWidthStyles,
-} from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
-import styled from 'styled-components';
+} from '../TermSearchResultsStyles';
 
 export const TermSearchResultsColContainer = styled(Grid)<{
   $colType: TermSearchResultsColType;
