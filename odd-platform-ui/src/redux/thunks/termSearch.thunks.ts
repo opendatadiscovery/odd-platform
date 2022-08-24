@@ -1,6 +1,5 @@
 import {
   Configuration,
-  PageInfo,
   Term,
   TermApi,
   TermApiGetTermFiltersForFacetRequest,
@@ -76,12 +75,10 @@ export const getTermsSearchFacetOptions = createAsyncThunk<
 });
 
 export const fetchTermSearchSuggestions = createAsyncThunk<
-  { items: TermRef[]; pageInfo: PageInfo },
+  TermRef[],
   TermApiGetTermSearchSuggestionsRequest
 >(actions.fetchTermsSearchSuggestionsActionType, async params => {
-  const { items, pageInfo } = await termApi.getTermSearchSuggestions(
-    params
-  );
+  const { items } = await termApi.getTermSearchSuggestions(params);
 
-  return { items, pageInfo };
+  return items;
 });

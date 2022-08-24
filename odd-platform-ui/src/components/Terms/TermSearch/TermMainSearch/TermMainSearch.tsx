@@ -74,8 +74,8 @@ const TermMainSearch: React.FC = () => {
   }, [query]);
 
   React.useEffect(() => {
-    setOptions(suggestions.items);
-  }, [suggestions.items]);
+    setOptions(suggestions);
+  }, [suggestions]);
 
   React.useEffect(() => {
     if (!searchText) return;

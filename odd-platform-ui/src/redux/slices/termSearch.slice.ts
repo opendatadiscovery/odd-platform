@@ -31,13 +31,7 @@ const initialState: TermSearchState = {
       hasNext: true,
     },
   },
-  suggestions: {
-    items: [],
-    pageInfo: {
-      total: 0,
-      hasNext: true,
-    },
-  },
+  suggestions: [],
   facets: {},
   facetState: {},
   isFacetsStateSynced: true,
