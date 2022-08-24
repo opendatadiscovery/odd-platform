@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { createStatusesSelector } from 'redux/selectors';
 import { RootState, TagsState } from 'redux/interfaces';
-import { tagsAdapter } from 'redux/reducers/tags.slice';
+import { tagsAdapter } from 'redux/slices/tags.slice';
 import * as actions from 'redux/actions';
 
 export const tagsState = ({ tags }: RootState): TagsState => tags;

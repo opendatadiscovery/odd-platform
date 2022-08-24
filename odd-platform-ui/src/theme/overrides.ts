@@ -20,6 +20,14 @@ export const components: Components = {
   },
   MuiCssBaseline: {
     styleOverrides: {
+      body: {
+        '*::-webkit-scrollbar': { width: '4px' },
+        '*::-webkit-scrollbar-thumb': {
+          backgroundColor: '#EBECF0',
+          borderRadius: '2px',
+          '&:hover': { backgroundColor: '#C1C7D0' },
+        },
+      },
       a: {
         font: 'inherit',
         color: 'inherit',

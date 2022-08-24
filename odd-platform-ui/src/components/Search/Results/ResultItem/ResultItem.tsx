@@ -145,7 +145,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
         {searchClass &&
         searchClass ===
           totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
-          <ColContainer item $colType="colxs">
+          <ColContainer item $colType="colsm">
             <Typography variant="body1" noWrap>
               {searchResult?.itemsCount}
             </Typography>

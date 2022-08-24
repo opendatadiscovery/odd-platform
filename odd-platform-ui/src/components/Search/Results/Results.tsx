@@ -20,7 +20,7 @@ import {
   getSearchUpdateStatuses,
 } from 'redux/selectors';
 import { fetchDataEntitySearchResults } from 'redux/thunks';
-import { changeDataEntitySearchFacet } from 'redux/reducers/dataEntitySearch.slice';
+import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import { SearchClass } from 'redux/interfaces';
 import DataEntityGroupForm from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import { AppButton, EmptyContentPlaceholder } from 'components/shared';
@@ -198,7 +198,7 @@ const Results: React.FC = () => {
           </S.ColContainer>
         )}
         {searchClassIdPredicate(DataEntityClassNameEnum.ENTITY_GROUP) && (
-          <S.ColContainer item $colType="colxs">
+          <S.ColContainer item $colType="colsm">
             <Typography variant="caption">Number of entities</Typography>
           </S.ColContainer>
         )}

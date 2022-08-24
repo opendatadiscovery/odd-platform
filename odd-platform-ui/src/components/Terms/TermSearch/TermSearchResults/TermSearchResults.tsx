@@ -2,44 +2,35 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useScrollBarWidth } from 'lib/hooks';
+import { EmptyContentPlaceholder } from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
-  Term,
-  TermApiGetTermSearchResultsRequest,
-} from 'generated-sources';
-import { CurrentPageInfo } from 'redux/interfaces';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import TermSearchResultsSkeletonItem from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsSkeletonItem/TermSearchResultsSkeletonItem';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import TermSearchResultItem from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultItem/TermSearchResultItem';
-import { useAppSelector } from 'lib/redux/hooks';
-import { getTermDeletingStatuses } from 'redux/selectors/terms.selectors';
-import {
-  TermSearchListContainer,
-  TermSearchResultsColContainer,
-  TermSearchResultsTableHeader,
-} from './TermSearchResultsStyles';
-
-interface ResultsProps {
-  termSearchId: string;
-  termSearchResults: Term[];
-  pageInfo: CurrentPageInfo;
-  termSearchFiltersSynced: boolean;
-  getTermSearchResults: (
-    params: TermApiGetTermSearchResultsRequest
-  ) => void;
-  isTermSearchFetching: boolean;
-  isTermSearchCreating: boolean;
-}
-
-const TermSearchResults: React.FC<ResultsProps> = ({
-  termSearchId,
-  termSearchResults,
-  pageInfo,
-  termSearchFiltersSynced,
+  getTermDeletingStatuses,
+  getTermSearchCreateStatuses,
+  getTermSearchFacetsSynced,
+  getTermSearchId,
+  getTermSearchIsFetching,
   getTermSearchResults,
-  isTermSearchFetching,
-  isTermSearchCreating,
-}) => {
+  getTermSearchResultsPage,
+} from 'redux/selectors';
+import { fetchTermsSearchResults } from 'redux/thunks';
+import TermSearchResultItem from './TermSearchResultItem/TermSearchResultItem';
+import * as S from './TermSearchResultsStyles';
+import TermSearchResultsSkeleton from './TermSearchResultsSkeleton/TermSearchResultsSkeleton';
+
+const TermSearchResults: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const termSearchId = useAppSelector(getTermSearchId);
+  const termSearchResults = useAppSelector(getTermSearchResults);
+  const pageInfo = useAppSelector(getTermSearchResultsPage);
+  const isTermSearchFacetsSynced = useAppSelector(
+    getTermSearchFacetsSynced
+  );
+  const isTermSearchFetching = useAppSelector(getTermSearchIsFetching);
+
+  const { isLoading: isTermSearchCreating } = useAppSelector(
+    getTermSearchCreateStatuses
+  );
   const { isLoaded: isTermDeleted } = useAppSelector(
     getTermDeletingStatuses
   );
@@ -49,85 +40,77 @@ const TermSearchResults: React.FC<ResultsProps> = ({
   const fetchNextPage = () => {
     if (!pageInfo.hasNext) return;
 
-    getTermSearchResults({
-      searchId: termSearchId,
-      page: pageInfo.page + 1,
-      size: pageSize,
-    });
+    dispatch(
+      fetchTermsSearchResults({
+        searchId: termSearchId,
+        page: pageInfo.page + 1,
+        size: pageSize,
+      })
+    );
   };
 
   const fetchPageAfterDeleting = () => {
     if (pageInfo.page && isTermDeleted) {
-      getTermSearchResults({
-        searchId: termSearchId,
-        page: pageInfo.page,
-        size: pageSize,
-      });
+      dispatch(
+        fetchTermsSearchResults({
+          searchId: termSearchId,
+          page: pageInfo.page,
+          size: pageSize,
+        })
+      );
     }
   };
 
   React.useEffect(() => fetchPageAfterDeleting(), [isTermDeleted]);
 
   React.useEffect(() => {
-    if (termSearchFiltersSynced && termSearchId && !isTermSearchCreating) {
+    if (
+      isTermSearchFacetsSynced &&
+      termSearchId &&
+      !isTermSearchCreating
+    ) {
       fetchNextPage();
     }
-  }, [termSearchFiltersSynced, termSearchId, isTermSearchCreating]);
+  }, [isTermSearchFacetsSynced, termSearchId, isTermSearchCreating]);
 
   return (
     <Grid sx={{ mt: 2 }}>
-      <TermSearchResultsTableHeader
+      <S.TermSearchResultsTableHeader
         container
         sx={{ mt: 2, pr: scrollbarWidth }}
         wrap="nowrap"
       >
-        <TermSearchResultsColContainer item $colType="collg">
+        <S.TermSearchResultsColContainer item $colType="collg">
           <Typography variant="caption">Term name</Typography>
-        </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="collg">
+        </S.TermSearchResultsColContainer>
+        <S.TermSearchResultsColContainer item $colType="collg">
           <Typography variant="caption">Namespace</Typography>
-        </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="collg">
+        </S.TermSearchResultsColContainer>
+        <S.TermSearchResultsColContainer item $colType="collg">
           <Typography variant="caption">Owner</Typography>
-        </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colxs">
+        </S.TermSearchResultsColContainer>
+        <S.TermSearchResultsColContainer item $colType="colxs">
           <Typography variant="caption">Using</Typography>
-        </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colsm">
+        </S.TermSearchResultsColContainer>
+        <S.TermSearchResultsColContainer item $colType="colsm">
           <Typography variant="caption">Created</Typography>
-        </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colsm">
+        </S.TermSearchResultsColContainer>
+        <S.TermSearchResultsColContainer item $colType="colsm">
           <Typography variant="caption">Last update</Typography>
-        </TermSearchResultsColContainer>
-        <TermSearchResultsColContainer item $colType="colxs" />
-      </TermSearchResultsTableHeader>
+        </S.TermSearchResultsColContainer>
+        <S.TermSearchResultsColContainer item $colType="colxs" />
+      </S.TermSearchResultsTableHeader>
       {isTermSearchCreating ? (
-        <SkeletonWrapper
-          length={10}
-          renderContent={({ randomSkeletonPercentWidth, key }) => (
-            <TermSearchResultsSkeletonItem
-              width={randomSkeletonPercentWidth()}
-              key={key}
-            />
-          )}
-        />
+        <TermSearchResultsSkeleton length={10} />
       ) : (
-        <TermSearchListContainer id="term-search-results-list">
+        <S.TermSearchListContainer id="term-search-results-list">
           <InfiniteScroll
             dataLength={termSearchResults.length}
             next={fetchNextPage}
             hasMore={pageInfo.hasNext}
             loader={
               isTermSearchFetching && (
-                <SkeletonWrapper
-                  length={10}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <TermSearchResultsSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
-                  )}
-                />
+                <TermSearchResultsSkeleton length={10} />
               )
             }
             scrollThreshold="200px"
@@ -143,7 +126,7 @@ const TermSearchResults: React.FC<ResultsProps> = ({
           {!isTermSearchFetching && !pageInfo.total && (
             <EmptyContentPlaceholder text="No matches found" />
           )}
-        </TermSearchListContainer>
+        </S.TermSearchListContainer>
       )}
     </Grid>
   );
