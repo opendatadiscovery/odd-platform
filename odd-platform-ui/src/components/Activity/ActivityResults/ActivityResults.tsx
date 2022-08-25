@@ -198,8 +198,9 @@ const ActivityResults: React.FC = () => {
               scrollableTarget="activities-list"
             >
               {Object.entries(activityResults).map(
-                ([activityDate, activities]) => (
-                  <Grid container>
+                ([activityDate, activities], idx) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <Grid key={`${activityDate}-${idx}`} container>
                     <Typography variant="subtitle2" sx={{ py: 1 }}>
                       {activityDate}
                     </Typography>

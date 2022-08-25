@@ -251,7 +251,7 @@ const DataEntityDetailsView: React.FC = () => {
                       >
                         {`${
                           dataEntityDetails.internalName
-                            ? 'Edit'
+                            ? 'Edit custom'
                             : 'Add custom'
                         } name`}
                       </AppButton>
@@ -269,11 +269,20 @@ const DataEntityDetailsView: React.FC = () => {
                   </Grid>
                 )}
             </S.Caption>
-            <Grid container item alignItems="center" width="auto">
+            <Grid
+              container
+              item
+              alignItems="center"
+              width="auto"
+              flexWrap="nowrap"
+            >
               {dataEntityDetails.updatedAt ? (
                 <>
                   <TimeGapIcon />
-                  <Typography variant="body1" sx={{ ml: 1 }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ ml: 1, whiteSpace: 'nowrap' }}
+                  >
                     {formatDistanceToNowStrict(
                       dataEntityDetails.updatedAt,
                       {
@@ -286,6 +295,10 @@ const DataEntityDetailsView: React.FC = () => {
               <Grid>
                 {dataEntityDetails.manuallyCreated && (
                   <AppPopover
+                    childrenSx={{
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                    }}
                     renderOpenBtn={({ onClick, ariaDescribedBy }) => (
                       <AppIconButton
                         sx={{ ml: 2 }}

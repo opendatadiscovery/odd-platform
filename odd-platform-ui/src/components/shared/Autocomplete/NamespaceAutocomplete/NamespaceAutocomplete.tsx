@@ -7,17 +7,15 @@ import {
 import { useDebouncedCallback } from 'use-debounce';
 import {
   CollectorFormData,
+  DataEntityGroupFormData,
   Namespace,
   TermFormData,
 } from 'generated-sources';
-import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { AppInput, AutocompleteSuggestion } from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { ControllerRenderProps } from 'react-hook-form';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { fetchNamespaceList as searchNamespace } from 'redux/thunks';
-import { DataEntityGroupFormData } from 'components/DataEntityDetails/DataEntityGroupForm/DataEntityGroupForm';
 import { DataSourceFormDataValues } from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
 
 type FilterOption = Omit<Namespace, 'id' | 'name'> & Partial<Namespace>;
