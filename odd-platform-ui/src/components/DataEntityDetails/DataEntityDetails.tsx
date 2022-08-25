@@ -286,6 +286,10 @@ const DataEntityDetailsView: React.FC = () => {
               <Grid>
                 {dataEntityDetails.manuallyCreated && (
                   <AppPopover
+                    childrenSx={{
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                    }}
                     renderOpenBtn={({ onClick, ariaDescribedBy }) => (
                       <AppIconButton
                         sx={{ ml: 2 }}

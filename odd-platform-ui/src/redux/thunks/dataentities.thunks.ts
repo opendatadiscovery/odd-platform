@@ -172,9 +172,7 @@ export const createDataEntityGroup = createAsyncThunk<
 >(
   actions.createDataEntityGroupActionType,
   async ({ dataEntityGroupFormData }) =>
-    dataEntityApi.createDataEntityGroup({
-      dataEntityGroupFormData,
-    })
+    dataEntityApi.createDataEntityGroup({ dataEntityGroupFormData })
 );
 
 export const updateDataEntityGroup = createAsyncThunk<
