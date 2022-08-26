@@ -14,7 +14,7 @@ There are two ways to configure the Platform:
 
 <details>
 
-<summary>YAML entries VS environment variables</summary
+<summary>YAML entries VS environment variables</summary>
 
 &#x20;Let's say you need to define the following configuration block and configure the Platform with it using environment variables.
 
