@@ -17,15 +17,6 @@ There are two ways to configure the Platform:
 <summary>YAML entries VS environment variables</summary
 
 &#x20;Let's say you need to define the following configuration block and configure the platform with it using environment variables
-
-
-| Tables   |      Are      |  Cool |
-|----------|:-------------:|------:|
-| col 1 is |  left-aligned | $1600 |
-| col 2 is |    centered   |   $12 |
-| col 3 is | right-aligned |    $1 |
-
-
 ```yaml
 spring:
     datasource:
