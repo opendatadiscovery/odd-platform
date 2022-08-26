@@ -8,11 +8,20 @@ description: >-
 
 ## Configuration approaches
 
-ODD Platform can be configured either via putting a YAML file or defining environment variables that translate properties from YAML file. Configuring via YAML can come in handy when there's a complex configuration block (e.g OAuth2 authentication or logging levels) needs to be defined while environment variables are good for simple entries.
+There are two ways to configure the Platform:
+* **Environment variables** are used for simple entries
+* Configuring via **YAML** can come in handy when there's a complex configuration block (e.g OAuth2 authentication or logging levels) needs to be defined.
 
 <details>
 
-<summary>How to map YAML entries to environment variables</summary>
+<summary>YAML entries VS environment variables</summary
+
+| Tables   |      Are      |  Cool |
+|----------|:-------------:|------:|
+| col 1 is |  left-aligned | $1600 |
+| col 2 is |    centered   |   $12 |
+| col 3 is | right-aligned |    $1 |
+
 
 &#x20;Let's say you need to define the following configuration block and configure the platform with it using environment variables
 
