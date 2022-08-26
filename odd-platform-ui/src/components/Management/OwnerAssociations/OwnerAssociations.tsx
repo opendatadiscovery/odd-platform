@@ -45,9 +45,10 @@ const OwnerAssociations: React.FC = () => {
     getResolvedAssociationRequestsList
   );
 
-  const { isLoading: isRequestsListFetching } = useAppSelector(
-    getOwnerAssociationRequestsListFetchingStatuses
-  );
+  const {
+    isLoading: isRequestsListFetching,
+    isLoaded: isRequestsListFetched,
+  } = useAppSelector(getOwnerAssociationRequestsListFetchingStatuses);
 
   const pageInfo = React.useMemo(
     () => (active ? newRequestsPageInfo : resolvedRequestsPageInfo),
@@ -60,25 +61,18 @@ const OwnerAssociations: React.FC = () => {
   );
 
   const requestCountOverall = React.useMemo(
-    () => newRequestsList.length + resolvedRequestsList.length,
-    []
+    () => newRequestsPageInfo.total + resolvedRequestsPageInfo.total,
+    [newRequestsPageInfo, resolvedRequestsPageInfo]
   );
 
   const [tabs, setTabs] = React.useState<AppTabItem<boolean>[]>([]);
 
   React.useEffect(() => {
     setTabs([
-      {
-        name: 'New',
-        hint: newRequestsList.length,
-        value: true,
-      },
-      {
-        name: 'Resolved',
-        value: false,
-      },
+      { name: 'New', hint: newRequestsPageInfo.total, value: true },
+      { name: 'Resolved', value: false },
     ]);
-  }, [newRequestsList.length]);
+  }, [newRequestsPageInfo.total]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
 
@@ -105,6 +99,24 @@ const OwnerAssociations: React.FC = () => {
       dispatchedFetchRequestsList({ page: 1, size, active: false });
     }
   }, [query]);
+
+  React.useEffect(() => {
+    if (
+      isRequestsListFetched &&
+      newRequestsPageInfo.hasNext &&
+      newRequestsList.length < size
+    ) {
+      dispatchedFetchRequestsList({
+        page: newRequestsPageInfo.page + 1,
+        size,
+        active,
+      });
+    }
+  }, [
+    newRequestsPageInfo.page,
+    newRequestsPageInfo.hasNext,
+    newRequestsList.length,
+  ]);
 
   const fetchNextPage = () => {
     if (!pageInfo?.hasNext) return;
@@ -135,6 +147,12 @@ const OwnerAssociations: React.FC = () => {
       handleSearch();
     }
   };
+
+  const tableCellText = (text: string) => (
+    <Typography variant="subtitle2" color="texts.hint">
+      {text}
+    </Typography>
+  );
 
   return (
     <Grid container flexDirection="column" alignItems="center">
@@ -180,43 +198,29 @@ const OwnerAssociations: React.FC = () => {
         {active ? (
           <>
             <Grid item lg={4}>
-              <Typography variant="subtitle2" color="texts.hint">
-                User name
-              </Typography>
+              {tableCellText('User name')}
             </Grid>
             <Grid item lg={4}>
-              <Typography variant="subtitle2" color="texts.hint">
-                Owner name
-              </Typography>
+              {tableCellText('Owner name')}
             </Grid>
             <Grid item lg={4} />
           </>
         ) : (
           <>
             <Grid item lg={3}>
-              <Typography variant="subtitle2" color="texts.hint">
-                User name
-              </Typography>
+              {tableCellText('User name')}
             </Grid>
             <Grid item lg={3}>
-              <Typography variant="subtitle2" color="texts.hint">
-                Owner name
-              </Typography>
+              {tableCellText('Owner name')}
             </Grid>
             <Grid item lg={3}>
-              <Typography variant="subtitle2" color="texts.hint">
-                Resolved by
-              </Typography>
+              {tableCellText('Resolved by')}
             </Grid>
             <Grid item lg={1}>
-              <Typography variant="subtitle2" color="texts.hint">
-                Status
-              </Typography>
+              {tableCellText('Status')}
             </Grid>
             <Grid item lg={2}>
-              <Typography variant="subtitle2" color="texts.hint">
-                Resolved at
-              </Typography>
+              {tableCellText('Resolved at')}
             </Grid>
           </>
         )}

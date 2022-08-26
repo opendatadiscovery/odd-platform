@@ -6,38 +6,44 @@ import {
   useForm,
 } from 'react-hook-form';
 import { useDebouncedCallback } from 'use-debounce';
-import { getIdentity } from 'redux/selectors/profile.selectors';
+import {
+  getIdentity,
+  getOwnerAssociationRequestCreatingStatuses,
+} from 'redux/selectors';
 import {
   AutocompleteInputChangeReason,
   createFilterOptions,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
 import { Owner, OwnerFormData } from 'generated-sources';
-import UserSyncIcon from 'components/shared/Icons/UserSyncIcon';
-import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { ClearIcon, UserSyncIcon } from 'components/shared/Icons';
+import {
+  AppButton,
+  AppInput,
+  AutocompleteSuggestion,
+} from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   createOwnerAssociationRequest,
   fetchOwnersList,
 } from 'redux/thunks';
-import { getOwnerAssociationRequestCreatingStatuses } from 'redux/selectors/ownerAssociation.selectors';
 import * as S from './OwnerAssociationFormStyles';
 
-const OwnerAssociationForm: React.FC = () => {
+interface Props {
+  setSupposedOwner: (ownerName: string) => void;
+}
+
+const OwnerAssociationForm: React.FC<Props> = ({ setSupposedOwner }) => {
   const dispatch = useAppDispatch();
   const identity = useAppSelector(getIdentity);
   const { isLoading: isRequestCreating } = useAppSelector(
     getOwnerAssociationRequestCreatingStatuses
   );
+
   const searchOwners = fetchOwnersList;
   const methods = useForm<OwnerFormData>({
     mode: 'onChange',
-    defaultValues: {
-      name: '',
-    },
+    defaultValues: { name: '' },
   });
   const [possibleOwners, setPossibleOwners] = React.useState<Owner[]>([]);
   type FilterOption = Omit<Owner, 'id' | 'name'> & Partial<Owner>;
@@ -53,7 +59,12 @@ const OwnerAssociationForm: React.FC = () => {
     useDebouncedCallback(() => {
       setOptionsLoading(true);
       dispatch(
-        searchOwners({ page: 1, size: 30, query: optionsSearchText })
+        searchOwners({
+          page: 1,
+          size: 30,
+          query: optionsSearchText,
+          allowedForSync: true,
+        })
       )
         .unwrap()
         .then(({ items }) => {
@@ -121,7 +132,9 @@ const OwnerAssociationForm: React.FC = () => {
   }, [autocompleteOpen, optionsSearchText]);
 
   const onSubmit = (data: OwnerFormData) => {
-    dispatch(createOwnerAssociationRequest({ ownerFormData: data }));
+    dispatch(createOwnerAssociationRequest({ ownerFormData: data }))
+      .unwrap()
+      .then(({ ownerName }) => setSupposedOwner(ownerName));
   };
 
   React.useEffect(() => {
@@ -131,6 +144,7 @@ const OwnerAssociationForm: React.FC = () => {
         page: 1,
         size: 30,
         query: identity?.username,
+        allowedForSync: true,
       })
     )
       .unwrap()

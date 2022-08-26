@@ -12,11 +12,15 @@ import {
 export const getIsMainOverviewContentFetching = createSelector(
   getTagsListFetchingStatuses,
   getIdentityFetchingStatuses,
+  (...isFetchingFlags) =>
+    compact(isFetchingFlags.map(({ isLoading }) => isLoading)).length > 0
+);
+
+export const getIsOwnerEntitiesFetching = createSelector(
   getMyDataEntitiesFetchingStatuses,
   getMyUpstreamDataEntitiesFetchingStatuses,
   getMyDownstreamFetchingStatuses,
   getPopularDataEntitiesFetchingStatuses,
-  getIdentityFetchingStatuses,
   (...isFetchingFlags) =>
     compact(isFetchingFlags.map(({ isLoading }) => isLoading)).length > 0
 );
