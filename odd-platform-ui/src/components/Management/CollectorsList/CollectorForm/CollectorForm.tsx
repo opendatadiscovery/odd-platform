@@ -1,12 +1,12 @@
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Collector, CollectorFormData } from 'generated-sources';
-import { updateCollector, registerCollector } from 'redux/thunks';
+import { registerCollector, updateCollector } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import {
   getCollectorCreatingStatuses,
-  getCollectoruUpdatingStatuses,
+  getCollectorsUpdatingStatuses,
 } from 'redux/selectors';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
@@ -30,7 +30,7 @@ const CollectorForm: React.FC<CollectorFormDialogProps> = ({
     getCollectorCreatingStatuses
   );
   const { isLoading: isCollectorUpdating } = useAppSelector(
-    getCollectoruUpdatingStatuses
+    getCollectorsUpdatingStatuses
   );
   const getDefaultValues = React.useCallback(
     (): CollectorFormData => ({

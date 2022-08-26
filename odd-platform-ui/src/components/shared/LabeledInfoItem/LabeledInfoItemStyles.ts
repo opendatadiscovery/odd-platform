@@ -49,6 +49,7 @@ export const ValueContainer = styled(Grid)(() => ({
 
 export const Value = styled(Typography)<ValueProps>(
   ({ theme, $runStatus, $valueColor, $inline, $valueLineHeight }) => ({
+    display: 'block',
     wordBreak: 'break-all',
     overflow: 'hidden',
     color: $runStatus ? theme.palette.runStatus[$runStatus] : $valueColor,

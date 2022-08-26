@@ -4,7 +4,7 @@ import { SearchFilter } from 'generated-sources';
 import { OptionalFacetNames } from 'redux/interfaces';
 import { AppMenuItem, AppSelect } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { changeDataEntitySearchFacet } from 'redux/reducers/dataEntitySearch.slice';
+import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import { getSelectedSearchFacetOptions } from 'redux/selectors';
 
 interface FilterItemProps {

@@ -36,12 +36,12 @@ import {
   getDataEntityGroupUpdatingStatuses,
   getSearchId,
 } from 'redux/selectors';
-import DataEntityDetailsTabs from './DataEntityDetailsTabs/DataEntityDetailsTabs';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
-import LinkedItemsListContainer from './LinkedItemsList/LinkedItemsListContainer';
+import LinkedItemsList from './LinkedItemsList/LinkedItemsList';
 import * as S from './DataEntityDetailsStyles';
+import DataEntityDetailsTabs from './DataEntityDetailsTabs/DataEntityDetailsTabs';
 
 // lazy components
 const Overview = React.lazy(() => import('./Overview/Overview'));
@@ -67,9 +67,8 @@ const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { dataEntityId } = useAppParams();
-  const { searchPath } = useAppPaths();
-
   const isAllowedToEditEntity = usePermissions();
+  const { searchPath } = useAppPaths();
 
   const searchId = useAppSelector(getSearchId);
   const dataEntityDetails = useAppSelector(
@@ -83,6 +82,7 @@ const DataEntityDetails: React.FC = () => {
     isLoading: isDataEntityDetailsFetching,
     isLoaded: isDataEntityDetailsFetched,
   } = useAppSelector(getDataEntityDetailsFetchingStatuses);
+
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
   );
@@ -161,7 +161,7 @@ const DataEntityDetails: React.FC = () => {
                       >
                         {`${
                           dataEntityDetails.internalName
-                            ? 'Edit'
+                            ? 'Edit custom'
                             : 'Add custom'
                         } name`}
                       </AppButton>
@@ -179,11 +179,20 @@ const DataEntityDetails: React.FC = () => {
                   </Grid>
                 )}
             </S.Caption>
-            <Grid container item alignItems="center" width="auto">
+            <Grid
+              container
+              item
+              alignItems="center"
+              width="auto"
+              flexWrap="nowrap"
+            >
               {dataEntityDetails.updatedAt ? (
                 <>
                   <TimeGapIcon />
-                  <Typography variant="body1" sx={{ ml: 1 }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ ml: 1, whiteSpace: 'nowrap' }}
+                  >
                     {formatDistanceToNowStrict(
                       dataEntityDetails.updatedAt,
                       {
@@ -196,6 +205,10 @@ const DataEntityDetails: React.FC = () => {
               <Grid>
                 {dataEntityDetails.manuallyCreated && (
                   <AppPopover
+                    childrenSx={{
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                    }}
                     renderOpenBtn={({ onClick, ariaDescribedBy }) => (
                       <AppIconButton
                         sx={{ ml: 2 }}
@@ -316,7 +329,7 @@ const DataEntityDetails: React.FC = () => {
                 '/dataentities/:dataEntityId/linked-items',
                 '/embedded/dataentities/:dataEntityId/linked-items',
               ]}
-              component={LinkedItemsListContainer}
+              component={LinkedItemsList}
             />
             <Route
               exact

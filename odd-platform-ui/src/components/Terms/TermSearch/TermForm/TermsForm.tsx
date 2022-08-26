@@ -3,17 +3,19 @@ import { Controller, useForm } from 'react-hook-form';
 import { TermDetails, TermFormData } from 'generated-sources';
 import { useHistory } from 'react-router-dom';
 import { Typography } from '@mui/material';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import {
+  AppButton,
+  AppInput,
+  DialogWrapper,
+  NamespaceAutocomplete,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { createTerm, updateTerm } from 'redux/thunks';
 import {
   getTermCreatingStatuses,
   getTermUpdatingStatuses,
 } from 'redux/selectors';
-import NamespaceAutocomplete from 'components/shared/Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 import { useAppPaths } from 'lib/hooks';
 
 interface TermsFormDialogProps {

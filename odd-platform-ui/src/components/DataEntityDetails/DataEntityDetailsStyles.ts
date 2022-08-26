@@ -23,6 +23,7 @@ export const InternalNameEditBtnContainer = styled('div')(() => ({
 }));
 
 export const Caption = styled(Grid)(() => ({
+  width: '100%',
   '&:hover': {
     [`${InternalNameEditBtnContainer}`]: { opacity: 1 },
   },

@@ -27,8 +27,12 @@ export const dataEntityRunsSlice = createSlice({
       (state, { payload }) => {
         const { items, pageInfo } = payload;
 
-        dataEntityRunAdapter.setMany(state, items);
         state.pageInfo = pageInfo;
+        if (pageInfo.page > 1) {
+          return dataEntityRunAdapter.setMany(state, items);
+        }
+        dataEntityRunAdapter.setAll(state, items);
+        return state;
       }
     );
   },

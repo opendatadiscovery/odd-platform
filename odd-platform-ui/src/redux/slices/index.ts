@@ -1,5 +1,4 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import legacyLoader from './loader-reducer';
 import loader from './loader.slice';
 import namespaces from './namespace.slice';
 import dataSources from './datasources.slice';
@@ -19,7 +18,7 @@ import termLinkedList from './termLinkedList.slice';
 import appInfo from './appInfo.slice';
 import collectors from './collectors.slice';
 import terms from './terms.slice';
-import termSearch from './termSearch.reducer';
+import termSearch from './termSearch.slice';
 import activities from './activity.slice';
 import dataEntityRuns from './dataEntityRuns.slice';
 import ownerAssociation from './ownerAssociation.slice';
@@ -30,7 +29,6 @@ export default combineReducers({
   dataEntities,
   dataEntitySearch,
   loader,
-  legacyLoader,
   tags,
   metaData,
   owners,
