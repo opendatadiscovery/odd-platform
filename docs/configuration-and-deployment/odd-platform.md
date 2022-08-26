@@ -16,7 +16,10 @@ There are two ways to configure the Platform:
 
 <summary>YAML entries VS environment variables</summary
 
-&#x20;Let's say you need to define the following configuration block and configure the platform with it using environment variables
+&#x20;Let's say you need to define the following configuration block and configure the Platform with it using environment variables.
+
+YAML:
+
 ```yaml
 spring:
     datasource:
@@ -25,7 +28,7 @@ spring:
         password: PASSWORD
 ```
 
-This block flattens to 3 environment variables by replacing semicolons with underscores and uppercasing words, like so:
+To configure the Platform using environment variables, replace semicolons with underscores and uppercasing words, like so:
 
 * `SPRING_DATASOURCE_URL=URL`
 * `SPRING_DATASOURCE_USERNAME=USERNAME`
