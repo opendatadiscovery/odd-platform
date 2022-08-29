@@ -28,4 +28,7 @@ export { default as AppCheckbox } from './AppCheckbox/AppCheckbox';
 export { default as EmptyContentPlaceholder } from './EmptyContentPlaceholder/EmptyContentPlaceholder';
 export { default as NamespaceAutocomplete } from './Autocomplete/NamespaceAutocomplete/NamespaceAutocomplete';
 export { default as SearchSuggestionsAutocomplete } from './Autocomplete/SearchSuggestionsAutocomplete/SearchSuggestionsAutocomplete';
+export { default as AutocompleteSuggestion } from './AutocompleteSuggestion/AutocompleteSuggestion';
 export { default as AppToolbar } from './AppToolbar/AppToolbar';
+export { default as TextFormatted } from './TextFormatted/TextFormatted';
+export * as PageWithLeftSidebar from './StyledComponents/PageWithLeftSidebar';

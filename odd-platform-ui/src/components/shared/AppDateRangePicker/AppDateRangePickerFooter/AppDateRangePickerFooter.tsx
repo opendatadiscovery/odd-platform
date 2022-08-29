@@ -25,6 +25,7 @@ const DateRangePickerFooter: React.FC<AppDateRangePickerFooterProps> = ({
     <Grid>
       {ranges.map(range => (
         <AppButton
+          key={range.label}
           sx={{ mr: 0.5 }}
           color="secondary"
           size="medium"

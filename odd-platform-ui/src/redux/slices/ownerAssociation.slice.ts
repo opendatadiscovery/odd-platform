@@ -61,6 +61,8 @@ export const ownerAssociationSlice = createSlice({
       thunks.updateOwnerAssociationRequest.fulfilled,
       (state, { payload }) => {
         ownerAssociationAdapter.removeOne(state.newRequests, payload);
+        state.newRequests.pageInfo.total -= 1;
+        state.resolvedRequests.pageInfo.total += 1;
       }
     );
   },

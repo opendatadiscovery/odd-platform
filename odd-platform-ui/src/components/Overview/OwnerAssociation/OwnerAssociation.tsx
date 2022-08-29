@@ -7,10 +7,12 @@ import {
 } from 'redux/selectors';
 import { useAppSelector } from 'lib/redux/hooks';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
-import OwnerAssociationRequestInfo from 'components/Overview/OwnerAssociation/OwnerAssociationRequestInfo/OwnerAssociationRequestInfo';
-import { useLocalStorage } from 'lib/hooks/useLocalStorage';
-import OwnerAssociationForm from 'components/Overview/OwnerAssociation/OwnerAssociationForm/OwnerAssociationForm';
+import { Grid, Typography } from '@mui/material';
+import { WaitIcon } from 'components/shared/Icons';
+import { AppIconButton } from 'components/shared';
+import OwnerAssociationForm from './OwnerAssociationForm/OwnerAssociationForm';
 import OwnerEntitiesList from './OwnerEntitiesList/OwnerEntitiesList';
+import * as S from './OwnerAssociationStyles';
 
 const OwnerAssociation: React.FC = () => {
   const identity = useAppSelector(getIdentity);
@@ -20,57 +22,75 @@ const OwnerAssociation: React.FC = () => {
     getIdentityFetchingStatuses
   );
 
-  const { getLocalStorageValue } = useLocalStorage();
-  const showAcceptedInfo = getLocalStorageValue(
-    'showAssociationAcceptedMessage'
+  const [showRejectMsg, setShowRejectMsg] = React.useState(true);
+  const [supposedOwner, setSupposedOwner] = React.useState('');
+  const setOwnerName = React.useCallback(
+    (ownerName: string) => setSupposedOwner(ownerName),
+    [setSupposedOwner]
   );
 
-  const statusPredicate = (status: OwnerAssociationRequestStatus) =>
+  const isStatus = (status: OwnerAssociationRequestStatus) =>
     requestStatus === status;
 
   const getContent = () => {
-    const isIdentityFetchedWithoutOwnership =
-      !ownership && identity && isIdentityFetched;
+    const isIDOnly = !ownership && identity && isIdentityFetched;
 
-    if (isIdentityFetchedWithoutOwnership && !requestStatus) {
-      return <OwnerAssociationForm />;
-    }
-
-    if (
-      isIdentityFetchedWithoutOwnership &&
-      statusPredicate(OwnerAssociationRequestStatus.PENDING)
-    ) {
+    if (isIDOnly && !requestStatus) {
       return (
-        <OwnerAssociationRequestInfo
-          status={OwnerAssociationRequestStatus.PENDING}
-        />
+        <S.Container>
+          <OwnerAssociationForm setSupposedOwner={setOwnerName} />
+        </S.Container>
       );
     }
 
-    if (
-      isIdentityFetchedWithoutOwnership &&
-      statusPredicate(OwnerAssociationRequestStatus.DECLINED)
-    ) {
+    if (isIDOnly && isStatus(OwnerAssociationRequestStatus.PENDING)) {
       return (
-        <OwnerAssociationRequestInfo
-          status={OwnerAssociationRequestStatus.DECLINED}
-        />
+        <S.Container>
+          <S.PendingContainer container>
+            <WaitIcon />
+            <Typography variant="h3">Request is being checked</Typography>
+            <Typography variant="subtitle1">
+              {`You request to associate user ${identity.username} with owner ${supposedOwner}.`}
+            </Typography>
+            <Typography variant="subtitle1">
+              Wait for the administrator to review the request.
+            </Typography>
+          </S.PendingContainer>
+        </S.Container>
+      );
+    }
+
+    if (isIDOnly && isStatus(OwnerAssociationRequestStatus.DECLINED)) {
+      return (
+        <S.Container>
+          {showRejectMsg && (
+            <S.RejectMsg container sx={{ mb: showRejectMsg ? 3 : 0 }}>
+              <Grid container>
+                <S.AlertIcn />
+                <Typography variant="body2">
+                  Your previous request was rejected. Сontact the system
+                  administrator, or re-submit your request.
+                </Typography>
+              </Grid>
+              <AppIconButton
+                size="small"
+                color="unfilled"
+                icon={<S.RejectIcon />}
+                onClick={() => setShowRejectMsg(false)}
+              />
+            </S.RejectMsg>
+          )}
+          <OwnerAssociationForm setSupposedOwner={setOwnerName} />
+        </S.Container>
       );
     }
 
     if (
       identity &&
       ownership &&
-      statusPredicate(OwnerAssociationRequestStatus.APPROVED)
+      isStatus(OwnerAssociationRequestStatus.APPROVED)
     ) {
-      return (
-        <>
-          <OwnerEntitiesList />
-          <OwnerAssociationRequestInfo
-            status={OwnerAssociationRequestStatus.APPROVED}
-          />
-        </>
-      );
+      return <OwnerEntitiesList />;
     }
 
     return null;

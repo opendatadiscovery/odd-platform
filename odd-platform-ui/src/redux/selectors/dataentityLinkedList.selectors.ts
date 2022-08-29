@@ -5,7 +5,7 @@ import {
   RootState,
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
-import { createLegacyFetchingSelector } from 'redux/selectors/loader-selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 
 const dataEntityGroupLinkedListState = ({
   dataEntityGroupLinkedList,
@@ -15,29 +15,19 @@ const dataEntitiesState = ({
   dataEntities,
 }: RootState): DataEntitiesState => dataEntities;
 
-const getDEGLinkedListFetchingStatus = createLegacyFetchingSelector(
+export const getDEGLinkedListFetchingStatuses = createStatusesSelector(
   actions.fetchDataEntityGroupLinkedListAction
 );
 
-export const getIsDEGLinkedListFetching = createSelector(
-  getDEGLinkedListFetchingStatus,
-  status => status === 'fetching'
-);
-
-export const getDataEntityGroupId = (
-  _: RootState,
-  dataEntityGroupId: number | string
-) => dataEntityGroupId;
-
-export const getDataEntityGroupLinkedList = createSelector(
-  dataEntityGroupLinkedListState,
-  dataEntitiesState,
-  getDataEntityGroupId,
-  (linkedLists, dataEntities, dataEntityGroupId) =>
-    linkedLists.linkedItemsIdsByDataEntityGroupId?.[
-      dataEntityGroupId
-    ]?.map(id => dataEntities.byId[id])
-);
+export const getDataEntityGroupLinkedList = (dataEntityGroupId: number) =>
+  createSelector(
+    dataEntityGroupLinkedListState,
+    dataEntitiesState,
+    (linkedLists, dataEntities) =>
+      linkedLists.linkedItemsIdsByDataEntityGroupId?.[
+        dataEntityGroupId
+      ]?.map(id => dataEntities.byId[id])
+  );
 
 export const getDataEntityGroupLinkedListPage = createSelector(
   dataEntityGroupLinkedListState,

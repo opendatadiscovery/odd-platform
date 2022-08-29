@@ -14,18 +14,13 @@ import {
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchDataentitiesUsageInfo, fetchTagsList } from 'redux/thunks';
 import { DataEntityClassLabelMap } from 'redux/interfaces';
-import OwnerAssociation from './OwnerAssociation/OwnerAssociation';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
+import OwnerAssociation from './OwnerAssociation/OwnerAssociation';
 import TopTagsList from './TopTagsList/TopTagsList';
 
 const Overview: React.FC = () => {
   const dispatch = useAppDispatch();
-
-  React.useEffect(() => {
-    dispatch(fetchDataentitiesUsageInfo());
-    dispatch(fetchTagsList({ page: 1, size: 20 }));
-  }, []);
 
   const dataEntityClassesUsageInfo = useAppSelector(
     getDataEntityClassesUsageInfo
@@ -36,9 +31,15 @@ const Overview: React.FC = () => {
   const dataEntityUsageUnfilledCount = useAppSelector(
     getDataEntitiesUsageUnfilledCount
   );
+
   const isMainOverviewContentFetching = useAppSelector(
     getIsMainOverviewContentFetching
   );
+
+  React.useEffect(() => {
+    dispatch(fetchTagsList({ page: 1, size: 20 }));
+    dispatch(fetchDataentitiesUsageInfo());
+  }, []);
 
   return (
     <S.Container>
