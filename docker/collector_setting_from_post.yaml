@@ -1,8 +1,8 @@
 default_pulling_interval: 1
-token: ""
+token: $value
 plugins:
   - type: postgresql
-    name: postgresql-step2-test
+    name: AEG-test
     host: !ENV ${SAMPLE_POSTGRES_HOST}
     port: 5432
     database: !ENV ${SAMPLE_POSTGRES_DATABASE}
