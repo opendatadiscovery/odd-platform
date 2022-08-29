@@ -8,5 +8,5 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 public record AssociatedOwnerDto(String username,
                                  OwnerPojo owner,
                                  Set<UserPermission> permissions,
-                                 OwnerAssociationRequestStatus lastRequestStatus) {
+                                 OwnerAssociationRequestDto lastRequestDto) {
 }

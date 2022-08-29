@@ -109,13 +109,17 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
     }
 
     @Override
-    public Mono<OwnerAssociationRequestPojo> getLastRequestForUsername(final String username) {
-        final var query = DSL.selectFrom(OWNER_ASSOCIATION_REQUEST)
+    public Mono<OwnerAssociationRequestDto> getLastRequestForUsername(final String username) {
+        final Owner requestOwner = OWNER.as(REQUEST_OWNER_ALIAS);
+        final var query = DSL.select(OWNER_ASSOCIATION_REQUEST.fields())
+            .select(requestOwner.fields())
+            .from(OWNER_ASSOCIATION_REQUEST)
+            .join(requestOwner).on(OWNER_ASSOCIATION_REQUEST.OWNER_ID.eq(requestOwner.ID))
             .where(OWNER_ASSOCIATION_REQUEST.USERNAME.eq(username))
             .orderBy(OWNER_ASSOCIATION_REQUEST.CREATED_AT.desc())
             .limit(1);
         return jooqReactiveOperations.mono(query)
-            .map(r -> r.into(OWNER_ASSOCIATION_REQUEST).into(OwnerAssociationRequestPojo.class));
+            .map(r -> mapRecordToDto(r, OWNER_ASSOCIATION_REQUEST.getName()));
     }
 
     private Mono<Long> fetchCount(final String query,

@@ -25,6 +25,10 @@ public interface OwnerAssociationRequestMapper {
     @Mapping(target = "statusUpdatedBy", source = "dto.statusUpdatedUser")
     OwnerAssociationRequest mapToOwnerAssociationRequest(final OwnerAssociationRequestDto dto);
 
+    @Mapping(target = "status", expression = "java(OwnerAssociationRequestStatus.APPROVED)")
+    OwnerAssociationRequest mapToApprovedRequest(final String username,
+                                                 final String ownerName);
+
     List<OwnerAssociationRequest> mapList(final Collection<OwnerAssociationRequestDto> dtos);
 
     OwnerAssociationRequestPojo applyToPojo(@MappingTarget final OwnerAssociationRequestPojo pojo,

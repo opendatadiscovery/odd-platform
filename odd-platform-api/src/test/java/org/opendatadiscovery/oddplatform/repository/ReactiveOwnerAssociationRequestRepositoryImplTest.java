@@ -152,7 +152,7 @@ public class ReactiveOwnerAssociationRequestRepositoryImplTest extends BaseInteg
         final OwnerAssociationRequestPojo savedPendingPojo = repository.create(pendingPojo).block();
         repository.getLastRequestForUsername(username)
             .as(StepVerifier::create)
-            .assertNext(pojo -> assertThat(pojo).isEqualTo(savedPendingPojo))
+            .assertNext(dto -> assertThat(dto.pojo()).isEqualTo(savedPendingPojo))
             .verifyComplete();
 
         repository.getLastRequestForUsername(UUID.randomUUID().toString())

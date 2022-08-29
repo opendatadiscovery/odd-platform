@@ -72,9 +72,9 @@ public class AlertServiceImpl implements AlertService {
     @Override
     public Mono<AlertStatus> updateStatus(final long alertId,
                                           final AlertStatus alertStatus) {
-        return authIdentityProvider.getUsername()
+        return authIdentityProvider.getCurrentUser()
             .flatMap(u -> alertRepository.updateAlertStatus(
-                alertId, AlertStatusEnum.valueOf(alertStatus.name()), u))
+                alertId, AlertStatusEnum.valueOf(alertStatus.name()), u.username()))
             .switchIfEmpty(alertRepository
                 .updateAlertStatus(alertId, AlertStatusEnum.valueOf(alertStatus.name()), null))
             .thenReturn(alertStatus);

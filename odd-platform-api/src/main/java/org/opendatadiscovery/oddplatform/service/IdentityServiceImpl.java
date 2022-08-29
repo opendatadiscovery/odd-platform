@@ -2,11 +2,11 @@ package org.opendatadiscovery.oddplatform.service;
 
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.api.contract.model.AssociatedOwner;
-import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatus;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
 import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
+import org.opendatadiscovery.oddplatform.dto.OwnerAssociationRequestDto;
+import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.mapper.AssociatedOwnerMapper;
-import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerAssociationRequestPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerAssociationRequestRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
@@ -26,22 +26,21 @@ public class IdentityServiceImpl implements IdentityService {
     @Override
     public Mono<AssociatedOwner> whoami() {
         return authIdentityProvider
-            .getUsername()
+            .getCurrentUser()
             .flatMap(this::getAssociatedOwner);
     }
 
-    private Mono<AssociatedOwner> getAssociatedOwner(final String username) {
+    private Mono<AssociatedOwner> getAssociatedOwner(final UserDto userDto) {
         return Mono.zip(
-                authIdentityProvider.getPermissions(),
-                userOwnerMappingRepository.getAssociatedOwner(username)
+                userOwnerMappingRepository.getAssociatedOwner(userDto.username())
                     .defaultIfEmpty(new OwnerPojo()),
-                ownerAssociationRequestRepository.getLastRequestForUsername(username)
-                    .defaultIfEmpty(new OwnerAssociationRequestPojo()))
-            .map(function((permissions, owner, request) -> new AssociatedOwnerDto(
-                username,
+                ownerAssociationRequestRepository.getLastRequestForUsername(userDto.username())
+                    .defaultIfEmpty(new OwnerAssociationRequestDto(null, null, null)))
+            .map(function((owner, request) -> new AssociatedOwnerDto(
+                userDto.username(),
                 owner.getId() != null ? owner : null,
-                permissions,
-                request.getStatus() != null ? OwnerAssociationRequestStatus.fromValue(request.getStatus()) : null
+                userDto.permissions(),
+                request.pojo() != null ? request : null
             )))
             .map(associatedOwnerMapper::mapAssociatedOwner);
     }

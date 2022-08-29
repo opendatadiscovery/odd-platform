@@ -14,5 +14,5 @@ public interface ReactiveOwnerAssociationRequestRepository extends ReactiveCRUDR
                                                       final String query,
                                                       final Boolean active);
 
-    Mono<OwnerAssociationRequestPojo> getLastRequestForUsername(final String username);
+    Mono<OwnerAssociationRequestDto> getLastRequestForUsername(final String username);
 }

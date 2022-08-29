@@ -1,16 +1,15 @@
 package org.opendatadiscovery.oddplatform.auth;
 
-import java.security.Principal;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.dto.security.UserPermission;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveUserOwnerMappingRepository;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
@@ -24,26 +23,22 @@ public class AuthIdentityProviderImpl implements AuthIdentityProvider {
     private final ReactiveUserOwnerMappingRepository userOwnerMappingRepository;
 
     @Override
-    public Mono<String> getUsername() {
-        return ReactiveSecurityContextHolder.getContext()
-            .switchIfEmpty(Mono.empty())
-            .map(SecurityContext::getAuthentication)
-            .map(Principal::getName);
-    }
-
-    @Override
-    public Mono<Set<UserPermission>> getPermissions() {
+    public Mono<UserDto> getCurrentUser() {
         return ReactiveSecurityContextHolder.getContext()
             .map(SecurityContext::getAuthentication)
-            .map(Authentication::getAuthorities)
-            .map(this::mapAuthorities)
-            .defaultIfEmpty(Set.of());
+            .map(authentication -> {
+                final String username = authentication.getName();
+                final Set<UserPermission> permissions = Optional.ofNullable(authentication.getAuthorities())
+                    .map(this::mapAuthorities)
+                    .orElse(Set.of());
+                return new UserDto(username, permissions);
+            });
     }
 
     @Override
     public Mono<OwnerPojo> fetchAssociatedOwner() {
-        return getUsername()
-            .flatMap(userOwnerMappingRepository::getAssociatedOwner);
+        return getCurrentUser()
+            .flatMap(user -> userOwnerMappingRepository.getAssociatedOwner(user.username()));
     }
 
     private Set<UserPermission> mapAuthorities(final Collection<? extends GrantedAuthority> authorities) {
