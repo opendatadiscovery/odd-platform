@@ -25,21 +25,21 @@ spring:
       client:
         registration:
           cognito:
-            client-id: '5d2suhs8kcbictf17r960lbd1l'
-            client-secret: '3etnhms3o54ni59dmf3hnim6e4qg4iibhvgbrdp5bv74i3p5vru'
+            client-id:
+            client-secret:
             scope:
               - openid
             redirect-uri: 'http://localhost:8080/login/oauth2/code/cognito'
             client-name: 'auth-client'
           github:
-            client-id: 'f792bc97df55e97766ad'
-            client-secret: 'abd86d7834f0fbd1c0b3baf886f56d22464a5f5b'
+            client-id:
+            client-secret:
             scope:
               - user:read
               - read:org
           google:
-            client-id: '832184027882-b0advma5u8cmerak61rvufgkfhr62k1g.apps.googleusercontent.com'
-            client-secret: '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'
+            client-id:
+            client-secret:
             scope:
               - openid
               - profile
