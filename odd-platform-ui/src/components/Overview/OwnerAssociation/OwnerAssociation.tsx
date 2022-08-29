@@ -4,6 +4,7 @@ import {
   getIdentity,
   getIdentityFetchingStatuses,
   getOwnership,
+  getSupposedOwnerName,
 } from 'redux/selectors';
 import { useAppSelector } from 'lib/redux/hooks';
 import { OwnerAssociationRequestStatus } from 'generated-sources';
@@ -18,16 +19,12 @@ const OwnerAssociation: React.FC = () => {
   const identity = useAppSelector(getIdentity);
   const ownership = useAppSelector(getOwnership);
   const requestStatus = useAppSelector(getAssociationRequestStatus);
+  const supposedOwnerName = useAppSelector(getSupposedOwnerName);
   const { isLoaded: isIdentityFetched } = useAppSelector(
     getIdentityFetchingStatuses
   );
 
   const [showRejectMsg, setShowRejectMsg] = React.useState(true);
-  const [supposedOwner, setSupposedOwner] = React.useState('');
-  const setOwnerName = React.useCallback(
-    (ownerName: string) => setSupposedOwner(ownerName),
-    [setSupposedOwner]
-  );
 
   const isStatus = (status: OwnerAssociationRequestStatus) =>
     requestStatus === status;
@@ -38,7 +35,7 @@ const OwnerAssociation: React.FC = () => {
     if (isIDOnly && !requestStatus) {
       return (
         <S.Container>
-          <OwnerAssociationForm setSupposedOwner={setOwnerName} />
+          <OwnerAssociationForm />
         </S.Container>
       );
     }
@@ -50,7 +47,7 @@ const OwnerAssociation: React.FC = () => {
             <WaitIcon />
             <Typography variant="h3">Request is being checked</Typography>
             <Typography variant="subtitle1">
-              {`You request to associate user ${identity.username} with owner ${supposedOwner}.`}
+              {`You request to associate user ${identity.username} with owner ${supposedOwnerName}.`}
             </Typography>
             <Typography variant="subtitle1">
               Wait for the administrator to review the request.
@@ -80,16 +77,12 @@ const OwnerAssociation: React.FC = () => {
               />
             </S.RejectMsg>
           )}
-          <OwnerAssociationForm setSupposedOwner={setOwnerName} />
+          <OwnerAssociationForm />
         </S.Container>
       );
     }
 
-    if (
-      identity &&
-      ownership &&
-      isStatus(OwnerAssociationRequestStatus.APPROVED)
-    ) {
+    if (identity && ownership) {
       return <OwnerEntitiesList />;
     }
 

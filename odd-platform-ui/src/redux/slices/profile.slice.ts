@@ -10,7 +10,12 @@ export const initialState: ProfileState = {
 export const profileSlice = createSlice({
   name: profileActionPrefix,
   initialState,
-  reducers: {},
+  reducers: {
+    setProfileOwnerName: (state, { payload }: { payload: string }) => ({
+      ...state,
+      owner: { ...state.owner, owner: { name: payload, id: 0 } },
+    }),
+  },
   extraReducers: builder => {
     builder.addCase(
       thunks.fetchIdentity.fulfilled,
@@ -26,5 +31,7 @@ export const profileSlice = createSlice({
     );
   },
 });
+
+export const { setProfileOwnerName } = profileSlice.actions;
 
 export default profileSlice.reducer;

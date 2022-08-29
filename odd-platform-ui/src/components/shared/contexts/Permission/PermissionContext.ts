@@ -1,11 +1,13 @@
 import React from 'react';
 
-interface PermissionContextProps {
+export interface PermissionContextProps {
   isAllowedTo: boolean;
+  isAdmin: boolean;
 }
 
 const defaultBehaviour: PermissionContextProps = {
   isAllowedTo: false,
+  isAdmin: false,
 };
 
 const PermissionContext =

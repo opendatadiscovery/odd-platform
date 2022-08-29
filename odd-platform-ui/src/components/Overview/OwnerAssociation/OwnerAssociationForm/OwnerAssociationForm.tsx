@@ -15,7 +15,11 @@ import {
   createFilterOptions,
   FilterOptionsState,
 } from '@mui/material/useAutocomplete';
-import { Owner, OwnerFormData } from 'generated-sources';
+import {
+  Owner,
+  OwnerAssociationRequestStatus,
+  OwnerFormData,
+} from 'generated-sources';
 import { ClearIcon, UserSyncIcon } from 'components/shared/Icons';
 import {
   AppButton,
@@ -27,14 +31,13 @@ import {
   createOwnerAssociationRequest,
   fetchOwnersList,
 } from 'redux/thunks';
+import { usePermissions } from 'lib/hooks';
+import { setProfileOwnerName } from 'redux/slices/profile.slice';
 import * as S from './OwnerAssociationFormStyles';
 
-interface Props {
-  setSupposedOwner: (ownerName: string) => void;
-}
-
-const OwnerAssociationForm: React.FC<Props> = ({ setSupposedOwner }) => {
+const OwnerAssociationForm: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions();
   const identity = useAppSelector(getIdentity);
   const { isLoading: isRequestCreating } = useAppSelector(
     getOwnerAssociationRequestCreatingStatuses
@@ -134,7 +137,11 @@ const OwnerAssociationForm: React.FC<Props> = ({ setSupposedOwner }) => {
   const onSubmit = (data: OwnerFormData) => {
     dispatch(createOwnerAssociationRequest({ ownerFormData: data }))
       .unwrap()
-      .then(({ ownerName }) => setSupposedOwner(ownerName));
+      .then(({ status, ownerName }) => {
+        if (isAdmin && status === OwnerAssociationRequestStatus.APPROVED) {
+          dispatch(setProfileOwnerName(ownerName));
+        }
+      });
   };
 
   React.useEffect(() => {
@@ -271,7 +278,7 @@ const OwnerAssociationForm: React.FC<Props> = ({ setSupposedOwner }) => {
             disabled={!methods.formState.isValid}
             isLoading={isRequestCreating}
           >
-            Send a request
+            {isAdmin ? 'Associate' : 'Send a request'}
           </AppButton>
         </S.FormContainer>
       </Grid>

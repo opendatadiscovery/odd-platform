@@ -16,14 +16,19 @@ export const getOwnership = createSelector(
   profile => profile.owner?.owner
 );
 
-export const getUserPermissions = createSelector(profileState, profile => [
-  ...(profile.owner?.identity.actions?.allowed || emptyArr),
-  ...(profile.owner?.identity.actions?.forbidden || emptyArr),
-]);
+export const getGlobalPermissions = createSelector(
+  profileState,
+  profile => profile.owner?.identity.actions?.allowed || emptyArr
+);
 
 export const getAssociationRequestStatus = createSelector(
   profileState,
   profile => profile.owner?.associationRequest?.status
+);
+
+export const getSupposedOwnerName = createSelector(
+  profileState,
+  profile => profile.owner?.associationRequest?.ownerName
 );
 
 export const getIdentityFetchingStatuses = createStatusesSelector(
