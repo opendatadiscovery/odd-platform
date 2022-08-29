@@ -8,6 +8,9 @@ CREATE TABLE IF NOT EXISTS owner_association_request
     status_updated_by varchar(512),
     created_at        timestamp without time zone NOT NULL DEFAULT NOW(),
 
-    CONSTRAINT owner_association_request_owner_fk FOREIGN KEY (owner_id) REFERENCES owner (id),
-    UNIQUE (username, owner_id, status)
-)
+    CONSTRAINT owner_association_request_owner_fk FOREIGN KEY (owner_id) REFERENCES owner (id)
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS username_owner_id_status_unique
+    ON owner_association_request (username, owner_id, status)
+    WHERE owner_association_request.status IN ('PENDING', 'APPROVED');

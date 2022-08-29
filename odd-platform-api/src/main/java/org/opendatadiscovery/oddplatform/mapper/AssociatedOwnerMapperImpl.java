@@ -10,15 +10,19 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AssociatedOwnerMapperImpl implements AssociatedOwnerMapper {
     private final OwnerMapper ownerMapper;
+    private final ActionsMapper actionsMapper;
 
     @Override
     public AssociatedOwner mapAssociatedOwner(final AssociatedOwnerDto dto) {
         if (dto == null) {
             return null;
         }
+        final Identity identity = new Identity()
+            .actions(actionsMapper.mapToActions(dto.permissions()))
+            .username(dto.username());
         return new AssociatedOwner()
             .owner(dto.owner() != null ? ownerMapper.mapToOwner(dto.owner()) : null)
-            .identity(new Identity().username(dto.username()))
+            .identity(identity)
             .associationRequestStatus(dto.lastRequestStatus());
     }
 }

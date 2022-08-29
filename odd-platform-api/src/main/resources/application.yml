@@ -17,35 +17,60 @@ spring:
 #    username:
 #    password:
 #    database: 0
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri:
-#      client:
-#        registration:
-#          cognito:
-#            client-id:
-#            client-secret:
-#            scope:
-#            redirect-uri:
-#            client-name:
-#        provider:
-#          cognito:
-#            issuerUri:
-#            user-name-attribute:
-
-cognito:
-  enabled: false
-  logoutUrl:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_SLj42PGZ4'
+      client:
+        registration:
+          cognito:
+            client-id: '5d2suhs8kcbictf17r960lbd1l'
+            client-secret: '3etnhms3o54ni59dmf3hnim6e4qg4iibhvgbrdp5bv74i3p5vru'
+            scope:
+              - openid
+            redirect-uri: 'http://localhost:8080/login/oauth2/code/cognito'
+            client-name: 'auth-client'
+          github:
+            client-id: 'f792bc97df55e97766ad'
+            client-secret: 'abd86d7834f0fbd1c0b3baf886f56d22464a5f5b'
+            scope:
+              - user:read
+              - read:org
+          google:
+            client-id: '832184027882-b0advma5u8cmerak61rvufgkfhr62k1g.apps.googleusercontent.com'
+            client-secret: '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'
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          cognito:
+            issuerUri: 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_SLj42PGZ4'
+            user-name-attribute: 'username'
+            admin-principals:
+            admin-groups: admin
+          github:
+            user-name-attribute: 'login'
+            organization-name: 'damirtestorg'
+            admin-principals:
+            admin-teams: admin,member
+          google:
+            user-name-attribute: 'name'
+            admin-principals:
+            allowed-domain: 'oddp.dev'
+#
+#cognito:
+#  enabled: true
+#  logoutUrl:
 
 session:
   # INTERNAL_POSTGRESQL, REDIS, IN_MEMORY
   provider: IN_MEMORY
 
 auth:
-  # DISABLED, LOGIN_FORM, OAUTH2
-  type: DISABLED
+  # DISABLED, LOGIN_FORM, OAUTH2, LDAP
+  type: OAUTH2
 
   # For dev/demo purposes only -- username1:password1,username2:password2,etc
   login-form-credentials: admin:admin,root:root

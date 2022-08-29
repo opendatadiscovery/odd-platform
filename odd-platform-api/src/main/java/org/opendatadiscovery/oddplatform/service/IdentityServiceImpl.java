@@ -31,13 +31,16 @@ public class IdentityServiceImpl implements IdentityService {
     }
 
     private Mono<AssociatedOwner> getAssociatedOwner(final String username) {
-        return Mono.zip(userOwnerMappingRepository.getAssociatedOwner(username)
+        return Mono.zip(
+                authIdentityProvider.getPermissions(),
+                userOwnerMappingRepository.getAssociatedOwner(username)
                     .defaultIfEmpty(new OwnerPojo()),
                 ownerAssociationRequestRepository.getLastRequestForUsername(username)
                     .defaultIfEmpty(new OwnerAssociationRequestPojo()))
-            .map(function((owner, request) -> new AssociatedOwnerDto(
+            .map(function((permissions, owner, request) -> new AssociatedOwnerDto(
                 username,
                 owner.getId() != null ? owner : null,
+                permissions,
                 request.getStatus() != null ? OwnerAssociationRequestStatus.fromValue(request.getStatus()) : null
             )))
             .map(associatedOwnerMapper::mapAssociatedOwner);

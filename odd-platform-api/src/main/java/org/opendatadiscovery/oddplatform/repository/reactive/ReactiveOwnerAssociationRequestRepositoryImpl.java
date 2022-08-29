@@ -2,6 +2,7 @@ package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Record;
@@ -155,7 +156,7 @@ public class ReactiveOwnerAssociationRequestRepositoryImpl
         final OwnerPojo statusOwner = jooqRecordHelper.extractRelation(statusUpdatedRecord, OWNER, OwnerPojo.class);
 
         final AssociatedOwnerDto associatedOwnerDto = pojo.getStatusUpdatedBy() != null
-            ? new AssociatedOwnerDto(pojo.getStatusUpdatedBy(), statusOwner, null) : null;
+            ? new AssociatedOwnerDto(pojo.getStatusUpdatedBy(), statusOwner, Set.of(), null) : null;
         return new OwnerAssociationRequestDto(pojo, requestOwner.getName(), associatedOwnerDto);
     }
 }

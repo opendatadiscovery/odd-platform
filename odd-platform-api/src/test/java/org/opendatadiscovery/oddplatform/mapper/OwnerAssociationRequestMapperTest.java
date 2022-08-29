@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.mapper;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Set;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -89,7 +90,7 @@ public class OwnerAssociationRequestMapperTest {
         final String updatedUserOwnerName = UUID.randomUUID().toString();
         final OffsetDateTime offsetDateTime = pojo.getStatusUpdatedAt().atOffset(ZoneOffset.UTC);
         final AssociatedOwnerDto ownerDto = new AssociatedOwnerDto(pojo.getUsername(),
-            new OwnerPojo().setName(updatedUserOwnerName), null);
+            new OwnerPojo().setName(updatedUserOwnerName), Set.of(), null);
         final OwnerAssociationRequestDto dto = new OwnerAssociationRequestDto(pojo, ownerName, ownerDto);
 
         final AssociatedOwner identity = new AssociatedOwner()

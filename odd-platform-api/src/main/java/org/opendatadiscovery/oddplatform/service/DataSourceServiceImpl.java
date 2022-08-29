@@ -18,6 +18,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityR
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTokenRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -47,6 +48,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ReactiveTransactional
     public Mono<DataSource> create(final DataSourceFormData form) {
         if (StringUtils.isNotEmpty(form.getConnectionUrl()) && StringUtils.isNotEmpty(form.getOddrn())) {
@@ -69,6 +71,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ReactiveTransactional
     public Mono<DataSource> update(final long id, final DataSourceUpdateFormData form) {
         return dataSourceRepository.getDto(id)
@@ -86,6 +89,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     @ReactiveTransactional
     public Mono<Long> delete(final long id) {
         return dataEntityRepository.existsByDataSourceId(id)
@@ -99,6 +103,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Mono<DataSource> regenerateDataSourceToken(final long id) {
         return dataSourceRepository.getDto(id)
             .switchIfEmpty(Mono.error(new NotFoundException("Data source with id % doesn't exist", id)))

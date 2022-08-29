@@ -3,9 +3,11 @@ package org.opendatadiscovery.oddplatform.config;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.opendatadiscovery.oddplatform.auth.CognitoOidcLogoutSuccessHandler;
+import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
+import org.opendatadiscovery.oddplatform.auth.handler.OidcUserHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -14,15 +16,20 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcReactiveOAuth2UserService;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.DefaultReactiveOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.ReactiveOAuth2UserService;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 import org.springframework.web.server.ServerWebExchange;
@@ -32,32 +39,40 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring5.context.webflux.SpringWebFluxContext;
 import reactor.core.publisher.Mono;
 
+import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
 
 @Configuration
+@EnableReactiveMethodSecurity
 @ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
 public class OAuthSecurityConfiguration {
 
-    private final Boolean cognitoEnabled;
+    //private final Boolean cognitoEnabled;
     private final String clientId;
     private final String logoutUrl;
+    private final Map<String, OidcUserHandler> oidcUserHandlerMap;
+    private final Map<String, OAuthUserHandler> oauthUserHandlerMap;
 
     public OAuthSecurityConfiguration(
-        @Value("${cognito.enabled}") final Boolean cognitoEnabled,
+        //@Value("${cognito.enabled}") final Boolean cognitoEnabled,
         @Value("${spring.security.oauth2.client.registration.cognito.client-id:}") final String clientId,
-        @Value("${cognito.logoutUrl:}") final String logoutUrl) {
-        this.cognitoEnabled = cognitoEnabled;
+        @Value("${cognito.logoutUrl:}") final String logoutUrl,
+        final Map<String, OidcUserHandler> oidcUserHandlerMap,
+        final Map<String, OAuthUserHandler> oauthUserHandlerMap) {
+        //this.cognitoEnabled = cognitoEnabled;
         this.clientId = clientId;
         this.logoutUrl = logoutUrl;
+        this.oidcUserHandlerMap = oidcUserHandlerMap;
+        this.oauthUserHandlerMap = oauthUserHandlerMap;
     }
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChainOauth2Client(final ServerHttpSecurity http,
                                                                      final ReactiveClientRegistrationRepository repo,
                                                                      final TemplateEngine templateEngine) {
-        final ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
-            ? new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId)
-            : new OidcClientInitiatedServerLogoutSuccessHandler(repo);
+//        final ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
+//            ? new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId)
+//            : new OidcClientInitiatedServerLogoutSuccessHandler(repo);
 
         final List<ClientRegistration> clientRegistrations =
             IteratorUtils.toList(((InMemoryReactiveClientRegistrationRepository) repo).iterator());
@@ -69,8 +84,9 @@ public class OAuthSecurityConfiguration {
             .authorizeExchange(e -> e
                 .pathMatchers("/actuator/**", "/favicon.ico", "/ingestion/**", "/img/**").permitAll()
                 .pathMatchers("/**").authenticated())
-            .oauth2Login(Customizer.withDefaults())
-            .logout().logoutSuccessHandler(logoutHandler)
+            .oauth2Login(withDefaults())
+            .logout()
+            //.logoutSuccessHandler(logoutHandler)
             .and();
 
         if (clientRegistrations.size() > 1) {
@@ -79,6 +95,44 @@ public class OAuthSecurityConfiguration {
         }
 
         return sec.build();
+    }
+
+    @Bean
+    public ReactiveOAuth2UserService<OidcUserRequest, OidcUser> customOidcUserService() {
+        final OidcReactiveOAuth2UserService delegate = new OidcReactiveOAuth2UserService();
+        return request -> delegate.loadUser(request)
+            .flatMap(oidcUser -> {
+                final Optional<OidcUserHandler> userHandler =
+                    getOidcUserHandler(request.getClientRegistration().getRegistrationId());
+                if (userHandler.isEmpty()) {
+                    return Mono.just(oidcUser);
+                }
+                return userHandler.get().enrichUserWithProviderInformation(oidcUser, request);
+            });
+    }
+
+    @Bean
+    public ReactiveOAuth2UserService<OAuth2UserRequest, OAuth2User> customOauth2UserService() {
+        final DefaultReactiveOAuth2UserService delegate = new DefaultReactiveOAuth2UserService();
+        return request -> delegate.loadUser(request)
+            .flatMap(user -> {
+                final Optional<OAuthUserHandler> userHandler =
+                    getOAuthUserHandler(request.getClientRegistration().getRegistrationId());
+                if (userHandler.isEmpty()) {
+                    return Mono.just(user);
+                }
+                return userHandler.get().enrichUserWithProviderInformation(user, request);
+            });
+    }
+
+    private Optional<OidcUserHandler> getOidcUserHandler(final String providerId) {
+        final String userHandlerBeanId = providerId + "UserHandler";
+        return Optional.ofNullable(oidcUserHandlerMap.get(userHandlerBeanId));
+    }
+
+    private Optional<OAuthUserHandler> getOAuthUserHandler(final String providerId) {
+        final String userHandlerBeanId = providerId + "UserHandler";
+        return Optional.ofNullable(oauthUserHandlerMap.get(userHandlerBeanId));
     }
 
     private static class LoginPageFilter implements WebFilter {

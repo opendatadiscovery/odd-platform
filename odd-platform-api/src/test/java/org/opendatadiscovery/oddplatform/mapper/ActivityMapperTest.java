@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
@@ -107,7 +108,7 @@ public class ActivityMapperTest {
 
         lenient()
             .when(associatedOwnerMapper
-                .mapAssociatedOwner(new AssociatedOwnerDto(activityPojo.getCreatedBy(), owner, null)))
+                .mapAssociatedOwner(new AssociatedOwnerDto(activityPojo.getCreatedBy(), owner, Set.of(), null)))
             .thenReturn(identity);
 
         lenient().when(dataEntityMapper.mapType(any(DataEntityTypeDto.class))).thenReturn(dataEntityType);
