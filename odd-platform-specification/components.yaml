@@ -27,6 +27,7 @@ components:
       enum:
         - MANAGEMENT_CONTROL
         - DATA_ENTITY_EDIT
+        - DIRECT_OWNER_SYNC
 
     Actions:
       type: object
