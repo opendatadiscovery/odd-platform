@@ -23,7 +23,7 @@ export const getUserPermissions = createSelector(profileState, profile => [
 
 export const getAssociationRequestStatus = createSelector(
   profileState,
-  profile => profile.owner?.associationRequestStatus
+  profile => profile.owner?.associationRequest?.status
 );
 
 export const getIdentityFetchingStatuses = createStatusesSelector(

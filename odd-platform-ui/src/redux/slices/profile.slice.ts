@@ -21,8 +21,7 @@ export const profileSlice = createSlice({
     builder.addCase(
       thunks.createOwnerAssociationRequest.fulfilled,
       (state, { payload }) => {
-        const { status } = payload;
-        state.owner.associationRequestStatus = status;
+        state.owner.associationRequest = payload;
       }
     );
   },
