@@ -109,7 +109,7 @@ const tabStyles = (
 ): CSSObject => ({
   [`&.${buttonBaseClasses.root}`]: {
     [`&.${tabClasses.root}`]: {
-      display: $hidden ? 'none' : 'block',
+      display: $hidden ? 'none' : 'flex',
       alignItems: $orientation === 'vertical' ? 'flex-start' : 'center',
       '&:hover, &:active, &:focus': { textDecoration: 'none' },
     },

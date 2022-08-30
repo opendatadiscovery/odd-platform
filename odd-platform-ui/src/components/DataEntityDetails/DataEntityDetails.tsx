@@ -26,6 +26,7 @@ import {
   deleteDataEntityGroup,
   fetchDataEntityAlerts,
   fetchDataEntityDetails,
+  fetchDataEntityPermissions,
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import {
@@ -67,7 +68,7 @@ const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { dataEntityId } = useAppParams();
-  const isAllowedToEditEntity = usePermissions();
+  const { isAdmin, isAllowedTo: editDataEntity } = usePermissions();
   const { searchPath } = useAppPaths();
 
   const searchId = useAppSelector(getSearchId);
@@ -103,6 +104,7 @@ const DataEntityDetails: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
+    if (!isAdmin) dispatch(fetchDataEntityPermissions({ dataEntityId }));
   }, [dataEntityId]);
 
   const handleEntityGroupDelete = React.useCallback(
@@ -150,7 +152,7 @@ const DataEntityDetails: React.FC = () => {
                         size="small"
                         color="tertiary"
                         sx={{ ml: 1 }}
-                        disabled={!isAllowedToEditEntity}
+                        disabled={!editDataEntity}
                         startIcon={
                           dataEntityDetails.internalName ? (
                             <EditIcon />
@@ -229,7 +231,11 @@ const DataEntityDetails: React.FC = () => {
                     }}
                   >
                     <DataEntityGroupForm
-                      btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
+                      btnCreateEl={
+                        <AppMenuItem disabled={!editDataEntity}>
+                          Edit
+                        </AppMenuItem>
+                      }
                     />
                     <ConfirmationDialog
                       actionTitle="Are you sure you want to delete this data entity group?"
@@ -243,7 +249,11 @@ const DataEntityDetails: React.FC = () => {
                         </>
                       }
                       onConfirm={handleEntityGroupDelete}
-                      actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+                      actionBtn={
+                        <AppMenuItem disabled={!editDataEntity}>
+                          Delete
+                        </AppMenuItem>
+                      }
                     />
                   </AppPopover>
                 )}

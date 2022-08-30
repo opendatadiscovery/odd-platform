@@ -1,24 +1,28 @@
 import React from 'react';
 import { Grid, SelectChangeEvent, Typography } from '@mui/material';
-import TestReportDetailsOverviewSkeleton from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetailsOverview/TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
+import {
+  SkeletonWrapper,
+  LabeledInfoItem,
+  AppMenuItem,
+  AppSelect,
+} from 'components/shared';
 import { format, formatDistanceStrict } from 'date-fns';
 import { DataQualityTestSeverity } from 'generated-sources';
 import {
   getDatasetTestListFetchingStatuses,
   getQualityTestByTestId,
-} from 'redux/selectors/dataQualityTest.selectors';
-import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+} from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { setDataQATestSeverity } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
-import AppSelect from 'components/shared/AppSelect/AppSelect';
+import { useAppParams, usePermissions } from 'lib/hooks';
 import { ORDERED_SEVERITY } from 'lib/constants';
+import TestReportDetailsOverviewSkeleton from './TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
+  const { isAllowedTo: editDataEntity } = usePermissions();
+
   const { isLoading: isDatasetTestListFetching } = useAppSelector(
     getDatasetTestListFetchingStatuses
   );
@@ -76,6 +80,7 @@ const TestReportDetailsOverview: React.FC = () => {
             >
               <AppSelect
                 size="small"
+                disabled={!editDataEntity}
                 defaultValue={
                   qualityTest?.severity || DataQualityTestSeverity.MAJOR
                 }

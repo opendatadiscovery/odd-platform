@@ -12,7 +12,7 @@ import {
   SkeletonWrapper,
 } from 'components/shared';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { fetchDataentitiesUsageInfo, fetchTagsList } from 'redux/thunks';
+import { fetchDataEntitiesUsageInfo, fetchTagsList } from 'redux/thunks';
 import { DataEntityClassLabelMap } from 'redux/interfaces';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
@@ -38,7 +38,7 @@ const Overview: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchTagsList({ page: 1, size: 20 }));
-    dispatch(fetchDataentitiesUsageInfo());
+    dispatch(fetchDataEntitiesUsageInfo());
   }, []);
 
   return (

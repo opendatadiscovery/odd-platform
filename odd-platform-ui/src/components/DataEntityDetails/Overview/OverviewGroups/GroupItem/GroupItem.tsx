@@ -1,11 +1,11 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
-import CloseIcon from 'components/shared/Icons/CloseIcon';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
+import { CloseIcon } from 'components/shared/Icons';
+import { AppIconButton } from 'components/shared';
 import { DataEntityRef } from 'generated-sources';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteDataEntityFromGroup } from 'redux/thunks';
-import { useAppPaths } from 'lib/hooks';
+import { useAppPaths, usePermissions } from 'lib/hooks';
 import * as S from './GroupItemStyles';
 
 interface GroupItemProps {
@@ -17,6 +17,17 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
   const dispatch = useAppDispatch();
   const { dataEntityDetailsPath } = useAppPaths();
   const groupDetailsLink = dataEntityDetailsPath(group.id);
+  const { isAllowedTo: editDataEntity } = usePermissions();
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    return dispatch(
+      deleteDataEntityFromGroup({
+        dataEntityId,
+        dataEntityGroupId: group.id,
+      })
+    );
+  };
 
   return (
     <S.GroupItemContainer to={groupDetailsLink}>
@@ -32,20 +43,12 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
           </Typography>
         </Grid>
         <S.ActionsContainer>
-          {group.manuallyCreated && (
+          {group.manuallyCreated && editDataEntity && (
             <AppIconButton
               size="small"
               color="unfilled"
               icon={<CloseIcon />}
-              onClick={e => {
-                e.preventDefault();
-                return dispatch(
-                  deleteDataEntityFromGroup({
-                    dataEntityId,
-                    dataEntityGroupId: group.id,
-                  })
-                );
-              }}
+              onClick={handleDelete}
               sx={{ ml: 0.25 }}
             />
           )}

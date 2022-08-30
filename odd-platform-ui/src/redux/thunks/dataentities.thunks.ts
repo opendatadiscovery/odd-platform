@@ -1,4 +1,5 @@
 import {
+  Actions,
   Configuration,
   DataEntityApi,
   DataEntityApiAddDataEntityDataEntityGroupRequest,
@@ -9,6 +10,7 @@ import {
   DataEntityApiDeleteDataEntityGroupRequest,
   DataEntityApiDeleteTermFromDataEntityRequest,
   DataEntityApiGetDataEntityDetailsRequest,
+  DataEntityApiGetDataEntityPermissionsRequest,
   DataEntityApiGetMyObjectsRequest,
   DataEntityApiGetMyObjectsWithDownstreamRequest,
   DataEntityApiGetMyObjectsWithUpstreamRequest,
@@ -28,6 +30,7 @@ import {
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { fetchDataEntityPermissionsActionType } from 'redux/actions';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const dataEntityApi = new DataEntityApi(apiClientConf);
@@ -165,7 +168,6 @@ export const fetchPopularDataEntitiesList = createAsyncThunk<
   })
 );
 
-// data entity groups
 export const createDataEntityGroup = createAsyncThunk<
   DataEntityRef,
   DataEntityApiCreateDataEntityGroupRequest
@@ -225,10 +227,18 @@ export const deleteDataEntityFromGroup = createAsyncThunk<
   }
 );
 
-export const fetchDataentitiesUsageInfo = createAsyncThunk<
+export const fetchDataEntitiesUsageInfo = createAsyncThunk<
   DataEntityUsageInfo,
   void
->(actions.fetchDataEntitiesUsageActionType, async () => {
-  const response = await dataEntityApi.getDataEntitiesUsage();
-  return response;
-});
+>(actions.fetchDataEntitiesUsageActionType, async () =>
+  dataEntityApi.getDataEntitiesUsage()
+);
+
+export const fetchDataEntityPermissions = createAsyncThunk<
+  Actions,
+  DataEntityApiGetDataEntityPermissionsRequest
+>(actions.fetchDataEntityPermissionsActionType, async ({ dataEntityId }) =>
+  dataEntityApi.getDataEntityPermissions({
+    dataEntityId,
+  })
+);

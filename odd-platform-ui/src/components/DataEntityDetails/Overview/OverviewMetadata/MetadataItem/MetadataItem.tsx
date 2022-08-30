@@ -7,33 +7,28 @@ import {
   MetadataFieldValue,
   MetadataFieldValueUpdateFormData,
 } from 'generated-sources';
-import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import CopyButton from 'components/shared/CopyButton/CopyButton';
-import DropdownIcon from 'components/shared/Icons/DropdownIcon';
-import MetadataValueEditor from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
+import {
+  DeleteIcon,
+  EditIcon,
+  DropdownIcon,
+} from 'components/shared/Icons';
+import {
+  AppTooltip,
+  CopyButton,
+  AppButton,
+  AppIconButton,
+  ConfirmationDialog,
+  TextFormatted,
+} from 'components/shared';
 import { stringFormatted } from 'lib/helpers';
 import { useAppDispatch } from 'lib/redux/hooks';
 import {
   deleteDataEntityCustomMetadata,
   updateDataEntityCustomMetadata,
 } from 'redux/thunks';
-import {
-  Actions,
-  Container,
-  EditForm,
-  FormActionBtns,
-  Label,
-  LabelContainer,
-  Value,
-  ValueContainer,
-  ValueLeftContainer,
-} from './MetadataItemStyles';
+import { usePermissions } from 'lib/hooks';
+import MetadataValueEditor from '../../../Metadata/MetadataValueEditor/MetadataValueEditor';
+import * as S from './MetadataItemStyles';
 
 interface MetadataItemProps {
   dataEntityId: number;
@@ -45,6 +40,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   metadataItem,
 }) => {
   const dispatch = useAppDispatch();
+  const { isAllowedTo: editDataEntity } = usePermissions();
 
   const [editMode, setEditMode] = React.useState<boolean>(false);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
@@ -107,8 +103,8 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   const isNestedField = (fieldName: string) => fieldName?.indexOf('.') > 0;
 
   return (
-    <Container container wrap="nowrap">
-      <LabelContainer item sm={2}>
+    <S.Container container wrap="nowrap">
+      <S.LabelContainer item sm={2}>
         <AppTooltip
           title={() =>
             isNestedField(metadataItem.field.name)
@@ -120,26 +116,26 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 )
           }
         >
-          <Label variant="subtitle1" noWrap>
+          <S.Label variant="subtitle1" noWrap>
             {isNestedField(metadataItem.field.name) ? (
               metadataItem.field.name
             ) : (
               <TextFormatted value={metadataItem.field.name} />
             )}
-          </Label>
+          </S.Label>
         </AppTooltip>
-      </LabelContainer>
+      </S.LabelContainer>
       <Grid item container wrap="nowrap" zeroMinWidth>
         {editMode ? (
           <FormProvider {...methods}>
-            <EditForm onSubmit={methods.handleSubmit(handleUpdate)}>
+            <S.EditForm onSubmit={methods.handleSubmit(handleUpdate)}>
               <MetadataValueEditor
                 fieldName="value"
                 metadataType={metadataItem.field.type}
                 metadataValue={metadataItem.value}
                 size="small"
               />
-              <FormActionBtns>
+              <S.FormActionBtns>
                 <AppButton type="submit" size="small" color="primary">
                   Save
                 </AppButton>
@@ -151,13 +147,13 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                 >
                   Cancel
                 </AppButton>
-              </FormActionBtns>
-            </EditForm>
+              </S.FormActionBtns>
+            </S.EditForm>
           </FormProvider>
         ) : (
-          <ValueContainer>
-            <ValueLeftContainer>
-              <Value $isOpened={isExpanded}>{metadataVal}</Value>
+          <S.ValueContainer>
+            <S.ValueLeftContainer>
+              <S.Value $isOpened={isExpanded}>{metadataVal}</S.Value>
               {isExpandable && (
                 <AppButton
                   size="medium"
@@ -173,13 +169,14 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                   {isExpanded ? 'Hide' : `Show All`}
                 </AppButton>
               )}
-            </ValueLeftContainer>
+            </S.ValueLeftContainer>
             {isCustom ? (
-              <Actions>
+              <S.Actions>
                 <AppIconButton
                   size="small"
                   color="tertiary"
                   icon={<EditIcon />}
+                  disabled={!editDataEntity}
                   onClick={() => {
                     setEditMode(true);
                   }}
@@ -205,16 +202,17 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
                       size="small"
                       color="tertiary"
                       icon={<DeleteIcon />}
+                      disabled={!editDataEntity}
                       sx={{ ml: 0.5 }}
                     />
                   }
                 />
-              </Actions>
+              </S.Actions>
             ) : null}
-          </ValueContainer>
+          </S.ValueContainer>
         )}
       </Grid>
-    </Container>
+    </S.Container>
   );
 };
 export default MetadataItem;

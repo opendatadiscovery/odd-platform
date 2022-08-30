@@ -1,6 +1,9 @@
 import React, { useMemo } from 'react';
 import { Permission } from 'generated-sources';
-import { getGlobalPermissions } from 'redux/selectors';
+import {
+  getDataEntityPermissions,
+  getGlobalPermissions,
+} from 'redux/selectors';
 import { useAppSelector } from 'lib/redux/hooks';
 import PermissionContext, {
   PermissionContextProps,
@@ -8,25 +11,24 @@ import PermissionContext, {
 
 interface PermissionProviderProps {
   permissions: Permission[];
-  dataEntityId?: number;
 }
 
 const PermissionProvider: React.FunctionComponent<
   PermissionProviderProps
-> = ({ permissions, dataEntityId, children }) => {
+> = ({ permissions, children }) => {
   const globalPermissions = useAppSelector(getGlobalPermissions);
-  const dataEntityPermissions = [];
+  const dataEntityPermissions = useAppSelector(getDataEntityPermissions);
 
   const providerValue = useMemo<PermissionContextProps>(() => {
     const isAllowedTo = permissions.every(perm =>
-      globalPermissions.includes(perm)
+      dataEntityPermissions.includes(perm)
     );
     const isAdmin = globalPermissions.includes(
       Permission.MANAGEMENT_CONTROL
     );
 
     return { isAllowedTo, isAdmin };
-  }, [permissions, globalPermissions]);
+  }, [permissions, globalPermissions, dataEntityPermissions]);
 
   return (
     <PermissionContext.Provider value={providerValue}>

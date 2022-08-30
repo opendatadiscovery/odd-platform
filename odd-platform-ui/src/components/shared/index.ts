@@ -32,4 +32,13 @@ export { default as AutocompleteSuggestion } from './AutocompleteSuggestion/Auto
 export { default as AppToolbar } from './AppToolbar/AppToolbar';
 export { default as TextFormatted } from './TextFormatted/TextFormatted';
 export { default as RestrictedRoute } from './RestrictedRoute/RestrictedRoute';
+export { default as AppRadio } from './AppRadio/AppRadio';
+export { default as AlertStatusItem } from './AlertStatusItem/AlertStatusItem';
+export { default as AppDatePicker } from './AppDatePicker/AppDatePicker';
+export { default as TermItem } from './TermItem/TermItem';
+export {
+  maxDate,
+  minDate,
+  metadataDatePickerInputFormat,
+} from './AppDatePicker/AppDatePicker';
 export * as PageWithLeftSidebar from './StyledComponents/PageWithLeftSidebar';

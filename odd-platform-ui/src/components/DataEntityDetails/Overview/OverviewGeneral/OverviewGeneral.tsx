@@ -16,13 +16,14 @@ import {
   getDataEntityDetails,
   getDataEntityOwnership,
 } from 'redux/selectors';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, usePermissions } from 'lib/hooks';
 import * as S from './OverviewGeneralStyles';
 import OwnershipForm from '../../Ownership/OwnershipForm';
 
 const OverviewGeneral: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
+  const { isAdmin } = usePermissions();
 
   const dataEntityDetails = useAppSelector(
     getDataEntityDetails(dataEntityId)
@@ -83,41 +84,41 @@ const OverviewGeneral: React.FC = () => {
               <S.OwnerItem key={ownershipItem.id}>
                 {ownershipItem.owner.name}
                 <LabelItem labelName={ownershipItem.role?.name} />
-                <OwnershipForm
-                  dataEntityId={dataEntityDetails.id}
-                  dataEntityOwnership={ownershipItem}
-                  ownerEditBtn={
-                    <S.OwnerActionBtns>
+                <S.OwnerActionBtns>
+                  <OwnershipForm
+                    dataEntityId={dataEntityDetails.id}
+                    dataEntityOwnership={ownershipItem}
+                    ownerEditBtn={
                       <AppIconButton
                         size="small"
                         color="tertiary"
                         icon={<EditIcon />}
                         sx={{ ml: 1 }}
+                        disabled={!isAdmin}
                       />
-                    </S.OwnerActionBtns>
-                  }
-                />
-                <ConfirmationDialog
-                  actionTitle="Are you sure you want to delete this owner?"
-                  actionName="Delete Owner"
-                  actionText={
-                    <>
-                      &quot;{ownershipItem.owner.name}&quot; will be
-                      deleted permanently.
-                    </>
-                  }
-                  onConfirm={handleOwnershipDelete(ownershipItem.id)}
-                  actionBtn={
-                    <S.OwnerActionBtns>
+                    }
+                  />
+                  <ConfirmationDialog
+                    actionTitle="Are you sure you want to delete this owner?"
+                    actionName="Delete Owner"
+                    actionText={
+                      <>
+                        &quot;{ownershipItem.owner.name}&quot; will be
+                        deleted permanently.
+                      </>
+                    }
+                    onConfirm={handleOwnershipDelete(ownershipItem.id)}
+                    actionBtn={
                       <AppIconButton
                         size="small"
                         color="tertiary"
                         icon={<DeleteIcon />}
                         sx={{ ml: 0.5 }}
+                        disabled={!isAdmin}
                       />
-                    </S.OwnerActionBtns>
-                  }
-                />
+                    }
+                  />
+                </S.OwnerActionBtns>
               </S.OwnerItem>
             ))}
             <OwnershipForm
@@ -128,6 +129,7 @@ const OverviewGeneral: React.FC = () => {
                   size="medium"
                   color="tertiary"
                   startIcon={<AddIcon />}
+                  disabled={!isAdmin}
                 >
                   Add Owner
                 </AppButton>

@@ -10,8 +10,8 @@ import {
 } from '@mui/material/styles';
 import { StyleSheetManager, ThemeProvider } from 'styled-components';
 
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 import { CssBaseline } from '@mui/material';
 import { store } from 'redux/store';

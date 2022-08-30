@@ -22,3 +22,5 @@ export { default as RejectIcon } from './RejectIcon';
 export { default as AlertIcon } from './AlertIcon';
 export { default as CopyIcon } from './CopyIcon';
 export { default as UserSyncIcon } from './UserSyncIcon';
+export { default as CloseIcon } from './CloseIcon';
+export { default as CalendarIcon } from './CalendarIcon';

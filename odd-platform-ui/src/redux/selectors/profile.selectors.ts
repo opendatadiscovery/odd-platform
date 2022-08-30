@@ -21,6 +21,11 @@ export const getGlobalPermissions = createSelector(
   profile => profile.owner?.identity.actions?.allowed || emptyArr
 );
 
+export const getDataEntityPermissions = createSelector(
+  profileState,
+  profile => profile.permissions.dataEntity.allowed || emptyArr
+);
+
 export const getAssociationRequestStatus = createSelector(
   profileState,
   profile => profile.owner?.associationRequest?.status

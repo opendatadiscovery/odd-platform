@@ -248,7 +248,7 @@ export const dataEntitiesSlice = createSlice({
       })
     );
     builder.addCase(
-      thunks.fetchDataentitiesUsageInfo.fulfilled,
+      thunks.fetchDataEntitiesUsageInfo.fulfilled,
       (state, { payload }) => ({
         ...state,
         dataEntityUsageInfo: payload,
