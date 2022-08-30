@@ -16,7 +16,7 @@ There are two ways to configure the Platform:
 
 <summary>YAML entries VS environment variables</summary>
 
-&#x20;Let's say you need to define the following configuration block and configure the Platform with it using environment variables.
+&#x20;Here is an example of how to define the following block and configure the Platform with it using environment variables.
 
 YAML:
 
@@ -36,7 +36,7 @@ To configure the Platform using environment variables, replace semicolons with u
 
 </details>
 
-## Database connection
+## Connect your database
 
 For all of its features ODD Platform uses PostgreSQL database and PostgreSQL database only. These variables are needed to be defined to connect ODD Platform to database:
 
@@ -64,14 +64,14 @@ spring:
 {% endtab %}
 {% endtabs %}
 
-## Authentication
+## Enable security
 
-While ODD Platform doesn't have its own registration and authentication process, it supports several third-party authentication mechanisms as well as an absence of authentication at all. You can define what mechanism to use by setting `auth.type` variable.
+While ODD Platform doesn't have its own registration and authentication process, it supports several third-party authentication mechanisms as well as an absence of authentication at all. To define what mechanism to use, set `auth.type` variable.
 
-### Authentication: Disabled
+By default, the authentication option is disabled:
 
 {% hint style="info" %}
-**`auth.type`** variable must be set to **`LOGIN_FORM`**
+**`auth.type`** variable must be set to **`Disabled`**
 {% endhint %}
 
 No additional settings are required.
@@ -83,7 +83,7 @@ No additional settings are required.
 {% endhint %}
 
 {% hint style="danger" %}
-**`LOGIN_FORM`**authentication mechanism **is not meant** to be used in production!
+**`LOGIN_FORM`**authentication mechanism **is not recommended** to be used in production!
 {% endhint %}
 
 The easiest authentication mechanism to use. Users' credentials can be set by defining `auth.login-form-credentials` variable in the following format: `username1:password1,username2:password2.` Default value is `admin:admin,root:root`, hence by default ODD Platform will be able to authenticate 2 users with usernames `admin` and `root` and passwords `admin` and `root` respectively.
@@ -144,7 +144,7 @@ TODO: finish
 
 
 
-## Session provider
+## Select session provider
 
 ODD Platform is able to keep users' sessions in several places such as in memory, PostgreSQL database or Redis. Session provider can be set via `session.provider` variable with following expected values:
 
@@ -212,9 +212,9 @@ If you already have a Redis in your infrastructure or you're willing to install 
 **``**Otherwise **`INTERNAL_POSTGRESQL`**is the best pick
 {% endhint %}
 
-## Metrics Export
+## Enable Metrics
 
-Some of metadata ODD Platform ingests can be conveniently represented in a shape of time-series   chart, for example the amount of data in the MySQL table or the physical size of the Redshift database. ODD Platform allows users to push such metadata to the [OTLP collector](https://opentelemetry.io/docs/collector/) as a telemetry in order to be able to create charts in Prometheus, New Relic or any other backend that supports [OTLP Exporters](https://aws-otel.github.io/docs/components/otlp-exporter). These variables are needed to be set in order to leverage this functionality:
+Some of metadata ODD Platform ingests can be conveniently represented in a shape of time-series   chart, for example the amount of data in the MySQL table or the physical size of the Redshift database. ODD Platform pushes metadata to the [OTLP collector](https://opentelemetry.io/docs/collector/) as a telemetry in order to be able to create charts in [Prometheus](https://prometheus.io/), [New Relic](https://newrelic.com/) or any other backend that supports [OTLP Exporters](https://aws-otel.github.io/docs/components/otlp-exporter). These variables are needed to be set in order to leverage this functionality:
 
 * `metrics.export.enabled`: Must be set to `true`
 * `metrics.export.otlp-endpoint`: OTLP Collector endpoint
@@ -235,7 +235,7 @@ metrics:
 {% endtab %}
 {% endtabs %}
 
-## Alert notifications
+## Enable Alert Notifications
 
 Any alert that is created inside the platform can be sent via webhook or [Slack incoming webhook](https://api.slack.com/messaging/webhooks). ODD Platform is using PostgreSQL replication mechanism so to be able to send a notification even if there's a network lag occurred or the platform crushes. In order to enable this functionality, an underlying PostgreSQL database needs to be configured as well.
 
