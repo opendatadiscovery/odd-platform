@@ -4,11 +4,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.handler.OidcUserHandler;
-import org.springframework.beans.factory.annotation.Value;
+import org.opendatadiscovery.oddplatform.auth.logout.OAuthLogoutSuccessHandler;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,37 +44,18 @@ import static org.springframework.security.config.Customizer.withDefaults;
 import static org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers.pathMatchers;
 
 @Configuration
-@EnableReactiveMethodSecurity
 @ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
+@EnableReactiveMethodSecurity
+@RequiredArgsConstructor
 public class OAuthSecurityConfiguration {
-
-    //private final Boolean cognitoEnabled;
-    private final String clientId;
-    private final String logoutUrl;
     private final Map<String, OidcUserHandler> oidcUserHandlerMap;
     private final Map<String, OAuthUserHandler> oauthUserHandlerMap;
 
-    public OAuthSecurityConfiguration(
-        //@Value("${cognito.enabled}") final Boolean cognitoEnabled,
-        @Value("${spring.security.oauth2.client.registration.cognito.client-id:}") final String clientId,
-        @Value("${cognito.logoutUrl:}") final String logoutUrl,
-        final Map<String, OidcUserHandler> oidcUserHandlerMap,
-        final Map<String, OAuthUserHandler> oauthUserHandlerMap) {
-        //this.cognitoEnabled = cognitoEnabled;
-        this.clientId = clientId;
-        this.logoutUrl = logoutUrl;
-        this.oidcUserHandlerMap = oidcUserHandlerMap;
-        this.oauthUserHandlerMap = oauthUserHandlerMap;
-    }
-
     @Bean
     public SecurityWebFilterChain securityWebFilterChainOauth2Client(final ServerHttpSecurity http,
+                                                                     final OAuthLogoutSuccessHandler logoutHandler,
                                                                      final ReactiveClientRegistrationRepository repo,
                                                                      final TemplateEngine templateEngine) {
-//        final ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
-//            ? new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId)
-//            : new OidcClientInitiatedServerLogoutSuccessHandler(repo);
-
         final List<ClientRegistration> clientRegistrations =
             IteratorUtils.toList(((InMemoryReactiveClientRegistrationRepository) repo).iterator());
 
@@ -86,7 +68,7 @@ public class OAuthSecurityConfiguration {
                 .pathMatchers("/**").authenticated())
             .oauth2Login(withDefaults())
             .logout()
-            //.logoutSuccessHandler(logoutHandler)
+            .logoutSuccessHandler(logoutHandler)
             .and();
 
         if (clientRegistrations.size() > 1) {

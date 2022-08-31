@@ -19,9 +19,6 @@ spring:
 #    database: 0
   security:
     oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_SLj42PGZ4'
       client:
         registration:
           cognito:
@@ -30,7 +27,7 @@ spring:
             scope:
               - openid
             redirect-uri: 'http://localhost:8080/login/oauth2/code/cognito'
-            client-name: 'auth-client'
+            client-name: 'Cognito'
           github:
             client-id:
             client-secret:
@@ -47,6 +44,7 @@ spring:
         provider:
           cognito:
             issuerUri: 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_SLj42PGZ4'
+            logoutUri:
             user-name-attribute: 'username'
             admin-principals:
             admin-groups: admin
@@ -59,10 +57,6 @@ spring:
             user-name-attribute: 'name'
             admin-principals:
             allowed-domain: 'oddp.dev'
-#
-#cognito:
-#  enabled: true
-#  logoutUrl:
 
 session:
   # INTERNAL_POSTGRESQL, REDIS, IN_MEMORY
