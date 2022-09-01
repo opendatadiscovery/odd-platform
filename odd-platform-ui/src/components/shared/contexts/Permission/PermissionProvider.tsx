@@ -27,7 +27,7 @@ const PermissionProvider: React.FunctionComponent<
       Permission.MANAGEMENT_CONTROL
     );
 
-    return { isAllowedTo, isAdmin };
+    return { isAllowedTo: isAdmin || isAllowedTo, isAdmin };
   }, [permissions, globalPermissions, dataEntityPermissions]);
 
   return (
