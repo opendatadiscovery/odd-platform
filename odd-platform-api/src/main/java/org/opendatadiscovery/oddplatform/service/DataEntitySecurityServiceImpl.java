@@ -27,7 +27,9 @@ public class DataEntitySecurityServiceImpl implements DataEntitySecurityService 
                     .defaultIfEmpty(false);
             })
             .filter(canEdit -> canEdit)
-            .map(canEdit -> new Actions().addAllowedItem(Permission.DATA_ENTITY_EDIT))
+            .map(canEdit -> new Actions()
+                .addAllowedItem(Permission.DATA_ENTITY_EDIT)
+                .addAllowedItem(Permission.ALERT_PROCESSING))
             .defaultIfEmpty(new Actions());
     }
 }

@@ -28,6 +28,7 @@ components:
         - MANAGEMENT_CONTROL
         - DATA_ENTITY_EDIT
         - DIRECT_OWNER_SYNC
+        - ALERT_PROCESSING
 
     Actions:
       type: object
@@ -1645,6 +1646,8 @@ components:
         created_at:
           type: string
           format: date-time
+        actions:
+          $ref: '#/components/schemas/Actions'
       required:
         - id
         - type
