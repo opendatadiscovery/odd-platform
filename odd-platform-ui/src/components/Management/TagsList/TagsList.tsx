@@ -17,16 +17,16 @@ import {
   AppInput,
   EmptyContentPlaceholder,
   NumberFormatted,
-  SkeletonWrapper,
 } from 'components/shared';
+import { usePermissions } from 'lib/hooks';
 import TagsSkeletonItem from './TagsSkeletonItem/TagsSkeletonItem';
 import EditableTagItem from './EditableTagItem/EditableTagItem';
 import TagCreateForm from './TagCreateForm/TagCreateForm';
-
 import * as S from './TagsListStyles';
 
 const TagsListView: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions();
 
   const { isLoading: isTagCreating } = useAppSelector(
     getTagCreatingStatuses
@@ -126,6 +126,7 @@ const TagsListView: React.FC = () => {
               size="medium"
               color="primaryLight"
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Create tag
             </AppButton>
@@ -151,19 +152,7 @@ const TagsListView: React.FC = () => {
             hasMore={!!pageInfo?.hasNext}
             dataLength={tagsList.length}
             scrollThreshold="200px"
-            loader={
-              isTagsFetching && (
-                <SkeletonWrapper
-                  length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <TagsSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
-                  )}
-                />
-              )
-            }
+            loader={isTagsFetching && <TagsSkeletonItem length={5} />}
           >
             {tagsList?.map(tag => (
               <EditableTagItem key={tag.id} tag={tag} />

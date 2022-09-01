@@ -1,13 +1,11 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { Label } from 'generated-sources';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { EditIcon, DeleteIcon } from 'components/shared/Icons';
+import { ConfirmationDialog, AppButton } from 'components/shared';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteLabel } from 'redux/thunks';
-
+import { usePermissions } from 'lib/hooks';
 import LabelEditForm from '../LabelEditForm/LabelEditForm';
 import * as S from './EditableLabelItemStyles';
 
@@ -19,6 +17,8 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
   label,
 }) => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions();
+
   const handleDelete = React.useCallback(
     () => dispatch(deleteLabel({ labelId: label.id })),
     [label, deleteLabel]
@@ -41,6 +41,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
                 color="primaryLight"
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
+                disabled={!isAdmin}
               >
                 Edit
               </AppButton>
@@ -58,6 +59,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
                 size="medium"
                 color="primaryLight"
                 startIcon={<DeleteIcon />}
+                disabled={!isAdmin}
               >
                 Delete
               </AppButton>

@@ -1,15 +1,15 @@
 import React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useDebouncedCallback } from 'use-debounce';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
+import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import {
+  EmptyContentPlaceholder,
+  NumberFormatted,
+  AppButton,
+  AppInput,
+  SkeletonWrapper,
+} from 'components/shared';
 import { Grid, Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getNamespaceCreatingStatuses,
@@ -19,6 +19,7 @@ import {
   getNamespaceListPageInfo,
 } from 'redux/selectors';
 import { fetchNamespaceList } from 'redux/thunks';
+import { usePermissions } from 'lib/hooks';
 import EditableNamespaceItem from './EditableNamespaceItem/EditableNamespaceItem';
 import NamespaceForm from './NamespaceForm/NamespaceForm';
 import NamespaceSkeletonItem from './NamespaceListSkeleton/NamespaceListSkeleton';
@@ -26,6 +27,7 @@ import * as S from './NamespaceListStyles';
 
 const NamespaceList: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions();
 
   const namespacesList = useAppSelector(getNamespaceList);
   const pageInfo = useAppSelector(getNamespaceListPageInfo);
@@ -131,6 +133,7 @@ const NamespaceList: React.FC = () => {
               size="medium"
               color="primaryLight"
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Create namespace
             </AppButton>

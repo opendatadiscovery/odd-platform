@@ -2,10 +2,13 @@ import React from 'react';
 import { Collector } from 'generated-sources';
 import { regenerateCollectorToken } from 'redux/thunks';
 import { useAppDispatch } from 'lib/redux/hooks';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
+import {
+  ConfirmationDialog,
+  AppButton,
+  CopyButton,
+} from 'components/shared';
 import { Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
-import CopyButton from 'components/shared/CopyButton/CopyButton';
+import { usePermissions } from 'lib/hooks';
 import { TokenContainer, Token } from './CollectorItemTokenStyles';
 
 interface CollectorItemProps {
@@ -16,6 +19,7 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({
   collector,
 }) => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions();
 
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
 
@@ -47,7 +51,11 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({
           }
           onConfirm={onTokenRegenerate}
           actionBtn={
-            <AppButton size="medium" color="primaryLight">
+            <AppButton
+              size="medium"
+              color="primaryLight"
+              disabled={!isAdmin}
+            >
               Regenerate
             </AppButton>
           }

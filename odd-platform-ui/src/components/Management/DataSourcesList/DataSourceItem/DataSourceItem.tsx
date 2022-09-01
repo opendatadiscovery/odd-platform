@@ -3,15 +3,17 @@ import { Grid, Typography } from '@mui/material';
 import { addSeconds, formatDistanceToNowStrict } from 'date-fns';
 import { DataSource } from 'generated-sources';
 import { useAppDispatch } from 'lib/redux/hooks';
-import { deleteDataSource } from 'redux/thunks/datasources.thunks';
-import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import BooleanFormatted from 'components/shared/BooleanFormatted/BooleanFormatted';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppTooltip from 'components/shared/AppTooltip/AppTooltip';
-import DataSourceFormDialog from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
+import { deleteDataSource } from 'redux/thunks';
+import {
+  LabeledInfoItem,
+  ConfirmationDialog,
+  BooleanFormatted,
+  AppButton,
+  AppTooltip,
+} from 'components/shared';
+import { EditIcon, DeleteIcon } from 'components/shared/Icons';
+import { usePermissions } from 'lib/hooks';
+import DataSourceFormDialog from '../DataSourceForm/DataSourceForm';
 import DataSourceItemToken from './DataSourceItemToken/DataSourceItemToken';
 import * as S from './DataSourceItemStyles';
 
@@ -21,6 +23,7 @@ interface DataSourceItemProps {
 
 const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions();
 
   const onDelete = React.useCallback(
     () => dispatch(deleteDataSource({ dataSourceId: dataSource.id })),
@@ -44,6 +47,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
                 color="primaryLight"
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
+                disabled={!isAdmin}
               >
                 Edit
               </AppButton>
@@ -63,6 +67,7 @@ const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
                 size="medium"
                 color="primaryLight"
                 startIcon={<DeleteIcon />}
+                disabled={!isAdmin}
               >
                 Delete
               </AppButton>
