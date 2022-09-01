@@ -19,6 +19,7 @@ import {
   getOwnersList,
   getOwnersListPageInfo,
 } from 'redux/selectors';
+import { usePermissions } from 'lib/hooks';
 import EditableOwnerItem from './EditableOwnerItem/EditableOwnerItem';
 import OwnersSkeletonItem from './OwnersSkeletonItem/OwnersSkeletonItem';
 import OwnerForm from './OwnerForm/OwnerForm';
@@ -26,6 +27,7 @@ import * as S from './OwnersListStyles';
 
 const OwnersList: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions();
 
   const ownersList = useAppSelector(getOwnersList);
   const pageInfo = useAppSelector(getOwnersListPageInfo);
@@ -124,6 +126,7 @@ const OwnersList: React.FC = () => {
               color="primaryLight"
               size="medium"
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Create Owner
             </AppButton>

@@ -2,11 +2,13 @@ import React from 'react';
 import { DataSource } from 'generated-sources';
 import { regenerateDataSourceToken } from 'redux/thunks';
 import { useAppDispatch } from 'lib/redux/hooks';
-
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
+import {
+  ConfirmationDialog,
+  AppButton,
+  CopyButton,
+} from 'components/shared';
 import { Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
-import CopyButton from 'components/shared/CopyButton/CopyButton';
+import { usePermissions } from 'lib/hooks';
 import { TokenContainer, Token } from './DataSourceItemTokenStyles';
 
 interface DataSourceItemProps {
@@ -17,6 +19,7 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
   dataSource,
 }) => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions();
 
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
 
@@ -48,7 +51,11 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
           }
           onConfirm={onTokenRegenerate}
           actionBtn={
-            <AppButton size="medium" color="primaryLight">
+            <AppButton
+              size="medium"
+              color="primaryLight"
+              disabled={!isAdmin}
+            >
               Regenerate
             </AppButton>
           }

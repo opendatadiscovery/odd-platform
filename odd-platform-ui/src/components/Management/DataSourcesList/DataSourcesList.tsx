@@ -10,24 +10,24 @@ import { fetchDataSourcesList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import DataSourceForm from 'components/Management/DataSourcesList/DataSourceForm/DataSourceForm';
+import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import {
+  NumberFormatted,
+  AppButton,
+  AppInput,
+  EmptyContentPlaceholder,
+} from 'components/shared';
+import { usePermissions } from 'lib/hooks';
+import DataSourceForm from './DataSourceForm/DataSourceForm';
 import DataSourceSkeletonItem from './DataSourceSkeletonItem/DataSourceSkeletonItem';
 import DataSourceItem from './DataSourceItem/DataSourceItem';
 import * as S from './DataSourcesListStyles';
 
 const DataSourcesListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const dataSourcesList = useAppSelector(getDataSourcesList);
+  const { isAdmin } = usePermissions();
 
+  const dataSourcesList = useAppSelector(getDataSourcesList);
   const pageInfo = useAppSelector(getDataSourcesListPage);
 
   const { isLoading: isDataSourcesListFetching } = useAppSelector(
@@ -126,6 +126,7 @@ const DataSourcesListView: React.FC = () => {
               size="medium"
               color="primaryLight"
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Add datasource
             </AppButton>
@@ -134,48 +135,25 @@ const DataSourcesListView: React.FC = () => {
       </S.Caption>
       <Grid container>
         <Grid item xs={12}>
-          {isDataSourcesListFetching ? (
-            <SkeletonWrapper
-              length={5}
-              renderContent={({ randomSkeletonPercentWidth, key }) => (
-                <DataSourceSkeletonItem
-                  width={randomSkeletonPercentWidth()}
-                  key={key}
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            loader={
+              isDataSourcesListFetching && (
+                <DataSourceSkeletonItem length={5} />
+              )
+            }
+            dataLength={dataSourcesList.length}
+          >
+            {dataSourcesList.map(dataSource => (
+              <Grid key={dataSource.id} sx={{ mb: 1 }}>
+                <DataSourceItem
+                  key={dataSource.id}
+                  dataSource={dataSource}
                 />
-              )}
-            />
-          ) : (
-            <InfiniteScroll
-              next={fetchNextPage}
-              hasMore={!!pageInfo?.hasNext}
-              loader={
-                isDataSourcesListFetching ? (
-                  <SkeletonWrapper
-                    length={5}
-                    renderContent={({
-                      randomSkeletonPercentWidth,
-                      key,
-                    }) => (
-                      <DataSourceSkeletonItem
-                        width={randomSkeletonPercentWidth()}
-                        key={key}
-                      />
-                    )}
-                  />
-                ) : null
-              }
-              dataLength={dataSourcesList.length}
-            >
-              {dataSourcesList.map(dataSource => (
-                <Grid key={dataSource.id} sx={{ mb: 1 }}>
-                  <DataSourceItem
-                    key={dataSource.id}
-                    dataSource={dataSource}
-                  />
-                </Grid>
-              ))}
-            </InfiniteScroll>
-          )}
+              </Grid>
+            ))}
+          </InfiniteScroll>
         </Grid>
       </Grid>
       {!isDataSourcesListFetching && !dataSourcesList.length ? (
