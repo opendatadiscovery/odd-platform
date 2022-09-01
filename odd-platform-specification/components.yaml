@@ -1646,8 +1646,6 @@ components:
         created_at:
           type: string
           format: date-time
-        actions:
-          $ref: '#/components/schemas/Actions'
       required:
         - id
         - type
