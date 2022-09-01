@@ -290,6 +290,16 @@ public class ReactiveAlertRepositoryImpl extends ReactiveAbstractCRUDRepository<
             .collect(Collectors.toSet());
     }
 
+    @Override
+    public Mono<Long> getDataEntityIdByAlertId(final long alertId) {
+        final var query = DSL.select(DATA_ENTITY.ID)
+            .from(ALERT)
+            .join(DATA_ENTITY).on(ALERT.DATA_ENTITY_ODDRN.eq(DATA_ENTITY.ODDRN))
+            .where(ALERT.ID.eq(alertId));
+        return jooqReactiveOperations.mono(query)
+            .map(Record1::value1);
+    }
+
     private AlertDto mapRecordToDto(final Record r, final String alertCteName) {
         return new AlertDto(
             jooqRecordHelper.remapCte(r, alertCteName, ALERT).into(AlertPojo.class),
