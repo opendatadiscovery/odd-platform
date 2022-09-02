@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.handler.OidcUserHandler;
 import org.opendatadiscovery.oddplatform.auth.logout.OAuthLogoutSuccessHandler;
+import org.opendatadiscovery.oddplatform.auth.manager.OwnerBasedReactiveAuthorizationManager;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,10 +53,13 @@ public class OAuthSecurityConfiguration {
     private final Map<String, OAuthUserHandler> oauthUserHandlerMap;
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChainOauth2Client(final ServerHttpSecurity http,
-                                                                     final OAuthLogoutSuccessHandler logoutHandler,
-                                                                     final ReactiveClientRegistrationRepository repo,
-                                                                     final TemplateEngine templateEngine) {
+    public SecurityWebFilterChain securityWebFilterChainOauth2Client(
+        final ServerHttpSecurity http,
+        final OAuthLogoutSuccessHandler logoutHandler,
+        final ReactiveClientRegistrationRepository repo,
+        final OwnerBasedReactiveAuthorizationManager authManager,
+        final TemplateEngine templateEngine) {
+
         final List<ClientRegistration> clientRegistrations =
             IteratorUtils.toList(((InMemoryReactiveClientRegistrationRepository) repo).iterator());
 
@@ -64,7 +68,22 @@ public class OAuthSecurityConfiguration {
             .csrf().disable()
             .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
             .authorizeExchange(e -> e
-                .pathMatchers("/actuator/**", "/favicon.ico", "/ingestion/**", "/img/**").permitAll()
+                .pathMatchers("/actuator/**", "/favicon.ico", "/ingestion/**", "/img/**")
+                .permitAll()
+                .matchers(
+                    new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/**",
+                        HttpMethod.POST),
+                    new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/**",
+                        HttpMethod.PUT),
+                    new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/**",
+                        HttpMethod.DELETE),
+                    new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/**",
+                        HttpMethod.POST),
+                    new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/**",
+                        HttpMethod.PUT),
+                    new PathPatternParserServerWebExchangeMatcher("/api/alerts/{alert_id}/**",
+                        HttpMethod.PUT))
+                .access(authManager)
                 .pathMatchers("/**").authenticated())
             .oauth2Login(withDefaults())
             .logout()

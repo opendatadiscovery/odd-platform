@@ -104,4 +104,6 @@ public interface ReactiveAlertRepository extends ReactiveCRUDRepository<AlertPoj
      * @return - List of existing messengers
      */
     Mono<Set<String>> getExistingMessengers(final Collection<AlertPojo> alerts);
+
+    Mono<Long> getDataEntityIdByAlertId(final long alertId);
 }
