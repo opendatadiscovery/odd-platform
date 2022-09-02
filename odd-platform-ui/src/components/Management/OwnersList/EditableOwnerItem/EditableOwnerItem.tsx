@@ -17,7 +17,7 @@ const EditableOwnerItem: React.FC<EditableOwnerItemProps> = ({
   owner,
 }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteOwner({ ownerId: owner.id })),

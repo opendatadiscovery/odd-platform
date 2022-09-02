@@ -30,7 +30,7 @@ const OwnerAssociationsList = React.lazy(
 const Management: React.FC = () => {
   const { viewType } = useAppParams();
   const { managementPath } = useAppPaths();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Namespaces', link: managementPath('namespaces') },

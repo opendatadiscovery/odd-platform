@@ -30,7 +30,6 @@ import {
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchDataEntityPermissionsActionType } from 'redux/actions';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const dataEntityApi = new DataEntityApi(apiClientConf);
@@ -235,10 +234,15 @@ export const fetchDataEntitiesUsageInfo = createAsyncThunk<
 );
 
 export const fetchDataEntityPermissions = createAsyncThunk<
-  Actions,
+  { dataEntityId: number; permissions: Actions },
   DataEntityApiGetDataEntityPermissionsRequest
->(actions.fetchDataEntityPermissionsActionType, async ({ dataEntityId }) =>
-  dataEntityApi.getDataEntityPermissions({
-    dataEntityId,
-  })
+>(
+  actions.fetchDataEntityPermissionsActionType,
+  async ({ dataEntityId }) => {
+    const permissions = await dataEntityApi.getDataEntityPermissions({
+      dataEntityId,
+    });
+
+    return { dataEntityId, permissions };
+  }
 );

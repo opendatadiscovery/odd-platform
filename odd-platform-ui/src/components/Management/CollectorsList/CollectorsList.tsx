@@ -25,7 +25,7 @@ import { CollectorCaption } from './CollectorsListStyles';
 
 const CollectorsListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const pageInfo = useAppSelector(getCollectorsListPage);
   const collectorsList = useAppSelector(getCollectorsList);

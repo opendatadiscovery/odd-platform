@@ -16,7 +16,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
   terms,
   dataEntityId,
 }) => {
-  const { isAllowedTo: editDataEntity } = usePermissions();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);

@@ -17,7 +17,7 @@ const GroupItem: React.FC<GroupItemProps> = ({ dataEntityId, group }) => {
   const dispatch = useAppDispatch();
   const { dataEntityDetailsPath } = useAppPaths();
   const groupDetailsLink = dataEntityDetailsPath(group.id);
-  const { isAllowedTo: editDataEntity } = usePermissions();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();

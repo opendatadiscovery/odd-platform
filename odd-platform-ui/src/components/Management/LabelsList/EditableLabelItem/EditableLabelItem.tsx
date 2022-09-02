@@ -17,7 +17,7 @@ const EditableLabelItem: React.FC<EditableLabelItemProps> = ({
   label,
 }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteLabel({ labelId: label.id })),

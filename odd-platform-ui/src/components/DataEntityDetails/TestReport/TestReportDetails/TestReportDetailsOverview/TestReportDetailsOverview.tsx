@@ -21,7 +21,7 @@ import TestReportDetailsOverviewSkeleton from './TestReportDetailsOverviewSkelet
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
-  const { isAllowedTo: editDataEntity } = usePermissions();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const { isLoading: isDatasetTestListFetching } = useAppSelector(
     getDatasetTestListFetchingStatuses

@@ -19,7 +19,7 @@ const CollectorItemToken: React.FC<CollectorItemProps> = ({
   collector,
 }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
 

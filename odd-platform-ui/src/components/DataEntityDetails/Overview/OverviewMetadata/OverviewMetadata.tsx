@@ -17,7 +17,7 @@ interface Props {
 }
 
 const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
-  const { isAllowedTo: editDataEntity } = usePermissions();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const predefinedMetadata = useAppSelector(
     getDataEntityPredefinedMetadataList(dataEntityId)

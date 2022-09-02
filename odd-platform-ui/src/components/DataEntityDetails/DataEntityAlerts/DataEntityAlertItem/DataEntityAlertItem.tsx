@@ -5,7 +5,7 @@ import lowerCase from 'lodash/lowerCase';
 import { AppTooltip, AppButton, AlertStatusItem } from 'components/shared';
 import { Alert } from 'redux/interfaces';
 import { alertDateFormat } from 'lib/constants';
-import { usePermissions } from 'lib/hooks';
+import { useAppParams, usePermissions } from 'lib/hooks';
 import { ColContainer } from '../DataEntityAlertsStyles';
 import * as S from './DataEntityAlertItemStyles';
 
@@ -18,7 +18,8 @@ const DataEntityAlertItem: React.FC<DataEntityAlertItemProps> = ({
   alert,
   alertStatusHandler,
 }) => {
-  const { isAllowedTo: editDataEntity } = usePermissions();
+  const { dataEntityId } = useAppParams();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   return (
     <S.Container container>

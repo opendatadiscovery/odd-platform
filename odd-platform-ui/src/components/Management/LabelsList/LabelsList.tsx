@@ -26,7 +26,7 @@ import * as S from './LabelsListStyles';
 
 const LabelsListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const labelsList = useAppSelector(getLabelsList);
   const pageInfo = useAppSelector(getLabelsListPage);

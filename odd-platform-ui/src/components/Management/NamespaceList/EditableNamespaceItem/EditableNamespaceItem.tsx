@@ -17,7 +17,7 @@ const EditableNamespaceItem: React.FC<EditableNamespaceItemProps> = ({
   namespace,
 }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteNamespace({ namespaceId: namespace.id })),

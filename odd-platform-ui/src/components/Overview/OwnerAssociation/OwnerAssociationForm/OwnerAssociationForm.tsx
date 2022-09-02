@@ -37,7 +37,8 @@ import * as S from './OwnerAssociationFormStyles';
 
 const OwnerAssociationForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAllowedTo: associateImmediately } = usePermissions({});
+
   const identity = useAppSelector(getIdentity);
   const { isLoading: isRequestCreating } = useAppSelector(
     getOwnerAssociationRequestCreatingStatuses
@@ -138,7 +139,10 @@ const OwnerAssociationForm: React.FC = () => {
     dispatch(createOwnerAssociationRequest({ ownerFormData: data }))
       .unwrap()
       .then(({ status, ownerName }) => {
-        if (isAdmin && status === OwnerAssociationRequestStatus.APPROVED) {
+        if (
+          associateImmediately &&
+          status === OwnerAssociationRequestStatus.APPROVED
+        ) {
           dispatch(setProfileOwnerName(ownerName));
         }
       });
@@ -278,7 +282,7 @@ const OwnerAssociationForm: React.FC = () => {
             disabled={!methods.formState.isValid}
             isLoading={isRequestCreating}
           >
-            {isAdmin ? 'Associate' : 'Send a request'}
+            {associateImmediately ? 'Associate' : 'Send a request'}
           </AppButton>
         </S.FormContainer>
       </Grid>

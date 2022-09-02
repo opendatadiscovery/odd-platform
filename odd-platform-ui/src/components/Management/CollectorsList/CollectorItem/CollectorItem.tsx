@@ -20,7 +20,7 @@ interface CollectorItemProps {
 
 const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const onDelete = React.useCallback(
     () => dispatch(deleteCollector({ collectorId: collector.id })),

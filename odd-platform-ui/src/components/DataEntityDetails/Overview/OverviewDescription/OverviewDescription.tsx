@@ -18,7 +18,7 @@ import * as S from './OverviewDescriptionStyles';
 const OverviewDescription: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
-  const { isAllowedTo: editDataEntity } = usePermissions();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const DEInternalDescription = useAppSelector(
     getDataEntityInternalDescription(dataEntityId)

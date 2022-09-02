@@ -193,7 +193,7 @@ export interface AlertsState extends EntityState<Alert> {
 
 export interface ProfileState {
   owner: AssociatedOwner;
-  permissions: { dataEntity: Actions };
+  permissions: { byDataEntityId: { [entityId: number]: Actions } };
 }
 
 export interface OwnerAssociationState {

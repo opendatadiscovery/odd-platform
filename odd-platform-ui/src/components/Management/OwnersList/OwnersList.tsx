@@ -27,7 +27,7 @@ import * as S from './OwnersListStyles';
 
 const OwnersList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const ownersList = useAppSelector(getOwnersList);
   const pageInfo = useAppSelector(getOwnersListPageInfo);

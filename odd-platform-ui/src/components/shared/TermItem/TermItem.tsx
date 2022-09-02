@@ -17,7 +17,7 @@ const TermItem: React.FC<TermItemProps> = ({ dataEntityId, term }) => {
   const dispatch = useAppDispatch();
   const { termDetailsOverviewPath } = useAppPaths();
   const termDetailsLink = termDetailsOverviewPath(term.id);
-  const { isAllowedTo: editDataEntity } = usePermissions();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();

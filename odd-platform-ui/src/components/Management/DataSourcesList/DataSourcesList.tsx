@@ -25,7 +25,7 @@ import * as S from './DataSourcesListStyles';
 
 const DataSourcesListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const dataSourcesList = useAppSelector(getDataSourcesList);
   const pageInfo = useAppSelector(getDataSourcesListPage);

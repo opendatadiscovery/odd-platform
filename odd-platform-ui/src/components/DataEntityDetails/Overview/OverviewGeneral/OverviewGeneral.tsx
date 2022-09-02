@@ -23,7 +23,7 @@ import OwnershipForm from '../../Ownership/OwnershipForm';
 const OverviewGeneral: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({ dataEntityId });
 
   const dataEntityDetails = useAppSelector(
     getDataEntityDetails(dataEntityId)

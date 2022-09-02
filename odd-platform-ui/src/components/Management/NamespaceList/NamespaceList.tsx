@@ -27,7 +27,7 @@ import * as S from './NamespaceListStyles';
 
 const NamespaceList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const namespacesList = useAppSelector(getNamespaceList);
   const pageInfo = useAppSelector(getNamespaceListPageInfo);

@@ -3,7 +3,7 @@ import { Collapse, Grid, Typography } from '@mui/material';
 import { Tag } from 'generated-sources';
 import { AppButton, TagItem } from 'components/shared';
 import { AddIcon, EditIcon } from 'components/shared/Icons';
-import { usePermissions } from 'lib/hooks';
+import { useAppParams, usePermissions } from 'lib/hooks';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
 import { CaptionContainer, TagsContainer } from './OverviewTagsStyles';
 
@@ -12,7 +12,8 @@ interface OverviewTagsProps {
 }
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
-  const { isAllowedTo: editDataEntity } = usePermissions();
+  const { dataEntityId } = useAppParams();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);

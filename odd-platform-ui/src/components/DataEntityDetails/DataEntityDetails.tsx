@@ -68,7 +68,7 @@ const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const { dataEntityId } = useAppParams();
-  const { isAdmin, isAllowedTo: editDataEntity } = usePermissions();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
   const { searchPath } = useAppPaths();
 
   const searchId = useAppSelector(getSearchId);
@@ -104,7 +104,7 @@ const DataEntityDetails: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
-    if (!isAdmin) dispatch(fetchDataEntityPermissions({ dataEntityId }));
+    dispatch(fetchDataEntityPermissions({ dataEntityId }));
   }, [dataEntityId]);
 
   const handleEntityGroupDelete = React.useCallback(

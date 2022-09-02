@@ -14,6 +14,8 @@ import {
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { fetchDataEntitiesUsageInfo, fetchTagsList } from 'redux/thunks';
 import { DataEntityClassLabelMap } from 'redux/interfaces';
+import { PermissionProvider } from 'components/shared/contexts';
+import { Permission } from 'generated-sources';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import * as S from './OverviewStyles';
 import OwnerAssociation from './OwnerAssociation/OwnerAssociation';
@@ -98,7 +100,9 @@ const Overview: React.FC = () => {
           </Grid>
         </>
       )}
-      <OwnerAssociation />
+      <PermissionProvider permissions={[Permission.DIRECT_OWNER_SYNC]}>
+        <OwnerAssociation />
+      </PermissionProvider>
     </S.Container>
   );
 };

@@ -15,7 +15,7 @@ interface EditableTagItemProps {
 
 const EditableTagItem: React.FC<EditableTagItemProps> = ({ tag }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const handleDelete = React.useCallback(
     () => dispatch(deleteTag({ tagId: tag.id })),

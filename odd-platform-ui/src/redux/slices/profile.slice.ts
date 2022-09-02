@@ -5,7 +5,7 @@ import * as thunks from 'redux/thunks';
 
 export const initialState: ProfileState = {
   owner: { identity: { username: '' } },
-  permissions: { dataEntity: {} },
+  permissions: { byDataEntityId: {} },
 };
 
 export const profileSlice = createSlice({
@@ -33,7 +33,9 @@ export const profileSlice = createSlice({
     builder.addCase(
       thunks.fetchDataEntityPermissions.fulfilled,
       (state, { payload }) => {
-        state.permissions.dataEntity = payload;
+        const { dataEntityId, permissions } = payload;
+
+        state.permissions.byDataEntityId[dataEntityId] = permissions;
       }
     );
   },

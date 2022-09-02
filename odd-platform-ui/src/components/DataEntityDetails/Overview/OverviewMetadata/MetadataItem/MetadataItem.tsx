@@ -40,7 +40,7 @@ const MetadataItem: React.FC<MetadataItemProps> = ({
   metadataItem,
 }) => {
   const dispatch = useAppDispatch();
-  const { isAllowedTo: editDataEntity } = usePermissions();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const [editMode, setEditMode] = React.useState<boolean>(false);
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);

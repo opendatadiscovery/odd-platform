@@ -26,7 +26,7 @@ import * as S from './TagsListStyles';
 
 const TagsListView: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const { isLoading: isTagCreating } = useAppSelector(
     getTagCreatingStatuses

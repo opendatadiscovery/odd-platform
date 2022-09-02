@@ -23,7 +23,7 @@ interface DataSourceItemProps {
 
 const DataSourceItem: React.FC<DataSourceItemProps> = ({ dataSource }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const onDelete = React.useCallback(
     () => dispatch(deleteDataSource({ dataSourceId: dataSource.id })),

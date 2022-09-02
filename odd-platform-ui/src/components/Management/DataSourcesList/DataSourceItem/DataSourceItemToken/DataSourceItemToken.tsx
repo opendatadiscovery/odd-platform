@@ -19,7 +19,7 @@ const DataSourceItemToken: React.FC<DataSourceItemProps> = ({
   dataSource,
 }) => {
   const dispatch = useAppDispatch();
-  const { isAdmin } = usePermissions();
+  const { isAdmin } = usePermissions({});
 
   const [isHidden, setIsHidden] = React.useState<boolean>(true);
 
