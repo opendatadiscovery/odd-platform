@@ -37,6 +37,8 @@ import {
   getDataEntityGroupUpdatingStatuses,
   getSearchId,
 } from 'redux/selectors';
+import { Permission } from 'generated-sources';
+import { PermissionProvider } from 'components/shared/contexts';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
@@ -323,7 +325,13 @@ const DataEntityDetails: React.FC = () => {
                 '/dataentities/:dataEntityId/alerts',
                 '/embedded/dataentities/:dataEntityId/alerts',
               ]}
-              component={DataEntityAlerts}
+              render={() => (
+                <PermissionProvider
+                  permissions={[Permission.ALERT_PROCESSING]}
+                >
+                  <DataEntityAlerts />
+                </PermissionProvider>
+              )}
             />
             <Route
               exact
