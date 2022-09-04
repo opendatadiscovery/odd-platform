@@ -77,7 +77,7 @@
     "@emotion/styled": "^11.8.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.4",
-    "@testing-library/user-event": "^14.2.0",
+    "@testing-library/user-event": "^14.4.3",
     "@types/d3": "^7.1.0",
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.182",
