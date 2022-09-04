@@ -39,7 +39,7 @@
     ]
   },
   "dependencies": {
-    "@mui/lab": "^5.0.0-alpha.87",
+    "@mui/lab": "^5.0.0-alpha.96",
     "@mui/material": "^5.8.5",
     "@mui/system": "^5.8.5",
     "@mui/x-date-pickers": "^5.0.0-beta.1",
