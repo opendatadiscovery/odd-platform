@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.18.2",
-    "@emotion/react": "^11.8.1",
+    "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.8.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^12.1.4",
