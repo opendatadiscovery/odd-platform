@@ -1,15 +1,6 @@
-import { Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import styled from 'styled-components';
-import { DataEntityRunStatus, DataSetTestReport } from 'generated-sources';
-import compact from 'lodash/compact';
-
-interface CountLabelProps {
-  $testRunStatus: DataEntityRunStatus;
-}
-
-interface BarProps extends CountLabelProps {
-  $testReport: DataSetTestReport;
-}
+import { DataEntityRunStatus } from 'generated-sources';
 
 export const Container = styled('div')(() => ({
   width: '100%',
@@ -20,63 +11,58 @@ export const Container = styled('div')(() => ({
   flexGrow: 1,
 }));
 
-export const CountLabel = styled(Typography)<CountLabelProps>(
-  ({ theme, $testRunStatus }) => ({
-    color: theme.palette.runStatus[$testRunStatus],
-  })
-);
+export const BarContainer = styled(Grid)(({ theme }) => ({
+  flexWrap: 'nowrap',
+  marginTop: theme.spacing(1),
+  columnGap: '1px',
+  '*:first-child': {
+    borderTopLeftRadius: '2px',
+    borderBottomLeftRadius: '2px',
+  },
+  '*:last-child': {
+    borderTopRightRadius: '2px',
+    borderBottomRightRadius: '2px',
+  },
+}));
 
-export const Bar = styled('div')<BarProps>(
-  ({ theme, $testRunStatus, $testReport }) => {
-    const key =
-      `${$testRunStatus.toLowerCase()}Total` as keyof DataSetTestReport;
-    const getNonNullValuesNum = (arr: (number | undefined)[]) =>
-      compact(arr).length || 1;
-    const getRelation = (nonNullValNum: number, total: number) =>
-      Math.fround(
-        (100 * nonNullValNum * ($testReport?.[key] || 0)) / total
-      );
-    const getResultStyles = (relation: number) => ({
-      backgroundColor: theme.palette.runStatus[$testRunStatus],
-      height: '8px',
-      width: '100%',
-      flexBasis: `${relation}%`,
-      maxWidth: `${relation}%`,
-      flexGrow: $testReport?.[key] ? 1 : 0,
-    });
+export const Bar = styled('div')<{
+  $runStatus: string;
+  $runCount: number;
+  $total: number | undefined;
+}>(({ theme, $runStatus, $runCount, $total }) => {
+  const runStatusPaletteKey = $runStatus
+    .replace('Total', '')
+    .toUpperCase() as DataEntityRunStatus;
 
-    const {
-      successTotal,
-      failedTotal,
-      skippedTotal,
-      brokenTotal,
-      unknownTotal,
-      abortedTotal,
-      total,
-    } = $testReport;
+  const relation = Math.round((100 * ($runCount || 0)) / ($total || 1));
 
-    let barTotal = total || 1;
-    let nonNullValuesNum: number;
-    let relation: number;
+  return {
+    backgroundColor: theme.palette.runStatus[runStatusPaletteKey].color,
+    height: '8px',
+    width: '100%',
+    maxWidth: `${relation}%`,
+  };
+});
 
-    if (
-      $testRunStatus === DataEntityRunStatus.FAILED ||
-      $testRunStatus === DataEntityRunStatus.SUCCESS
-    ) {
-      nonNullValuesNum = getNonNullValuesNum([successTotal, failedTotal]);
-      barTotal = (successTotal || 0) + (failedTotal || 0);
-      relation = getRelation(nonNullValuesNum, barTotal);
-      return getResultStyles(relation);
-    }
+export const CountContainer = styled(Grid)(({ theme }) => ({
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: theme.spacing(0.5),
+}));
 
-    nonNullValuesNum = getNonNullValuesNum([
-      abortedTotal,
-      skippedTotal,
-      brokenTotal,
-      unknownTotal,
-    ]);
-    relation = getRelation(nonNullValuesNum, barTotal);
+export const Count = styled('div')<{
+  $runStatus: DataEntityRunStatus;
+}>(({ theme, $runStatus }) => {
+  const runStatusPaletteKey = $runStatus
+    .replace('Total', '')
+    .toUpperCase() as DataEntityRunStatus;
 
-    return getResultStyles(relation);
-  }
-);
+  return {
+    backgroundColor:
+      theme.palette.runStatus[runStatusPaletteKey].background,
+    color: theme.palette.runStatus[runStatusPaletteKey].color,
+    borderRadius: '16px',
+    padding: theme.spacing(0, 1),
+    width: 'fit-content',
+  };
+});
