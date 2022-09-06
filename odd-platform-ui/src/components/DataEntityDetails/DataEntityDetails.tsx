@@ -107,9 +107,8 @@ const DataEntityDetailsView: React.FC = () => {
     getDataEntityDeleteFromGroupStatuses
   );
 
-  // TODO change selectors
-  const datasetQualityTestReport = useAppSelector(state =>
-    getDatasetTestReport(state, dataEntityId)
+  const datasetQualityTestReport = useAppSelector(
+    getDatasetTestReport(dataEntityId)
   );
 
   React.useEffect(() => {
