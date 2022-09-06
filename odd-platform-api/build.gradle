@@ -163,7 +163,7 @@ if (env == "dev") {
         overwrite true
     }
 
-    jibDockerBuild.dependsOn downloadOtlp
+    jib.dependsOn downloadOtlp
 }
 
 sonarqube {
