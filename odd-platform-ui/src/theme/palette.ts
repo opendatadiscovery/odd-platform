@@ -140,7 +140,7 @@ export const palette = createPalette({
       disabled: { background: colors.white, color: colors.blue20 },
     },
     tertiary: {
-      normal: { background: colors.white, color: colors.blue60 },
+      normal: { background: colors.transparent, color: colors.blue60 },
       hover: { background: colors.blue5, color: colors.blue60 },
       active: { background: colors.blue10, color: colors.blue65 },
     },

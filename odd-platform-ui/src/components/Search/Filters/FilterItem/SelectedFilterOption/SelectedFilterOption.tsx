@@ -1,12 +1,12 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { Typography } from '@mui/material';
 import { SearchFilter, SearchFilterState } from 'generated-sources';
-import * as actions from 'redux/actions';
 import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
-import { OptionalFacetNames } from 'redux/interfaces/search';
+import { OptionalFacetNames } from 'redux/interfaces/dataEntitySearch';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
+import { useAppDispatch } from 'lib/redux/hooks';
+import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
 import { Container } from './SelectedFilterOptionStyles';
 
 interface FilterItemProps {
@@ -18,12 +18,12 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({
   filter,
   facetName,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const filterId = 'id' in filter ? filter.id : filter.entityId;
   const filterName = 'name' in filter ? filter.name : filter.entityName;
   const onRemoveClick = () => {
     dispatch(
-      actions.changeDataEntitySearchFilterAction({
+      changeDataEntitySearchFacet({
         facetName,
         facetOptionId: filterId,
         facetOptionName: filterName,

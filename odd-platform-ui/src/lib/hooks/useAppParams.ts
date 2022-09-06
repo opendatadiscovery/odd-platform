@@ -10,7 +10,9 @@ interface RouteParams {
   dataEntityId: string;
   dataQATestId: string;
   termId: string;
+  termSearchId: string;
   versionId: string;
+  searchId: string;
   viewType: TermsViewType | AlertViewType | ManagementViewType;
 }
 
@@ -18,7 +20,9 @@ interface AppRouteParams {
   dataEntityId: number;
   dataQATestId: number;
   termId: number;
+  termSearchId: string;
   versionId: number;
+  searchId: string;
   viewType:
     | TermsViewType
     | AlertViewType
@@ -27,14 +31,23 @@ interface AppRouteParams {
 }
 
 export const useAppParams = (): AppRouteParams => {
-  const { dataEntityId, termId, viewType, dataQATestId, versionId } =
-    useParams<RouteParams>();
+  const {
+    dataEntityId,
+    termId,
+    termSearchId,
+    viewType,
+    dataQATestId,
+    versionId,
+    searchId,
+  } = useParams<RouteParams>();
 
   return {
     dataEntityId: parseInt(dataEntityId, 10),
     dataQATestId: parseInt(dataQATestId, 10),
     termId: parseInt(termId, 10),
+    termSearchId,
     viewType,
     versionId: parseInt(versionId, 10),
+    searchId,
   };
 };

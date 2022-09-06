@@ -11,6 +11,7 @@ import {
   DataEntityRef,
   DataEntityRun,
   DataEntityType,
+  DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
   DataSetTestReport,
@@ -26,8 +27,7 @@ import {
   Tag,
   Term,
   TermDetails,
-  TermRefList,
-  DataEntityUsageInfo,
+  TermRef,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -96,7 +96,10 @@ export interface DatasetStructureState {
     };
   };
   statsByVersionId: {
-    [versionId: number]: DataSetStructureTypesCount;
+    [versionId: number]: {
+      typeStats: DataSetStructureTypesCount;
+      isUniqueStatsExist: boolean;
+    };
   };
   latestVersionByDataset: {
     [datasetId: string]: DataSetVersion['id'];
@@ -166,7 +169,7 @@ export interface DataEntitiesState {
   dataEntityUsageInfo: DataEntityUsageInfo;
 }
 
-export interface SearchState {
+export interface DataEntitySearchState {
   searchId: string;
   query: string;
   myObjects: boolean;
@@ -209,7 +212,7 @@ export interface TermSearchState {
     items: Term[];
     pageInfo: CurrentPageInfo;
   };
-  suggestions: TermRefList;
+  suggestions: TermRef[];
   facetState: TermSearchFacetsByName;
 }
 

@@ -9,7 +9,7 @@ import {
   fetchMyDependentsAlertList,
 } from 'redux/thunks';
 import { getAlertTotals } from 'redux/selectors';
-import { changeAlertsFilterAction } from 'redux/reducers/alerts.slice';
+import { changeAlertsFilterAction } from 'redux/slices/alerts.slice';
 import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
 import { AlertViewType } from 'lib/interfaces';
 import { useAppParams, useAppPaths } from 'lib/hooks';

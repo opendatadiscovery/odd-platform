@@ -119,7 +119,7 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
 
   // Tags list
   type TermDetailsTagsFormType = {
-    tagNameList: { name: string; important: boolean }[];
+    tagNameList: { name: string; important?: boolean }[];
   };
   const methods = useForm<TermDetailsTagsFormType>({
     defaultValues: { tagNameList: [{ name: '', important: false }] },

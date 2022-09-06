@@ -1,36 +1,59 @@
 import { Grid, GridProps } from '@mui/material';
 import styled from 'styled-components';
 
-export const OptionsBtnContainer = styled(Grid)<GridProps>(() => ({
-  display: 'flex',
-  flexWrap: 'nowrap',
-  alignItems: 'center',
-  opacity: 0,
-}));
+export const ButtonContainer = styled(Grid)<{ $showBtn?: boolean }>(
+  ({ $showBtn }) => ({
+    opacity: $showBtn ? 1 : 0,
+  })
+);
 
-export const RowInfo = styled(Grid)(({ theme }) => ({
-  minHeight: '40px',
-  borderBottom: '1px solid',
-  borderBottomColor: theme.palette.backgrounds.primary,
-  '& > *': {
-    padding: theme.spacing(0.5, 0),
-    alignItems: 'center',
-  },
+export const RowContainer = styled(Grid)<{
+  $offset: number;
+  $rowHeight?: string | number;
+}>(({ theme, $offset, $rowHeight }) => ({
+  flexWrap: 'nowrap',
+  position: 'relative',
+
   '&:hover': {
     backgroundColor: theme.palette.backgrounds.primary,
-    [`${OptionsBtnContainer}`]: {
+    [`${ButtonContainer}`]: {
       opacity: 1,
+    },
+  },
+
+  '&::after': {
+    display: 'block',
+    position: 'absolute',
+    content: '""',
+    width: `calc(100% - ${$offset + 8}px)`,
+    borderBottom: `1px solid ${theme.palette.backgrounds.primary}`,
+    marginLeft: `${$offset + 8}px`,
+    top: $rowHeight,
+    '&:last-child': {
+      borderBottom: `1px solid ${theme.palette.backgrounds.primary}`,
     },
   },
 }));
 
-export const TypeContainer = styled(Grid)(() => ({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  alignItems: 'center',
+export const RowInfoWrapper = styled(Grid)<{
+  $padOffset: number;
+}>(({ $padOffset }) => ({
+  flexWrap: 'nowrap',
+  alignItems: 'baseline',
+  paddingLeft: `${$padOffset}px`,
 }));
 
-export const Divider = styled(Grid)(({ theme }) => ({
-  borderRight: '1px solid',
-  borderRightColor: theme.palette.backgrounds.primary,
+export const RowInfoHeader = styled(Grid)(({ theme }) => ({
+  display: 'flex',
+  padding: theme.spacing(0.25, 0),
+  alignItems: 'center',
+  flexWrap: 'nowrap',
+  justifyContent: 'space-between',
+}));
+
+export const RowInfoHeaderActions = styled(Grid)<GridProps>(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  flexWrap: 'nowrap',
+  justifyContent: 'flex-end',
 }));

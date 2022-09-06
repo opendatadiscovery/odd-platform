@@ -1,6 +1,6 @@
 export * from './state';
 export * from './loader';
-export * from './search';
+export * from './dataEntitySearch';
 export * from './dataentities';
 export * from './datasetStructure';
 export * from './dataQualityTest';

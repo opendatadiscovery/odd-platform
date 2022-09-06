@@ -1,23 +1,28 @@
 import React from 'react';
 import { Collapse, Grid, Typography } from '@mui/material';
-import { MetadataFieldValue } from 'generated-sources';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import MetadataCreateFormContainer from 'components/DataEntityDetails/Metadata/MetadataCreateForm/MetadataCreateFormContainer';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { AddIcon } from 'components/shared/Icons';
+import { AppButton } from 'components/shared';
+import { useAppSelector } from 'lib/redux/hooks';
+import {
+  getDataEntityCustomMetadataList,
+  getDataEntityPredefinedMetadataList,
+} from 'redux/selectors';
+import MetadataCreateForm from '../../Metadata/MetadataCreateForm/MetadataCreateForm';
 import MetadataItem from './MetadataItem/MetadataItem';
 import { SubtitleContainer } from './OverviewMetadataStyles';
 
-interface OverviewMetadataProps {
+interface Props {
   dataEntityId: number;
-  predefinedMetadata: MetadataFieldValue[];
-  customMetadata: MetadataFieldValue[];
 }
 
-const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
-  dataEntityId,
-  predefinedMetadata = [],
-  customMetadata = [],
-}) => {
+const OverviewMetadata: React.FC<Props> = ({ dataEntityId }) => {
+  const predefinedMetadata = useAppSelector(
+    getDataEntityPredefinedMetadataList(dataEntityId)
+  );
+  const customMetadata = useAppSelector(
+    getDataEntityCustomMetadataList(dataEntityId)
+  );
+
   const visibleLimit = 10;
 
   const [predefOpen, setPredefOpen] = React.useState<boolean>(false);
@@ -101,7 +106,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
           <Grid item xs={12}>
             <SubtitleContainer>
               <Typography variant="h4">Custom</Typography>
-              <MetadataCreateFormContainer
+              <MetadataCreateForm
                 dataEntityId={dataEntityId}
                 btnCreateEl={
                   <AppButton
@@ -135,7 +140,7 @@ const OverviewMetadata: React.FC<OverviewMetadataProps> = ({
               wrap="nowrap"
             >
               <Typography variant="subtitle2">Not created.</Typography>
-              <MetadataCreateFormContainer
+              <MetadataCreateForm
                 dataEntityId={dataEntityId}
                 btnCreateEl={
                   <AppButton

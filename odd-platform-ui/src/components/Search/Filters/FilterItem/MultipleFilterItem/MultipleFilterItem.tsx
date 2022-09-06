@@ -1,45 +1,49 @@
 import React from 'react';
 import { Grid } from '@mui/material';
-import {
-  OptionalFacetNames,
-  SearchFilterStateSynced,
-} from 'redux/interfaces/search';
-import SelectedFilterOption from 'components/Search/Filters/FilterItem/SelectedFilterOption/SelectedFilterOption';
-import MultipleFilterItemAutocompleteContainer from './MultipleFilterItemAutocomplete/MultipleFilterItemAutocompleteContainer';
+import { OptionalFacetNames } from 'redux/interfaces';
+import { useAppSelector } from 'lib/redux/hooks';
+import { getSelectedSearchFacetOptions } from 'redux/selectors';
+import SelectedFilterOption from '../SelectedFilterOption/SelectedFilterOption';
+import MultipleFilterItemAutocomplete from './MultipleFilterItemAutocomplete/MultipleFilterItemAutocomplete';
 
 interface FilterItemProps {
   name: string;
   facetName: OptionalFacetNames;
-  selectedOptions?: SearchFilterStateSynced[];
 }
 
 const MultipleFilterItem: React.FC<FilterItemProps> = ({
   name,
   facetName,
-  selectedOptions,
-}) => (
-  <Grid container>
-    <Grid item xs={12}>
-      <MultipleFilterItemAutocompleteContainer
-        name={name}
-        facetName={facetName}
-      />
-    </Grid>
-    <Grid
-      display="inline-flex"
-      item
-      xs={12}
-      sx={{ my: 0.25, mx: -0.25 }}
-      container
-    >
-      {selectedOptions?.map(option => (
-        <SelectedFilterOption
-          key={option.entityId}
+}) => {
+  const selectedOptions = useAppSelector(
+    getSelectedSearchFacetOptions(facetName)
+  );
+
+  return (
+    <Grid container>
+      <Grid item xs={12}>
+        <MultipleFilterItemAutocomplete
+          name={name}
           facetName={facetName}
-          filter={option}
         />
-      ))}
+      </Grid>
+      <Grid
+        display="inline-flex"
+        item
+        xs={12}
+        sx={{ my: 0.25, mx: -0.25 }}
+        container
+      >
+        {selectedOptions?.map(option => (
+          <SelectedFilterOption
+            key={option.entityId}
+            facetName={facetName}
+            filter={option}
+          />
+        ))}
+      </Grid>
     </Grid>
-  </Grid>
-);
+  );
+};
+
 export default MultipleFilterItem;
