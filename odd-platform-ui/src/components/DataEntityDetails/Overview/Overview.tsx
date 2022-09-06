@@ -10,7 +10,7 @@ import {
 import { useAppSelector } from 'lib/redux/hooks';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { SkeletonWrapper } from 'components/shared';
-import { DataQualityTestExpectation } from 'generated-sources';
+import OverviewExpectations from './OverviewExpectations/OverviewExpectations';
 import OverviewGroups from './OverviewGroups/OverviewGroups';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import OverviewDescription from './OverviewDescription/OverviewDescription';
@@ -21,7 +21,6 @@ import { SectionContainer } from './OverviewStyles';
 import OverviewGeneral from './OverviewGeneral/OverviewGeneral';
 import OverviewDataQualityReport from './OverviewDataQualityReport/OverviewDataQualityReport';
 import OverviewTerms from './OverviewTerms/OverviewTerms';
-import OverviewExpectations from './OverviewExpectatios/OverviewExpectatios';
 
 const Overview: React.FC = () => {
   const { dataEntityId } = useAppParams();
@@ -57,9 +56,8 @@ const Overview: React.FC = () => {
                 </Typography>
                 <SectionContainer square elevation={0}>
                   <OverviewExpectations
-                    data={
-                      dataEntityDetails.expectation as DataQualityTestExpectation
-                    }
+                    parameters={dataEntityDetails.expectation}
+                    linkedUrlList={dataEntityDetails.linkedUrlList}
                   />
                 </SectionContainer>
               </>
