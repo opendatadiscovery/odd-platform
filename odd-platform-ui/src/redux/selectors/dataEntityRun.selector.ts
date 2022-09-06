@@ -1,9 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
-
 import { DataEntityRunState, RootState } from 'redux/interfaces';
-import { dataEntityRunAdapter } from 'redux/reducers/dataEntityRuns.slice';
+import { dataEntityRunAdapter } from 'redux/slices/dataEntityRuns.slice';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
-
 import * as actions from 'redux/actions';
 
 const getDataEntityRunState = ({

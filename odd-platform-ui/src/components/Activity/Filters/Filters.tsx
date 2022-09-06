@@ -4,7 +4,7 @@ import AppButton from 'components/shared/AppButton/AppButton';
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { getDataSourcesList, getNamespaceList } from 'redux/selectors';
-import { clearActivityFilters } from 'redux/reducers/activity.slice';
+import { clearActivityFilters } from 'redux/slices/activity.slice';
 import { ActivityEventType } from 'generated-sources';
 import SingleFilter from 'components/shared/Activity/ActivityFilterItems/SingleFilter/SingleFilter';
 import CalendarFilter from 'components/shared/Activity/ActivityFilterItems/CalendarFilter/CalendarFilter';

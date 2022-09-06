@@ -1,13 +1,12 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
 import { Typography } from '@mui/material';
 import { SearchFilter, SearchFilterState } from 'generated-sources';
 import { TermSearchOptionalFacetNames } from 'redux/interfaces';
-import * as actions from 'redux/actions';
-import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { Container } from './SelectedFilterOptionStyles';
+import { AppIconButton, TextFormatted } from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
+import { useAppDispatch } from 'redux/lib/hooks';
+import { changeTermSearchFacet } from 'redux/slices/termSearch.slice';
+import * as S from './SelectedFilterOptionStyles';
 
 interface FilterItemProps {
   filter: SearchFilter | SearchFilterState;
@@ -18,12 +17,13 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({
   filter,
   facetName,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
   const filterId = 'id' in filter ? filter.id : filter.entityId;
   const filterName = 'name' in filter ? filter.name : filter.entityName;
   const onRemoveClick = () => {
     dispatch(
-      actions.changeTermSearchFilterAction({
+      changeTermSearchFacet({
         facetName,
         facetOptionId: filterId,
         facetOptionName: filterName,
@@ -33,7 +33,7 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({
   };
 
   return (
-    <Container sx={{ mt: 0.5, mx: 0.25 }}>
+    <S.Container sx={{ mt: 0.5, mx: 0.25 }}>
       <Typography noWrap title={filterName}>
         <TextFormatted value={filterName} />
       </Typography>
@@ -44,7 +44,7 @@ const SelectedFilterOption: React.FC<FilterItemProps> = ({
         icon={<ClearIcon />}
         onClick={onRemoveClick}
       />
-    </Container>
+    </S.Container>
   );
 };
 

@@ -4,21 +4,22 @@ import {
   AutocompleteInputChangeReason,
   createFilterOptions,
 } from '@mui/material/useAutocomplete';
-import { fetchLabelsList as searchLabels } from 'redux/thunks/labels.thunks';
+import { fetchLabelsList as searchLabels } from 'redux/thunks';
 import { useAppDispatch } from 'redux/lib/hooks';
-
 import { useDebouncedCallback } from 'use-debounce';
 import { Label } from 'generated-sources';
-import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import { UseFieldArrayReturn } from 'react-hook-form';
+import { AppInput, AutocompleteSuggestion } from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
+import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 
 type FilterOption = Omit<Label, 'id'> & Partial<Label>;
+type DatasetFieldInfoFormType = {
+  labels: { name: string; external?: boolean }[];
+  internalDescription: string;
+};
 
 interface LabelsAutocompleteProps {
-  appendLabel: UseFieldArrayReturn['append'];
+  appendLabel: UseFieldArrayAppend<DatasetFieldInfoFormType, 'labels'>;
 }
 
 const LabelsAutocomplete: React.FC<LabelsAutocompleteProps> = ({

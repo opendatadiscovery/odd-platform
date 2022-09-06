@@ -1,74 +1,57 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
+import { AppButton, AppCircularProgress } from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import {
-  Namespace,
-  NamespaceApiGetNamespaceListRequest,
-} from 'generated-sources';
-import MultipleFilterItemContainer from 'components/Terms/TermSearch/TermSearchFilters/TermSearchFilterItem/MultipleFilterItem/MultipleFilterItemContainer';
-import SingleFilterItemContainer from 'components/Terms/TermSearch/TermSearchFilters/TermSearchFilterItem/SingleFilterItem/SingleFilterItemContainer';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppCircularProgress from 'components/shared/AppCircularProgress/AppCircularProgress';
-import {
-  TermSearchFiltersContainer,
-  TermSearchListContainer,
-  TermSearchFacetsLoaderContainer,
-} from './TermSearchFiltersStyles';
+  getNamespaceList,
+  getTermSearchUpdateStatuses,
+} from 'redux/selectors';
+import { fetchNamespaceList } from 'redux/thunks';
+import { clearTermSearchFacets } from 'redux/slices/termSearch.slice';
+import MultipleFilterItem from './TermSearchFilterItem/MultipleFilterItem/MultipleFilterItem';
+import SingleFilterItem from './TermSearchFilterItem/SingleFilterItem/SingleFilterItem';
+import * as S from './TermSearchFiltersStyles';
 
-interface FiltersProps {
-  namespaces: Namespace[];
-  fetchNamespaceList: (
-    params: NamespaceApiGetNamespaceListRequest
-  ) => void;
-  clearTermSearchFilters: () => void;
-  isTermSearchFacetsUpdating: boolean;
-}
+const TermSearchFilters: React.FC = () => {
+  const dispatch = useAppDispatch();
 
-const TermSearchFilters: React.FC<FiltersProps> = ({
-  namespaces,
-  fetchNamespaceList,
-  clearTermSearchFilters,
-  isTermSearchFacetsUpdating,
-}) => {
+  const namespaces = useAppSelector(getNamespaceList);
+  const { isLoading: isTermSearchUpdating } = useAppSelector(
+    getTermSearchUpdateStatuses
+  );
+
   React.useEffect(() => {
-    fetchNamespaceList({ page: 1, size: 100 });
+    dispatch(fetchNamespaceList({ page: 1, size: 100 }));
   }, []);
 
   return (
-    <TermSearchFiltersContainer>
+    <S.TermSearchFiltersContainer>
       <Grid container justifyContent="space-between" sx={{ mb: 1 }}>
         <Typography variant="h4">Filters</Typography>
         <AppButton
           color="tertiary"
           size="medium"
-          onClick={clearTermSearchFilters}
+          onClick={() => dispatch(clearTermSearchFacets())}
         >
           Clear All
         </AppButton>
       </Grid>
-      <TermSearchListContainer>
-        <MultipleFilterItemContainer
-          key="tg"
-          facetName="tags"
-          name="Tag"
-        />
-        <MultipleFilterItemContainer
-          key="ow"
-          facetName="owners"
-          name="Owner"
-        />
-        <SingleFilterItemContainer
+      <S.TermSearchListContainer>
+        <MultipleFilterItem key="tg" facetName="tags" name="Tag" />
+        <MultipleFilterItem key="ow" facetName="owners" name="Owner" />
+        <SingleFilterItem
           key="ns"
           facetName="namespaces"
           name="Namespace"
           facetOptions={namespaces}
         />
-        <TermSearchFacetsLoaderContainer container sx={{ mt: 2 }}>
-          {isTermSearchFacetsUpdating && (
+        <S.TermSearchFacetsLoaderContainer container sx={{ mt: 2 }}>
+          {isTermSearchUpdating && (
             <AppCircularProgress size={16} text="Updating filters" />
           )}
-        </TermSearchFacetsLoaderContainer>
-      </TermSearchListContainer>
-    </TermSearchFiltersContainer>
+        </S.TermSearchFacetsLoaderContainer>
+      </S.TermSearchListContainer>
+    </S.TermSearchFiltersContainer>
   );
 };
 

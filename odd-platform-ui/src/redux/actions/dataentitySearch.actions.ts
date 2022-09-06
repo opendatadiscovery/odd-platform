@@ -2,11 +2,6 @@ import { createActionType } from 'redux/lib/helpers';
 
 export const dataEntitiesSearchActionTypePrefix = 'dataEntitiesSearch';
 
-export const fetchDataEntitySearchSuggestionsActionType = createActionType(
-  dataEntitiesSearchActionTypePrefix,
-  'fetchDataEntitySearchSuggestions'
-);
-
 export const getDataEntitySearchActionType = createActionType(
   dataEntitiesSearchActionTypePrefix,
   'getDataEntitySearch'
@@ -30,4 +25,9 @@ export const fetchDataEntitySearchResultsActionType = createActionType(
 export const getDataEntitySearchFacetOptionsActionType = createActionType(
   dataEntitiesSearchActionTypePrefix,
   'getDataEntitySearchFacetOptions'
+);
+
+export const fetchDataEntitySearchSuggestionsActionType = createActionType(
+  dataEntitiesSearchActionTypePrefix,
+  'fetchDataEntitySearchSuggestions'
 );

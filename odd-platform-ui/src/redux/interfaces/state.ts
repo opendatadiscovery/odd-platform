@@ -27,7 +27,7 @@ import {
   Tag,
   Term,
   TermDetails,
-  TermRefList,
+  TermRef,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces/dataQualityTest';
@@ -48,7 +48,6 @@ import {
   TermSearchFacetOptionsByName,
   TermSearchFacetsByName,
 } from 'redux/interfaces';
-import { combinedReducer } from 'redux/reducers';
 
 export interface DataSourcesState extends EntityState<DataSource> {
   pageInfo?: CurrentPageInfo;
@@ -213,7 +212,7 @@ export interface TermSearchState {
     items: Term[];
     pageInfo: CurrentPageInfo;
   };
-  suggestions: TermRefList;
+  suggestions: TermRef[];
   facetState: TermSearchFacetsByName;
 }
 
@@ -237,18 +236,18 @@ export interface ActivitiesState {
   queryParams: ActivityQueryParams;
 }
 
-export type RootState = ReturnType<typeof combinedReducer>;
+export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
 export type Action = ActionType<typeof actions>;
 
-export type ThunkResult<ReturnType = void> = ThunkAction<
-  ReturnType,
-  RootState,
-  undefined,
-  Action
->;
+// export type ThunkResult<ReturnType = void> = ThunkAction<
+//   ReturnType,
+//   RootState,
+//   undefined,
+//   Action
+// >;
 
-export type PromiseThunkResult<ReturnType = void> = ThunkResult<
-  Promise<ReturnType>
->;
+// export type PromiseThunkResult<ReturnType = void> = ThunkResult<
+//   Promise<ReturnType>
+// >;

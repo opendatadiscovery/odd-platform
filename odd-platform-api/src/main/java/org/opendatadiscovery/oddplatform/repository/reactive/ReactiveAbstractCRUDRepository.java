@@ -97,7 +97,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     @Override
     public Mono<Page<P>> list(final int page, final int size, final String nameQuery, final List<Long> ids) {
         final Select<? extends Record> query = paginate(baseSelectManyQuery(nameQuery, ids),
-            List.of(new OrderByField(idField, SortOrder.ASC)), page - 1, size);
+            List.of(new OrderByField(idField, SortOrder.ASC)), (page - 1) * size, size);
 
         return jooqReactiveOperations.flux(query)
             .collectList()

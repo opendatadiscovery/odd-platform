@@ -35,11 +35,11 @@ const ResultItemPreview: React.FC<ResultItemPreviewProps> = ({
   const dataEntityDetails = useAppSelector(
     getDataEntityDetails(dataEntityId)
   );
-  const predefinedMetadata = useAppSelector(state =>
-    getDataEntityPredefinedMetadataList(state, dataEntityId)
+  const predefinedMetadata = useAppSelector(
+    getDataEntityPredefinedMetadataList(dataEntityId)
   );
-  const customMetadata = useAppSelector(state =>
-    getDataEntityCustomMetadataList(state, dataEntityId)
+  const customMetadata = useAppSelector(
+    getDataEntityCustomMetadataList(dataEntityId)
   );
   const { isLoading: isDataEntityDetailsFetching } = useAppSelector(
     getDataEntityDetailsFetchingStatuses

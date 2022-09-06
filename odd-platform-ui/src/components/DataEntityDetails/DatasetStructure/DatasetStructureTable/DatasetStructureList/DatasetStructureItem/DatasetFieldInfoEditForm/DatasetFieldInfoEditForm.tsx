@@ -7,11 +7,13 @@ import {
 } from 'redux/selectors';
 import { updateDataSetFieldFormData } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import {
+  AppButton,
+  AppInput,
+  DialogWrapper,
+  LabelItem,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 import * as S from './DatasetFieldInfoEditFormStyles';
 

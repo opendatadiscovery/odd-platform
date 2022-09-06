@@ -12,7 +12,7 @@ import { SkeletonWrapper } from 'components/shared';
 import OverviewGroups from './OverviewGroups/OverviewGroups';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import OverviewDescription from './OverviewDescription/OverviewDescription';
-import OverviewMetadataContainer from './OverviewMetadata/OverviewMetadataContainer';
+import OverviewMetadata from './OverviewMetadata/OverviewMetadata';
 import OverviewStats from './OverviewStats/OverviewStats';
 import OverviewTags from './OverviewTags/OverviewTags';
 import { SectionContainer } from './OverviewStyles';
@@ -29,8 +29,8 @@ const Overview: React.FC = () => {
   const { isDataset } = useAppSelector(
     getIsDataEntityBelongsToClass(dataEntityId)
   );
-  const datasetQualityTestReport = useAppSelector(state =>
-    getDatasetTestReport(state, dataEntityId)
+  const datasetQualityTestReport = useAppSelector(
+    getDatasetTestReport(dataEntityId)
   );
 
   const { isLoading: isDataEntityDetailsFetching } = useAppSelector(
@@ -49,7 +49,7 @@ const Overview: React.FC = () => {
               Metadata
             </Typography>
             <SectionContainer square elevation={0}>
-              <OverviewMetadataContainer dataEntityId={dataEntityId} />
+              <OverviewMetadata dataEntityId={dataEntityId} />
             </SectionContainer>
             <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
               About

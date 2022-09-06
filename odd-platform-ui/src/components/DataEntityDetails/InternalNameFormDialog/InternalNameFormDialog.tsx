@@ -59,7 +59,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
         setState({
           ...initialState,
           error:
-            response.statusText || 'Unable to add or edit internal name',
+            response.statusText || 'Unable to add or edit custom name',
         });
       }
     );
@@ -74,7 +74,7 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
   const formTitle = (
     <Typography variant="h4" component="span">
       {dataEntityInternalName ? 'Edit ' : 'Add '}
-      business name
+      custom name
     </Typography>
   );
 
@@ -87,8 +87,8 @@ const InternalNameFormDialog: React.FC<InternalNameFormDialogProps> = ({
         render={({ field }) => (
           <AppInput
             {...field}
-            label="Business name"
-            placeholder="Enter business name"
+            label="Custom name"
+            placeholder="Enter custom name"
             onKeyDown={handleKeyDown}
             customEndAdornment={{
               variant: 'clear',

@@ -1,26 +1,26 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
-import { MetadataField, MetadataObject } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import AppButton from 'components/shared/AppButton/AppButton';
-import { useAppDispatch } from 'redux/lib/hooks';
-import { createDataEntityCustomMetadata } from 'redux/thunks/metadata.thunks';
+import { MetadataObject } from 'generated-sources';
+import { AppButton, DialogWrapper } from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
+import { createDataEntityCustomMetadata } from 'redux/thunks';
+import { getDataEntityMetadataCreatingStatuses } from 'redux/selectors';
 import MetadataCreateFormItem from './MetadataCreateFormItem/MetadataCreateFormItem';
 
 interface MetadataCreateFormProps {
   dataEntityId: number;
-  metadataOptions: MetadataField[];
-  isLoading: boolean;
   btnCreateEl: JSX.Element;
 }
 
 const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
   dataEntityId,
-  isLoading,
   btnCreateEl,
 }) => {
   const dispatch = useAppDispatch();
+  const { isLoading: isMetadataCreating } = useAppSelector(
+    getDataEntityMetadataCreatingStatuses
+  );
 
   const methods = useForm<{ metadata: MetadataObject[] }>({
     mode: 'onChange',
@@ -107,7 +107,7 @@ const MetadataCreateForm: React.FC<MetadataCreateFormProps> = ({
       renderContent={formContent}
       renderActions={formActionButtons}
       handleCloseSubmittedForm={isSuccessfulSubmit}
-      isLoading={isLoading}
+      isLoading={isMetadataCreating}
       errorText={error}
       clearState={clearState}
       formSubmitHandler={methods.handleSubmit(createMetadata)}

@@ -16,7 +16,7 @@ import {
 } from 'redux/selectors';
 import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
 import { fetchActivityCounts, fetchActivityList } from 'redux/thunks';
-import { setActivityQueryParam } from 'redux/reducers/activity.slice';
+import { setActivityQueryParam } from 'redux/slices/activity.slice';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ActivityQueryName, ActivityQueryParams } from 'redux/interfaces';
 import { useAppPaths, useAppQuery } from 'lib/hooks';
@@ -198,8 +198,9 @@ const ActivityResults: React.FC = () => {
               scrollableTarget="activities-list"
             >
               {Object.entries(activityResults).map(
-                ([activityDate, activities]) => (
-                  <Grid container>
+                ([activityDate, activities], idx) => (
+                  // eslint-disable-next-line react/no-array-index-key
+                  <Grid key={`${activityDate}-${idx}`} container>
                     <Typography variant="subtitle2" sx={{ py: 1 }}>
                       {activityDate}
                     </Typography>

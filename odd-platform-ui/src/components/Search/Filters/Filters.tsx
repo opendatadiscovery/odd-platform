@@ -10,7 +10,7 @@ import {
 import { fetchDataSourcesList, fetchNamespaceList } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { AppButton, AppCircularProgress } from 'components/shared';
-import { clearDataEntitySearchFacets } from 'redux/reducers/dataEntitySearch.slice';
+import { clearDataEntitySearchFacets } from 'redux/slices/dataEntitySearch.slice';
 import MultipleFilterItem from './FilterItem/MultipleFilterItem/MultipleFilterItem';
 import SingleFilterItem from './FilterItem/SingleFilterItem/SingleFilterItem';
 import * as S from './FiltersStyles';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Autocomplete, Grid, Typography } from '@mui/material';
 import {
+  DataEntityGroupFormData,
   DataEntityRef,
   SearchApiGetSearchSuggestionsRequest,
 } from 'generated-sources';
@@ -15,13 +16,13 @@ import {
   getSearchSuggestions,
   getSearchSuggestionsFetchingStatuses,
 } from 'redux/selectors';
-import { UseFieldArrayReturn } from 'react-hook-form';
+import { UseFieldArrayAppend } from 'react-hook-form/dist/types/fieldArray';
 
 interface SearchSuggestionsAutocompleteProps {
   addEntities?: boolean;
-  append?: UseFieldArrayReturn['append'];
+  append?: UseFieldArrayAppend<DataEntityGroupFormData, 'entities'>;
   searchParams?: SearchApiGetSearchSuggestionsRequest;
-  formOnChange: (val: any) => void;
+  formOnChange?: (val: any) => void;
 }
 
 const SearchSuggestionsAutocomplete: React.FC<
@@ -88,7 +89,7 @@ const SearchSuggestionsAutocomplete: React.FC<
       value: Partial<DataEntityRef> | string | null
     ) => {
       setSelectedOption(value as DataEntityRef);
-      formOnChange(value);
+      if (formOnChange) formOnChange(value);
     },
     []
   );
@@ -119,7 +120,7 @@ const SearchSuggestionsAutocomplete: React.FC<
           <EntityClassItem
             sx={{ mr: 0.5 }}
             key={entityClass.id}
-            entityClassName={entityClass.name}
+            entityClassName={entityClass?.name}
           />
         ))}
       </li>

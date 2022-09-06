@@ -9,7 +9,7 @@ import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
 import { useAppDispatch, useAppSelector } from 'redux/lib/hooks';
 import { stringFormatted } from 'lib/helpers';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
-import { setActivityQueryParam } from 'redux/reducers/activity.slice';
+import { setActivityQueryParam } from 'redux/slices/activity.slice';
 import { getActivitiesQueryParamsByName } from 'redux/selectors';
 import AppSelect from 'components/shared/AppSelect/AppSelect';
 

@@ -2,21 +2,16 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { Term } from 'generated-sources';
-import AppButton from 'components/shared/AppButton/AppButton';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
+import { AppButton, ConfirmationDialog } from 'components/shared';
+import { DeleteIcon } from 'components/shared/Icons';
+import { deleteTerm } from 'redux/thunks';
+import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppDispatch } from 'redux/lib/hooks';
 import {
   TermSearchNameContainer,
   TermSearchResultsColContainer,
-} from 'components/Terms/TermSearch/TermSearchResults/TermSearchResultsStyles';
-import { useAppDispatch } from 'redux/lib/hooks';
-import { deleteTerm } from 'redux/thunks';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
-import {
-  ActionsContainer,
-  TermSearchResultsContainer,
-  TermSearchResultsItemLink,
-} from './TermSearchResultItemStyles';
+} from '../TermSearchResultsStyles';
+import * as S from './TermSearchResultItemStyles';
 
 interface TermsResultItemProps {
   termSearchResult: Term;
@@ -38,8 +33,8 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
   );
 
   return (
-    <TermSearchResultsItemLink to={termDetailsOverviewLink}>
-      <TermSearchResultsContainer container>
+    <S.TermSearchResultsItemLink to={termDetailsOverviewLink}>
+      <S.TermSearchResultsContainer container>
         <TermSearchResultsColContainer item $colType="collg">
           <TermSearchNameContainer container item>
             <Typography variant="body1" noWrap>
@@ -91,7 +86,7 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
           </Typography>
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colxs">
-          <ActionsContainer>
+          <S.ActionsContainer>
             <ConfirmationDialog
               actionTitle="Are you sure you want to delete this term?"
               actionName="Delete Term"
@@ -112,10 +107,10 @@ const TermSearchResultItem: React.FC<TermsResultItemProps> = ({
                 </AppButton>
               }
             />
-          </ActionsContainer>
+          </S.ActionsContainer>
         </TermSearchResultsColContainer>
-      </TermSearchResultsContainer>
-    </TermSearchResultsItemLink>
+      </S.TermSearchResultsContainer>
+    </S.TermSearchResultsItemLink>
   );
 };
 
