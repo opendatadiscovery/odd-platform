@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { clearActivityFilters } from 'redux/reducers/activity.slice';
+import { clearActivityFilters } from 'redux/slices/activity.slice';
 import { ActivityEventType } from 'generated-sources';
 import MultipleFilter from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/MultipleFilter';
 import CalendarFilter from 'components/shared/Activity/ActivityFilterItems/CalendarFilter/CalendarFilter';

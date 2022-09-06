@@ -44,7 +44,6 @@ const AlertItem: React.FC<AlertItemProps> = ({
             }
           >
             <AppTooltip
-              cursorPointer
               title={() =>
                 alert.dataEntity?.internalName ||
                 alert.dataEntity?.externalName

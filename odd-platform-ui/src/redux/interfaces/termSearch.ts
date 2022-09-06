@@ -1,6 +1,9 @@
-import { CountableSearchFilter, TermFacetState } from 'generated-sources';
-import { CurrentPageInfo } from './common';
-import { SearchFacetStateById } from './search';
+import {
+  CountableSearchFilter,
+  SearchFilterState,
+  TermFacetState,
+} from 'generated-sources';
+import { CurrentPageInfo } from 'redux/interfaces';
 
 export type TermSearchOptionalFacetMap = TermFacetState;
 export type TermSearchOptionalFacetNames =
@@ -15,8 +18,16 @@ export type TermSearchFacetStateUpdate = {
   facetSingle?: boolean;
 };
 
+export type TermsSearchFilterStateSynced = SearchFilterState & {
+  syncedState: boolean;
+};
+
+export type TermsSearchFacetStateById = {
+  [facetOptionId: string]: TermsSearchFilterStateSynced;
+};
+
 export type TermSearchFacetsByName = {
-  [facetName in TermSearchFacetNames]?: SearchFacetStateById;
+  [facetName in TermSearchFacetNames]?: TermsSearchFacetStateById;
 };
 
 export interface TermSearchFacetOptions {

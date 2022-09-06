@@ -8,6 +8,7 @@ configure([project(':odd-platform-api-contract'), project(':odd-platform-api')])
 
 ext {
     env = findProperty('env') ?: 'prod'
+    multiArchContainerBuild = (findProperty('multiArchContainerBuild') ?: 'true').toBoolean()
 }
 
 if (hasProperty('buildScan')) {

@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import { DataSourcesState } from 'redux/interfaces/state';
-import { datasourceAdapter } from 'redux/reducers/datasources.slice';
+import { datasourceAdapter } from 'redux/slices/datasources.slice';
 import * as actions from 'redux/actions';
 
 const dataSourcesState = ({ dataSources }: RootState): DataSourcesState =>

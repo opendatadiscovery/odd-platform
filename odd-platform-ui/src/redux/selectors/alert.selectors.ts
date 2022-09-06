@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { AlertsState, RootState } from 'redux/interfaces';
-import { alertsAdapter } from 'redux/reducers/alerts.slice';
+import { alertsAdapter } from 'redux/slices/alerts.slice';
 import { createStatusesSelector } from 'redux/selectors/loader-selectors';
 import * as actions from 'redux/actions';
 import { AlertStatus } from 'generated-sources';
@@ -9,10 +9,6 @@ const getAlertsState = ({ alerts }: RootState): AlertsState => alerts;
 
 export const { selectAll: getAlertList } =
   alertsAdapter.getSelectors<RootState>(state => state.alerts);
-
-export const getAlertTotalsFetchingStatuses = createStatusesSelector(
-  actions.fetchAlertsTotalsActionType
-);
 
 export const getAlertListFetchingStatus = createStatusesSelector(
   actions.fetchAlertListActionType

@@ -76,6 +76,7 @@ export const StyledAppInput = styled(TextField)<AppInputStyleProps>(
         fontWeight: 400,
         fontSize: pxToRem(14),
         lineHeight: pxToRem(20),
+        '&::-webkit-scrollbar': { display: 'none' },
         ...breakpointDownLgBody2,
       },
       [`& .${inputLabelClasses.root}`]: {

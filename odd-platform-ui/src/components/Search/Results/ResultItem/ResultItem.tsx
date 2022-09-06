@@ -56,13 +56,8 @@ const ResultItem: React.FC<ResultItemProps> = ({
             >
               {searchResult.internalName || searchResult.externalName}
             </Typography>
-            <AppTooltip
-              maxWidth={285}
-              checkForOverflow={false}
-              isOverflowed={false}
-              title={resultItemPreview}
-            >
-              <InformationIcon sx={{ display: 'flex', ml: 1.25 }} />
+            <AppTooltip checkForOverflow={false} title={resultItemPreview}>
+              <InformationIcon sx={{ ml: 1.25 }} />
             </AppTooltip>
           </NameContainer>
           <Grid
@@ -150,7 +145,7 @@ const ResultItem: React.FC<ResultItemProps> = ({
         {searchClass &&
         searchClass ===
           totals[DataEntityClassNameEnum.ENTITY_GROUP]?.id ? (
-          <ColContainer item $colType="colxs">
+          <ColContainer item $colType="colsm">
             <Typography variant="body1" noWrap>
               {searchResult?.itemsCount}
             </Typography>

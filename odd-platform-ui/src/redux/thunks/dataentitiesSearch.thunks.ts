@@ -1,8 +1,8 @@
 import {
   Configuration,
-  CountableSearchFilter,
-  DataEntityList,
+  DataEntity,
   DataEntityRef,
+  MultipleFacetType,
   SearchApi,
   SearchApiGetFiltersForFacetRequest,
   SearchApiGetSearchFacetListRequest,
@@ -12,104 +12,73 @@ import {
   SearchApiUpdateSearchFacetsRequest,
   SearchFacetsData,
 } from 'generated-sources';
-import { createThunk } from 'redux/thunks/base.thunk';
 import * as actions from 'redux/actions';
 import { BASE_PARAMS } from 'lib/constants';
-import {
-  FacetOptions,
-  OptionalFacetNames,
-  PaginatedResponse,
-} from 'redux/interfaces';
+import { CurrentPageInfo, FacetOptions } from 'redux/interfaces';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const searchApi = new SearchApi(apiClientConf);
 
-export const createDataEntitiesSearch = createThunk<
-  SearchApiSearchRequest,
+export const createDataEntitiesSearch = createAsyncThunk<
   SearchFacetsData,
-  SearchFacetsData
->(
-  (params: SearchApiSearchRequest) => searchApi.search(params),
-  actions.createDataEntitySearchAction,
-  (response: SearchFacetsData) => response
+  SearchApiSearchRequest
+>(actions.createDataEntitySearchActionType, async params =>
+  searchApi.search(params)
 );
 
-export const updateDataEntitiesSearch = createThunk<
-  SearchApiUpdateSearchFacetsRequest,
+export const updateDataEntitiesSearch = createAsyncThunk<
   SearchFacetsData,
-  SearchFacetsData
->(
-  (params: SearchApiUpdateSearchFacetsRequest) =>
-    searchApi.updateSearchFacets(params),
-  actions.updateDataEntitySearchAction,
-  (response: SearchFacetsData) => response
+  SearchApiUpdateSearchFacetsRequest
+>(actions.updateDataEntitySearchActionType, async params =>
+  searchApi.updateSearchFacets(params)
 );
 
-export const getDataEntitiesSearchDetails = createThunk<
-  SearchApiGetSearchFacetListRequest,
+export const getDataEntitiesSearch = createAsyncThunk<
   SearchFacetsData,
-  SearchFacetsData
->(
-  (params: SearchApiGetSearchFacetListRequest) =>
-    searchApi.getSearchFacetList(params),
-  actions.getDataEntitySearchAction,
-  (response: SearchFacetsData) => response
+  SearchApiGetSearchFacetListRequest
+>(actions.getDataEntitySearchActionType, async params =>
+  searchApi.getSearchFacetList(params)
 );
 
-export const getDataEntitiesSearchResults = createThunk<
-  SearchApiGetSearchResultsRequest,
-  DataEntityList,
-  PaginatedResponse<DataEntityList>
->(
-  (params: SearchApiGetSearchResultsRequest) =>
-    searchApi.getSearchResults(params),
-  actions.getDataEntitySearchResultsAction,
-  (
-    response: DataEntityList,
-    request: SearchApiGetSearchResultsRequest
-  ) => ({
-    ...response,
+export const fetchDataEntitySearchResults = createAsyncThunk<
+  { items: DataEntity[]; pageInfo: CurrentPageInfo },
+  SearchApiGetSearchResultsRequest
+>(actions.fetchDataEntitySearchResultsActionType, async params => {
+  const { items, pageInfo } = await searchApi.getSearchResults(params);
+  const { page, size } = params;
+
+  return {
+    items,
     pageInfo: {
-      ...response.pageInfo,
-      page: request.page,
-      hasNext: !!(request.size * request.page < response.pageInfo.total),
+      ...pageInfo,
+      page,
+      hasNext: page * size < pageInfo.total,
     },
-  })
-);
+  };
+});
 
-export const getFacetOptions = createThunk<
-  SearchApiGetFiltersForFacetRequest,
-  CountableSearchFilter[],
-  FacetOptions
->(
-  (params: SearchApiGetFiltersForFacetRequest) =>
-    searchApi.getFiltersForFacet(params),
-  actions.getSearchFacetOptionsAction,
-  (
-    response: CountableSearchFilter[],
-    request: SearchApiGetFiltersForFacetRequest
-  ) => ({
-    facetName: request.query
+export const getDataEntitySearchFacetOptions = createAsyncThunk<
+  FacetOptions,
+  SearchApiGetFiltersForFacetRequest
+>(actions.getDataEntitySearchFacetOptionsActionType, async params => {
+  const countableSearchFilters = await searchApi.getFiltersForFacet(
+    params
+  );
+  const { query, page, facetType } = params;
+
+  return {
+    facetName: query
       ? undefined
-      : (request.facetType.toLowerCase() as OptionalFacetNames),
-    facetOptions: response,
-    page: request.page,
-  })
-);
+      : (facetType.toLowerCase() as MultipleFacetType),
+    facetOptions: countableSearchFilters,
+    page,
+  };
+});
 
 export const fetchSearchSuggestions = createAsyncThunk<
   DataEntityRef[],
   SearchApiGetSearchSuggestionsRequest
->(
-  actions.fetchDataEntitySearchSuggestionsActionType,
-  async ({ query, entityClassId, manuallyCreated }) => {
-    const searchSuggestions = await searchApi.getSearchSuggestions({
-      query,
-      entityClassId,
-      manuallyCreated,
-    });
-
-    return searchSuggestions;
-  }
+>(actions.fetchDataEntitySearchSuggestionsActionType, async params =>
+  searchApi.getSearchSuggestions(params)
 );

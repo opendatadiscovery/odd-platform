@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Box, BoxProps } from '@mui/material';
 
 export type DatasetFieldKeyType = 'primary' | 'sort';
 
@@ -6,12 +7,12 @@ interface FilledContainerProps {
   $keyType: DatasetFieldKeyType;
 }
 
-export const Container = styled('div')(({ theme }) => ({
+export const Container = styled(Box)<BoxProps>(() => ({
   display: 'inline-flex',
   alignItems: 'center',
-  marginTop: theme.spacing(0.3),
   whiteSpace: 'nowrap',
 }));
+
 export const FilledContainer = styled('span')<FilledContainerProps>(
   ({ theme, $keyType }) => ({
     fontSize: theme.typography.body2.fontSize,
@@ -19,7 +20,6 @@ export const FilledContainer = styled('span')<FilledContainerProps>(
     borderRadius: '12px',
     padding: theme.spacing(0, 1),
     backgroundColor: theme.palette.datasetFieldKey[$keyType].background,
-    marginLeft: '10px',
     color: theme.palette.common.white,
   })
 );

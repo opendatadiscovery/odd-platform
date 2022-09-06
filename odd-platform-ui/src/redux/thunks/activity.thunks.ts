@@ -17,7 +17,7 @@ import {
   DataEntityActivityQueryParams,
 } from 'redux/interfaces';
 import { toDateWithoutOffset } from 'lib/helpers';
-import { activityListSize } from 'redux/reducers/activity.slice';
+import { activityListSize } from 'redux/slices/activity.slice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 const activityApi = new ActivityApi(apiClientConf);

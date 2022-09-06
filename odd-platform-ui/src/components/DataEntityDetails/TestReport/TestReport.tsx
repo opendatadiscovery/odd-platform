@@ -34,8 +34,8 @@ interface DatasetQualityTestList {
 const TestReport: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataQATestId, dataEntityId, viewType } = useAppParams();
-  const datasetTestReport = useAppSelector(state =>
-    getDatasetTestReport(state, dataEntityId)
+  const datasetTestReport = useAppSelector(
+    getDatasetTestReport(dataEntityId)
   );
 
   const datasetQualityTestList: DatasetQualityTestList = useAppSelector(

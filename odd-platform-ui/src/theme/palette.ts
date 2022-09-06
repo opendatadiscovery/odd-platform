@@ -97,12 +97,12 @@ export const palette = createPalette({
     DATA_ENTITY_GROUP: colors.lightGreen5,
   },
   runStatus: {
-    SUCCESS: colors.green60,
-    FAILED: colors.red50,
-    BROKEN: colors.orange50,
-    SKIPPED: colors.blue50,
-    ABORTED: colors.purple30,
-    UNKNOWN: colors.black30,
+    SUCCESS: { color: colors.green60, background: colors.green5 },
+    FAILED: { color: colors.red50, background: colors.red5 },
+    BROKEN: { color: colors.orange50, background: colors.orange5 },
+    SKIPPED: { color: colors.blue50, background: colors.blue5 },
+    ABORTED: { color: colors.purple30, background: colors.purple5 },
+    UNKNOWN: { color: colors.black30, background: colors.black5 },
   },
   reportStatus: {
     SUCCESS: { background: colors.green10, border: colors.green20 },
@@ -140,7 +140,7 @@ export const palette = createPalette({
       disabled: { background: colors.white, color: colors.blue20 },
     },
     tertiary: {
-      normal: { background: colors.white, color: colors.blue60 },
+      normal: { background: colors.transparent, color: colors.blue60 },
       hover: { background: colors.blue5, color: colors.blue60 },
       active: { background: colors.blue10, color: colors.blue65 },
     },

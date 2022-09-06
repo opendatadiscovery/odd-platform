@@ -17,6 +17,14 @@ interface TagsEditProps {
   btnEditEl: JSX.Element;
 }
 
+type DataEntityTagsFormType = {
+  tagNameList: {
+    name: string;
+    important?: boolean;
+    external?: boolean;
+  }[];
+};
+
 const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
   const dispatch = useAppDispatch();
   const { dataEntityId } = useAppParams();
@@ -26,13 +34,6 @@ const TagsEditForm: React.FC<TagsEditProps> = ({ btnEditEl }) => {
     getDataEntityTagsUpdatingStatuses
   );
 
-  type DataEntityTagsFormType = {
-    tagNameList: {
-      name: string;
-      important: boolean;
-      external?: boolean;
-    }[];
-  };
   const methods = useForm<DataEntityTagsFormType>({
     defaultValues: {
       tagNameList: [{ name: '' }],
