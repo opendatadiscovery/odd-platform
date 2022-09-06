@@ -6,11 +6,14 @@ import {
   DataEntityDetails,
   DataQualityTest,
 } from 'generated-sources';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
 import { format, formatDistanceStrict } from 'date-fns';
-import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import AppButton from 'components/shared/AppButton/AppButton';
 import { useAppPaths } from 'lib/hooks';
+import {
+  EntitiesListModal,
+  AppButton,
+  LabeledInfoItem,
+  EntityClassItem,
+} from 'components/shared';
 import * as S from './OverviewQualityTestStatsStyles';
 
 interface OverviewQualityTestStatsProps {
@@ -18,15 +21,23 @@ interface OverviewQualityTestStatsProps {
   suiteUrl: DataEntityDetails['suiteUrl'];
   datasetsList: DataEntityDetails['datasetsList'];
   qualityTest: DataQualityTest;
+  dataEntityName: string | undefined;
 }
 
 const OverviewQualityTestStats: React.FC<
   OverviewQualityTestStatsProps
-> = ({ suiteName, suiteUrl, datasetsList, qualityTest }) => {
+> = ({
+  suiteName,
+  suiteUrl,
+  dataEntityName,
+  qualityTest,
+  datasetsList,
+}) => {
   const { dataEntityDetailsPath, dataEntityHistoryPath } = useAppPaths();
+  const displayedEntitiesNumber = 10;
 
   return (
-    <Grid container>
+    <Grid container flexDirection="column">
       <Grid item sx={{ mb: 1.25 }}>
         <EntityClassItem
           entityClassName={DataEntityClassNameEnum.QUALITY_TEST}
@@ -34,68 +45,84 @@ const OverviewQualityTestStats: React.FC<
         />
       </Grid>
       <S.StatsContainer container>
-        <Grid item sx={{ mr: 4 }}>
-          <Grid item container>
-            <Grid item container alignItems="baseline" sx={{ mb: 1 }}>
-              <Typography variant="h2" sx={{ mr: 0.5 }}>
-                {datasetsList?.length || 0}
-              </Typography>
-              <S.StatLabel variant="body2">datasets</S.StatLabel>
-            </Grid>
-            <Grid item>
-              {datasetsList?.map(dataset => (
+        <Grid
+          item
+          lg={4}
+          container
+          flexDirection="column"
+          alignItems="flex-start"
+        >
+          <Typography variant="h3" sx={{ mb: 1.25 }}>
+            {datasetsList?.length || 0}{' '}
+            {`dataset${datasetsList?.length === 1 ? '' : 's'}`}
+          </Typography>
+          {datasetsList?.slice(0, displayedEntitiesNumber).map(dataset => (
+            <AppButton
+              to={dataEntityDetailsPath(dataset.id)}
+              key={dataset.id}
+              sx={{ my: 0.25 }}
+              size="medium"
+              color="tertiary"
+              truncate
+            >
+              {dataset.internalName || dataset.externalName}
+            </AppButton>
+          ))}
+          {datasetsList &&
+          datasetsList.length > displayedEntitiesNumber ? (
+            <EntitiesListModal
+              entities={datasetsList}
+              labelFor="Datasets"
+              dataEntityName={dataEntityName}
+              openBtnEl={
                 <AppButton
-                  key={dataset.id}
-                  sx={{ my: 0.25 }}
                   size="medium"
                   color="tertiary"
+                  sx={{ my: 0.25 }}
                 >
-                  <Link to={dataEntityDetailsPath(dataset.id)}>
-                    {dataset.internalName || dataset.externalName}
-                  </Link>
+                  Show All
                 </AppButton>
-              ))}
-            </Grid>
-          </Grid>
+              }
+            />
+          ) : null}
+        </Grid>
+        <Grid item lg={4}>
           {suiteUrl && (
-            <Grid item container sx={{ mt: 5 }}>
-              <Grid item container>
-                <S.StatLabel variant="body2">Suite</S.StatLabel>
-              </Grid>
-              <Grid item>
-                <AppButton
-                  sx={{ my: 0.25 }}
-                  size="medium"
-                  color="tertiary"
-                >
-                  <Link to={{ pathname: suiteUrl }} target="_blank">
-                    {suiteName || suiteUrl}
-                  </Link>
-                </AppButton>
-              </Grid>
+            <Grid container flexDirection="column" alignItems="flex-start">
+              <Typography variant="h3" sx={{ mb: 1.25 }}>
+                Suite
+              </Typography>
+              <AppButton
+                to={{ pathname: suiteUrl }}
+                sx={{ my: 0.25 }}
+                size="medium"
+                color="tertiary"
+                truncate
+                linkTarget="_blank"
+              >
+                {suiteName || suiteUrl}
+              </AppButton>
             </Grid>
           )}
         </Grid>
-        <S.Overview item sx={{ mr: 4 }}>
-          <Grid item container xs={12} alignItems="baseline">
-            <S.StatLabel variant="body2">Last execution</S.StatLabel>
-          </Grid>
+        <S.Overview item lg={4}>
+          <Typography variant="h3">Last execution</Typography>
           <LabeledInfoItem
             inline
             label="Status"
-            labelWidth={4}
+            labelWidth={3}
             runStatus={qualityTest.latestRun?.status}
           >
             {qualityTest?.latestRun?.status}
           </LabeledInfoItem>
-          <LabeledInfoItem inline label="Date" labelWidth={4}>
+          <LabeledInfoItem inline label="Date" labelWidth={3}>
             {qualityTest?.latestRun?.startTime &&
               format(
                 qualityTest?.latestRun?.startTime,
                 'd MMM yyyy, HH:MM a'
               )}
           </LabeledInfoItem>
-          <LabeledInfoItem inline label="Duration" labelWidth={4}>
+          <LabeledInfoItem inline label="Duration" labelWidth={3}>
             {qualityTest?.latestRun?.startTime &&
               qualityTest?.latestRun?.endTime &&
               formatDistanceStrict(
@@ -106,22 +133,6 @@ const OverviewQualityTestStats: React.FC<
                 }
               )}
           </LabeledInfoItem>
-
-          {!!qualityTest?.linkedUrlList?.length && (
-            <Grid container alignItems="baseline">
-              <S.StatLabel variant="body1">Links</S.StatLabel>
-              <Grid container sx={{ mt: 1 }}>
-                <Grid item container xs={12}>
-                  {qualityTest.linkedUrlList.map(link => (
-                    <Typography variant="body1">
-                      {`${link}, `}&nbsp;
-                    </Typography>
-                  ))}
-                </Grid>
-              </Grid>
-            </Grid>
-          )}
-
           <Grid container>
             <Link to={dataEntityHistoryPath(qualityTest?.id)}>
               <AppButton size="small" color="tertiary">

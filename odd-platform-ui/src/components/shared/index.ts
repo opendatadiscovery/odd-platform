@@ -31,4 +31,5 @@ export { default as SearchSuggestionsAutocomplete } from './Autocomplete/SearchS
 export { default as AutocompleteSuggestion } from './AutocompleteSuggestion/AutocompleteSuggestion';
 export { default as AppToolbar } from './AppToolbar/AppToolbar';
 export { default as TextFormatted } from './TextFormatted/TextFormatted';
+export { default as EntitiesListModal } from './EntitiesListModal/EntitiesListModal';
 export * as PageWithLeftSidebar from './StyledComponents/PageWithLeftSidebar';
