@@ -5,7 +5,7 @@ import TextFormatted from 'components/shared/TextFormatted/TextFormatted';
 import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import ClearIcon from 'components/shared/Icons/ClearIcon';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
-import { deleteActivityQueryParam } from 'redux/reducers/activity.slice';
+import { deleteActivityQueryParam } from 'redux/slices/activity.slice';
 import { Container } from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/SelectedFilterOption/SelectedFilterOptionStyles';
 
 interface SelectedFilterOptionProps {

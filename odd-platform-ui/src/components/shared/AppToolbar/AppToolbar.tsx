@@ -10,7 +10,7 @@ import {
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useHistory, useLocation } from 'react-router-dom';
 import { DropdownIcon } from 'components/shared/Icons';
-import { clearActivityFilters } from 'redux/reducers/activity.slice';
+import { clearActivityFilters } from 'redux/slices/activity.slice';
 import { useAppPaths } from 'lib/hooks/useAppPaths';
 import {
   AppIconButton,
@@ -105,13 +105,13 @@ const AppToolbar: React.FC = () => {
         filters: {},
       };
 
-      dispatch(
-        createTermSearch({ termSearchFormData: termSearchQuery })
-      ).then(termSearch => {
-        const termSearchLink = termSearchPath(termSearch.searchId);
-        history.replace(termSearchLink);
-        setTermSearchLoading(false);
-      });
+      dispatch(createTermSearch({ termSearchFormData: termSearchQuery }))
+        .unwrap()
+        .then(termSearch => {
+          const termSearchLink = termSearchPath(termSearch.searchId);
+          history.replace(termSearchLink);
+          setTermSearchLoading(false);
+        });
     } else if (tabs[idx].name === 'Catalog') {
       if (searchLoading) return;
       setSearchLoading(true);
@@ -121,13 +121,13 @@ const AppToolbar: React.FC = () => {
         filters: {},
       };
 
-      dispatch(
-        createDataEntitiesSearch({ searchFormData: searchQuery })
-      ).then(search => {
-        const searchLink = searchPath(search.searchId);
-        history.replace(searchLink);
-        setSearchLoading(false);
-      });
+      dispatch(createDataEntitiesSearch({ searchFormData: searchQuery }))
+        .unwrap()
+        .then(({ searchId }) => {
+          const searchLink = searchPath(searchId);
+          history.replace(searchLink);
+          setSearchLoading(false);
+        });
     } else if (tabs[idx].name === 'Activity') {
       dispatch(clearActivityFilters());
     }

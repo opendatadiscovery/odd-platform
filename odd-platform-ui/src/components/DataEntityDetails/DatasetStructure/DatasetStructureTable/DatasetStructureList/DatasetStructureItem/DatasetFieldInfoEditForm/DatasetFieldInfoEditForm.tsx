@@ -7,11 +7,13 @@ import {
 } from 'redux/selectors';
 import { updateDataSetFieldFormData } from 'redux/thunks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
-import LabelItem from 'components/shared/LabelItem/LabelItem';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
+import {
+  AppButton,
+  AppInput,
+  DialogWrapper,
+  LabelItem,
+} from 'components/shared';
+import { ClearIcon } from 'components/shared/Icons';
 import LabelsAutocomplete from './LabelsAutocomplete/LabelsAutocomplete';
 import * as S from './DatasetFieldInfoEditFormStyles';
 
@@ -133,6 +135,8 @@ const DatasetFieldInfoEditForm: React.FC<
             {...field}
             label="Description"
             placeholder="Enter description"
+            multiline
+            maxRows={4}
             customEndAdornment={{
               variant: 'clear',
               showAdornment: !!field.value,

@@ -1,40 +1,41 @@
 import React from 'react';
 import { Grid } from '@mui/material';
 import { SearchFilter } from 'generated-sources';
-import {
-  FacetStateUpdate,
-  OptionalFacetNames,
-  SearchFilterStateSynced,
-} from 'redux/interfaces/search';
-import AppSelect from 'components/shared/AppSelect/AppSelect';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import { OptionalFacetNames } from 'redux/interfaces';
+import { AppMenuItem, AppSelect } from 'components/shared';
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import { changeDataEntitySearchFacet } from 'redux/slices/dataEntitySearch.slice';
+import { getSelectedSearchFacetOptions } from 'redux/selectors';
 
 interface FilterItemProps {
   name: string;
   facetName: OptionalFacetNames;
   facetOptions: SearchFilter[];
-  selectedOptions: SearchFilterStateSynced[] | undefined;
-  setFacets: (option: FacetStateUpdate) => void;
 }
 
 const SingleFilterItem: React.FC<FilterItemProps> = ({
   name,
   facetName,
   facetOptions,
-  selectedOptions,
-  setFacets,
 }) => {
+  const dispatch = useAppDispatch();
+  const selectedOptions = useAppSelector(
+    getSelectedSearchFacetOptions(facetName)
+  );
+
   const handleFilterSelect = React.useCallback(
     (option: { id: number | string; name: string }) => {
-      setFacets({
-        facetName,
-        facetOptionId: option.id,
-        facetOptionName: option.name,
-        facetOptionState: true,
-        facetSingle: true,
-      });
+      dispatch(
+        changeDataEntitySearchFacet({
+          facetName,
+          facetOptionId: option.id,
+          facetOptionName: option.name,
+          facetOptionState: true,
+          facetSingle: true,
+        })
+      );
     },
-    [setFacets, facetName]
+    [facetName]
   );
 
   return facetOptions.length ? (
@@ -43,6 +44,7 @@ const SingleFilterItem: React.FC<FilterItemProps> = ({
         <AppSelect
           sx={{ mt: 2 }}
           label={name}
+          maxMenuHeight={464}
           id={`filter-${facetName}`}
           value={
             selectedOptions?.length ? selectedOptions[0].entityId : 'All'

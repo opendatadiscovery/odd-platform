@@ -54,8 +54,14 @@
     justify-content: center !important;
 }
 
-.rmdp-day.rmdp-deactive, .rmdp-day.rmdp-disabled {
+.rmdp-day.rmdp-deactive {
     color: #A8B0BD !important;
+}
+
+.rmdp-day.rmdp-disabled {
+    background-color: #0080FF !important;
+    color: white !important;
+    border-radius: 4px !important;
 }
 
 .rmdp-day {

@@ -10,7 +10,7 @@ import uniq from 'lodash/uniq';
 import { fetchOwnersList, fetchTagsList } from 'redux/thunks';
 import { ActivityFilterOption, ActivityQueryName } from 'redux/interfaces';
 import { AutocompleteInputChangeReason } from '@mui/material/useAutocomplete';
-import { setActivityQueryParam } from 'redux/reducers/activity.slice';
+import { setActivityQueryParam } from 'redux/slices/activity.slice';
 import AppInput from 'components/shared/AppInput/AppInput';
 import * as S from 'components/shared/Activity/ActivityFilterItems/MultipleFilter/MultipleFilterAutocomplete/MultipleFilterAutocompleteStyles';
 

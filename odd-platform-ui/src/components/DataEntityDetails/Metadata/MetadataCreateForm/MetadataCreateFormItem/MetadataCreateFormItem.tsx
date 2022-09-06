@@ -11,15 +11,16 @@ import { createFilterOptions } from '@mui/material/useAutocomplete';
 import { useDebouncedCallback } from 'use-debounce';
 import { Controller, useFormContext } from 'react-hook-form';
 import { MetadataField, MetadataFieldType } from 'generated-sources';
-import MetadataValueEditField from 'components/DataEntityDetails/Metadata/MetadataValueEditor/MetadataValueEditor';
-import AutocompleteSuggestion from 'components/shared/AutocompleteSuggestion/AutocompleteSuggestion';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import AppInput from 'components/shared/AppInput/AppInput';
-import DropdownIcon from 'components/shared/Icons/DropdownIcon';
-import AppMenuItem from 'components/shared/AppMenuItem/AppMenuItem';
+import { ClearIcon, DropdownIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'lib/redux/hooks';
-import { searchMetadata } from 'redux/thunks/metadata.thunks';
-import AppSelect from 'components/shared/AppSelect/AppSelect';
+import { searchMetadata } from 'redux/thunks';
+import {
+  AppInput,
+  AppMenuItem,
+  AppSelect,
+  AutocompleteSuggestion,
+} from 'components/shared';
+import MetadataValueEditField from '../../MetadataValueEditor/MetadataValueEditor';
 
 interface MetadataCreateFormItemProps {
   itemIndex: number;

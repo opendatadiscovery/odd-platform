@@ -1,52 +1,38 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { useHistory } from 'react-router-dom';
-import {
-  TermApiGetTermSearchSuggestionsRequest,
-  TermApiTermSearchRequest,
-  TermRef,
-  TermRefList,
-  TermSearchFacetsData,
-} from 'generated-sources';
-import {
-  TermMainSearchAutocomplete,
-  TermMainSearchContainer,
-  TermMainSearchSearch,
-  TermMainSearchSuggestionItem,
-} from 'components/Terms/TermSearch/TermMainSearch/TermMainSearchStyles';
+import { TermRef } from 'generated-sources';
 import { useDebouncedCallback } from 'use-debounce';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import SearchIcon from 'components/shared/Icons/SearchIcon';
+import { AppInput } from 'components/shared';
+import { ClearIcon, SearchIcon } from 'components/shared/Icons';
 import { useAppPaths } from 'lib/hooks/useAppPaths';
-
-interface TermMainSearchProps {
-  query?: string;
-  suggestions: TermRefList;
-  fetchTermSearchSuggestions: (
-    params: TermApiGetTermSearchSuggestionsRequest
-  ) => Promise<TermRefList>;
-  createTermSearch: (
-    params: TermApiTermSearchRequest
-  ) => Promise<TermSearchFacetsData>;
-  isSuggestionsFetching: boolean;
-}
-
-const TermMainSearch: React.FC<TermMainSearchProps> = ({
-  query,
-  suggestions,
-  fetchTermSearchSuggestions,
+import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
+import {
+  getTermSearchQuery,
+  getTermSearchSuggestions,
+  getTermSearchSuggestionsFetchStatuses,
+} from 'redux/selectors';
+import {
   createTermSearch,
-  isSuggestionsFetching,
-}) => {
+  fetchTermSearchSuggestions,
+} from 'redux/thunks';
+import * as S from './TermMainSearchStyles';
+
+const TermMainSearch: React.FC = () => {
+  const history = useHistory();
+  const dispatch = useAppDispatch();
+  const { termSearchPath, termDetailsOverviewPath } = useAppPaths();
+
+  const query = useAppSelector(getTermSearchQuery);
+  const suggestions = useAppSelector(getTermSearchSuggestions);
+  const { isLoading: isSuggestionsFetching } = useAppSelector(
+    getTermSearchSuggestionsFetchStatuses
+  );
+
   const [searchText, setSearchText] = React.useState<string>('');
   const [options, setOptions] = React.useState<Partial<TermRef>[]>([]);
   const [autocompleteOpen, setAutocompleteOpen] =
     React.useState<boolean>(false);
-
-  const { termSearchPath, termDetailsOverviewPath } = useAppPaths();
-  const history = useHistory();
 
   const createSearch = () => {
     const termSearchQuery = {
@@ -54,12 +40,12 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
       pageSize: 30,
       filters: {},
     };
-    createTermSearch({ termSearchFormData: termSearchQuery }).then(
-      termSearch => {
+    dispatch(createTermSearch({ termSearchFormData: termSearchQuery }))
+      .unwrap()
+      .then(termSearch => {
         const termSearchLink = termSearchPath(termSearch.searchId);
         history.replace(termSearchLink);
-      }
-    );
+      });
     history.push(termSearchPath());
   };
 
@@ -78,7 +64,7 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
 
   const getSuggestions = React.useCallback(
     useDebouncedCallback(() => {
-      fetchTermSearchSuggestions({ query: searchText });
+      dispatch(fetchTermSearchSuggestions({ query: searchText }));
     }, 500),
     [searchText, setOptions, fetchTermSearchSuggestions]
   );
@@ -88,8 +74,8 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
   }, [query]);
 
   React.useEffect(() => {
-    setOptions(suggestions.items);
-  }, [suggestions.items]);
+    setOptions(suggestions);
+  }, [suggestions]);
 
   React.useEffect(() => {
     if (!searchText) return;
@@ -110,7 +96,7 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
     const typedOption = option as TermRef;
     return (
       <li {...props}>
-        <TermMainSearchSuggestionItem
+        <S.TermMainSearchSuggestionItem
           to={
             typedOption.id ? termDetailsOverviewPath(typedOption.id) : '#'
           }
@@ -118,15 +104,15 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
           <Typography variant="body1" sx={{ mr: 1 }}>
             {typedOption.name}
           </Typography>
-        </TermMainSearchSuggestionItem>
+        </S.TermMainSearchSuggestionItem>
       </li>
     );
   };
 
   return (
-    <TermMainSearchContainer>
-      <TermMainSearchSearch>
-        <TermMainSearchAutocomplete
+    <S.TermMainSearchContainer>
+      <S.TermMainSearchSearch>
+        <S.TermMainSearchAutocomplete
           fullWidth
           value={{ name: searchText }}
           id="term-search"
@@ -166,8 +152,8 @@ const TermMainSearch: React.FC<TermMainSearchProps> = ({
           )}
           renderOption={renderOption}
         />
-      </TermMainSearchSearch>
-    </TermMainSearchContainer>
+      </S.TermMainSearchSearch>
+    </S.TermMainSearchContainer>
   );
 };
 
