@@ -29,8 +29,8 @@ const Overview: React.FC = () => {
   const { isDataset } = useAppSelector(
     getIsDataEntityBelongsToClass(dataEntityId)
   );
-  const datasetQualityTestReport = useAppSelector(state =>
-    getDatasetTestReport(state, dataEntityId)
+  const datasetQualityTestReport = useAppSelector(
+    getDatasetTestReport(dataEntityId)
   );
 
   const { isLoading: isDataEntityDetailsFetching } = useAppSelector(

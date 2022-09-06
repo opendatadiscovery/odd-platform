@@ -31,12 +31,12 @@ export const getDatasetTestListFetchingStatuses = createStatusesSelector(
   actions.fetchDataSetQualityTestListActionType
 );
 
-export const getDatasetTestReport = createSelector(
-  getDataQualityTestState,
-  getDataEntityId,
-  (dataQualityTestState, dataEntityId) =>
-    dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
-);
+export const getDatasetTestReport = (dataEntityId: number) =>
+  createSelector(
+    getDataQualityTestState,
+    dataQualityTestState =>
+      dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
+  );
 
 export const getDatasetQualityTestsBySuiteNames = createSelector(
   getDataQualityTestState,
