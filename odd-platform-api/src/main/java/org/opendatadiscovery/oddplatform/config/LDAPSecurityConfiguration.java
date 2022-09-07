@@ -11,8 +11,10 @@ import org.opendatadiscovery.oddplatform.auth.util.SecurityConstants;
 import org.opendatadiscovery.oddplatform.dto.security.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.ldap.core.support.BaseLdapPathContextSource;
@@ -38,6 +40,7 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
 import static org.opendatadiscovery.oddplatform.utils.OperationUtils.containsIgnoreCase;
 
 @Configuration
+@Import(LdapAutoConfiguration.class)
 @ConditionalOnProperty(value = "auth.type", havingValue = "LDAP")
 @EnableReactiveMethodSecurity
 @Slf4j
@@ -48,10 +51,10 @@ public class LDAPSecurityConfiguration {
     @Value("${spring.ldap.dn.patterns}")
     private List<String> ldapUserDnPatterns;
 
-    @Value("${spring.ldap.adminUser:}")
-    private String adminUser;
-    @Value("${spring.ldap.adminPassword:}")
-    private String adminPassword;
+    @Value("${spring.ldap.username:}")
+    private String username;
+    @Value("${spring.ldap.password:}")
+    private String password;
     @Value("${spring.ldap.user-filter.search-base:}")
     private String userFilterSearchBase;
     @Value("${spring.ldap.user-filter.filter:}")
@@ -125,8 +128,8 @@ public class LDAPSecurityConfiguration {
     public BaseLdapPathContextSource contextSource() {
         final LdapContextSource ctx = new LdapContextSource();
         ctx.setUrl(ldapUrl);
-        ctx.setUserDn(adminUser);
-        ctx.setPassword(adminPassword);
+        ctx.setUserDn(username);
+        ctx.setPassword(password);
         ctx.afterPropertiesSet();
         return ctx;
     }

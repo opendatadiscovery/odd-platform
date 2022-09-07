@@ -8,9 +8,11 @@ spring:
   codec:
     max-in-memory-size: 20MB
 #  ldap:
-#    urls:
+#    url:
+#    username:
+#    password:
 #    dn:
-#      pattern:
+#      patterns:
 #    user-filter:
 #      search-base:
 #      filter:
