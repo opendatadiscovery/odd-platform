@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.auth.handler.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -23,6 +22,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryReactiveClientRegistrationRepository;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.oidc.IdTokenClaimNames;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
@@ -30,11 +31,14 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-@Component("googleUserHandler")
+import static org.opendatadiscovery.oddplatform.utils.OperationUtils.containsIgnoreCase;
+
+@Component
 @Conditional(GoogleCondition.class)
 @RequiredArgsConstructor
 public class GoogleUserHandler implements OidcUserHandler {
     private static final String GOOGLE_EMAIL = "email";
+    private static final String GOOGLE_DOMAIN = "hd";
 
     @Value("${spring.security.oauth2.client.provider.google.admin-principals:}")
     private Set<String> adminPrincipals;
@@ -45,6 +49,11 @@ public class GoogleUserHandler implements OidcUserHandler {
     private final GrantedAuthorityExtractor authorityExtractor;
 
     @Override
+    public String getProviderId() {
+        return "google";
+    }
+
+    @Override
     public Mono<OidcUser> enrichUserWithProviderInformation(final OidcUser oidcUser,
                                                             final OidcUserRequest request) {
         final String userNameAttribute = Optional.ofNullable(request.getClientRegistration()
@@ -53,6 +62,11 @@ public class GoogleUserHandler implements OidcUserHandler {
             .orElse(IdTokenClaimNames.SUB);
         final Set<UserRole> roles = new HashSet<>();
         final OidcIdToken token = oidcUser.getIdToken();
+        final String domain = token.getClaim(GOOGLE_DOMAIN);
+        if (allowedDomain != null && !StringUtils.equalsIgnoreCase(allowedDomain, domain)) {
+            return Mono.error(() -> new OAuth2AuthenticationException(new OAuth2Error("invalid_token",
+                String.format("Domain %s doesn't match with allowed domain %s", domain, allowedDomain), "")));
+        }
         if (CollectionUtils.isNotEmpty(adminPrincipals)) {
             final String email = token.getClaim(GOOGLE_EMAIL);
             final boolean containsEmail = containsIgnoreCase(adminPrincipals, email);
@@ -84,10 +98,5 @@ public class GoogleUserHandler implements OidcUserHandler {
             return new InMemoryReactiveClientRegistrationRepository(clientRegistrations);
         }
         return new InMemoryReactiveClientRegistrationRepository(registrations);
-    }
-
-    private boolean containsIgnoreCase(final Collection<String> collection,
-                                       final String element) {
-        return collection.stream().anyMatch(element::equalsIgnoreCase);
     }
 }

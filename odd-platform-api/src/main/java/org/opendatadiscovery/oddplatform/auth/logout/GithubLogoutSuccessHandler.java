@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.auth.logout;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.auth.condition.GithubCondition;
@@ -20,10 +21,11 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Mono;
 
-@Component("githubLogoutHandler")
+@Component
 @Conditional(GithubCondition.class)
 @RequiredArgsConstructor
 public class GithubLogoutSuccessHandler implements LogoutSuccessHandler {
+    private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
     private final WebClient webClient = WebClient.create("https://api.github.com");
     private final ReactiveOAuth2AuthorizedClientService auth2AuthorizedClientService;
 
@@ -31,6 +33,11 @@ public class GithubLogoutSuccessHandler implements LogoutSuccessHandler {
     private String clientId;
     @Value("${spring.security.oauth2.client.registration.github.client-secret:}")
     private String clientSecret;
+
+    @Override
+    public String getProviderId() {
+        return "github";
+    }
 
     public Mono<Void> handle(final WebFilterExchange exchange,
                              final Authentication authentication) {
@@ -49,13 +56,16 @@ public class GithubLogoutSuccessHandler implements LogoutSuccessHandler {
                 .uri(uriBuilder -> uriBuilder.path("/applications/{client_id}/grant").build(clientId))
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers -> {
-                    headers.set(HttpHeaders.ACCEPT, "application/vnd.github+json");
+                    headers.set(HttpHeaders.ACCEPT, GITHUB_ACCEPT_HEADER);
                     headers.set(HttpHeaders.AUTHORIZATION, "Basic " + base64);
                 })
-                .bodyValue("{\"access_token\":\"" + client.getAccessToken().getTokenValue() + "\"}")
+                .bodyValue(new LogoutBody(client.getAccessToken().getTokenValue()))
                 .retrieve()
                 .toBodilessEntity())
             .then(Mono.defer(() -> exchange.getExchange().getSession().flatMap(WebSession::invalidate)))
             .onErrorResume(e -> Mono.defer(() -> exchange.getExchange().getSession().flatMap(WebSession::invalidate)));
+    }
+
+    private record LogoutBody(@JsonProperty("access_token") String accessToken) {
     }
 }

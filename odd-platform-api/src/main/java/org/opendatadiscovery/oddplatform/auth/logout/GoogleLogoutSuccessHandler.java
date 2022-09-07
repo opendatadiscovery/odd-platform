@@ -16,12 +16,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.WebSession;
 import reactor.core.publisher.Mono;
 
-@Component("googleLogoutHandler")
+@Component
 @Conditional(GoogleCondition.class)
 @RequiredArgsConstructor
 public class GoogleLogoutSuccessHandler implements LogoutSuccessHandler {
     private final WebClient webClient = WebClient.create("https://oauth2.googleapis.com");
     private final ReactiveOAuth2AuthorizedClientService auth2AuthorizedClientService;
+
+    @Override
+    public String getProviderId() {
+        return "google";
+    }
 
     public Mono<Void> handle(final WebFilterExchange exchange,
                              final Authentication authentication) {

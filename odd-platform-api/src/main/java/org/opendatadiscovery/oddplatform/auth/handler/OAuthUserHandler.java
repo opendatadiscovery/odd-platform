@@ -6,6 +6,8 @@ import reactor.core.publisher.Mono;
 
 public interface OAuthUserHandler {
 
+    String getProviderId();
+
     Mono<OAuth2User> enrichUserWithProviderInformation(final OAuth2User user,
                                                        final OAuth2UserRequest request);
 }

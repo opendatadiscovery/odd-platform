@@ -15,7 +15,7 @@ import org.springframework.web.server.WebSession;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
-@Component("cognitoLogoutHandler")
+@Component
 @Conditional(CognitoCondition.class)
 public class CognitoLogoutSuccessHandler implements LogoutSuccessHandler {
 
@@ -24,6 +24,11 @@ public class CognitoLogoutSuccessHandler implements LogoutSuccessHandler {
 
     @Value("${spring.security.oauth2.client.registration.cognito.client-id:}")
     private String clientId;
+
+    @Override
+    public String getProviderId() {
+        return "cognito";
+    }
 
     public Mono<Void> handle(final WebFilterExchange exchange, final Authentication authentication) {
         final ServerHttpResponse response = exchange.getExchange().getResponse();

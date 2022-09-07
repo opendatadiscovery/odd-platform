@@ -3,10 +3,12 @@ package org.opendatadiscovery.oddplatform.auth.manager;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.api.contract.model.Permission;
+import org.opendatadiscovery.oddplatform.auth.condition.AuthorizationManagerCondition;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveAlertRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFieldRepository;
 import org.opendatadiscovery.oddplatform.service.DataEntitySecurityService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.authorization.ReactiveAuthorizationManager;
 import org.springframework.security.core.Authentication;
@@ -15,7 +17,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-@ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
+@Conditional(AuthorizationManagerCondition.class)
 @RequiredArgsConstructor
 public class OwnerBasedReactiveAuthorizationManager implements ReactiveAuthorizationManager<AuthorizationContext> {
     private static final String DATA_ENTITY_PATH = "/api/dataentities";

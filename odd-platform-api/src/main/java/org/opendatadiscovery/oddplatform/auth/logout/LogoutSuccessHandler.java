@@ -5,5 +5,7 @@ import org.springframework.security.web.server.WebFilterExchange;
 import reactor.core.publisher.Mono;
 
 public interface LogoutSuccessHandler {
+    String getProviderId();
+
     Mono<Void> handle(final WebFilterExchange exchange, final Authentication authentication);
 }

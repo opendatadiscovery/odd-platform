@@ -6,6 +6,8 @@ import reactor.core.publisher.Mono;
 
 public interface OidcUserHandler {
 
+    String getProviderId();
+
     Mono<OidcUser> enrichUserWithProviderInformation(final OidcUser oidcUser,
                                                      final OidcUserRequest request);
 }
