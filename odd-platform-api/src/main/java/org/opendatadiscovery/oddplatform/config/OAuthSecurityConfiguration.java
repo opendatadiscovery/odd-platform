@@ -60,7 +60,6 @@ public class OAuthSecurityConfiguration {
         final ReactiveClientRegistrationRepository repo,
         final OwnerBasedReactiveAuthorizationManager authManager,
         final TemplateEngine templateEngine) {
-
         final List<ClientRegistration> clientRegistrations =
             IteratorUtils.toList(((InMemoryReactiveClientRegistrationRepository) repo).iterator());
 
