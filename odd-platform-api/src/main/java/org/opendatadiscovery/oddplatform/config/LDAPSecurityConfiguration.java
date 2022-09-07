@@ -59,7 +59,7 @@ public class LDAPSecurityConfiguration {
 
     @Value("${spring.ldap.groups.search-base:''}")
     private String groupsSearchBase;
-    @Value("${spring.ldap.groups.filter:''}")
+    @Value("${spring.ldap.groups.filter:}")
     private String groupsSearchFilter;
     @Value("${spring.ldap.groups.admin-groups:}")
     private Set<String> adminGroups;
