@@ -5,7 +5,7 @@ import org.springframework.security.web.util.UrlUtils;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-public class UriUtils {
+public final class UriUtils {
     public static URI getBaseUri(final URI requestUri) {
         final var fullUrl = UrlUtils.buildFullRequestUrl(requestUri.getScheme(),
             requestUri.getHost(), requestUri.getPort(),

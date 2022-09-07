@@ -7,56 +7,68 @@ spring:
     sql-dialect: postgres
   codec:
     max-in-memory-size: 20MB
-  ldap:
-    urls: ""
-    dn:
-      pattern: ""
+#  ldap:
+#    url:
+#    username:
+#    password:
+#    dn:
+#      patterns:
+#    user-filter:
+#      search-base:
+#      filter:
+#    groups:
+#      search-base:
+#      filter:
+#      admin-groups:
+#    active-directory:
+#      enabled: false
+#      domain:
 #  redis:
 #    host: localhost
 #    port: 6379
 #    username:
 #    password:
 #    database: 0
-  security:
-    oauth2:
-      client:
-        registration:
-          cognito:
-            client-id:
-            client-secret:
-            scope:
-              - openid
-            redirect-uri: 'http://localhost:8080/login/oauth2/code/cognito'
-            client-name: 'Cognito'
-          github:
-            client-id:
-            client-secret:
-            scope:
-              - user:read
-              - read:org
-          google:
-            client-id:
-            client-secret:
-            scope:
-              - openid
-              - profile
-              - email
-        provider:
-          cognito:
-            issuerUri: 'https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_SLj42PGZ4'
-            logoutUri:
-            user-name-attribute: 'username'
-            admin-principals:
-            admin-groups: admin
-          github:
-            user-name-attribute: 'login'
-            organization-name: 'damirtestorg'
-            admin-principals:
-            admin-teams: admin,member
-          google:
-            user-name-attribute: 'name'
-            admin-principals:
-            allowed-domain: 'oddp.dev'
+#  security:
+#    oauth2:
+#      client:
+#        registration:
+#          cognito:
+#            client-id:
+#            client-secret:
+#            scope:
+#              - openid
+#            redirect-uri:
+#            client-name: 'Cognito'
+#          github:
+#            client-id:
+#            client-secret:
+#            scope:
+#              - user:read
+#              - read:org
+#          google:
+#            client-id:
+#            client-secret:
+#            scope:
+#              - openid
+#              - profile
+#              - email
+#        provider:
+#          cognito:
+#            issuerUri:
+#            logoutUri:
+#            user-name-attribute: 'username'
+#            admin-principals:
+#            admin-groups:
+#          github:
+#            user-name-attribute: 'login'
+#            organization-name:
+#            admin-principals:
+#            admin-teams:
+#          google:
+#            user-name-attribute:
+#            admin-principals:
+#            allowed-domain:
 
 session:
   # INTERNAL_POSTGRESQL, REDIS, IN_MEMORY
@@ -64,7 +76,7 @@ session:
 
 auth:
   # DISABLED, LOGIN_FORM, OAUTH2, LDAP
-  type: OAUTH2
+  type: DISABLED
 
   # For dev/demo purposes only -- username1:password1,username2:password2,etc
   login-form-credentials: admin:admin,root:root

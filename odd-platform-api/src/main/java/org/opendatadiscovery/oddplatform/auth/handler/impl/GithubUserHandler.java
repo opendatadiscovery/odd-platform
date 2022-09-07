@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.auth.handler.impl;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-@Component("githubUserHandler")
+import static org.opendatadiscovery.oddplatform.utils.OperationUtils.containsIgnoreCase;
+
+@Component
 @Conditional(GithubCondition.class)
 @RequiredArgsConstructor
 public class GithubUserHandler implements OAuthUserHandler {
@@ -47,6 +48,11 @@ public class GithubUserHandler implements OAuthUserHandler {
 
     @Value("${spring.security.oauth2.client.provider.github.organization-name:}")
     private String organizationName;
+
+    @Override
+    public String getProviderId() {
+        return "github";
+    }
 
     @Override
     public Mono<OAuth2User> enrichUserWithProviderInformation(final OAuth2User user,
@@ -127,6 +133,7 @@ public class GithubUserHandler implements OAuthUserHandler {
         });
     }
 
+    @SuppressWarnings("unchecked")
     private boolean teamBelongsToOrganization(final Map<String, Object> teamInfo) {
         final Object organization = teamInfo.get(ORGANIZATION);
         if (organization == null) {
@@ -139,11 +146,6 @@ public class GithubUserHandler implements OAuthUserHandler {
     private boolean userBelongsToOrganization(final List<Map<String, Object>> organizations) {
         return organizations.stream()
             .anyMatch(org -> org.get(ORGANIZATION_NAME).toString().equalsIgnoreCase(organizationName));
-    }
-
-    private boolean containsIgnoreCase(final Collection<String> collection,
-                                       final String element) {
-        return collection.stream().anyMatch(element::equalsIgnoreCase);
     }
 }
 

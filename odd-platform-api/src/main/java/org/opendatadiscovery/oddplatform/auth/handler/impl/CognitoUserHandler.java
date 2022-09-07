@@ -22,7 +22,9 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-@Component("cognitoUserHandler")
+import static org.opendatadiscovery.oddplatform.utils.OperationUtils.containsIgnoreCase;
+
+@Component
 @Conditional(CognitoCondition.class)
 @RequiredArgsConstructor
 public class CognitoUserHandler implements OidcUserHandler {
@@ -35,6 +37,11 @@ public class CognitoUserHandler implements OidcUserHandler {
 
     @Value("${spring.security.oauth2.client.provider.cognito.admin-groups:}")
     private Set<String> adminGroups;
+
+    @Override
+    public String getProviderId() {
+        return "cognito";
+    }
 
     @Override
     public Mono<OidcUser> enrichUserWithProviderInformation(final OidcUser oidcUser,
@@ -68,10 +75,5 @@ public class CognitoUserHandler implements OidcUserHandler {
         final DefaultOidcUser enrichedUser =
             new DefaultOidcUser(authorities, oidcUser.getIdToken(), oidcUser.getUserInfo(), userNameAttribute);
         return Mono.just(enrichedUser);
-    }
-
-    private boolean containsIgnoreCase(final Collection<String> collection,
-                                       final String element) {
-        return collection.stream().anyMatch(element::equalsIgnoreCase);
     }
 }

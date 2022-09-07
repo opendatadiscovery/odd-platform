@@ -11,6 +11,7 @@ import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.handler.OidcUserHandler;
 import org.opendatadiscovery.oddplatform.auth.logout.OAuthLogoutSuccessHandler;
 import org.opendatadiscovery.oddplatform.auth.manager.OwnerBasedReactiveAuthorizationManager;
+import org.opendatadiscovery.oddplatform.auth.util.SecurityConstants;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,8 +50,8 @@ import static org.springframework.security.web.server.util.matcher.ServerWebExch
 @EnableReactiveMethodSecurity
 @RequiredArgsConstructor
 public class OAuthSecurityConfiguration {
-    private final Map<String, OidcUserHandler> oidcUserHandlerMap;
-    private final Map<String, OAuthUserHandler> oauthUserHandlerMap;
+    private final List<OidcUserHandler> oidcUserHandlers;
+    private final List<OAuthUserHandler> oauthUserHandlerMap;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChainOauth2Client(
@@ -59,7 +60,6 @@ public class OAuthSecurityConfiguration {
         final ReactiveClientRegistrationRepository repo,
         final OwnerBasedReactiveAuthorizationManager authManager,
         final TemplateEngine templateEngine) {
-
         final List<ClientRegistration> clientRegistrations =
             IteratorUtils.toList(((InMemoryReactiveClientRegistrationRepository) repo).iterator());
 
@@ -68,21 +68,9 @@ public class OAuthSecurityConfiguration {
             .csrf().disable()
             .securityMatcher(new PathPatternParserServerWebExchangeMatcher("/**"))
             .authorizeExchange(e -> e
-                .pathMatchers("/actuator/**", "/favicon.ico", "/ingestion/**", "/img/**")
+                .pathMatchers(SecurityConstants.WHITELIST_PATHS)
                 .permitAll()
-                .matchers(
-                    new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/**",
-                        HttpMethod.POST),
-                    new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/**",
-                        HttpMethod.PUT),
-                    new PathPatternParserServerWebExchangeMatcher("/api/dataentities/{data_entity_id}/**",
-                        HttpMethod.DELETE),
-                    new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/**",
-                        HttpMethod.POST),
-                    new PathPatternParserServerWebExchangeMatcher("/api/datasetfields/{dataset_field_id}/**",
-                        HttpMethod.PUT),
-                    new PathPatternParserServerWebExchangeMatcher("/api/alerts/{alert_id}/**",
-                        HttpMethod.PUT))
+                .matchers(SecurityConstants.OWNER_ACCESS_PATHS)
                 .access(authManager)
                 .pathMatchers("/**").authenticated())
             .oauth2Login(withDefaults())
@@ -127,13 +115,15 @@ public class OAuthSecurityConfiguration {
     }
 
     private Optional<OidcUserHandler> getOidcUserHandler(final String providerId) {
-        final String userHandlerBeanId = providerId + "UserHandler";
-        return Optional.ofNullable(oidcUserHandlerMap.get(userHandlerBeanId));
+        return oidcUserHandlers.stream()
+            .filter(h -> h.getProviderId().equalsIgnoreCase(providerId))
+            .findFirst();
     }
 
     private Optional<OAuthUserHandler> getOAuthUserHandler(final String providerId) {
-        final String userHandlerBeanId = providerId + "UserHandler";
-        return Optional.ofNullable(oauthUserHandlerMap.get(userHandlerBeanId));
+        return oauthUserHandlerMap.stream()
+            .filter(h -> h.getProviderId().equalsIgnoreCase(providerId))
+            .findFirst();
     }
 
     private static class LoginPageFilter implements WebFilter {

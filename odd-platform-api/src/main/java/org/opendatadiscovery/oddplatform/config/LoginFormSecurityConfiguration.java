@@ -3,9 +3,12 @@ package org.opendatadiscovery.oddplatform.config;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
+import org.opendatadiscovery.oddplatform.dto.security.UserRole;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +27,10 @@ import org.springframework.util.StringUtils;
 
 @Configuration
 @ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
+@RequiredArgsConstructor
 public class LoginFormSecurityConfiguration {
+    private final GrantedAuthorityExtractor grantedAuthorityExtractor;
+
     @Bean
     public SecurityWebFilterChain securityWebFilterChainLoginForm(
         final ServerHttpSecurity http,
@@ -59,7 +65,7 @@ public class LoginFormSecurityConfiguration {
                 .withUsername(c.getUsername())
                 .passwordEncoder(pe::encode)
                 .password(c.getPassword())
-                .authorities("ROLE_USER_STUB")
+                .authorities(grantedAuthorityExtractor.getAuthoritiesByUserRoles(Set.of(UserRole.ROLE_ADMIN)))
                 .build())
             .collect(Collectors.toList());
 
