@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Typography } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 
 const paramsHeight = 220;
 
@@ -23,4 +23,10 @@ export const Params = styled(Typography)<{
       ? 'transparent'
       : 'linear-gradient(180deg, transparent 0%, white 100%)',
   },
+}));
+
+export const Divider = styled(Grid)(({ theme }) => ({
+  borderTop: `1px solid ${theme.palette.divider}`,
+  width: '100%',
+  margin: theme.spacing(2.25, 0),
 }));

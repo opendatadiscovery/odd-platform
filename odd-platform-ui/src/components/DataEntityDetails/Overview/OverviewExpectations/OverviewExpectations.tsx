@@ -1,8 +1,8 @@
 import React from 'react';
 import { DataQualityTestExpectation } from 'generated-sources';
 import { Grid, Typography } from '@mui/material';
-import AppButton from 'components/shared/AppButton/AppButton';
-import DropdownIcon from 'components/shared/Icons/DropdownIcon';
+import { AppButton } from 'components/shared';
+import { DropdownIcon } from 'components/shared/Icons';
 import * as S from './OverviewExpectationsStyles';
 
 interface OverviewExpectationsProps {
@@ -19,7 +19,7 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
   const isExpandable = jsonParams.length > 430;
 
   return (
-    <Grid container flexDirection="column">
+    <Grid container flexDirection="column" alignItems="flex-start">
       <Typography variant="h4">Parameters</Typography>
       <S.Params
         variant="body1"
@@ -42,6 +42,26 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
         >
           {isExpanded ? 'Hide' : `Show All`}
         </AppButton>
+      )}
+      {linkedUrlList && linkedUrlList?.length > 0 && (
+        <>
+          <S.Divider />
+          <Typography variant="h4">Links</Typography>
+          <Grid container flexDirection="column">
+            {linkedUrlList?.map(link => (
+              <AppButton
+                to={{ pathname: link }}
+                key={link}
+                sx={{ my: 0.25 }}
+                size="medium"
+                color="tertiary"
+                linkTarget="_blank"
+              >
+                {link}
+              </AppButton>
+            ))}
+          </Grid>
+        </>
       )}
     </Grid>
   );
