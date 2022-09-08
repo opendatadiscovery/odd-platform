@@ -35,22 +35,7 @@ public class RecordFactory extends ObjenesisObjectFactory {
         final Object[] randomValues = new Object[recordComponents.length];
         for (int i = 0; i < recordComponents.length; i++) {
             if (Collection.class.isAssignableFrom(recordComponents[i].getType())) {
-                final Type type =
-                    ((ParameterizedType) recordComponents[i].getGenericType()).getActualTypeArguments()[0];
-                final String typeName;
-                if (type instanceof WildcardType wildcardType) {
-                    if (wildcardType.getUpperBounds().length > 0) {
-                        typeName = wildcardType.getUpperBounds()[0].getTypeName();
-                    } else if (wildcardType.getLowerBounds().length > 0) {
-                        typeName = wildcardType.getLowerBounds()[0].getTypeName();
-                    } else {
-                        typeName = Object.class.getTypeName();
-                    }
-                } else {
-                    typeName = type.getTypeName();
-                }
-                final Collection<?> collection = easyRandom.objects(Class.forName(typeName), 5).toList();
-                randomValues[i] = collection;
+                randomValues[i] = generateCollectionField(recordComponents[i]);
             } else {
                 randomValues[i] = easyRandom.nextObject(recordComponents[i].getType());
             }
@@ -73,5 +58,23 @@ public class RecordFactory extends ObjenesisObjectFactory {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Invalid record definition", e);
         }
+    }
+
+    @SneakyThrows
+    private Collection<?> generateCollectionField(final RecordComponent recordComponent) {
+        final Type type = ((ParameterizedType) recordComponent.getGenericType()).getActualTypeArguments()[0];
+        final String typeName;
+        if (type instanceof WildcardType wildcardType) {
+            if (wildcardType.getUpperBounds().length > 0) {
+                typeName = wildcardType.getUpperBounds()[0].getTypeName();
+            } else if (wildcardType.getLowerBounds().length > 0) {
+                typeName = wildcardType.getLowerBounds()[0].getTypeName();
+            } else {
+                typeName = Object.class.getTypeName();
+            }
+        } else {
+            typeName = type.getTypeName();
+        }
+        return easyRandom.objects(Class.forName(typeName), 5).toList();
     }
 }
