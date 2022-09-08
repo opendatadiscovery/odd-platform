@@ -1,6 +1,6 @@
 import { DataEntityRunStatus } from 'generated-sources';
 import styled from 'styled-components';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 export const Container = styled(Box)(() => ({
   display: 'inline-flex',
@@ -13,7 +13,7 @@ export const Count = styled('span')(({ theme }) => ({
   fontWeight: theme.typography.fontWeightMedium,
 }));
 
-export const FilledContainer = styled('span')<{
+export const FilledContainer = styled(Typography)<{
   $typeName: DataEntityRunStatus;
 }>(({ theme, $typeName }) => ({
   fontSize: theme.typography.body2.fontSize,

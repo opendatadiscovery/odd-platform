@@ -104,8 +104,8 @@ const Overview: React.FC = () => {
     <S.Container>
       {isMainOverviewContentFetching ? (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <OverviewSkeleton width={randomSkeletonPercentWidth()} />
+          renderContent={({ randWidth }) => (
+            <OverviewSkeleton width={randWidth()} />
           )}
         />
       ) : (

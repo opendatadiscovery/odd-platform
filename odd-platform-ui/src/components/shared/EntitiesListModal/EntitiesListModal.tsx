@@ -1,9 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
 import { DataEntityRef } from 'generated-sources';
-import DialogWrapper from 'components/shared/DialogWrapper/DialogWrapper';
 import { Link } from 'react-router-dom';
-import EntityClassItem from 'components/shared/EntityClassItem/EntityClassItem';
+import { EntityClassItem, DialogWrapper } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
 import * as S from './EntitiesListModalStyles';
 
@@ -13,7 +12,8 @@ type LabelForTypes =
   | 'Sources'
   | 'Targets'
   | 'Inputs'
-  | 'Outputs';
+  | 'Outputs'
+  | 'Datasets';
 
 interface EntitiesListModalProps {
   dataEntityName: string | undefined;

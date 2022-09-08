@@ -149,11 +149,8 @@ const LabelsListView: React.FC = () => {
               isLabelFetching ? (
                 <SkeletonWrapper
                   length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <LabelsSkeletonItem
-                      key={key}
-                      width={randomSkeletonPercentWidth()}
-                    />
+                  renderContent={({ randWidth, key }) => (
+                    <LabelsSkeletonItem key={key} width={randWidth()} />
                   )}
                 />
               ) : null
