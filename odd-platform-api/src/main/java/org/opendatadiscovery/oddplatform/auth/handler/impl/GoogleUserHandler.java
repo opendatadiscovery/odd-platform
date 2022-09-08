@@ -3,13 +3,14 @@ package org.opendatadiscovery.oddplatform.auth.handler.impl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.auth.condition.GoogleCondition;
-import org.opendatadiscovery.oddplatform.auth.handler.OidcUserHandler;
+import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
 import org.opendatadiscovery.oddplatform.dto.security.UserRole;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,7 +37,7 @@ import static org.opendatadiscovery.oddplatform.utils.OperationUtils.containsIgn
 @Component
 @Conditional(GoogleCondition.class)
 @RequiredArgsConstructor
-public class GoogleUserHandler implements OidcUserHandler {
+public class GoogleUserHandler implements OAuthUserHandler<OidcUser, OidcUserRequest> {
     private static final String GOOGLE_EMAIL = "email";
     private static final String GOOGLE_DOMAIN = "hd";
 
@@ -56,10 +57,11 @@ public class GoogleUserHandler implements OidcUserHandler {
     @Override
     public Mono<OidcUser> enrichUserWithProviderInformation(final OidcUser oidcUser,
                                                             final OidcUserRequest request) {
-        final String userNameAttribute = Optional.ofNullable(request.getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint().getUserNameAttributeName())
-            .orElse(IdTokenClaimNames.SUB);
+
+        final String userNameAttributeName = request.getClientRegistration()
+            .getProviderDetails()
+            .getUserInfoEndpoint().getUserNameAttributeName();
+        final String userNameAttribute = Objects.requireNonNullElse(userNameAttributeName, IdTokenClaimNames.SUB);
         final Set<UserRole> roles = new HashSet<>();
         final OidcIdToken token = oidcUser.getIdToken();
         final String domain = token.getClaim(GOOGLE_DOMAIN);

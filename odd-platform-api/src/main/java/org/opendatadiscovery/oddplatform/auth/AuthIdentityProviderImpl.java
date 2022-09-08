@@ -53,7 +53,7 @@ public class AuthIdentityProviderImpl implements AuthIdentityProvider {
         try {
             return Optional.of(UserPermission.valueOf(authority.getAuthority()));
         } catch (Exception e) {
-            log.debug("Can't map authority {} to existing permission", authority.getAuthority());
+            log.warn("Can't map authority {} to existing permission", authority.getAuthority());
             return Optional.empty();
         }
     }

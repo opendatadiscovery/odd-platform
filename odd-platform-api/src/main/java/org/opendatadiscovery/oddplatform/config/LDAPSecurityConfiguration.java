@@ -24,6 +24,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.ReactiveAuthenticationManagerAdapter;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.ldap.authentication.AbstractLdapAuthenticationProvider;
@@ -42,6 +43,7 @@ import static org.opendatadiscovery.oddplatform.utils.OperationUtils.containsIgn
 @Configuration
 @Import(LdapAutoConfiguration.class)
 @ConditionalOnProperty(value = "auth.type", havingValue = "LDAP")
+@EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 @Slf4j
 public class LDAPSecurityConfiguration {

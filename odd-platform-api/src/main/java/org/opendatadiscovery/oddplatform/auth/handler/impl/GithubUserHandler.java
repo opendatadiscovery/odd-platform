@@ -31,7 +31,7 @@ import static org.opendatadiscovery.oddplatform.utils.OperationUtils.containsIgn
 @Component
 @Conditional(GithubCondition.class)
 @RequiredArgsConstructor
-public class GithubUserHandler implements OAuthUserHandler {
+public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2UserRequest> {
     private static final String ORGANIZATION = "organization";
     private static final String TEAM_NAME = "name";
     private static final String ORGANIZATION_NAME = "login";

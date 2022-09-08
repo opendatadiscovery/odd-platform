@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
@@ -27,6 +28,7 @@ import org.springframework.util.StringUtils;
 
 @Configuration
 @ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
+@EnableWebFluxSecurity
 @RequiredArgsConstructor
 public class LoginFormSecurityConfiguration {
     private final GrantedAuthorityExtractor grantedAuthorityExtractor;

@@ -1,14 +1,14 @@
 package org.opendatadiscovery.oddplatform.auth.handler.impl;
 
 import com.nimbusds.jose.shaded.json.JSONArray;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.auth.condition.CognitoCondition;
-import org.opendatadiscovery.oddplatform.auth.handler.OidcUserHandler;
+import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
 import org.opendatadiscovery.oddplatform.dto.security.UserRole;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,7 @@ import static org.opendatadiscovery.oddplatform.utils.OperationUtils.containsIgn
 @Component
 @Conditional(CognitoCondition.class)
 @RequiredArgsConstructor
-public class CognitoUserHandler implements OidcUserHandler {
+public class CognitoUserHandler implements OAuthUserHandler<OidcUser, OidcUserRequest> {
     private static final String COGNITO_USERNAME = "cognito:username";
     private static final String COGNITO_GROUPS = "cognito:groups";
     private final GrantedAuthorityExtractor authorityExtractor;
@@ -46,10 +46,10 @@ public class CognitoUserHandler implements OidcUserHandler {
     @Override
     public Mono<OidcUser> enrichUserWithProviderInformation(final OidcUser oidcUser,
                                                             final OidcUserRequest request) {
-        final String userNameAttribute = Optional.ofNullable(request.getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint().getUserNameAttributeName())
-            .orElse(IdTokenClaimNames.SUB);
+        final String userNameAttributeName = request.getClientRegistration()
+            .getProviderDetails()
+            .getUserInfoEndpoint().getUserNameAttributeName();
+        final String userNameAttribute = Objects.requireNonNullElse(userNameAttributeName, IdTokenClaimNames.SUB);
         final Set<UserRole> roles = new HashSet<>();
         final OidcIdToken token = oidcUser.getIdToken();
         if (CollectionUtils.isNotEmpty(adminPrincipals)) {

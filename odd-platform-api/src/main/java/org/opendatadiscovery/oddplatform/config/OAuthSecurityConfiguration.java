@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
-import org.opendatadiscovery.oddplatform.auth.handler.OidcUserHandler;
 import org.opendatadiscovery.oddplatform.auth.logout.OAuthLogoutSuccessHandler;
 import org.opendatadiscovery.oddplatform.auth.manager.OwnerBasedReactiveAuthorizationManager;
 import org.opendatadiscovery.oddplatform.auth.util.SecurityConstants;
@@ -20,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcReactiveOAuth2UserService;
@@ -48,10 +48,11 @@ import static org.springframework.security.web.server.util.matcher.ServerWebExch
 @Configuration
 @ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
 @EnableReactiveMethodSecurity
+@EnableWebFluxSecurity
 @RequiredArgsConstructor
 public class OAuthSecurityConfiguration {
-    private final List<OidcUserHandler> oidcUserHandlers;
-    private final List<OAuthUserHandler> oauthUserHandlerMap;
+    private final List<OAuthUserHandler<OAuth2User, OAuth2UserRequest>> oauthUserHandlers;
+    private final List<OAuthUserHandler<OidcUser, OidcUserRequest>> oidcUserHandlers;
 
     @Bean
     public SecurityWebFilterChain securityWebFilterChainOauth2Client(
@@ -91,12 +92,11 @@ public class OAuthSecurityConfiguration {
         final OidcReactiveOAuth2UserService delegate = new OidcReactiveOAuth2UserService();
         return request -> delegate.loadUser(request)
             .flatMap(oidcUser -> {
-                final Optional<OidcUserHandler> userHandler =
-                    getOidcUserHandler(request.getClientRegistration().getRegistrationId());
-                if (userHandler.isEmpty()) {
+                var oidcUserHandler = getOidcUserHandler(request.getClientRegistration().getRegistrationId());
+                if (oidcUserHandler.isEmpty()) {
                     return Mono.just(oidcUser);
                 }
-                return userHandler.get().enrichUserWithProviderInformation(oidcUser, request);
+                return oidcUserHandler.get().enrichUserWithProviderInformation(oidcUser, request);
             });
     }
 
@@ -105,23 +105,22 @@ public class OAuthSecurityConfiguration {
         final DefaultReactiveOAuth2UserService delegate = new DefaultReactiveOAuth2UserService();
         return request -> delegate.loadUser(request)
             .flatMap(user -> {
-                final Optional<OAuthUserHandler> userHandler =
-                    getOAuthUserHandler(request.getClientRegistration().getRegistrationId());
-                if (userHandler.isEmpty()) {
+                var oAuthUserHandler = getOAuthUserHandler(request.getClientRegistration().getRegistrationId());
+                if (oAuthUserHandler.isEmpty()) {
                     return Mono.just(user);
                 }
-                return userHandler.get().enrichUserWithProviderInformation(user, request);
+                return oAuthUserHandler.get().enrichUserWithProviderInformation(user, request);
             });
     }
 
-    private Optional<OidcUserHandler> getOidcUserHandler(final String providerId) {
+    private Optional<OAuthUserHandler<OidcUser, OidcUserRequest>> getOidcUserHandler(final String providerId) {
         return oidcUserHandlers.stream()
             .filter(h -> h.getProviderId().equalsIgnoreCase(providerId))
             .findFirst();
     }
 
-    private Optional<OAuthUserHandler> getOAuthUserHandler(final String providerId) {
-        return oauthUserHandlerMap.stream()
+    private Optional<OAuthUserHandler<OAuth2User, OAuth2UserRequest>> getOAuthUserHandler(final String providerId) {
+        return oauthUserHandlers.stream()
             .filter(h -> h.getProviderId().equalsIgnoreCase(providerId))
             .findFirst();
     }

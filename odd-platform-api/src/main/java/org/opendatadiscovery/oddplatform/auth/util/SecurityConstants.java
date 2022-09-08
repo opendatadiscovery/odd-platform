@@ -1,9 +1,11 @@
 package org.opendatadiscovery.oddplatform.auth.util;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
 
+@UtilityClass
 public final class SecurityConstants {
 
     public static final String[] WHITELIST_PATHS = {
