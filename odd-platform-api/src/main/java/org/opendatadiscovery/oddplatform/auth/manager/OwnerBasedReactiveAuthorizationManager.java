@@ -45,7 +45,7 @@ public class OwnerBasedReactiveAuthorizationManager implements ReactiveAuthoriza
                 .filter(actions -> CollectionUtils.isNotEmpty(actions.getAllowed()))
                 .map(actions -> actions.getAllowed().contains(Permission.DATA_ENTITY_EDIT))
                 .map(AuthorizationDecision::new)
-                .switchIfEmpty(Mono.just(new AuthorizationDecision(false)));
+                .defaultIfEmpty(new AuthorizationDecision(false));
         } else if (path.startsWith(DATASET_FIELD_PATH)) {
             final String datasetFieldId = (String) object.getVariables().get(DATASET_FIELD_ID);
             if (datasetFieldId == null) {
@@ -56,7 +56,7 @@ public class OwnerBasedReactiveAuthorizationManager implements ReactiveAuthoriza
                 .filter(actions -> CollectionUtils.isNotEmpty(actions.getAllowed()))
                 .map(actions -> actions.getAllowed().contains(Permission.DATA_ENTITY_EDIT))
                 .map(AuthorizationDecision::new)
-                .switchIfEmpty(Mono.just(new AuthorizationDecision(false)));
+                .defaultIfEmpty(new AuthorizationDecision(false));
         } else if (path.startsWith(ALERT_PATH)) {
             final String alertId = (String) object.getVariables().get(ALERT_ID);
             if (alertId == null) {
@@ -67,7 +67,7 @@ public class OwnerBasedReactiveAuthorizationManager implements ReactiveAuthoriza
                 .filter(actions -> CollectionUtils.isNotEmpty(actions.getAllowed()))
                 .map(actions -> actions.getAllowed().contains(Permission.ALERT_PROCESSING))
                 .map(AuthorizationDecision::new)
-                .switchIfEmpty(Mono.just(new AuthorizationDecision(false)));
+                .defaultIfEmpty(new AuthorizationDecision(false));
         } else {
             return Mono.just(new AuthorizationDecision(false));
         }

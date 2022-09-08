@@ -41,7 +41,7 @@ public class ReactiveDataEntityRepositoryImpl
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.ID.eq(dataEntityId))));
 
-        return jooqReactiveOperations.mono(query).map(Record1::component1).switchIfEmpty(Mono.just(false));
+        return jooqReactiveOperations.mono(query).map(Record1::component1).defaultIfEmpty(false);
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ReactiveDataEntityRepositoryImpl
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.DATA_SOURCE_ID.eq(dataSourceId))));
 
-        return jooqReactiveOperations.mono(query).map(Record1::component1).switchIfEmpty(Mono.just(false));
+        return jooqReactiveOperations.mono(query).map(Record1::component1).defaultIfEmpty(false);
     }
 
     @Override
@@ -57,7 +57,7 @@ public class ReactiveDataEntityRepositoryImpl
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_ENTITY).where(addSoftDeleteFilter(DATA_ENTITY.NAMESPACE_ID.eq(namespaceId))));
 
-        return jooqReactiveOperations.mono(query).map(Record1::component1).switchIfEmpty(Mono.just(false));
+        return jooqReactiveOperations.mono(query).map(Record1::component1).defaultIfEmpty(false);
     }
 
     @Override
