@@ -10,6 +10,9 @@ The diagram below contains the structure of the Platform and shows principles of
 * It manages your metadata according to the [Specification](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md).
 * It connects to all your data sources simultaneously and provides configurable scheduling.
 
+**ODDRN** (Open Data Discovery Resource Name) is a unique id that identifies an entity in the Platform to support data lineage. 
+
+<!---
 ### Collector types 
 #### [Collector](https://github.com/opendatadiscovery/odd-collector)
 * Cassandra
