@@ -92,11 +92,11 @@ public class OAuthSecurityConfiguration {
         final OidcReactiveOAuth2UserService delegate = new OidcReactiveOAuth2UserService();
         return request -> delegate.loadUser(request)
             .flatMap(oidcUser -> {
-                var oidcUserHandler = getOidcUserHandler(request.getClientRegistration().getRegistrationId());
-                if (oidcUserHandler.isEmpty()) {
+                final var handler = getOidcUserHandler(request.getClientRegistration().getRegistrationId());
+                if (handler.isEmpty()) {
                     return Mono.just(oidcUser);
                 }
-                return oidcUserHandler.get().enrichUserWithProviderInformation(oidcUser, request);
+                return handler.get().enrichUserWithProviderInformation(oidcUser, request);
             });
     }
 
@@ -105,11 +105,11 @@ public class OAuthSecurityConfiguration {
         final DefaultReactiveOAuth2UserService delegate = new DefaultReactiveOAuth2UserService();
         return request -> delegate.loadUser(request)
             .flatMap(user -> {
-                var oAuthUserHandler = getOAuthUserHandler(request.getClientRegistration().getRegistrationId());
-                if (oAuthUserHandler.isEmpty()) {
+                final var handler = getOAuthUserHandler(request.getClientRegistration().getRegistrationId());
+                if (handler.isEmpty()) {
                     return Mono.just(user);
                 }
-                return oAuthUserHandler.get().enrichUserWithProviderInformation(user, request);
+                return handler.get().enrichUserWithProviderInformation(user, request);
             });
     }
 

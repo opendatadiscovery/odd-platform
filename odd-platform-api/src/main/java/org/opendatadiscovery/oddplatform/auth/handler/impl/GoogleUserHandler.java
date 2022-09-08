@@ -57,7 +57,6 @@ public class GoogleUserHandler implements OAuthUserHandler<OidcUser, OidcUserReq
     @Override
     public Mono<OidcUser> enrichUserWithProviderInformation(final OidcUser oidcUser,
                                                             final OidcUserRequest request) {
-
         final String userNameAttributeName = request.getClientRegistration()
             .getProviderDetails()
             .getUserInfoEndpoint().getUserNameAttributeName();
