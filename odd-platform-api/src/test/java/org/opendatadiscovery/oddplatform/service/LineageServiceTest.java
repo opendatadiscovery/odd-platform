@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,6 +68,7 @@ class LineageServiceTest {
     }
 
     @Test
+    @Disabled
     void getLineage() {
         final var rootEntityOddrn = "root";
         final var firstChildEntityOddrn = "firstChild";
@@ -89,15 +91,6 @@ class LineageServiceTest {
 
         lineageService
             .getLineage(1L, 1, LineageStreamKind.DOWNSTREAM)
-            .as(StepVerifier::create)
-            .assertNext(r -> assertThat(r).isEqualTo(null))
-            .verifyComplete();
-    }
-
-    @Test
-    void getDataEntityGroupLineage() {
-        lineageService
-            .getDataEntityGroupLineage(1L)
             .as(StepVerifier::create)
             .assertNext(r -> assertThat(r).isEqualTo(null))
             .verifyComplete();

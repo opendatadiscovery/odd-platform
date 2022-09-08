@@ -79,7 +79,7 @@ class LineageRepositoryTest extends BaseIntegrationTest {
     void getTargetsCountTest() {
         final var parentId = EASY_RANDOM.nextLong();
         final var parentOddrn = RandomStringUtils.randomAlphabetic(5);
-        final var pojo = new DataEntityPojo().setId(parentId).setOddrn(parentOddrn);
+        final var pojo = new DataEntityPojo().setId(parentId).setOddrn(parentOddrn).setIsDeleted(false);
         final var entity = new DataEntityDimensionsDto();
         entity.setDataEntity(pojo);
         final var firstLineagePojo = new LineagePojo()
@@ -95,7 +95,7 @@ class LineageRepositoryTest extends BaseIntegrationTest {
             .setChildOddrn(RandomStringUtils.randomAlphabetic(5))
             .setEstablisherOddrn(RandomStringUtils.randomAlphabetic(5));
         dataEntityRepository.create(pojo).block();
-        lineageRepository.bulkCreate(List.of(firstLineagePojo, secondLineagePojo, notCountedLineagePojo)).blockFirst();
+        lineageRepository.bulkCreate(List.of(firstLineagePojo, secondLineagePojo, notCountedLineagePojo)).blockLast();
         lineageRepository.getTargetsCount(parentId)
             .as(StepVerifier::create)
             .assertNext(r -> assertThat(r).isEqualTo(2L))
