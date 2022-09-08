@@ -31,7 +31,6 @@ public class RecordFactory extends ObjenesisObjectFactory {
 
     @SneakyThrows
     private <T> T createRandomRecord(final Class<T> recordType) {
-        // generate random values for record components
         final RecordComponent[] recordComponents = recordType.getRecordComponents();
         final Object[] randomValues = new Object[recordComponents.length];
         for (int i = 0; i < recordComponents.length; i++) {
@@ -39,21 +38,23 @@ public class RecordFactory extends ObjenesisObjectFactory {
                 final Type type =
                     ((ParameterizedType) recordComponents[i].getGenericType()).getActualTypeArguments()[0];
                 final String typeName;
-                if (type instanceof WildcardType) {
-                    // naively assume that we only have wildcards with upper bounds
-                    typeName = ((WildcardType) type).getUpperBounds()[0].getTypeName();
+                if (type instanceof WildcardType wildcardType) {
+                    if (wildcardType.getUpperBounds().length > 0) {
+                        typeName = wildcardType.getUpperBounds()[0].getTypeName();
+                    } else if (wildcardType.getLowerBounds().length > 0) {
+                        typeName = wildcardType.getLowerBounds()[0].getTypeName();
+                    } else {
+                        typeName = Object.class.getTypeName();
+                    }
                 } else {
                     typeName = type.getTypeName();
                 }
-                final Collection<?> collection =
-                    easyRandom.objects(Class.forName(typeName), 5)
-                        .toList();
+                final Collection<?> collection = easyRandom.objects(Class.forName(typeName), 5).toList();
                 randomValues[i] = collection;
             } else {
                 randomValues[i] = easyRandom.nextObject(recordComponents[i].getType());
             }
         }
-        // create a random instance with random values
         try {
             return getCanonicalConstructor(recordType).newInstance(randomValues);
         } catch (Exception e) {
@@ -65,16 +66,11 @@ public class RecordFactory extends ObjenesisObjectFactory {
         final RecordComponent[] recordComponents = recordType.getRecordComponents();
         final Class<?>[] componentTypes = new Class<?>[recordComponents.length];
         for (int i = 0; i < recordComponents.length; i++) {
-            // recordComponents are ordered, see javadoc:
-            // "The components are returned in the same order that they are declared in the record header"
             componentTypes[i] = recordComponents[i].getType();
         }
         try {
             return recordType.getDeclaredConstructor(componentTypes);
         } catch (NoSuchMethodException e) {
-            // should not happen, from Record javadoc:
-            // "A record class has the following mandated members: a public canonical constructor ,
-            // whose descriptor is the same as the record descriptor;"
             throw new RuntimeException("Invalid record definition", e);
         }
     }
