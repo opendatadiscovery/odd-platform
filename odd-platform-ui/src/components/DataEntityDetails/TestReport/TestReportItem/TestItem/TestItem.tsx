@@ -1,12 +1,8 @@
 import React from 'react';
 import { Grid, Typography } from '@mui/material';
 import { formatDistanceStrict } from 'date-fns';
-import values from 'lodash/values';
-import {
-  DataEntityRunStatus,
-  DataQualityTestExpectation,
-} from 'generated-sources';
-import TestRunStatusIcon from 'components/shared/TestRunStatusIcon/TestRunStatusIcon';
+import { DataEntityRunStatus } from 'generated-sources';
+import { TestRunStatusIcon } from 'components/shared';
 import { Container } from './TestitemStyles';
 
 interface TestItemProps {

@@ -20,3 +20,4 @@ export * from './terms.selectors';
 export * from './termLinkedList.selectors';
 export * from './termSearch.selectors';
 export * from './activities.selectors';
+export * from './dataEntityRun.selector';

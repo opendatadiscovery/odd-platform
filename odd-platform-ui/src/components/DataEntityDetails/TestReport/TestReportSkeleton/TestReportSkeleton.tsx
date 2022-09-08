@@ -1,29 +1,29 @@
 import React from 'react';
-import Skeleton from '@mui/material/Skeleton';
-import { Grid } from '@mui/material';
+import { Grid, Skeleton } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
+import { SkeletonWrapper } from 'components/shared';
 import { TestReportContainer } from '../TestReportStyles';
 
-interface SkeletonProps {
-  width: string;
-}
-
-const TestReportSkeleton: React.FC<SkeletonProps> = ({ width }) => (
-  <Grid container>
-    <Grid container justifyContent="space-between">
-      <TestReportContainer container item xs={6}>
-        <Skeleton width={width} height={mainSkeletonHeight} />
-        <Skeleton width={width} height={mainSkeletonHeight} />
-        <Skeleton width={width} height={mainSkeletonHeight} />
-        <Skeleton width={width} height={mainSkeletonHeight} />
-        <Skeleton width={width} height={mainSkeletonHeight} />
-        <Skeleton width={width} height={mainSkeletonHeight} />
-      </TestReportContainer>
-      <Grid container item xs={2} justifyContent="flex-end">
-        <Skeleton width={width} height={mainSkeletonHeight} />
+const TestReportSkeleton: React.FC = () => (
+  <SkeletonWrapper
+    renderContent={({ randWidth }) => (
+      <Grid container>
+        <Grid container justifyContent="space-between">
+          <TestReportContainer container item xs={6}>
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+          </TestReportContainer>
+          <Grid container item xs={2} justifyContent="flex-end">
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+          </Grid>
+        </Grid>
       </Grid>
-    </Grid>
-  </Grid>
+    )}
+  />
 );
 
 export default TestReportSkeleton;

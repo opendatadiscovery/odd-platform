@@ -48,8 +48,8 @@ const Overview: React.FC = () => {
       )}
       {isTermDetailsFetching && (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <OverviewSkeleton width={randomSkeletonPercentWidth()} />
+          renderContent={({ randWidth }) => (
+            <OverviewSkeleton width={randWidth()} />
           )}
         />
       )}

@@ -1,5 +1,5 @@
 import React, { HTMLAttributeAnchorTarget } from 'react';
-import { ButtonProps } from '@mui/material';
+import { Box, ButtonProps } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { ButtonColors, StyledAppButton } from './AppButtonStyles';
 
@@ -42,18 +42,20 @@ const AppButton: React.FC<AppButtonProps> = React.forwardRef(
 
     if (to) {
       return (
-        <Link to={to} style={{ width: 'inherit' }} target={linkTarget}>
-          <StyledAppButton
-            {...props}
-            focusRipple
-            $color={color}
-            ref={ref || buttonRef}
-            disableRipple
-            $isOverflowed={isOverflowed}
-          >
-            {children}
-          </StyledAppButton>
-        </Link>
+        <Box sx={props.sx} width="100%">
+          <Link to={to} style={{ width: 'inherit' }} target={linkTarget}>
+            <StyledAppButton
+              {...props}
+              focusRipple
+              $color={color}
+              ref={ref || buttonRef}
+              disableRipple
+              $isOverflowed={isOverflowed}
+            >
+              {children}
+            </StyledAppButton>
+          </Link>
+        </Box>
       );
     }
 

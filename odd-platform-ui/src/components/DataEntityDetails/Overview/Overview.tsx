@@ -104,8 +104,8 @@ const Overview: React.FC = () => {
       ) : null}
       {isDataEntityDetailsFetching ? (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <OverviewSkeleton width={randomSkeletonPercentWidth()} />
+          renderContent={({ randWidth }) => (
+            <OverviewSkeleton width={randWidth()} />
           )}
         />
       ) : null}

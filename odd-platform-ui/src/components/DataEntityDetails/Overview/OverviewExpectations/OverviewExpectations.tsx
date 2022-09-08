@@ -15,8 +15,8 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
   linkedUrlList,
 }) => {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
-  const jsonParams = JSON.stringify(parameters, null, 2);
-  const isExpandable = jsonParams.length > 430;
+  const stringifyParams = JSON.stringify(parameters, null, 2);
+  const isExpandable = stringifyParams.length > 430;
 
   return (
     <Grid container flexDirection="column" alignItems="flex-start">
@@ -26,7 +26,7 @@ const OverviewExpectations: React.FC<OverviewExpectationsProps> = ({
         $isOpened={isExpanded}
         $isExpandable={isExpandable}
       >
-        {jsonParams}
+        {stringifyParams}
       </S.Params>
       {isExpandable && (
         <AppButton

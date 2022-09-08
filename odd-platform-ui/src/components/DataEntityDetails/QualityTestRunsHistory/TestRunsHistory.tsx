@@ -95,11 +95,8 @@ const TestRunsHistory: React.FC = () => {
               isTestRunsListFetching ? (
                 <SkeletonWrapper
                   length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <TestRunSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
+                  renderContent={({ randWidth, key }) => (
+                    <TestRunSkeletonItem width={randWidth()} key={key} />
                   )}
                 />
               ) : null
