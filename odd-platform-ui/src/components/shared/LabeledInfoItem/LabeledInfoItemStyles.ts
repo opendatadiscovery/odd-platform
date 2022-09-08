@@ -52,7 +52,9 @@ export const Value = styled(Typography)<ValueProps>(
     display: 'block',
     wordBreak: 'break-all',
     overflow: 'hidden',
-    color: $runStatus ? theme.palette.runStatus[$runStatus] : $valueColor,
+    color: $runStatus
+      ? theme.palette.runStatus[$runStatus].color
+      : $valueColor,
     marginLeft: $inline ? theme.spacing(0.5) : '',
     lineHeight: $valueLineHeight ? `${$valueLineHeight}px` : 'inherit',
   })

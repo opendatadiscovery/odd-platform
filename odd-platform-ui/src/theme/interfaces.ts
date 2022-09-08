@@ -33,7 +33,7 @@ type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 
 type ReportStatus = Record<DataEntityRunStatus, ItemColors>;
 
-type RunStatus = Record<DataEntityRunStatus, string>;
+type RunStatus = Record<DataEntityRunStatus, ItemColors>;
 
 type AssociationRequestStatus = Record<
   OwnerAssociationRequestStatus,
