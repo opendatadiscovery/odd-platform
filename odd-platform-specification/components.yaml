@@ -666,12 +666,21 @@ components:
         success:
           type: integer
           format: int64
+        sla_colour:
+          $ref: '#/components/schemas/SLAColour'
         severity_weights:
           type: array
           items:
             $ref: '#/components/schemas/DataSetSLASeverityWeight'
         sla_ref:
           type: string
+
+    SLAColour:
+      type: string
+      enum:
+      - GREEN
+      - YELLOW
+      - RED
 
     DataSetSLASeverityWeight:
       type: object
