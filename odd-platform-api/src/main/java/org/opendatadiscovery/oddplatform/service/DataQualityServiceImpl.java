@@ -91,7 +91,7 @@ public class DataQualityServiceImpl implements DataQualityService {
     @Override
     public Mono<DataSetSLAReport> getSLAReport(final long datasetId) {
         return getDatasetSLA(datasetId)
-            .map(slaCalculator::getSLAReport);
+            .map(tests -> slaCalculator.getSLAReport(datasetId, tests));
     }
 
     private Mono<List<TestStatusWithSeverityDto>> getDatasetSLA(final long datasetId) {

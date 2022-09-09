@@ -17,7 +17,8 @@ import static org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTe
 @Component
 public class SLACalculator {
 
-    public DataSetSLAReport getSLAReport(final List<TestStatusWithSeverityDto> tests) {
+    public DataSetSLAReport getSLAReport(final long datasetId,
+                                         final List<TestStatusWithSeverityDto> tests) {
         final Counter counter = new Counter();
         tests.stream()
             .filter(t -> t.status() == QualityRunStatus.SUCCESS || t.status() == QualityRunStatus.FAILED)
@@ -59,6 +60,7 @@ public class SLACalculator {
 
         result.setTotal(totalWeight);
         result.setSuccess(successWeight);
+        result.setSlaRef("/api/datasets/%s/sla".formatted(datasetId));
 
         return result;
     }
