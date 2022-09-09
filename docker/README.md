@@ -23,7 +23,7 @@ This environment consists of:
     * Linux/Mac: `lsof -i -P -n | grep LISTEN | grep <PORT_NUMBER>`
     * Windows Powershell: `Get-NetTCPConnection | where Localport -eq <PORT_NUMBER> | select Localport,OwningProcess`
 
-    Replace `<PORT_NUMBER>` with 5432 and 8080. Empty output mean that the port is free and ready to go.
+    Replace `<PORT_NUMBER>` with 5432 and 8080. Empty output means that the port is free and ready to go.
 
 ### Execution
 
@@ -37,7 +37,7 @@ You should be able to see 10 predefined data sources in the list
 
 2. Go to the **Catalog** section
 
-You should be able to see metadata sample injected in the Platform
+You should be able to see metadata sample injected into the Platform
 
 ## Step 2: Configuring and running Collector to gather metadata from the sample data source
 
