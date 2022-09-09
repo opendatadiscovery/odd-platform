@@ -4,16 +4,16 @@
   "description": "<p>  <img src=\"./images/open-data-discovery-platform-odd-logo.png\" width=\"600px\" alt=\"open-data-discovery-logo\"/>&nbsp; </p>",
   "main": "index.js",
   "directories": {
-    "doc": "docs"
+    "doc": "../docs"
   },
   "scripts": {
     "build": "tsc",
-    "clean": "rimraf dist/",
+    "clean": "./node_modules/.bin/rimraf ./dist/",
     "clean-build": "npm run clean && npm run build",
-    "up-odd-platform": "./docker/up-platform.sh",
-    "up-collector": "./docker/up-collector.sh",
+    "up-odd-platform": "../docker/up-platform.sh",
+    "up-collector": "../docker/up-collector.sh",
     "odd-up": "npm run up-odd-platform && npm run up-collector",
-    "odd-down": "docker-compose -f docker/demo.yaml down",
+    "odd-down": "docker-compose -f ../docker/demo.yaml down",
     "pw": "npm run clean-build; ENVIRONMENT=main_test playwright test --workers=1 --headed"
   },
   "repository": {

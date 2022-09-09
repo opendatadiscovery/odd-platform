@@ -1,12 +1,12 @@
 #!/bin/bash
 
-export value=$(curl -X POST -H "Content-Type: application/json" -d @./docker/req.json http://localhost:8080/api/collectors | jq '.token.value')
-echo > docker/config/collector_config.yaml
-envsubst '${value}' < docker/collector_setting_from_post.yaml >> docker/config/collector_config.yaml
+export value=$(curl -X POST -H "Content-Type: application/json" -d @../docker/req.json http://localhost:8080/api/collectors | jq '.token.value')
+echo > ../docker/config/collector_config.yaml
+envsubst '${value}' < ../docker/collector_setting_from_post.yaml >> ../docker/config/collector_config.yaml
 
 # start collector
 echo "starting Collector to gather metadata from the sample data source"
-docker-compose -f docker/demo.yaml up -d odd-collector
+docker-compose -f ../docker/demo.yaml up -d odd-collector
 
 # sleep a bit until data be ready
 read -p "waiting 30 sec to make sure containers are up and data is ready..." -t 30
