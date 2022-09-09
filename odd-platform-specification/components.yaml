@@ -657,6 +657,29 @@ components:
           type: integer
           format: int64
 
+    DataSetSLAReport:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: int64
+        success:
+          type: integer
+          format: int64
+        severity_weights:
+          $ref: '#/components/schemas/DataSetSLASeverityWeight'
+        sla_ref:
+          type: string
+
+    DataSetSLASeverityWeight:
+      type: object
+      properties:
+        severity:
+          $ref: '#/components/schemas/DataQualityTestSeverity'
+        count:
+          type: integer
+          format: int64
+
     DataSetTestReport:
       type: object
       properties:

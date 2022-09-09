@@ -1353,6 +1353,23 @@ paths:
       tags:
         - dataQuality
 
+  /api/datasets/{data_entity_id}/sla_report:
+    get:
+      summary: Get SLA report
+      description: Get detailed SLA statistics
+      operationId: getDatasetSLAReport
+      parameters:
+        - $ref: './components.yaml/#/components/parameters/DataEntityIdParam'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: './components.yaml/#/components/schemas/DataSetSLAReport'
+      tags:
+        - dataQuality
+
   /api/datasets/{data_entity_id}/test_report:
     get:
       summary: Get Dataset's test report
