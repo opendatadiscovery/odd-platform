@@ -49,7 +49,7 @@ public abstract class LineageMapper {
         return new DataEntityGroupLineageList().items(lineageStreams);
     }
 
-    public DataEntityLineageStream mapStream(final DataEntityLineageStreamDto stream) {
+    DataEntityLineageStream mapStream(final DataEntityLineageStreamDto stream) {
         if (stream == null) {
             return null;
         }
@@ -81,7 +81,7 @@ public abstract class LineageMapper {
     @Mapping(target = "targetId", source = "right")
     abstract DataEntityLineageEdge mapEdge(final Pair<Long, Long> edge);
 
-    public DataEntityLineageNode mapRootOrGroupNode(final DataEntityDimensionsDto dto) {
+    DataEntityLineageNode mapRootOrGroupNode(final DataEntityDimensionsDto dto) {
         return mapNode(new LineageNodeDto(dto, null, null), emptyList());
     }
 
@@ -94,7 +94,7 @@ public abstract class LineageMapper {
     abstract DataEntityLineageNode mapNode(final LineageNodeDto dto, final List<Long> groupIds);
 
     @Named("entityClassesNamed")
-    public List<DataEntityClass> mapDtoToEntityClasses(final LineageNodeDto dto) {
+    List<DataEntityClass> mapDtoToEntityClasses(final LineageNodeDto dto) {
         return DataEntityClassDto.findByIds(dto.entity().getDataEntity().getEntityClassIds())
             .stream()
             .map(dataEntityMapper::mapEntityClass)
@@ -102,7 +102,7 @@ public abstract class LineageMapper {
     }
 
     @Named("dtoToDataSourceNamed")
-    public DataSource mapDtoToDataSource(final LineageNodeDto dto) {
+    DataSource mapDtoToDataSource(final LineageNodeDto dto) {
         return dto.entity().getDataSource() != null
             ? dataSourceMapper.mapDto(new DataSourceDto(dto.entity().getDataSource(),
             dto.entity().getNamespace(), null))

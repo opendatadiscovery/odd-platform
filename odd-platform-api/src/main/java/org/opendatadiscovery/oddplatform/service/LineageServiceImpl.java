@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.SetUtils;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityGroupLineageList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
@@ -106,6 +107,8 @@ public class LineageServiceImpl implements LineageService {
             .map(lineageMapper::mapLineageDto);
     }
 
+    @Override
+    @ReactiveTransactional
     public Flux<LineagePojo> replaceLineagePaths(final List<LineagePojo> pojos) {
         final Set<String> establishers = pojos.stream()
             .map(LineagePojo::getEstablisherOddrn)

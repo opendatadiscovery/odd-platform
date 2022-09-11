@@ -13,7 +13,6 @@ import org.jooq.Record2;
 import org.jooq.SelectJoinStep;
 import org.jooq.TableField;
 import org.jooq.impl.DSL;
-import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
@@ -41,7 +40,6 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
     }
 
     @Override
-    @ReactiveTransactional
     public Flux<LineagePojo> batchDeleteByEstablisherOddrn(final Collection<String> establishers) {
         final var query = DSL.deleteFrom(LINEAGE)
             .where(LINEAGE.ESTABLISHER_ODDRN.in(establishers));
@@ -49,7 +47,6 @@ public class ReactiveLineageRepositoryImpl extends ReactiveAbstractCRUDRepositor
     }
 
     @Override
-    @ReactiveTransactional
     public Flux<LineagePojo> batchInsertLineages(final List<LineagePojo> pojos) {
         InsertValuesStep3<LineageRecord, String, String, String> step
             = DSL.insertInto(LINEAGE, LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN, LINEAGE.ESTABLISHER_ODDRN);
