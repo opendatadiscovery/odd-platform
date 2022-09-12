@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetSLAReport;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetSLASeverityWeight;
+import org.opendatadiscovery.oddplatform.api.contract.model.SLAColour;
 import org.opendatadiscovery.oddplatform.dto.SLA;
 import org.opendatadiscovery.oddplatform.dto.TestStatusWithSeverityDto;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.QualityRunStatus;
@@ -45,9 +46,9 @@ public class SLACalculator {
         result.addSeverityWeightsItem(new DataSetSLASeverityWeight().severity(MAJOR).count(majorsCount));
 
         final long criticalCount;
-        if (counter.getMajorsCount() > 0) {
-            criticalCount = counter.getMajorsCount() * counter.getCriticalCount();
-            successWeight += counter.getMajorsCount() * counter.getCriticalSuccess();
+        if (majorsCount > 0) {
+            criticalCount = majorsCount * counter.getCriticalCount();
+            successWeight += majorsCount * counter.getCriticalSuccess();
         } else if (counter.getMinorsCount() > 0) {
             criticalCount = counter.getMinorsCount() * counter.getCriticalCount();
             successWeight += counter.getMinorsCount() * counter.getCriticalSuccess();
@@ -56,71 +57,67 @@ public class SLACalculator {
             successWeight += counter.getCriticalSuccess();
         }
         totalWeight += criticalCount;
-        result.addSeverityWeightsItem(new DataSetSLASeverityWeight().severity(CRITICAL).count(majorsCount));
+        result.addSeverityWeightsItem(new DataSetSLASeverityWeight().severity(CRITICAL).count(criticalCount));
 
         result.setTotal(totalWeight);
         result.setSuccess(successWeight);
         result.setSlaRef("/api/datasets/%s/sla".formatted(datasetId));
 
+        final SLA slaColour = getSLAColour(counter);
+        result.setSlaColour(SLAColour.fromValue(slaColour.name()));
+
         return result;
     }
 
     public SLA calculateSLA(final List<TestStatusWithSeverityDto> tests) {
-        final List<TestStatusWithSeverityDto> countableTests = tests.stream()
+        final Counter counter = new Counter();
+        tests.stream()
             .filter(t -> t.status() == QualityRunStatus.SUCCESS || t.status() == QualityRunStatus.FAILED)
-            .toList();
+            .forEach(counter::add);
+        return getSLAColour(counter);
+    }
 
-        if (countableTests.isEmpty()) {
+    private SLA getSLAColour(final Counter counter) {
+        if (counter.getMinorsCount() == 0 && counter.getMajorsCount() == 0 && counter.getCriticalCount() == 0) {
             return SLA.YELLOW;
         }
-
-        long failedMajor = 0;
-        long failedMinor = 0;
-
-        long totalMajor = 0;
-        long totalMinor = 0;
-
-        for (final TestStatusWithSeverityDto test : countableTests) {
-            if (test.status() != QualityRunStatus.SUCCESS) {
-                if (test.severity() == DataQualityTestSeverity.CRITICAL) {
-                    return SLA.RED;
-                }
-
-                if (test.severity() == DataQualityTestSeverity.MAJOR) {
-                    failedMajor++;
-                }
-
-                if (test.severity() == DataQualityTestSeverity.MINOR) {
-                    failedMinor++;
-                }
-            }
-
-            if (test.severity() == DataQualityTestSeverity.MAJOR) {
-                totalMajor++;
-            }
-
-            if (test.severity() == DataQualityTestSeverity.MINOR) {
-                totalMinor++;
-            }
-        }
-
-        if (totalMajor != 0 && failedMajor == totalMajor) {
+        if (anyCriticalFailed(counter)) {
             return SLA.RED;
         }
-
-        if (failedMajor + 1 == totalMajor && failedMinor == totalMinor) {
+        if (allMajorsFailed(counter)) {
             return SLA.RED;
         }
-
-        if (failedMajor > 0) {
+        if (allExceptOneMajorsFailedAndAllMinorsFailed(counter)) {
+            return SLA.RED;
+        }
+        if (hasFailedMajors(counter)) {
             return SLA.YELLOW;
         }
-
-        if (failedMinor == totalMinor) {
+        if (allMinorsFailed(counter)) {
             return SLA.YELLOW;
         }
-
         return SLA.GREEN;
+    }
+
+    private boolean anyCriticalFailed(final Counter counter) {
+        return counter.getCriticalCount() != counter.getCriticalSuccess();
+    }
+
+    private boolean allMajorsFailed(final Counter counter) {
+        return counter.getMajorsCount() != 0 && counter.getMajorsSuccess() == 0;
+    }
+
+    private boolean allExceptOneMajorsFailedAndAllMinorsFailed(final Counter counter) {
+        return counter.getMajorsCount() != 0 && counter.getMajorsSuccess() == 1 && counter.getMinorsCount() != 0
+            && counter.getMinorsSuccess() == 0;
+    }
+
+    private boolean hasFailedMajors(final Counter counter) {
+        return counter.getMajorsCount() != counter.getMajorsSuccess();
+    }
+
+    private boolean allMinorsFailed(final Counter counter) {
+        return counter.getMinorsCount() != 0 && counter.getMinorsSuccess() == 0;
     }
 
     @Getter
