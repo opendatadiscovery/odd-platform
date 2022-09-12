@@ -52,18 +52,14 @@ import static org.mockito.Mockito.when;
 @DisplayName("Unit tests for LineageService")
 class LineageServiceTest {
 
+    private final LineageMapper lineageMapper = new LineageMapperImpl();
     private LineageService lineageService;
-
     @Mock
     private ReactiveLineageRepository lineageRepository;
-
     @Mock
     private ReactiveGroupEntityRelationRepository groupEntityRelationRepository;
-
     @Mock
     private DataEntityRepository dataEntityRepository;
-
-    private final LineageMapper lineageMapper = new LineageMapperImpl();
 
     @BeforeEach
     void setUp() {
@@ -117,7 +113,8 @@ class LineageServiceTest {
         final var rootEntityOddrn = "root";
         final var firstChildEntityOddrn = "firstChild";
         final var secondChildEntityOddrn = "secondChild";
-        final var rootEntity = new DataEntityPojo().setOddrn(rootEntityOddrn).setId(1L).setEntityClassIds(new Integer[]{1});
+        final var rootEntity = new DataEntityPojo().setOddrn(rootEntityOddrn).setId(1L)
+            .setEntityClassIds(new Integer[] {1});
         final var firstChildEntity = new DataEntityPojo().setId(2L).setOddrn(firstChildEntityOddrn);
         final var secondChildEntity = new DataEntityPojo().setId(3L).setOddrn(secondChildEntityOddrn);
         final var rootToFirstEntityLineage = new LineagePojo(rootEntityOddrn, firstChildEntityOddrn, null);
@@ -136,7 +133,7 @@ class LineageServiceTest {
             dto,
             DataEntityDimensionsDto.dimensionsBuilder().dataEntity(firstChildEntity).build(),
             DataEntityDimensionsDto.dimensionsBuilder().dataEntity(secondChildEntity).build()
-            ));
+        ));
 
         lineageService
             .getLineage(1L, 1, LineageStreamKind.DOWNSTREAM)
@@ -147,8 +144,8 @@ class LineageServiceTest {
                         Collectors.toSet())).isEqualTo(Set.of(1L, 2L, 3L));
                     assertThat(r.getDownstream().getEdges()).isEqualTo(
                         List.of(new DataEntityLineageEdge().sourceId(1L).targetId(2L),
-                        new DataEntityLineageEdge().sourceId(1L).targetId(3L)));
-                }
+                            new DataEntityLineageEdge().sourceId(1L).targetId(3L)));
+                    }
             )
             .verifyComplete();
     }
