@@ -1,11 +1,13 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.jooq.impl.DSL;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
 import org.opendatadiscovery.oddplatform.repository.util.JooqReactiveOperations;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_QUALITY_TEST_RELATIONS;
@@ -34,5 +36,14 @@ public class ReactiveDataQualityTestRelationRepositoryImpl implements ReactiveDa
 
             return jooqReactiveOperations.mono(step.onDuplicateKeyIgnore());
         });
+    }
+
+    @Override
+    public Flux<DataQualityTestRelationsPojo> getRelations(final Collection<String> dataQATestOddrns) {
+        final var query = DSL
+            .selectFrom(DATA_QUALITY_TEST_RELATIONS)
+            .where(DATA_QUALITY_TEST_RELATIONS.DATA_QUALITY_TEST_ODDRN.in(dataQATestOddrns));
+
+        return jooqReactiveOperations.flux(query).map(r -> r.into(DataQualityTestRelationsPojo.class));
     }
 }

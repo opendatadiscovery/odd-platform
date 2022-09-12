@@ -18,8 +18,6 @@ import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassesTotalDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
-import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
@@ -33,47 +31,48 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelat
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
+import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
-import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
+import org.opendatadiscovery.oddplatform.service.AlertLocator;
 import org.opendatadiscovery.oddplatform.service.IngestionService;
-import org.opendatadiscovery.oddplatform.service.activity.ActivityService;
 import org.opendatadiscovery.oddplatform.service.ingestion.processor.IngestionProcessorChain;
+import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 import static java.util.function.Function.identity;
 import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityType.JOB_RUN;
-import static reactor.function.TupleUtils.function;
 
 @RequiredArgsConstructor
 @Service
 public class NewIngestionService implements IngestionService {
     private final IngestionProcessorChain ingestionProcessorChain;
-    private final ActivityService activityService;
+    private final MetricService metricService;
+
     private final ReactiveDataEntityRepository dataEntityRepository;
     private final ReactiveDataSourceRepository dataSourceRepository;
-    private final ReactiveSearchEntrypointRepository searchEntrypointRepository;
+
     private final IngestionMapper ingestionMapper;
 
     @Override
     @ReactiveTransactional
-    // TODO: lineage, alerts, metrics
+    // TODO: lineage
     // TODO: lineageRepository.replaceLineagePaths(lineageRelations) into handler
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
         return dataSourceRepository.getDtoByOddrn(dataEntityList.getDataSourceOddrn())
             .switchIfEmpty(Mono.error(() -> new NotFoundException(
                 "Data source with oddrn %s hasn't been found", dataEntityList.getDataSourceOddrn())))
-            .flatMap(dataSource -> persistDataEntities(dataSource.dataSource().getId(), dataEntityList.getItems()))
+            .<Long>handle((dto, sink) -> {
+                if (CollectionUtils.isNotEmpty(dataEntityList.getItems())) {
+                    sink.next(dto.dataSource().getId());
+                }
+            })
+            .flatMap(dataSourceId -> persistDataEntities(dataSourceId, dataEntityList.getItems()))
             .flatMap(ingestionProcessorChain::processIngestionRequest)
-            .flatMap(request -> searchEntrypointRepository.recalculateVectors(request.getAllIds()).thenReturn(request))
-            .flatMap(request -> dataEntityCreatedEvents(request.getNewIds())
-                .flatMap(activityService::createActivityEvents)
-                .thenReturn(request)
-            )
+            .flatMap(metricService::exportMetrics)
             .then();
 //            .then(Mono.error(new RuntimeException("ingestion api test exception")));
     }
@@ -144,21 +143,6 @@ public class NewIngestionService implements IngestionService {
                     .map(newEntities -> buildIngestionRequest(newEntities, enrichedExistingDtos, taskRuns,
                         specificAttributesDeltas, classesDelta));
             });
-    }
-
-    private Mono<List<ActivityCreateEvent>> dataEntityCreatedEvents(final List<Long> newEntitiesIds) {
-        return Mono.zip(
-                activityService.getContextInfo(emptyMap(), ActivityEventTypeDto.DATA_ENTITY_CREATED),
-                activityService.getUpdatedInfo(emptyMap(), newEntitiesIds, ActivityEventTypeDto.DATA_ENTITY_CREATED)
-            )
-            .map(function((ci, dtoMap) -> dtoMap.entrySet().stream().map(e -> ActivityCreateEvent.builder()
-                    .dataEntityId(e.getKey())
-                    .oldState(ci.getOldState())
-                    .eventType(ActivityEventTypeDto.DATA_ENTITY_CREATED)
-                    .newState(e.getValue())
-                    .systemEvent(true)
-                    .build())
-                .toList()));
     }
 
     private IngestionRequest buildIngestionRequest(

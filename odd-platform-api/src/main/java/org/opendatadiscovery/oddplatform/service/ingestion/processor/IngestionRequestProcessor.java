@@ -7,4 +7,8 @@ public interface IngestionRequestProcessor {
     Mono<Void> process(final IngestionRequest request);
 
     boolean shouldProcess(final IngestionRequest request);
+
+    default IngestionProcessingPhase getPhase() {
+        return IngestionProcessingPhase.MAIN;
+    }
 }

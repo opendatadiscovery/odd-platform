@@ -46,7 +46,8 @@ import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
 import static org.opendatadiscovery.oddplatform.model.Tables.USER_OWNER_MAPPING;
 
 @Repository
-public class AlertRepositoryImpl extends ReactiveAbstractCRUDRepository<AlertRecord, AlertPojo>
+public class AlertRepositoryImpl
+    extends ReactiveAbstractCRUDRepository<AlertRecord, AlertPojo>
     implements AlertRepository {
 
     private final JooqRecordHelper jooqRecordHelper;

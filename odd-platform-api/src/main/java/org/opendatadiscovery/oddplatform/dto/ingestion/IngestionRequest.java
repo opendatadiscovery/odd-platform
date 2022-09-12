@@ -19,6 +19,7 @@ public class IngestionRequest {
     private final List<EnrichedDataEntityIngestionDto> allEntities;
     private final DataEntityClassesTotalDelta entityClassesTotalDelta;
 
+    // TODO: try to remove smth into handlers
     private final List<IngestionTaskRun> taskRuns;
     private final List<LineagePojo> lineageRelations;
     private final List<DataQualityTestRelationsPojo> dataQARelations;

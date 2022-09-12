@@ -1,6 +1,5 @@
 package org.opendatadiscovery.oddplatform.service;
 
-import java.util.Collection;
 import java.util.List;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertList;
 import org.opendatadiscovery.oddplatform.api.contract.model.AlertStatus;

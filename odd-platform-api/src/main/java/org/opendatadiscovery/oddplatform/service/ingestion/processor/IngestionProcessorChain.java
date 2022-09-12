@@ -1,17 +1,23 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.processor;
 
+import java.util.Comparator;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class IngestionProcessorChain {
     private final List<IngestionRequestProcessor> ingestionRequestProcessors;
+
+    public IngestionProcessorChain(final List<IngestionRequestProcessor> ingestionRequestProcessors) {
+        this.ingestionRequestProcessors = ingestionRequestProcessors
+            .stream()
+            .sorted(Comparator.comparingInt(processor -> processor.getPhase().ordinal()))
+            .toList();
+    }
 
     public Mono<IngestionRequest> processIngestionRequest(final IngestionRequest request) {
         final List<Mono<IngestionRequest>> executions = ingestionRequestProcessors
