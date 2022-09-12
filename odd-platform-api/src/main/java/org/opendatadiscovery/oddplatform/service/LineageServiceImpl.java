@@ -93,12 +93,12 @@ public class LineageServiceImpl implements LineageService {
                             lineageRepository.getChildrenCount(oddrnsToFetch),
                             lineageRepository.getParentCount(oddrnsToFetch))
                         .map(function((groupRelations, childrenCountMap, parentsCountMap) -> {
-                            final Map<String, DataEntityDimensionsDto> dataEntityDimensionsDtoMap =
+                            final Map<String, DataEntityDimensionsDto> dtoRepository =
                                 getDataEntityDimensionsDtoMap(SetUtils.union(oddrnsToFetch, groupRelations.keySet()));
                             final Map<DataEntityDimensionsDto, List<String>> groupRepository =
-                                getGroupRepository(groupRelations, dataEntityDimensionsDtoMap);
+                                getGroupRepository(groupRelations, dtoRepository);
                             final DataEntityLineageStreamDto lineageStream =
-                                getLineageStream(dataEntityDimensionsDtoMap,
+                                getLineageStream(dtoRepository,
                                     groupRepository, relations, childrenCountMap, parentsCountMap);
 
                             return buildDataEntityLineage(dto, lineageStreamKind, lineageStream);
