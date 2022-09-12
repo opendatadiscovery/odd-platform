@@ -31,10 +31,8 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelat
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRelationsPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
-import org.opendatadiscovery.oddplatform.repository.AlertRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
-import org.opendatadiscovery.oddplatform.service.AlertLocator;
 import org.opendatadiscovery.oddplatform.service.IngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.processor.IngestionProcessorChain;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
@@ -60,17 +58,12 @@ public class NewIngestionService implements IngestionService {
     @Override
     @ReactiveTransactional
     // TODO: lineage
-    // TODO: lineageRepository.replaceLineagePaths(lineageRelations) into handler
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
         return dataSourceRepository.getDtoByOddrn(dataEntityList.getDataSourceOddrn())
             .switchIfEmpty(Mono.error(() -> new NotFoundException(
                 "Data source with oddrn %s hasn't been found", dataEntityList.getDataSourceOddrn())))
-            .<Long>handle((dto, sink) -> {
-                if (CollectionUtils.isNotEmpty(dataEntityList.getItems())) {
-                    sink.next(dto.dataSource().getId());
-                }
-            })
-            .flatMap(dataSourceId -> persistDataEntities(dataSourceId, dataEntityList.getItems()))
+            .filter(ds -> CollectionUtils.isNotEmpty(dataEntityList.getItems()))
+            .flatMap(ds -> persistDataEntities(ds.dataSource().getId(), dataEntityList.getItems()))
             .flatMap(ingestionProcessorChain::processIngestionRequest)
             .flatMap(metricService::exportMetrics)
             .then();

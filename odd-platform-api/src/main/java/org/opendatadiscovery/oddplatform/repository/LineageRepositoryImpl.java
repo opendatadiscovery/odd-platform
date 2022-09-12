@@ -4,16 +4,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.jooq.CommonTableExpression;
 import org.jooq.DSLContext;
 import org.jooq.Field;
-import org.jooq.InsertValuesStep3;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.TableField;
-import org.opendatadiscovery.oddplatform.annotation.BlockingTransactional;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageDepth;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
@@ -22,7 +19,6 @@ import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.springframework.stereotype.Repository;
 
 import static java.util.stream.Collectors.toList;
-import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.DSL.val;
@@ -33,27 +29,6 @@ import static org.opendatadiscovery.oddplatform.model.Tables.LINEAGE;
 @RequiredArgsConstructor
 public class LineageRepositoryImpl implements LineageRepository {
     private final DSLContext dslContext;
-
-    @Override
-    @BlockingTransactional
-    public void replaceLineagePaths(final List<LineagePojo> pojos) {
-        final Set<String> establishers = pojos.stream()
-            .map(LineagePojo::getEstablisherOddrn)
-            .collect(Collectors.toSet());
-
-        dslContext.deleteFrom(LINEAGE)
-            .where(LINEAGE.ESTABLISHER_ODDRN.in(establishers))
-            .execute();
-
-        InsertValuesStep3<LineageRecord, String, String, String> step
-            = dslContext.insertInto(LINEAGE, LINEAGE.PARENT_ODDRN, LINEAGE.CHILD_ODDRN, LINEAGE.ESTABLISHER_ODDRN);
-
-        for (final LineagePojo p : pojos) {
-            step = step.values(p.getParentOddrn(), p.getChildOddrn(), p.getEstablisherOddrn());
-        }
-
-        step.onDuplicateKeyIgnore().execute();
-    }
 
     @Override
     public Optional<Long> getTargetsCount(final long dataEntityId) {

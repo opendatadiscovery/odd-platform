@@ -3,6 +3,7 @@ package org.opendatadiscovery.oddplatform.service.ingestion.processor;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
@@ -31,7 +32,7 @@ public class ActivityIngestionRequestProcessor implements IngestionRequestProces
 
     @Override
     public boolean shouldProcess(final IngestionRequest request) {
-        return false;
+        return CollectionUtils.isNotEmpty(request.getNewEntities());
     }
 
     @Override
