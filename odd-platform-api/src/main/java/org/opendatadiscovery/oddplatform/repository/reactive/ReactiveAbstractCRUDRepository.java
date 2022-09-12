@@ -130,7 +130,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .map(e -> createRecord(e, now))
             .toList();
 
-        return insertMany(records).map(this::recordToPojo);
+        return insertManyReturning(records).map(this::recordToPojo);
     }
 
     @Override
@@ -176,8 +176,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .mono(DSL.update(recordTable).set(record).where(idField.eq(record.get(idField))).returning());
     }
 
-    // TODO: rename to returning
-    protected Flux<R> insertMany(final List<R> records) {
+    protected Flux<R> insertManyReturning(final List<R> records) {
         return jooqReactiveOperations.executeInPartitionReturning(records, rs -> {
             InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
 
@@ -189,8 +188,7 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
         });
     }
 
-    // TODO: remove headless word
-    protected Mono<Void> insertManyHeadless(final List<R> records, final boolean failOnDuplicateKey) {
+    protected Mono<Void> insertMany(final List<R> records, final boolean failOnDuplicateKey) {
         return jooqReactiveOperations.executeInPartition(records, rs -> {
             InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
 
@@ -210,7 +208,6 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
         return jooqReactiveOperations.executeInPartitionReturning(records, rs -> {
             final Table<?> table = DSL.table(jooqReactiveOperations.newResult(recordTable, rs));
 
-            // TODO: duplicate code
             final List<Field<?>> nonUpdatableFields = getNonUpdatableFields();
 
             final Map<? extends Field<?>, Field<?>> fields = Arrays

@@ -35,6 +35,6 @@ public class ReactiveDatasetStructureRepositoryImpl
             .map(e -> createRecord(e, now))
             .toList();
 
-        return insertManyHeadless(records, true);
+        return insertMany(records, true);
     }
 }

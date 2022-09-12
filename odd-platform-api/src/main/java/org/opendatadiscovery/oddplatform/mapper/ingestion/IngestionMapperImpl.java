@@ -52,6 +52,14 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_QUAL
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_SET;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRANSFORMER;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRANSFORMER_RUN;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataConsumerIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataEntityGroupDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataEntityIngestionDtoBuilder;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataInputIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataQualityTestIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataSetIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataTransformerIngestionDto;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.builder;
 
 @Component
 @RequiredArgsConstructor
@@ -75,7 +83,7 @@ public class IngestionMapperImpl implements IngestionMapper {
         final Set<DataEntityClassDto> entityClasses = defineEntityClasses(dataEntity);
         final DataEntityTypeDto type = DataEntityTypeDto.valueOf(dataEntity.getType().getValue());
 
-        DataEntityIngestionDto.DataEntityIngestionDtoBuilder builder = DataEntityIngestionDto.builder()
+        DataEntityIngestionDtoBuilder builder = builder()
             .name(dataEntity.getName())
             .oddrn(dataEntity.getOddrn())
             .externalDescription(dataEntity.getDescription())
@@ -199,8 +207,8 @@ public class IngestionMapperImpl implements IngestionMapper {
             .build();
     }
 
-    private DataEntityIngestionDto.DataSetIngestionDto createDatasetIngestionDto(final DataSet dataEntity) {
-        return new DataEntityIngestionDto.DataSetIngestionDto(
+    private DataSetIngestionDto createDatasetIngestionDto(final DataSet dataEntity) {
+        return new DataSetIngestionDto(
             dataEntity.getParentOddrn(),
             datasetFieldIngestionMapper.mapFields(dataEntity.getFieldList()),
             structureHash(dataEntity.getFieldList()),
@@ -208,53 +216,43 @@ public class IngestionMapperImpl implements IngestionMapper {
         );
     }
 
-    private DataEntityIngestionDto.DataTransformerIngestionDto createDataTransformerIngestionDto(
-        final DataTransformer dataTransformer
-    ) {
-        return new DataEntityIngestionDto.DataTransformerIngestionDto(
+    private DataTransformerIngestionDto createDataTransformerIngestionDto(final DataTransformer dataTransformer) {
+        return new DataTransformerIngestionDto(
             ListUtils.emptyIfNull(dataTransformer.getInputs()),
             ListUtils.emptyIfNull(dataTransformer.getOutputs())
         );
     }
 
-    private DataEntityIngestionDto.DataConsumerIngestionDto createDataConsumerIngestionDto(
-        final DataConsumer dataConsumer
-    ) {
-        return new DataEntityIngestionDto.DataConsumerIngestionDto(
-            ListUtils.emptyIfNull(dataConsumer.getInputs()));
+    private DataConsumerIngestionDto createDataConsumerIngestionDto(final DataConsumer dataConsumer) {
+        return new DataConsumerIngestionDto(ListUtils.emptyIfNull(dataConsumer.getInputs()));
     }
 
-    private DataEntityIngestionDto.DataQualityTestIngestionDto createDataQualityTestIngestionDto(
-        final DataQualityTest dataQualityTest
-    ) {
-        return new DataEntityIngestionDto.DataQualityTestIngestionDto(
-            ListUtils.emptyIfNull(dataQualityTest.getDatasetList()));
+    private DataQualityTestIngestionDto createDataQualityTestIngestionDto(final DataQualityTest dataQualityTest) {
+        return new DataQualityTestIngestionDto(ListUtils.emptyIfNull(dataQualityTest.getDatasetList()));
     }
 
-    private DataEntityIngestionDto.DataEntityGroupDto createDataEntityGroupDto(
-        final DataEntityGroup dataEntityGroup
-    ) {
-        return new DataEntityIngestionDto.DataEntityGroupDto(
+    private DataEntityGroupDto createDataEntityGroupDto(final DataEntityGroup dataEntityGroup) {
+        return new DataEntityGroupDto(
             ListUtils.emptyIfNull(dataEntityGroup.getEntitiesList()),
             dataEntityGroup.getGroupOddrn()
         );
     }
 
-    private DataEntityIngestionDto.DataInputIngestionDto createDataInput(final DataInput dataInput) {
-        return new DataEntityIngestionDto.DataInputIngestionDto(
+    private DataInputIngestionDto createDataInput(final DataInput dataInput) {
+        return new DataInputIngestionDto(
             ListUtils.emptyIfNull(dataInput.getOutputs())
         );
     }
 
-    private Set<DataEntityClassDto> defineEntityClasses(final DataEntity de) {
+    private Set<DataEntityClassDto> defineEntityClasses(final DataEntity dataEntity) {
         final Set<DataEntityClassDto> entityClasses = ENTITY_CLASS_DISCRIMINATOR.stream()
-            .map(disc -> disc.getLeft().test(de) ? disc.getRight() : null)
+            .map(disc -> disc.getLeft().test(dataEntity) ? disc.getRight() : null)
             .filter(Objects::nonNull)
             .collect(Collectors.toSet());
 
         if (entityClasses.isEmpty()) {
             throw new IllegalArgumentException(
-                String.format("There's no supported class for entity %s", de.getOddrn()));
+                String.format("There's no supported class for entity %s", dataEntity.getOddrn()));
         }
 
         return entityClasses;

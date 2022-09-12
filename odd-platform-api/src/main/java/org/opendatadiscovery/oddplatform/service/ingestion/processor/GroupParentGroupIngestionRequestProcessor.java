@@ -14,7 +14,6 @@ public class GroupParentGroupIngestionRequestProcessor implements IngestionReque
 
     @Override
     public Mono<Void> process(final IngestionRequest request) {
-        // TODO: why no delete here opposed to what's in GERIRP? Is it because we don't want to delete old "experiments"?
         return groupParentGroupRelationRepository.createRelations(request.getGroupParentGroupRelations());
     }
 

@@ -75,7 +75,6 @@ public class JooqReactiveOperations {
             return mapper.apply(entities);
         }
 
-        // TODO: test whether this works
         return ListUtils.partition(entities, BATCH_SIZE)
             .stream()
             .map(mapper)

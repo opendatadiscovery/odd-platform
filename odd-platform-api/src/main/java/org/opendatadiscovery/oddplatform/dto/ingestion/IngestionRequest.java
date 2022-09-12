@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Getter;
+import org.apache.commons.collections4.ListUtils;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassesTotalDelta;
 import org.opendatadiscovery.oddplatform.dto.DataEntitySpecificAttributesDelta;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataQualityTestRelationsPojo;
@@ -19,7 +20,6 @@ public class IngestionRequest {
     private final List<EnrichedDataEntityIngestionDto> allEntities;
     private final DataEntityClassesTotalDelta entityClassesTotalDelta;
 
-    // TODO: try to remove smth into handlers
     private final List<IngestionTaskRun> taskRuns;
     private final List<LineagePojo> lineageRelations;
     private final List<DataQualityTestRelationsPojo> dataQARelations;
@@ -53,10 +53,9 @@ public class IngestionRequest {
         this.groupParentGroupRelations = groupParentGroupRelations;
         this.entityClassesTotalDelta = entityClassesTotalDelta;
 
-        // TODO: rewrite
         this.existingIds = extractIds(existingEntities);
         this.newIds = extractIds(newEntities);
-        this.allIds = extractIds(this.allEntities);
+        this.allIds = ListUtils.union(this.existingIds, this.newIds);
     }
 
     private List<Long> extractIds(final List<EnrichedDataEntityIngestionDto> entities) {

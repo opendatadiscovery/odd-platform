@@ -14,7 +14,6 @@ public interface ActivityHandler {
     Mono<String> getUpdatedState(final Map<String, Object> parameters,
                                  final Long dataEntityId);
 
-    // TODO: adhoc solution -- create issue
     default Mono<Map<Long, String>> getUpdatedState(final Map<String, Object> parameters,
                                                     final List<Long> dataEntityIds) {
         throw new UnsupportedOperationException(

@@ -35,7 +35,6 @@ public class DataEntityCreatedActivityHandler implements ActivityHandler {
     public Mono<String> getUpdatedState(final Map<String, Object> parameters, final Long dataEntityId) {
         return getUpdatedState(parameters, singletonList(dataEntityId))
             .handle((map, sink) -> {
-                // TODO: check whether this works in terms of emptiness
                 final String state = map.get(dataEntityId);
                 if (state != null) {
                     sink.next(state);

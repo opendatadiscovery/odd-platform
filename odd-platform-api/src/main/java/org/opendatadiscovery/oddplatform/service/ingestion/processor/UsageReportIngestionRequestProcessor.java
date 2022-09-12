@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.service.ingestion.processor;
 
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.dto.DataEntityClassesTotalDelta;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityStatisticsRepository;
 import org.springframework.stereotype.Service;
@@ -13,10 +14,11 @@ public class UsageReportIngestionRequestProcessor implements IngestionRequestPro
 
     @Override
     public Mono<Void> process(final IngestionRequest request) {
-        return dataEntityStatisticsRepository.updateCounts(
-            request.getEntityClassesTotalDelta().totalDelta(),
-            request.getEntityClassesTotalDelta().entityClassesDelta()
-        ).then();
+        final DataEntityClassesTotalDelta classesDelta = request.getEntityClassesTotalDelta();
+
+        return dataEntityStatisticsRepository
+            .updateCounts(classesDelta.totalDelta(), classesDelta.entityClassesDelta())
+            .then();
     }
 
     @Override

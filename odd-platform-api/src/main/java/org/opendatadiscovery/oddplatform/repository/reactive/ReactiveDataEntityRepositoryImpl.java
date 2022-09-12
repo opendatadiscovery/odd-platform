@@ -76,7 +76,6 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Flux<DataEntityPojo> listAllByOddrns(final Collection<String> oddrns) {
-        // TODO: batch by some value
         if (CollectionUtils.isEmpty(oddrns)) {
             return Flux.just();
         }
@@ -116,7 +115,7 @@ public class ReactiveDataEntityRepositoryImpl
 
     @Override
     public Mono<Void> createHollow(final Collection<String> hollowOddrns) {
-        return insertManyHeadless(hollowOddrns.stream().map(this::buildHollowRecord).toList(), false);
+        return insertMany(hollowOddrns.stream().map(this::buildHollowRecord).toList(), false);
     }
 
     @Override

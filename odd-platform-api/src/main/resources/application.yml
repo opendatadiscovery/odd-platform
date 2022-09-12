@@ -97,6 +97,10 @@ management:
     redis:
       enabled: false
 
+odd:
+  activity:
+    partition-period: 30
+
 logging:
   level:
     org.springframework.transaction.interceptor: info
@@ -104,7 +108,4 @@ logging:
     io.r2dbc.postgresql.QUERY: debug
     io.r2dbc.postgresql.PARAM: info
     org.opendatadiscovery.oddplatform.notification: info
-
-odd:
-  activity:
-    partition-period: 30
+    org.opendatadiscovery.oddplatform.service.ingestion: debug

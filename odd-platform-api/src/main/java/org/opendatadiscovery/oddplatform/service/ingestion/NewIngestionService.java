@@ -57,7 +57,6 @@ public class NewIngestionService implements IngestionService {
 
     @Override
     @ReactiveTransactional
-    // TODO: lineage
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
         return dataSourceRepository.getDtoByOddrn(dataEntityList.getDataSourceOddrn())
             .switchIfEmpty(Mono.error(() -> new NotFoundException(
@@ -267,7 +266,6 @@ public class NewIngestionService implements IngestionService {
             || dto.getUpdatedAt() == null
             || !dto.getUpdatedAt().equals(dePojo.getUpdatedAt().atOffset(dto.getUpdatedAt().getOffset()));
     }
-
 
     private DataEntityClassesTotalDelta calculateTotalDeltaCount(final List<DataEntityPojo> newPojos,
                                                                  final List<DataEntityPojo> entitiesToUpdate,

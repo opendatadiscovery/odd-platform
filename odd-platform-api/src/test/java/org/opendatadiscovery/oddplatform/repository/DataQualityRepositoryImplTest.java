@@ -48,27 +48,26 @@
 //    @Autowired
 //    private DataEntityRepository dataEntityRepository;
 //
-//    // TODO:
-////    @Test
-////    public void testGetDataQualityTestOddrnsForHollowDataset() {
-////        final DataEntityPojo hollowDataEntity = dataEntityRepository
-////            .bulkCreate(List.of(new DataEntityPojo().setHollow(true).setOddrn(UUID.randomUUID().toString())))
-////            .get(0);
-////
-////        final DataEntityPojo dqTest = dataEntityRepository
-////            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
-////            .get(0);
-////
-////        dataQualityTestRelationRepository.createRelations(List.of(
-////            new DataQualityTestRelationsPojo()
-////                .setDataQualityTestOddrn(dqTest.getOddrn())
-////                .setDatasetOddrn(hollowDataEntity.getOddrn())
-////        ));
-////
-////        dataQualityRepository.getDataQualityTestOddrnsForDataset(hollowDataEntity.getId())
-////            .as(StepVerifier::create)
-////            .verifyComplete();
-////    }
+//    @Test
+//    public void testGetDataQualityTestOddrnsForHollowDataset() {
+//        final DataEntityPojo hollowDataEntity = dataEntityRepository
+//            .bulkCreate(List.of(new DataEntityPojo().setHollow(true).setOddrn(UUID.randomUUID().toString())))
+//            .get(0);
+//
+//        final DataEntityPojo dqTest = dataEntityRepository
+//            .bulkCreate(List.of(new DataEntityPojo().setOddrn(UUID.randomUUID().toString())))
+//            .get(0);
+//
+//        dataQualityTestRelationRepository.createRelations(List.of(
+//            new DataQualityTestRelationsPojo()
+//                .setDataQualityTestOddrn(dqTest.getOddrn())
+//                .setDatasetOddrn(hollowDataEntity.getOddrn())
+//        ));
+//
+//        dataQualityRepository.getDataQualityTestOddrnsForDataset(hollowDataEntity.getId())
+//            .as(StepVerifier::create)
+//            .verifyComplete();
+//    }
 //
 ////    @Test
 ////    public void testGetDataQualityTestOddrnsForDataset() {
