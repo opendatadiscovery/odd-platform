@@ -36,7 +36,11 @@ const AppTooltip: React.FC<AppTooltipProps> = ({
       const { scrollWidth, clientWidth } = element;
       setIsOverflow(scrollWidth > clientWidth);
     }
-  }, [childrenRef.current]);
+  }, [
+    childrenRef.current,
+    childrenRef.current?.firstElementChild,
+    checkForOverflow,
+  ]);
 
   return (
     <S.AppTooltip

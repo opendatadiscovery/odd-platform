@@ -155,11 +155,8 @@ const TagsListView: React.FC = () => {
               isTagsFetching && (
                 <SkeletonWrapper
                   length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <TagsSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
+                  renderContent={({ randWidth, key }) => (
+                    <TagsSkeletonItem width={randWidth()} key={key} />
                   )}
                 />
               )

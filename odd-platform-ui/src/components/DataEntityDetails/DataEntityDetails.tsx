@@ -353,10 +353,8 @@ const DataEntityDetailsView: React.FC = () => {
       ) : null}
       {isDataEntityDetailsFetching ? (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <DataEntityDetailsSkeleton
-              width={randomSkeletonPercentWidth()}
-            />
+          renderContent={({ randWidth }) => (
+            <DataEntityDetailsSkeleton width={randWidth()} />
           )}
         />
       ) : null}

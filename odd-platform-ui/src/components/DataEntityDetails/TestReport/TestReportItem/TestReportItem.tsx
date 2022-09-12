@@ -1,15 +1,13 @@
 import React from 'react';
 import { DataEntityRunStatus, DataQualityTest } from 'generated-sources';
 import { Collapse, Grid, Typography } from '@mui/material';
-import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
-import MinusIcon from 'components/shared/Icons/MinusIcon';
-import PlusIcon from 'components/shared/Icons/PlusIcon';
-import TestItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestItem/TestItem';
+import { TestRunStatusItem, AppIconButton } from 'components/shared';
+import { MinusIcon, PlusIcon } from 'components/shared/Icons';
 import { Link } from 'react-router-dom';
 import { DataSetQualityTestsStatusCount } from 'redux/interfaces';
-import AppIconButton from 'components/shared/AppIconButton/AppIconButton';
 import { useAppPaths } from 'lib/hooks';
-import { TestReportBySuitNameHeader } from './TestReportItemStyles';
+import TestItem from './TestItem/TestItem';
+import * as S from './TestReportItemStyles';
 
 interface TestReportItemProps {
   suitName: string;
@@ -52,7 +50,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
 
   return (
     <Grid container direction="column" wrap="nowrap">
-      <TestReportBySuitNameHeader container wrap="nowrap">
+      <S.TestReportBySuitNameHeader container wrap="nowrap">
         <Grid item>{collapseBtn}</Grid>
         <Grid
           item
@@ -79,7 +77,7 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
             )}
           </Grid>
         </Grid>
-      </TestReportBySuitNameHeader>
+      </S.TestReportBySuitNameHeader>
       <Collapse in={open} timeout="auto" unmountOnExit>
         {open && dataQATestList.length
           ? dataQATestList.map(dataQATest => (
@@ -95,7 +93,6 @@ const TestReportItem: React.FC<TestReportItemProps> = ({
                   }
                   testStartTime={dataQATest.latestRun?.startTime}
                   testEndTime={dataQATest.latestRun?.endTime}
-                  testExpectations={dataQATest?.expectation}
                 />
               </Link>
             ))

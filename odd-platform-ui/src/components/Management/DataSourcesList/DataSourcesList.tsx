@@ -137,11 +137,8 @@ const DataSourcesListView: React.FC = () => {
           {isDataSourcesListFetching ? (
             <SkeletonWrapper
               length={5}
-              renderContent={({ randomSkeletonPercentWidth, key }) => (
-                <DataSourceSkeletonItem
-                  width={randomSkeletonPercentWidth()}
-                  key={key}
-                />
+              renderContent={({ randWidth, key }) => (
+                <DataSourceSkeletonItem width={randWidth()} key={key} />
               )}
             />
           ) : (
@@ -152,12 +149,9 @@ const DataSourcesListView: React.FC = () => {
                 isDataSourcesListFetching ? (
                   <SkeletonWrapper
                     length={5}
-                    renderContent={({
-                      randomSkeletonPercentWidth,
-                      key,
-                    }) => (
+                    renderContent={({ randWidth, key }) => (
                       <DataSourceSkeletonItem
-                        width={randomSkeletonPercentWidth()}
+                        width={randWidth()}
                         key={key}
                       />
                     )}

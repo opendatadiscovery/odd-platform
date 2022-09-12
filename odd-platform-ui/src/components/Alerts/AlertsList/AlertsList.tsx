@@ -120,11 +120,8 @@ const AlertsList: React.FC<AlertsListProps> = ({ fetchAlerts }) => {
                 isMyAlertListFetching ||
                 isMyDependentsAlertListFetching) && (
                 <SkeletonWrapper
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <AlertListSkeleton
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
+                  renderContent={({ randWidth, key }) => (
+                    <AlertListSkeleton width={randWidth()} key={key} />
                   )}
                 />
               )

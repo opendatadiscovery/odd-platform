@@ -130,11 +130,8 @@ const CollectorsListView: React.FC = () => {
           {isCollectorsListFetching ? (
             <SkeletonWrapper
               length={5}
-              renderContent={({ randomSkeletonPercentWidth, key }) => (
-                <CollectorSkeletonItem
-                  width={randomSkeletonPercentWidth()}
-                  key={key}
-                />
+              renderContent={({ randWidth, key }) => (
+                <CollectorSkeletonItem width={randWidth()} key={key} />
               )}
             />
           ) : (
@@ -145,12 +142,9 @@ const CollectorsListView: React.FC = () => {
                 isCollectorsListFetching ? (
                   <SkeletonWrapper
                     length={5}
-                    renderContent={({
-                      randomSkeletonPercentWidth,
-                      key,
-                    }) => (
+                    renderContent={({ randWidth, key }) => (
                       <CollectorSkeletonItem
-                        width={randomSkeletonPercentWidth()}
+                        width={randWidth()}
                         key={key}
                       />
                     )}

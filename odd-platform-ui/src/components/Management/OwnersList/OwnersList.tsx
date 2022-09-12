@@ -154,11 +154,8 @@ const OwnersListView: React.FC<OwnersListProps> = ({
               isOwnerListFetching && (
                 <SkeletonWrapper
                   length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <OwnersSkeletonItem
-                      width={randomSkeletonPercentWidth()}
-                      key={key}
-                    />
+                  renderContent={({ randWidth, key }) => (
+                    <OwnersSkeletonItem width={randWidth()} key={key} />
                   )}
                 />
               )

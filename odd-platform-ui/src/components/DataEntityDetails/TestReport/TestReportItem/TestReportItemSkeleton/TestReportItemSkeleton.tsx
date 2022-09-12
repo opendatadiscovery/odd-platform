@@ -1,14 +1,14 @@
 import React from 'react';
-import Skeleton from '@mui/material/Skeleton';
-import { Grid } from '@mui/material';
+import { Grid, Skeleton } from '@mui/material';
 import { mainSkeletonHeight } from 'lib/constants';
+import { SkeletonWrapper } from 'components/shared';
 
 interface SkeletonProps {
-  width: string;
+  length: number;
 }
 
-const TestReportItemSkeleton: React.FC<SkeletonProps> = ({ width }) => {
-  const skeletonItem = () => (
+const TestReportItemSkeleton: React.FC<SkeletonProps> = ({ length }) => {
+  const skeletonItem = (width?: string) => (
     <Grid container justifyContent="space-between" sx={{ mb: 2 }}>
       <Grid item xs={2}>
         <Skeleton width={width} height={mainSkeletonHeight} />
@@ -23,13 +23,18 @@ const TestReportItemSkeleton: React.FC<SkeletonProps> = ({ width }) => {
   );
 
   return (
-    <Grid container sx={{ py: 1.25, px: 1 }}>
-      <Grid container item xs={4} sx={{ mb: 2 }}>
-        <Skeleton width={width} height={mainSkeletonHeight} />
-      </Grid>
-      {skeletonItem()}
-      {skeletonItem()}
-    </Grid>
+    <SkeletonWrapper
+      length={length}
+      renderContent={({ randWidth, key }) => (
+        <Grid key={key} container sx={{ py: 1.25, px: 1 }}>
+          <Grid container item xs={4} sx={{ mb: 2 }}>
+            <Skeleton width={randWidth()} height={mainSkeletonHeight} />
+          </Grid>
+          {skeletonItem(randWidth())}
+          {skeletonItem(randWidth())}
+        </Grid>
+      )}
+    />
   );
 };
 
