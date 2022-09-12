@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdge;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageNode;
 import org.opendatadiscovery.oddplatform.dto.DataEntityDimensionsDto;
@@ -16,15 +16,13 @@ import org.opendatadiscovery.oddplatform.dto.lineage.DataEntityLineageStreamDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageNodeDto;
 import org.opendatadiscovery.oddplatform.utils.Pair;
 import org.opendatadiscovery.oddplatform.utils.RecordFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.jeasy.random.FieldPredicates.named;
 
-class LineageMapperTest extends BaseIntegrationTest {
+class LineageMapperTest {
 
-    @Autowired
-    private LineageMapper mapper;
+    private final LineageMapper mapper = new LineageMapperImpl();
 
     private static final EasyRandom EASY_RANDOM;
 
@@ -36,6 +34,51 @@ class LineageMapperTest extends BaseIntegrationTest {
             .objectFactory(new RecordFactory());
 
         EASY_RANDOM = new EasyRandom(EASY_RANDOMParameters);
+    }
+
+    @BeforeEach
+    void setUp() {
+        mapper.setDataEntityMapper(
+            new DataEntityMapperImpl(
+                new DataSourceMapperImpl(
+                    new NamespaceMapperImpl(),
+                    new TokenMapperImpl(
+                        new OffsetDateTimeMapperImpl()
+                    )
+                ),
+                new OwnershipMapperImpl(
+                    new OwnerMapperImpl(),
+                    new RoleMapperImpl()
+                ),
+                new TagMapperImpl(),
+                new MetadataFieldValueMapperImpl(
+                    new MetadataFieldMapperImpl()
+                ),
+                new DatasetVersionMapperImpl(
+                    new DatasetFieldApiMapperImpl(
+                        new LabelMapperImpl()
+                    ),
+                    new OffsetDateTimeMapperImpl()
+                ),
+                new DataEntityRunMapperImpl(
+                    new OffsetDateTimeMapperImpl()
+                ),
+                new TermMapperImpl(
+                    new NamespaceMapperImpl(),
+                    new OffsetDateTimeMapperImpl(),
+                    new OwnershipMapperImpl(
+                        new OwnerMapperImpl(),
+                        new RoleMapperImpl()
+                    )
+                )
+            )
+        );
+        mapper.setDataSourceMapper(
+            new DataSourceMapperImpl(
+                new NamespaceMapperImpl(),
+                new TokenMapperImpl(new OffsetDateTimeMapperImpl())
+            )
+        );
     }
 
     @Test
