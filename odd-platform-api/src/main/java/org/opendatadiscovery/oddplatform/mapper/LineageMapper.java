@@ -31,11 +31,19 @@ import static java.util.Collections.emptyList;
 @Mapper(config = MapperConfig.class)
 public abstract class LineageMapper {
 
-    @Autowired
-    DataEntityMapper dataEntityMapper;
+    private DataEntityMapper dataEntityMapper;
+
+    private DataSourceMapper dataSourceMapper;
 
     @Autowired
-    DataSourceMapper dataSourceMapper;
+    public void setDataEntityMapper(final DataEntityMapper dataEntityMapper) {
+        this.dataEntityMapper = dataEntityMapper;
+    }
+
+    @Autowired
+    public void setDataSourceMapper(final DataSourceMapper dataSourceMapper) {
+        this.dataSourceMapper = dataSourceMapper;
+    }
 
     @Mapping(target = "root", source = "dataEntityDto")
     public abstract DataEntityLineage mapLineageDto(final DataEntityLineageDto dataEntityLineageDto);
