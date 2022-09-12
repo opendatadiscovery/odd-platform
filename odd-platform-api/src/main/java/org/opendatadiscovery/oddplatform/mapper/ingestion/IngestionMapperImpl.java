@@ -57,6 +57,8 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRAN
 @RequiredArgsConstructor
 @Slf4j
 public class IngestionMapperImpl implements IngestionMapper {
+    private final DatasetFieldIngestionMapper datasetFieldIngestionMapper;
+
     private static final List<Pair<Predicate<DataEntity>, DataEntityClassDto>> ENTITY_CLASS_DISCRIMINATOR = List.of(
         Pair.of(de -> de.getDataset() != null, DATA_SET),
         Pair.of(de -> de.getDataTransformer() != null, DATA_TRANSFORMER),
@@ -159,7 +161,6 @@ public class IngestionMapperImpl implements IngestionMapper {
     @Override
     public IngestionTaskRun mapTaskRun(final DataEntity dataEntity) {
         if (dataEntity.getDataTransformerRun() == null && dataEntity.getDataQualityTestRun() == null) {
-            // TODO: enhanced validation + proper exception
             throw new IllegalArgumentException("Data Entity doesn't have task run data");
         }
 
@@ -201,7 +202,7 @@ public class IngestionMapperImpl implements IngestionMapper {
     private DataEntityIngestionDto.DataSetIngestionDto createDatasetIngestionDto(final DataSet dataEntity) {
         return new DataEntityIngestionDto.DataSetIngestionDto(
             dataEntity.getParentOddrn(),
-            dataEntity.getFieldList(),
+            datasetFieldIngestionMapper.mapFields(dataEntity.getFieldList()),
             structureHash(dataEntity.getFieldList()),
             dataEntity.getRowsNumber()
         );

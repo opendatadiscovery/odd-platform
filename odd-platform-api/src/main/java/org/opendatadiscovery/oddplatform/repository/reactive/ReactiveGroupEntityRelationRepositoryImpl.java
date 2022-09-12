@@ -42,7 +42,7 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     }
 
     @Override
-    public Flux<GroupEntityRelationsPojo> deleteRelations(final String groupOddrn, final String entityOddrn) {
+    public Flux<GroupEntityRelationsPojo> deleteRelationsReturning(final String groupOddrn, final String entityOddrn) {
         final var query = DSL.deleteFrom(GROUP_ENTITY_RELATIONS)
             .where(GROUP_ENTITY_RELATIONS.GROUP_ODDRN.eq(groupOddrn)
                 .and(GROUP_ENTITY_RELATIONS.DATA_ENTITY_ODDRN.eq(entityOddrn)))
@@ -52,7 +52,7 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     }
 
     @Override
-    public Flux<GroupEntityRelationsPojo> createRelations(final String groupOddrn, final List<String> entityOddrns) {
+    public Flux<GroupEntityRelationsPojo> createRelationsReturning(final String groupOddrn, final List<String> entityOddrns) {
         if (entityOddrns.isEmpty()) {
             return Flux.just();
         }
@@ -76,7 +76,7 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     }
 
     @Override
-    public Mono<Void> deleteRelationsHeadless(final List<GroupEntityRelationsPojo> pojos) {
+    public Mono<Void> deleteRelations(final List<GroupEntityRelationsPojo> pojos) {
         final List<String> groupOddrns = pojos.stream().map(GroupEntityRelationsPojo::getGroupOddrn).toList();
         final List<String> entityOddrns = pojos.stream().map(GroupEntityRelationsPojo::getDataEntityOddrn).toList();
 
@@ -98,7 +98,7 @@ public class ReactiveGroupEntityRelationRepositoryImpl implements ReactiveGroupE
     }
 
     @Override
-    public Mono<Void> createRelationsHeadless(final List<GroupEntityRelationsPojo> pojos) {
+    public Mono<Void> createRelations(final List<GroupEntityRelationsPojo> pojos) {
         return jooqReactiveOperations.executeInPartition(pojos, ps -> {
             var step = DSL.insertInto(
                 GROUP_ENTITY_RELATIONS,

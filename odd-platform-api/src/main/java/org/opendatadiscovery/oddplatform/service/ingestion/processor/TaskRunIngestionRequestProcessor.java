@@ -1,11 +1,12 @@
-package org.opendatadiscovery.oddplatform.service.ingestion.handler;
+package org.opendatadiscovery.oddplatform.service.ingestion.processor;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionTaskRun;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityTaskRunMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DataEntityTaskRunPojo;
@@ -15,20 +16,19 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class DataEntityTaskRunIngestionHandler implements IngestionHandler {
+public class TaskRunIngestionRequestProcessor implements IngestionRequestProcessor {
     private final ReactiveDataEntityTaskRunRepository dataEntityTaskRunRepository;
     private final DataEntityTaskRunMapper dataEntityTaskRunMapper;
 
     @Override
-    // TODO: set propagation?
     @ReactiveTransactional
-    public Mono<Void> handle(final IngestionDataStructure dataStructure) {
-        final List<String> taskRunOddrns = dataStructure.getTaskRuns()
+    public Mono<Void> process(final IngestionRequest request) {
+        final List<String> taskRunOddrns = request.getTaskRuns()
             .stream()
             .map(IngestionTaskRun::getOddrn)
             .toList();
 
-        final List<DataEntityTaskRunPojo> pojos = dataStructure.getTaskRuns()
+        final List<DataEntityTaskRunPojo> pojos = request.getTaskRuns()
             .stream()
             .map(dataEntityTaskRunMapper::mapTaskRun)
             .toList();
@@ -44,7 +44,11 @@ public class DataEntityTaskRunIngestionHandler implements IngestionHandler {
                     dataEntityTaskRunRepository.bulkUpdate(partitioned.get(true))
                 );
             })
-            .then(dataEntityTaskRunRepository.insertLastRuns(pojos))
-            .then();
+            .then(dataEntityTaskRunRepository.insertLastRuns(pojos));
+    }
+
+    @Override
+    public boolean shouldProcess(final IngestionRequest request) {
+        return CollectionUtils.isNotEmpty(request.getTaskRuns());
     }
 }

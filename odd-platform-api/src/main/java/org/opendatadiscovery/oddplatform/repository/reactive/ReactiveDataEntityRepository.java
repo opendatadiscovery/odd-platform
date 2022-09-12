@@ -8,6 +8,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<DataEntityPojo> {
+    Flux<DataEntityPojo> get(final List<Long> ids);
+
     Mono<Boolean> exists(final long dataEntityId);
 
     Mono<Boolean> existsByDataSourceId(final long dataSourceId);

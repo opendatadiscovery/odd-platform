@@ -29,13 +29,11 @@ public class ActivityTablePartitionManagerImpl implements ActivityTablePartition
 
     @Override
     public Mono<LocalDate> createPartitionIfNotExists(final LocalDate eventDate) {
-        this.lastPartitionDate = lastPartitionDate.filter(
-            l -> l.isAfter(eventDate)
-        ).switchIfEmpty(
-            Mono.usingWhen(connectionFactory.create(),
-                c -> createPartitionTables(c, eventDate),
-                Connection::close).cache()
-        );
+        this.lastPartitionDate = lastPartitionDate.filter(l -> l.isAfter(eventDate))
+            .switchIfEmpty(
+                Mono.usingWhen(connectionFactory.create(), c -> createPartitionTables(c, eventDate), Connection::close)
+                    .cache()
+            );
 
         return this.lastPartitionDate;
     }

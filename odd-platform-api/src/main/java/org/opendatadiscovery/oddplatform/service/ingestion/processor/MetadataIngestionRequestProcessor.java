@@ -1,4 +1,4 @@
-package org.opendatadiscovery.oddplatform.service.ingestion.handler;
+package org.opendatadiscovery.oddplatform.service.ingestion.processor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataBinding;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin;
@@ -27,14 +27,14 @@ import static java.util.function.Function.identity;
 @RequiredArgsConstructor
 @Slf4j
 // TODO: refactor
-public class MetadataIngestionHandler implements IngestionHandler {
+public class MetadataIngestionRequestProcessor implements IngestionRequestProcessor {
     private final MetadataParser metadataParser;
     private final ReactiveMetadataFieldRepository metadataFieldRepository;
     private final ReactiveMetadataFieldValueRepository metadataFieldValueRepository;
 
     @Override
-    public Mono<Void> handle(final IngestionDataStructure dataStructure) {
-        final List<MetadataInfo> metadataInfos = retrieveMetadataInfoFromDataStructure(dataStructure);
+    public Mono<Void> process(final IngestionRequest request) {
+        final List<MetadataInfo> metadataInfos = retrieveMetadataInfoFromDataStructure(request);
 
         final List<MetadataFieldPojo> metadataFieldPojos = metadataInfos.stream()
             .map(MetadataInfo::key)
@@ -52,7 +52,7 @@ public class MetadataIngestionHandler implements IngestionHandler {
             .collect(Collectors.toMap(MetadataKey::new, identity()))
             .zipWith(
                 metadataFieldValueRepository
-                    .listByDataEntityIds(dataStructure.getAllIds())
+                    .listByDataEntityIds(request.getAllIds())
                     .collect(Collectors.toMap(
                         mf -> new MetadataBinding(mf.getDataEntityId(), mf.getMetadataFieldId()),
                         identity()
@@ -83,6 +83,11 @@ public class MetadataIngestionHandler implements IngestionHandler {
             });
     }
 
+    @Override
+    public boolean shouldProcess(final IngestionRequest request) {
+        return true;
+    }
+
     private Flux<MetadataFieldPojo> persistMetadataFields(final Map<MetadataKey, MetadataFieldPojo> entities,
                                                           final Map<MetadataKey, MetadataFieldPojo> existing) {
         final List<MetadataFieldPojo> newMetadataFields = entities.entrySet()
@@ -96,7 +101,7 @@ public class MetadataIngestionHandler implements IngestionHandler {
             .mergeWith(Flux.fromIterable(existing.values()));
     }
 
-    private List<MetadataInfo> retrieveMetadataInfoFromDataStructure(final IngestionDataStructure dataStructure) {
+    private List<MetadataInfo> retrieveMetadataInfoFromDataStructure(final IngestionRequest dataStructure) {
         return dataStructure.getAllEntities().stream()
             .filter(e -> MapUtils.isNotEmpty(e.getMetadata()))
             .flatMap(e -> e.getMetadata().entrySet().stream()

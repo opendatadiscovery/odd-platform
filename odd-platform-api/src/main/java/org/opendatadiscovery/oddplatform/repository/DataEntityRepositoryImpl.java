@@ -26,13 +26,11 @@ import org.jooq.Name;
 import org.jooq.OrderField;
 import org.jooq.Record;
 import org.jooq.Record1;
-import org.jooq.Record3;
 import org.jooq.Select;
 import org.jooq.SelectConditionStep;
 import org.jooq.SelectHavingStep;
 import org.jooq.SelectJoinStep;
 import org.jooq.SelectLimitStep;
-import org.jooq.SelectOnConditionStep;
 import org.jooq.SelectOrderByStep;
 import org.jooq.SelectSelectStep;
 import org.jooq.SortOrder;
@@ -89,22 +87,14 @@ import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
-import static org.jooq.impl.DSL.max;
 import static org.jooq.impl.DSL.name;
 import static org.opendatadiscovery.oddplatform.dto.DataEntityDetailsDto.DataInputDetailsDto;
 import static org.opendatadiscovery.oddplatform.model.Tables.ALERT;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_STRUCTURE;
-import static org.opendatadiscovery.oddplatform.model.Tables.DATASET_VERSION;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_ENTITY_TO_TERM;
 import static org.opendatadiscovery.oddplatform.model.Tables.DATA_SOURCE;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_ENTITY_RELATIONS;
 import static org.opendatadiscovery.oddplatform.model.Tables.GROUP_PARENT_GROUP_RELATIONS;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL;
-import static org.opendatadiscovery.oddplatform.model.Tables.LABEL_TO_DATASET_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD;
-import static org.opendatadiscovery.oddplatform.model.Tables.METADATA_FIELD_VALUE;
 import static org.opendatadiscovery.oddplatform.model.Tables.NAMESPACE;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNER;
 import static org.opendatadiscovery.oddplatform.model.Tables.OWNERSHIP;
@@ -218,18 +208,6 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    public void createHollow(final Collection<String> oddrns) {
-        var step = dslContext
-            .insertInto(DATA_ENTITY, DATA_ENTITY.ODDRN, DATA_ENTITY.HOLLOW, DATA_ENTITY.EXCLUDE_FROM_SEARCH);
-
-        for (final String oddrn : oddrns) {
-            step = step.values(oddrn, true, true);
-        }
-
-        step.onDuplicateKeyIgnore().execute();
-    }
-
-    @Override
     public Page<DataEntityDimensionsDto> list(final int page, final int size, final String query) {
         return Page.<DataEntityDimensionsDto>builder()
             .hasNext(false)
@@ -307,9 +285,9 @@ public class DataEntityRepositoryImpl
 
     @Override
     public List<DataEntityDimensionsDto> listAllByOddrns(final Collection<String> oddrns,
-                                                          final Integer page,
-                                                          final Integer size,
-                                                          final boolean skipHollow) {
+                                                         final Integer page,
+                                                         final Integer size,
+                                                         final boolean skipHollow) {
         if (CollectionUtils.isEmpty(oddrns)) {
             return emptyList();
         }
@@ -499,42 +477,6 @@ public class DataEntityRepositoryImpl
     }
 
     @Override
-    @BlockingTransactional
-    public void calculateSearchEntrypoints(final Collection<Long> dataEntityIds) {
-        calculateDataEntityVectors(dataEntityIds);
-        calculateDataSourceVectors(dataEntityIds);
-        calculateNamespaceVectors(dataEntityIds);
-        calculateMetadataVectors(dataEntityIds);
-        calculateStructureVectors(dataEntityIds);
-        calculateTagsVectors(dataEntityIds);
-    }
-
-    @Override
-    public void calculateMetadataVectors(final Collection<Long> dataEntityIds) {
-        final Field<Long> deId = field("data_entity_id", Long.class);
-
-        final List<Field<?>> fields = List.of(
-            METADATA_FIELD.NAME,
-            METADATA_FIELD_VALUE.VALUE
-        );
-
-        final SelectConditionStep<Record> select = dslContext
-            .select(DATA_ENTITY.ID.as(deId))
-            .select(fields)
-            .from(METADATA_FIELD)
-            .join(METADATA_FIELD_VALUE).on(METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(METADATA_FIELD.ID))
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(METADATA_FIELD_VALUE.DATA_ENTITY_ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
-            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
-            .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(METADATA_FIELD.IS_DELETED.isFalse());
-
-        jooqFTSHelper
-            .buildSearchEntrypointUpsert(select, deId, fields, SEARCH_ENTRYPOINT.METADATA_VECTOR, true)
-            .execute();
-    }
-
-    @Override
     public List<DataEntityDto> getQuerySuggestions(final String query, final Integer entityClassId,
                                                    final Boolean manuallyCreated) {
         if (StringUtils.isEmpty(query)) {
@@ -577,135 +519,6 @@ public class DataEntityRepositoryImpl
             .fetchStream()
             .map(this::mapDtoRecord)
             .collect(toList());
-    }
-
-    private void calculateTagsVectors(final Collection<Long> dataEntityIds) {
-        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
-
-        final List<Field<?>> vectorFields = List.of(TAG.NAME);
-
-        final SelectConditionStep<Record> vectorSelect = dslContext.select(vectorFields)
-            .select(DATA_ENTITY.ID.as(dataEntityId))
-            .from(TAG)
-            .join(TAG_TO_DATA_ENTITY).on(TAG_TO_DATA_ENTITY.TAG_ID.eq(TAG.ID))
-            .join(DATA_ENTITY).on(DATA_ENTITY.ID.eq(TAG_TO_DATA_ENTITY.DATA_ENTITY_ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
-            .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(TAG.IS_DELETED.isFalse());
-
-        jooqFTSHelper
-            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.TAG_VECTOR, true)
-            .execute();
-    }
-
-    private void calculateDataEntityVectors(final Collection<Long> dataEntityIds) {
-        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
-
-        final List<Field<?>> vectorFields = List.of(
-            DATA_ENTITY.EXTERNAL_NAME,
-            DATA_ENTITY.INTERNAL_NAME,
-            DATA_ENTITY.EXTERNAL_DESCRIPTION,
-            DATA_ENTITY.INTERNAL_DESCRIPTION
-        );
-
-        final SelectConditionStep<Record> vectorSelect = dslContext
-            .select(vectorFields)
-            .select(DATA_ENTITY.ID.as(dataEntityId))
-            .from(DATA_ENTITY)
-            .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
-            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()));
-
-        jooqFTSHelper
-            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.DATA_ENTITY_VECTOR)
-            .execute();
-    }
-
-    private void calculateNamespaceVectors(final Collection<Long> dataEntityIds) {
-        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
-
-        final List<Field<?>> vectorFields = List.of(NAMESPACE.NAME);
-
-        final SelectConditionStep<Record> vectorSelect = dslContext
-            .select(DATA_ENTITY.ID.as(dataEntityId))
-            .select(vectorFields)
-            .from(NAMESPACE)
-            .join(DATA_SOURCE).on(DATA_SOURCE.NAMESPACE_ID.eq(NAMESPACE.ID))
-            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
-            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
-            .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(NAMESPACE.IS_DELETED.isFalse());
-
-        jooqFTSHelper
-            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.NAMESPACE_VECTOR)
-            .execute();
-    }
-
-    private void calculateDataSourceVectors(final Collection<Long> dataEntityIds) {
-        final Field<Long> dataEntityId = field("data_entity_id", Long.class);
-
-        final List<Field<?>> vectorFields = List.of(DATA_SOURCE.NAME, DATA_SOURCE.CONNECTION_URL, DATA_SOURCE.ODDRN);
-
-        final SelectConditionStep<Record> vectorSelect = dslContext
-            .select(DATA_ENTITY.ID.as(dataEntityId))
-            .select(vectorFields)
-            .from(DATA_SOURCE)
-            .join(DATA_ENTITY).on(DATA_ENTITY.DATA_SOURCE_ID.eq(DATA_SOURCE.ID))
-            .and(DATA_ENTITY.HOLLOW.isFalse())
-            .and(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isNull().or(DATA_ENTITY.EXCLUDE_FROM_SEARCH.isFalse()))
-            .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .and(DATA_SOURCE.IS_DELETED.isFalse());
-
-        jooqFTSHelper
-            .buildSearchEntrypointUpsert(vectorSelect, dataEntityId, vectorFields, SEARCH_ENTRYPOINT.DATA_SOURCE_VECTOR)
-            .execute();
-    }
-
-    private void calculateStructureVectors(final Collection<Long> dataEntityIds) {
-        final String dsOddrnAlias = "dsv_dataset_oddrn";
-
-        final Field<String> datasetOddrnField = DATASET_VERSION.DATASET_ODDRN.as(dsOddrnAlias);
-        final Field<Long> dsvMaxField = max(DATASET_VERSION.VERSION).as("dsv_max");
-
-        final SelectHavingStep<Record3<Long, String, Long>> subquery = dslContext
-            .select(DATA_ENTITY.ID, datasetOddrnField, dsvMaxField)
-            .from(DATASET_VERSION)
-            .join(DATA_ENTITY).on(DATA_ENTITY.ODDRN.eq(DATASET_VERSION.DATASET_ODDRN))
-            .where(DATA_ENTITY.ID.in(dataEntityIds))
-            .groupBy(DATA_ENTITY.ID, DATASET_VERSION.DATASET_ODDRN);
-
-        final Field<Long> deId = subquery.field(DATA_ENTITY.ID);
-
-        final Field<String> labelName = LABEL.NAME.as("label_name");
-
-        final List<Field<?>> vectorFields = List.of(
-            DATASET_FIELD.NAME,
-            DATASET_FIELD.INTERNAL_DESCRIPTION,
-            DATASET_FIELD.EXTERNAL_DESCRIPTION,
-            labelName
-        );
-
-        final SelectOnConditionStep<Record> vectorSelect = dslContext
-            .select(vectorFields)
-            .select(deId)
-            .from(subquery)
-            .join(DATASET_VERSION)
-            .on(DATASET_VERSION.DATASET_ODDRN.eq(subquery.field(dsOddrnAlias, String.class)))
-            .and(DATASET_VERSION.VERSION.eq(dsvMaxField))
-            .join(DATASET_STRUCTURE).on(DATASET_STRUCTURE.DATASET_VERSION_ID.eq(DATASET_VERSION.ID))
-            .join(DATASET_FIELD).on(DATASET_FIELD.ID.eq(DATASET_STRUCTURE.DATASET_FIELD_ID))
-            .leftJoin(LABEL_TO_DATASET_FIELD).on(LABEL_TO_DATASET_FIELD.DATASET_FIELD_ID.eq(DATASET_FIELD.ID))
-            .leftJoin(LABEL).on(LABEL.ID.eq(LABEL_TO_DATASET_FIELD.LABEL_ID)).and(LABEL.IS_DELETED.isFalse());
-
-        jooqFTSHelper.buildSearchEntrypointUpsert(
-            vectorSelect,
-            deId,
-            vectorFields,
-            SEARCH_ENTRYPOINT.STRUCTURE_VECTOR,
-            true,
-            Map.of(labelName, LABEL.NAME)
-        ).execute();
     }
 
     private List<DataEntityDimensionsDto> listByConfig(final DataEntityQueryConfig config) {

@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
@@ -37,10 +37,8 @@ import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.rowNumber;
 
 @RequiredArgsConstructor
+@Slf4j
 public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implements ReactiveCRUDRepository<P> {
-    // TODO: remove all batches except one place. use helper method
-    private static final int BATCH_SIZE = 1000;
-
     private static final String DEFAULT_NAME_FIELD = "name";
     private static final String DEFAULT_ID_FIELD = "id";
     private static final String DEFAULT_UPDATED_AT_FIELD = "updated_at";
@@ -120,7 +118,6 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     @Override
-    // TODO: set propagation?
     @ReactiveTransactional
     public Flux<P> bulkCreate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
@@ -137,7 +134,6 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
     }
 
     @Override
-    // TODO: set propagation?
     @ReactiveTransactional
     public Flux<P> bulkUpdate(final Collection<P> pojos) {
         if (pojos.isEmpty()) {
@@ -180,69 +176,57 @@ public abstract class ReactiveAbstractCRUDRepository<R extends Record, P> implem
             .mono(DSL.update(recordTable).set(record).where(idField.eq(record.get(idField))).returning());
     }
 
+    // TODO: rename to returning
     protected Flux<R> insertMany(final List<R> records) {
-        // TODO: extract every ListUtils.partition to helpers
-        return ListUtils.partition(records, BATCH_SIZE)
-            .stream()
-            .map(rs -> {
-                InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
+        return jooqReactiveOperations.executeInPartitionReturning(records, rs -> {
+            InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
 
-                for (int i = 0; i < rs.size() - 1; i++) {
-                    insertStep = insertStep.set(rs.get(i)).newRecord();
-                }
+            for (int i = 0; i < rs.size() - 1; i++) {
+                insertStep = insertStep.set(rs.get(i)).newRecord();
+            }
 
-                return jooqReactiveOperations
-                    .flux(insertStep.set(rs.get(rs.size() - 1)).returning(recordTable.fields()));
-            })
-            .reduce(Flux::concat)
-            .orElse(Flux.empty());
+            return jooqReactiveOperations.flux(insertStep.set(rs.get(rs.size() - 1)).returning(recordTable.fields()));
+        });
     }
 
+    // TODO: remove headless word
     protected Mono<Void> insertManyHeadless(final List<R> records, final boolean failOnDuplicateKey) {
-        // TODO: extract every ListUtils.partition to helpers
-        return ListUtils.partition(records, BATCH_SIZE)
-            .stream()
-            .map(rs -> {
-                InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
+        return jooqReactiveOperations.executeInPartition(records, rs -> {
+            InsertSetStep<R> insertStep = DSL.insertInto(recordTable);
 
-                for (int i = 0; i < rs.size() - 1; i++) {
-                    insertStep = insertStep.set(rs.get(i)).newRecord();
-                }
+            for (int i = 0; i < rs.size() - 1; i++) {
+                insertStep = insertStep.set(rs.get(i)).newRecord();
+            }
 
-                InsertSetMoreStep<R> query = insertStep.set(rs.get(rs.size() - 1));
+            InsertSetMoreStep<R> query = insertStep.set(rs.get(rs.size() - 1));
 
-                return !failOnDuplicateKey
-                    ? jooqReactiveOperations.mono(query.onDuplicateKeyIgnore())
-                    : jooqReactiveOperations.mono(query);
-            })
-            .reduce((m1, m2) -> m1.zipWith(m2, Integer::sum))
-            .orElseThrow(() -> new IllegalStateException("Records' list was empty"))
-            .then();
+            return !failOnDuplicateKey
+                ? jooqReactiveOperations.mono(query.onDuplicateKeyIgnore())
+                : jooqReactiveOperations.mono(query);
+        });
     }
 
     protected Flux<R> updateMany(final List<R> records) {
-        return ListUtils.partition(records, BATCH_SIZE)
-            .stream()
-            .map(rs -> {
-                final Table<?> table = DSL.table(jooqReactiveOperations.newResult(recordTable, rs));
+        return jooqReactiveOperations.executeInPartitionReturning(records, rs -> {
+            final Table<?> table = DSL.table(jooqReactiveOperations.newResult(recordTable, rs));
 
-                final List<Field<?>> nonUpdatableFields = getNonUpdatableFields();
-                final Map<? extends Field<?>, Field<?>> fields = Arrays
-                    .stream(recordTable.fields())
-                    .filter(f -> !nonUpdatableFields.contains(f))
-                    .map(r -> Pair.of(r, table.field(r.getName())))
-                    .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            // TODO: duplicate code
+            final List<Field<?>> nonUpdatableFields = getNonUpdatableFields();
 
-                final UpdateResultStep<R> returning = DSL.update(recordTable)
-                    .set(fields)
-                    .from(table)
-                    .where(idField.eq(table.field(idField.getName(), Long.class)))
-                    .returning();
+            final Map<? extends Field<?>, Field<?>> fields = Arrays
+                .stream(recordTable.fields())
+                .filter(f -> !nonUpdatableFields.contains(f))
+                .map(r -> Pair.of(r, table.field(r.getName())))
+                .collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
-                return jooqReactiveOperations.flux(returning);
-            })
-            .reduce(Flux::concat)
-            .orElse(Flux.just());
+            final UpdateResultStep<R> returning = DSL.update(recordTable)
+                .set(fields)
+                .from(table)
+                .where(idField.eq(table.field(idField.getName(), Long.class)))
+                .returning();
+
+            return jooqReactiveOperations.flux(returning);
+        });
     }
 
     protected Mono<Long> fetchCount(final String nameQuery) {

@@ -4,7 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
@@ -41,6 +43,11 @@ public class ReactiveDataEntityRepositoryImpl
             DATA_ENTITY.IS_DELETED, DATA_ENTITY.DELETED_AT);
 
         this.jooqRecordHelper = jooqRecordHelper;
+    }
+
+    @Override
+    public Flux<DataEntityPojo> get(final List<Long> ids) {
+        return jooqReactiveOperations.flux(DSL.selectFrom(DATA_ENTITY).where(idCondition(ids))).map(this::recordToPojo);
     }
 
     @Override
@@ -134,6 +141,17 @@ public class ReactiveDataEntityRepositoryImpl
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(DataEntityPojo.class));
+    }
+
+    @Override
+    protected List<Field<?>> getNonUpdatableFields() {
+        final List<Field<?>> dataEntityNonUpdatableFields = List.of(
+            DATA_ENTITY.INTERNAL_NAME,
+            DATA_ENTITY.INTERNAL_DESCRIPTION,
+            DATA_ENTITY.VIEW_COUNT
+        );
+
+        return ListUtils.union(dataEntityNonUpdatableFields, super.getNonUpdatableFields());
     }
 
     private DataEntityRecord buildHollowRecord(final String oddrn) {

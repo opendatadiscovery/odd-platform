@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDatasetFiel
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveLabelRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.opendatadiscovery.oddplatform.dto.DataEntityFilledField.DATASET_FIELD_LABELS;
@@ -28,6 +30,7 @@ import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DatasetFieldServiceImpl implements DatasetFieldService {
     private final DatasetFieldApiMapper datasetFieldApiMapper;
     private final ReactiveLabelService labelService;
@@ -92,6 +95,7 @@ public class DatasetFieldServiceImpl implements DatasetFieldService {
                         return copyNew;
                     })
                     .toList();
+
                 return reactiveDatasetFieldRepository.bulkCreate(fieldsToCreate)
                     .concatWith(reactiveDatasetFieldRepository.bulkUpdate(fieldsToUpdate))
                     .collectList();

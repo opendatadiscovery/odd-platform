@@ -13,7 +13,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRela
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 
 @Getter
-public class IngestionDataStructure {
+public class IngestionRequest {
     private final List<EnrichedDataEntityIngestionDto> newEntities;
     private final List<EnrichedDataEntityIngestionDto> existingEntities;
     private final List<EnrichedDataEntityIngestionDto> allEntities;
@@ -31,15 +31,15 @@ public class IngestionDataStructure {
     private final List<Long> allIds;
 
     @Builder
-    public IngestionDataStructure(final List<EnrichedDataEntityIngestionDto> newEntities,
-                                  final List<EnrichedDataEntityIngestionDto> existingEntities,
-                                  final List<IngestionTaskRun> taskRuns,
-                                  final List<LineagePojo> lineageRelations,
-                                  final List<DataQualityTestRelationsPojo> dataQARelations,
-                                  final List<DataEntitySpecificAttributesDelta> specificAttributesDeltas,
-                                  final List<GroupEntityRelationsPojo> groupEntityRelations,
-                                  final List<GroupParentGroupRelationsPojo> groupParentGroupRelations,
-                                  final DataEntityClassesTotalDelta entityClassesTotalDelta) {
+    public IngestionRequest(final List<EnrichedDataEntityIngestionDto> newEntities,
+                            final List<EnrichedDataEntityIngestionDto> existingEntities,
+                            final List<IngestionTaskRun> taskRuns,
+                            final List<LineagePojo> lineageRelations,
+                            final List<DataQualityTestRelationsPojo> dataQARelations,
+                            final List<DataEntitySpecificAttributesDelta> specificAttributesDeltas,
+                            final List<GroupEntityRelationsPojo> groupEntityRelations,
+                            final List<GroupParentGroupRelationsPojo> groupParentGroupRelations,
+                            final DataEntityClassesTotalDelta entityClassesTotalDelta) {
         this.newEntities = newEntities;
         this.existingEntities = existingEntities;
         this.allEntities = Stream.concat(newEntities.stream(), existingEntities.stream()).collect(Collectors.toList());

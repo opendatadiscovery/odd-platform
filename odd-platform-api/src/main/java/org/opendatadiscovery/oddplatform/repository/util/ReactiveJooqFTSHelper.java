@@ -47,8 +47,6 @@ public class ReactiveJooqFTSHelper {
             vectorFields, seTargetField, ftsConfigDetails, agg, emptyMap());
     }
 
-    // A headless variant of the method, which construct query leveraging jOOQ's static DSL class
-    // Used in the application's reactive part
     public Insert<? extends Record> buildVectorUpsert(
         final Select<? extends Record> vectorSelect,
         final Field<Long> idField,

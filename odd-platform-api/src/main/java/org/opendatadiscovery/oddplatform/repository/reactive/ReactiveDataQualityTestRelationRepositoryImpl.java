@@ -17,6 +17,10 @@ public class ReactiveDataQualityTestRelationRepositoryImpl implements ReactiveDa
 
     @Override
     public Mono<Void> createRelations(final List<DataQualityTestRelationsPojo> pojos) {
+        if (pojos.isEmpty()) {
+            return Mono.empty();
+        }
+
         return jooqReactiveOperations.executeInPartition(pojos, ps -> {
             var step = DSL.insertInto(
                 DATA_QUALITY_TEST_RELATIONS,

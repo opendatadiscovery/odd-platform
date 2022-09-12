@@ -49,10 +49,6 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
     // TODO: use from abstract?
     @Override
     public Mono<Void> bulkCreate(final Collection<DataEntityTaskRunPojo> pojos) {
-        if (pojos.isEmpty()) {
-            return Mono.empty();
-        }
-
         final List<DataEntityTaskRunRecord> records = pojos.stream()
             .map(e -> jooqReactiveOperations.newRecord(DATA_ENTITY_TASK_RUN, e))
             .toList();
@@ -71,10 +67,6 @@ public class ReactiveDataEntityTaskRunRepositoryImpl implements ReactiveDataEnti
     // TODO: use from abstract?
     @Override
     public Mono<Void> bulkUpdate(final Collection<DataEntityTaskRunPojo> pojos) {
-        if (pojos.isEmpty()) {
-            return Mono.empty();
-        }
-
         final List<DataEntityTaskRunRecord> records = pojos.stream()
             .map(e -> jooqReactiveOperations.newRecord(DATA_ENTITY_TASK_RUN, e))
             .toList();

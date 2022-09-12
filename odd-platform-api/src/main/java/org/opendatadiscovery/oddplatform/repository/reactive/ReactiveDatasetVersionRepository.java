@@ -7,6 +7,7 @@ import java.util.Set;
 import org.opendatadiscovery.oddplatform.dto.DatasetStructureDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetVersionPojo;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface ReactiveDatasetVersionRepository extends ReactiveCRUDRepository<DatasetVersionPojo> {
@@ -16,7 +17,7 @@ public interface ReactiveDatasetVersionRepository extends ReactiveCRUDRepository
 
     Mono<List<DatasetVersionPojo>> getVersions(final String datasetOddrn);
 
-    Mono<List<DatasetVersionPojo>> getLatestVersions(final Collection<Long> datasetIds);
+    Flux<DatasetVersionPojo> getLatestVersions(final Collection<Long> datasetIds);
 
     Mono<List<DatasetVersionPojo>> getPenultimateVersions(final List<DatasetVersionPojo> lastVersions);
 

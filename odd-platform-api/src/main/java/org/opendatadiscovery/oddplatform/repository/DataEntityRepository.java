@@ -53,15 +53,9 @@ public interface DataEntityRepository extends CRUDRepository<DataEntityDimension
 
     Optional<Long> incrementViewCount(final long id);
 
-    void createHollow(final Collection<String> oddrns);
-
     Long countByState(final FacetStateDto state);
 
     Long countByState(final FacetStateDto state, final OwnerPojo ownerPojo);
-
-    void calculateSearchEntrypoints(final Collection<Long> dataEntityIds);
-
-    void calculateMetadataVectors(final Collection<Long> ids);
 
     List<DataEntityDto> getQuerySuggestions(final String query, final Integer entityClassId,
                                             final Boolean manuallyCreated);

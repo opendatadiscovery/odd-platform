@@ -49,18 +49,33 @@ public class JooqReactiveOperations {
 
     public <T> Mono<Void> executeInPartition(final List<T> entities,
                                              final Function<List<T>, Mono<Integer>> mapper) {
-        // TODO: add simple if checking whether list is less than batchsize
+        if (entities.isEmpty()) {
+            return Mono.empty();
+        }
+
+        if (entities.size() <= BATCH_SIZE) {
+            return mapper.apply(entities).then();
+        }
+
         return ListUtils.partition(entities, BATCH_SIZE)
             .stream()
             .map(mapper)
             .reduce((m1, m2) -> m1.zipWith(m2, Integer::sum))
-            .orElseThrow(() -> new IllegalStateException("Given list of entities was empty"))
+            .orElse(Mono.empty())
             .then();
     }
 
     public <T, R extends Record> Flux<R> executeInPartitionReturning(final List<T> entities,
                                                                      final Function<List<T>, Flux<R>> mapper) {
-        // TODO: add simple if checking whether list is less than batchsize
+        if (entities.isEmpty()) {
+            return Flux.empty();
+        }
+
+        if (entities.size() <= BATCH_SIZE) {
+            return mapper.apply(entities);
+        }
+
+        // TODO: test whether this works
         return ListUtils.partition(entities, BATCH_SIZE)
             .stream()
             .map(mapper)

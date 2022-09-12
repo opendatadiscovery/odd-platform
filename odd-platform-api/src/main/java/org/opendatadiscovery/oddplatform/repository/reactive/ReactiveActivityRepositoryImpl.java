@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jooq.Condition;
 import org.jooq.Field;
+import org.jooq.InsertSetStep;
 import org.jooq.Record;
 import org.jooq.SelectJoinStep;
 import org.jooq.impl.DSL;
@@ -41,10 +42,27 @@ public class ReactiveActivityRepositoryImpl implements ReactiveActivityRepositor
     private final JooqRecordHelper jooqRecordHelper;
 
     @Override
-    public Mono<ActivityPojo> save(final ActivityPojo pojo) {
+    public Mono<ActivityPojo> saveReturning(final ActivityPojo pojo) {
         final ActivityRecord record = jooqReactiveOperations.newRecord(ACTIVITY, pojo);
         return jooqReactiveOperations.mono(DSL.insertInto(ACTIVITY).set(record).returning())
             .map(r -> r.into(ACTIVITY).into(ActivityPojo.class));
+    }
+
+    @Override
+    public Mono<Void> save(final List<ActivityPojo> pojos) {
+        final List<ActivityRecord> records = pojos.stream()
+            .map(p -> jooqReactiveOperations.newRecord(ACTIVITY, p))
+            .toList();
+
+        return jooqReactiveOperations.executeInPartition(records, rs -> {
+            InsertSetStep<ActivityRecord> insertStep = DSL.insertInto(ACTIVITY);
+
+            for (int i = 0; i < rs.size() - 1; i++) {
+                insertStep = insertStep.set(rs.get(i)).newRecord();
+            }
+
+            return jooqReactiveOperations.mono(insertStep.set(rs.get(rs.size() - 1)));
+        });
     }
 
     @Override

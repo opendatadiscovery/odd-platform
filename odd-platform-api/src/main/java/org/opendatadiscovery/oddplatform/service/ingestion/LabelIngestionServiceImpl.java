@@ -8,13 +8,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto;
 import org.opendatadiscovery.oddplatform.dto.ingestion.EnrichedDataEntityIngestionDto;
-import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionDataStructure;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSetField;
-import org.opendatadiscovery.oddplatform.ingestion.contract.model.Tag;
-import org.opendatadiscovery.oddplatform.mapper.DatasetFieldMapper;
+import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.DatasetFieldPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LabelToDatasetFieldPojo;
@@ -25,6 +23,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
+import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DatasetFieldIngestionDto;
 import static reactor.function.TupleUtils.function;
 
 @Service
@@ -33,10 +32,10 @@ public class LabelIngestionServiceImpl implements LabelIngestionService {
     private final ReactiveLabelRepository labelRepository;
     private final ReactiveDatasetFieldRepository datasetFieldRepository;
     private final ReactiveLabelService labelService;
-    private final DatasetFieldMapper datasetFieldMapper;
 
     @Override
-    public Mono<IngestionDataStructure> ingestExternalLabels(final IngestionDataStructure dataStructure) {
+    @ReactiveTransactional
+    public Mono<Void> ingestExternalLabels(final IngestionRequest dataStructure) {
         final List<EnrichedDataEntityIngestionDto> datasetEntities = dataStructure.getAllEntities().stream()
             .filter(e -> e.getEntityClasses().contains(DataEntityClassDto.DATA_SET))
             .toList();
@@ -45,15 +44,16 @@ public class LabelIngestionServiceImpl implements LabelIngestionService {
             .map(DataEntityIngestionDto::getDataSet)
             .filter(ds -> CollectionUtils.isNotEmpty(ds.fieldList()))
             .flatMap(ds -> ds.fieldList().stream())
-            .map(datasetFieldMapper::mapField)
+            .map(DatasetFieldIngestionDto::field)
             .toList();
 
         if (CollectionUtils.isEmpty(pojos)) {
-            return Mono.just(dataStructure);
+            return Mono.empty();
         }
 
-        final Mono<Map<String, DatasetFieldPojo>> datasetFieldOddrnToPojo = datasetFieldRepository
-            .getExistingFieldsByOddrnAndType(pojos);
+        final Mono<Map<String, DatasetFieldPojo>> datasetFieldOddrnToPojo =
+            datasetFieldRepository.getExistingFieldsByOddrnAndType(pojos);
+
         final Set<String> externalLabelNames = getLabelNames(datasetEntities);
 
         return datasetFieldOddrnToPojo
@@ -74,11 +74,12 @@ public class LabelIngestionServiceImpl implements LabelIngestionService {
                     .then(Mono.just(updated));
             })))
             .flatMapMany(labelRepository::createRelations)
-            .then(Mono.just(dataStructure));
+            .then();
     }
 
     private Mono<List<LabelToDatasetFieldPojo>> getExternalRelations(final Collection<Long> datasetFieldIds) {
         return labelRepository.listLabelRelations(datasetFieldIds)
+            // TODO: filter in database?
             .filter(LabelToDatasetFieldPojo::getExternal)
             .collectList();
     }
@@ -87,27 +88,28 @@ public class LabelIngestionServiceImpl implements LabelIngestionService {
                                                               final Map<String, DatasetFieldPojo> datasetFieldMap,
                                                               final List<EnrichedDataEntityIngestionDto> entities) {
         return getDatasetFieldsWithLabelsStream(entities)
-            .flatMap(ds -> ds.getTags()
+            .flatMap(ds -> ds.labels()
                 .stream()
                 .map(label -> new LabelToDatasetFieldPojo()
-                    .setLabelId(labelsMap.get(label.getName()).getId())
-                    .setDatasetFieldId(datasetFieldMap.get(ds.getOddrn()).getId())
+                    .setLabelId(labelsMap.get(label).getId())
+                    .setDatasetFieldId(datasetFieldMap.get(ds.field().getOddrn()).getId())
                     .setExternal(true)
                 )).toList();
     }
 
     private Set<String> getLabelNames(final List<EnrichedDataEntityIngestionDto> datasetEntities) {
         return getDatasetFieldsWithLabelsStream(datasetEntities)
-            .flatMap(field -> field.getTags().stream())
-            .map(Tag::getName)
+            .flatMap(field -> field.labels().stream())
             .collect(Collectors.toSet());
     }
 
-    private Stream<DataSetField> getDatasetFieldsWithLabelsStream(final List<EnrichedDataEntityIngestionDto> entities) {
+    private Stream<DatasetFieldIngestionDto> getDatasetFieldsWithLabelsStream(
+        final List<EnrichedDataEntityIngestionDto> entities
+    ) {
         return entities.stream()
             .map(DataEntityIngestionDto::getDataSet)
             .filter(ds -> CollectionUtils.isNotEmpty(ds.fieldList()))
             .flatMap(ds -> ds.fieldList().stream())
-            .filter(field -> CollectionUtils.isNotEmpty(field.getTags()));
+            .filter(field -> CollectionUtils.isNotEmpty(field.labels()));
     }
 }

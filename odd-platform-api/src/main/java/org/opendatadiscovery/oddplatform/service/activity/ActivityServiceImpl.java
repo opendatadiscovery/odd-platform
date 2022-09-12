@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.opendatadiscovery.oddplatform.api.contract.model.Activity;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityCountInfo;
 import org.opendatadiscovery.oddplatform.api.contract.model.ActivityEventType;
@@ -16,6 +18,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
 import org.opendatadiscovery.oddplatform.mapper.ActivityMapper;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveActivityRepository;
 import org.opendatadiscovery.oddplatform.service.activity.handler.ActivityHandler;
@@ -28,6 +31,7 @@ import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ActivityServiceImpl implements ActivityService {
     private final ActivityTablePartitionManager activityTablePartitionManager;
     private final ReactiveActivityRepository activityRepository;
@@ -39,18 +43,38 @@ public class ActivityServiceImpl implements ActivityService {
     @Override
     public Mono<Void> createActivityEvent(final ActivityCreateEvent event) {
         final LocalDateTime activityCreateTime = LocalDateTime.now();
+
         return activityTablePartitionManager.createPartitionIfNotExists(activityCreateTime.toLocalDate())
             .then(authIdentityProvider.getUsername())
             .map(username -> activityMapper.mapToPojo(event, activityCreateTime, username))
-            .switchIfEmpty(Mono.defer(() -> Mono.just(activityMapper.mapToPojo(event, activityCreateTime, null))))
-            .flatMap(activityRepository::save)
+            .switchIfEmpty(Mono.just(activityMapper.mapToPojo(event, activityCreateTime, null)))
+            .flatMap(activityRepository::saveReturning)
             .then();
+    }
+
+    @Override
+    public Mono<Void> createActivityEvents(final List<ActivityCreateEvent> events) {
+        final LocalDateTime activityCreateTime = LocalDateTime.now();
+
+        return activityTablePartitionManager.createPartitionIfNotExists(activityCreateTime.toLocalDate())
+            .then(authIdentityProvider.getUsername())
+            .flatMapMany(username -> Flux.fromStream(mapEventsToPojos(events, activityCreateTime, username)))
+            .switchIfEmpty(Flux.fromStream(mapEventsToPojos(events, activityCreateTime, null)))
+            .collectList()
+            .flatMap(activityRepository::save);
     }
 
     @Override
     public Mono<ActivityContextInfo> getContextInfo(final Map<String, Object> parameters,
                                                     final ActivityEventTypeDto eventType) {
         return getActivityHandler(eventType).getContextInfo(parameters);
+    }
+
+    @Override
+    public Mono<Map<Long, String>> getUpdatedInfo(final Map<String, Object> parameters,
+                                                  final List<Long> dataEntityIds,
+                                                  final ActivityEventTypeDto eventType) {
+        return getActivityHandler(eventType).getUpdatedState(parameters, dataEntityIds);
     }
 
     @Override
@@ -243,5 +267,13 @@ public class ActivityServiceImpl implements ActivityService {
         return handlers.stream().filter(handler -> handler.isHandle(eventType))
             .findFirst()
             .orElseThrow(() -> new RuntimeException("Can't find handler for event type " + eventType.name()));
+    }
+
+    private Stream<ActivityPojo> mapEventsToPojos(final List<ActivityCreateEvent> events,
+                                                  final LocalDateTime createTime,
+                                                  final String username) {
+        return events
+            .stream()
+            .map(event -> activityMapper.mapToPojo(event, createTime, username));
     }
 }
