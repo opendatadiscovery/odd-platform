@@ -1,6 +1,6 @@
 
 default_pulling_interval: 1
-token: null
+token: "9flnuSdUOValPB7hUawmVVNl73Tk6NMUZrN07cIr"
 plugins:
   - type: postgresql
     name: postgresql-step2-test

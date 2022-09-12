@@ -8,10 +8,10 @@
   },
   "scripts": {
     "build": "tsc",
-    "clean": "./node_modules/.bin/rimraf ./dist/",
+    "clean": "rimraf ./dist/",
     "clean-build": "npm run clean && npm run build",
-    "up-odd-platform": "../docker/up-platform.sh",
-    "up-collector": "../docker/up-collector.sh",
+    "up-odd-platform": "docker/up-platform.sh",
+    "up-collector": "docker/up-collector.sh",
     "odd-up": "npm run up-odd-platform && npm run up-collector",
     "odd-down": "docker-compose -f ../docker/demo.yaml down",
     "pw": "npm run clean-build; ENVIRONMENT=main_test playwright test --workers=1 --headed"
