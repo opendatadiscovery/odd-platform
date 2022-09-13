@@ -18,6 +18,7 @@ jobs:
   run_playwright_tests:
     uses: ./.github/workflows/run-playwright-tests.yml
   release:
+    needs: [run_playwright_tests]
     concurrency: release
     runs-on: ubuntu-latest
     outputs:
