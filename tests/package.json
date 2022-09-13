@@ -17,7 +17,8 @@
     "up-collector": "docker/up-collector.sh",
     "odd-up": "npm run up-odd-platform && npm run up-collector",
     "odd-down": "docker-compose -f ../docker/demo.yaml down",
-    "pw": "npm run clean-build; ENVIRONMENT=main_test playwright test --workers=1 --headed"
+    "test": "npm run clean-build; ENVIRONMENT=main_test playwright test --workers=1 --headed",
+    "test-ci": "npm run clean-build; ENVIRONMENT=main_test playwright test"
   },
   "repository": {
     "type": "git",

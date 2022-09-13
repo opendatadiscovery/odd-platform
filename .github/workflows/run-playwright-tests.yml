@@ -13,7 +13,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14.x'
+          node-version: '18.x'
 
       - name: Start containers
         run: |
@@ -33,7 +33,7 @@ jobs:
       - name: Run Playwright tests
         run: |
           cd tests
-          ENVIRONMENT=main_test npx playwright test
+          npm run test-ci
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
