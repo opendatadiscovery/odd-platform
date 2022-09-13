@@ -72,6 +72,7 @@
     "dotenv": "10.0.0",
     "faker": "5.5.3",
     "mammoth": "^1.4.21",
-    "prettier": "2.3.2"
+    "prettier": "2.3.2",
+    "typescript": "^4.8.3"
   }
 }
