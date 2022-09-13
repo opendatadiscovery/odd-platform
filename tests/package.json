@@ -6,6 +6,9 @@
   "directories": {
     "doc": "../docs"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "clean": "rimraf ./dist/",
