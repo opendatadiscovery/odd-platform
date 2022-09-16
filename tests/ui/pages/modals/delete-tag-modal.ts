@@ -7,18 +7,11 @@ const SELECTORS = {
     delete_tag: 'button:has-text:"Delete"',
     delete_tag_confirm: 'text=Delete Tag',
 }
-
 export default class DeleteTagModal extends BaseModal {
     constructor(pages: Pages) {
         super(pages, SELECTORS.this_dialog);
     }
-
-    get delete_tag() {
-        return new Button(this.page, SELECTORS.delete_tag);
-    }
-
     get delete_tag_confirm() {
         return new Button(this.page, SELECTORS.delete_tag_confirm);
     }
 }
-

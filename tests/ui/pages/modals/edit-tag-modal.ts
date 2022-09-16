@@ -10,22 +10,17 @@ const SELECTORS = {
     save_tag: '[type="submit"]',
     important_tag: '[type="checkbox"]',
 }
-
 export default class EditTagModal extends BaseModal {
     constructor(pages: Pages) {
         super(pages, SELECTORS.this_dialog);
     }
-
     get tag_name_field() {
         return new InputField(this.page, SELECTORS.tag_name);
     }
-
     get check_important() {
         return new Checkbox(this.page, SELECTORS.important_tag);
     }
-
     get save_tag() {
         return new Button(this.page, SELECTORS.save_tag);
     }
-
 }
