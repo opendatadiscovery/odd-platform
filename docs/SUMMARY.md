@@ -14,3 +14,4 @@
 
 * [Try locally](configuration-and-deployment/trylocally.md)
 * [Configure ODD Platform](configuration-and-deployment/odd-platform.md)
+* [Open Data Discovery Resource Name](oddrn.md)
