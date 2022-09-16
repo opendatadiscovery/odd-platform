@@ -237,6 +237,18 @@ metrics:
 
 Any alert that is created inside the platform can be sent via webhook and/or [Slack incoming webhook](https://api.slack.com/messaging/webhooks). Such notifications contain information such as:
 
+### ODD Platform configuration
+
+{% tabs %}
+{% tab title="YAML" %}
+
+{% endtab %}
+
+{% tab title="Environment variables" %}
+
+{% endtab %}
+{% endtabs %}
+
 1. Name of the entity upon which alert has been created
 2. Data source and namespace of an entity
 3. Owners of an entity
