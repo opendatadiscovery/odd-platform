@@ -14,4 +14,7 @@
 
 * [Try locally](configuration-and-deployment/trylocally.md)
 * [Configure ODD Platform](configuration-and-deployment/odd-platform.md)
-* [Open Data Discovery Resource Name](oddrn.md)
+
+## Ingestion
+
+* [Open Data Discovery Resource Name](ingestion/oddrn.md)

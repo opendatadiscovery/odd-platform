@@ -1,19 +1,22 @@
-
 # Open Data Discovery Resource Name
+
 ODDRN is a unique resource name that identifies entities such as data sources, data entities, dataset fields etc.
+
 ## ODDRN to build lineage
 
 If you want to ingest custom entities and then add them to a lineage diagram, use the [ODD model](https://pypi.org/project/odd-models/).
 
 ### Step 1 Retrieve ODDRNs of your data entity
 
-1. Go to the main page of the data entity. 
+1. Go to the main page of the data entity.
 2. On the right panel, copy the ODDRN.
 
-![](.gitbook/img/oddrn.png)
+![](../.gitbook/img/oddrn.png)
 
 ### Step 2. Add ODDRN into the model
+
 Example:
+
 ```
     DataEntity(
         oddrn=f"//airflow/example/job/{dag_id}",
@@ -33,6 +36,7 @@ Example:
 ```
 
 ## ODDRN Generator
+
 If you apply a custom collector or a run custom script. Postgresql example:
 
 ```
