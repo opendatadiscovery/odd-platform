@@ -1,16 +1,18 @@
 
-## ODDRN to built lineage
-If you want to injest custom entities and then add them to a lineage diagram, use the [ODD model](https://pypi.org/project/odd-models/).
+# Open Data Discovery Resource Name
+ODDRN is a unique resource name that identifies entities such as data sources, data entities, dataset fields etc.
+## ODDRN to build lineage
 
-follow these steps:
+If you want to ingest custom entities and then add them to a lineage diagram, use the [ODD model](https://pypi.org/project/odd-models/).
 
-Step 1 retrieve ODDRNs of your data entity:
-1. Go to the main page of the data entity 
-\\\\screen
-2. On the right panel, copy the ODDRN
+### Step 1 Retrieve ODDRNs of your data entity
 
-Step 2. Add ODDRN into the model
+1. Go to the main page of the data entity. 
+2. On the right panel, copy the ODDRN.
 
+![](.gitbook/img/oddrn.png)
+
+### Step 2. Add ODDRN into the model
 Example:
 ```
     DataEntity(
@@ -30,7 +32,7 @@ Example:
     )
 ```
 
-## ODDRN generator
+## ODDRN Generator
 If you apply a custom collector or a run custom script. Postgresql example:
 
 ```
@@ -48,23 +50,23 @@ oddrn_gen.available_paths
 # ('schemas', 'databases', 'tables', 'columns')
 
 oddrn_gen.get_data_source_oddrn()
-# //postgresql/host/my.host.com:5432/schemas/schema_name/databases/database_name
+# //postgresql/host/my.host.com:schemas/schema_name/databases/database_name
 
 oddrn_gen.get_oddrn_by_path("schemas")
-# //postgresql/host/my.host.com:5432/schemas/schema_name
+# //postgresql/host/my.host.com:schemas/schema_name
 
 oddrn_gen.get_oddrn_by_path("databases")
-# //postgresql/host/my.host.com:5432/schemas/schema_name/databases/database_name
+# //postgresql/host/my.host.com:schemas/schema_name/databases/database_name
 
 oddrn_gen.get_oddrn_by_path("tables")
-# //postgresql/host/my.host.com:5432/schemas/schema_name/databases/database_name/tables/table_name
+# //postgresql/host/my.host.com:schemas/schema_name/databases/database_name/tables/table_name
 
 # you can set or change path:
 oddrn_gen.set_oddrn_paths(tables='another_table_name', columns='new_column_name')
 oddrn_gen.get_oddrn_by_path("columns")
-# //postgresql/host/my.host.com:5432/schemas/schema_name/databases/database_name/tables/another_table_name/columns/new_column_name
+# //postgresql/host/my.host.com:schemas/schema_name/databases/database_name/tables/another_table_name/columns/new_column_name
 
 # you can get path wih new values:
 oddrn_gen.get_oddrn_by_path("columns", new_value="another_new_column_name")
-# //postgresql/host/my.host.com:5432/schemas/schema_name/databases/database_name/tables/another_table_name/columns/another_new_column_name
+# //postgresql/host/my.host.com:schemas/schema_name/databases/database_name/tables/another_table_name/columns/another_new_column_name
 ```
