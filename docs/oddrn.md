@@ -1,28 +1,49 @@
-## ODDRN: default state
-By default, ODDRN is generated automatically as a unique id of a data entity.
 
-link to a spec??
-collector_config.yaml ??
+## ODDRN to built lineage
+If you want to injest custom entities and then add them to a lineage diagram, use the [ODD model](https://pypi.org/project/odd-models/).
 
-To retrieve ODDRNs of your data entities:
-1. Go to the main page of the data entity (https://platform.dev.odd.provectus.io/dataentities/{entity ID}/overview).
+follow these steps:
+
+Step 1 retrieve ODDRNs of your data entity:
+1. Go to the main page of the data entity 
+\\\\screen
 2. On the right panel, copy the ODDRN
-3. ??? 
-tip: why do we need oddrn?
 
-## ODDRN for a custom integration
-If you apply a custom collector or a run custom script:
+Step 2. Add ODDRN into the model
+
+Example:
+```
+    DataEntity(
+        oddrn=f"//airflow/example/job/{dag_id}",
+        name=dag_id,
+        type=DataEntityType.JOB,
+        data_transformer=DataTransformer(
+            inputs=[
+                '<oddrn1>',
+                '<oddrn2>',
+            ],
+            outputs=[
+                '<oddrn3>',
+                '<oddrn4>',
+            ],
+        ),
+    )
+```
+
+## ODDRN generator
+If you apply a custom collector or a run custom script. Postgresql example:
+
 ```
 # postgresql
 from oddrn_generator import PostgresqlGenerator
 
 oddrn_gen = PostgresqlGenerator(
-    host_settings='my.host.com:5432',
+    host_settings='my.host.com',
     schemas='schema_name', databases='database_name', tables='table_name'
 )
 
 oddrn_gen.base_oddrn
-# //postgresql/host/my.host.com:5432
+# //postgresql/host/my.host.com
 oddrn_gen.available_paths
 # ('schemas', 'databases', 'tables', 'columns')
 
