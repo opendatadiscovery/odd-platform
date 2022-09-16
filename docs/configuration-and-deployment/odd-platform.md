@@ -4,11 +4,12 @@ description: >-
   its functionality and features
 ---
 
-# ODD Platform
+# Configure ODD Platform
 
 ## Configuration approaches
 
 There are two ways to configure the Platform:
+
 * **Environment variables** are used for simple entries
 * Configuring via **YAML** can come in handy when there's a complex configuration block (e.g OAuth2 authentication or logging levels) needs to be defined.
 
@@ -16,7 +17,7 @@ There are two ways to configure the Platform:
 
 <summary>YAML entries VS environment variables</summary>
 
-&#x20;Here is an example of how to define the following block and configure the Platform with it using environment variables.
+Here is an example of how to define the following block and configure the Platform with it using environment variables.
 
 YAML:
 
@@ -83,7 +84,7 @@ No additional settings are required.
 {% endhint %}
 
 {% hint style="danger" %}
-**`LOGIN_FORM`**authentication mechanism **is not recommended** to be used in production!
+**`LOGIN_FORM`** authentication mechanism **is not recommended** to be used in production!
 {% endhint %}
 
 The easiest authentication mechanism to use. Users' credentials can be set by defining `auth.login-form-credentials` variable in the following format: `username1:password1,username2:password2.` Default value is `admin:admin,root:root`, hence by default ODD Platform will be able to authenticate 2 users with usernames `admin` and `root` and passwords `admin` and `root` respectively.
@@ -137,18 +138,16 @@ spring:
 ### Authentication: LDAP
 
 {% hint style="info" %}
-**`auth.type`**variable must be set to **`LDAP`**
+**`auth.type`** variable must be set to **`LDAP`**
 {% endhint %}
 
 TODO: finish
-
-
 
 ## Select session provider
 
 ODD Platform is able to keep users' sessions in several places such as in memory, PostgreSQL database or Redis. Session provider can be set via `session.provider` variable with following expected values:
 
-* `IN_MEMORY`: Local in-memory storage. **ODD Platform defaults to this value**
+* `IN_MEMORY`: Local in-memory storage. ODD Platform defaults to this value
 * `INTERNAL_POSTGRESQL`: Underlying PostgreSQL database
 * `REDIS`: [Redis data-store](https://redis.io/). In order to connect to Redis following variables are needed to be defined:
   * `spring.redis.host`: Redis host
@@ -208,13 +207,12 @@ If you'd like to use only one instance of ODD Platform and you're ready to toler
 
 \
 If you already have a Redis in your infrastructure or you're willing to install it, the best choice would be **`REDIS`**\
-**``**\
-**``**Otherwise **`INTERNAL_POSTGRESQL`**is the best pick
+\*\*`**\ **`\*\*Otherwise \*\*`INTERNAL_POSTGRESQL`\*\*is the best pick
 {% endhint %}
 
 ## Enable Metrics
 
-Some of metadata ODD Platform ingests can be conveniently represented in a shape of time-series   chart, for example the amount of data in the MySQL table or the physical size of the Redshift database. ODD Platform pushes metadata to the [OTLP collector](https://opentelemetry.io/docs/collector/) as a telemetry in order to be able to create charts in [Prometheus](https://prometheus.io/), [New Relic](https://newrelic.com/) or any other backend that supports [OTLP Exporters](https://aws-otel.github.io/docs/components/otlp-exporter). These variables are needed to be set in order to leverage this functionality:
+Some of metadata ODD Platform ingests can be conveniently represented in a shape of time-series chart, for example the amount of data in the MySQL table or the physical size of the Redshift database. ODD Platform pushes metadata to the [OTLP collector](https://opentelemetry.io/docs/collector/) as a telemetry in order to be able to create charts in [Prometheus](https://prometheus.io/), [New Relic](https://newrelic.com/) or any other backend that supports [OTLP Exporters](https://aws-otel.github.io/docs/components/otlp-exporter). These variables are needed to be set in order to leverage this functionality:
 
 * `metrics.export.enabled`: Must be set to `true`
 * `metrics.export.otlp-endpoint`: OTLP Collector endpoint
@@ -237,27 +235,87 @@ metrics:
 
 ## Enable Alert Notifications
 
-Any alert that is created inside the platform can be sent via webhook or [Slack incoming webhook](https://api.slack.com/messaging/webhooks). ODD Platform is using PostgreSQL replication mechanism so to be able to send a notification even if there's a network lag occurred or the platform crushes. In order to enable this functionality, an underlying PostgreSQL database needs to be configured as well.
+Any alert that is created inside the platform can be sent via webhook and/or [Slack incoming webhook](https://api.slack.com/messaging/webhooks). Such notifications contain information such as:
+
+1. Name of the entity upon which alert has been created
+2. Data source and namespace of an entity
+3. Owners of an entity
+4. Possibly affected entities&#x20;
+
+ODD Platform uses PostgreSQL replication mechanism to be able to send a notification even if there's a network lag occurred or the platform crushes. In order to enable this functionality, an underlying PostgreSQL database needs to be configured as well.
+
+### PostgreSQL Configuration
+
+PostgreSQL database must be [configured](https://www.postgresql.org/docs/current/config-setting.html) in order for ODD Platform to leverage its replication mechanism along with the granting the database user replication permissions
+
+#### Database settings
+
+To configure the database the following entries must be added to the `postgresql.conf` file:
+
+```
+max_wal_senders = 1
+wal_keep_size = 16
+wal_level = logical
+max_replication_slots = 1
+```
+
+Or if the replication mechanism is already configured, just increment the `max_wal_senders` and `max_replication_slots` numbers
+
+#### Database user permissions
+
+ODD Platform database user must be granted with replication permissions:
+
+```sql
+ALTER ROLE {database_username} WITH REPLICATION
+```
+
+{% hint style="info" %}
+User permissions configuration may vary from one on-demand/cloud provider to another. This example shows the generic PostgreSQL syntax.
+{% endhint %}
+
+### ODD Platform configuration
+
+Following variables need to be defined:
+
+* `notifications.enabled`: must be set to `true`. Defaults to `false`
+* `notifications.message.downstream-entities-depth`: limits the amount of fetching of affected data entities **in terms of lineage graph level.** Defaults to 1
+* `notifications.wal.advisory-lock-id`: ODD Platform uses [PostgreSQL advisory lock](https://www.postgresql.org/docs/current/explicit-locking.html#ADVISORY-LOCKS) in order to make sure that in a case of horizontal scaling only one instance of the platform processes alert messages. This setting defines advisory lock id. Defaults to `100`
+* `notifications.wal.replication-slot-name`: PostgreSQL replication slot name that will be created if it doesn't exist yet. Defaults to `odd_platform_replication_slot`
+* `notifications.wal.publication-name`: PostgreSQL publication name that will be created if it doesn't exist yet. Defaults to `odd_platform_publication_alert`
+* `notifications.receivers.slack.url`: [Slack incoming webhook](https://api.slack.com/messaging/webhooks) URL
+* `notifications.receivers.slack.platform-base-url`: ODD Platform URL to be used in alert messages' hyperlinks.
+* `notifications.receivers.webhook.url`: Generic webhook URL
+
+ODD Platform configuration would look like this:
 
 {% tabs %}
-{% tab title="ODD Platform configuration" %}
-Here are generic variables to define:
-
-* `notifications.enabled` must be set to `true`.
-* `notifications.message.downstream-entities-depth`: Allows to define a level of lineage  graph depth to be fetched to enrich an alert data. **Defaults to `1`**
-* `notifications.wal.advisory-lock-id`: PostgreSQL advisory lock id. **Defaults to `100`**
-* `notifications.wal.replication-slot-name`: PostgreSQL replication slot name that will be created if it's not exists yet. **Defaults to `odd_platform_replication_slot`**
-* `notifications.wal.publication-name`: PostgreSQL publication name. **Defaults to `odd_platform_publication_alert`**
-
-\
-You can define Slack incoming webhook URL and/or a webhook URL:
-
-* `notifications.receivers.slack.url`: Slack incoming webhook URL
-* `notifications.receivers.slack.platform-base-url`: ODD Platform public URL for hyperlinks inside of alert messages
-* `notifications.receivers.webhook.url`: Generic webhook URL
+{% tab title="YAML" %}
+```yaml
+notifications:
+  enabled: true
+  message:
+    downstream-entities-depth: {downstream_entities_depth_to_fetch}
+  wal:
+    advisory-lock-id: {postgresql_advisory_lock_id}
+    replication-slot-name: {postgresql_replication_slot_name}
+    publication-name: {postgresql_publication_name}
+  receivers:
+    slack:
+      url: {slack_incoming_webhook_url}
+      platform-base-url: {platform_url}
+    webhook:
+      url: {webhook_url}
+```
 {% endtab %}
 
-{% tab title="PostgreSQL configuration" %}
-
+{% tab title="Environment variables" %}
+* `NOTIFICATIONS_ENABLED=true`
+* `NOTIFICATIONS_MESSAGE_DOWNSTREAM-ENTITIES_DEPTH={downstream_entities_depth_to_fetch}`
+* `NOTIFICATIONS_WAL_ADVISORY-LOCK-ID={postgresql_advisory_lock_id}`
+* `NOTIFICATIONS_WAL_REPLICATION-SLOT-NAME={postgresql_replication_slot_name}`
+* `NOTIFICATIONS_WAL_PUBLICATION-NAME={postgresql_publication_name}`
+* `NOTIFICATIONS_RECEIVERS_SLACK_URL={slack_incoming_webhook_url}`
+* `NOTIFICATIONS_RECEIVERS_SLACK_PLATFORM-BASE-URL={odd_platform_url}`
+* `NOTIFICATIONS_RECEIVERS_WEBHOOK_URL={webhook_url}`
 {% endtab %}
 {% endtabs %}
