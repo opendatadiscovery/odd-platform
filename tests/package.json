@@ -71,6 +71,7 @@
     "chai-as-promised": "7.1.1",
     "docx4js": "^3.2.20",
     "dotenv": "10.0.0",
+    "eslint": "^8.23.1",
     "faker": "5.5.3",
     "mammoth": "^1.4.21",
     "prettier": "2.3.2",
