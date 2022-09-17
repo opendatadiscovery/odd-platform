@@ -65,6 +65,7 @@
     "@types/pdfkit": "^0.12.6",
     "@types/pizzip": "^3.0.2",
     "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.37.0",
     "@typescript-eslint/parser": "^5.37.0",
     "async-wait-until": "2.0.5",
     "axios": "^0.21.4",
