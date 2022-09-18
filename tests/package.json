@@ -76,6 +76,7 @@
     "docx4js": "^3.2.20",
     "dotenv": "10.0.0",
     "eslint": "^8.23.1",
+    "eslint-config-prettier": "^8.5.0",
     "faker": "5.5.3",
     "mammoth": "^1.4.21",
     "prettier": "2.7.1",
