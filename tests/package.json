@@ -19,7 +19,8 @@
     "odd-down": "docker-compose -f ../docker/demo.yaml down",
     "test": "npm run clean-build; ENVIRONMENT=main_test playwright test --workers=1 --headed",
     "test-ci": "npm run clean-build; ENVIRONMENT=main_test playwright test",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format": "npx prettier --write ."
   },
   "repository": {
     "type": "git",
