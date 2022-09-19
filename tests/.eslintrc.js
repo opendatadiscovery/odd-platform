@@ -11,12 +11,13 @@ module.exports = {
     tsconfigRootDir: __dirname,
     project: ['./tsconfig.json', './tsconfig.eslint.json'],
   },
-  plugins: ['@typescript-eslint'],
+  plugins: ['@typescript-eslint', 'jsdoc'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:playwright/playwright-test',
+    'plugin:jsdoc/recommended',
     'prettier' /** Make sure to put it last, so it gets the chance to override other configs */,
   ],
   rules: {
