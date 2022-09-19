@@ -106,42 +106,11 @@ auth:
 
 ### Authentication: OAuth2
 
-{% hint style="info" %}
-**`auth.type`**variable must be set to **`OAUTH2`**
-{% endhint %}
-
-ODD Platform supports any authentication provider if it implements the [OAuth 2.0](https://oauth.net/2/) and [OpenID Connect 1.0 Provider](https://openid.net/connect/). In order to connect the platform to the OAuth2 provider, these variables are needed to be set:
-
-```yaml
-spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: # JWT Issuer URI
-      client:
-        registration:
-          # Name of your OAuth2 provider, e.g github, google, okta or custom one
-          provider_name: 
-            client-id: # Client ID issued by your OAuth2 provider
-            client-secret: # Client Secret issued by your OAuth2 provider
-            scope: # OAuth2 Scopes
-            redirect-uri: # OAuth2 Redirect URI
-            client-name: # Name of the OAuth2 client
-        provider:
-          # Name of your OAuth2 provider, e.g github, google, okta or custom one
-          provider_name:
-            issuerUri: # Issuer Identifier uri
-            user-name-attribute: # payload attribute referencing username or user id
-```
+**`TBD`**
 
 ### Authentication: LDAP
 
-{% hint style="info" %}
-**`auth.type`** variable must be set to **`LDAP`**
-{% endhint %}
-
-TODO: finish
+**`TBD`**
 
 ## Select session provider
 
@@ -149,59 +118,101 @@ ODD Platform is able to keep users' sessions in several places such as in memory
 
 * `IN_MEMORY`: Local in-memory storage. ODD Platform defaults to this value
 * `INTERNAL_POSTGRESQL`: Underlying PostgreSQL database
-* `REDIS`: [Redis data-store](https://redis.io/). In order to connect to Redis following variables are needed to be defined:
-  * `spring.redis.host`: Redis host
-  * `spring.redis.port`: Redis port
-  * `spring.redis.username`: Redis user's name
-  * `spring.redis.password`: Redis user's password
-  * `spring.redis.database`: Redis database index
+* `REDIS`: [Redis data-store](https://redis.io/).
+
+{% hint style="info" %}
+If you'd like to use only one instance of ODD Platform and you're ready to tolerate users' logouts each time the platform restarts, the best choice would be **`IN_MEMORY`**
+
+\
+If you already have a Redis in your infrastructure or you're willing to install it, the best choice would be **`REDIS`**
+
+\
+Otherwise **`INTERNAL_POSTGRESQL`** is the best pick
+{% endhint %}
 
 {% tabs %}
-{% tab title="In memory" %}
+{% tab title="YAML" %}
+#### In memory (default)
+
 ```yaml
 session:
     provider: IN_MEMORY
 ```
 
-or
 
-* `SESSION_PROVIDER=IN_MEMORY`
-{% endtab %}
 
-{% tab title="PostgreSQL" %}
+#### Internal PostgreSQL
+
 ```yaml
 session:
     provider: INTERNAL_POSTGRESQL
 ```
 
-or
+####
 
-* `SESSION_PROVIDER=INTERNAL_POSTGRESQL`
-{% endtab %}
+#### Redis
 
-{% tab title="Redis" %}
+In order to connect to Redis following variables are needed to be defined:
+
+* `spring.redis.host`: Redis host
+* `spring.redis.port`: Redis port
+* `spring.redis.username`: Redis user's name
+* `spring.redis.password`: Redis user's password
+* `spring.redis.database`: Redis database index
+
+
+
+YAML for Redis session provider
+
 ```yaml
 spring:
     redis:
-        host: ...
-        port: ...
-        username: ...
-        password: ...
+        host: {redis_host}
+        port: {redis_port}
+        username: {redis_username}
+        password: {redis_password}
 session:
     provider: REDIS
 ```
+{% endtab %}
 
-or
+{% tab title="Second Tab" %}
+#### In memory (default)
+
+* `SESSION_PROVIDER=IN_MEMORY`
+
+
+
+#### Internal PostgreSQL
+
+* `SESSION_PROVIDER=IN_MEMORY`
+
+####
+
+#### Redis
+
+In order to connect to Redis following variables are needed to be defined:
+
+* `spring.redis.host`: Redis host
+* `spring.redis.port`: Redis port
+* `spring.redis.username`: Redis user's name
+* `spring.redis.password`: Redis user's password
+* `spring.redis.database`: Redis database index
+
+
+
+Environment variables for Redis session provider:
 
 * `SESSION_PROVIDER=REDIS`
-* `SPRING_REDIS_HOST=...`
-* `SPRING_REDIS_PORT=...`
-* `SPRING_REDIS_USERNAME=...`
-* `SPRING_REDIS_PASSWORD=...`
-* `SPRING_REDIS_DATABASE=...`
+* `SPRING_REDIS_HOST={redis_host}`
+* `SPRING_REDIS_PORT={redis_port}`
+* `SPRING_REDIS_USERNAME={redis_username}`
+* `SPRING_REDIS_PASSWORD={redis_password}`
+* `SPRING_REDIS_DATABASE={redis_database}`
 {% endtab %}
 {% endtabs %}
 
+<<<<<<< HEAD
 {% hint style="info" %}
 If you'd like to use only one instance of ODD Platform and you're ready to tolerate users' logouts each time the platform restarts, the best choice would be **`IN_MEMORY`**
 
@@ -210,6 +221,8 @@ If you already have a Redis in your infrastructure or you're willing to install 
 Otherwise **`INTERNAL_POSTGRESQL`** is the best pick
 {% endhint %}
 
+=======
+>>>>>>> 79338c8cde27cb93e77dc5ec4b8874497253df9d
 ## Enable Metrics
 
 Some of metadata ODD Platform ingests can be conveniently represented in a shape of time-series chart, for example the amount of data in the MySQL table or the physical size of the Redshift database. ODD Platform pushes metadata to the [OTLP collector](https://opentelemetry.io/docs/collector/) as a telemetry in order to be able to create charts in [Prometheus](https://prometheus.io/), [New Relic](https://newrelic.com/) or any other backend that supports [OTLP Exporters](https://aws-otel.github.io/docs/components/otlp-exporter). These variables are needed to be set in order to leverage this functionality:
@@ -236,18 +249,6 @@ metrics:
 ## Enable Alert Notifications
 
 Any alert that is created inside the platform can be sent via webhook and/or [Slack incoming webhook](https://api.slack.com/messaging/webhooks). Such notifications contain information such as:
-
-### ODD Platform configuration
-
-{% tabs %}
-{% tab title="YAML" %}
-
-{% endtab %}
-
-{% tab title="Environment variables" %}
-
-{% endtab %}
-{% endtabs %}
 
 1. Name of the entity upon which alert has been created
 2. Data source and namespace of an entity
