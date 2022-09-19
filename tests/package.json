@@ -23,6 +23,12 @@
     "format": "npx prettier --write .",
     "prepare": "cd ../ && husky install ./tests/.husky"
   },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
+      "npx prettier --write",
+      "npx eslint --fix"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/opendatadiscovery/odd-platform.git"
