@@ -79,6 +79,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-playwright": "^0.11.1",
     "faker": "5.5.3",
+    "lint-staged": "^13.0.3",
     "mammoth": "^1.4.21",
     "prettier": "2.7.1",
     "typescript": "^4.8.3"
