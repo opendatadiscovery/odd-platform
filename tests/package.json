@@ -25,8 +25,8 @@
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
-      "npx prettier --write",
-      "npx eslint --fix"
+      "prettier --write",
+      "eslint --fix"
     ]
   },
   "repository": {
@@ -84,12 +84,13 @@
     "dotenv": "10.0.0",
     "eslint": "^8.23.1",
     "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-jsdoc": "^39.3.6",
     "eslint-plugin-playwright": "^0.11.1",
     "faker": "5.5.3",
+    "husky": "^6.0.0",
     "lint-staged": "^13.0.3",
     "mammoth": "^1.4.21",
     "prettier": "2.7.1",
-    "typescript": "^4.8.3",
-    "husky": "^6.0.0"
+    "typescript": "^4.8.3"
   }
 }
