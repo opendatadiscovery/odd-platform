@@ -20,7 +20,8 @@
     "test": "npm run clean-build; ENVIRONMENT=main_test playwright test --workers=1 --headed",
     "test-ci": "npm run clean-build; ENVIRONMENT=main_test playwright test",
     "lint": "eslint .",
-    "format": "npx prettier --write ."
+    "format": "npx prettier --write .",
+    "prepare": "cd ../ && husky install ./tests/.husky"
   },
   "repository": {
     "type": "git",
@@ -82,6 +83,7 @@
     "lint-staged": "^13.0.3",
     "mammoth": "^1.4.21",
     "prettier": "2.7.1",
-    "typescript": "^4.8.3"
+    "typescript": "^4.8.3",
+    "husky": "^6.0.0"
   }
 }
