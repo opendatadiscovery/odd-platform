@@ -207,7 +207,7 @@ If you'd like to use only one instance of ODD Platform and you're ready to toler
 
 \
 If you already have a Redis in your infrastructure or you're willing to install it, the best choice would be **`REDIS`**\
-\*\*`**\ **`\*\*Otherwise \*\*`INTERNAL_POSTGRESQL`\*\*is the best pick
+Otherwise **`INTERNAL_POSTGRESQL`** is the best pick
 {% endhint %}
 
 ## Enable Metrics
