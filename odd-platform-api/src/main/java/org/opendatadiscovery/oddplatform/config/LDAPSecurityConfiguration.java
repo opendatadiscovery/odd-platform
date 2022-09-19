@@ -3,21 +3,23 @@ package org.opendatadiscovery.oddplatform.config;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.opendatadiscovery.oddplatform.auth.ODDLDAPProperties;
 import org.opendatadiscovery.oddplatform.auth.manager.OwnerBasedReactiveAuthorizationManager;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
 import org.opendatadiscovery.oddplatform.auth.util.SecurityConstants;
 import org.opendatadiscovery.oddplatform.dto.security.UserRole;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.ldap.LdapAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
-import org.springframework.ldap.core.support.BaseLdapPathContextSource;
+import org.springframework.ldap.core.ContextSource;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -41,56 +43,34 @@ import org.springframework.security.web.server.util.matcher.PathPatternParserSer
 import static org.opendatadiscovery.oddplatform.utils.OperationUtils.containsIgnoreCase;
 
 @Configuration
-@Import(LdapAutoConfiguration.class)
 @ConditionalOnProperty(value = "auth.type", havingValue = "LDAP")
+@EnableConfigurationProperties(ODDLDAPProperties.class)
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
+@RequiredArgsConstructor
 @Slf4j
 public class LDAPSecurityConfiguration {
-
-    @Value("${spring.ldap.url}")
-    private String ldapUrl;
-    @Value("${spring.ldap.dn.patterns}")
-    private List<String> ldapUserDnPatterns;
-
-    @Value("${spring.ldap.username:}")
-    private String username;
-    @Value("${spring.ldap.password:}")
-    private String password;
-    @Value("${spring.ldap.user-filter.search-base:}")
-    private String userFilterSearchBase;
-    @Value("${spring.ldap.user-filter.filter:}")
-    private String userFilterSearchFilter;
-
-    @Value("${spring.ldap.groups.search-base:''}")
-    private String groupsSearchBase;
-    @Value("${spring.ldap.groups.filter:}")
-    private String groupsSearchFilter;
-    @Value("${spring.ldap.groups.admin-groups:}")
-    private Set<String> adminGroups;
-
-    @Value("${spring.ldap.active-directory.enabled:false}")
-    private boolean isActiveDirectory;
-    @Value("${spring.ldap.active-directory.domain:}")
-    private String domain;
+    private final ODDLDAPProperties properties;
 
     @Bean
-    public ReactiveAuthenticationManager authenticationManager(final BaseLdapPathContextSource contextSource,
+    public ReactiveAuthenticationManager authenticationManager(final LdapContextSource contextSource,
                                                                final LdapAuthoritiesPopulator authoritiesPopulator,
                                                                final GrantedAuthoritiesMapper authoritiesMapper) {
         final BindAuthenticator ba = new BindAuthenticator(contextSource);
-        if (CollectionUtils.isNotEmpty(ldapUserDnPatterns)) {
-            ba.setUserDnPatterns(ldapUserDnPatterns.toArray(String[]::new));
+        if (StringUtils.isNotEmpty(properties.getDnPattern())) {
+            ba.setUserDnPatterns(new String[] {properties.getDnPattern()});
         }
-        if (userFilterSearchFilter != null) {
+        if (properties.getUserFilter() != null && StringUtils.isNotEmpty(properties.getUserFilter().getFilter())) {
             final LdapUserSearch userSearch =
-                new FilterBasedLdapUserSearch(userFilterSearchBase, userFilterSearchFilter, contextSource);
+                new FilterBasedLdapUserSearch(properties.getUserFilter().getSearchBase(),
+                    properties.getUserFilter().getFilter(), contextSource);
             ba.setUserSearch(userSearch);
         }
 
         final AbstractLdapAuthenticationProvider ap;
-        if (isActiveDirectory) {
-            ap = new ActiveDirectoryLdapAuthenticationProvider(domain, ldapUrl);
+        if (properties.getActiveDirectory() != null && properties.getActiveDirectory().isEnabled()) {
+            ap = new ActiveDirectoryLdapAuthenticationProvider(properties.getActiveDirectory().getDomain(),
+                properties.getUrl());
             ap.setUseAuthenticationRequestCredentials(true);
         } else {
             ap = new LdapAuthenticationProvider(ba, authoritiesPopulator);
@@ -102,12 +82,12 @@ public class LDAPSecurityConfiguration {
 
     @Bean
     public GrantedAuthoritiesMapper authoritiesMapper(final GrantedAuthorityExtractor extractor) {
-        if (CollectionUtils.isEmpty(adminGroups)) {
+        if (properties.getGroups() != null && CollectionUtils.isEmpty(properties.getGroups().getAdminGroups())) {
             return authorities -> Set.of();
         }
         return (authorities) -> {
             final Set<UserRole> roles = authorities.stream()
-                .filter(a -> containsIgnoreCase(adminGroups, a.getAuthority()))
+                .filter(a -> containsIgnoreCase(properties.getGroups().getAdminGroups(), a.getAuthority()))
                 .map(a -> UserRole.ROLE_ADMIN)
                 .collect(Collectors.toSet());
             return extractor.getAuthoritiesByUserRoles(roles);
@@ -115,25 +95,37 @@ public class LDAPSecurityConfiguration {
     }
 
     @Bean
-    public LdapAuthoritiesPopulator authoritiesPopulator(final BaseLdapPathContextSource contextSource) {
+    public LdapAuthoritiesPopulator authoritiesPopulator(final LdapContextSource contextSource) {
+        final String groupsSearchBase = properties.getGroups() != null
+            && StringUtils.isNotEmpty(properties.getGroups().getSearchBase()) ?
+            properties.getGroups().getSearchBase() : "";
         final DefaultLdapAuthoritiesPopulator authorities =
             new DefaultLdapAuthoritiesPopulator(contextSource, groupsSearchBase);
         authorities.setRolePrefix("");
-        if (groupsSearchFilter != null) {
-            authorities.setGroupSearchFilter(groupsSearchFilter);
+        if (properties.getGroups() != null && StringUtils.isNotEmpty(properties.getGroups().getFilter())) {
+            authorities.setGroupSearchFilter(properties.getGroups().getFilter());
         }
         authorities.setSearchSubtree(true);
         return authorities;
     }
 
     @Bean
-    public BaseLdapPathContextSource contextSource() {
+    public LdapContextSource ldapContextSource() {
         final LdapContextSource ctx = new LdapContextSource();
-        ctx.setUrl(ldapUrl);
-        ctx.setUserDn(username);
-        ctx.setPassword(password);
+        ctx.setUrl(properties.getUrl());
+        ctx.setUserDn(properties.getUsername());
+        ctx.setPassword(properties.getPassword());
         ctx.afterPropertiesSet();
         return ctx;
+    }
+
+    @Bean
+    public LdapTemplate ldapTemplate(final ContextSource contextSource) {
+        final LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+        ldapTemplate.setIgnorePartialResultException(false);
+        ldapTemplate.setIgnoreNameNotFoundException(false);
+        ldapTemplate.setIgnoreSizeLimitExceededException(true);
+        return ldapTemplate;
     }
 
     @Bean

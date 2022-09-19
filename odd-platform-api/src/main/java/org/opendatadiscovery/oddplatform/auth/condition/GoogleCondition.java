@@ -1,14 +1,15 @@
 package org.opendatadiscovery.oddplatform.auth.condition;
 
-import org.apache.commons.lang3.StringUtils;
+import org.opendatadiscovery.oddplatform.utils.OperationUtils;
 import org.springframework.context.annotation.Condition;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
-public class GoogleCondition implements Condition {
+import static org.opendatadiscovery.oddplatform.auth.Provider.GOOGLE;
+
+public class GoogleCondition extends AbstractProviderCondition implements Condition {
     @Override
     public boolean matches(final ConditionContext context, final AnnotatedTypeMetadata metadata) {
-        final String cognitoClientId = "spring.security.oauth2.client.registration.google.client-id";
-        return StringUtils.isNotEmpty(context.getEnvironment().getProperty(cognitoClientId));
+        return OperationUtils.containsIgnoreCase(getRegisteredProviders(context.getEnvironment()), GOOGLE.name());
     }
 }

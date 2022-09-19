@@ -3,9 +3,10 @@ package org.opendatadiscovery.oddplatform.auth.logout;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.auth.ODDOAuth2Properties;
+import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.auth.condition.GithubCondition;
 import org.opendatadiscovery.oddplatform.auth.util.UriUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,31 +30,29 @@ public class GithubLogoutSuccessHandler implements LogoutSuccessHandler {
     private final WebClient webClient = WebClient.create("https://api.github.com");
     private final ReactiveOAuth2AuthorizedClientService auth2AuthorizedClientService;
 
-    @Value("${spring.security.oauth2.client.registration.github.client-id:}")
-    private String clientId;
-    @Value("${spring.security.oauth2.client.registration.github.client-secret:}")
-    private String clientSecret;
-
     @Override
-    public String getProviderId() {
-        return "github";
+    public boolean shouldHandle(final String provider) {
+        return provider.equalsIgnoreCase(Provider.GITHUB.name());
     }
 
+    @Override
     public Mono<Void> handle(final WebFilterExchange exchange,
-                             final Authentication authentication) {
+                             final Authentication authentication,
+                             final ODDOAuth2Properties.OAuth2Provider provider) {
         final ServerHttpResponse response = exchange.getExchange().getResponse();
         response.setStatusCode(HttpStatus.FOUND);
         final var requestUri = exchange.getExchange().getRequest().getURI();
         response.getHeaders().setLocation(UriUtils.getBaseUri(requestUri));
 
         final OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
-        final String base64 = Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
+        final String base64 = Base64.getEncoder()
+            .encodeToString((provider.getClientId() + ":" + provider.getClientSecret()).getBytes());
 
         return auth2AuthorizedClientService
             .loadAuthorizedClient(oauthToken.getAuthorizedClientRegistrationId(), oauthToken.getName())
             .flatMap(client -> webClient
                 .method(HttpMethod.DELETE)
-                .uri(uriBuilder -> uriBuilder.path("/applications/{client_id}/grant").build(clientId))
+                .uri(uriBuilder -> uriBuilder.path("/applications/{client_id}/grant").build(provider.getClientId()))
                 .contentType(MediaType.APPLICATION_JSON)
                 .headers(headers -> {
                     headers.set(HttpHeaders.ACCEPT, GITHUB_ACCEPT_HEADER);

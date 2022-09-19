@@ -1,6 +1,8 @@
 package org.opendatadiscovery.oddplatform.auth.logout;
 
 import lombok.RequiredArgsConstructor;
+import org.opendatadiscovery.oddplatform.auth.ODDOAuth2Properties;
+import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.auth.condition.GoogleCondition;
 import org.opendatadiscovery.oddplatform.auth.util.UriUtils;
 import org.springframework.context.annotation.Conditional;
@@ -24,12 +26,14 @@ public class GoogleLogoutSuccessHandler implements LogoutSuccessHandler {
     private final ReactiveOAuth2AuthorizedClientService auth2AuthorizedClientService;
 
     @Override
-    public String getProviderId() {
-        return "google";
+    public boolean shouldHandle(final String provider) {
+        return provider.equalsIgnoreCase(Provider.GOOGLE.name());
     }
 
+    @Override
     public Mono<Void> handle(final WebFilterExchange exchange,
-                             final Authentication authentication) {
+                             final Authentication authentication,
+                             final ODDOAuth2Properties.OAuth2Provider provider) {
         final ServerHttpResponse response = exchange.getExchange().getResponse();
         response.setStatusCode(HttpStatus.FOUND);
         final var requestUri = exchange.getExchange().getRequest().getURI();

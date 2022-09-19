@@ -9,11 +9,12 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.opendatadiscovery.oddplatform.auth.ODDOAuth2Properties;
+import org.opendatadiscovery.oddplatform.auth.Provider;
 import org.opendatadiscovery.oddplatform.auth.condition.GithubCondition;
 import org.opendatadiscovery.oddplatform.auth.handler.OAuthUserHandler;
 import org.opendatadiscovery.oddplatform.auth.mapper.GrantedAuthorityExtractor;
 import org.opendatadiscovery.oddplatform.dto.security.UserRole;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -37,39 +38,35 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
     private static final String ORGANIZATION_NAME = "login";
     private static final String USER_LOGIN = "login";
     private static final String GITHUB_ACCEPT_HEADER = "application/vnd.github+json";
+
     private final WebClient webClient = WebClient.create("https://api.github.com");
     private final GrantedAuthorityExtractor grantedAuthorityExtractor;
-
-    @Value("${spring.security.oauth2.client.provider.github.admin-principals:}")
-    private Set<String> adminPrincipals;
-
-    @Value("${spring.security.oauth2.client.provider.github.admin-teams:}")
-    private Set<String> adminTeams;
-
-    @Value("${spring.security.oauth2.client.provider.github.organization-name:}")
-    private String organizationName;
+    private final ODDOAuth2Properties oAuth2Properties;
 
     @Override
-    public String getProviderId() {
-        return "github";
+    public boolean shouldHandle(final String provider) {
+        return StringUtils.isNotEmpty(provider) && provider.equalsIgnoreCase(Provider.GITHUB.name());
     }
 
     @Override
     public Mono<OAuth2User> enrichUserWithProviderInformation(final OAuth2User user,
                                                               final OAuth2UserRequest request) {
-        final String userNameAttributeName = request.getClientRegistration().getProviderDetails()
-            .getUserInfoEndpoint().getUserNameAttributeName();
+        final String registrationId = request.getClientRegistration().getRegistrationId();
+        final ODDOAuth2Properties.OAuth2Provider provider = oAuth2Properties.getClient().get(registrationId);
+        final String userNameAttributeName = provider.getUserNameAttribute();
         final Set<UserRole> roles = new HashSet<>();
-        if (CollectionUtils.isNotEmpty(adminPrincipals)) {
-            final Optional<String> username = Optional.ofNullable(user.getAttribute(USER_LOGIN));
+        if (CollectionUtils.isNotEmpty(provider.getAdminPrincipals())) {
+            final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute()) ?
+                provider.getAdminAttribute() : USER_LOGIN;
+            final Optional<String> username = Optional.ofNullable(user.getAttribute(adminPrincipalAttribute));
             final boolean containsUsername = username
-                .map(name -> containsIgnoreCase(adminPrincipals, name))
+                .map(name -> containsIgnoreCase(provider.getAdminPrincipals(), name))
                 .orElse(false);
             if (containsUsername) {
                 roles.add(UserRole.ROLE_ADMIN);
             }
         }
-        if (StringUtils.isEmpty(organizationName)) {
+        if (StringUtils.isEmpty(provider.getOrganizationName())) {
             return Mono.just(
                 new DefaultOAuth2User(grantedAuthorityExtractor.getAuthoritiesByUserRoles(roles),
                     user.getAttributes(),
@@ -89,11 +86,11 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
             });
 
         return userOrganizations
-            .map(this::userBelongsToOrganization)
+            .map(orgs -> userBelongsToOrganization(orgs, provider.getOrganizationName()))
             .filter(belongs -> belongs)
             .switchIfEmpty(Mono.error(() -> new OAuth2AuthenticationException(new OAuth2Error("invalid_token",
-                String.format("User doesn't belong to organization %s", organizationName), ""))))
-            .then(Mono.defer(() -> getTeamRoles(request)))
+                String.format("User doesn't belong to organization %s", provider.getOrganizationName()), ""))))
+            .then(Mono.defer(() -> getTeamRoles(request, provider)))
             .map(teamRoles -> {
                 roles.addAll(teamRoles);
                 return roles;
@@ -104,8 +101,9 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
             );
     }
 
-    private Mono<Set<UserRole>> getTeamRoles(final OAuth2UserRequest request) {
-        if (CollectionUtils.isEmpty(adminTeams)) {
+    private Mono<Set<UserRole>> getTeamRoles(final OAuth2UserRequest request,
+                                             final ODDOAuth2Properties.OAuth2Provider provider) {
+        if (CollectionUtils.isEmpty(provider.getAdminGroups())) {
             return Mono.just(Set.of());
         }
         final Mono<List<Map<String, Object>>> userTeamsRequest = webClient
@@ -120,11 +118,11 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
             });
         return userTeamsRequest.map(teams -> {
             final boolean isUserInAdminGroup = teams.stream()
-                .filter(this::teamBelongsToOrganization)
+                .filter(team -> teamBelongsToOrganization(team, provider.getOrganizationName()))
                 .map(t -> t.get(TEAM_NAME))
                 .filter(Objects::nonNull)
                 .map(Object::toString)
-                .anyMatch(userTeam -> containsIgnoreCase(adminTeams, userTeam));
+                .anyMatch(userTeam -> containsIgnoreCase(provider.getAdminGroups(), userTeam));
             final Set<UserRole> roles = new HashSet<>();
             if (isUserInAdminGroup) {
                 roles.add(UserRole.ROLE_ADMIN);
@@ -134,7 +132,8 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
     }
 
     @SuppressWarnings("unchecked")
-    private boolean teamBelongsToOrganization(final Map<String, Object> teamInfo) {
+    private boolean teamBelongsToOrganization(final Map<String, Object> teamInfo,
+                                              final String organizationName) {
         final Object organization = teamInfo.get(ORGANIZATION);
         if (organization == null) {
             return false;
@@ -143,7 +142,8 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
         return teamOrganization != null && teamOrganization.toString().equalsIgnoreCase(organizationName);
     }
 
-    private boolean userBelongsToOrganization(final List<Map<String, Object>> organizations) {
+    private boolean userBelongsToOrganization(final List<Map<String, Object>> organizations,
+                                              final String organizationName) {
         return organizations.stream()
             .anyMatch(org -> org.get(ORGANIZATION_NAME).toString().equalsIgnoreCase(organizationName));
     }
