@@ -97,8 +97,8 @@ public class LDAPSecurityConfiguration {
     @Bean
     public LdapAuthoritiesPopulator authoritiesPopulator(final LdapContextSource contextSource) {
         final String groupsSearchBase = properties.getGroups() != null
-            && StringUtils.isNotEmpty(properties.getGroups().getSearchBase()) ?
-            properties.getGroups().getSearchBase() : "";
+            && StringUtils.isNotEmpty(properties.getGroups().getSearchBase())
+            ? properties.getGroups().getSearchBase() : "";
         final DefaultLdapAuthoritiesPopulator authorities =
             new DefaultLdapAuthoritiesPopulator(contextSource, groupsSearchBase);
         authorities.setRolePrefix("");

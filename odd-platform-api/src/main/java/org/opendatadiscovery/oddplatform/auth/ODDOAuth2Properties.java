@@ -18,7 +18,7 @@ public class ODDOAuth2Properties {
         getClient().values().forEach(this::validateProvider);
     }
 
-    private void validateProvider(OAuth2Provider provider) {
+    private void validateProvider(final OAuth2Provider provider) {
         if (!StringUtils.hasText(provider.getClientId())) {
             throw new IllegalStateException("Client id must not be empty.");
         }

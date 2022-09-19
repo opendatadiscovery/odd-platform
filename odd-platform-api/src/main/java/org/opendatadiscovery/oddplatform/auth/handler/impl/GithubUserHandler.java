@@ -56,8 +56,8 @@ public class GithubUserHandler implements OAuthUserHandler<OAuth2User, OAuth2Use
         final String userNameAttributeName = provider.getUserNameAttribute();
         final Set<UserRole> roles = new HashSet<>();
         if (CollectionUtils.isNotEmpty(provider.getAdminPrincipals())) {
-            final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute()) ?
-                provider.getAdminAttribute() : USER_LOGIN;
+            final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute())
+                ? provider.getAdminAttribute() : USER_LOGIN;
             final Optional<String> username = Optional.ofNullable(user.getAttribute(adminPrincipalAttribute));
             final boolean containsUsername = username
                 .map(name -> containsIgnoreCase(provider.getAdminPrincipals(), name))

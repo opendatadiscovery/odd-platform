@@ -47,8 +47,8 @@ public class CognitoUserHandler implements OAuthUserHandler<OidcUser, OidcUserRe
         final Set<UserRole> roles = new HashSet<>();
         final OidcIdToken token = oidcUser.getIdToken();
         if (CollectionUtils.isNotEmpty(provider.getAdminPrincipals())) {
-            final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute()) ?
-                provider.getAdminAttribute() : COGNITO_USERNAME;
+            final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute())
+                ? provider.getAdminAttribute() : COGNITO_USERNAME;
             final String username = token.getClaim(adminPrincipalAttribute);
             final boolean containsUsername = containsIgnoreCase(provider.getAdminPrincipals(), username);
             if (containsUsername) {

@@ -9,24 +9,23 @@ public final class ODDOAuth2PropertiesConverter {
 
     public static OAuth2ClientProperties convertOddProperties(final ODDOAuth2Properties properties) {
         final OAuth2ClientProperties result = new OAuth2ClientProperties();
-        properties.getClient().forEach((key, oAuth2Provider) -> {
+        properties.getClient().forEach((key, provider) -> {
             final OAuth2ClientProperties.Registration registration = new OAuth2ClientProperties.Registration();
-            registration.setClientId(oAuth2Provider.getClientId());
-            registration.setClientSecret(oAuth2Provider.getClientSecret());
-            //registration.setProvider(oAuth2Provider.getProvider());
-            registration.setClientName(oAuth2Provider.getClientName());
-            registration.setScope(oAuth2Provider.getScope());
-            registration.setRedirectUri(oAuth2Provider.getRedirectUri());
+            registration.setClientId(provider.getClientId());
+            registration.setClientSecret(provider.getClientSecret());
+            registration.setClientName(provider.getClientName());
+            registration.setScope(provider.getScope());
+            registration.setRedirectUri(provider.getRedirectUri());
             result.getRegistration().put(key, registration);
 
-            final OAuth2ClientProperties.Provider provider = new OAuth2ClientProperties.Provider();
-            provider.setAuthorizationUri(oAuth2Provider.getAuthorizationUri());
-            provider.setIssuerUri(oAuth2Provider.getIssuerUri());
-            provider.setJwkSetUri(oAuth2Provider.getJwkSetUri());
-            provider.setTokenUri(oAuth2Provider.getTokenUri());
-            provider.setUserInfoUri(oAuth2Provider.getUserInfoUri());
-            provider.setUserNameAttribute(oAuth2Provider.getUserNameAttribute());
-            result.getProvider().put(key, provider);
+            final OAuth2ClientProperties.Provider clientProvider = new OAuth2ClientProperties.Provider();
+            clientProvider.setAuthorizationUri(provider.getAuthorizationUri());
+            clientProvider.setIssuerUri(provider.getIssuerUri());
+            clientProvider.setJwkSetUri(provider.getJwkSetUri());
+            clientProvider.setTokenUri(provider.getTokenUri());
+            clientProvider.setUserInfoUri(provider.getUserInfoUri());
+            clientProvider.setUserNameAttribute(provider.getUserNameAttribute());
+            result.getProvider().put(key, clientProvider);
         });
         return result;
     }

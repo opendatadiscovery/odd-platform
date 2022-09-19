@@ -56,8 +56,8 @@ public class GoogleUserHandler implements OAuthUserHandler<OidcUser, OidcUserReq
                 "")));
         }
         if (CollectionUtils.isNotEmpty(provider.getAdminPrincipals())) {
-            final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute()) ?
-                provider.getAdminAttribute() : GOOGLE_EMAIL;
+            final String adminPrincipalAttribute = StringUtils.isNotEmpty(provider.getAdminAttribute())
+                ? provider.getAdminAttribute() : GOOGLE_EMAIL;
             final String adminPrincipal = token.getClaim(adminPrincipalAttribute);
             final boolean containsEmail = containsIgnoreCase(provider.getAdminPrincipals(), adminPrincipal);
             if (containsEmail) {
