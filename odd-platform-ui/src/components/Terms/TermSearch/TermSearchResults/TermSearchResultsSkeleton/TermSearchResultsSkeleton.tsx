@@ -14,49 +14,28 @@ const TermSearchResultsSkeleton: React.FC<SkeletonProps> = ({
 }) => (
   <SkeletonWrapper
     length={length}
-    renderContent={({ randomSkeletonPercentWidth, key }) => (
+    renderContent={({ randWidth, key }) => (
       <Grid key={key} container sx={{ py: 1.25 }} wrap="nowrap">
         <TermSearchResultsColContainer item $colType="collg">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="collg">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="collg">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colxs">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colsm">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colsm">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
         <TermSearchResultsColContainer item $colType="colxs">
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </TermSearchResultsColContainer>
       </Grid>
     )}

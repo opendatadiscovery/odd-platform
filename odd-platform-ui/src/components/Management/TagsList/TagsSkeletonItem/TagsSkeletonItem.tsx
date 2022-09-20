@@ -11,19 +11,13 @@ interface SkeletonProps {
 const TagsSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
   <SkeletonWrapper
     length={length}
-    renderContent={({ randomSkeletonPercentWidth, key }) => (
+    renderContent={({ randWidth, key }) => (
       <Grid key={key} container sx={{ py: 1.5, px: 1 }}>
         <Grid item alignItems="center" sx={{ minWidth: '285px' }}>
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
         <Grid item alignItems="center" sx={{ minWidth: '285px' }}>
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
     )}

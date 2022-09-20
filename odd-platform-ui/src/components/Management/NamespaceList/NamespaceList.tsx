@@ -158,11 +158,8 @@ const NamespaceList: React.FC = () => {
               isNamespaceFetching && (
                 <SkeletonWrapper
                   length={5}
-                  renderContent={({ randomSkeletonPercentWidth, key }) => (
-                    <NamespaceSkeletonItem
-                      key={key}
-                      width={randomSkeletonPercentWidth()}
-                    />
+                  renderContent={({ randWidth, key }) => (
+                    <NamespaceSkeletonItem key={key} width={randWidth()} />
                   )}
                 />
               )

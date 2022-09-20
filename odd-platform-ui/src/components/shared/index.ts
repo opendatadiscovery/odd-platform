@@ -41,4 +41,8 @@ export {
   minDate,
   metadataDatePickerInputFormat,
 } from './AppDatePicker/AppDatePicker';
+export { default as EntitiesListModal } from './EntitiesListModal/EntitiesListModal';
+export { default as AppPaper } from './AppPaper/AppPaper';
+export { default as TestRunStatusItem } from './TestRunStatusItem/TestRunStatusItem';
+export { default as TestRunStatusIcon } from './TestRunStatusIcon/TestRunStatusIcon';
 export * as PageWithLeftSidebar from './StyledComponents/PageWithLeftSidebar';

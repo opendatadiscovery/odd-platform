@@ -9,5 +9,5 @@ export const Content = styled('div')<{
   width: '8px',
   height: '8px',
   borderRadius: '50%',
-  backgroundColor: theme.palette.reportStatus[$typeName].border,
+  backgroundColor: theme.palette.runStatus[$typeName].color,
 }));

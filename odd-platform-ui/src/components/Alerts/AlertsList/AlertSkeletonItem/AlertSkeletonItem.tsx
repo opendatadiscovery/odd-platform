@@ -10,25 +10,16 @@ interface SkeletonProps {
 const AlertSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
   <SkeletonWrapper
     length={length}
-    renderContent={({ randomSkeletonPercentWidth, key }) => (
+    renderContent={({ randWidth, key }) => (
       <Grid key={key} container sx={{ py: 1.25, px: 1 }} wrap="nowrap">
         <Grid item xs={3}>
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
         <Grid item xs={7}>
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
         <Grid item xs={2}>
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
     )}

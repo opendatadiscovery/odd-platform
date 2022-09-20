@@ -11,13 +11,10 @@ interface SkeletonProps {
 const LabelsSkeletonItem: React.FC<SkeletonProps> = ({ length }) => (
   <SkeletonWrapper
     length={length}
-    renderContent={({ randomSkeletonPercentWidth, key }) => (
+    renderContent={({ randWidth, key }) => (
       <Grid container key={key} sx={{ py: 1.5, px: 1 }} wrap="nowrap">
         <Grid item xs={3}>
-          <Skeleton
-            width={randomSkeletonPercentWidth()}
-            height={mainSkeletonHeight}
-          />
+          <Skeleton width={randWidth()} height={mainSkeletonHeight} />
         </Grid>
       </Grid>
     )}

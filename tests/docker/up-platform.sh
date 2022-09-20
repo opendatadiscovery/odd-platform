@@ -2,7 +2,7 @@
 
 # start platform
 echo "starting infra with ODD Platform with a metadata sample in it..."
-docker-compose -f docker/demo.yaml up -d odd-platform-enricher
+docker-compose -f ../docker/demo.yaml up -d odd-platform-enricher
 
 # sleep a bit until data be ready
 read -p "waiting 30 sec to make sure containers are up and data is ready..." -t 30

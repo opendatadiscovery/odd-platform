@@ -8,23 +8,16 @@ import {
   getTestReportListBySuiteName,
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import {
-  fetchDataSetQualityTestList,
-  fetchDataSetQualityTestReport,
-} from 'redux/thunks';
+import { fetchDataSetQualityTestList } from 'redux/thunks';
 import { useAppParams } from 'lib/hooks';
 import { Grid, Typography } from '@mui/material';
-import TestRunStatusItem from 'components/shared/TestRunStatusItem/TestRunStatusItem';
-import TestReportItem from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItem';
-import TestReportDetails from 'components/DataEntityDetails/TestReport/TestReportDetails/TestReportDetails';
-import TestReportItemSkeleton from 'components/DataEntityDetails/TestReport/TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
-import TestReportSkeleton from 'components/DataEntityDetails/TestReport/TestReportSkeleton/TestReportSkeleton';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import AppPaper from 'components/shared/AppPaper/AppPaper';
-import {
-  TestReportContainer,
-  TestReportItemCont,
-} from './TestReportStyles';
+import { AppPaper, TestRunStatusItem } from 'components/shared';
+import omit from 'lodash/omit';
+import TestReportItem from './TestReportItem/TestReportItem';
+import TestReportDetails from './TestReportDetails/TestReportDetails';
+import TestReportItemSkeleton from './TestReportItem/TestReportItemSkeleton/TestReportItemSkeleton';
+import TestReportSkeleton from './TestReportSkeleton/TestReportSkeleton';
+import * as S from './TestReportStyles';
 
 interface DatasetQualityTestList {
   [suiteName: string]: DataQualityTest[];
@@ -33,12 +26,12 @@ interface DatasetQualityTestList {
 const TestReport: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataQATestId, dataEntityId, viewType } = useAppParams();
+
   const datasetTestReport = useAppSelector(
     getDatasetTestReport(dataEntityId)
   );
-
   const datasetQualityTestList: DatasetQualityTestList = useAppSelector(
-    state => getDatasetQualityTestsBySuiteNames(state, dataEntityId)
+    getDatasetQualityTestsBySuiteNames(dataEntityId)
   );
   const testReportBySuitName = useAppSelector(
     getTestReportListBySuiteName
@@ -47,114 +40,83 @@ const TestReport: React.FC = () => {
   const { isLoading: isDatasetTestListFetching } = useAppSelector(
     getDatasetTestListFetchingStatuses
   );
-  const { isLoading: isDatasetTestReportFetching } = useAppSelector(
+  const { isLoading: isTestReportFetching } = useAppSelector(
     getDatasetTestReportFetchingStatuses
   );
+
   React.useEffect(() => {
-    dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
     dispatch(fetchDataSetQualityTestList({ dataEntityId }));
-  }, [fetchDataSetQualityTestReport, dataEntityId]);
+  }, [dataEntityId]);
+
+  const renderTestReportItems = React.useMemo(
+    () =>
+      Object.entries(omit(datasetTestReport, ['score', 'total'])).map(
+        ([runStatusTotal, count]) => {
+          const runStatus = runStatusTotal.replace('Total', '');
+          const runStatusPalette =
+            runStatus.toUpperCase() as DataEntityRunStatus;
+
+          return (
+            <TestRunStatusItem count={count} typeName={runStatusPalette} />
+          );
+        }
+      ),
+    [datasetTestReport]
+  );
 
   return (
     <Grid container sx={{ mt: 2 }}>
-      {datasetQualityTestList ? (
+      <>
+        {isTestReportFetching ? (
+          <TestReportSkeleton />
+        ) : (
+          <Grid container alignItems="center" wrap="nowrap">
+            <S.TestReportContainer container item>
+              {renderTestReportItems}
+            </S.TestReportContainer>
+            <Grid container item justifyContent="flex-end">
+              <Typography variant="subtitle1">{` ${datasetTestReport?.total} tests`}</Typography>
+            </Grid>
+          </Grid>
+        )}
         <>
-          {isDatasetTestReportFetching ? (
-            <SkeletonWrapper
-              renderContent={({ randomSkeletonPercentWidth }) => (
-                <TestReportSkeleton width={randomSkeletonPercentWidth()} />
-              )}
-            />
-          ) : (
-            <Grid container alignItems="center" wrap="nowrap">
-              <TestReportContainer container item>
-                <TestRunStatusItem
-                  count={datasetTestReport?.successTotal}
-                  typeName={DataEntityRunStatus.SUCCESS}
-                />
-                <TestRunStatusItem
-                  count={datasetTestReport?.failedTotal}
-                  typeName={DataEntityRunStatus.FAILED}
-                />
-                <TestRunStatusItem
-                  count={datasetTestReport?.brokenTotal}
-                  typeName={DataEntityRunStatus.BROKEN}
-                />
-                <TestRunStatusItem
-                  count={datasetTestReport?.abortedTotal}
-                  typeName={DataEntityRunStatus.ABORTED}
-                />
-                <TestRunStatusItem
-                  count={datasetTestReport?.skippedTotal}
-                  typeName={DataEntityRunStatus.SKIPPED}
-                />
-                <TestRunStatusItem
-                  count={datasetTestReport?.unknownTotal}
-                  typeName={DataEntityRunStatus.UNKNOWN}
-                />
-              </TestReportContainer>
-              <Grid container item justifyContent="flex-end">
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                >{` ${datasetTestReport?.total} tests`}</Typography>
+          {datasetQualityTestList ? (
+            <Grid container sx={{ mt: 4 }}>
+              <Grid item lg={7.91} sx={{ pr: 2 }}>
+                {isDatasetTestListFetching ? (
+                  <TestReportItemSkeleton length={5} />
+                ) : (
+                  <S.TestReportItemCont container>
+                    {Object.entries(datasetQualityTestList).map(
+                      ([suitName, dataQATestList]) => (
+                        <TestReportItem
+                          dataQATestId={dataQATestId}
+                          dataSetId={dataEntityId}
+                          dataQATestReport={testReportBySuitName[suitName]}
+                          key={suitName}
+                          suitName={suitName}
+                          dataQATestList={dataQATestList}
+                        />
+                      )
+                    )}
+                  </S.TestReportItemCont>
+                )}
+              </Grid>
+              <Grid item lg={4.09}>
+                {dataQATestId ? (
+                  <AppPaper square elevation={0}>
+                    <TestReportDetails
+                      dataEntityId={dataEntityId}
+                      dataQATestId={dataQATestId}
+                      reportDetailsViewType={viewType}
+                    />
+                  </AppPaper>
+                ) : null}
               </Grid>
             </Grid>
-          )}
-          <>
-            {datasetQualityTestList ? (
-              <Grid container sx={{ mt: 4 }}>
-                <Grid item xs={9}>
-                  {isDatasetTestListFetching ? (
-                    <SkeletonWrapper
-                      length={5}
-                      renderContent={({
-                        randomSkeletonPercentWidth,
-                        key,
-                      }) => (
-                        <TestReportItemSkeleton
-                          width={randomSkeletonPercentWidth()}
-                          key={key}
-                        />
-                      )}
-                    />
-                  ) : (
-                    <TestReportItemCont container>
-                      {Object.entries(datasetQualityTestList).map(
-                        ([suitName, dataQATestList]) => (
-                          <TestReportItem
-                            dataQATestId={dataQATestId}
-                            dataSetId={dataEntityId}
-                            dataQATestReport={
-                              testReportBySuitName[suitName]
-                            }
-                            key={suitName}
-                            suitName={suitName}
-                            dataQATestList={dataQATestList}
-                          />
-                        )
-                      )}
-                    </TestReportItemCont>
-                  )}
-                </Grid>
-                <Grid item xs={3}>
-                  {dataQATestId ? (
-                    <AppPaper square elevation={0}>
-                      <TestReportDetails
-                        dataEntityId={dataEntityId}
-                        dataQATestId={dataQATestId}
-                        reportDetailsViewType={viewType}
-                      />
-                    </AppPaper>
-                  ) : null}
-                </Grid>
-              </Grid>
-            ) : null}
-          </>
+          ) : null}
         </>
-      ) : (
-        <Typography variant="body1">There are no test reports</Typography>
-      )}
+      </>
     </Grid>
   );
 };

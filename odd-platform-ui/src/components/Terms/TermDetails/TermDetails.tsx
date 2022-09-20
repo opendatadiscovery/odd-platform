@@ -173,8 +173,8 @@ const TermDetailsView: React.FC = () => {
       )}
       {isTermDetailsFetching && (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <TermDetailsSkeleton width={randomSkeletonPercentWidth()} />
+          renderContent={({ randWidth }) => (
+            <TermDetailsSkeleton width={randWidth()} />
           )}
         />
       )}

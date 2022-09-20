@@ -1,13 +1,16 @@
 import React from 'react';
-import { Grid, SelectChangeEvent, Typography } from '@mui/material';
+import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
 import {
-  SkeletonWrapper,
-  LabeledInfoItem,
+  AppButton,
   AppMenuItem,
   AppSelect,
+  LabeledInfoItem,
 } from 'components/shared';
 import { format, formatDistanceStrict } from 'date-fns';
-import { DataQualityTestSeverity } from 'generated-sources';
+import {
+  DataQualityTestExpectation,
+  DataQualityTestSeverity,
+} from 'generated-sources';
 import {
   getDatasetTestListFetchingStatuses,
   getQualityTestByTestId,
@@ -16,18 +19,20 @@ import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { setDataQATestSeverity } from 'redux/thunks';
 import { useAppParams, usePermissions } from 'lib/hooks';
 import { ORDERED_SEVERITY } from 'lib/constants';
+import { hasDataQualityTestExpectations } from 'lib/helpers';
 import TestReportDetailsOverviewSkeleton from './TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
+import TestReportDetailsOverviewExpectationsModal from './TestReportDetailsOverviewParametersModal/TestReportDetailsOverviewParametersModal';
+import * as S from './TestReportDetailsOverviewStyles';
 
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
   const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
+  const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
+
   const { isLoading: isDatasetTestListFetching } = useAppSelector(
     getDatasetTestListFetchingStatuses
-  );
-  const qualityTest = useAppSelector(state =>
-    getQualityTestByTestId(state, dataQATestId)
   );
 
   const handleSeverityChange = (e: SelectChangeEvent<unknown>) =>
@@ -41,41 +46,48 @@ const TestReportDetailsOverview: React.FC = () => {
       })
     );
 
+  const stringifyParams = JSON.stringify(
+    qualityTest?.expectation,
+    null,
+    2
+  );
+  const [showSeeMore, setShowSeeMore] = React.useState(false);
+  const paramsRef = React.useRef<HTMLParagraphElement>(null);
+
+  React.useEffect(() => {
+    if (paramsRef.current) {
+      const { clientHeight, scrollHeight } = paramsRef.current;
+      setShowSeeMore(scrollHeight > clientHeight);
+    }
+  }, [isDatasetTestListFetching, paramsRef.current]);
+
   return (
-    <Grid container direction="column">
+    <Grid container direction="column" wrap="nowrap">
       {isDatasetTestListFetching ? (
-        <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <TestReportDetailsOverviewSkeleton
-              width={randomSkeletonPercentWidth()}
-            />
-          )}
-        />
+        <TestReportDetailsOverviewSkeleton length={1} />
       ) : (
         <>
-          <Grid sx={{ mt: 2 }}>
-            <LabeledInfoItem label="Date" inline labelWidth={4}>
+          <Grid item sx={{ mt: 2 }} xs={12}>
+            <LabeledInfoItem label="Date" inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
                 format(
                   qualityTest?.latestRun?.startTime,
                   'd MMM yyyy, HH:MM a'
                 )}
             </LabeledInfoItem>
-            <LabeledInfoItem label="Duration" inline labelWidth={4}>
+            <LabeledInfoItem label="Duration" inline labelWidth={2.4}>
               {qualityTest?.latestRun?.startTime &&
                 qualityTest?.latestRun.endTime &&
                 formatDistanceStrict(
                   qualityTest?.latestRun.endTime,
                   qualityTest?.latestRun.startTime,
-                  {
-                    addSuffix: false,
-                  }
+                  { addSuffix: false }
                 )}
             </LabeledInfoItem>
             <LabeledInfoItem
               label="Severity"
               inline
-              labelWidth={4}
+              labelWidth={2.4}
               valueComponent="div"
             >
               <AppSelect
@@ -94,38 +106,56 @@ const TestReportDetailsOverview: React.FC = () => {
               </AppSelect>
             </LabeledInfoItem>
           </Grid>
-          <Grid sx={{ mt: 2 }}>
-            {qualityTest?.expectation &&
-              Object.entries(qualityTest.expectation).map(
-                ([key, value]) =>
-                  value && (
-                    <LabeledInfoItem
-                      key={key}
-                      label={key}
-                      inline
-                      labelWidth={4}
-                    >
-                      {value}
-                    </LabeledInfoItem>
-                  )
+
+          {hasDataQualityTestExpectations(qualityTest?.expectation) && (
+            <Grid container sx={{ mt: 2 }}>
+              <Typography variant="h4">Parameters</Typography>
+              <S.Params
+                $isExpandable={showSeeMore}
+                ref={paramsRef}
+                variant="body1"
+              >
+                {stringifyParams}
+              </S.Params>
+              {showSeeMore && (
+                <Box sx={{ px: 1.5, py: 0.25 }}>
+                  <TestReportDetailsOverviewExpectationsModal
+                    openBtnEl={
+                      <AppButton size="medium" color="tertiary">
+                        See more
+                      </AppButton>
+                    }
+                    expectations={
+                      qualityTest?.expectation as DataQualityTestExpectation
+                    }
+                  />
+                </Box>
               )}
-          </Grid>
-          <Grid sx={{ mt: 2 }}>
-            <Typography variant="h4">Links</Typography>
-            <Grid container item xs={4} sx={{ mt: 1 }}>
-              {qualityTest?.linkedUrlList?.map(link => (
-                <Typography variant="body1">{link}</Typography>
-              ))}
             </Grid>
-          </Grid>
-          <Grid sx={{ mt: 2 }}>
-            <Typography variant="h4">Execution</Typography>
-            <Grid container item xs={12} sx={{ mt: 1 }}>
-              <Typography variant="body2" color="texts.secondary">
-                No information about test execution is available.
-              </Typography>
+          )}
+
+          {!!qualityTest?.linkedUrlList?.length && (
+            <Grid item sx={{ mt: 2.25 }} xs={12}>
+              <Typography variant="h4">Links</Typography>
+              <Grid container sx={{ mt: 1 }}>
+                {qualityTest.linkedUrlList.map(link => (
+                  <AppButton
+                    to={{ pathname: link }}
+                    key={link}
+                    sx={{
+                      py: 0.25,
+                    }}
+                    size="medium"
+                    color="tertiary"
+                    linkTarget="_blank"
+                    truncate
+                  >
+                    {link}
+                  </AppButton>
+                ))}
+              </Grid>
             </Grid>
-          </Grid>
+          )}
         </>
       )}
     </Grid>

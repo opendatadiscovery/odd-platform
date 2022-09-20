@@ -12,7 +12,7 @@ import { useAppPaths } from 'lib/hooks';
 import * as S from './OverviewEntityGroupStatsStyles';
 
 interface OverviewEntityGroupStatsProps {
-  dataEntityGroupName: string;
+  dataEntityGroupName: string | undefined;
   entities: DataEntityDetails['entities'];
   entityGroups: DataEntityDetails['dataEntityGroups'];
 }

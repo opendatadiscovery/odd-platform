@@ -15,12 +15,13 @@ export type ButtonColors =
 
 interface AppButtonStyleProps {
   $color: ButtonColors;
+  $isOverflowed?: boolean;
 }
 
 const isTertiary = (color: string) => color === 'tertiary';
 
 export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
-  ({ theme, $color }) => ({
+  ({ theme, $color, $isOverflowed }) => ({
     // overrides of MUI Button styles
     [`&.${buttonClasses.root}`]: {
       minWidth: 0,
@@ -32,7 +33,10 @@ export const StyledAppButton = styled(Button)<AppButtonStyleProps>(
       fontSize: theme.typography.body1.fontSize,
       lineHeight: theme.typography.body1.lineHeight,
       whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
       ...breakpointDownLgBody2,
+      ...($isOverflowed && { width: 'inherit', display: 'block' }),
     },
     [`&.${buttonClasses.text}`]: {
       padding: isTertiary($color)

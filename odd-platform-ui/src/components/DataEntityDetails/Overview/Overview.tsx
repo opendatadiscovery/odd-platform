@@ -8,7 +8,9 @@ import {
   getIsDataEntityBelongsToClass,
 } from 'redux/selectors';
 import { useAppSelector } from 'lib/redux/hooks';
+import { hasDataQualityTestExpectations } from 'lib/helpers';
 import { SkeletonWrapper } from 'components/shared';
+import OverviewExpectations from './OverviewExpectations/OverviewExpectations';
 import OverviewGroups from './OverviewGroups/OverviewGroups';
 import OverviewSkeleton from './OverviewSkeleton/OverviewSkeleton';
 import OverviewDescription from './OverviewDescription/OverviewDescription';
@@ -41,10 +43,25 @@ const Overview: React.FC = () => {
     <>
       {dataEntityDetails && !isDataEntityDetailsFetching ? (
         <Grid container spacing={2} sx={{ mt: 0 }}>
-          <Grid item xs={8}>
+          <Grid item lg={9}>
             <SectionContainer elevation={9}>
               <OverviewStats />
             </SectionContainer>
+            {hasDataQualityTestExpectations(
+              dataEntityDetails?.expectation
+            ) && (
+              <>
+                <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
+                  Expectations
+                </Typography>
+                <SectionContainer square elevation={0}>
+                  <OverviewExpectations
+                    parameters={dataEntityDetails.expectation}
+                    linkedUrlList={dataEntityDetails.linkedUrlList}
+                  />
+                </SectionContainer>
+              </>
+            )}
             <Typography variant="h3" sx={{ mt: 3, mb: 1 }}>
               Metadata
             </Typography>
@@ -58,7 +75,7 @@ const Overview: React.FC = () => {
               <OverviewDescription />
             </SectionContainer>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item lg={3}>
             <SectionContainer square elevation={0}>
               <OverviewGeneral />
             </SectionContainer>
@@ -87,8 +104,8 @@ const Overview: React.FC = () => {
       ) : null}
       {isDataEntityDetailsFetching ? (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <OverviewSkeleton width={randomSkeletonPercentWidth()} />
+          renderContent={({ randWidth }) => (
+            <OverviewSkeleton width={randWidth()} />
           )}
         />
       ) : null}

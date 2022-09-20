@@ -7,8 +7,4 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupEntityRelations
 
 public interface GroupEntityRelationRepository {
     void createOrUpdateRelations(final Collection<GroupEntityRelationsPojo> pojos);
-
-    Map<String, List<String>> fetchGroupRelations(final Collection<String> childOddrns);
-
-    List<String> getDEGEntitiesOddrns(final long dataEntityGroupId);
 }

@@ -71,10 +71,8 @@ const OwnerEntitiesList: React.FC = () => {
     <>
       {isOwnerEntitiesListFetching ? (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <OwnerEntitiesListSkeleton
-              width={randomSkeletonPercentWidth()}
-            />
+          renderContent={({ randWidth }) => (
+            <OwnerEntitiesListSkeleton width={randWidth()} />
           )}
         />
       ) : (

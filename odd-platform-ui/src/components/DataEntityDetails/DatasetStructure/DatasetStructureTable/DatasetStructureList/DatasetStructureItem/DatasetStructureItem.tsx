@@ -216,14 +216,18 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
                     onSizeChange={onSizeChange}
                     labelList={datasetField.labels}
                   />
-                  <DatasetStructureKeyFieldLabel
-                    sx={{ ml: 0.5 }}
-                    keyType="primary"
-                  />
-                  <DatasetStructureKeyFieldLabel
-                    sx={{ ml: 0.5 }}
-                    keyType="sort"
-                  />
+                  {datasetField.isPrimaryKey && (
+                    <DatasetStructureKeyFieldLabel
+                      sx={{ ml: 0.5 }}
+                      keyType="primary"
+                    />
+                  )}
+                  {datasetField.isSortKey && (
+                    <DatasetStructureKeyFieldLabel
+                      sx={{ ml: 0.5 }}
+                      keyType="sort"
+                    />
+                  )}
                 </Grid>
               )}
               {datasetField.externalDescription && (
