@@ -6,7 +6,7 @@ import { AppButton, ConfirmationDialog } from 'components/shared';
 import { DeleteIcon } from 'components/shared/Icons';
 import { useAppDispatch } from 'lib/redux/hooks';
 import { deleteTerm } from 'redux/thunks';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 import {
   TermSearchNameContainer,
   TermSearchResultsColContainer,

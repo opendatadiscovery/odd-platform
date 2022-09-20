@@ -1,5 +1,6 @@
 package org.opendatadiscovery.oddplatform.repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -9,19 +10,27 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIntegrationTest;
+import org.opendatadiscovery.oddplatform.api.contract.model.OwnerAssociationRequestStatus;
+import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerAssociationRequestPojo;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.OwnerPojo;
+import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerAssociationRequestRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnerRepository;
+import org.opendatadiscovery.oddplatform.utils.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @DisplayName("Integration tests for OwnerRepository")
 class OwnerRepositoryImplTest extends BaseIntegrationTest {
 
     @Autowired
     private ReactiveOwnerRepository ownerRepository;
+
+    @Autowired
+    private ReactiveOwnerAssociationRequestRepository associationRequestRepository;
 
     @Test
     @DisplayName("Creates new owner, expecting owner in db")
@@ -174,6 +183,82 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
             }).verifyComplete();
     }
 
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void testListOwner() {
+        final int numberOfTestOwners = 10;
+        final List<OwnerPojo> testOwnerList = createTestOwnerList(numberOfTestOwners);
+        ownerRepository.bulkCreate(testOwnerList)
+            .collectList()
+            .block();
+
+        final Mono<Page<OwnerPojo>> pageMono = ownerRepository.list(1, 5, null, List.of(), null);
+        StepVerifier.create(pageMono)
+            .assertNext(page -> {
+                assertThat(page.getTotal()).isEqualTo(numberOfTestOwners);
+                assertThat(page.isHasNext()).isTrue();
+                assertThat(page.getData())
+                    .hasSize(5);
+            }).verifyComplete();
+
+        final Mono<Page<OwnerPojo>> secondPageMono = ownerRepository.list(2, 5, null, List.of(), null);
+        StepVerifier.create(secondPageMono)
+            .assertNext(page -> {
+                assertThat(page.getTotal()).isEqualTo(numberOfTestOwners);
+                assertThat(page.isHasNext()).isFalse();
+                assertThat(page.getData())
+                    .hasSize(5);
+            }).verifyComplete();
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    void testListAllowedForSyncOwners() {
+        final int numberOfTestOwners = 10;
+        final List<OwnerPojo> testOwnerList = createTestOwnerList(numberOfTestOwners);
+        final List<OwnerPojo> savedOwners = ownerRepository.bulkCreate(testOwnerList)
+            .collectList()
+            .block();
+        final OwnerAssociationRequestPojo pendingPojo =
+            createAssociationPojo(savedOwners.get(0).getId(), OwnerAssociationRequestStatus.PENDING);
+        final OwnerAssociationRequestPojo approvedPojo =
+            createAssociationPojo(savedOwners.get(1).getId(), OwnerAssociationRequestStatus.APPROVED);
+        final OwnerAssociationRequestPojo declinedPojo =
+            createAssociationPojo(savedOwners.get(2).getId(), OwnerAssociationRequestStatus.DECLINED);
+        final OwnerAssociationRequestPojo secondPending =
+            createAssociationPojo(savedOwners.get(2).getId(), OwnerAssociationRequestStatus.PENDING);
+        final OwnerAssociationRequestPojo secondDeclined =
+            createAssociationPojo(savedOwners.get(3).getId(), OwnerAssociationRequestStatus.DECLINED);
+        associationRequestRepository.bulkCreate(
+            List.of(pendingPojo, approvedPojo, declinedPojo, secondPending, secondDeclined)).collectList().block();
+
+        final Mono<Page<OwnerPojo>> pageMono = ownerRepository.list(1, numberOfTestOwners, null, List.of(), true);
+        StepVerifier.create(pageMono)
+            .assertNext(page -> {
+                assertThat(page.getTotal()).isEqualTo(numberOfTestOwners - 3);
+                assertThat(page.isHasNext()).isFalse();
+                assertThat(page.getData())
+                    .hasSize(numberOfTestOwners - 3);
+                assertThat(page.getData())
+                    .extracting(OwnerPojo::getId)
+                    .doesNotContain(savedOwners.get(0).getId(), savedOwners.get(1).getId(), savedOwners.get(2).getId());
+            }).verifyComplete();
+
+        final Mono<Page<OwnerPojo>> notAllowedToSyncMono =
+            ownerRepository.list(1, numberOfTestOwners, null, List.of(), false);
+        StepVerifier.create(notAllowedToSyncMono)
+            .assertNext(page -> {
+                assertThat(page.getTotal()).isEqualTo(numberOfTestOwners - 7);
+                assertThat(page.isHasNext()).isFalse();
+                assertThat(page.getData())
+                    .hasSize(numberOfTestOwners - 7);
+                assertThat(page.getData())
+                    .extracting(OwnerPojo::getId)
+                    .containsExactlyInAnyOrder(savedOwners.get(0).getId(), savedOwners.get(1).getId(),
+                        savedOwners.get(2).getId());
+            }).verifyComplete();
+    }
+
     /**
      * Method for the test purpose.
      * Creates list of exact number of {@link OwnerPojo}.
@@ -189,6 +274,20 @@ class OwnerRepositoryImplTest extends BaseIntegrationTest {
                 .setName(UUID.randomUUID().toString()));
         }
         return testOwnerList;
+    }
+
+    private OwnerAssociationRequestPojo createAssociationPojo(final Long ownerId,
+                                                              final OwnerAssociationRequestStatus status) {
+        final OwnerAssociationRequestPojo pojo = new OwnerAssociationRequestPojo()
+            .setOwnerId(ownerId)
+            .setUsername(UUID.randomUUID().toString())
+            .setStatus(status.getValue())
+            .setCreatedAt(LocalDateTime.now());
+        if (status != OwnerAssociationRequestStatus.PENDING) {
+            pojo.setStatusUpdatedBy(UUID.randomUUID().toString());
+            pojo.setStatusUpdatedAt(LocalDateTime.now());
+        }
+        return pojo;
     }
 
     private List<String> getListNames(final List<OwnerPojo> testOwnerList) {

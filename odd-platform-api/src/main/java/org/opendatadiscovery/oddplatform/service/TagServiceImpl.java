@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.TagToTermPojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTagRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -33,6 +34,7 @@ public class TagServiceImpl implements TagService {
     private final ReactiveTermSearchEntrypointRepository reactiveTermSearchEntrypointRepository;
 
     @Override
+    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Flux<Tag> bulkCreate(final List<TagFormData> tags) {
         final List<TagPojo> pojos = tags.stream().map(tagMapper::mapToPojo).toList();
         return reactiveTagRepository.bulkCreate(pojos)
@@ -40,6 +42,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Tag> update(final long tagId, final TagFormData formData) {
         return reactiveTagRepository.getDto(tagId)
@@ -53,6 +56,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Tag> delete(final long tagId) {
         return reactiveTagRepository.getDto(tagId)

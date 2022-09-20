@@ -36,6 +36,13 @@ export const getDatasetTestReport = (dataEntityId: number) =>
       dataQualityTestState.datasetTestReportByEntityId[dataEntityId]
   );
 
+export const getDatasetTestReportTotal = (dataEntityId: number) =>
+  createSelector(
+    getDataQualityTestState,
+    dataQualityTestState =>
+      dataQualityTestState.datasetTestReportByEntityId[dataEntityId]?.total
+  );
+
 export const getDatasetQualityTestsBySuiteNames = (dataEntityId: number) =>
   createSelector(getDataQualityTestState, dataQualityTestState => {
     if (

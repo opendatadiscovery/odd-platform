@@ -21,7 +21,8 @@ import {
   MinusIcon,
   PlusIcon,
 } from 'components/shared/Icons';
-import DatasetFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldTypeLabel/DatasetFieldTypeLabel';
+import { usePermissions } from 'lib/hooks';
+import DatasetFieldTypeLabel from './DatasetFieldTypeLabel/DatasetFieldTypeLabel';
 import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
 import DatasetFieldEnumsEditForm from './DatasetFieldEnumsEditForm/DatasetFieldEnumsEditForm';
 import DatasetFieldCollapsedDescription from './DatasetFieldCollapsedDescription/DatasetFieldCollapsedDescription';
@@ -56,6 +57,8 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
   onSizeChange,
   rowHeight,
 }) => {
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+
   const [open, setOpen] = React.useState<boolean>(initialStateOpen);
 
   const datasetStructure = useAppSelector(
@@ -111,20 +114,27 @@ const DatasetStructureItem: React.FC<DatasetStructureItemProps> = ({
     }
 
     return (
-      <S.ButtonContainer $showBtn={showBtn}>
-        <AppButton size={btnSize} color={btnColor} sx={{ mr: 1 }}>
-          {btnText}
-        </AppButton>
-      </S.ButtonContainer>
+      <S.Button
+        $showBtn={showBtn}
+        disabled={!editDataEntity}
+        size={btnSize}
+        color={btnColor}
+        sx={{ mr: 1 }}
+      >
+        {btnText}
+      </S.Button>
     );
   }, [datasetField.enumValueCount]);
 
   const datasetFieldInfoEditBtn = (
-    <S.ButtonContainer>
-      <AppButton size="medium" color="primaryLight" sx={{ mr: 1 }}>
-        Edit
-      </AppButton>
-    </S.ButtonContainer>
+    <S.Button
+      disabled={!editDataEntity}
+      size="medium"
+      color="primaryLight"
+      sx={{ mr: 1 }}
+    >
+      Edit
+    </S.Button>
   );
 
   return (

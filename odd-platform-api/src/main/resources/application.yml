@@ -7,44 +7,13 @@ spring:
     sql-dialect: postgres
   codec:
     max-in-memory-size: 20MB
-  ldap:
-    urls: ""
-    dn:
-      pattern: ""
-#  redis:
-#    host: localhost
-#    port: 6379
-#    username:
-#    password:
-#    database: 0
-#  security:
-#    oauth2:
-#      resourceserver:
-#        jwt:
-#          issuer-uri:
-#      client:
-#        registration:
-#          cognito:
-#            client-id:
-#            client-secret:
-#            scope:
-#            redirect-uri:
-#            client-name:
-#        provider:
-#          cognito:
-#            issuerUri:
-#            user-name-attribute:
-
-cognito:
-  enabled: false
-  logoutUrl:
 
 session:
   # INTERNAL_POSTGRESQL, REDIS, IN_MEMORY
   provider: IN_MEMORY
 
 auth:
-  # DISABLED, LOGIN_FORM, OAUTH2
+  # DISABLED, LOGIN_FORM, OAUTH2, LDAP
   type: DISABLED
 
   # For dev/demo purposes only -- username1:password1,username2:password2,etc
@@ -55,6 +24,82 @@ auth:
   ingestion:
     filter:
       enabled: false
+#  ldap:
+#    url:
+#    username:
+#    password:
+#    dn-pattern:
+#    user-filter:
+#      search-base:
+#      filter:
+#    groups:
+#      search-base:
+#      filter:
+#      admin-groups:
+#    active-directory:
+#      enabled: false
+#      domain:
+#  oauth2:
+#    client:
+#      okta:
+#        provider: 'okta'
+#        client-id:
+#        client-secret:
+#        client-name: 'Okta'
+#        redirect-uri: http://localhost:8080/login/oauth2/code/okta
+#        scope:
+#          - openid
+#        issuer-uri:
+#        user-name-attribute:
+#        admin-attribute:
+#        admin-principals:
+#      cognito:
+#        provider: 'cognito'
+#        client-id:
+#        client-secret:
+#        scope:
+#          - openid
+#        redirect-uri: 'http://localhost:8080/login/oauth2/code/cognito'
+#        client-name: 'Cognito'
+#        issuerUri:
+#        logoutUri:
+#        admin-attribute: email
+#        admin-principals: dabdullin@provectus.com
+#        admin-groups: 'admin'
+#      github:
+#        provider: 'github'
+#        client-id:
+#        client-secret:
+#        scope:
+#          - user:read
+#          - read:org
+#        user-name-attribute: 'login'
+#        organization-name:
+#        admin-principals:
+#        admin-teams:
+#      google:
+#        provider: 'google'
+#        client-id:
+#        client-secret:
+#        scope:
+#          - openid
+#          - profile
+#          - email
+#        user-name-attribute: 'name'
+#        admin-principals:
+#        allowed-domain:
+#      keycloak:
+#        provider: 'keycloak'
+#        client-id:
+#        client-secret:
+#        scope:
+#          - openid
+#        client-name: 'Keycloak'
+#        redirect-uri: 'http://localhost:8080/login/oauth2/code/keycloak'
+#        issuer-uri:
+#        user-name-attribute: 'preferred_username'
+#        admin-attribute: 'preferred_username'
+#        admin-principals:
 
 metrics:
   export:

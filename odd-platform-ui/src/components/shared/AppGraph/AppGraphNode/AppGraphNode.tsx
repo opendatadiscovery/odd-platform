@@ -90,7 +90,7 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
     width: 91,
     height: 24,
     my: 4,
-    mx: 8,
+    mx: 16,
   };
 
   const setTransform = (
@@ -213,13 +213,15 @@ const AppGraphNode: React.FC<AppGraphNodeProps> = ({
       onMouseLeave={handleLoadMoreMouseLeave}
     >
       <rect
-        width={nodeSize.x + loadMoreLayout.width + loadMoreLayout.mx}
+        width={loadMoreLayout.x + loadMoreLayout.mx + loadMoreLayout.width}
         transform={
           reverse
-            ? `translate(${-loadMoreLayout.width - loadMoreLayout.mx})`
-            : ''
+            ? `translate(${-loadMoreLayout.mx - loadMoreLayout.width}, ${
+                nodeSize.y / 2 - loadMoreLayout.height
+              })`
+            : ``
         }
-        height={nodeSize.y}
+        height={loadMoreLayout.height * 2}
         fill="transparent"
       />
 

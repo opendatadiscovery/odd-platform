@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.UUID;
 import org.jeasy.random.EasyRandom;
 import org.jeasy.random.EasyRandomParameters;
@@ -24,6 +25,7 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.Identity;
 import org.opendatadiscovery.oddplatform.api.contract.model.Owner;
 import org.opendatadiscovery.oddplatform.api.contract.model.OwnershipActivityState;
+import org.opendatadiscovery.oddplatform.dto.AssociatedOwnerDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityClassDto;
 import org.opendatadiscovery.oddplatform.dto.DataEntityTypeDto;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
@@ -104,7 +106,9 @@ public class ActivityMapperTest {
             .owner(new Owner().id(owner.getId()).name(owner.getName()))
             .identity(new Identity().username(activityPojo.getCreatedBy()));
 
-        lenient().when(associatedOwnerMapper.mapAssociatedOwner(activityPojo.getCreatedBy(), owner))
+        lenient()
+            .when(associatedOwnerMapper
+                .mapAssociatedOwner(new AssociatedOwnerDto(activityPojo.getCreatedBy(), owner, Set.of(), null)))
             .thenReturn(identity);
 
         lenient().when(dataEntityMapper.mapType(any(DataEntityTypeDto.class))).thenReturn(dataEntityType);

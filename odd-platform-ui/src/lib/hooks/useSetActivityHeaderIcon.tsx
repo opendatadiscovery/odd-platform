@@ -4,7 +4,7 @@ import ActivityUpdatedIcon from 'components/shared/Icons/ActivityUpdatedIcon';
 import ActivityDeletedIcon from 'components/shared/Icons/ActivityDeletedIcon';
 import { CRUDType } from 'lib/interfaces';
 
-export const useSetActivityHeaderIcon = (eventType: CRUDType | string) => {
+const useSetActivityHeaderIcon = (eventType: CRUDType | string) => {
   const [icon, setHeaderIcon] = React.useState<JSX.Element | null>(null);
 
   React.useEffect(() => {
@@ -21,3 +21,5 @@ export const useSetActivityHeaderIcon = (eventType: CRUDType | string) => {
 
   return { icon };
 };
+
+export default useSetActivityHeaderIcon;
