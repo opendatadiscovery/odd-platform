@@ -5,7 +5,7 @@ import { TermRef } from 'generated-sources';
 import { useDebouncedCallback } from 'use-debounce';
 import { AppInput } from 'components/shared';
 import { ClearIcon, SearchIcon } from 'components/shared/Icons';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getTermSearchQuery,

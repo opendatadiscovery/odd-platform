@@ -27,4 +27,6 @@ public interface ReactiveDataEntityRepository extends ReactiveCRUDRepository<Dat
     Mono<DataEntityPojo> setInternalName(final long dataEntityId, final String name);
 
     Mono<DataEntityPojo> setInternalDescription(final long dataEntityId, final String description);
+
+    Mono<Boolean> userIsDataEntityOwner(final long dataEntityId, final String username);
 }

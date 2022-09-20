@@ -6,8 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { AppButton, PageWithLeftSidebar } from 'components/shared';
 import { AddIcon } from 'components/shared/Icons';
 import { Grid } from '@mui/material';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, useAppPaths } from 'lib/hooks';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import {
   getTermSearchCreateStatuses,

@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.dto.activity.ActivityContextInfo;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityCreateEvent;
 import org.opendatadiscovery.oddplatform.dto.activity.ActivityEventTypeDto;
 import org.opendatadiscovery.oddplatform.dto.lineage.LineageStreamKind;
+import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.mapper.ActivityMapper;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.ActivityPojo;
 import org.opendatadiscovery.oddplatform.repository.DataEntityRepository;
@@ -45,7 +46,8 @@ public class ActivityServiceImpl implements ActivityService {
         final LocalDateTime activityCreateTime = LocalDateTime.now();
 
         return activityTablePartitionManager.createPartitionIfNotExists(activityCreateTime.toLocalDate())
-            .then(authIdentityProvider.getUsername())
+            .then(authIdentityProvider.getCurrentUser())
+            .map(UserDto::username)
             .map(username -> activityMapper.mapToPojo(event, activityCreateTime, username))
             .switchIfEmpty(Mono.just(activityMapper.mapToPojo(event, activityCreateTime, null)))
             .flatMap(activityRepository::saveReturning)

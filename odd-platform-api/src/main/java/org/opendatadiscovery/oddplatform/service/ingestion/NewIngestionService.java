@@ -192,7 +192,7 @@ public class NewIngestionService implements IngestionService {
 
         return dto.getDataEntityGroup().entitiesOddrns().stream()
             .map(entityOddrn -> new GroupEntityRelationsPojo(dto.getOddrn(), entityOddrn))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     private List<DataQualityTestRelationsPojo> extractDataQARelations(final EnrichedDataEntityIngestionDto dto) {

@@ -12,7 +12,11 @@ public interface OwnerService {
 
     Mono<Owner> get(final long id);
 
-    Mono<OwnerList> list(final int page, final int size, final String query, final List<Long> ids);
+    Mono<OwnerList> list(final int page,
+                         final int size,
+                         final String query,
+                         final List<Long> ids,
+                         final Boolean allowedForSync);
 
     Mono<Owner> create(final OwnerFormData createEntityForm);
 

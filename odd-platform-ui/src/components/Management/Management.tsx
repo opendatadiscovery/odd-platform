@@ -1,18 +1,20 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Grid } from '@mui/material';
-import AppTabs, { AppTabItem } from 'components/shared/AppTabs/AppTabs';
-import AppLoadingPage from 'components/shared/AppLoadingPage/AppLoadingPage';
-import { useAppParams, useAppPaths } from 'lib/hooks';
+import {
+  AppLoadingPage,
+  AppTabItem,
+  AppTabs,
+  RestrictedRoute,
+} from 'components/shared';
+import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import * as S from './ManagementStyles';
 
 // lazy components
 const NamespaceList = React.lazy(
   () => import('./NamespaceList/NamespaceList')
 );
-const OwnersListContainer = React.lazy(
-  () => import('./OwnersList/OwnersListContainer')
-);
+const OwnersList = React.lazy(() => import('./OwnersList/OwnersList'));
 const LabelsList = React.lazy(() => import('./LabelsList/LabelsList'));
 const TagsList = React.lazy(() => import('./TagsList/TagsList'));
 const DataSourcesList = React.lazy(
@@ -21,10 +23,14 @@ const DataSourcesList = React.lazy(
 const CollectorsList = React.lazy(
   () => import('./CollectorsList/CollectorsList')
 );
+const OwnerAssociationsList = React.lazy(
+  () => import('./OwnerAssociations/OwnerAssociations')
+);
 
 const Management: React.FC = () => {
   const { viewType } = useAppParams();
   const { managementPath } = useAppPaths();
+  const { isAdmin } = usePermissions({});
 
   const [tabs] = React.useState<AppTabItem[]>([
     { name: 'Namespaces', link: managementPath('namespaces') },
@@ -33,6 +39,11 @@ const Management: React.FC = () => {
     { name: 'Owners', link: managementPath('owners') },
     { name: 'Tags', link: managementPath('tags') },
     { name: 'Labels', link: managementPath('labels') },
+    {
+      name: 'Associations',
+      link: managementPath('associations'),
+      hidden: !isAdmin,
+    },
   ]);
 
   const [selectedTab, setSelectedTab] = React.useState<number>(-1);
@@ -43,7 +54,7 @@ const Management: React.FC = () => {
         ? tabs.findIndex(tab => tab.name.toLowerCase() === viewType)
         : 0
     );
-  }, [tabs]);
+  }, [tabs, viewType]);
 
   return (
     <S.Container container wrap="nowrap">
@@ -81,13 +92,20 @@ const Management: React.FC = () => {
             <Route
               exact
               path="/management/owners"
-              component={OwnersListContainer}
+              component={OwnersList}
             />
             <Route exact path="/management/tags" component={TagsList} />
             <Route
               exact
               path="/management/labels"
               component={LabelsList}
+            />
+            <RestrictedRoute
+              isAllowedTo={isAdmin}
+              redirectTo="/management/namespaces"
+              exact
+              path="/management/associations/:viewType?"
+              component={OwnerAssociationsList}
             />
             <Redirect
               exact

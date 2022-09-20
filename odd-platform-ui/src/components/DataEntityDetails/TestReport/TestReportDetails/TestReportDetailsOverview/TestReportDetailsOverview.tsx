@@ -1,5 +1,11 @@
 import React from 'react';
 import { Box, Grid, SelectChangeEvent, Typography } from '@mui/material';
+import {
+  AppButton,
+  AppMenuItem,
+  AppSelect,
+  LabeledInfoItem,
+} from 'components/shared';
 import { format, formatDistanceStrict } from 'date-fns';
 import {
   DataQualityTestExpectation,
@@ -11,15 +17,9 @@ import {
 } from 'redux/selectors';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { setDataQATestSeverity } from 'redux/thunks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, usePermissions } from 'lib/hooks';
 import { ORDERED_SEVERITY } from 'lib/constants';
 import { hasDataQualityTestExpectations } from 'lib/helpers';
-import {
-  AppButton,
-  AppSelect,
-  AppMenuItem,
-  LabeledInfoItem,
-} from 'components/shared';
 import TestReportDetailsOverviewSkeleton from './TestReportDetailsOverviewSkeleton/TestReportDetailsOverviewSkeleton';
 import TestReportDetailsOverviewExpectationsModal from './TestReportDetailsOverviewParametersModal/TestReportDetailsOverviewParametersModal';
 import * as S from './TestReportDetailsOverviewStyles';
@@ -27,6 +27,7 @@ import * as S from './TestReportDetailsOverviewStyles';
 const TestReportDetailsOverview: React.FC = () => {
   const dispatch = useAppDispatch();
   const { dataEntityId, dataQATestId } = useAppParams();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
 
   const qualityTest = useAppSelector(getQualityTestByTestId(dataQATestId));
 
@@ -91,6 +92,7 @@ const TestReportDetailsOverview: React.FC = () => {
             >
               <AppSelect
                 size="small"
+                disabled={!editDataEntity}
                 defaultValue={
                   qualityTest?.severity || DataQualityTestSeverity.MAJOR
                 }

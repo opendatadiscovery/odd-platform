@@ -15,6 +15,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveOwnershipRe
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermOwnershipRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -43,11 +44,17 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
-    public Mono<OwnerList> list(final int page, final int size, final String query, final List<Long> ids) {
-        return ownerRepository.list(page, size, query, ids).map(ownerMapper::mapToOwnerList);
+    public Mono<OwnerList> list(final int page,
+                                final int size,
+                                final String query,
+                                final List<Long> ids,
+                                final Boolean allowedForSync) {
+        return ownerRepository.list(page, size, query, ids, allowedForSync)
+            .map(ownerMapper::mapToOwnerList);
     }
 
     @Override
+    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Mono<Owner> create(final OwnerFormData createEntityForm) {
         return Mono.just(createEntityForm)
             .map(ownerMapper::mapToPojo)
@@ -56,6 +63,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Owner> update(final long id, final OwnerFormData updateEntityForm) {
         return ownerRepository.get(id)
@@ -67,6 +75,7 @@ public class OwnerServiceImpl implements OwnerService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Owner> delete(final long id) {
         return Mono.zip(termOwnershipRepository.existsByOwner(id), ownershipRepository.existsByOwner(id))

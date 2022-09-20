@@ -3,6 +3,7 @@ import { Collapse, Grid, Typography } from '@mui/material';
 import { Tag } from 'generated-sources';
 import { AppButton, TagItem } from 'components/shared';
 import { AddIcon, EditIcon } from 'components/shared/Icons';
+import { useAppParams, usePermissions } from 'lib/hooks';
 import TagsEditForm from './TagsEditForm/TagsEditForm';
 import { CaptionContainer, TagsContainer } from './OverviewTagsStyles';
 
@@ -11,6 +12,9 @@ interface OverviewTagsProps {
 }
 
 const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
+  const { dataEntityId } = useAppParams();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
 
@@ -31,7 +35,7 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
             <AppButton
               size="medium"
               color="primaryLight"
-              onClick={() => {}}
+              disabled={!editDataEntity}
               startIcon={tags?.length ? <EditIcon /> : <AddIcon />}
             >
               {tags?.length ? 'Edit' : 'Add'} tags
@@ -94,7 +98,11 @@ const OverviewTags: React.FC<OverviewTagsProps> = ({ tags }) => {
           <Typography variant="subtitle2">Not created.</Typography>
           <TagsEditForm
             btnEditEl={
-              <AppButton size="small" color="tertiary" onClick={() => {}}>
+              <AppButton
+                size="small"
+                color="tertiary"
+                disabled={!editDataEntity}
+              >
                 Add tags
               </AppButton>
             }

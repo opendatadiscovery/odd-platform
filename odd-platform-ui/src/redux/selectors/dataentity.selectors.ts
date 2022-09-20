@@ -193,3 +193,6 @@ export const getDataEntityAddToGroupStatuses = createStatusesSelector(
 export const getDataEntityDeleteFromGroupStatuses = createStatusesSelector(
   actions.deleteDataEntityFromGroupActionType
 );
+
+export const getDataEntityPermissionsFetchingStatuses =
+  createStatusesSelector(actions.fetchDataEntityPermissionsActionType);

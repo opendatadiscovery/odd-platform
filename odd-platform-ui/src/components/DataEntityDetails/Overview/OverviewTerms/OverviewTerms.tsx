@@ -1,9 +1,9 @@
 import React from 'react';
 import { Box, Collapse, Grid, Typography } from '@mui/material';
 import { TermRef } from 'generated-sources';
-import TermItem from 'components/shared/TermItem/TermItem';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
+import { TermItem, AppButton } from 'components/shared';
+import { AddIcon } from 'components/shared/Icons';
+import { usePermissions } from 'lib/hooks';
 import { TermsCaptionContainer } from './OverviewTermsStyles';
 import AddTermsForm from './AddTermsForm/AddTermsForm';
 
@@ -16,8 +16,11 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
   terms,
   dataEntityId,
 }) => {
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+
   const visibleLimit = 20;
   const [viewAll, setViewAll] = React.useState(false);
+
   return (
     <div>
       <TermsCaptionContainer>
@@ -28,7 +31,7 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
             <AppButton
               size="medium"
               color="primaryLight"
-              onClick={() => {}}
+              disabled={!editDataEntity}
               startIcon={<AddIcon />}
             >
               Add terms
@@ -87,7 +90,11 @@ const OverviewTerms: React.FC<OverviewTermsProps> = ({
           <AddTermsForm
             dataEntityId={dataEntityId}
             btnCreateEl={
-              <AppButton size="small" color="tertiary" onClick={() => {}}>
+              <AppButton
+                size="small"
+                color="tertiary"
+                disabled={!editDataEntity}
+              >
                 Add terms
               </AppButton>
             }

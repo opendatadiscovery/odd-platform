@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.opendatadiscovery.oddplatform.auth.AuthIdentityProvider;
+import org.opendatadiscovery.oddplatform.dto.security.UserDto;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.TokenPojo;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -16,14 +17,16 @@ public class TokenGeneratorImpl implements TokenGenerator {
 
     @Override
     public Mono<TokenPojo> generateToken() {
-        return authIdentityProvider.getUsername()
+        return authIdentityProvider.getCurrentUser()
+            .map(UserDto::username)
             .map(this::generate)
             .switchIfEmpty(Mono.defer(() -> Mono.just(this.generate(null))));
     }
 
     @Override
     public Mono<TokenPojo> regenerateToken(final TokenPojo tokenPojo) {
-        return authIdentityProvider.getUsername()
+        return authIdentityProvider.getCurrentUser()
+            .map(UserDto::username)
             .map(username -> this.regenerate(tokenPojo, username))
             .switchIfEmpty(Mono.defer(() -> Mono.just(this.regenerate(tokenPojo, null))));
     }

@@ -1,6 +1,7 @@
 import { EntityState, ThunkAction } from '@reduxjs/toolkit';
 import { ActionType } from 'typesafe-actions';
 import {
+  Actions,
   ActivityCountInfo,
   AlertTotals,
   AppInfo,
@@ -23,6 +24,7 @@ import {
   MetadataFieldValue,
   Namespace,
   Owner,
+  OwnerAssociationRequest,
   Ownership,
   Tag,
   Term,
@@ -190,7 +192,17 @@ export interface AlertsState extends EntityState<Alert> {
 }
 
 export interface ProfileState {
-  owner?: AssociatedOwner;
+  owner: AssociatedOwner;
+  permissions: { byDataEntityId: { [entityId: number]: Actions } };
+}
+
+export interface OwnerAssociationState {
+  newRequests: {
+    pageInfo: CurrentPageInfo;
+  } & EntityState<OwnerAssociationRequest>;
+  resolvedRequests: {
+    pageInfo: CurrentPageInfo;
+  } & EntityState<OwnerAssociationRequest>;
 }
 
 export interface AppInfoState {

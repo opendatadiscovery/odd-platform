@@ -1,7 +1,8 @@
 import { Grid, GridProps } from '@mui/material';
 import styled from 'styled-components';
+import { AppButton } from 'components/shared';
 
-export const ButtonContainer = styled(Grid)<{ $showBtn?: boolean }>(
+export const Button = styled(AppButton)<{ $showBtn?: boolean }>(
   ({ $showBtn }) => ({
     opacity: $showBtn ? 1 : 0,
   })
@@ -16,9 +17,7 @@ export const RowContainer = styled(Grid)<{
 
   '&:hover': {
     backgroundColor: theme.palette.backgrounds.primary,
-    [`${ButtonContainer}`]: {
-      opacity: 1,
-    },
+    [`${Button}`]: { opacity: 1 },
   },
 
   '&::after': {

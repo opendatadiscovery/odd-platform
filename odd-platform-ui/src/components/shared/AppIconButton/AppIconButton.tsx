@@ -2,11 +2,7 @@ import React from 'react';
 import { IconButtonProps } from '@mui/material';
 import { IconButtonColors, StyledIconButton } from './AppIconButtonStyles';
 
-interface AppIconButtonProps
-  extends Pick<
-    IconButtonProps,
-    'onClick' | 'sx' | 'ref' | 'edge' | 'disabled' | 'id'
-  > {
+interface AppIconButtonProps extends Omit<IconButtonProps, 'color'> {
   size?: 'medium' | 'small';
   color: IconButtonColors;
   icon: React.ReactNode;
@@ -23,32 +19,24 @@ const AppIconButton: React.FC<AppIconButtonProps> = ({
   color,
   icon,
   open,
-  onClick,
-  sx,
-  disabled,
-  id,
   ariaDescribedBy,
   ariaControls,
   ariaExpanded,
   ariaHaspopup,
-  edge,
   height,
+  ...props
 }) => (
   <StyledIconButton
+    {...props}
     aria-describedby={ariaDescribedBy}
     aria-haspopup={ariaHaspopup}
     aria-expanded={ariaExpanded}
     aria-controls={ariaControls}
-    edge={edge}
     $color={color}
     $open={open}
     $height={height}
-    id={id}
     disableRipple
     size={size}
-    onClick={onClick}
-    sx={sx}
-    disabled={disabled}
   >
     {icon}
   </StyledIconButton>

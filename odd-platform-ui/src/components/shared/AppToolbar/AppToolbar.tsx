@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useHistory, useLocation } from 'react-router-dom';
 import { DropdownIcon } from 'components/shared/Icons';
 import { clearActivityFilters } from 'redux/slices/activity.slice';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { useAppPaths } from 'lib/hooks';
 import {
   AppIconButton,
   AppMenu,
@@ -158,7 +158,7 @@ const AppToolbar: React.FC = () => {
             </Grid>
             <S.SectionDesktop item>
               <S.UserAvatar stroke="currentColor" />
-              <S.UserName>{identity?.identity.username}</S.UserName>
+              <S.UserName>{identity?.username}</S.UserName>
               <AppIconButton
                 icon={<DropdownIcon />}
                 color="unfilled"
