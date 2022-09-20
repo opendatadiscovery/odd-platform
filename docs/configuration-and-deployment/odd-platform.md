@@ -176,7 +176,7 @@ session:
 ```
 {% endtab %}
 
-{% tab title="Second Tab" %}
+{% tab title="Environment Variables" %}
 #### In memory (default)
 
 * `SESSION_PROVIDER=IN_MEMORY`
