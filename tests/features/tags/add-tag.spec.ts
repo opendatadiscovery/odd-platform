@@ -15,7 +15,7 @@ test.describe('Tags', function () {
             expect(await pages.modals.add_tag.is_opened()).toBeTruthy();
         });
     });
-    test(`Add new Tag`, async ({ steps: { pages }, page}) => {
+    test(`Add new Tag`, async ({ steps: { pages }}) => {
         /**
         https://odd.testops.cloud/project/1/test-cases/4?treeId=0
         */
@@ -42,6 +42,7 @@ test.describe('Tags', function () {
         });
         await test.step(`I click 'create' button`, async () => {
             await pages.modals.add_tag.add_new_tag.click();
+            await pages.tags.wait_until_tag_visible(tag_name);
             expect(await pages.tags.is_tag_visible(`${tag_name}`)).toBeTruthy();
             expect(await pages.tags.is_tag_important(`${tag_name}`)).toBeTruthy();
         });
@@ -58,6 +59,7 @@ test.describe('Tags', function () {
             const tags = await pages.modals.add_tag.fill_all_tag_name('tag');
             await pages.modals.add_tag.add_new_tag.click();
             tags_all = await pages.tags.get_all_tags();
+            await pages.tags.wait_until_tag_visible(tags);
             expect(await pages.tags.tags_list.is_visible()).toBeTruthy();
             expect(tags_all).toEqual(expect.arrayContaining(tags))
         });
@@ -75,6 +77,7 @@ test.describe('Tags', function () {
             await pages.modals.add_tag.check_important(1);
             await expect(await page.locator('[type="checkbox"]').nth(1).inputValue()).toBeTruthy();
             await pages.modals.add_tag.add_new_tag.click();
+            await pages.tags.wait_until_tag_visible(tags);
             tags_all = await pages.tags.get_all_tags();
             expect(await pages.tags.tags_list.is_visible()).toBeTruthy();
             expect(tags_all).toEqual(expect.arrayContaining(tags))
@@ -94,6 +97,7 @@ test.describe('Tags', function () {
             await pages.modals.add_tag.check_important(0);
             await pages.modals.add_tag.check_important(1);
             await pages.modals.add_tag.add_new_tag.click();
+            await pages.tags.wait_until_tag_visible(tags);
             tags_all = await pages.tags.get_all_tags();
             expect(await pages.tags.tags_list.is_visible()).toBeTruthy();
             expect(tags_all).toEqual(expect.arrayContaining(tags))

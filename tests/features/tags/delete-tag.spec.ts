@@ -9,7 +9,7 @@ test.describe(() => {
             await pages.management.tags.click();
         });
     });
-    test(`Delete unimportant tag`, async ({ steps: { pages }, page }) => {
+    test(`Delete unimportant tag`, async ({ steps: { pages } }) => {
         /**
         https://odd.testops.cloud/project/1/test-cases/33?treeId=0
          */
@@ -23,10 +23,11 @@ test.describe(() => {
             });
         await test.step(`I delete tag`, async () => {
             await pages.modals.delete_tag.delete_tag_confirm.click();
-            expect(await pages.tags.is_tag_visible(`${tag_name}`)).toBeFalsy();
+            await pages.tags.wait_until_tag_invisible(tag_name);
+            expect(await pages.tags.is_tag_invisible(`${tag_name}`)).toBeTruthy();
             });
         });
-    test(`Delete important tag`, async ({ steps: { pages }, page }) => {
+    test(`Delete important tag`, async ({ steps: { pages } }) => {
         /**
         https://odd.testops.cloud/project/1/test-cases/34?treeId=0
          */
@@ -40,7 +41,8 @@ test.describe(() => {
         });
         await test.step(`I delete tag`, async () => {
             await pages.modals.delete_tag.delete_tag_confirm.click();
-            expect(await pages.tags.is_tag_visible(`${tag_name}`)).toBeFalsy();
+            await pages.tags.wait_until_tag_invisible(tag_name);
+            expect(await pages.tags.is_tag_invisible(tag_name)).toBeTruthy();
         });
     });
 });

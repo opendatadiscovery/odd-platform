@@ -31,6 +31,9 @@ export default class TagsPage extends ManagementPage {
     async is_tag_visible(name: string) {
         return await this.page.locator(SELECTORS.tag_string(name)).isVisible();
     }
+    async is_tag_invisible(name: string) {
+        return await this.page.locator(SELECTORS.tag_string(name)).isHidden();
+    }
     async add_tag(name: string) {
         await this.create_tag.click();
         await this.pages.modals.add_tag.tag_name_field.fill(name);
@@ -50,5 +53,27 @@ export default class TagsPage extends ManagementPage {
     }
     async is_tag_important(name: string){
         return await this.page.locator(SELECTORS.tag_string(name)).locator(SELECTORS.tag_important_mark, { hasText: 'important' }).isVisible();
+    }
+    async wait_until_tag_invisible(tag_name: string | Array<string>) {
+        if (typeof tag_name === 'string') {
+            await this.page.waitForSelector(SELECTORS.tag_string(tag_name), { state: "hidden" });
+        }
+        else {
+            const tags = Array.from(tag_name)
+            for (let tag of tags) {
+                await this.page.waitForSelector(SELECTORS.tag_string(tag), { state: "hidden" })
+            }
+        }
+    }
+    async wait_until_tag_visible(tag_name: string | Array<string>) {
+        if (typeof tag_name === 'string') {
+            await this.page.waitForSelector(SELECTORS.tag_string(tag_name), { state: "visible" });
+        }
+        else {
+            const tags = Array.from(tag_name)
+            for (let tag of tags) {
+                await this.page.waitForSelector(SELECTORS.tag_string(tag), { state: "visible" })
+            }
+        }
     }
 }
