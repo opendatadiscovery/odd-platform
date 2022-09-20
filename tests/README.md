@@ -40,6 +40,11 @@
 
         npm run odd-down
 
+## Useful commands
+
+- `npm run lint` to run linter
+- `npm run format` to run code formatter
+- `npm run lint:fix` to fix fixable linter issues and run code formatter
 
 ## Setup user friendly development environment
 

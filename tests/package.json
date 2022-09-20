@@ -20,7 +20,8 @@
     "test": "npm run clean-build; ENVIRONMENT=main_test playwright test --workers=1 --headed",
     "test-ci": "npm run clean-build; ENVIRONMENT=main_test playwright test",
     "lint": "eslint .",
-    "format": "npx prettier --write .",
+    "format": "prettier --write .",
+    "lint:fix": "eslint --fix . && npm run format",
     "prepare": "cd ../ && husky install ./tests/.husky"
   },
   "lint-staged": {
