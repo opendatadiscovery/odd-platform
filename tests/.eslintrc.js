@@ -6,6 +6,7 @@ module.exports = {
     amd: true,
     node: true,
   },
+
   parser: '@typescript-eslint/parser',
   parserOptions: {
     tsconfigRootDir: __dirname,
@@ -18,6 +19,8 @@ module.exports = {
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:playwright/playwright-test',
     'plugin:jsdoc/recommended',
+    'airbnb-base',
+    'airbnb-typescript/base',
     'prettier' /** Make sure to put it last, so it gets the chance to override other configs */,
   ],
   rules: {
