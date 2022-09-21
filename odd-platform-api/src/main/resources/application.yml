@@ -61,11 +61,11 @@ auth:
 #          - openid
 #        redirect-uri: 'http://localhost:8080/login/oauth2/code/cognito'
 #        client-name: 'Cognito'
-#        issuerUri:
-#        logoutUri:
-#        admin-attribute: email
-#        admin-principals: dabdullin@provectus.com
-#        admin-groups: 'admin'
+#        issuer-uri:
+#        logout-uri:
+#        admin-attribute:
+#        admin-principals:
+#        admin-groups:
 #      github:
 #        provider: 'github'
 #        client-id:
