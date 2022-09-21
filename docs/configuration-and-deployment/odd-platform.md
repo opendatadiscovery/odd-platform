@@ -289,8 +289,8 @@ Following variables need to be defined:
 
 * `notifications.enabled`: must be set to `true`. Defaults to `false`
 * `notifications.message.downstream-entities-depth`: limits the amount of fetching of affected data entities **in terms of lineage graph level.** Defaults to 1
-* `notifications.wal.advisory-lock-id`: ODD Platform uses [PostgreSQL advisory lock](https://www.postgresql.org/docs/current/explicit-locking.html#ADVISORY-LOCKS) in order to make sure that in a case of horizontal scaling only one instance of the platform processes alert messages. This setting defines advisory lock id. Defaults to `100`
-* `notifications.wal.replication-slot-name`: PostgreSQL replication slot name that will be created if it doesn't exist yet. Defaults to `odd_platform_replication_slot`
+* `notifications.wal.advisory-lock-id`: ODD Platform uses [PostgreSQL advisory lock](https://www.postgresql.org/docs/current/explicit-locking.html#ADVISORY-LOCKS) in order to make sure that in a case of horizontal scaling only one instance of the Platform processes alert messages. This setting defines advisory lock id. Defaults to `100`
+* `notifications.wal.replication-slot-name`: PostgreSQL replication slot name will be created if it doesn't exist yet. Defaults to `odd_platform_replication_slot`
 * `notifications.wal.publication-name`: PostgreSQL publication name will be created if it doesn't exist yet. Defaults to `odd_platform_publication_alert`
 * `notifications.receivers.slack.url`: [Slack incoming webhook](https://api.slack.com/messaging/webhooks) URL
 * `notifications.receivers.slack.platform-base-url`: ODD Platform URL to be used in alert messages' hyperlinks.
