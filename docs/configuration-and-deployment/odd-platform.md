@@ -11,7 +11,7 @@ description: >-
 There are two ways to configure the Platform:
 
 * **Environment variables** are used for simple entries
-* Configuring via **YAML** can come in handy when there's a complex configuration block (e.g OAuth2 authentication or logging levels) needs to be defined.
+* Configuring via **YAML** can come in handy when it is necessary to define a complex configuration block (e.g OAuth2 authentication or logging levels).
 
 <details>
 
@@ -84,7 +84,7 @@ No additional settings are required.
 {% endhint %}
 
 {% hint style="danger" %}
-**`LOGIN_FORM`** authentication mechanism **is not recommended** to be used in production!
+We don't recommend to use **`LOGIN_FORM`** authentication mechanism in production!
 {% endhint %}
 
 The easiest authentication mechanism to use. Users' credentials can be set by defining `auth.login-form-credentials` variable in the following format: `username1:password1,username2:password2.` Default value is `admin:admin,root:root`, hence by default ODD Platform will be able to authenticate 2 users with usernames `admin` and `root` and passwords `admin` and `root` respectively.
@@ -114,14 +114,14 @@ auth:
 
 ## Select session provider
 
-ODD Platform is able to keep users' sessions in several places such as in memory, PostgreSQL database or Redis. Session provider can be set via `session.provider` variable with following expected values:
+ODD Platform is able to keep users' sessions in several places such as in memory, PostgreSQL database or Redis. A session provider can be set via `session.provider` variable with following expected values:
 
 * `IN_MEMORY`: Local in-memory storage. ODD Platform defaults to this value
 * `INTERNAL_POSTGRESQL`: Underlying PostgreSQL database
 * `REDIS`: [Redis data-store](https://redis.io/).
 
 {% hint style="info" %}
-If you'd like to use only one instance of ODD Platform and you're ready to tolerate users' logouts each time the platform restarts, the best choice would be **`IN_MEMORY`**
+If you'd like to use only one instance of ODD Platform and you're ready to tolerate users' logouts each time the Platform restarts, the best choice would be **`IN_MEMORY`**
 
 \
 If you already have a Redis in your infrastructure or you're willing to install it, the best choice would be **`REDIS`**
@@ -222,7 +222,7 @@ Otherwise **`INTERNAL_POSTGRESQL`** is the best pick
 
 ## Enable Metrics
 
-Some of metadata ODD Platform ingests can be conveniently represented in a shape of time-series chart, for example the amount of data in the MySQL table or the physical size of the Redshift database. ODD Platform pushes metadata to the [OTLP collector](https://opentelemetry.io/docs/collector/) as a telemetry in order to be able to create charts in [Prometheus](https://prometheus.io/), [New Relic](https://newrelic.com/) or any other backend that supports [OTLP Exporters](https://aws-otel.github.io/docs/components/otlp-exporter). These variables are needed to be set in order to leverage this functionality:
+Some of metadata ODD Platform ingests can be conveniently represented in a shape of time-series chart, for example, an amount of data in a MySQL table or a physical size of a Redshift database. ODD Platform pushes metadata to the [OTLP collector](https://opentelemetry.io/docs/collector/) as a telemetry in order to be able to create charts in [Prometheus](https://prometheus.io/), [New Relic](https://newrelic.com/) or any other backend that supports [OTLP Exporters](https://aws-otel.github.io/docs/components/otlp-exporter). These variables are needed to be set in order to leverage this functionality:
 
 * `metrics.export.enabled`: Must be set to `true`
 * `metrics.export.otlp-endpoint`: OTLP Collector endpoint
@@ -252,15 +252,15 @@ Any alert that is created inside the platform can be sent via webhook and/or [Sl
 3. Owners of an entity
 4. Possibly affected entities&#x20;
 
-ODD Platform uses PostgreSQL replication mechanism to be able to send a notification even if there's a network lag occurred or the platform crushes. In order to enable this functionality, an underlying PostgreSQL database needs to be configured as well.
+ODD Platform uses the PostgreSQL replication mechanism to be able to send a notification even if there's a network lag occurred or the Platform crushes. In order to enable this functionality, an underlying PostgreSQL database needs to be configured as well.
 
 ### PostgreSQL Configuration
 
-PostgreSQL database must be [configured](https://www.postgresql.org/docs/current/config-setting.html) in order for ODD Platform to leverage its replication mechanism along with the granting the database user replication permissions
+PostgreSQL database must be [configured](https://www.postgresql.org/docs/current/config-setting.html) in order to leverage the replication mechanism of the Platform along with the granting the database user replication permissions.
 
 #### Database settings
 
-To configure the database the following entries must be added to the `postgresql.conf` file:
+To configure the database, add the following entries to the `postgresql.conf` file:
 
 ```
 max_wal_senders = 1
@@ -269,7 +269,7 @@ wal_level = logical
 max_replication_slots = 1
 ```
 
-Or if the replication mechanism is already configured, just increment the `max_wal_senders` and `max_replication_slots` numbers
+Or if the replication mechanism is already configured, just increment the `max_wal_senders` and `max_replication_slots` numbers.
 
 #### Database user permissions
 
@@ -291,7 +291,7 @@ Following variables need to be defined:
 * `notifications.message.downstream-entities-depth`: limits the amount of fetching of affected data entities **in terms of lineage graph level.** Defaults to 1
 * `notifications.wal.advisory-lock-id`: ODD Platform uses [PostgreSQL advisory lock](https://www.postgresql.org/docs/current/explicit-locking.html#ADVISORY-LOCKS) in order to make sure that in a case of horizontal scaling only one instance of the platform processes alert messages. This setting defines advisory lock id. Defaults to `100`
 * `notifications.wal.replication-slot-name`: PostgreSQL replication slot name that will be created if it doesn't exist yet. Defaults to `odd_platform_replication_slot`
-* `notifications.wal.publication-name`: PostgreSQL publication name that will be created if it doesn't exist yet. Defaults to `odd_platform_publication_alert`
+* `notifications.wal.publication-name`: PostgreSQL publication name will be created if it doesn't exist yet. Defaults to `odd_platform_publication_alert`
 * `notifications.receivers.slack.url`: [Slack incoming webhook](https://api.slack.com/messaging/webhooks) URL
 * `notifications.receivers.slack.platform-base-url`: ODD Platform URL to be used in alert messages' hyperlinks.
 * `notifications.receivers.webhook.url`: Generic webhook URL
