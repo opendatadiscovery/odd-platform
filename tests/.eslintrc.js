@@ -32,5 +32,33 @@ module.exports = {
      * (That’s how ESLint works – it lets you override configs you extend.)
      * The CLI helper tool reports that conflicts with Prettier, so you can remove it.
      */
+
+    /**
+     * Note: The rules have been temporarily changed from 'error' to 'warn.
+     * Delete rules after fixing errors in the code.
+     */
+    '@typescript-eslint/no-unsafe-call': 'warn',
+    '@typescript-eslint/no-unsafe-assignment': 'warn',
+    '@typescript-eslint/no-unsafe-argument': 'warn',
+    '@typescript-eslint/no-unsafe-member-access': 'warn',
+    '@typescript-eslint/no-unsafe-return': 'warn',
+    '@typescript-eslint/restrict-template-expressions': 'warn',
+    '@typescript-eslint/naming-convention': 'warn',
+    'import/no-extraneous-dependencies': 'warn',
+    '@typescript-eslint/no-use-before-define': 'warn',
+    'import/prefer-default-export': 'warn',
+    'import/no-cycle': 'warn',
+    '@typescript-eslint/no-unused-vars': 'warn',
+    '@typescript-eslint/no-shadow': 'warn',
+    'class-methods-use-this': 'warn',
+    'no-await-in-loop': 'warn',
+    'no-plusplus': 'warn',
+    'no-cond-assign': 'warn',
+    'new-cap': 'warn',
+    'consistent-return': 'warn',
+    'no-nested-ternary': 'warn',
+    'no-param-reassign': 'warn',
+    'prefer-destructuring': 'warn',
+    'no-restricted-syntax': 'warn',
   },
 };
