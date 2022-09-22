@@ -212,14 +212,6 @@ Environment variables for Redis session provider:
 {% endtab %}
 {% endtabs %}
 
-{% hint style="info" %}
-If you'd like to use only one instance of ODD Platform and you're ready to tolerate users' logouts each time the platform restarts, the best choice would be **`IN_MEMORY`**
-
-\
-If you already have a Redis in your infrastructure or you're willing to install it, the best choice would be **`REDIS`**\
-Otherwise **`INTERNAL_POSTGRESQL`** is the best pick
-{% endhint %}
-
 ## Enable Metrics
 
 Some of metadata ODD Platform ingests can be conveniently represented in a shape of time-series chart, for example, an amount of data in a MySQL table or a physical size of a Redshift database. ODD Platform pushes metadata to the [OTLP collector](https://opentelemetry.io/docs/collector/) as a telemetry in order to be able to create charts in [Prometheus](https://prometheus.io/), [New Relic](https://newrelic.com/) or any other backend that supports [OTLP Exporters](https://aws-otel.github.io/docs/components/otlp-exporter). These variables are needed to be set in order to leverage this functionality:
