@@ -28,7 +28,7 @@ test.describe('Tags', function () {
             expect(await pages.tags.is_tag_visible(`${tag_name}`)).toBeTruthy();
         });
     });
-    test(`Add new important tag`, async ({ steps: {pages }, page }) => {
+    test(`Add new important tag`, async ({ steps: {pages } }) => {
         /**
         https://odd.testops.cloud/project/1/test-cases/5?treeId=0
         */
@@ -38,7 +38,7 @@ test.describe('Tags', function () {
         });
         await test.step(`I mark checkbox 'important'`, async () => {
             await pages.modals.add_tag.check_important(0);
-            await expect(await page.locator('[type="checkbox"]').inputValue()).toBeTruthy();
+            await expect(pages.modals.add_tag.is_checkbox_marked(0)).toBeTruthy();
         });
         await test.step(`I click 'create' button`, async () => {
             await pages.modals.add_tag.add_new_tag.click();
@@ -47,13 +47,14 @@ test.describe('Tags', function () {
             expect(await pages.tags.is_tag_important(`${tag_name}`)).toBeTruthy();
         });
     });
-    test(`Add several unimportant tags`, async ({ steps: { pages }, page }) => {
+    test(`Add several unimportant tags`, async ({ steps: { pages }}) => {
         /**
         https://odd.testops.cloud/project/1/test-cases/6?treeId=0
         */
         await test.step(`I add one more tag`, async () => {
             await pages.modals.add_tag.add_one_more_tag.click();
-            await expect(await page.locator('[placeholder="Tag Name"]').nth(1).isVisible()).toBeTruthy();
+            await expect(pages.modals.add_tag.is_tag_name_input_visible(0)).toBeTruthy();
+            await expect(pages.modals.add_tag.is_tag_name_input_visible(1)).toBeTruthy();
         });
         await test.step(`I fill inputs and click 'create' button`, async () => {
             const tags = await pages.modals.add_tag.fill_all_tag_name('tag');
@@ -64,18 +65,19 @@ test.describe('Tags', function () {
             expect(tags_all).toEqual(expect.arrayContaining(tags))
         });
     });
-    test(`Add several tags, one important`, async ({ steps: {pages }, page }) => {
+    test(`Add several tags, one important`, async ({ steps: {pages } }) => {
         /**
         https://odd.testops.cloud/project/1/test-cases/7?treeId=0
         */
         await test.step(`I add one more tag`, async () => {
             await pages.modals.add_tag.add_one_more_tag.click();
-            await expect(await page.locator('[placeholder="Tag Name"]').nth(1).isVisible()).toBeTruthy();
+            await expect(pages.modals.add_tag.is_tag_name_input_visible(0)).toBeTruthy();
+            await expect(pages.modals.add_tag.is_tag_name_input_visible(1)).toBeTruthy();
         });
         await test.step(`I fill inputs, check 'important' and click 'create' button`, async () => {
             const tags = await pages.modals.add_tag.fill_all_tag_name('tag_test');
             await pages.modals.add_tag.check_important(1);
-            await expect(await page.locator('[type="checkbox"]').nth(1).inputValue()).toBeTruthy();
+            await expect(pages.modals.add_tag.is_checkbox_marked(1)).toBeTruthy();
             await pages.modals.add_tag.add_new_tag.click();
             await pages.tags.wait_until_tag_visible(tags);
             tags_all = await pages.tags.get_all_tags();
@@ -84,13 +86,14 @@ test.describe('Tags', function () {
             expect(await pages.tags.is_tag_important(`tag_test_1`)).toBeTruthy();
         });
     });
-    test(`Add several important tags`, async ({ steps: { pages }, page }) => {
+    test(`Add several important tags`, async ({ steps: { pages } }) => {
         /**
         https://odd.testops.cloud/project/1/test-cases/29?treeId=0
          */
         await test.step(`I add one more tag`, async () => {
             await pages.modals.add_tag.add_one_more_tag.click();
-            await expect(await page.locator('[placeholder="Tag Name"]').nth(1).isVisible()).toBeTruthy();
+            await expect(pages.modals.add_tag.is_tag_name_input_visible(0)).toBeTruthy();
+            await expect(pages.modals.add_tag.is_tag_name_input_visible(1)).toBeTruthy();
         });
         await test.step(`I fill inputs, check 'important' and click 'create' button`, async () => {
             const tags = await pages.modals.add_tag.fill_all_tag_name('new_test');

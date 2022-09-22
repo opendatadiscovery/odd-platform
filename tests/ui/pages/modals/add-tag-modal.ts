@@ -24,8 +24,14 @@ export default class AddTagModal extends BaseModal {
     async check_important(indexOfCheckbox: number) {
         await this.page.locator(SELECTORS.important_tag).nth(indexOfCheckbox).click();
     }
+    async is_checkbox_marked(indexOfCheckbox: number) {
+        await this.page.locator(SELECTORS.important_tag).nth(indexOfCheckbox).inputValue();
+    }
     get add_one_more_tag() {
         return new Button(this.page, SELECTORS.add_one_more_tag);
+    }
+    async is_tag_name_input_visible(numberOfInput: number) {
+        await this.page.locator(SELECTORS.tag_name).nth(numberOfInput).isVisible();
     }
     async fill_all_tag_name(name:string) {
         const new_tags = [];
