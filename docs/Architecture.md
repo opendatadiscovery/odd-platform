@@ -11,4 +11,4 @@ The diagram below contains the structure of the Platform and shows principles of
 * It manages your metadata according to the [Specification](https://github.com/opendatadiscovery/opendatadiscovery-specification/blob/main/specification/specification.md).
 * It connects to all your data sources simultaneously and provides configurable scheduling.
 
-**ODDRN** (Open Data Discovery Resource Name) is a unique resource name that identifies entities such as data sources, data entities, dataset fields etc. It is used to built lineage and update metadata. [Read more](ingestion/oddrn.md)
+**ODDRN** (Open Data Discovery Resource Name) is a unique resource name that identifies entities such as data sources, data entities, dataset fields etc. It is used to built lineage and update metadata.
