@@ -11,7 +11,7 @@ test.describe(() => {
     });
     test(`Change tag name`, async ({ steps: { pages }}) => {
         /**
-        https://odd.testops.cloud/project/1/test-cases/30?treeId=0
+        /project/1/test-cases/30?treeId=0
          */
         const tag_name = 'tag_1';
         const changed_name = 'tag_changed_name';
@@ -33,7 +33,7 @@ test.describe(() => {
     });
     test(`Mark tag as important`, async ({ steps: { pages } }) => {
         /**
-        https://odd.testops.cloud/project/1/test-cases/31?treeId=0
+        /project/1/test-cases/31?treeId=0
          */
         const tag_name = 'tag_2';
         await test.step(`I create tag`, async () => {
@@ -53,7 +53,7 @@ test.describe(() => {
     });
     test(`Mark tag as unimportant`, async ({ steps: { pages } }) => {
         /**
-        https://odd.testops.cloud/project/1/test-cases/32?treeId=0
+        /project/1/test-cases/32?treeId=0
          */
         const tag_name = 'tag_3';
         await test.step(`I create tag`, async () => {

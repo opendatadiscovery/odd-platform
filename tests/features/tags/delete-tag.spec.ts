@@ -11,7 +11,7 @@ test.describe(() => {
     });
     test(`Delete unimportant tag`, async ({ steps: { pages } }) => {
         /**
-        https://odd.testops.cloud/project/1/test-cases/33?treeId=0
+        /project/1/test-cases/33?treeId=0
          */
         const tag_name = 'tag_4';
         await test.step(`I create tag`, async () => {
@@ -29,7 +29,7 @@ test.describe(() => {
         });
     test(`Delete important tag`, async ({ steps: { pages } }) => {
         /**
-        https://odd.testops.cloud/project/1/test-cases/34?treeId=0
+        /project/1/test-cases/34?treeId=0
          */
         const tag_name = 'tag_5';
         await test.step(`I create tag`, async () => {
