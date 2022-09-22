@@ -8,8 +8,6 @@ import {
   AppLoadingPage,
   AppMenuItem,
   AppPopover,
-  AppTabItem,
-  AppTabs,
   ConfirmationDialog,
   EntityClassItem,
   EntityTypeItem,
@@ -23,11 +21,12 @@ import {
   TimeGapIcon,
 } from 'components/shared/Icons';
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
-import { useAppParams } from 'lib/hooks';
+import { useAppParams, useAppPaths, usePermissions } from 'lib/hooks';
 import {
   deleteDataEntityGroup,
   fetchDataEntityAlerts,
   fetchDataEntityDetails,
+  fetchDataEntityPermissions,
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import {
@@ -36,17 +35,16 @@ import {
   getDataEntityDetails,
   getDataEntityDetailsFetchingStatuses,
   getDataEntityGroupUpdatingStatuses,
-  getDataEntityOpenAlertsCount,
-  getDatasetTestReport,
-  getIsDataEntityBelongsToClass,
   getSearchId,
 } from 'redux/selectors';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { Permission } from 'generated-sources';
+import { PermissionProvider } from 'components/shared/contexts';
 import DataEntityDetailsSkeleton from './DataEntityDetailsSkeleton/DataEntityDetailsSkeleton';
 import InternalNameFormDialog from './InternalNameFormDialog/InternalNameFormDialog';
 import DataEntityGroupForm from './DataEntityGroupForm/DataEntityGroupForm';
-import LinkedItemsListContainer from './LinkedItemsList/LinkedItemsListContainer';
+import LinkedItemsList from './LinkedItemsList/LinkedItemsList';
 import * as S from './DataEntityDetailsStyles';
+import DataEntityDetailsTabs from './DataEntityDetailsTabs/DataEntityDetailsTabs';
 
 // lazy components
 const Overview = React.lazy(() => import('./Overview/Overview'));
@@ -68,29 +66,16 @@ const DataEntityActivity = React.lazy(
   () => import('./DataEntityActivity/DataEntityActivity')
 );
 
-const DataEntityDetailsView: React.FC = () => {
+const DataEntityDetails: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const { dataEntityId, viewType } = useAppParams();
-  const {
-    searchPath,
-    dataEntityOverviewPath,
-    datasetStructurePath,
-    dataEntityLineagePath,
-    dataEntityTestReportPath,
-    dataEntityLinkedItemsPath,
-    dataEntityHistoryPath,
-    dataEntityAlertsPath,
-    dataEntityActivityPath,
-  } = useAppPaths();
+  const { dataEntityId } = useAppParams();
+  const { isAllowedTo: editDataEntity } = usePermissions({ dataEntityId });
+  const { searchPath } = useAppPaths();
 
-  const openAlertsCount = useAppSelector(getDataEntityOpenAlertsCount);
   const searchId = useAppSelector(getSearchId);
   const dataEntityDetails = useAppSelector(
     getDataEntityDetails(dataEntityId)
-  );
-  const { isDataset, isQualityTest, isTransformer } = useAppSelector(
-    getIsDataEntityBelongsToClass(dataEntityId)
   );
 
   const { isLoaded: isDataEntityGroupUpdated } = useAppSelector(
@@ -100,16 +85,12 @@ const DataEntityDetailsView: React.FC = () => {
     isLoading: isDataEntityDetailsFetching,
     isLoaded: isDataEntityDetailsFetched,
   } = useAppSelector(getDataEntityDetailsFetchingStatuses);
+
   const { isLoaded: isDataEntityAddedToGroup } = useAppSelector(
     getDataEntityAddToGroupStatuses
   );
   const { isLoaded: isDataEntityDeletedFromGroup } = useAppSelector(
     getDataEntityDeleteFromGroupStatuses
-  );
-
-  // TODO change selectors
-  const datasetQualityTestReport = useAppSelector(state =>
-    getDatasetTestReport(state, dataEntityId)
   );
 
   React.useEffect(() => {
@@ -125,76 +106,8 @@ const DataEntityDetailsView: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
+    dispatch(fetchDataEntityPermissions({ dataEntityId }));
   }, [dataEntityId]);
-
-  const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
-
-  React.useEffect(() => {
-    setTabs([
-      {
-        name: 'Overview',
-        link: dataEntityOverviewPath(dataEntityId),
-        value: 'overview',
-      },
-      {
-        name: 'Structure',
-        link: datasetStructurePath(dataEntityId),
-        hidden: !isDataset,
-        value: 'structure',
-      },
-      {
-        name: 'Lineage',
-        link: dataEntityLineagePath(dataEntityId),
-        hidden: isQualityTest,
-        value: 'lineage',
-      },
-      {
-        name: 'Test reports',
-        link: dataEntityTestReportPath(dataEntityId),
-        hidden: !isDataset || !datasetQualityTestReport?.total,
-        value: 'test-reports',
-      },
-      {
-        name: 'History',
-        link: dataEntityHistoryPath(dataEntityId),
-        hidden: !isQualityTest && !isTransformer,
-        value: 'history',
-      },
-      {
-        name: 'Alerts',
-        link: dataEntityAlertsPath(dataEntityId),
-        value: 'alerts',
-        hint: openAlertsCount,
-        hintType: 'alert',
-      },
-      {
-        name: 'Linked items',
-        link: dataEntityLinkedItemsPath(dataEntityId),
-        hidden: !dataEntityDetails?.hasChildren,
-        value: 'linked-items',
-      },
-      {
-        name: 'Activity',
-        link: dataEntityActivityPath(dataEntityId),
-        value: 'activity',
-      },
-    ]);
-  }, [
-    dataEntityId,
-    isQualityTest,
-    isDataset,
-    dataEntityDetails,
-    openAlertsCount,
-    datasetQualityTestReport?.total,
-  ]);
-
-  const [selectedTab, setSelectedTab] = React.useState<number>(-1);
-
-  React.useEffect(() => {
-    setSelectedTab(
-      viewType ? tabs.findIndex(tab => tab.value === viewType) : 0
-    );
-  }, [tabs, viewType]);
 
   const handleEntityGroupDelete = React.useCallback(
     () =>
@@ -241,6 +154,7 @@ const DataEntityDetailsView: React.FC = () => {
                         size="small"
                         color="tertiary"
                         sx={{ ml: 1 }}
+                        disabled={!editDataEntity}
                         startIcon={
                           dataEntityDetails.internalName ? (
                             <EditIcon />
@@ -251,7 +165,7 @@ const DataEntityDetailsView: React.FC = () => {
                       >
                         {`${
                           dataEntityDetails.internalName
-                            ? 'Edit'
+                            ? 'Edit custom'
                             : 'Add custom'
                         } name`}
                       </AppButton>
@@ -269,11 +183,20 @@ const DataEntityDetailsView: React.FC = () => {
                   </Grid>
                 )}
             </S.Caption>
-            <Grid container item alignItems="center" width="auto">
+            <Grid
+              container
+              item
+              alignItems="center"
+              width="auto"
+              flexWrap="nowrap"
+            >
               {dataEntityDetails.updatedAt ? (
                 <>
                   <TimeGapIcon />
-                  <Typography variant="body1" sx={{ ml: 1 }}>
+                  <Typography
+                    variant="body1"
+                    sx={{ ml: 1, whiteSpace: 'nowrap' }}
+                  >
                     {formatDistanceToNowStrict(
                       dataEntityDetails.updatedAt,
                       {
@@ -286,6 +209,10 @@ const DataEntityDetailsView: React.FC = () => {
               <Grid>
                 {dataEntityDetails.manuallyCreated && (
                   <AppPopover
+                    childrenSx={{
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                    }}
                     renderOpenBtn={({ onClick, ariaDescribedBy }) => (
                       <AppIconButton
                         sx={{ ml: 2 }}
@@ -306,7 +233,11 @@ const DataEntityDetailsView: React.FC = () => {
                     }}
                   >
                     <DataEntityGroupForm
-                      btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
+                      btnCreateEl={
+                        <AppMenuItem disabled={!editDataEntity}>
+                          Edit
+                        </AppMenuItem>
+                      }
                     />
                     <ConfirmationDialog
                       actionTitle="Are you sure you want to delete this data entity group?"
@@ -320,7 +251,11 @@ const DataEntityDetailsView: React.FC = () => {
                         </>
                       }
                       onConfirm={handleEntityGroupDelete}
-                      actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+                      actionBtn={
+                        <AppMenuItem disabled={!editDataEntity}>
+                          Delete
+                        </AppMenuItem>
+                      }
                     />
                   </AppPopover>
                 )}
@@ -328,23 +263,14 @@ const DataEntityDetailsView: React.FC = () => {
             </Grid>
           </Grid>
           <Grid sx={{ mt: 2 }}>
-            {tabs.length && selectedTab >= 0 ? (
-              <AppTabs
-                type="primary"
-                items={tabs}
-                selectedTab={selectedTab}
-                handleTabChange={() => {}}
-              />
-            ) : null}
+            <DataEntityDetailsTabs />
           </Grid>
         </>
       ) : null}
       {isDataEntityDetailsFetching ? (
         <SkeletonWrapper
-          renderContent={({ randomSkeletonPercentWidth }) => (
-            <DataEntityDetailsSkeleton
-              width={randomSkeletonPercentWidth()}
-            />
+          renderContent={({ randWidth }) => (
+            <DataEntityDetailsSkeleton width={randWidth()} />
           )}
         />
       ) : null}
@@ -397,7 +323,13 @@ const DataEntityDetailsView: React.FC = () => {
                 '/dataentities/:dataEntityId/alerts',
                 '/embedded/dataentities/:dataEntityId/alerts',
               ]}
-              component={DataEntityAlerts}
+              render={() => (
+                <PermissionProvider
+                  permissions={[Permission.ALERT_PROCESSING]}
+                >
+                  <DataEntityAlerts />
+                </PermissionProvider>
+              )}
             />
             <Route
               exact
@@ -413,7 +345,7 @@ const DataEntityDetailsView: React.FC = () => {
                 '/dataentities/:dataEntityId/linked-items',
                 '/embedded/dataentities/:dataEntityId/linked-items',
               ]}
-              component={LinkedItemsListContainer}
+              component={LinkedItemsList}
             />
             <Route
               exact
@@ -438,4 +370,4 @@ const DataEntityDetailsView: React.FC = () => {
   );
 };
 
-export default DataEntityDetailsView;
+export default DataEntityDetails;

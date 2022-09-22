@@ -58,6 +58,20 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
     [setRange, setCurrentRange]
   );
 
+  const disableSelectedDate = ({
+    date,
+    selectedDate,
+  }: {
+    date: DateObject;
+    selectedDate: DateObject | DateObject[];
+  }) => {
+    const isArray = Array.isArray(selectedDate);
+    if (isArray && selectedDate[0].unix === date.unix)
+      return { disabled: true };
+
+    return {};
+  };
+
   return (
     <>
       <S.DateRangePickerLabel>{label}</S.DateRangePickerLabel>
@@ -69,9 +83,10 @@ const AppDateRangePicker: React.FC<AppDateRangePickerProps> = ({
         multiple
         offsetY={4}
         numberOfMonths={2}
+        mapDays={disableSelectedDate}
         render={<S.AppDateRangeInputIcon />}
         onChange={([start, end]: DateObject[]) =>
-          handleSetRange([start.toDate(), end.toDate()])
+          handleSetRange([start?.toDate(), end?.toDate()])
         }
         value={[rangeStart, rangeEnd]}
         plugins={[

@@ -8,13 +8,14 @@ import {
 import { Controller, useFormContext } from 'react-hook-form';
 import { format, isAfter, isBefore, isValid } from 'date-fns';
 import { MetadataFieldType } from 'generated-sources';
-import AppDatePicker, {
+import {
+  AppInput,
+  AppRadio,
+  AppDatePicker,
   maxDate,
   metadataDatePickerInputFormat,
   minDate,
-} from 'components/shared/AppDatePicker/AppDatePicker';
-import AppInput from 'components/shared/AppInput/AppInput';
-import AppRadio from 'components/shared/AppRadio/AppRadio';
+} from 'components/shared';
 
 interface MetadataValueEditFieldProps {
   metadataType: MetadataFieldType | '';

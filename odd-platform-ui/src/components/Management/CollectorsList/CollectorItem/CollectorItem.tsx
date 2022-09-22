@@ -3,18 +3,16 @@ import { Grid, Typography } from '@mui/material';
 import { Collector } from 'generated-sources';
 import { deleteCollector } from 'redux/thunks';
 import { useAppDispatch } from 'lib/redux/hooks';
-import LabeledInfoItem from 'components/shared/LabeledInfoItem/LabeledInfoItem';
-import ConfirmationDialog from 'components/shared/ConfirmationDialog/ConfirmationDialog';
-import EditIcon from 'components/shared/Icons/EditIcon';
-import DeleteIcon from 'components/shared/Icons/DeleteIcon';
-import AppButton from 'components/shared/AppButton/AppButton';
-import CollectorFormDialog from 'components/Management/CollectorsList/CollectorForm/CollectorForm';
-import CollectorItemToken from './CollectorItemToken/CollectorItemToken';
 import {
-  CollectorActionsContainer,
-  CollectorDescriptionContainer,
-  CollectorContainer,
-} from './CollectorItemStyles';
+  LabeledInfoItem,
+  ConfirmationDialog,
+  AppButton,
+} from 'components/shared';
+import { EditIcon, DeleteIcon } from 'components/shared/Icons';
+import { usePermissions } from 'lib/hooks';
+import CollectorFormDialog from '../CollectorForm/CollectorForm';
+import CollectorItemToken from './CollectorItemToken/CollectorItemToken';
+import * as S from './CollectorItemStyles';
 
 interface CollectorItemProps {
   collector: Collector;
@@ -22,6 +20,7 @@ interface CollectorItemProps {
 
 const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions({});
 
   const onDelete = React.useCallback(
     () => dispatch(deleteCollector({ collectorId: collector.id })),
@@ -29,14 +28,14 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
   );
 
   return (
-    <CollectorContainer elevation={0}>
+    <S.CollectorContainer elevation={0}>
       <Grid container alignItems="flex-start" spacing={2}>
         <Grid item xs={8}>
           <Typography variant="h4" title={collector.name}>
             {collector.name}
           </Typography>
         </Grid>
-        <CollectorActionsContainer item sm={4}>
+        <S.CollectorActionsContainer item sm={4}>
           <CollectorFormDialog
             collector={collector}
             btnCreateEl={
@@ -45,6 +44,7 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
                 color="primaryLight"
                 startIcon={<EditIcon />}
                 sx={{ mr: 1 }}
+                disabled={!isAdmin}
               >
                 Edit
               </AppButton>
@@ -64,13 +64,14 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
                 size="medium"
                 color="primaryLight"
                 startIcon={<DeleteIcon />}
+                disabled={!isAdmin}
               >
                 Delete
               </AppButton>
             }
           />
-        </CollectorActionsContainer>
-        <CollectorDescriptionContainer item sm={6} container>
+        </S.CollectorActionsContainer>
+        <S.CollectorDescriptionContainer item sm={6} container>
           <LabeledInfoItem
             variant="body2"
             inline
@@ -95,9 +96,9 @@ const CollectorItem: React.FC<CollectorItemProps> = ({ collector }) => {
           >
             <CollectorItemToken collector={collector} />
           </LabeledInfoItem>
-        </CollectorDescriptionContainer>
+        </S.CollectorDescriptionContainer>
       </Grid>
-    </CollectorContainer>
+    </S.CollectorContainer>
   );
 };
 

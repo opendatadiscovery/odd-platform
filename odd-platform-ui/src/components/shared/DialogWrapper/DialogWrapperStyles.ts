@@ -18,8 +18,9 @@ export const MainDialog = styled(Dialog)<{
   [`& .${dialogClasses.paperWidthXs}`]: { maxWidth: '368px' },
   [`& .${dialogClasses.paperWidthSm}`]: { maxWidth: '560px' },
   [`& .${dialogClasses.paperWidthMd}`]: {
+    minHeight: '320px',
     maxWidth: '640px',
-    maxHeight: '640px',
+    maxHeight: '70vh',
   },
   [`& .${dialogClasses.paper}`]: {
     border: ' 1px solid',

@@ -12,7 +12,7 @@ import { useAppPaths } from 'lib/hooks';
 import * as S from './OverviewEntityGroupStatsStyles';
 
 interface OverviewEntityGroupStatsProps {
-  dataEntityGroupName: string;
+  dataEntityGroupName: string | undefined;
   entities: DataEntityDetails['entities'];
   entityGroups: DataEntityDetails['dataEntityGroups'];
 }
@@ -54,7 +54,10 @@ const OverviewEntityGroupStats: React.FC<
           sx={{ mt: 1 }}
         >
           {entities?.slice(0, 5).map(entity => (
-            <S.EntityLink to={dataEntityDetailsPath(entity.id)}>
+            <S.EntityLink
+              key={entity.id}
+              to={dataEntityDetailsPath(entity.id)}
+            >
               <AppButton
                 key={entity.id}
                 size="medium"

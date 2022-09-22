@@ -17,6 +17,7 @@ import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveNamespaceRe
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveSearchEntrypointRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveTermSearchEntrypointRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -51,6 +52,7 @@ public class NamespaceServiceImpl implements NamespaceService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Mono<Namespace> create(final NamespaceFormData createEntityForm) {
         return Mono.just(createEntityForm)
             .map(namespaceMapper::mapForm)
@@ -59,6 +61,7 @@ public class NamespaceServiceImpl implements NamespaceService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     @ReactiveTransactional
     public Mono<Namespace> update(final long id, final NamespaceUpdateFormData updateEntityForm) {
         return namespaceRepository.get(id)
@@ -70,6 +73,7 @@ public class NamespaceServiceImpl implements NamespaceService {
     }
 
     @Override
+    @PreAuthorize("hasAuthority('MANAGEMENT_CONTROL')")
     public Mono<Long> delete(final long id) {
         return Mono.zip(
                 dataSourceRepository.existsByNamespace(id),

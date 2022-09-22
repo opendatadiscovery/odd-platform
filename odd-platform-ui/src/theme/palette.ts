@@ -97,12 +97,12 @@ export const palette = createPalette({
     DATA_ENTITY_GROUP: colors.lightGreen5,
   },
   runStatus: {
-    SUCCESS: colors.green60,
-    FAILED: colors.red50,
-    BROKEN: colors.orange50,
-    SKIPPED: colors.blue50,
-    ABORTED: colors.purple30,
-    UNKNOWN: colors.black30,
+    SUCCESS: { color: colors.green60, background: colors.green5 },
+    FAILED: { color: colors.red50, background: colors.red5 },
+    BROKEN: { color: colors.orange50, background: colors.orange5 },
+    SKIPPED: { color: colors.blue50, background: colors.blue5 },
+    ABORTED: { color: colors.purple30, background: colors.purple5 },
+    UNKNOWN: { color: colors.black30, background: colors.black5 },
   },
   reportStatus: {
     SUCCESS: { background: colors.green10, border: colors.green20 },
@@ -186,6 +186,19 @@ export const palette = createPalette({
       hover: { background: colors.black15, color: colors.black70 },
       active: { background: colors.black15, color: colors.black90 },
     },
+    secondarySuccess: {
+      normal: { background: colors.green5, color: colors.green60 },
+      hover: { background: colors.green10, color: colors.green60 },
+      active: { background: colors.green20, color: colors.green60 },
+      disabled: { background: colors.green5, color: colors.green20 },
+    },
+    secondaryWarn: {
+      normal: { background: colors.red5, color: colors.red60 },
+      hover: { background: colors.red10, color: colors.red60 },
+      active: { background: colors.red20, color: colors.red60 },
+      disabled: { background: colors.red5, color: colors.red20 },
+    },
+    animationParas: { start: colors.blue30, end: colors.blue5 },
   },
   tag: {
     main: {
@@ -236,12 +249,13 @@ export const palette = createPalette({
     },
   },
   alert: {
-    OPEN: {
-      background: colors.red10,
-      border: colors.red20,
-      color: colors.red5,
-    },
+    OPEN: { background: colors.red10, border: colors.red20 },
     RESOLVED: { background: colors.blue10, border: colors.blue20 },
+  },
+  associationRequestStatus: {
+    APPROVED: { background: colors.green10, border: colors.green20 },
+    DECLINED: { background: colors.red10, border: colors.red20 },
+    PENDING: { background: colors.blue10, border: colors.blue20 },
   },
   textField: {
     normal: { border: colors.black20, background: colors.white },

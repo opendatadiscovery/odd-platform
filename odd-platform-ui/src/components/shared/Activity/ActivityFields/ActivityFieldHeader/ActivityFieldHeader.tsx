@@ -2,7 +2,7 @@ import React from 'react';
 import { Typography } from '@mui/material';
 import AppButton from 'components/shared/AppButton/AppButton';
 import { CRUDType } from 'lib/interfaces';
-import { useSetActivityHeaderIcon } from 'lib/hooks/useSetActivityHeaderIcon';
+import { useSetActivityHeaderIcon } from 'lib/hooks';
 import * as S from './ActivityFieldHeaderStyles';
 
 interface ActivityFieldHeaderProps {

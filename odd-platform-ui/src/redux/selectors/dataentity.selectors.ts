@@ -12,24 +12,21 @@ const dataEntitiesState = ({
   dataEntities,
 }: RootState): DataEntitiesState => dataEntities;
 
-const dataEntityClassName = (
-  _: RootState,
-  entityClassName: DataEntityClassNameEnum
-) => entityClassName;
-
 export const getDataEntityId = (
   _: RootState,
   dataEntityId: number | string
 ) => dataEntityId;
 
-export const getDataEntityTypesByClassName = createSelector(
-  dataEntitiesState,
-  dataEntityClassName,
-  (dataEntities, entityClassName): Array<DataEntityType> =>
-    Object.values(dataEntities.classesAndTypesDict.entityClasses).find(
-      entityClass => entityClass.name === entityClassName
-    )?.types || []
-);
+export const getDataEntityTypesByClassName = (
+  entityClassName: DataEntityClassNameEnum
+) =>
+  createSelector(
+    dataEntitiesState,
+    (dataEntities): Array<DataEntityType> =>
+      Object.values(dataEntities.classesAndTypesDict.entityClasses).find(
+        entityClass => entityClass.name === entityClassName
+      )?.types || []
+  );
 
 export const getIsDataEntityBelongsToClass = (
   dataEntityId: number | string
@@ -196,3 +193,6 @@ export const getDataEntityAddToGroupStatuses = createStatusesSelector(
 export const getDataEntityDeleteFromGroupStatuses = createStatusesSelector(
   actions.deleteDataEntityFromGroupActionType
 );
+
+export const getDataEntityPermissionsFetchingStatuses =
+  createStatusesSelector(actions.fetchDataEntityPermissionsActionType);

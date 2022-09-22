@@ -9,6 +9,8 @@ permissions:
   pull-requests: write
 
 jobs:
+  run_playwright_tests:
+    uses: ./.github/workflows/run-playwright-tests.yml
   run_tests:
     runs-on: ubuntu-latest
     steps:

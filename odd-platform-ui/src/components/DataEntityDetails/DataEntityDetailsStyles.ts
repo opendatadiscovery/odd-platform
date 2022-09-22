@@ -19,11 +19,12 @@ export const Container = styled('div')(({ theme }) => ({
 }));
 
 export const InternalNameEditBtnContainer = styled('div')(() => ({
-  display: 'none',
+  opacity: 0,
 }));
 
 export const Caption = styled(Grid)(() => ({
+  width: '100%',
   '&:hover': {
-    [`${InternalNameEditBtnContainer}`]: { display: 'block' },
+    [`${InternalNameEditBtnContainer}`]: { opacity: 1 },
   },
 }));

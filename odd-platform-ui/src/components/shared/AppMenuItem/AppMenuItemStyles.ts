@@ -23,7 +23,7 @@ export const StyledAppMenuItem = styled(MenuItem)<AppMenuItemStyleProps>(
       '&:hover': {
         backgroundColor: theme.palette.backgrounds.primary,
       },
-
+      width: '100%',
       minWidth: $minWidth ? `${$minWidth}px` : 0,
       maxWidth: $maxWidth ? `${$maxWidth}px` : 'none',
     },

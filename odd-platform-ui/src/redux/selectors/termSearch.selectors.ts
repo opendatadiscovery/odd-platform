@@ -1,8 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
-import {
-  createLegacyErrorSelector,
-  createLegacyFetchingSelector,
-} from 'redux/selectors/loader-selectors';
+import { createStatusesSelector } from 'redux/selectors/loader-selectors';
+import * as actions from 'redux/actions';
 import {
   RootState,
   SearchFacetStateById,
@@ -14,27 +12,29 @@ import mapValues from 'lodash/mapValues';
 import pickBy from 'lodash/pickBy';
 import values from 'lodash/values';
 import transform from 'lodash/transform';
+import compact from 'lodash/compact';
+import { emptyArr } from 'lib/constants';
 
-export const getTermSearchCreationStatus =
-  createLegacyFetchingSelector('POST_TERM_SEARCH');
+export const getTermSearchCreateStatuses = createStatusesSelector(
+  actions.createTermsSearchActionType
+);
 
-export const getTermSearchFetchStatus =
-  createLegacyFetchingSelector('GET_TERM_SEARCH');
+export const getTermSearchFetchStatuses = createStatusesSelector(
+  actions.getTermsSearchActionType
+);
 
-export const getTermSearchFetchError =
-  createLegacyErrorSelector('GET_TERM_SEARCH');
+export const getTermSearchUpdateStatuses = createStatusesSelector(
+  actions.updateTermsSearchActionType
+);
 
-export const getTermSearchUpdateStatus =
-  createLegacyFetchingSelector('PUT_TERM_SEARCH');
+export const getTermSearchResultsFetchStatuses = createStatusesSelector(
+  actions.fetchTermsSearchResultsActionType
+);
 
-export const getTermSearchResultsFetchStatus =
-  createLegacyFetchingSelector('GET_TERM_SEARCH_RESULTS');
-
-export const getTermSearchSuggestionsFetchStatus =
-  createLegacyFetchingSelector('GET_TERM_SEARCH_SUGGESTIONS');
+export const getTermSearchSuggestionsFetchStatuses =
+  createStatusesSelector(actions.fetchTermsSearchSuggestionsActionType);
 
 // Term Search
-
 const termSearchState = ({ termSearch }: RootState): TermSearchState =>
   termSearch;
 
@@ -43,7 +43,7 @@ export const getTermSearchId = createSelector(
   termsSearch => termsSearch.termSearchId
 );
 
-export const getTermSearchFiltersSynced = createSelector(
+export const getTermSearchFacetsSynced = createSelector(
   termSearchState,
   termsSearch => termsSearch.isFacetsStateSynced
 );
@@ -53,34 +53,32 @@ export const getTermSearchResultsPage = createSelector(
   termsSearch => termsSearch.results.pageInfo
 );
 
-export const getTermSearchResultsItems = createSelector(
+export const getTermSearchResults = createSelector(
   termSearchState,
   termsSearch => termsSearch.results.items
 );
 
-export const getTermSearchIsCreating = createSelector(
-  getTermSearchCreationStatus,
-  statusCreate => statusCreate === 'fetching'
-);
-
 export const getTermSearchIsFetching = createSelector(
-  getTermSearchCreationStatus,
-  getTermSearchFetchStatus,
-  getTermSearchUpdateStatus,
-  getTermSearchFiltersSynced,
-  getTermSearchResultsFetchStatus,
+  getTermSearchCreateStatuses,
+  getTermSearchFetchStatuses,
+  getTermSearchUpdateStatuses,
+  getTermSearchResultsFetchStatuses,
+  getTermSearchFacetsSynced,
   termSearchState,
   (
-    statusCreate,
-    statusFetch,
-    statusUpdate,
+    { isLoading: isSearchCreating },
+    { isLoading: isSearchFetching },
+    { isLoading: isSearchUpdating },
+    { isLoading: isSearchResultsFetching },
     isSynced,
-    statusResults,
     search
   ) =>
-    [statusCreate, statusFetch, statusUpdate, statusResults].includes(
-      'fetching'
-    ) ||
+    compact([
+      isSearchCreating,
+      isSearchFetching,
+      isSearchUpdating,
+      isSearchResultsFetching,
+    ]).length > 0 ||
     !isSynced ||
     (!!search.results.pageInfo.total && !search.results.items.length)
 );
@@ -90,19 +88,8 @@ export const getTermSearchQuery = createSelector(
   termsSearch => termsSearch.query
 );
 
-export const getTermSearchIsUpdated = createSelector(
-  getTermSearchUpdateStatus,
-  statusUpdate => statusUpdate === 'fetching'
-);
-
-export const getTermSuggestionsIsFetching = createSelector(
-  getTermSearchSuggestionsFetchStatus,
-  statusFetch => statusFetch === 'fetching'
-);
-
 // Facets
-
-export const getTermSearchFacetsData = createSelector(
+export const getTermSearchFacetsParams = createSelector(
   termSearchState,
   termsSearch =>
     mapValues(termsSearch.facetState, facetState =>
@@ -110,23 +97,19 @@ export const getTermSearchFacetsData = createSelector(
     )
 );
 
-const getTermSearchFacetName = (
-  _: RootState,
-  termsSearchFacet: TermSearchOptionalFacetNames
-) => termsSearchFacet;
+export const getTermSearchFacetsByType = (
+  facetName: TermSearchOptionalFacetNames
+) =>
+  createSelector(
+    termSearchState,
+    termsSearch => values(termsSearch.facets[facetName]?.items) || []
+  );
 
-export const getTermSearchFacetsByType = createSelector(
-  termSearchState,
-  getTermSearchFacetName,
-  (termsSearch, termsSearchFacet) =>
-    values(termsSearch.facets[termsSearchFacet]?.items) || []
-);
-
-export const getSelectedTermSearchFacetOptions = createSelector(
-  termSearchState,
-  getTermSearchFacetName,
-  (termsSearch, facetName) => {
-    if (!termsSearch.facetState[facetName]) return [];
+export const getSelectedTermSearchFacetOptions = (
+  facetName: TermSearchOptionalFacetNames
+) =>
+  createSelector(termSearchState, termsSearch => {
+    if (!termsSearch.facetState[facetName]) return emptyArr;
     return transform<SearchFacetStateById, SearchFilterStateSynced[]>(
       termsSearch.facetState[facetName] || {},
       (memo, facetOption) => {
@@ -135,8 +118,7 @@ export const getSelectedTermSearchFacetOptions = createSelector(
       },
       []
     );
-  }
-);
+  });
 
 export const getTermSearchSuggestions = createSelector(
   termSearchState,

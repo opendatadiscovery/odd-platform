@@ -4,7 +4,7 @@ import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import {
   DataEntityClassNameEnum,
   DataEntityDetails,
-  DataEntityGroupFormData as GeneratedDataEntityGroupFormData,
+  DataEntityGroupFormData,
   DataEntityType,
   DataEntityTypeNameEnum,
 } from 'generated-sources';
@@ -31,16 +31,12 @@ import {
   updateDataEntityGroup,
 } from 'redux/thunks';
 import { useHistory } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import EntityItem from './EntityItem/EntityItem';
 import { EntityItemsContainer } from './DataEntityGroupFormStyles';
 
 interface DataEntityGroupFormProps {
   btnCreateEl: JSX.Element;
-}
-
-export interface DataEntityGroupFormData
-  extends Omit<GeneratedDataEntityGroupFormData, 'type'> {
-  type?: DataEntityType;
 }
 
 const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
@@ -55,11 +51,8 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
     getDataEntityDetails(dataEntityId)
   );
 
-  const types = useAppSelector(state =>
-    getDataEntityTypesByClassName(
-      state,
-      DataEntityClassNameEnum.ENTITY_GROUP
-    )
+  const types = useAppSelector(
+    getDataEntityTypesByClassName(DataEntityClassNameEnum.ENTITY_GROUP)
   );
 
   const { isLoading: isDataEntityGroupCreating } = useAppSelector(
@@ -77,13 +70,13 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
         '',
       namespaceName:
         dataEntityGroupDetails?.dataSource?.namespace?.name || '',
-      type: dataEntityGroupDetails?.type,
+      type: dataEntityGroupDetails?.type || ({} as DataEntityType),
       entities: dataEntityGroupDetails?.entities || [],
     }),
     [dataEntityGroupDetails]
   );
 
-  const { handleSubmit, control, reset, formState, setValue, register } =
+  const { handleSubmit, control, reset, formState, watch } =
     useForm<DataEntityGroupFormData>({
       mode: 'onChange',
       reValidateMode: 'onChange',
@@ -93,6 +86,7 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
   const { fields, append, remove } = useFieldArray({
     control,
     name: 'entities',
+    rules: { required: true },
   });
 
   const initialState = { error: '', isSuccessfulSubmit: false };
@@ -111,13 +105,9 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       dataEntityGroupDetails
         ? updateDataEntityGroup({
             dataEntityGroupId: dataEntityGroupDetails.id,
-            dataEntityGroupFormData:
-              data as GeneratedDataEntityGroupFormData,
+            dataEntityGroupFormData: data,
           })
-        : createDataEntityGroup({
-            dataEntityGroupFormData:
-              data as GeneratedDataEntityGroupFormData,
-          })
+        : createDataEntityGroup({ dataEntityGroupFormData: data })
     )
       .unwrap()
       .then(
@@ -182,12 +172,13 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
       <Controller
         name="type"
         control={control}
-        rules={{ required: true }}
+        rules={{ required: true, validate: val => !isEmpty(val) }}
         render={({ field }) => (
           <AppSelect
+            {...field}
             label="Type"
             sx={{ mt: 1.5 }}
-            defaultValue={field.value?.name}
+            value={watch('type')}
           >
             {types
               ?.filter(
@@ -195,23 +186,14 @@ const DataEntityGroupForm: React.FC<DataEntityGroupFormProps> = ({
                 type => type.name !== DataEntityTypeNameEnum.ML_EXPERIMENT
               )
               .map(type => (
-                <AppMenuItem
-                  {...field}
-                  key={type.id}
-                  value={type.name}
-                  onClick={() => setValue('type', type)}
-                >
+                <AppMenuItem key={type.id} value={type as never}>
                   {type.name}
                 </AppMenuItem>
               ))}
           </AppSelect>
         )}
       />
-      <SearchSuggestionsAutocomplete
-        formOnChange={register('entities').onChange}
-        append={append}
-        addEntities
-      />
+      <SearchSuggestionsAutocomplete append={append} addEntities />
       <EntityItemsContainer sx={{ mt: 1.25 }}>
         {fields?.map((entity, index) => (
           <EntityItem

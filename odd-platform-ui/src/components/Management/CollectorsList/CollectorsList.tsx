@@ -10,30 +10,33 @@ import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 import { fetchCollectorsList } from 'redux/thunks';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import AddIcon from 'components/shared/Icons/AddIcon';
-import NumberFormatted from 'components/shared/NumberFormatted/NumberFormatted';
-import SkeletonWrapper from 'components/shared/SkeletonWrapper/SkeletonWrapper';
-import EmptyContentPlaceholder from 'components/shared/EmptyContentPlaceholder/EmptyContentPlaceholder';
-import AppButton from 'components/shared/AppButton/AppButton';
-import AppInput from 'components/shared/AppInput/AppInput';
-
-import SearchIcon from 'components/shared/Icons/SearchIcon';
-import ClearIcon from 'components/shared/Icons/ClearIcon';
-import CollectorFormDialog from 'components/Management/CollectorsList/CollectorForm/CollectorForm';
+import { AddIcon, SearchIcon, ClearIcon } from 'components/shared/Icons';
+import {
+  NumberFormatted,
+  AppButton,
+  AppInput,
+  EmptyContentPlaceholder,
+} from 'components/shared';
+import { usePermissions } from 'lib/hooks';
+import CollectorForm from './CollectorForm/CollectorForm';
 import CollectorSkeletonItem from './CollectorSkeletonItem/CollectorSkeletonItem';
 import CollectorItem from './CollectorItem/CollectorItem';
 import { CollectorCaption } from './CollectorsListStyles';
 
 const CollectorsListView: React.FC = () => {
   const dispatch = useAppDispatch();
+  const { isAdmin } = usePermissions({});
+
   const pageInfo = useAppSelector(getCollectorsListPage);
   const collectorsList = useAppSelector(getCollectorsList);
+
   const { isLoading: isCollectorDeleting } = useAppSelector(
     getCollectorDeletingStatuses
   );
   const { isLoading: isCollectorsListFetching } = useAppSelector(
     getCollectorsListFetchingStatuses
   );
+
   const pageSize = 30;
   const [searchText, setSearchText] = React.useState<string>('');
   const [totalCollectors, setTotalCollectors] = React.useState<
@@ -113,12 +116,13 @@ const CollectorsListView: React.FC = () => {
           onKeyDown={handleKeyDown}
           onChange={handleInputChange}
         />
-        <CollectorFormDialog
+        <CollectorForm
           btnCreateEl={
             <AppButton
               size="medium"
               color="primaryLight"
               startIcon={<AddIcon />}
+              disabled={!isAdmin}
             >
               Add collector
             </AppButton>
@@ -127,48 +131,22 @@ const CollectorsListView: React.FC = () => {
       </CollectorCaption>
       <Grid container>
         <Grid item xs={12}>
-          {isCollectorsListFetching ? (
-            <SkeletonWrapper
-              length={5}
-              renderContent={({ randomSkeletonPercentWidth, key }) => (
-                <CollectorSkeletonItem
-                  width={randomSkeletonPercentWidth()}
-                  key={key}
-                />
-              )}
-            />
-          ) : (
-            <InfiniteScroll
-              next={fetchNextPage}
-              hasMore={!!pageInfo?.hasNext}
-              loader={
-                isCollectorsListFetching ? (
-                  <SkeletonWrapper
-                    length={5}
-                    renderContent={({
-                      randomSkeletonPercentWidth,
-                      key,
-                    }) => (
-                      <CollectorSkeletonItem
-                        width={randomSkeletonPercentWidth()}
-                        key={key}
-                      />
-                    )}
-                  />
-                ) : null
-              }
-              dataLength={collectorsList.length}
-            >
-              {collectorsList.map(collector => (
-                <Grid key={collector.id} sx={{ mb: 1 }}>
-                  <CollectorItem
-                    key={collector.id}
-                    collector={collector}
-                  />
-                </Grid>
-              ))}
-            </InfiniteScroll>
-          )}
+          <InfiniteScroll
+            next={fetchNextPage}
+            hasMore={!!pageInfo?.hasNext}
+            dataLength={collectorsList.length}
+            loader={
+              isCollectorsListFetching && (
+                <CollectorSkeletonItem length={5} />
+              )
+            }
+          >
+            {collectorsList.map(collector => (
+              <Grid key={collector.id} sx={{ mb: 1 }}>
+                <CollectorItem key={collector.id} collector={collector} />
+              </Grid>
+            ))}
+          </InfiniteScroll>
         </Grid>
       </Grid>
       {!isCollectorsListFetching && !collectorsList.length ? (

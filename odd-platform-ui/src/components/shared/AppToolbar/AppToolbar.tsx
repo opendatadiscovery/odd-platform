@@ -10,8 +10,8 @@ import {
 import { useAppDispatch, useAppSelector } from 'lib/redux/hooks';
 import { useHistory, useLocation } from 'react-router-dom';
 import { DropdownIcon } from 'components/shared/Icons';
-import { clearActivityFilters } from 'redux/reducers/activity.slice';
-import { useAppPaths } from 'lib/hooks/useAppPaths';
+import { clearActivityFilters } from 'redux/slices/activity.slice';
+import { useAppPaths } from 'lib/hooks';
 import {
   AppIconButton,
   AppMenu,
@@ -105,13 +105,13 @@ const AppToolbar: React.FC = () => {
         filters: {},
       };
 
-      dispatch(
-        createTermSearch({ termSearchFormData: termSearchQuery })
-      ).then(termSearch => {
-        const termSearchLink = termSearchPath(termSearch.searchId);
-        history.replace(termSearchLink);
-        setTermSearchLoading(false);
-      });
+      dispatch(createTermSearch({ termSearchFormData: termSearchQuery }))
+        .unwrap()
+        .then(termSearch => {
+          const termSearchLink = termSearchPath(termSearch.searchId);
+          history.replace(termSearchLink);
+          setTermSearchLoading(false);
+        });
     } else if (tabs[idx].name === 'Catalog') {
       if (searchLoading) return;
       setSearchLoading(true);
@@ -158,7 +158,7 @@ const AppToolbar: React.FC = () => {
             </Grid>
             <S.SectionDesktop item>
               <S.UserAvatar stroke="currentColor" />
-              <S.UserName>{identity?.identity.username}</S.UserName>
+              <S.UserName>{identity?.username}</S.UserName>
               <AppIconButton
                 icon={<DropdownIcon />}
                 color="unfilled"
