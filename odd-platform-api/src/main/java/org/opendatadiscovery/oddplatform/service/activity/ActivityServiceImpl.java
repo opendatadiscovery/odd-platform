@@ -59,7 +59,8 @@ public class ActivityServiceImpl implements ActivityService {
         final LocalDateTime activityCreateTime = LocalDateTime.now();
 
         return activityTablePartitionManager.createPartitionIfNotExists(activityCreateTime.toLocalDate())
-            .then(authIdentityProvider.getUsername())
+            .then(authIdentityProvider.getCurrentUser())
+            .map(UserDto::username)
             .flatMapMany(username -> Flux.fromStream(mapEventsToPojos(events, activityCreateTime, username)))
             .switchIfEmpty(Flux.fromStream(mapEventsToPojos(events, activityCreateTime, null)))
             .collectList()

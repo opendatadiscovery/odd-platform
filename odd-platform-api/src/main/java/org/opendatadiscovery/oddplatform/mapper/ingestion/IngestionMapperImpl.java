@@ -54,12 +54,10 @@ import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRAN
 import static org.opendatadiscovery.oddplatform.dto.DataEntityClassDto.DATA_TRANSFORMER_RUN;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataConsumerIngestionDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataEntityGroupDto;
-import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataEntityIngestionDtoBuilder;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataInputIngestionDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataQualityTestIngestionDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataSetIngestionDto;
 import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.DataTransformerIngestionDto;
-import static org.opendatadiscovery.oddplatform.dto.ingestion.DataEntityIngestionDto.builder;
 
 @Component
 @RequiredArgsConstructor
@@ -83,7 +81,7 @@ public class IngestionMapperImpl implements IngestionMapper {
         final Set<DataEntityClassDto> entityClasses = defineEntityClasses(dataEntity);
         final DataEntityTypeDto type = DataEntityTypeDto.valueOf(dataEntity.getType().getValue());
 
-        DataEntityIngestionDtoBuilder builder = builder()
+        DataEntityIngestionDto.DataEntityIngestionDtoBuilder builder = DataEntityIngestionDto.builder()
             .name(dataEntity.getName())
             .oddrn(dataEntity.getOddrn())
             .externalDescription(dataEntity.getDescription())
