@@ -3,6 +3,7 @@
 ## Prerequisites
 
 - Node.js and npm
+- [jq](https://github.com/stedolan/jq/wiki/Installation)
 - Docker Engine 19.03.0+
 - Preferably the latest docker-compose
 
@@ -34,7 +35,7 @@
 
     - or in headless mode:
 
-            npm run test-ci
+            npm run test:ci
 
 1. Tear down all parts of the ODD platform (i.e. stop and remove containers):
 
