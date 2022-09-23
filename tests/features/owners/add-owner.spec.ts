@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { test } from '../config/test-base';
-import { go_to_page } from '../ui/steps/login';
+import { test } from '../../config/test-base';
+import { go_to_page } from '../../ui/steps/login';
 
 test.describe('Owners', function () {
   test('Add new Owner', async ({ steps: { pages }, page }) => {
