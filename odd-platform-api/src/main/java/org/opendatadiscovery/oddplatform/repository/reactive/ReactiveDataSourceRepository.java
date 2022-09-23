@@ -16,8 +16,6 @@ public interface ReactiveDataSourceRepository extends ReactiveCRUDRepository<Dat
 
     Flux<DataSourceDto> getDtosByOddrns(final List<String> oddrns);
 
-    Flux<DataSourceDto> listActive();
-
     Mono<Boolean> existsByNamespace(final long namespaceId);
 
     Mono<DataSourcePojo> injectOddrn(final long id, final String oddrn);

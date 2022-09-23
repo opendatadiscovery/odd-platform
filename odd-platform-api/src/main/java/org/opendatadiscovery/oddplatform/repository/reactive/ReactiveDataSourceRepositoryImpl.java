@@ -101,17 +101,6 @@ public class ReactiveDataSourceRepositoryImpl
     }
 
     @Override
-    public Flux<DataSourceDto> listActive() {
-        final SelectConditionStep<Record> query = baseSelect()
-            .where(DATA_SOURCE.ACTIVE.isTrue())
-            .and(DATA_SOURCE.IS_DELETED.isFalse())
-            .and(DATA_SOURCE.CONNECTION_URL.isNotNull())
-            .and(DATA_SOURCE.CONNECTION_URL.notEqual(""));
-
-        return jooqReactiveOperations.flux(query).map(this::mapRecordIntoDto);
-    }
-
-    @Override
     public Mono<Boolean> existsByNamespace(final long namespaceId) {
         final Select<? extends Record1<Boolean>> query = jooqQueryHelper.selectExists(
             DSL.selectFrom(DATA_SOURCE)
