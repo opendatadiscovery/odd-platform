@@ -3,14 +3,14 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 
-import { odd } from '../config/environments.json';
 import AppService from '../api/app-service';
 import { MyProfile } from '../api/interfaces/my-profile';
 import LoginService from '../api/login-service';
 import CommonUtils from '../common-utilities/common-utils';
-import { configuration, UserType } from './configuration';
-import { go_to_page } from '../ui/steps/login';
 import { Steps } from '../ui/steps';
+import { go_to_page } from '../ui/steps/login';
+import { configuration, UserType } from './configuration';
+import { odd } from './environments.json';
 
 const workers_folder = `./dist/workers`;
 const save_worker_id = (worker_id: string) => {
@@ -28,7 +28,6 @@ export const test = base.extend<
     /**
      * Shared beforeEach hook which runs before each `test`
      */
-    // @ts-ignore
     shared_before_each;
     /**
      * Logins in application with the defined auth type
@@ -71,10 +70,8 @@ export const test = base.extend<
           );
 
           await context.addCookies([
-            // @ts-ignore
             { url: odd[configuration.environment], name: 'access_token', value: access_token },
             {
-              // @ts-ignore
               url: odd[configuration.environment],
               name: 'refresh_token',
               value: refresh_token,
@@ -90,10 +87,9 @@ export const test = base.extend<
           });
 
           const access_token = await CommonUtils.wait_until(async () => {
-            const [access_token_cookie] = // @ts-ignore
-            (await context.cookies([odd[configuration.environment]])).filter(
-              cookie => cookie.name === 'access_token',
-            );
+            const [access_token_cookie] = (
+              await context.cookies([odd[configuration.environment]])
+            ).filter(cookie => cookie.name === 'access_token');
 
             if (access_token_cookie) return access_token_cookie.value;
           });
@@ -102,7 +98,6 @@ export const test = base.extend<
             await go_to_page(page, auth_data.url);
           }
 
-          // @ts-ignore
           LoginService.auth_token = access_token;
         }
       }
@@ -113,10 +108,8 @@ export const test = base.extend<
     await use(login);
   },
   shared_before_each: [
-    // @ts-ignore
     async ({ page, browser }, use, testInfo: TestInfo) => {
       // skip automation, that isn't done
-      // @ts-ignore
       const tags: string[] = testInfo.titlePath.map(title => title.match(/@\w+/gi)).flat();
 
       test.skip(tags.includes('@wip'), 'Check under work(tagged with @wip)');

@@ -7,6 +7,8 @@ import { status_is_ok } from './helpers/api-status-check';
 export default class LoginService {
   /**
    *
+   * @param user
+   * @param client
    */
   static async login_as(
     user: UserType,

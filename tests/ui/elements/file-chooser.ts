@@ -5,6 +5,8 @@ import Button from './button';
 export default class FileChooser extends Button {
   /**
    *
+   * @param root0
+   * @param root0.filepath
    */
   async upload_document({ filepath }: FileData) {
     const [file_chooser] = await Promise.all([

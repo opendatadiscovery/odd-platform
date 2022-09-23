@@ -1,11 +1,11 @@
 import { Page } from '@playwright/test';
 
 import LoginPage from './login-page';
-import { Modals } from './modals';
-import TopPanel from './shared/top-panel';
 import ManagementPage from './management/management-page';
 import OwnersPage from './management/owners-page';
-import TagsPage from "./management/tags-page";
+import TagsPage from './management/tags-page';
+import { Modals } from './modals';
+import TopPanel from './shared/top-panel';
 // inject-import-page dont delete comment
 
 export class Pages {
@@ -15,8 +15,11 @@ export class Pages {
   // inject-page dont delete comment
 
   readonly modals: Modals;
+
   readonly management: ManagementPage;
+
   readonly owners: OwnersPage;
+
   readonly tags: TagsPage;
 
   constructor(readonly page: Page) {
