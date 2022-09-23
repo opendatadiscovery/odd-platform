@@ -3,6 +3,7 @@ import { test } from '../../config/test-base';
 
 test.describe('Tags', () => {
   let tag_name;
+
   test.beforeEach(async ({ steps: { pages }, page }) => {
     await test.step(`I open Tags page`, async () => {
       await page.goto('');
@@ -14,10 +15,11 @@ test.describe('Tags', () => {
       expect(await pages.modals.add_tag.is_opened()).toBeTruthy();
     });
   });
+
+  /**
+   * /project/1/test-cases/4
+   */
   test(`Add new Tag`, async ({ steps: { pages } }) => {
-    /**
-        /project/1/test-cases/4?treeId=0
-     */
     tag_name = 'Test_tag_name';
     await test.step(`I fill tag name ${tag_name} and click 'create' button`, async () => {
       await pages.modals.add_tag.tag_name_field.fill(`${tag_name}`);
@@ -27,10 +29,11 @@ test.describe('Tags', () => {
       expect(await pages.tags.is_tag_visible(`${tag_name}`)).toBeTruthy();
     });
   });
+
+  /**
+   * /project/1/test-cases/5
+   */
   test(`Add new important tag`, async ({ steps: { pages } }) => {
-    /**
-        /project/1/test-cases/5?treeId=0
-     */
     tag_name = 'Test_important_tag_name';
     await test.step(`I fill tag name ${tag_name}`, async () => {
       await pages.modals.add_tag.tag_name_field.fill(`${tag_name}`);
@@ -46,10 +49,11 @@ test.describe('Tags', () => {
       expect(await pages.tags.is_tag_important(`${tag_name}`)).toBeTruthy();
     });
   });
+
+  /**
+   * /project/1/test-cases/6
+   */
   test(`Add several unimportant tags`, async ({ steps: { pages } }) => {
-    /**
-        /project/1/test-cases/6?treeId=0
-     */
     let tags;
     let tags_all;
     await test.step(`I add one more tag`, async () => {
@@ -68,10 +72,11 @@ test.describe('Tags', () => {
       expect(tags_all).toEqual(expect.arrayContaining(tags));
     });
   });
+
+  /**
+   * /project/1/test-cases/7
+   */
   test(`Add several tags, one important`, async ({ steps: { pages } }) => {
-    /**
-        /project/1/test-cases/7?treeId=0
-     */
     let tags;
     let tags_all;
     await test.step(`I add one more tag`, async () => {
@@ -93,10 +98,11 @@ test.describe('Tags', () => {
       expect(await pages.tags.is_tag_important(`tag_test_1`)).toBeTruthy();
     });
   });
+
+  /**
+   * /project/1/test-cases/29
+   */
   test(`Add several important tags`, async ({ steps: { pages } }) => {
-    /**
-         /project/1/test-cases/29?treeId=0
-     */
     let tags;
     let tags_all;
     await test.step(`I add one more tag`, async () => {

@@ -9,10 +9,11 @@ test.describe(() => {
       await pages.management.tags.click();
     });
   });
+
+  /**
+   * /project/1/test-cases/33
+   */
   test(`Delete unimportant tag`, async ({ steps: { pages } }) => {
-    /**
-        /project/1/test-cases/33?treeId=0
-     */
     const tag_name = 'tag_4';
     await test.step(`I create tag`, async () => {
       await pages.tags.add_tag(`${tag_name}`);
@@ -27,10 +28,11 @@ test.describe(() => {
       expect(await pages.tags.is_tag_invisible(`${tag_name}`)).toBeTruthy();
     });
   });
+
+  /**
+   * /project/1/test-cases/34
+   */
   test(`Delete important tag`, async ({ steps: { pages } }) => {
-    /**
-        /project/1/test-cases/34?treeId=0
-     */
     const tag_name = 'tag_5';
     await test.step(`I create tag`, async () => {
       await pages.tags.add_important_tag(`${tag_name}`);
