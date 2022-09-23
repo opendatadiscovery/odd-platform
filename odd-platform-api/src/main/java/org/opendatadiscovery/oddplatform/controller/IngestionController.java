@@ -8,7 +8,7 @@ import org.opendatadiscovery.oddplatform.ingestion.contract.api.IngestionApi;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataSourceList;
 import org.opendatadiscovery.oddplatform.service.DataSourceIngestionService;
-import org.opendatadiscovery.oddplatform.service.IngestionService;
+import org.opendatadiscovery.oddplatform.service.ingestion.IngestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;

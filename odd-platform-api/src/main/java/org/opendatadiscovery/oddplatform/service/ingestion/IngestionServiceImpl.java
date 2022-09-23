@@ -33,7 +33,6 @@ import org.opendatadiscovery.oddplatform.model.tables.pojos.GroupParentGroupRela
 import org.opendatadiscovery.oddplatform.model.tables.pojos.LineagePojo;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataEntityRepository;
 import org.opendatadiscovery.oddplatform.repository.reactive.ReactiveDataSourceRepository;
-import org.opendatadiscovery.oddplatform.service.IngestionService;
 import org.opendatadiscovery.oddplatform.service.ingestion.processor.IngestionProcessorChain;
 import org.opendatadiscovery.oddplatform.service.metric.MetricService;
 import org.springframework.stereotype.Service;
@@ -46,7 +45,7 @@ import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEnt
 
 @RequiredArgsConstructor
 @Service
-public class NewIngestionService implements IngestionService {
+public class IngestionServiceImpl implements IngestionService {
     private final IngestionProcessorChain ingestionProcessorChain;
     private final MetricService metricService;
 

@@ -33,7 +33,6 @@ import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.mapping;
-import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.countDistinct;
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.jsonArrayAgg;
