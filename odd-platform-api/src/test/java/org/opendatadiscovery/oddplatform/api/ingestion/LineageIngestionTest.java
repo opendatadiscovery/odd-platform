@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.opendatadiscovery.oddplatform.BaseIngestionTest;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityDetails;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineage;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageEdge;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageNode;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityLineageStream;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityRef;
@@ -33,7 +34,7 @@ public class LineageIngestionTest extends BaseIngestionTest {
      * Ingests a simple graph of data entities and checks that it was ingested correctly
      * ([inputDataset1] + [inputDataset2]) -> [dataTransformer1] -> [middlewareDataset] -> [dataTransformer2] -> ([outputDataset1] + [outputDataset2])
      * <p>
-     * Hollow entities cannot be tested yet since we can't get their ids from the Client API
+     * Hollow entities cannot be tested yet since we can't get their ids from the Client API, but we still inject them validating by indirect assertions such as hasSize
      */
     @Test
     @DisplayName("Simple lineage ingestion test")
@@ -95,47 +96,162 @@ public class LineageIngestionTest extends BaseIngestionTest {
                     .consumersCount(0L)
                     .fieldsCount((long) dataEntity.getDataset().getFieldList().size())
                     .rowsCount(dataEntity.getDataset().getRowsNumber()));
+
+                assertDataEntityDetailsEqual(expectedDetails, (expected, actual) -> {
+                    assertThat(actual.getVersionList()).hasSize(1);
+                    assertThat(actual.getVersionList().get(0).getVersion()).isEqualTo(1);
+                });
             }
 
             if (dataEntity.getDataTransformer() != null) {
-                final List<DataEntityRef> inputList = dataEntity.getDataTransformer().getInputs()
+                final List<DataEntityRef> sourceList = dataEntity.getDataTransformer().getInputs()
                     .stream()
+                    // filtering hollow entities
+                    .filter(itemsMap::containsKey)
                     .map(inputOddrn -> buildExpectedDataEntityRef(
                         itemsMap.get(inputOddrn),
                         ingestedEntities.get(inputOddrn)
                     ))
                     .toList();
 
-                final List<DataEntityRef> outputList = dataEntity.getDataTransformer().getOutputs()
+                final List<DataEntityRef> targetList = dataEntity.getDataTransformer().getOutputs()
                     .stream()
-                    .peek(System.out::println)
+                    // filtering hollow entities
+                    .filter(itemsMap::containsKey)
                     .map(outputOddrn -> buildExpectedDataEntityRef(
                         itemsMap.get(outputOddrn),
                         ingestedEntities.get(outputOddrn)
                     ))
                     .toList();
 
-                expectedDetails.setInputList(inputList);
-                expectedDetails.setOutputList(outputList);
-            }
+                assertDataEntityDetailsEqual(expectedDetails, (expected, actual) -> {
+                    assertThat(actual.getSourceList())
+                        .usingRecursiveFieldByFieldElementComparatorIgnoringFields("entityClasses")
+                        .hasSameElementsAs(sourceList);
 
-            assertDataEntityDetailsEqual(expectedDetails);
+                    assertThat(actual.getTargetList())
+                        .usingRecursiveFieldByFieldElementComparatorIgnoringFields("entityClasses")
+                        .hasSameElementsAs(targetList);
+                });
+            }
         });
 
+        final DataEntityLineageNode root = buildExpectedLineageNode(
+            ingestedEntities.get(dataTransformer1.getOddrn()),
+            dataTransformer1.getName(),
+            createdDataSource
+        );
+
         final DataEntityLineage expectedDownstream = new DataEntityLineage()
+            .root(root)
             .downstream(
                 new DataEntityLineageStream()
                     .nodes(List.of(new DataEntityLineageNode()))
             );
 
         final DataEntityLineage expectedUpstream = new DataEntityLineage()
+            .root(root)
             .upstream(
                 new DataEntityLineageStream()
-                    .nodes(List.of(new DataEntityLineageNode()))
+                    .nodes(List.of(
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(inputDataset1.getOddrn()),
+                            inputDataset1.getName(),
+                            createdDataSource,
+                            0,
+                            1
+                        ),
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(inputDataset2.getOddrn()),
+                            inputDataset2.getName(),
+                            createdDataSource,
+                            0,
+                            1
+                        ),
+                        // TODO: wtf? why do I need to specify the root here again?
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(dataTransformer1.getOddrn()),
+                            dataTransformer1.getName(),
+                            createdDataSource,
+                            // hollow entity adds 1 here
+                            3,
+                            2
+                        )
+                    ))
+                    .edges(List.of(
+                        new DataEntityLineageEdge()
+                            .sourceId(ingestedEntities.get(inputDataset1.getOddrn()))
+                            .targetId(ingestedEntities.get(dataTransformer1.getOddrn())),
+                        new DataEntityLineageEdge()
+                            .sourceId(ingestedEntities.get(inputDataset2.getOddrn()))
+                            .targetId(ingestedEntities.get(dataTransformer1.getOddrn()))
+                    ))
             );
 
-        // assert that all relationships were ingested correctly
-//        assertLineage(ingestedEntities.get(dataTransformer1.getOddrn()), expectedDownstream, expectedUpstream);
+        assertLineage(ingestedEntities.get(dataTransformer1.getOddrn()), expectedDownstream, expectedUpstream);
+    }
+    private void assertLineage(final long dataEntityId,
+                               final DataEntityLineage expectedDownstream,
+                               final DataEntityLineage expectedUpstream) {
+//        webTestClient.get()
+//            .uri("/api/dataentities/{data_entity_id}/lineage/downstream?lineage_depth=100", dataEntityId)
+//            .exchange()
+//            .expectBody(DataEntityLineage.class)
+//            .value(actual -> {
+//                assertThat(actual.getRoot())
+//                    .usingRecursiveComparison()
+//                    .ignoringFields("dataSource.token", "entityClasses")
+//                    .isEqualTo(expectedDownstream.getRoot());
+//
+//                assertThat(actual.getUpstream()).isNull();
+//
+//                assertThat(actual.getDownstream().getEdges())
+//                    .containsAll(expectedDownstream.getDownstream().getEdges())
+//                    // indirect sign of hollow entity in the upstream
+//                    .hasSize(expectedDownstream.getDownstream().getEdges().size() + 1);
+//            });
+
+        webTestClient.get()
+            .uri("/api/dataentities/{data_entity_id}/lineage/upstream?lineage_depth=100", dataEntityId)
+            .exchange()
+            .expectBody(DataEntityLineage.class)
+            .value(actual -> {
+                // TODO: groupId == [] here but null in the root node?
+                assertThat(actual.getRoot())
+                    .usingRecursiveComparison()
+                    .ignoringFields("dataSource.token", "entityClasses", "groupIdList")
+                    .isEqualTo(expectedUpstream.getRoot());
+
+                assertThat(actual.getUpstream().getEdges())
+                    .containsAll(expectedUpstream.getUpstream().getEdges())
+                    // indirect sign of hollow entity in the upstream
+                    .hasSize(expectedUpstream.getUpstream().getEdges().size() + 1);
+
+                assertThat(actual.getUpstream().getNodes())
+                    .usingRecursiveFieldByFieldElementComparatorIgnoringFields("dataSource.token", "entityClasses")
+                    .containsAll(expectedUpstream.getUpstream().getNodes())
+                    // indirect sign of hollow entity in the upstream
+                    .hasSize(expectedUpstream.getUpstream().getNodes().size() + 1);
+            });
+    }
+
+    private DataEntityLineageNode buildExpectedLineageNode(final long id,
+                                                           final String name,
+                                                           final DataSource dataSource) {
+        return buildExpectedLineageNode(id, name, dataSource, null, null);
+    }
+
+    private DataEntityLineageNode buildExpectedLineageNode(final long id,
+                                                           final String name,
+                                                           final DataSource dataSource,
+                                                           final Integer parentsCount,
+                                                           final Integer childrenCount) {
+        return new DataEntityLineageNode()
+            .id(id)
+            .externalName(name)
+            .dataSource(dataSource)
+            .parentsCount(parentsCount)
+            .childrenCount(childrenCount);
     }
 
     private DataEntityRef buildExpectedDataEntityRef(final DataEntity ingestedEntity, final long ingestedId) {
@@ -143,32 +259,9 @@ public class LineageIngestionTest extends BaseIngestionTest {
             .id(ingestedId)
             .oddrn(ingestedEntity.getOddrn())
             .externalName(ingestedEntity.getName())
+            // TODO: wtf?
+            .url("")
             .hasAlerts(false)
             .manuallyCreated(false);
-    }
-
-    private void assertLineage(final long dataEntityId,
-                               final DataEntityLineage expectedDownstream,
-                               final DataEntityLineage expectedUpstream) {
-        webTestClient.get()
-            .uri("/api/dataentities/{data_entity_id}/lineage/downstream?lineage_depth=100", dataEntityId)
-            .exchange()
-            .expectBody(DataEntityLineage.class)
-            .value(actual -> assertThat(actual).isEqualTo(expectedDownstream));
-
-        webTestClient.get()
-            .uri("/api/dataentities/{data_entity_id}/lineage/upstream?lineage_depth=100", dataEntityId)
-            .exchange()
-            .expectBody(DataEntityLineage.class)
-            .value(actual -> assertThat(actual).isEqualTo(expectedUpstream));
-    }
-
-    private DataEntityLineageNode buildLineageNode(final long dataEntityId,
-                                                   final DataEntity dataEntity) {
-        return new DataEntityLineageNode()
-            .id(dataEntityId)
-            .externalName(dataEntity.getName())
-            // TODO: fill
-            .entityClasses(Collections.emptyList());
     }
 }

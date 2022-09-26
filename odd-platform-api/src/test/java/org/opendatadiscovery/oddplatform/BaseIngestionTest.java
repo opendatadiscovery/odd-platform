@@ -74,7 +74,8 @@ public abstract class BaseIngestionTest extends BaseIntegrationTest {
                     .usingRecursiveComparison()
                     .ignoringFields(
                         "dataSource.token", "viewCount", "updatedAt",
-                        "versionList", "entityClasses", "type.id"
+                        "versionList", "entityClasses", "type.id",
+                        "sourceList", "targetList"
                     )
                     .isEqualTo(actual);
 
