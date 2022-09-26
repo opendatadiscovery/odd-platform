@@ -92,6 +92,7 @@ public class DatasetStructureIngestionRequestProcessor implements IngestionReque
                 }
 
                 if (!fetchedVersion.getVersionHash().equals(dto.getDataSet().structureHash())) {
+                    // TODO: figure out how to fix mutable behaviour here
                     dto.setDatasetSchemaChanged(true);
                     sink.next(incrementDatasetVersion(fetchedVersion, dto));
                 }

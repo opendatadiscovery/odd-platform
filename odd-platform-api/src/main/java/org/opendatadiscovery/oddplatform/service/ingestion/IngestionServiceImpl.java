@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.jooq.JSONB;
@@ -45,6 +46,7 @@ import static org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEnt
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class IngestionServiceImpl implements IngestionService {
     private final IngestionProcessorChain ingestionProcessorChain;
     private final MetricService metricService;
@@ -56,6 +58,7 @@ public class IngestionServiceImpl implements IngestionService {
 
     @Override
     @ReactiveTransactional
+    // TODO: demo data doesn't work --> reproduce and fix
     public Mono<Void> ingest(final DataEntityList dataEntityList) {
         return dataSourceRepository.getDtoByOddrn(dataEntityList.getDataSourceOddrn())
             .switchIfEmpty(Mono.error(() -> new NotFoundException(
@@ -65,7 +68,6 @@ public class IngestionServiceImpl implements IngestionService {
             .flatMap(ingestionProcessorChain::processIngestionRequest)
             .flatMap(metricService::exportMetrics)
             .then();
-//            .then(Mono.error(new RuntimeException("ingestion api test exception")));
     }
 
     private Mono<IngestionRequest> persistDataEntities(final long dataSourceId,
@@ -143,7 +145,6 @@ public class IngestionServiceImpl implements IngestionService {
         final List<DataEntitySpecificAttributesDelta> specificAttributesDeltas,
         final DataEntityClassesTotalDelta entityClassesTotalDelta
     ) {
-        // TODO: rewrite in one loop
         final List<LineagePojo> lineageRelations = Stream
             .concat(newEntities.stream(), existingEntities.stream())
             .map(this::extractLineageRelations)

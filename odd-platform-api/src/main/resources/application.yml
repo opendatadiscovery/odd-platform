@@ -149,8 +149,8 @@ odd:
 logging:
   level:
     org.springframework.transaction.interceptor: info
-    org.jooq.tools.LoggerListener: debug
-    io.r2dbc.postgresql.QUERY: debug
+    org.jooq.tools.LoggerListener: info
+    io.r2dbc.postgresql.QUERY: info
     io.r2dbc.postgresql.PARAM: info
     org.opendatadiscovery.oddplatform.notification: info
-    org.opendatadiscovery.oddplatform.service.ingestion: debug
+    org.opendatadiscovery.oddplatform.service.ingestion: info

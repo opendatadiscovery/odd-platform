@@ -49,7 +49,7 @@ public class ActivityServiceImpl implements ActivityService {
             .then(authIdentityProvider.getCurrentUser())
             .map(UserDto::username)
             .map(username -> activityMapper.mapToPojo(event, activityCreateTime, username))
-            .switchIfEmpty(Mono.just(activityMapper.mapToPojo(event, activityCreateTime, null)))
+            .switchIfEmpty(Mono.defer(() -> Mono.just(activityMapper.mapToPojo(event, activityCreateTime, null))))
             .flatMap(activityRepository::saveReturning)
             .then();
     }

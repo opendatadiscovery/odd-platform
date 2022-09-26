@@ -3,7 +3,7 @@
   "items": [
     {
       "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm",
-      "name": "sales_denorm",
+      "name": "aoisjdoaijsd",
       "version": null,
       "description": "Denormalized data lake for bookshop",
       "owner": null,
@@ -32,7 +32,7 @@
           }
         }
       ],
-      "updated_at": null,
+      "updated_at": "2019-03-27T15:00:00Z",
       "created_at": null,
       "type": "TABLE",
       "dataset": {
@@ -40,8 +40,8 @@
         "rows_number": 35000000,
         "field_list": [
           {
-            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/TRANSACTION_ID",
-            "name": "TRANSACTION_ID",
+            "oddrn": "//redshift/host/4.3.2.1/databases/data_lake/tables/sales_denorm/fields/asdasd",
+            "name": "asdasd",
             "version": null,
             "description": null,
             "owner": null,
