@@ -3,38 +3,51 @@ on:
   workflow_call:
 
 jobs:
-  tests:
+  lint:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
       - name: Install Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18.x'
-
-      - name: Start containers
-        run: |
-          cd tests
-          npm run odd-up
-
       - name: Install dependencies
         run: |
           cd tests
           npm ci
+      - name: Run linter
+        run: |
+          cd tests
+          npm run lint:ci
 
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.x'
+      - name: Start containers
+        run: |
+          cd tests
+          npm run odd-up
+      - name: Install dependencies
+        run: |
+          cd tests
+          npm ci
       - name: Install Playwright Browsers
         run: |
           cd tests
           npx playwright install --with-deps chromium
-
       - name: Run Playwright tests
         run: |
           cd tests
-          npm run test-ci
-
+          npm run test:ci
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         if: always()

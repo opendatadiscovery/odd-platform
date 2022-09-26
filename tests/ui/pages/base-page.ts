@@ -1,5 +1,5 @@
-import { odd } from '../../config/environments.json';
 import { configuration } from '../../config/configuration';
+import { odd } from '../../config/environments.json';
 import Button from '../elements/button';
 import TextBox from '../elements/text-box';
 
@@ -14,6 +14,7 @@ export default class BasePage {
 
   /**
    *
+   * @param locator
    */
   protected locator(locator: string) {
     return this.page.locator(locator);
@@ -33,9 +34,9 @@ export default class BasePage {
 
   /**
    *
+   * @param url
    */
   build_url(url: string) {
-    // @ts-ignore
     return odd[configuration.environment].replace('/login', url);
   }
 }
