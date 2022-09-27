@@ -59,7 +59,6 @@ public class IngestionController implements IngestionApi {
     @Override
     public Mono<ResponseEntity<CompactDataEntityList>> getDataEntitiesByDEGOddrn(@NotNull @Valid final String degOddrn,
                                                                                  final ServerWebExchange exchange) {
-
         return dataEntityService.listEntitiesWithinDEG(degOddrn).map(ResponseEntity::ok);
     }
 }
