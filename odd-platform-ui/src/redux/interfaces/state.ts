@@ -14,6 +14,7 @@ import {
   DataEntityUsageInfo,
   DataQualityTest,
   DataSetField,
+  DataSetSLAReport,
   DataSetTestReport,
   DataSetVersion,
   DataSource,
@@ -121,6 +122,9 @@ export interface DataQualityTestState {
   qualityTestRunsPageInfo: CurrentPageInfo;
   datasetTestReportByEntityId: {
     [dataEntityId: string]: DataSetTestReport;
+  };
+  datasetSLAReportByEntityId: {
+    [dataEntityId: string]: DataSetSLAReport;
   };
   testReportBySuiteName: {
     [suiteName: string]: DataSetQualityTestsStatusCount;

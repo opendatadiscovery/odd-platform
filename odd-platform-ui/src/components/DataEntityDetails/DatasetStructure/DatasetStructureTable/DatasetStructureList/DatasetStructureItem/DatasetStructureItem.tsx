@@ -21,7 +21,7 @@ import {
   MinusIcon,
   PlusIcon,
 } from 'components/shared/Icons';
-import DatasetFieldTypeLabel from 'components/DataEntityDetails/DatasetStructure/DatasetStructureTable/DatasetStructureList/DatasetStructureItem/DatasetFieldTypeLabel/DatasetFieldTypeLabel';
+import DatasetFieldTypeLabel from './DatasetFieldTypeLabel/DatasetFieldTypeLabel';
 import DatasetFieldInfoEditForm from './DatasetFieldInfoEditForm/DatasetFieldInfoEditForm';
 import DatasetFieldEnumsEditForm from './DatasetFieldEnumsEditForm/DatasetFieldEnumsEditForm';
 import DatasetFieldCollapsedDescription from './DatasetFieldCollapsedDescription/DatasetFieldCollapsedDescription';

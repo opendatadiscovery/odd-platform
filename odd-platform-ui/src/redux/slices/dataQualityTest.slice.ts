@@ -18,6 +18,7 @@ export const initialState: DataQualityTestState = {
     hasNext: true,
   },
   datasetTestReportByEntityId: {},
+  datasetSLAReportByEntityId: {},
   testReportBySuiteName: {},
 };
 
@@ -107,6 +108,7 @@ const createDataSetQualityTestList = (
       ...state,
     }
   );
+
 export const dataQualityTestSlice = createSlice({
   name: dataQualityTestTypePrefix,
   initialState,
@@ -117,10 +119,23 @@ export const dataQualityTestSlice = createSlice({
       (state, { payload }) => ({
         ...state,
         datasetTestReportByEntityId: {
+          ...state.datasetTestReportByEntityId,
           [payload.entityId]: payload.value,
         },
       })
     );
+
+    builder.addCase(
+      thunks.fetchDataSetQualitySLAReport.fulfilled,
+      (state, { payload }): DataQualityTestState => ({
+        ...state,
+        datasetSLAReportByEntityId: {
+          ...state.datasetSLAReportByEntityId,
+          [payload.entityId]: payload.value,
+        },
+      })
+    );
+
     builder.addCase(
       thunks.fetchDataSetQualityTestList.fulfilled,
       (state, { payload }) =>

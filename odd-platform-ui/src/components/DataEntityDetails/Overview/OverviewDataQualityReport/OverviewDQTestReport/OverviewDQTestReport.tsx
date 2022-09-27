@@ -10,16 +10,16 @@ import {
 import { AppButton, NumberFormatted } from 'components/shared';
 import { useAppPaths } from 'lib/hooks';
 import omit from 'lodash/omit';
-import OverviewDataQualityReportSkeleton from './OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
-import * as S from './OverviewDataQualityReportStyles';
+import OverviewDataQualityReportSkeleton from '../OverviewDataQualityReportSkeleton/OverviewDataQualityReportSkeleton';
+import * as S from './OverviewDQTestReportStyles';
 
-interface OverviewDataQualityReportProps {
+interface OverviewDQTestReportProps {
   dataEntityId: number;
 }
 
-const OverviewDataQualityReport: React.FC<
-  OverviewDataQualityReportProps
-> = ({ dataEntityId }) => {
+const OverviewDQTestReport: React.FC<OverviewDQTestReportProps> = ({
+  dataEntityId,
+}) => {
   const { dataEntityTestReportPath } = useAppPaths();
 
   const { isLoading: isDatasetTestReportFetching } = useAppSelector(
@@ -119,4 +119,4 @@ const OverviewDataQualityReport: React.FC<
   );
 };
 
-export default OverviewDataQualityReport;
+export default OverviewDQTestReport;

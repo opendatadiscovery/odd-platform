@@ -3,6 +3,7 @@ import {
   AlertStatus,
   DataEntityClassNameEnum,
   DataEntityRunStatus,
+  DataQualityTestSeverity,
   DataSetFieldTypeTypeEnum,
 } from 'generated-sources';
 import { TypographyStyle } from '@mui/material';
@@ -33,6 +34,11 @@ type StructureLabelType = Record<DataSetFieldTypeTypeEnum, ItemColors>;
 type ReportStatus = Record<DataEntityRunStatus, ItemColors>;
 
 type RunStatus = Record<DataEntityRunStatus, ItemColors>;
+
+type SLAStatus = Record<
+  DataQualityTestSeverity,
+  { normal: string; light: string }
+>;
 
 interface TextType {
   primary: string;
@@ -93,6 +99,7 @@ declare module '@mui/material/styles' {
     texts: TextType;
     textField: ItemCondition;
     activityEvent: ActivityEventType;
+    slaStatus: SLAStatus;
   }
 
   interface PaletteOptions {
@@ -108,6 +115,7 @@ declare module '@mui/material/styles' {
     texts?: TextType;
     textField?: ItemCondition;
     activityEvent?: ActivityEventType;
+    slaStatus?: SLAStatus;
   }
 }
 

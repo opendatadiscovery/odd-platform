@@ -28,6 +28,7 @@ import {
   deleteDataEntityGroup,
   fetchDataEntityAlerts,
   fetchDataEntityDetails,
+  fetchDataSetQualitySLAReport,
   fetchDataSetQualityTestReport,
 } from 'redux/thunks';
 import {
@@ -124,6 +125,7 @@ const DataEntityDetailsView: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchDataEntityAlerts({ dataEntityId }));
     dispatch(fetchDataSetQualityTestReport({ dataEntityId }));
+    dispatch(fetchDataSetQualitySLAReport({ dataEntityId }));
   }, [dataEntityId]);
 
   const [tabs, setTabs] = React.useState<AppTabItem[]>([]);
@@ -207,14 +209,14 @@ const DataEntityDetailsView: React.FC = () => {
     <S.Container>
       {dataEntityDetails && !isDataEntityDetailsFetching ? (
         <>
-          <Grid
-            container
-            justifyContent="space-between"
-            alignItems="center"
-            wrap="nowrap"
-          >
-            <S.Caption item>
-              <Grid container item alignItems="center">
+          <Grid container flexDirection="column" alignItems="flex-start">
+            <S.Caption container alignItems="center" flexWrap="nowrap">
+              <Grid
+                container
+                lg={11}
+                alignItems="center"
+                flexWrap="nowrap"
+              >
                 <Typography variant="h1" noWrap sx={{ mr: 1 }}>
                   {dataEntityDetails.internalName
                     ? dataEntityDetails.internalName
@@ -258,86 +260,87 @@ const DataEntityDetailsView: React.FC = () => {
                   />
                 </S.InternalNameEditBtnContainer>
               </Grid>
-              {dataEntityDetails.internalName &&
-                dataEntityDetails.externalName && (
-                  <Grid container alignItems="center">
-                    <LabelItem labelName="Original" variant="body1" />
-                    <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
-                      {dataEntityDetails.externalName}
+              <Grid
+                container
+                lg={1}
+                sx={{ ml: 1 }}
+                alignItems="center"
+                flexWrap="nowrap"
+              >
+                {dataEntityDetails.updatedAt ? (
+                  <>
+                    <TimeGapIcon />
+                    <Typography
+                      variant="body1"
+                      sx={{ ml: 1, whiteSpace: 'nowrap' }}
+                    >
+                      {formatDistanceToNowStrict(
+                        dataEntityDetails.updatedAt,
+                        {
+                          addSuffix: true,
+                        }
+                      )}
                     </Typography>
-                  </Grid>
-                )}
-            </S.Caption>
-            <Grid
-              container
-              item
-              alignItems="center"
-              width="auto"
-              flexWrap="nowrap"
-            >
-              {dataEntityDetails.updatedAt ? (
-                <>
-                  <TimeGapIcon />
-                  <Typography
-                    variant="body1"
-                    sx={{ ml: 1, whiteSpace: 'nowrap' }}
-                  >
-                    {formatDistanceToNowStrict(
-                      dataEntityDetails.updatedAt,
-                      {
-                        addSuffix: true,
-                      }
-                    )}
-                  </Typography>
-                </>
-              ) : null}
-              <Grid>
-                {dataEntityDetails.manuallyCreated && (
-                  <AppPopover
-                    childrenSx={{
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                    }}
-                    renderOpenBtn={({ onClick, ariaDescribedBy }) => (
-                      <AppIconButton
-                        sx={{ ml: 2 }}
-                        ariaDescribedBy={ariaDescribedBy}
-                        size="medium"
-                        color="primaryLight"
-                        icon={<KebabIcon />}
-                        onClick={onClick}
+                  </>
+                ) : null}
+                <Grid>
+                  {dataEntityDetails.manuallyCreated && (
+                    <AppPopover
+                      childrenSx={{
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                      }}
+                      renderOpenBtn={({ onClick, ariaDescribedBy }) => (
+                        <AppIconButton
+                          sx={{ ml: 2 }}
+                          ariaDescribedBy={ariaDescribedBy}
+                          size="medium"
+                          color="primaryLight"
+                          icon={<KebabIcon />}
+                          onClick={onClick}
+                        />
+                      )}
+                      anchorOrigin={{
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      }}
+                      transformOrigin={{
+                        vertical: 'top',
+                        horizontal: 65,
+                      }}
+                    >
+                      <DataEntityGroupForm
+                        btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
                       />
-                    )}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 65,
-                    }}
-                  >
-                    <DataEntityGroupForm
-                      btnCreateEl={<AppMenuItem>Edit</AppMenuItem>}
-                    />
-                    <ConfirmationDialog
-                      actionTitle="Are you sure you want to delete this data entity group?"
-                      actionName="Delete Data Entity Group"
-                      actionText={
-                        <>
-                          &quot;
-                          {dataEntityDetails.internalName ||
-                            dataEntityDetails.externalName}
-                          &quot; will be deleted permanently.
-                        </>
-                      }
-                      onConfirm={handleEntityGroupDelete}
-                      actionBtn={<AppMenuItem>Delete</AppMenuItem>}
-                    />
-                  </AppPopover>
-                )}
+                      <ConfirmationDialog
+                        actionTitle="Are you sure you want to delete this data entity group?"
+                        actionName="Delete Data Entity Group"
+                        actionText={
+                          <>
+                            &quot;
+                            {dataEntityDetails.internalName ||
+                              dataEntityDetails.externalName}
+                            &quot; will be deleted permanently.
+                          </>
+                        }
+                        onConfirm={handleEntityGroupDelete}
+                        actionBtn={<AppMenuItem>Delete</AppMenuItem>}
+                      />
+                    </AppPopover>
+                  )}
+                </Grid>
               </Grid>
-            </Grid>
+            </S.Caption>
+
+            {dataEntityDetails.internalName &&
+              dataEntityDetails.externalName && (
+                <Grid container alignItems="center" width="auto">
+                  <LabelItem labelName="Original" variant="body1" />
+                  <Typography variant="body1" sx={{ ml: 0.5 }} noWrap>
+                    {dataEntityDetails.externalName}
+                  </Typography>
+                </Grid>
+              )}
           </Grid>
           <Grid sx={{ mt: 2 }}>
             {tabs.length && selectedTab >= 0 ? (

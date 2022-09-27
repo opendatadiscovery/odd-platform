@@ -4,8 +4,10 @@ import {
   DataEntityList,
   DataQualityApi,
   DataQualityApiGetDataEntityDataQATestsRequest,
+  DataQualityApiGetDatasetSLAReportRequest,
   DataQualityApiGetDatasetTestReportRequest,
   DataQualityApiSetDataQATestSeverityRequest,
+  DataSetSLAReport,
   DataSetTestReport,
 } from 'generated-sources';
 import * as actions from 'redux/actions';
@@ -22,6 +24,19 @@ export const fetchDataSetQualityTestReport = createAsyncThunk<
   actions.fetchDataSetQualityTestReportActionType,
   async ({ dataEntityId }) => {
     const response = await dataQualityApi.getDatasetTestReport({
+      dataEntityId,
+    });
+    return { entityId: dataEntityId, value: response };
+  }
+);
+
+export const fetchDataSetQualitySLAReport = createAsyncThunk<
+  { entityId: number; value: DataSetSLAReport },
+  DataQualityApiGetDatasetSLAReportRequest
+>(
+  actions.fetchDataSetQualitySLAReportActionType,
+  async ({ dataEntityId }) => {
+    const response = await dataQualityApi.getDatasetSLAReport({
       dataEntityId,
     });
     return { entityId: dataEntityId, value: response };
