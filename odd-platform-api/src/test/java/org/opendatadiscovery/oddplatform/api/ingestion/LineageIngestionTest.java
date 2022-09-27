@@ -1,7 +1,6 @@
 package org.opendatadiscovery.oddplatform.api.ingestion;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -146,7 +145,49 @@ public class LineageIngestionTest extends BaseIngestionTest {
             .root(root)
             .downstream(
                 new DataEntityLineageStream()
-                    .nodes(List.of(new DataEntityLineageNode()))
+                    .nodes(List.of(
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(dataTransformer1.getOddrn()),
+                            dataTransformer1.getName(),
+                            createdDataSource,
+                            3,
+                            2
+                        ),
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(middlewareDataset.getOddrn()),
+                            middlewareDataset.getName(),
+                            createdDataSource,
+                            1,
+                            1
+                        ),
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(dataTransformer2.getOddrn()),
+                            dataTransformer2.getName(),
+                            createdDataSource,
+                            1,
+                            2
+                        ),
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(outputDataset1.getOddrn()),
+                            outputDataset1.getName(),
+                            createdDataSource,
+                            1,
+                            0
+                        ),
+                        buildExpectedLineageNode(
+                            ingestedEntities.get(outputDataset2.getOddrn()),
+                            outputDataset2.getName(),
+                            createdDataSource,
+                            1,
+                            0
+                        )
+                    ))
+                    .edges(List.of(
+                        buildExpectedLineageEdge(dataTransformer1, middlewareDataset, ingestedEntities),
+                        buildExpectedLineageEdge(middlewareDataset, dataTransformer2, ingestedEntities),
+                        buildExpectedLineageEdge(dataTransformer2, outputDataset1, ingestedEntities),
+                        buildExpectedLineageEdge(dataTransformer2, outputDataset2, ingestedEntities)
+                    ))
             );
 
         final DataEntityLineage expectedUpstream = new DataEntityLineage()
@@ -168,59 +209,59 @@ public class LineageIngestionTest extends BaseIngestionTest {
                             0,
                             1
                         ),
-                        // TODO: wtf? why do I need to specify the root here again?
                         buildExpectedLineageNode(
                             ingestedEntities.get(dataTransformer1.getOddrn()),
                             dataTransformer1.getName(),
                             createdDataSource,
-                            // hollow entity adds 1 here
                             3,
                             2
                         )
                     ))
                     .edges(List.of(
-                        new DataEntityLineageEdge()
-                            .sourceId(ingestedEntities.get(inputDataset1.getOddrn()))
-                            .targetId(ingestedEntities.get(dataTransformer1.getOddrn())),
-                        new DataEntityLineageEdge()
-                            .sourceId(ingestedEntities.get(inputDataset2.getOddrn()))
-                            .targetId(ingestedEntities.get(dataTransformer1.getOddrn()))
+                        buildExpectedLineageEdge(inputDataset1, dataTransformer1, ingestedEntities),
+                        buildExpectedLineageEdge(inputDataset2, dataTransformer1, ingestedEntities)
                     ))
             );
 
         assertLineage(ingestedEntities.get(dataTransformer1.getOddrn()), expectedDownstream, expectedUpstream);
     }
+
     private void assertLineage(final long dataEntityId,
                                final DataEntityLineage expectedDownstream,
                                final DataEntityLineage expectedUpstream) {
-//        webTestClient.get()
-//            .uri("/api/dataentities/{data_entity_id}/lineage/downstream?lineage_depth=100", dataEntityId)
-//            .exchange()
-//            .expectBody(DataEntityLineage.class)
-//            .value(actual -> {
-//                assertThat(actual.getRoot())
-//                    .usingRecursiveComparison()
-//                    .ignoringFields("dataSource.token", "entityClasses")
-//                    .isEqualTo(expectedDownstream.getRoot());
-//
-//                assertThat(actual.getUpstream()).isNull();
-//
-//                assertThat(actual.getDownstream().getEdges())
-//                    .containsAll(expectedDownstream.getDownstream().getEdges())
-//                    // indirect sign of hollow entity in the upstream
-//                    .hasSize(expectedDownstream.getDownstream().getEdges().size() + 1);
-//            });
+        webTestClient.get()
+            .uri("/api/dataentities/{data_entity_id}/lineage/downstream?lineage_depth=100", dataEntityId)
+            .exchange()
+            .expectBody(DataEntityLineage.class)
+            .value(actual -> {
+                assertThat(actual.getRoot())
+                    .usingRecursiveComparison()
+                    .ignoringFields("dataSource.token", "entityClasses", "groupIdList")
+                    .isEqualTo(expectedDownstream.getRoot());
+
+                assertThat(actual.getDownstream().getEdges())
+                    .containsAll(expectedDownstream.getDownstream().getEdges())
+                    // indirect sign of hollow entity in the downstream
+                    .hasSize(expectedDownstream.getDownstream().getEdges().size() + 1);
+
+                assertThat(actual.getDownstream().getNodes())
+                    .usingRecursiveFieldByFieldElementComparatorIgnoringFields("dataSource.token", "entityClasses")
+                    .containsAll(expectedDownstream.getDownstream().getNodes())
+                    // indirect sign of hollow entity in the downstream
+                    .hasSize(expectedDownstream.getDownstream().getNodes().size() + 1);
+            });
 
         webTestClient.get()
             .uri("/api/dataentities/{data_entity_id}/lineage/upstream?lineage_depth=100", dataEntityId)
             .exchange()
             .expectBody(DataEntityLineage.class)
             .value(actual -> {
-                // TODO: groupId == [] here but null in the root node?
                 assertThat(actual.getRoot())
                     .usingRecursiveComparison()
                     .ignoringFields("dataSource.token", "entityClasses", "groupIdList")
                     .isEqualTo(expectedUpstream.getRoot());
+
+                assertThat(actual.getDownstream()).isNull();
 
                 assertThat(actual.getUpstream().getEdges())
                     .containsAll(expectedUpstream.getUpstream().getEdges())
@@ -233,6 +274,14 @@ public class LineageIngestionTest extends BaseIngestionTest {
                     // indirect sign of hollow entity in the upstream
                     .hasSize(expectedUpstream.getUpstream().getNodes().size() + 1);
             });
+    }
+
+    private DataEntityLineageEdge buildExpectedLineageEdge(final DataEntity source,
+                                                           final DataEntity target,
+                                                           final Map<String, Long> idMap) {
+        return new DataEntityLineageEdge()
+            .sourceId(idMap.get(source.getOddrn()))
+            .targetId(idMap.get(target.getOddrn()));
     }
 
     private DataEntityLineageNode buildExpectedLineageNode(final long id,
