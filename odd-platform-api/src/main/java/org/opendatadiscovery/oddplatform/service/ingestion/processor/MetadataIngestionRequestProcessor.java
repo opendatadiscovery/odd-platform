@@ -3,10 +3,12 @@ package org.opendatadiscovery.oddplatform.service.ingestion.processor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.SetUtils;
 import org.opendatadiscovery.oddplatform.dto.ingestion.IngestionRequest;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataBinding;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataKey;
@@ -22,11 +24,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static java.util.function.Function.identity;
+import static reactor.function.TupleUtils.function;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-// TODO: refactor
 public class MetadataIngestionRequestProcessor implements IngestionRequestProcessor {
     private final MetadataParser metadataParser;
     private final ReactiveMetadataFieldRepository metadataFieldRepository;
@@ -58,29 +60,37 @@ public class MetadataIngestionRequestProcessor implements IngestionRequestProces
                         identity()
                     ))
             )
-            .flatMap(tuple -> {
-                final Map<MetadataKey, MetadataFieldPojo> allMetadataFields = tuple.getT1();
-                final Map<MetadataBinding, MetadataFieldValuePojo> existingMetadataValues = tuple.getT2();
-
+            .flatMap(function((allMetadataFields, existingMetadataValues) -> {
                 final List<MetadataFieldValuePojo> valuesToCreate = new ArrayList<>();
                 final List<MetadataFieldValuePojo> valuesToUpdate = new ArrayList<>();
 
                 for (final MetadataInfo metadataInfo : metadataInfos) {
-                    final Long metadataId = allMetadataFields.get(metadataInfo.key()).getId();
+                    final Long metadataFieldId = allMetadataFields.get(metadataInfo.key()).getId();
                     final MetadataFieldValuePojo metadataFieldValuePojo =
-                        existingMetadataValues.get(new MetadataBinding(metadataInfo.entityId(), metadataId));
+                        existingMetadataValues.get(new MetadataBinding(metadataInfo.entityId(), metadataFieldId));
 
                     if (metadataFieldValuePojo != null) {
                         metadataFieldValuePojo.setValue(metadataInfo.value().toString());
                         valuesToUpdate.add(metadataFieldValuePojo);
                     } else {
-                        valuesToCreate.add(createValuePojo(metadataInfo, metadataId));
+                        valuesToCreate.add(createValuePojo(metadataInfo, metadataFieldId));
                     }
                 }
 
-                return metadataFieldValueRepository.bulkCreate(valuesToCreate)
-                    .then(metadataFieldValueRepository.bulkUpdate(valuesToUpdate));
-            });
+                final Set<MetadataBinding> existingMetadataBindings = metadataInfos.stream()
+                    .map(mi -> new MetadataBinding(mi.entityId(), allMetadataFields.get(mi.key()).getId()))
+                    .collect(Collectors.toSet());
+
+                final Set<MetadataBinding> bindingsToDelete = SetUtils
+                    .difference(existingMetadataValues.keySet(), existingMetadataBindings)
+                    .toSet();
+
+                return Mono.zipDelayError(
+                    metadataFieldValueRepository.delete(bindingsToDelete),
+                    metadataFieldValueRepository.bulkCreate(valuesToCreate),
+                    metadataFieldValueRepository.bulkUpdate(valuesToUpdate)
+                ).then();
+            }));
     }
 
     @Override

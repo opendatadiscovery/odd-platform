@@ -1,6 +1,7 @@
 package org.opendatadiscovery.oddplatform.api.ingestion.utils;
 
 import java.util.List;
+import java.util.Map;
 import org.opendatadiscovery.oddplatform.api.contract.model.BinaryFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.BooleanFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.ComplexFieldStat;
@@ -9,10 +10,13 @@ import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityType;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetField;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetFieldType;
-import org.opendatadiscovery.oddplatform.api.contract.model.DataSetStats;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSource;
 import org.opendatadiscovery.oddplatform.api.contract.model.DateTimeFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.Label;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetadataField;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldOrigin;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldType;
+import org.opendatadiscovery.oddplatform.api.contract.model.MetadataFieldValue;
 import org.opendatadiscovery.oddplatform.api.contract.model.NumberFieldStat;
 import org.opendatadiscovery.oddplatform.api.contract.model.StringFieldStat;
 import org.opendatadiscovery.oddplatform.ingestion.contract.model.DataEntity;
@@ -23,13 +27,13 @@ public class IngestionModelMapper {
     public static DataEntityDetails buildExpectedBaseDEDetails(final long entityId,
                                                                final DataEntity dataEntity,
                                                                final DataSource dataSource) {
-
         return new DataEntityDetails()
             .id(entityId)
             .createdAt(dataEntity.getCreatedAt())
             .dataSource(dataSource)
             .externalName(dataEntity.getName())
             .oddrn(dataEntity.getOddrn())
+            .metadataFieldValues(buildExpectedMetadataFieldValue(dataEntity.getMetadata().get(0).getMetadata()))
             .dataEntityGroups(emptyList())
             .tags(emptyList())
             .terms(emptyList())
@@ -105,5 +109,17 @@ public class IngestionModelMapper {
             .isSortKey(field.getIsSortKey())
             .isPrimaryKey(field.getIsPrimaryKey())
             .enumValueCount(0);
+    }
+
+    public static List<MetadataFieldValue> buildExpectedMetadataFieldValue(final Map<String, Object> metadata) {
+        return metadata.entrySet().stream()
+            .map(e -> new MetadataFieldValue()
+                .field(new MetadataField()
+                    .name(e.getKey())
+                    .origin(MetadataFieldOrigin.EXTERNAL)
+                    .type(MetadataFieldType.STRING))
+                .value(e.getValue().toString())
+            )
+            .toList();
     }
 }

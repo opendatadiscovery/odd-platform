@@ -1,14 +1,17 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.InsertReturningStep;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataBinding;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import org.opendatadiscovery.oddplatform.model.tables.records.MetadataFieldValueRecord;
@@ -108,6 +111,23 @@ public class ReactiveMetadataFieldValueRepositoryImpl implements ReactiveMetadat
             .returning();
         return jooqReactiveOperations.mono(query)
             .map(r -> r.into(MetadataFieldValuePojo.class));
+    }
+
+    @Override
+    public Mono<Void> delete(final Collection<MetadataBinding> bindings) {
+        if (bindings.isEmpty()) {
+            return Mono.empty();
+        }
+
+        final Condition condition = bindings.stream()
+            .map(binding ->
+                METADATA_FIELD_VALUE.METADATA_FIELD_ID.eq(binding.metadataFieldId())
+                    .and(METADATA_FIELD_VALUE.DATA_ENTITY_ID.eq(binding.dataEntityId()))
+            )
+            .reduce(Condition::or)
+            .orElseThrow();
+
+        return jooqReactiveOperations.mono(DSL.deleteFrom(METADATA_FIELD_VALUE).where(condition)).then();
     }
 
     private InsertReturningStep<MetadataFieldValueRecord> createInsertQuery(final List<MetadataFieldValuePojo> pojos) {

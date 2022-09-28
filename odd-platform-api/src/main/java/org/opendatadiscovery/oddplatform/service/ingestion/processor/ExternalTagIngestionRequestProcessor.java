@@ -24,7 +24,6 @@ public class ExternalTagIngestionRequestProcessor implements IngestionRequestPro
     private final TagService tagService;
     private final ReactiveTagRepository reactiveTagRepository;
 
-    // TODO: revise
     @Override
     @ReactiveTransactional
     public Mono<Void> process(final IngestionRequest request) {

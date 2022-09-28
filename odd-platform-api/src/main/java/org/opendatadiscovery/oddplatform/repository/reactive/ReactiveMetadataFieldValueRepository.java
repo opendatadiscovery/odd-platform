@@ -1,6 +1,8 @@
 package org.opendatadiscovery.oddplatform.repository.reactive;
 
+import java.util.Collection;
 import java.util.List;
+import org.opendatadiscovery.oddplatform.dto.metadata.MetadataBinding;
 import org.opendatadiscovery.oddplatform.dto.metadata.MetadataOrigin;
 import org.opendatadiscovery.oddplatform.model.tables.pojos.MetadataFieldValuePojo;
 import reactor.core.publisher.Flux;
@@ -20,4 +22,6 @@ public interface ReactiveMetadataFieldValueRepository {
     Mono<MetadataFieldValuePojo> update(final MetadataFieldValuePojo pojo);
 
     Mono<MetadataFieldValuePojo> delete(final long dataEntityId, final long metadataFieldId);
+
+    Mono<Void> delete(final Collection<MetadataBinding> bindings);
 }
