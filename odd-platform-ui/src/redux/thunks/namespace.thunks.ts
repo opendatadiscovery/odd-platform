@@ -31,26 +31,20 @@ export const fetchNamespaceList = createAsyncThunk<
 export const createNamespace = createAsyncThunk<
   Namespace,
   NamespaceApiCreateNamespaceRequest
->(actions.createNamespaceActionType, async ({ namespaceFormData }) => {
-  const namespace = await namespaceApi.createNamespace({
+>(actions.createNamespaceActionType, async ({ namespaceFormData }) =>
+  namespaceApi.createNamespace({
     namespaceFormData,
-  });
-
-  return namespace;
-});
+  })
+);
 
 export const updateNamespace = createAsyncThunk<
   Namespace,
   NamespaceApiUpdateNamespaceRequest
->(
-  actions.updateNamespaceActionType,
-  async ({ namespaceId, namespaceUpdateFormData }) => {
-    const namespace = await namespaceApi.updateNamespace({
-      namespaceId,
-      namespaceUpdateFormData,
-    });
-    return namespace;
-  }
+>(actions.updateNamespaceActionType, async ({ namespaceId, namespaceUpdateFormData }) =>
+  namespaceApi.updateNamespace({
+    namespaceId,
+    namespaceUpdateFormData,
+  })
 );
 
 export const deleteNamespace = createAsyncThunk<

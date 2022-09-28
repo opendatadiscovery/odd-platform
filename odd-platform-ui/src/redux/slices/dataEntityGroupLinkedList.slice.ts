@@ -5,11 +5,7 @@ import { dataEntityGroupLinkedListActionTypePrefix } from 'redux/actions/dataent
 
 export const initialState: DataEntityGroupLinkedListState = {
   linkedItemsIdsByDataEntityGroupId: {},
-  pageInfo: {
-    total: 0,
-    page: 0,
-    hasNext: true,
-  },
+  pageInfo: { total: 0, page: 0, hasNext: true },
 };
 
 export const dataEntityGroupLinkedListSlice = createSlice({
@@ -17,28 +13,22 @@ export const dataEntityGroupLinkedListSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      fetchDataEntityGroupLinkedList.fulfilled,
-      (state, { payload }) => {
-        const { dataEntityGroupId, linkedItemsList, pageInfo } = payload;
-        return {
-          ...state,
-          linkedItemsIdsByDataEntityGroupId: linkedItemsList.reduce(
-            (
-              memo: DataEntityGroupLinkedListState['linkedItemsIdsByDataEntityGroupId'],
-              linkedItem
-            ) => ({
-              ...memo,
-              [dataEntityGroupId]: [
-                ...(memo?.[dataEntityGroupId] || []),
-                linkedItem.id,
-              ],
-            }),
-            { ...state, pageInfo }
-          ),
-        };
-      }
-    );
+    builder.addCase(fetchDataEntityGroupLinkedList.fulfilled, (state, { payload }) => {
+      const { dataEntityGroupId, linkedItemsList, pageInfo } = payload;
+      return {
+        ...state,
+        linkedItemsIdsByDataEntityGroupId: linkedItemsList.reduce(
+          (
+            memo: DataEntityGroupLinkedListState['linkedItemsIdsByDataEntityGroupId'],
+            linkedItem
+          ) => ({
+            ...memo,
+            [dataEntityGroupId]: [...(memo?.[dataEntityGroupId] || []), linkedItem.id],
+          }),
+          { ...state, pageInfo }
+        ),
+      };
+    });
   },
 });
 

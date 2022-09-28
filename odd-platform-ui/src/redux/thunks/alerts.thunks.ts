@@ -78,17 +78,14 @@ export const fetchMyDependentsAlertList = createAsyncThunk<
 export const updateAlertStatus = createAsyncThunk<
   { alertId: number; status: AlertStatus },
   AlertApiChangeAlertStatusRequest
->(
-  actions.updateAlertStatusActionType,
-  async ({ alertId, alertStatusFormData }) => {
-    const status = await alertApi.changeAlertStatus({
-      alertId,
-      alertStatusFormData,
-    });
+>(actions.updateAlertStatusActionType, async ({ alertId, alertStatusFormData }) => {
+  const status = await alertApi.changeAlertStatus({
+    alertId,
+    alertStatusFormData,
+  });
 
-    return { alertId, status };
-  }
-);
+  return { alertId, status };
+});
 
 export const fetchDataEntityAlerts = createAsyncThunk<
   { items: Alert[]; pageInfo: PageInfo },

@@ -66,10 +66,7 @@ export const fetchActivityList = createAsyncThunk<
 
   const activitiesWithTimestamps = castCreatedAtToTimestamp(activityList);
 
-  const pageInfo = setActivitiesPageInfo(
-    activitiesWithTimestamps,
-    activityListSize
-  );
+  const pageInfo = setActivitiesPageInfo(activitiesWithTimestamps, activityListSize);
 
   return { activities: activitiesWithTimestamps, pageInfo };
 });
@@ -93,10 +90,7 @@ export const fetchDataEntityActivityList = createAsyncThunk<
 
   const activitiesWithTimestamps = castCreatedAtToTimestamp(activityList);
 
-  const pageInfo = setActivitiesPageInfo(
-    activitiesWithTimestamps,
-    activityListSize
-  );
+  const pageInfo = setActivitiesPageInfo(activitiesWithTimestamps, activityListSize);
 
   return { activities: activitiesWithTimestamps, pageInfo };
 });

@@ -1,13 +1,16 @@
 package org.opendatadiscovery.oddplatform.service;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.opendatadiscovery.oddplatform.annotation.ReactiveTransactional;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntity;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataEntityList;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataQualityTestSeverity;
+import org.opendatadiscovery.oddplatform.api.contract.model.DataSetSLAReport;
 import org.opendatadiscovery.oddplatform.api.contract.model.DataSetTestReport;
 import org.opendatadiscovery.oddplatform.dto.SLA;
+import org.opendatadiscovery.oddplatform.dto.TestStatusWithSeverityDto;
 import org.opendatadiscovery.oddplatform.exception.NotFoundException;
 import org.opendatadiscovery.oddplatform.mapper.DataEntityMapper;
 import org.opendatadiscovery.oddplatform.mapper.DataQualityMapper;
@@ -81,11 +84,21 @@ public class DataQualityServiceImpl implements DataQualityService {
 
     @Override
     public Mono<SLA> getSLA(final long datasetId) {
+        return getDatasetSLA(datasetId)
+            .map(slaCalculator::calculateSLA);
+    }
+
+    @Override
+    public Mono<DataSetSLAReport> getSLAReport(final long datasetId) {
+        return getDatasetSLA(datasetId)
+            .map(tests -> slaCalculator.getSLAReport(datasetId, tests));
+    }
+
+    private Mono<List<TestStatusWithSeverityDto>> getDatasetSLA(final long datasetId) {
         return reactiveDataEntityRepository.exists(datasetId)
             .filter(e -> e)
             .switchIfEmpty(Mono.error(new NotFoundException("Dataset with id %d not found".formatted(datasetId))))
             .thenMany(dataQualityRepository.getSLA(datasetId))
-            .collectList()
-            .map(slaCalculator::calculateSLA);
+            .collectList();
     }
 }

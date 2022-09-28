@@ -24,43 +24,36 @@ const datasetFieldApiClient = new DatasetFieldApi(apiClientConf);
 export const fetchDataSetStructureLatest = createAsyncThunk<
   DataSetStructureResponse,
   DataSetApiGetDataSetStructureLatestRequest
->(
-  actions.fetchDataSetStructureLatestActionType,
-  async ({ dataEntityId }) => {
-    const { dataSetVersion, fieldList } =
-      await datasetApiClient.getDataSetStructureLatest({
-        dataEntityId,
-      });
+>(actions.fetchDataSetStructureLatestActionType, async ({ dataEntityId }) => {
+  const { dataSetVersion, fieldList } = await datasetApiClient.getDataSetStructureLatest({
+    dataEntityId,
+  });
 
-    return {
-      dataEntityId,
-      dataSetVersionId: dataSetVersion.id,
-      fieldList,
-      isLatestVersion: true,
-    };
-  }
-);
+  return {
+    dataEntityId,
+    dataSetVersionId: dataSetVersion.id,
+    fieldList,
+    isLatestVersion: true,
+  };
+});
 
 export const fetchDataSetStructure = createAsyncThunk<
   DataSetStructureResponse,
   DataSetApiGetDataSetStructureByVersionIdRequest
->(
-  actions.fetchDataSetStructureActionType,
-  async ({ dataEntityId, versionId }) => {
-    const { dataSetVersion, fieldList } =
-      await datasetApiClient.getDataSetStructureByVersionId({
-        dataEntityId,
-        versionId,
-      });
-
-    return {
+>(actions.fetchDataSetStructureActionType, async ({ dataEntityId, versionId }) => {
+  const { dataSetVersion, fieldList } =
+    await datasetApiClient.getDataSetStructureByVersionId({
       dataEntityId,
-      dataSetVersionId: dataSetVersion.id,
-      fieldList,
-      isLatestVersion: false,
-    };
-  }
-);
+      versionId,
+    });
+
+  return {
+    dataEntityId,
+    dataSetVersionId: dataSetVersion.id,
+    fieldList,
+    isLatestVersion: false,
+  };
+});
 
 export const updateDataSetFieldFormData = createAsyncThunk<
   UpdateDataSetFieldFormResponse,
@@ -74,11 +67,7 @@ export const updateDataSetFieldFormData = createAsyncThunk<
         datasetFieldUpdateFormData,
       });
 
-    return {
-      datasetFieldId,
-      internalDescription,
-      labels,
-    };
+    return { datasetFieldId, internalDescription, labels };
   }
 );
 
@@ -90,10 +79,7 @@ export const fetchDataSetFieldEnum = createAsyncThunk<
     datasetFieldId,
   });
 
-  return {
-    datasetFieldId,
-    enumValueList: items,
-  };
+  return { datasetFieldId, enumValueList: items };
 });
 
 export const createDataSetFieldEnum = createAsyncThunk<
@@ -107,9 +93,6 @@ export const createDataSetFieldEnum = createAsyncThunk<
       bulkEnumValueFormData,
     });
 
-    return {
-      datasetFieldId,
-      enumValueList: items,
-    };
+    return { datasetFieldId, enumValueList: items };
   }
 );

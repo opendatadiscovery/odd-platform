@@ -108,7 +108,7 @@ const TestReportDetailsOverview: React.FC = () => {
           </Grid>
 
           {hasDataQualityTestExpectations(qualityTest?.expectation) && (
-            <Grid container sx={{ mt: 2 }}>
+            <Grid container sx={{ mt: 2 }} flexDirection="column">
               <Typography variant="h4">Parameters</Typography>
               <S.Params
                 $isExpandable={showSeeMore}

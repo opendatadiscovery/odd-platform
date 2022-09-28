@@ -26,9 +26,7 @@ const termApi = new TermApi(apiClientConf);
 export const createTermSearch = createAsyncThunk<
   TermSearchFacetsData,
   TermApiTermSearchRequest
->(actions.createTermsSearchActionType, async params =>
-  termApi.termSearch(params)
-);
+>(actions.createTermsSearchActionType, async params => termApi.termSearch(params));
 
 export const updateTermSearch = createAsyncThunk<
   TermSearchFacetsData,

@@ -9,11 +9,7 @@ export const tagsAdapter = createEntityAdapter<Tag>({
 });
 
 export const initialState: TagsState = {
-  pageInfo: {
-    total: 0,
-    page: 0,
-    hasNext: true,
-  },
+  pageInfo: { total: 0, page: 0, hasNext: true },
   ...tagsAdapter.getInitialState(),
 };
 
@@ -22,15 +18,12 @@ export const tagsSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(
-      thunks.fetchTagsList.fulfilled,
-      (state, { payload }) => {
-        const { items, pageInfo } = payload;
+    builder.addCase(thunks.fetchTagsList.fulfilled, (state, { payload }) => {
+      const { items, pageInfo } = payload;
 
-        tagsAdapter.setMany(state, items);
-        state.pageInfo = pageInfo;
-      }
-    );
+      tagsAdapter.setMany(state, items);
+      state.pageInfo = pageInfo;
+    });
     builder.addCase(thunks.createTag.fulfilled, (state, { payload }) => {
       tagsAdapter.addMany(state, payload);
     });
